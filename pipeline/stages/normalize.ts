@@ -18,8 +18,9 @@ Return JSON: array of story objects.`
 export async function runNormalize(): Promise<void> {
   const verdictsPath = path.join(DATA_DIR, 'verdicts.json')
   if (fs.existsSync(verdictsPath) && process.env.PA_FORCE_NORMALIZE !== '1') {
-    const raw = fs.readFileSync(verdictsPath, 'utf8')
-    if (!raw.includes('SAMPLE:')) {
+    const verdicts = JSON.parse(fs.readFileSync(verdictsPath, 'utf8')) as { rationale?: string }[]
+    const allSample = Array.isArray(verdicts) && verdicts.every((v) => typeof v.rationale === 'string' && v.rationale.includes('SAMPLE:'))
+    if (!allSample) {
       throw new Error(
         'normalize: real verdicts exist and would be invalidated. Re-run with PA_FORCE_NORMALIZE=1, then re-run judge for all products.',
       )
