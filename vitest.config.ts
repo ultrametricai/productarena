@@ -1,9 +1,13 @@
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import path from 'node:path'
 
 export default defineConfig({
   plugins: [react()],
-  test: { include: ['**/__tests__/**/*.test.{ts,tsx}'], passWithNoTests: true },
+  test: {
+    include: ['**/__tests__/**/*.test.{ts,tsx}'],
+    exclude: [...configDefaults.exclude, '**/.claude/**', '**/.next/**'],
+    passWithNoTests: true,
+  },
   resolve: { alias: { '@': path.resolve(__dirname) } },
 })
