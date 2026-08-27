@@ -86,13 +86,19 @@ export async function runJudge({ product }: { product?: string }): Promise<void>
   // Assemble verdicts.json from ALL cached cells (not just targets)
   const all: Verdict[] = []
   for (const p of products) {
+    const currentEvidence = readJson(EvidenceSchema.array(), path.join(DATA_DIR, 'evidence', `${p.id}.json`))
     for (const story of stories) {
       const cacheFile = path.join(CACHE_DIR, 'judge', p.id, `${story.id}.json`)
       if (!fs.existsSync(cacheFile)) {
         console.warn(`judge: matrix incomplete — missing ${p.id}:${story.id}; not writing verdicts.json`)
         return
       }
-      all.push(VerdictSchema.parse((JSON.parse(fs.readFileSync(cacheFile, 'utf8')) as { verdict: unknown }).verdict))
+      const cached = JSON.parse(fs.readFileSync(cacheFile, 'utf8')) as { hash: string; verdict: unknown }
+      const currentHash = cellHash(story, currentEvidence, PROMPT_VERSION)
+      if (cached.hash !== currentHash) {
+        throw new Error(`judge: stale cached verdict for ${p.id}:${story.id} — evidence changed; re-run judge --product ${p.id}`)
+      }
+      all.push(VerdictSchema.parse(cached.verdict))
     }
   }
   all.sort((x, y) => x.productId.localeCompare(y.productId) || x.storyId.localeCompare(y.storyId))

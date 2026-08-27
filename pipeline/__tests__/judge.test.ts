@@ -19,6 +19,15 @@ describe('cellHash', () => {
     expect(h1).not.toBe(cellHash(story, evidence, 'v2'))
     expect(h1).not.toBe(cellHash(story, [ev('e1', 'claimed-docs'), ev('e2', 'community')], 'v1'))
   })
+
+  it('changes when an evidence item keeps its id but gets a new excerpt (same-id regeneration)', () => {
+    // This is the exact staleness scenario the judge assembly guard must catch:
+    // extract/collect-community regenerates evidence for a product, reusing ids
+    // but changing excerpt text — the cached verdict hash must no longer match.
+    const before = [{ ...ev('e1', 'claimed-docs'), excerpt: 'old excerpt' }]
+    const after = [{ ...ev('e1', 'claimed-docs'), excerpt: 'new excerpt' }]
+    expect(cellHash(story, before, 'v1')).not.toBe(cellHash(story, after, 'v1'))
+  })
 })
 
 describe('validateVerdictRules', () => {
