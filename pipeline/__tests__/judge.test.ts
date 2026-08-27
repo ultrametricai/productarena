@@ -1,0 +1,41 @@
+import { describe, expect, it } from 'vitest'
+import type { Evidence, Story, Verdict } from '@/lib/schemas'
+import { cellHash, validateVerdictRules } from '@/pipeline/stages/judge'
+
+const story: Story = { id: 's1', persona: 'developer', title: 't', theme: 'core', weight: 2 }
+const ev = (id: string, tier: Evidence['tier']): Evidence => ({
+  id, tier, url: 'https://x.example/e', excerpt: 'q', fetchedAt: '2026-08-26T00:00:00Z',
+})
+const verdict = (over: Partial<Verdict>): Verdict => ({
+  productId: 'p', storyId: 's1', verdict: 'full', quality: 8, confidence: 'high',
+  rationale: 'r', evidenceIds: ['e1'], ...over,
+})
+
+describe('cellHash', () => {
+  it('is stable and sensitive to evidence and prompt version', () => {
+    const evidence = [ev('e1', 'claimed-docs')]
+    const h1 = cellHash(story, evidence, 'v1')
+    expect(h1).toBe(cellHash(story, [...evidence], 'v1'))
+    expect(h1).not.toBe(cellHash(story, evidence, 'v2'))
+    expect(h1).not.toBe(cellHash(story, [ev('e1', 'claimed-docs'), ev('e2', 'community')], 'v1'))
+  })
+})
+
+describe('validateVerdictRules', () => {
+  const evidence = [ev('e1', 'claimed-docs'), ev('e2', 'community')]
+
+  it('accepts a clean verdict', () => {
+    expect(validateVerdictRules(verdict({}), evidence)).toBeNull()
+  })
+  it('rejects citations of unknown evidence', () => {
+    expect(validateVerdictRules(verdict({ evidenceIds: ['nope'] }), evidence)).toMatch(/unknown evidence/)
+  })
+  it('requires two tiers for disputed', () => {
+    expect(validateVerdictRules(verdict({ verdict: 'disputed', evidenceIds: ['e1'] }), evidence)).toMatch(/two distinct tiers/)
+    expect(validateVerdictRules(verdict({ verdict: 'disputed', evidenceIds: ['e1', 'e2'] }), evidence)).toBeNull()
+  })
+  it('forces quality 0 for none', () => {
+    expect(validateVerdictRules(verdict({ verdict: 'none', quality: 3, evidenceIds: [] }), evidence)).toMatch(/quality 0/)
+    expect(validateVerdictRules(verdict({ verdict: 'none', quality: 0, evidenceIds: [] }), evidence)).toBeNull()
+  })
+})

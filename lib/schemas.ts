@@ -36,19 +36,20 @@ export const EvidenceSchema = z.object({
   fetchedAt: z.string().datetime(),
 })
 
-export const VerdictSchema = z
-  .object({
-    productId: z.string().min(1),
-    storyId: z.string().min(1),
-    verdict: z.enum(['full', 'partial', 'none', 'disputed']),
-    quality: z.number().min(0).max(10),
-    confidence: z.enum(['high', 'medium', 'low']),
-    rationale: z.string().min(1),
-    evidenceIds: z.array(z.string().min(1)),
-  })
-  .refine((v) => v.verdict === 'none' || v.evidenceIds.length >= 1, {
-    message: 'non-none verdicts must cite at least one evidenceId',
-  })
+export const VerdictBaseSchema = z.object({
+  productId: z.string().min(1),
+  storyId: z.string().min(1),
+  verdict: z.enum(['full', 'partial', 'none', 'disputed']),
+  quality: z.number().min(0).max(10),
+  confidence: z.enum(['high', 'medium', 'low']),
+  rationale: z.string().min(1),
+  evidenceIds: z.array(z.string().min(1)),
+})
+
+export const VerdictSchema = VerdictBaseSchema.refine(
+  (v) => v.verdict === 'none' || v.evidenceIds.length >= 1,
+  { message: 'non-none verdicts must cite at least one evidenceId' },
+)
 
 export const RankingsSchema = z.object({
   generatedAt: z.string().datetime(),
