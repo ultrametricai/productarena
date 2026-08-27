@@ -3,7 +3,7 @@ import path from 'node:path'
 import type { z } from 'zod'
 
 export const ROOT = path.resolve(__dirname, '..')
-export const DATA_DIR = path.join(ROOT, 'data')
+export const DATA_DIR = process.env.PA_DATA_DIR ?? path.join(ROOT, 'data')
 export const CACHE_DIR = path.join(ROOT, 'pipeline', 'cache')
 
 export function readJson<T>(schema: z.ZodType<T>, file: string): T {
