@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
-import { loadCategories } from "@/lib/data";
+import CommandPalette from "@/components/CommandPalette";
+import { loadAll, loadCategories } from "@/lib/data";
+import { buildSearchIndex } from "@/lib/search-index";
 
 const REPO = "ultrametricai/productarena";
 
@@ -66,6 +68,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const categories = loadCategories();
   const stars = await fetchStarCount();
+  const searchEntries = buildSearchIndex(loadAll());
 
   return (
     <html
@@ -103,6 +106,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   </span>
                 )}
               </a>
+              <CommandPalette entries={searchEntries} />
             </nav>
           </div>
         </header>
