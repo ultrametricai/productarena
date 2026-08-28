@@ -1,4 +1,4 @@
-const STAGES = ['crawl', 'extract', 'normalize', 'collect-community', 'judge', 'derive', 'logos'] as const
+const STAGES = ['crawl', 'extract', 'normalize', 'collect-community', 'probe', 'judge', 'derive', 'logos'] as const
 type Stage = (typeof STAGES)[number]
 
 async function main() {
@@ -31,6 +31,8 @@ async function main() {
       return (await import('./stages/normalize')).runNormalize(opts)
     case 'collect-community':
       return (await import('./stages/collect-community')).runCollectCommunity(opts)
+    case 'probe':
+      return (await import('./stages/probe')).runProbe(opts)
     case 'judge':
       return (await import('./stages/judge')).runJudge(opts)
     case 'logos':
