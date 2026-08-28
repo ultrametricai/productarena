@@ -2,11 +2,14 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AgenticBadge from '@/components/AgenticBadge'
+import ContestLink from '@/components/ContestLink'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import VerdictBadge from '@/components/VerdictBadge'
+import VerificationBadge from '@/components/VerificationBadge'
 import { battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, verdictFor } from '@/lib/data'
 import type { Story } from '@/lib/schemas'
+import { verificationLevel } from '@/lib/verification'
 
 export function generateStaticParams() {
   return loadAll().flatMap((data) => data.products.map((p) => ({ category: data.category.id, id: p.id })))
@@ -112,6 +115,7 @@ export default async function ProductPage({
                                 <p className="font-medium">{s.title}</p>
                                 <span className="flex items-center gap-2">
                                   <VerdictBadge verdict={v.verdict} />
+                                  <VerificationBadge level={verificationLevel(v, evidence)} />
                                   {v.verdict !== 'na' && (
                                     <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
                                   )}
@@ -130,6 +134,9 @@ export default async function ProductPage({
                                   })}
                                 </p>
                               )}
+                              <div className="mt-1 text-right">
+                                <ContestLink category={category} productId={id} storyId={s.id} verdict={v} />
+                              </div>
                             </li>
                           )
                         })}

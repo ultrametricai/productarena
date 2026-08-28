@@ -1,7 +1,10 @@
 import AgenticBadge from '@/components/AgenticBadge'
+import ContestLink from '@/components/ContestLink'
 import VerdictBadge from '@/components/VerdictBadge'
+import VerificationBadge from '@/components/VerificationBadge'
 import { evidenceById, groupInOrder, type CategoryData, verdictFor } from '@/lib/data'
 import type { BattleRecord } from '@/lib/schemas'
+import { verificationLevel } from '@/lib/verification'
 
 type Round = BattleRecord['rounds'][number]
 
@@ -43,6 +46,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
                 <span className="text-sm font-semibold">{p.name}</span>
                 <span className="flex items-center gap-2">
                   <VerdictBadge verdict={v.verdict} />
+                  <VerificationBadge level={verificationLevel(v, evidence)} />
                   {v.verdict !== 'na' && (
                     <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
                   )}
@@ -62,6 +66,9 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
                   )
                 })}
               </ul>
+              <div className="mt-2 text-right">
+                <ContestLink category={data.category.id} productId={p.id} storyId={round.storyId} verdict={v} />
+              </div>
             </div>
           ))}
         </div>

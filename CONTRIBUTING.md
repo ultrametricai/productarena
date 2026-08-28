@@ -6,8 +6,16 @@ a verdict, or add evidence) plus local setup and style rules.
 
 ## 1. Contest a verdict
 
-If you think a verdict is wrong — wrong tier, wrong quality score, stale evidence, or a
-rationale that misreads its own citation — open an issue using the
+Every verdict shown on the site (battle round cards, product pages) carries a small
+"⚑ contest" link right next to it. Clicking it opens a prefilled GitHub issue — category,
+product, story id, and the current verdict/quality are filled in for you, with empty sections
+for your proposed verdict, evidence URLs, and quotes. It's the fast path for flagging
+something that looks wrong; it does not itself change any data. A maintainer (or, eventually,
+a GitHub Action) still has to do the deeper check described below: add the evidence, run
+`pnpm pipeline judge --category <category> --product <product>`, then
+`pnpm pipeline derive --category <category>` to actually update the verdict.
+
+If you'd rather skip the prefilled link, you can also open an issue manually using the
 [Contest a Verdict](./.github/ISSUE_TEMPLATE/contest-verdict.md) template. Fill in:
 
 - `category` and `product` (must match the ids in `data/categories.json` / `data/{category}/products.json`)

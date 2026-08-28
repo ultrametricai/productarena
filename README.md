@@ -210,7 +210,11 @@ data/
 
 Found a verdict you think is wrong, or evidence we missed? See
 [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict and adding evidence are both
-first-class, expected contribution paths.
+first-class, expected contribution paths. Every verdict on the site has a "⚑ contest" link
+that opens a prefilled GitHub issue with the category/product/story and current verdict
+already filled in; a maintainer (or, in the future, a GitHub Action) does the deeper check —
+adding evidence, then `pnpm pipeline judge --category <category> --product <product>` followed
+by `pnpm pipeline derive --category <category>` — before any verdict actually changes.
 
 ## License
 

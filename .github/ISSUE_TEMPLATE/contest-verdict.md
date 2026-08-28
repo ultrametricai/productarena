@@ -2,7 +2,7 @@
 name: Contest a verdict
 about: Dispute a specific (product, story) verdict in Product Arena
 title: "[verdict] <category>/<product>: <story id>"
-labels: verdict-contest
+labels: verdict-contest, contest
 ---
 
 <!--

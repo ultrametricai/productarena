@@ -1,10 +1,13 @@
 import ProductLogo from '@/components/ProductLogo'
 import VerdictBadge from '@/components/VerdictBadge'
-import { groupInOrder, verdictFor, type CategoryData } from '@/lib/data'
+import VerificationBadge from '@/components/VerificationBadge'
+import { evidenceById, groupInOrder, verdictFor, type CategoryData } from '@/lib/data'
 import type { Story } from '@/lib/schemas'
+import { verificationLevel } from '@/lib/verification'
 
 export default function StoryMatrix({ data }: { data: CategoryData }) {
   const byTheme = groupInOrder(data.stories, (s) => s.theme)
+  const evidence = evidenceById(data)
 
   return (
     <div className="space-y-10">
@@ -15,7 +18,7 @@ export default function StoryMatrix({ data }: { data: CategoryData }) {
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-amber-400">{theme}</h3>
             <div className="space-y-6">
               {byGroup.map(([group, stories]) => (
-                <StoryMatrixGroup key={group} data={data} theme={theme} group={group} stories={stories} />
+                <StoryMatrixGroup key={group} data={data} theme={theme} group={group} stories={stories} evidence={evidence} />
               ))}
             </div>
           </div>
@@ -30,11 +33,13 @@ function StoryMatrixGroup({
   theme,
   group,
   stories,
+  evidence,
 }: {
   data: CategoryData
   theme: string
   group: string
   stories: Story[]
+  evidence: ReturnType<typeof evidenceById>
 }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-zinc-800">
@@ -62,7 +67,10 @@ function StoryMatrixGroup({
                 return (
                   <td key={p.id} className="px-3 py-3 text-center">
                     <div className="flex flex-col items-center gap-1">
-                      <VerdictBadge verdict={v.verdict} />
+                      <div className="flex items-center gap-1">
+                        <VerdictBadge verdict={v.verdict} />
+                        <VerificationBadge level={verificationLevel(v, evidence)} compact />
+                      </div>
                       {v.verdict !== 'na' && (
                         <span className="font-mono text-xs tabular-nums text-zinc-600">{v.quality}/10</span>
                       )}
