@@ -10,7 +10,7 @@ import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, verdictFor } from '@/lib/data'
 import type { Story } from '@/lib/schemas'
-import { verificationLevel } from '@/lib/verification'
+import { strongestEvidence, verificationLevel } from '@/lib/verification'
 
 export function generateStaticParams() {
   return loadAll().flatMap((data) => data.products.map((p) => ({ category: data.category.id, id: p.id })))
@@ -114,8 +114,9 @@ export default async function ProductPage({
                       <ul className="divide-y divide-zinc-800 rounded-xl border border-zinc-800">
                         {stories.map((s) => {
                           const v = verdictFor(data, id, s.id)
+                          const proof = strongestEvidence(v, evidence)
                           return (
-                            <li key={s.id} className="p-4">
+                            <li key={s.id} id={`story-${s.id}`} className="scroll-mt-4 p-4">
                               <div className="flex flex-wrap items-center justify-between gap-2">
                                 <p className="font-medium">{s.title}</p>
                                 <span className="flex items-center gap-2">
@@ -139,7 +140,17 @@ export default async function ProductPage({
                                   })}
                                 </p>
                               )}
-                              <div className="mt-1 text-right">
+                              <div className="mt-1 flex items-center justify-end gap-3">
+                                {proof && (
+                                  <a
+                                    href={proof.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-zinc-600 hover:text-amber-300"
+                                  >
+                                    proof ↗
+                                  </a>
+                                )}
                                 <ContestLink category={category} productId={id} storyId={s.id} verdict={v} />
                               </div>
                             </li>

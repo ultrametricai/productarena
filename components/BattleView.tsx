@@ -4,7 +4,7 @@ import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { evidenceById, groupInOrder, type CategoryData, verdictFor } from '@/lib/data'
 import type { BattleRecord } from '@/lib/schemas'
-import { verificationLevel } from '@/lib/verification'
+import { strongestEvidence, verificationLevel } from '@/lib/verification'
 
 type Round = BattleRecord['rounds'][number]
 
@@ -40,37 +40,50 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
           {[
             { p: a, v: va, won: round.winner === 'a' },
             { p: b, v: vb, won: round.winner === 'b' },
-          ].map(({ p, v, won }) => (
-            <div key={p.id} className={`rounded-lg p-4 ring-1 ${won ? 'ring-amber-400/60 bg-amber-400/5' : 'ring-zinc-800'}`}>
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold">{p.name}</span>
-                <span className="flex items-center gap-2">
-                  <VerdictBadge verdict={v.verdict} />
-                  <VerificationBadge level={verificationLevel(v, evidence)} />
-                  {v.verdict !== 'na' && (
-                    <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
+          ].map(({ p, v, won }) => {
+            const proof = strongestEvidence(v, evidence)
+            return (
+              <div key={p.id} className={`rounded-lg p-4 ring-1 ${won ? 'ring-amber-400/60 bg-amber-400/5' : 'ring-zinc-800'}`}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold">{p.name}</span>
+                  <span className="flex items-center gap-2">
+                    <VerdictBadge verdict={v.verdict} />
+                    <VerificationBadge level={verificationLevel(v, evidence)} />
+                    {v.verdict !== 'na' && (
+                      <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
+                    )}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-zinc-400">{v.rationale}</p>
+                <ul className="mt-2 space-y-1">
+                  {v.evidenceIds.map((id) => {
+                    const e = evidence.get(id)!
+                    return (
+                      <li key={id} className="text-xs text-zinc-500">
+                        <a href={e.url} target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 hover:text-amber-300">
+                          [{e.tier}]
+                        </a>{' '}
+                        &ldquo;{e.excerpt.length > 140 ? e.excerpt.slice(0, 140) + '…' : e.excerpt}&rdquo;
+                      </li>
+                    )
+                  })}
+                </ul>
+                <div className="mt-2 flex items-center justify-end gap-3">
+                  {proof && (
+                    <a
+                      href={proof.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-zinc-500 hover:text-amber-300"
+                    >
+                      proof ↗
+                    </a>
                   )}
-                </span>
+                  <ContestLink category={data.category.id} productId={p.id} storyId={round.storyId} verdict={v} />
+                </div>
               </div>
-              <p className="mt-2 text-sm text-zinc-400">{v.rationale}</p>
-              <ul className="mt-2 space-y-1">
-                {v.evidenceIds.map((id) => {
-                  const e = evidence.get(id)!
-                  return (
-                    <li key={id} className="text-xs text-zinc-500">
-                      <a href={e.url} target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 hover:text-amber-300">
-                        [{e.tier}]
-                      </a>{' '}
-                      &ldquo;{e.excerpt.length > 140 ? e.excerpt.slice(0, 140) + '…' : e.excerpt}&rdquo;
-                    </li>
-                  )
-                })}
-              </ul>
-              <div className="mt-2 text-right">
-                <ContestLink category={data.category.id} productId={p.id} storyId={round.storyId} verdict={v} />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </li>
     )

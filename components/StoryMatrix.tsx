@@ -1,9 +1,20 @@
+import Link from 'next/link'
 import ProductLogo from '@/components/ProductLogo'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { evidenceById, groupInOrder, verdictFor, type CategoryData } from '@/lib/data'
-import type { Story } from '@/lib/schemas'
+import type { Story, Verdict } from '@/lib/schemas'
 import { verificationLevel } from '@/lib/verification'
+
+// Tooltip text for a matrix cell: the verdict plus a truncated excerpt of the first cited
+// evidence item (not necessarily the strongest tier — just the judge's first citation, kept
+// simple and predictable for a hover title).
+function cellTitle(v: Verdict, evidence: ReturnType<typeof evidenceById>): string {
+  const first = v.evidenceIds.length > 0 ? evidence.get(v.evidenceIds[0]) : undefined
+  if (!first) return v.verdict
+  const excerpt = first.excerpt.length > 160 ? `${first.excerpt.slice(0, 160)}…` : first.excerpt
+  return `${v.verdict}: "${excerpt}"`
+}
 
 export default function StoryMatrix({ data }: { data: CategoryData }) {
   const byTheme = groupInOrder(data.stories, (s) => s.theme)
@@ -60,13 +71,17 @@ function StoryMatrixGroup({
         </thead>
         <tbody className="divide-y divide-zinc-800/70">
           {stories.map((s) => (
-            <tr key={s.id}>
+            <tr key={s.id} id={`story-${s.id}`} className="scroll-mt-4">
               <td className="px-4 py-3 text-zinc-300">{s.title}</td>
               {data.products.map((p) => {
                 const v = verdictFor(data, p.id, s.id)
                 return (
                   <td key={p.id} className="px-3 py-3 text-center">
-                    <div className="flex flex-col items-center gap-1">
+                    <Link
+                      href={`/arena/${data.category.id}/product/${p.id}#story-${s.id}`}
+                      title={cellTitle(v, evidence)}
+                      className="flex flex-col items-center gap-1"
+                    >
                       <div className="flex items-center gap-1">
                         <VerdictBadge verdict={v.verdict} />
                         <VerificationBadge level={verificationLevel(v, evidence)} compact />
@@ -74,7 +89,7 @@ function StoryMatrixGroup({
                       {v.verdict !== 'na' && (
                         <span className="font-mono text-xs tabular-nums text-zinc-600">{v.quality}/10</span>
                       )}
-                    </div>
+                    </Link>
                   </td>
                 )
               })}

@@ -38,6 +38,35 @@ Every claim about a product is backed by an **evidence** item with one of four t
 Evidence is stored per product at `data/{category}/evidence/{product}.json`, each item with
 a stable id, tier, source URL, verbatim excerpt, and fetch timestamp.
 
+#### Evidence-strength ladder
+
+Tiers aren't just labels — they're ranked, strongest first:
+
+**`probe` (tested) > `github` (code) > `community` (independent) > `claimed-docs` (vendor claim)**
+
+A direct, hands-on probe of the product (see "Probe harness" below) outranks a GitHub
+README, which outranks independent community commentary, which outranks the vendor simply
+describing its own product. `lib/verification.ts`'s `strongestEvidence()` walks a verdict's
+cited evidence down this ladder and returns the single best-supported item — that's the
+source behind every "proof ↗" link on the site (product page verdict rows, story matrix
+cells, and battle round cards). It's a different, finer-grained ranking than the coarser
+`verificationLevel` badge (`tested`/`corroborated`/`vendor-claim`/`disputed`), which groups
+`github` in with `claimed-docs` for display purposes; `strongestEvidence` keeps them distinct
+so the proof link always points at the most credible single source, not just the highest
+badge tier.
+
+#### Probe harness
+
+`pnpm pipeline probe` runs a small set of keyless, hands-on checks per product and turns each
+*definitive* result — positive or negative — into a `probe`-tier evidence item (ambiguous
+results, e.g. a 403 from a WAF, produce no item rather than a guess): whether `/llms.txt`
+resolves, whether the docs URL serves a `.md` variant, whether a conventional OpenAPI spec
+path resolves, and whether the curated `links.mcp`/`links.cli` URLs are live. See
+`pipeline/stages/probe.ts` (`runProbeChecks`) for the exact rules and
+`pipeline/__tests__/probe.test.ts` for coverage with a mocked fetcher (no live network calls
+in tests). Like `collect-community`, re-running `probe` for a product replaces only its prior
+`probe`-tier items — other tiers are untouched.
+
 ### 2. Judged cells
 
 For every (product, story) pair, an LLM judge reads only that product's evidence pack for
@@ -173,6 +202,7 @@ pnpm pipeline crawl             --category <id> [--product <id>]   # fetch site/
 pnpm pipeline extract           --category <id> [--product <id>]   # LLM: pull candidate stories from crawled pages
 pnpm pipeline normalize         --category <id>                    # LLM: assemble the category's story taxonomy
 pnpm pipeline collect-community --category <id> [--product <id>]   # gather community evidence
+pnpm pipeline probe             --category <id> [--product <id>]   # keyless hands-on checks (llms.txt, openapi, etc.) → probe-tier evidence
 pnpm pipeline judge             --category <id> [--product <id>]   # LLM: judge every (product, story) cell
 pnpm pipeline derive            --category <id>                    # compute rankings.json (scores + battles) from verdicts
 pnpm pipeline logos             --category <id> [--product <id>]   # fetch product logos into public/logos/
