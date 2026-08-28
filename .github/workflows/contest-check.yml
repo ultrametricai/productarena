@@ -33,8 +33,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify required secret
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
             echo "::error::ANTHROPIC_API_KEY secret is not configured on this repository. A maintainer must add it under Settings > Secrets and variables > Actions before contest issues can be auto-processed (this workflow ships dormant until then). No data was changed."
             exit 1
           fi
@@ -53,11 +55,14 @@ jobs:
 
       - name: Resolve issue number
         id: issue
+        env:
+          INPUT_ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
+          EVENT_ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
-          if [ -n "${{ github.event.inputs.issue_number }}" ]; then
-            echo "number=${{ github.event.inputs.issue_number }}" >> "$GITHUB_OUTPUT"
+          if [ -n "$INPUT_ISSUE_NUMBER" ]; then
+            echo "number=$INPUT_ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
           else
-            echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+            echo "number=$EVENT_ISSUE_NUMBER" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run contest check
@@ -66,7 +71,8 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm tsx pipeline/contest-check.ts --issue "${{ steps.issue.outputs.number }}"
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: pnpm tsx pipeline/contest-check.ts --issue "$ISSUE_NUMBER"
 
       # Best-effort: a missing comment permission (e.g. a fork PR context) should never fail
       # the whole run when the actual contest-check step already succeeded or failed cleanly.
@@ -75,10 +81,14 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CONTEST_OUTCOME: ${{ steps.contest.outcome }}
+          PR_URL: ${{ steps.contest.outputs.pr_url }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          REPO: ${{ github.repository }}
         run: |
-          if [ "${{ steps.contest.outcome }}" = "success" ]; then
-            BODY="Contest check opened a PR: ${{ steps.contest.outputs.pr_url }}"
+          if [ "$CONTEST_OUTCOME" = "success" ]; then
+            BODY="Contest check opened a PR: $PR_URL"
           else
-            BODY="Contest check could not auto-resolve this issue (step outcome: ${{ steps.contest.outcome }}). A maintainer will need to follow the manual flow in CONTRIBUTING.md."
+            BODY="Contest check could not auto-resolve this issue (step outcome: $CONTEST_OUTCOME). A maintainer will need to follow the manual flow in CONTRIBUTING.md."
           fi
-          gh issue comment "${{ steps.issue.outputs.number }}" --repo "${{ github.repository }}" --body "$BODY"
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "$BODY"
