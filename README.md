@@ -135,6 +135,15 @@ The judge model is `claude-sonnet-5` by default (override with the `PA_MODEL` en
 the judge prompt is versioned (`PROMPT_VERSION = 'v2'` in `pipeline/stages/judge.ts`) — the
 cache key includes the prompt version, so bumping it forces a full re-judge.
 
+**Re-judge stability policy.** LLM judging has measurable re-roll variance (~9% of cells can
+change verdict or quality on a re-judge with no relevant evidence change). To keep rankings
+evidence-driven rather than noise-driven, large re-judge waves are reviewed against the prior
+state and pure churn is reverted under audited rules: applicability (`na`↔`none`) never flips
+without new evidence, verdicts that cite nothing new don't move close races, and negative
+mechanical probe results only affect the story axis they actually test. Every revert is
+recorded in the commit that applies it. A future prompt version will pass the prior verdict
+as an anchor to reduce this variance at the source.
+
 ### 6. Bias disclosure — the judge is an Anthropic model
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
