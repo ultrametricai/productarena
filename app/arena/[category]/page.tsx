@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import LeaderboardTable from '@/components/LeaderboardTable'
+import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
 import { loadAll, loadCategory } from '@/lib/data'
 
@@ -34,6 +35,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         </p>
       </div>
       <LeaderboardTable data={data} />
+      <StacksSection data={data} />
       <div>
         <h2 className="mb-4 text-lg font-semibold">Story matrix</h2>
         <StoryMatrix data={data} />

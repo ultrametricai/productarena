@@ -16,8 +16,9 @@ export function cellScore(verdict: Verdict, story: Story): number {
 
 // Weighted percentage over a set of (verdict, story) pairs, restricted to non-na cells.
 // Returns null when there are no applicable cells (caller decides whether null or 0 is
-// the right fallback for that context — see buildRankings).
-function weightedPercent(cells: Array<{ verdict: Verdict; story: Story }>): number | null {
+// the right fallback for that context — see buildRankings). Exported so other consumers
+// (e.g. lib/stacks.ts) can reuse the exact same normalization without duplicating it.
+export function weightedPercent(cells: Array<{ verdict: Verdict; story: Story }>): number | null {
   const applicable = cells.filter((c) => c.verdict.verdict !== 'na')
   if (applicable.length === 0) return null
   const numerator = applicable.reduce((sum, c) => sum + cellScore(c.verdict, c.story), 0)

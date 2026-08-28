@@ -58,6 +58,12 @@ export const VerdictSchema = VerdictBaseSchema.refine(
   { message: 'na verdicts must have quality 0' },
 )
 
+export const StackSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  productIds: z.array(z.string().min(1)).min(2),
+})
+
 export const RankingsSchema = z.object({
   generatedAt: z.string().datetime(),
   leaderboard: z.array(
@@ -96,6 +102,7 @@ export type Product = z.infer<typeof ProductSchema>
 export type Story = z.infer<typeof StorySchema>
 export type Evidence = z.infer<typeof EvidenceSchema>
 export type Verdict = z.infer<typeof VerdictSchema>
+export type Stack = z.infer<typeof StackSchema>
 export type Rankings = z.infer<typeof RankingsSchema>
 export type BattleRecord = Rankings['battles'][number]
 export type LeaderboardEntry = Rankings['leaderboard'][number]

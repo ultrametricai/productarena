@@ -3,7 +3,7 @@ import path from 'node:path'
 import {
   type Category, CategorySchema, type Evidence, EvidenceSchema,
   type Product, ProductSchema, type Rankings, RankingsSchema,
-  type Story, StorySchema, type Verdict, VerdictSchema,
+  type Stack, StackSchema, type Story, StorySchema, type Verdict, VerdictSchema,
 } from './schemas'
 
 export interface CategoryData {
@@ -13,6 +13,7 @@ export interface CategoryData {
   evidence: Record<string, Evidence[]>
   verdicts: Verdict[]
   rankings: Rankings
+  stacks: Stack[]
 }
 
 const DEFAULT_DIR = () => path.join(process.cwd(), 'data')
@@ -87,7 +88,15 @@ export function loadCategory(categoryId: string, dir: string = DEFAULT_DIR()): C
     throw new Error(`expected ${expectedPairs} unique battles, found ${rankings.battles.length}`)
   }
 
-  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings }
+  const stacksPath = path.join(catDir, 'stacks.json')
+  const stacks = fs.existsSync(stacksPath) ? StackSchema.array().parse(read('stacks.json')) : []
+  for (const stack of stacks) {
+    for (const pid of stack.productIds) {
+      if (!productIds.has(pid)) throw new Error(`stack ${stack.id} references unknown product ${pid}`)
+    }
+  }
+
+  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks }
   categoryCache.set(cacheKey, data)
   return data
 }
