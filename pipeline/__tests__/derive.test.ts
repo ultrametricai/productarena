@@ -18,12 +18,12 @@ describe('derive stage', () => {
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-derive-'))
     fs.cpSync(path.join(repoRoot, 'data'), tmpDir, { recursive: true })
 
-    execFileSync('pnpm', ['pipeline', 'derive'], {
+    execFileSync('pnpm', ['pipeline', 'derive', '--category', 'desktop-os'], {
       cwd: repoRoot,
       env: { ...process.env, PA_DATA_DIR: tmpDir },
     })
 
-    const raw = JSON.parse(fs.readFileSync(path.join(tmpDir, 'rankings.json'), 'utf8'))
+    const raw = JSON.parse(fs.readFileSync(path.join(tmpDir, 'desktop-os', 'rankings.json'), 'utf8'))
     const rankings = RankingsSchema.parse(raw)
     expect(rankings.battles).toHaveLength(6)
     expect(rankings.leaderboard).toHaveLength(4)

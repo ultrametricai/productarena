@@ -4,16 +4,19 @@ import { z } from 'zod'
 import { type Evidence, EvidenceSchema, ProductSchema } from '../../lib/schemas'
 import { fetchWithRetry, htmlToMarkdown } from '../fetch-page'
 import { llmJson } from '../llm'
-import { DATA_DIR, readJson, writeJson } from '../paths'
+import { categoryDir, readJson, resolveCategories, writeJson } from '../paths'
 
 const CommunityItemsSchema = z.object({
-  items: z.array(z.object({ url: z.string().url(), excerpt: z.string().min(10).max(400) })).min(5).max(20),
+  items: z.array(z.object({ url: z.string().url(), excerpt: z.string().min(10).max(400) })).min(0).max(20),
 })
 
-const SYSTEM = `You distill community discussion about a software product into evidence items.
+function buildSystemPrompt(name: string, vendor: string, siteDomain: string, categoryName: string): string {
+  return `You distill community discussion about a software product into evidence items.
 Each item: a real user experience or claim from the discussion (praise, complaint, workaround, comparison), paraphrased tightly or quoted, max 400 chars, with the URL it came from.
 Exclude marketing, vendor statements, and speculation. Cover both positives and negatives.
+These discussions may be about a DIFFERENT product that shares the name. Include an item ONLY if the discussion is clearly about ${name} by ${vendor} (${siteDomain}), the ${categoryName} product. If none qualify, return an empty items list.
 Return JSON: {"items":[{"url":"...","excerpt":"..."}]}`
+}
 
 async function hnCorpus(name: string): Promise<{ url: string; text: string }[]> {
   let search: { hits: { objectID: string; title: string; num_comments: number }[] }
@@ -45,48 +48,70 @@ async function hnCorpus(name: string): Promise<{ url: string; text: string }[]> 
   return out
 }
 
-export async function runCollectCommunity({ product }: { product?: string }): Promise<void> {
-  const products = readJson(ProductSchema.array(), path.join(DATA_DIR, 'products.json')).filter(
-    (p) => !product || p.id === product,
-  )
-  if (products.length === 0) throw new Error(`unknown product: ${product}`)
-  const seeds = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seeds', 'community.json'), 'utf8')) as Record<string, string[]>
+export async function runCollectCommunity({ category, product }: { category?: string; product?: string }): Promise<void> {
+  const seeds = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'seeds', 'community.json'), 'utf8')) as Record<
+    string,
+    Record<string, string[]>
+  >
 
-  for (const p of products) {
-    try {
-      const sources = await hnCorpus(`${p.name}`)
-      for (const url of seeds[p.id] ?? []) {
-        try {
-          sources.push({ url, text: htmlToMarkdown(await fetchWithRetry(url)).slice(0, 20_000) })
-        } catch (err) {
-          console.warn(`collect-community: WARN seed ${url} failed: ${(err as Error).message}`)
+  let matched = 0
+  for (const cat of resolveCategories(category)) {
+    const dataDir = categoryDir(cat.id)
+    const products = readJson(ProductSchema.array(), path.join(dataDir, 'products.json')).filter(
+      (p) => !product || p.id === product,
+    )
+    matched += products.length
+    const catSeeds = seeds[cat.id] ?? {}
+
+    for (const p of products) {
+      try {
+        const sources = await hnCorpus(`${p.name}`)
+        for (const url of catSeeds[p.id] ?? []) {
+          try {
+            sources.push({ url, text: htmlToMarkdown(await fetchWithRetry(url)).slice(0, 20_000) })
+          } catch (err) {
+            console.warn(`collect-community: WARN seed ${url} failed: ${(err as Error).message}`)
+          }
         }
+        if (sources.length === 0) {
+          console.warn(`collect-community: WARN no community sources found for ${cat.id}/${p.id}; skipping`)
+          continue
+        }
+        const corpus = sources.map((s) => `=== ${s.url} ===\n${s.text}`).join('\n\n').slice(0, 80_000)
+        let siteDomain: string
+        try {
+          siteDomain = new URL(p.urls.site).hostname
+        } catch {
+          siteDomain = p.urls.site
+        }
+        const { items } = await llmJson({
+          schema: CommunityItemsSchema,
+          system: buildSystemPrompt(p.name, p.vendor, siteDomain, cat.name),
+          prompt: `Product: ${p.name}\n\nDiscussions:\n\n${corpus}`,
+          maxTokens: 8192,
+        })
+        const now = new Date().toISOString()
+        const community: Evidence[] = items.map((item, i) => ({
+          id: `${p.id}-comm-${i + 1}`,
+          tier: 'community',
+          url: item.url,
+          excerpt: item.excerpt,
+          fetchedAt: now,
+        }))
+        const file = path.join(dataDir, 'evidence', `${p.id}.json`)
+        const existing = fs.existsSync(file) ? readJson(EvidenceSchema.array(), file) : []
+        writeJson(file, [...existing.filter((e) => e.tier !== 'community'), ...community])
+        if (community.length === 0) {
+          console.warn(
+            `collect-community: WARN ${cat.id}/${p.id} → 0 community items qualified (of ${sources.length} sources); non-community evidence preserved`,
+          )
+        } else {
+          console.log(`collect-community: ${cat.id}/${p.id} → ${community.length} items from ${sources.length} sources`)
+        }
+      } catch (err) {
+        console.warn(`collect-community: WARN ${cat.id}/${p.id} failed: ${(err as Error).message}`)
       }
-      if (sources.length === 0) {
-        console.warn(`collect-community: WARN no community sources found for ${p.id}; skipping`)
-        continue
-      }
-      const corpus = sources.map((s) => `=== ${s.url} ===\n${s.text}`).join('\n\n').slice(0, 80_000)
-      const { items } = await llmJson({
-        schema: CommunityItemsSchema,
-        system: SYSTEM,
-        prompt: `Product: ${p.name}\n\nDiscussions:\n\n${corpus}`,
-        maxTokens: 8192,
-      })
-      const now = new Date().toISOString()
-      const community: Evidence[] = items.map((item, i) => ({
-        id: `${p.id}-comm-${i + 1}`,
-        tier: 'community',
-        url: item.url,
-        excerpt: item.excerpt,
-        fetchedAt: now,
-      }))
-      const file = path.join(DATA_DIR, 'evidence', `${p.id}.json`)
-      const existing = fs.existsSync(file) ? readJson(EvidenceSchema.array(), file) : []
-      writeJson(file, [...existing.filter((e) => e.tier !== 'community'), ...community])
-      console.log(`collect-community: ${p.id} → ${community.length} items from ${sources.length} sources`)
-    } catch (err) {
-      console.warn(`collect-community: WARN ${p.id} failed: ${(err as Error).message}`)
     }
   }
+  if (product && matched === 0) throw new Error(`unknown product: ${product}`)
 }

@@ -5,12 +5,21 @@ const STYLES: Record<Verdict['verdict'], string> = {
   partial: 'bg-amber-950 text-amber-300 ring-amber-800',
   disputed: 'bg-red-950 text-red-300 ring-red-800',
   none: 'bg-zinc-900 text-zinc-500 ring-zinc-700',
+  na: 'bg-zinc-900 text-zinc-600 ring-zinc-800 italic',
+}
+
+const LABELS: Record<Verdict['verdict'], string> = {
+  full: 'full',
+  partial: 'partial',
+  disputed: 'disputed',
+  none: 'none',
+  na: 'n/a',
 }
 
 export default function VerdictBadge({ verdict }: { verdict: Verdict['verdict'] }) {
   return (
     <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${STYLES[verdict]}`}>
-      {verdict}
+      {LABELS[verdict]}
     </span>
   )
 }

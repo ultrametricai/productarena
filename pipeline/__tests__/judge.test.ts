@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Evidence, Story, Verdict } from '@/lib/schemas'
 import { cellHash, validateVerdictRules } from '@/pipeline/stages/judge'
 
-const story: Story = { id: 's1', persona: 'developer', title: 't', theme: 'core', weight: 2 }
+const story: Story = { id: 's1', persona: 'developer', title: 't', theme: 'core', group: 'core', weight: 2 }
 const ev = (id: string, tier: Evidence['tier']): Evidence => ({
   id, tier, url: 'https://x.example/e', excerpt: 'q', fetchedAt: '2026-08-26T00:00:00Z',
 })

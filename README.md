@@ -1,36 +1,217 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Product Arena
 
-## Getting Started
+Product Arena is an evidence-based comparison site. For each of 7 product arenas we crawl
+vendor docs, GitHub, and community sources, extract per-product evidence, and have an LLM
+judge every product against a shared set of user stories. The result is a leaderboard, a
+head-to-head battle log, and a per-product story matrix — every score traces back to cited
+evidence, not opinion.
 
-First, run the development server:
+Live site: https://productarena.vercel.app
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+As of the last full pipeline run: **7 arenas, 36 products, 1,844 judged verdicts.**
+
+## The arenas
+
+| Arena | Products |
+|---|---|
+| AI Coding Agents (`ai-coding`) | claude-code, codex, cursor, github-copilot, gemini-cli |
+| Code Hosting (`code-hosting`) | github, gitlab, bitbucket, gitea |
+| Desktop OS (`desktop-os`) | macos, omarchy, ubuntu, fedora |
+| Mobile AI Dev Tools (`mobile-dev`) | termius, tailscale, blink-shell, a-shell, working-copy, github-mobile |
+| Project Management (`project-management`) | linear, asana, clickup, notion, monday, jira |
+| Startup Banking (`startup-banking`) | mercury, brex, ramp, wise, relay |
+| Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase |
+
+See `data/categories.json` for each arena's full description, personas, and themes.
+
+## Methodology
+
+### 1. Evidence tiers
+
+Every claim about a product is backed by an **evidence** item with one of four tiers:
+
+- `claimed-docs` — vendor site/docs/changelog copy (what the vendor says about itself)
+- `github` — README/repo content
+- `community` — independent community sources (forums, reviews, social posts)
+- `probe` — direct, hands-on observation of the product
+
+Evidence is stored per product at `data/{category}/evidence/{product}.json`, each item with
+a stable id, tier, source URL, verbatim excerpt, and fetch timestamp.
+
+### 2. Judged cells
+
+For every (product, story) pair, an LLM judge reads only that product's evidence pack for
+that story and returns a **verdict**:
+
+| Verdict | Meaning |
+|---|---|
+| `full` | Clearly delivers the story |
+| `partial` | Delivers, with significant caveats or extra tooling required |
+| `disputed` | Vendor claims it, but community/hands-on evidence contradicts — must cite both sides |
+| `none` | No evidence it delivers (never used for capabilities that don't apply — see `na`) |
+| `na` | The story's axis doesn't apply to this product at all (wrong-axis, e.g. an OS-install story for a SaaS API) |
+
+Each verdict also carries a `quality` score (0–10, how *well* it delivers — 0 for `none`/`na`),
+a `confidence` level, a short rationale, and the specific `evidenceIds` the judge relied on.
+The judge is instructed to use **only** the evidence pack, never outside/training knowledge —
+absence of evidence for a well-known capability still yields `none`, not a guess.
+
+Verdicts are cached and keyed on a hash of `(storyId, story title, evidence ids+excerpts,
+prompt version)`, so re-running `judge` is a no-op unless the story or evidence actually
+changed.
+
+### 3. Scoring formula
+
+A cell's score is `story.weight × quality × verdictFactor`, where the verdict factor is
+`full=1.0, partial=0.6, disputed=0.3, none=0, na=excluded`. A product's overall score (and
+each per-theme score) is the weighted percentage across all **applicable** (non-`na`) cells:
+
+```
+score = 100 × Σ(cellScore) / Σ(story.weight × 10)   — over non-na cells only
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`na` cells are excluded from both numerator and denominator entirely — they neither help nor
+hurt a product's score. Head-to-head battles use the same per-cell scores: each story is a
+"round" won by whichever product scores higher on it (ties are draws, `na` rounds are
+excluded), and the overall battle winner is whoever wins more story-weight.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Important:** scores measure **evidenced story coverage**, not absolute product quality. A
+product with a thin crawl (fewer/weaker evidence items) will score lower even if it's
+objectively excellent — the judge can only score what's in the evidence pack. Conversely, a
+wrong-axis story is marked `na` and excluded rather than counted against a product.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. The Agenticness Index
 
-## Learn More
+Every arena includes the same 8 canonical "agenticness" stories, injected verbatim (never
+LLM-authored) so agent-readiness is comparable across categories. Defined in
+`pipeline/agentic-stories.ts`:
 
-To learn more about Next.js, take a look at the following resources:
+| Story id | Story | Weight |
+|---|---|---|
+| `agentic-public-api` | I can drive the product through a documented public API | 3 |
+| `agentic-official-cli` | I can use an official CLI | 2 |
+| `agentic-mcp-server` | I can connect an agent via an official MCP server | 3 |
+| `agentic-webhooks` | I can subscribe to events via webhooks | 2 |
+| `agentic-sdks` | I can build against official SDKs | 2 |
+| `agentic-agent-docs` | I can point an agent at llms.txt or agent-oriented docs | 2 |
+| `agentic-scoped-keys` | I can issue scoped/least-privilege API credentials for an agent | 2 |
+| `agentic-headless` | I can run the product headlessly / in CI for automation | 2 |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A product's "agenticness" score on the leaderboard is its weighted percentage across just
+these 8 cells (theme `agenticness`, group `agent-access`).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 5. Judge model and prompt version
 
-## Deploy on Vercel
+The judge model is `claude-sonnet-5` by default (override with the `PA_MODEL` env var), and
+the judge prompt is versioned (`PROMPT_VERSION = 'v2'` in `pipeline/stages/judge.ts`) — the
+cache key includes the prompt version, so bumping it forces a full re-judge.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 6. Bias disclosure — the judge is an Anthropic model
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Read this before trusting the `ai-coding` arena's numbers.** The judge model
+(`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
+product, Claude Code, which currently leads that arena (score 35.2). This is a real
+conflict of interest and we want it visible, not buried.
+
+What we did about it:
+
+- **We ran an adversarial bias audit** of every `claude-code` verdict scored `full` in the
+  `ai-coding` arena (14 cells), checking each cited evidence excerpt against the claim it
+  was used to support, and separately compared every `agentic-*` cell head-to-head against
+  `codex`.
+- **One cell was downgraded** as a result: `live-app-debugging` went from `full` (quality 6)
+  to `partial` (quality 5) after adjudication. The sole citation was a bare, title-only doc
+  fragment ("Debug live web applications | Chrome") with no scope or mechanism detail, while
+  every competing product's comparable-or-better evidence for the same story capped at
+  `partial`/`none`. The verdict's rationale in `data/ai-coding/verdicts.json` documents the
+  downgrade and the shared-vendor conflict explicitly. This changed Claude Code's overall
+  score from 35.5 to 35.2 (it remained the category leader).
+- **The audit's calibration samples also found the judge was *harsher* on claude-code in
+  several cells**, not just lenient. The clearest example: on
+  `natural-language-feature-implementation`, Claude Code's own marketing describing its core
+  workflow was judged `disputed` (because cited community complaints contradicted it),
+  while Codex was judged `full` on the same story from its evidence pack. A biased judge that
+  favored its own vendor would not do this.
+- **Two additional cells carry documented caveats** (left as computed, not adjusted,
+  per the audit's own rule of "flag, don't silently override" except where adjudicated
+  above):
+  - `persistent-project-instructions` — `full`, quality 9. The cited community evidence
+    partly complains about the feature's practical downsides (config sprawl, some output
+    degradation), which the verdict's rationale doesn't fully surface. The verdict *tier*
+    (`full`) is considered correct — the feature (CLAUDE.md) unambiguously exists and is used
+    — but the quality score is generous given the mixed community signal.
+  - `background-cloud-tasks` — both `claude-code` and `codex` scored `full`, quality 8. The
+    story specifies an "isolated cloud environment"; Codex's cited evidence explicitly says
+    "isolated cloud environments," while Claude Code's cited evidence confirms background/
+    cloud execution but never uses the word "isolated." Both were scored `full`, but only one
+    product's evidence actually supports that specific qualifier.
+- **Every verdict cites evidence ids** resolvable in `data/{category}/evidence/`, so anyone
+  can independently check any verdict against its source. If you disagree with a call, see
+  [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict is a first-class, expected
+  workflow, not a one-off.
+
+We think shipping this disclosure — including the fact that the audit itself was run by the
+same vendor's model — is more honest than pretending the conflict doesn't exist. Judge for
+yourself using the cited evidence.
+
+## Local development
+
+```bash
+pnpm install
+pnpm dev        # http://localhost:3000
+pnpm test       # vitest — schema and scoring unit tests
+pnpm build      # next build (static)
+```
+
+## Pipeline refresh workflow
+
+The pipeline is local-only (not run on Vercel). Each stage accepts `--category <id>` to
+scope a run, and most accept `--product <id>` to scope further to one product:
+
+```bash
+pnpm pipeline crawl             --category <id> [--product <id>]   # fetch site/docs/github pages
+pnpm pipeline extract           --category <id> [--product <id>]   # LLM: pull candidate stories from crawled pages
+pnpm pipeline normalize         --category <id>                    # LLM: assemble the category's story taxonomy
+pnpm pipeline collect-community --category <id> [--product <id>]   # gather community evidence
+pnpm pipeline judge             --category <id> [--product <id>]   # LLM: judge every (product, story) cell
+pnpm pipeline derive            --category <id>                    # compute rankings.json (scores + battles) from verdicts
+pnpm pipeline logos             --category <id> [--product <id>]   # fetch product logos into public/logos/
+```
+
+To refresh a single product's data after editing its evidence (e.g. after a contributed
+correction), you don't need to re-run the whole category — see
+[CONTRIBUTING.md](./CONTRIBUTING.md) for the minimal `judge --product` + `derive` flow.
+
+Requires `ANTHROPIC_API_KEY` in a local `.env` (see `.env.example`) for the LLM-driven stages
+(`extract`, `normalize`, `collect-community`, `judge`).
+
+**`ANTHROPIC_API_KEY` is local-pipeline-only. It must never be set as an environment variable
+on the Vercel project** — the deployed site only serves pre-computed static data from `data/`
+and never calls the Anthropic API at build or request time.
+
+## Data layout
+
+```
+data/
+  categories.json          # arena metadata: id, name, description, personas, themes
+  {category}/
+    products.json           # product metadata (id, name, vendor, type, urls, logo)
+    stories.json             # the category's story taxonomy (incl. the 8 canonical agentic stories)
+    evidence/
+      {product}.json          # evidence items for one product: id, tier, url, excerpt, fetchedAt
+    verdicts.json            # one verdict per (productId, storyId) cell
+    rankings.json            # derived: leaderboard + battles (generated by `pipeline derive`)
+```
+
+`rankings.json` is derived data — never hand-edit it; regenerate it with
+`pnpm pipeline derive --category <id>` after any verdict change.
+
+## Contributing
+
+Found a verdict you think is wrong, or evidence we missed? See
+[CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict and adding evidence are both
+first-class, expected contribution paths.
+
+## License
+
+[MIT](./LICENSE)

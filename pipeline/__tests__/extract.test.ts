@@ -19,4 +19,26 @@ describe('buildEvidence', () => {
     expect(candidates).toHaveLength(3)
     expect(candidates[2].evidenceId).toBe('omarchy-docs-1') // deduped story points at existing evidence
   })
+
+  it('maps an extra-N sourceKey to the matching urls.extra entry', () => {
+    const urlsWithExtra = { ...urls, extra: ['https://omarchy.org/features'] }
+    const extractionWithExtra = {
+      stories: [
+        { persona: 'developer', title: 'feature x', quote: 'quote from the features page', sourceKey: 'extra-0' as const },
+      ],
+    }
+    const { evidence } = buildEvidence('omarchy', extractionWithExtra, urlsWithExtra, '2026-08-26T00:00:00Z')
+    expect(evidence).toHaveLength(1)
+    expect(evidence[0]).toMatchObject({ tier: 'claimed-docs', url: 'https://omarchy.org/features' })
+  })
+
+  it('falls back to the site url when the referenced extra index is missing', () => {
+    const extractionWithExtra = {
+      stories: [
+        { persona: 'developer', title: 'feature y', quote: 'quote pointing at an out-of-range extra', sourceKey: 'extra-3' as const },
+      ],
+    }
+    const { evidence } = buildEvidence('omarchy', extractionWithExtra, urls, '2026-08-26T00:00:00Z')
+    expect(evidence[0]).toMatchObject({ url: urls.site })
+  })
 })

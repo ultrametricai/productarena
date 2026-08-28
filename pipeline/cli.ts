@@ -1,29 +1,40 @@
-const STAGES = ['crawl', 'extract', 'normalize', 'collect-community', 'judge', 'derive'] as const
+const STAGES = ['crawl', 'extract', 'normalize', 'collect-community', 'judge', 'derive', 'logos'] as const
 type Stage = (typeof STAGES)[number]
 
 async function main() {
   const [stage, ...rest] = process.argv.slice(2)
   const productFlag = rest.indexOf('--product')
   const product = productFlag >= 0 ? rest[productFlag + 1] : undefined
+  const categoryFlag = rest.indexOf('--category')
+  const category = categoryFlag >= 0 ? rest[categoryFlag + 1] : undefined
 
   if (!STAGES.includes(stage as Stage)) {
-    console.error(`usage: pnpm pipeline <${STAGES.join('|')}> [--product <id>]`)
+    console.error(`usage: pnpm pipeline <${STAGES.join('|')}> [--category <id>] [--product <id>]`)
     process.exit(1)
   }
 
+  if (stage === 'normalize' && !category) {
+    console.error('usage: pnpm pipeline normalize --category <id>')
+    process.exit(1)
+  }
+
+  const opts = { category, product }
+
   switch (stage as Stage) {
     case 'derive':
-      return (await import('./stages/derive')).runDerive()
+      return (await import('./stages/derive')).runDerive(opts)
     case 'crawl':
-      return (await import('./stages/crawl')).runCrawl({ product })
+      return (await import('./stages/crawl')).runCrawl(opts)
     case 'extract':
-      return (await import('./stages/extract')).runExtract({ product })
+      return (await import('./stages/extract')).runExtract(opts)
     case 'normalize':
-      return (await import('./stages/normalize')).runNormalize()
+      return (await import('./stages/normalize')).runNormalize(opts)
     case 'collect-community':
-      return (await import('./stages/collect-community')).runCollectCommunity({ product })
+      return (await import('./stages/collect-community')).runCollectCommunity(opts)
     case 'judge':
-      return (await import('./stages/judge')).runJudge({ product })
+      return (await import('./stages/judge')).runJudge(opts)
+    case 'logos':
+      return (await import('./stages/logos')).runLogos(opts)
   }
 }
 

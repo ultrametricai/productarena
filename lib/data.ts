@@ -6,7 +6,7 @@ import {
   type Story, StorySchema, type Verdict, VerdictSchema,
 } from './schemas'
 
-export interface AppData {
+export interface CategoryData {
   category: Category
   products: Product[]
   stories: Story[]
@@ -15,14 +15,38 @@ export interface AppData {
   rankings: Rankings
 }
 
-const cache = new Map<string, AppData>()
+const DEFAULT_DIR = () => path.join(process.cwd(), 'data')
 
-export function loadData(dir: string = path.join(process.cwd(), 'data')): AppData {
-  const hit = cache.get(dir)
+const categoriesCache = new Map<string, Category[]>()
+const categoryCache = new Map<string, CategoryData>()
+
+export function loadCategories(dir: string = DEFAULT_DIR()): Category[] {
+  const hit = categoriesCache.get(dir)
   if (hit) return hit
 
-  const read = (file: string) => JSON.parse(fs.readFileSync(path.join(dir, file), 'utf8'))
-  const category = CategorySchema.parse(read('category.json'))
+  const raw = JSON.parse(fs.readFileSync(path.join(dir, 'categories.json'), 'utf8'))
+  const categories = CategorySchema.array().parse(raw)
+  categoriesCache.set(dir, categories)
+  return categories
+}
+
+const REQUIRED_POPULATED_FILES = ['stories.json', 'verdicts.json', 'rankings.json']
+
+export function isPopulated(categoryId: string, dir: string = DEFAULT_DIR()): boolean {
+  const base = path.join(dir, categoryId)
+  return REQUIRED_POPULATED_FILES.every((file) => fs.existsSync(path.join(base, file)))
+}
+
+export function loadCategory(categoryId: string, dir: string = DEFAULT_DIR()): CategoryData {
+  const cacheKey = `${dir}::${categoryId}`
+  const hit = categoryCache.get(cacheKey)
+  if (hit) return hit
+
+  const category = loadCategories(dir).find((c) => c.id === categoryId)
+  if (!category) throw new Error(`unknown category ${categoryId}`)
+
+  const catDir = path.join(dir, categoryId)
+  const read = (file: string) => JSON.parse(fs.readFileSync(path.join(catDir, file), 'utf8'))
   const products = ProductSchema.array().parse(read('products.json'))
   const stories = StorySchema.array().parse(read('stories.json'))
   const verdicts = VerdictSchema.array().parse(read('verdicts.json'))
@@ -63,9 +87,15 @@ export function loadData(dir: string = path.join(process.cwd(), 'data')): AppDat
     throw new Error(`expected ${expectedPairs} unique battles, found ${rankings.battles.length}`)
   }
 
-  const data: AppData = { category, products, stories, evidence, verdicts, rankings }
-  cache.set(dir, data)
+  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings }
+  categoryCache.set(cacheKey, data)
   return data
+}
+
+export function loadAll(dir: string = DEFAULT_DIR()): CategoryData[] {
+  return loadCategories(dir)
+    .filter((c) => isPopulated(c.id, dir))
+    .map((c) => loadCategory(c.id, dir))
 }
 
 export function battleSlug(a: string, b: string): string {
@@ -82,12 +112,28 @@ export function parseBattleSlug(slug: string, products: Product[]): { a: string;
   return null
 }
 
-export function verdictFor(data: AppData, productId: string, storyId: string): Verdict {
+export function verdictFor(data: CategoryData, productId: string, storyId: string): Verdict {
   const v = data.verdicts.find((x) => x.productId === productId && x.storyId === storyId)
   if (!v) throw new Error(`missing verdict for cell ${productId}:${storyId}`)
   return v
 }
 
-export function evidenceById(data: AppData): Map<string, Evidence> {
+export function evidenceById(data: CategoryData): Map<string, Evidence> {
   return new Map(Object.values(data.evidence).flat().map((e) => [e.id, e]))
+}
+
+// Buckets items by a key, preserving the order each key was first seen. Used to group
+// stories/rounds by theme→group without imposing an alphabetical or schema-declared order.
+export function groupInOrder<T>(items: T[], keyOf: (item: T) => string): Array<[string, T[]]> {
+  const order: string[] = []
+  const buckets = new Map<string, T[]>()
+  for (const item of items) {
+    const key = keyOf(item)
+    if (!buckets.has(key)) {
+      buckets.set(key, [])
+      order.push(key)
+    }
+    buckets.get(key)!.push(item)
+  }
+  return order.map((key) => [key, buckets.get(key)!])
 }

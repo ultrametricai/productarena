@@ -1,14 +1,76 @@
+import AgenticBadge from '@/components/AgenticBadge'
 import VerdictBadge from '@/components/VerdictBadge'
-import { type AppData, evidenceById, verdictFor } from '@/lib/data'
+import { evidenceById, groupInOrder, type CategoryData, verdictFor } from '@/lib/data'
 import type { BattleRecord } from '@/lib/schemas'
 
-export default function BattleView({ data, battle }: { data: AppData; battle: BattleRecord }) {
+type Round = BattleRecord['rounds'][number]
+
+export default function BattleView({ data, battle }: { data: CategoryData; battle: BattleRecord }) {
   const productById = new Map(data.products.map((p) => [p.id, p]))
   const storyById = new Map(data.stories.map((s) => [s.id, s]))
+  const entryById = new Map(data.rankings.leaderboard.map((e) => [e.productId, e]))
   const evidence = evidenceById(data)
   const a = productById.get(battle.a)!
   const b = productById.get(battle.b)!
   const winnerName = battle.winner === 'draw' ? null : productById.get(battle.winner)!.name
+
+  const decided = battle.rounds.filter((r) => r.winner !== 'na')
+  const naRounds = battle.rounds.filter((r) => r.winner === 'na')
+  const byTheme = groupInOrder(decided, (r) => storyById.get(r.storyId)!.theme)
+
+  const renderRound = (round: Round) => {
+    const story = storyById.get(round.storyId)!
+    const va = verdictFor(data, battle.a, round.storyId)
+    const vb = verdictFor(data, battle.b, round.storyId)
+    const roundWinner =
+      round.winner === 'a' ? a.name : round.winner === 'b' ? b.name : round.winner === 'draw' ? 'draw' : null
+    return (
+      <li key={round.storyId} className="rounded-xl border border-zinc-800 p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h4 className="font-medium">{story.title}</h4>
+          <span className="text-xs text-zinc-500">
+            weight {story.weight} ·{' '}
+            {roundWinner === null ? 'not comparable' : roundWinner === 'draw' ? 'round drawn' : `round to ${roundWinner}`}
+          </span>
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {[
+            { p: a, v: va, won: round.winner === 'a' },
+            { p: b, v: vb, won: round.winner === 'b' },
+          ].map(({ p, v, won }) => (
+            <div key={p.id} className={`rounded-lg p-4 ring-1 ${won ? 'ring-amber-400/60 bg-amber-400/5' : 'ring-zinc-800'}`}>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold">{p.name}</span>
+                <span className="flex items-center gap-2">
+                  <VerdictBadge verdict={v.verdict} />
+                  {v.verdict !== 'na' && (
+                    <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
+                  )}
+                </span>
+              </div>
+              <p className="mt-2 text-sm text-zinc-400">{v.rationale}</p>
+              <ul className="mt-2 space-y-1">
+                {v.evidenceIds.map((id) => {
+                  const e = evidence.get(id)!
+                  return (
+                    <li key={id} className="text-xs text-zinc-500">
+                      <a href={e.url} target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 hover:text-amber-300">
+                        [{e.tier}]
+                      </a>{' '}
+                      &ldquo;{e.excerpt.length > 140 ? e.excerpt.slice(0, 140) + '…' : e.excerpt}&rdquo;
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </li>
+    )
+  }
+
+  const aAgentic = entryById.get(a.id)?.agenticness ?? null
+  const bAgentic = entryById.get(b.id)?.agenticness ?? null
 
   return (
     <div className="space-y-8">
@@ -22,54 +84,45 @@ export default function BattleView({ data, battle }: { data: AppData; battle: Ba
         </p>
       </div>
 
-      <ol className="space-y-3">
-        {battle.rounds.map((round) => {
-          const story = storyById.get(round.storyId)!
-          const va = verdictFor(data, battle.a, round.storyId)
-          const vb = verdictFor(data, battle.b, round.storyId)
-          const roundWinner = round.winner === 'a' ? a.name : round.winner === 'b' ? b.name : 'draw'
+      <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl border border-zinc-800 p-4">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-zinc-400">{a.name}</span>
+          <AgenticBadge value={aAgentic} />
+        </div>
+        <span className="text-xs uppercase tracking-widest text-zinc-600">Agenticness</span>
+        <div className="flex items-center gap-2">
+          <AgenticBadge value={bAgentic} />
+          <span className="text-sm text-zinc-400">{b.name}</span>
+        </div>
+      </div>
+
+      <div className="space-y-8">
+        {byTheme.map(([theme, rounds]) => {
+          const byGroup = groupInOrder(rounds, (r) => storyById.get(r.storyId)!.group)
           return (
-            <li key={round.storyId} className="rounded-xl border border-zinc-800 p-5">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="font-medium">{story.title}</h2>
-                <span className="text-xs text-zinc-500">
-                  {story.theme} · weight {story.weight} ·{' '}
-                  {round.winner === 'draw' ? 'round drawn' : `round to ${roundWinner}`}
-                </span>
+            <div key={theme}>
+              <h2 className="sticky top-0 z-10 -mx-5 border-b border-zinc-800 bg-zinc-950/95 px-5 py-2 text-sm font-semibold uppercase tracking-widest text-amber-400 backdrop-blur">
+                {theme}
+              </h2>
+              <div className="mt-4 space-y-6">
+                {byGroup.map(([group, groupRounds]) => (
+                  <div key={group}>
+                    {group !== theme && <p className="mb-2 text-xs text-zinc-500">{group}</p>}
+                    <ol className="space-y-3">{groupRounds.map(renderRound)}</ol>
+                  </div>
+                ))}
               </div>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                {[{ p: a, v: va, won: round.winner === 'a' }, { p: b, v: vb, won: round.winner === 'b' }].map(
-                  ({ p, v, won }) => (
-                    <div key={p.id} className={`rounded-lg p-4 ring-1 ${won ? 'ring-amber-400/60 bg-amber-400/5' : 'ring-zinc-800'}`}>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold">{p.name}</span>
-                        <span className="flex items-center gap-2">
-                          <VerdictBadge verdict={v.verdict} />
-                          <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
-                        </span>
-                      </div>
-                      <p className="mt-2 text-sm text-zinc-400">{v.rationale}</p>
-                      <ul className="mt-2 space-y-1">
-                        {v.evidenceIds.map((id) => {
-                          const e = evidence.get(id)!
-                          return (
-                            <li key={id} className="text-xs text-zinc-500">
-                              <a href={e.url} target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 hover:text-amber-300">
-                                [{e.tier}]
-                              </a>{' '}
-                              "{e.excerpt.length > 140 ? e.excerpt.slice(0, 140) + '…' : e.excerpt}"
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </div>
-                  ),
-                )}
-              </div>
-            </li>
+            </div>
           )
         })}
-      </ol>
+      </div>
+
+      {naRounds.length > 0 && (
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-600">Not comparable on these axes</h2>
+          <ol className="mt-4 space-y-3 opacity-60">{naRounds.map(renderRound)}</ol>
+        </div>
+      )}
     </div>
   )
 }
