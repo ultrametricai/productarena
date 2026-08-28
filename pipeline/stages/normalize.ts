@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { type Story, StorySchema } from '../../lib/schemas'
-import { AGENTIC_STORIES } from '../agentic-stories'
+import { AGENTIC_FEATURE_STORIES, AGENTIC_STORIES } from '../agentic-stories'
 import { llmJson } from '../llm'
 import { CACHE_DIR, categoryDir, resolveCategories, writeJson } from '../paths'
 
@@ -11,7 +11,7 @@ import { CACHE_DIR, categoryDir, resolveCategories, writeJson } from '../paths'
 // diffs.
 export function assembleTaxonomy(llmStories: Story[]): Story[] {
   const filtered = llmStories.filter((s) => s.theme !== 'agenticness' && !s.id.startsWith('agentic-'))
-  const combined = [...filtered, ...AGENTIC_STORIES]
+  const combined = [...filtered, ...AGENTIC_STORIES, ...AGENTIC_FEATURE_STORIES]
 
   const ids = new Set<string>()
   for (const s of combined) {
@@ -71,7 +71,7 @@ export async function runNormalize({ category }: { category?: string; product?: 
   })
 
   const assembled = assembleTaxonomy(llmStories)
-  const stories = StorySchema.array().min(30).max(60).parse(assembled)
+  const stories = StorySchema.array().min(30).max(64).parse(assembled)
   writeJson(path.join(dataDir, 'stories.json'), stories)
   console.log(`normalize: wrote ${stories.length} canonical stories for ${cat.id}`)
 }

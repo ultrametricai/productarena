@@ -55,10 +55,22 @@ export function buildRankings(
         themes.map((t) => [t, weightedPercent(cells.filter((c) => c.story.theme === t))]),
       )
 
+      // The agenticness theme splits into two group-scoped indexes: agentReady ("can your
+      // agent drive it" — group agent-access) and agenticApp ("does the product act
+      // agentically itself" — group agentic-features). Each is null when the product has no
+      // applicable cells in that group, independent of the other.
+      const agentReady = weightedPercent(
+        cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'agent-access'),
+      )
+      const agenticApp = weightedPercent(
+        cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'agentic-features'),
+      )
+
       return {
         productId: p.id,
         score,
-        agenticness: themeScores['agenticness'] ?? null,
+        agentReady,
+        agenticApp,
         applicable,
         total: stories.length,
         themeScores,

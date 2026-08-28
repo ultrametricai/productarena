@@ -111,31 +111,51 @@ describe('na handling', () => {
   })
 })
 
-describe('agenticness index', () => {
+describe('agenticness index (split into agentReady and agenticApp)', () => {
   const storiesWithAgentic: Story[] = [
     ...stories,
     { id: 's4', persona: 'ai-native', title: 't4', theme: 'agenticness', group: 'agent-access', weight: 3 },
+    { id: 's5', persona: 'ai-native', title: 't5', theme: 'agenticness', group: 'agentic-features', weight: 2 },
   ]
 
-  it('surfaces the agenticness theme score, null when theme absent', () => {
+  it('surfaces independent agentReady/agenticApp group scores, null when theme absent', () => {
     const verdicts = [
-      v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'full', 10), v('a', 's4', 'full', 10),
-      v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'full', 10), v('b', 's4', 'none', 0),
+      v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'full', 10), v('a', 's4', 'full', 10), v('a', 's5', 'none', 0),
+      v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'full', 10), v('b', 's4', 'none', 0), v('b', 's5', 'full', 10),
     ]
     const r = buildRankings(products, storiesWithAgentic, verdicts, '2026-08-27T00:00:00.000Z')
     const a = r.leaderboard.find((e) => e.productId === 'a')!
     const b = r.leaderboard.find((e) => e.productId === 'b')!
-    expect(a.agenticness).toBe(100)
-    expect(b.agenticness).toBe(0)
+    // a: agent-access (s4) full -> 100; agentic-features (s5) none -> 0
+    expect(a.agentReady).toBe(100)
+    expect(a.agenticApp).toBe(0)
+    // b: agent-access (s4) none -> 0; agentic-features (s5) full -> 100
+    expect(b.agentReady).toBe(0)
+    expect(b.agenticApp).toBe(100)
 
-    // 3-story set has no 'agenticness' theme at all -> null
+    // 3-story set has no 'agenticness' theme at all -> both null
     const noAgenticVerdicts = [
       v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'full', 10),
       v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'full', 10),
     ]
     const r3 = buildRankings(products, stories, noAgenticVerdicts, '2026-08-27T00:00:00.000Z')
     const a3 = r3.leaderboard.find((e) => e.productId === 'a')!
-    expect(a3.agenticness).toBeNull()
+    expect(a3.agentReady).toBeNull()
+    expect(a3.agenticApp).toBeNull()
+  })
+
+  it('nulls one group independently when only that group is missing applicable cells', () => {
+    const verdicts = [
+      v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'full', 10), vNa('a', 's4'), v('a', 's5', 'full', 8),
+      v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'full', 10), v('b', 's4', 'full', 10), vNa('b', 's5'),
+    ]
+    const r = buildRankings(products, storiesWithAgentic, verdicts, '2026-08-27T00:00:00.000Z')
+    const a = r.leaderboard.find((e) => e.productId === 'a')!
+    const b = r.leaderboard.find((e) => e.productId === 'b')!
+    expect(a.agentReady).toBeNull()
+    expect(a.agenticApp).toBe(80)
+    expect(b.agentReady).toBe(100)
+    expect(b.agenticApp).toBeNull()
   })
 })
 
@@ -151,6 +171,7 @@ describe('zero applicable cells', () => {
     expect(a.applicable).toBe(0)
     expect(a.total).toBe(3)
     expect(a.themeScores).toEqual({ core: null, extras: null })
-    expect(a.agenticness).toBeNull()
+    expect(a.agentReady).toBeNull()
+    expect(a.agenticApp).toBeNull()
   })
 })

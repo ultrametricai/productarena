@@ -69,3 +69,41 @@ export const AGENTIC_STORIES: Story[] = [
     weight: 2,
   },
 ]
+
+// Canonical agentic-features stories — same injection contract as AGENTIC_STORIES above, but
+// scored as a separate group ("does the product act agentically itself" vs "can your agent
+// drive it"). Ids, titles, and weights are fixed and must stay identical across all categories.
+export const AGENTIC_FEATURE_STORIES: Story[] = [
+  {
+    id: 'agentic-builtin-assistant',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can delegate tasks to a built-in AI assistant inside the product',
+    theme: 'agenticness',
+    group: 'agentic-features',
+    weight: 3,
+  },
+  {
+    id: 'agentic-autonomous-automation',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can set up automations that run autonomously in the background',
+    theme: 'agenticness',
+    group: 'agentic-features',
+    weight: 2,
+  },
+  {
+    id: 'agentic-nl-commands',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can operate the product with natural-language commands',
+    theme: 'agenticness',
+    group: 'agentic-features',
+    weight: 2,
+  },
+  {
+    id: 'agentic-ai-insights',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can get AI-generated insights and suggestions from my data inside the product',
+    theme: 'agenticness',
+    group: 'agentic-features',
+    weight: 2,
+  },
+]

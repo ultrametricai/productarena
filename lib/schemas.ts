@@ -21,6 +21,12 @@ export const ProductSchema = z.object({
     extra: z.array(z.string().url()).optional(),
   }),
   logo: z.string().optional(),
+  links: z.object({
+    app: z.string().url().optional(),
+    api: z.string().url().optional(),
+    cli: z.string().url().optional(),
+    mcp: z.string().url().optional(),
+  }).optional(),
 })
 
 export const StorySchema = z.object({
@@ -70,7 +76,8 @@ export const RankingsSchema = z.object({
     z.object({
       productId: z.string().min(1),
       score: z.number().min(0).max(100),
-      agenticness: z.number().min(0).max(100).nullable(),
+      agentReady: z.number().min(0).max(100).nullable(),
+      agenticApp: z.number().min(0).max(100).nullable(),
       applicable: z.number().int().min(0),
       total: z.number().int().min(0),
       themeScores: z.record(z.string(), z.number().min(0).max(100).nullable()),

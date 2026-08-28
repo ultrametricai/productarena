@@ -58,12 +58,22 @@ describe('schemas', () => {
     expect(VerdictSchema.safeParse({ ...base, verdict: 'na', quality: 3 }).success).toBe(false)
   })
 
-  it('accepts nullable theme scores, agenticness and applicability on rankings', () => {
+  it('accepts nullable theme scores, agentReady/agenticApp and applicability on rankings', () => {
     const r = {
       generatedAt: '2026-08-27T00:00:00Z',
-      leaderboard: [{ productId: 'p', score: 50, agenticness: null, applicable: 10, total: 12, themeScores: { security: null, agenticness: 75 } }],
+      leaderboard: [{
+        productId: 'p', score: 50, agentReady: null, agenticApp: 75,
+        applicable: 10, total: 12, themeScores: { security: null, agenticness: 75 },
+      }],
       battles: [{ a: 'p', b: 'q', winner: 'draw', record: { aWins: 0, bWins: 0, draws: 1 }, rounds: [{ storyId: 's', winner: 'na', margin: 0 }] }],
     }
     expect(RankingsSchema.safeParse(r).success).toBe(true)
+  })
+
+  it('accepts an optional links object on products', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'oss' as const, urls: { site: 'https://p.example' } }
+    expect(ProductSchema.safeParse(base).success).toBe(true)
+    expect(ProductSchema.safeParse({ ...base, links: { app: 'https://app.p.example', api: 'https://docs.p.example' } }).success).toBe(true)
+    expect(ProductSchema.safeParse({ ...base, links: { app: 'not-a-url' } }).success).toBe(false)
   })
 })

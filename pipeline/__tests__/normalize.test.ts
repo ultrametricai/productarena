@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Story } from '@/lib/schemas'
-import { AGENTIC_STORIES } from '@/pipeline/agentic-stories'
+import { AGENTIC_FEATURE_STORIES, AGENTIC_STORIES } from '@/pipeline/agentic-stories'
 import { assembleTaxonomy } from '@/pipeline/stages/normalize'
 
 const s = (over: Partial<Story>): Story => ({
@@ -28,8 +28,8 @@ describe('assembleTaxonomy', () => {
     expect(result.find((r) => r.id === 'story-b')).toBeUndefined()
     expect(result.find((r) => r.id === 'agentic-something-custom')).toBeUndefined()
 
-    // Canonical ids all present exactly once.
-    for (const canon of AGENTIC_STORIES) {
+    // Canonical ids all present exactly once (both agent-access and agentic-features groups).
+    for (const canon of [...AGENTIC_STORIES, ...AGENTIC_FEATURE_STORIES]) {
       expect(result.filter((r) => r.id === canon.id)).toHaveLength(1)
     }
   })

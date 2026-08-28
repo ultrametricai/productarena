@@ -62,21 +62,37 @@ describe('stackCoverage', () => {
     expect(cov.themeScores.agenticness).toBeNull()
   })
 
-  it('propagates null agenticness when no member has an applicable agenticness cell', () => {
+  it('propagates null agentReady when no member has an applicable agent-access cell', () => {
     const data = makeData([
       v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'na', 0),
       v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'na', 0),
     ])
     const cov = stackCoverage(stack, data)
-    expect(cov.agenticness).toBeNull()
+    expect(cov.agentReady).toBeNull()
+    expect(cov.agenticApp).toBeNull()
   })
 
-  it('surfaces a non-null agenticness score when at least one member has an applicable cell', () => {
+  it('surfaces a non-null agentReady score when at least one member has an applicable cell', () => {
     const data = makeData([
       v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'na', 0),
       v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'full', 9),
     ])
     const cov = stackCoverage(stack, data)
-    expect(cov.agenticness).toBe(90)
+    expect(cov.agentReady).toBe(90)
+  })
+
+  it('scores agenticApp independently from agentReady over the agentic-features group', () => {
+    const stories2: Story[] = [
+      ...stories,
+      { id: 's4', persona: 'ai-native', title: 't4', theme: 'agenticness', group: 'agentic-features', weight: 2 },
+    ]
+    const data: CategoryData = { ...makeData([]), stories: stories2 }
+    data.verdicts = [
+      v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'na', 0), v('a', 's4', 'full', 10),
+      v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'na', 0), v('b', 's4', 'na', 0),
+    ]
+    const cov = stackCoverage(stack, data)
+    expect(cov.agentReady).toBeNull()
+    expect(cov.agenticApp).toBe(100)
   })
 })

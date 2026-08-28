@@ -4,7 +4,8 @@ import { cellScore, weightedPercent } from './scoring'
 
 export interface StackCoverage {
   score: number
-  agenticness: number | null
+  agentReady: number | null
+  agenticApp: number | null
   themeScores: Record<string, number | null>
   applicable: number
   total: number
@@ -31,10 +32,17 @@ export function stackCoverage(stack: Stack, data: CategoryData): StackCoverage {
   const themeScores: Record<string, number | null> = Object.fromEntries(
     themes.map((t) => [t, weightedPercent(cells.filter((c) => c.story.theme === t))]),
   )
+  const agentReady = weightedPercent(
+    cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'agent-access'),
+  )
+  const agenticApp = weightedPercent(
+    cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'agentic-features'),
+  )
 
   return {
     score,
-    agenticness: themeScores['agenticness'] ?? null,
+    agentReady,
+    agenticApp,
     themeScores,
     applicable,
     total: data.stories.length,
