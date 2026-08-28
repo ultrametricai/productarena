@@ -1,0 +1,84 @@
+name: Contest Check
+
+# Automates the "add evidence → judge → derive → PR" side of a contested verdict (see
+# CONTRIBUTING.md, "Contest a verdict"). Ships DORMANT: it fails fast with a clear message
+# on the "Verify required secret" step until a maintainer adds the ANTHROPIC_API_KEY repo
+# secret, and it never touches data/ if the issue body can't be parsed or validated.
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to process (contest-verdict template)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  contest-check:
+    # For the `issues` trigger, only run when the label that was just added is `contest`
+    # (avoids firing on every label change, and on issues that carry `contest` alongside
+    # other labels added earlier). workflow_dispatch always runs — the maintainer chose the
+    # issue explicitly.
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.issue.labels.*.name, 'contest')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify required secret
+        run: |
+          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            echo "::error::ANTHROPIC_API_KEY secret is not configured on this repository. A maintainer must add it under Settings > Secrets and variables > Actions before contest issues can be auto-processed (this workflow ships dormant until then). No data was changed."
+            exit 1
+          fi
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve issue number
+        id: issue
+        run: |
+          if [ -n "${{ github.event.inputs.issue_number }}" ]; then
+            echo "number=${{ github.event.inputs.issue_number }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "number=${{ github.event.issue.number }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run contest check
+        id: contest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm tsx pipeline/contest-check.ts --issue "${{ steps.issue.outputs.number }}"
+
+      # Best-effort: a missing comment permission (e.g. a fork PR context) should never fail
+      # the whole run when the actual contest-check step already succeeded or failed cleanly.
+      - name: Comment outcome on issue
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ steps.contest.outcome }}" = "success" ]; then
+            BODY="Contest check opened a PR: ${{ steps.contest.outputs.pr_url }}"
+          else
+            BODY="Contest check could not auto-resolve this issue (step outcome: ${{ steps.contest.outcome }}). A maintainer will need to follow the manual flow in CONTRIBUTING.md."
+          fi
+          gh issue comment "${{ steps.issue.outputs.number }}" --repo "${{ github.repository }}" --body "$BODY"

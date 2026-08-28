@@ -39,6 +39,27 @@ If you'd rather skip the prefilled link, you can also open an issue manually usi
 4. The updated `verdicts.json` and `rankings.json` are committed with a reference to the
    issue.
 
+### Automated contest resolution (GitHub Action)
+
+`.github/workflows/contest-check.yml` can do steps 2–4 above automatically: when an issue is
+labeled `contest` (or a maintainer runs the workflow manually via `workflow_dispatch` with an
+`issue_number`), it runs `pnpm tsx pipeline/contest-check.ts --issue <n>`, which:
+
+1. Fetches the issue and parses the category/product/story id and the "Evidence URLs" section
+   from its body (tolerant of the exact template — see `pipeline/__tests__/contest-check.test.ts`
+   for the cases it handles).
+2. Fetches each evidence URL and appends it as a `claimed-docs`-tier evidence item, ided
+   `{product}-contest-{issueNumber}-{n}` (namespaced by issue so it can never collide with ids
+   the pipeline itself mints, or with another contest issue's items).
+3. Re-runs `judge --category <category> --product <product>` and `derive --category <category>`.
+4. Opens a PR on a `contest-{issueNumber}` branch referencing the issue, and comments the
+   outcome (PR link, or a failure reason) back on the issue.
+
+**This ships dormant.** It requires an `ANTHROPIC_API_KEY` repository secret (Settings →
+Secrets and variables → Actions) — without it, the workflow fails fast at a "Verify required
+secret" step with a clear error, before touching any data. Only a maintainer can add that
+secret. Until it's configured, contested verdicts still go through the manual flow above.
+
 You don't need to be a maintainer to do step 3 yourself — see the PR flow below.
 
 ## 2. Add evidence (PR flow)
