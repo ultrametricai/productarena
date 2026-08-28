@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import AgenticBadge from '@/components/AgenticBadge'
+import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { battleSlug, type CategoryData } from '@/lib/data'
@@ -27,6 +28,7 @@ export default function LeaderboardTable({ data }: { data: CategoryData }) {
                   {product.name}
                 </Link>
                 <p className="truncate text-sm text-zinc-500">{product.vendor}</p>
+                <ProductLinkChips product={product} variant="letter" />
                 <p className="mt-0.5 text-xs text-zinc-600">
                   {entry.applicable}/{entry.total} stories applicable
                 </p>
@@ -34,7 +36,10 @@ export default function LeaderboardTable({ data }: { data: CategoryData }) {
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <ScoreBar score={entry.score} />
-              <AgenticBadge value={entry.agenticness} />
+              <div className="flex flex-wrap gap-2">
+                <AgenticBadge kind="agent-ready" value={entry.agentReady} />
+                <AgenticBadge kind="agentic-app" value={entry.agenticApp} />
+              </div>
               <div className="flex flex-wrap gap-2 text-xs text-zinc-500">
                 {rivals.map((r) => (
                   <Link

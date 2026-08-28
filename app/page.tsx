@@ -20,10 +20,14 @@ export default function Home() {
           const { leaderboard } = data.rankings
           const leaderEntry = leaderboard[0]
           const leader = data.products.find((p) => p.id === leaderEntry.productId)!
-          const agenticLeaderEntry = [...leaderboard].sort(
-            (x, y) => (y.agenticness ?? -1) - (x.agenticness ?? -1),
+          const agentReadyLeaderEntry = [...leaderboard].sort(
+            (x, y) => (y.agentReady ?? -1) - (x.agentReady ?? -1),
           )[0]
-          const agenticLeader = data.products.find((p) => p.id === agenticLeaderEntry.productId)!
+          const agentReadyLeader = data.products.find((p) => p.id === agentReadyLeaderEntry.productId)!
+          const agenticAppLeaderEntry = [...leaderboard].sort(
+            (x, y) => (y.agenticApp ?? -1) - (x.agenticApp ?? -1),
+          )[0]
+          const agenticAppLeader = data.products.find((p) => p.id === agenticAppLeaderEntry.productId)!
           return (
             <Link
               key={data.category.id}
@@ -48,10 +52,17 @@ export default function Home() {
               </div>
               <div className="mt-3 flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-zinc-600">Most agentic</p>
-                  <p className="font-medium">{agenticLeader.name}</p>
+                  <p className="text-xs uppercase tracking-widest text-zinc-600">Most agent-ready</p>
+                  <p className="font-medium">{agentReadyLeader.name}</p>
                 </div>
-                <AgenticBadge value={agenticLeaderEntry.agenticness} />
+                <AgenticBadge kind="agent-ready" value={agentReadyLeaderEntry.agentReady} />
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-xs uppercase tracking-widest text-zinc-600">Most agentic</p>
+                  <p className="font-medium">{agenticAppLeader.name}</p>
+                </div>
+                <AgenticBadge kind="agentic-app" value={agenticAppLeaderEntry.agenticApp} />
               </div>
               <p className="mt-4 text-xs text-zinc-600">
                 {data.stories.length} stories · {data.verdicts.length} judged cells

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import AgenticnessStrip from '@/components/AgenticnessStrip'
 import LeaderboardTable from '@/components/LeaderboardTable'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
@@ -34,6 +35,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           {data.rankings.generatedAt.slice(0, 10)}
         </p>
       </div>
+      <AgenticnessStrip data={data} />
       <LeaderboardTable data={data} />
       <StacksSection data={data} />
       <div>

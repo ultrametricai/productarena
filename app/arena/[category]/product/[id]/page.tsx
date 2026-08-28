@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AgenticBadge from '@/components/AgenticBadge'
 import ContestLink from '@/components/ContestLink'
+import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import VerdictBadge from '@/components/VerdictBadge'
@@ -63,9 +64,13 @@ export default async function ProductPage({
             </p>
           </div>
         </div>
+        <div className="mt-3">
+          <ProductLinkChips product={product} variant="label" />
+        </div>
         <div className="mt-4 flex max-w-md flex-wrap items-center gap-4">
           <ScoreBar score={entry.score} className="flex-1" />
-          <AgenticBadge value={entry.agenticness} />
+          <AgenticBadge kind="agent-ready" value={entry.agentReady} />
+          <AgenticBadge kind="agentic-app" value={entry.agenticApp} />
         </div>
         <p className="mt-2 text-xs text-zinc-600">
           {entry.applicable}/{entry.total} stories applicable · evidence:{' '}

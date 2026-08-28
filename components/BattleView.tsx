@@ -76,8 +76,8 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
     )
   }
 
-  const aAgentic = entryById.get(a.id)?.agenticness ?? null
-  const bAgentic = entryById.get(b.id)?.agenticness ?? null
+  const aEntry = entryById.get(a.id)
+  const bEntry = entryById.get(b.id)
 
   return (
     <div className="space-y-8">
@@ -94,11 +94,13 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
       <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl border border-zinc-800 p-4">
         <div className="flex items-center gap-2">
           <span className="text-sm text-zinc-400">{a.name}</span>
-          <AgenticBadge value={aAgentic} />
+          <AgenticBadge kind="agent-ready" value={aEntry?.agentReady ?? null} />
+          <AgenticBadge kind="agentic-app" value={aEntry?.agenticApp ?? null} />
         </div>
         <span className="text-xs uppercase tracking-widest text-zinc-600">Agenticness</span>
         <div className="flex items-center gap-2">
-          <AgenticBadge value={bAgentic} />
+          <AgenticBadge kind="agent-ready" value={bEntry?.agentReady ?? null} />
+          <AgenticBadge kind="agentic-app" value={bEntry?.agenticApp ?? null} />
           <span className="text-sm text-zinc-400">{b.name}</span>
         </div>
       </div>

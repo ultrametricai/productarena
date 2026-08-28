@@ -29,7 +29,10 @@ export default function StacksSection({ data }: { data: CategoryData }) {
               <div className="mt-4 space-y-2">
                 <ScoreBar score={coverage.score} />
                 <div className="flex items-center justify-between">
-                  <AgenticBadge value={coverage.agenticness} />
+                  <div className="flex flex-wrap gap-2">
+                    <AgenticBadge kind="agent-ready" value={coverage.agentReady} />
+                    <AgenticBadge kind="agentic-app" value={coverage.agenticApp} />
+                  </div>
                   <p className="text-xs text-zinc-600">
                     {coverage.applicable}/{coverage.total} stories applicable
                   </p>
