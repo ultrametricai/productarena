@@ -1,17 +1,31 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { type Story, StorySchema } from '../../lib/schemas'
-import { AGENTIC_FEATURE_STORIES, AGENTIC_STORIES } from '../agentic-stories'
+import { AGENTIC_FEATURE_STORIES, AGENTIC_STORIES, AUTOMATION_STORIES, OPENNESS_STORIES, PRIVACY_STORIES } from '../agentic-stories'
 import { llmJson } from '../llm'
 import { CACHE_DIR, categoryDir, resolveCategories, writeJson } from '../paths'
 
+// Canonical lens themes injected verbatim below — kept out of the LLM-facing theme list
+// (categories.json's `themes`) so the model never authors competing stories for them, but
+// filtered here too as a belt-and-suspenders guard against theme/id collisions.
+const CANON_THEMES = new Set(['agenticness', 'openness', 'automation-depth', 'privacy-posture'])
+const CANON_ID_PREFIXES = ['agentic-', 'openness-', 'automation-', 'privacy-']
+
 // Pure post-processing of the LLM's candidate taxonomy: drops any LLM-authored story that
-// duplicates the canonical agenticness set (by theme or id prefix), appends the canon
-// verbatim, dedupes ids (throwing on collision), and sorts theme → group → id for stable
-// diffs.
+// duplicates a canonical lens (by theme or id prefix), appends the canon verbatim, dedupes ids
+// (throwing on collision), and sorts theme → group → id for stable diffs.
 export function assembleTaxonomy(llmStories: Story[]): Story[] {
-  const filtered = llmStories.filter((s) => s.theme !== 'agenticness' && !s.id.startsWith('agentic-'))
-  const combined = [...filtered, ...AGENTIC_STORIES, ...AGENTIC_FEATURE_STORIES]
+  const filtered = llmStories.filter(
+    (s) => !CANON_THEMES.has(s.theme) && !CANON_ID_PREFIXES.some((prefix) => s.id.startsWith(prefix)),
+  )
+  const combined = [
+    ...filtered,
+    ...AGENTIC_STORIES,
+    ...AGENTIC_FEATURE_STORIES,
+    ...OPENNESS_STORIES,
+    ...AUTOMATION_STORIES,
+    ...PRIVACY_STORIES,
+  ]
 
   const ids = new Set<string>()
   for (const s of combined) {
@@ -71,7 +85,10 @@ export async function runNormalize({ category }: { category?: string; product?: 
   })
 
   const assembled = assembleTaxonomy(llmStories)
-  const stories = StorySchema.array().min(30).max(64).parse(assembled)
+  // Ceiling raised 64→76 to make room for the 12 newly-canonical lens stories (openness,
+  // automation-depth, privacy-posture) injected by assembleTaxonomy above, on top of the
+  // pre-existing 12-story agenticness canon.
+  const stories = StorySchema.array().min(30).max(76).parse(assembled)
   writeJson(path.join(dataDir, 'stories.json'), stories)
   console.log(`normalize: wrote ${stories.length} canonical stories for ${cat.id}`)
 }

@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import type { Story } from '@/lib/schemas'
-import { AGENTIC_FEATURE_STORIES, AGENTIC_STORIES } from '@/pipeline/agentic-stories'
+import {
+  AGENTIC_FEATURE_STORIES,
+  AGENTIC_STORIES,
+  AUTOMATION_STORIES,
+  OPENNESS_STORIES,
+  PRIVACY_STORIES,
+} from '@/pipeline/agentic-stories'
 import { assembleTaxonomy } from '@/pipeline/stages/normalize'
 
 const s = (over: Partial<Story>): Story => ({
@@ -28,8 +34,38 @@ describe('assembleTaxonomy', () => {
     expect(result.find((r) => r.id === 'story-b')).toBeUndefined()
     expect(result.find((r) => r.id === 'agentic-something-custom')).toBeUndefined()
 
-    // Canonical ids all present exactly once (both agent-access and agentic-features groups).
-    for (const canon of [...AGENTIC_STORIES, ...AGENTIC_FEATURE_STORIES]) {
+    // Canonical ids all present exactly once (agent-access, agentic-features, openness,
+    // automation-depth, and privacy-posture groups — 24 canonical stories total).
+    const allCanon = [
+      ...AGENTIC_STORIES,
+      ...AGENTIC_FEATURE_STORIES,
+      ...OPENNESS_STORIES,
+      ...AUTOMATION_STORIES,
+      ...PRIVACY_STORIES,
+    ]
+    expect(allCanon).toHaveLength(24)
+    for (const canon of allCanon) {
+      expect(result.filter((r) => r.id === canon.id)).toHaveLength(1)
+    }
+  })
+
+  it('drops LLM stories that duplicate the newer lens canon (openness, automation-depth, privacy-posture)', () => {
+    const llmStories = [
+      s({ id: 'story-c', theme: 'dev-experience' }),
+      s({ id: 'story-d', theme: 'openness', group: 'openness' }),
+      s({ id: 'openness-custom', theme: 'dev-experience' }),
+      s({ id: 'story-e', theme: 'automation-depth', group: 'automation-depth' }),
+      s({ id: 'automation-custom', theme: 'dev-experience' }),
+      s({ id: 'story-f', theme: 'privacy-posture', group: 'privacy-posture' }),
+      s({ id: 'privacy-custom', theme: 'dev-experience' }),
+    ]
+    const result = assembleTaxonomy(llmStories)
+
+    expect(result.find((r) => r.id === 'story-c')).toBeDefined()
+    for (const dropped of ['story-d', 'openness-custom', 'story-e', 'automation-custom', 'story-f', 'privacy-custom']) {
+      expect(result.find((r) => r.id === dropped)).toBeUndefined()
+    }
+    for (const canon of [...OPENNESS_STORIES, ...AUTOMATION_STORIES, ...PRIVACY_STORIES]) {
       expect(result.filter((r) => r.id === canon.id)).toHaveLength(1)
     }
   })
