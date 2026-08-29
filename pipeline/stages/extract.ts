@@ -32,17 +32,52 @@ function resolveSourceUrl(sourceKey: string, sourceUrls: Product['urls']): strin
   return sourceUrls[sourceKey as 'site' | 'docs' | 'changelog' | 'github'] ?? sourceUrls.site
 }
 
+// Normalizes an excerpt for cross-run dedup: trim, lowercase, collapse internal whitespace.
+// Deliberately looser than exact-string equality so re-extracting against a slightly
+// reformatted crawl (e.g. different turndown whitespace) still recognizes the same claim.
+function normalizeExcerpt(s: string): string {
+  return s.trim().toLowerCase().replace(/\s+/g, ' ')
+}
+
+// Highest `-{abbrev}-N` suffix already in use across `items`, so freshly minted ids never
+// collide with ids retained from a prior run.
+function maxIndex(items: Evidence[], abbrev: 'docs' | 'gh'): number {
+  const tier = abbrev === 'gh' ? 'github' : 'claimed-docs'
+  let max = 0
+  for (const e of items) {
+    if (e.tier !== tier) continue
+    const m = e.id.match(/-(\d+)$/)
+    if (m) max = Math.max(max, Number(m[1]))
+  }
+  return max
+}
+
+// Builds this run's claimed-docs/github evidence from a fresh extraction, UNIONED with
+// `existingDocsGh` (that product's claimed-docs/github evidence from a prior extract run, if
+// any — community/probe tiers are handled separately by the caller). This makes re-running
+// extract against an expanded corpus monotonic rather than a wholesale replacement: a single
+// LLM extraction pass over a bigger corpus has no guarantee it re-surfaces every previously
+// captured claim, so silently dropping the old pack on every re-run would let real,
+// still-true evidence disappear by chance. Matching is by normalized excerpt equality
+// (see normalizeExcerpt): a match reuses the EXISTING item's id (so citations by
+// upstream verdicts/tests stay stable across runs); a genuinely new excerpt gets a fresh
+// sequential id continuing from the existing pack's max index per tier abbreviation.
 export function buildEvidence(
   productId: string,
   extraction: Extraction,
   sourceUrls: Product['urls'],
   fetchedAt: string,
+  existingDocsGh: Evidence[] = [],
 ): { candidates: CandidateStory[]; evidence: Evidence[] } {
-  const evidence: Evidence[] = []
-  const byQuote = new Map<string, string>()
-  const counters = { docs: 0, gh: 0 }
+  const evidence: Evidence[] = [...existingDocsGh]
+  const byNormExcerpt = new Map<string, string>() // normalized excerpt -> evidenceId (existing + newly minted this run)
+  for (const e of existingDocsGh) byNormExcerpt.set(normalizeExcerpt(e.excerpt), e.id)
+  const byQuote = new Map<string, string>() // exact-quote dedup within this run's own extraction output
+  const counters = { docs: maxIndex(existingDocsGh, 'docs'), gh: maxIndex(existingDocsGh, 'gh') }
+
   const candidates = extraction.stories.map((s) => {
-    let evidenceId = byQuote.get(s.quote)
+    const norm = normalizeExcerpt(s.quote)
+    let evidenceId = byQuote.get(s.quote) ?? byNormExcerpt.get(norm)
     if (!evidenceId) {
       const isGithub = s.sourceKey === 'github'
       const abbrev = isGithub ? 'gh' : 'docs'
@@ -55,8 +90,9 @@ export function buildEvidence(
         excerpt: s.quote,
         fetchedAt,
       })
-      byQuote.set(s.quote, evidenceId)
+      byNormExcerpt.set(norm, evidenceId)
     }
+    byQuote.set(s.quote, evidenceId)
     return { persona: s.persona, title: s.title, evidenceId }
   })
   return { candidates, evidence }
@@ -94,11 +130,13 @@ export async function runExtract({ category, product }: { category?: string; pro
         maxTokens: 8192,
       })
 
-      const { candidates, evidence } = buildEvidence(p.id, extraction, p.urls, new Date().toISOString())
-
       const evidenceFile = path.join(dataDir, 'evidence', `${p.id}.json`)
       const existing = fs.existsSync(evidenceFile) ? readJson(EvidenceSchema.array(), evidenceFile) : []
       const kept = existing.filter((e) => e.tier === 'community' || e.tier === 'probe')
+      const existingDocsGh = existing.filter((e) => e.tier === 'claimed-docs' || e.tier === 'github')
+
+      const { candidates, evidence } = buildEvidence(p.id, extraction, p.urls, new Date().toISOString(), existingDocsGh)
+
       writeJson(evidenceFile, [...evidence, ...kept])
       writeJson(path.join(CACHE_DIR, 'extract', cat.id, `${p.id}.json`), candidates)
       console.log(`extract: ${cat.id}/${p.id} → ${candidates.length} candidate stories, ${evidence.length} evidence items`)
