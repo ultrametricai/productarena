@@ -3,9 +3,9 @@
     "productId": "cloudflare",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "A direct probe confirms llms.txt is live and returns structured, agent-oriented documentation content at developers.cloudflare.com/llms.txt, plus an accessible openapi.json for machine-readable API docs.",
+    "rationale": "A direct probe confirms llms.txt is live at developers.cloudflare.com/llms.txt returning HTTP 200 with structured agent-oriented content, and Cloudflare also exposes an OpenAPI spec, giving agents multiple standardized entry points to the docs.",
     "evidenceIds": [
       "cloudflare-probe-1",
       "cloudflare-probe-2"
@@ -14,32 +14,38 @@
   {
     "productId": "cloudflare",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Cloudflare Workers offers building blocks (Workers AI, agents, data search) that developers could use to construct AI-insight features, but there is no evidence of the platform itself surfacing AI-generated insights or suggestions from a user's own data inside the product experience.",
-    "evidenceIds": []
+    "rationale": "Cloudflare Workers offers building blocks (Workers AI, agents, MCP servers) that let developers build AI-driven insight/agent features over data, but there's no evidence of a built-in, end-user-facing feature that surfaces AI-generated insights from a user's own data inside the Cloudflare product itself — it's an infrastructure layer requiring custom development.",
+    "evidenceIds": [
+      "cloudflare-docs-3",
+      "cloudflare-docs-12",
+      "cloudflare-comm-9"
+    ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "disputed",
-    "quality": 4,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Cloudflare markets Workers for building agents and long-running background workflows, citing compute-only billing for 'long agent workflows or hibernating WebSockets' (docs-2, docs-6), but community evidence directly disputes this, noting CPU time caps (30s free/15min paid) make Workers unsuitable for long-running autonomous agent tasks, pushing developers to self-hosted alternatives (comm-9).",
+    "rationale": "Cloudflare Workers explicitly supports cron triggers, Durable Workflows, and Queues for background automation, plus AI agent building blocks (Workers AI, MCP servers), enabling autonomous background jobs. However, community evidence highlights real limits — CPU time caps (30s free, 15min paid) make genuinely long-running autonomous agent tasks impractical without workarounds, a concern echoed by developers building AI agent workloads.",
     "evidenceIds": [
-      "cloudflare-docs-2",
-      "cloudflare-docs-6",
+      "cloudflare-docs-9",
+      "cloudflare-docs-15",
+      "cloudflare-docs-3",
+      "cloudflare-docs-12",
       "cloudflare-comm-9"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cloudflare Workers is a serverless developer platform for building and deploying code/AI applications, not a product with a built-in AI assistant UI that end users delegate tasks to. The evidence shows it lets developers build AI agents/inference into their own apps, but no built-in assistant exists inside the product itself for a user persona to delegate tasks to.",
+    "rationale": "Cloudflare Workers provides building blocks for developers to build AI agents (Workers AI, MCP servers) but there is no evidence of a built-in AI assistant inside the product itself that a user can delegate tasks to; it's a platform for building such tools, not one that ships one.",
     "evidenceIds": []
   },
   {
@@ -48,86 +54,100 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Cloudflare Workers ships wrangler, a full CLI for building, testing, and deploying Workers headlessly, and explicitly documents fitting into existing CI workflows like Git and GitHub Actions with no proprietary tooling required. Community feedback confirms fast, scriptable deploys, though some note CPU-time limits constrain long-running agent workloads.",
+    "rationale": "Cloudflare Workers ships an official CLI (Wrangler) with scriptable commands for deploy/build, a local simulator (workers-sdk/Miniflare) for testing, and scoped API tokens for authentication—all standard building blocks for CI/headless automation.",
     "evidenceIds": [
-      "cloudflare-gh-1",
-      "cloudflare-gh-2",
-      "cloudflare-docs-7",
+      "cloudflare-docs-11",
       "cloudflare-probe-3",
-      "cloudflare-comm-9"
+      "cloudflare-gh-1",
+      "cloudflare-docs-14",
+      "cloudflare-docs-2"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-mcp-server",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers Workers' general serverless, AI inference, and database features but contains no mention of an official MCP (Model Context Protocol) server or agent-connection capability specific to Workers.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cloudflare provides official documentation and tooling for building and deploying MCP servers directly on Workers, explicitly enabling agent connections via a supported first-party protocol implementation.",
+    "evidenceIds": [
+      "cloudflare-docs-12",
+      "cloudflare-docs-3",
+      "cloudflare-probe-1"
+    ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-nl-commands",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Cloudflare Workers is a CLI/code-first serverless platform (wrangler, npm create, Git workflows); the evidence pack shows no natural-language command interface or chat-driven operation for building/deploying Workers.",
-    "evidenceIds": []
+    "rationale": "Cloudflare provides an llms.txt and OpenAPI spec for its docs/API, and supports building MCP servers for agentic integrations, suggesting some AI-native tooling support, but there is no evidence of a native natural-language interface for operating Workers itself (deployment, config, etc. still require CLI/code via Wrangler).",
+    "evidenceIds": [
+      "cloudflare-probe-1",
+      "cloudflare-probe-2",
+      "cloudflare-docs-12",
+      "cloudflare-docs-11"
+    ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Cloudflare provides an official CLI (Wrangler) documented at developers.cloudflare.com/workers/wrangler/ and open-sourced in the workers-sdk GitHub repo, plus a scaffolding command (npm create cloudflare@latest) and a local simulator for testing Workers, indicating strong first-party tooling for building/deploying via CLI.",
+    "rationale": "Cloudflare provides Wrangler, an official CLI with documented commands for managing Workers, plus npm create cloudflare scaffolding and a local dev simulator, all confirmed via official docs and probes.",
     "evidenceIds": [
+      "cloudflare-docs-11",
+      "cloudflare-docs-2",
       "cloudflare-probe-3",
-      "cloudflare-gh-1",
-      "cloudflare-gh-2",
-      "cloudflare-docs-4"
+      "cloudflare-gh-1"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Cloudflare exposes a documented OpenAPI spec (openapi.json) plus an llms.txt for AI-native discovery, alongside a full CLI/SDK (wrangler, workers-sdk) enabling programmatic deployment and management of Workers. Community evidence corroborates active developer usage building on these APIs, though some note documentation quality/gaps for certain features.",
+    "rationale": "Cloudflare exposes a documented public REST API (verified live OpenAPI spec at openapi.json), an llms.txt for AI-native discovery, token-scoped API authentication docs, and the Wrangler CLI/SDK for programmatic management, plus native MCP server support for agentic integration.",
     "evidenceIds": [
-      "cloudflare-probe-2",
       "cloudflare-probe-1",
+      "cloudflare-probe-2",
       "cloudflare-probe-3",
-      "cloudflare-gh-1",
-      "cloudflare-docs-4",
-      "cloudflare-comm-3"
+      "cloudflare-docs-11",
+      "cloudflare-docs-14",
+      "cloudflare-docs-12"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of scoped API tokens, least-privilege credential issuance, or agent-specific credential scoping features for Cloudflare Workers; only general platform, security, and community sentiment items are present.",
-    "evidenceIds": []
+    "rationale": "Cloudflare's API token creation lets users select which resources a token can access, showing scoped/least-privilege credential support at the platform level, but there's no evidence this is tailored or exposed as an agent-specific credentialing workflow within Workers itself.",
+    "evidenceIds": [
+      "cloudflare-docs-14"
+    ]
   },
   {
     "productId": "cloudflare",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Cloudflare provides official SDK/tooling (workers-sdk CLI, wrangler, local simulator), a machine-readable OpenAPI spec, and an llms.txt file explicitly for AI-native consumption of its developer docs, all confirmed via live probes.",
+    "rationale": "Cloudflare documents official language support (JS/TS/Python/Rust), a CLI (Wrangler), exposed OpenAPI spec, llms.txt for AI-agent consumption, and native MCP server support for building agents — strong signals for AI-native SDK usage. However, community evidence disputes practical completeness (no full Node runtime, limited/no real Python support, vendor lock-in on KV/D1), tempering the 'official SDK' story.",
     "evidenceIds": [
-      "cloudflare-gh-1",
-      "cloudflare-gh-2",
-      "cloudflare-probe-1",
+      "cloudflare-docs-7",
+      "cloudflare-docs-11",
+      "cloudflare-docs-12",
       "cloudflare-probe-2",
       "cloudflare-probe-3",
-      "cloudflare-docs-4"
+      "cloudflare-probe-1",
+      "cloudflare-comm-13",
+      "cloudflare-comm-14",
+      "cloudflare-comm-10"
     ]
   },
   {
@@ -136,7 +156,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items describe webhook subscription capabilities for events; the pack covers serverless compute, AI inference, storage, security, and developer sentiment, but nothing about webhooks or event subscription mechanisms.",
+    "rationale": "The evidence pack covers Workers' compute, storage, AI, and workflow features (cron, Queues, Workflows) but contains no mention of a native webhook subscription mechanism for platform or application events that an AI agent could subscribe to.",
     "evidenceIds": []
   },
   {
@@ -145,33 +165,34 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cloudflare's own docs directly promise exactly this capability (Workers AI: 'Run AI inference globally with one API call... no GPUs to manage, no capacity planning'), and the broader Workers platform is well-corroborated by community praise for ease and speed. However, no community/hands-on evidence specifically validates the AI inference product's quality or reliability, and one community comment flags Cloudflare's newer AI-related docs as possibly 'AI slop', creating some doubt.",
+    "rationale": "Cloudflare's own docs explicitly promise global AI inference via a single API call with no GPU/capacity management (cloudflare-docs-3), matching the story closely. However, this is vendor-only messaging with no independent/community evidence validating the AI inference product specifically, and some community commentary raises general skepticism about Cloudflare's newer AI-related docs being low-quality or 'AI slop' (cloudflare-comm-6), reducing confidence in real-world delivery.",
     "evidenceIds": [
-      "cloudflare-docs-2",
-      "cloudflare-comm-14",
+      "cloudflare-docs-3",
       "cloudflare-comm-6",
-      "cloudflare-comm-3"
+      "cloudflare-comm-14"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "ai-model-gateway",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Docs mention Workers AI enabling inference 'with one API call' without managing GPUs, suggesting some unified access to AI models, but there is no evidence of 'hundreds of models' or an explicit unified gateway endpoint feature (e.g., AI Gateway) being described or validated by community feedback.",
+    "rationale": "Cloudflare docs mention running AI inference with one API call (Workers AI) but the evidence pack contains no explicit mention of a unified 'AI Gateway' aggregating hundreds of third-party models, only Cloudflare's own inference API.",
     "evidenceIds": [
-      "cloudflare-docs-2"
+      "cloudflare-docs-3"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "automatic-tls-certs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers Cloudflare Workers' compute, storage, AI, and DX features but contains no mention of TLS/SSL certificate issuance, wildcard certs, or automatic renewal (this is typically a Cloudflare-proxy/DNS feature, not a Workers-specific capability shown here).",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cloudflare docs confirm free, auto-renewing, publicly trusted SSL certificates for domains on Cloudflare (covering Workers' custom domains), but the evidence doesn't explicitly confirm wildcard certificate coverage or address it directly in the Workers context.",
+    "evidenceIds": [
+      "cloudflare-docs-13"
+    ]
   },
   {
     "productId": "cloudflare",
@@ -179,27 +200,32 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers Workers' compute platform, storage, security, and DX but contains no mention of bulk/batch operations across many items, batch APIs, or automation tooling for mass processing of data.",
+    "rationale": "Cloudflare Workers evidence covers building/deploying serverless functions, bindings, storage, and AI inference, but nothing indicates a bulk/batch operation capability for acting across many items at once as an automation feature exposed to end users.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "automation-rules-engine",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack describes Workers as a general-purpose serverless compute platform (functions, AI inference, databases, security) but contains no mention of event-driven rule/trigger systems (e.g., cron triggers, queues, webhooks) that would let a user define automatic rules on events.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cloudflare Workers supports event-driven automation via cron triggers, Queues, and Durable Workflows, and bindings let workers react to events and call APIs (cloudflare-docs-9, cloudflare-docs-10), but this is developer-configured infrastructure rather than a user-facing 'define rules' interface, and community notes flag limits for long-running agent workloads (cloudflare-comm-9).",
+    "evidenceIds": [
+      "cloudflare-docs-9",
+      "cloudflare-docs-10",
+      "cloudflare-comm-9"
+    ]
   },
   {
     "productId": "cloudflare",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "The evidence mentions Cloudflare's support for 'long agent workflows' and compute-based billing that would suit background/agentic jobs, implying a Workflows/automation capability, but no evidence pack item explicitly confirms Cron Triggers or scheduled/recurring job support.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cloudflare Workers natively supports Cron Triggers for scheduled jobs and Workflows for durable, multi-step orchestration, plus Queues for async task chaining, explicitly documented as core platform features. Community feedback confirms production use of Workers for backend automation, though some note limits for long-running agent tasks on certain plans.",
     "evidenceIds": [
-      "cloudflare-docs-6",
+      "cloudflare-docs-9",
+      "cloudflare-docs-15",
       "cloudflare-comm-9"
     ]
   },
@@ -209,7 +235,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence shows deployment tooling (wrangler, workers-sdk) and Git/CI integration, but nothing specific to versioning, reviewing, or rolling back automations/workflows as a first-class AI-native feature; no mention of deployment history, rollback UI, or automation review capability.",
+    "rationale": "Evidence covers deployment, bindings, CLI commands, and pricing but nothing about versioning, review workflows, or rollback of Workers/automations; no mention of deployment history, rollback commands, or approval/review flows.",
     "evidenceIds": []
   },
   {
@@ -218,12 +244,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Wrangler CLI (workers-sdk) is Cloudflare's official command-line tool for building and deploying Workers, documented at developers.cloudflare.com/workers/wrangler/, and the scaffolding command 'npm create cloudflare@latest' confirms CLI-first project creation and deployment without needing the dashboard.",
+    "rationale": "Wrangler CLI is Cloudflare's official tool for scaffolding, testing, and deploying Workers projects entirely from the command line, documented with a full command set and supported by community reports of quick, straightforward deployment experiences.",
     "evidenceIds": [
-      "cloudflare-gh-1",
+      "cloudflare-docs-2",
+      "cloudflare-docs-11",
       "cloudflare-probe-3",
-      "cloudflare-docs-4",
-      "cloudflare-docs-7"
+      "cloudflare-comm-3",
+      "cloudflare-comm-11"
     ]
   },
   {
@@ -232,13 +259,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Cloudflare provides a documented single-command scaffold (`npm create cloudflare@latest`) and a dedicated CLI (wrangler/workers-sdk) for building and deploying Workers, backed by official docs and community testimonials describing fast, easy setup and deployment.",
+    "rationale": "Cloudflare documents a single command, `npm create cloudflare@latest my-app`, to scaffold a new Workers project, and Wrangler provides CLI commands to deploy it, with community testimonials confirming the fast, easy setup and deployment experience.",
     "evidenceIds": [
-      "cloudflare-docs-4",
-      "cloudflare-gh-1",
+      "cloudflare-docs-2",
+      "cloudflare-docs-11",
       "cloudflare-probe-3",
-      "cloudflare-comm-3",
-      "cloudflare-comm-11"
+      "cloudflare-comm-3"
     ]
   },
   {
@@ -247,17 +273,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of alerting, notifications, chat/email integration, or monitoring conditions for Cloudflare Workers; coverage focuses on deployment, runtime, storage, and developer experience.",
+    "rationale": "The evidence pack covers Workers development, deployment, bindings, and community sentiment, but contains no mention of alerting, notifications, chat/email integrations, or observability alert configuration for Workers.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "custom-domains",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of custom domains, routes, or DNS attachment for Workers; general docs about deployment, CLI, storage, and security are present but none address binding custom domains to deployed services.",
-    "evidenceIds": []
+    "rationale": "The evidence shows Cloudflare's platform manages domains and automatically issues SSL/TLS certificates for domains added to Cloudflare, implying custom domain support exists, but no evidence pack item explicitly documents attaching a custom domain to a deployed Worker (e.g., via Wrangler 'routes' or 'custom domains' config).",
+    "evidenceIds": [
+      "cloudflare-docs-13",
+      "cloudflare-docs-11"
+    ]
   },
   {
     "productId": "cloudflare",
@@ -265,69 +294,74 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack shows Cloudflare Workers as a serverless compute/storage platform with docs, CLI tooling, and security features, but there is no evidence of any dashboard-building capability for combining metrics across services—no analytics dashboard product, no observability UI, no cross-service metrics aggregation mentioned anywhere in the pack.",
+    "rationale": "The evidence pack covers Workers' compute, storage, bindings, and deployment features but contains no mention of dashboards, metrics aggregation, or observability tooling for building custom cross-service dashboards.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "default-ddos-waf",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cloudflare's own docs state DDoS protection, WAF, bot management, and Zero Trust controls are built into the network and applied to every request by default, which directly matches the story; this is consistent with Cloudflare's core network positioning underlying Workers deployments. No community evidence disputes this specific claim, though it is vendor-sourced rather than independently verified.",
-    "evidenceIds": [
-      "cloudflare-docs-8"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers Workers development, runtimes, bindings, and community feedback, but contains no mention of DDoS protection or WAF being applied automatically to Workers requests.",
+    "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "docker-deploy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Cloudflare Workers is a V8-isolate based JS/Wasm runtime, not a container runtime; the evidence pack shows no support for deploying Docker container images to Workers (Cloudflare Containers is a separate product not mentioned here). No evidence supports this capability.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Cloudflare Workers is a V8-isolate serverless JS/Wasm runtime; the evidence pack shows no support for deploying arbitrary Docker container images. Community evidence even highlights this gap, with users comparing Workers unfavorably to running a 'plain old node server in a docker container' and requesting fuller runtime support, but nothing indicates native Docker image deployment.",
+    "evidenceIds": [
+      "cloudflare-comm-8",
+      "cloudflare-comm-13",
+      "cloudflare-docs-6",
+      "cloudflare-docs-7"
+    ]
   },
   {
     "productId": "cloudflare",
     "storyId": "durable-workflows",
     "verdict": "disputed",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Cloudflare touts billing that 'even during long agent workflows or hibernating WebSockets' charges only for compute (cloudflare-docs-6), implying support for durable workflows, but there is no evidence of a dedicated workflow/queue/retry orchestration primitive in the pack, and community feedback explicitly states CPU time limits 'don't work for long-running agent tasks,' pushing developers toward self-hosting instead (cloudflare-comm-9).",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cloudflare explicitly ships Workflows for durable execution plus Queues/cron integration and claims compute-only billing even for long agent workflows (cloudflare-docs-9, cloudflare-docs-15), but hands-on community feedback says the CPU-time limits (30s free/15min paid) make Workers unsuitable for long-running agent tasks, pushing some to self-host workers instead (cloudflare-comm-9).",
     "evidenceIds": [
-      "cloudflare-docs-6",
-      "cloudflare-comm-9"
+      "cloudflare-docs-9",
+      "cloudflare-docs-15",
+      "cloudflare-comm-9",
+      "cloudflare-docs-10"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "fast-boot-scaling",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Cloudflare Workers' V8 isolate model explicitly eliminates cold starts and manages global scaling automatically per-request without server provisioning, backed by vendor docs and echoed by community reports of instant, fast deployment ('easy to use and very quick', 'API running in production in an hour'). Some caveats exist around CPU-time limits for long-running tasks, but the core boot-speed/scale story is well supported.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cloudflare Workers' V8 isolate model with no cold starts is core to its documented value prop, and community feedback repeatedly praises speed and ease of scaling ('easy to use and very quick', 'API running in production in an hour'). Some caveats exist around CPU time limits for long-running agent tasks, but the boot-time/scale claim itself is corroborated rather than disputed.",
     "evidenceIds": [
       "cloudflare-docs-1",
-      "cloudflare-docs-5",
       "cloudflare-comm-3",
       "cloudflare-comm-11",
-      "cloudflare-comm-2"
+      "cloudflare-comm-9"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "framework-tool-continuity",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Cloudflare explicitly advertises fitting into existing Git/GitHub Actions/VS Code/framework workflows with 'no proprietary tools or vendor lock-in' (cloudflare-docs-7), and Wrangler/workers-sdk integrate with standard CI and editors. However, community feedback directly contradicts the no-lock-in claim, citing proprietary storage APIs (KV, D1) that make switching away hard, and lack of a full Node runtime blocking migration of standard framework apps from Vercel/Netlify.",
+    "rationale": "Workers supports many frameworks (Next, Astro, Vue, etc.), a CLI (Wrangler) for CI/deploy, and a local dev simulator, letting devs keep familiar editors and frameworks. However, using Workers' storage/compute (KV, D1, Durable Objects) requires proprietary bindings and the Wrangler toolchain, and community feedback notes lock-in and lack of a full Node runtime block seamless migration of existing stacks.",
     "evidenceIds": [
+      "cloudflare-docs-6",
       "cloudflare-docs-7",
+      "cloudflare-docs-11",
       "cloudflare-gh-1",
       "cloudflare-comm-10",
-      "cloudflare-comm-13",
-      "cloudflare-comm-14"
+      "cloudflare-comm-13"
     ]
   },
   {
@@ -336,21 +370,17 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack shows Workers deployment tooling (Wrangler, CLI, Git/GitHub Actions integration) but contains no mention of automatic ephemeral preview environments per pull request or full-stack preview URLs tied to PRs.",
+    "rationale": "Evidence covers Workers' local dev simulator (workerd) and Wrangler CLI, but there is no mention of automatic ephemeral preview environments tied to pull requests (a Pages/CI-integration feature) for Workers full-stack apps.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "git-push-deploy",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "low",
-    "rationale": "Cloudflare docs state Workers 'fits into your existing workflows: Git, GitHub Actions...' implying CI/CD integration for git-push deploys, and Workers Builds/Pages historically support Git-triggered deploys, but the evidence pack lacks direct documentation or hands-on confirmation of automatic deploy-on-push specifically for Workers apps, relying mainly on a general claim.",
-    "evidenceIds": [
-      "cloudflare-docs-7",
-      "cloudflare-gh-1",
-      "cloudflare-docs-4"
-    ]
+    "rationale": "The evidence pack covers Wrangler CLI, bindings, runtime features, and community sentiment, but contains no mention of GitHub/GitLab integration or automatic deploy-on-push (e.g., Workers Builds/Pages CI) for Cloudflare Workers.",
+    "evidenceIds": []
   },
   {
     "productId": "cloudflare",
@@ -358,11 +388,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Cloudflare Workers is core edge-compute infrastructure, with docs, CLI tooling, and Smart Placement designed to run code across a global network close to users, and multiple community reports confirm workers run fast and globally in production use.",
+    "rationale": "Cloudflare Workers is explicitly built to run code on Cloudflare's global edge network with no server/region management, corroborated by docs (deployment tooling, bindings, Smart Placement for latency) and multiple community reports of fast, easy-to-deploy global execution. Some caveats exist around runtime limitations and vendor lock-in but don't negate the core edge-compute capability.",
     "evidenceIds": [
       "cloudflare-docs-1",
-      "cloudflare-docs-5",
-      "cloudflare-gh-1",
+      "cloudflare-docs-8",
       "cloudflare-comm-2",
       "cloudflare-comm-3",
       "cloudflare-comm-11"
@@ -373,13 +402,12 @@
     "storyId": "global-static-cdn",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "low",
-    "rationale": "Cloudflare Workers runs on Cloudflare's global edge network with Smart Placement for latency optimization, and community feedback confirms Workers are fast, and CF Pages is used for static sites with good results — but the evidence pack lacks direct documentation of a CDN/static-asset-caching feature (e.g., Workers Sites/Assets) specific to this story, relying mainly on general platform and compute claims.",
+    "confidence": "medium",
+    "rationale": "Workers run on Cloudflare's global edge network, and community evidence confirms static sites served via Cloudflare Pages perform well, but the evidence pack lacks direct documentation of Workers' static asset/CDN caching features specifically, focusing instead on compute, bindings, and databases.",
     "evidenceIds": [
       "cloudflare-docs-1",
-      "cloudflare-docs-5",
-      "cloudflare-comm-3",
-      "cloudflare-comm-14"
+      "cloudflare-comm-14",
+      "cloudflare-comm-3"
     ]
   },
   {
@@ -388,27 +416,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of hard spending limits, budget caps, or billing alerts for Cloudflare Workers; only general pricing philosophy (charge for compute not wall time) is present, which does not address spend control.",
+    "rationale": "No evidence pack item mentions billing caps, spending limits, or budget alerts for Cloudflare Workers; only pricing model (charge for compute not wall time) is mentioned, with no hard-limit mechanism described.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "idp-secured-access",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Cloudflare's docs mention Zero Trust controls built into the network (cloudflare-docs-8), which implies IdP-based access for internal apps, but there is no specific evidence pack detail on Workers integrating with an organization's identity provider for securing internal apps, deployments, or agents. No community or hands-on evidence confirms this Zero Trust/Access capability in the context of Workers specifically.",
-    "evidenceIds": [
-      "cloudflare-docs-8"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack covers Workers' serverless runtime, storage bindings, wrangler CLI, and community sentiment, but contains no mention of Access, Zero Trust, SSO/IdP integration, or any identity-based security controls for internal apps/agents.",
+    "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "in-browser-dev-toolbar",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions an in-browser toolbar for feedback, feature flags, or performance inspection on live sites; Cloudflare Workers evidence covers CLI tooling, serverless runtime, and platform features, not this kind of visual dev toolbar.",
+    "confidence": "high",
+    "rationale": "No evidence pack items mention an in-browser toolbar for feedback, feature flags, or performance inspection on live sites; Cloudflare Workers evidence covers serverless compute, bindings, CLI tooling, and databases, not this dev-experience feature.",
     "evidenceIds": []
   },
   {
@@ -417,7 +443,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention gradual/canary rollouts, percentage-based traffic splitting, or incremental deployment features (e.g., Workers Gradual Deployments) for reducing blast radius; evidence covers general deployment, integrations, and community sentiment but nothing on staged rollout controls.",
+    "rationale": "The evidence pack covers Wrangler deployment commands, bindings, runtime features, and community sentiment, but nothing describes gradual/canary rollout, traffic-splitting, or percentage-based incremental deployment capabilities for Workers.",
     "evidenceIds": []
   },
   {
@@ -426,24 +452,23 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Cloudflare Workers ships a CLI (Wrangler) with a project config that defines bindings, routes and environments, and documentation confirms it fits into Git/CI workflows and supports `npm create cloudflare`/deploy commands, implying config-driven, versionable deployment. However, the evidence pack never explicitly shows a single-file architecture definition (e.g., wrangler.toml spanning multiple services) or version-history capabilities, so this is inferred rather than directly demonstrated.",
+    "rationale": "Workers' Wrangler CLI and bindings system (docs-9,10,11) let devs declare resources, routes, and triggers in a config file and deploy via CLI, and community feedback confirms fast, simple deploys (comm-3, comm-11). However, no evidence pack item explicitly describes a single unified config file capturing the 'entire architecture' or built-in versioning/rollback workflow, so full IaC-style version control is not demonstrated.",
     "evidenceIds": [
-      "cloudflare-gh-1",
-      "cloudflare-probe-3",
-      "cloudflare-docs-7",
-      "cloudflare-docs-4"
+      "cloudflare-docs-9",
+      "cloudflare-docs-10",
+      "cloudflare-docs-11",
+      "cloudflare-comm-3",
+      "cloudflare-comm-11"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "invisible-bot-protection",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "low",
-    "rationale": "Cloudflare's own docs mention bot management is 'built into the network' at the platform level (cloudflare-docs-8), but this evidence is generic marketing copy about Cloudflare as a whole, not specific to Workers integration or invisible challenge mechanics, and no community/hands-on evidence confirms Workers-specific bot challenge features.",
-    "evidenceIds": [
-      "cloudflare-docs-8"
-    ]
+    "rationale": "The evidence pack covers Cloudflare Workers' serverless compute, storage bindings, tooling, and developer sentiment, but contains no mention of bot management, Turnstile, or invisible challenge-based bot protection features.",
+    "evidenceIds": []
   },
   {
     "productId": "cloudflare",
@@ -451,7 +476,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack describes serverless deployment, performance, and platform features but contains no mention of the isolation model (e.g., V8 isolates vs. hardware-level VM isolation) or disposable sandbox execution guarantees for untrusted code, so the specific hardware-isolation claim is unsubstantiated in this pack.",
+    "rationale": "The evidence pack describes Workers as a serverless/edge compute platform with various features (bindings, Wrangler CLI, frameworks, AI, storage) but contains no evidence about the underlying isolation model (e.g., V8 isolates vs. hardware-level VM isolation) or claims of 'hardware-isolated, disposable sandboxes'. Without this specific architectural evidence, the story's claim cannot be substantiated.",
     "evidenceIds": []
   },
   {
@@ -460,10 +485,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cloudflare's docs claim a serverless, global model with no servers to manage and no cold starts, which implies automatic scaling to handle traffic bursts, and community feedback echoes speed and ease under real workloads. However, there is no direct evidence (benchmarks, load tests) demonstrating burst-absorption behavior, and community notes about CPU-time limits for long-running tasks suggest scaling has practical ceilings.",
+    "rationale": "Workers' serverless isolate model inherently scales per-request with no capacity planning or server management (cloudflare-docs-1, cloudflare-docs-3), which implicitly delivers burst absorption, and community feedback confirms it's 'fast' and handles production load well (cloudflare-comm-3). However, there's no explicit autoscaling documentation, benchmark, or SLA evidence, and some community reports note CPU-time limits causing issues for sustained heavy workloads (cloudflare-comm-9), so full confidence in burst-absorption at scale isn't established.",
     "evidenceIds": [
       "cloudflare-docs-1",
-      "cloudflare-docs-5",
+      "cloudflare-docs-3",
       "cloudflare-comm-3",
       "cloudflare-comm-9"
     ]
@@ -474,12 +499,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Cloudflare provides Wrangler CLI and an explicit local simulator (Miniflare, powered by workerd, the same runtime engine used in production) for developing and testing Workers locally, as documented in the workers-sdk repo and wrangler docs. Community feedback confirms strong developer experience with Workers tooling, though some note gaps like lack of full Node runtime support for certain edge cases.",
+    "rationale": "Cloudflare provides Wrangler with a built-in local simulator (Miniflare, powered by workerd, the same runtime used in production) explicitly described as 'a simulator for developing and testing Cloudflare Workers, powered by workerd,' plus documented CLI tooling for local dev/deploy workflows.",
     "evidenceIds": [
       "cloudflare-gh-1",
-      "cloudflare-gh-2",
-      "cloudflare-probe-3",
-      "cloudflare-docs-4"
+      "cloudflare-docs-11",
+      "cloudflare-probe-3"
     ]
   },
   {
@@ -488,9 +512,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Cloudflare offers D1 (serverless SQL) and Hyperdrive for database acceleration, but the evidence pack shows no fully-managed Postgres offering with point-in-time recovery, replicas, and high availability; D1 is SQLite-based, not Postgres.",
+    "rationale": "Evidence shows Cloudflare's serverless SQL (D1, SQLite-based) and database acceleration via Hyperdrive for connecting to external databases, but no evidence of a fully-managed Postgres offering with point-in-time recovery, replicas, or high availability.",
     "evidenceIds": [
-      "cloudflare-docs-3"
+      "cloudflare-docs-4"
     ]
   },
   {
@@ -498,27 +522,33 @@
     "storyId": "migration-credits",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions migration credits or any incentive program for moving infrastructure from another platform to Cloudflare Workers; discussions of lock-in and switching costs actually highlight friction rather than credits.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions migration credits, competitive migration incentives, or any pricing program for moving infrastructure from another platform to Cloudflare Workers.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "object-storage-uploads",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack mentions Workers' KV, D1 (SQL), and Hyperdrive as storage options, but there is no mention of R2 or any built-in object storage for user uploads. No evidence supports this specific capability.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "The evidence shows Cloudflare offers storage-oriented services like Cloudflare Images for media pipelines and generic 'Bindings' to connect Workers to storage, but no explicit mention of a general-purpose object storage product (e.g., R2) for arbitrary user uploads appears in the pack.",
+    "evidenceIds": [
+      "cloudflare-docs-5",
+      "cloudflare-docs-10",
+      "cloudflare-docs-4"
+    ]
   },
   {
     "productId": "cloudflare",
     "storyId": "on-demand-image-optimization",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The evidence pack covers Workers compute, AI inference, databases, security, and DX feedback, but contains no mention of an image resizing/optimization CDN capability (Cloudflare Images) for Workers.",
-    "evidenceIds": []
+    "rationale": "Cloudflare Images is documented as a separate product to store, optimize, and deliver images, but this is not a Workers-native feature—it's a distinct service, and no evidence shows on-demand resizing/transformation integrated directly into Workers code or its DX quality.",
+    "evidenceIds": [
+      "cloudflare-docs-5"
+    ]
   },
   {
     "productId": "cloudflare",
@@ -526,20 +556,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of rollback functionality, version history, or one-click revert capability for Workers deployments; only general deployment, tooling, and community sentiment items are present.",
+    "rationale": "No evidence pack item mentions deployment version rollback or a one-click rollback feature for Workers; only Wrangler CLI command management is referenced without detail on rollback capability.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "one-click-templates",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "The `npm create cloudflare@latest` CLI (C3) supports scaffolding from framework/template starters, and workers-sdk provides tooling, but the evidence pack shows no explicit one-click template gallery/marketplace details, and community feedback focuses on general DX rather than confirming a curated one-click starter catalog.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cloudflare's `npm create cloudflare@latest` CLI (C3) offers scaffolding for common frameworks (React, Vue, Svelte, Next, Astro) and use cases like MCP servers, functioning as starter templates, but evidence doesn't show a true 'one-click' deploy-from-template gallery like Vercel/Netlify, and community feedback notes CF lags in developer-platform polish/mindshare.",
     "evidenceIds": [
-      "cloudflare-docs-4",
-      "cloudflare-gh-1",
-      "cloudflare-probe-3"
+      "cloudflare-docs-2",
+      "cloudflare-docs-6",
+      "cloudflare-docs-12",
+      "cloudflare-comm-12"
     ]
   },
   {
@@ -548,26 +579,26 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cloudflare publishes a full OpenAPI spec and offers wrangler CLI/SDK that let developers deploy and manage Workers entirely without the dashboard, and community reports confirm production use via API/CLI alone. However, there's no direct evidence confirming 100% UI/API feature parity, and some comments note friction (lack of full Node runtime, vendor lock-in with D1/KV) suggesting gaps in programmatic control of some platform features.",
+    "rationale": "Cloudflare exposes a full OpenAPI spec, granular API tokens, and a CLI (Wrangler) that wraps the API for deploying/managing Workers, plus MCP server support for AI-native access — strong signals of API-first design. However, the evidence pack has no explicit confirmation that every dashboard feature (e.g. some analytics, billing, or newer UI-only features) is fully mirrored in the API, so full UI/API parity isn't directly substantiated.",
     "evidenceIds": [
       "cloudflare-probe-2",
+      "cloudflare-docs-11",
       "cloudflare-probe-3",
-      "cloudflare-gh-1",
-      "cloudflare-comm-3",
-      "cloudflare-comm-13",
-      "cloudflare-comm-10"
+      "cloudflare-docs-14",
+      "cloudflare-docs-12",
+      "cloudflare-probe-1"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "openness-full-export",
-    "verdict": "disputed",
-    "quality": 3,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Cloudflare claims 'no proprietary tools or vendor lock-in' (cloudflare-docs-7), but community evidence directly contradicts this, citing KV and D1 as 'locked-in things' that make it hard to switch away from Cloudflare (cloudflare-comm-10). No dedicated data-export tooling or open-format export documentation is present in the evidence pack.",
+    "rationale": "There is no documentation or feature described for exporting Workers/D1/KV data in open formats, and community feedback explicitly cites Cloudflare's storage products (KV, D1) as creating lock-in that makes switching away difficult, the opposite of easy data portability.",
     "evidenceIds": [
-      "cloudflare-docs-7",
-      "cloudflare-comm-10"
+      "cloudflare-comm-10",
+      "cloudflare-comm-13"
     ]
   },
   {
@@ -576,10 +607,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "medium",
-    "rationale": "The Workers CLI/tooling (workers-sdk, and its Miniflare simulator) is open source on GitHub, letting users inspect the developer tooling, but the core Workers runtime/platform itself is a proprietary managed service with no evidence of its source being available under an open license.",
+    "rationale": "Cloudflare open-sources parts of the Workers tooling stack (workers-sdk, the workerd-based local simulator) on GitHub, giving some visibility into the runtime, but the actual production Workers platform/service that runs code on Cloudflare's edge is closed-source and not available under an open license.",
     "evidenceIds": [
-      "cloudflare-gh-1",
-      "cloudflare-gh-2"
+      "cloudflare-gh-1"
     ]
   },
   {
@@ -588,11 +618,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Cloudflare Workers is a proprietary managed edge-compute platform; while the workerd runtime is open-source and a local simulator exists (cloudflare-gh-2), there is no evidence of self-hosting the actual Workers platform (KV, D1, global network, routing) — community comments explicitly note vendor lock-in and lack of portability of the core stack (cloudflare-comm-10, cloudflare-comm-13).",
+    "rationale": "Cloudflare Workers is a proprietary global edge platform; there is no vendor documentation for running the production runtime, KV/D1/R2 or global network yourself. The open-source 'workers-sdk' includes only a local simulator (workerd) for testing, not the actual hosted product, and community comments explicitly cite vendor lock-in (KV/D1) as a barrier to running the same code on self-hosted infrastructure.",
     "evidenceIds": [
-      "cloudflare-gh-2",
+      "cloudflare-gh-1",
       "cloudflare-comm-10",
-      "cloudflare-comm-13"
+      "cloudflare-comm-8"
     ]
   },
   {
@@ -601,9 +631,9 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cloudflare explicitly claims billing only for active compute time, not wall time, even during long workflows or hibernating WebSockets, and pricing is based on CPU time rather than duration. However, community evidence notes CPU-time limits (30s free, 15min paid) constrain long-running agent workloads, indicating caveats to the pure 'pay for compute only' claim.",
+    "rationale": "Cloudflare explicitly claims billing only for compute time, not wall time, even during hibernating WebSockets or long agent workflows, aligning with the story's ask. However, this is vendor-stated pricing docs only, and community evidence notes CPU-time limits (30s free/15min paid) causing friction for long-running agent workloads, suggesting real-world caveats to the 'pay for active compute only' promise.",
     "evidenceIds": [
-      "cloudflare-docs-6",
+      "cloudflare-docs-15",
       "cloudflare-comm-9"
     ]
   },
@@ -611,12 +641,12 @@
     "productId": "cloudflare",
     "storyId": "persistent-agent-runtime",
     "verdict": "disputed",
-    "quality": 3,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Cloudflare markets Workers/AI agent support and hibernating WebSockets that charge only for compute (cloudflare-docs-2, cloudflare-docs-6), suggesting some agent-state persistence, but there is no evidence of an automatic 'checkpointing' mechanism, and hands-on community feedback explicitly states CPU time limits (30s free/15min paid) make Workers unsuitable for long-running agent tasks, pushing developers to self-host instead (cloudflare-comm-9).",
+    "rationale": "Cloudflare docs mention durable Workflows and cron/queue integration (cloudflare-docs-9) and usage-based billing even for long agent workflows (cloudflare-docs-15), suggesting persistent, checkpointed execution. But community evidence directly contradicts this for agent workloads, noting CPU time limits (30s free, 15min paid) make Workers unsuitable for long-running agent tasks, pushing people to self-host instead (cloudflare-comm-9).",
     "evidenceIds": [
-      "cloudflare-docs-2",
-      "cloudflare-docs-6",
+      "cloudflare-docs-9",
+      "cloudflare-docs-15",
       "cloudflare-comm-9"
     ]
   },
@@ -626,7 +656,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions preview URLs for pull requests, GitHub PR integration, or Cloudflare Pages preview deployments. Evidence covers general Workers features, CLI tooling, and community sentiment but nothing about automatic PR preview URLs.",
+    "rationale": "The evidence pack covers Workers' runtime, bindings, CLI, and community sentiment, but contains no mention of Git integration, pull request preview deployments, or preview URLs for Workers.",
     "evidenceIds": []
   },
   {
@@ -634,8 +664,8 @@
     "storyId": "preview-collaboration-comments",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions any commenting or collaboration feature on preview/production deployments; the pack covers runtime, tooling, pricing, and community sentiment but nothing about comment threads or review collaboration.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions any commenting, annotation, or collaboration feature on preview/production deployments; the pack covers runtime, bindings, CLI, and general dev-experience discussion only.",
     "evidenceIds": []
   },
   {
@@ -644,7 +674,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data residency, region selection, or jurisdictional controls for Workers data/storage; it only discusses general platform features, performance, and developer experience.",
+    "rationale": "The evidence pack contains no mention of data residency, region selection/pinning, or jurisdiction controls for Workers/D1/KV data; the only geo-related item references reading visitor country headers, not storage location control.",
     "evidenceIds": []
   },
   {
@@ -653,7 +683,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage policies or opt-out controls for Cloudflare Workers or its AI products; the evidence covers deployment, performance, pricing, and developer experience but nothing on data-for-training privacy commitments.",
+    "rationale": "No evidence in the pack addresses AI training data opt-out or data usage controls for Cloudflare Workers; the pack covers deployment, runtime, bindings, and developer sentiment only.",
     "evidenceIds": []
   },
   {
@@ -662,7 +692,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention controls, deletion APIs, or privacy/data lifecycle policies for Workers or its storage products (D1, KV, R2, etc.); the pack only covers deployment, performance, and DX topics.",
+    "rationale": "The evidence pack contains no mention of data retention policies, deletion controls, or privacy/data-lifecycle management features for Workers or its storage products (KV, D1, R2). No documentation or community evidence addresses this capability.",
     "evidenceIds": []
   },
   {
@@ -671,7 +701,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of telemetry opt-out, usage tracking controls, or privacy settings for Workers CLI/tooling; nothing addresses this axis at all.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Cloudflare Workers or its tooling (e.g., Wrangler CLI analytics collection).",
     "evidenceIds": []
   },
   {
@@ -680,7 +710,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of Cloudflare Workers' service bindings, Tunnels, or any private networking mechanism for keeping service-to-service traffic off the public internet; only generic Zero Trust/WAF claims are present, which don't address VPC-free internal traffic routing.",
+    "rationale": "The evidence pack covers Workers' serverless compute, bindings, storage, and general dev experience, but contains no mention of private networking, Cloudflare Tunnel, WARP, or service-to-service connectivity features that would keep internal traffic off the public internet without VPC complexity.",
     "evidenceIds": []
   },
   {
@@ -689,18 +719,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers general Workers platform features (serverless compute, AI, databases, security add-ons like WAF/Zero Trust) but contains no mention of environment isolation, staging vs. production separation, or network controls preventing non-prod from reaching prod services.",
+    "rationale": "No evidence in the pack addresses environment isolation, staging/production separation, or network access controls between non-prod and prod services for Workers; evidence covers general product features, DX opinions, and API tokens scoping resources but not environment-level network isolation.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "redis-compatible-cache",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Cloudflare offers Workers KV (mentioned in community evidence) as a low-latency key-value store for caching, but there is no evidence it is Redis-protocol-compatible or supports Redis-style job queues; docs only describe a proprietary 'globally distributed key-value' product, not Redis compatibility.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cloudflare offers Workers KV for globally distributed key-value storage and Queues for job/task processing (docs-4, docs-9), and community reports confirm developers using KV successfully for production caching (comm-3). However, none of the evidence indicates Redis protocol compatibility — KV has a different API/semantics, and community feedback notes lock-in concerns tied to KV/D1's proprietary nature (comm-10), meaning it satisfies the caching/queue need but not the 'Redis-compatible' requirement.",
     "evidenceIds": [
-      "cloudflare-docs-3",
+      "cloudflare-docs-4",
+      "cloudflare-docs-9",
       "cloudflare-comm-3",
       "cloudflare-comm-10"
     ]
@@ -711,12 +742,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Workers deploy to Cloudflare's global edge network automatically, placing code near end users without manual region selection, and 'Smart Placement' optimizes latency relative to backend data — but this is the opposite of explicit region-targeted deployment; there's no evidence of pinning/restricting to specific regions as the story implies.",
+    "rationale": "Workers deploy automatically across Cloudflare's global edge network (docs-1, docs-8's Smart Placement) which achieves latency proximity to users, but this is automatic global distribution rather than explicit selection of specific regions as a devops-lead might expect for compliance or targeted deployment control.",
     "evidenceIds": [
       "cloudflare-docs-1",
-      "cloudflare-docs-5",
-      "cloudflare-comm-3",
-      "cloudflare-comm-11"
+      "cloudflare-docs-8"
     ]
   },
   {
@@ -725,27 +754,30 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Cloudflare Workers explicitly delivers serverless deployment with no server management, backed by official docs, CLI tooling (wrangler/workers-sdk), and strong positive community experiences confirming ease of use and quick production deployment; caveats around CPU limits and lock-in exist but don't negate core delivery.",
+    "rationale": "Cloudflare Workers explicitly delivers serverless functions and full-stack app deployment with no server management, backed by docs on deployment tooling (Wrangler, npm create), framework support, bindings, and databases, plus strong community testimonials confirming ease of use and production readiness. Some caveats exist around Node runtime limitations and long-running workloads, but the core story is clearly and consistently delivered.",
     "evidenceIds": [
       "cloudflare-docs-1",
-      "cloudflare-docs-4",
+      "cloudflare-docs-2",
+      "cloudflare-docs-6",
+      "cloudflare-docs-7",
+      "cloudflare-docs-9",
+      "cloudflare-docs-10",
       "cloudflare-gh-1",
-      "cloudflare-gh-2",
       "cloudflare-comm-2",
       "cloudflare-comm-3",
-      "cloudflare-comm-11",
-      "cloudflare-probe-3"
+      "cloudflare-comm-11"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "serverless-sql-query",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Cloudflare explicitly claims serverless SQL (D1) queryable directly from Workers with no connection management, and community evidence confirms developers using D1 successfully from Workers. However, community feedback also flags lock-in concerns with D1/KV and no independent technical validation of the 'no connection management' claim beyond vendor docs.",
+    "rationale": "Cloudflare's docs explicitly state D1 offers serverless SQL queryable directly from Workers with no connection management, and community evidence confirms developers actively use D1/KV databases from Workers with good DX, though some note vendor lock-in concerns.",
     "evidenceIds": [
-      "cloudflare-docs-3",
+      "cloudflare-docs-4",
+      "cloudflare-docs-10",
       "cloudflare-comm-11",
       "cloudflare-comm-10"
     ]
@@ -756,20 +788,22 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Cloudflare explicitly documents 'Smart Placement' which automatically moves Worker execution closer to backend data/origin to optimize end-to-end latency, directly matching the story; this is corroborated by broader platform docs on global compute with no region complexity.",
+    "rationale": "Cloudflare documents Smart Placement, a feature explicitly designed to automatically run Worker compute near backend data stores to optimize latency, directly matching the devops-lead need for automatic compute placement.",
     "evidenceIds": [
-      "cloudflare-docs-5",
-      "cloudflare-docs-1"
+      "cloudflare-docs-8"
     ]
   },
   {
     "productId": "cloudflare",
     "storyId": "team-secrets-env-vars",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of team-level access controls, secrets management, or centralized environment variable administration for Workers; documentation snippets focus on runtime, deployment, and DX aspects rather than devops/team governance features.",
-    "evidenceIds": []
+    "rationale": "Evidence shows scoped API tokens for resource access (cloudflare-docs-14) implying some access control, but there's no direct evidence of centralized team member management, secrets vaults, or shared environment variable management across a team in the pack.",
+    "evidenceIds": [
+      "cloudflare-docs-14",
+      "cloudflare-docs-11"
+    ]
   },
   {
     "productId": "cloudflare",
@@ -777,7 +811,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of a unified logging view for builds, deployments, and runtime logs; only general platform, tooling, and community sentiment items are present with no observability-specific evidence.",
+    "rationale": "No evidence pack items mention a unified logs view combining build, deploy, and runtime logs; Wrangler and docs references cover deployment and CLI commands but not a consolidated logging/observability dashboard.",
     "evidenceIds": []
   },
   {
@@ -785,16 +819,13 @@
     "storyId": "unlimited-team-environments",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Workers' serverless/isolate model, CLI (wrangler) and local simulator (workers-sdk/miniflare) support fast, git/CI-friendly dev workflows that imply many parallel environments, and community testimonials praise quick iteration, but no evidence pack item explicitly confirms 'unlimited isolated environments per team' (e.g., preview URLs, per-branch envs) and some devs cite CPU/runtime limits and lock-in as friction.",
+    "confidence": "medium",
+    "rationale": "Cloudflare provides a local simulator (workerd/wrangler) and CLI tooling (npm create cloudflare, Wrangler commands) that let developers spin up and test isolated Worker instances quickly, and Workers' isolate-based architecture naturally supports concurrent, isolated executions. However, there's no explicit evidence of a built-in unlimited multi-environment/preview-deployment system for whole-team parallel shipping (e.g., per-branch preview URLs), so support is inferred rather than demonstrated.",
     "evidenceIds": [
       "cloudflare-gh-1",
-      "cloudflare-gh-2",
-      "cloudflare-docs-4",
-      "cloudflare-docs-7",
-      "cloudflare-comm-2",
-      "cloudflare-comm-9",
-      "cloudflare-comm-13"
+      "cloudflare-docs-11",
+      "cloudflare-docs-2",
+      "cloudflare-probe-3"
     ]
   },
   {
@@ -803,7 +834,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention Workers Analytics Engine, dashboard analytics, or visitor behavior tracking features; evidence covers compute, storage, security, and DX but not built-in observability/analytics for site performance or visitors.",
+    "rationale": "The evidence pack contains no mention of built-in analytics, dashboards, or observability features for tracking site performance or visitor behavior; all evidence covers deployment, runtime, bindings, and community DX discussions.",
     "evidenceIds": []
   },
   {
@@ -812,22 +843,17 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cloudflare Workers is a code-first serverless platform driven by CLI (wrangler), config files (wrangler.toml), and SDKs; no evidence anywhere of a visual canvas for building or editing infrastructure without config files.",
+    "rationale": "Cloudflare Workers is a code-first serverless platform driven by CLI (Wrangler), config files (wrangler.toml), and bindings—there is no evidence of any visual canvas for building or editing infrastructure without config files.",
     "evidenceIds": []
   },
   {
     "productId": "cloudflare",
     "storyId": "zero-config-repo-deploy",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs mention Workers 'fits into existing workflows: Git, GitHub Actions' but most deployment evidence centers on CLI tools (wrangler, npm create cloudflare) rather than a zero-config 'connect repo and deploy' flow. Community comments suggest Vercel/Netlify have stronger mindshare for this exact workflow, indicating Cloudflare's git-based deploy experience is less proven or polished.",
-    "evidenceIds": [
-      "cloudflare-docs-7",
-      "cloudflare-docs-4",
-      "cloudflare-gh-1",
-      "cloudflare-comm-12"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Cloudflare Workers deployment centers on CLI tooling (Wrangler, npm create cloudflare) rather than a git-connect/no-config deploy flow; no evidence describes connecting a repo and auto-deploying without build configuration for Workers.",
+    "evidenceIds": []
   },
   {
     "productId": "fly-io",
