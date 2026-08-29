@@ -46,7 +46,7 @@ describe('loadCategory', () => {
 describe('loadCategories', () => {
   it('returns every category from categories.json', () => {
     const categories = loadCategories(REAL)
-    expect(categories).toHaveLength(7)
+    expect(categories).toHaveLength(10)
     expect(categories.map((c) => c.id)).toEqual([
       'desktop-os',
       'startup-banking',
@@ -55,6 +55,9 @@ describe('loadCategories', () => {
       'mobile-dev',
       'code-hosting',
       'ai-coding',
+      'edge-platforms',
+      'frontend-frameworks',
+      'local-llm-runtimes',
     ])
     expect(categories[0].id).toBe('desktop-os')
     for (const c of categories) expect(c.personas).toContain('ai-native')
@@ -92,7 +95,7 @@ describe('loadAll', () => {
     // The unpopulated category must still be listed by loadCategories — only loadAll
     // (which is used for static generation) filters it out.
     const categories = loadCategories(dir)
-    expect(categories).toHaveLength(8)
+    expect(categories).toHaveLength(11)
     expect(categories.some((c) => c.id === 'empty-cat')).toBe(true)
   })
 })
