@@ -13,7 +13,7 @@ interface IndexRow {
 
 // Sibling of AgenticIndexTable, answering the other half of "which products are most
 // AI-friendly": this one sorts by AGENTIC_APP ("does the product act agentically itself" / how
-// AI-native the product's own UX is) instead of AGENT-READY ("can your agent drive it").
+// AI-native the product's own UX is) instead of AGENTREADYNESS ("can your agent drive it").
 // Ties break on the automation-depth theme score, then aiEra/INIT Score, both desc/nulls-last.
 function buildIndex(categories: CategoryData[]): IndexRow[] {
   const rows: IndexRow[] = []
@@ -51,8 +51,12 @@ function tiebreak(x: IndexRow, y: IndexRow): number {
   return ye - xe
 }
 
-export default function AiNativeIndexTable({ categories }: { categories: CategoryData[] }) {
-  const rows = buildIndex(categories)
+// `limit` truncates to the top N rows (homepage preview mode); omit it for the full ranking
+// (the /rankings/ai-native page). Truncation happens after the sort, never before, so a
+// preview is always a strict prefix of the full ranking.
+export default function AiNativeIndexTable({ categories, limit }: { categories: CategoryData[]; limit?: number }) {
+  const allRows = buildIndex(categories)
+  const rows = limit === undefined ? allRows : allRows.slice(0, limit)
   return (
     <div className="overflow-x-auto rounded-xl border border-zinc-800">
       <table className="w-full min-w-[640px] border-collapse text-sm">
@@ -63,7 +67,7 @@ export default function AiNativeIndexTable({ categories }: { categories: Categor
             <th className="px-3 py-2 font-normal">Arena</th>
             <th className="px-3 py-2 font-normal">Agentic</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Automation</th>
-            <th className="px-3 py-2 font-normal">INIT</th>
+            <th className="px-3 py-2 font-normal">INIT Score</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">
