@@ -13,7 +13,7 @@ interface IndexRow {
   entry: CategoryData['rankings']['leaderboard'][number]
 }
 
-// Flattens every category's leaderboard into one global list, then sorts by the AGENT-READY
+// Flattens every category's leaderboard into one global list, then sorts by the AGENTREADYNESS
 // score (desc, nulls last) — the whole point of "The Agentic Index" is a cross-arena view of
 // how friendly products are to AI agents, so agentReady (not the per-category aiEra/score) is
 // the primary sort key. Ties break on apiQuality, then aiEra, both desc/nulls-last.
@@ -53,8 +53,12 @@ function tiebreak(x: IndexRow, y: IndexRow): number {
   return ye - xe
 }
 
-export default function AgenticIndexTable({ categories }: { categories: CategoryData[] }) {
-  const rows = buildIndex(categories)
+// `limit` truncates to the top N rows (homepage preview mode); omit it for the full ranking
+// (the /rankings/agentic page). Truncation happens after the sort, never before, so a preview
+// is always a strict prefix of the full ranking.
+export default function AgenticIndexTable({ categories, limit }: { categories: CategoryData[]; limit?: number }) {
+  const allRows = buildIndex(categories)
+  const rows = limit === undefined ? allRows : allRows.slice(0, limit)
   return (
     <div className="overflow-x-auto rounded-xl border border-zinc-800">
       <table className="w-full min-w-[640px] border-collapse text-sm">
@@ -63,10 +67,10 @@ export default function AgenticIndexTable({ categories }: { categories: Category
             <th className="px-3 py-2 font-normal">#</th>
             <th className="px-3 py-2 font-normal">Product</th>
             <th className="px-3 py-2 font-normal">Arena</th>
-            <th className="px-3 py-2 font-normal">Agent-ready</th>
+            <th className="px-3 py-2 font-normal">Agentreadyness</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">API quality</th>
             <th className="px-3 py-2 font-normal">Access</th>
-            <th className="px-3 py-2 font-normal">INIT</th>
+            <th className="px-3 py-2 font-normal">INIT Score</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">

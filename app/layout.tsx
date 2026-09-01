@@ -7,7 +7,7 @@ import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
 import { REPO } from "@/lib/site";
-import { buildSearchIndex } from "@/lib/search-index";
+import { buildSearchIndex, type SearchEntry } from "@/lib/search-index";
 
 // Short labels used inside the Arenas dropdown alongside full names.
 const NAV_LABELS: Record<string, string> = {
@@ -73,7 +73,14 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const categories = loadCategories();
   const stars = await fetchStarCount();
-  const searchEntries = buildSearchIndex(loadAll());
+  // The two full global rankings (see app/rankings/*) aren't arenas, but they're arena-shaped
+  // (a ranked list you land on and browse) — surfacing them as `type: 'arena'` groups them with
+  // the per-category arenas in the palette instead of inventing a one-off section for two items.
+  const searchEntries: SearchEntry[] = [
+    ...buildSearchIndex(loadAll()),
+    { type: "arena", label: "Most agentic (full ranking)", sublabel: "All products, ranked by agentreadyness", href: "/rankings/agentic" },
+    { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by agentic", href: "/rankings/ai-native" },
+  ];
 
   return (
     <html

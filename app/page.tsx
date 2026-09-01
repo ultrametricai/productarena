@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     "Two evidence-graded rankings across every arena: most agentic (best for AI agents — sorted by agent-ready) and most AI-native (best for humans working with AI — sorted by agentic-app). No opinion, every score traces back to cited evidence.",
 }
 
+const RANKINGS_PREVIEW_LIMIT = 12
+
 export default function Home() {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
@@ -28,27 +30,6 @@ export default function Home() {
           AI agents, and how AI-native they are for the humans using them — identical canonical stories, identical
           judge, identical evidence rules.
         </p>
-      </section>
-
-      <section id="most-agentic">
-        <h2 className="text-xl font-semibold tracking-tight">Most agentic — best for AI agents</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Ranked by AGENT-READY: can an agent reach the product at all (API/CLI/MCP/webhooks/SDKs/docs)?
-        </p>
-        <div className="mt-4">
-          <AgenticIndexTable categories={categories} />
-        </div>
-      </section>
-
-      <section id="most-ai-native">
-        <h2 className="text-xl font-semibold tracking-tight">Most AI-native — best for humans working with AI</h2>
-        <p className="mt-1 text-sm text-zinc-500">
-          Ranked by AGENTIC: does the product act agentically on its own behalf (built-in assistant, autonomous
-          automation, natural-language commands)?
-        </p>
-        <div className="mt-4">
-          <AiNativeIndexTable categories={categories} />
-        </div>
       </section>
 
       <section>
@@ -113,6 +94,47 @@ export default function Home() {
               </Link>
             )
           })}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold tracking-tight">Global rankings</h2>
+        <p className="mt-1 text-sm text-zinc-500">
+          Every product, every arena, ranked two ways — top {RANKINGS_PREVIEW_LIMIT} shown below; each has a full
+          {` ${totalProducts}`}-row ranking.
+        </p>
+
+        <div id="most-agentic" className="mt-6">
+          <h3 className="text-lg font-semibold tracking-tight">Most agentic — best for AI agents</h3>
+          <p className="mt-1 text-sm text-zinc-500">
+            Ranked by AGENTREADYNESS: can an agent reach the product at all (API/CLI/MCP/webhooks/SDKs/docs)?
+          </p>
+          <div className="mt-4">
+            <AgenticIndexTable categories={categories} limit={RANKINGS_PREVIEW_LIMIT} />
+          </div>
+          <Link
+            href="/rankings/agentic"
+            className="mt-2 inline-block text-sm text-amber-400 underline decoration-amber-400/40 hover:text-amber-300"
+          >
+            Full ranking →
+          </Link>
+        </div>
+
+        <div id="most-ai-native" className="mt-8">
+          <h3 className="text-lg font-semibold tracking-tight">Most AI-native — best for humans working with AI</h3>
+          <p className="mt-1 text-sm text-zinc-500">
+            Ranked by AGENTIC: does the product act agentically on its own behalf (built-in assistant, autonomous
+            automation, natural-language commands)?
+          </p>
+          <div className="mt-4">
+            <AiNativeIndexTable categories={categories} limit={RANKINGS_PREVIEW_LIMIT} />
+          </div>
+          <Link
+            href="/rankings/ai-native"
+            className="mt-2 inline-block text-sm text-amber-400 underline decoration-amber-400/40 hover:text-amber-300"
+          >
+            Full ranking →
+          </Link>
         </div>
       </section>
     </div>

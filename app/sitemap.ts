@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/methodology`, lastModified: now },
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
+    { url: `${SITE_URL}/rankings/agentic`, lastModified: now },
+    { url: `${SITE_URL}/rankings/ai-native`, lastModified: now },
   ]
 
   for (const data of categories) {

@@ -25,6 +25,11 @@ INIT crawls vendor docs, GitHub, and community sources for ${categories.length} 
 
 ${arenaLinks}
 
+## Global rankings (every product, every arena, one flat list)
+
+- [Most agentic](${SITE}/rankings/agentic): every product ranked by AGENTREADYNESS (can an agent reach it at all).
+- [Most AI-native](${SITE}/rankings/ai-native): every product ranked by AGENTIC (does the product act agentically on its own behalf).
+
 ## Data API (JSON, no auth)
 
 - [Categories](${SITE}/data/categories.json): every arena's id/name/description/personas/themes.
