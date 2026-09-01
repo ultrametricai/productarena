@@ -180,7 +180,24 @@ openness/agenticApp/automation matter but are one step removed. If you think the
 wrong, [contest it via an issue](./CONTRIBUTING.md) — like every verdict on this site, the
 formula is open to challenge.
 
-### 6. Judge model and prompt version
+### 6. Story provenance
+
+Every story in `data/{category}/stories.json` optionally carries an `origin` field
+(`lib/schemas.ts`'s `StoryOriginSchema`) recording where it came from and when:
+
+| `origin.kind` | Meaning |
+|---|---|
+| `canonical` | one of the 28 fixed agenticness/openness/automation-depth/privacy-posture stories (`pipeline/agentic-stories.ts`), injected verbatim into every category by `normalize.ts`'s `assembleTaxonomy` — never LLM-authored |
+| `normalized` | assembled into the category's taxonomy by the LLM-driven `normalize` stage; carries the judge `promptVersion` in force at the time |
+| `contest` | added or adjusted via a contest issue (not yet exercised — `contest-check.ts` only appends evidence today, never stories) |
+| `manual` | hand-edited |
+
+`origin` is additive and never participates in `cellHash` (`pipeline/stages/judge.ts`) —
+stamping or backfilling it can never invalidate the judge cache or change a verdict. Hover a
+story title or matrix cell on any product page to see its origin in the tooltip (e.g.
+"canonical" or "normalized · v2").
+
+### 7. Judge model and prompt version
 
 The judge model is `claude-sonnet-5` by default (override with the `PA_MODEL` env var), and
 the judge prompt is versioned (`PROMPT_VERSION = 'v2'` in `pipeline/stages/judge.ts`) — the
@@ -195,7 +212,7 @@ mechanical probe results only affect the story axis they actually test. Every re
 recorded in the commit that applies it. A future prompt version will pass the prior verdict
 as an anchor to reduce this variance at the source.
 
-### 7. Bias disclosure — the judge is an Anthropic model
+### 8. Bias disclosure — the judge is an Anthropic model
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
 (`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
@@ -298,7 +315,7 @@ data/
   categories.json          # arena metadata: id, name, description, personas, themes
   {category}/
     products.json           # product metadata (id, name, vendor, type, urls, logo)
-    stories.json             # the category's story taxonomy (incl. the 28 canonical stories)
+    stories.json             # the category's story taxonomy (incl. the 28 canonical stories, each with an optional `origin`)
     evidence/
       {product}.json          # evidence items for one product: id, tier, url, excerpt, fetchedAt
     verdicts.json            # one verdict per (productId, storyId) cell
@@ -307,6 +324,45 @@ data/
 
 `rankings.json` is derived data — never hand-edit it; regenerate it with
 `pnpm pipeline derive --category <id>` after any verdict change.
+
+`pnpm run build`/`pnpm run dev` mirror all of `data/` verbatim to `public/data/` (a gitignored
+build artifact, via `scripts/copy-data.mjs`) so it's served at stable URLs — see "For AI
+agents" below.
+
+## For AI agents
+
+Product Arena is built to be read by agents, not just browsed by humans:
+
+- **[/llms.txt](https://productarena.vercel.app/llms.txt)** — the top-level index per the
+  [llms.txt convention](https://llmstxt.org): site purpose, methodology one-liner, and links to
+  every arena's markdown endpoint, the data API, and `/openapi.json`.
+- **Markdown endpoints** — every arena has a full-content markdown rendering at
+  `/arena/{category}/llms.md` (leaderboard, business models, grouped story matrix with proof
+  URLs), and every product has a deep-dive at `/arena/{category}/product/{productId}/llms.md`
+  (every verdict, rationale, and proof URL). These are the pages an agent should actually read.
+- **Data API** — the same JSON the site renders from is mirrored verbatim to stable URLs at
+  build time (`scripts/copy-data.mjs`, a `prebuild` step): `/data/categories.json`,
+  `/data/{category}/{products,stories,verdicts,rankings}.json`,
+  `/data/{category}/evidence/{productId}.json`. `public/data/` is a build artifact
+  (gitignored) — it doesn't exist until `pnpm run build` or `pnpm run dev` regenerates it.
+- **[/openapi.json](https://productarena.vercel.app/openapi.json)** — an OpenAPI 3.1 document
+  describing every data endpoint above, with hand-written JSON Schema summaries of each shape
+  (mirrors `lib/schemas.ts`).
+- **[/methodology](https://productarena.vercel.app/methodology)** — a tight, on-site summary of
+  the methodology below (evidence tiers, judging, scoring, AI-Era weights, story provenance,
+  re-judge stability, bias disclosure), linked from the header next to Arenas and from
+  `/llms.txt`.
+- **MCP server** (`mcp/`) — a stdio [MCP](https://modelcontextprotocol.io) server exposing this
+  same data as tools (`list_arenas`, `get_rankings`, `get_product`, `get_battle`,
+  `search_products`, `get_story_verdicts`). See [`mcp/README.md`](./mcp/README.md) for setup and
+  client config (Claude Code and generic stdio clients).
+- **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
+  pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
+  metrics (`aiEra`, `score`, etc). No `aggregateRating` — we don't have star ratings, and faking
+  one would be dishonest.
+- **sitemap.xml / robots.txt** — `app/sitemap.ts` lists every route including the `llms.md`
+  endpoints; `public/robots.txt` explicitly allows `GPTBot`, `ClaudeBot`, `Claude-Web`,
+  `PerplexityBot`, `Googlebot`, and `Bingbot`, with a `Sitemap:` pointer.
 
 ## Contributing
 

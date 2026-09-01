@@ -9,11 +9,34 @@ import ContestLink from '@/components/ContestLink'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
+import { originLabel } from '@/components/StoryMatrix'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
-import { battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, verdictFor } from '@/lib/data'
-import type { Story } from '@/lib/schemas'
+import { battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, type CategoryData, verdictFor } from '@/lib/data'
+import type { Product, Story } from '@/lib/schemas'
 import { strongestEvidence, verificationLevel } from '@/lib/verification'
+
+const SITE = 'https://productarena.vercel.app'
+
+// schema.org SoftwareApplication for one product. No aggregateRating (see arena page's
+// comment) — our custom metrics go in additionalProperty instead.
+function productJsonLd(data: CategoryData, product: Product) {
+  const entry = data.rankings.leaderboard.find((e) => e.productId === product.id)!
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: product.name,
+    url: `${SITE}/arena/${data.category.id}/product/${product.id}`,
+    applicationCategory: data.category.name,
+    ...(product.vendor ? { author: { '@type': 'Organization', name: product.vendor } } : {}),
+    additionalProperty: [
+      { '@type': 'PropertyValue', name: 'aiEra', value: entry.aiEra },
+      { '@type': 'PropertyValue', name: 'score', value: entry.score },
+      { '@type': 'PropertyValue', name: 'agentReady', value: entry.agentReady },
+      { '@type': 'PropertyValue', name: 'apiQuality', value: entry.apiQuality },
+    ],
+  }
+}
 
 export function generateStaticParams() {
   return loadAll().flatMap((data) => data.products.map((p) => ({ category: data.category.id, id: p.id })))
@@ -53,6 +76,10 @@ export default async function ProductPage({
 
   return (
     <div className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(data, product)) }}
+      />
       <div>
         <p className="text-sm uppercase tracking-widest text-amber-400">Rank #{rank}</p>
         <div className="mt-1 flex items-center gap-4">
@@ -130,7 +157,7 @@ export default async function ProductPage({
                           return (
                             <li key={s.id} id={`story-${s.id}`} className="scroll-mt-4 p-4">
                               <div className="flex flex-wrap items-center justify-between gap-2">
-                                <p className="font-medium">{s.title}</p>
+                                <p className="font-medium" title={originLabel(s)}>{s.title}</p>
                                 <span className="flex items-center gap-2">
                                   <VerdictBadge verdict={v.verdict} />
                                   <VerificationBadge level={verificationLevel(v, evidence)} />

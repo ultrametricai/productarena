@@ -3,7 +3,41 @@ import AgenticnessStrip from '@/components/AgenticnessStrip'
 import LeaderboardTable from '@/components/LeaderboardTable'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
-import { loadAll, loadCategory } from '@/lib/data'
+import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
+
+const SITE = 'https://productarena.vercel.app'
+
+// schema.org ItemList of SoftwareApplication entries — one per product in the arena's
+// leaderboard order. Deliberately no aggregateRating: we don't have star ratings, and faking
+// one would be dishonest. Our own custom metrics (aiEra, coverage score) are instead exposed
+// as additionalProperty PropertyValue entries, which is what schema.org intends for
+// non-standard, honestly-labeled metrics.
+function arenaJsonLd(data: CategoryData) {
+  const productById = new Map(data.products.map((p) => [p.id, p]))
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${data.category.name} Arena`,
+    description: data.category.description,
+    itemListElement: data.rankings.leaderboard.map((entry, i) => {
+      const product = productById.get(entry.productId)!
+      return {
+        '@type': 'ListItem',
+        position: i + 1,
+        item: {
+          '@type': 'SoftwareApplication',
+          name: product.name,
+          url: `${SITE}/arena/${data.category.id}/product/${product.id}`,
+          applicationCategory: data.category.name,
+          additionalProperty: [
+            { '@type': 'PropertyValue', name: 'aiEra', value: entry.aiEra },
+            { '@type': 'PropertyValue', name: 'score', value: entry.score },
+          ],
+        },
+      }
+    }),
+  }
+}
 
 export function generateStaticParams() {
   return loadAll().map((data) => ({ category: data.category.id }))
@@ -26,6 +60,10 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
   const data = loadCategory(category)
   return (
     <div className="space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(arenaJsonLd(data)) }}
+      />
       <div>
         <p className="text-sm uppercase tracking-widest text-amber-400">Arena</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight">{data.category.name}</h1>
