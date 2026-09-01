@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
 import { loadCategories } from '@/lib/data'
+import { REPO, SITE_URL as SITE } from '@/lib/site'
 
 // Static export safety: this route has no dynamic segments and no request-time data
 // dependency (categories.json is bundled at build time), so it's safe to force-static —
 // Next prerenders it once at build and serves the cached response forever after.
 export const dynamic = 'force-static'
-
-const SITE = 'https://productarena.vercel.app'
 
 // Hand-written JSON Schema summaries mirroring lib/schemas.ts (zod). Kept intentionally
 // hand-authored rather than auto-derived so this file stays a stable, readable contract —
@@ -174,14 +173,14 @@ export async function GET() {
   const spec = {
     openapi: '3.1.0',
     info: {
-      title: 'Product Arena Data API',
+      title: 'AIness Data API',
       version: '1.0.0',
       description:
-        'Read-only, statically-served JSON data behind productarena.vercel.app — the same files the site itself renders from. ' +
+        'Read-only, statically-served JSON data behind ainess.vercel.app — the same files the site itself renders from. ' +
         'No auth, no rate limit beyond normal CDN caching. See /llms.txt for a full agent-facing index and /methodology for ' +
         'how the underlying scores and verdicts are produced.',
       contact: { url: `${SITE}/llms.txt` },
-      license: { name: 'MIT', url: 'https://github.com/ultrametricai/productarena/blob/main/LICENSE' },
+      license: { name: 'MIT', url: `https://github.com/${REPO}/blob/main/LICENSE` },
     },
     servers: [{ url: SITE }],
     paths: {

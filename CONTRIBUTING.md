@@ -1,6 +1,6 @@
-# Contributing to Product Arena
+# Contributing to AIness
 
-Product Arena's whole premise is that every score should trace back to cited evidence, and
+AIness's whole premise is that every score should trace back to cited evidence, and
 that anyone can contest a verdict. This document covers the two contribution paths (contest
 a verdict, or add evidence) plus local setup and style rules.
 
@@ -108,7 +108,7 @@ The judge cache (`pipeline/cache/judge/`) **is committed** to the repo, keyed by
 
 ```bash
 git clone <repo>
-cd productarena
+cd AIness
 pnpm install
 cp .env.example .env    # fill in ANTHROPIC_API_KEY if you need to run extract/normalize/collect-community/judge
 pnpm dev                # http://localhost:3000

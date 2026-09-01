@@ -1,28 +1,28 @@
 // Pure request-routing/formatting logic for each MCP tool, factored out of mcp/src/server.ts
-// so it's testable without spinning up an MCP transport — each function takes a
-// ProductArenaClient and returns plain data; mcp/src/server.ts just wraps these in
+// so it's testable without spinning up an MCP transport — each function takes an
+// AinessClient and returns plain data; mcp/src/server.ts just wraps these in
 // registerTool() calls and formats the result as tool content.
-import type { ProductArenaClient } from './client.js'
+import type { AinessClient } from './client.js'
 import type { Battle, Category, Evidence, Product, Rankings, Story, Verdict } from './types.js'
 
-export class ProductArenaError extends Error {}
+export class AinessError extends Error {}
 
-async function fetchCategories(client: ProductArenaClient): Promise<Category[]> {
+async function fetchCategories(client: AinessClient): Promise<Category[]> {
   return client.fetchJson<Category[]>('/data/categories.json')
 }
 
-async function assertKnownCategory(client: ProductArenaClient, category: string): Promise<void> {
+async function assertKnownCategory(client: AinessClient, category: string): Promise<void> {
   const categories = await fetchCategories(client)
   if (!categories.some((c) => c.id === category)) {
-    throw new ProductArenaError(`unknown category "${category}" — see list_arenas for valid ids`)
+    throw new AinessError(`unknown category "${category}" — see list_arenas for valid ids`)
   }
 }
 
-export async function listArenas(client: ProductArenaClient): Promise<Category[]> {
+export async function listArenas(client: AinessClient): Promise<Category[]> {
   return fetchCategories(client)
 }
 
-export async function getRankings(client: ProductArenaClient, category: string): Promise<Rankings> {
+export async function getRankings(client: AinessClient, category: string): Promise<Rankings> {
   await assertKnownCategory(client, category)
   return client.fetchJson<Rankings>(`/data/${category}/rankings.json`)
 }
@@ -44,7 +44,7 @@ export interface ProductDetail {
   verdicts: ProductVerdict[]
 }
 
-export async function getProduct(client: ProductArenaClient, category: string, productId: string): Promise<ProductDetail> {
+export async function getProduct(client: AinessClient, category: string, productId: string): Promise<ProductDetail> {
   await assertKnownCategory(client, category)
   const [products, stories, verdicts, rankings, evidence] = await Promise.all([
     client.fetchJson<Product[]>(`/data/${category}/products.json`),
@@ -56,7 +56,7 @@ export async function getProduct(client: ProductArenaClient, category: string, p
 
   const product = products.find((p) => p.id === productId)
   if (!product) {
-    throw new ProductArenaError(`unknown product "${productId}" in category "${category}"`)
+    throw new AinessError(`unknown product "${productId}" in category "${category}"`)
   }
 
   const storyTitleById = new Map(stories.map((s) => [s.id, s.title]))
@@ -78,12 +78,12 @@ export async function getProduct(client: ProductArenaClient, category: string, p
   return { category, product, ranking, verdicts: productVerdicts }
 }
 
-export async function getBattle(client: ProductArenaClient, category: string, a: string, b: string): Promise<Battle> {
+export async function getBattle(client: AinessClient, category: string, a: string, b: string): Promise<Battle> {
   await assertKnownCategory(client, category)
   const rankings = await client.fetchJson<Rankings>(`/data/${category}/rankings.json`)
   const battle = rankings.battles.find((x) => (x.a === a && x.b === b) || (x.a === b && x.b === a))
   if (!battle) {
-    throw new ProductArenaError(`no battle found between "${a}" and "${b}" in category "${category}"`)
+    throw new AinessError(`no battle found between "${a}" and "${b}" in category "${category}"`)
   }
   return battle
 }
@@ -97,7 +97,7 @@ export interface SearchResult {
 // against id, name, or vendor. Deliberately simple (no ranking/fuzzy match) — this is meant
 // for an agent to locate the right (category, productId) pair to feed into get_product, not
 // as a general search engine.
-export async function searchProducts(client: ProductArenaClient, query: string): Promise<SearchResult[]> {
+export async function searchProducts(client: AinessClient, query: string): Promise<SearchResult[]> {
   const q = query.trim().toLowerCase()
   if (!q) return []
   const categories = await fetchCategories(client)
@@ -133,7 +133,7 @@ export interface StoryVerdictsResult {
   verdicts: StoryVerdictCell[]
 }
 
-export async function getStoryVerdicts(client: ProductArenaClient, category: string, storyId: string): Promise<StoryVerdictsResult> {
+export async function getStoryVerdicts(client: AinessClient, category: string, storyId: string): Promise<StoryVerdictsResult> {
   await assertKnownCategory(client, category)
   const [stories, verdicts, products] = await Promise.all([
     client.fetchJson<Story[]>(`/data/${category}/stories.json`),
@@ -143,7 +143,7 @@ export async function getStoryVerdicts(client: ProductArenaClient, category: str
 
   const story = stories.find((s) => s.id === storyId)
   if (!story) {
-    throw new ProductArenaError(`unknown story "${storyId}" in category "${category}"`)
+    throw new AinessError(`unknown story "${storyId}" in category "${category}"`)
   }
 
   const productById = new Map(products.map((p) => [p.id, p]))

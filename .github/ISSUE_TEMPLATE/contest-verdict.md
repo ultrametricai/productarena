@@ -1,6 +1,6 @@
 ---
 name: Contest a verdict
-about: Dispute a specific (product, story) verdict in Product Arena
+about: Dispute a specific (product, story) verdict in AIness
 title: "[verdict] <category>/<product>: <story id>"
 labels: verdict-contest, contest
 ---

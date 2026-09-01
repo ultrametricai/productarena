@@ -20,7 +20,7 @@ export interface ProbeResult {
   excerpt: string
 }
 
-const USER_AGENT = 'Mozilla/5.0 (compatible; ProductArena/1.0; +https://productarena.vercel.app)'
+const USER_AGENT = 'Mozilla/5.0 (compatible; AIness/1.0; +https://ainess.vercel.app)'
 
 export const defaultFetcher: ProbeFetcher = async (url) => {
   const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, redirect: 'follow' })

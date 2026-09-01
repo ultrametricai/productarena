@@ -6,8 +6,9 @@ import { fetchWithRetry, htmlToMarkdown } from './fetch-page'
 import { categoryDir, readJson, resolveCategories, ROOT, writeJson } from './paths'
 import { runDerive } from './stages/derive'
 import { runJudge } from './stages/judge'
+import { REPO as DEFAULT_REPO } from '../lib/site'
 
-const REPO = process.env.GITHUB_REPOSITORY ?? 'ultrametricai/productarena'
+const REPO = process.env.GITHUB_REPOSITORY ?? DEFAULT_REPO
 
 // Story provenance note: this module currently only ever appends Evidence items (see
 // buildContestEvidence below) — it never adds or edits a Story, so there is no story-side
@@ -184,7 +185,7 @@ async function main(): Promise<void> {
   ])
   git([
     '-c',
-    'user.name=productarena-bot',
+    'user.name=ainess-bot',
     '-c',
     'user.email=actions@github.com',
     'commit',

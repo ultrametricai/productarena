@@ -1,10 +1,8 @@
 import { loadCategories } from '@/lib/data'
+import { REPO, SITE_URL as SITE } from '@/lib/site'
 
 // Static export safety: no dynamic segments, categories.json is bundled at build time.
 export const dynamic = 'force-static'
-
-const SITE = 'https://productarena.vercel.app'
-const REPO = 'ultrametricai/productarena'
 
 // llms.txt convention (https://llmstxt.org): an H1 title, a blockquote one-line summary, then
 // H2 sections of markdown link lists. This is the top-level index an agent should read first —
@@ -17,11 +15,11 @@ export async function GET() {
     .map((c) => `- [${c.name}](${SITE}/arena/${c.id}/llms.md): full leaderboard, business models, and story-verdict matrix for "${c.id}" as markdown.`)
     .join('\n')
 
-  const body = `# Product Arena
+  const body = `# AIness
 
 > Evidence-graded, head-to-head rankings of software products against a shared taxonomy of user stories. Every score traces back to cited evidence (vendor docs, GitHub, community sources, or a hands-on probe) — never opinion. See /methodology for the full scoring writeup.
 
-Product Arena crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, an AI-Era Index, and a head-to-head battle log per arena — all reproducible from the cited evidence.
+AIness crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, an AI-Era Index, and a head-to-head battle log per arena — all reproducible from the cited evidence.
 
 ## Arenas (markdown, one per category)
 
