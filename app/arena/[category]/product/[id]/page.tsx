@@ -4,18 +4,24 @@ import { notFound } from 'next/navigation'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
+import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
+import OssPill from '@/components/OssPill'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { originLabel } from '@/components/StoryMatrix'
+import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, type CategoryData, verdictFor } from '@/lib/data'
+import { productFreshness } from '@/lib/freshness'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
 import { strongestEvidence, verificationLevel } from '@/lib/verification'
+
+const AI_MODE_STORY_ID = 'agentic-builtin-assistant'
 
 // schema.org SoftwareApplication for one product. No aggregateRating (see arena page's
 // comment) — our custom metrics go in additionalProperty instead.
@@ -65,6 +71,7 @@ export default async function ProductPage({
   if (!product) notFound()
   const entry = data.rankings.leaderboard.find((e) => e.productId === id)!
   const rank = data.rankings.leaderboard.indexOf(entry) + 1
+  const freshness = productFreshness(data, id)
   const evidence = evidenceById(data)
   const tierCounts = data.evidence[id].reduce<Record<string, number>>((acc, e) => {
     acc[e.tier] = (acc[e.tier] ?? 0) + 1
@@ -81,17 +88,27 @@ export default async function ProductPage({
       />
       <div>
         <p className="text-sm uppercase tracking-widest text-amber-400">Rank #{rank}</p>
-        <div className="mt-1 flex items-center gap-4">
+        <div className="mt-1 flex flex-wrap items-center gap-4">
           <ProductLogo product={product} size={56} />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+              {product.type === 'oss' && <OssPill />}
+              <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
+            </div>
             <p className="text-zinc-500">
-              {product.vendor} · {product.type === 'oss' ? 'open source' : 'commercial'} ·{' '}
-              <a href={product.urls.site} className="underline decoration-zinc-700 hover:text-amber-300">
-                site
-              </a>
+              {product.vendor} · {product.type === 'oss' ? 'open source' : 'commercial'}
             </p>
+            {freshness && <p className="text-xs text-zinc-600">Evidence as of {freshness}</p>}
           </div>
+          <a
+            href={product.urls.site}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-auto shrink-0 rounded-lg border border-amber-400/60 px-4 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-400/10"
+          >
+            Visit {product.name} ↗
+          </a>
         </div>
         <div className="mt-3">
           <ProductLinkChips product={product} variant="label" />
@@ -144,7 +161,10 @@ export default async function ProductPage({
             const byGroup = groupInOrder<Story>(storiesInTheme, (s) => s.group)
             return (
               <div key={theme}>
-                <h3 className="mb-2 text-sm font-semibold uppercase tracking-widest text-amber-400">{theme}</h3>
+                <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-amber-400">
+                  <ThemeIcon theme={theme} className="text-amber-400" />
+                  {theme}
+                </h3>
                 <div className="space-y-4">
                   {byGroup.map(([group, stories]) => (
                     <div key={group}>
