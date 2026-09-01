@@ -11,6 +11,7 @@ import {
 } from '../agentic-stories'
 import { llmJson } from '../llm'
 import { CACHE_DIR, categoryDir, resolveCategories, writeJson } from '../paths'
+import { PROMPT_VERSION } from './judge'
 
 // Canonical lens themes injected verbatim below — kept out of the LLM-facing theme list
 // (categories.json's `themes`) so the model never authors competing stories for them, but
@@ -21,19 +22,23 @@ const CANON_ID_PREFIXES = ['agentic-', 'api-', 'openness-', 'automation-', 'priv
 // Pure post-processing of the LLM's candidate taxonomy: drops any LLM-authored story that
 // duplicates a canonical lens (by theme or id prefix), appends the canon verbatim, dedupes ids
 // (throwing on collision), and sorts theme → group → id for stable diffs.
-export function assembleTaxonomy(llmStories: Story[]): Story[] {
-  const filtered = llmStories.filter(
-    (s) => !CANON_THEMES.has(s.theme) && !CANON_ID_PREFIXES.some((prefix) => s.id.startsWith(prefix)),
-  )
-  const combined = [
-    ...filtered,
+//
+// Stamps `origin` provenance on every story: LLM-authored survivors get {kind:'normalized',
+// promptVersion, recordedAt}, canonical lens injections get {kind:'canonical', recordedAt}.
+// `origin` is never part of cellHash (judge.ts) so this can't affect judge caching.
+export function assembleTaxonomy(llmStories: Story[], recordedAt: string = new Date().toISOString()): Story[] {
+  const filtered = llmStories
+    .filter((s) => !CANON_THEMES.has(s.theme) && !CANON_ID_PREFIXES.some((prefix) => s.id.startsWith(prefix)))
+    .map((s) => ({ ...s, origin: { kind: 'normalized' as const, promptVersion: PROMPT_VERSION, recordedAt } }))
+  const canon = [
     ...AGENTIC_STORIES,
     ...AGENTIC_FEATURE_STORIES,
     ...API_QUALITY_STORIES,
     ...OPENNESS_STORIES,
     ...AUTOMATION_STORIES,
     ...PRIVACY_STORIES,
-  ]
+  ].map((s) => ({ ...s, origin: { kind: 'canonical' as const, recordedAt } }))
+  const combined = [...filtered, ...canon]
 
   const ids = new Set<string>()
   for (const s of combined) {

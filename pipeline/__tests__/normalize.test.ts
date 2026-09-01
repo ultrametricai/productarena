@@ -105,4 +105,25 @@ describe('assembleTaxonomy', () => {
     const llmStories = [s({ id: 'dup-id' }), s({ id: 'dup-id', title: 'different title' })]
     expect(() => assembleTaxonomy(llmStories)).toThrow(/duplicate/i)
   })
+
+  it('stamps normalized origin (with promptVersion) on LLM-authored stories and canonical origin (no promptVersion) on injected lens stories', () => {
+    const recordedAt = '2026-08-27T22:35:38-07:00'
+    const llmStories = [s({ id: 'story-a', theme: 'dev-experience' })]
+    const result = assembleTaxonomy(llmStories, recordedAt)
+
+    const authored = result.find((r) => r.id === 'story-a')!
+    expect(authored.origin).toEqual({ kind: 'normalized', promptVersion: 'v2', recordedAt })
+
+    const canonical = result.find((r) => r.id === 'agentic-public-api')!
+    expect(canonical.origin).toEqual({ kind: 'canonical', recordedAt })
+  })
+
+  it('defaults recordedAt to roughly now when not given', () => {
+    const before = Date.now()
+    const result = assembleTaxonomy([s({ id: 'story-a', theme: 'dev-experience' })])
+    const after = Date.now()
+    const recordedAt = result.find((r) => r.id === 'story-a')!.origin!.recordedAt!
+    expect(new Date(recordedAt).getTime()).toBeGreaterThanOrEqual(before)
+    expect(new Date(recordedAt).getTime()).toBeLessThanOrEqual(after)
+  })
 })

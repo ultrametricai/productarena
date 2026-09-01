@@ -34,6 +34,17 @@ export const ProductSchema = z.object({
   }).optional(),
 })
 
+// Provenance of a story in the taxonomy: 'canonical' for the 28 ids injected verbatim by
+// pipeline/agentic-stories.ts (never LLM-authored), 'normalized' for LLM-assembled stories
+// (normalize.ts), 'contest' for stories ever added/adjusted via a contest issue, 'manual' for
+// hand-edited entries. Optional and additive — never referenced by cellHash (see judge.ts),
+// so stamping/backfilling it must never bust the judge cache.
+export const StoryOriginSchema = z.object({
+  kind: z.enum(['normalized', 'canonical', 'contest', 'manual']),
+  promptVersion: z.string().optional(),
+  recordedAt: z.string().optional(),
+})
+
 export const StorySchema = z.object({
   id: z.string().min(1),
   persona: z.string().min(1),
@@ -41,6 +52,7 @@ export const StorySchema = z.object({
   theme: z.string().min(1),
   group: z.string().min(1),
   weight: z.number().int().min(1).max(3),
+  origin: StoryOriginSchema.optional(),
 })
 
 export const EvidenceSchema = z.object({
@@ -114,6 +126,7 @@ export const RankingsSchema = z.object({
 export type Category = z.infer<typeof CategorySchema>
 export type Product = z.infer<typeof ProductSchema>
 export type Story = z.infer<typeof StorySchema>
+export type StoryOrigin = z.infer<typeof StoryOriginSchema>
 export type Evidence = z.infer<typeof EvidenceSchema>
 export type Verdict = z.infer<typeof VerdictSchema>
 export type Stack = z.infer<typeof StackSchema>

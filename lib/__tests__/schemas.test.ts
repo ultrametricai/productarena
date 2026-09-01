@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { EvidenceSchema, ProductSchema, RankingsSchema, StorySchema, VerdictSchema } from '@/lib/schemas'
+import { EvidenceSchema, ProductSchema, RankingsSchema, StoryOriginSchema, StorySchema, VerdictSchema } from '@/lib/schemas'
 
 describe('schemas', () => {
   it('accepts a valid verdict', () => {
@@ -92,6 +92,30 @@ describe('schemas', () => {
       ...base,
       businessModel: { models: [], summary: 'Free tier plus paid per-seat plans.', url: 'https://p.example/pricing' },
     }).success).toBe(false)
+  })
+
+  it('accepts a story without origin (backward compatible)', () => {
+    expect(StorySchema.safeParse({ id: 's', persona: 'ai-native', title: 't', theme: 'x', group: 'core', weight: 2 }).success).toBe(true)
+  })
+
+  it('accepts a canonical story origin without promptVersion', () => {
+    const r = StorySchema.safeParse({
+      id: 'agentic-public-api', persona: 'ai-native', title: 't', theme: 'agenticness', group: 'agent-access', weight: 3,
+      origin: { kind: 'canonical', recordedAt: '2026-08-27T22:35:38-07:00' },
+    })
+    expect(r.success).toBe(true)
+  })
+
+  it('accepts a normalized story origin with promptVersion', () => {
+    const r = StorySchema.safeParse({
+      id: 's', persona: 'developer', title: 't', theme: 'x', group: 'core', weight: 2,
+      origin: { kind: 'normalized', promptVersion: 'v2', recordedAt: '2026-08-27T22:35:38-07:00' },
+    })
+    expect(r.success).toBe(true)
+  })
+
+  it('rejects an unknown origin kind', () => {
+    expect(StoryOriginSchema.safeParse({ kind: 'invented' }).success).toBe(false)
   })
 
   it('rejects a businessModel with a too-short summary or bad url', () => {

@@ -6,14 +6,24 @@ import { evidenceById, groupInOrder, verdictFor, type CategoryData } from '@/lib
 import type { Story, Verdict } from '@/lib/schemas'
 import { verificationLevel } from '@/lib/verification'
 
+// "canonical", "normalized · v2", etc — see lib/schemas.ts's StoryOriginSchema. Falls back to
+// "unknown" for stories migrated/authored before origin existed.
+export function originLabel(story: Story): string {
+  const origin = story.origin
+  if (!origin) return 'unknown'
+  return origin.promptVersion ? `${origin.kind} · ${origin.promptVersion}` : origin.kind
+}
+
 // Tooltip text for a matrix cell: the verdict plus a truncated excerpt of the first cited
 // evidence item (not necessarily the strongest tier — just the judge's first citation, kept
-// simple and predictable for a hover title).
-function cellTitle(v: Verdict, evidence: ReturnType<typeof evidenceById>): string {
+// simple and predictable for a hover title), plus the story's provenance (origin kind ·
+// promptVersion — see #methodology).
+function cellTitle(v: Verdict, story: Story, evidence: ReturnType<typeof evidenceById>): string {
   const first = v.evidenceIds.length > 0 ? evidence.get(v.evidenceIds[0]) : undefined
-  if (!first) return v.verdict
+  const origin = originLabel(story)
+  if (!first) return `${v.verdict} (${origin})`
   const excerpt = first.excerpt.length > 160 ? `${first.excerpt.slice(0, 160)}…` : first.excerpt
-  return `${v.verdict}: "${excerpt}"`
+  return `${v.verdict}: "${excerpt}" (${origin})`
 }
 
 export default function StoryMatrix({ data }: { data: CategoryData }) {
@@ -79,7 +89,7 @@ function StoryMatrixGroup({
                   <td key={p.id} className="px-3 py-3 text-center">
                     <Link
                       href={`/arena/${data.category.id}/product/${p.id}#story-${s.id}`}
-                      title={cellTitle(v, evidence)}
+                      title={cellTitle(v, s, evidence)}
                       className="flex flex-col items-center gap-1"
                     >
                       <div className="flex items-center gap-1">

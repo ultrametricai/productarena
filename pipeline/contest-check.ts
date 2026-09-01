@@ -9,6 +9,14 @@ import { runJudge } from './stages/judge'
 
 const REPO = process.env.GITHUB_REPOSITORY ?? 'ultrametricai/productarena'
 
+// Story provenance note: this module currently only ever appends Evidence items (see
+// buildContestEvidence below) — it never adds or edits a Story, so there is no story-side
+// origin to stamp {kind:'contest'} on yet. If a future contest flow starts minting new
+// stories (as opposed to evidence for existing ones), stamp them with
+// `{ kind: 'contest', recordedAt: new Date().toISOString() }` (see lib/schemas.ts's
+// StoryOriginSchema) at the point they're written, the same way normalize.ts's
+// assembleTaxonomy stamps 'normalized'/'canonical' origin today.
+
 export interface ParsedContestIssue {
   category: string
   productId: string
