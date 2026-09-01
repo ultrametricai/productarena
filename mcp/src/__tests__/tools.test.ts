@@ -6,11 +6,11 @@ import {
   getStoryVerdicts,
   getRankings,
   listArenas,
-  AinessError,
+  InitError,
   searchProducts,
 } from '../tools'
 
-const BASE_URL = 'https://ainess.example'
+const BASE_URL = 'https://init.example'
 
 const CATEGORIES = [
   { id: 'desktop-os', name: 'Desktop OS', description: 'Desktop operating systems.', personas: ['developer'] },
@@ -101,7 +101,7 @@ describe('getRankings', () => {
   })
 
   it('rejects an unknown category before fetching rankings', async () => {
-    await expect(getRankings(client(), 'nope')).rejects.toThrow(AinessError)
+    await expect(getRankings(client(), 'nope')).rejects.toThrow(InitError)
     expect(fetchMock).not.toHaveBeenCalledWith(expect.stringContaining('/nope/'))
   })
 })
@@ -125,7 +125,7 @@ describe('getProduct', () => {
     expect(result.verdicts[0].evidenceUrls).toEqual([])
   })
 
-  it('throws AinessError for an unknown product', async () => {
+  it('throws InitError for an unknown product', async () => {
     await expect(getProduct(client(), 'desktop-os', 'nonexistent')).rejects.toThrow(/unknown product/)
   })
 })
@@ -170,7 +170,7 @@ describe('getStoryVerdicts', () => {
     expect(macos.evidenceUrls).toEqual(['https://apple.com/docs/1'])
   })
 
-  it('throws AinessError for an unknown story id', async () => {
+  it('throws InitError for an unknown story id', async () => {
     await expect(getStoryVerdicts(client(), 'desktop-os', 'nonexistent')).rejects.toThrow(/unknown story/)
   })
 })

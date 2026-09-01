@@ -1,11 +1,11 @@
-# ainess-mcp
+# init-dog-mcp
 
-A stdio [MCP](https://modelcontextprotocol.io) server exposing [AIness](https://ainess.vercel.app)'s
+A stdio [MCP](https://modelcontextprotocol.io) server exposing [INIT](https://init.dog)'s
 evidence-graded product rankings, verdicts, and evidence as tools for AI agents — the same
 static JSON data the site itself renders from (see the root repo's README "For AI agents"
 section and `/openapi.json`).
 
-This package is part of the [AIness](https://github.com/ultrametricai/AIness)
+This package is part of the [INIT](https://github.com/ultrametricai/productarena)
 monorepo. **It is not published to npm** — run it from a local checkout (see below).
 
 ## Tools
@@ -19,7 +19,7 @@ monorepo. **It is not published to npm** — run it from a local checkout (see b
 | `search_products` | Search for a product by id/name/vendor substring across every category. |
 | `get_story_verdicts` | Every product's verdict for one specific story within a category. |
 
-Data source: fetches `https://ainess.vercel.app/data/...` at call time (no local
+Data source: fetches `https://init.dog/data/...` at call time (no local
 dataset, no build-time bundling). Override the base URL with the `PA_BASE_URL` env var, e.g.
 to point at a local `next dev`/`next start`.
 
@@ -38,7 +38,7 @@ This produces `mcp/dist/index.js`, a stdio MCP server entry point.
 ### Claude Code
 
 ```bash
-claude mcp add ainess -- node /absolute/path/to/AIness/mcp/dist/index.js
+claude mcp add init -- node /absolute/path/to/INIT/mcp/dist/index.js
 ```
 
 Or add it directly to `.mcp.json` / `claude_desktop_config.json`:
@@ -46,11 +46,11 @@ Or add it directly to `.mcp.json` / `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "ainess": {
+    "init": {
       "command": "node",
-      "args": ["/absolute/path/to/AIness/mcp/dist/index.js"],
+      "args": ["/absolute/path/to/INIT/mcp/dist/index.js"],
       "env": {
-        "PA_BASE_URL": "https://ainess.vercel.app"
+        "PA_BASE_URL": "https://init.dog"
       }
     }
   }
@@ -62,7 +62,7 @@ Or add it directly to `.mcp.json` / `claude_desktop_config.json`:
 Any client that speaks MCP over stdio can launch:
 
 ```bash
-node /absolute/path/to/AIness/mcp/dist/index.js
+node /absolute/path/to/INIT/mcp/dist/index.js
 ```
 
 or, without a build step, during development:
@@ -72,7 +72,7 @@ cd mcp && pnpm run dev   # tsx src/index.ts
 ```
 
 `PA_BASE_URL` (optional) overrides the data source base URL; it defaults to
-`https://ainess.vercel.app`.
+`https://init.dog`.
 
 ## Development
 

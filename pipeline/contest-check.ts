@@ -185,7 +185,7 @@ async function main(): Promise<void> {
   ])
   git([
     '-c',
-    'user.name=ainess-bot',
+    'user.name=init-bot',
     '-c',
     'user.email=actions@github.com',
     'commit',

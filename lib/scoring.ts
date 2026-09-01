@@ -10,14 +10,15 @@ export const VERDICT_FACTORS: Record<Verdict['verdict'], number> = {
 
 const round1 = (n: number) => Math.round(n * 10) / 10
 
-// The AI-Era Index blends five leaderboard components into one number: how well a product
-// works for an agent (agentReady), how good its API surface is once an agent is there
-// (apiQuality), how open it is to leave/inspect/self-host (openness — themeScores.openness),
-// how agentically it behaves on its own (agenticApp), and how deep its automation primitives
-// go (automation — themeScores['automation-depth']). Weights are deliberately contestable —
-// see README's "AI-Era Index" section — and are renormalized over whichever components are
-// non-null for a given product, so a product missing one axis isn't penalized twice (once for
-// the missing axis, once for a shrunken blend).
+// The INIT Score (internally `aiEra`, formerly displayed as "AI-Era Index") blends five
+// leaderboard components into one number: how well a product works for an agent (agentReady),
+// how good its API surface is once an agent is there (apiQuality), how open it is to
+// leave/inspect/self-host (openness — themeScores.openness), how agentically it behaves on its
+// own (agenticApp), and how deep its automation primitives go (automation —
+// themeScores['automation-depth']). Weights are deliberately contestable — see README's "INIT
+// Score" section — and are renormalized over whichever components are non-null for a given
+// product, so a product missing one axis isn't penalized twice (once for the missing axis, once
+// for a shrunken blend).
 export const AI_ERA_WEIGHTS = {
   agentReady: 0.3,
   apiQuality: 0.2,
@@ -130,8 +131,8 @@ export function buildRankings(
         themeScores,
       }
     })
-    // Primary sort is the AI-Era Index (nulls last — a product with no AI-era signal at all
-    // ranks below one with any), tie-broken by the coverage score so ordering stays stable
+    // Primary sort is the INIT Score (nulls last — a product with no agent-readiness signal at
+    // all ranks below one with any), tie-broken by the coverage score so ordering stays stable
     // when aiEra ties (including the common all-null case, which falls back to score order).
     .sort((x, y) => {
       if (x.aiEra === null && y.aiEra === null) return y.score - x.score

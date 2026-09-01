@@ -11,7 +11,7 @@ export async function fetchWithRetry(url: string, retries = 2): Promise<string> 
   for (let attempt = 0; ; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AIness/1.0; +https://ainess.vercel.app)' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; INIT/1.0; +https://init.dog)' },
         redirect: 'follow',
       })
       if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`)
@@ -34,7 +34,7 @@ export async function fetchBinaryWithRetry(url: string, retries = 2): Promise<Bi
   for (let attempt = 0; ; attempt++) {
     try {
       const res = await fetch(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; AIness/1.0; +https://ainess.vercel.app)' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; INIT/1.0; +https://init.dog)' },
         redirect: 'follow',
       })
       if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`)

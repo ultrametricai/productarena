@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
-import AinessMark from "@/components/AinessMark";
+import InitMark from "@/components/InitMark";
 import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
@@ -65,9 +65,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AIness",
+  title: "INIT",
   description:
-    "AIness — evidence-tested rankings of how AI-ready every product is. Evidence in, rankings out.",
+    "INIT — evidence-tested rankings of how AI-ready every product is. Evidence in, rankings out.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -84,9 +84,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-5 py-4">
             <Link href="/" className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight">
-              <AinessMark size={22} />
+              <InitMark size={22} />
               <span>
-                <span className="text-amber-400">AI</span>ness
+                INIT<span className="text-amber-400">.dog</span>
               </span>
             </Link>
             <nav className="flex items-center gap-3 text-sm text-zinc-400">
@@ -129,7 +129,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="mx-auto max-w-4xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-4xl items-center justify-between px-5 text-xs text-zinc-600">
-            <span>AIness · MIT licensed</span>
+            <span>INIT · MIT licensed · © 2026 Ultrametric Inc</span>
             <Link href="/llms.txt" className="hover:text-amber-300">
               For agents: /llms.txt
             </Link>
