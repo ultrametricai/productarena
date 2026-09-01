@@ -11,7 +11,7 @@ evidence, not opinion.
 
 Live site: https://ainess.vercel.app
 
-As of the last full pipeline run: **10 arenas, 52 products, 3,751 judged verdicts.**
+As of the last full pipeline run: **10 arenas, 53 products, 3,828 judged verdicts.**
 
 ## The arenas
 
@@ -19,7 +19,7 @@ As of the last full pipeline run: **10 arenas, 52 products, 3,751 judged verdict
 |---|---|
 | AI Coding Agents (`ai-coding`) | claude-code, codex, cursor, github-copilot, gemini-cli |
 | Code Hosting (`code-hosting`) | github, gitlab, bitbucket, gitea |
-| Desktop OS (`desktop-os`) | macos, omarchy, ubuntu, fedora |
+| Desktop OS (`desktop-os`) | macos, omarchy, ubuntu, fedora, windows |
 | Mobile AI Dev Tools (`mobile-dev`) | termius, tailscale, blink-shell, a-shell, working-copy, github-mobile |
 | Project Management (`project-management`) | linear, asana, clickup, notion, monday, jira |
 | Startup Banking (`startup-banking`) | mercury, brex, ramp, wise, relay |
