@@ -181,7 +181,7 @@ export async function GET() {
         'No auth, no rate limit beyond normal CDN caching. See /llms.txt for a full agent-facing index and /methodology for ' +
         'how the underlying scores and verdicts are produced.',
       contact: { url: `${SITE}/llms.txt` },
-      license: { name: 'MIT', url: `${SITE}/LICENSE` },
+      license: { name: 'MIT', url: 'https://github.com/ultrametricai/productarena/blob/main/LICENSE' },
     },
     servers: [{ url: SITE }],
     paths: {
