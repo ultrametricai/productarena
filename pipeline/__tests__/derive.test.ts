@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
+import { ProductSchema } from '@/lib/schemas'
 import { RankingsSchema } from '@/lib/schemas'
 
 describe('derive stage', () => {
@@ -13,7 +14,7 @@ describe('derive stage', () => {
     tmpDir = undefined
   })
 
-  it('writes a valid rankings.json with 6 battles from the CLI', () => {
+  it('writes a valid rankings.json with one battle per product pair from the CLI', () => {
     const repoRoot = path.resolve(__dirname, '../..')
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-derive-'))
     fs.cpSync(path.join(repoRoot, 'data'), tmpDir, { recursive: true })
@@ -23,10 +24,15 @@ describe('derive stage', () => {
       env: { ...process.env, PA_DATA_DIR: tmpDir },
     })
 
+    const productCount = ProductSchema.array().parse(
+      JSON.parse(fs.readFileSync(path.join(tmpDir, 'desktop-os', 'products.json'), 'utf8')),
+    ).length
+    const expectedBattles = (productCount * (productCount - 1)) / 2
+
     const raw = JSON.parse(fs.readFileSync(path.join(tmpDir, 'desktop-os', 'rankings.json'), 'utf8'))
     const rankings = RankingsSchema.parse(raw)
-    expect(rankings.battles).toHaveLength(6)
-    expect(rankings.leaderboard).toHaveLength(4)
+    expect(rankings.battles).toHaveLength(expectedBattles)
+    expect(rankings.leaderboard).toHaveLength(productCount)
     // buildRankings' actual sort key is aiEra desc (nulls last), tie-broken by score desc —
     // not raw score — since v2.4's AI-Era Index. Assert every adjacent pair respects that.
     for (let i = 0; i < rankings.leaderboard.length - 1; i++) {

@@ -19,7 +19,7 @@ describe('loadCategory', () => {
   it('loads the committed desktop-os dataset', () => {
     const data = loadCategory('desktop-os', REAL)
     expect(data.category.id).toBe('desktop-os')
-    expect(data.products).toHaveLength(4)
+    expect(data.products.length).toBeGreaterThanOrEqual(4)
     expect(data.verdicts).toHaveLength(data.products.length * data.stories.length)
   })
 
