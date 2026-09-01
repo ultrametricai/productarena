@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-
-const REPO = 'ultrametricai/productarena'
+import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Methodology — Product Arena',
+  title: 'Methodology — AIness',
   description: 'Evidence tiers, judging, scoring, the AI-Era Index, story provenance, and bias disclosure.',
 }
 
@@ -21,7 +20,7 @@ export default function MethodologyPage() {
     <div className="space-y-10">
       <div>
         <p className="text-sm uppercase tracking-widest text-amber-400">Methodology</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">How Product Arena scores products</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight">How AIness scores products</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           A tight summary of the full writeup in{' '}
           <a href={`https://github.com/${REPO}/blob/main/README.md`} className="underline decoration-zinc-700 hover:text-amber-300">
@@ -88,7 +87,7 @@ export default function MethodologyPage() {
         </p>
       </section>
 
-      <section>
+      <section id="ai-era">
         <h2 className={SECTION_H2}>AI-Era weights</h2>
         <p className={P}>
           Every leaderboard entry carries an AI-Era Index (<code className="text-zinc-500">aiEra</code>) — a

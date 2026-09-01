@@ -1,6 +1,7 @@
 import type { Verdict } from '@/lib/schemas'
+import { REPO } from '@/lib/site'
 
-const REPO_ISSUES_URL = 'https://github.com/ultrametricai/productarena/issues/new'
+const REPO_ISSUES_URL = `https://github.com/${REPO}/issues/new`
 
 // A quick, always-available "something's wrong here" flag on every verdict. It's just a
 // prefilled GitHub issue link — the deeper check (adding evidence, re-judging, deriving)

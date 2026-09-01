@@ -1,12 +1,15 @@
-# Product Arena
+# AIness
 
-Product Arena is an evidence-based comparison site. For each of 10 product arenas we crawl
-vendor docs, GitHub, and community sources, extract per-product evidence, and have an LLM
-judge every product against a shared set of user stories. The result is a leaderboard, a
-head-to-head battle log, and a per-product story matrix — every score traces back to cited
+*(formerly Product Arena)*
+
+AIness is an evidence-based comparison site: evidence in, rankings out. For each of 10 product
+arenas we crawl vendor docs, GitHub, and community sources, extract per-product evidence, and
+have an LLM judge every product against a shared set of user stories. The result is a
+leaderboard, a head-to-head battle log, a per-product story matrix, and — across every arena —
+a global Agentic Index ranking how AI-ready every product is. Every score traces back to cited
 evidence, not opinion.
 
-Live site: https://productarena.vercel.app
+Live site: https://ainess.vercel.app
 
 As of the last full pipeline run: **10 arenas, 52 products, 3,751 judged verdicts.**
 
@@ -334,9 +337,9 @@ agents" below.
 
 ## For AI agents
 
-Product Arena is built to be read by agents, not just browsed by humans:
+AIness is built to be read by agents, not just browsed by humans:
 
-- **[/llms.txt](https://productarena.vercel.app/llms.txt)** — the top-level index per the
+- **[/llms.txt](https://ainess.vercel.app/llms.txt)** — the top-level index per the
   [llms.txt convention](https://llmstxt.org): site purpose, methodology one-liner, and links to
   every arena's markdown endpoint, the data API, and `/openapi.json`.
 - **Markdown endpoints** — every arena has a full-content markdown rendering at
@@ -348,10 +351,10 @@ Product Arena is built to be read by agents, not just browsed by humans:
   `/data/{category}/{products,stories,verdicts,rankings}.json`,
   `/data/{category}/evidence/{productId}.json`. `public/data/` is a build artifact
   (gitignored) — it doesn't exist until `pnpm run build` or `pnpm run dev` regenerates it.
-- **[/openapi.json](https://productarena.vercel.app/openapi.json)** — an OpenAPI 3.1 document
+- **[/openapi.json](https://ainess.vercel.app/openapi.json)** — an OpenAPI 3.1 document
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
-- **[/methodology](https://productarena.vercel.app/methodology)** — a tight, on-site summary of
+- **[/methodology](https://ainess.vercel.app/methodology)** — a tight, on-site summary of
   the methodology below (evidence tiers, judging, scoring, AI-Era weights, story provenance,
   re-judge stability, bias disclosure), linked from the header next to Arenas and from
   `/llms.txt`.

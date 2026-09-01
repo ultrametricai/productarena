@@ -14,9 +14,8 @@ import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, type CategoryData, verdictFor } from '@/lib/data'
 import type { Product, Story } from '@/lib/schemas'
+import { SITE_URL } from '@/lib/site'
 import { strongestEvidence, verificationLevel } from '@/lib/verification'
-
-const SITE = 'https://productarena.vercel.app'
 
 // schema.org SoftwareApplication for one product. No aggregateRating (see arena page's
 // comment) — our custom metrics go in additionalProperty instead.
@@ -26,7 +25,7 @@ function productJsonLd(data: CategoryData, product: Product) {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
     name: product.name,
-    url: `${SITE}/arena/${data.category.id}/product/${product.id}`,
+    url: `${SITE_URL}/arena/${data.category.id}/product/${product.id}`,
     applicationCategory: data.category.name,
     ...(product.vendor ? { author: { '@type': 'Organization', name: product.vendor } } : {}),
     additionalProperty: [

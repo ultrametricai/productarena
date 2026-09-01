@@ -1,11 +1,11 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { createClient, type ProductArenaClient } from './client.js'
+import { createClient, type AinessClient } from './client.js'
 import {
   getBattle,
   getProduct,
   getStoryVerdicts,
-  ProductArenaError,
+  AinessError,
   getRankings as fetchRankings,
   listArenas as fetchArenas,
   searchProducts as fetchSearchResults,
@@ -20,23 +20,23 @@ function errorResult(err: unknown) {
   return { content: [{ type: 'text' as const, text: `Error: ${message}` }], isError: true }
 }
 
-// Wraps a tool implementation so ProductArenaError (and any other thrown error) comes back as
+// Wraps a tool implementation so AinessError (and any other thrown error) comes back as
 // a normal tool-error result instead of crashing the MCP connection.
 function wrap<T>(fn: () => Promise<T>) {
   return fn().then(jsonResult, (err) => {
-    if (err instanceof ProductArenaError || err instanceof Error) return errorResult(err)
+    if (err instanceof AinessError || err instanceof Error) return errorResult(err)
     return errorResult(new Error(String(err)))
   })
 }
 
-export function createServer(client: ProductArenaClient = createClient()): McpServer {
-  const server = new McpServer({ name: 'productarena-mcp', version: '0.1.0' })
+export function createServer(client: AinessClient = createClient()): McpServer {
+  const server = new McpServer({ name: 'ainess-mcp', version: '0.1.0' })
 
   server.registerTool(
     'list_arenas',
     {
       title: 'List arenas',
-      description: 'List every Product Arena category (id, name, description, personas, themes).',
+      description: 'List every AIness category (id, name, description, personas, themes).',
       inputSchema: {},
     },
     async () => wrap(() => fetchArenas(client)),

@@ -40,7 +40,7 @@ export function validateVerdictRules(verdict: Verdict, evidence: Evidence[]): st
 
 const RawVerdictSchema = VerdictBaseSchema.omit({ productId: true, storyId: true })
 
-const SYSTEM = `You are the judge in a product arena. Given ONE user story and ONE product's evidence pack, decide how well the product delivers that story.
+const SYSTEM = `You are the judge in a head-to-head product-comparison arena. Given ONE user story and ONE product's evidence pack, decide how well the product delivers that story.
 Verdicts: "full" (clearly delivers), "partial" (delivers with significant caveats/extra tools), "none" (no evidence it delivers), "disputed" (vendor claims it but community/hands-on evidence contradicts — requires citing both sides), "na" (the story's axis does not apply to this product at all).
 Verdict "na": ONLY when the story's axis fundamentally does not apply to this product's type (wrong axis), e.g. an OS-install story for a SaaS API. Lack of evidence for an applicable capability is "none", never "na". na must have quality 0.
 quality: 0-10 how WELL it delivers (0 if none or na). confidence: high/medium/low based on evidence strength. rationale: 1-3 sentences. evidenceIds: cite the specific items you relied on (empty only for "none" or "na").

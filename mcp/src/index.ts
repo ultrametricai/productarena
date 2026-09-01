@@ -6,7 +6,7 @@ async function main() {
   const server = createServer()
   const transport = new StdioServerTransport()
   await server.connect(transport)
-  console.error('productarena-mcp: connected over stdio')
+  console.error('ainess-mcp: connected over stdio')
 }
 
 main().catch((err) => {
