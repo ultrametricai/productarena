@@ -2,6 +2,7 @@ import Link from 'next/link'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
+import { BusinessModelChip } from '@/components/BusinessModel'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
@@ -30,7 +31,10 @@ export default function LeaderboardTable({ data }: { data: CategoryData }) {
                   {product.name}
                 </Link>
                 <p className="truncate text-sm text-zinc-500">{product.vendor}</p>
-                <ProductLinkChips product={product} variant="letter" />
+                <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+                  <ProductLinkChips product={product} variant="letter" />
+                  <BusinessModelChip product={product} />
+                </div>
                 <p className="mt-0.5 text-xs text-zinc-600">
                   {entry.applicable}/{entry.total} stories applicable
                 </p>

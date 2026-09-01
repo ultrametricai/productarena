@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
+import { BusinessModelSection } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
@@ -88,6 +89,8 @@ export default async function ProductPage({
             .join(' · ') || 'none'}
         </p>
       </div>
+
+      <BusinessModelSection product={product} />
 
       <div>
         <h2 className="mb-3 text-lg font-semibold">By theme</h2>

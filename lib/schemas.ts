@@ -27,6 +27,11 @@ export const ProductSchema = z.object({
     cli: z.string().url().optional(),
     mcp: z.string().url().optional(),
   }).optional(),
+  businessModel: z.object({
+    models: z.array(z.string().min(1)).min(1),
+    summary: z.string().min(10).max(240),
+    url: z.string().url(),
+  }).optional(),
 })
 
 export const StorySchema = z.object({

@@ -76,4 +76,33 @@ describe('schemas', () => {
     expect(ProductSchema.safeParse({ ...base, links: { app: 'https://app.p.example', api: 'https://docs.p.example' } }).success).toBe(true)
     expect(ProductSchema.safeParse({ ...base, links: { app: 'not-a-url' } }).success).toBe(false)
   })
+
+  it('accepts an optional businessModel object on products', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'commercial' as const, urls: { site: 'https://p.example' } }
+    expect(ProductSchema.safeParse(base).success).toBe(true)
+    expect(ProductSchema.safeParse({
+      ...base,
+      businessModel: { models: ['freemium', 'subscription-per-seat'], summary: 'Free tier plus paid per-seat plans.', url: 'https://p.example/pricing' },
+    }).success).toBe(true)
+  })
+
+  it('rejects a businessModel with an empty models array', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'commercial' as const, urls: { site: 'https://p.example' } }
+    expect(ProductSchema.safeParse({
+      ...base,
+      businessModel: { models: [], summary: 'Free tier plus paid per-seat plans.', url: 'https://p.example/pricing' },
+    }).success).toBe(false)
+  })
+
+  it('rejects a businessModel with a too-short summary or bad url', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'commercial' as const, urls: { site: 'https://p.example' } }
+    expect(ProductSchema.safeParse({
+      ...base,
+      businessModel: { models: ['freemium'], summary: 'short', url: 'https://p.example/pricing' },
+    }).success).toBe(false)
+    expect(ProductSchema.safeParse({
+      ...base,
+      businessModel: { models: ['freemium'], summary: 'Free tier plus paid per-seat plans.', url: 'not-a-url' },
+    }).success).toBe(false)
+  })
 })

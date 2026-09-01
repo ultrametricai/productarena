@@ -1,4 +1,5 @@
 import AgenticBadge from '@/components/AgenticBadge'
+import { BusinessModelLine } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
@@ -98,6 +99,11 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
         <h1 className="text-3xl font-bold tracking-tight">
           {a.name} <span className="text-zinc-600">vs</span> {b.name}
         </h1>
+        <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-600">
+          <BusinessModelLine product={a} />
+          <span className="text-zinc-700">·</span>
+          <BusinessModelLine product={b} />
+        </div>
         <p className="mt-2 text-amber-300">
           {winnerName ? `${winnerName} wins` : 'Draw'} · {battle.record.aWins}–{battle.record.bWins}
           {battle.record.draws > 0 ? ` (${battle.record.draws} drawn)` : ''}
