@@ -21,6 +21,9 @@ As of the last full pipeline run: **10 arenas, 52 products, 3,751 judged verdict
 | Project Management (`project-management`) | linear, asana, clickup, notion, monday, jira |
 | Startup Banking (`startup-banking`) | mercury, brex, ramp, wise, relay |
 | Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase |
+| Edge & App Platforms (`edge-platforms`) | cloudflare, vercel, netlify, fly-io, railway, render |
+| Frontend Frameworks (`frontend-frameworks`) | react, vue, svelte, angular, solid |
+| Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan |
 
 See `data/categories.json` for each arena's full description, personas, and themes.
 
