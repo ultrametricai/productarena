@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import AgenticBadge from '@/components/AgenticBadge'
+import AiEraBadge from '@/components/AiEraBadge'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { loadAll } from '@/lib/data'
@@ -45,9 +46,13 @@ export default function Home() {
               <p className="mt-1 text-sm text-zinc-500">{data.category.description}</p>
               <div className="mt-4 flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-zinc-600">Leader</p>
+                  <p className="text-xs uppercase tracking-widest text-zinc-600">AI-Era leader</p>
                   <p className="font-medium">{leader.name}</p>
                 </div>
+                <AiEraBadge value={leaderEntry.aiEra} />
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-600">coverage</span>
                 <ScoreBar score={leaderEntry.score} className="max-w-[140px]" />
               </div>
               <div className="mt-3 flex items-center justify-between gap-2">
@@ -55,14 +60,14 @@ export default function Home() {
                   <p className="text-xs uppercase tracking-widest text-zinc-600">Most agent-ready</p>
                   <p className="font-medium">{agentReadyLeader.name}</p>
                 </div>
-                <AgenticBadge kind="agent-ready" value={agentReadyLeaderEntry.agentReady} />
+                <AgenticBadge kind="agent-ready" value={agentReadyLeaderEntry.agentReady} size="sm" />
               </div>
               <div className="mt-3 flex items-center justify-between gap-2">
                 <div>
                   <p className="text-xs uppercase tracking-widest text-zinc-600">Most agentic</p>
                   <p className="font-medium">{agenticAppLeader.name}</p>
                 </div>
-                <AgenticBadge kind="agentic-app" value={agenticAppLeaderEntry.agenticApp} />
+                <AgenticBadge kind="agentic-app" value={agenticAppLeaderEntry.agenticApp} size="sm" />
               </div>
               <p className="mt-4 text-xs text-zinc-600">
                 {data.stories.length} stories · {data.verdicts.length} judged cells

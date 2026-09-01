@@ -1,23 +1,26 @@
 import Link from 'next/link'
-import AgenticBadge from '@/components/AgenticBadge'
+import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
+import AiEraBadge from '@/components/AiEraBadge'
 import ProductLogo from '@/components/ProductLogo'
 import type { CategoryData } from '@/lib/data'
 
-// Compact horizontal ranking by agentReady (desc, nulls last), shown above the main
-// leaderboard so "can your agent drive it" is scannable at a glance per arena.
+// Compact horizontal ranking by the AI-Era Index (desc, nulls last), shown above the main
+// leaderboard so "how AI-era-ready is this product" is scannable at a glance per arena. This
+// is the same ordering as rankings.json's leaderboard array (see buildRankings), just
+// re-sorted defensively here in case a caller ever passes an unsorted slice.
 export default function AgenticnessStrip({ data }: { data: CategoryData }) {
   const categoryId = data.category.id
   const productById = new Map(data.products.map((p) => [p.id, p]))
   const ranked = [...data.rankings.leaderboard].sort((x, y) => {
-    if (x.agentReady === null && y.agentReady === null) return 0
-    if (x.agentReady === null) return 1
-    if (y.agentReady === null) return -1
-    return y.agentReady - x.agentReady
+    if (x.aiEra === null && y.aiEra === null) return y.score - x.score
+    if (x.aiEra === null) return 1
+    if (y.aiEra === null) return -1
+    return y.aiEra - x.aiEra || y.score - x.score
   })
 
   return (
     <div>
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-zinc-500">Agenticness</h2>
+      <h2 className="mb-3 text-sm font-semibold uppercase tracking-widest text-zinc-500">AI-Era</h2>
       <div className="flex gap-3 overflow-x-auto pb-1">
         {ranked.map((entry) => {
           const product = productById.get(entry.productId)!
@@ -29,10 +32,8 @@ export default function AgenticnessStrip({ data }: { data: CategoryData }) {
             >
               <ProductLogo product={product} size={32} />
               <p className="max-w-[7rem] truncate text-xs font-medium">{product.name}</p>
-              <div className="flex flex-col gap-1">
-                <AgenticBadge kind="agent-ready" value={entry.agentReady} />
-                <AgenticBadge kind="agentic-app" value={entry.agenticApp} />
-              </div>
+              <AiEraBadge value={entry.aiEra} size="sm" />
+              <AgentAccessGlyphs data={data} productId={product.id} />
             </Link>
           )
         })}

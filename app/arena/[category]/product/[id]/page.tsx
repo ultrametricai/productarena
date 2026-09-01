@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
+import AiEraBadge from '@/components/AiEraBadge'
 import ContestLink from '@/components/ContestLink'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
@@ -67,10 +69,17 @@ export default async function ProductPage({
         <div className="mt-3">
           <ProductLinkChips product={product} variant="label" />
         </div>
-        <div className="mt-4 flex max-w-md flex-wrap items-center gap-4">
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          <AiEraBadge value={entry.aiEra} />
+          <AgentAccessGlyphs data={data} productId={id} />
+        </div>
+        <div className="mt-2 flex max-w-md items-center gap-2">
+          <span className="text-[10px] uppercase tracking-widest text-zinc-600">coverage</span>
           <ScoreBar score={entry.score} className="flex-1" />
-          <AgenticBadge kind="agent-ready" value={entry.agentReady} />
-          <AgenticBadge kind="agentic-app" value={entry.agenticApp} />
+        </div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" />
+          <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" />
         </div>
         <p className="mt-2 text-xs text-zinc-600">
           {entry.applicable}/{entry.total} stories applicable · evidence:{' '}

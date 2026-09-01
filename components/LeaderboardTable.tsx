@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
+import AiEraBadge from '@/components/AiEraBadge'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
@@ -35,10 +37,17 @@ export default function LeaderboardTable({ data }: { data: CategoryData }) {
               </div>
             </div>
             <div className="flex flex-1 flex-col gap-2">
-              <ScoreBar score={entry.score} />
-              <div className="flex flex-wrap gap-2">
-                <AgenticBadge kind="agent-ready" value={entry.agentReady} />
-                <AgenticBadge kind="agentic-app" value={entry.agenticApp} />
+              <div className="flex flex-wrap items-center gap-3">
+                <AiEraBadge value={entry.aiEra} />
+                <AgentAccessGlyphs data={data} productId={product.id} />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] uppercase tracking-widest text-zinc-600">coverage</span>
+                <ScoreBar score={entry.score} className="max-w-xs" />
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" />
+                <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" />
               </div>
               <div className="flex flex-wrap gap-2 text-xs text-zinc-500">
                 {rivals.map((r) => (

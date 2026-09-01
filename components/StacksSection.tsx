@@ -1,4 +1,5 @@
 import AgenticBadge from '@/components/AgenticBadge'
+import AiEraBadge from '@/components/AiEraBadge'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import type { CategoryData } from '@/lib/data'
@@ -27,11 +28,12 @@ export default function StacksSection({ data }: { data: CategoryData }) {
                 <h3 className="font-semibold">{stack.name}</h3>
               </div>
               <div className="mt-4 space-y-2">
+                <AiEraBadge value={coverage.aiEra} size="sm" />
                 <ScoreBar score={coverage.score} />
                 <div className="flex items-center justify-between">
                   <div className="flex flex-wrap gap-2">
-                    <AgenticBadge kind="agent-ready" value={coverage.agentReady} />
-                    <AgenticBadge kind="agentic-app" value={coverage.agenticApp} />
+                    <AgenticBadge kind="agent-ready" value={coverage.agentReady} size="sm" />
+                    <AgenticBadge kind="agentic-app" value={coverage.agenticApp} size="sm" />
                   </div>
                   <p className="text-xs text-zinc-600">
                     {coverage.applicable}/{coverage.total} stories applicable
