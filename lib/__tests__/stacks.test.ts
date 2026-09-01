@@ -95,4 +95,22 @@ describe('stackCoverage', () => {
     expect(cov.agentReady).toBeNull()
     expect(cov.agenticApp).toBe(100)
   })
+
+  it('scores apiQuality as its own group and computes aiEra from the composed cells', () => {
+    const stories2: Story[] = [
+      ...stories,
+      { id: 's4', persona: 'ai-native', title: 't4', theme: 'agenticness', group: 'api-quality', weight: 2 },
+    ]
+    const data: CategoryData = { ...makeData([]), stories: stories2 }
+    data.verdicts = [
+      v('a', 's1', 'full', 10), v('a', 's2', 'full', 10), v('a', 's3', 'full', 10), v('a', 's4', 'full', 10),
+      v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'na', 0), v('b', 's4', 'na', 0),
+    ]
+    const cov = stackCoverage(stack, data)
+    // s3 (agent-access) and s4 (api-quality) are both full for the composed stack -> 100 each.
+    expect(cov.apiQuality).toBe(100)
+    // Only agentReady (0.30) and apiQuality (0.20) are non-null here -> renormalize over 0.50:
+    // (100*0.30 + 100*0.20) / 0.50 = 100
+    expect(cov.aiEra).toBe(100)
+  })
 })

@@ -1,11 +1,13 @@
 import { verdictFor, type CategoryData } from './data'
 import type { Stack, Story, Verdict } from './schemas'
-import { cellScore, weightedPercent } from './scoring'
+import { cellScore, computeAiEra, weightedPercent } from './scoring'
 
 export interface StackCoverage {
   score: number
   agentReady: number | null
   agenticApp: number | null
+  apiQuality: number | null
+  aiEra: number | null
   themeScores: Record<string, number | null>
   applicable: number
   total: number
@@ -38,11 +40,23 @@ export function stackCoverage(stack: Stack, data: CategoryData): StackCoverage {
   const agenticApp = weightedPercent(
     cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'agentic-features'),
   )
+  const apiQuality = weightedPercent(
+    cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'api-quality'),
+  )
+  const aiEra = computeAiEra({
+    agentReady,
+    apiQuality,
+    openness: themeScores['openness'] ?? null,
+    agenticApp,
+    automation: themeScores['automation-depth'] ?? null,
+  })
 
   return {
     score,
     agentReady,
     agenticApp,
+    apiQuality,
+    aiEra,
     themeScores,
     applicable,
     total: data.stories.length,

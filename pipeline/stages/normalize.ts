@@ -1,7 +1,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { type Story, StorySchema } from '../../lib/schemas'
-import { AGENTIC_FEATURE_STORIES, AGENTIC_STORIES, AUTOMATION_STORIES, OPENNESS_STORIES, PRIVACY_STORIES } from '../agentic-stories'
+import {
+  AGENTIC_FEATURE_STORIES,
+  AGENTIC_STORIES,
+  API_QUALITY_STORIES,
+  AUTOMATION_STORIES,
+  OPENNESS_STORIES,
+  PRIVACY_STORIES,
+} from '../agentic-stories'
 import { llmJson } from '../llm'
 import { CACHE_DIR, categoryDir, resolveCategories, writeJson } from '../paths'
 
@@ -9,7 +16,7 @@ import { CACHE_DIR, categoryDir, resolveCategories, writeJson } from '../paths'
 // (categories.json's `themes`) so the model never authors competing stories for them, but
 // filtered here too as a belt-and-suspenders guard against theme/id collisions.
 const CANON_THEMES = new Set(['agenticness', 'openness', 'automation-depth', 'privacy-posture'])
-const CANON_ID_PREFIXES = ['agentic-', 'openness-', 'automation-', 'privacy-']
+const CANON_ID_PREFIXES = ['agentic-', 'api-', 'openness-', 'automation-', 'privacy-']
 
 // Pure post-processing of the LLM's candidate taxonomy: drops any LLM-authored story that
 // duplicates a canonical lens (by theme or id prefix), appends the canon verbatim, dedupes ids
@@ -22,6 +29,7 @@ export function assembleTaxonomy(llmStories: Story[]): Story[] {
     ...filtered,
     ...AGENTIC_STORIES,
     ...AGENTIC_FEATURE_STORIES,
+    ...API_QUALITY_STORIES,
     ...OPENNESS_STORIES,
     ...AUTOMATION_STORIES,
     ...PRIVACY_STORIES,
@@ -43,7 +51,7 @@ function systemPrompt(categoryName: string, personas: string[], themes: string[]
 Input: candidate user stories extracted from several competing products' own materials.
 Output: 25-52 canonical stories that TOGETHER cover what all products claim, with duplicates merged and product-specific phrasing neutralized. Every story must be judgeable for ANY product in the category (never mention a product name).
 Cluster stories into kebab-case \`group\`s under themes. Be granular — one capability per story (e.g. separate stories for TOTP-app 2FA vs hardware-key 2FA).
-You MUST include at least 3 stories with persona "ai-native" describing AI-driven capabilities within this category's own domain (e.g. AI automating a core in-app task for that persona) — beyond generic agent-access, which is canonical and injected separately: DO NOT write stories about public APIs, official CLIs, MCP servers, webhooks, SDKs, or agent-oriented docs, and do not write agentic-access stories.
+You MUST include at least 3 stories with persona "ai-native" describing AI-driven capabilities within this category's own domain (e.g. AI automating a core in-app task for that persona) — beyond generic agent-access and API quality, which are canonical and injected separately: DO NOT write stories about public APIs, official CLIs, MCP servers, webhooks, SDKs, agent-oriented docs, interactive API references, machine-readable API specs, API versioning/deprecation policy, or sandbox environments, and do not write agentic-access or api-quality stories.
 Personas must be drawn from: ${personas.join(', ')}.
 Fields: id (kebab-case, stable, descriptive), persona (one of the personas above), title ("As a <persona>, I can <specific capability>"), theme (one of: ${themes.join(', ')}), group (kebab-case cluster id under the theme), weight (3 = core daily-driver need, 2 = important, 1 = nice-to-have).
 Return JSON: array of story objects.`
@@ -85,10 +93,10 @@ export async function runNormalize({ category }: { category?: string; product?: 
   })
 
   const assembled = assembleTaxonomy(llmStories)
-  // Ceiling raised 64→76 to make room for the 12 newly-canonical lens stories (openness,
-  // automation-depth, privacy-posture) injected by assembleTaxonomy above, on top of the
-  // pre-existing 12-story agenticness canon.
-  const stories = StorySchema.array().min(30).max(76).parse(assembled)
+  // Ceiling raised 64→76→80 to make room for the canonical lens stories injected by
+  // assembleTaxonomy above: 12 agenticness (agent-access + agentic-features + api-quality),
+  // plus 4 each of openness, automation-depth, and privacy-posture — 28 canonical total.
+  const stories = StorySchema.array().min(30).max(80).parse(assembled)
   writeJson(path.join(dataDir, 'stories.json'), stories)
   console.log(`normalize: wrote ${stories.length} canonical stories for ${cat.id}`)
 }

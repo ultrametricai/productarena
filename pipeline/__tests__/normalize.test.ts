@@ -3,6 +3,7 @@ import type { Story } from '@/lib/schemas'
 import {
   AGENTIC_FEATURE_STORIES,
   AGENTIC_STORIES,
+  API_QUALITY_STORIES,
   AUTOMATION_STORIES,
   OPENNESS_STORIES,
   PRIVACY_STORIES,
@@ -34,16 +35,17 @@ describe('assembleTaxonomy', () => {
     expect(result.find((r) => r.id === 'story-b')).toBeUndefined()
     expect(result.find((r) => r.id === 'agentic-something-custom')).toBeUndefined()
 
-    // Canonical ids all present exactly once (agent-access, agentic-features, openness,
-    // automation-depth, and privacy-posture groups — 24 canonical stories total).
+    // Canonical ids all present exactly once (agent-access, agentic-features, api-quality,
+    // openness, automation-depth, and privacy-posture groups — 28 canonical stories total).
     const allCanon = [
       ...AGENTIC_STORIES,
       ...AGENTIC_FEATURE_STORIES,
+      ...API_QUALITY_STORIES,
       ...OPENNESS_STORIES,
       ...AUTOMATION_STORIES,
       ...PRIVACY_STORIES,
     ]
-    expect(allCanon).toHaveLength(24)
+    expect(allCanon).toHaveLength(28)
     for (const canon of allCanon) {
       expect(result.filter((r) => r.id === canon.id)).toHaveLength(1)
     }
@@ -66,6 +68,23 @@ describe('assembleTaxonomy', () => {
       expect(result.find((r) => r.id === dropped)).toBeUndefined()
     }
     for (const canon of [...OPENNESS_STORIES, ...AUTOMATION_STORIES, ...PRIVACY_STORIES]) {
+      expect(result.filter((r) => r.id === canon.id)).toHaveLength(1)
+    }
+  })
+
+  it('drops LLM stories that duplicate the api-quality canon (theme agenticness, id prefix api-)', () => {
+    const llmStories = [
+      s({ id: 'story-g', theme: 'dev-experience' }),
+      s({ id: 'story-h', theme: 'agenticness', group: 'api-quality' }),
+      s({ id: 'api-custom-thing', theme: 'dev-experience' }),
+    ]
+    const result = assembleTaxonomy(llmStories)
+
+    expect(result.find((r) => r.id === 'story-g')).toBeDefined()
+    for (const dropped of ['story-h', 'api-custom-thing']) {
+      expect(result.find((r) => r.id === dropped)).toBeUndefined()
+    }
+    for (const canon of API_QUALITY_STORIES) {
       expect(result.filter((r) => r.id === canon.id)).toHaveLength(1)
     }
   })

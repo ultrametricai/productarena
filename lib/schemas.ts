@@ -78,6 +78,8 @@ export const RankingsSchema = z.object({
       score: z.number().min(0).max(100),
       agentReady: z.number().min(0).max(100).nullable(),
       agenticApp: z.number().min(0).max(100).nullable(),
+      apiQuality: z.number().min(0).max(100).nullable(),
+      aiEra: z.number().min(0).max(100).nullable(),
       applicable: z.number().int().min(0),
       total: z.number().int().min(0),
       themeScores: z.record(z.string(), z.number().min(0).max(100).nullable()),

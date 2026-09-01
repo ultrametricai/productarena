@@ -62,7 +62,7 @@ describe('schemas', () => {
     const r = {
       generatedAt: '2026-08-27T00:00:00Z',
       leaderboard: [{
-        productId: 'p', score: 50, agentReady: null, agenticApp: 75,
+        productId: 'p', score: 50, agentReady: null, agenticApp: 75, apiQuality: null, aiEra: 60,
         applicable: 10, total: 12, themeScores: { security: null, agenticness: 75 },
       }],
       battles: [{ a: 'p', b: 'q', winner: 'draw', record: { aWins: 0, bWins: 0, draws: 1 }, rounds: [{ storyId: 's', winner: 'na', margin: 0 }] }],

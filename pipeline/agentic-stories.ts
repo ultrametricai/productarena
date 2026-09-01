@@ -184,6 +184,45 @@ export const AUTOMATION_STORIES: Story[] = [
   },
 ]
 
+// Canonical API-quality stories — same injection contract as AGENTIC_STORIES above, scored as
+// their own group ("api-quality") under the "agenticness" theme (agent-access is "can an agent
+// reach the product at all"; api-quality is "how good is that surface once you're there"). Ids,
+// titles, and weights are fixed and must stay identical across all categories.
+export const API_QUALITY_STORIES: Story[] = [
+  {
+    id: 'api-interactive-docs',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can explore an interactive API reference with runnable examples',
+    theme: 'agenticness',
+    group: 'api-quality',
+    weight: 2,
+  },
+  {
+    id: 'api-machine-spec',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can download a machine-readable API spec (OpenAPI or equivalent)',
+    theme: 'agenticness',
+    group: 'api-quality',
+    weight: 2,
+  },
+  {
+    id: 'api-versioning-policy',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can rely on versioned APIs with a documented deprecation policy',
+    theme: 'agenticness',
+    group: 'api-quality',
+    weight: 2,
+  },
+  {
+    id: 'api-sandbox',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can test against a sandbox environment without touching production data',
+    theme: 'agenticness',
+    group: 'api-quality',
+    weight: 1,
+  },
+]
+
 // Canonical privacy-posture stories — same injection contract as AGENTIC_STORIES above,
 // scored as their own theme ("privacy-posture"). Ids, titles, and weights are fixed and must
 // stay identical across all categories.

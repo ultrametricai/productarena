@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Product, Story, Verdict } from '@/lib/schemas'
-import { buildRankings, cellScore } from '@/lib/scoring'
+import { AI_ERA_WEIGHTS, buildRankings, cellScore, computeAiEra } from '@/lib/scoring'
 
 const products: Product[] = [
   { id: 'a', name: 'A', vendor: 'v', type: 'oss', urls: { site: 'https://a.example' } },
@@ -173,5 +173,76 @@ describe('zero applicable cells', () => {
     expect(a.themeScores).toEqual({ core: null, extras: null })
     expect(a.agentReady).toBeNull()
     expect(a.agenticApp).toBeNull()
+  })
+})
+
+describe('computeAiEra', () => {
+  it('sums AI_ERA_WEIGHTS to exactly 1.0', () => {
+    const total = Object.values(AI_ERA_WEIGHTS).reduce((sum, w) => sum + w, 0)
+    expect(total).toBeCloseTo(1.0, 10)
+  })
+
+  it('blends all five components by their fixed weights when none are null', () => {
+    // 100*0.30 + 100*0.20 + 0*0.20 + 0*0.15 + 100*0.15 = 30 + 20 + 0 + 0 + 15 = 65
+    const result = computeAiEra({
+      agentReady: 100, apiQuality: 100, openness: 0, agenticApp: 0, automation: 100,
+    })
+    expect(result).toBe(65)
+  })
+
+  it('renormalizes over just the non-null components when some are null', () => {
+    // Only agentReady (0.30) and openness (0.20) present -> renormalize over 0.50.
+    // (100*0.30 + 50*0.20) / 0.50 = (30 + 10) / 0.5 = 80
+    const result = computeAiEra({
+      agentReady: 100, apiQuality: null, openness: 50, agenticApp: null, automation: null,
+    })
+    expect(result).toBe(80)
+  })
+
+  it('renormalizes a single non-null component to exactly its own value', () => {
+    const result = computeAiEra({
+      agentReady: null, apiQuality: null, openness: null, agenticApp: 42, automation: null,
+    })
+    expect(result).toBe(42)
+  })
+
+  it('returns null when every component is null', () => {
+    const result = computeAiEra({
+      agentReady: null, apiQuality: null, openness: null, agenticApp: null, automation: null,
+    })
+    expect(result).toBeNull()
+  })
+})
+
+describe('aiEra on the leaderboard', () => {
+  const storiesWithAiEra: Story[] = [
+    ...stories,
+    { id: 's4', persona: 'ai-native', title: 't4', theme: 'agenticness', group: 'agent-access', weight: 3 },
+    { id: 's5', persona: 'ai-native', title: 't5', theme: 'agenticness', group: 'agentic-features', weight: 2 },
+    { id: 's6', persona: 'ai-native', title: 't6', theme: 'agenticness', group: 'api-quality', weight: 2 },
+    { id: 's7', persona: 'ai-native', title: 't7', theme: 'openness', group: 'openness', weight: 2 },
+    { id: 's8', persona: 'ai-native', title: 't8', theme: 'automation-depth', group: 'automation-depth', weight: 2 },
+  ]
+
+  it('scores apiQuality as its own group and reorders the leaderboard by aiEra desc, tie-broken by score', () => {
+    const verdicts = [
+      // a: weak coverage score but a perfect AI-era footprint
+      v('a', 's1', 'none', 0), v('a', 's2', 'none', 0), v('a', 's3', 'none', 0),
+      v('a', 's4', 'full', 10), v('a', 's5', 'full', 10), v('a', 's6', 'full', 10), v('a', 's7', 'full', 10), v('a', 's8', 'full', 10),
+      // b: strong coverage score but no AI-era signal at all
+      v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'full', 10),
+      vNa('b', 's4'), vNa('b', 's5'), vNa('b', 's6'), vNa('b', 's7'), vNa('b', 's8'),
+    ]
+    const r = buildRankings(products, storiesWithAiEra, verdicts, '2026-09-01T00:00:00.000Z')
+    const a = r.leaderboard.find((e) => e.productId === 'a')!
+    const b = r.leaderboard.find((e) => e.productId === 'b')!
+
+    expect(a.apiQuality).toBe(100)
+    expect(a.aiEra).toBe(100)
+    expect(b.apiQuality).toBeNull()
+    expect(b.aiEra).toBeNull()
+
+    // a's aiEra (100) beats b's null aiEra even though b's coverage score is higher.
+    expect(r.leaderboard.map((e) => e.productId)).toEqual(['a', 'b'])
   })
 })

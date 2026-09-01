@@ -129,7 +129,58 @@ LLM-authored) so agent-readiness is comparable across categories. Defined in
 A product's "agenticness" score on the leaderboard is its weighted percentage across just
 these 8 cells (theme `agenticness`, group `agent-access`).
 
-### 5. Judge model and prompt version
+Two sibling group-scoped indexes live under the same `agenticness` theme: `agentic-features`
+("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
+`api-quality` (see below).
+
+### 5. The AI-Era Index
+
+v2.4 adds a sixth canonical group, **API quality** (theme `agenticness`, group `api-quality`),
+alongside `agent-access`. Where `agent-access` asks "can an agent reach the product at all,"
+`api-quality` asks "how good is that surface once an agent is there":
+
+| Story id | Story | Weight |
+|---|---|---|
+| `api-interactive-docs` | I can explore an interactive API reference with runnable examples | 2 |
+| `api-machine-spec` | I can download a machine-readable API spec (OpenAPI or equivalent) | 2 |
+| `api-versioning-policy` | I can rely on versioned APIs with a documented deprecation policy | 2 |
+| `api-sandbox` | I can test against a sandbox environment without touching production data | 1 |
+
+On top of that, every leaderboard entry now carries an **AI-Era Index** (`aiEra`) — a single
+number meant to answer "how ready is this product for a world where agents, not just humans,
+are the primary users?" It's a weighted blend of five existing leaderboard components:
+
+| Component | Weight | What it measures |
+|---|---|---|
+| `agentReady` | 0.30 | can an agent reach the product (API/CLI/MCP/webhooks/SDKs/docs) |
+| `apiQuality` | 0.20 | how good is that API surface (docs, spec, versioning, sandbox) |
+| `openness` | 0.20 | can you self-host, export your data, and read the source |
+| `agenticApp` | 0.15 | does the product act agentically on its own behalf |
+| `automation` | 0.15 | how deep are its rules/scheduling/bulk/versioned-automation primitives |
+
+```
+aiEra = Σ(component × weight) / Σ(weight)   — over non-null components only
+```
+
+Weights are renormalized over whichever components are non-null for a given product, so a
+product missing one axis (e.g. no `openness` theme applies to its category) isn't penalized
+twice — once for the missing axis, once for a shrunken blend. `aiEra` is `null` only when every
+component is null. The exact weights live in `AI_ERA_WEIGHTS` in `lib/scoring.ts`.
+
+**Why lead with this instead of the coverage score.** The coverage score measures evidenced
+story coverage across a product's whole category — useful, but it treats "has a nice settings
+UI" the same as "has an MCP server." As of v2.4, leaderboards sort primarily by `aiEra` (nulls
+last, ties broken by coverage score) because we think products in the AI era should be ranked
+first by how well agents and automation can actually work with them — the coverage score is
+still shown, just demoted to a secondary line.
+
+**These weights are a starting position, not a verdict.** We picked them because agent-access
+and API quality are the most direct proxies for "can an agent use this at all," while
+openness/agenticApp/automation matter but are one step removed. If you think the weighting is
+wrong, [contest it via an issue](./CONTRIBUTING.md) — like every verdict on this site, the
+formula is open to challenge.
+
+### 6. Judge model and prompt version
 
 The judge model is `claude-sonnet-5` by default (override with the `PA_MODEL` env var), and
 the judge prompt is versioned (`PROMPT_VERSION = 'v2'` in `pipeline/stages/judge.ts`) — the
@@ -144,12 +195,15 @@ mechanical probe results only affect the story axis they actually test. Every re
 recorded in the commit that applies it. A future prompt version will pass the prior verdict
 as an anchor to reduce this variance at the source.
 
-### 6. Bias disclosure — the judge is an Anthropic model
+### 7. Bias disclosure — the judge is an Anthropic model
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
 (`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
-product, Claude Code, which currently leads that arena (score 35.2). This is a real
-conflict of interest and we want it visible, not buried.
+product, Claude Code, which leads that arena's **AI-Era Index** (29.5) as of v2.4 — though on
+raw coverage score it now sits second (34.6) behind GitHub Copilot (35.0), a lead that flipped
+when the v2.4 `api-quality` cells were added (Claude Code's own coverage score was 35.2 as of
+the last full audit below, before those cells existed). This is a real conflict of interest and
+we want it visible, not buried.
 
 What we did about it:
 
@@ -235,7 +289,7 @@ data/
   categories.json          # arena metadata: id, name, description, personas, themes
   {category}/
     products.json           # product metadata (id, name, vendor, type, urls, logo)
-    stories.json             # the category's story taxonomy (incl. the 8 canonical agentic stories)
+    stories.json             # the category's story taxonomy (incl. the 28 canonical stories)
     evidence/
       {product}.json          # evidence items for one product: id, tier, url, excerpt, fetchedAt
     verdicts.json            # one verdict per (productId, storyId) cell
