@@ -42,7 +42,7 @@ export default function LeaderboardTable({ data }: { data: CategoryData }) {
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <div className="flex flex-wrap items-center gap-3">
-                <AiEraBadge value={entry.aiEra} />
+                <AiEraBadge value={entry.aiEra} components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
                 <AgentAccessGlyphs data={data} productId={product.id} />
               </div>
               <div className="flex items-center gap-2">

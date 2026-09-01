@@ -32,7 +32,7 @@ export default function AgenticnessStrip({ data }: { data: CategoryData }) {
             >
               <ProductLogo product={product} size={32} />
               <p className="max-w-[7rem] truncate text-xs font-medium">{product.name}</p>
-              <AiEraBadge value={entry.aiEra} size="sm" />
+              <AiEraBadge value={entry.aiEra} size="sm" components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
               <AgentAccessGlyphs data={data} productId={product.id} />
             </Link>
           )
