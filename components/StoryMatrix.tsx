@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ProductLogo from '@/components/ProductLogo'
+import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { evidenceById, groupInOrder, verdictFor, type CategoryData } from '@/lib/data'
@@ -36,7 +37,10 @@ export default function StoryMatrix({ data }: { data: CategoryData }) {
         const byGroup = groupInOrder(storiesInTheme, (s) => s.group)
         return (
           <div key={theme}>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-amber-400">{theme}</h3>
+            <h3 className="mb-4 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-amber-400">
+              <ThemeIcon theme={theme} className="text-amber-400" />
+              {theme}
+            </h3>
             <div className="space-y-6">
               {byGroup.map(([group, stories]) => (
                 <StoryMatrixGroup key={group} data={data} theme={theme} group={group} stories={stories} evidence={evidence} />

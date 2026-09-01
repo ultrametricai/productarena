@@ -3,6 +3,7 @@ import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import { BusinessModelChip } from '@/components/BusinessModel'
+import OssPill from '@/components/OssPill'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
@@ -27,9 +28,21 @@ export default function LeaderboardTable({ data }: { data: CategoryData }) {
               <span className="w-8 font-mono text-2xl tabular-nums text-zinc-600">{i + 1}</span>
               <ProductLogo product={product} size={40} />
               <div className="min-w-0">
-                <Link href={`/arena/${categoryId}/product/${product.id}`} className="text-lg font-semibold hover:text-amber-300">
-                  {product.name}
-                </Link>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <Link href={`/arena/${categoryId}/product/${product.id}`} className="text-lg font-semibold hover:text-amber-300">
+                    {product.name}
+                  </Link>
+                  <a
+                    href={product.urls.site}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={`Visit ${product.name}`}
+                    className="text-xs text-zinc-600 hover:text-amber-300"
+                  >
+                    site ↗
+                  </a>
+                  {product.type === 'oss' && <OssPill />}
+                </div>
                 <p className="truncate text-sm text-zinc-500">{product.vendor}</p>
                 <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
                   <ProductLinkChips product={product} variant="letter" />

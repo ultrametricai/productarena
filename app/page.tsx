@@ -1,10 +1,18 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import AgenticBadge from '@/components/AgenticBadge'
 import AgenticIndexTable from '@/components/AgenticIndexTable'
 import AiEraBadge from '@/components/AiEraBadge'
+import AiNativeIndexTable from '@/components/AiNativeIndexTable'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { loadAll } from '@/lib/data'
+
+export const metadata: Metadata = {
+  title: 'INIT — which products are most AI-friendly?',
+  description:
+    "Two evidence-graded rankings across every arena: most agentic (best for AI agents — sorted by agent-ready) and most AI-native (best for humans working with AI — sorted by agentic-app). No opinion, every score traces back to cited evidence.",
+}
 
 export default function Home() {
   const categories = loadAll()
@@ -13,14 +21,33 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <section>
-        <p className="text-sm uppercase tracking-widest text-amber-400">AIness</p>
+        <p className="text-sm uppercase tracking-widest text-amber-400">INIT</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight">The Agentic Index</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          All {totalProducts} products across {categories.length} arenas, ranked by how friendly they are to AI
-          agents — identical canonical stories, identical judge, identical evidence rules.
+          All {totalProducts} products across {categories.length} arenas, ranked two ways: how friendly they are to
+          AI agents, and how AI-native they are for the humans using them — identical canonical stories, identical
+          judge, identical evidence rules.
         </p>
-        <div className="mt-5">
+      </section>
+
+      <section id="most-agentic">
+        <h2 className="text-xl font-semibold tracking-tight">Most agentic — best for AI agents</h2>
+        <p className="mt-1 text-sm text-zinc-500">
+          Ranked by AGENT-READY: can an agent reach the product at all (API/CLI/MCP/webhooks/SDKs/docs)?
+        </p>
+        <div className="mt-4">
           <AgenticIndexTable categories={categories} />
+        </div>
+      </section>
+
+      <section id="most-ai-native">
+        <h2 className="text-xl font-semibold tracking-tight">Most AI-native — best for humans working with AI</h2>
+        <p className="mt-1 text-sm text-zinc-500">
+          Ranked by AGENTIC: does the product act agentically on its own behalf (built-in assistant, autonomous
+          automation, natural-language commands)?
+        </p>
+        <div className="mt-4">
+          <AiNativeIndexTable categories={categories} />
         </div>
       </section>
 
@@ -57,7 +84,7 @@ export default function Home() {
                 <p className="mt-1 text-sm text-zinc-500">{data.category.description}</p>
                 <div className="mt-4 flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-zinc-600">AI-Era leader</p>
+                    <p className="text-xs uppercase tracking-widest text-zinc-600">INIT Score leader</p>
                     <p className="font-medium">{leader.name}</p>
                   </div>
                   <AiEraBadge value={leaderEntry.aiEra} />

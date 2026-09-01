@@ -2,6 +2,8 @@ import Link from 'next/link'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
+import AiModeBadge from '@/components/AiModeBadge'
+import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
 import type { CategoryData } from '@/lib/data'
 
@@ -64,7 +66,7 @@ export default function AgenticIndexTable({ categories }: { categories: Category
             <th className="px-3 py-2 font-normal">Agent-ready</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">API quality</th>
             <th className="px-3 py-2 font-normal">Access</th>
-            <th className="px-3 py-2 font-normal">AI-Era</th>
+            <th className="px-3 py-2 font-normal">INIT</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">
@@ -79,6 +81,14 @@ export default function AgenticIndexTable({ categories }: { categories: Category
                   <ProductLogo product={row.product} size={24} />
                   <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                 </Link>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                  {row.product.type === 'oss' && <OssPill />}
+                  <AiModeBadge
+                    data={row.data}
+                    productId={row.product.id}
+                    href={`/arena/${row.data.category.id}/product/${row.product.id}#story-agentic-builtin-assistant`}
+                  />
+                </div>
               </td>
               <td className="px-3 py-2">
                 <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-amber-300">
