@@ -218,6 +218,15 @@ What we did about it:
   `partial`/`none`. The verdict's rationale in `data/ai-coding/verdicts.json` documents the
   downgrade and the shared-vendor conflict explicitly. This changed Claude Code's overall
   score from 35.5 to 35.2 (it remained the category leader).
+- **A second adversarial review pass, run for v2.4, audited the new api-quality/agent-access
+  cells** and applied two cross-vendor corrections, stated plainly in both directions:
+  one **against** Claude Code's favor (`agentic-public-api` downgraded `full`→`partial`,
+  quality 8→5 — the Agent SDK/CLI don't clear the same "documented public REST/HTTP API" bar
+  applied to competitors), and one **in** Claude Code's favor, applied to a competitor
+  (GitHub Copilot's `agentic-mcp-server` downgraded `partial`→`none`, quality 5→0 — its cited
+  evidence showed MCP *client* administration, not an official MCP server offered by the
+  product). Both corrections are recorded in `data/ai-coding/verdicts.json` with rationale
+  suffixes citing the review.
 - **The audit's calibration samples also found the judge was *harsher* on claude-code in
   several cells**, not just lenient. The clearest example: on
   `natural-language-feature-implementation`, Claude Code's own marketing describing its core

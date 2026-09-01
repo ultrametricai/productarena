@@ -27,6 +27,18 @@ describe('derive stage', () => {
     const rankings = RankingsSchema.parse(raw)
     expect(rankings.battles).toHaveLength(6)
     expect(rankings.leaderboard).toHaveLength(4)
-    expect(rankings.leaderboard[0].score).toBeGreaterThanOrEqual(rankings.leaderboard[3].score)
+    // buildRankings' actual sort key is aiEra desc (nulls last), tie-broken by score desc —
+    // not raw score — since v2.4's AI-Era Index. Assert every adjacent pair respects that.
+    for (let i = 0; i < rankings.leaderboard.length - 1; i++) {
+      const a = rankings.leaderboard[i]
+      const b = rankings.leaderboard[i + 1]
+      if (a.aiEra === null && b.aiEra === null) {
+        expect(a.score).toBeGreaterThanOrEqual(b.score)
+      } else if (a.aiEra === null) {
+        throw new Error(`entry ${i} has null aiEra but entry ${i + 1} does not — nulls must sort last`)
+      } else if (b.aiEra !== null) {
+        expect(a.aiEra === b.aiEra ? a.score >= b.score : a.aiEra > b.aiEra).toBe(true)
+      }
+    }
   })
 })
