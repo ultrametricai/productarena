@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import AinessMark from "@/components/AinessMark";
 import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
+import { REPO } from "@/lib/site";
 import { buildSearchIndex } from "@/lib/search-index";
-
-const REPO = "ultrametricai/productarena";
 
 // Short labels used inside the Arenas dropdown alongside full names.
 const NAV_LABELS: Record<string, string> = {
@@ -65,8 +65,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Product Arena",
-  description: "User-story combat for software. Evidence in, rankings out.",
+  title: "AIness",
+  description:
+    "AIness — evidence-tested rankings of how AI-ready every product is. Evidence in, rankings out.",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -82,8 +83,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 antialiased">
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-5 py-4">
-            <Link href="/" className="shrink-0 text-lg font-bold tracking-tight">
-              Product<span className="text-amber-400">Arena</span>
+            <Link href="/" className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight">
+              <AinessMark size={22} />
+              <span>
+                <span className="text-amber-400">AI</span>ness
+              </span>
             </Link>
             <nav className="flex items-center gap-3 text-sm text-zinc-400">
               <ArenaMenu
@@ -125,7 +129,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="mx-auto max-w-4xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-4xl items-center justify-between px-5 text-xs text-zinc-600">
-            <span>Product Arena · MIT licensed</span>
+            <span>AIness · MIT licensed</span>
             <Link href="/llms.txt" className="hover:text-amber-300">
               For agents: /llms.txt
             </Link>
