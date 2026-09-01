@@ -114,7 +114,10 @@ export default async function ProductPage({
           <ProductLinkChips product={product} variant="label" />
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-4">
-          <AiEraBadge value={entry.aiEra} components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-600">INIT Score</span>
+            <AiEraBadge value={entry.aiEra} components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
+          </div>
           <AgentAccessGlyphs data={data} productId={id} />
         </div>
         <div className="mt-2 flex max-w-md items-center gap-2">

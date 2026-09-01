@@ -14,7 +14,7 @@ const PALETTES = {
 export type AgenticBadgeKind = 'agent-ready' | 'agentic-app'
 
 const LABELS: Record<AgenticBadgeKind, string> = {
-  'agent-ready': 'AGENT-READY',
+  'agent-ready': 'AGENTREADYNESS',
   'agentic-app': 'AGENTIC',
 }
 

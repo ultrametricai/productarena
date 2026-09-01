@@ -28,7 +28,10 @@ export default function StacksSection({ data }: { data: CategoryData }) {
                 <h3 className="font-semibold">{stack.name}</h3>
               </div>
               <div className="mt-4 space-y-2">
-                <AiEraBadge value={coverage.aiEra} size="sm" />
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-600">INIT Score</span>
+                  <AiEraBadge value={coverage.aiEra} size="sm" />
+                </div>
                 <ScoreBar score={coverage.score} />
                 <div className="flex items-center justify-between">
                   <div className="flex flex-wrap gap-2">

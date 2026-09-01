@@ -14,7 +14,7 @@ describe('LeaderboardTable', () => {
     }
     const first = data.rankings.leaderboard[0]
     expect(screen.getByText(first.score.toFixed(1))).toBeDefined()
-    expect(screen.getAllByText(/AGENT-READY/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/AGENTREADYNESS/).length).toBeGreaterThan(0)
     expect(screen.getAllByText(/AGENTIC/).length).toBeGreaterThan(0)
   })
 })
