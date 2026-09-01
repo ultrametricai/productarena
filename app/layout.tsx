@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
 import { buildSearchIndex } from "@/lib/search-index";
@@ -85,28 +86,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               Product<span className="text-amber-400">Arena</span>
             </Link>
             <nav className="flex items-center gap-3 text-sm text-zinc-400">
-              <details className="group relative">
-                <summary className="flex cursor-pointer list-none items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-400/60 hover:text-amber-300 [&::-webkit-details-marker]:hidden">
-                  Arenas
-                  <span aria-hidden className="text-zinc-500 transition-transform group-open:rotate-180">
-                    ▾
-                  </span>
-                </summary>
-                <div className="absolute right-0 z-50 mt-2 w-64 rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 shadow-xl shadow-black/40">
-                  {categories.map((c) => (
-                    <Link
-                      key={c.id}
-                      href={`/arena/${c.id}`}
-                      className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-amber-300"
-                    >
-                      <span className="text-sm text-zinc-200">{c.name}</span>
-                      <span className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">
-                        {NAV_LABELS[c.id] ?? ""}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </details>
+              <ArenaMenu
+                items={categories.map((c) => ({
+                  id: c.id,
+                  name: c.name,
+                  label: NAV_LABELS[c.id] ?? "",
+                }))}
+              />
               <a
                 href={`https://github.com/${REPO}`}
                 target="_blank"
