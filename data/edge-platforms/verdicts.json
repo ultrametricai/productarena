@@ -185,6 +185,59 @@
   },
   {
     "productId": "cloudflare",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "There is evidence of a machine-readable API reference (openapi.json) and docs discoverable via llms.txt, suggesting some API-reference tooling, but no evidence of an interactive, runnable-example explorer akin to a live API playground.",
+    "evidenceIds": [
+      "cloudflare-probe-2",
+      "cloudflare-probe-1",
+      "cloudflare-docs-14"
+    ]
+  },
+  {
+    "productId": "cloudflare",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A direct probe confirms Cloudflare publishes a machine-readable OpenAPI spec at a stable URL (openapi.json returning HTTP 200 with an 'openapi' key), plus an llms.txt for AI-native consumption of docs.",
+    "evidenceIds": [
+      "cloudflare-probe-2",
+      "cloudflare-probe-1"
+    ]
+  },
+  {
+    "productId": "cloudflare",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cloudflare Workers provides a local dev simulator (Miniflare/workerd via Wrangler) for testing Workers without deploying to production, plus rollback and version tooling, but the evidence pack lacks explicit sandbox/staging environment isolation for data (e.g., separate D1/KV instances) and community notes highlight vendor lock-in and DX friction rather than confirming a clean sandbox workflow.",
+    "evidenceIds": [
+      "cloudflare-gh-1",
+      "cloudflare-gh-3",
+      "cloudflare-docs-11",
+      "cloudflare-docs-23",
+      "cloudflare-comm-10"
+    ]
+  },
+  {
+    "productId": "cloudflare",
+    "storyId": "api-versioning-policy",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Cloudflare provides an OpenAPI spec (versioned API schema) and Worker version rollback capability, indicating some API versioning infrastructure, but the evidence pack contains no documentation of an explicit deprecation policy or lifecycle guarantees for its APIs.",
+    "evidenceIds": [
+      "cloudflare-probe-2",
+      "cloudflare-docs-23",
+      "cloudflare-docs-14"
+    ]
+  },
+  {
+    "productId": "cloudflare",
     "storyId": "automatic-tls-certs",
     "verdict": "full",
     "quality": 7,
@@ -1087,6 +1140,58 @@
   },
   {
     "productId": "fly-io",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of an interactive API reference or runnable examples; probes explicitly show no OpenAPI/swagger spec found (404s across all candidate paths) and no docs.md, only generic docs pages and CLI guides.",
+    "evidenceIds": [
+      "fly-io-probe-3",
+      "fly-io-probe-2",
+      "fly-io-docs-2"
+    ]
+  },
+  {
+    "productId": "fly-io",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Direct probes for OpenAPI/swagger spec files all returned 404, and no documentation evidence points to a downloadable machine-readable API spec; only an llms.txt for docs and CLI docs exist.",
+    "evidenceIds": [
+      "fly-io-probe-3",
+      "fly-io-probe-2",
+      "fly-io-probe-1"
+    ]
+  },
+  {
+    "productId": "fly-io",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Fly.io's Sprites/Machines offer hardware-isolated, disposable VMs with 'no two users ever share state,' which can be used to spin up isolated sandbox environments separate from production, but there's no explicit staging/production-separation feature described. Community reports specifically cite flakiness when using Fly for staging environments, undermining confidence in this use case.",
+    "evidenceIds": [
+      "fly-io-docs-7",
+      "fly-io-docs-4",
+      "fly-io-docs-6",
+      "fly-io-comm-5"
+    ]
+  },
+  {
+    "productId": "fly-io",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions API versioning or a deprecation policy; OpenAPI spec probes returned 404s and docs focus on CLI/product features, not API lifecycle guarantees.",
+    "evidenceIds": [
+      "fly-io-probe-3",
+      "fly-io-probe-2"
+    ]
+  },
+  {
+    "productId": "fly-io",
     "storyId": "automatic-tls-certs",
     "verdict": "none",
     "quality": 0,
@@ -1929,6 +2034,56 @@
     "rationale": "Netlify docs mention 'Connect to AI models through AI Gateway,' indicating a single gateway endpoint exists, but there is no evidence detailing the number of models supported, unified API format, or hands-on validation of 'hundreds of models' claim.",
     "evidenceIds": [
       "netlify-docs-7"
+    ]
+  },
+  {
+    "productId": "netlify",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Netlify has a REST API and CLI docs, but explicit probes for OpenAPI/Swagger specs returned 404s, and no evidence of an interactive, runnable API reference or explorer exists in the pack.",
+    "evidenceIds": [
+      "netlify-docs-14",
+      "netlify-probe-2"
+    ]
+  },
+  {
+    "productId": "netlify",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Netlify documents a REST API for programmatic access, but direct probes for an OpenAPI/Swagger spec at standard locations (openapi.json, swagger.json, etc.) all returned 404, and no evidence pack item shows a downloadable machine-readable spec being offered.",
+    "evidenceIds": [
+      "netlify-docs-14",
+      "netlify-probe-2"
+    ]
+  },
+  {
+    "productId": "netlify",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Netlify provides preview deploy URLs, branch deploys, and private-until-published projects that isolate testing from production, and Netlify Database claims to let you 'safely iterate' on a managed Postgres instance separate from production. However, there's no explicit sandbox/staging data-isolation feature or documentation describing a dedicated non-production data environment for AI-native testing workflows.",
+    "evidenceIds": [
+      "netlify-docs-1",
+      "netlify-docs-4",
+      "netlify-docs-13",
+      "netlify-docs-19"
+    ]
+  },
+  {
+    "productId": "netlify",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Netlify documents a REST API and CLI, but there is no evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probes returned 404s, indicating no discoverable formal API contract/versioning docs.",
+    "evidenceIds": [
+      "netlify-docs-14",
+      "netlify-probe-2"
     ]
   },
   {
@@ -2790,6 +2945,56 @@
   },
   {
     "productId": "railway",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows no interactive API reference with runnable examples; a direct probe for OpenAPI/Swagger docs returned 404s on all candidate paths, and docs only mention CLI, MCP server, and Agent Skills, not an interactive API explorer.",
+    "evidenceIds": [
+      "railway-probe-2",
+      "railway-docs-16",
+      "railway-probe-3"
+    ]
+  },
+  {
+    "productId": "railway",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "A direct probe for OpenAPI/swagger spec files at common paths returned 404s, and no evidence pack item shows a downloadable machine-readable API spec; only llms.txt and CLI docs are found.",
+    "evidenceIds": [
+      "railway-probe-2",
+      "railway-probe-1",
+      "railway-probe-3"
+    ]
+  },
+  {
+    "productId": "railway",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Railway supports unlimited environments and per-PR preview deployments, enabling isolated sandbox testing separate from production, but there's no explicit documentation on data isolation guarantees or AI-specific sandboxing workflows, and community reports raise stability/trust concerns.",
+    "evidenceIds": [
+      "railway-docs-11",
+      "railway-docs-12",
+      "railway-comm-5"
+    ]
+  },
+  {
+    "productId": "railway",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack items mention API versioning or a deprecation policy; probes even show openapi.json spec endpoints returning 404, and no docs reference version numbers or deprecation timelines for their GraphQL/public API.",
+    "evidenceIds": [
+      "railway-probe-2"
+    ]
+  },
+  {
+    "productId": "railway",
     "storyId": "automatic-tls-certs",
     "verdict": "partial",
     "quality": 4,
@@ -3618,6 +3823,54 @@
     "quality": 0,
     "confidence": "high",
     "rationale": "No evidence indicates Render offers a unified AI model gateway or access to hundreds of AI models; the evidence pack only covers deployment, hosting, databases, and infrastructure features.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "render",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Render publishes a REST API and an OpenAPI spec (render-docs-15, render-probe-3), which could support an interactive reference, but there is no evidence of an actual interactive/try-it-out console with runnable examples.",
+    "evidenceIds": [
+      "render-docs-15",
+      "render-probe-3",
+      "render-probe-4"
+    ]
+  },
+  {
+    "productId": "render",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Render exposes a machine-readable OpenAPI spec directly at a public endpoint (openapi.json, HTTP 200 with 'openapi' key), and also documents a REST API and CLI, confirming programmatic/agentic access to its API surface.",
+    "evidenceIds": [
+      "render-probe-3",
+      "render-docs-15",
+      "render-docs-14"
+    ]
+  },
+  {
+    "productId": "render",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Render supports ephemeral preview environments for entire app architectures and can isolate non-production from production services, which enables sandbox-style testing without touching production data. However, this is infra-level environment isolation rather than an AI-native/agent-specific sandbox testing feature, and no evidence describes AI-specific sandbox tooling or data-safety guarantees.",
+    "evidenceIds": [
+      "render-docs-8",
+      "render-docs-18",
+      "render-docs-9"
+    ]
+  },
+  {
+    "productId": "render",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence shows Render has a REST API, an OpenAPI spec, and a CLI, but nothing in the pack references API versioning or a documented deprecation policy for its APIs.",
     "evidenceIds": []
   },
   {
@@ -4459,6 +4712,57 @@
     "rationale": "Vercel's docs explicitly describe an AI Gateway feature that provides access to hundreds of models through a single unified endpoint with budgets, fallbacks, and monitoring, directly matching the story. No community evidence disputes this specific feature, though evidence is vendor-sourced only.",
     "evidenceIds": [
       "vercel-docs-2"
+    ]
+  },
+  {
+    "productId": "vercel",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Vercel exposes a machine-readable OpenAPI spec and docs, showing an API reference exists, but there is no evidence of an interactive, runnable-example explorer (e.g., a try-it-out console) for AI-native users.",
+    "evidenceIds": [
+      "vercel-probe-3",
+      "vercel-probe-2",
+      "vercel-probe-1"
+    ]
+  },
+  {
+    "productId": "vercel",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A probe confirms Vercel publishes a machine-readable OpenAPI spec at vercel.com/openapi.json returning HTTP 200 with an 'openapi' key, and Vercel also exposes llms.txt and docs.md for AI-friendly consumption.",
+    "evidenceIds": [
+      "vercel-probe-3",
+      "vercel-probe-1",
+      "vercel-probe-2"
+    ]
+  },
+  {
+    "productId": "vercel",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Vercel's preview environments and isolated Sandbox execution (vercel-docs-1, vercel-docs-3, vercel-docs-12) let developers and agents test changes and run code without deploying to production, which aligns with the sandboxing story. However, there's no explicit evidence that preview environments guarantee isolation from production data (e.g., databases), and community notes (vercel-comm-11) suggest secure DB connectivity requires enterprise plans, leaving data isolation only partially addressed.",
+    "evidenceIds": [
+      "vercel-docs-1",
+      "vercel-docs-3",
+      "vercel-docs-12",
+      "vercel-comm-11"
+    ]
+  },
+  {
+    "productId": "vercel",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence confirms an OpenAPI spec exists, but there is no mention anywhere in the pack of API versioning practices or a documented deprecation policy for Vercel's APIs.",
+    "evidenceIds": [
+      "vercel-probe-3"
     ]
   },
   {
