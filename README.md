@@ -1,6 +1,6 @@
 # Product Arena
 
-Product Arena is an evidence-based comparison site. For each of 7 product arenas we crawl
+Product Arena is an evidence-based comparison site. For each of 10 product arenas we crawl
 vendor docs, GitHub, and community sources, extract per-product evidence, and have an LLM
 judge every product against a shared set of user stories. The result is a leaderboard, a
 head-to-head battle log, and a per-product story matrix — every score traces back to cited
@@ -8,7 +8,7 @@ evidence, not opinion.
 
 Live site: https://productarena.vercel.app
 
-As of the last full pipeline run: **7 arenas, 36 products, 1,844 judged verdicts.**
+As of the last full pipeline run: **10 arenas, 52 products, 3,751 judged verdicts.**
 
 ## The arenas
 
