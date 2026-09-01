@@ -1,15 +1,15 @@
-# AIness
+# INIT (init.dog)
 
 *(formerly Product Arena)*
 
-AIness is an evidence-based comparison site: evidence in, rankings out. For each of 10 product
+INIT is an evidence-based comparison site: evidence in, rankings out. For each of 10 product
 arenas we crawl vendor docs, GitHub, and community sources, extract per-product evidence, and
 have an LLM judge every product against a shared set of user stories. The result is a
 leaderboard, a head-to-head battle log, a per-product story matrix, and — across every arena —
 a global Agentic Index ranking how AI-ready every product is. Every score traces back to cited
 evidence, not opinion.
 
-Live site: https://ainess.vercel.app
+Live site: https://init.dog
 
 As of the last full pipeline run: **10 arenas, 53 products, 3,828 judged verdicts.**
 
@@ -139,7 +139,7 @@ Two sibling group-scoped indexes live under the same `agenticness` theme: `agent
 ("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
 `api-quality` (see below).
 
-### 5. The AI-Era Index
+### 5. The INIT Score (formerly the AI-Era Index)
 
 v2.4 adds a sixth canonical group, **API quality** (theme `agenticness`, group `api-quality`),
 alongside `agent-access`. Where `agent-access` asks "can an agent reach the product at all,"
@@ -152,7 +152,9 @@ alongside `agent-access`. Where `agent-access` asks "can an agent reach the prod
 | `api-versioning-policy` | I can rely on versioned APIs with a documented deprecation policy | 2 |
 | `api-sandbox` | I can test against a sandbox environment without touching production data | 1 |
 
-On top of that, every leaderboard entry now carries an **AI-Era Index** (`aiEra`) — a single
+On top of that, every leaderboard entry now carries an **INIT Score** (`aiEra` internally,
+displayed on-site as "INIT {n}/100" — this section used to be called the "AI-Era Index," same
+formula, new name) — a single
 number meant to answer "how ready is this product for a world where agents, not just humans,
 are the primary users?" It's a weighted blend of five existing leaderboard components:
 
@@ -222,7 +224,7 @@ as an anchor to reduce this variance at the source.
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
 (`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
-product, Claude Code, which leads that arena's **AI-Era Index** (29.5) as of v2.4 — though on
+product, Claude Code, which leads that arena's **INIT Score** (29.5) as of v2.4 — though on
 raw coverage score it now sits second (34.6) behind GitHub Copilot (35.0), a lead that flipped
 when the v2.4 `api-quality` cells were added (Claude Code's own coverage score was 35.2 as of
 the last full audit below, before those cells existed). This is a real conflict of interest and
@@ -337,9 +339,9 @@ agents" below.
 
 ## For AI agents
 
-AIness is built to be read by agents, not just browsed by humans:
+INIT is built to be read by agents, not just browsed by humans:
 
-- **[/llms.txt](https://ainess.vercel.app/llms.txt)** — the top-level index per the
+- **[/llms.txt](https://init.dog/llms.txt)** — the top-level index per the
   [llms.txt convention](https://llmstxt.org): site purpose, methodology one-liner, and links to
   every arena's markdown endpoint, the data API, and `/openapi.json`.
 - **Markdown endpoints** — every arena has a full-content markdown rendering at
@@ -351,11 +353,11 @@ AIness is built to be read by agents, not just browsed by humans:
   `/data/{category}/{products,stories,verdicts,rankings}.json`,
   `/data/{category}/evidence/{productId}.json`. `public/data/` is a build artifact
   (gitignored) — it doesn't exist until `pnpm run build` or `pnpm run dev` regenerates it.
-- **[/openapi.json](https://ainess.vercel.app/openapi.json)** — an OpenAPI 3.1 document
+- **[/openapi.json](https://init.dog/openapi.json)** — an OpenAPI 3.1 document
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
-- **[/methodology](https://ainess.vercel.app/methodology)** — a tight, on-site summary of
-  the methodology below (evidence tiers, judging, scoring, AI-Era weights, story provenance,
+- **[/methodology](https://init.dog/methodology)** — a tight, on-site summary of
+  the methodology below (evidence tiers, judging, scoring, INIT Score weights, story provenance,
   re-judge stability, bias disclosure), linked from the header next to Arenas and from
   `/llms.txt`.
 - **MCP server** (`mcp/`) — a stdio [MCP](https://modelcontextprotocol.io) server exposing this
@@ -382,4 +384,4 @@ by `pnpm pipeline derive --category <category>` — before any verdict actually 
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) © 2026 Ultrametric Inc

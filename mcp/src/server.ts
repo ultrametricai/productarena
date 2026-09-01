@@ -1,11 +1,11 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { createClient, type AinessClient } from './client.js'
+import { createClient, type InitClient } from './client.js'
 import {
   getBattle,
   getProduct,
   getStoryVerdicts,
-  AinessError,
+  InitError,
   getRankings as fetchRankings,
   listArenas as fetchArenas,
   searchProducts as fetchSearchResults,
@@ -20,23 +20,23 @@ function errorResult(err: unknown) {
   return { content: [{ type: 'text' as const, text: `Error: ${message}` }], isError: true }
 }
 
-// Wraps a tool implementation so AinessError (and any other thrown error) comes back as
+// Wraps a tool implementation so InitError (and any other thrown error) comes back as
 // a normal tool-error result instead of crashing the MCP connection.
 function wrap<T>(fn: () => Promise<T>) {
   return fn().then(jsonResult, (err) => {
-    if (err instanceof AinessError || err instanceof Error) return errorResult(err)
+    if (err instanceof InitError || err instanceof Error) return errorResult(err)
     return errorResult(new Error(String(err)))
   })
 }
 
-export function createServer(client: AinessClient = createClient()): McpServer {
-  const server = new McpServer({ name: 'ainess-mcp', version: '0.1.0' })
+export function createServer(client: InitClient = createClient()): McpServer {
+  const server = new McpServer({ name: 'init-dog-mcp', version: '0.1.0' })
 
   server.registerTool(
     'list_arenas',
     {
       title: 'List arenas',
-      description: 'List every AIness category (id, name, description, personas, themes).',
+      description: 'List every INIT category (id, name, description, personas, themes).',
       inputSchema: {},
     },
     async () => wrap(() => fetchArenas(client)),
@@ -46,7 +46,7 @@ export function createServer(client: AinessClient = createClient()): McpServer {
     'get_rankings',
     {
       title: 'Get rankings',
-      description: 'Get the leaderboard (scores, AI-Era Index, per-theme scores) and head-to-head battles for one arena category.',
+      description: 'Get the leaderboard (scores, INIT Score, per-theme scores) and head-to-head battles for one arena category.',
       inputSchema: { category: z.string().describe('Category id, e.g. "desktop-os" — see list_arenas.') },
     },
     async ({ category }) => wrap(() => fetchRankings(client, category)),

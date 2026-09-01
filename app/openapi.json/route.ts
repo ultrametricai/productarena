@@ -122,7 +122,7 @@ const SCHEMAS = {
       agentReady: { type: 'number', minimum: 0, maximum: 100, nullable: true },
       agenticApp: { type: 'number', minimum: 0, maximum: 100, nullable: true },
       apiQuality: { type: 'number', minimum: 0, maximum: 100, nullable: true },
-      aiEra: { type: 'number', minimum: 0, maximum: 100, nullable: true, description: 'AI-Era Index — see /methodology.' },
+      aiEra: { type: 'number', minimum: 0, maximum: 100, nullable: true, description: 'INIT Score (formerly AI-Era Index) — see /methodology.' },
       applicable: { type: 'integer', minimum: 0 },
       total: { type: 'integer', minimum: 0 },
       themeScores: { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 100, nullable: true } },
@@ -173,10 +173,10 @@ export async function GET() {
   const spec = {
     openapi: '3.1.0',
     info: {
-      title: 'AIness Data API',
+      title: 'INIT Data API',
       version: '1.0.0',
       description:
-        'Read-only, statically-served JSON data behind ainess.vercel.app — the same files the site itself renders from. ' +
+        'Read-only, statically-served JSON data behind init.dog — the same files the site itself renders from. ' +
         'No auth, no rate limit beyond normal CDN caching. See /llms.txt for a full agent-facing index and /methodology for ' +
         'how the underlying scores and verdicts are produced.',
       contact: { url: `${SITE}/llms.txt` },

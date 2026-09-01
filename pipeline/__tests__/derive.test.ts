@@ -34,7 +34,7 @@ describe('derive stage', () => {
     expect(rankings.battles).toHaveLength(expectedBattles)
     expect(rankings.leaderboard).toHaveLength(productCount)
     // buildRankings' actual sort key is aiEra desc (nulls last), tie-broken by score desc —
-    // not raw score — since v2.4's AI-Era Index. Assert every adjacent pair respects that.
+    // not raw score — since v2.4's INIT Score. Assert every adjacent pair respects that.
     for (let i = 0; i < rankings.leaderboard.length - 1; i++) {
       const a = rankings.leaderboard[i]
       const b = rankings.leaderboard[i + 1]

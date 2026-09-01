@@ -15,11 +15,11 @@ export async function GET() {
     .map((c) => `- [${c.name}](${SITE}/arena/${c.id}/llms.md): full leaderboard, business models, and story-verdict matrix for "${c.id}" as markdown.`)
     .join('\n')
 
-  const body = `# AIness
+  const body = `# INIT (init.dog)
 
 > Evidence-graded, head-to-head rankings of software products against a shared taxonomy of user stories. Every score traces back to cited evidence (vendor docs, GitHub, community sources, or a hands-on probe) — never opinion. See /methodology for the full scoring writeup.
 
-AIness crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, an AI-Era Index, and a head-to-head battle log per arena — all reproducible from the cited evidence.
+INIT crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, an INIT Score, and a head-to-head battle log per arena — all reproducible from the cited evidence.
 
 ## Arenas (markdown, one per category)
 
@@ -37,7 +37,7 @@ Every product also has an \`llms.md\` deep-dive with all of its verdicts, ration
 
 ## Reference
 
-- [Methodology](${SITE}/methodology): evidence tiers, judging rules, scoring formula, AI-Era weights, story provenance, re-judge stability policy, bias disclosure.
+- [Methodology](${SITE}/methodology): evidence tiers, judging rules, scoring formula, INIT Score weights, story provenance, re-judge stability policy, bias disclosure.
 - [README](https://github.com/${REPO}/blob/main/README.md): full methodology writeup and data layout (source of truth; /methodology is a tighter summary of this).
 - [CONTRIBUTING](https://github.com/${REPO}/blob/main/CONTRIBUTING.md): how to contest a verdict or add evidence.
 - [MCP server](https://github.com/${REPO}/blob/main/mcp/README.md): a stdio MCP server exposing this same data as tools (list_arenas, get_rankings, get_product, get_battle, search_products, get_story_verdicts).
