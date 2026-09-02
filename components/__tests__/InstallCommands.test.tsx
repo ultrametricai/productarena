@@ -68,6 +68,6 @@ describe('InstallCommands', () => {
     fireEvent.click(screen.getByRole('button', { name: /copy npm command/i }))
 
     expect(writeText).toHaveBeenCalledWith('npm i react react-dom')
-    expect(await screen.findByText('✓ Copied')).toBeDefined()
+    expect(await screen.findByTitle('Copied')).toBeDefined()
   })
 })
