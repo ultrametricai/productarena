@@ -99,7 +99,7 @@ export default function Home() {
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-zinc-400">Most agentic</p>
+                    <p className="text-xs uppercase tracking-widest text-zinc-400">Most AI-native</p>
                     <p className="font-medium">{agenticAppLeader.name}</p>
                   </div>
                   <AgenticBadge kind="agentic-app" value={agenticAppLeaderEntry.agenticApp} size="sm" />
