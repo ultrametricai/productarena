@@ -90,6 +90,15 @@ describe('runPopularity (integration, fake fetchers, isolated data dir)', () => 
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-popularity-'))
     const repoRoot = path.resolve(__dirname, '../..')
     fs.cpSync(path.join(repoRoot, 'data'), tmpDir, { recursive: true })
+    // Strip any already-committed popularity.json/-history.jsonl from the fixture copy — the
+    // real data/ has these once `pnpm pipeline popularity` has been run for real, and a
+    // same-day fetchedAt would trip the 7-day cache-skip logic these tests are trying to
+    // exercise from a clean slate.
+    for (const catDir of fs.readdirSync(tmpDir, { withFileTypes: true })) {
+      if (!catDir.isDirectory()) continue
+      fs.rmSync(path.join(tmpDir, catDir.name, 'popularity.json'), { force: true })
+      fs.rmSync(path.join(tmpDir, catDir.name, 'popularity-history.jsonl'), { force: true })
+    }
     process.env.PA_DATA_DIR = tmpDir
     vi.resetModules()
   })
