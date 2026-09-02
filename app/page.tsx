@@ -8,7 +8,6 @@ import InitIndexTable from '@/components/InitIndexTable'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { battleSlug, leadingBattle, loadAll } from '@/lib/data'
-import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'INIT — which software is most AI-friendly?',
@@ -39,17 +38,7 @@ export default function Home() {
       </section>
 
       <section>
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-xl font-semibold tracking-tight">Arenas</h2>
-          <a
-            href={`https://github.com/${REPO}/issues/new?template=request-a-product.md`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-amber-400 underline decoration-amber-400/40 hover:text-amber-300"
-          >
-            Submit a product →
-          </a>
-        </div>
+        <h2 className="text-xl font-semibold tracking-tight">Arenas</h2>
         <p className="mt-1 text-sm text-zinc-500">Pick an arena to see the full head-to-head leaderboard.</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {categories.map((data) => {
