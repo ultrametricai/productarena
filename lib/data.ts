@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {
-  type Category, CategorySchema, EvidenceSchema,
+  type Category, CategorySchema, type Claim, ClaimSchema, EvidenceSchema,
   PopularityMapSchema, ProductSchema, RankingsSchema,
   StackSchema, StorySchema, VerdictSchema,
 } from './schemas'
@@ -100,7 +100,27 @@ export function loadCategory(categoryId: string, dir: string = DEFAULT_DIR()): C
     if (!productIds.has(pid)) throw new Error(`popularity references unknown product ${pid}`)
   }
 
-  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity }
+  // Optional, same contract as popularity above: not every category has been through the claims
+  // stage yet, and even when it has, an individual product's claims file may be missing — both
+  // resolve to that productId being absent from the map (display code must treat a miss as "no
+  // claims recorded", i.e. `[]`, not as an error).
+  const claimsDirPath = path.join(catDir, 'claims')
+  const claims: Record<string, Claim[]> = {}
+  if (fs.existsSync(claimsDirPath)) {
+    for (const p of products) {
+      const claimsFile = path.join(claimsDirPath, `${p.id}.json`)
+      if (!fs.existsSync(claimsFile)) continue
+      const productClaims = ClaimSchema.array().parse(read(path.join('claims', `${p.id}.json`)))
+      for (const c of productClaims) {
+        for (const sid of c.storyIds) {
+          if (!storyIds.has(sid)) throw new Error(`claim ${c.id} references unknown story ${sid}`)
+        }
+      }
+      claims[p.id] = productClaims
+    }
+  }
+
+  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity, claims }
   categoryCache.set(cacheKey, data)
   return data
 }

@@ -4,7 +4,7 @@
 // statically importing a Node builtin, even if the code path is never actually called client-
 // side. lib/data.ts re-exports everything here for backward compatibility, so existing server
 // call sites (`import { verdictFor } from '@/lib/data'`) are unaffected.
-import type { Category, Evidence, Popularity, Product, Rankings, Stack, Story, Verdict } from './schemas'
+import type { Category, Claim, Evidence, Popularity, Product, Rankings, Stack, Story, Verdict } from './schemas'
 
 // "canonical", "normalized · v2", etc — see lib/schemas.ts's StoryOriginSchema. Falls back to
 // "unknown" for stories migrated/authored before origin existed. Shared by both the (client)
@@ -30,6 +30,12 @@ export interface CategoryData {
   // than undefined when absent — display code should look up by productId and treat a miss as
   // "no public signals", not as an error.
   popularity: Record<string, Popularity>
+  // Keyed by productId — see lib/schemas.ts's ClaimSchema and pipeline/stages/claims.ts.
+  // `data/{cat}/claims/` is optional (not every category has been through the claims stage yet)
+  // and, even when present, an individual product's file may be missing — both cases resolve to
+  // `[]` for that productId rather than an error, same "absence is not an error" contract as
+  // popularity above.
+  claims: Record<string, Claim[]>
 }
 
 export function battleSlug(a: string, b: string): string {

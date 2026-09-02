@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  EvidenceSchema, PopularityMapSchema, PopularitySchema,
+  ClaimSchema, ClaimsArraySchema, EvidenceSchema, PopularityMapSchema, PopularitySchema,
   ProductSchema, RankingsSchema, StoryOriginSchema, StorySchema, VerdictSchema,
 } from '@/lib/schemas'
 
@@ -156,5 +156,37 @@ describe('schemas', () => {
       vllm: { pypiWeekly: 500_000, fetchedAt: '2026-08-27T00:00:00Z' },
     })
     expect(r.success).toBe(true)
+  })
+
+  it('accepts a claim with an empty storyIds array (taxonomy gap)', () => {
+    const c = {
+      id: 'p-claim-1', text: 'Ships an official CLI', quote: 'Ships a CLI for automation',
+      url: 'https://p.example/docs', sourceTier: 'claimed-docs' as const, storyIds: [],
+      extractedAt: '2026-08-27T00:00:00Z',
+    }
+    expect(ClaimSchema.safeParse(c).success).toBe(true)
+  })
+
+  it('rejects a claim with text or quote over the length cap, or a non-claim sourceTier', () => {
+    const base = {
+      id: 'p-claim-1', text: 'x'.repeat(160), quote: 'y'.repeat(240),
+      url: 'https://p.example/docs', sourceTier: 'claimed-docs' as const, storyIds: [],
+      extractedAt: '2026-08-27T00:00:00Z',
+    }
+    expect(ClaimSchema.safeParse(base).success).toBe(true)
+    expect(ClaimSchema.safeParse({ ...base, text: 'x'.repeat(161) }).success).toBe(false)
+    expect(ClaimSchema.safeParse({ ...base, quote: 'y'.repeat(241) }).success).toBe(false)
+    expect(ClaimSchema.safeParse({ ...base, sourceTier: 'community' }).success).toBe(false)
+  })
+
+  it('caps a product claims array at 60 entries', () => {
+    const claim = (n: number) => ({
+      id: `p-claim-${n}`, text: `claim ${n}`, quote: `quote ${n}`,
+      url: 'https://p.example/docs', sourceTier: 'github' as const, storyIds: [],
+      extractedAt: '2026-08-27T00:00:00Z',
+    })
+    expect(ClaimsArraySchema.safeParse([]).success).toBe(true)
+    expect(ClaimsArraySchema.safeParse(Array.from({ length: 60 }, (_, i) => claim(i))).success).toBe(true)
+    expect(ClaimsArraySchema.safeParse(Array.from({ length: 61 }, (_, i) => claim(i))).success).toBe(false)
   })
 })

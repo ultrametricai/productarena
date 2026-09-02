@@ -84,6 +84,29 @@ export const VerdictSchema = VerdictBaseSchema.refine(
   { message: 'none verdicts must have quality 0' },
 )
 
+// A vendor CLAIM extracted from a product's own claimed-docs/github evidence (see
+// pipeline/stages/claims.ts) — distinct from a Verdict, which is our judge's assessment of
+// whether the claim actually holds up. `quote` is always copied verbatim from the cited
+// evidence item's own excerpt (never LLM-paraphrased), so every claim is traceable byte-for-byte
+// back to something the vendor's own materials said. `storyIds` maps this claim onto the
+// category's story taxonomy — empty when no story covers the claimed capability, which is
+// itself a signal: a taxonomy gap worth surfacing (see lib/claims.ts's claimStatus /
+// "claims outside our story set" on the product page), not an error.
+export const ClaimSchema = z.object({
+  id: z.string().min(1),
+  text: z.string().min(1).max(160),
+  quote: z.string().min(1).max(240),
+  url: z.string().url(),
+  sourceTier: z.enum(['claimed-docs', 'github']),
+  storyIds: z.array(z.string().min(1)),
+  extractedAt: z.string().datetime(),
+})
+
+// data/{cat}/claims/{productId}.json shape: at most 60 distinct capability claims per product
+// (see pipeline/stages/claims.ts's SYSTEM prompt — the LLM consolidates near-duplicate evidence
+// into one claim per distinct capability, so this cap is a content limit, not a truncation).
+export const ClaimsArraySchema = ClaimSchema.array().min(0).max(60)
+
 export const StackSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -155,6 +178,7 @@ export type StoryOrigin = z.infer<typeof StoryOriginSchema>
 export type Evidence = z.infer<typeof EvidenceSchema>
 export type Popularity = z.infer<typeof PopularitySchema>
 export type Verdict = z.infer<typeof VerdictSchema>
+export type Claim = z.infer<typeof ClaimSchema>
 export type Stack = z.infer<typeof StackSchema>
 export type Rankings = z.infer<typeof RankingsSchema>
 export type BattleRecord = Rankings['battles'][number]
