@@ -8,6 +8,7 @@ import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
 import ContestLink from '@/components/ContestLink'
+import InstallCommands from '@/components/InstallCommands'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLinkChips from '@/components/ProductLinkChips'
@@ -117,6 +118,9 @@ export default async function ProductPage({
         </div>
         <div className="mt-3">
           <ProductLinkChips product={product} variant="label" />
+        </div>
+        <div className="mt-3">
+          <InstallCommands product={product} />
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
