@@ -117,11 +117,18 @@ export async function runExtract({ category, product }: { category?: string; pro
     for (const p of products) {
       const crawlDir = path.join(CACHE_DIR, 'crawl', cat.id, p.id)
       if (!fs.existsSync(crawlDir)) throw new Error(`extract: no crawl cache for ${cat.id}/${p.id} — run crawl first`)
-      const parts = fs.readdirSync(crawlDir).map((f) => {
+      const files = fs.readdirSync(crawlDir)
+      // Fair per-source budget: a single oversized source (e.g. a years-long changelog)
+      // must not consume the whole corpus and silently starve every other crawled source
+      // (docs, github, urls.extra pages) out of the extraction prompt. Each source gets an
+      // equal share of the total cap; smaller sources naturally use less.
+      const perSourceCap = Math.max(1, Math.floor(60_000 / files.length))
+      const parts = files.map((f) => {
         const key = f.replace(/\.md$/, '')
-        return `=== SOURCE ${key} ===\n${fs.readFileSync(path.join(crawlDir, f), 'utf8')}`
+        const body = fs.readFileSync(path.join(crawlDir, f), 'utf8').slice(0, perSourceCap)
+        return `=== SOURCE ${key} ===\n${body}`
       })
-      const corpus = parts.join('\n\n').slice(0, 60_000)
+      const corpus = parts.join('\n\n')
 
       const extraction = await llmJson({
         schema: ExtractionSchema,
