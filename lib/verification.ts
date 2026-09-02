@@ -1,3 +1,4 @@
+import { evidenceById, verdictFor, type CategoryData } from './data-helpers'
 import type { Evidence, Verdict } from './schemas'
 
 export type VerificationLevel = 'unverified' | 'vendor-claim' | 'corroborated' | 'tested' | 'disputed'
@@ -35,4 +36,23 @@ export function strongestEvidence(verdict: Verdict, evidence: Map<string, Eviden
     if (match) return match
   }
   return null
+}
+
+export type VerificationMix = Record<Exclude<VerificationLevel, 'unverified'>, number>
+
+// Counts, across every story in a category, how many of a product's verdicts land at each
+// verified level (claimed/corroborated/tested/disputed) — `unverified` cells (na/none/uncited)
+// are intentionally excluded from the mix since there's nothing to summarize about them. Feeds
+// the ArenaTable's "verification mix" mini-chip: a glance at how much of a product's coverage
+// is vendor-claim vs independently corroborated/tested vs actively disputed.
+export function verificationMix(data: CategoryData, productId: string): VerificationMix {
+  const evidence = evidenceById(data)
+  const mix: VerificationMix = { 'vendor-claim': 0, corroborated: 0, tested: 0, disputed: 0 }
+  for (const story of data.stories) {
+    const verdict = verdictFor(data, productId, story.id)
+    const level = verificationLevel(verdict, evidence)
+    if (level === 'unverified') continue
+    mix[level] += 1
+  }
+  return mix
 }

@@ -1,20 +1,16 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {
-  type Category, CategorySchema, type Evidence, EvidenceSchema,
-  type Product, ProductSchema, type Rankings, RankingsSchema,
-  type Stack, StackSchema, type Story, StorySchema, type Verdict, VerdictSchema,
+  type Category, CategorySchema, EvidenceSchema,
+  ProductSchema, RankingsSchema,
+  StackSchema, StorySchema, VerdictSchema,
 } from './schemas'
 
-export interface CategoryData {
-  category: Category
-  products: Product[]
-  stories: Story[]
-  evidence: Record<string, Evidence[]>
-  verdicts: Verdict[]
-  rankings: Rankings
-  stacks: Stack[]
-}
+export type { CategoryData } from './data-helpers'
+export {
+  battleSlug, evidenceById, groupInOrder, originLabel, parseBattleSlug, stripPersonaPrefix, verdictFor,
+} from './data-helpers'
+import type { CategoryData } from './data-helpers'
 
 const DEFAULT_DIR = () => path.join(process.cwd(), 'data')
 
@@ -105,44 +101,4 @@ export function loadAll(dir: string = DEFAULT_DIR()): CategoryData[] {
   return loadCategories(dir)
     .filter((c) => isPopulated(c.id, dir))
     .map((c) => loadCategory(c.id, dir))
-}
-
-export function battleSlug(a: string, b: string): string {
-  return `${a}-vs-${b}`
-}
-
-export function parseBattleSlug(slug: string, products: Product[]): { a: string; b: string } | null {
-  for (const a of products) {
-    const prefix = `${a.id}-vs-`
-    if (!slug.startsWith(prefix)) continue
-    const b = slug.slice(prefix.length)
-    if (b !== a.id && products.some((p) => p.id === b)) return { a: a.id, b }
-  }
-  return null
-}
-
-export function verdictFor(data: CategoryData, productId: string, storyId: string): Verdict {
-  const v = data.verdicts.find((x) => x.productId === productId && x.storyId === storyId)
-  if (!v) throw new Error(`missing verdict for cell ${productId}:${storyId}`)
-  return v
-}
-
-export function evidenceById(data: CategoryData): Map<string, Evidence> {
-  return new Map(Object.values(data.evidence).flat().map((e) => [e.id, e]))
-}
-
-// Buckets items by a key, preserving the order each key was first seen. Used to group
-// stories/rounds by theme→group without imposing an alphabetical or schema-declared order.
-export function groupInOrder<T>(items: T[], keyOf: (item: T) => string): Array<[string, T[]]> {
-  const order: string[] = []
-  const buckets = new Map<string, T[]>()
-  for (const item of items) {
-    const key = keyOf(item)
-    if (!buckets.has(key)) {
-      buckets.set(key, [])
-      order.push(key)
-    }
-    buckets.get(key)!.push(item)
-  }
-  return order.map((key) => [key, buckets.get(key)!])
 }

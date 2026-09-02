@@ -8,6 +8,7 @@ export default defineConfig({
     include: ['**/__tests__/**/*.test.{ts,tsx}'],
     exclude: [...configDefaults.exclude, '**/.claude/**', '**/.next/**'],
     passWithNoTests: true,
+    setupFiles: ['./vitest.setup.ts'],
   },
   resolve: { alias: { '@': path.resolve(__dirname) } },
 })
