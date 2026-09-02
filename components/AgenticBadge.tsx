@@ -43,7 +43,7 @@ export default function AgenticBadge({
   const sizeClass = size === 'md' ? 'px-2 py-0.5 text-xs' : 'px-1.5 py-0 text-[10px]'
   if (value === null) {
     return (
-      <span className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-600 ring-1 ring-zinc-800 ${sizeClass}`}>
+      <span className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
         {label} n/a
       </span>
     )

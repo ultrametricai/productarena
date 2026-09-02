@@ -29,7 +29,7 @@ export default function StacksSection({ data }: { data: CategoryData }) {
               </div>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-widest text-zinc-600">INIT Score</span>
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-400">INIT Score</span>
                   <AiEraBadge value={coverage.aiEra} size="sm" />
                 </div>
                 <ScoreBar score={coverage.score} />
@@ -38,12 +38,12 @@ export default function StacksSection({ data }: { data: CategoryData }) {
                     <AgenticBadge kind="agent-ready" value={coverage.agentReady} size="sm" />
                     <AgenticBadge kind="agentic-app" value={coverage.agenticApp} size="sm" />
                   </div>
-                  <p className="text-xs text-zinc-600">
+                  <p className="text-xs text-zinc-400">
                     {coverage.applicable}/{coverage.total} stories applicable
                   </p>
                 </div>
               </div>
-              <p className="mt-3 text-xs italic text-zinc-600">
+              <p className="mt-3 text-xs italic text-zinc-400">
                 Composed coverage: best member per story. Stacks don&apos;t fight battles.
               </p>
             </div>

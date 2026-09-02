@@ -5,7 +5,7 @@ const STYLES: Record<Verdict['verdict'], string> = {
   partial: 'bg-amber-950 text-amber-300 ring-amber-800',
   disputed: 'bg-red-950 text-red-300 ring-red-800',
   none: 'bg-zinc-900 text-zinc-500 ring-zinc-700',
-  na: 'bg-zinc-900 text-zinc-600 ring-zinc-800 italic',
+  na: 'bg-zinc-900 text-zinc-400 ring-zinc-800 italic',
 }
 
 const LABELS: Record<Verdict['verdict'], string> = {

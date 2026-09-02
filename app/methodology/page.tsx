@@ -83,7 +83,7 @@ export default function MethodologyPage() {
             <tr><td className="py-1.5 pr-3 text-zinc-500">automation</td><td className="py-1.5 text-zinc-300">×0.15 — depth of rules/scheduling/bulk primitives</td></tr>
           </tbody>
         </table>
-        <p className="mt-3 text-xs text-zinc-600">
+        <p className="mt-3 text-xs text-zinc-400">
           n/a components are excluded and weights renormalized over the rest. See the full methodology (link above)
           for the exact formula and the case for leading with this number over raw coverage.
         </p>

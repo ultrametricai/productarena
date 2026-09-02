@@ -32,7 +32,7 @@ export default function ContestLink({
       href={`${REPO_ISSUES_URL}?${params.toString()}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-xs text-zinc-600 hover:text-amber-300"
+      className="text-xs text-zinc-400 hover:text-amber-300"
     >
       ⚑ contest
     </a>
