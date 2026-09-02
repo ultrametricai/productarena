@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { PopularityMapSchema } from '@/lib/schemas'
 import {
   derivePopularity,
+  isGhAvailable,
   parseGithubUrl,
   type GithubRepoInfo,
 } from '@/pipeline/stages/popularity'
@@ -29,6 +30,16 @@ describe('parseGithubUrl', () => {
   it('returns null for a malformed URL or missing repo segment', () => {
     expect(parseGithubUrl('not-a-url')).toBeNull()
     expect(parseGithubUrl('https://github.com/onlyowner')).toBeNull()
+  })
+})
+
+describe('isGhAvailable', () => {
+  // Doesn't touch api.github.com/gh api — just checks whether the `gh` CLI is installed and
+  // authenticated on this machine (see resolvedGithubFetcher's comment). Deliberately does not
+  // assert a specific value: CI/contributor machines without `gh` installed must resolve to
+  // `false`, not throw or hang.
+  it('resolves to a boolean without throwing', async () => {
+    await expect(isGhAvailable()).resolves.toEqual(expect.any(Boolean))
   })
 })
 

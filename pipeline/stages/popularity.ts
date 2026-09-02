@@ -1,15 +1,20 @@
 // Keyless popularity/momentum signal ("will this project be alive tomorrow?" — a
 // reader-requested addition). Gathers GitHub stars/forks/issues/dates for products with a
 // urls.github, and npm/pypi weekly downloads for products curated in
-// pipeline/popularity-packages.json, verified against the public registry (no API key for
-// either source). NO LLM CALLS — this is a pure display signal, never fed into scoring (see
-// lib/scoring.ts, which never imports lib/schemas.ts's PopularitySchema).
+// pipeline/popularity-packages.json, verified against the public registry (no API key
+// *required* for either source — see the `gh` CLI note below). NO LLM CALLS — this is a pure
+// display signal, never fed into scoring (see lib/scoring.ts, which never imports
+// lib/schemas.ts's PopularitySchema).
+import { execFile } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import { promisify } from 'node:util'
 import { daysSincePush, starsPerYear } from '../../lib/popularity'
 import { type Popularity, PopularityMapSchema, ProductSchema } from '../../lib/schemas'
 import { fetchWithRetry } from '../fetch-page'
 import { categoryDir, readJson, resolveCategories, writeJson } from '../paths'
+
+const execFileAsync = promisify(execFile)
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000
 
@@ -26,18 +31,10 @@ export interface GithubRepoInfo {
 export type GithubFetcher = (owner: string, repo: string) => Promise<GithubRepoInfo | null>
 export type DownloadsFetcher = (pkg: string) => Promise<number | null>
 
-// api.github.com/repos/{owner}/{repo}, unauthenticated (60 req/hr per IP — see runPopularity's
-// per-product 7-day cache and inter-request delay). Returns null on any failure: 404 (unknown
-// repo), 403 (rate-limited — GitHub returns non-2xx for this, so fetchWithRetry throws), or a
-// network error. A rate-limited/failed fetch is NOT the same as "this repo has zero stars" —
-// callers must fall back to the last cached value, never treat null as 0.
-export const defaultGithubFetcher: GithubFetcher = async (owner, repo) => {
-  let body: string
-  try {
-    body = await fetchWithRetry(`https://api.github.com/repos/${owner}/${repo}`, 1)
-  } catch {
-    return null
-  }
+// GitHub's repo response has the same shape whether it came from `gh api` (authenticated) or a
+// bare `fetch` (unauthenticated) — this is the one place that turns that JSON into
+// GithubRepoInfo, shared by both fetchers below.
+function parseGithubRepoJson(body: string): GithubRepoInfo | null {
   let json: Record<string, unknown>
   try {
     json = JSON.parse(body) as Record<string, unknown>
@@ -54,6 +51,67 @@ export const defaultGithubFetcher: GithubFetcher = async (owner, repo) => {
     createdAt: json.created_at,
     pushedAt: json.pushed_at,
   }
+}
+
+// Preferred path: shell out to the `gh` CLI (`gh api repos/{owner}/{repo}`). When the machine
+// running the pipeline has `gh` installed and authenticated, this rides the user's own OAuth
+// token — 5,000 req/hr instead of the 60/hr unauthenticated cap — so a full run across every
+// category's ~25 GitHub products comfortably fits in one shot with no per-request throttling
+// needed. Returns null (not a thrown error) for anything that fails: repo not found, `gh` not
+// authenticated, non-JSON output, etc — same "null means unknown, not zero" contract as
+// defaultGithubFetcher below.
+export const ghCliGithubFetcher: GithubFetcher = async (owner, repo) => {
+  let stdout: string
+  try {
+    const result = await execFileAsync('gh', ['api', `repos/${owner}/${repo}`], {
+      timeout: 15_000,
+      maxBuffer: 10 * 1024 * 1024,
+    })
+    stdout = result.stdout
+  } catch {
+    return null
+  }
+  return parseGithubRepoJson(stdout)
+}
+
+// Fallback path: api.github.com/repos/{owner}/{repo}, unauthenticated (60 req/hr per IP — see
+// runPopularity's per-product 7-day cache and inter-request delay, which matter *only* on this
+// path). Used only when `gh` isn't installed/authenticated on the machine running the pipeline
+// — so contributors without `gh` still get coverage, just at the stricter rate limit. Returns
+// null on any failure: 404 (unknown repo), 403 (rate-limited — GitHub returns non-2xx for this,
+// so fetchWithRetry throws), or a network error. A rate-limited/failed fetch is NOT the same as
+// "this repo has zero stars" — callers must fall back to the last cached value, never treat
+// null as 0.
+export const defaultGithubFetcher: GithubFetcher = async (owner, repo) => {
+  let body: string
+  try {
+    body = await fetchWithRetry(`https://api.github.com/repos/${owner}/${repo}`, 1)
+  } catch {
+    return null
+  }
+  return parseGithubRepoJson(body)
+}
+
+let ghAvailableCache: Promise<boolean> | undefined
+
+// Checked once per process (cached — this spawns a subprocess, so we don't want to pay that
+// cost per product) via `gh auth status`, which fails fast if `gh` is either not installed or
+// installed-but-not-logged-in. Exported so tests/callers can reset/inspect it if ever needed.
+export function isGhAvailable(): Promise<boolean> {
+  if (!ghAvailableCache) {
+    ghAvailableCache = execFileAsync('gh', ['auth', 'status'], { timeout: 5_000 })
+      .then(() => true)
+      .catch(() => false)
+  }
+  return ghAvailableCache
+}
+
+// What `defaultDeps.github` actually calls: `gh api` when available, else the unauthenticated
+// fetcher. This indirection only matters for the real run — tests inject their own `github`
+// fetcher in PopularityDeps and never reach this at all.
+const resolvedGithubFetcher: GithubFetcher = async (owner, repo) => {
+  const fetcher = (await isGhAvailable()) ? ghCliGithubFetcher : defaultGithubFetcher
+  return fetcher(owner, repo)
 }
 
 // api.npmjs.org/downloads/point/last-week/{pkg} — public, keyless, generous limits. Scoped
@@ -148,10 +206,12 @@ export interface PopularityDeps {
 }
 
 const defaultDeps: PopularityDeps = {
-  github: defaultGithubFetcher,
+  github: resolvedGithubFetcher,
   npm: defaultNpmFetcher,
   pypi: defaultPypiFetcher,
   now: () => new Date(),
+  // Mainly for the unauthenticated api.github.com fallback (60 req/hr) — a no-op-ish delay when
+  // `gh` is available and riding its 5,000 req/hr budget, but harmless there too.
   delayMs: 1000,
 }
 
