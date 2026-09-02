@@ -26,11 +26,15 @@ export default function Home() {
     <div className="space-y-12">
       <section>
         <p className="text-sm uppercase tracking-widest text-amber-400">INIT</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">The Agentic Index</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight">
+          The unbiased, evidence-based arena for software in the AI era
+        </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          All {totalProducts} products across {categories.length} arenas, ranked two ways: how friendly they are to
-          AI agents, and how AI-native they are for the humans using them — identical canonical stories, identical
-          judge, identical evidence rules.
+          We crawl what vendors claim, collect what communities report, and probe what actually
+          works — then every one of the {totalProducts} products across {categories.length} arenas
+          is judged against identical user stories, with a citation behind every verdict and a
+          contest button on every score. Two questions drive the rankings: how friendly is it to
+          AI agents, and how AI-native is it for the humans using it?
         </p>
       </section>
 
