@@ -28,10 +28,10 @@ export default function Legend({ id = 'legend', defaultOpen = false }: { id?: st
             <LegendRow swatch="bg-red-950 text-red-300 ring-red-800" term="disputed">
               Vendor claims it, independent evidence disagrees — we show both sides.
             </LegendRow>
-            <LegendRow swatch="bg-zinc-900 text-zinc-400 ring-zinc-700" term="none">
+            <LegendRow swatch="bg-zinc-900 text-zinc-500 ring-zinc-700" term="none">
               No evidence found. Not proof the product can&apos;t do it, just that we found no citation.
             </LegendRow>
-            <LegendRow swatch="bg-zinc-900 text-zinc-500 ring-zinc-800" term="n/a">
+            <LegendRow swatch="bg-zinc-900 text-zinc-400 ring-zinc-800" term="n/a">
               Wrong question for this kind of product — excluded from scoring entirely.
             </LegendRow>
           </dl>
