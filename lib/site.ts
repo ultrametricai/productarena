@@ -6,4 +6,4 @@
 // URL (init.dog isn't wired up yet) can override it; once the domain is live, drop the env var
 // and this const alone is the source of truth again.
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://init.dog'
-export const REPO = 'ultrametricai/productarena'
+export const REPO = 'ultrametricai/initdotdog'
