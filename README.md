@@ -40,6 +40,10 @@ See `data/categories.json` for each arena's full description, personas, and them
 
 ## Methodology
 
+New to the site and just want plain-language answers ("what does `na` mean," "why does this
+score look low," "how do I disagree")? See **[docs/SCORING.md](./docs/SCORING.md)** — a
+one-page, jargon-free companion to the technical writeup below.
+
 ### 1. Evidence tiers
 
 Every claim about a product is backed by an **evidence** item with one of four tiers:
@@ -125,7 +129,7 @@ wrong-axis story is marked `na` and excluded rather than counted against a produ
 
 ### 4. The Agenticness Index
 
-Every arena includes the same 8 canonical "agenticness" stories, injected verbatim (never
+Every arena includes the same 9 canonical "agenticness" stories, injected verbatim (never
 LLM-authored) so agent-readiness is comparable across categories. Defined in
 `pipeline/agentic-stories.ts`:
 
@@ -134,14 +138,22 @@ LLM-authored) so agent-readiness is comparable across categories. Defined in
 | `agentic-public-api` | I can drive the product through a documented public API | 3 |
 | `agentic-official-cli` | I can use an official CLI | 2 |
 | `agentic-mcp-server` | I can connect an agent via an official MCP server | 3 |
+| `agentic-mcp-client` | I can plug MCP servers into this product so it can use their tools | 3 |
 | `agentic-webhooks` | I can subscribe to events via webhooks | 2 |
 | `agentic-sdks` | I can build against official SDKs | 2 |
 | `agentic-agent-docs` | I can point an agent at llms.txt or agent-oriented docs | 2 |
 | `agentic-scoped-keys` | I can issue scoped/least-privilege API credentials for an agent | 2 |
 | `agentic-headless` | I can run the product headlessly / in CI for automation | 2 |
 
+`agentic-mcp-server` and `agentic-mcp-client` are two ends of the same protocol, deliberately
+split into separate axes: `-server` asks whether the product *ships* an MCP server for other
+agents to connect to, `-client` asks whether the product itself *consumes* MCP servers. For
+agent products (e.g. a coding-agent CLI), the serving axis is often the wrong question — the
+product IS the agent — while the consuming axis is exactly the right one; see the applicability
+notes in [METHODOLOGY.md](./METHODOLOGY.md).
+
 A product's "agenticness" score on the leaderboard is its weighted percentage across just
-these 8 cells (theme `agenticness`, group `agent-access`).
+these 9 cells (theme `agenticness`, group `agent-access`).
 
 Two sibling group-scoped indexes live under the same `agenticness` theme: `agentic-features`
 ("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
@@ -203,7 +215,7 @@ Every story in `data/{category}/stories.json` optionally carries an `origin` fie
 
 | `origin.kind` | Meaning |
 |---|---|
-| `canonical` | one of the 28 fixed agenticness/openness/automation-depth/privacy-posture stories (`pipeline/agentic-stories.ts`), injected verbatim into every category by `normalize.ts`'s `assembleTaxonomy` — never LLM-authored |
+| `canonical` | one of the 29 fixed agenticness/openness/automation-depth/privacy-posture stories (`pipeline/agentic-stories.ts`), injected verbatim into every category by `normalize.ts`'s `assembleTaxonomy` — never LLM-authored |
 | `normalized` | assembled into the category's taxonomy by the LLM-driven `normalize` stage; carries the judge `promptVersion` in force at the time |
 | `contest` | added or adjusted via a contest issue (not yet exercised — `contest-check.ts` only appends evidence today, never stories) |
 | `manual` | hand-edited |
@@ -331,7 +343,7 @@ data/
   categories.json          # arena metadata: id, name, description, personas, themes
   {category}/
     products.json           # product metadata (id, name, vendor, type, urls, logo)
-    stories.json             # the category's story taxonomy (incl. the 28 canonical stories, each with an optional `origin`)
+    stories.json             # the category's story taxonomy (incl. the 29 canonical stories, each with an optional `origin`)
     evidence/
       {product}.json          # evidence items for one product: id, tier, url, excerpt, fetchedAt
     verdicts.json            # one verdict per (productId, storyId) cell
