@@ -24,7 +24,6 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <section>
-        <p className="text-sm uppercase tracking-widest text-amber-400">INIT</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight">
           The unbiased, evidence-based arena for software in the AI era
         </h1>
