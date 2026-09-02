@@ -7,11 +7,19 @@ import { strongestEvidence } from './verification'
 // app/arena/[category]/product/[id]/llms.md — kept out of the route handlers so they're
 // trivially unit-testable without going through Next's request/response machinery.
 
+// MCP is two stories, not one: `agentic-mcp-server` (ships an MCP server for other agents to
+// connect to) and `agentic-mcp-client` (consumes MCP servers itself). Showing only the
+// `-server` verdict here would repeat the wrong-axis mistake for agent products (the product
+// IS the agent, so "does it ship a server" is often correctly `na`) — so this mark shows
+// whichever of the two verdicts is stronger. See components/AgentAccessGlyphs.tsx for the
+// on-site equivalent of this same logic.
 const AGENT_ACCESS_STORIES = {
-  mcp: 'agentic-mcp-server',
-  cli: 'agentic-official-cli',
-  api: 'agentic-public-api',
+  mcp: ['agentic-mcp-server', 'agentic-mcp-client'],
+  cli: ['agentic-official-cli'],
+  api: ['agentic-public-api'],
 } as const
+
+const VERDICT_RANK: Record<string, number> = { full: 3, partial: 2, disputed: 1, none: 0, na: 0 }
 
 function glyph(verdict: string): string {
   if (verdict === 'full') return '✓'
@@ -22,11 +30,12 @@ function glyph(verdict: string): string {
 function agentAccessMarks(data: CategoryData, productId: string): string {
   return (Object.keys(AGENT_ACCESS_STORIES) as Array<keyof typeof AGENT_ACCESS_STORIES>)
     .map((key) => {
-      const storyId = AGENT_ACCESS_STORIES[key]
-      const has = data.stories.some((s) => s.id === storyId)
-      if (!has) return `${key.toUpperCase()}:n/a`
-      const v = verdictFor(data, productId, storyId)
-      return `${key.toUpperCase()}:${glyph(v.verdict)}`
+      const storyIds = AGENT_ACCESS_STORIES[key].filter((id) => data.stories.some((s) => s.id === id))
+      if (storyIds.length === 0) return `${key.toUpperCase()}:n/a`
+      const best = storyIds
+        .map((id) => verdictFor(data, productId, id))
+        .reduce((a, b) => (VERDICT_RANK[b.verdict] > VERDICT_RANK[a.verdict] ? b : a))
+      return `${key.toUpperCase()}:${glyph(best.verdict)}`
     })
     .join(' ')
 }
