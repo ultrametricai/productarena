@@ -28,12 +28,17 @@ const NAV_LABELS: Record<string, string> = {
 async function fetchStarCount(): Promise<number | null> {
   try {
     const res = await fetch(`https://api.github.com/repos/${REPO}`, { cache: "force-cache" });
-    if (!res.ok) return null;
-    const json = await res.json();
-    return typeof json.stargazers_count === "number" ? json.stargazers_count : null;
+    if (res.ok) {
+      const json = await res.json();
+      if (typeof json.stargazers_count === "number") return json.stargazers_count;
+    }
   } catch {
-    return null;
+    /* fall through to env fallback */
   }
+  // While the repo is private, the anonymous API can't see it — a deploy-time env var
+  // (refreshed from an authenticated fetch before each deploy) carries the count instead.
+  const fallback = Number(process.env.GITHUB_STARS_FALLBACK);
+  return Number.isFinite(fallback) && fallback >= 0 ? fallback : null;
 }
 
 // Compact star-count formatting (1.2k, 3m) — Firecrawl-nav style, lowercase suffix.
@@ -102,7 +107,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 antialiased">
         <header className="border-b border-zinc-800">
-          <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-5 py-4">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
             <Link href="/" className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight">
               <InitMark size={22} />
               <span>
@@ -147,9 +152,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </nav>
           </div>
         </header>
-        <main className="mx-auto max-w-4xl px-5 py-10">{children}</main>
+        <main className="mx-auto max-w-7xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
-          <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
             <span>INIT · MIT licensed · © 2026 Ultrametric Inc</span>
             <div className="flex items-center gap-4">
               <a
