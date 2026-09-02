@@ -212,7 +212,7 @@ export async function GET() {
       '/data/{category}/stories.json': {
         get: {
           operationId: 'getStories',
-          summary: "Get the category's user-story taxonomy (30-80 stories, including the 28 canonical agenticness/openness/automation-depth/privacy-posture stories injected into every category).",
+          summary: "Get the category's user-story taxonomy (30-80 stories, including the 29 canonical agenticness/openness/automation-depth/privacy-posture stories injected into every category).",
           parameters: [categoryParam(categoryIds)],
           responses: {
             '200': {

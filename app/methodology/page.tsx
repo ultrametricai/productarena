@@ -89,6 +89,15 @@ export default function MethodologyPage() {
         </p>
       </section>
 
+      <a
+        href={`https://github.com/${REPO}/blob/main/docs/SCORING.md`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/50 px-6 py-3 text-center text-sm font-medium text-zinc-300 transition hover:border-amber-400/60 hover:text-amber-300"
+      >
+        New here? Read the plain-language scoring guide →
+      </a>
+
       <div className="flex flex-wrap gap-3 text-sm">
         <a href="/llms.txt" className="underline decoration-zinc-700 hover:text-amber-300">
           /llms.txt

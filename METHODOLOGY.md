@@ -113,7 +113,7 @@ Every story in `data/{category}/stories.json` optionally carries an `origin` fie
 
 | `origin.kind` | Meaning |
 |---|---|
-| `canonical` | one of the 28 fixed agenticness/openness/automation-depth/privacy-posture stories (`pipeline/agentic-stories.ts`), injected verbatim into every category — never LLM-authored |
+| `canonical` | one of the 29 fixed agenticness/openness/automation-depth/privacy-posture stories (`pipeline/agentic-stories.ts`), injected verbatim into every category — never LLM-authored |
 | `normalized` | assembled into the category's taxonomy by the LLM-driven `normalize` stage; carries the judge `promptVersion` in force at the time |
 | `contest` | added or adjusted via a contest issue |
 | `manual` | hand-edited |
