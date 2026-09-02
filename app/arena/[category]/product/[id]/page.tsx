@@ -136,22 +136,30 @@ export default async function ProductPage({
         </p>
       </div>
 
-      <BusinessModelSection product={product} />
-
       <div>
         <h2 className="mb-3 text-lg font-semibold">By theme</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {byTheme.map(([t]) => {
             const themeScore = entry.themeScores[t] ?? null
             return (
-              <div key={t} className="rounded-lg border border-zinc-800 p-4">
-                <p className="mb-2 text-sm text-zinc-400">{t}</p>
+              <a
+                key={t}
+                href={`#theme-${t}`}
+                title={`See the judged stories and evidence behind the ${t} score`}
+                className="group rounded-lg border border-zinc-800 p-4 transition hover:border-amber-400/60"
+              >
+                <p className="mb-2 flex items-center justify-between text-sm text-zinc-400">
+                  {t}
+                  <span className="text-xs text-zinc-600 opacity-0 transition group-hover:opacity-100">
+                    evidence →
+                  </span>
+                </p>
                 {themeScore === null ? (
                   <p className="text-xs italic text-zinc-600">n/a</p>
                 ) : (
                   <ScoreBar score={themeScore} />
                 )}
-              </div>
+              </a>
             )
           })}
         </div>
@@ -163,7 +171,7 @@ export default async function ProductPage({
           {byTheme.map(([theme, storiesInTheme]) => {
             const byGroup = groupInOrder<Story>(storiesInTheme, (s) => s.group)
             return (
-              <div key={theme}>
+              <div key={theme} id={`theme-${theme}`} className="scroll-mt-4">
                 <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-amber-400">
                   <ThemeIcon theme={theme} className="text-amber-400" />
                   {theme}
@@ -226,6 +234,8 @@ export default async function ProductPage({
           })}
         </div>
       </div>
+
+      <BusinessModelSection product={product} />
 
       <div>
         <h2 className="mb-3 text-lg font-semibold">Battles</h2>
