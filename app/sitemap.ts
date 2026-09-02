@@ -29,7 +29,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
 
     for (const battle of data.rankings.battles) {
-      entries.push({ url: `${SITE_URL}/arena/${data.category.id}/battle/${battleSlug(battle.a, battle.b)}`, lastModified: generatedAt })
+      const slug = battleSlug(battle.a, battle.b)
+      entries.push({ url: `${SITE_URL}/arena/${data.category.id}/battle/${slug}`, lastModified: generatedAt })
+      // /vs/{slug} is the canonical top-level mirror of the same battle (see
+      // app/vs/[slug]/page.tsx) — listed separately since it's a distinct indexable URL.
+      entries.push({ url: `${SITE_URL}/vs/${slug}`, lastModified: generatedAt })
     }
   }
 

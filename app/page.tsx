@@ -7,7 +7,7 @@ import AiNativeIndexTable from '@/components/AiNativeIndexTable'
 import InitIndexTable from '@/components/InitIndexTable'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
-import { loadAll } from '@/lib/data'
+import { battleSlug, leadingBattle, loadAll } from '@/lib/data'
 import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -163,6 +163,53 @@ export default function Home() {
           >
             Full ranking →
           </Link>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold tracking-tight">Leading battles</h2>
+        <p className="mt-1 text-sm text-zinc-500">
+          Every arena&rsquo;s #1 vs #2, evidence-tested round by round — see every battle on its own{' '}
+          <code className="text-xs text-zinc-400">/vs/</code> page.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {categories.map((data) => {
+            const battle = leadingBattle(data)
+            if (!battle) return null
+            const a = data.products.find((p) => p.id === battle.a)!
+            const b = data.products.find((p) => p.id === battle.b)!
+            const aEntry = data.rankings.leaderboard.find((e) => e.productId === a.id)!
+            const bEntry = data.rankings.leaderboard.find((e) => e.productId === b.id)!
+            const winnerName = battle.winner === 'draw' ? null : battle.winner === a.id ? a.name : b.name
+            return (
+              <Link
+                key={data.category.id}
+                href={`/vs/${battleSlug(battle.a, battle.b)}`}
+                className="group rounded-xl border border-zinc-800 p-4 transition hover:border-amber-400/60"
+              >
+                <p className="text-xs uppercase tracking-widest text-zinc-400">{data.category.name}</p>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <ProductLogo product={a} size={28} />
+                    <span className="text-sm font-medium group-hover:text-amber-300">{a.name}</span>
+                  </div>
+                  <AiEraBadge value={aEntry.aiEra} size="sm" />
+                </div>
+                <p className="my-1 text-center text-[10px] uppercase tracking-widest text-zinc-500">vs</p>
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <ProductLogo product={b} size={28} />
+                    <span className="text-sm font-medium group-hover:text-amber-300">{b.name}</span>
+                  </div>
+                  <AiEraBadge value={bEntry.aiEra} size="sm" />
+                </div>
+                <p className="mt-3 text-center text-xs text-amber-300">
+                  {winnerName ? `${winnerName} wins` : 'Draw'} · {battle.record.aWins}–{battle.record.bWins}
+                  {battle.record.draws > 0 ? ` (${battle.record.draws} drawn)` : ''}
+                </p>
+              </Link>
+            )
+          })}
         </div>
       </section>
     </div>

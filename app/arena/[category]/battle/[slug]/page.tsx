@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import BattleView from '@/components/BattleView'
 import { battleSlug, loadAll, loadCategory, parseBattleSlug } from '@/lib/data'
+import { SITE_URL } from '@/lib/site'
 
 export function generateStaticParams() {
   return loadAll().flatMap((data) =>
@@ -22,7 +23,13 @@ export async function generateMetadata({
   if (!pair) return { title: `Battle — ${data.category.name} Arena` }
   const a = data.products.find((p) => p.id === pair.a)!
   const b = data.products.find((p) => p.id === pair.b)!
-  return { title: `${a.name} vs ${b.name} — ${data.category.name}` }
+  return {
+    title: `${a.name} vs ${b.name} — ${data.category.name}`,
+    // /vs/{slug} is the canonical top-level mirror of this same battle (see
+    // app/vs/[slug]/page.tsx) — richer layout, no category segment in the URL. This page still
+    // resolves (existing links/bookmarks keep working) but defers ranking signal to it.
+    alternates: { canonical: `${SITE_URL}/vs/${battleSlug(pair.a, pair.b)}` },
+  }
 }
 
 export default async function BattlePage({

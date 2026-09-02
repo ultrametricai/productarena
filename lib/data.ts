@@ -8,7 +8,8 @@ import {
 
 export type { CategoryData } from './data-helpers'
 export {
-  battleSlug, evidenceById, groupInOrder, originLabel, parseBattleSlug, stripPersonaPrefix, verdictFor,
+  battleSlug, evidenceById, findBattleBySlug, groupInOrder, leadingBattle, originLabel,
+  parseBattleSlug, stripPersonaPrefix, verdictFor,
 } from './data-helpers'
 import type { CategoryData } from './data-helpers'
 
