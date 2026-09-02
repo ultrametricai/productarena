@@ -133,6 +133,25 @@ pure churn is reverted under audited rules: applicability (`na`↔`none`) never 
 evidence, verdicts citing nothing new don't move close races, and negative mechanical probe
 results only affect the story axis they actually test.
 
+## Popularity — a signal, not a score
+
+Product pages, the arena table, and the global rankings pages show a **popularity/momentum
+chip** — GitHub stars, stars/year, and npm/PyPI weekly downloads, sourced entirely from public
+registries (`api.github.com`, `api.npmjs.org`, `pypistats.org`), no API key required. It answers
+a different question than everything else on this site: not "is this AI-ready" but "will this
+project still be alive tomorrow" — a reader-requested survival/support signal.
+
+It is **deliberately not part of the INIT Score** and never affects rankings, leaderboard
+position, or any battle outcome (`pnpm pipeline popularity` makes no LLM calls and its output,
+`data/{category}/popularity.json`, isn't read by `lib/scoring.ts`). Popularity measures
+*adoption* — how many people already use something — which is a lagging, momentum-driven
+signal unrelated to whether a product is well-built for AI agents today. A ten-year-old
+framework with a huge install base and a brand-new, better-designed API for agents should not
+outrank each other because of stars; keeping popularity out of the score preserves what the
+score actually means. Coverage is necessarily partial: only products with a `urls.github` or a
+curated npm/PyPI package (`pipeline/popularity-packages.json`) have any numbers at all, and a
+missing chip means "no public signal available," not "unpopular."
+
 ## Bias disclosure — the judge is an Anthropic model
 
 The judge model is made by Anthropic, and the `ai-coding` arena includes Anthropic's own

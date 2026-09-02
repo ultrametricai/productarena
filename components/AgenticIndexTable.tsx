@@ -3,6 +3,7 @@ import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
+import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
 import type { CategoryData } from '@/lib/data'
@@ -70,6 +71,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
             <th className="px-3 py-2 font-normal">Agentreadyness</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">API quality</th>
             <th className="px-3 py-2 font-normal">Access</th>
+            <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
             <th className="px-3 py-2 font-normal">INIT Score</th>
           </tr>
         </thead>
@@ -107,6 +109,9 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
               </td>
               <td className="px-3 py-2">
                 <AgentAccessGlyphs data={row.data} productId={row.product.id} />
+              </td>
+              <td className="hidden px-3 py-2 sm:table-cell">
+                <MomentumChip popularity={row.data.popularity[row.product.id]} compact />
               </td>
               <td className="px-3 py-2">
                 <AiEraBadge

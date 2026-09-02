@@ -7,6 +7,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
+import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
@@ -100,6 +101,9 @@ export default async function ProductPage({
               {product.vendor} · {product.type === 'oss' ? 'open source' : 'commercial'}
             </p>
             {freshness && <p className="text-xs text-zinc-400">Evidence as of {freshness}</p>}
+            <div className="mt-1">
+              <MomentumChip popularity={data.popularity[id]} />
+            </div>
           </div>
           <a
             href={product.urls.site}

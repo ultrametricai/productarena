@@ -7,6 +7,7 @@ import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import { BusinessModelChip } from '@/components/BusinessModel'
+import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
 import VerificationMixChip from '@/components/VerificationMixChip'
@@ -45,6 +46,7 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
       apiQuality: entry.apiQuality,
       openness: entry.themeScores['openness'] ?? null,
       automation: entry.themeScores['automation-depth'] ?? null,
+      popularity: data.popularity[entry.productId]?.stars ?? null,
     }
   })
 }
@@ -194,6 +196,9 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
               <SortableTh col="automation" current={column} direction={direction} onSort={handleSort}>
                 Automation
               </SortableTh>
+              <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort}>
+                Popularity
+              </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false}>
                 Access
               </SortableTh>
@@ -262,6 +267,9 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                     {row.automation === null ? <span className="text-zinc-500">n/a</span> : row.automation.toFixed(0)}
                   </td>
                   <td className="px-3 py-2">
+                    <MomentumChip popularity={data.popularity[row.productId]} compact />
+                  </td>
+                  <td className="px-3 py-2">
                     <AgentAccessGlyphs data={data} productId={row.productId} />
                   </td>
                   <td className="px-3 py-2">
@@ -272,7 +280,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={11} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>

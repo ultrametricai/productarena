@@ -7,9 +7,9 @@ import {
 } from '@/lib/arenaTableSort'
 
 const rows: ArenaTableRow[] = [
-  { productId: 'b', name: 'Bravo', vendor: 'Vendor B', initScore: 40, agentReady: 50, agenticApp: null, apiQuality: 20, openness: 30, automation: 10 },
-  { productId: 'a', name: 'Alpha', vendor: 'Vendor A', initScore: 80, agentReady: null, agenticApp: 60, apiQuality: 70, openness: 90, automation: 40 },
-  { productId: 'c', name: 'Charlie', vendor: 'Vendor C', initScore: null, agentReady: 10, agenticApp: 20, apiQuality: null, openness: null, automation: 5 },
+  { productId: 'b', name: 'Bravo', vendor: 'Vendor B', initScore: 40, agentReady: 50, agenticApp: null, apiQuality: 20, openness: 30, automation: 10, popularity: 500 },
+  { productId: 'a', name: 'Alpha', vendor: 'Vendor A', initScore: 80, agentReady: null, agenticApp: 60, apiQuality: 70, openness: 90, automation: 40, popularity: null },
+  { productId: 'c', name: 'Charlie', vendor: 'Vendor C', initScore: null, agentReady: 10, agenticApp: 20, apiQuality: null, openness: null, automation: 5, popularity: 200_000 },
 ]
 
 describe('sortArenaRows', () => {
@@ -28,6 +28,16 @@ describe('sortArenaRows', () => {
     expect(desc.map((r) => r.productId)).toEqual(['b', 'c', 'a'])
     const asc = sortArenaRows(rows, 'agentReady', 'asc')
     expect(asc.map((r) => r.productId)).toEqual(['c', 'b', 'a'])
+  })
+
+  it('sorts the popularity column descending by default, nulls last', () => {
+    const sorted = sortArenaRows(rows, 'popularity', 'desc')
+    expect(sorted.map((r) => r.productId)).toEqual(['c', 'b', 'a'])
+  })
+
+  it('sorts the popularity column ascending, nulls still last', () => {
+    const sorted = sortArenaRows(rows, 'popularity', 'asc')
+    expect(sorted.map((r) => r.productId)).toEqual(['b', 'c', 'a'])
   })
 
   it('sorts name alphabetically ascending', () => {
@@ -57,6 +67,7 @@ describe('defaultDirectionFor', () => {
   it('defaults numeric columns to descending', () => {
     expect(defaultDirectionFor('initScore')).toBe('desc')
     expect(defaultDirectionFor('agentReady')).toBe('desc')
+    expect(defaultDirectionFor('popularity')).toBe('desc')
   })
 
   it('defaults name to ascending', () => {
