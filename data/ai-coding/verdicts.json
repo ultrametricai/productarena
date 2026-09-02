@@ -983,7 +983,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Direct probes show no llms.txt file (404) and no markdown-friendly docs at the expected path (404), indicating no agent-oriented documentation surface for AI-native consumption; while docs.md content exists at learn.chatgpt.com, there's no evidence of an llms.txt or explicit agent-discoverable docs index.",
+    "rationale": "Probes directly checked for an llms.txt or agent-oriented docs.md file on OpenAI's Codex documentation and both returned 404, and no other evidence shows Codex can be pointed at an llms.txt-style feed for agent consumption.",
     "evidenceIds": [
       "codex-probe-1",
       "codex-probe-2"
@@ -1024,12 +1024,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codex is explicitly designed as a delegated AI coding agent — docs describe 'Delegate a longer task and return when it is ready,' running tasks in isolated cloud environments/CLI/IDE, and returning results as diffs or PRs. Community threads (though mixed on speed/quality) confirm real-world usage of Codex to autonomously complete coding tasks, corroborating the delegation model works in practice.",
+    "rationale": "Codex is designed exactly as a delegatable AI coding agent: users can delegate longer tasks to run in cloud/isolated environments or CLI, work in parallel, and return to review diffs/PRs (codex-docs-1,3,5,6). Community evidence confirms real-world heavy use and delegation, though with caveats about speed, quota limits, and inconsistent quality across models.",
     "evidenceIds": [
-      "codex-docs-6",
       "codex-docs-1",
       "codex-docs-3",
       "codex-docs-5",
+      "codex-docs-6",
+      "codex-docs-9",
       "codex-gh-1",
       "codex-comm-8",
       "codex-comm-18"
@@ -1041,13 +1042,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codex CLI explicitly supports non-interactive, scriptable execution ('Run a non-interactive command in a repeatable workflow') plus cloud task delegation and API key usage for automated/CI setups, indicating headless automation is a first-class capability.",
+    "rationale": "Codex CLI explicitly supports non-interactive, headless execution ('Run a non-interactive command in a repeatable workflow') and cloud task delegation/parallel runs without tying up local machines, both suited for CI automation; it can also be invoked via npm install and JSON-RPC/MCP server mode for programmatic control.",
     "evidenceIds": [
       "codex-docs-19",
-      "codex-docs-8",
-      "codex-gh-4",
+      "codex-docs-3",
       "codex-docs-6",
-      "codex-docs-15"
+      "codex-gh-5",
+      "codex-gh-6"
     ]
   },
   {
@@ -1055,36 +1056,42 @@
     "storyId": "agentic-mcp-client",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Codex documentation explicitly supports adding local or remote MCP servers, authenticating, and inspecting available tools before use, with shared configuration across CLI, IDE, and desktop clients. No community evidence disputes this specific capability.",
+    "confidence": "high",
+    "rationale": "Codex CLI explicitly supports adding local or remote MCP servers, authenticating, and inspecting/using their tools, with shared config across CLI, IDE extension, and desktop app; docs even show the 'codex mcp add' command syntax.",
     "evidenceIds": [
       "codex-docs-16",
+      "codex-docs-20",
       "codex-docs-21",
-      "codex-docs-22",
-      "codex-docs-20"
+      "codex-docs-22"
     ]
   },
   {
     "productId": "codex",
     "storyId": "agentic-mcp-server",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "This product is an AI agent — it consumes MCP servers rather than shipping one; the serving axis does not apply. See agentic-mcp-client. (Applicability corrected after reader review.)",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Codex documents both connecting to external MCP servers as a client (codex-docs-16, codex-docs-21/22) and exposing itself as an MCP server for other agents to connect to (codex-gh-6). However, the official 'codex mcp-server' interface is explicitly marked experimental and now deprecated in favor of an unspecified 'Codex app server' (codex-docs-23), creating uncertainty about the stability and continuity of this integration path.",
+    "evidenceIds": [
+      "codex-gh-6",
+      "codex-docs-16",
+      "codex-docs-21",
+      "codex-docs-22",
+      "codex-docs-23"
+    ]
   },
   {
     "productId": "codex",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Codex is fundamentally a natural-language coding agent — users delegate tasks, ask questions, and issue instructions in plain language via CLI, IDE, web, or Slack/Linear integrations, with the agent interpreting intent to edit files, run commands, and open PRs. Community feedback confirms real-world agentic use, though with complaints about reliability, speed, and quota limits.",
+    "confidence": "high",
+    "rationale": "Codex is fundamentally a natural-language coding agent: users describe tasks via prompts in CLI, IDE, web, or Slack/Linear/GitHub and it plans, edits files, runs commands, and opens PRs. Docs and community posts confirm broad agentic NL-driven workflows, though some reviews note inconsistent agentic reliability and rate limits.",
     "evidenceIds": [
-      "codex-docs-6",
+      "codex-docs-8",
       "codex-docs-9",
-      "codex-docs-13",
-      "codex-gh-1",
+      "codex-docs-6",
+      "codex-docs-1",
       "codex-comm-18",
       "codex-comm-8"
     ]
@@ -1095,30 +1102,32 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Codex CLI is an official, actively maintained CLI (npm install -g @openai/codex, GitHub repo) with extensive documented features—local agentic coding, non-interactive scripting, MCP support, cloud task delegation—and is corroborated by community usage discussions confirming real-world use.",
+    "rationale": "Codex ships an official, actively documented CLI (npm install -g @openai/codex) that supports interactive coding, non-interactive workflows, MCP integration, sandboxing controls, and cloud task delegation, confirmed by both OpenAI docs and GitHub repo. Community comments corroborate real hands-on usage of the CLI, though with mixed sentiment on performance/UX.",
     "evidenceIds": [
       "codex-gh-1",
       "codex-gh-5",
       "codex-docs-8",
       "codex-docs-9",
-      "codex-docs-19",
       "codex-docs-15",
+      "codex-docs-19",
+      "codex-docs-16",
+      "codex-comm-8",
       "codex-comm-9"
     ]
   },
   {
     "productId": "codex",
     "storyId": "agentic-public-api",
-    "verdict": "disputed",
-    "quality": 3,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Codex offers CLI, IDE, cloud, and MCP integration surfaces (codex-docs-15, codex-docs-19, codex-docs-22), and can use an API key per GitHub docs (codex-gh-4), but the newer model (gpt-5.3-codex) is explicitly stated as not yet available via API (codex-comm-5), undercutting claims of a fully documented, current public API for AI-native automation.",
+    "rationale": "Codex exposes a documented MCP JSON-RPC server interface and CLI non-interactive/scriptable mode for programmatic control, but the docs mark the MCP server command as deprecated in favor of an undocumented 'Codex app server,' and community evidence confirms the underlying gpt-5.3-codex model API access isn't yet enabled ('We are working to safely enable API access soon').",
     "evidenceIds": [
-      "codex-gh-4",
-      "codex-comm-5",
-      "codex-docs-15",
+      "codex-gh-6",
+      "codex-docs-23",
       "codex-docs-19",
-      "codex-docs-22"
+      "codex-docs-22",
+      "codex-comm-5"
     ]
   },
   {
@@ -1126,9 +1135,13 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Codex supports API key auth and sandbox/approval controls for file/command execution, but there is no mention of scoped or least-privilege API credential issuance for agents (e.g., granular permission scopes on API keys).",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence covers authentication via ChatGPT account or a generic API key, sandboxing/approval modes for local execution, and MCP server integration, but there is no mention of issuing scoped or least-privilege API credentials specifically for an agent (e.g., granular permission scopes, token minting with restricted access).",
+    "evidenceIds": [
+      "codex-gh-3",
+      "codex-gh-4",
+      "codex-docs-17"
+    ]
   },
   {
     "productId": "codex",
@@ -1136,14 +1149,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Codex supports API-key based usage and MCP integration (codex-gh-4, codex-docs-16, codex-docs-21), but there's no evidence of a dedicated official SDK for building on Codex, and community reports confirm the latest Codex model isn't even available via API yet ('gpt-5.3-codex isn't available on the API yet' — codex-comm-5). Docs probes for platform.openai.com also 404 (codex-probe-1, codex-probe-2), suggesting weak first-class SDK/API documentation.",
+    "rationale": "Codex offers some programmatic hooks — API key access (with 'additional setup' required) and an MCP server JSON-RPC interface for local control — but there's no evidence of dedicated official SDKs (e.g., Python/Node client libraries) for building against Codex, and the newest model reportedly isn't yet available via API, while the MCP server interface itself is flagged as experimental/deprecated.",
     "evidenceIds": [
       "codex-gh-4",
       "codex-comm-5",
-      "codex-docs-16",
-      "codex-docs-21",
-      "codex-probe-1",
-      "codex-probe-2"
+      "codex-gh-6",
+      "codex-docs-23"
     ]
   },
   {
@@ -1151,8 +1162,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions webhooks or an event-subscription API for Codex; the product surfaces documented are CLI, IDE extension, MCP integration, and cloud task delegation, none of which describe webhook subscriptions.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Codex can act as an MCP server/client and integrate with GitHub, Slack, etc., but there is no mention of a webhook subscription mechanism for external event notifications; MCP is a different protocol, not webhooks.",
     "evidenceIds": []
   },
   {
@@ -1161,13 +1172,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Codex supports trigger-based cloud task kickoff from GitHub, GitLab, Linear issues, and Slack, and can run tasks in parallel isolated cloud environments, which covers event-driven autonomy to some degree. However, there is no evidence of scheduled/cron-based always-on execution or continuous autonomous maintenance—tasks appear to be delegated and returned to, not persistently self-triggering.",
+    "rationale": "Codex supports cloud tasks triggered by external events (new PRs/issues, Slack messages, Linear issues) and can run delegated tasks in parallel cloud environments, which enables some trigger-based automation, but there is no evidence of true cron-like scheduling or a persistent always-on agent that proactively monitors and fixes software without a triggering event.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-2",
-      "codex-docs-3",
       "codex-docs-6",
-      "codex-docs-19"
+      "codex-docs-3",
+      "codex-docs-5"
     ]
   },
   {
@@ -1175,12 +1186,11 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Codex is a coding agent/CLI product with docs describing its own features (CLI usage, MCP, cloud tasks), but there's no evidence of an interactive API reference with runnable examples for exploring Codex's API—docs probes even show 404s for standard docs endpoints.",
+    "confidence": "low",
+    "rationale": "No evidence pack items describe an interactive API reference with runnable examples; documentation shown is CLI/agent usage docs, and probes for docs pages (llms.txt, docs.md) returned 404s.",
     "evidenceIds": [
       "codex-probe-1",
-      "codex-probe-2",
-      "codex-probe-3"
+      "codex-probe-2"
     ]
   },
   {
@@ -1201,11 +1211,13 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a published OpenAPI or machine-readable API spec for Codex; probes for llms.txt and docs.md returned 404s, and no evidence pack item references a downloadable API specification.",
+    "confidence": "medium",
+    "rationale": "There is no evidence of a downloadable OpenAPI or machine-readable API spec; probes for llms.txt and docs.md both returned 404s, and the MCP server interface is a protocol description, not a machine-readable API spec artifact.",
     "evidenceIds": [
       "codex-probe-1",
-      "codex-probe-2"
+      "codex-probe-2",
+      "codex-gh-6",
+      "codex-docs-23"
     ]
   },
   {
@@ -1214,9 +1226,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex explicitly runs tasks in 'isolated cloud environments' and lets users configure sandbox/writable roots and approval policies before code execution, supporting safe, isolated testing without touching a live system. However, no evidence directly addresses 'production data' separation or a dedicated staging/test data sandbox, and community comments raise concerns about sandbox trust and file-system access scope.",
+    "rationale": "Codex offers isolated cloud execution environments and a CLI sandbox mode that restricts file edits/command execution until approved, which functionally shields local/production systems from agent actions (codex-docs-1, codex-docs-3, codex-docs-17). However, this is general execution sandboxing rather than a dedicated 'test data' sandbox, and community reports raise doubts about whether the sandbox reliably prevents access to sensitive files (codex-comm-7, codex-comm-10).",
     "evidenceIds": [
       "codex-docs-1",
+      "codex-docs-3",
       "codex-docs-17",
       "codex-comm-7",
       "codex-comm-10"
@@ -1227,21 +1240,24 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack discusses API versioning schemes or a documented deprecation policy; evidence only covers Codex CLI/cloud features and community sentiment about model performance and quotas.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "There is no evidence of a documented API versioning scheme or deprecation policy; the only deprecation-related item shows an ad hoc note that 'codex mcp-server is deprecated, use the Codex app server instead' with no formal policy, versioning scheme, or migration timeline. The API itself is noted as not yet generally available (codex-comm-5), further undercutting any claim of a stable, versioned, documented API contract.",
+    "evidenceIds": [
+      "codex-docs-23",
+      "codex-comm-5"
+    ]
   },
   {
     "productId": "codex",
     "storyId": "architecture-navigation",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs claim Codex CLI can be started in a repo to 'explore unfamiliar code, plan a change, edit files' and reopen/search past chats, suggesting some codebase-orientation capability, but there is no evidence of dedicated codebase-mapping, architecture visualization, or onboarding-focused features. Community feedback focuses on agentic task execution and model performance rather than codebase comprehension, leaving the specific story only weakly supported.",
+    "confidence": "medium",
+    "rationale": "Codex CLI docs explicitly mention exploring unfamiliar code and inspecting code as a starting workflow (codex-docs-9, codex-docs-8), and its terminal/agent design supports asking questions about a repo, but there's no dedicated codebase-mapping, architecture-visualization, or onboarding feature described—capability is implicit within general coding-agent use rather than a purpose-built understanding tool.",
     "evidenceIds": [
       "codex-docs-9",
-      "codex-docs-11",
-      "codex-gh-1"
+      "codex-docs-8",
+      "codex-docs-13"
     ]
   },
   {
@@ -1250,12 +1266,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly confirm Codex can inspect diffs and open pull requests when a task is complete, and integrates with GitHub PRs/issues, implying branch and commit handling under the hood. However, no evidence explicitly describes staging changes or generating commit messages as a distinct, user-facing capability.",
+    "rationale": "Docs explicitly describe Codex making edits, running commands, and opening pull requests when work is ready ('Inspect the summary and diff, request a follow-up, or open a pull request when the result is ready'), and it can start from GitHub PRs/issues. However, there's no explicit mention of staging changes, writing commit messages, or creating branches as discrete controllable steps, and community feedback raises concerns about sandboxing/permissions and reliability of agentic actions.",
     "evidenceIds": [
       "codex-docs-5",
+      "codex-docs-9",
       "codex-docs-2",
-      "codex-docs-15",
-      "codex-docs-7"
+      "codex-gh-1",
+      "codex-comm-7",
+      "codex-comm-10"
     ]
   },
   {
@@ -1277,13 +1295,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex is documented as a general-purpose coding agent that can inspect code, edit files, run commands, and automate repeatable work (codex-docs-8/9/19), which plausibly covers writing tests, fixing lint, and similar tasks, but no evidence explicitly confirms merge-conflict resolution or dependency updates. Community feedback is mixed, with some praising its real-world coding help ('no worse than average L3-L4 engs') and others reporting it struggles with tasks, so quality is inconsistent.",
+    "rationale": "Codex is a general coding agent capable of editing files, running local dev tools/commands, and automating repeatable work, which supports writing tests, fixing lint issues, resolving conflicts, and updating dependencies as generic coding tasks, but no evidence explicitly confirms these specific workflows work reliably. Community feedback is mixed, with some praising its ability to edit/test code and others reporting it struggles with tasks and has tight usage limits.",
     "evidenceIds": [
       "codex-docs-8",
       "codex-docs-9",
-      "codex-docs-10",
       "codex-docs-19",
-      "codex-comm-18",
+      "codex-comm-8",
+      "codex-comm-14",
       "codex-comm-3"
     ]
   },
@@ -1293,7 +1311,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes automatic model selection; users appear to manually choose or are assigned a fixed model (e.g., gpt-5.3-codex, gpt-5.3-codex-spark) with community comments discussing speed/quality tradeoffs across models rather than any auto-selection feature.",
+    "rationale": "There is no evidence Codex automatically selects the best model per task; users must choose a model (e.g., gpt-5.3-codex, spark variant) and community comments describe manually switching between models/providers due to speed or quality issues rather than any automatic model-selection feature.",
     "evidenceIds": []
   },
   {
@@ -1302,7 +1320,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe running tasks in parallel across isolated cloud environments, delegating multiple tasks, and non-interactive scripted execution (codex exec) for repeatable workflows, which supports bulk/automation use cases. However there's no explicit batch-item or bulk-edit API, and no community evidence confirms this at scale, only vendor-doc claims.",
+    "rationale": "Docs describe running multiple tasks in parallel in isolated cloud environments and non-interactive CLI mode for repeatable workflows, which supports bulk-style automation across many items/tasks. However, there's no dedicated 'bulk operation' feature (e.g., batch API over many items) and no community evidence validating this at scale.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-3",
@@ -1316,13 +1334,9 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Codex can be manually invoked from GitHub, GitLab, Linear, or Slack, but there is no indication of a rules/trigger system where users define conditions that automatically fire actions on events without human initiation.",
-    "evidenceIds": [
-      "codex-docs-1",
-      "codex-docs-2",
-      "codex-docs-6"
-    ]
+    "confidence": "medium",
+    "rationale": "Codex evidence covers task delegation, integrations (GitHub/Slack/Linear), MCP server connectivity, and CLI automation, but there is no mention of user-defined rules that automatically trigger actions based on events (e.g., event-driven triggers/webhooks configured by the user). Task initiation appears to be manual (starting from an issue/PR/chat) rather than rule-based automatic triggering.",
+    "evidenceIds": []
   },
   {
     "productId": "codex",
@@ -1330,7 +1344,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Codex's cloud tasks, CLI automation, delegation, and MCP integrations, but nowhere mentions scheduling, cron-like recurring jobs, or triggers for repeated automated execution — this capability is simply not documented.",
+    "rationale": "Evidence shows Codex can run tasks async/in parallel, integrate with GitHub/Slack/Linear, and run non-interactive workflow commands, but nothing describes scheduling recurring/cron-like jobs or workflows on a timer basis.",
     "evidenceIds": []
   },
   {
@@ -1353,15 +1367,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe a cloud agent that runs tasks in isolated environments, works in parallel, lets you inspect diffs/summaries and open PRs for review, covering build-and-review end-to-end (codex-docs-1,3,5,6). However, explicit 'test' and 'demo' steps aren't directly evidenced, and community feedback highlights inconsistent quality, tight usage limits, slow performance, and reliability caveats that undercut a fully autonomous end-to-end experience.",
+    "rationale": "Codex cloud tasks support delegating a full build/test/PR-creation workflow (isolated cloud env, run tasks, inspect diff, open a pull request) matching the 'build, test, demo, review' loop, and docs explicitly describe configuring repo setup/tools for tests. However, community evidence raises real doubts about reliability and consistency of agentic execution ('struggles with almost anything', rate limits interrupting flow, agentic weaknesses vs competitors), so delivery is credible but with significant caveats.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-3",
+      "codex-docs-4",
       "codex-docs-5",
       "codex-docs-6",
-      "codex-docs-4",
+      "codex-comm-3",
       "codex-comm-8",
-      "codex-comm-12",
+      "codex-comm-13",
       "codex-comm-18"
     ]
   },
@@ -1371,12 +1386,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs clearly describe delegating longer tasks to run in isolated cloud environments in parallel, starting work from web/GitHub/GitLab/Linear/Slack, and returning to inspect diffs/PRs, directly matching the story. Some community feedback questions agent quality and rate limits, but the core cloud-delegation capability itself is well documented and not disputed.",
+    "rationale": "Codex docs clearly describe a cloud offering where tasks run in isolated cloud environments, in parallel, without tying up the local machine, and users can delegate a longer task and return when ready, then review diffs and open PRs. This directly matches the story, though community evidence raises caveats about speed, quotas, and reliability rather than disputing the core capability's existence.",
     "evidenceIds": [
       "codex-docs-1",
-      "codex-docs-2",
       "codex-docs-3",
       "codex-docs-6",
+      "codex-docs-4",
       "codex-docs-5",
       "codex-docs-15"
     ]
@@ -1387,13 +1402,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show real controls: admins/engineers can add/remove MCP servers, inspect available tools before use, and configure approval modes for file edits/command execution (codex-docs-16, codex-docs-17, codex-docs-20, codex-docs-22). However, community reports raise concerns about sandboxing effectiveness and unauthorized file access, suggesting these controls aren't always trusted or fully enforced in practice.",
+    "rationale": "Docs show Codex supports adding/removing MCP servers, authenticating them, and inspecting/approving tools and sandbox permissions before use, giving some control over external integrations at the individual/config level. However, this is CLI/session-level configuration rather than a centralized engineering-lead policy control, and community reports raise concerns about the agent reading sensitive data without explicit permission, undercutting full trust in this control.",
     "evidenceIds": [
       "codex-docs-16",
       "codex-docs-17",
-      "codex-docs-20",
+      "codex-docs-21",
       "codex-docs-22",
-      "codex-comm-7",
       "codex-comm-10"
     ]
   },
@@ -1430,7 +1444,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe packaging repeatable instructions as 'skills' and adding plugins/MCP servers to connect Codex to custom tools and data directly from the CLI, matching the custom-skills story. Community evidence doesn't specifically contest this feature, though it's less battle-tested than other capabilities.",
+    "rationale": "Codex explicitly supports packaging repeatable instructions as 'skills' and adding plugins/MCP servers to connect to team tools, directly matching the custom skills story (codex-docs-20). This is reinforced by MCP server configuration docs shared across CLI/IDE/desktop clients, though evidence is vendor-doc only with no independent hands-on validation of the skills feature specifically.",
     "evidenceIds": [
       "codex-docs-20",
       "codex-docs-16",
@@ -1460,7 +1474,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Codex supports sign-in via a ChatGPT account tied to Business/Enterprise plans, implying some enterprise-tier access, but there is no evidence of SSO/SAML, Azure AD, Okta, or other enterprise identity/cloud-platform authentication integration for compliance and scalability.",
+    "rationale": "Evidence shows sign-in via ChatGPT Plus/Pro/Business/Edu/Enterprise plans and API-key auth (codex-gh-3, codex-gh-4), which hints at enterprise account tiers but provides no detail on SSO/SAML, cloud IAM integration, or compliance-grade identity federation expected by engineering leads. No mention of enterprise identity providers (Okta, Azure AD, etc.) or scalable cloud auth mechanisms beyond plan tiers.",
     "evidenceIds": [
       "codex-gh-3",
       "codex-gh-4"
@@ -1472,12 +1486,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "GitHub docs explicitly recommend signing in with a ChatGPT account to use Codex under existing Plus, Pro, Business, Edu, or Enterprise subscription plans, with API key as an alternative. Community evidence confirms this is the real usage pattern, though some users report tight usage limits under subscription plans.",
+    "rationale": "OpenAI's own GitHub docs explicitly recommend signing into an existing ChatGPT account to use Codex under Plus, Pro, Business, Edu, or Enterprise plan subscriptions, with API key as an alternative requiring extra setup.",
     "evidenceIds": [
       "codex-gh-3",
-      "codex-gh-4",
-      "codex-comm-8",
-      "codex-comm-12"
+      "codex-gh-4"
     ]
   },
   {
@@ -1502,7 +1514,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Official docs explicitly recommend signing in with a ChatGPT account (Plus/Pro/Business/Edu/Enterprise) to use Codex, contrasting this with API key use which 'requires additional setup,' confirming account-based access without managing API keys.",
+    "rationale": "GitHub docs explicitly recommend signing into a ChatGPT Plus/Pro/Business/Edu/Enterprise account to use Codex without needing an API key, with API key usage noted as an alternative requiring extra setup, indicating free/subscription-tier access via personal account login is the primary supported path.",
     "evidenceIds": [
       "codex-gh-3",
       "codex-gh-4"
@@ -1513,12 +1525,14 @@
     "storyId": "full-codebase-mapping",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs explicitly mention Codex CLI can be started in a repository to 'explore unfamiliar code' without manual file selection, supporting autonomous codebase exploration, but no independent evidence or benchmarks demonstrate quality of whole-codebase mapping/explanation, and community feedback focuses on coding/agentic performance rather than codebase comprehension specifically.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe using Codex CLI to 'explore unfamiliar code, plan a change, edit files' (codex-docs-9), implying autonomous codebase exploration without manual file selection, and agents can delegate to specialized sub-agents to gather findings (codex-docs-13). However, there's no dedicated 'explain codebase' or architecture-mapping feature described, and community evidence focuses on coding/editing performance and reliability issues rather than confirming deep codebase comprehension quality.",
     "evidenceIds": [
       "codex-docs-9",
+      "codex-docs-13",
       "codex-docs-8",
-      "codex-gh-1"
+      "codex-comm-3",
+      "codex-comm-18"
     ]
   },
   {
@@ -1527,8 +1541,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codex is positioned as an agentic coding assistant (CLI, cloud tasks, IDE extension, PR/task automation) rather than an inline autocomplete tool; no evidence describes inline code completions or next-edit suggestions as you type, which is the hallmark of tools like Copilot/Cursor Tab.",
-    "evidenceIds": []
+    "rationale": "Codex is positioned as an agentic coding assistant/CLI/cloud task runner (delegated tasks, PR review, terminal automation) rather than an inline autocomplete tool. No evidence in the pack describes inline code completions or next-edit suggestions as the developer types; IDE extension mention (codex-gh-2) only references installing Codex in an editor, not autocomplete-style suggestions.",
+    "evidenceIds": [
+      "codex-gh-2",
+      "codex-docs-9",
+      "codex-docs-8"
+    ]
   },
   {
     "productId": "codex",
@@ -1553,10 +1571,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms Codex has an IDE extension for VS Code, Cursor, and Windsurf, and mentions a generic 'IDE extension' sharing MCP config, but JetBrains is never mentioned anywhere in the pack. No evidence supports interactive diffs or context-sharing specifically within a JetBrains IDE.",
+    "rationale": "The evidence only mentions IDE extensions for VS Code, Cursor, and Windsurf—JetBrains IDEs are never mentioned in any of the docs, GitHub, or community evidence. There is no indication of interactive diff viewing or code-context sharing within a JetBrains IDE specifically.",
     "evidenceIds": [
-      "codex-gh-2",
-      "codex-docs-21"
+      "codex-gh-2"
     ]
   },
   {
@@ -1565,7 +1582,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack indicates Codex provides license attribution or public-code matching references for AI-suggested code; the docs focus on task execution, review of diffs, and CLI features, with no mention of code provenance/license scanning.",
+    "rationale": "No evidence in the pack shows Codex providing license attribution or public-code match references for its suggestions; documentation covers agentic workflows, CLI, MCP, and review features but nothing about IP/license provenance checking.",
     "evidenceIds": []
   },
   {
@@ -1574,8 +1591,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Codex is a coding agent for code editing, review, task delegation, and terminal/IDE workflows, but nothing describes live debugging of a running web application (e.g., attaching to a running process, browser devtools integration, runtime inspection). No mention of debugging live/running apps anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "Codex is presented as a coding agent for editing files, running commands, and automating code tasks, but there is no evidence of any live debugging capability (e.g., attaching a debugger, breakpoints, inspecting runtime state of a running web app). Evidence focuses on code generation, review, and terminal/CLI workflows, not live application debugging.",
+    "evidenceIds": [
+      "codex-docs-8",
+      "codex-docs-9",
+      "codex-docs-10",
+      "codex-docs-17"
+    ]
   },
   {
     "productId": "codex",
@@ -1583,16 +1605,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Codex CLI is explicitly a locally-run coding agent (npm install -g @openai/codex), documented to inspect code, edit files, run commands, and automate work directly in the terminal, with rich local features (reviews, MCP servers, sandboxing, non-interactive mode). Community evidence confirms real-world local terminal usage, despite complaints about speed/limits/model quality that don't negate core delivery.",
+    "rationale": "Codex CLI is explicitly described as a coding agent that runs locally on your computer, installable via npm, and community evidence confirms widespread real-world terminal usage (editing files, running tests, agentic workflows) despite some quality/performance complaints.",
     "evidenceIds": [
       "codex-gh-1",
       "codex-gh-5",
       "codex-docs-8",
       "codex-docs-9",
-      "codex-docs-17",
       "codex-docs-19",
       "codex-comm-8",
-      "codex-comm-14"
+      "codex-comm-9"
     ]
   },
   {
@@ -1601,7 +1622,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence covers Codex CLI/cloud sessions per repository, MCP configuration, and delegating to specialized agents, but nothing describes including multiple project directories in one session for broader context.",
+    "rationale": "No evidence describes a way to include multiple project directories/repositories in a single Codex session for combined context; docs focus on per-repository setup, single-repo CLI sessions, and cloud tasks tied to one repo at a time.",
     "evidenceIds": []
   },
   {
@@ -1623,13 +1644,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Codex is tied to OpenAI's own models (e.g., gpt-5.3-codex, gpt-5.3-codex-spark) and requires a ChatGPT plan or OpenAI API key; there's no mention of selecting models from other providers (Anthropic, Google, etc.) within a Codex session. Community comments merely compare Codex to competing tools like Claude Code and Gemini, not switching providers inside Codex.",
+    "rationale": "Codex is built around OpenAI's own GPT-5.3-Codex model family, with docs and community discussion referencing different Codex model variants (e.g., gpt-5.3-codex, gpt-5.3-codex-spark) but no evidence of selecting models from other providers like Anthropic or Google within the product itself. Community comments treat Claude/Gemini as separate tools users switch to outside Codex, not as options within it.",
     "evidenceIds": [
-      "codex-gh-3",
-      "codex-gh-4",
-      "codex-comm-13",
+      "codex-comm-8",
+      "codex-comm-12",
       "codex-comm-15",
-      "codex-comm-8"
+      "codex-gh-3",
+      "codex-gh-4"
     ]
   },
   {
@@ -1638,7 +1659,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Vendor docs explicitly state Codex cloud tasks can be started from GitHub pull requests, GitLab merge requests/issues, Linear issues, and Slack channels/threads, directly matching the story. No community evidence contradicts this specific integration capability, though most hands-on discussion focuses on model quality rather than these triggers.",
+    "rationale": "Vendor docs explicitly state Codex cloud tasks can be started from GitHub pull requests, GitLab merge requests/issues, Linear issues, or Slack channels/threads, directly matching the story. No community evidence contradicts this specific integration claim, though most third-party discussion focuses on model quality rather than these entry points.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-2"
@@ -1650,11 +1671,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Codex CLI docs confirm image/design input support ('pass an error screenshot, architecture diagram, or design reference with the first prompt'), which supports generating code from a sketch/image, but there's no evidence of PDF design ingestion or a full 'app from a design file' workflow, and community feedback raises concerns about reliability and agentic capability.",
+    "rationale": "Codex CLI supports passing images (screenshots, architecture diagrams, design references) as prompts alongside coding tasks, suggesting some multimodal input capability for design-to-code work, but there's no evidence of a dedicated 'sketch/image/PDF to app' generation pipeline or PDF support specifically. This is inferred from a general coding-agent feature rather than a purpose-built app-generation-from-design workflow.",
     "evidenceIds": [
       "codex-docs-12",
-      "codex-comm-13",
-      "codex-comm-15"
+      "codex-gh-1",
+      "codex-docs-9"
     ]
   },
   {
@@ -1663,15 +1684,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex CLI explicitly supports natural-language debugging workflows—exploring unfamiliar code, running dedicated reviews with prioritized findings, and accepting error screenshots for troubleshooting—per official docs. However, community reports are mixed, with some users praising its debugging/agentic capabilities while others report it 'struggles with almost anything' or lacks agentic reasoning compared to competitors.",
+    "rationale": "Codex CLI supports natural-language driven debugging workflows—exploring code, running local commands, reviewing diffs, accepting error screenshots for context, and even running dedicated code reviews—all documented as agentic features (codex-docs-9, codex-docs-10, codex-docs-12). However community feedback is mixed, citing inconsistent quality ('struggles with almost anything'), slowness, and sandboxing friction that can hamper real troubleshooting sessions (codex-comm-3, codex-comm-12, codex-comm-7).",
     "evidenceIds": [
+      "codex-docs-8",
       "codex-docs-9",
       "codex-docs-10",
       "codex-docs-12",
       "codex-docs-14",
       "codex-comm-3",
-      "codex-comm-13",
-      "codex-comm-14"
+      "codex-comm-12",
+      "codex-comm-8"
     ]
   },
   {
@@ -1697,13 +1719,13 @@
     "verdict": "disputed",
     "quality": 3,
     "confidence": "medium",
-    "rationale": "Docs show Codex offers CLI, IDE extension, MCP, and cloud task features, and API key access is technically supported (codex-gh-4), but direct evidence shows newest capabilities lag behind the UI: 'gpt-5.3-codex isn't available on the API yet' (codex-comm-5), and API key usage requires extra setup vs the primary ChatGPT-account flow (codex-gh-3, codex-gh-4), undermining full UI/API parity claims.",
+    "rationale": "Codex offers CLI, MCP server, and cloud/web/Slack UIs, but the flagship gpt-5.3-codex model is explicitly not yet available via API ('We are working to safely enable API access soon'), and the MCP server interface is marked experimental/deprecated in favor of the app server, undermining full API-UI parity.",
     "evidenceIds": [
       "codex-comm-5",
-      "codex-gh-3",
-      "codex-gh-4",
-      "codex-docs-15",
-      "codex-docs-19"
+      "codex-gh-6",
+      "codex-docs-23",
+      "codex-docs-21",
+      "codex-gh-4"
     ]
   },
   {
@@ -1711,22 +1733,22 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Codex operates on local filesystems and cloud tasks tied to your own repos/code, but there is no evidence of any 'export all your data in open format' capability—no account data export, chat history export, or portability feature is documented anywhere in the pack.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data export or open-format portability; Codex's data is largely code stored in the user's own repos (not a proprietary data store), but there's no documentation or claim about exporting chats, configs, or other Codex-managed data in open formats.",
     "evidenceIds": []
   },
   {
     "productId": "codex",
     "storyId": "openness-open-license",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Codex CLI is hosted publicly on GitHub with an install command and issue tracker (codex-gh-1, codex-gh-5, codex-comm-10 linking to a GitHub issue), suggesting some source is visible, but no evidence specifies an open-source license, and a community comment explicitly wishes the Codex App were open source, implying parts of the product are closed (codex-comm-9).",
+    "rationale": "The Codex CLI source is hosted publicly on GitHub (codex-gh-1 through codex-gh-6), suggesting some code is readable, but no evidence in the pack states an explicit open-source license, and a community comment explicitly notes the Codex App (a related surface) is *not* open source, wishing it were (codex-comm-9), indicating inconsistent openness across the product surface.",
     "evidenceIds": [
       "codex-gh-1",
       "codex-gh-5",
-      "codex-comm-9",
-      "codex-comm-10"
+      "codex-gh-6",
+      "codex-comm-9"
     ]
   },
   {
@@ -1735,7 +1757,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codex is offered as a cloud service (ChatGPT plans) or local CLI/IDE tool requiring OpenAI account/API access, not as a self-hostable core product; there is no evidence of an open-source server or deployable backend that a user could run entirely on their own infrastructure. Community complaints even wish the app itself were open source, confirming it isn't.",
+    "rationale": "Codex CLI runs locally as a client, but it requires signing into a ChatGPT plan or an OpenAI API key to access the underlying model (codex-gh-3, codex-gh-4); there is no evidence the core model/service can be self-hosted, and a community comment explicitly wishes the app were open source (codex-comm-9), implying it isn't fully self-hostable.",
     "evidenceIds": [
       "codex-gh-3",
       "codex-gh-4",
@@ -1748,7 +1770,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs describe cloud tasks running in parallel and isolated from the local machine, and 'delegate a longer task and return when it is ready,' supporting multi-task parallel autonomy, but there's no explicit claim of sustained multi-day runs or 'fleets' at scale. Community feedback highlights tight daily usage limits and slow performance that would constrain running many agents for extended periods.",
+    "rationale": "Codex cloud explicitly supports running multiple tasks in parallel in isolated environments, delegating long-running work and returning later, which matches the core of the story. However, evidence doesn't confirm 'fleets' of many agents or true multi-day autonomous runs, and community feedback highlights tight usage limits, slowness, and reliability issues that undercut sustained long-running autonomy.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-3",
@@ -1762,27 +1784,30 @@
     "storyId": "parallel-task-attempt-comparison",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs confirm Codex can run tasks in parallel in isolated cloud environments and let users inspect diffs/summaries and choose a follow-up or PR, supporting parallel task attempts, but there's no explicit evidence of a UI/workflow for directly comparing multiple parallel attempts of the same task side-by-side before choosing one.",
+    "confidence": "medium",
+    "rationale": "Codex cloud explicitly supports running tasks in parallel in isolated environments, and results can be inspected via summary/diff before opening a PR, which supports comparing outcomes; however there's no explicit evidence of a dedicated multi-attempt comparison UI for the same task, and community feedback raises concerns about reliability and model behavior variance.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-3",
       "codex-docs-5",
-      "codex-docs-6"
+      "codex-comm-3",
+      "codex-comm-15"
     ]
   },
   {
     "productId": "codex",
     "storyId": "partner-agent-app-integration",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Codex supports MCP servers and plugins to connect third-party tools/data to the CLI, and integrates with GitHub/GitLab/Linear/Slack for triggering work, but there's no evidence of a broader third-party 'partner-built agent app' marketplace or ecosystem integration beyond MCP connectors.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Codex supports MCP (Model Context Protocol) to add local/remote third-party servers and 'plugins to connect Codex to your team's tools and data,' enabling integration of external agent/tool ecosystems into workflows; it also connects to GitHub, GitLab, Linear, and Slack as trigger sources. However, evidence focuses on tool/data connectors rather than partner-built 'agent apps' specifically, and the MCP server command itself is noted as deprecated in favor of a newer app server, indicating some integration instability.",
     "evidenceIds": [
       "codex-docs-16",
       "codex-docs-20",
       "codex-docs-21",
-      "codex-docs-2"
+      "codex-docs-22",
+      "codex-docs-2",
+      "codex-docs-23"
     ]
   },
   {
@@ -1791,7 +1816,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack describes Codex's cloud/CLI features, environment configuration, MCP setup, and general agent behavior, but nowhere mentions a project-level instructions file (e.g., AGENTS.md or similar) for setting coding standards or conventions.",
+    "rationale": "The evidence pack describes repository setup configuration (dependencies, tools, variables) but contains no mention of a project-level instructions file (e.g., AGENTS.md) for coding standards or conventions that the agent follows.",
     "evidenceIds": []
   },
   {
@@ -1813,7 +1838,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions data residency, region selection, or storage location controls for Codex; all evidence focuses on features, CLI usage, and performance discussions.",
+    "rationale": "No evidence pack item mentions data residency, region selection, or storage location controls for Codex; the pack focuses on features, CLI usage, and community sentiment.",
     "evidenceIds": []
   },
   {
@@ -1822,7 +1847,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation, settings, or community discussion addressing data-training opt-out or privacy controls for Codex; all evidence covers features, performance, and UX complaints instead.",
+    "rationale": "The evidence pack contains no documentation, settings, or claims about data usage/training opt-out, enterprise data privacy controls, or zero-retention policies for Codex. No mention of training-data exclusion appears anywhere in the docs, GitHub, or community evidence.",
     "evidenceIds": []
   },
   {
@@ -1831,7 +1856,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or claims about data retention settings, deletion controls, or privacy/data lifecycle management for Codex; community comments even raise unanswered concerns about sensitive data access without addressing retention/deletion policy.",
+    "rationale": "The evidence pack contains no documentation or community discussion of data retention policies, deletion controls, or privacy settings for Codex; one community comment even raises unresolved concerns about Codex reading sensitive filesystem data without permission (codex-comm-10), but no actual retention/deletion capability is described.",
     "evidenceIds": []
   },
   {
@@ -1840,7 +1865,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention telemetry, usage data collection, or any opt-out/privacy settings for Codex; documentation excerpts focus on features like cloud tasks, CLI usage, and MCP integration with no privacy-posture controls described.",
+    "rationale": "No evidence pack item mentions telemetry, usage data collection, opt-out settings, or privacy controls for Codex; the pack covers features, capabilities, and user experience sentiment but never addresses data collection or opt-out mechanisms.",
     "evidenceIds": []
   },
   {
@@ -1848,14 +1873,12 @@
     "storyId": "reproducible-cloud-environment-config",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs explicitly state you can configure dependencies, tools, variables, and setup steps per repository for cloud tasks (codex-docs-4), supporting isolated cloud environments (codex-docs-1,3). However, no evidence details reproducibility mechanisms, environment persistence, or setup-file specifics, and community feedback raises sandboxing/security concerns rather than confirming environment configuration works smoothly.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly state Codex cloud lets users 'configure the dependencies, tools, variables, and setup steps each repository needs' and run tasks in isolated cloud environments, directly matching the story. However, there is no detail on how reproducibility is guaranteed (e.g., container images, caching) and no community evidence validating this specific setup workflow, only general agent-quality complaints.",
     "evidenceIds": [
       "codex-docs-4",
       "codex-docs-1",
-      "codex-docs-3",
-      "codex-comm-7",
-      "codex-comm-10"
+      "codex-docs-3"
     ]
   },
   {
@@ -1864,15 +1887,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex CLI/cloud supports running commands, editing code, exploring unfamiliar codebases, running dedicated code reviews against diffs/commits, and iterating with follow-ups—capabilities that map to reproducing bugs, narrowing root causes, and verifying fixes. However, community evidence shows inconsistent reliability, agentic struggles on hard problems, and slowness that undercut confidence in this workflow.",
+    "rationale": "Codex CLI/agent can explore unfamiliar code, edit files, run local dev tools/commands, and run dedicated reviews against diffs/commits to surface findings—supporting root-cause narrowing and fix verification (codex-docs-9, codex-docs-10, codex-docs-8). However, community evidence shows mixed real-world reliability, agentic struggles on hard problems, and inconsistent quality across models, so effectiveness at actually reproducing issues and pinpointing root causes is disputed in practice.",
     "evidenceIds": [
       "codex-docs-9",
       "codex-docs-10",
-      "codex-docs-5",
-      "codex-docs-19",
-      "codex-comm-14",
+      "codex-docs-8",
       "codex-comm-3",
-      "codex-comm-13"
+      "codex-comm-13",
+      "codex-comm-14"
     ]
   },
   {
@@ -1894,8 +1916,8 @@
     "storyId": "shared-knowledge-workspace",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Codex evidence covers running coding tasks against repos (cloud/CLI/IDE), MCP tool integration, and PR/issue workflows, but nothing describes creating a shared 'workspace' combining docs and repos as a persistent team source-of-truth artifact.",
+    "confidence": "low",
+    "rationale": "Codex is presented as an individual/agentic coding tool (CLI, IDE extension, cloud tasks) operating on repos, but there is no evidence of a feature to create a shared team workspace aggregating docs and repos as a common source of truth. Config repos, MCP connections, and task delegation are agent-execution features, not a team knowledge/workspace hub.",
     "evidenceIds": []
   },
   {
@@ -1904,12 +1926,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Codex CLI explicitly documents non-interactive mode ('Run a non-interactive command in a repeatable workflow') and automating repeatable work from the terminal, directly supporting scripted/CI use cases, with configurable auto-approval settings for edits/commands.",
+    "rationale": "Docs explicitly describe running a non-interactive command in a repeatable workflow via the CLI, plus scriptable exec-style usage, MCP server mode, and automation of repeatable work without leaving the terminal, indicating first-party support for scripted/CI automation.",
     "evidenceIds": [
       "codex-docs-19",
       "codex-docs-8",
-      "codex-docs-17",
-      "codex-gh-1"
+      "codex-docs-20",
+      "codex-gh-6",
+      "codex-docs-15"
     ]
   },
   {
@@ -1918,7 +1941,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data usage policies, training opt-out settings, enterprise privacy controls, or any documentation addressing whether code/prompts are used for model training.",
+    "rationale": "The evidence pack contains no mention of data usage, training opt-out settings, enterprise privacy controls, or any policy statement about whether code/prompts are used for model training. Nothing in the docs, GitHub, or community items addresses this axis.",
     "evidenceIds": []
   },
   {
@@ -1927,15 +1950,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex supports running multiple parallel cloud tasks, browsing active/completed chats, and reopening recent sessions from a unified CLI/web interface, which enables managing multiple agent sessions (codex-docs-3, codex-docs-11, codex-docs-15). However, evidence shows real-world friction with quotas/rate limits forcing users to juggle across tools, platform restrictions (Mac-only complaints), and no clear evidence of a true single-pane-of-glass session manager for many concurrent sessions at scale.",
+    "rationale": "Docs describe a unified workspace where you can run tasks in parallel across cloud, web, CLI and IDE, browse active/completed chats, and delegate/return to sessions later, directly matching the story. However community feedback cites tight usage limits, UX inconsistencies, and 'paper cuts' when juggling multiple sessions, indicating the experience isn't seamless in practice.",
     "evidenceIds": [
+      "codex-docs-1",
       "codex-docs-3",
-      "codex-docs-11",
-      "codex-docs-15",
       "codex-docs-6",
+      "codex-docs-7",
+      "codex-docs-15",
+      "codex-docs-11",
       "codex-comm-8",
-      "codex-comm-12",
-      "codex-comm-20"
+      "codex-comm-9"
     ]
   },
   {
@@ -1944,7 +1968,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Codex CLI offers a general code review feature that reports 'prioritized findings' against diffs/commits without modifying the tree, which could surface some security issues, but there is no evidence of dedicated vulnerability detection, CVE-level contextual explanations, or automated security-specific fixes.",
+    "rationale": "Codex CLI includes a general code review command that 'reports prioritized findings' against changes (codex-docs-10), and as a general coding agent it can plausibly explain and fix issues including security bugs, but no evidence describes a dedicated security-vulnerability detection, explanation, or autofix capability.",
     "evidenceIds": [
       "codex-docs-10",
       "codex-docs-9"

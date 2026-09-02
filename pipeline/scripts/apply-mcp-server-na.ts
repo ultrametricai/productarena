@@ -1,4 +1,4 @@
-// Accuracy Program wave 1, applicability correction #1: for the 5 ai-coding products,
+// Accuracy Program wave 1, applicability correction #1: for 4 of the 5 ai-coding products,
 // `agentic-mcp-server` ("I can connect an agent via an official MCP server") is the wrong
 // axis. These products ARE the agent — the meaningful question is whether they CONSUME MCP
 // servers (see the new `agentic-mcp-client` canonical story), not whether they ship one for
@@ -6,6 +6,12 @@
 // (na, quality 0) and stamp the cache file with the CURRENT cellHash (post evidence-pack
 // deepening) so `pnpm pipeline judge` treats it as already judged and doesn't overwrite it
 // with an LLM call that has no way to know about this applicability ruling.
+//
+// EXCLUDES codex (review verdict, reopened): codex ships a real (if experimental, and now
+// deprecated per its own docs) `codex mcp-server` / `codex-mcp-server` binary — see
+// codex-gh-6 / codex-docs-23 in data/ai-coding/evidence/codex.json. The axis genuinely
+// applies to codex, so its `agentic-mcp-server` cell is judged normally by the LLM from that
+// evidence, not forced to na. The other 4 products' na rulings stand.
 //
 // Usage: pnpm exec tsx pipeline/scripts/apply-mcp-server-na.ts [--write]
 import fs from 'node:fs'
@@ -17,7 +23,7 @@ import { cellHash, PROMPT_VERSION, validateVerdictRules } from '../stages/judge'
 const WRITE = process.argv.includes('--write')
 const CATEGORY = 'ai-coding'
 const STORY_ID = 'agentic-mcp-server'
-const PRODUCTS = ['codex', 'claude-code', 'cursor', 'github-copilot', 'gemini-cli']
+const PRODUCTS = ['claude-code', 'cursor', 'github-copilot', 'gemini-cli']
 
 const RATIONALE =
   'This product is an AI agent — it consumes MCP servers rather than shipping one; the serving axis does not apply. See agentic-mcp-client. (Applicability corrected after reader review.)'
