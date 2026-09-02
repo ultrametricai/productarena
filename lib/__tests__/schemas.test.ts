@@ -133,6 +133,36 @@ describe('schemas', () => {
     }).success).toBe(false)
   })
 
+  it('accepts an optional install array on products', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'oss' as const, urls: { site: 'https://p.example' } }
+    expect(ProductSchema.safeParse(base).success).toBe(true)
+    expect(ProductSchema.safeParse({
+      ...base,
+      install: [{ label: 'npm', command: 'npm i p', url: 'https://p.example/docs' }],
+    }).success).toBe(true)
+    expect(ProductSchema.safeParse({
+      ...base,
+      install: [{ label: 'npm', command: 'npm i p' }],
+    }).success).toBe(true)
+  })
+
+  it('rejects an install entry with a too-short command, bad url, or empty label', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'oss' as const, urls: { site: 'https://p.example' } }
+    expect(ProductSchema.safeParse({ ...base, install: [{ label: 'npm', command: 'x' }] }).success).toBe(false)
+    expect(ProductSchema.safeParse({ ...base, install: [{ label: '', command: 'npm i p' }] }).success).toBe(false)
+    expect(ProductSchema.safeParse({
+      ...base,
+      install: [{ label: 'npm', command: 'npm i p', url: 'not-a-url' }],
+    }).success).toBe(false)
+  })
+
+  it('caps the install array at 4 entries', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'oss' as const, urls: { site: 'https://p.example' } }
+    const entry = { label: 'npm', command: 'npm i p' }
+    expect(ProductSchema.safeParse({ ...base, install: [entry, entry, entry, entry] }).success).toBe(true)
+    expect(ProductSchema.safeParse({ ...base, install: [entry, entry, entry, entry, entry] }).success).toBe(false)
+  })
+
   it('accepts a popularity record with only some fields present', () => {
     const r = PopularitySchema.safeParse({ stars: 230_000, starsPerYear: 11_500, fetchedAt: '2026-08-27T00:00:00Z' })
     expect(r.success).toBe(true)

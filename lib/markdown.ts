@@ -156,6 +156,20 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
     lines.push('')
   }
 
+  if (product.install && product.install.length > 0) {
+    lines.push('## Install')
+    lines.push('')
+    lines.push('Vendor-official one-liners — verify before piping any script to a shell.')
+    for (const entry of product.install) {
+      lines.push('')
+      lines.push(`${entry.label}${entry.url ? ` ([docs](${entry.url}))` : ''}:`)
+      lines.push('```')
+      lines.push(entry.command)
+      lines.push('```')
+    }
+    lines.push('')
+  }
+
   lines.push('## Story verdicts')
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
   for (const [theme, storiesInTheme] of byTheme) {

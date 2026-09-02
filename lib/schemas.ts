@@ -32,6 +32,16 @@ export const ProductSchema = z.object({
     summary: z.string().min(10).max(240),
     url: z.string().url(),
   }).optional(),
+  // Copy-pasteable install/try one-liners — curated only where a genuine OFFICIAL command
+  // exists (see components/InstallCommands.tsx). `label` is a short kind like "npm", "brew",
+  // "pip", "installer", "docker"; `command` is the exact vendor-documented one-liner (never a
+  // paraphrase); `url` is the docs page that documents it. Absent entirely for SaaS-only
+  // products with nothing to install (see METHODOLOGY.md).
+  install: z.array(z.object({
+    label: z.string().min(1),
+    command: z.string().min(2),
+    url: z.string().url().optional(),
+  })).max(4).optional(),
 })
 
 // Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by
