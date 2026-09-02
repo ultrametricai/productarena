@@ -34,7 +34,7 @@ export const ProductSchema = z.object({
   }).optional(),
 })
 
-// Provenance of a story in the taxonomy: 'canonical' for the 28 ids injected verbatim by
+// Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by
 // pipeline/agentic-stories.ts (never LLM-authored), 'normalized' for LLM-assembled stories
 // (normalize.ts), 'contest' for stories ever added/adjusted via a contest issue, 'manual' for
 // hand-edited entries. Optional and additive — never referenced by cellHash (see judge.ts),

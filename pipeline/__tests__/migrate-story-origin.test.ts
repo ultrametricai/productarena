@@ -6,8 +6,8 @@ import { CANONICAL_IDS, stampOrigin } from '@/pipeline/scripts/migrate-story-ori
 const RECORDED_AT = '2026-08-27T22:35:38-07:00'
 
 describe('migrate-story-origin', () => {
-  it('has exactly the 28 canonical ids', () => {
-    expect(CANONICAL_IDS.size).toBe(28)
+  it('has exactly the 29 canonical ids', () => {
+    expect(CANONICAL_IDS.size).toBe(29)
     expect(CANONICAL_IDS.has('agentic-public-api')).toBe(true)
     expect(CANONICAL_IDS.has('openness-self-host')).toBe(true)
     expect(CANONICAL_IDS.has('privacy-no-training')).toBe(true)

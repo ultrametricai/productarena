@@ -1,5 +1,5 @@
 // One-time migration: stamps `origin` provenance onto every story in every category's
-// stories.json. The 28 canonical ids (pipeline/agentic-stories.ts exports, injected verbatim
+// stories.json. The 29 canonical ids (pipeline/agentic-stories.ts exports, injected verbatim
 // by normalize.ts's assembleTaxonomy) get {kind:'canonical'}; every other (LLM-normalized)
 // story gets {kind:'normalized', promptVersion:'v2'}. Both get the same `recordedAt`: the
 // category's stories.json first-add commit date (`git log --diff-filter=A --format=%cI`),
@@ -36,8 +36,8 @@ export const CANONICAL_IDS = new Set(
   ].map((s) => s.id),
 )
 
-if (CANONICAL_IDS.size !== 28) {
-  throw new Error(`migrate-story-origin: expected 28 canonical ids, found ${CANONICAL_IDS.size}`)
+if (CANONICAL_IDS.size !== 29) {
+  throw new Error(`migrate-story-origin: expected 29 canonical ids, found ${CANONICAL_IDS.size}`)
 }
 
 // Commit date the category's stories.json was first added, oldest match (`tail`-equivalent —

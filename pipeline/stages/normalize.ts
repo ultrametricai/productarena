@@ -99,8 +99,8 @@ export async function runNormalize({ category }: { category?: string; product?: 
 
   const assembled = assembleTaxonomy(llmStories)
   // Ceiling raised 64→76→80 to make room for the canonical lens stories injected by
-  // assembleTaxonomy above: 12 agenticness (agent-access + agentic-features + api-quality),
-  // plus 4 each of openness, automation-depth, and privacy-posture — 28 canonical total.
+  // assembleTaxonomy above: 13 agenticness (agent-access + agentic-features + api-quality),
+  // plus 4 each of openness, automation-depth, and privacy-posture — 29 canonical total.
   const stories = StorySchema.array().min(30).max(80).parse(assembled)
   writeJson(path.join(dataDir, 'stories.json'), stories)
   console.log(`normalize: wrote ${stories.length} canonical stories for ${cat.id}`)
