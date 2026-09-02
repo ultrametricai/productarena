@@ -65,6 +65,13 @@ export default function MethodologyPage() {
             product. Full adversarial audit writeup on GitHub.
           </p>
         </div>
+        <div className={PILL}>
+          <p className="font-semibold text-zinc-300">Popularity (not scored)</p>
+          <p className="mt-1">
+            GitHub stars/npm/PyPI downloads, shown as a survival signal only — measures adoption, not AI-readiness,
+            so it&apos;s never part of the INIT Score or rankings.
+          </p>
+        </div>
       </div>
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">

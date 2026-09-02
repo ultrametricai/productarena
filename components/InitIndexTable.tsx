@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AiEraBadge from '@/components/AiEraBadge'
+import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
 import type { CategoryData } from '@/lib/data'
@@ -50,6 +51,7 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
             <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
             <th className="px-3 py-2 font-normal">Arena</th>
             <th className="px-3 py-2 font-normal">Access</th>
+            <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
             <th className="px-3 py-2 font-normal">INIT Score</th>
           </tr>
         </thead>
@@ -80,6 +82,9 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
               </td>
               <td className="px-3 py-2">
                 <AgentAccessGlyphs data={row.data} productId={row.product.id} />
+              </td>
+              <td className="hidden px-3 py-2 sm:table-cell">
+                <MomentumChip popularity={row.data.popularity[row.product.id]} compact />
               </td>
               <td className="px-3 py-2">
                 <AiEraBadge

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
+import MomentumChip from '@/components/MomentumChip'
 import ProductLogo from '@/components/ProductLogo'
 import type { CategoryData } from '@/lib/data'
 
@@ -67,6 +68,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
             <th className="px-3 py-2 font-normal">Arena</th>
             <th className="px-3 py-2 font-normal">Agentic</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Automation</th>
+            <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
             <th className="px-3 py-2 font-normal">INIT Score</th>
           </tr>
         </thead>
@@ -102,6 +104,9 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">
                   {automation === null ? '—' : automation.toFixed(0)}
+                </td>
+                <td className="hidden px-3 py-2 sm:table-cell">
+                  <MomentumChip popularity={row.data.popularity[row.product.id]} compact />
                 </td>
                 <td className="px-3 py-2">
                   <AiEraBadge

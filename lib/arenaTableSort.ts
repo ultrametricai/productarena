@@ -11,6 +11,7 @@ export type ArenaTableColumn =
   | 'apiQuality'
   | 'openness'
   | 'automation'
+  | 'popularity'
 
 export type SortDirection = 'asc' | 'desc'
 
@@ -24,6 +25,11 @@ export interface ArenaTableRow {
   apiQuality: number | null
   openness: number | null
   automation: number | null
+  // GitHub star count backing the "Popularity" column — the one number both intuitive to sort
+  // by and available across the widest swath of products (vs. npm/pypi downloads, which only a
+  // curated few have). Null (not 0) for a product with no public signal at all — see
+  // lib/popularity.ts's hasSignal, mirrored here so nulls sort last like every other column.
+  popularity: number | null
 }
 
 // Human-readable label for the live "Ranked by ___" strip. `rank` has no independent meaning
@@ -38,6 +44,7 @@ export const COLUMN_LABELS: Record<ArenaTableColumn, string> = {
   apiQuality: 'API quality',
   openness: 'Openness',
   automation: 'Automation',
+  popularity: 'Popularity',
 }
 
 // Every numeric column defaults to descending (highest value first) the first time it's
