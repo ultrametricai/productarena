@@ -69,9 +69,20 @@ isn't "40% as good as a perfect product" in some absolute sense — it earned 40
 evidence-backed credit available to it.
 
 On top of the raw coverage score, we also publish a single **INIT Score** (0–100) per product —
-a blend of five angles: can an agent reach the product at all, how good that access surface is,
-how open the product is (self-host, export, source), whether the product itself acts
-agentically, and how deep its automation features go. It's meant to answer one question: "how
+a blend of five angles, and the first two are easy to conflate so it's worth being precise:
+
+- **agentReady = reach.** Does an agent have a *way in* at all — an MCP server, an official CLI,
+  a documented public API, agent-parseable docs? This is a yes/no-shaped question about whether
+  the door exists, not how nice the room behind it is.
+- **apiQuality = quality of that surface, once the door exists.** Given that an agent can reach
+  the product, how good is the experience — auth model (scoped API keys vs. only full-account
+  login), rate limits, SDK/client coverage, how complete and current the docs are. A product can
+  score high on reach (agentReady) and low on quality (apiQuality), or vice versa — they're
+  deliberately independent axes, not a single "API-ness" score.
+
+The other three angles: how open the product is (self-host, export, source), whether the
+product itself acts agentically, and how deep its automation features go. It's meant to answer
+one question: "how
 ready is this product for a world where AI agents, not just humans, use it?" The exact weights
 are a starting position we're open to arguing about — see "How to disagree" below.
 

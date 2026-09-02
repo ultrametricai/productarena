@@ -79,6 +79,9 @@ export const VerdictSchema = VerdictBaseSchema.refine(
 ).refine(
   (v) => v.verdict !== 'na' || v.quality === 0,
   { message: 'na verdicts must have quality 0' },
+).refine(
+  (v) => v.verdict !== 'none' || v.quality === 0,
+  { message: 'none verdicts must have quality 0' },
 )
 
 export const StackSchema = z.object({
