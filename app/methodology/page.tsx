@@ -14,7 +14,7 @@ const CODE = 'text-zinc-500'
 
 export default function MethodologyPage() {
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-3xl space-y-8">
       <div>
         <p className="text-sm uppercase tracking-widest text-amber-400">Methodology</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight">How INIT scores products</h1>
