@@ -16,9 +16,12 @@ import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { originLabel } from '@/lib/data-helpers'
 import ThemeIcon from '@/components/ThemeIcon'
+import UncertaintyMarker from '@/components/UncertaintyMarker'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
-import { battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, type CategoryData, verdictFor } from '@/lib/data'
+import {
+  battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, type CategoryData, uncertaintyFor, verdictFor,
+} from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
@@ -193,12 +196,14 @@ export default async function ProductPage({
                         {stories.map((s) => {
                           const v = verdictFor(data, id, s.id)
                           const proof = strongestEvidence(v, evidence)
+                          const uncertainty = uncertaintyFor(data, id, s.id)
                           return (
                             <li key={s.id} id={`story-${s.id}`} className="scroll-mt-4 p-4">
                               <div className="flex flex-wrap items-center justify-between gap-2">
                                 <p className="font-medium" title={originLabel(s)}>{s.title}</p>
                                 <span className="flex items-center gap-2">
                                   <VerdictBadge verdict={v.verdict} />
+                                  <UncertaintyMarker agreement={uncertainty?.agreement} />
                                   <VerificationBadge level={verificationLevel(v, evidence)} />
                                   {v.verdict !== 'na' && (
                                     <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
