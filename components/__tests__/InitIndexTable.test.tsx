@@ -21,6 +21,7 @@ function makeData(entries: CategoryData['rankings']['leaderboard']): CategoryDat
     stacks: [],
     popularity: {},
     claims: {},
+    uncertainty: [],
   }
 }
 

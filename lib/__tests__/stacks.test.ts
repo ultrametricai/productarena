@@ -30,6 +30,7 @@ function makeData(verdicts: Verdict[]): CategoryData {
     stacks: [],
     popularity: {},
     claims: {},
+    uncertainty: [],
   }
 }
 

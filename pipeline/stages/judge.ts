@@ -38,16 +38,19 @@ export function validateVerdictRules(verdict: Verdict, evidence: Evidence[]): st
   return null
 }
 
-const RawVerdictSchema = VerdictBaseSchema.omit({ productId: true, storyId: true })
+// Exported so other consumers that need to re-run the EXACT judge prompt against current
+// evidence (pipeline/scripts/calibration-check.ts, pipeline/scripts/uncertainty-pass.ts) do so
+// verbatim rather than risking prompt drift from a hand-copied duplicate.
+export const RawVerdictSchema = VerdictBaseSchema.omit({ productId: true, storyId: true })
 
-const SYSTEM = `You are the judge in a head-to-head product-comparison arena. Given ONE user story and ONE product's evidence pack, decide how well the product delivers that story.
+export const SYSTEM = `You are the judge in a head-to-head product-comparison arena. Given ONE user story and ONE product's evidence pack, decide how well the product delivers that story.
 Verdicts: "full" (clearly delivers), "partial" (delivers with significant caveats/extra tools), "none" (no evidence it delivers), "disputed" (vendor claims it but community/hands-on evidence contradicts — requires citing both sides), "na" (the story's axis does not apply to this product at all).
 Verdict "na": ONLY when the story's axis fundamentally does not apply to this product's type (wrong axis), e.g. an OS-install story for a SaaS API. Lack of evidence for an applicable capability is "none", never "na". na must have quality 0.
 quality: 0-10 how WELL it delivers (0 if none or na). confidence: high/medium/low based on evidence strength. rationale: 1-3 sentences. evidenceIds: cite the specific items you relied on (empty only for "none" or "na").
 Judge ONLY from the evidence pack. Absence of evidence for a mainstream capability of a well-known product may still only ever yield "none" — do not use outside knowledge.
 Return JSON: {"verdict":"...","quality":N,"confidence":"...","rationale":"...","evidenceIds":["..."]}`
 
-function judgePrompt(productName: string, story: Story, evidence: Evidence[], extra = ''): string {
+export function judgePrompt(productName: string, story: Story, evidence: Evidence[], extra = ''): string {
   const pack = evidence
     .map((e) => `[${e.id}] (${e.tier}) ${e.excerpt} — ${e.url}`)
     .join('\n')
