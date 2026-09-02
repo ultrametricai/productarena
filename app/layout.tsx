@@ -122,12 +122,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   label: NAV_LABELS[c.id] ?? "",
                 }))}
               />
-              <Link
-                href="/methodology"
-                className="shrink-0 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-400/60 hover:text-amber-300"
-              >
-                Methodology
-              </Link>
               <a
                 href={`https://github.com/${REPO}`}
                 target="_blank"
