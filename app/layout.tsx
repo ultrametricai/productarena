@@ -65,9 +65,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://init.dog"),
   title: "INIT",
   description:
     "INIT — evidence-tested rankings of how AI-ready every product is. Evidence in, rankings out.",
+  openGraph: {
+    title: "INIT.dog",
+    description: "Evidence-tested rankings of how AI-ready every product is.",
+    url: "https://init.dog",
+    siteName: "INIT",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "INIT.dog",
+    description: "Evidence-tested rankings of how AI-ready every product is.",
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
