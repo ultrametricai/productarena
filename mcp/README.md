@@ -5,7 +5,7 @@ evidence-graded product rankings, verdicts, and evidence as tools for AI agents 
 static JSON data the site itself renders from (see the root repo's README "For AI agents"
 section and `/openapi.json`).
 
-This package is part of the [INIT](https://github.com/ultrametricai/productarena)
+This package is part of the [INIT](https://github.com/ultrametricai/initdotdog)
 monorepo. **It is not published to npm** — run it from a local checkout (see below).
 
 ## Tools
