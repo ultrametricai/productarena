@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { EvidenceSchema, ProductSchema, RankingsSchema, StoryOriginSchema, StorySchema, VerdictSchema } from '@/lib/schemas'
+import {
+  EvidenceSchema, PopularityMapSchema, PopularitySchema,
+  ProductSchema, RankingsSchema, StoryOriginSchema, StorySchema, VerdictSchema,
+} from '@/lib/schemas'
 
 describe('schemas', () => {
   it('accepts a valid verdict', () => {
@@ -128,5 +131,30 @@ describe('schemas', () => {
       ...base,
       businessModel: { models: ['freemium'], summary: 'Free tier plus paid per-seat plans.', url: 'not-a-url' },
     }).success).toBe(false)
+  })
+
+  it('accepts a popularity record with only some fields present', () => {
+    const r = PopularitySchema.safeParse({ stars: 230_000, starsPerYear: 11_500, fetchedAt: '2026-08-27T00:00:00Z' })
+    expect(r.success).toBe(true)
+  })
+
+  it('accepts a popularity record with just fetchedAt (fetch attempted, nothing found)', () => {
+    expect(PopularitySchema.safeParse({ fetchedAt: '2026-08-27T00:00:00Z' }).success).toBe(true)
+  })
+
+  it('requires fetchedAt on a popularity record', () => {
+    expect(PopularitySchema.safeParse({ stars: 100 }).success).toBe(false)
+  })
+
+  it('rejects negative counts on a popularity record', () => {
+    expect(PopularitySchema.safeParse({ stars: -1, fetchedAt: '2026-08-27T00:00:00Z' }).success).toBe(false)
+  })
+
+  it('parses a productId -> Popularity map', () => {
+    const r = PopularityMapSchema.safeParse({
+      react: { stars: 230_000, fetchedAt: '2026-08-27T00:00:00Z' },
+      vllm: { pypiWeekly: 500_000, fetchedAt: '2026-08-27T00:00:00Z' },
+    })
+    expect(r.success).toBe(true)
   })
 })

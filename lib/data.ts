@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import {
   type Category, CategorySchema, EvidenceSchema,
-  ProductSchema, RankingsSchema,
+  PopularityMapSchema, ProductSchema, RankingsSchema,
   StackSchema, StorySchema, VerdictSchema,
 } from './schemas'
 
@@ -92,7 +92,15 @@ export function loadCategory(categoryId: string, dir: string = DEFAULT_DIR()): C
     }
   }
 
-  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks }
+  // Optional: not every category has been through the (LLM-free) popularity stage yet. Tolerate
+  // absence entirely — an empty map, not an error — per lib/data-helpers.ts's CategoryData doc.
+  const popularityPath = path.join(catDir, 'popularity.json')
+  const popularity = fs.existsSync(popularityPath) ? PopularityMapSchema.parse(read('popularity.json')) : {}
+  for (const pid of Object.keys(popularity)) {
+    if (!productIds.has(pid)) throw new Error(`popularity references unknown product ${pid}`)
+  }
+
+  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity }
   categoryCache.set(cacheKey, data)
   return data
 }
