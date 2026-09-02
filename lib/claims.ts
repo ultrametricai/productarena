@@ -64,3 +64,43 @@ export function claimedStoryCount(counts: ClaimBucketCounts): number {
 export function unmappedClaims(data: CategoryData, productId: string): Claim[] {
   return (data.claims[productId] ?? []).filter((c) => c.storyIds.length === 0)
 }
+
+// Percentage of a product's mapped claims (claimed-verified + claimed-unverified +
+// claimed-contradicted) that land at claimed-verified — the "{verified}/{claimed} claims
+// verified" scoreboard figure. Null when nothing is claimed at all, so it sorts last like every
+// other null column in ArenaTable rather than looking like a (misleadingly perfect or zero) score.
+export function claimsVerifiedPercent(data: CategoryData, productId: string): number | null {
+  const counts = claimBucketCounts(data, productId)
+  const claimed = claimedStoryCount(counts)
+  if (claimed === 0) return null
+  return Math.round((counts['claimed-verified'] / claimed) * 100)
+}
+
+// One (claim, storyId) pairing rendered in a product page's claim-status bucket list. `claim` is
+// null for the delivered-unclaimed bucket — by definition, there's no claim to show, only the
+// story that quietly over-delivered.
+export interface ClaimEntry {
+  claim: Claim | null
+  storyId: string
+}
+
+// Every (claim, story) pairing whose claimStatus is exactly `status` — backs each expandable
+// bucket list on the product page (see components/ClaimsSection.tsx). A claim with multiple
+// storyIds can appear more than once here (once per mapped story), which is correct: each
+// mapping is independently verified/unverified/contradicted against that specific story's own
+// verdict.
+export function claimEntriesByStatus(data: CategoryData, productId: string, status: ClaimStatus): ClaimEntry[] {
+  if (status === 'delivered-unclaimed' || status === 'unclaimed-none') {
+    return data.stories
+      .filter((s) => claimStatus(data, productId, s.id) === status)
+      .map((s) => ({ claim: null, storyId: s.id }))
+  }
+  const claims = data.claims[productId] ?? []
+  const entries: ClaimEntry[] = []
+  for (const c of claims) {
+    for (const storyId of c.storyIds) {
+      if (claimStatus(data, productId, storyId) === status) entries.push({ claim: c, storyId })
+    }
+  }
+  return entries
+}

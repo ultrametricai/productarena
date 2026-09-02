@@ -1,7 +1,16 @@
+import { CLAIM_STATUSES, claimBucketCounts, claimEntriesByStatus, unmappedClaims } from './claims'
 import type { CategoryData } from './data'
 import { evidenceById, groupInOrder, verdictFor } from './data'
 import type { Product, Story } from './schemas'
 import { strongestEvidence } from './verification'
+
+const CLAIM_STATUS_LABEL: Record<(typeof CLAIM_STATUSES)[number], string> = {
+  'claimed-verified': 'Verified',
+  'claimed-unverified': 'Unverified',
+  'claimed-contradicted': 'Contradicted',
+  'delivered-unclaimed': 'Undersold (delivered, never claimed)',
+  'unclaimed-none': 'Neither claimed nor delivered',
+}
 
 // Pure markdown renderers backing app/arena/[category]/llms.md and
 // app/arena/[category]/product/[id]/llms.md — kept out of the route handlers so they're
@@ -175,6 +184,46 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
             .join(', ')
           lines.push(`- Cited evidence: ${cites}`)
         }
+      }
+    }
+  }
+
+  const claims = data.claims[productId] ?? []
+  if (claims.length > 0) {
+    const counts = claimBucketCounts(data, productId)
+    const storyById = new Map(data.stories.map((s) => [s.id, s]))
+    lines.push('')
+    lines.push('## Claims vs evidence')
+    lines.push('')
+    lines.push(
+      `${claims.length} distinct capability claims found in ${product.name}'s own claimed-docs/GitHub materials, reconciled against our judge's independent verdicts.`,
+    )
+    lines.push('')
+    lines.push(
+      CLAIM_STATUSES.filter((s) => s !== 'unclaimed-none')
+        .map((s) => `${CLAIM_STATUS_LABEL[s]} ${counts[s]}`)
+        .join(' · '),
+    )
+    for (const status of CLAIM_STATUSES) {
+      if (status === 'unclaimed-none') continue
+      const entries = claimEntriesByStatus(data, productId, status)
+      if (entries.length === 0) continue
+      lines.push('')
+      lines.push(`### ${CLAIM_STATUS_LABEL[status]} (${entries.length})`)
+      for (const { claim, storyId } of entries) {
+        const story = storyById.get(storyId)!
+        const v = verdictFor(data, productId, storyId)
+        const claimText = claim ? `"${claim.text}" — ` : ''
+        lines.push(`- ${claimText}${story.title} → ${v.verdict}${v.verdict === 'na' ? '' : ` q${v.quality}/10`}`)
+      }
+    }
+    const unmapped = unmappedClaims(data, productId)
+    if (unmapped.length > 0) {
+      lines.push('')
+      lines.push(`### Claims outside our story set (${unmapped.length})`)
+      lines.push('Real capability claims with no matching story in this arena\'s taxonomy yet — feedback on the taxonomy, not the product.')
+      for (const c of unmapped) {
+        lines.push(`- "${c.text}" — [source](${c.url})`)
       }
     }
   }

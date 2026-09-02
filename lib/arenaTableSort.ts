@@ -12,6 +12,7 @@ export type ArenaTableColumn =
   | 'openness'
   | 'automation'
   | 'popularity'
+  | 'claimsVerified'
 
 export type SortDirection = 'asc' | 'desc'
 
@@ -30,6 +31,11 @@ export interface ArenaTableRow {
   // curated few have). Null (not 0) for a product with no public signal at all — see
   // lib/popularity.ts's hasSignal, mirrored here so nulls sort last like every other column.
   popularity: number | null
+  // Percentage of the product's mapped claims (claimed-verified+unverified+contradicted) that
+  // are claimed-verified — see lib/claims.ts's claimsVerifiedPercent. Null when the product has
+  // no claims mapped to any story at all (nothing to score), sorting last like every other null
+  // column here.
+  claimsVerified: number | null
 }
 
 // Human-readable label for the live "Ranked by ___" strip. `rank` has no independent meaning
@@ -45,6 +51,7 @@ export const COLUMN_LABELS: Record<ArenaTableColumn, string> = {
   openness: 'Openness',
   automation: 'Automation',
   popularity: 'Popularity',
+  claimsVerified: 'claims verified',
 }
 
 // Every numeric column defaults to descending (highest value first) the first time it's
