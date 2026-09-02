@@ -36,7 +36,7 @@ describe('assembleTaxonomy', () => {
     expect(result.find((r) => r.id === 'agentic-something-custom')).toBeUndefined()
 
     // Canonical ids all present exactly once (agent-access, agentic-features, api-quality,
-    // openness, automation-depth, and privacy-posture groups — 28 canonical stories total).
+    // openness, automation-depth, and privacy-posture groups — 29 canonical stories total).
     const allCanon = [
       ...AGENTIC_STORIES,
       ...AGENTIC_FEATURE_STORIES,
@@ -45,7 +45,7 @@ describe('assembleTaxonomy', () => {
       ...AUTOMATION_STORIES,
       ...PRIVACY_STORIES,
     ]
-    expect(allCanon).toHaveLength(28)
+    expect(allCanon).toHaveLength(29)
     for (const canon of allCanon) {
       expect(result.filter((r) => r.id === canon.id)).toHaveLength(1)
     }

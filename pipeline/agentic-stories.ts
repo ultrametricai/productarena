@@ -29,6 +29,14 @@ export const AGENTIC_STORIES: Story[] = [
     weight: 3,
   },
   {
+    id: 'agentic-mcp-client',
+    persona: 'ai-native',
+    title: 'As an AI-native user, I can plug MCP servers into this product so it can use their tools',
+    theme: 'agenticness',
+    group: 'agent-access',
+    weight: 3,
+  },
+  {
     id: 'agentic-webhooks',
     persona: 'ai-native',
     title: 'As an AI-native user, I can subscribe to events via webhooks',
