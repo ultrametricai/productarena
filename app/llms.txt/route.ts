@@ -1,4 +1,4 @@
-import { loadCategories } from '@/lib/data'
+import { battleSlug, leadingBattle, loadAll, loadCategories } from '@/lib/data'
 import { REPO, SITE_URL as SITE } from '@/lib/site'
 
 // Static export safety: no dynamic segments, categories.json is bundled at build time.
@@ -15,6 +15,21 @@ export async function GET() {
     .map((c) => `- [${c.name}](${SITE}/arena/${c.id}/llms.md): full leaderboard, business models, and story-verdict matrix for "${c.id}" as markdown.`)
     .join('\n')
 
+  // One concrete example per arena (its #1-vs-#2 battle) so an agent sees the /vs/{slug}
+  // pattern in action, not just a description of it — same picks as the homepage's "Leading
+  // battles" section (see lib/data-helpers.ts's leadingBattle).
+  const all = loadAll()
+  const leadingBattleLinks = all
+    .map((data) => {
+      const battle = leadingBattle(data)
+      if (!battle) return null
+      const a = data.products.find((p) => p.id === battle.a)!
+      const b = data.products.find((p) => p.id === battle.b)!
+      return `- [${a.name} vs ${b.name}](${SITE}/vs/${battleSlug(battle.a, battle.b)}) (${data.category.name}'s #1 vs #2)`
+    })
+    .filter((l): l is string => l !== null)
+    .join('\n')
+
   const body = `# INIT (init.dog)
 
 > Evidence-graded, head-to-head rankings of software products against a shared taxonomy of user stories. Every score traces back to cited evidence (vendor docs, GitHub, community sources, or a hands-on probe) — never opinion. See /methodology for the full scoring writeup.
@@ -24,6 +39,16 @@ INIT crawls vendor docs, GitHub, and community sources for ${categories.length} 
 ## Arenas (markdown, one per category)
 
 ${arenaLinks}
+
+## Head-to-head comparisons (\`/vs/\` pages)
+
+Every battle between two products in the same arena also has its own top-level page:
+\`${SITE}/vs/{productA}-vs-{productB}\` (product ids are globally unique, so no category segment
+is needed). Rich side-by-side layout — INIT Score, AGENTREADYNESS, MCP/CLI/API access, business
+model, claims-verified — followed by every judged round. Full list in \`${SITE}/sitemap.xml\`;
+one example per arena below.
+
+${leadingBattleLinks}
 
 ## Global rankings (every product, every arena, one flat list)
 

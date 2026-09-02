@@ -2,7 +2,9 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
-import { battleSlug, isPopulated, loadAll, loadCategories, loadCategory, parseBattleSlug } from '@/lib/data'
+import {
+  battleSlug, findBattleBySlug, isPopulated, leadingBattle, loadAll, loadCategories, loadCategory, parseBattleSlug,
+} from '@/lib/data'
 
 const REAL = path.resolve(__dirname, '../../data')
 let tmp: string | undefined
@@ -118,5 +120,31 @@ describe('battle slugs', () => {
     expect(battleSlug('macos', 'omarchy')).toBe('macos-vs-omarchy')
     expect(parseBattleSlug('macos-vs-omarchy', products)).toEqual({ a: 'macos', b: 'omarchy' })
     expect(parseBattleSlug('nope-vs-omarchy', products)).toBeNull()
+  })
+})
+
+describe('findBattleBySlug', () => {
+  it('resolves a slug to the one category whose product list recognizes it', () => {
+    const all = loadAll(REAL)
+    const desktopOs = all.find((c) => c.category.id === 'desktop-os')!
+    const found = findBattleBySlug(all, 'macos-vs-omarchy')
+    expect(found?.data.category.id).toBe('desktop-os')
+    expect(found?.battle).toEqual(desktopOs.rankings.battles.find((b) => b.a === 'macos' && b.b === 'omarchy'))
+  })
+
+  it('returns null for an unknown slug', () => {
+    expect(findBattleBySlug(loadAll(REAL), 'nope-vs-alsonope')).toBeNull()
+  })
+})
+
+describe('leadingBattle', () => {
+  it('returns the #1-vs-#2 battle, ordered by product-list index (not leaderboard order)', () => {
+    const data = loadCategory('desktop-os', REAL)
+    const [first, second] = data.rankings.leaderboard
+    const battle = leadingBattle(data)
+    expect(battle).not.toBeNull()
+    expect(new Set([battle!.a, battle!.b])).toEqual(new Set([first.productId, second.productId]))
+    const idx = (id: string) => data.products.findIndex((p) => p.id === id)
+    expect(idx(battle!.a)).toBeLessThan(idx(battle!.b))
   })
 })

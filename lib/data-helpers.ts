@@ -52,6 +52,36 @@ export function parseBattleSlug(slug: string, products: Product[]): { a: string;
   return null
 }
 
+// Resolves a globally-unique `/vs/{slug}` slug (see app/vs/[slug]/page.tsx) to whichever
+// category's battle it belongs to — product ids are unique across every category, so at most
+// one category's product list can ever parse the slug into a real (a, b) pair with a matching
+// battle. Returns null if no category recognizes it (unknown slug / stale link).
+export function findBattleBySlug(
+  categories: CategoryData[],
+  slug: string,
+): { data: CategoryData; battle: Rankings['battles'][number] } | null {
+  for (const data of categories) {
+    const pair = parseBattleSlug(slug, data.products)
+    if (!pair) continue
+    const battle = data.rankings.battles.find((b) => b.a === pair.a && b.b === pair.b)
+    if (battle) return { data, battle }
+  }
+  return null
+}
+
+// The #1-vs-#2 battle for a category's INIT-Score leaderboard — the homepage's "Leading
+// battles" section and llms.txt's example /vs/ links. Null only for a category with fewer than
+// two products (every populated category has at least two — see lib/data.ts's expectedPairs
+// check — so this is purely a defensive fallback, not an expected runtime case).
+export function leadingBattle(data: CategoryData): Rankings['battles'][number] | null {
+  const [first, second] = data.rankings.leaderboard
+  if (!first || !second) return null
+  const idx = (id: string) => data.products.findIndex((p) => p.id === id)
+  const [a, b] =
+    idx(first.productId) <= idx(second.productId) ? [first.productId, second.productId] : [second.productId, first.productId]
+  return data.rankings.battles.find((bt) => bt.a === a && bt.b === b) ?? null
+}
+
 export function verdictFor(data: CategoryData, productId: string, storyId: string): Verdict {
   const v = data.verdicts.find((x) => x.productId === productId && x.storyId === storyId)
   if (!v) throw new Error(`missing verdict for cell ${productId}:${storyId}`)
