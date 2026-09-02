@@ -1,0 +1,52 @@
+name: CI
+
+# Runs the test suite, static build, and rankings-determinism check on every PR and every push
+# to main. No secrets required: the LLM-driven pipeline stages are never invoked here, only
+# `pnpm test`, `pnpm build`, and a read-only recompute-and-compare check against the data
+# already committed under data/.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Read Node version from package.json
+        id: node-version
+        run: |
+          NODE_VERSION=20
+          echo "version=$NODE_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node-version.outputs.version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Rankings determinism check
+        run: pnpm tsx pipeline/scripts/recompute-check.ts
