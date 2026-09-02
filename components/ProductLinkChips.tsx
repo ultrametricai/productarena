@@ -17,7 +17,7 @@ export default function ProductLinkChips({ product, variant }: { product: Produc
   const text = variant === 'letter' ? LETTER : LABEL
   const chipClass =
     variant === 'letter'
-      ? 'rounded border border-zinc-800 px-1 py-0.5 text-[10px] font-medium text-zinc-600 hover:border-amber-400 hover:text-amber-300'
+      ? 'rounded border border-zinc-800 px-1 py-0.5 text-[10px] font-medium text-zinc-400 hover:border-amber-400 hover:text-amber-300'
       : 'rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-400 hover:border-amber-400 hover:text-amber-300'
 
   return (

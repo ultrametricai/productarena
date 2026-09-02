@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import AgenticBadge from '@/components/AgenticBadge'
 import { BusinessModelLine } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
@@ -97,13 +98,21 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
     <div className="space-y-8">
       <div className="text-center">
         <h1 className="text-3xl font-bold tracking-tight">
-          {a.name} <span className="text-zinc-600">vs</span> {b.name}
+          {a.name} <span className="text-zinc-400">vs</span> {b.name}
         </h1>
-        <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-600">
+        <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-400">
           <BusinessModelLine product={a} />
           <span className="text-zinc-700">·</span>
           <BusinessModelLine product={b} />
         </div>
+        <p className="mt-1">
+          <Link
+            href={`/arena/${data.category.id}#legend`}
+            className="text-xs text-zinc-400 underline decoration-zinc-700 hover:text-amber-300"
+          >
+            How to read this: legend →
+          </Link>
+        </p>
         <p className="mt-2 text-amber-300">
           {winnerName ? `${winnerName} wins` : 'Draw'} · {battle.record.aWins}–{battle.record.bWins}
           {battle.record.draws > 0 ? ` (${battle.record.draws} drawn)` : ''}
@@ -116,7 +125,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
           <AgenticBadge kind="agent-ready" value={aEntry?.agentReady ?? null} />
           <AgenticBadge kind="agentic-app" value={aEntry?.agenticApp ?? null} />
         </div>
-        <span className="text-xs uppercase tracking-widest text-zinc-600">Agenticness</span>
+        <span className="text-xs uppercase tracking-widest text-zinc-400">Agenticness</span>
         <div className="flex items-center gap-2">
           <AgenticBadge kind="agent-ready" value={bEntry?.agentReady ?? null} />
           <AgenticBadge kind="agentic-app" value={bEntry?.agenticApp ?? null} />
@@ -147,7 +156,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
 
       {naRounds.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-600">Not comparable on these axes</h2>
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-zinc-400">Not comparable on these axes</h2>
           <ol className="mt-4 space-y-3 opacity-60">{naRounds.map(renderRound)}</ol>
         </div>
       )}

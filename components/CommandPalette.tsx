@@ -116,10 +116,10 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
               value={query}
               onChange={(e) => onInputChange(e.target.value)}
               placeholder="Search arenas, products, stories…"
-              className="w-full border-b border-zinc-800 bg-transparent px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none"
+              className="w-full border-b border-zinc-800 bg-transparent px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
             />
             <div className="max-h-96 overflow-y-auto py-2">
-              {results.length === 0 && <p className="px-4 py-6 text-center text-sm text-zinc-600">No matches</p>}
+              {results.length === 0 && <p className="px-4 py-6 text-center text-sm text-zinc-400">No matches</p>}
               {results.map((entry, index) => {
                 const showHeader = index === 0 || results[index - 1].type !== entry.type
                 const active = index === activeIndex

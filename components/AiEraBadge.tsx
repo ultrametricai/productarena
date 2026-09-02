@@ -43,7 +43,7 @@ export default function AiEraBadge({
     return (
       <span
         title={tooltip(components)}
-        className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-mono font-semibold italic text-zinc-600 ring-1 ring-zinc-800 ${sizeClass}`}
+        className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-mono font-semibold italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}
       >
         n/a
       </span>

@@ -136,7 +136,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </header>
         <main className="mx-auto max-w-4xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
-          <div className="mx-auto flex max-w-4xl items-center justify-between px-5 text-xs text-zinc-600">
+          <div className="mx-auto flex max-w-4xl items-center justify-between px-5 text-xs text-zinc-400">
             <span>INIT · MIT licensed · © 2026 Ultrametric Inc</span>
             <Link href="/llms.txt" className="hover:text-amber-300">
               For agents: /llms.txt

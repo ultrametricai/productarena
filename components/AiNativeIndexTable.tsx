@@ -62,8 +62,8 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
       <table className="w-full min-w-[640px] border-collapse text-sm">
         <thead>
           <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-500">
-            <th className="px-3 py-2 font-normal">#</th>
-            <th className="px-3 py-2 font-normal">Product</th>
+            <th className="sticky left-0 z-10 w-10 bg-zinc-950 px-3 py-2 font-normal">#</th>
+            <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
             <th className="px-3 py-2 font-normal">Arena</th>
             <th className="px-3 py-2 font-normal">Agentic</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Automation</th>
@@ -74,8 +74,8 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
           {rows.map((row, i) => {
             const automation = row.entry.themeScores['automation-depth'] ?? null
             return (
-              <tr key={`${row.data.category.id}:${row.product.id}`} className="transition hover:bg-zinc-900/50">
-                <td className="px-3 py-2 font-mono tabular-nums text-zinc-600">{i + 1}</td>
+              <tr key={`${row.data.category.id}:${row.product.id}`} className="group transition hover:bg-zinc-900/50">
+                <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{i + 1}</td>
                 <td className="px-3 py-2">
                   <Link
                     href={`/arena/${row.data.category.id}/product/${row.product.id}`}

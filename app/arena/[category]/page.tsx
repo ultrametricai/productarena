@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import ArenaTable from '@/components/ArenaTable'
+import Legend from '@/components/Legend'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
@@ -129,6 +130,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           {freshness && <> · Evidence as of {freshness}</>}
         </p>
       </div>
+      <Legend />
       <div>
         <h2 className="mb-4 text-lg font-semibold">Leaderboard</h2>
         <ArenaTable data={data} logoMap={logoMap} />

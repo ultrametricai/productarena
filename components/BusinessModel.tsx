@@ -26,7 +26,7 @@ export function BusinessModelSection({ product }: { product: Product }) {
           href={bm.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 inline-block text-xs text-zinc-600 hover:text-amber-300"
+          className="mt-2 inline-block text-xs text-zinc-400 hover:text-amber-300"
         >
           pricing ↗
         </a>
@@ -51,7 +51,7 @@ export function BusinessModelLine({ product }: { product: Product }) {
   const bm = product.businessModel
   if (!bm) return null
   return (
-    <p title={bm.summary} className="truncate text-xs text-zinc-600">
+    <p title={bm.summary} className="truncate text-xs text-zinc-400">
       {bm.models.join(' · ')}
     </p>
   )
