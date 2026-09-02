@@ -4,9 +4,11 @@ import AgenticBadge from '@/components/AgenticBadge'
 import AgenticIndexTable from '@/components/AgenticIndexTable'
 import AiEraBadge from '@/components/AiEraBadge'
 import AiNativeIndexTable from '@/components/AiNativeIndexTable'
+import InitIndexTable from '@/components/InitIndexTable'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { loadAll } from '@/lib/data'
+import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'INIT — which products are most AI-friendly?',
@@ -33,7 +35,17 @@ export default function Home() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold tracking-tight">Arenas</h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 className="text-xl font-semibold tracking-tight">Arenas</h2>
+          <a
+            href={`https://github.com/${REPO}/issues/new?template=request-a-product.md`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-amber-400 underline decoration-amber-400/40 hover:text-amber-300"
+          >
+            Submit a product →
+          </a>
+        </div>
         <p className="mt-1 text-sm text-zinc-500">Pick an arena to see the full head-to-head leaderboard.</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {categories.map((data) => {
@@ -65,30 +77,30 @@ export default function Home() {
                 <p className="mt-1 text-sm text-zinc-500">{data.category.description}</p>
                 <div className="mt-4 flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-zinc-600">INIT Score leader</p>
+                    <p className="text-xs uppercase tracking-widest text-zinc-400">INIT Score leader</p>
                     <p className="font-medium">{leader.name}</p>
                   </div>
                   <AiEraBadge value={leaderEntry.aiEra} />
                 </div>
                 <div className="mt-2 flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-widest text-zinc-600">coverage</span>
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-400">coverage</span>
                   <ScoreBar score={leaderEntry.score} className="max-w-[140px]" />
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-zinc-600">Most agent-ready</p>
+                    <p className="text-xs uppercase tracking-widest text-zinc-400">Most agent-ready</p>
                     <p className="font-medium">{agentReadyLeader.name}</p>
                   </div>
                   <AgenticBadge kind="agent-ready" value={agentReadyLeaderEntry.agentReady} size="sm" />
                 </div>
                 <div className="mt-3 flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-zinc-600">Most agentic</p>
+                    <p className="text-xs uppercase tracking-widest text-zinc-400">Most agentic</p>
                     <p className="font-medium">{agenticAppLeader.name}</p>
                   </div>
                   <AgenticBadge kind="agentic-app" value={agenticAppLeaderEntry.agenticApp} size="sm" />
                 </div>
-                <p className="mt-4 text-xs text-zinc-600">
+                <p className="mt-4 text-xs text-zinc-400">
                   {data.stories.length} stories · {data.verdicts.length} judged cells
                 </p>
               </Link>
@@ -100,11 +112,27 @@ export default function Home() {
       <section>
         <h2 className="text-xl font-semibold tracking-tight">Global rankings</h2>
         <p className="mt-1 text-sm text-zinc-500">
-          Every product, every arena, ranked two ways — top {RANKINGS_PREVIEW_LIMIT} shown below; each has a full
+          Every product, every arena, ranked three ways — top {RANKINGS_PREVIEW_LIMIT} shown below; each has a full
           {` ${totalProducts}`}-row ranking.
         </p>
 
-        <div id="most-agentic" className="mt-6">
+        <div id="most-init" className="mt-6">
+          <h3 className="text-lg font-semibold tracking-tight">Highest INIT Score</h3>
+          <p className="mt-1 text-sm text-zinc-500">
+            Ranked by the blended INIT Score: agent-ready, API quality, openness, agentic app, and automation.
+          </p>
+          <div className="mt-4">
+            <InitIndexTable categories={categories} limit={RANKINGS_PREVIEW_LIMIT} />
+          </div>
+          <Link
+            href="/rankings/init"
+            className="mt-2 inline-block text-sm text-amber-400 underline decoration-amber-400/40 hover:text-amber-300"
+          >
+            Full ranking →
+          </Link>
+        </div>
+
+        <div id="most-agentic" className="mt-8">
           <h3 className="text-lg font-semibold tracking-tight">Most agentic — best for AI agents</h3>
           <p className="mt-1 text-sm text-zinc-500">
             Ranked by AGENTREADYNESS: can an agent reach the product at all (API/CLI/MCP/webhooks/SDKs/docs)?
