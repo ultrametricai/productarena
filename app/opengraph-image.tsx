@@ -22,7 +22,7 @@ export default function OgImage() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 40 }}>
-          <svg viewBox="0 0 32 32" width={180} height={180}>
+          <svg viewBox="0 0 32 32" width={280} height={280}>
             <rect width="32" height="32" rx="7" fill="#18181b" />
             <path
               d="M5,29 Q3,20 5,12 Q5,6 10,4 Q16,3.5 19,8 Q18,10 22,10.5 Q26,10.2 28,13.5 Q29,16 27,18.5 Q24,20.5 19,20 Q15,19.5 13,23 Q11.5,26 14,28.5 Q15,29.5 9,29.3 Q6,29.5 5,29 Z"
@@ -34,7 +34,7 @@ export default function OgImage() {
             />
             <circle cx="17" cy="10" r="2" fill="#09090b" />
           </svg>
-          <div style={{ display: 'flex', fontSize: 120, fontWeight: 800, color: '#fafafa' }}>
+          <div style={{ display: 'flex', fontSize: 96, fontWeight: 800, color: '#fafafa' }}>
             INIT<span style={{ color: '#fbbf24' }}>.dog</span>
           </div>
         </div>
