@@ -11,7 +11,7 @@ import { loadAll } from '@/lib/data'
 import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'INIT — which products are most AI-friendly?',
+  title: 'INIT — which software is most AI-friendly?',
   description:
     "Two evidence-graded rankings across every arena: most agentic (best for AI agents — sorted by agent-ready) and most AI-native (best for humans working with AI — sorted by agentic-app). No opinion, every score traces back to cited evidence.",
 }
