@@ -1,28 +1,11 @@
-import Image from 'next/image'
+import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
 import type { Product } from '@/lib/schemas'
 
+// Server-only convenience wrapper: resolves hasLogo() via lib/logos.ts's fs check, then
+// delegates to the pure ProductLogoView for rendering. Use this from server components; client
+// components must precompute the hasLogo booleans server-side and use ProductLogoView directly
+// (see components/ArenaTable.tsx / components/StoryMatrix.tsx for why).
 export default function ProductLogo({ product, size = 40 }: { product: Product; size?: number }) {
-  if (hasLogo(product.id)) {
-    return (
-      <Image
-        src={`/logos/${product.id}.png`}
-        alt={`${product.name} logo`}
-        width={size}
-        height={size}
-        unoptimized
-        className="shrink-0 rounded-lg bg-zinc-900 object-contain ring-1 ring-zinc-800"
-        style={{ width: size, height: size }}
-      />
-    )
-  }
-  return (
-    <div
-      aria-hidden
-      className="flex shrink-0 items-center justify-center rounded-lg bg-zinc-900 font-mono font-bold text-amber-300 ring-1 ring-zinc-800"
-      style={{ width: size, height: size, fontSize: Math.round(size * 0.42) }}
-    >
-      {product.name.charAt(0).toUpperCase()}
-    </div>
-  )
+  return <ProductLogoView product={product} size={size} hasLogo={hasLogo(product.id)} />
 }

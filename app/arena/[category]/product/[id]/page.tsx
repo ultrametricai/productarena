@@ -11,7 +11,7 @@ import OssPill from '@/components/OssPill'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
-import { originLabel } from '@/components/StoryMatrix'
+import { originLabel } from '@/lib/data-helpers'
 import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
@@ -99,7 +99,7 @@ export default async function ProductPage({
             <p className="text-zinc-500">
               {product.vendor} · {product.type === 'oss' ? 'open source' : 'commercial'}
             </p>
-            {freshness && <p className="text-xs text-zinc-600">Evidence as of {freshness}</p>}
+            {freshness && <p className="text-xs text-zinc-400">Evidence as of {freshness}</p>}
           </div>
           <a
             href={product.urls.site}
@@ -115,20 +115,20 @@ export default async function ProductPage({
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-600">INIT Score</span>
+            <span className="text-[10px] uppercase tracking-widest text-zinc-400">INIT Score</span>
             <AiEraBadge value={entry.aiEra} components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           </div>
           <AgentAccessGlyphs data={data} productId={id} />
         </div>
         <div className="mt-2 flex max-w-md items-center gap-2">
-          <span className="text-[10px] uppercase tracking-widest text-zinc-600">coverage</span>
+          <span className="text-[10px] uppercase tracking-widest text-zinc-400">coverage</span>
           <ScoreBar score={entry.score} className="flex-1" />
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" />
           <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" />
         </div>
-        <p className="mt-2 text-xs text-zinc-600">
+        <p className="mt-2 text-xs text-zinc-400">
           {entry.applicable}/{entry.total} stories applicable · evidence:{' '}
           {Object.entries(tierCounts)
             .map(([t, n]) => `${t} ×${n}`)
@@ -150,12 +150,12 @@ export default async function ProductPage({
               >
                 <p className="mb-2 flex items-center justify-between text-sm text-zinc-400">
                   {t}
-                  <span className="text-xs text-zinc-600 opacity-0 transition group-hover:opacity-100">
+                  <span className="text-xs text-zinc-400 opacity-0 transition group-hover:opacity-100">
                     evidence →
                   </span>
                 </p>
                 {themeScore === null ? (
-                  <p className="text-xs italic text-zinc-600">n/a</p>
+                  <p className="text-xs italic text-zinc-400">n/a</p>
                 ) : (
                   <ScoreBar score={themeScore} />
                 )}
@@ -198,7 +198,7 @@ export default async function ProductPage({
                               </div>
                               <p className="mt-1 text-sm text-zinc-500">{v.rationale}</p>
                               {v.evidenceIds.length > 0 && (
-                                <p className="mt-1 text-xs text-zinc-600">
+                                <p className="mt-1 text-xs text-zinc-400">
                                   {v.evidenceIds.map((eid, i) => {
                                     const e = evidence.get(eid)!
                                     return (
@@ -215,7 +215,7 @@ export default async function ProductPage({
                                     href={proof.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-zinc-600 hover:text-amber-300"
+                                    className="text-xs text-zinc-400 hover:text-amber-300"
                                   >
                                     proof ↗
                                   </a>

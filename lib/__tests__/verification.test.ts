@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import type { Evidence, Verdict } from '@/lib/schemas'
-import { strongestEvidence, verificationLevel } from '@/lib/verification'
+import type { CategoryData } from '@/lib/data'
+import type { Category, Evidence, Product, Story, Verdict } from '@/lib/schemas'
+import { strongestEvidence, verificationLevel, verificationMix } from '@/lib/verification'
 
 const ev = (id: string, tier: Evidence['tier']): Evidence => ({
   id, tier, url: 'https://example.com', excerpt: 'x', fetchedAt: '2026-08-26T00:00:00.000Z',
@@ -77,5 +78,54 @@ describe('strongestEvidence', () => {
     const twoDocs = new Map(evidence)
     twoDocs.set('docs-2', { id: 'docs-2', tier: 'claimed-docs', url: 'https://example.com/2', excerpt: 'y', fetchedAt: '2026-08-26T00:00:00.000Z' })
     expect(strongestEvidence(v('full', ['docs-2', 'docs-1']), twoDocs)?.id).toBe('docs-2')
+  })
+})
+
+describe('verificationMix', () => {
+  const category: Category = { id: 'cat', name: 'Cat', description: 'd', personas: ['dev'] }
+  const products: Product[] = [{ id: 'p', name: 'P', vendor: 'v', type: 'oss', urls: { site: 'https://p.example' } }]
+  const stories: Story[] = [
+    { id: 's1', persona: 'dev', title: 't1', theme: 'core', group: 'core-basics', weight: 1 },
+    { id: 's2', persona: 'dev', title: 't2', theme: 'core', group: 'core-basics', weight: 1 },
+    { id: 's3', persona: 'dev', title: 't3', theme: 'core', group: 'core-basics', weight: 1 },
+    { id: 's4', persona: 'dev', title: 't4', theme: 'core', group: 'core-basics', weight: 1 },
+    { id: 's5', persona: 'dev', title: 't5', theme: 'core', group: 'core-basics', weight: 1 },
+  ]
+
+  function makeData(verdicts: Verdict[]): CategoryData {
+    return {
+      category,
+      products,
+      stories,
+      evidence: { p: [ev('docs-1', 'claimed-docs'), ev('community-1', 'community'), ev('probe-1', 'probe')] },
+      verdicts,
+      rankings: { generatedAt: '2026-08-26T00:00:00.000Z', leaderboard: [], battles: [] },
+      stacks: [],
+    }
+  }
+
+  it('counts each verified level, excluding unverified (na/none/uncited) cells', () => {
+    const data = makeData([
+      { productId: 'p', storyId: 's1', verdict: 'full', quality: 8, confidence: 'high', rationale: 'r', evidenceIds: ['docs-1'] },
+      { productId: 'p', storyId: 's2', verdict: 'full', quality: 8, confidence: 'high', rationale: 'r', evidenceIds: ['community-1'] },
+      { productId: 'p', storyId: 's3', verdict: 'full', quality: 8, confidence: 'high', rationale: 'r', evidenceIds: ['probe-1'] },
+      { productId: 'p', storyId: 's4', verdict: 'disputed', quality: 3, confidence: 'medium', rationale: 'r', evidenceIds: ['docs-1'] },
+      { productId: 'p', storyId: 's5', verdict: 'none', quality: 0, confidence: 'high', rationale: 'r', evidenceIds: [] },
+    ])
+    expect(verificationMix(data, 'p')).toEqual({
+      'vendor-claim': 1,
+      corroborated: 1,
+      tested: 1,
+      disputed: 1,
+    })
+  })
+
+  it('returns all zeros when every cell is unverified', () => {
+    const data = makeData(
+      stories.map((s) => ({
+        productId: 'p', storyId: s.id, verdict: 'na', quality: 0, confidence: 'high', rationale: 'r', evidenceIds: [],
+      })),
+    )
+    expect(verificationMix(data, 'p')).toEqual({ 'vendor-claim': 0, corroborated: 0, tested: 0, disputed: 0 })
   })
 })

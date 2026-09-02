@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import LeaderboardTable from '@/components/LeaderboardTable'
-import QuestionRankStrip from '@/components/QuestionRankStrip'
+import ArenaTable from '@/components/ArenaTable'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { categoryFreshness } from '@/lib/freshness'
+import { hasLogo } from '@/lib/logos'
 import { SITE_URL } from '@/lib/site'
 
 // The leaderboard already sorts primarily by aiEra/INIT Score (see lib/scoring.ts), so entry 0
@@ -106,6 +105,10 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
   const { category } = await params
   const data = loadCategory(category)
   const freshness = categoryFreshness(data)
+  // Computed server-side and passed down as a plain prop: ArenaTable/StoryMatrix are client
+  // components, so they can't call lib/logos.ts's fs-based hasLogo() themselves (see
+  // components/ProductLogoView.tsx for why).
+  const logoMap = Object.fromEntries(data.products.map((p) => [p.id, hasLogo(p.id)]))
   return (
     <div className="space-y-8">
       <script
@@ -120,42 +123,20 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         <p className="text-sm uppercase tracking-widest text-amber-400">Arena</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight">{data.category.name}</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">{data.category.description}</p>
-        <p className="mt-2 text-xs text-zinc-600">
+        <p className="mt-2 text-xs text-zinc-400">
           {data.stories.length} user stories · {data.verdicts.length} judged cells · updated{' '}
           {data.rankings.generatedAt.slice(0, 10)}
           {freshness && <> · Evidence as of {freshness}</>}
         </p>
       </div>
-      <QuestionRankStrip
-        data={data}
-        title="Easiest for AI to use"
-        badgeKind="agent-ready"
-        rankBy={(entry) => entry.agentReady}
-        secondaryLabel="API quality"
-        secondaryValue={(entry) => entry.apiQuality}
-        showAccessGlyphs
-      />
-      <QuestionRankStrip
-        data={data}
-        title="Best AI experience for humans"
-        badgeKind="agentic-app"
-        rankBy={(entry) => entry.agenticApp}
-        secondaryLabel="Automation"
-        secondaryValue={(entry) => entry.themeScores['automation-depth'] ?? null}
-      />
       <div>
-        <h2 className="mb-4 text-lg font-semibold">
-          Leaderboard <span className="font-normal text-zinc-500">— ranked by</span>{' '}
-          <Link href="/methodology#ai-era" className="text-amber-400 underline decoration-amber-400/40 hover:text-amber-300">
-            INIT Score
-          </Link>
-        </h2>
-        <LeaderboardTable data={data} />
+        <h2 className="mb-4 text-lg font-semibold">Leaderboard</h2>
+        <ArenaTable data={data} logoMap={logoMap} />
       </div>
       <StacksSection data={data} />
       <div>
         <h2 className="mb-4 text-lg font-semibold">Story matrix</h2>
-        <StoryMatrix data={data} />
+        <StoryMatrix data={data} logoMap={logoMap} />
       </div>
     </div>
   )

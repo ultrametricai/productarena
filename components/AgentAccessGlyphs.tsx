@@ -1,4 +1,4 @@
-import { verdictFor, type CategoryData } from '@/lib/data'
+import { verdictFor, type CategoryData } from '@/lib/data-helpers'
 import type { Verdict } from '@/lib/schemas'
 
 // Three mono glyph columns derived straight from canonical agent-access verdicts — no new
@@ -30,7 +30,11 @@ function bestVerdict(data: CategoryData, productId: string, storyIds: string[]):
 function glyphFor(verdict: Verdict['verdict']): { char: string; className: string } {
   if (verdict === 'full') return { char: '✓', className: 'text-emerald-400' }
   if (verdict === 'partial') return { char: '~', className: 'text-amber-400' }
-  return { char: '—', className: 'text-zinc-600' }
+  // `disputed` gets its own mark, distinct from "—" (none/na): the vendor claims this access
+  // mode works, but independent evidence disagrees — that's a live disagreement worth a glance,
+  // not the same as "no evidence found" or "not applicable". See components/Legend.tsx.
+  if (verdict === 'disputed') return { char: '!', className: 'text-red-400' }
+  return { char: '—', className: 'text-zinc-400' }
 }
 
 export default function AgentAccessGlyphs({ data, productId }: { data: CategoryData; productId: string }) {
@@ -45,7 +49,7 @@ export default function AgentAccessGlyphs({ data, productId }: { data: CategoryD
             className="flex items-center gap-1"
             title={`${label}: ${v.verdict} — ${v.rationale}`}
           >
-            <span className="text-zinc-600">{label}</span>
+            <span className="text-zinc-400">{label}</span>
             <span className={className}>{char}</span>
           </span>
         )
