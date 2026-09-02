@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { claimBucketCounts, claimedStoryCount, claimStatus, unmappedClaims } from '@/lib/claims'
+import { claimBucketCounts, claimedStoryCount, claimEntriesByStatus, claimsVerifiedPercent, claimStatus, unmappedClaims } from '@/lib/claims'
 import type { CategoryData } from '@/lib/data'
 import type { Category, Claim, Evidence, Product, Story, Verdict } from '@/lib/schemas'
 
@@ -96,6 +96,40 @@ describe('claimBucketCounts / claimedStoryCount', () => {
       'unclaimed-none': 1,
     })
     expect(claimedStoryCount(counts)).toBe(3) // verified + unverified + contradicted
+  })
+})
+
+describe('claimsVerifiedPercent', () => {
+  it('is the percentage of mapped claims (verified+unverified+contradicted) that are verified', () => {
+    const data = makeData()
+    expect(claimsVerifiedPercent(data, 'p')).toBe(33) // 1 of 3 mapped claims verified, rounded
+  })
+
+  it('is null when nothing is claimed at all', () => {
+    const data = { ...makeData(), claims: {} }
+    expect(claimsVerifiedPercent(data, 'p')).toBeNull()
+  })
+})
+
+describe('claimEntriesByStatus', () => {
+  it('returns the (claim, story) pairing for a claimed bucket', () => {
+    const data = makeData()
+    const entries = claimEntriesByStatus(data, 'p', 'claimed-verified')
+    expect(entries).toEqual([{ claim: data.claims.p![0], storyId: 's1' }])
+  })
+
+  it('returns story-only entries (claim: null) for delivered-unclaimed', () => {
+    const data = makeData()
+    const entries = claimEntriesByStatus(data, 'p', 'delivered-unclaimed')
+    expect(entries).toEqual([{ claim: null, storyId: 's4' }])
+  })
+
+  it('returns an entry per mapped story when one claim covers multiple stories', () => {
+    const data = makeData()
+    const multi = { ...data, claims: { p: [claim('p-claim-multi', ['s1', 's2'])] } }
+    const entries = claimEntriesByStatus(multi, 'p', 'claimed-verified')
+    expect(entries).toEqual([{ claim: multi.claims.p![0], storyId: 's1' }])
+    expect(claimEntriesByStatus(multi, 'p', 'claimed-unverified')).toEqual([{ claim: multi.claims.p![0], storyId: 's2' }])
   })
 })
 

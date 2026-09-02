@@ -7,10 +7,12 @@ import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import { BusinessModelChip } from '@/components/BusinessModel'
+import ClaimsChip from '@/components/ClaimsChip'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
 import VerificationMixChip from '@/components/VerificationMixChip'
+import { claimsVerifiedPercent } from '@/lib/claims'
 import { battleSlug, type CategoryData } from '@/lib/data-helpers'
 import {
   type ArenaTableColumn,
@@ -47,6 +49,7 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
       openness: entry.themeScores['openness'] ?? null,
       automation: entry.themeScores['automation-depth'] ?? null,
       popularity: data.popularity[entry.productId]?.stars ?? null,
+      claimsVerified: claimsVerifiedPercent(data, entry.productId),
     }
   })
 }
@@ -205,6 +208,9 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false}>
                 Verification
               </SortableTh>
+              <SortableTh col="claimsVerified" current={column} direction={direction} onSort={handleSort}>
+                Claims
+              </SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
@@ -275,12 +281,15 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                   <td className="px-3 py-2">
                     <VerificationMixChip data={data} productId={row.productId} />
                   </td>
+                  <td className="px-3 py-2">
+                    <ClaimsChip data={data} productId={row.productId} />
+                  </td>
                 </tr>
               )
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={11} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={12} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>

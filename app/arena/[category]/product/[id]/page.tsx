@@ -6,6 +6,7 @@ import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
+import ClaimsSection from '@/components/ClaimsSection'
 import ContestLink from '@/components/ContestLink'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
@@ -238,6 +239,8 @@ export default async function ProductPage({
           })}
         </div>
       </div>
+
+      <ClaimsSection data={data} category={category} productId={id} />
 
       <BusinessModelSection product={product} />
 
