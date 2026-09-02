@@ -126,11 +126,34 @@ export const RankingsSchema = z.object({
   ),
 })
 
+// Keyless popularity/momentum signal for one product (see pipeline/stages/popularity.ts). Every
+// field is optional because coverage depends entirely on what's discoverable without an API
+// key: GitHub fields only for products with urls.github, npm/pypi fields only for products
+// mapped in pipeline/popularity-packages.json. This is a *display-only* signal — never fed into
+// scoring (see lib/scoring.ts, which never imports this schema) — so it stays lenient rather
+// than mirroring VerdictSchema's strictness.
+export const PopularitySchema = z.object({
+  stars: z.number().int().min(0).optional(),
+  starsPerYear: z.number().min(0).optional(),
+  forks: z.number().int().min(0).optional(),
+  openIssues: z.number().int().min(0).optional(),
+  daysSincePush: z.number().min(0).optional(),
+  npmWeekly: z.number().int().min(0).optional(),
+  pypiWeekly: z.number().int().min(0).optional(),
+  fetchedAt: z.string().datetime(),
+})
+
+// data/{cat}/popularity.json shape: productId -> Popularity. A product absent from the map has
+// no public signals at all (not "zero" — genuinely unknown), which display code must render as
+// muted/absent rather than as a zero value.
+export const PopularityMapSchema = z.record(z.string(), PopularitySchema)
+
 export type Category = z.infer<typeof CategorySchema>
 export type Product = z.infer<typeof ProductSchema>
 export type Story = z.infer<typeof StorySchema>
 export type StoryOrigin = z.infer<typeof StoryOriginSchema>
 export type Evidence = z.infer<typeof EvidenceSchema>
+export type Popularity = z.infer<typeof PopularitySchema>
 export type Verdict = z.infer<typeof VerdictSchema>
 export type Stack = z.infer<typeof StackSchema>
 export type Rankings = z.infer<typeof RankingsSchema>

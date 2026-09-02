@@ -4,7 +4,7 @@
 // statically importing a Node builtin, even if the code path is never actually called client-
 // side. lib/data.ts re-exports everything here for backward compatibility, so existing server
 // call sites (`import { verdictFor } from '@/lib/data'`) are unaffected.
-import type { Category, Evidence, Product, Rankings, Stack, Story, Verdict } from './schemas'
+import type { Category, Evidence, Popularity, Product, Rankings, Stack, Story, Verdict } from './schemas'
 
 // "canonical", "normalized · v2", etc — see lib/schemas.ts's StoryOriginSchema. Falls back to
 // "unknown" for stories migrated/authored before origin existed. Shared by both the (client)
@@ -23,6 +23,13 @@ export interface CategoryData {
   verdicts: Verdict[]
   rankings: Rankings
   stacks: Stack[]
+  // Keyless popularity/momentum signal, keyed by productId — see lib/schemas.ts's
+  // PopularityMapSchema and pipeline/stages/popularity.ts. `data/{cat}/popularity.json` is
+  // optional (not every category has been through the popularity stage yet, and even when it
+  // has, most products have no discoverable GitHub/npm/pypi signal), so this is `{}` rather
+  // than undefined when absent — display code should look up by productId and treat a miss as
+  // "no public signals", not as an error.
+  popularity: Record<string, Popularity>
 }
 
 export function battleSlug(a: string, b: string): string {

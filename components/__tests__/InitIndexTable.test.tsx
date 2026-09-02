@@ -19,6 +19,7 @@ function makeData(entries: CategoryData['rankings']['leaderboard']): CategoryDat
     verdicts: [],
     rankings: { generatedAt: '2026-08-26T00:00:00.000Z', leaderboard: entries, battles: [] },
     stacks: [],
+    popularity: {},
   }
 }
 

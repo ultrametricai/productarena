@@ -101,6 +101,7 @@ describe('verificationMix', () => {
       verdicts,
       rankings: { generatedAt: '2026-08-26T00:00:00.000Z', leaderboard: [], battles: [] },
       stacks: [],
+      popularity: {},
     }
   }
 
