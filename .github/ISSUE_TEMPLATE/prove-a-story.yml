@@ -1,0 +1,99 @@
+name: Prove a story
+description: Submit a reproducible proof spec for a (product, story) claim — our runner executes it, records it, and publishes the recording as evidence
+title: "[proof] <category>/<product>: <story id>"
+labels: ["proof-spec", "prove-it"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the Prove-It protocol (see `docs/PROVE-IT.md`): anyone — vendors included —
+        can submit a *reproducible proof spec* for a story. Our runner executes it in a
+        sandbox, records the terminal transcript (or browser video), and publishes the
+        recording as probe-tier evidence labeled `vendor-submitted, runner-verified`.
+        Proofs that FAIL are published too, as disputed-tier evidence — so only submit
+        commands you have actually run.
+
+        Find the exact ids in `data/categories.json`, `data/{category}/products.json`,
+        and `data/{category}/stories.json`. Specs must be keyless and deterministic:
+        no credentials, no accounts, no network calls beyond public endpoints.
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      description: The arena id, e.g. ai-coding
+      placeholder: ai-coding
+    validations:
+      required: true
+  - type: input
+    id: product
+    attributes:
+      label: Product
+      description: The product id, e.g. claude-code
+      placeholder: claude-code
+    validations:
+      required: true
+  - type: input
+    id: story-id
+    attributes:
+      label: Story id
+      description: The story id this proof substantiates, e.g. agentic-mcp-server
+      placeholder: agentic-mcp-server
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where the runner should execute the spec (docker image preferred — fully reproducible)
+      options:
+        - docker (specify image below)
+        - macos-shell
+    validations:
+      required: true
+  - type: input
+    id: docker-image
+    attributes:
+      label: Docker image
+      description: Required when environment is docker — a public image with a pinned tag or digest
+      placeholder: "node:22-bookworm-slim"
+  - type: textarea
+    id: setup-commands
+    attributes:
+      label: Setup commands
+      description: >-
+        Commands that prepare the environment (installs, config), one per line. Must run
+        keyless and non-interactively. Leave empty if none are needed.
+      placeholder: |
+        npm install -g @anthropic-ai/claude-code
+      render: shell
+  - type: textarea
+    id: proof-commands
+    attributes:
+      label: Proof commands
+      description: >-
+        The commands that demonstrate the story, one per line. These are what gets recorded
+        and published verbatim (after secret redaction).
+      placeholder: |
+        claude --version
+        echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{...}}' | claude mcp serve
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected-result
+    attributes:
+      label: Expected result
+      description: >-
+        The assertions the recording must satisfy for the proof to pass — exact strings or
+        regexes the output must contain, and the expected exit code(s).
+      placeholder: |
+        output contains "serverInfo" and a protocolVersion; exit code 0
+    validations:
+      required: true
+  - type: checkboxes
+    id: affiliation
+    attributes:
+      label: Affiliation
+      description: Provenance is published alongside the recording either way.
+      options:
+        - label: I am affiliated with the vendor of this product
