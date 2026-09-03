@@ -8,6 +8,7 @@ import MomentumChip from '@/components/MomentumChip'
 import TableControls from '@/components/TableControls'
 import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
+import YcBadge from '@/components/YcBadge'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
   COLUMN_LABELS,
@@ -178,6 +179,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                         <ProductLogoView product={{ id: row.productId, name: row.name }} size={24} hasLogo={row.hasLogo} />
                         <span className="min-w-0 truncate font-medium">{row.name}</span>
                       </Link>
+                      <YcBadge ycBatch={row.ycBatch} />
                     </div>
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">

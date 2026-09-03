@@ -39,6 +39,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         apiQuality: entry.apiQuality,
         apiUntested: isGroupUntested(data, product.id, 'api-quality'),
         popularity: data.popularity[product.id]?.stars ?? null,
+        ycBatch: product.ycBatch,
         access: {
           MCP: toClientGlyph(glyphs.MCP, arenaId, product.id),
           CLI: toClientGlyph(glyphs.CLI, arenaId, product.id),
