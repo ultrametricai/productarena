@@ -48,19 +48,11 @@ describe('loadCategory', () => {
 describe('loadCategories', () => {
   it('returns every category from categories.json', () => {
     const categories = loadCategories(REAL)
-    expect(categories).toHaveLength(10)
-    expect(categories.map((c) => c.id)).toEqual([
-      'desktop-os',
-      'startup-banking',
-      'project-management',
-      'web-scraping',
-      'mobile-dev',
-      'code-hosting',
-      'ai-coding',
-      'edge-platforms',
-      'frontend-frameworks',
-      'local-llm-runtimes',
-    ])
+    // Derive expected ids/count from the raw file rather than hardcoding a number — this
+    // list grows over time as new categories are seeded.
+    const raw = JSON.parse(fs.readFileSync(path.join(REAL, 'categories.json'), 'utf8')) as { id: string }[]
+    expect(categories).toHaveLength(raw.length)
+    expect(categories.map((c) => c.id)).toEqual(raw.map((c) => c.id))
     expect(categories[0].id).toBe('desktop-os')
     for (const c of categories) expect(c.personas).toContain('ai-native')
   })
@@ -80,6 +72,7 @@ describe('loadAll', () => {
 
   it('excludes categories missing required data files', () => {
     const baselineCount = loadAll(REAL).length
+    const baselineCategoryCount = loadCategories(REAL).length
     const dir = corruptedCopy((d) => {
       const categories = JSON.parse(fs.readFileSync(path.join(d, 'categories.json'), 'utf8'))
       categories.push({
@@ -97,7 +90,7 @@ describe('loadAll', () => {
     // The unpopulated category must still be listed by loadCategories — only loadAll
     // (which is used for static generation) filters it out.
     const categories = loadCategories(dir)
-    expect(categories).toHaveLength(11)
+    expect(categories).toHaveLength(baselineCategoryCount + 1)
     expect(categories.some((c) => c.id === 'empty-cat')).toBe(true)
   })
 })
