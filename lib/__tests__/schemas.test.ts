@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   ClaimSchema, ClaimsArraySchema, EvidenceSchema, PopularityMapSchema, PopularitySchema,
-  ProductSchema, RankingsSchema, StoryOriginSchema, StorySchema, VerdictSchema,
+  ProductSchema, RankingsSchema, StoryOriginSchema, StorySchema, UncertaintyEntrySchema, VerdictSchema,
 } from '@/lib/schemas'
 
 describe('schemas', () => {
@@ -218,5 +218,33 @@ describe('schemas', () => {
     expect(ClaimsArraySchema.safeParse([]).success).toBe(true)
     expect(ClaimsArraySchema.safeParse(Array.from({ length: 60 }, (_, i) => claim(i))).success).toBe(true)
     expect(ClaimsArraySchema.safeParse(Array.from({ length: 61 }, (_, i) => claim(i))).success).toBe(false)
+  })
+})
+
+describe('UncertaintyEntrySchema', () => {
+  it('accepts a valid entry', () => {
+    const u = {
+      productId: 'claude-code', storyId: 'agentic-mcp-server',
+      judgments: ['na', 'na', 'na'] as const, agreement: '3/3' as const,
+    }
+    expect(UncertaintyEntrySchema.safeParse(u).success).toBe(true)
+  })
+
+  it('rejects a judgments array that is not exactly length 3', () => {
+    expect(UncertaintyEntrySchema.safeParse({
+      productId: 'p', storyId: 's', judgments: ['full', 'full'], agreement: '3/3',
+    }).success).toBe(false)
+  })
+
+  it('rejects an agreement value outside the n/3 enum', () => {
+    expect(UncertaintyEntrySchema.safeParse({
+      productId: 'p', storyId: 's', judgments: ['full', 'full', 'full'], agreement: '4/3',
+    }).success).toBe(false)
+  })
+
+  it('rejects a judgment tier the judge could never produce', () => {
+    expect(UncertaintyEntrySchema.safeParse({
+      productId: 'p', storyId: 's', judgments: ['full', 'full', 'maybe'], agreement: '2/3',
+    }).success).toBe(false)
   })
 })

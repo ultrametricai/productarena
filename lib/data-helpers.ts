@@ -4,7 +4,7 @@
 // statically importing a Node builtin, even if the code path is never actually called client-
 // side. lib/data.ts re-exports everything here for backward compatibility, so existing server
 // call sites (`import { verdictFor } from '@/lib/data'`) are unaffected.
-import type { Category, Claim, Evidence, Popularity, Product, Rankings, Stack, Story, Verdict } from './schemas'
+import type { Category, Claim, Evidence, Popularity, Product, Rankings, Stack, Story, UncertaintyEntry, Verdict } from './schemas'
 
 // "canonical", "normalized · v2", etc — see lib/schemas.ts's StoryOriginSchema. Falls back to
 // "unknown" for stories migrated/authored before origin existed. Shared by both the (client)
@@ -36,6 +36,13 @@ export interface CategoryData {
   // `[]` for that productId rather than an error, same "absence is not an error" contract as
   // popularity above.
   claims: Record<string, Claim[]>
+  // Multi-judge uncertainty results — see lib/schemas.ts's UncertaintyEntrySchema and
+  // pipeline/scripts/uncertainty-pass.ts. `data/{cat}/uncertainty.json` is optional (most
+  // categories are never a "close race", and even a qualifying one only covers its decisive
+  // cells) — absence resolves to `[]`, same "absence is not an error" contract as popularity and
+  // claims above. Use uncertaintyFor(data, productId, storyId) rather than scanning this array
+  // directly.
+  uncertainty: UncertaintyEntry[]
 }
 
 export function battleSlug(a: string, b: string): string {
@@ -90,6 +97,14 @@ export function verdictFor(data: CategoryData, productId: string, storyId: strin
 
 export function evidenceById(data: CategoryData): Map<string, Evidence> {
   return new Map(Object.values(data.evidence).flat().map((e) => [e.id, e]))
+}
+
+// Looks up the multi-judge uncertainty result for one cell, if any was recorded — see
+// CategoryData.uncertainty's doc. Undefined (not an error) for the overwhelming majority of
+// cells: most arenas were never a "close race", and even a qualifying one only re-judged its
+// decisive agenticness-theme cells.
+export function uncertaintyFor(data: CategoryData, productId: string, storyId: string): UncertaintyEntry | undefined {
+  return data.uncertainty.find((u) => u.productId === productId && u.storyId === storyId)
 }
 
 // Every story title is authored as "As a(n) {persona description}, I can {capability}" (see

@@ -3,13 +3,13 @@ import path from 'node:path'
 import {
   type Category, CategorySchema, type Claim, ClaimSchema, EvidenceSchema,
   PopularityMapSchema, ProductSchema, RankingsSchema,
-  StackSchema, StorySchema, VerdictSchema,
+  StackSchema, StorySchema, UncertaintyArraySchema, VerdictSchema,
 } from './schemas'
 
 export type { CategoryData } from './data-helpers'
 export {
   battleSlug, evidenceById, findBattleBySlug, groupInOrder, leadingBattle, originLabel,
-  parseBattleSlug, stripPersonaPrefix, verdictFor,
+  parseBattleSlug, stripPersonaPrefix, uncertaintyFor, verdictFor,
 } from './data-helpers'
 import type { CategoryData } from './data-helpers'
 
@@ -121,7 +121,16 @@ export function loadCategory(categoryId: string, dir: string = DEFAULT_DIR()): C
     }
   }
 
-  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity, claims }
+  // Optional, same contract as popularity/claims above: not every category is a "close race"
+  // (see pipeline/scripts/uncertainty-pass.ts) or has been through this pass at all.
+  const uncertaintyPath = path.join(catDir, 'uncertainty.json')
+  const uncertainty = fs.existsSync(uncertaintyPath) ? UncertaintyArraySchema.parse(read('uncertainty.json')) : []
+  for (const u of uncertainty) {
+    if (!productIds.has(u.productId)) throw new Error(`uncertainty references unknown product ${u.productId}`)
+    if (!storyIds.has(u.storyId)) throw new Error(`uncertainty references unknown story ${u.storyId}`)
+  }
+
+  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity, claims, uncertainty }
   categoryCache.set(cacheKey, data)
   return data
 }
