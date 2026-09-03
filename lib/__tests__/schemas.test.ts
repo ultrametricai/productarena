@@ -117,6 +117,14 @@ describe('schemas', () => {
     expect(r.success).toBe(true)
   })
 
+  it('accepts a mined story origin with promptVersion', () => {
+    const r = StorySchema.safeParse({
+      id: 'documented-rate-limits', persona: 'developer', title: 't', theme: 'agenticness', group: 'api-quality', weight: 3,
+      origin: { kind: 'mined', promptVersion: 'v2-depth', recordedAt: '2026-09-02T23:54:25.620Z' },
+    })
+    expect(r.success).toBe(true)
+  })
+
   it('rejects an unknown origin kind', () => {
     expect(StoryOriginSchema.safeParse({ kind: 'invented' }).success).toBe(false)
   })
