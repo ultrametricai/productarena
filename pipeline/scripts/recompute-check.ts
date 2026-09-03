@@ -17,6 +17,7 @@ const CATEGORIES = [
   'frontend-frameworks',
   'local-llm-runtimes',
   'mobile-dev',
+  'mobile-payments',
   'payroll',
   'product-feedback',
   'project-management',
