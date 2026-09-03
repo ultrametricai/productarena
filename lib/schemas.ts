@@ -47,11 +47,14 @@ export const ProductSchema = z.object({
 
 // Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by
 // pipeline/agentic-stories.ts (never LLM-authored), 'normalized' for LLM-assembled stories
-// (normalize.ts), 'contest' for stories ever added/adjusted via a contest issue, 'manual' for
-// hand-edited entries. Optional and additive — never referenced by cellHash (see judge.ts),
-// so stamping/backfilling it must never bust the judge cache.
+// (normalize.ts, or the depth-mining pass's claims-derived stories — see
+// pipeline/scripts/depth-mine.ts), 'mined' for stories distilled from demand-side signal (HN/
+// community discussion) or an expert-buyer gap review (same script), 'contest' for stories
+// ever added/adjusted via a contest issue, 'manual' for hand-edited entries. Optional and
+// additive — never referenced by cellHash (see judge.ts), so stamping/backfilling it must
+// never bust the judge cache.
 export const StoryOriginSchema = z.object({
-  kind: z.enum(['normalized', 'canonical', 'contest', 'manual']),
+  kind: z.enum(['normalized', 'canonical', 'contest', 'manual', 'mined']),
   promptVersion: z.string().optional(),
   recordedAt: z.string().optional(),
 })
