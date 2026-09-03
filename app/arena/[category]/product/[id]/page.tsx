@@ -11,6 +11,7 @@ import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
 import ProductLogo from '@/components/ProductLogo'
+import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import {
@@ -185,6 +186,8 @@ export default async function ProductPage({
         <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Story verdicts</h2>
         <StoryVerdictsTable category={category} productId={id} rows={verdictRows} />
       </div>
+
+      <ProofsSection category={category} productId={id} stories={data.stories} />
 
       <ClaimsSection data={data} category={category} productId={id} />
 
