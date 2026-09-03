@@ -166,7 +166,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <span>© 2026 Ultrametric Inc · data CC BY 4.0</span>
             <div className="flex items-center gap-4">
               <a
-                href={`https://github.com/${REPO}/issues/new?template=request-a-product.md`}
+                href={`https://github.com/${REPO}/issues/new?template=request-a-product.yml`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-emerald-300"
