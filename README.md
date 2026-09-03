@@ -210,6 +210,34 @@ product with a thin crawl (fewer/weaker evidence items) will score lower even if
 objectively excellent — the judge can only score what's in the evidence pack. Conversely, a
 wrong-axis story is marked `na` and excluded rather than counted against a product.
 
+#### Claims vs reality — the claims-integrity index
+
+Every product's vendor claims (extracted from its own docs/GitHub materials by
+`pipeline/stages/claims.ts`) are reconciled against our judge's independent verdicts
+(`lib/claims.ts`). Each claim that maps onto a story lands in one of three **testable**
+buckets: *verified* (full/partial verdict backed by corroborated/tested evidence),
+*unverified* (full/partial verdict, but only the vendor's own claim backs it), or
+*contradicted* (verdict disputed/none/na). Claims mapping onto no story are **untestable**
+(a taxonomy gap, not a mark against the product) and are excluded entirely.
+
+The claims-integrity score (`lib/claimsIntegrity.ts`) rewards claims we independently
+verified and actively penalizes ones the evidence contradicts:
+
+```
+testable  = verified + unverified + contradicted        — untestable claims excluded
+integrity = 100 × max(0, verified − 2 × contradicted) / testable
+```
+
+Verified claims count fully, unverified claims count for nothing (they only inflate the
+denominator), and each contradicted claim cancels **two** verified ones — overpromising is
+worse than staying silent — with the score clamped at 0.
+
+**Null, never zero:** a product with no claims data (or no testable claims) gets `null`,
+not a fabricated `0` — same rule as every other index here: "we don't know" is not "the
+worst", and nulls sort last. The full cross-arena ranking lives at
+[/rankings/claims-integrity](https://ultrametric.ai/productarena/rankings/claims-integrity),
+and each product page's "Claims vs evidence" section opens with its integrity summary.
+
 ### 4. The Agenticness Index
 
 Every arena includes the same 9 canonical "agenticness" stories, injected verbatim (never
