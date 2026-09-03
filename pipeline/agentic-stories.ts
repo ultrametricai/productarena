@@ -1,9 +1,20 @@
 import type { Story } from '../lib/schemas'
 
+// Every canonical lens story is by definition comparable across ALL software products — that is
+// exactly what makes it canon — so scope: 'global' is stamped here at the source rather than in
+// each data file. normalize.ts's assembleTaxonomy spreads these objects verbatim, so any newly
+// assembled taxonomy inherits the tag; already-committed stories.json files are backfilled by
+// pipeline/scripts/tag-story-scopes.ts (whose first rule is canonical → global, so both paths
+// agree). Cache-safe: judge.ts's cellHash never reads `scope` (only storyId + title + evidence
+// + promptVersion), so stamping this can never trigger a re-judge.
+function withGlobalScope(stories: Story[]): Story[] {
+  return stories.map((s) => ({ ...s, scope: 'global' as const }))
+}
+
 // Canonical agenticness stories, injected verbatim by normalize into every category's
 // taxonomy — never LLM-authored. Ids, titles, and weights are fixed by spec §3 and must
 // stay identical across all categories.
-export const AGENTIC_STORIES: Story[] = [
+export const AGENTIC_STORIES: Story[] = withGlobalScope([
   {
     id: 'agentic-public-api',
     persona: 'ai-native',
@@ -76,12 +87,12 @@ export const AGENTIC_STORIES: Story[] = [
     group: 'agent-access',
     weight: 2,
   },
-]
+])
 
 // Canonical agentic-features stories — same injection contract as AGENTIC_STORIES above, but
 // scored as a separate group ("does the product act agentically itself" vs "can your agent
 // drive it"). Ids, titles, and weights are fixed and must stay identical across all categories.
-export const AGENTIC_FEATURE_STORIES: Story[] = [
+export const AGENTIC_FEATURE_STORIES: Story[] = withGlobalScope([
   {
     id: 'agentic-builtin-assistant',
     persona: 'ai-native',
@@ -114,12 +125,12 @@ export const AGENTIC_FEATURE_STORIES: Story[] = [
     group: 'agentic-features',
     weight: 2,
   },
-]
+])
 
 // Canonical openness stories — same injection contract as AGENTIC_STORIES above, scored as
 // their own theme ("openness"). Ids, titles, and weights are fixed and must stay identical
 // across all categories.
-export const OPENNESS_STORIES: Story[] = [
+export const OPENNESS_STORIES: Story[] = withGlobalScope([
   {
     id: 'openness-self-host',
     persona: 'ai-native',
@@ -152,12 +163,12 @@ export const OPENNESS_STORIES: Story[] = [
     group: 'openness',
     weight: 2,
   },
-]
+])
 
 // Canonical automation-depth stories — same injection contract as AGENTIC_STORIES above,
 // scored as their own theme ("automation-depth"). Ids, titles, and weights are fixed and must
 // stay identical across all categories.
-export const AUTOMATION_STORIES: Story[] = [
+export const AUTOMATION_STORIES: Story[] = withGlobalScope([
   {
     id: 'automation-rules-engine',
     persona: 'ai-native',
@@ -190,13 +201,13 @@ export const AUTOMATION_STORIES: Story[] = [
     group: 'automation-depth',
     weight: 1,
   },
-]
+])
 
 // Canonical API-quality stories — same injection contract as AGENTIC_STORIES above, scored as
 // their own group ("api-quality") under the "agenticness" theme (agent-access is "can an agent
 // reach the product at all"; api-quality is "how good is that surface once you're there"). Ids,
 // titles, and weights are fixed and must stay identical across all categories.
-export const API_QUALITY_STORIES: Story[] = [
+export const API_QUALITY_STORIES: Story[] = withGlobalScope([
   {
     id: 'api-interactive-docs',
     persona: 'ai-native',
@@ -229,12 +240,12 @@ export const API_QUALITY_STORIES: Story[] = [
     group: 'api-quality',
     weight: 1,
   },
-]
+])
 
 // Canonical privacy-posture stories — same injection contract as AGENTIC_STORIES above,
 // scored as their own theme ("privacy-posture"). Ids, titles, and weights are fixed and must
 // stay identical across all categories.
-export const PRIVACY_STORIES: Story[] = [
+export const PRIVACY_STORIES: Story[] = withGlobalScope([
   {
     id: 'privacy-telemetry-optout',
     persona: 'ai-native',
@@ -267,4 +278,4 @@ export const PRIVACY_STORIES: Story[] = [
     group: 'privacy-posture',
     weight: 3,
   },
-]
+])

@@ -6,7 +6,7 @@
 import {
   evidenceById, originLabel, uncertaintyFor, verdictFor, type CategoryData,
 } from './data-helpers'
-import type { Evidence, UncertaintyEntry, Verdict } from './schemas'
+import type { Evidence, Story, UncertaintyEntry, Verdict } from './schemas'
 import { strongestEvidence, verificationLevel, type VerificationLevel } from './verification'
 
 export type StoryVerdictColumn =
@@ -48,11 +48,23 @@ export interface StoryVerdictRow {
   evidence: StoryVerdictEvidenceLink[]
   // strongestEvidence(...)?.url — the single best "proof ↗" link, or null if nothing cited.
   proofUrl: string | null
+  // Story scope (global/category/product — see lib/schemas.ts's StorySchema), undefined for
+  // stories not yet tagged; the table renders it as a [G]/[C]/[P] chip and a filter option.
+  scope?: Story['scope']
+  // `/global/{storyId}` when this is a global story with a cross-arena comparison page (see
+  // lib/globalStories.ts's globalStoryIds), else null — the [G] chip links here.
+  globalHref: string | null
   // Multi-judge agreement ('2/3' etc) when an uncertainty entry exists for this cell.
   agreement?: UncertaintyEntry['agreement']
 }
 
-export function buildStoryVerdictRows(data: CategoryData, productId: string): StoryVerdictRow[] {
+export function buildStoryVerdictRows(
+  data: CategoryData,
+  productId: string,
+  // Ids that have a /global/[story] page (lib/globalStories.ts's globalStoryIds) — optional so
+  // callers that never render the chip link (tests, llms.md) can skip the cross-arena load.
+  globalStoryIds?: ReadonlySet<string>,
+): StoryVerdictRow[] {
   const evidence = evidenceById(data)
   return data.stories.map((s) => {
     const v = verdictFor(data, productId, s.id)
@@ -65,6 +77,8 @@ export function buildStoryVerdictRows(data: CategoryData, productId: string): St
       theme: s.theme,
       group: s.group,
       weight: s.weight,
+      scope: s.scope,
+      globalHref: s.scope === 'global' && globalStoryIds?.has(s.id) ? `/global/${s.id}` : null,
       verdict: v.verdict,
       quality: v.quality,
       confidence: v.confidence,
@@ -164,15 +178,18 @@ export function sortStoryVerdictRows(
 }
 
 // Case-insensitive substring match over title + persona + theme + group (the text filter),
-// optionally intersected with an exact theme (the theme dropdown). Empty theme = all themes.
+// optionally intersected with an exact theme (the theme dropdown) and/or an exact scope (the
+// scope dropdown). Empty theme/scope = no restriction.
 export function filterStoryVerdictRows(
   rows: StoryVerdictRow[],
   query: string,
   theme = '',
+  scope = '',
 ): StoryVerdictRow[] {
   const q = query.trim().toLowerCase()
   return rows.filter((r) => {
     if (theme !== '' && r.theme !== theme) return false
+    if (scope !== '' && r.scope !== scope) return false
     if (q === '') return true
     return (
       r.title.toLowerCase().includes(q) ||

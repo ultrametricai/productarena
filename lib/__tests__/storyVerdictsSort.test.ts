@@ -22,6 +22,7 @@ function row(overrides: Partial<StoryVerdictRow> & { storyId: string }): StoryVe
     verification: 'vendor-claim',
     evidence: [{ id: 'e1', tier: 'claimed-docs', url: 'https://example.com/doc', excerpt: 'quoted' }],
     proofUrl: null,
+    globalHref: null,
     ...overrides,
   }
 }
@@ -118,5 +119,20 @@ describe('filterStoryVerdictRows', () => {
   it('intersects the theme dropdown with the text query', () => {
     expect(filterStoryVerdictRows(rows, '', 'openness').map((r) => r.storyId)).toEqual(['b'])
     expect(filterStoryVerdictRows(rows, 'agent', 'openness')).toHaveLength(0)
+  })
+
+  it('filters by exact scope, leaving untagged rows out of any scope selection', () => {
+    const scoped = [
+      row({ storyId: 'g', scope: 'global' }),
+      row({ storyId: 'c', scope: 'category' }),
+      row({ storyId: 'p', scope: 'product' }),
+      row({ storyId: 'untagged' }),
+    ]
+    expect(filterStoryVerdictRows(scoped, '', '', 'global').map((r) => r.storyId)).toEqual(['g'])
+    expect(filterStoryVerdictRows(scoped, '', '', 'product').map((r) => r.storyId)).toEqual(['p'])
+    // Empty scope = no restriction (same contract as the theme dropdown).
+    expect(filterStoryVerdictRows(scoped, '', '', '')).toHaveLength(4)
+    // Scope intersects the text query and theme like every other filter.
+    expect(filterStoryVerdictRows(scoped, 'story g', '', 'category')).toHaveLength(0)
   })
 })

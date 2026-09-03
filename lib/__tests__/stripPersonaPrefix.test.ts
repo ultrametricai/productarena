@@ -20,6 +20,12 @@ describe('stripPersonaPrefix', () => {
     )
   })
 
+  it('strips the "…, I know " variant used by depth-mined pricing/limits stories', () => {
+    expect(stripPersonaPrefix('As a devops-lead, I know the exact overage fee schedule before I get billed')).toBe(
+      'The exact overage fee schedule before I get billed',
+    )
+  })
+
   it('returns the title unchanged when it does not match the expected shape', () => {
     expect(stripPersonaPrefix('A hand-edited title with no persona prefix')).toBe(
       'A hand-edited title with no persona prefix',
