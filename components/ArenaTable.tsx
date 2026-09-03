@@ -10,6 +10,7 @@ import ClaimsChip from '@/components/ClaimsChip'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
+import TableControls from '@/components/TableControls'
 import VerificationMixChip from '@/components/VerificationMixChip'
 import { claimsVerifiedPercent } from '@/lib/claims'
 import { battleSlug, isGroupUntested, type CategoryData } from '@/lib/data-helpers'
@@ -53,12 +54,14 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
   })
 }
 
-function presetButtonClass(active: boolean): string {
-  const base = 'rounded-full border px-3 py-1.5 text-xs font-medium transition'
-  return active
-    ? `${base} border-emerald-400/60 bg-emerald-400/10 text-emerald-300`
-    : `${base} border-zinc-800 text-zinc-400 hover:border-emerald-400/40 hover:text-emerald-300`
-}
+// Same preset vocabulary as the homepage MegaTable (see its RANK_PRESETS) so "rank by" reads
+// identically on every leaderboard; only the columns differ per table.
+const RANK_PRESETS: Array<{ col: ArenaTableColumn; label: string }> = [
+  { col: 'agentReady', label: 'Most agent-ready' },
+  { col: 'initScore', label: 'Highest Arena Score' },
+  { col: 'agenticApp', label: 'Most AI-native' },
+  { col: 'popularity', label: 'Most popular' },
+]
 
 function SortableTh({
   children,
@@ -144,70 +147,63 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={() => applyPreset('agentReady')} className={presetButtonClass(column === 'agentReady')}>
-          Best for AI agents
-        </button>
-        <button type="button" onClick={() => applyPreset('agenticApp')} className={presetButtonClass(column === 'agenticApp')}>
-          Best AI-native for humans
-        </button>
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Filter products…"
-          aria-label="Filter products by name or vendor"
-          className="ml-auto w-full min-w-0 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:w-48"
-        />
-      </div>
+      <TableControls
+        presets={RANK_PRESETS}
+        activeColumn={column}
+        presetActive={direction === 'desc'}
+        onPreset={applyPreset}
+        query={query}
+        onQuery={setQuery}
+        rankedByLabel={COLUMN_LABELS[column]}
+        direction={direction}
+        after={
+          <>
+            {' · '}
+            <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
+              legend
+            </a>
+          </>
+        }
+      />
 
-      <p className="text-xs text-zinc-400" aria-live="polite">
-        Ranked by <span className="font-semibold text-emerald-300">{COLUMN_LABELS[column]}</span>{' '}
-        ({direction === 'desc' ? 'high → low' : 'low → high'})
-        {' · '}
-        <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
-          legend
-        </a>
-      </p>
-
-      <div className="overflow-x-auto rounded-xl border border-zinc-800">
-        <table className="w-full min-w-[880px] border-collapse text-sm">
+      <div className="rounded-xl border border-zinc-800">
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-400">
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} className="sticky left-0 z-20 w-10 bg-zinc-950">
+            <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} className="w-8">
                 #
               </SortableTh>
-              <SortableTh col="name" current={column} direction={direction} onSort={handleSort} className="sticky left-10 z-20 w-[190px] bg-zinc-950">
+              <SortableTh col="name" current={column} direction={direction} onSort={handleSort}>
                 Product
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
                 Arena Score
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
-                Agentreadyness
+                Agent-ready
               </SortableTh>
-              <SortableTh col="agenticApp" current={column} direction={direction} onSort={handleSort}>
+              <SortableTh col="agenticApp" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">
                 Agentic
               </SortableTh>
-              <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort}>
-                API quality
+              <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
+                API
               </SortableTh>
-              <SortableTh col="openness" current={column} direction={direction} onSort={handleSort}>
-                Openness
+              <SortableTh col="openness" current={column} direction={direction} onSort={handleSort} className="hidden xl:table-cell">
+                Open
               </SortableTh>
-              <SortableTh col="automation" current={column} direction={direction} onSort={handleSort}>
-                Automation
+              <SortableTh col="automation" current={column} direction={direction} onSort={handleSort} className="hidden xl:table-cell">
+                Autom.
               </SortableTh>
-              <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort}>
+              <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
                 Popularity
               </SortableTh>
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false}>
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 Access
               </SortableTh>
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false}>
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell">
                 Verification
               </SortableTh>
-              <SortableTh col="claimsVerified" current={column} direction={direction} onSort={handleSort}>
+              <SortableTh col="claimsVerified" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 Claims
               </SortableTh>
             </tr>
@@ -218,11 +214,11 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
               const rank = rankOf.get(row.productId) ?? sorted.length
               const rival = row.productId === topRivalId ? data.rankings.leaderboard[1] : data.rankings.leaderboard[0]
               return (
-                <tr key={row.productId} className="group transition hover:bg-zinc-900/50">
-                  <td className="sticky left-0 z-10 w-10 bg-zinc-950 px-3 py-2 font-mono tabular-nums text-zinc-400 group-hover:bg-zinc-900/50">
+                <tr key={row.productId} className="transition hover:bg-zinc-900/50">
+                  <td className="w-8 px-2 py-2 font-mono tabular-nums text-zinc-400">
                     {rank}
                   </td>
-                  <td className="sticky left-10 z-10 w-[190px] bg-zinc-950 px-3 py-2 group-hover:bg-zinc-900/50">
+                  <td className="max-w-[200px] px-2 py-2">
                     <Link
                       href={`/arena/${data.category.id}/product/${product.id}`}
                       className="flex items-center gap-2 hover:text-emerald-300"
@@ -256,13 +252,13 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                       }}
                     />
                   </td>
-                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                  <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
                     {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : row.agentReady.toFixed(0)}
                   </td>
-                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                  <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
                     {row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : row.agenticApp.toFixed(0)}
                   </td>
-                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                  <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 md:table-cell">
                     {isGroupUntested(data, row.productId, 'api-quality') ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No API-quality evidence found or probed either way — unscored, not zero.">
                         untested
@@ -273,22 +269,22 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                       row.apiQuality.toFixed(0)
                     )}
                   </td>
-                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                  <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
                     {row.openness === null ? <span className="text-zinc-500">n/a</span> : row.openness.toFixed(0)}
                   </td>
-                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                  <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
                     {row.automation === null ? <span className="text-zinc-500">n/a</span> : row.automation.toFixed(0)}
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="hidden px-2 py-2 md:table-cell">
                     <MomentumChip popularity={data.popularity[row.productId]} compact />
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="hidden px-2 py-2 sm:table-cell">
                     <AgentAccessGlyphs data={data} productId={row.productId} />
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="hidden px-2 py-2 lg:table-cell">
                     <VerificationMixChip data={data} productId={row.productId} />
                   </td>
-                  <td className="px-3 py-2">
+                  <td className="hidden px-2 py-2 lg:table-cell">
                     <ClaimsChip data={data} productId={row.productId} />
                   </td>
                 </tr>

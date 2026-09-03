@@ -18,7 +18,7 @@ describe('ArenaTable', () => {
   it('switches the "Ranked by" label when a preset button is clicked', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
-    fireEvent.click(screen.getByText('Best for AI agents'))
+    fireEvent.click(screen.getByText('Most agent-ready'))
     expect(screen.getByText(/Ranked by/).textContent).toMatch(/AGENTREADYNESS/)
   })
 

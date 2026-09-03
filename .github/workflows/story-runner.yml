@@ -1,0 +1,116 @@
+# Continuous story-analysis runner: every 6 hours, pick the next arena in rotation and re-run
+# its full evidence pipeline (crawl → extract → collect-community → probe → judge → claims →
+# popularity → derive). The judge's cellHash cache means unchanged evidence costs no LLM calls —
+# only cells whose evidence actually moved get re-judged — so a run on a quiet arena is cheap.
+# Results land as a PR (never a direct push) so every ranking change stays reviewable and the
+# re-judge stability policy (see README) can be applied before merge.
+#
+# Requires the ANTHROPIC_API_KEY repo secret; until it exists the job exits early and green.
+name: story-runner
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Arena id to run (default: rotation pick)'
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: story-runner
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for API key
+        id: gate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "ANTHROPIC_API_KEY secret not set — skipping (add it to enable the runner)."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: pnpm/action-setup@v4
+        if: steps.gate.outputs.enabled == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.enabled == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        if: steps.gate.outputs.enabled == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Pick arena (rotation by run number unless dispatched with one)
+        if: steps.gate.outputs.enabled == 'true'
+        id: pick
+        env:
+          INPUT_CATEGORY: ${{ github.event.inputs.category }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          if [ -n "$INPUT_CATEGORY" ]; then
+            CAT="$INPUT_CATEGORY"
+          else
+            CAT=$(node -e '
+              const cats = require("./data/categories.json").map((c) => c.id);
+              const n = Number(process.env.RUN_NUMBER) || 0;
+              console.log(cats[n % cats.length]);
+            ')
+          fi
+          echo "category=$CAT" >> "$GITHUB_OUTPUT"
+          echo "Running arena: $CAT"
+
+      - name: Run pipeline for arena
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CATEGORY: ${{ steps.pick.outputs.category }}
+        run: |
+          for stage in crawl extract normalize collect-community probe judge claims popularity derive; do
+            echo "::group::$stage"
+            pnpm tsx pipeline/cli.ts "$stage" --category "$CATEGORY"
+            echo "::endgroup::"
+          done
+
+      - name: Tests + recompute check
+        if: steps.gate.outputs.enabled == 'true'
+        run: |
+          pnpm test
+          pnpm tsx pipeline/scripts/recompute-check.ts
+
+      - name: Open PR if anything changed
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CATEGORY: ${{ steps.pick.outputs.category }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          if git diff --quiet -- data pipeline/cache; then
+            echo "No changes for $CATEGORY — done."
+            exit 0
+          fi
+          BRANCH="story-runner/$CATEGORY-$RUN_ID"
+          git config user.name "productarena-story-runner"
+          git config user.email "noreply@ultrametric.ai"
+          git checkout -b "$BRANCH"
+          git add data pipeline/cache
+          git commit -m "chore(story-runner): refresh $CATEGORY evidence + verdicts"
+          git push -u origin "$BRANCH"
+          gh pr create \
+            --title "story-runner: $CATEGORY refresh" \
+            --body "Automated evidence/verdict refresh for \`$CATEGORY\`. Review verdict flips against the re-judge stability policy (README) before merging — no-new-citation flips should be reverted." \
+            --base main --head "$BRANCH"
