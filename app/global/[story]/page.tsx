@@ -64,11 +64,14 @@ export default async function GlobalStoryPage({
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-zinc-800">
-        <table className="w-full min-w-[640px] border-collapse text-sm">
+        {/* Arena is the one column that can go below sm — the verdict is this page's whole
+            point, so it must stay on-screen at phone widths instead of behind a sideways
+            scroll. min-w only applies once the Arena column is back. */}
+        <table className="w-full border-collapse text-sm sm:min-w-[640px]">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-400">
               <th scope="col" className="px-3 py-2 font-normal">Product</th>
-              <th scope="col" className="px-3 py-2 font-normal">Arena</th>
+              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Arena</th>
               <th scope="col" className="px-3 py-2 font-normal">Verdict</th>
               <th scope="col" className="px-3 py-2 font-normal">Quality</th>
               <th scope="col" className="px-3 py-2 font-normal">Evidence</th>
@@ -84,7 +87,7 @@ export default async function GlobalStoryPage({
                       {cell.productName}
                     </Link>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-xs text-zinc-400">
+                  <td className="hidden whitespace-nowrap px-3 py-2 text-xs text-zinc-400 sm:table-cell">
                     <Link href={`/arena/${cell.categoryId}`} className="hover:text-emerald-300">
                       {cell.categoryName}
                     </Link>
