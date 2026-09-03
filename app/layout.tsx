@@ -2,11 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
-import InitMark from "@/components/InitMark";
 import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
-import { REPO } from "@/lib/site";
+import { REPO, SITE_URL } from "@/lib/site";
 import { buildSearchIndex, type SearchEntry } from "@/lib/search-index";
 
 // Short labels used inside the Arenas dropdown alongside full names.
@@ -70,21 +69,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://init.dog"),
-  title: "INIT",
+  metadataBase: new URL(SITE_URL),
+  title: "ProductArena",
   description:
-    "INIT — evidence-tested rankings of how AI-ready every product is. Evidence in, rankings out.",
+    "ProductArena — the unbiased, evidence-based arena for software in the AI era. Evidence in, rankings out.",
   openGraph: {
-    title: "INIT.dog",
-    description: "Evidence-tested rankings of how AI-ready every product is.",
-    url: "https://init.dog",
-    siteName: "INIT",
+    title: "ProductArena",
+    description: "The unbiased, evidence-based arena for software in the AI era.",
+    url: SITE_URL,
+    siteName: "ProductArena",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "INIT.dog",
-    description: "Evidence-tested rankings of how AI-ready every product is.",
+    title: "ProductArena",
+    description: "The unbiased, evidence-based arena for software in the AI era.",
   },
 };
 
@@ -109,9 +108,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
             <Link href="/" className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight">
-              <InitMark size={22} />
               <span>
-                INIT<span className="text-amber-400">.dog</span>
+                Product<span className="text-amber-400">Arena</span>
               </span>
             </Link>
             <nav className="flex items-center gap-3 text-sm text-zinc-400">
@@ -149,7 +147,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="mx-auto max-w-7xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
-            <span>INIT · MIT licensed · © 2026 Ultrametric Inc</span>
+            <span>ProductArena · MIT licensed · © 2026 Ultrametric Inc</span>
             <div className="flex items-center gap-4">
               <a
                 href={`https://github.com/${REPO}/issues/new?template=request-a-product.md`}
