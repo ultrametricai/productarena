@@ -1,7 +1,7 @@
-# INIT Methodology
+# ProductArena Methodology
 
-The full methodology writeup — evidence tiers, judging, scoring, the INIT Score, story
-provenance, re-judge stability, and bias disclosure. The on-site [/methodology](https://init.dog/methodology)
+The full methodology writeup — evidence tiers, judging, scoring, the Arena Score, story
+provenance, re-judge stability, and bias disclosure. The on-site [/methodology](https://ultrametric.ai/productarena/methodology)
 page is a tight one-screen summary of this document; this file is the source of truth. See also
 [README.md](./README.md) for the arena list, data layout, and pipeline workflow, and
 [CONTRIBUTING.md](./CONTRIBUTING.md) for how to contest a verdict.
@@ -76,9 +76,9 @@ and the overall battle winner is whoever wins more story-weight.
 product with a thin crawl (fewer/weaker evidence items) will score lower even if it's
 objectively excellent — the judge can only score what's in the evidence pack.
 
-## The INIT Score (formerly the "AI-Era Index")
+## The Arena Score (formerly INIT Score / AI-Era Index)
 
-Every leaderboard entry carries an **INIT Score** — displayed on-site as `INIT {n}/100` — a
+Every leaderboard entry carries an **Arena Score** — displayed on-site as `Arena {n}/100` — a
 single number meant to answer "how ready is this product for a world where agents, not just
 humans, are the primary users?" Internally it's still the `aiEra` field; only the display name
 changed (the score, formula, and weights are identical to what shipped as the "AI-Era Index").
@@ -99,7 +99,7 @@ aiEra = Σ(component × weight) / Σ(weight)   — over non-null components only
 Weights are renormalized over whichever components are non-null for a given product, so a
 product missing one axis isn't penalized twice — once for the missing axis, once for a shrunken
 blend. `aiEra` is `null` only when every component is null. The exact weights live in
-`AI_ERA_WEIGHTS` in `lib/scoring.ts`. Leaderboards sort primarily by the INIT Score (nulls last,
+`AI_ERA_WEIGHTS` in `lib/scoring.ts`. Leaderboards sort primarily by the Arena Score (nulls last,
 ties broken by the coverage score).
 
 **These weights are a starting position, not a verdict.** If you think the weighting is wrong,
@@ -141,7 +141,7 @@ registries (`api.github.com`, `api.npmjs.org`, `pypistats.org`), no API key requ
 a different question than everything else on this site: not "is this AI-ready" but "will this
 project still be alive tomorrow" — a reader-requested survival/support signal.
 
-It is **deliberately not part of the INIT Score** and never affects rankings, leaderboard
+It is **deliberately not part of the Arena Score** and never affects rankings, leaderboard
 position, or any battle outcome (`pnpm pipeline popularity` makes no LLM calls and its output,
 `data/{category}/popularity.json`, isn't read by `lib/scoring.ts`). Popularity measures
 *adoption* — how many people already use something — which is a lagging, momentum-driven

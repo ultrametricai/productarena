@@ -40,11 +40,11 @@ export interface ArenaTableRow {
 
 // Human-readable label for the live "Ranked by ___" strip. `rank` has no independent meaning
 // to sort by (it's the output of sorting, not an input), so clicking its header falls back to
-// the default INIT Score ordering — same label as `initScore`.
+// the default Arena Score ordering — same label as `initScore`.
 export const COLUMN_LABELS: Record<ArenaTableColumn, string> = {
-  rank: 'INIT Score',
+  rank: 'Arena Score',
   name: 'product name',
-  initScore: 'INIT Score',
+  initScore: 'Arena Score',
   agentReady: 'AGENTREADYNESS',
   agenticApp: 'AGENTIC',
   apiQuality: 'API quality',
@@ -70,7 +70,7 @@ function compareNullableNumber(a: number | null, b: number | null, direction: So
 }
 
 // The column a given ArenaTableColumn actually reads from a row (rank has no own field; it
-// re-derives the default INIT Score order).
+// re-derives the default Arena Score order).
 function fieldFor(column: ArenaTableColumn): keyof ArenaTableRow | null {
   if (column === 'rank') return 'initScore'
   if (column === 'name') return null

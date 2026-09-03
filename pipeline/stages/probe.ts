@@ -20,7 +20,7 @@ export interface ProbeResult {
   excerpt: string
 }
 
-const USER_AGENT = 'Mozilla/5.0 (compatible; INIT/1.0; +https://init.dog)'
+const USER_AGENT = 'Mozilla/5.0 (compatible; ProductArena/1.0; +https://ultrametric.ai/productarena)'
 
 export const defaultFetcher: ProbeFetcher = async (url) => {
   const res = await fetch(url, { headers: { 'User-Agent': USER_AGENT }, redirect: 'follow' })

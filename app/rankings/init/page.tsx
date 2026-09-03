@@ -6,8 +6,8 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Full INIT Score ranking — all ${totalProducts} products — INIT`,
-    description: `Every product across every arena ranked by the blended INIT Score (agent-ready, API quality, openness, agentic app, automation). Evidence-graded, no opinion.`,
+    title: `Full Arena Score ranking — all ${totalProducts} products — ProductArena`,
+    description: `Every product across every arena ranked by the blended Arena Score (agent-ready, API quality, openness, agentic app, automation). Evidence-graded, no opinion.`,
   }
 }
 
@@ -26,9 +26,9 @@ export default function InitRankingPage() {
     <div className="space-y-4">
       <div>
         <p className="text-sm uppercase tracking-widest text-amber-400">Global ranking</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">Highest INIT Score</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight">Highest Arena Score</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          All {totalProducts} products across every arena, ranked by the blended INIT Score — agent-ready, API
+          All {totalProducts} products across every arena, ranked by the blended Arena Score — agent-ready, API
           quality, openness, agentic app, and automation, all evidence-graded. Ties break on the raw coverage score.
         </p>
       </div>

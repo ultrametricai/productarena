@@ -15,7 +15,7 @@ interface IndexRow {
 // Sibling of AgenticIndexTable, answering the other half of "which products are most
 // AI-friendly": this one sorts by AGENTIC_APP ("does the product act agentically itself" / how
 // AI-native the product's own UX is) instead of AGENTREADYNESS ("can your agent drive it").
-// Ties break on the automation-depth theme score, then aiEra/INIT Score, both desc/nulls-last.
+// Ties break on the automation-depth theme score, then aiEra/Arena Score, both desc/nulls-last.
 function buildIndex(categories: CategoryData[]): IndexRow[] {
   const rows: IndexRow[] = []
   for (const data of categories) {
@@ -69,7 +69,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
             <th className="px-3 py-2 font-normal">Agentic</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Automation</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
-            <th className="px-3 py-2 font-normal">INIT Score</th>
+            <th className="px-3 py-2 font-normal">Arena Score</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">

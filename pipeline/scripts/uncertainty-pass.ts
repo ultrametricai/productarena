@@ -1,8 +1,8 @@
 // Multi-judge uncertainty pass (Lane A, judge calibration + uncertainty). For arenas where the
-// #1 and #2 leaderboard products are within CLOSE_RACE_THRESHOLD INIT points of each other, the
+// #1 and #2 leaderboard products are within CLOSE_RACE_THRESHOLD Arena Score points of each other, the
 // ranking is a "close race" — worth knowing how much of that gap is real signal vs. judge noise.
 // For each qualifying arena, re-judges BOTH contenders' decisive cells (every story under the
-// agenticness theme: agent-access, agentic-features, api-quality — the axes that feed the INIT
+// agenticness theme: agent-access, agentic-features, api-quality — the axes that feed the Arena
 // Score's agentReady/agenticApp/apiQuality components) two ADDITIONAL times against the same
 // on-disk evidence pack, and records agreement across those 2 fresh samples plus the tier already
 // cached in verdicts.json.
@@ -50,13 +50,13 @@ async function main(): Promise<void> {
     }
 
     const diff = Math.abs(top1.aiEra! - top2.aiEra!).toFixed(1)
-    console.log(`\nuncertainty: ${cat.id} QUALIFIES — ${top1.productId} vs ${top2.productId} (Δ${diff} INIT points)`)
+    console.log(`\nuncertainty: ${cat.id} QUALIFIES — ${top1.productId} vs ${top2.productId} (Δ${diff} Arena Score points)`)
 
     const products = readJson(ProductSchema.array(), path.join(dataDir, 'products.json'))
     const stories = readJson(StorySchema.array(), path.join(dataDir, 'stories.json'))
     const verdicts = readJson(VerdictSchema.array(), path.join(dataDir, 'verdicts.json'))
     // The "decisive canon": every story under the agenticness theme, which spans all three
-    // groups that feed the INIT Score's agent-readiness components (agent-access -> agentReady,
+    // groups that feed the Arena Score's agent-readiness components (agent-access -> agentReady,
     // agentic-features -> agenticApp, api-quality -> apiQuality).
     const decisive = stories.filter((s) => s.theme === 'agenticness')
 

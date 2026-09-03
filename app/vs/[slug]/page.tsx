@@ -69,12 +69,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const found = resolve(slug)
-  if (!found) return { title: 'Comparison — INIT' }
+  if (!found) return { title: 'Comparison — ProductArena' }
   const { data, a, b } = found
   const year = new Date().getFullYear()
   return {
     title: `${a.name} vs ${b.name} (${year}): which is more AI-ready? Evidence-tested comparison`,
-    description: `Head-to-head, evidence-graded comparison of ${a.name} and ${b.name} across ${data.category.name} — INIT Score, agent-readiness, business model, vendor claims verified, and every judged round.`,
+    description: `Head-to-head, evidence-graded comparison of ${a.name} and ${b.name} across ${data.category.name} — Arena Score, agent-readiness, business model, vendor claims verified, and every judged round.`,
     alternates: { canonical: `${SITE_URL}/vs/${slug}` },
   }
 }
@@ -103,7 +103,7 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
           {a.name} <span className="text-zinc-400">vs</span> {b.name}
         </h1>
         <p className="mt-1 text-xs text-zinc-500">
-          Evidence-tested comparison — INIT Score, agent-readiness, and every judged round.
+          Evidence-tested comparison — Arena Score, agent-readiness, and every judged round.
         </p>
       </div>
 
@@ -121,7 +121,7 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
               </div>
             </Link>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-[10px] uppercase tracking-widest text-zinc-400">INIT</span>
+              <span className="text-[10px] uppercase tracking-widest text-zinc-400">Arena</span>
               <AiEraBadge
                 value={entry.aiEra}
                 components={{

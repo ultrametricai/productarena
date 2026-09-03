@@ -1,6 +1,6 @@
 # The Agentic Depth Program
 
-**Status: proposed, phased rollout.** This document is the design for INIT's next layer of
+**Status: proposed, phased rollout.** This document is the design for ProductArena's next layer of
 agent-readiness measurement — a successor to (not a replacement for) the current
 `agentic-*`/`api-*` verdict cells described in the [README](../README.md#4-the-agenticness-index).
 Those cells ask *"does documentation/evidence say this product has an MCP server / CLI /
@@ -45,12 +45,12 @@ Ladders are tracked per surface:
   agent acting on a human's behalf (e.g. an agent operating a web UI, not just an API).
 
 A product's overall "agentic depth" is not a single number collapsing all five ladders — the
-leaderboard will show the per-surface rungs plus a summary, the same way the current INIT
+leaderboard will show the per-surface rungs plus a summary, the same way the current Arena
 Score is a transparent weighted blend rather than a black box (see README §5).
 
-## 2. INITbench: runtime conformance suites
+## 2. ArenaBench: runtime conformance suites
 
-**INITbench** is the versioned, public conformance spec + runner that gets a product from L2
+**ArenaBench** is the versioned, public conformance spec + runner that gets a product from L2
 to L3. It is deliberately narrow and mechanical — no LLM judgment in the loop, just protocol-
 and contract-level checks, so results are reproducible and adversarially hard to dispute.
 
@@ -71,7 +71,7 @@ and contract-level checks, so results are reproducible and adversarially hard to
 Every suite run produces a **transcript** — the literal requests/responses or command
 invocations and their outputs — stored as evidence, the same way probe-tier evidence works
 today. The transcript, not just a pass/fail bit, is the artifact anyone can audit. The spec
-itself is versioned (`INITBENCH_VERSION`, mirroring the existing `PROMPT_VERSION` pattern in
+itself is versioned (`ARENABENCH_VERSION`, mirroring the existing `PROMPT_VERSION` pattern in
 `pipeline/stages/judge.ts`) so suite changes don't silently reshuffle historical scores —
 a version bump is a visible, changelogged event, and old transcripts stay attributed to the
 spec version that produced them.
@@ -93,7 +93,7 @@ into one pass/fail:
 
 Task trials are the most expensive tier and the most valuable — they're what actually
 distinguishes "has an MCP server" from "an agent can get real work done through it." They run
-on a slower cadence than INITbench (see §6) precisely because of that cost.
+on a slower cadence than ArenaBench (see §6) precisely because of that cost.
 
 ## 4. Demand-side story mining + claims gap analysis
 
@@ -101,7 +101,7 @@ Capability ladders and conformance suites measure supply (what a product's surfa
 does). The program's other half measures demand: mining real user/developer stories (support
 forums, issue trackers, "how do I get an agent to do X with this" threads) to find the
 capabilities people are actually trying to use agents for, then running a **claims gap
-analysis** — where a vendor's marketing claims an L4/L5-grade capability but INITbench or task
+analysis** — where a vendor's marketing claims an L4/L5-grade capability but ArenaBench or task
 trials only substantiate L1/L2. That gap, not the raw rung, is often the more interesting
 signal for a buyer: a product overclaiming its agent-readiness is arguably worse than one that
 makes no claim at all. Gap findings feed back into the existing `disputed` verdict tier
@@ -119,7 +119,7 @@ genuinely ambiguous.
 
 ## 6. Monthly snapshots → agentic-velocity leaderboard
 
-INITbench and task-trial results are captured as dated **snapshots**, not overwritten in
+ArenaBench and task-trial results are captured as dated **snapshots**, not overwritten in
 place. A monthly cadence balances cost (task trials are expensive) against staleness. The
 snapshot history feeds an **agentic-velocity leaderboard** — not just "who's ahead" but "who's
 improving fastest," ranking products by month-over-month rung movement and gap closure. This
@@ -128,7 +128,7 @@ whether a laggard is catching up or falling further behind.
 
 ## 7. Governance
 
-- **Vendor evidence submissions.** Vendors may submit their own INITbench transcripts or
+- **Vendor evidence submissions.** Vendors may submit their own ArenaBench transcripts or
   task-trial logs as supporting evidence, exactly like the existing contest flow
   (`CONTRIBUTING.md`) — submissions are additive evidence, never a direct score override, and
   are subject to the same adversarial review as any other contested verdict.
@@ -143,11 +143,11 @@ whether a laggard is catching up or falling further behind.
 
 ## Phases
 
-- **Phase 1 — Spec + transcripts.** Publish the versioned INITbench spec (MCP/API/CLI suites)
+- **Phase 1 — Spec + transcripts.** Publish the versioned ArenaBench spec (MCP/API/CLI suites)
   and wire suite runs to produce evidence-grade transcripts, gated behind the sandbox
   infrastructure needed to run them safely against real products without touching production
   data. No leaderboard changes yet — this phase is instrumentation only.
-  - **Exit criteria:** at least one full arena has INITbench transcripts for every product on
+  - **Exit criteria:** at least one full arena has ArenaBench transcripts for every product on
     every implemented surface; transcripts are reproducible on a re-run with no product-side
     changes.
 - **Phase 2 — Ladder rungs on-site.** Surface L0–L3 rungs per surface on product pages
@@ -168,5 +168,5 @@ whether a laggard is catching up or falling further behind.
     annual report is published.
 
 Each phase ships independently and is additive to the current site — no phase requires
-retracting or invalidating the existing evidence-tier verdicts, and every INITbench/task-trial
-result is itself subject to the same contest mechanism as any other verdict on INIT.
+retracting or invalidating the existing evidence-tier verdicts, and every ArenaBench/task-trial
+result is itself subject to the same contest mechanism as any other verdict on ProductArena.

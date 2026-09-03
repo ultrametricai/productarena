@@ -45,7 +45,7 @@ function computeStats() {
   }
 }
 
-// Mirrors the site's leaderboard sort: primarily by INIT Score (aiEra), nulls last, ties
+// Mirrors the site's leaderboard sort: primarily by Arena Score (aiEra), nulls last, ties
 // broken by coverage score (see README "Why lead with this instead of the coverage score").
 function computeLeaders() {
   const categories = readJson(path.join(DATA_DIR, 'categories.json'))
@@ -96,7 +96,7 @@ function renderLeadersBlock(leaders) {
   )
   return [
     LEADERS_START_MARKER,
-    '| Arena | Leader | INIT Score |',
+    '| Arena | Leader | Arena Score |',
     '|---|---|---|',
     ...rows,
     LEADERS_END_MARKER,

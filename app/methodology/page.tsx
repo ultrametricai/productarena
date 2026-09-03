@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
-  title: 'Methodology — INIT',
-  description: 'Evidence tiers, judging, scoring, the INIT Score, story provenance, and bias disclosure — full writeup on GitHub.',
+  title: 'Methodology — ProductArena',
+  description: 'Evidence tiers, judging, scoring, the Arena Score, story provenance, and bias disclosure — full writeup on GitHub.',
 }
 
 // Static page — no data dependency, no dynamic segments.
@@ -17,7 +17,7 @@ export default function MethodologyPage() {
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
         <p className="text-sm uppercase tracking-widest text-amber-400">Methodology</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">How INIT scores products</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight">How ProductArena scores products</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Evidence in, rankings out. Every claim traces back to a cited evidence item — vendor docs, GitHub, an
           independent community source, or a hands-on probe — and an LLM judge scores every (product, story) cell
@@ -69,16 +69,16 @@ export default function MethodologyPage() {
           <p className="font-semibold text-zinc-300">Popularity (not scored)</p>
           <p className="mt-1">
             GitHub stars/npm/PyPI downloads, shown as a survival signal only — measures adoption, not AI-readiness,
-            so it&apos;s never part of the INIT Score or rankings.
+            so it&apos;s never part of the Arena Score or rankings.
           </p>
         </div>
       </div>
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">
-        <h2 className="text-lg font-semibold">The INIT Score</h2>
+        <h2 className="text-lg font-semibold">The Arena Score</h2>
         <p className="mt-1 text-sm text-zinc-500">Formerly displayed as the &quot;AI-Era Index&quot; — same formula, new name.</p>
         <p className="mt-3 max-w-2xl text-sm text-zinc-400">
-          Every leaderboard entry carries an INIT Score (0–100, <span className={CODE}>aiEra</span> internally) — a
+          Every leaderboard entry carries an Arena Score (0–100, <span className={CODE}>aiEra</span> internally) — a
           weighted, renormalized blend of five components:
         </p>
         <table className="mt-3 w-full max-w-2xl border-collapse text-sm">
