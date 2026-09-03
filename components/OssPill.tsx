@@ -4,6 +4,7 @@
 export default function OssPill({ className = '' }: { className?: string }) {
   return (
     <span
+      title="Open source — the product's code is publicly available"
       className={`inline-flex w-fit items-center rounded-full bg-emerald-950 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-300 ring-1 ring-emerald-800 ${className}`}
     >
       Open Source

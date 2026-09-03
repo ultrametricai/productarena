@@ -34,8 +34,16 @@ export interface AccessGlyph {
   storyId: string
 }
 
+const VERDICT_GLOSS: Record<Verdict['verdict'], string> = {
+  full: 'full — clear evidence it delivers',
+  partial: 'partial — works, with caveats',
+  disputed: 'disputed — evidence conflicts',
+  none: 'none — no evidence found either way',
+  na: "n/a — question doesn't apply to this kind of product",
+}
+
 export function accessGlyphFor(label: AccessGlyphLabel, verdict: Verdict): AccessGlyph {
-  const title = `${label}: ${verdict.verdict} — ${verdict.rationale}`
+  const title = `${label} access: ${VERDICT_GLOSS[verdict.verdict]}. ${verdict.rationale}`
   const storyId = verdict.storyId
   if (verdict.verdict === 'full') return { char: '✓', className: 'text-emerald-400', title, storyId }
   if (verdict.verdict === 'partial') return { char: '~', className: 'text-emerald-400', title, storyId }

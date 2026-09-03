@@ -166,7 +166,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
         }
       />
 
-      <div className="rounded-xl border border-zinc-800">
+      <div className="overflow-x-auto rounded-xl border border-zinc-800">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">

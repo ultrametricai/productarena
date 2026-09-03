@@ -131,7 +131,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
         direction={direction}
       />
 
-      <div className="rounded-2xl border border-zinc-800">
+      <div className="overflow-x-auto rounded-2xl border border-zinc-800">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">

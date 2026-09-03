@@ -7,11 +7,22 @@ const STYLES: Record<Exclude<VerificationLevel, 'unverified'>, string> = {
   disputed: 'bg-red-950 text-red-300 ring-red-800',
 }
 
+// One shared word vocabulary for verification everywhere a label renders (pills, tooltips,
+// the Legend): "probed" = we ran it ourselves, "community" = independent users back it,
+// "claimed" = only the vendor says so, "contradicted" = evidence disagrees with the claim.
 const LABELS: Record<Exclude<VerificationLevel, 'unverified'>, string> = {
   'vendor-claim': 'claimed',
-  corroborated: 'corroborated',
-  tested: 'tested',
-  disputed: 'disputed',
+  corroborated: 'community',
+  tested: 'probed',
+  disputed: 'contradicted',
+}
+
+// Plain-language hover text so a bare letter or pill never needs the legend to be understood.
+const TITLES: Record<Exclude<VerificationLevel, 'unverified'>, string> = {
+  'vendor-claim': 'claimed — only the vendor says so, unverified',
+  corroborated: 'community — independent users report it works',
+  tested: 'probed — we tested it ourselves',
+  disputed: 'contradicted — evidence disagrees with the claim',
 }
 
 // Single-letter glyph for the dense StoryMatrix cells, where a full pill doesn't fit.
@@ -26,23 +37,41 @@ const GLYPHS: Record<Exclude<VerificationLevel, 'unverified'>, string> = {
 export default function VerificationBadge({
   level,
   compact = false,
+  responsive = false,
 }: {
   level: VerificationLevel
   compact?: boolean
+  // Letter below the sm breakpoint (where the column is cramped), small word pill from sm up.
+  responsive?: boolean
 }) {
   if (level === 'unverified') return null
-  if (compact) {
+  const letter = (extra = '') => (
+    <span
+      title={TITLES[level]}
+      className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold ring-1 ${STYLES[level]} ${extra}`}
+    >
+      {GLYPHS[level]}
+    </span>
+  )
+  if (compact) return letter()
+  if (responsive) {
     return (
-      <span
-        title={`verification: ${LABELS[level]}`}
-        className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold ring-1 ${STYLES[level]}`}
-      >
-        {GLYPHS[level]}
-      </span>
+      <>
+        {letter('sm:hidden')}
+        <span
+          title={TITLES[level]}
+          className={`hidden rounded-full px-2 py-0.5 text-xs font-medium ring-1 sm:inline-flex ${STYLES[level]}`}
+        >
+          {LABELS[level]}
+        </span>
+      </>
     )
   }
   return (
-    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${STYLES[level]}`}>
+    <span
+      title={TITLES[level]}
+      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${STYLES[level]}`}
+    >
       {LABELS[level]}
     </span>
   )
