@@ -43,6 +43,11 @@ export const ProductSchema = z.object({
     command: z.string().min(2),
     url: z.string().url().optional(),
   })).max(4).optional(),
+  // YC batch code (e.g. "S22", "W23") for products verified — by website domain, never by name
+  // alone — to be alumni of a Y Combinator batch (see pipeline/scripts/yc-cross-reference.ts and
+  // data/yc-batches.json, the source of truth this field is stamped from). Display-only, like
+  // PopularitySchema: never fed into scoring (lib/scoring.ts never imports it).
+  ycBatch: z.string().regex(/^[WS]\d{2}$/, 'ycBatch must look like "S22" or "W23"').optional(),
 })
 
 // Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by
@@ -206,6 +211,28 @@ export const UncertaintyEntrySchema = z.object({
 // category only covers its decisive cells, not the full matrix.
 export const UncertaintyArraySchema = UncertaintyEntrySchema.array()
 
+// data/yc-map.json shape: one entry per modern-batch (W23–S26) YC company, distilled from the
+// yc-oss/api mirror of YC's public directory (see pipeline/scripts/yc-fetch.ts) plus an
+// LLM-assigned arena mapping (see pipeline/scripts/yc-classify.ts). `mappedArena` is an existing
+// categories.json id the company genuinely competes in; `proposedArena` is a kebab-case name for
+// a new arena it clusters with peers under; a company can have at most one of the two set (never
+// both), and both null means "not a software product ranked meaningfully here" (hardware,
+// biotech, services, marketplaces — see METHODOLOGY.md).
+export const YcCompanySchema = z.object({
+  name: z.string().min(1),
+  slug: z.string().min(1),
+  batch: z.string().min(1),
+  website: z.string().url(),
+  oneLiner: z.string(),
+  tags: z.array(z.string()),
+  mappedArena: z.string().min(1).nullable(),
+  proposedArena: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'proposedArena must be kebab-case').nullable(),
+}).refine((c) => !(c.mappedArena && c.proposedArena), {
+  message: 'a company cannot have both mappedArena and proposedArena set',
+})
+
+export const YcMapSchema = YcCompanySchema.array()
+
 export type Category = z.infer<typeof CategorySchema>
 export type Product = z.infer<typeof ProductSchema>
 export type Story = z.infer<typeof StorySchema>
@@ -216,6 +243,7 @@ export type UncertaintyEntry = z.infer<typeof UncertaintyEntrySchema>
 export type Verdict = z.infer<typeof VerdictSchema>
 export type Claim = z.infer<typeof ClaimSchema>
 export type Stack = z.infer<typeof StackSchema>
+export type YcCompany = z.infer<typeof YcCompanySchema>
 export type Rankings = z.infer<typeof RankingsSchema>
 export type BattleRecord = Rankings['battles'][number]
 export type LeaderboardEntry = Rankings['leaderboard'][number]

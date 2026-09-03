@@ -43,6 +43,10 @@ export interface MegaTableRow {
   apiUntested: boolean
   // GitHub star count — see lib/arenaTableSort.ts's ArenaTableRow.popularity doc.
   popularity: number | null
+  // Verified YC batch code (e.g. "S22") — see lib/schemas.ts's ProductSchema.ycBatch doc. Optional
+  // (not `| null`, unlike popularity) so existing MegaTableRow fixtures/callers built before this
+  // field existed stay valid without every one needing an update.
+  ycBatch?: string
   access: { MCP: MegaTableAccessGlyph; CLI: MegaTableAccessGlyph; API: MegaTableAccessGlyph }
 }
 
