@@ -19,6 +19,7 @@ import ThemeIcon from '@/components/ThemeIcon'
 import UncertaintyMarker from '@/components/UncertaintyMarker'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
+import YcBadge from '@/components/YcBadge'
 import {
   battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, type CategoryData, uncertaintyFor, verdictFor,
 } from '@/lib/data'
@@ -100,6 +101,7 @@ export default async function ProductPage({
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">{product.name}</h1>
               {product.type === 'oss' && <OssPill />}
+              <YcBadge ycBatch={product.ycBatch} />
               <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
             </div>
             <p className="text-zinc-500">

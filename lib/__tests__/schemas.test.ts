@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   ClaimSchema, ClaimsArraySchema, EvidenceSchema, PopularityMapSchema, PopularitySchema,
   ProductSchema, RankingsSchema, StoryOriginSchema, StorySchema, UncertaintyEntrySchema, VerdictSchema,
+  YcCompanySchema, YcMapSchema,
 } from '@/lib/schemas'
 
 describe('schemas', () => {
@@ -217,6 +218,14 @@ describe('schemas', () => {
     expect(ClaimSchema.safeParse({ ...base, sourceTier: 'community' }).success).toBe(false)
   })
 
+  it('accepts a valid ycBatch on products and rejects a malformed one', () => {
+    const base = { id: 'p', name: 'P', vendor: 'V', type: 'commercial' as const, urls: { site: 'https://p.example' } }
+    expect(ProductSchema.safeParse({ ...base, ycBatch: 'S22' }).success).toBe(true)
+    expect(ProductSchema.safeParse({ ...base, ycBatch: 'W17' }).success).toBe(true)
+    expect(ProductSchema.safeParse({ ...base, ycBatch: 'Summer 2022' }).success).toBe(false)
+    expect(ProductSchema.safeParse({ ...base, ycBatch: 's22' }).success).toBe(false)
+  })
+
   it('caps a product claims array at 60 entries', () => {
     const claim = (n: number) => ({
       id: `p-claim-${n}`, text: `claim ${n}`, quote: `quote ${n}`,
@@ -254,5 +263,40 @@ describe('UncertaintyEntrySchema', () => {
     expect(UncertaintyEntrySchema.safeParse({
       productId: 'p', storyId: 's', judgments: ['full', 'full', 'maybe'], agreement: '2/3',
     }).success).toBe(false)
+  })
+})
+
+describe('YcCompanySchema / YcMapSchema', () => {
+  const base = {
+    name: 'Acme', slug: 'acme', batch: 'Summer 2023', website: 'https://acme.example',
+    oneLiner: 'Widgets for agents', tags: ['B2B', 'AI'],
+  }
+
+  it('accepts a company mapped to an existing arena', () => {
+    expect(YcCompanySchema.safeParse({ ...base, mappedArena: 'startup-banking', proposedArena: null }).success).toBe(true)
+  })
+
+  it('accepts a company mapped to a proposed new arena', () => {
+    expect(YcCompanySchema.safeParse({ ...base, mappedArena: null, proposedArena: 'ai-legal-assistants' }).success).toBe(true)
+  })
+
+  it('accepts a company mapped to neither (not a rankable software product)', () => {
+    expect(YcCompanySchema.safeParse({ ...base, mappedArena: null, proposedArena: null }).success).toBe(true)
+  })
+
+  it('rejects a company with both mappedArena and proposedArena set', () => {
+    expect(YcCompanySchema.safeParse({ ...base, mappedArena: 'startup-banking', proposedArena: 'ai-legal-assistants' }).success).toBe(false)
+  })
+
+  it('rejects a non-kebab-case proposedArena', () => {
+    expect(YcCompanySchema.safeParse({ ...base, mappedArena: null, proposedArena: 'AI Legal Assistants' }).success).toBe(false)
+  })
+
+  it('validates an array of companies as YcMapSchema', () => {
+    const r = YcMapSchema.safeParse([
+      { ...base, mappedArena: null, proposedArena: null },
+      { ...base, slug: 'acme-2', mappedArena: 'web-scraping', proposedArena: null },
+    ])
+    expect(r.success).toBe(true)
   })
 })

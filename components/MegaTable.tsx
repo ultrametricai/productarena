@@ -8,6 +8,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
+import YcBadge from '@/components/YcBadge'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
   COLUMN_LABELS,
@@ -179,9 +180,10 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                         <span className="min-w-0 truncate font-medium">{row.name}</span>
                       </Link>
                     </div>
-                    {row.type === 'oss' && (
-                      <div className="mt-1 pl-8">
-                        <OssPill />
+                    {(row.type === 'oss' || row.ycBatch) && (
+                      <div className="mt-1 flex flex-wrap gap-1 pl-8">
+                        {row.type === 'oss' && <OssPill />}
+                        <YcBadge ycBatch={row.ycBatch} />
                       </div>
                     )}
                   </td>
