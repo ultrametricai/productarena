@@ -66,9 +66,10 @@ export function unmappedClaims(data: CategoryData, productId: string): Claim[] {
 }
 
 // Percentage of a product's mapped claims (claimed-verified + claimed-unverified +
-// claimed-contradicted) that land at claimed-verified — the "{verified}/{claimed} claims
-// verified" scoreboard figure. Null when nothing is claimed at all, so it sorts last like every
-// other null column in ArenaTable rather than looking like a (misleadingly perfect or zero) score.
+// claimed-contradicted) that land at claimed-verified. Null when nothing is claimed at all, so
+// it never looks like a (misleadingly perfect or zero) score. The ArenaTable scoreboard now
+// shows lib/claimsIntegrity.ts's contradiction-penalizing score instead of this raw percentage;
+// this stays as the simple "share verified" figure for anyone consuming the data directly.
 export function claimsVerifiedPercent(data: CategoryData, productId: string): number | null {
   const counts = claimBucketCounts(data, productId)
   const claimed = claimedStoryCount(counts)

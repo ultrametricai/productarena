@@ -12,7 +12,7 @@ import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
 import TableControls from '@/components/TableControls'
 import VerificationMixChip from '@/components/VerificationMixChip'
-import { claimsVerifiedPercent } from '@/lib/claims'
+import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import { battleSlug, isGroupUntested, type CategoryData } from '@/lib/data-helpers'
 import {
   type ArenaTableColumn,
@@ -49,7 +49,7 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
       openness: entry.themeScores['openness'] ?? null,
       automation: entry.themeScores['automation-depth'] ?? null,
       popularity: data.popularity[entry.productId]?.stars ?? null,
-      claimsVerified: claimsVerifiedPercent(data, entry.productId),
+      claimsIntegrity: claimsIntegrity(data, entry.productId).score,
     }
   })
 }
@@ -203,7 +203,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell">
                 Verification
               </SortableTh>
-              <SortableTh col="claimsVerified" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
+              <SortableTh col="claimsIntegrity" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 Claims
               </SortableTh>
             </tr>

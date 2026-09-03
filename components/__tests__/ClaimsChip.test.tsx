@@ -3,22 +3,26 @@ import { render, screen } from '@testing-library/react'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import ClaimsChip from '@/components/ClaimsChip'
+import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import { loadCategory } from '@/lib/data'
 
 const DATA_DIR = path.resolve(__dirname, '../../data')
 
 describe('ClaimsChip', () => {
-  it('renders "{verified}/{claimed} claims verified" for a product with mapped claims', () => {
+  it('renders the claims-integrity score as "{score}/100" for a product with testable claims', () => {
     const data = loadCategory('code-hosting', DATA_DIR)
+    const { score } = claimsIntegrity(data, 'github')
+    expect(score).not.toBeNull() // sanity: github's real data has testable claims
     render(<ClaimsChip data={data} productId="github" />)
-    expect(screen.getByText(/claims verified/)).toBeDefined()
+    expect(screen.getByText(String(score))).toBeDefined()
+    expect(screen.getByText('/100 integrity')).toBeDefined()
   })
 
-  it('renders a muted dash when nothing is claimed for the product', () => {
+  it('renders an italic "untested" (unscored, not zero) when nothing is claimed for the product', () => {
     const data = loadCategory('code-hosting', DATA_DIR)
     const noClaims = { ...data, claims: {} }
     render(<ClaimsChip data={noClaims} productId="github" />)
-    expect(screen.getByText('—')).toBeDefined()
+    expect(screen.getByText('untested')).toBeDefined()
   })
 
   it('carries the full bucket breakdown in the title tooltip', () => {
@@ -27,5 +31,6 @@ describe('ClaimsChip', () => {
     const title = container.querySelector('[title]')?.getAttribute('title')
     expect(title).toContain('verified')
     expect(title).toContain('contradicted')
+    expect(title).toContain('untestable')
   })
 })

@@ -98,6 +98,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     ...buildSearchIndex(loadAll()),
     { type: "arena", label: "Most agentic (full ranking)", sublabel: "All products, ranked by agentreadyness", href: "/rankings/agentic" },
     { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by agentic", href: "/rankings/ai-native" },
+    { type: "arena", label: "Claims vs reality (full ranking)", sublabel: "All products, ranked by claims integrity", href: "/rankings/claims-integrity" },
   ];
 
   return (
