@@ -24,10 +24,10 @@ export default function AiModeBadge({
   return (
     <a
       href={href}
-      title={v.rationale}
+      title={`Has a built-in AI assistant you can delegate tasks to (${v.verdict}). ${v.rationale}`}
       className={`inline-flex w-fit items-center gap-1 rounded-full bg-violet-950 px-2 py-0.5 text-xs font-medium text-violet-300 ring-1 ring-violet-800 transition hover:ring-violet-600 ${className}`}
     >
-      <span aria-hidden>✨</span> AI mode
+      <span aria-hidden>✨</span> Built-in AI assistant
     </a>
   )
 }

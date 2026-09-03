@@ -2,10 +2,19 @@
 // every product in every arena). Deliberately produces a flat, minimal MegaTableRow per product
 // — no evidence, verdicts, stories, or claims — since this gets serialized as a client-component
 // prop and every extra field is bundle weight the table's columns never use.
-import { computeAccessGlyphs } from './accessGlyphs'
-import type { CategoryData } from './data-helpers'
+import { computeAccessGlyphs, type AccessGlyph } from './accessGlyphs'
+import { isGroupUntested, type CategoryData } from './data-helpers'
 import { hasLogo } from './logos'
-import { type MegaTableRow } from './megaTableSort'
+import { type MegaTableAccessGlyph, type MegaTableRow } from './megaTableSort'
+
+function toClientGlyph(glyph: AccessGlyph, arenaId: string, productId: string): MegaTableAccessGlyph {
+  return {
+    char: glyph.char,
+    className: glyph.className,
+    title: glyph.title,
+    href: `/arena/${arenaId}/product/${productId}#story-${glyph.storyId}`,
+  }
+}
 
 export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
   const rows: MegaTableRow[] = []
@@ -15,6 +24,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
       const product = productById.get(entry.productId)
       if (!product) continue
       const glyphs = computeAccessGlyphs(data, product.id)
+      const arenaId = data.category.id
       rows.push({
         productId: product.id,
         name: product.name,
@@ -27,8 +37,13 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         agentReady: entry.agentReady,
         agenticApp: entry.agenticApp,
         apiQuality: entry.apiQuality,
+        apiUntested: isGroupUntested(data, product.id, 'api-quality'),
         popularity: data.popularity[product.id]?.stars ?? null,
-        access: { MCP: glyphs.MCP, CLI: glyphs.CLI, API: glyphs.API },
+        access: {
+          MCP: toClientGlyph(glyphs.MCP, arenaId, product.id),
+          CLI: toClientGlyph(glyphs.CLI, arenaId, product.id),
+          API: toClientGlyph(glyphs.API, arenaId, product.id),
+        },
       })
     }
   }

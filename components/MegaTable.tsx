@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
-import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
@@ -77,6 +76,22 @@ function SortableTh({
   )
 }
 
+// The "rank by" presets rendered as a segmented control above the table — one-click views of
+// the same rows (they just set the sort column), replacing the old links out to /rankings/*.
+const RANK_PRESETS: Array<{ col: MegaTableColumn; label: string }> = [
+  { col: 'agentReady', label: 'Most agent-ready' },
+  { col: 'initScore', label: 'Highest Arena Score' },
+  { col: 'agenticApp', label: 'Most AI-native' },
+  { col: 'popularity', label: 'Most popular' },
+]
+
+function presetButtonClass(active: boolean): string {
+  const base = 'rounded-full border px-3 py-1.5 text-xs font-medium transition'
+  return active
+    ? `${base} border-emerald-400/60 bg-emerald-400/10 text-emerald-300`
+    : `${base} border-zinc-800 text-zinc-400 hover:border-emerald-400/40 hover:text-emerald-300`
+}
+
 export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; arenas: MegaTableArenaOption[] }) {
   const [column, setColumn] = useState<MegaTableColumn>(DEFAULT_COLUMN)
   const [direction, setDirection] = useState<SortDirection>(DEFAULT_DIRECTION)
@@ -97,25 +112,36 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     }
   }
 
+  function applyPreset(col: MegaTableColumn) {
+    setColumn(col)
+    setDirection('desc')
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <label className="flex items-center gap-2 text-xs text-zinc-400">
-          Arena
-          <select
-            value={arenaId}
-            onChange={(e) => setArenaId(e.target.value)}
-            aria-label="Filter by arena"
-            className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
-          >
-            <option value="all">All arenas</option>
-            {arenas.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <span className="text-xs uppercase tracking-widest text-zinc-500">Rank by</span>
+        {RANK_PRESETS.map((p) => (
+          <button key={p.col} type="button" onClick={() => applyPreset(p.col)} className={presetButtonClass(column === p.col && direction === 'desc')}>
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs uppercase tracking-widest text-zinc-500">Show</span>
+        <select
+          value={arenaId}
+          onChange={(e) => setArenaId(e.target.value)}
+          aria-label="Filter by arena"
+          className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
+        >
+          <option value="all">All products</option>
+          {arenas.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.name}
+            </option>
+          ))}
+        </select>
         <input
           type="search"
           value={query}
@@ -129,8 +155,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
       <p className="text-xs text-zinc-400" aria-live="polite">
         Ranked by <span className="font-semibold text-emerald-300">{COLUMN_LABELS[column]}</span>{' '}
         ({direction === 'desc' ? 'high → low' : 'low → high'})
-        {' · '}
-        {sorted.length} of {rows.length} products
       </p>
 
       <div className="overflow-x-auto rounded-2xl border border-zinc-800">
@@ -142,6 +166,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               </SortableTh>
               <SortableTh col="arena" current={column} direction={direction} onSort={handleSort}>
                 Arena
+              </SortableTh>
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false}>
+                OSS
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
                 Arena Score
@@ -179,16 +206,14 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                         <span className="min-w-0 truncate font-medium">{row.name}</span>
                       </Link>
                     </div>
-                    {row.type === 'oss' && (
-                      <div className="mt-1 pl-8">
-                        <OssPill />
-                      </div>
-                    )}
                   </td>
                   <td className="px-3 py-2">
                     <Link href={`/arena/${row.arenaId}`} className="text-zinc-400 hover:text-emerald-300">
                       {row.arenaName}
                     </Link>
+                  </td>
+                  <td className="px-3 py-2">
+                    {row.type === 'oss' ? <OssPill /> : <span className="text-zinc-600">—</span>}
                   </td>
                   <td className="px-3 py-2">
                     <AiEraBadge
@@ -203,14 +228,22 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       }}
                     />
                   </td>
-                  <td className="px-3 py-2">
-                    <AgenticBadge kind="agent-ready" value={row.agentReady} size="sm" />
-                  </td>
-                  <td className="px-3 py-2">
-                    <AgenticBadge kind="agentic-app" value={row.agenticApp} size="sm" />
+                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                    {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : row.agentReady.toFixed(0)}
                   </td>
                   <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
-                    {row.apiQuality === null ? <span className="text-zinc-500">n/a</span> : row.apiQuality.toFixed(0)}
+                    {row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : row.agenticApp.toFixed(0)}
+                  </td>
+                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                    {row.apiUntested ? (
+                      <span className="font-sans text-xs italic text-zinc-500" title="No API-quality evidence found or probed either way — unscored, not zero.">
+                        untested
+                      </span>
+                    ) : row.apiQuality === null ? (
+                      <span className="text-zinc-500">n/a</span>
+                    ) : (
+                      row.apiQuality.toFixed(0)
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     <MomentumChip popularity={row.popularity === null ? undefined : { fetchedAt: '', stars: row.popularity }} compact />
@@ -220,10 +253,15 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       {(['MCP', 'CLI', 'API'] as const).map((label) => {
                         const glyph = row.access[label]
                         return (
-                          <span key={label} className="flex items-center gap-1" title={glyph.title}>
+                          <Link
+                            key={label}
+                            href={glyph.href}
+                            className="flex items-center gap-1 hover:text-emerald-300"
+                            title={glyph.title}
+                          >
                             <span className="text-zinc-400">{label}</span>
                             <span className={glyph.className}>{glyph.char}</span>
-                          </span>
+                          </Link>
                         )
                       })}
                     </div>
@@ -233,7 +271,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={9} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>
