@@ -99,7 +99,7 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
         aria-label="Open search"
       >
         <span>Search</span>
-        <kbd className="rounded border border-zinc-700 bg-zinc-900 px-1 font-mono text-[10px] text-zinc-500">⌘K</kbd>
+        <kbd className="hidden rounded border border-zinc-700 bg-zinc-900 px-1 font-mono text-[10px] text-zinc-500 sm:inline">⌘K</kbd>
       </button>
 
       {open && (

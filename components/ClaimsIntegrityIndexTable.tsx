@@ -50,7 +50,9 @@ export default function ClaimsIntegrityIndexTable({ categories, limit }: { categ
           <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-500">
             <th className="sticky left-0 z-10 w-10 bg-zinc-950 px-3 py-2 font-normal">#</th>
             <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
-            <th className="px-3 py-2 font-normal">Arena</th>
+            {/* Arena yields below md so the integrity score — the ranking's whole point — is
+                visible without a sideways scroll on phones. */}
+            <th className="hidden px-3 py-2 font-normal md:table-cell">Arena</th>
             <th className="px-3 py-2 font-normal">Integrity</th>
             <th className="px-3 py-2 font-normal">Verified</th>
             <th className="px-3 py-2 font-normal">Contradicted</th>
@@ -72,7 +74,7 @@ export default function ClaimsIntegrityIndexTable({ categories, limit }: { categ
                   <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                 </Link>
               </td>
-              <td className="px-3 py-2">
+              <td className="hidden px-3 py-2 md:table-cell">
                 <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-emerald-300">
                   {row.data.category.name}
                 </Link>
