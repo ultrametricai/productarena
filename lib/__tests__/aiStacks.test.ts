@@ -32,12 +32,21 @@ describe('resolveStack', () => {
           expect(slot.productId).toBeTruthy()
           expect(slot.metricValue).not.toBeNull()
           const data = categories.find((c) => c.category.id === slot.arenaId)!
+          // ossOnly slots rank a filtered field, so only check the unfiltered maximum bound.
           const best = Math.max(
             ...data.rankings.leaderboard
               .map((e) => e[slot.metric as 'agentReady' | 'aiEra' | 'agenticApp'])
               .filter((v): v is number => v !== null),
           )
-          expect(slot.metricValue).toBe(best)
+          expect(slot.metricValue).toBeLessThanOrEqual(best)
+          if (slot.coPick) {
+            expect(slot.metricValue! - slot.coPick.metricValue).toBeLessThan(3.0)
+            expect(slot.coPick.productId).not.toBe(slot.productId)
+          }
+        } else if (slot.kind === 'product') {
+          expect(slot.productId).toBeTruthy()
+          expect(slot.curatedNote).toBeTruthy()
+          expect(slot.rank).toBeGreaterThanOrEqual(1)
         } else {
           expect(slot.editorialName).toBeTruthy()
           expect(slot.editorialNote).toBeTruthy()

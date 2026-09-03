@@ -53,18 +53,36 @@ export default function StacksPage() {
                       <p className="mt-0.5 max-w-[220px] text-xs text-zinc-500">{slot.why}</p>
                     </td>
                     <td className="px-3 py-2.5 align-top">
-                      {slot.kind === 'arena-top' && slot.productId && slot.arenaId ? (
-                        <Link
-                          href={`/arena/${slot.arenaId}/product/${slot.productId}`}
-                          className="flex items-center gap-2 hover:text-emerald-300"
-                        >
-                          <ProductLogoView
-                            product={{ id: slot.productId, name: slot.productName ?? slot.productId }}
-                            size={24}
-                            hasLogo={hasLogo(slot.productId)}
-                          />
-                          <span className="font-medium">{slot.productName}</span>
-                        </Link>
+                      {slot.kind !== 'editorial' && slot.productId && slot.arenaId ? (
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                          <Link
+                            href={`/arena/${slot.arenaId}/product/${slot.productId}`}
+                            className="flex items-center gap-2 hover:text-emerald-300"
+                          >
+                            <ProductLogoView
+                              product={{ id: slot.productId, name: slot.productName ?? slot.productId }}
+                              size={24}
+                              hasLogo={hasLogo(slot.productId)}
+                            />
+                            <span className="font-medium">{slot.productName}</span>
+                          </Link>
+                          {slot.coPick && (
+                            <>
+                              <span className="text-xs text-zinc-500">or</span>
+                              <Link
+                                href={`/arena/${slot.arenaId}/product/${slot.coPick.productId}`}
+                                className="flex items-center gap-2 hover:text-emerald-300"
+                              >
+                                <ProductLogoView
+                                  product={{ id: slot.coPick.productId, name: slot.coPick.productName }}
+                                  size={24}
+                                  hasLogo={hasLogo(slot.coPick.productId)}
+                                />
+                                <span className="font-medium">{slot.coPick.productName}</span>
+                              </Link>
+                            </>
+                          )}
+                        </div>
                       ) : (
                         <a
                           href={slot.editorialUrl ?? '#'}
@@ -75,20 +93,29 @@ export default function StacksPage() {
                           {slot.editorialName} ↗
                         </a>
                       )}
-                      {slot.kind === 'arena-top' && slot.runnerUpName && (
+                      {slot.kind === 'arena-top' && slot.coPick && (
+                        <p className="mt-0.5 text-xs text-zinc-500">
+                          too close to call (Δ{((slot.metricValue ?? 0) - slot.coPick.metricValue).toFixed(1)}) — either is a strong pick
+                        </p>
+                      )}
+                      {slot.kind === 'arena-top' && !slot.coPick && slot.runnerUpName && (
                         <p className="mt-0.5 text-xs text-zinc-500">runner-up: {slot.runnerUpName}</p>
                       )}
                     </td>
                     <td className="hidden max-w-[280px] px-3 py-2.5 align-top text-xs text-zinc-400 md:table-cell">
-                      {slot.kind === 'arena-top'
-                        ? `#1 of ${slot.fieldSize} in ${slot.arenaName} by ${metricLabel(slot.metric ?? '')}`
-                        : slot.editorialNote}
+                      {slot.kind === 'arena-top' &&
+                        `${slot.coPick ? 'top two' : '#1'} of ${slot.fieldSize} in ${slot.arenaName} by ${metricLabel(slot.metric ?? '')}`}
+                      {slot.kind === 'product' && slot.curatedNote}
+                      {slot.kind === 'editorial' && slot.editorialNote}
                     </td>
                     <td className="hidden px-3 py-2.5 align-top sm:table-cell">
-                      {slot.kind === 'arena-top' && slot.arenaId ? (
+                      {slot.kind !== 'editorial' && slot.arenaId ? (
                         <span className="whitespace-nowrap font-mono text-xs">
                           <span className="text-emerald-400">{slot.metricValue?.toFixed(0)}</span>
                           <span className="text-zinc-500">/100 · </span>
+                          {slot.kind === 'product' && (
+                            <span className="text-zinc-500">#{slot.rank} of {slot.fieldSize} · </span>
+                          )}
                           <Link href={`/arena/${slot.arenaId}`} className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
                             full arena
                           </Link>

@@ -9,7 +9,15 @@ export interface ArenaMenuItem {
   label: string;
 }
 
-export default function ArenaMenu({ items }: { items: ArenaMenuItem[] }) {
+export default function ArenaMenu({
+  items,
+  title = "Arenas",
+  hrefPrefix = "/arena",
+}: {
+  items: ArenaMenuItem[];
+  title?: string;
+  hrefPrefix?: string;
+}) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +46,7 @@ export default function ArenaMenu({ items }: { items: ArenaMenuItem[] }) {
         onClick={() => setOpen((v) => !v)}
         className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
       >
-        Arenas
+        {title}
         <span aria-hidden className={`text-zinc-500 transition-transform ${open ? "rotate-180" : ""}`}>
           ▾
         </span>
@@ -52,7 +60,7 @@ export default function ArenaMenu({ items }: { items: ArenaMenuItem[] }) {
             <Link
               key={item.id}
               role="menuitem"
-              href={`/arena/${item.id}`}
+              href={`${hrefPrefix}/${item.id}`}
               onClick={() => setOpen(false)}
               className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-emerald-300"
             >
