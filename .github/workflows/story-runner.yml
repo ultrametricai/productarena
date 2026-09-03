@@ -80,7 +80,11 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CATEGORY: ${{ steps.pick.outputs.category }}
         run: |
-          for stage in crawl extract normalize collect-community probe judge claims popularity derive; do
+          # NOTE: no `normalize` here — that stage re-authors the story taxonomy and is guarded
+          # against running on arenas with real verdicts (it would invalidate all of them). A
+          # refresh updates evidence and re-judges changed cells against the EXISTING stories;
+          # taxonomy changes stay a deliberate, human-triggered act.
+          for stage in crawl extract collect-community probe judge claims popularity derive; do
             echo "::group::$stage"
             pnpm tsx pipeline/cli.ts "$stage" --category "$CATEGORY"
             echo "::endgroup::"
