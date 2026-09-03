@@ -72,6 +72,17 @@ export const StorySchema = z.object({
   group: z.string().min(1),
   weight: z.number().int().min(1).max(3),
   origin: StoryOriginSchema.optional(),
+  // How far a story generalizes beyond its own arena (see pipeline/scripts/tag-story-scopes.ts,
+  // the deterministic tagger that stamps this): 'global' = meaningful for any software product
+  // (2FA, "I can use a CLI", pricing transparency, uptime SLA) — the 29 canonical lens stories
+  // are global by definition and carry the tag at the source (pipeline/agentic-stories.ts);
+  // 'category' = meaningful only within this arena's domain (treasury yield, payroll runs,
+  // proxy rotation); 'product' = written to probe one product's specific claim (claims-derived
+  // depth-mine stories that in practice only that product holds). Optional and additive — like
+  // `origin`, never referenced by cellHash (judge.ts), so stamping/backfilling it must never
+  // bust the judge cache. Global stories with ≥2-arena coverage power the /global/[story]
+  // cross-arena comparison pages (see lib/globalStories.ts).
+  scope: z.enum(['global', 'category', 'product']).optional(),
 })
 
 export const EvidenceSchema = z.object({

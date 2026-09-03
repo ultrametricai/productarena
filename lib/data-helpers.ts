@@ -107,12 +107,14 @@ export function uncertaintyFor(data: CategoryData, productId: string, storyId: s
   return data.uncertainty.find((u) => u.productId === productId && u.storyId === storyId)
 }
 
-// Every story title is authored as "As a(n) {persona description}, I can {capability}" (see
-// pipeline/agentic-stories.ts + normalize.ts). The persona clause is redundant once a story has
-// its own persona tag/column (StoryMatrix), so this strips it for *display only* — the
-// underlying Story.title is never mutated, and if a title doesn't match the expected shape
-// (defensive: hand-edited/legacy titles), it's returned unchanged rather than mangled.
-const PERSONA_PREFIX = /^As an? .+?,\s*I can\s+/i
+// Every story title is authored as "As a(n) {persona description}, I can {capability}" — or
+// "..., I know {concrete fact}" for the pricing/limits stories depth-mine.ts authors (see
+// pipeline/agentic-stories.ts + normalize.ts + depth-mine.ts's commonRules). The persona clause
+// is redundant once a story has its own persona tag/column (StoryMatrix), so this strips it for
+// *display only* — the underlying Story.title is never mutated, and if a title doesn't match
+// the expected shape (defensive: hand-edited/legacy titles), it's returned unchanged rather
+// than mangled.
+const PERSONA_PREFIX = /^As an? .+?,\s*I (?:can|know)\s+/i
 
 export function stripPersonaPrefix(title: string): string {
   const stripped = title.replace(PERSONA_PREFIX, '')
