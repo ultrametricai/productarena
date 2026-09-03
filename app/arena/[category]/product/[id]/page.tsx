@@ -11,6 +11,7 @@ import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
 import ProductLogo from '@/components/ProductLogo'
+import ProductShowcase from '@/components/ProductShowcase'
 import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
@@ -142,6 +143,8 @@ export default async function ProductPage({
       </div>
 
       <ProductActions data={data} productId={id} />
+
+      <ProductShowcase product={product} />
 
       {product.affiliation && (
         <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">

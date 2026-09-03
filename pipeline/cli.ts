@@ -1,4 +1,4 @@
-const STAGES = ['crawl', 'extract', 'normalize', 'collect-community', 'probe', 'probe-record', 'judge', 'claims', 'derive', 'logos', 'popularity'] as const
+const STAGES = ['crawl', 'extract', 'normalize', 'collect-community', 'probe', 'probe-record', 'judge', 'claims', 'derive', 'logos', 'popularity', 'screenshots'] as const
 type Stage = (typeof STAGES)[number]
 
 async function main() {
@@ -18,7 +18,8 @@ async function main() {
     process.exit(1)
   }
 
-  const opts = { category, product }
+  // --force is only meaningful to stages with a freshness cache (screenshots); others ignore it.
+  const opts = { category, product, force: rest.includes('--force') }
 
   switch (stage as Stage) {
     case 'derive':
@@ -43,6 +44,8 @@ async function main() {
       return (await import('./stages/logos')).runLogos(opts)
     case 'popularity':
       return (await import('./stages/popularity')).runPopularity(opts)
+    case 'screenshots':
+      return (await import('./stages/screenshots')).runScreenshots(opts)
   }
 }
 
