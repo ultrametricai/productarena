@@ -1,5 +1,6 @@
 import VerdictBadge from '@/components/VerdictBadge'
 import { claimBucketCounts, claimEntriesByStatus, unmappedClaims, type ClaimStatus } from '@/lib/claims'
+import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import { evidenceById, type CategoryData } from '@/lib/data'
 import { REPO } from '@/lib/site'
 import { strongestEvidence } from '@/lib/verification'
@@ -29,13 +30,24 @@ export default function ClaimsSection({
 
   const product = data.products.find((p) => p.id === productId)!
   const counts = claimBucketCounts(data, productId)
+  const integrity = claimsIntegrity(data, productId)
+  const testable = integrity.total - integrity.untestable
   const evidence = evidenceById(data)
   const storyById = new Map(data.stories.map((s) => [s.id, s]))
   const unmapped = unmappedClaims(data, productId)
 
   return (
-    <div>
+    <div id="claims" className="scroll-mt-4">
       <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Claims vs evidence</h2>
+      {integrity.score !== null && (
+        <p
+          className="mb-1 font-mono text-xs tabular-nums text-zinc-300"
+          title="Integrity = 100 × max(0, verified − 2×contradicted) / testable claims — see the README methodology's Claims-vs-reality subsection."
+        >
+          {integrity.verified} of {testable} testable claims verified · {integrity.contradicted} contradicted
+          {' → '}integrity <span className={integrity.contradicted > 0 ? 'text-red-400' : 'text-emerald-400'}>{integrity.score}/100</span>
+        </p>
+      )}
       <p className="mb-3 text-xs text-zinc-400">
         {claims.length} distinct capability claims found in {product.name}&rsquo;s own claimed-docs/GitHub materials,
         reconciled against our judge&rsquo;s independent verdicts.

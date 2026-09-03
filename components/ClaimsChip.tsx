@@ -1,27 +1,34 @@
-import { claimBucketCounts, claimedStoryCount } from '@/lib/claims'
+import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import type { CategoryData } from '@/lib/data-helpers'
 
-// ArenaTable's claims scoreboard cell: "{verified}/{claimed} claims verified" — how many of a
-// product's own vendor claims our judge independently corroborated, out of however many claims
-// actually map onto this arena's story taxonomy. Title tooltip carries the full bucket
-// breakdown (see lib/claims.ts's claimStatus), same "dense glyph, full detail in the tooltip"
-// pattern as VerificationMixChip.
+// ArenaTable's claims scoreboard cell: the product's claims-integrity score ("{score}/100") —
+// how honestly the vendor's own claims survive our judge's independent verdicts, verified
+// claims counting fully and contradicted ones counting doubly against (see
+// lib/claimsIntegrity.ts for the formula). Title tooltip carries the full bucket breakdown
+// (see lib/claims.ts's claimStatus), same "dense glyph, full detail in the tooltip" pattern
+// as VerificationMixChip. Also reused verbatim by ClaimsIntegrityIndexTable so the number
+// renders identically on the arena scoreboard and the global ranking.
 export default function ClaimsChip({ data, productId }: { data: CategoryData; productId: string }) {
-  const counts = claimBucketCounts(data, productId)
-  const claimed = claimedStoryCount(counts)
-  const title = `Claims vs evidence — verified ${counts['claimed-verified']} · unverified (vendor-claim only) ${counts['claimed-unverified']} · contradicted ${counts['claimed-contradicted']} · delivered but never claimed ${counts['delivered-unclaimed']}`
+  const { score, verified, unverified, contradicted, untestable } = claimsIntegrity(data, productId)
+  const title = `Claims integrity — verified ${verified} · unverified (vendor-claim only) ${unverified} · contradicted ${contradicted} · untestable (outside our story set) ${untestable}`
 
-  if (claimed === 0) {
-    return <span title={title} className="font-mono text-xs text-zinc-500">—</span>
+  if (score === null) {
+    return (
+      <span
+        title={`${title}. No testable claims found — unscored, not zero.`}
+        className="font-sans text-xs italic text-zinc-500"
+      >
+        untested
+      </span>
+    )
   }
 
-  const verified = counts['claimed-verified']
-  const colorClass = counts['claimed-contradicted'] > 0 ? 'text-red-400' : verified === claimed ? 'text-emerald-400' : 'text-zinc-300'
+  const colorClass = contradicted > 0 ? 'text-red-400' : score === 100 ? 'text-emerald-400' : 'text-zinc-300'
 
   return (
-    <span title={title} className="font-mono text-xs">
-      <span className={colorClass}>{verified}</span>
-      <span className="text-zinc-500">/{claimed} claims verified</span>
+    <span title={title} className="font-mono text-xs tabular-nums">
+      <span className={colorClass}>{score}</span>
+      <span className="text-zinc-500">/100 integrity</span>
     </span>
   )
 }
