@@ -20,6 +20,7 @@ const NAV_LABELS: Record<string, string> = {
   "edge-platforms": "Edge",
   "frontend-frameworks": "Frontend",
   "local-llm-runtimes": "Local LLM",
+  "payroll": "Payroll",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
