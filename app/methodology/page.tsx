@@ -16,8 +16,8 @@ export default function MethodologyPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-widest text-amber-400">Methodology</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">How ProductArena scores products</h1>
+        <p className="text-sm uppercase tracking-widest text-emerald-400">Methodology</p>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">How ProductArena scores products</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Evidence in, rankings out. Every claim traces back to a cited evidence item — vendor docs, GitHub, an
           independent community source, or a hands-on probe — and an LLM judge scores every (product, story) cell
@@ -29,7 +29,7 @@ export default function MethodologyPage() {
         href={`https://github.com/${REPO}/blob/main/METHODOLOGY.md`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 rounded-xl border-2 border-amber-400 bg-amber-400/10 px-6 py-4 text-center text-lg font-semibold text-amber-300 transition hover:bg-amber-400/20"
+        className="flex items-center justify-center gap-2 rounded-xl border-2 border-emerald-400 bg-emerald-400/10 px-6 py-4 text-center text-lg font-semibold text-emerald-300 transition hover:bg-emerald-400/20"
       >
         Read the full methodology on GitHub ★
       </a>
@@ -75,7 +75,7 @@ export default function MethodologyPage() {
       </div>
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">
-        <h2 className="text-lg font-semibold">The Arena Score</h2>
+        <h2 className="font-display leading-[1.1] text-lg font-semibold">The Arena Score</h2>
         <p className="mt-1 text-sm text-zinc-500">Formerly displayed as the &quot;AI-Era Index&quot; — same formula, new name.</p>
         <p className="mt-3 max-w-2xl text-sm text-zinc-400">
           Every leaderboard entry carries an Arena Score (0–100, <span className={CODE}>aiEra</span> internally) — a
@@ -100,19 +100,19 @@ export default function MethodologyPage() {
         href={`https://github.com/${REPO}/blob/main/docs/SCORING.md`}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/50 px-6 py-3 text-center text-sm font-medium text-zinc-300 transition hover:border-amber-400/60 hover:text-amber-300"
+        className="flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/50 px-6 py-3 text-center text-sm font-medium text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
       >
         New here? Read the plain-language scoring guide →
       </a>
 
       <div className="flex flex-wrap gap-3 text-sm">
-        <a href="/llms.txt" className="underline decoration-zinc-700 hover:text-amber-300">
+        <a href="/llms.txt" className="underline decoration-zinc-700 hover:text-emerald-300">
           /llms.txt
         </a>
-        <a href="/openapi.json" className="underline decoration-zinc-700 hover:text-amber-300">
+        <a href="/openapi.json" className="underline decoration-zinc-700 hover:text-emerald-300">
           /openapi.json
         </a>
-        <a href={`https://github.com/${REPO}/blob/main/CONTRIBUTING.md`} className="underline decoration-zinc-700 hover:text-amber-300">
+        <a href={`https://github.com/${REPO}/blob/main/CONTRIBUTING.md`} className="underline decoration-zinc-700 hover:text-emerald-300">
           CONTRIBUTING.md
         </a>
       </div>

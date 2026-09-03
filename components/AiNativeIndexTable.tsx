@@ -81,7 +81,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                 <td className="px-3 py-2">
                   <Link
                     href={`/arena/${row.data.category.id}/product/${row.product.id}`}
-                    className="flex items-center gap-2 hover:text-amber-300"
+                    className="flex items-center gap-2 hover:text-emerald-300"
                   >
                     <ProductLogo product={row.product} size={24} />
                     <span className="min-w-0 truncate font-medium">{row.product.name}</span>
@@ -95,7 +95,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                   </div>
                 </td>
                 <td className="px-3 py-2">
-                  <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-amber-300">
+                  <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-emerald-300">
                     {row.data.category.name}
                   </Link>
                 </td>

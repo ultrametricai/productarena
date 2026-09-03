@@ -95,7 +95,7 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex shrink-0 items-center gap-2 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-400 transition hover:border-amber-400/60 hover:text-amber-300"
+        className="flex shrink-0 items-center gap-2 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
         aria-label="Open search"
       >
         <span>Search</span>
@@ -126,7 +126,7 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
                 return (
                   <div key={`${entry.type}-${entry.href}-${entry.label}`} className="px-2">
                     {showHeader && (
-                      <p className="px-2 py-1 text-xs font-semibold uppercase tracking-widest text-amber-400">
+                      <p className="px-2 py-1 text-xs font-semibold uppercase tracking-widest text-emerald-400">
                         {TYPE_LABEL[entry.type]}
                       </p>
                     )}
@@ -135,7 +135,7 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => go(entry)}
                       className={`flex w-full flex-col items-start rounded-lg px-2 py-2 text-left text-sm transition ${
-                        active ? 'bg-amber-400/10 text-amber-300' : 'text-zinc-300'
+                        active ? 'bg-emerald-400/10 text-emerald-300' : 'text-zinc-300'
                       }`}
                     >
                       <span className="font-medium">{entry.label}</span>

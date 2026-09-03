@@ -94,12 +94,12 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
         dangerouslySetInnerHTML={{ __html: JSON.stringify(vsFaqJsonLd(data, battle, a, b)) }}
       />
       <div className="text-center">
-        <p className="text-sm uppercase tracking-widest text-amber-400">
-          <Link href={`/arena/${data.category.id}`} className="hover:text-amber-300">
+        <p className="text-sm uppercase tracking-widest text-emerald-400">
+          <Link href={`/arena/${data.category.id}`} className="hover:text-emerald-300">
             {data.category.name} Arena
           </Link>
         </p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           {a.name} <span className="text-zinc-400">vs</span> {b.name}
         </h1>
         <p className="mt-1 text-xs text-zinc-500">
@@ -112,7 +112,7 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
           <div key={p.id} className="rounded-xl border border-zinc-800 p-5">
             <Link
               href={`/arena/${data.category.id}/product/${p.id}`}
-              className="flex items-center gap-3 hover:text-amber-300"
+              className="flex items-center gap-3 hover:text-emerald-300"
             >
               <ProductLogo product={p} size={40} />
               <div>
@@ -149,7 +149,7 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
       <p className="text-center">
         <Link
           href={`/arena/${data.category.id}#legend`}
-          className="text-xs text-zinc-400 underline decoration-zinc-700 hover:text-amber-300"
+          className="text-xs text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300"
         >
           How to read this: legend →
         </Link>

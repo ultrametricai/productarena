@@ -57,8 +57,8 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
 function presetButtonClass(active: boolean): string {
   const base = 'rounded-full border px-3 py-1.5 text-xs font-medium transition'
   return active
-    ? `${base} border-amber-400/60 bg-amber-400/10 text-amber-300`
-    : `${base} border-zinc-800 text-zinc-400 hover:border-amber-400/40 hover:text-amber-300`
+    ? `${base} border-emerald-400/60 bg-emerald-400/10 text-emerald-300`
+    : `${base} border-zinc-800 text-zinc-400 hover:border-emerald-400/40 hover:text-emerald-300`
 }
 
 function SortableTh({
@@ -92,7 +92,7 @@ function SortableTh({
       <button
         type="button"
         onClick={() => onSort(col)}
-        className={`flex items-center gap-1 whitespace-nowrap hover:text-amber-300 ${isCurrent ? 'text-amber-300' : ''}`}
+        className={`flex items-center gap-1 whitespace-nowrap hover:text-emerald-300 ${isCurrent ? 'text-emerald-300' : ''}`}
       >
         {children}
         {isCurrent && <span aria-hidden>{direction === 'asc' ? '▲' : '▼'}</span>}
@@ -158,15 +158,15 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Filter products…"
           aria-label="Filter products by name or vendor"
-          className="ml-auto w-full min-w-0 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-amber-400/60 focus:outline-none sm:w-48"
+          className="ml-auto w-full min-w-0 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:w-48"
         />
       </div>
 
       <p className="text-xs text-zinc-400" aria-live="polite">
-        Ranked by <span className="font-semibold text-amber-300">{COLUMN_LABELS[column]}</span>{' '}
+        Ranked by <span className="font-semibold text-emerald-300">{COLUMN_LABELS[column]}</span>{' '}
         ({direction === 'desc' ? 'high → low' : 'low → high'})
         {' · '}
-        <a href="#legend" className="underline decoration-zinc-700 hover:text-amber-300">
+        <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
           legend
         </a>
       </p>
@@ -226,7 +226,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                   <td className="sticky left-10 z-10 w-[190px] bg-zinc-950 px-3 py-2 group-hover:bg-zinc-900/50">
                     <Link
                       href={`/arena/${data.category.id}/product/${product.id}`}
-                      className="flex items-center gap-2 hover:text-amber-300"
+                      className="flex items-center gap-2 hover:text-emerald-300"
                     >
                       <ProductLogoView product={product} size={24} hasLogo={logoMap[product.id] ?? false} />
                       <span className="min-w-0 truncate font-medium">{product.name}</span>
@@ -238,7 +238,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                     {rival && (
                       <Link
                         href={`/arena/${data.category.id}/battle/${battleSlug(...orderByProduct(row.productId, rival.productId))}`}
-                        className="mt-1 inline-block text-[10px] text-zinc-500 hover:text-amber-300"
+                        className="mt-1 inline-block text-[10px] text-zinc-500 hover:text-emerald-300"
                       >
                         vs {productById.get(rival.productId)?.name} ↗
                       </Link>

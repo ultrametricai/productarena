@@ -45,7 +45,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
           ].map(({ p, v, won }) => {
             const proof = strongestEvidence(v, evidence)
             return (
-              <div key={p.id} className={`rounded-lg p-4 ring-1 ${won ? 'ring-amber-400/60 bg-amber-400/5' : 'ring-zinc-800'}`}>
+              <div key={p.id} className={`rounded-xl p-4 ring-1 ${won ? 'ring-emerald-400/60 bg-emerald-400/5' : 'ring-zinc-800'}`}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold">{p.name}</span>
                   <span className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
                     const e = evidence.get(id)!
                     return (
                       <li key={id} className="text-xs text-zinc-500">
-                        <a href={e.url} target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 hover:text-amber-300">
+                        <a href={e.url} target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 hover:text-emerald-300">
                           [{e.tier}]
                         </a>{' '}
                         &ldquo;{e.excerpt.length > 140 ? e.excerpt.slice(0, 140) + '…' : e.excerpt}&rdquo;
@@ -76,7 +76,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
                       href={proof.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-zinc-500 hover:text-amber-300"
+                      className="text-xs text-zinc-500 hover:text-emerald-300"
                     >
                       proof ↗
                     </a>
@@ -97,7 +97,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">
+        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">
           {a.name} <span className="text-zinc-400">vs</span> {b.name}
         </h1>
         <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-400">
@@ -108,12 +108,12 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
         <p className="mt-1">
           <Link
             href={`/arena/${data.category.id}#legend`}
-            className="text-xs text-zinc-400 underline decoration-zinc-700 hover:text-amber-300"
+            className="text-xs text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300"
           >
             How to read this: legend →
           </Link>
         </p>
-        <p className="mt-2 text-amber-300">
+        <p className="mt-2 text-emerald-300">
           {winnerName ? `${winnerName} wins` : 'Draw'} · {battle.record.aWins}–{battle.record.bWins}
           {battle.record.draws > 0 ? ` (${battle.record.draws} drawn)` : ''}
         </p>
@@ -138,7 +138,7 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
           const byGroup = groupInOrder(rounds, (r) => storyById.get(r.storyId)!.group)
           return (
             <div key={theme}>
-              <h2 className="sticky top-0 z-10 -mx-5 border-b border-zinc-800 bg-zinc-950/95 px-5 py-2 text-sm font-semibold uppercase tracking-widest text-amber-400 backdrop-blur">
+              <h2 className="sticky top-0 z-10 -mx-5 border-b border-zinc-800 bg-zinc-950/95 px-5 py-2 text-sm font-semibold uppercase tracking-widest text-emerald-400 backdrop-blur">
                 {theme}
               </h2>
               <div className="mt-4 space-y-6">

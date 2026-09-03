@@ -36,7 +36,7 @@ export default function ArenaMenu({ items }: { items: ArenaMenuItem[] }) {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-400/60 hover:text-amber-300"
+        className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
       >
         Arenas
         <span aria-hidden className={`text-zinc-500 transition-transform ${open ? "rotate-180" : ""}`}>
@@ -54,7 +54,7 @@ export default function ArenaMenu({ items }: { items: ArenaMenuItem[] }) {
               role="menuitem"
               href={`/arena/${item.id}`}
               onClick={() => setOpen(false)}
-              className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-amber-300"
+              className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-emerald-300"
             >
               <span className="text-sm text-zinc-200">{item.name}</span>
               <span className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">

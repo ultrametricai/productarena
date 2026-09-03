@@ -122,8 +122,8 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         dangerouslySetInnerHTML={{ __html: JSON.stringify(arenaFaqJsonLd(data)) }}
       />
       <div>
-        <p className="text-sm uppercase tracking-widest text-amber-400">Arena</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">{data.category.name}</h1>
+        <p className="text-sm uppercase tracking-widest text-emerald-400">Arena</p>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">{data.category.name}</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">{data.category.description}</p>
         <p className="mt-2 text-xs text-zinc-400">
           {data.stories.length} user stories · {data.verdicts.length} judged cells · updated{' '}
@@ -133,13 +133,13 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
       </div>
       <Legend />
       <div>
-        <h2 className="mb-4 text-lg font-semibold">Leaderboard</h2>
+        <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Leaderboard</h2>
         <ArenaTable data={data} logoMap={logoMap} />
       </div>
       <PersonaStacksSection data={data} />
       <StacksSection data={data} />
       <div>
-        <h2 className="mb-4 text-lg font-semibold">Story matrix</h2>
+        <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Story matrix</h2>
         <StoryMatrix data={data} logoMap={logoMap} />
       </div>
     </div>

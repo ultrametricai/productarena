@@ -14,7 +14,7 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
 
   return (
     <div>
-      <h2 className="mb-1 text-lg font-semibold">Best by user type</h2>
+      <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Best by user type</h2>
       <p className="mb-4 text-sm text-zinc-400">
         Per persona, the product with the highest persona-weighted coverage over just that persona&apos;s stories —
         not the same ranking as the overall Arena Score leaderboard above.
@@ -28,12 +28,12 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
               <p className="font-mono text-xs uppercase tracking-widest text-zinc-400">Best for {r.persona}</p>
               <Link
                 href={`/arena/${data.category.id}/product/${winner.id}`}
-                className="mt-2 flex items-center gap-3 hover:text-amber-300"
+                className="mt-2 flex items-center gap-3 hover:text-emerald-300"
               >
                 <ProductLogo product={winner} size={32} />
                 <div>
                   <p className="font-semibold">{winner.name}</p>
-                  <p className="font-mono text-xs tabular-nums text-amber-300">{r.winner!.score.toFixed(0)}/100</p>
+                  <p className="font-mono text-xs tabular-nums text-emerald-300">{r.winner!.score.toFixed(0)}/100</p>
                 </div>
               </Link>
               {runnerUp && (

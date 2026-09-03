@@ -11,7 +11,7 @@ export default function StacksSection({ data }: { data: CategoryData }) {
 
   return (
     <div>
-      <h2 className="mb-4 text-lg font-semibold">Stacks</h2>
+      <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Stacks</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {data.stacks.map((stack) => {
           const coverage = stackCoverage(stack, data)
@@ -25,7 +25,7 @@ export default function StacksSection({ data }: { data: CategoryData }) {
                     </div>
                   ))}
                 </div>
-                <h3 className="font-semibold">{stack.name}</h3>
+                <h3 className="font-display leading-[1.1] font-semibold">{stack.name}</h3>
               </div>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center gap-2">

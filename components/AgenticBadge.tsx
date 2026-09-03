@@ -1,8 +1,8 @@
 const PALETTES = {
-  amber: {
-    high: 'bg-amber-950 text-amber-300 ring-amber-800',
-    mid: 'bg-amber-950/70 text-amber-400/90 ring-amber-900',
-    low: 'bg-zinc-900 text-amber-700 ring-zinc-800',
+  emerald: {
+    high: 'bg-emerald-950 text-emerald-300 ring-emerald-800',
+    mid: 'bg-emerald-950/70 text-emerald-400/90 ring-emerald-900',
+    low: 'bg-zinc-900 text-emerald-700 ring-zinc-800',
   },
   violet: {
     high: 'bg-violet-950 text-violet-300 ring-violet-800',
@@ -19,12 +19,12 @@ const LABELS: Record<AgenticBadgeKind, string> = {
 }
 
 const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
-  'agent-ready': 'amber',
+  'agent-ready': 'emerald',
   'agentic-app': 'violet',
 }
 
 // Renders one of the two group-scoped agenticness indexes: agent-ready ("can your agent
-// drive it" — group agent-access, amber) or agentic-app ("does the product act agentically
+// drive it" — group agent-access, emerald) or agentic-app ("does the product act agentically
 // itself" — group agentic-features, violet). null renders a muted n/a badge in the same
 // color family so the pair always reads as a matched set.
 // Since v2.4 (the Arena Score), these badges are secondary to AiEraBadge wherever both appear —

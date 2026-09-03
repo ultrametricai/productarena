@@ -35,7 +35,7 @@ export default function Legend({ id = 'legend' }: { id?: string; defaultOpen?: b
         Legend
       </span>
       <Item chip={<Chip className="bg-emerald-950 text-emerald-300 ring-emerald-800">full</Chip>} gloss="clear evidence" />
-      <Item chip={<Chip className="bg-amber-950 text-amber-300 ring-amber-800">partial</Chip>} gloss="with caveats" />
+      <Item chip={<Chip className="bg-emerald-950 text-emerald-300 ring-emerald-800">partial</Chip>} gloss="with caveats" />
       <Item chip={<Chip className="bg-red-950 text-red-300 ring-red-800">disputed</Chip>} gloss="evidence conflicts" />
       <Item chip={<Chip className="bg-zinc-900 text-zinc-500 ring-zinc-700">none</Chip>} gloss="no evidence found" />
       <Item chip={<Chip className="bg-zinc-900 text-zinc-400 ring-zinc-800">n/a</Chip>} gloss="wrong axis, unscored" />
@@ -48,7 +48,7 @@ export default function Legend({ id = 'legend' }: { id?: string; defaultOpen?: b
       <span className="font-mono text-[11px]">
         <span className="text-emerald-400">✓</span>
         <span className="text-zinc-400"> full · </span>
-        <span className="text-amber-400">~</span>
+        <span className="text-emerald-400">~</span>
         <span className="text-zinc-400"> partial · </span>
         <span className="text-zinc-500">—</span>
         <span className="text-zinc-400"> none · </span>
@@ -58,7 +58,7 @@ export default function Legend({ id = 'legend' }: { id?: string; defaultOpen?: b
       {SEP}
       <span className="text-[11px] text-zinc-400">
         quality 0–10 · Arena Score /100 ·{' '}
-        <Link href="/methodology" className="underline decoration-zinc-700 hover:text-amber-300">
+        <Link href="/methodology" className="underline decoration-zinc-700 hover:text-emerald-300">
           full guide
         </Link>
       </span>

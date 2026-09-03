@@ -3,7 +3,7 @@ import type { Popularity } from '@/lib/schemas'
 
 // Momentum/popularity chip — a keyless, evidence-free "will this project be alive tomorrow?"
 // signal (see pipeline/stages/popularity.ts). Deliberately NOT styled like AiEraBadge/ScoreBar
-// (no amber "score" treatment): this is adoption data from public registries, not a judged
+// (no emerald "score" treatment): this is adoption data from public registries, not a judged
 // verdict, and must never look like it's part of the Arena Score (see METHODOLOGY.md's
 // "Popularity is not part of the Arena Score" section).
 //
