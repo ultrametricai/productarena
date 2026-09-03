@@ -6,7 +6,7 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Full agentic ranking — all ${totalProducts} products — INIT`,
+    title: `Full agentic ranking — all ${totalProducts} products — ProductArena`,
     description: `Every product across every arena ranked by AGENTREADYNESS — can an agent reach it at all (API/CLI/MCP/webhooks/SDKs/docs)? Evidence-graded, no opinion.`,
   }
 }
@@ -26,7 +26,7 @@ export default function AgenticRankingPage() {
         <h1 className="mt-1 text-3xl font-bold tracking-tight">Most agentic — best for AI agents</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by AGENTREADYNESS: can an agent reach the product
-          at all (API/CLI/MCP/webhooks/SDKs/docs)? Ties break on API quality, then INIT Score.
+          at all (API/CLI/MCP/webhooks/SDKs/docs)? Ties break on API quality, then Arena Score.
         </p>
       </div>
       <AgenticIndexTable categories={categories} />

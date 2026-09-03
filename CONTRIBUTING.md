@@ -1,6 +1,6 @@
-# Contributing to INIT
+# Contributing to ProductArena
 
-INIT's whole premise is that every score should trace back to cited evidence, and
+ProductArena's whole premise is that every score should trace back to cited evidence, and
 that anyone can contest a verdict. This document covers the two contribution paths (contest
 a verdict, or add evidence) plus local setup and style rules.
 

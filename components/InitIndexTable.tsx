@@ -13,7 +13,7 @@ interface IndexRow {
 }
 
 // Third global index, alongside AgenticIndexTable (sorted by agentReady) and AiNativeIndexTable
-// (sorted by agenticApp): this one sorts by the blended INIT Score itself — "which single
+// (sorted by agenticApp): this one sorts by the blended Arena Score itself — "which single
 // product is most ready for the AI-agent era, all five axes considered." Ties break on the raw
 // coverage score, both desc/nulls-last, matching lib/scoring.ts's own leaderboard tiebreak.
 export function buildInitIndex(categories: CategoryData[]): IndexRow[] {
@@ -52,7 +52,7 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
             <th className="px-3 py-2 font-normal">Arena</th>
             <th className="px-3 py-2 font-normal">Access</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
-            <th className="px-3 py-2 font-normal">INIT Score</th>
+            <th className="px-3 py-2 font-normal">Arena Score</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">

@@ -9,7 +9,7 @@ import { categoryFreshness } from '@/lib/freshness'
 import { hasLogo } from '@/lib/logos'
 import { SITE_URL } from '@/lib/site'
 
-// The leaderboard already sorts primarily by aiEra/INIT Score (see lib/scoring.ts), so entry 0
+// The leaderboard already sorts primarily by aiEra/Arena Score (see lib/scoring.ts), so entry 0
 // is the "most agent-friendly" product for both metadata and the FAQ answer below — no
 // fabricated ratings, just the same number rendered on the page.
 function topEntry(data: CategoryData) {
@@ -19,7 +19,7 @@ function topEntry(data: CategoryData) {
 }
 
 function scoreText(aiEra: number | null): string {
-  return aiEra === null ? 'the top evidence-graded coverage score' : `an INIT Score of ${aiEra.toFixed(0)}/100`
+  return aiEra === null ? 'the top evidence-graded coverage score' : `an Arena Score of ${aiEra.toFixed(0)}/100`
 }
 
 // Honest FAQPage JSON-LD — both answers are derived straight from this arena's own computed
@@ -35,7 +35,7 @@ function arenaFaqJsonLd(data: CategoryData) {
         name: `Which ${data.category.name} product is most agent-friendly?`,
         acceptedAnswer: {
           '@type': 'Answer',
-          text: `${product.name} ranks first in INIT's ${data.category.name} arena, with ${scoreText(entry.aiEra)} — see the full evidence-graded leaderboard at ${SITE_URL}/arena/${data.category.id}.`,
+          text: `${product.name} ranks first in ProductArena's ${data.category.name} arena, with ${scoreText(entry.aiEra)} — see the full evidence-graded leaderboard at ${SITE_URL}/arena/${data.category.id}.`,
         },
       },
       {
@@ -98,8 +98,8 @@ export async function generateMetadata({
   const { entry, product } = topEntry(data)
   const year = new Date().getFullYear()
   return {
-    title: `Best ${data.category.name} for AI agents (${year}) — INIT`,
-    description: `Which ${data.category.name} product is most agent-friendly? ${product.name} leads with ${scoreText(entry.aiEra)} in INIT's evidence-graded ${data.category.name} rankings.`,
+    title: `Best ${data.category.name} for AI agents (${year}) — ProductArena`,
+    description: `Which ${data.category.name} product is most agent-friendly? ${product.name} leads with ${scoreText(entry.aiEra)} in ProductArena's evidence-graded ${data.category.name} rankings.`,
   }
 }
 

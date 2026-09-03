@@ -6,13 +6,13 @@ import ArenaTable from '@/components/ArenaTable'
 import { loadCategory } from '@/lib/data'
 
 describe('ArenaTable', () => {
-  it('renders every product and defaults to "Ranked by INIT Score"', () => {
+  it('renders every product and defaults to "Ranked by Arena Score"', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
     for (const p of data.products) {
       expect(screen.getAllByText(p.name).length).toBeGreaterThan(0)
     }
-    expect(screen.getByText(/Ranked by/).textContent).toMatch(/INIT Score/)
+    expect(screen.getByText(/Ranked by/).textContent).toMatch(/Arena Score/)
   })
 
   it('switches the "Ranked by" label when a preset button is clicked', () => {
@@ -33,7 +33,7 @@ describe('ArenaTable', () => {
   it('sets aria-sort on the current sort column header', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
-    const initScoreHeader = screen.getAllByText('INIT Score').map((el) => el.closest('th')).find((th) => th !== null)
+    const initScoreHeader = screen.getAllByText('Arena Score').map((el) => el.closest('th')).find((th) => th !== null)
     expect(initScoreHeader?.getAttribute('aria-sort')).toBe('descending')
   })
 })

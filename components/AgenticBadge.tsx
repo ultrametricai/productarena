@@ -27,8 +27,8 @@ const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
 // drive it" — group agent-access, amber) or agentic-app ("does the product act agentically
 // itself" — group agentic-features, violet). null renders a muted n/a badge in the same
 // color family so the pair always reads as a matched set.
-// Since v2.4 (the INIT Score), these badges are secondary to AiEraBadge wherever both appear —
-// `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the INIT Score strip).
+// Since v2.4 (the Arena Score), these badges are secondary to AiEraBadge wherever both appear —
+// `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the Arena Score strip).
 export default function AgenticBadge({
   kind,
   value,

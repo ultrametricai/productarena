@@ -226,10 +226,10 @@ describe('aiEra on the leaderboard', () => {
 
   it('scores apiQuality as its own group and reorders the leaderboard by aiEra desc, tie-broken by score', () => {
     const verdicts = [
-      // a: weak coverage score but a perfect INIT Score footprint
+      // a: weak coverage score but a perfect Arena Score footprint
       v('a', 's1', 'none', 0), v('a', 's2', 'none', 0), v('a', 's3', 'none', 0),
       v('a', 's4', 'full', 10), v('a', 's5', 'full', 10), v('a', 's6', 'full', 10), v('a', 's7', 'full', 10), v('a', 's8', 'full', 10),
-      // b: strong coverage score but no INIT Score signal at all
+      // b: strong coverage score but no Arena Score signal at all
       v('b', 's1', 'full', 10), v('b', 's2', 'full', 10), v('b', 's3', 'full', 10),
       vNa('b', 's4'), vNa('b', 's5'), vNa('b', 's6'), vNa('b', 's7'), vNa('b', 's8'),
     ]

@@ -1,4 +1,4 @@
-// One-time migration for INIT's Accuracy Program wave 1: appends the new canonical
+// One-time migration for ProductArena's Accuracy Program wave 1: appends the new canonical
 // `agentic-mcp-client` story (pipeline/agentic-stories.ts) to every category's stories.json.
 //
 // Why a separate migration instead of just re-running normalize: normalize.ts refuses to

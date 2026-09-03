@@ -111,7 +111,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
   const filtered = useMemo(() => filterArenaRows(allRows, query), [allRows, query])
   const sorted = useMemo(() => sortArenaRows(filtered, column, direction), [filtered, column, direction])
 
-  // Rank is a fixed identity (position in the default INIT-Score-desc leaderboard), not a
+  // Rank is a fixed identity (position in the default Arena-Score-desc leaderboard), not a
   // re-derived row index — it doesn't jump around confusingly when you sort by another column.
   const rankOf = useMemo(() => {
     const map = new Map<string, number>()
@@ -182,7 +182,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                 Product
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                INIT Score
+                Arena Score
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
                 Agentreadyness

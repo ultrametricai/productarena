@@ -10,7 +10,7 @@ import ScoreBar from '@/components/ScoreBar'
 import { battleSlug, leadingBattle, loadAll } from '@/lib/data'
 
 export const metadata: Metadata = {
-  title: 'INIT — which software is most AI-friendly?',
+  title: 'ProductArena — which software is most AI-friendly?',
   description:
     "Two evidence-graded rankings across every arena: most agentic (best for AI agents — sorted by agent-ready) and most AI-native (best for humans working with AI — sorted by agentic-app). No opinion, every score traces back to cited evidence.",
 }
@@ -69,7 +69,7 @@ export default function Home() {
                 <p className="mt-1 text-sm text-zinc-500">{data.category.description}</p>
                 <div className="mt-4 flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-zinc-400">INIT Score leader</p>
+                    <p className="text-xs uppercase tracking-widest text-zinc-400">Arena Score leader</p>
                     <p className="font-medium">{leader.name}</p>
                   </div>
                   <AiEraBadge value={leaderEntry.aiEra} />
@@ -109,9 +109,9 @@ export default function Home() {
         </p>
 
         <div id="most-init" className="mt-6">
-          <h3 className="text-lg font-semibold tracking-tight">Highest INIT Score</h3>
+          <h3 className="text-lg font-semibold tracking-tight">Highest Arena Score</h3>
           <p className="mt-1 text-sm text-zinc-500">
-            Ranked by the blended INIT Score: agent-ready, API quality, openness, agentic app, and automation.
+            Ranked by the blended Arena Score: agent-ready, API quality, openness, agentic app, and automation.
           </p>
           <div className="mt-4">
             <InitIndexTable categories={categories} limit={RANKINGS_PREVIEW_LIMIT} />

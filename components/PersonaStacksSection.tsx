@@ -6,7 +6,7 @@ import { allPersonaStacks } from '@/lib/personaStacks'
 // "Best by user type": one card per persona declared on this category, showing which product
 // scores highest on persona-weighted coverage (see lib/personaStacks.ts) over just that
 // persona's stories — an honest v1 answer to "what should a {persona} actually pick here?"
-// distinct from the overall INIT-Score leaderboard, which blends every persona together.
+// distinct from the overall Arena-Score leaderboard, which blends every persona together.
 export default function PersonaStacksSection({ data }: { data: CategoryData }) {
   const results = allPersonaStacks(data).filter((r) => r.winner !== null)
   if (results.length === 0) return null
@@ -17,7 +17,7 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
       <h2 className="mb-1 text-lg font-semibold">Best by user type</h2>
       <p className="mb-4 text-sm text-zinc-400">
         Per persona, the product with the highest persona-weighted coverage over just that persona&apos;s stories —
-        not the same ranking as the overall INIT Score leaderboard above.
+        not the same ranking as the overall Arena Score leaderboard above.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         {results.map((r) => {

@@ -127,7 +127,7 @@ export default async function ProductPage({
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-widest text-zinc-400">INIT Score</span>
+            <span className="text-[10px] uppercase tracking-widest text-zinc-400">Arena Score</span>
             <AiEraBadge value={entry.aiEra} components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           </div>
           <AgentAccessGlyphs data={data} productId={id} />

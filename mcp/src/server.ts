@@ -30,13 +30,13 @@ function wrap<T>(fn: () => Promise<T>) {
 }
 
 export function createServer(client: InitClient = createClient()): McpServer {
-  const server = new McpServer({ name: 'init-dog-mcp', version: '0.1.0' })
+  const server = new McpServer({ name: 'productarena-mcp', version: '0.1.0' })
 
   server.registerTool(
     'list_arenas',
     {
       title: 'List arenas',
-      description: 'List every INIT category (id, name, description, personas, themes).',
+      description: 'List every ProductArena category (id, name, description, personas, themes).',
       inputSchema: {},
     },
     async () => wrap(() => fetchArenas(client)),
@@ -46,7 +46,7 @@ export function createServer(client: InitClient = createClient()): McpServer {
     'get_rankings',
     {
       title: 'Get rankings',
-      description: 'Get the leaderboard (scores, INIT Score, per-theme scores) and head-to-head battles for one arena category.',
+      description: 'Get the leaderboard (scores, Arena Score, per-theme scores) and head-to-head battles for one arena category.',
       inputSchema: { category: z.string().describe('Category id, e.g. "desktop-os" — see list_arenas.') },
     },
     async ({ category }) => wrap(() => fetchRankings(client, category)),

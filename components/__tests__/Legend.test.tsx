@@ -23,7 +23,7 @@ describe('Legend', () => {
     expect(screen.getByText('~')).toBeDefined()
     expect(screen.getByText('!')).toBeDefined()
     expect(screen.getByText('—')).toBeDefined()
-    expect(screen.getAllByText(/INIT Score/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/Arena Score/).length).toBeGreaterThan(0)
   })
 
   it('accepts a custom id for anchor linking', () => {

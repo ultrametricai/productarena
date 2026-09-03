@@ -57,7 +57,7 @@ export default function Legend({ id = 'legend' }: { id?: string; defaultOpen?: b
       </span>
       {SEP}
       <span className="text-[11px] text-zinc-400">
-        quality 0–10 · INIT Score /100 ·{' '}
+        quality 0–10 · Arena Score /100 ·{' '}
         <Link href="/methodology" className="underline decoration-zinc-700 hover:text-amber-300">
           full guide
         </Link>

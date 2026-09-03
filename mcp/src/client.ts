@@ -1,8 +1,8 @@
-// Thin fetch wrapper over INIT's static JSON data API (see the root repo's README
+// Thin fetch wrapper over ProductArena's static JSON data API (see the root repo's README
 // "For AI agents" section and /openapi.json). Base URL is overridable via PA_BASE_URL so this
 // can be pointed at a local `next dev`/`next start` during development or testing.
 
-export const DEFAULT_BASE_URL = 'https://init.dog'
+export const DEFAULT_BASE_URL = 'https://ultrametric.ai/productarena'
 
 export function resolveBaseUrl(): string {
   return process.env.PA_BASE_URL?.replace(/\/$/, '') || DEFAULT_BASE_URL

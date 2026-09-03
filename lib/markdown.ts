@@ -78,7 +78,7 @@ export function renderArenaMarkdown(data: CategoryData, siteUrl: string): string
 
   lines.push('## Leaderboard')
   lines.push('')
-  lines.push('| Rank | Product | INIT | Score | Agentreadyness | API quality | MCP | CLI | API |')
+  lines.push('| Rank | Product | Arena Score | Score | Agentreadyness | API quality | MCP | CLI | API |')
   lines.push('|---|---|---|---|---|---|---|---|---|')
   rankings.leaderboard.forEach((entry, i) => {
     const product = productById.get(entry.productId)!
@@ -144,7 +144,7 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
   )
   lines.push('')
   lines.push(
-    `Rank #${rank} · INIT ${fmtNum(entry.aiEra)} · Score ${fmtNum(entry.score)} · Agentreadyness ${fmtNum(entry.agentReady)} · Agentic-app ${fmtNum(entry.agenticApp)} · API quality ${fmtNum(entry.apiQuality)} · ${entry.applicable}/${entry.total} stories applicable`,
+    `Rank #${rank} · Arena Score ${fmtNum(entry.aiEra)} · Score ${fmtNum(entry.score)} · Agentreadyness ${fmtNum(entry.agentReady)} · Agentic-app ${fmtNum(entry.agenticApp)} · API quality ${fmtNum(entry.apiQuality)} · ${entry.applicable}/${entry.total} stories applicable`,
   )
   lines.push('')
   lines.push(`Business model: ${businessModelLine(product)}`)

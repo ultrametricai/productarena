@@ -76,7 +76,7 @@ export function findBattleBySlug(
   return null
 }
 
-// The #1-vs-#2 battle for a category's INIT-Score leaderboard — the homepage's "Leading
+// The #1-vs-#2 battle for a category's Arena-Score leaderboard — the homepage's "Leading
 // battles" section and llms.txt's example /vs/ links. Null only for a category with fewer than
 // two products (every populated category has at least two — see lib/data.ts's expectedPairs
 // check — so this is purely a defensive fallback, not an expected runtime case).

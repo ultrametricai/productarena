@@ -1,6 +1,6 @@
 # Security Policy
 
-INIT (init.dog) is a static, evidence-based comparison site. The deployed site serves
+ProductArena (ultrametric.ai/productarena) is a static, evidence-based comparison site. The deployed site serves
 pre-computed data from `data/` — it does not accept user input that is executed, does not run
 a database, and does not call any LLM API at build or request time (see README, "Pipeline
 refresh workflow"). The pipeline that *produces* the data runs locally, out of band, and is
@@ -11,12 +11,9 @@ URLs) — see below for what that means for reports.
 
 **Please do not open a public GitHub issue for security reports.**
 
-- Preferred: use [GitHub's private vulnerability reporting](../../security/advisories/new)
-  (Security tab → "Report a vulnerability") on this repository. This opens a private advisory
-  visible only to maintainers until a fix is ready.
-- Alternative: email **security@init.dog** with a description of the issue, steps to
-  reproduce, and any relevant proof-of-concept. If you don't get a response within 5 business
-  days, please follow up — email can get lost.
+Use [GitHub's private vulnerability reporting](../../security/advisories/new)
+(Security tab → "Report a vulnerability") on this repository. This opens a private advisory
+visible only to maintainers until a fix is ready.
 
 Please include:
 
@@ -29,8 +26,8 @@ Please include:
 
 In scope:
 
-- The deployed site (`init.dog`) and its data API / `llms.md` / `llms.txt` / OpenAPI
-  endpoints.
+- The deployed site (`ultrametric.ai/productarena`) and its data API / `llms.md` / `llms.txt` /
+  OpenAPI endpoints.
 - The pipeline (`pipeline/`) — crawl, extract, normalize, collect-community, probe, judge,
   derive stages — including SSRF/injection risks from fetching third-party vendor pages, and
   handling of the `ANTHROPIC_API_KEY`.

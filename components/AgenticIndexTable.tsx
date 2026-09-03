@@ -72,7 +72,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
             <th className="hidden px-3 py-2 font-normal sm:table-cell">API quality</th>
             <th className="px-3 py-2 font-normal">Access</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
-            <th className="px-3 py-2 font-normal">INIT Score</th>
+            <th className="px-3 py-2 font-normal">Arena Score</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">

@@ -6,7 +6,7 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Full AI-native ranking — all ${totalProducts} products — INIT`,
+    title: `Full AI-native ranking — all ${totalProducts} products — ProductArena`,
     description: `Every product across every arena ranked by AGENTIC — does the product act agentically on its own behalf (built-in assistant, autonomous automation, natural-language commands)? Evidence-graded, no opinion.`,
   }
 }
@@ -27,7 +27,7 @@ export default function AiNativeRankingPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by AGENTIC: does the product act agentically on
           its own behalf (built-in assistant, autonomous automation, natural-language commands)? Ties break on
-          automation depth, then INIT Score.
+          automation depth, then Arena Score.
         </p>
       </div>
       <AiNativeIndexTable categories={categories} />

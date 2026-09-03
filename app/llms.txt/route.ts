@@ -30,11 +30,11 @@ export async function GET() {
     .filter((l): l is string => l !== null)
     .join('\n')
 
-  const body = `# INIT (init.dog)
+  const body = `# ProductArena (${SITE})
 
 > Evidence-graded, head-to-head rankings of software products against a shared taxonomy of user stories. Every score traces back to cited evidence (vendor docs, GitHub, community sources, or a hands-on probe) — never opinion. See /methodology for the full scoring writeup.
 
-INIT crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, an INIT Score, and a head-to-head battle log per arena — all reproducible from the cited evidence.
+ProductArena crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, an Arena Score, and a head-to-head battle log per arena — all reproducible from the cited evidence.
 
 ## Arenas (markdown, one per category)
 
@@ -44,7 +44,7 @@ ${arenaLinks}
 
 Every battle between two products in the same arena also has its own top-level page:
 \`${SITE}/vs/{productA}-vs-{productB}\` (product ids are globally unique, so no category segment
-is needed). Rich side-by-side layout — INIT Score, AGENTREADYNESS, MCP/CLI/API access, business
+is needed). Rich side-by-side layout — Arena Score, AGENTREADYNESS, MCP/CLI/API access, business
 model, claims-verified — followed by every judged round. Full list in \`${SITE}/sitemap.xml\`;
 one example per arena below.
 
@@ -67,7 +67,7 @@ Every product also has an \`llms.md\` deep-dive with all of its verdicts, ration
 
 ## Reference
 
-- [Methodology](${SITE}/methodology): evidence tiers, judging rules, scoring formula, INIT Score weights, story provenance, re-judge stability policy, bias disclosure.
+- [Methodology](${SITE}/methodology): evidence tiers, judging rules, scoring formula, Arena Score weights, story provenance, re-judge stability policy, bias disclosure.
 - [README](https://github.com/${REPO}/blob/main/README.md): full methodology writeup and data layout (source of truth; /methodology is a tighter summary of this).
 - [CONTRIBUTING](https://github.com/${REPO}/blob/main/CONTRIBUTING.md): how to contest a verdict or add evidence.
 - [MCP server](https://github.com/${REPO}/blob/main/mcp/README.md): a stdio MCP server exposing this same data as tools (list_arenas, get_rankings, get_product, get_battle, search_products, get_story_verdicts).
