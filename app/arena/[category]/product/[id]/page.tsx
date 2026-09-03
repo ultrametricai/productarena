@@ -148,6 +148,15 @@ export default async function ProductPage({
         </p>
       </div>
 
+      {product.affiliation && (
+        <div className="rounded-xl border border-amber-400/40 bg-amber-400/5 px-4 py-3 text-sm text-amber-200/90">
+          <span className="mr-2 rounded border border-amber-400/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+            Affiliation
+          </span>
+          {product.affiliation}
+        </div>
+      )}
+
       <div>
         <h2 className="mb-3 text-lg font-semibold">By theme</h2>
         <div className="grid gap-3 sm:grid-cols-2">

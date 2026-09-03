@@ -332,6 +332,12 @@ as an anchor to reduce this variance at the source.
 
 ### 8. Bias disclosure — the judge is an Anthropic model
 
+**Owner-product disclosure:** the Product Feedback & Intent arena includes Foreloop, built by
+Ultrametric Inc — the company that operates INIT. Foreloop is judged by the identical evidence
+rules as every other product (it placed third of four in its own arena as of this writing), its
+product page carries an affiliation banner, and every one of its verdicts is contestable like
+any other.
+
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
 (`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
 product, Claude Code, which leads that arena's **INIT Score** (29.5) as of v2.4 — though on
