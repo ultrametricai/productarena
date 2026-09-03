@@ -181,12 +181,34 @@ export const PopularitySchema = z.object({
 // muted/absent rather than as a zero value.
 export const PopularityMapSchema = z.record(z.string(), PopularitySchema)
 
+// Multi-judge uncertainty result for one decisive cell — see pipeline/scripts/uncertainty-pass.ts.
+// Only computed for cells belonging to a "close race" arena (the #1 and #2 leaderboard products
+// within 3.0 INIT points of each other) on their agenticness-theme cells (agent-access,
+// agentic-features, api-quality groups — the axes that actually move the INIT Score). `judgments`
+// is exactly 3 independently-sampled verdict tiers for the SAME (productId, storyId) cell: the
+// tier already cached in verdicts.json plus two fresh re-judgments against the same evidence
+// pack. `agreement` is how many of those 3 agree with the plurality tier — '3/3' means the judge
+// is stable on this cell, '2/3' or '1/3' flags real judge noise worth treating with suspicion.
+export const UncertaintyEntrySchema = z.object({
+  productId: z.string().min(1),
+  storyId: z.string().min(1),
+  judgments: z.array(VerdictBaseSchema.shape.verdict).length(3),
+  agreement: z.enum(['1/3', '2/3', '3/3']),
+})
+
+// data/{cat}/uncertainty.json shape: an array of UncertaintyEntry, one per decisive cell that
+// was re-judged. Entirely optional/additive — see lib/data.ts's tolerant-optional load — most
+// categories (not a "close race") will have no uncertainty.json at all, and even a qualifying
+// category only covers its decisive cells, not the full matrix.
+export const UncertaintyArraySchema = UncertaintyEntrySchema.array()
+
 export type Category = z.infer<typeof CategorySchema>
 export type Product = z.infer<typeof ProductSchema>
 export type Story = z.infer<typeof StorySchema>
 export type StoryOrigin = z.infer<typeof StoryOriginSchema>
 export type Evidence = z.infer<typeof EvidenceSchema>
 export type Popularity = z.infer<typeof PopularitySchema>
+export type UncertaintyEntry = z.infer<typeof UncertaintyEntrySchema>
 export type Verdict = z.infer<typeof VerdictSchema>
 export type Claim = z.infer<typeof ClaimSchema>
 export type Stack = z.infer<typeof StackSchema>

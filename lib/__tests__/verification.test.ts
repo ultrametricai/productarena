@@ -103,6 +103,7 @@ describe('verificationMix', () => {
       stacks: [],
       popularity: {},
       claims: {},
+      uncertainty: [],
     }
   }
 
