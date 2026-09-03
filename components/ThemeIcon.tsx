@@ -1,6 +1,6 @@
 // Small inline glyph shown next to a theme heading (StoryMatrix, product page theme groups).
 // Deliberately not emoji — tiny monochrome inline SVGs (currentColor) so they inherit whatever
-// text color the caller applies (amber-400 on headings, zinc-500 elsewhere) and stay crisp at
+// text color the caller applies (emerald-400 on headings, zinc-500 elsewhere) and stay crisp at
 // any zoom level. Bucketed by keyword substring match over the ~60 theme ids in data/ rather
 // than an exhaustive 1:1 map — new themes fall back to the generic `Dot` glyph automatically.
 

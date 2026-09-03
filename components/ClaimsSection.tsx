@@ -12,7 +12,7 @@ const BUCKETS: Array<{ status: ClaimStatus; label: string; numberClass: string; 
   { status: 'claimed-verified', label: 'Verified', numberClass: 'text-emerald-400', borderClass: 'border-emerald-900/60' },
   { status: 'claimed-unverified', label: 'Unverified', numberClass: 'text-zinc-300', borderClass: 'border-zinc-800' },
   { status: 'claimed-contradicted', label: 'Contradicted', numberClass: 'text-red-400', borderClass: 'border-red-900/60' },
-  { status: 'delivered-unclaimed', label: 'Undersold', numberClass: 'text-amber-400', borderClass: 'border-amber-900/60' },
+  { status: 'delivered-unclaimed', label: 'Undersold', numberClass: 'text-emerald-400', borderClass: 'border-emerald-900/60' },
 ]
 
 export default function ClaimsSection({
@@ -35,14 +35,14 @@ export default function ClaimsSection({
 
   return (
     <div>
-      <h2 className="mb-3 text-lg font-semibold">Claims vs evidence</h2>
+      <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Claims vs evidence</h2>
       <p className="mb-3 text-xs text-zinc-400">
         {claims.length} distinct capability claims found in {product.name}&rsquo;s own claimed-docs/GitHub materials,
         reconciled against our judge&rsquo;s independent verdicts.
       </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {BUCKETS.map(({ status, label, numberClass, borderClass }) => (
-          <div key={status} className={`rounded-lg border ${borderClass} p-3 text-center`}>
+          <div key={status} className={`rounded-xl border ${borderClass} p-3 text-center`}>
             <p className={`text-2xl font-bold tabular-nums ${numberClass}`}>{counts[status]}</p>
             <p className="text-xs text-zinc-400">{label}</p>
           </div>
@@ -53,7 +53,7 @@ export default function ClaimsSection({
           const entries = claimEntriesByStatus(data, productId, status)
           if (entries.length === 0) return null
           return (
-            <details key={status} className="rounded-lg border border-zinc-800 p-3">
+            <details key={status} className="rounded-xl border border-zinc-800 p-3">
               <summary className={`cursor-pointer text-sm font-medium ${numberClass}`}>
                 {label} ({entries.length})
               </summary>
@@ -66,12 +66,12 @@ export default function ClaimsSection({
                     <li key={`${storyId}-${i}`} className="text-sm">
                       {claim && <p className="text-zinc-300">&ldquo;{claim.text}&rdquo;</p>}
                       <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
-                        <a href={`#story-${story.id}`} className="underline decoration-zinc-700 hover:text-amber-300">
+                        <a href={`#story-${story.id}`} className="underline decoration-zinc-700 hover:text-emerald-300">
                           {story.title}
                         </a>
                         <VerdictBadge verdict={v.verdict} />
                         {proof && (
-                          <a href={proof.url} target="_blank" rel="noopener noreferrer" className="hover:text-amber-300">
+                          <a href={proof.url} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-300">
                             proof ↗
                           </a>
                         )}
@@ -85,7 +85,7 @@ export default function ClaimsSection({
         })}
       </div>
       {unmapped.length > 0 && (
-        <details className="mt-3 rounded-lg border border-dashed border-zinc-700 p-3">
+        <details className="mt-3 rounded-xl border border-dashed border-zinc-700 p-3">
           <summary className="cursor-pointer text-sm font-medium text-zinc-400">
             Claims outside our story set ({unmapped.length})
           </summary>
@@ -101,7 +101,7 @@ export default function ClaimsSection({
                   href={c.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-zinc-500 hover:text-amber-300"
+                  className="text-xs text-zinc-500 hover:text-emerald-300"
                 >
                   source ↗
                 </a>
@@ -112,7 +112,7 @@ export default function ClaimsSection({
             href={`https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`[taxonomy gap] ${category}/${productId}`)}&labels=contest`}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-2 inline-block text-xs text-amber-400 underline decoration-amber-400/40 hover:text-amber-300"
+            className="mt-2 inline-block text-xs text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300"
           >
             Suggest a story for these →
           </a>

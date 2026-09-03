@@ -25,16 +25,16 @@ export default function InitRankingPage() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm uppercase tracking-widest text-amber-400">Global ranking</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">Highest Arena Score</h1>
+        <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Highest Arena Score</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by the blended Arena Score — agent-ready, API
           quality, openness, agentic app, and automation, all evidence-graded. Ties break on the raw coverage score.
         </p>
       </div>
-      <div className="rounded-xl border border-amber-800/60 bg-amber-400/5 p-4">
-        <p className="text-xs uppercase tracking-widest text-amber-400">Highest score found</p>
-        <p className="mt-1 text-2xl font-bold tabular-nums text-amber-300">
+      <div className="rounded-xl border border-emerald-800/60 bg-emerald-400/5 p-4">
+        <p className="text-xs uppercase tracking-widest text-emerald-400">Highest score found</p>
+        <p className="mt-1 text-2xl font-bold tabular-nums text-emerald-300">
           {maxScore.toFixed(0)}/100
           {leader && <span className="ml-2 text-sm font-normal text-zinc-400">— {leader.product.name}</span>}
         </p>

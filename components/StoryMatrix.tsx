@@ -51,7 +51,7 @@ export default function StoryMatrix({ data, logoMap }: { data: CategoryData; log
           id="matrix-persona-filter"
           value={persona}
           onChange={(e) => setPersona(e.target.value)}
-          className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-sm text-zinc-100 focus:border-amber-400/60 focus:outline-none"
+          className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
         >
           <option value={ALL_PERSONAS}>All personas</option>
           {personas.map((p) => (
@@ -62,7 +62,7 @@ export default function StoryMatrix({ data, logoMap }: { data: CategoryData; log
         </select>
         <span className="text-xs text-zinc-500">
           {visibleStories.length}/{data.stories.length} stories shown ·{' '}
-          <a href="#legend" className="underline decoration-zinc-700 hover:text-amber-300">
+          <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
             legend
           </a>
         </span>
@@ -75,8 +75,8 @@ export default function StoryMatrix({ data, logoMap }: { data: CategoryData; log
           const byGroup = groupInOrder(storiesInTheme, (s) => s.group)
           return (
             <div key={theme}>
-              <h3 className="mb-4 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-amber-400">
-                <ThemeIcon theme={theme} className="text-amber-400" />
+              <h3 className="mb-4 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-emerald-400">
+                <ThemeIcon theme={theme} className="text-emerald-400" />
                 {theme}
               </h3>
               <div className="space-y-6">

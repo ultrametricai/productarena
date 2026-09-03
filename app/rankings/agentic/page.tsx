@@ -22,8 +22,8 @@ export default function AgenticRankingPage() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm uppercase tracking-widest text-amber-400">Global ranking</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">Most agentic — best for AI agents</h1>
+        <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Most agentic — best for AI agents</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by AGENTREADYNESS: can an agent reach the product
           at all (API/CLI/MCP/webhooks/SDKs/docs)? Ties break on API quality, then Arena Score.

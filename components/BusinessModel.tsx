@@ -12,7 +12,7 @@ export function BusinessModelSection({ product }: { product: Product }) {
   if (!bm) return null
   return (
     <div>
-      <h2 className="mb-3 text-lg font-semibold">Business model</h2>
+      <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Business model</h2>
       <div className="rounded-xl border border-zinc-800 p-4">
         <div className="flex flex-wrap gap-1.5">
           {bm.models.map((m) => (
@@ -26,7 +26,7 @@ export function BusinessModelSection({ product }: { product: Product }) {
           href={bm.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 inline-block text-xs text-zinc-400 hover:text-amber-300"
+          className="mt-2 inline-block text-xs text-zinc-400 hover:text-emerald-300"
         >
           pricing ↗
         </a>

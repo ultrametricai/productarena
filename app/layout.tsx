@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import ArenaMenu from "@/components/ArenaMenu";
@@ -58,8 +58,8 @@ function formatCompact(n: number): string {
   return String(n);
 }
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -102,14 +102,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@700,900&display=swap"
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 antialiased">
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
-            <Link href="/" className="flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight">
+            <Link href="/" className="flex shrink-0 items-center gap-2 font-display text-lg font-bold tracking-tight">
               <span>
-                Product<span className="text-amber-400">Arena</span>
+                Product<span className="text-emerald-400">Arena</span>
               </span>
             </Link>
             <nav className="flex items-center gap-3 text-sm text-zinc-400">
@@ -124,7 +130,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 href={`https://github.com/${REPO}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex shrink-0 items-center gap-2 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-amber-400/60 hover:text-amber-300"
+                className="flex shrink-0 items-center gap-2 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
                 <svg viewBox="0 0 16 16" width={14} height={14} fill="currentColor" aria-hidden>
                   <path
@@ -133,7 +139,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   />
                 </svg>
                 {stars !== null ? (
-                  <span className="flex items-center gap-1 font-mono text-amber-400">
+                  <span className="flex items-center gap-1 font-mono text-emerald-400">
                     ★ {formatCompact(stars)}
                   </span>
                 ) : (
@@ -153,11 +159,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 href={`https://github.com/${REPO}/issues/new?template=request-a-product.md`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-amber-300"
+                className="hover:text-emerald-300"
               >
                 Submit a product →
               </a>
-              <Link href="/llms.txt" className="hover:text-amber-300">
+              <Link href="/llms.txt" className="hover:text-emerald-300">
                 For agents: /llms.txt
               </Link>
             </div>

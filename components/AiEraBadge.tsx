@@ -1,5 +1,5 @@
 // The Arena Score's lead badge — deliberately more prominent than AgenticBadge (bigger type,
-// solid amber ring) since v2.4 re-prioritizes the whole site around this number. Internally
+// solid emerald ring) since v2.4 re-prioritizes the whole site around this number. Internally
 // still keyed on the `aiEra` field/formula (see README's "Arena Score (formerly AI-Era Index)"
 // section for the blend formula and weights) — only the display label changed.
 //
@@ -52,7 +52,7 @@ export default function AiEraBadge({
   return (
     <span
       title={tooltip(components)}
-      className={`inline-flex w-fit cursor-help items-center rounded-full bg-amber-400 font-mono font-bold text-zinc-950 ring-1 ring-amber-300 tabular-nums ${sizeClass}`}
+      className={`inline-flex w-fit cursor-help items-center rounded-full bg-emerald-400 font-mono font-bold text-zinc-950 ring-1 ring-emerald-300 tabular-nums ${sizeClass}`}
     >
       {value.toFixed(0)}
       <span className="font-medium opacity-60">/100</span>

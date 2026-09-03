@@ -22,8 +22,8 @@ export default function AiNativeRankingPage() {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-sm uppercase tracking-widest text-amber-400">Global ranking</p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight">Most AI-native — best for humans working with AI</h1>
+        <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Most AI-native — best for humans working with AI</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by AGENTIC: does the product act agentically on
           its own behalf (built-in assistant, autonomous automation, natural-language commands)? Ties break on

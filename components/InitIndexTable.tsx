@@ -64,7 +64,7 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
               <td className="sticky left-10 z-[5] w-[170px] bg-zinc-950 px-3 py-2 group-hover:bg-zinc-900/50">
                 <Link
                   href={`/arena/${row.data.category.id}/product/${row.product.id}`}
-                  className="flex items-center gap-2 hover:text-amber-300"
+                  className="flex items-center gap-2 hover:text-emerald-300"
                 >
                   <ProductLogo product={row.product} size={24} />
                   <span className="min-w-0 truncate font-medium">{row.product.name}</span>
@@ -76,7 +76,7 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
                 )}
               </td>
               <td className="px-3 py-2">
-                <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-amber-300">
+                <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-emerald-300">
                   {row.data.category.name}
                 </Link>
               </td>

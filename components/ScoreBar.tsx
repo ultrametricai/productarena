@@ -2,9 +2,9 @@ export default function ScoreBar({ score, className = '' }: { score: number; cla
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-800">
-        <div className="h-full rounded-full bg-amber-400" style={{ width: `${score}%` }} />
+        <div className="h-full rounded-full bg-emerald-400" style={{ width: `${score}%` }} />
       </div>
-      <span className="w-12 text-right font-mono text-sm tabular-nums text-amber-300">{score.toFixed(1)}</span>
+      <span className="w-12 text-right font-mono text-sm tabular-nums text-emerald-300">{score.toFixed(1)}</span>
     </div>
   )
 }

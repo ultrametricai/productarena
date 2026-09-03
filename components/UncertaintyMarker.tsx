@@ -11,7 +11,7 @@ export default function UncertaintyMarker({ agreement }: { agreement: Agreement 
   return (
     <span
       title={`judges split ${agreement} — treat as uncertain`}
-      className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-amber-950 text-xs font-bold text-amber-300 ring-1 ring-amber-800"
+      className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-950 text-xs font-bold text-emerald-300 ring-1 ring-emerald-800"
     >
       ±
     </span>

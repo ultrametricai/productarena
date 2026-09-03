@@ -51,7 +51,7 @@ function InstallRow({ entry }: { entry: NonNullable<Product['install']>[number] 
             target="_blank"
             rel="noopener noreferrer"
             title={`${entry.label} docs ↗`}
-            className="shrink-0 hover:border-amber-400 hover:text-amber-300"
+            className="shrink-0 hover:border-emerald-400 hover:text-emerald-300"
           >
             {labelChip}
           </a>
@@ -66,7 +66,7 @@ function InstallRow({ entry }: { entry: NonNullable<Product['install']>[number] 
           onClick={onCopy}
           aria-label={`Copy ${entry.label} command`}
           title={copied ? 'Copied' : 'Copy'}
-          className="shrink-0 rounded p-1 text-zinc-500 transition hover:text-amber-300"
+          className="shrink-0 rounded p-1 text-zinc-500 transition hover:text-emerald-300"
         >
           {copied ? (
             <svg viewBox="0 0 16 16" width={13} height={13} fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>

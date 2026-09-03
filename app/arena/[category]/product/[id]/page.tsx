@@ -93,12 +93,12 @@ export default async function ProductPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(data, product)) }}
       />
       <div>
-        <p className="text-sm uppercase tracking-widest text-amber-400">Rank #{rank}</p>
+        <p className="text-sm uppercase tracking-widest text-emerald-400">Rank #{rank}</p>
         <div className="mt-1 flex flex-wrap items-center gap-4">
           <ProductLogo product={product} size={56} />
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-3xl font-bold tracking-tight">{product.name}</h1>
+              <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">{product.name}</h1>
               {product.type === 'oss' && <OssPill />}
               <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
             </div>
@@ -114,7 +114,7 @@ export default async function ProductPage({
             href={product.urls.site}
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-auto shrink-0 rounded-lg border border-amber-400/60 px-4 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-400/10"
+            className="ml-auto shrink-0 rounded-lg border border-emerald-400/60 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/10"
           >
             Visit {product.name} ↗
           </a>
@@ -149,8 +149,8 @@ export default async function ProductPage({
       </div>
 
       {product.affiliation && (
-        <div className="rounded-xl border border-amber-400/40 bg-amber-400/5 px-4 py-3 text-sm text-amber-200/90">
-          <span className="mr-2 rounded border border-amber-400/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+        <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">
+          <span className="mr-2 rounded border border-emerald-400/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
             Affiliation
           </span>
           {product.affiliation}
@@ -158,7 +158,7 @@ export default async function ProductPage({
       )}
 
       <div>
-        <h2 className="mb-3 text-lg font-semibold">By theme</h2>
+        <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">By theme</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {byTheme.map(([t]) => {
             const themeScore = entry.themeScores[t] ?? null
@@ -167,7 +167,7 @@ export default async function ProductPage({
                 key={t}
                 href={`#theme-${t}`}
                 title={`See the judged stories and evidence behind the ${t} score`}
-                className="group rounded-lg border border-zinc-800 p-4 transition hover:border-amber-400/60"
+                className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
                 <p className="mb-2 flex items-center justify-between text-sm text-zinc-400">
                   {t}
@@ -187,14 +187,14 @@ export default async function ProductPage({
       </div>
 
       <div>
-        <h2 className="mb-3 text-lg font-semibold">Story verdicts</h2>
+        <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Story verdicts</h2>
         <div className="space-y-6">
           {byTheme.map(([theme, storiesInTheme]) => {
             const byGroup = groupInOrder<Story>(storiesInTheme, (s) => s.group)
             return (
               <div key={theme} id={`theme-${theme}`} className="scroll-mt-4">
-                <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-amber-400">
-                  <ThemeIcon theme={theme} className="text-amber-400" />
+                <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-emerald-400">
+                  <ThemeIcon theme={theme} className="text-emerald-400" />
                   {theme}
                 </h3>
                 <div className="space-y-4">
@@ -225,7 +225,7 @@ export default async function ProductPage({
                                   {v.evidenceIds.map((eid, i) => {
                                     const e = evidence.get(eid)!
                                     return (
-                                      <a key={eid} href={e.url} className="underline decoration-zinc-800 hover:text-amber-300">
+                                      <a key={eid} href={e.url} className="underline decoration-zinc-800 hover:text-emerald-300">
                                         {i > 0 ? ' · ' : ''}[{e.tier}]
                                       </a>
                                     )
@@ -238,7 +238,7 @@ export default async function ProductPage({
                                     href={proof.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-xs text-zinc-400 hover:text-amber-300"
+                                    className="text-xs text-zinc-400 hover:text-emerald-300"
                                   >
                                     proof ↗
                                   </a>
@@ -263,7 +263,7 @@ export default async function ProductPage({
       <BusinessModelSection product={product} />
 
       <div>
-        <h2 className="mb-3 text-lg font-semibold">Battles</h2>
+        <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Battles</h2>
         <div className="flex flex-wrap gap-2">
           {data.products
             .filter((p) => p.id !== id)
@@ -273,7 +273,7 @@ export default async function ProductPage({
                 <Link
                   key={rival.id}
                   href={`/arena/${category}/battle/${battleSlug(a, b)}`}
-                  className="rounded-full border border-zinc-800 px-3 py-1 text-sm hover:border-amber-400 hover:text-amber-300"
+                  className="rounded-full border border-zinc-800 px-3 py-1 text-sm hover:border-emerald-400 hover:text-emerald-300"
                 >
                   vs {rival.name}
                 </Link>
