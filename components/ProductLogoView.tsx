@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import type { Product } from '@/lib/schemas'
+import { withBase } from '@/lib/site'
 
 // Pure rendering half of ProductLogo, split out so it can be safely imported from CLIENT
 // components (ArenaTable, StoryMatrix) without dragging lib/logos.ts's `node:fs` import into
@@ -20,7 +21,7 @@ export default function ProductLogoView({
   if (hasLogo) {
     return (
       <Image
-        src={`/logos/${product.id}.png`}
+        src={withBase(`/logos/${product.id}.png`)}
         alt={`${product.name} logo`}
         width={size}
         height={size}
