@@ -360,7 +360,7 @@ function StoryRowPair({
           )}
         </td>
         <td className="px-3 py-2">
-          <VerificationBadge level={row.verification} compact />
+          <VerificationBadge level={row.verification} responsive />
         </td>
         <td className="px-3 py-2">
           <button

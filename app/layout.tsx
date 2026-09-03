@@ -114,7 +114,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 antialiased">
         <header className="border-b border-zinc-800">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4">
             <div className="flex shrink-0 items-baseline gap-2">
               <a
                 href="https://ultrametric.ai"
@@ -130,7 +130,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 </span>
               </Link>
             </div>
-            <nav className="flex items-center gap-3 text-sm text-zinc-400">
+            <nav className="flex flex-wrap items-center gap-2 text-sm text-zinc-400 sm:gap-3">
               <ArenaMenu
                 items={categories.map((c) => ({
                   id: c.id,
@@ -184,7 +184,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </nav>
           </div>
         </header>
-        <main className="mx-auto max-w-7xl px-5 py-10">{children}</main>
+        {/* w-full + min-w-0: body is a column flex container, so without min-w-0 this flex
+            item's automatic minimum width tracks its content's min-content width — wide tables
+            inside overflow-x-auto wrappers would push the whole page wider than the viewport
+            on phones instead of scrolling inside their wrapper. */}
+        <main className="mx-auto w-full min-w-0 max-w-7xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
             <span>© 2026 Ultrametric Inc · data CC BY 4.0</span>
