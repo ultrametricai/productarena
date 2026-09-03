@@ -13,6 +13,8 @@ const README_PATH = path.join(ROOT, 'README.md')
 
 const START_MARKER = '<!-- stats:start -->'
 const END_MARKER = '<!-- stats:end -->'
+const ARENAS_START_MARKER = '<!-- arenas:start -->'
+const ARENAS_END_MARKER = '<!-- arenas:end -->'
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'))
@@ -43,6 +45,18 @@ function computeStats() {
   }
 }
 
+function renderArenasBlock() {
+  const categories = readJson(path.join(DATA_DIR, 'categories.json'))
+  const rows = []
+  for (const category of categories) {
+    const productsPath = path.join(DATA_DIR, category.id, 'products.json')
+    if (!fs.existsSync(productsPath)) continue
+    const ids = readJson(productsPath).map((p) => p.id)
+    rows.push(`| ${category.name} (\`${category.id}\`) | ${ids.join(', ')} |`)
+  }
+  return [ARENAS_START_MARKER, '| Arena | Products |', '|---|---|', ...rows, ARENAS_END_MARKER].join('\n')
+}
+
 function renderBlock(stats) {
   return [
     START_MARKER,
@@ -67,7 +81,8 @@ function replaceBetween(text, startMarker, endMarker, block) {
 function updateReadme(stats) {
   const readme = fs.readFileSync(README_PATH, 'utf8')
 
-  const next = replaceBetween(readme, START_MARKER, END_MARKER, renderBlock(stats))
+  let next = replaceBetween(readme, START_MARKER, END_MARKER, renderBlock(stats))
+  next = replaceBetween(next, ARENAS_START_MARKER, ARENAS_END_MARKER, renderArenasBlock())
 
   if (next === readme) {
     console.log('update-readme-stats: README already up to date, no changes written')
