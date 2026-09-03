@@ -115,7 +115,15 @@ jobs:
           git add data pipeline/cache README.md
           git commit -m "chore(story-runner): refresh $CATEGORY evidence + verdicts"
           git push -u origin "$BRANCH"
-          gh pr create \
+          # Org policy currently forbids Actions from creating PRs ("Write permissions for
+          # workflows are disabled by the organization") — fall back to an issue carrying the
+          # compare link so the refresh is never silently stranded on a branch.
+          if ! gh pr create \
             --title "story-runner: $CATEGORY refresh" \
             --body "Automated evidence/verdict refresh for \`$CATEGORY\`. Review verdict flips against the re-judge stability policy (README) before merging — no-new-citation flips should be reverted." \
-            --base main --head "$BRANCH"
+            --base main --head "$BRANCH"; then
+            gh issue create \
+              --title "story-runner: $CATEGORY refresh ready on $BRANCH" \
+              --body "The scheduled refresh for \`$CATEGORY\` is committed on [\`$BRANCH\`](https://github.com/${GITHUB_REPOSITORY}/compare/main...$BRANCH) but Actions may not open PRs (org policy). Open the PR from the compare link and review flips per the re-judge stability policy. Enable org Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests' to remove this manual step." \
+              --label "story-runner" || echo "issue creation also failed — branch $BRANCH is pushed; see run logs"
+          fi
