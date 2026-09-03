@@ -103,11 +103,12 @@ jobs:
             echo "No changes for $CATEGORY — done."
             exit 0
           fi
+          pnpm stats   # keep the README's generated counts in sync with the refreshed data
           BRANCH="story-runner/$CATEGORY-$RUN_ID"
           git config user.name "productarena-story-runner"
           git config user.email "noreply@ultrametric.ai"
           git checkout -b "$BRANCH"
-          git add data pipeline/cache
+          git add data pipeline/cache README.md
           git commit -m "chore(story-runner): refresh $CATEGORY evidence + verdicts"
           git push -u origin "$BRANCH"
           gh pr create \
