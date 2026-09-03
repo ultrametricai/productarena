@@ -1,0 +1,103 @@
+$ codex exec --help
+Run Codex non-interactively
+
+[1m[4mUsage:[0m codex exec [OPTIONS] [PROMPT]
+       codex exec [OPTIONS] <COMMAND> [ARGS]
+
+[1m[4mCommands:[0m
+  [1mresume[0m  Resume a previous session by id or pick the most recent with --last
+  [1mreview[0m  Run a code review against the current repository
+  [1mhelp[0m    Print this message or the help of the given subcommand(s)
+
+[1m[4mArguments:[0m
+  [PROMPT]
+          Initial instructions for the agent. If not provided as an argument (or if `-` is used),
+          instructions are read from stdin. If stdin is piped and a prompt is also provided, stdin
+          is appended as a `<stdin>` block
+
+[1m[4mOptions:[0m
+  [1m-c[0m, [1m--config[0m <[redacted]=value>
+          Override a configuration value that would otherwise be loaded from `~/.codex/config.toml`.
+          Use a dotted path (`foo.bar.baz`) to override nested values. The `value` portion is parsed
+          as TOML. If it fails to parse as TOML, the raw string is used as a literal.
+
+          Examples: - `-c model="o3"` - `-c 'sandbox_permissions=["di[redacted]full-read-access"]'` - `-c
+          shell_environment_policy.inherit=all`
+
+      [1m--enable[0m <FEATURE>
+          Enable a feature (repeatable). Equivalent to `-c features.<name>=true`
+
+      [1m--disable[0m <FEATURE>
+          Disable a feature (repeatable). Equivalent to `-c features.<name>=false`
+
+      [1m--strict-config[0m
+          Error out when config.toml contains fields that are not recognized by this version of
+          Codex
+
+  [1m-i[0m, [1m--image[0m <FILE>...
+          Optional image(s) to attach to the initial prompt
+
+  [1m-m[0m, [1m--model[0m <MODEL>
+          Model the agent should use
+
+      [1m--oss[0m
+          Use open-source provider
+
+      [1m--local-provider[0m <OSS_PROVIDER>
+          Specify which local provider to use (lmstudio or ollama). If not specified with --oss,
+          will use config default or show selection
+
+  [1m-p[0m, [1m--profile[0m <CONFIG_PROFILE_V2>
+          Layer $CODEX_HOME/<name>.config.toml on top of the base user config
+
+  [1m-s[0m, [1m--sandbox[0m <SANDBOX_MODE>
+          Select the sandbox policy to use when executing model-generated shell commands
+
+          [possible values: read-only, workspace-write, danger-full-access]
+
+      [1m--dangerously-bypass-approvals-and-sandbox[0m
+          Skip all confirmation prompts and execute commands without sandboxing. EXTREMELY
+          DANGEROUS. Intended solely for running in environments that are externally sandboxed
+
+      [1m--dangerously-bypass-hook-trust[0m
+          Run enabled hooks without requiring persisted hook trust for this invocation. DANGEROUS.
+          Intended only for automation that already vets hook sources
+
+  [1m-C[0m, [1m--cd[0m <DIR>
+          Tell the agent to use the specified directory as its working root
+
+      [1m--add-dir[0m <DIR>
+          Additional directories that should be writable alongside the primary workspace
+
+      [1m--skip-git-repo-check[0m
+          Allow running Codex outside a Git repository
+
+      [1m--ephemeral[0m
+          Run without persisting session files to disk
+
+      [1m--ignore-user-config[0m
+          Do not load `$CODEX_HOME/config.toml`; auth still uses `CODEX_HOME`
+
+      [1m--ignore-rules[0m
+          Do not load user or project execpolicy `.rules` files
+
+      [1m--output-schema[0m <FILE>
+          Path to a JSON Schema file describing the model's final response shape
+
+      [1m--color[0m <COLOR>
+          Specifies color settings for use in the output
+
+          [default: auto]
+          [possible values: always, never, auto]
+
+      [1m--json[0m
+          Print events to stdout as JSONL
+
+  [1m-o[0m, [1m--output-last-message[0m <FILE>
+          Specifies file where the last message from the agent should be written
+
+  [1m-h[0m, [1m--help[0m
+          Print help (see a summary with '-h')
+
+  [1m-V[0m, [1m--version[0m
+          Print version
