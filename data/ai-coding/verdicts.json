@@ -2,14 +2,16 @@
   {
     "productId": "claude-code",
     "storyId": "agentic-agent-docs",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Anthropic's own docs are structured in agent-friendly llms.txt format and Claude Code's documentation exposes a machine-readable index (llms.txt, .md variants) that an agent could fetch, but there is no direct evidence pack item showing a user explicitly pointing Claude Code at an arbitrary llms.txt file and having it consumed as agent context.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Claude Code's own docs are served as llms.txt/markdown-native content (probes confirm HTTP 200 at /llms.txt and .md doc URLs, with an explicit 'Documentation Index' pointer to llms.txt), and the product is inherently agentic (MCP, subagents, hooks, headless/CI use) making it natural to point at agent-oriented docs or llms.txt for context.",
     "evidenceIds": [
       "claude-code-probe-1",
       "claude-code-probe-2",
-      "claude-code-docs-15"
+      "claude-code-probe-3",
+      "claude-code-docs-29",
+      "claude-code-docs-21"
     ]
   },
   {
@@ -18,14 +20,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Claude Code provides agentic code understanding, codebase mapping, MCP-based data pulls (Jira, Slack, Postgres queries), and code review/insight generation, showing AI-generated suggestions from project/data context. However, this is scoped to coding/dev workflows rather than general 'data insights', and community evidence raises reliability concerns (self-verification failures, degrading quality) that temper confidence in consistent insight quality.",
+    "rationale": "Claude Code offers strong agentic capabilities to analyze codebases, generate code review feedback, run CI failure analysis, and pull/query external data (Jira, Postgres, Slack) via MCP to produce insights and suggestions, per docs (docs-15, docs-12, docs-8, docs-24, docs-21). However, community reports describe significant reliability issues—self-verification failures, quality degradation over time, and inconsistent output—that undercut confidence in the quality of those AI-generated insights (comm-16, comm-17, comm-19, comm-20).",
     "evidenceIds": [
       "claude-code-docs-15",
-      "claude-code-docs-21",
-      "claude-code-docs-23",
-      "claude-code-docs-24",
       "claude-code-docs-12",
+      "claude-code-docs-8",
+      "claude-code-docs-24",
+      "claude-code-docs-21",
       "claude-code-comm-16",
+      "claude-code-comm-19",
       "claude-code-comm-20"
     ]
   },
@@ -35,33 +38,33 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Claude Code docs explicitly describe scheduling recurring tasks (morning PR reviews, overnight CI analysis, weekly audits), running in cloud sessions, kicking off long-running background tasks accessible via web/mobile/terminal ('teleport'), and integration with CI pipelines and chat triggers (Slack @Claude)—all supporting autonomous background automation. Community evidence doesn't directly dispute this capability, though it raises reliability/trust concerns that temper confidence.",
+    "rationale": "Docs explicitly describe scheduling recurring runs (morning PR reviews, overnight CI analysis, weekly audits), CI/CD integration via GitHub Actions/GitLab, MCP-driven event channels (Telegram/Discord/webhooks) that trigger sessions while away, and long-running cloud/background tasks checked on later — all core to autonomous background automation. Community evidence doesn't directly dispute this specific capability, though general reliability complaints suggest some caveats on trustworthiness of unsupervised runs.",
     "evidenceIds": [
       "claude-code-docs-8",
-      "claude-code-docs-9",
-      "claude-code-docs-10",
-      "claude-code-docs-13",
+      "claude-code-docs-36",
+      "claude-code-docs-31",
       "claude-code-docs-14",
       "claude-code-docs-26",
-      "claude-code-docs-11",
-      "claude-code-docs-7"
+      "claude-code-docs-13",
+      "claude-code-comm-16",
+      "claude-code-comm-17"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
+    "verdict": "disputed",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Claude Code's docs clearly show extensive delegation capability—planning, multi-file coding, git operations, multi-agent orchestration, scheduled/remote tasks (claude-code-docs-2,3,6,8,9,10)—matching the story well. However, community evidence reveals significant reliability caveats: some users report near-100% failure rates, self-verification failures like accidental replace_all corruption, and degraded output quality over time (claude-code-comm-16,17,19,20), tempering the 'full' delegation claim.",
+    "rationale": "Docs strongly support the core delegation story: Claude Code plans, writes, tests, commits code, integrates with git/CI/MCP tools, and can run autonomously in background/scheduled/parallel modes (claude-code-docs-2,6,8,28,34). However, community evidence raises significant concerns about reliability of delegated tasks (self-verification failures, degrading quality, high failure rates) that undercut how trustworthy the delegation experience is in practice.",
     "evidenceIds": [
       "claude-code-docs-2",
-      "claude-code-docs-3",
       "claude-code-docs-6",
       "claude-code-docs-8",
-      "claude-code-docs-9",
-      "claude-code-comm-5",
+      "claude-code-docs-28",
+      "claude-code-docs-34",
       "claude-code-comm-16",
+      "claude-code-comm-17",
       "claude-code-comm-19",
       "claude-code-comm-20"
     ]
@@ -70,15 +73,17 @@
     "productId": "claude-code",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state Claude Code is composable, can pipe logs into it, run it in CI, chain with other tools, and be scheduled for recurring automated tasks (PR reviews, CI failure analysis, dependency audits), plus an Agent SDK for building custom headless agents. No community evidence directly disputes CI/headless usage, though general reliability complaints exist.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Docs explicitly describe headless/CI usage (piping logs, running in CI, chaining tools), GitHub Actions/GitLab CI/CD integration for automated code review and issue triage, scheduled/cron-like runs, and non-interactive API key auth suitable for automation pipelines.",
     "evidenceIds": [
       "claude-code-docs-7",
       "claude-code-docs-8",
-      "claude-code-docs-18",
-      "claude-code-docs-14",
-      "claude-code-docs-26"
+      "claude-code-docs-36",
+      "claude-code-docs-12",
+      "claude-code-docs-39",
+      "claude-code-docs-40",
+      "claude-code-docs-18"
     ]
   },
   {
@@ -87,38 +92,47 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code has documented, first-party MCP support allowing it to connect to external tools/servers like Google Drive, Jira, Slack, PostgreSQL, and custom tooling, with a dedicated MCP docs page and concrete usage examples.",
+    "rationale": "Claude Code has first-class MCP support documented with clear examples: connecting to hundreds of external tools/data sources via MCP, CLI commands to add MCP servers (e.g., 'claude mcp add --transport http notion'), integrating Google Drive, Jira, Slack, PostgreSQL, and even MCP servers acting as event channels pushing messages into sessions. This is a core, well-documented agentic capability, not a peripheral feature.",
     "evidenceIds": [
-      "claude-code-docs-4",
       "claude-code-docs-21",
-      "claude-code-docs-23",
-      "claude-code-docs-24"
+      "claude-code-docs-29",
+      "claude-code-docs-35",
+      "claude-code-docs-30",
+      "claude-code-docs-24",
+      "claude-code-docs-31",
+      "claude-code-docs-38"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "agentic-mcp-server",
-    "verdict": "na",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 9,
     "confidence": "high",
-    "rationale": "This product is an AI agent — it consumes MCP servers rather than shipping one; the serving axis does not apply. See agentic-mcp-client. (Applicability corrected after reader review.)",
-    "evidenceIds": []
+    "rationale": "Claude Code has an official MCP integration documented with CLI commands (e.g., `claude mcp add`), supports hundreds of external tools/data sources, official server scaffolding via mcp-server-dev plugin, and MCP servers can act as event channels pushing messages into sessions — clear first-party support for connecting agents via MCP.",
+    "evidenceIds": [
+      "claude-code-docs-29",
+      "claude-code-docs-35",
+      "claude-code-docs-38",
+      "claude-code-docs-31",
+      "claude-code-docs-21",
+      "claude-code-docs-30"
+    ]
   },
   {
     "productId": "claude-code",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code's core interface is natural-language driven — docs show users describing tasks in plain language and Claude planning, coding, testing, git operations, and tool integrations (Slack, Jira, GitHub) all from NL prompts. Community evidence confirms real-world use as an agentic coding assistant, though some users report inconsistent execution quality, which is a reliability caveat rather than a contradiction of the NL-command capability itself.",
+    "rationale": "Claude Code is explicitly designed for natural-language driven agentic operation: users describe intent in plain language and it plans, writes code across files, runs tests, manages git, and integrates with external tools via MCP, with strong community corroboration that it excels at code assistant tasks driven by conversational instructions.",
     "evidenceIds": [
       "claude-code-docs-2",
       "claude-code-docs-3",
-      "claude-code-docs-4",
       "claude-code-docs-15",
       "claude-code-docs-16",
-      "claude-code-comm-5",
-      "claude-code-comm-20"
+      "claude-code-docs-30",
+      "claude-code-comm-5"
     ]
   },
   {
@@ -127,12 +141,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code is itself an official CLI tool, extensively documented with setup, git integration, MCP tooling, scripting/CI composability, and confirmed via official docs and setup probe. Community evidence (even critical) confirms real-world usage as an interactive terminal CLI.",
+    "rationale": "Claude Code is fundamentally an official CLI tool—install and run via `claude` command, documented setup, IAM/auth flows, and GitHub repo confirming terminal/IDE/GitHub usage. Community evidence confirms real-world CLI usage (with mixed sentiment on quality but not on CLI existence/functioning).",
     "evidenceIds": [
-      "claude-code-docs-2",
-      "claude-code-docs-3",
-      "claude-code-docs-7",
+      "claude-code-docs-27",
+      "claude-code-gh-1",
       "claude-code-probe-3",
+      "claude-code-docs-37",
+      "claude-code-docs-39",
       "claude-code-comm-6",
       "claude-code-comm-7"
     ]
@@ -140,26 +155,33 @@
   {
     "productId": "claude-code",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "The Agent SDK and composable CLI provide programmatic access, but no documented public REST/HTTP API exists — the same bar applied to competitors on this story. (Adjusted after adversarial review — the judge model and this product share a vendor.)",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Claude Code exposes a documented Agent SDK for building custom agents with full control over orchestration/tool access, supports API key auth (ANTHROPIC_API_KEY), MCP for connecting external tools, hooks, headless/CI usage, and GitHub Actions integration—together constituting a documented programmatic surface for AI-native driving beyond the interactive CLI.",
     "evidenceIds": [
       "claude-code-docs-18",
+      "claude-code-docs-40",
+      "claude-code-docs-29",
+      "claude-code-docs-33",
+      "claude-code-docs-36",
       "claude-code-docs-7",
-      "claude-code-docs-8",
-      "claude-code-probe-2",
-      "claude-code-probe-3"
+      "claude-code-docs-8"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack shows Agent SDK permission/tool-access controls and general integrations, but there is no mention of scoped or least-privilege API credential issuance for agents (e.g., API key scoping, credential minting, or IAM-style scoped tokens).",
-    "evidenceIds": []
+    "rationale": "Claude Code supports API key auth (ANTHROPIC_API_KEY) and Enterprise adds SSO, role-based permissions, and managed policy settings, suggesting some scoping capability at the org level, but there's no explicit evidence of issuing per-agent scoped/least-privilege API credentials (e.g., fine-grained token scoping for individual agent instances). The Agent SDK offers 'permissions' control over tool access, which is adjacent but not the same as credential scoping.",
+    "evidenceIds": [
+      "claude-code-docs-39",
+      "claude-code-docs-40",
+      "claude-code-docs-41",
+      "claude-code-docs-18"
+    ]
   },
   {
     "productId": "claude-code",
@@ -178,27 +200,27 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack describes a webhook subscription mechanism for Claude Code; the product surfaces (CLI, MCP, GitHub/Slack integrations, scheduling) are event-triggered/polling or notification-based, not a documented webhook subscription API.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The only related evidence (claude-code-docs-31) describes an MCP server pushing incoming webhook events into a Claude Code session, not Claude Code exposing outbound webhook subscriptions for external systems to receive its events. No documentation describes a webhook subscription API or event feed from Claude Code itself.",
+    "evidenceIds": [
+      "claude-code-docs-31"
+    ]
   },
   {
     "productId": "claude-code",
     "storyId": "always-on-scheduled-agents",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe scheduling (morning PR reviews, overnight CI analysis, weekly dependency audits), trigger-based automation (Slack @mentions producing PRs, GitHub PR auto-review), and long-running/background sessions accessible remotely — directly matching the always-on agent story. However, community reports raise serious reliability concerns for unsupervised autonomous operation (self-verification failures, quality degradation over time, destructive edits like replace_all bugs), suggesting the autonomy works but requires human oversight rather than being fully trustworthy 'maintain and fix autonomously'.",
+    "rationale": "Docs describe scheduled runs (morning PR reviews, overnight CI analysis, weekly dependency audits) and trigger-based automation via MCP channels reacting to Telegram/Discord/webhooks 'while you're away', plus CI/CD and Slack-triggered PR workflows — directly matching the always-on scheduled/triggered autonomy story. However, community reports raise serious doubts about trusting it to run unsupervised: users describe destructive self-inflicted bugs from unverified replace_all edits, inability to self-verify, and marked quality degradation over time, undercutting claims of reliably maintaining/fixing software autonomously.",
     "evidenceIds": [
       "claude-code-docs-8",
+      "claude-code-docs-31",
+      "claude-code-docs-36",
       "claude-code-docs-11",
-      "claude-code-docs-12",
       "claude-code-docs-13",
-      "claude-code-docs-14",
-      "claude-code-docs-9",
       "claude-code-comm-16",
       "claude-code-comm-17",
-      "claude-code-comm-19",
       "claude-code-comm-20"
     ]
   },
@@ -214,19 +236,23 @@
   {
     "productId": "claude-code",
     "storyId": "api-key-auth",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of API key authentication as an alternative to account login for Claude Code; docs cover features like MCP, IDE integrations, and workflows but nothing on auth methods.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Docs explicitly describe ANTHROPIC_API_KEY environment variable support, sent as the X-Api-Key header for direct Anthropic API access with a key from the Claude Console, which bypasses the login prompt in favor of key approval—distinct from the Claude.ai account login flow.",
+    "evidenceIds": [
+      "claude-code-docs-39",
+      "claude-code-docs-40",
+      "claude-code-docs-37"
+    ]
   },
   {
     "productId": "claude-code",
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack indicates Claude Code exposes a downloadable OpenAPI or other machine-readable API spec; documentation focuses on CLI usage, IDE plugins, MCP integrations, and the Agent SDK, none of which reference an API spec artifact.",
+    "confidence": "low",
+    "rationale": "No evidence of Claude Code providing a downloadable OpenAPI or machine-readable API spec for itself; evidence covers CLI usage, MCP integrations, and docs indexes but no API spec artifact.",
     "evidenceIds": []
   },
   {
@@ -235,7 +261,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items describe sandboxing, environment isolation, or safeguards against touching production data; Claude Code's docs focus on codebase editing, git integration, and automation but nothing about sandbox/test environments vs production data separation.",
+    "rationale": "The evidence pack contains no mention of sandbox environments, staging/test data isolation, or any mechanism to prevent Claude Code from touching production data; nothing addresses this specific safety/isolation axis.",
     "evidenceIds": []
   },
   {
@@ -244,7 +270,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack references API versioning, deprecation policy, or changelog practices for Claude Code's APIs/SDK; documentation excerpts focus on features and workflows, not API lifecycle guarantees.",
+    "rationale": "No evidence in the pack discusses API versioning schemes or a documented deprecation policy for Claude Code's APIs/CLI; the docs focus on features and workflows, not on version stability guarantees.",
     "evidenceIds": []
   },
   {
@@ -267,10 +293,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code's official docs explicitly state it stages changes, writes commit messages, creates branches, and opens pull requests via native git integration, and additional docs describe end-to-end workflows including submitting PRs on GitHub/GitLab.",
+    "rationale": "Vendor docs explicitly state Claude Code stages changes, writes commit messages, creates branches, and opens pull requests, and integrates with GitHub/GitLab to submit PRs as part of the full workflow. Community evidence corroborates real-world use of the git/PR workflow (e.g., 'tag @Claude in Slack ... get a pull request back') without disputing this specific capability.",
     "evidenceIds": [
       "claude-code-docs-3",
       "claude-code-docs-16",
+      "claude-code-docs-11",
       "claude-code-docs-12"
     ]
   },
@@ -280,29 +307,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly advertise a 'GitHub Code Review' feature giving automatic review on every PR, and community feedback (comm-18) suggests Claude is a strong reviewer. However, the docs give only a single line of detail with no elaboration on setup, contextual depth, or CI integration specifics, and broader community threads report reliability and quality regressions in Claude Code's outputs, tempering confidence in consistent contextual feedback.",
+    "rationale": "Docs explicitly advertise 'Get automatic code review on every PR' via GitHub integration and CI automation (GitHub Actions/GitLab CI/CD), giving direct support for this story. However, there's no independent/community evidence validating the quality or contextual depth of these automated reviews, and general reliability concerns about Claude Code's coding judgment (e.g., unreliable self-verification, degrading output quality) raise some doubt about consistency of feedback.",
     "evidenceIds": [
       "claude-code-docs-12",
-      "claude-code-docs-8",
+      "claude-code-docs-36",
       "claude-code-comm-18",
-      "claude-code-comm-17"
+      "claude-code-comm-16"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "automated-test-and-lint-fixes",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim Claude Code writes tests, fixes lint errors, resolves merge conflicts, and updates dependencies as core selling points, and community feedback confirms strong code-assistant capability in general. However, hands-on reports describe significant reliability issues (unsafe replace_all edits, degrading output quality, 100% failure rate for one user, need for extensive guardrails), so real-world delivery is inconsistent with vendor claims.",
+    "rationale": "Anthropic's own docs explicitly list writing tests, fixing lint errors, resolving merge conflicts, and updating dependencies as core Claude Code use cases, backed by git/GitHub integration for PRs and CI hooks. However, multiple hands-on community reports describe unreliable self-verification, careless replace_all edits corrupting code, and degraded output quality over time, suggesting real-world execution doesn't always match the polished doc description.",
     "evidenceIds": [
-      "claude-code-docs-1",
       "claude-code-docs-20",
-      "claude-code-comm-5",
+      "claude-code-docs-3",
+      "claude-code-docs-16",
+      "claude-code-docs-36",
       "claude-code-comm-16",
       "claude-code-comm-17",
-      "claude-code-comm-19",
-      "claude-code-comm-20"
+      "claude-code-comm-19"
     ]
   },
   {
@@ -311,7 +338,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack describes automatic model selection based on task; the docs mention manual model switching context (e.g., Opus vs Sonnet) only via community complaints about token drain, not an automatic 'best model per task' feature.",
+    "rationale": "No evidence in the pack describes automatic model selection/routing per task; users must manually choose models (e.g., mentions of Sonnet vs Opus in community comments suggest manual selection), and no docs claim automatic best-model picking.",
     "evidenceIds": []
   },
   {
@@ -320,57 +347,57 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show strong support for bulk operations: fixing lint errors across a project, spawning multiple agents to work on subtasks in parallel, running multiple tasks/sessions in parallel, and MCP-driven bulk queries (e.g., finding many user records). However, community reports flag reliability issues with bulk text operations like replace_all corrupting code, indicating you can't fully trust automated bulk edits without verification.",
+    "rationale": "Docs describe strong automation-depth features supporting bulk-style work: fixing lint errors across a project, multi-file code changes, subagents working on different parts of a task simultaneously, parallel sessions/tasks, scheduled recurring runs, and CI/hooks for batch automation. However, there's no explicit 'bulk operations across many items' primitive (e.g., batch API over a list), and community evidence flags reliability issues like unsafe replace_all causing errors, undermining trust in large-scale automated edits.",
     "evidenceIds": [
-      "claude-code-docs-1",
-      "claude-code-docs-6",
-      "claude-code-docs-14",
       "claude-code-docs-20",
-      "claude-code-docs-24",
-      "claude-code-docs-26",
+      "claude-code-docs-34",
+      "claude-code-docs-14",
+      "claude-code-docs-8",
+      "claude-code-docs-36",
       "claude-code-comm-16"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "automation-rules-engine",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs show event/schedule-triggered automation (automatic PR code review, scheduled runs for recurring tasks, Slack mention triggers), but there's no clear evidence of a general user-defined rule engine for arbitrary events—only built-in automation hooks like scheduling and PR-triggered review.",
+    "rationale": "Claude Code's Hooks feature explicitly lets users define shell-command rules that trigger automatically before/after specific events like file edits or commits (e.g., auto-format after edit, lint before commit), and MCP servers can push webhook/Telegram/Discord events into sessions, plus scheduled runs for recurring triggers.",
     "evidenceIds": [
+      "claude-code-docs-33",
+      "claude-code-docs-31",
       "claude-code-docs-8",
-      "claude-code-docs-12",
-      "claude-code-docs-11",
-      "claude-code-docs-13"
+      "claude-code-docs-36"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "automation-scheduled-jobs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe scheduling Claude to run on a recurring basis (morning PR reviews, overnight CI analysis, weekly dependency audits) and the web UI supports scheduling recurring tasks, directly matching the story.",
+    "rationale": "Docs explicitly describe scheduling recurring jobs ('Run Claude on a schedule to automate work that repeats: morning PR reviews, overnight CI failure analysis, weekly dependency audits') and mention 'schedule recurring tasks' as a feature alongside CI integration (GitHub Actions/GitLab CI/CD) for automation, though no independent hands-on evidence confirms real-world reliability of the scheduler.",
     "evidenceIds": [
       "claude-code-docs-8",
-      "claude-code-docs-13"
+      "claude-code-docs-13",
+      "claude-code-docs-36"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Claude Code is git-native (stages changes, writes commits, creates branches/PRs) and offers diff review in CLI, VS Code, and JetBrains plugins plus automatic PR code review, which supports versioning and reviewing changes. However, there's no explicit evidence of a dedicated rollback mechanism for automations themselves (e.g., scheduled tasks, hooks, CLAUDE.md configs) beyond generic git history, and community reports note CLAUDE.md configs 'exploding' with manual upkeep rather than structured version/rollback tooling.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Claude Code's automations (skills, hooks, CLAUDE.md) are stored as plain files and it has native git integration (staging, commits, branches, PRs) plus diff review UIs, which implicitly enables versioning and review of these artifacts. However, there's no explicit feature for versioning, reviewing, or rolling back 'automations' as a first-class concept (e.g., automation history/rollback), so this relies on inferring git usage rather than a dedicated capability.",
     "evidenceIds": [
       "claude-code-docs-3",
-      "claude-code-docs-12",
       "claude-code-docs-13",
-      "claude-code-docs-19",
       "claude-code-docs-25",
-      "claude-code-comm-15"
+      "claude-code-docs-32",
+      "claude-code-docs-33",
+      "claude-code-docs-22"
     ]
   },
   {
@@ -379,17 +406,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show strong support for cloud/background agents that plan, code, test, and open PRs (docs-2,3,13,14,26), plus remote control/teleport for review-anywhere workflows (docs-9,10). However, no dedicated 'demo' artifact and community reports of unreliable self-verification, regressions, and failure modes on real tasks (comm-16,17,19,20) temper confidence in consistent end-to-end delivery.",
+    "rationale": "Docs show strong support for cloud/background agent workflows (web sessions, long-running tasks, scheduled runs, PR creation with tests written and verified) that let a cloud agent build and test a feature and hand off a PR for review, e.g. docs-14/26/13/10/2/3. However, there's no explicit 'demo' artifact generation, and community reports describe unreliable self-verification and degrading output quality, undercutting confidence in autonomous end-to-end delivery.",
     "evidenceIds": [
-      "claude-code-docs-2",
-      "claude-code-docs-3",
-      "claude-code-docs-13",
       "claude-code-docs-14",
       "claude-code-docs-26",
-      "claude-code-docs-9",
+      "claude-code-docs-13",
       "claude-code-docs-10",
+      "claude-code-docs-2",
+      "claude-code-docs-3",
       "claude-code-comm-16",
-      "claude-code-comm-17",
       "claude-code-comm-19",
       "claude-code-comm-20"
     ]
@@ -400,12 +425,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe running Claude Code in the browser/cloud with no local setup, kicking off long-running tasks and checking back later, working on repos not stored locally, running multiple tasks in parallel, and 'teleporting' cloud sessions into a terminal—directly matching background/isolated cloud execution for longer tasks. No community evidence directly disputes this specific cloud-session feature, though general reliability concerns exist for the product overall.",
+    "rationale": "Docs describe running Claude Code in the browser with 'no local setup' to kick off long-running tasks and check back later, working on repos not local, running multiple tasks in parallel, plus mobile/web kickoff with '--teleport' to pull sessions back into terminal—clearly describing isolated cloud sessions for background delegation. No community evidence directly disputes this cloud-session feature, though general reliability complaints exist elsewhere.",
     "evidenceIds": [
-      "claude-code-docs-14",
       "claude-code-docs-26",
-      "claude-code-docs-13",
+      "claude-code-docs-14",
       "claude-code-docs-10",
+      "claude-code-docs-13",
       "claude-code-docs-9"
     ]
   },
@@ -413,15 +438,16 @@
     "productId": "claude-code",
     "storyId": "configurable-tool-permissions",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show that Claude Code's tool access is extensible via MCP (Google Drive, Jira, Slack, custom tooling) and that the Agent SDK gives developers 'full control over orchestration, tool access, and permissions,' implying configurable gating of external integrations. However, there is no concrete evidence of an engineering-lead-facing admin/allowlist UI or policy enforcement mechanism for restricting which tools/integrations are available to end users.",
+    "rationale": "Claude Code supports MCP server configuration (add/remove servers, scoped project/user config) and enterprise controls like managed policy settings and role-based permissions via Claude for Enterprise, which give admins some ability to govern tool/integration access. However, evidence lacks explicit fine-grained allow/deny lists for specific tools per engineering-lead control, and community commentary raises security/trust concerns about undisclosed injected tools and data handling, suggesting real-world control is imperfect.",
     "evidenceIds": [
-      "claude-code-docs-18",
-      "claude-code-docs-21",
-      "claude-code-docs-4",
-      "claude-code-docs-23",
-      "claude-code-docs-24"
+      "claude-code-docs-29",
+      "claude-code-docs-35",
+      "claude-code-docs-41",
+      "claude-code-docs-42",
+      "claude-code-comm-9",
+      "claude-code-comm-11"
     ]
   },
   {
@@ -430,13 +456,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe cross-device continuity: starting tasks on web/mobile and pulling them into terminal via `claude --teleport`, using Remote Control from phone/browser, and running cloud sessions accessible across devices. No community evidence specifically contradicts this feature, though it's vendor-sourced only.",
+    "rationale": "Anthropic's official docs describe explicit cross-device continuity features: 'Remote Control' to continue work from phone/browser, `claude --teleport` to pull a task started on web/mobile into a terminal, and browser-based cloud sessions for long-running tasks accessible from anywhere. These directly match the story of starting on one device and continuing on another.",
     "evidenceIds": [
       "claude-code-docs-9",
       "claude-code-docs-10",
       "claude-code-docs-13",
-      "claude-code-docs-14",
-      "claude-code-docs-26"
+      "claude-code-docs-26",
+      "claude-code-docs-14"
     ]
   },
   {
@@ -445,7 +471,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "medium",
-    "rationale": "Claude Code supports CLAUDE.md, a persistent file read at the start of every session for project context, but this is a manually maintained file rather than automatic memory built and recalled by the agent itself; community evidence even notes users must manually keep expanding these files rather than the agent auto-generating memory.",
+    "rationale": "Claude Code supports persistent context via CLAUDE.md, which is read at the start of every session, giving a form of cross-session memory, but this file must be manually authored/maintained rather than automatically built and recalled by the agent itself. Community evidence even notes users manually expanding CLAUDE.md as guardrails grow, indicating no automatic memory-building mechanism.",
     "evidenceIds": [
       "claude-code-docs-5",
       "claude-code-docs-22",
@@ -455,15 +481,16 @@
   {
     "productId": "claude-code",
     "storyId": "custom-agent-skills",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Evidence shows extensibility via MCP ('use your own custom tooling'), CLAUDE.md project instructions, and the Agent SDK for building custom agents with full control over orchestration and tool access—supporting custom specialized capabilities. However, no explicit mention of a dedicated 'Skills' packaging/marketplace mechanism appears in the evidence, so support is inferred from adjacent extensibility features rather than a purpose-built skills system.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Claude Code has explicit built-in support for custom Skills to package repeatable workflows (e.g., `/review-pr`, `/deploy-staging`), plus a plugin/MCP ecosystem and Agent SDK for deeper custom tooling, giving developers multiple ways to equip the agent with specialized capabilities.",
     "evidenceIds": [
-      "claude-code-docs-4",
-      "claude-code-docs-21",
+      "claude-code-docs-32",
+      "claude-code-docs-29",
+      "claude-code-docs-38",
       "claude-code-docs-18",
-      "claude-code-docs-22"
+      "claude-code-docs-33"
     ]
   },
   {
@@ -483,21 +510,27 @@
   {
     "productId": "claude-code",
     "storyId": "enterprise-grade-auth",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of enterprise SSO/identity provider authentication, or cloud platform login (e.g., AWS Bedrock, Google Vertex, Okta/SAML) for Claude Code; all docs and community items focus on coding features and unrelated controversies.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state Claude for Enterprise adds SSO/SAML, domain capture, role-based permissions, and compliance API for org-wide Claude Code configurations, directly addressing enterprise identity/compliance/scalability needs; API key auth also supported for programmatic scaling.",
+    "evidenceIds": [
+      "claude-code-docs-41",
+      "claude-code-docs-42",
+      "claude-code-docs-40"
+    ]
   },
   {
     "productId": "claude-code",
     "storyId": "existing-subscription-auth",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "No official doc snippet explicitly describes signing in with a Pro/Max subscription, but community evidence (comm-19) references using Claude Code 'with a pro plan' implying subscription-based login is possible, though token limits are a pain point.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Official docs explicitly state users can log in with their existing Claude Pro or Max subscription (via Claude.ai account) to authenticate Claude Code, in addition to API key auth.",
     "evidenceIds": [
-      "claude-code-comm-19"
+      "claude-code-docs-37",
+      "claude-code-docs-39",
+      "claude-code-docs-40"
     ]
   },
   {
@@ -505,23 +538,30 @@
     "storyId": "external-workflow-tool-integration",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state Claude Code supports MCP integrations to connect to Jira, Slack, and Google Drive to extend context (e.g., reading design docs, updating tickets, pulling chat data), with example use cases like referencing Slack-posted Figma designs. No community evidence contradicts this specific claim, though most third-party evidence focuses on coding quality rather than integrations.",
+    "confidence": "high",
+    "rationale": "Docs explicitly describe MCP-based connections to Jira, Slack, and Google Drive (reading design docs, updating tickets, pulling data) plus concrete examples like implementing JIRA issues and syncing Slack/Figma content, and MCP supports hundreds of external tools including Notion. No community evidence disputes this specific integration capability.",
     "evidenceIds": [
       "claude-code-docs-4",
       "claude-code-docs-21",
       "claude-code-docs-23",
-      "claude-code-docs-11"
+      "claude-code-docs-24",
+      "claude-code-docs-29",
+      "claude-code-docs-30",
+      "claude-code-docs-35"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "free-tier-account-access",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of signing in with a personal Claude account, free-tier access, or avoiding API key management—only general product feature descriptions and unrelated community complaints.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs confirm users can log in with a Claude.ai (Pro or Max) account to use Claude Code without an API key, and API key usage is presented as an alternative, not a requirement.",
+    "evidenceIds": [
+      "claude-code-docs-37",
+      "claude-code-docs-39",
+      "claude-code-docs-40"
+    ]
   },
   {
     "productId": "claude-code",
@@ -542,8 +582,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Claude Code is described as an agentic CLI/IDE assistant that plans, edits multi-file code, and shows inline diffs, but the evidence describes task-based agentic workflows, not real-time inline completions or next-edit suggestions as the developer types (unlike Copilot-style autocomplete).",
-    "evidenceIds": []
+    "rationale": "Claude Code is an agentic CLI/IDE assistant that works via prompts, diffs, and multi-file edits (e.g., inline diffs in VS Code, plan review) rather than real-time ghost-text completions or next-edit suggestions as the developer types; no evidence pack item describes autocomplete-style inline suggestions.",
+    "evidenceIds": [
+      "claude-code-docs-25",
+      "claude-code-docs-19"
+    ]
   },
   {
     "productId": "claude-code",
@@ -551,16 +594,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe reading issues, writing code, running tests, and opening PRs (docs-16, docs-3, docs-1, docs-15), and Slack integration can turn a bug report into a PR (docs-11). However, community reports describe frequent failures, unreliable self-verification, and degraded output quality that would undermine fully autonomous issue-to-PR completion without human review (comm-16, comm-17, comm-19, comm-20).",
+    "rationale": "Docs explicitly describe issue-to-PR automation (reading issues, writing code, running tests, submitting PRs; JIRA/GitHub integration; Slack bug-report-to-PR flow; @claude tagging on GitHub), directly matching the story. However, community reports raise real caveats about reliability and self-verification (e.g., destructive replace_all bugs, 'simplest fix' producing broken code, high failure rates for some users), suggesting the end-to-end flow works but often needs human review/iteration rather than being fully autonomous.",
     "evidenceIds": [
       "claude-code-docs-16",
-      "claude-code-docs-3",
-      "claude-code-docs-1",
-      "claude-code-docs-15",
+      "claude-code-docs-30",
       "claude-code-docs-11",
+      "claude-code-docs-3",
+      "claude-code-gh-1",
       "claude-code-comm-16",
-      "claude-code-comm-17",
-      "claude-code-comm-19"
+      "claude-code-comm-19",
+      "claude-code-comm-18"
     ]
   },
   {
@@ -569,9 +612,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Official docs explicitly describe a JetBrains plugin (IntelliJ IDEA, PyCharm, WebStorm, etc.) with interactive diff viewing and selection context sharing, directly matching the story's requirements.",
+    "rationale": "Official docs explicitly describe a JetBrains IDE plugin (IntelliJ IDEA, PyCharm, WebStorm) providing interactive diff viewing and selection context sharing, directly matching the story. No community evidence contradicts this specific JetBrains feature, though most hands-on commentary focuses on the CLI/terminal experience rather than the JetBrains plugin.",
     "evidenceIds": [
-      "claude-code-docs-19"
+      "claude-code-docs-19",
+      "claude-code-docs-13"
     ]
   },
   {
@@ -580,7 +624,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack indicates Claude Code provides license attribution or public-code matching references for suggested code; docs focus on code generation, git integration, and workflow automation without any provenance/plagiarism-detection features mentioned.",
+    "rationale": "No evidence pack items mention license detection, public-code/training-data provenance matching, or any attribution/similarity reference feature for AI-suggested code; the docs focus on workflow, automation, and integration capabilities instead.",
     "evidenceIds": []
   },
   {
@@ -600,15 +644,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code is explicitly documented and confirmed by users as a terminal-native coding agent that reads codebases, plans, edits code, runs tests, and integrates with git, all invoked via CLI (`claude`) rather than an IDE plugin.",
+    "rationale": "Claude Code is explicitly a terminal-based CLI agent (`cd your-project && claude`), confirmed by official docs and GitHub description ('Use it in your terminal, IDE, or tag @claude on GitHub'), with broad agentic capabilities (multi-file edits, git integration, MCP tools) run locally. Community evidence corroborates real-world usage as a terminal tool, though with mixed quality/trust feedback that doesn't negate core delivery.",
     "evidenceIds": [
+      "claude-code-docs-27",
+      "claude-code-gh-1",
       "claude-code-docs-2",
       "claude-code-docs-3",
-      "claude-code-docs-15",
-      "claude-code-docs-16",
-      "claude-code-comm-6",
       "claude-code-comm-7",
-      "claude-code-probe-3"
+      "claude-code-comm-6"
     ]
   },
   {
@@ -617,22 +660,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers codebase mapping within a single project, CLAUDE.md, MCP integrations, and multi-agent/multi-session parallelism, but there is no mention of adding multiple project directories to one session's context (e.g., a multi-root workspace feature). No docs or community evidence confirm this specific capability.",
+    "rationale": "No evidence pack items describe adding or attaching multiple project directories to a single Claude Code session for broader context; docs focus on single-project sessions, MCP integrations, subagents, and remote/cloud features but never mention multi-directory context.",
     "evidenceIds": []
   },
   {
     "productId": "claude-code",
     "storyId": "multi-ide-chat-assistant",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs confirm IDE integrations (VS Code extension with inline diffs, @-mentions, plan review, conversation history; JetBrains plugin) that provide contextual chat/help inside the editor, but Claude Code's primary interface is a terminal/CLI agent rather than a native chat pane, and community feedback raises reliability concerns about code quality and trust that temper confidence in seamless IDE experience.",
+    "rationale": "Claude Code ships official VS Code and JetBrains plugins offering inline diffs, @-mentions, plan review, and conversation history directly in the editor, plus terminal/IDE usage confirmed on GitHub.",
     "evidenceIds": [
       "claude-code-docs-25",
       "claude-code-docs-19",
-      "claude-code-docs-13",
-      "claude-code-comm-6",
-      "claude-code-comm-7"
+      "claude-code-gh-1"
     ]
   },
   {
@@ -641,10 +682,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Claude Code is Anthropic's own CLI tool that runs on Claude models (e.g., community mentions of switching between Opus and Sonnet), but there is no evidence of support for choosing among multiple AI providers (e.g., OpenAI, Google) within a session. The docs pack focuses entirely on Anthropic's Claude models and workflow integrations, not third-party model selection.",
+    "rationale": "All evidence ties Claude Code strictly to Anthropic's Claude models (via Claude.ai subscription or Anthropic API key), with no mention of supporting alternative AI providers like OpenAI or Google. While users can select among Claude model tiers (e.g., Opus vs Sonnet per community comments), there's no evidence of true multi-provider model selection.",
     "evidenceIds": [
-      "claude-code-comm-19",
-      "claude-code-docs-1"
+      "claude-code-docs-37",
+      "claude-code-docs-39",
+      "claude-code-docs-40",
+      "claude-code-comm-19"
     ]
   },
   {
@@ -653,14 +696,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm GitHub/GitLab integration (issues, PRs, code review) and Slack task routing via @Claude mentions, plus GitHub Actions-like scheduling and remote/mobile kickoff. However, there's no explicit evidence of Linear integration, and most 'from Slack/chat' claims rely on vendor docs without independent confirmation.",
+    "rationale": "Docs show explicit GitHub/GitLab integration (tagging @claude on PRs/issues, GitHub Actions/GitLab CI code review) and Slack task routing via @Claude mentions, plus MCP connectors that can pull from Jira/issue trackers. However, there's no direct evidence of native Linear integration, and the Slack/GitHub routing is documented as vendor capability without independent community confirmation of reliability.",
     "evidenceIds": [
       "claude-code-docs-11",
-      "claude-code-docs-16",
       "claude-code-docs-12",
-      "claude-code-docs-9",
-      "claude-code-docs-10",
-      "claude-code-docs-21"
+      "claude-code-docs-16",
+      "claude-code-docs-36",
+      "claude-code-gh-1",
+      "claude-code-docs-30",
+      "claude-code-docs-29"
     ]
   },
   {
@@ -678,27 +722,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly support natural-language debugging (live web app debugging via Chrome, CI failure analysis, codebase mapping/explanation, lint/error fixing) via docs-8, docs-15, docs-17, docs-20. However community reports cite frequent failure modes in self-verification, unreliable fixes, and degraded troubleshooting quality over time, indicating the capability works but with significant caveats.",
+    "rationale": "Docs explicitly describe debugging live web apps, agentic codebase understanding, CI failure analysis, and piping logs into Claude Code via natural language (docs-17, docs-8, docs-15, docs-7), directly supporting NL-driven debugging. However, community reports raise real concerns about self-verification failures and unreliable fixes during troubleshooting sessions, tempering confidence in consistent quality.",
     "evidenceIds": [
+      "claude-code-docs-17",
       "claude-code-docs-8",
       "claude-code-docs-15",
-      "claude-code-docs-17",
-      "claude-code-docs-20",
+      "claude-code-docs-7",
       "claude-code-comm-16",
       "claude-code-comm-17",
-      "claude-code-comm-19"
+      "claude-code-comm-5"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "natural-language-feature-implementation",
     "verdict": "disputed",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe plain-language, multi-file implementation as Claude Code's core capability (docs-2, docs-1, docs-20), and one community comment corroborates strong coding performance (comm-5). However, multiple hands-on reports describe serious failure modes—unreliable self-verification, destructive replace_all bugs, degraded output quality, and even a reported 100% failure rate for one user (comm-16, comm-17, comm-19, comm-20)—directly contradicting the polished vendor narrative.",
+    "rationale": "Anthropic's docs explicitly describe the core capability — 'Describe what you want in plain language. Claude Code plans the approach, writes the code across multiple files, and verifies it works' — but hands-on community reports are mixed, with some users reporting a '100% failure rate,' unreliable self-verification (e.g., broken replace_all edits), and quality degradation over time.",
     "evidenceIds": [
       "claude-code-docs-2",
-      "claude-code-docs-1",
+      "claude-code-docs-28",
+      "claude-code-docs-15",
+      "claude-code-docs-16",
       "claude-code-docs-20",
       "claude-code-comm-5",
       "claude-code-comm-16",
@@ -711,14 +757,16 @@
     "productId": "claude-code",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Claude Code offers an Agent SDK for building custom agents with 'full control over orchestration, tool access, and permissions,' and the CLI is designed to be composable/scriptable (piping, CI use), suggesting strong programmatic access. However, there's no explicit evidence that every UI-specific feature (e.g., Remote Control, teleport, IDE diff viewers, GitHub Code Review UI) has a documented equivalent API/SDK parity.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Claude Code exposes a scriptable CLI, headless/CI modes, hooks, and an Agent SDK that gives 'full control over orchestration, tool access, and permissions' for building custom agents, plus direct API-key access bypassing the interactive UI login. However, some features (Remote Control, teleport, browser sessions, GitHub/Slack routing) are described as UI/product integrations rather than documented as fully API-addressable, so parity isn't explicitly claimed end-to-end.",
     "evidenceIds": [
       "claude-code-docs-18",
       "claude-code-docs-7",
-      "claude-code-docs-26",
-      "claude-code-docs-14"
+      "claude-code-docs-36",
+      "claude-code-docs-39",
+      "claude-code-docs-40",
+      "claude-code-docs-33"
     ]
   },
   {
@@ -727,7 +775,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions any data export feature, open-format export, or account/data portability mechanism for Claude Code; the evidence is entirely about coding capabilities, integrations, and community critiques unrelated to data export or leaving the platform.",
+    "rationale": "There is no evidence in the pack of any data export feature, open-format export, or account/data portability tooling in Claude Code; the evidence focuses on coding workflows, integrations, and community criticism (including closed-source concerns), not user data export/portability.",
     "evidenceIds": []
   },
   {
@@ -735,12 +783,11 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence Claude Code's source is available under an open license; community commentary explicitly notes it is not FOSS (unlike competitors such as Codex CLI), and while parts of its JS bundle are inspectable, this is not accompanied by any open-source license grant.",
+    "confidence": "high",
+    "rationale": "Claude Code is closed-source; community evidence explicitly contrasts it with FOSS alternatives ('Codex CLI is FOSS, unlike Claude Code'), and no docs or repo evidence indicates any open-license source availability—only compiled distribution and CLI usage instructions are provided.",
     "evidenceIds": [
       "claude-code-comm-4",
-      "claude-code-comm-14",
-      "claude-code-comm-8"
+      "claude-code-gh-1"
     ]
   },
   {
@@ -749,27 +796,32 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Claude Code is a closed-source, proprietary CLI/agent that depends on Anthropic's hosted API; there is no evidence of a self-hostable core product, and community evidence explicitly contrasts it with FOSS alternatives (Codex CLI) since Claude Code is not open source.",
+    "rationale": "Claude Code is a closed-source CLI that requires an Anthropic API key or Claude.ai/Enterprise login to function (claude-code-docs-37/39/40); there is no self-hosted deployment option in the docs. Community evidence explicitly contrasts it with FOSS alternatives, confirming it cannot be self-hosted.",
     "evidenceIds": [
+      "claude-code-docs-37",
+      "claude-code-docs-39",
+      "claude-code-docs-40",
       "claude-code-comm-4"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "parallel-agent-fleets",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Vendor docs explicitly describe spawning multiple coordinated agents, running multiple parallel sessions, kicking off long-running/scheduled tasks, and cloud/remote sessions that persist without local presence (docs-6,8,9,10,13,14,26), directly supporting the story. However, this is entirely vendor-sourced; community evidence focuses on quality/reliability issues over time (degradation, failure modes) rather than confirming true multi-day autonomous fleet operation, so independent validation of 'hours or days' unattended parallel autonomy is missing.",
+    "rationale": "Docs explicitly describe spawning multiple coordinated agents, running long-running/background tasks, scheduling, and parallel cloud sessions (docs-6/34/14/26/8/13/18), directly matching the 'fleets working for hours/days' story. However, community reports describe unreliable self-verification, degrading quality over extended sessions, and repeated failures when left to work autonomously (comm-16, comm-17, comm-19, comm-20), casting doubt on how well this works unsupervised over long horizons.",
     "evidenceIds": [
       "claude-code-docs-6",
-      "claude-code-docs-8",
-      "claude-code-docs-9",
-      "claude-code-docs-10",
-      "claude-code-docs-13",
+      "claude-code-docs-34",
       "claude-code-docs-14",
       "claude-code-docs-26",
-      "claude-code-comm-15",
+      "claude-code-docs-8",
+      "claude-code-docs-13",
+      "claude-code-docs-18",
+      "claude-code-comm-16",
+      "claude-code-comm-17",
+      "claude-code-comm-19",
       "claude-code-comm-20"
     ]
   },
@@ -777,28 +829,30 @@
     "productId": "claude-code",
     "storyId": "parallel-task-attempt-comparison",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs mention running multiple sessions side by side and running multiple tasks in parallel, which supports parallel task attempts and visual comparison of diffs, but no explicit feature for structured comparison and selection of one result over another (e.g., no built-in 'choose winning attempt' workflow) is documented.",
+    "rationale": "Claude Code docs mention running multiple sessions side by side and running multiple tasks in parallel (e.g., via cloud/browser sessions), and reviewing diffs visually, which supports launching parallel attempts and comparing outputs. However, there's no explicit feature for spawning multiple independent attempts at the same task and selecting the best result—parallelism is mostly framed as splitting subtasks or running unrelated tasks concurrently.",
     "evidenceIds": [
       "claude-code-docs-13",
       "claude-code-docs-14",
-      "claude-code-docs-26"
+      "claude-code-docs-26",
+      "claude-code-docs-6",
+      "claude-code-docs-34"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "partner-agent-app-integration",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Claude Code supports MCP integrations to pull in third-party tools/data (Jira, Slack, Google Drive, custom tooling) and offers an Agent SDK for building custom agents, which provides some ecosystem extensibility, but there is no explicit evidence of a marketplace or first-class support for integrating other partner-built 'agent apps' (as opposed to simple tool/data connectors) into engineering workflows.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Claude Code integrates with an ecosystem of third-party partner-built MCP servers (e.g., Notion, Slack, Jira, Google Drive) via the Model Context Protocol, letting engineering leads plug external agent tools into their coding workflows, and even scaffold new MCP servers with an official plugin.",
     "evidenceIds": [
-      "claude-code-docs-4",
+      "claude-code-docs-29",
+      "claude-code-docs-35",
       "claude-code-docs-21",
-      "claude-code-docs-18",
-      "claude-code-docs-11",
-      "claude-code-docs-16"
+      "claude-code-docs-31",
+      "claude-code-docs-38"
     ]
   },
   {
@@ -807,7 +861,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe CLAUDE.md, a markdown file placed in the project root that Claude Code reads at the start of every session, used to set coding standards, architecture decisions, preferred libraries, and review checklists—directly matching the story. Community evidence confirms real-world usage of CLAUDE.md files for guiding agent behavior, though some users note needing to expand them over time.",
+    "rationale": "Docs explicitly describe CLAUDE.md, a markdown file placed in the project root that Claude Code reads at the start of every session, used to set coding standards, architecture decisions, preferred libraries, and review checklists—directly matching the story. Some community evidence notes users need to expand CLAUDE.md heavily over time, but core capability is well documented and confirmed.",
     "evidenceIds": [
       "claude-code-docs-5",
       "claude-code-docs-22",
@@ -820,13 +874,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show concrete diff-review support (inline diffs in VS Code/JetBrains, 'Review diffs visually' in web UI) and workflow integration for running tests/CI and automated PR code review (GitHub Code Review, running tests as part of workflow). However community feedback raises real caveats: 'You absolutely can't trust it to self-verify' and notes Claude is a better reviewer than implementer, implying pre-merge checks still need human oversight.",
+    "rationale": "Claude Code offers diff inspection via VS Code/JetBrains inline diff viewers, web/desktop 'review diffs visually' features, git integration, and automated GitHub PR code review plus CI hooks for lint/tests before commits, directly supporting pre-merge checks. However, community evidence raises concerns about reliability of self-verification and trustworthiness of automated changes, and there's no dedicated 'diff/check' review tool beyond IDE integrations and hooks, so it's a partial fit with caveats.",
     "evidenceIds": [
       "claude-code-docs-12",
       "claude-code-docs-13",
-      "claude-code-docs-16",
-      "claude-code-docs-19",
       "claude-code-docs-25",
+      "claude-code-docs-19",
+      "claude-code-docs-33",
+      "claude-code-docs-36",
       "claude-code-comm-16",
       "claude-code-comm-18"
     ]
@@ -837,7 +892,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data residency, regional storage options, or configurable data location controls for Claude Code; all docs and community items focus on functionality, workflow, and trust/security concerns unrelated to data residency choice.",
+    "rationale": "No evidence in the pack addresses data residency or regional storage controls for Claude Code; only enterprise SSO/compliance API features are mentioned, with nothing about choosing storage region.",
     "evidenceIds": []
   },
   {
@@ -846,7 +901,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address data-training opt-out, privacy settings, or data usage controls for Claude Code; some community items even raise trust/security concerns but nothing confirms or denies a training opt-out mechanism.",
+    "rationale": "No evidence pack items address data training opt-out or a 'don't train on my data' setting for Claude Code; enterprise items mention SSO/compliance but not training data controls, and community evidence even raises trust/security concerns rather than confirming such a control.",
     "evidenceIds": []
   },
   {
@@ -855,7 +910,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or community discussion of data retention settings, deletion controls, or privacy configuration options for Claude Code; instead it covers features, workflows, and unrelated trust/security concerns (e.g., anti-distillation, undercover mode).",
+    "rationale": "The evidence pack contains no documentation or community discussion of data retention policies, deletion controls, or privacy configuration options for Claude Code; instead it covers coding features and unrelated trust/security controversies (e.g., anti-distillation, undercover mode).",
     "evidenceIds": []
   },
   {
@@ -863,8 +918,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or claims about telemetry/usage-tracking opt-out settings for Claude Code. Community evidence instead raises privacy concerns (e.g., anti-distillation telemetry injection, undercover mode stripping identifying info) but does not describe or confirm an opt-out mechanism.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no documentation or claims about telemetry settings, opt-out flags, or usage-tracking controls in Claude Code. Some community comments raise general trust/privacy concerns (e.g., anti-distillation telemetry, undercover mode) but do not address an actual opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -886,16 +941,16 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs claim Claude Code can map codebases to find root causes, debug live apps in Chrome, analyze CI failures overnight, and 'verifies it works' after fixes—directly matching the story. However, hands-on community reports describe unreliable self-verification (e.g., a replace_all bug creating GROQ_URL=GROQ_URL) and users noting it 'can't trust it to self-verify' or degrading over time, undercutting the verification claim.",
+    "rationale": "Docs claim Claude Code can debug live web apps, analyze CI failures overnight, and 'verifies it works' after writing fixes (docs-2/17/8), suggesting strong reproduce/root-cause/verify support. However, hands-on community reports directly contradict the verification claim, citing self-inflicted bugs (e.g., replace_all corrupting a constant) and stating 'you absolutely can't trust it to self-verify,' plus reports of degrading output quality and high failure rates on iterative fixes.",
     "evidenceIds": [
       "claude-code-docs-2",
-      "claude-code-docs-15",
       "claude-code-docs-17",
       "claude-code-docs-8",
-      "claude-code-docs-16",
+      "claude-code-docs-15",
       "claude-code-comm-16",
+      "claude-code-comm-17",
       "claude-code-comm-19",
-      "claude-code-comm-20"
+      "claude-code-comm-5"
     ]
   },
   {
@@ -917,13 +972,15 @@
     "storyId": "shared-knowledge-workspace",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "CLAUDE.md provides a per-project shared context file read by the whole team's sessions, and MCP integrations let Claude Code pull in docs/tickets/chat data, which partially supports a 'common source of truth' use case—but there's no dedicated shared-workspace or knowledge-base feature; it's a per-repo config file, not a team workspace hub.",
+    "confidence": "medium",
+    "rationale": "Claude Code supports project-level CLAUDE.md files as a shared source of truth for coding standards and architecture decisions, and MCP connectors let it pull in docs from Google Drive, Jira, and Slack, plus shareable 'skills' for team workflows. However, there's no dedicated feature for aggregating docs and repos into a unified team workspace/knowledge base—these are scattered context mechanisms rather than a single shared workspace construct.",
     "evidenceIds": [
       "claude-code-docs-5",
       "claude-code-docs-22",
+      "claude-code-docs-21",
       "claude-code-docs-4",
-      "claude-code-docs-21"
+      "claude-code-docs-32",
+      "claude-code-docs-29"
     ]
   },
   {
@@ -932,13 +989,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe running Claude Code non-interactively for automation: piping logs, running in CI, chaining with other tools, scheduling recurring tasks, and using the Agent SDK for custom orchestration—directly supporting scripted, non-interactive workflow automation.",
+    "rationale": "Docs explicitly describe non-interactive/automation usage: composable Unix-philosophy piping, running in CI, GitHub Actions/GitLab CI/CD automation of code review and issue triage, scheduled recurring tasks, and API-key-based non-interactive auth for scripts. Community evidence corroborates real-world CLI/CI usage though with mixed reliability complaints unrelated to the scripting axis itself.",
     "evidenceIds": [
       "claude-code-docs-7",
       "claude-code-docs-8",
-      "claude-code-docs-18",
-      "claude-code-docs-16",
-      "claude-code-docs-14"
+      "claude-code-docs-36",
+      "claude-code-docs-39",
+      "claude-code-docs-40",
+      "claude-code-gh-1"
     ]
   },
   {
@@ -947,21 +1005,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage/training opt-out policies for Claude Code; the docs excerpts focus on features/capabilities and community items focus on quality/security anecdotes, not training data policy or opt-out controls.",
+    "rationale": "No evidence in the pack addresses data-use/training opt-out policies for Claude Code; the pack covers features, IAM/enterprise SSO, and community sentiment but not training-data usage controls.",
     "evidenceIds": []
   },
   {
     "productId": "claude-code",
     "storyId": "unified-multi-session-workspace",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe a unified web/desktop interface where you can review diffs, run multiple sessions side by side, schedule recurring tasks, and kick off cloud sessions, plus spawning multiple coordinated agents from a lead agent — directly matching the story. Evidence is vendor-documentation only with no independent hands-on confirmation of this specific multi-session workspace UI.",
+    "rationale": "Docs describe a dashboard for reviewing diffs, running multiple sessions side by side, scheduling recurring tasks, and kicking off cloud sessions, plus multi-agent orchestration with a 'lead agent' and cross-device teleport/remote control — directly supporting a unified multi-session workspace for a lead. However, all evidence is vendor documentation with no independent/community confirmation of this specific workspace UX, and other community feedback raises general reliability/trust concerns about Claude Code's operation.",
     "evidenceIds": [
       "claude-code-docs-13",
-      "claude-code-docs-14",
       "claude-code-docs-6",
-      "claude-code-docs-26"
+      "claude-code-docs-34",
+      "claude-code-docs-14",
+      "claude-code-docs-26",
+      "claude-code-docs-9",
+      "claude-code-docs-10"
     ]
   },
   {
@@ -970,23 +1031,26 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Docs mention general 'automatic code review on every PR' and codebase-wide explanation/search capabilities, which could surface security issues, and lint-fixing is cited as a supported task, but no evidence specifically describes security vulnerability detection, contextual explanation of vulnerabilities, or automated security fixes.",
+    "rationale": "Claude Code offers general automatic code review on PRs and CI-integrated review/triage (docs-12, docs-36), which could surface security issues, but no evidence explicitly describes dedicated vulnerability detection, contextual security explanations, or automatic security fixes.",
     "evidenceIds": [
       "claude-code-docs-12",
-      "claude-code-docs-15",
-      "claude-code-docs-1"
+      "claude-code-docs-36",
+      "claude-code-docs-16"
     ]
   },
   {
     "productId": "codex",
     "storyId": "agentic-agent-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Probes directly checked for an llms.txt or agent-oriented docs.md file on OpenAI's Codex documentation and both returned 404, and no other evidence shows Codex can be pointed at an llms.txt-style feed for agent consumption.",
+    "rationale": "No llms.txt exists (404 confirmed by probe), but OpenAI does publish machine-readable markdown documentation for Codex CLI (learn.chatgpt.com/docs/codex/cli.md) that an agent could ingest directly, as evidenced by the many docs entries sourced from that .md file.",
     "evidenceIds": [
       "codex-probe-1",
-      "codex-probe-2"
+      "codex-probe-2",
+      "codex-probe-3",
+      "codex-docs-8",
+      "codex-docs-24"
     ]
   },
   {
@@ -1024,14 +1088,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codex is designed exactly as a delegatable AI coding agent: users can delegate longer tasks to run in cloud/isolated environments or CLI, work in parallel, and return to review diffs/PRs (codex-docs-1,3,5,6). Community evidence confirms real-world heavy use and delegation, though with caveats about speed, quota limits, and inconsistent quality across models.",
+    "rationale": "Codex is fundamentally an AI coding agent designed to have tasks delegated to it—via CLI, IDE extension, desktop app, or cloud—covering exploring code, editing files, running commands, and returning results for review (codex-docs-6, codex-docs-9, codex-docs-15, codex-gh-1). Community evidence confirms real-world delegation usage, with some praising it as equivalent to a junior engineer and others noting slowness/rate-limit friction, but the core delegate-and-return workflow is well substantiated.",
     "evidenceIds": [
-      "codex-docs-1",
-      "codex-docs-3",
-      "codex-docs-5",
       "codex-docs-6",
       "codex-docs-9",
+      "codex-docs-15",
       "codex-gh-1",
+      "codex-docs-19",
       "codex-comm-8",
       "codex-comm-18"
     ]
@@ -1042,13 +1105,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codex CLI explicitly supports non-interactive, headless execution ('Run a non-interactive command in a repeatable workflow') and cloud task delegation/parallel runs without tying up local machines, both suited for CI automation; it can also be invoked via npm install and JSON-RPC/MCP server mode for programmatic control.",
+    "rationale": "Codex CLI explicitly supports non-interactive execution ('Run a non-interactive command in a repeatable workflow'), cloud task delegation with parallel execution, and an MCP server mode for programmatic control, all indicating headless/CI-suitable automation. GitHub install via npm and API key auth further support scripted/CI use, though some caveats exist (MCP server deprecated in favor of app server, some community friction with agentic reliability).",
     "evidenceIds": [
       "codex-docs-19",
       "codex-docs-3",
       "codex-docs-6",
+      "codex-gh-6",
+      "codex-gh-4",
       "codex-gh-5",
-      "codex-gh-6"
+      "codex-docs-23"
     ]
   },
   {
@@ -1057,12 +1122,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Codex CLI explicitly supports adding local or remote MCP servers, authenticating, and inspecting/using their tools, with shared config across CLI, IDE extension, and desktop app; docs even show the 'codex mcp add' command syntax.",
+    "rationale": "Codex docs explicitly support adding local or remote MCP servers and inspecting their tools before use, shared across CLI, IDE, and desktop clients, plus a codex mcp add command with env config support. This is direct first-party documentation of MCP server integration for tool use.",
     "evidenceIds": [
       "codex-docs-16",
-      "codex-docs-20",
       "codex-docs-21",
-      "codex-docs-22"
+      "codex-docs-22",
+      "codex-docs-26",
+      "codex-docs-27"
     ]
   },
   {
@@ -1071,13 +1137,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex documents both connecting to external MCP servers as a client (codex-docs-16, codex-docs-21/22) and exposing itself as an MCP server for other agents to connect to (codex-gh-6). However, the official 'codex mcp-server' interface is explicitly marked experimental and now deprecated in favor of an unspecified 'Codex app server' (codex-docs-23), creating uncertainty about the stability and continuity of this integration path.",
+    "rationale": "Codex officially supports MCP: it can act as an MCP client (add local/remote MCP servers via `codex mcp add`, shared config across CLI/IDE/desktop) and can be run as an MCP server for other clients to connect to (`codex mcp-server`). However, the server-side interface is explicitly labeled experimental and now deprecated in favor of an unspecified 'Codex app server', signaling instability for agent-to-agent integration via MCP.",
     "evidenceIds": [
       "codex-gh-6",
+      "codex-docs-23",
       "codex-docs-16",
       "codex-docs-21",
-      "codex-docs-22",
-      "codex-docs-23"
+      "codex-docs-26"
     ]
   },
   {
@@ -1085,15 +1151,18 @@
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Codex is fundamentally a natural-language coding agent: users describe tasks via prompts in CLI, IDE, web, or Slack/Linear/GitHub and it plans, edits files, runs commands, and opens PRs. Docs and community posts confirm broad agentic NL-driven workflows, though some reviews note inconsistent agentic reliability and rate limits.",
+    "confidence": "medium",
+    "rationale": "Codex is explicitly designed as a natural-language coding agent — docs describe delegating tasks, prompting with images, interactive composer, and CLI chat sessions (codex-docs-6, -9, -12, -13, -19), and community reports confirm real-world use of NL prompts to drive edits and fixes (codex-comm-8, -14, -18), though some users note it requires more explicit prompting on lighter models (codex-comm-15).",
     "evidenceIds": [
-      "codex-docs-8",
-      "codex-docs-9",
       "codex-docs-6",
-      "codex-docs-1",
-      "codex-comm-18",
-      "codex-comm-8"
+      "codex-docs-9",
+      "codex-docs-12",
+      "codex-docs-13",
+      "codex-docs-19",
+      "codex-gh-1",
+      "codex-comm-8",
+      "codex-comm-14",
+      "codex-comm-18"
     ]
   },
   {
@@ -1102,15 +1171,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Codex ships an official, actively documented CLI (npm install -g @openai/codex) that supports interactive coding, non-interactive workflows, MCP integration, sandboxing controls, and cloud task delegation, confirmed by both OpenAI docs and GitHub repo. Community comments corroborate real hands-on usage of the CLI, though with mixed sentiment on performance/UX.",
+    "rationale": "Codex ships an official, actively maintained CLI (installable via npm, open-sourced on GitHub) that runs locally, supports interactive and non-interactive modes, MCP integration, sandboxing, and resuming sessions, backed by extensive official documentation and confirmed by community usage discussions.",
     "evidenceIds": [
       "codex-gh-1",
       "codex-gh-5",
       "codex-docs-8",
       "codex-docs-9",
-      "codex-docs-15",
+      "codex-docs-17",
       "codex-docs-19",
-      "codex-docs-16",
+      "codex-docs-24",
       "codex-comm-8",
       "codex-comm-9"
     ]
@@ -1119,26 +1188,27 @@
     "productId": "codex",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Codex exposes a documented MCP JSON-RPC server interface and CLI non-interactive/scriptable mode for programmatic control, but the docs mark the MCP server command as deprecated in favor of an undocumented 'Codex app server,' and community evidence confirms the underlying gpt-5.3-codex model API access isn't yet enabled ('We are working to safely enable API access soon').",
+    "rationale": "Codex does expose API-driven paths — the CLI supports API-key auth (codex-gh-4), a JSON-RPC MCP server interface for programmatic control (codex-gh-6), and OpenAI's broader documented REST API with OpenAPI spec (codex-gh-9, codex-docs-29) — but the MCP server route is now marked deprecated (codex-docs-23) and community evidence notes the flagship Codex model isn't yet available via API ('gpt-5.3-codex isn't available on the API yet', codex-comm-5), indicating the documented API path is incomplete or in flux rather than a fully supported first-class interface.",
     "evidenceIds": [
+      "codex-gh-4",
       "codex-gh-6",
       "codex-docs-23",
-      "codex-docs-19",
-      "codex-docs-22",
+      "codex-gh-9",
+      "codex-docs-29",
       "codex-comm-5"
     ]
   },
   {
     "productId": "codex",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers authentication via ChatGPT account or a generic API key, sandboxing/approval modes for local execution, and MCP server integration, but there is no mention of issuing scoped or least-privilege API credentials specifically for an agent (e.g., granular permission scopes, token minting with restricted access).",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "OpenAI's platform offers RBAC to scope API/dashboard access at org or project level, and Codex can be used via an API key, but there's no evidence of a Codex-specific mechanism for issuing scoped, least-privilege credentials to an agent itself (e.g., fine-grained per-task tokens or sandboxed permission grants tied to API keys).",
     "evidenceIds": [
-      "codex-gh-3",
+      "codex-docs-28",
       "codex-gh-4",
       "codex-docs-17"
     ]
@@ -1147,14 +1217,15 @@
     "productId": "codex",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Codex offers some programmatic hooks — API key access (with 'additional setup' required) and an MCP server JSON-RPC interface for local control — but there's no evidence of dedicated official SDKs (e.g., Python/Node client libraries) for building against Codex, and the newest model reportedly isn't yet available via API, while the MCP server interface itself is flagged as experimental/deprecated.",
+    "rationale": "There's evidence of API-level access (API key support, OpenAI REST API OpenAPI spec, multi-language API reference with code samples, MCP JSON-RPC interface for programmatic control) suggesting Codex/OpenAI can be built against via official SDKs. However, this evidence is mostly about the general OpenAI platform API rather than a Codex-specific SDK, and community evidence notes the actual gpt-5.3-codex model 'isn't available on the API yet', undercutting full SDK support for Codex itself.",
     "evidenceIds": [
       "codex-gh-4",
-      "codex-comm-5",
+      "codex-gh-9",
+      "codex-docs-29",
       "codex-gh-6",
-      "codex-docs-23"
+      "codex-comm-5"
     ]
   },
   {
@@ -1163,7 +1234,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Codex can act as an MCP server/client and integrate with GitHub, Slack, etc., but there is no mention of a webhook subscription mechanism for external event notifications; MCP is a different protocol, not webhooks.",
+    "rationale": "No evidence in the pack of any webhook subscription mechanism for Codex; integrations mentioned are GitHub/GitLab/Linear/Slack triggers, MCP servers, and REST API, but no webhook event subscription capability is documented.",
     "evidenceIds": []
   },
   {
@@ -1172,52 +1243,50 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Codex supports cloud tasks triggered by external events (new PRs/issues, Slack messages, Linear issues) and can run delegated tasks in parallel cloud environments, which enables some trigger-based automation, but there is no evidence of true cron-like scheduling or a persistent always-on agent that proactively monitors and fixes software without a triggering event.",
+    "rationale": "Codex supports triggering cloud tasks from external events like GitHub PRs, Linear issues, or Slack messages, and can run tasks in parallel in isolated cloud environments, which enables some autonomous, trigger-based workflows. However, there is no evidence of a true scheduling/cron capability or persistent 'always-on' agent that proactively monitors and fixes software without an external trigger or human prompt.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-2",
-      "codex-docs-6",
       "codex-docs-3",
-      "codex-docs-5"
+      "codex-docs-6"
     ]
   },
   {
     "productId": "codex",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "No evidence pack items describe an interactive API reference with runnable examples; documentation shown is CLI/agent usage docs, and probes for docs pages (llms.txt, docs.md) returned 404s.",
+    "rationale": "OpenAI's docs show a request/response API reference with per-language runnable code samples and live example bodies (codex-docs-29), plus a machine-readable OpenAPI spec (codex-gh-9), but this reference is for the general OpenAI Responses API rather than a Codex-specific interactive API reference, and no community evidence confirms hands-on use of it as an interactive playground.",
     "evidenceIds": [
-      "codex-probe-1",
-      "codex-probe-2"
+      "codex-docs-29",
+      "codex-gh-9"
     ]
   },
   {
     "productId": "codex",
     "storyId": "api-key-auth",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "GitHub docs confirm API key auth is possible but explicitly note it 'requires additional setup' and that account login is the recommended path; community evidence further shows the newest model isn't even available via API yet, indicating API-key auth is a secondary, less-supported option.",
+    "rationale": "OpenAI's own docs confirm Codex CLI supports authentication via API key as an alternative to ChatGPT account login, but explicitly note this 'requires additional setup' and the primary/recommended flow is ChatGPT sign-in; community evidence also notes the latest Codex model wasn't yet available via API, suggesting API-key auth can lag behind the account-based experience.",
     "evidenceIds": [
       "codex-gh-3",
       "codex-gh-4",
+      "codex-gh-7",
       "codex-comm-5"
     ]
   },
   {
     "productId": "codex",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "There is no evidence of a downloadable OpenAPI or machine-readable API spec; probes for llms.txt and docs.md both returned 404s, and the MCP server interface is a protocol description, not a machine-readable API spec artifact.",
+    "rationale": "OpenAI publishes a dedicated GitHub repo describing the REST API in OpenAPI 3.1 format, which is explicitly machine-readable and downloadable, and the API reference docs provide structured request/response schemas per endpoint.",
     "evidenceIds": [
-      "codex-probe-1",
-      "codex-probe-2",
-      "codex-gh-6",
-      "codex-docs-23"
+      "codex-gh-9",
+      "codex-docs-29"
     ]
   },
   {
@@ -1226,10 +1295,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex offers isolated cloud execution environments and a CLI sandbox mode that restricts file edits/command execution until approved, which functionally shields local/production systems from agent actions (codex-docs-1, codex-docs-3, codex-docs-17). However, this is general execution sandboxing rather than a dedicated 'test data' sandbox, and community reports raise doubts about whether the sandbox reliably prevents access to sensitive files (codex-comm-7, codex-comm-10).",
+    "rationale": "Codex offers isolated cloud environments for running tasks with configurable per-repo setup, and CLI sandbox modes with defined writable roots for file edits/commands, both of which support sandboxed testing away from live systems. However, community commentary raises real concerns about whether local-mode sandboxing actually restricts access to sensitive filesystem data, suggesting the isolation guarantee is not airtight in practice.",
     "evidenceIds": [
       "codex-docs-1",
-      "codex-docs-3",
+      "codex-docs-4",
       "codex-docs-17",
       "codex-comm-7",
       "codex-comm-10"
@@ -1238,13 +1307,14 @@
   {
     "productId": "codex",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "There is no evidence of a documented API versioning scheme or deprecation policy; the only deprecation-related item shows an ad hoc note that 'codex mcp-server is deprecated, use the Codex app server instead' with no formal policy, versioning scheme, or migration timeline. The API itself is noted as not yet generally available (codex-comm-5), further undercutting any claim of a stable, versioned, documented API contract.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "There's a machine-readable OpenAPI 3.1 spec for the OpenAI REST API and one example of a deprecation notice (codex mcp-server deprecated in favor of the app server), but no evidence of a documented, formal API versioning scheme or deprecation policy with timelines/guarantees.",
     "evidenceIds": [
       "codex-docs-23",
-      "codex-comm-5"
+      "codex-gh-9",
+      "codex-docs-29"
     ]
   },
   {
@@ -1253,11 +1323,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Codex CLI docs explicitly mention exploring unfamiliar code and inspecting code as a starting workflow (codex-docs-9, codex-docs-8), and its terminal/agent design supports asking questions about a repo, but there's no dedicated codebase-mapping, architecture-visualization, or onboarding feature described—capability is implicit within general coding-agent use rather than a purpose-built understanding tool.",
+    "rationale": "Docs explicitly state Codex CLI can be used to 'explore unfamiliar code, plan a change, edit files' and 'inspect code' within a repo, supporting codebase-understanding use cases, but there's no dedicated codebase-mapping/visualization feature—only general agentic file/command access. Community feedback is mixed on real-world reliability of the agent's reasoning about codebases.",
     "evidenceIds": [
       "codex-docs-9",
       "codex-docs-8",
-      "codex-docs-13"
+      "codex-gh-1",
+      "codex-comm-3",
+      "codex-comm-13"
     ]
   },
   {
@@ -1266,14 +1338,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe Codex making edits, running commands, and opening pull requests when work is ready ('Inspect the summary and diff, request a follow-up, or open a pull request when the result is ready'), and it can start from GitHub PRs/issues. However, there's no explicit mention of staging changes, writing commit messages, or creating branches as discrete controllable steps, and community feedback raises concerns about sandboxing/permissions and reliability of agentic actions.",
+    "rationale": "Docs confirm Codex can inspect diffs, request follow-ups, and open pull requests when tasks complete in cloud mode, and CLI supports editing files and running commands, but there is no explicit mention of staging changes, writing commit messages, or creating branches as discrete developer-controllable actions—only PR opening is directly evidenced.",
     "evidenceIds": [
       "codex-docs-5",
       "codex-docs-9",
-      "codex-docs-2",
-      "codex-gh-1",
-      "codex-comm-7",
-      "codex-comm-10"
+      "codex-docs-15",
+      "codex-docs-19"
     ]
   },
   {
@@ -1282,11 +1352,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Codex supports code review via CLI ('run a dedicated review against uncommitted changes, a commit, or a base branch' reporting prioritized findings) and can open pull requests from cloud tasks, but there's no evidence of automatic review triggered on every PR (e.g., GitHub PR-triggered review bot) as opposed to manually invoked review commands.",
+    "rationale": "Codex CLI supports a dedicated 'review' command that reports prioritized findings against uncommitted changes, commits, or a base branch without modifying the working tree, and cloud tasks can be started from GitHub PRs and result in opening a pull request. However, there is no evidence of automatic, native GitHub PR-triggered review comments integrated into the PR UI itself—review is invoked manually via CLI/cloud task rather than automatically on every PR.",
     "evidenceIds": [
       "codex-docs-10",
-      "codex-docs-5",
-      "codex-docs-2"
+      "codex-docs-2",
+      "codex-docs-5"
     ]
   },
   {
@@ -1311,7 +1381,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "There is no evidence Codex automatically selects the best model per task; users must choose a model (e.g., gpt-5.3-codex, spark variant) and community comments describe manually switching between models/providers due to speed or quality issues rather than any automatic model-selection feature.",
+    "rationale": "No evidence describes an automatic model-selection feature; docs mention model variants (e.g., gpt-5.3-codex, spark) but users manually choose or switch models, and community comments describe manually switching to Claude/Gemini when limits hit rather than the tool auto-selecting.",
     "evidenceIds": []
   },
   {
@@ -1334,8 +1404,8 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Codex evidence covers task delegation, integrations (GitHub/Slack/Linear), MCP server connectivity, and CLI automation, but there is no mention of user-defined rules that automatically trigger actions based on events (e.g., event-driven triggers/webhooks configured by the user). Task initiation appears to be manual (starting from an issue/PR/chat) rather than rule-based automatic triggering.",
+    "confidence": "low",
+    "rationale": "Codex is documented as a coding agent triggered by user prompts, delegated tasks, or starting points like GitHub/Slack/Linear items, but there is no evidence of user-defined rules that automatically trigger actions on arbitrary events (e.g., webhooks, schedules, conditional triggers).",
     "evidenceIds": []
   },
   {
@@ -1344,21 +1414,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Codex can run tasks async/in parallel, integrate with GitHub/Slack/Linear, and run non-interactive workflow commands, but nothing describes scheduling recurring/cron-like jobs or workflows on a timer basis.",
+    "rationale": "The evidence describes Codex's cloud task delegation, parallel runs, CLI automation, and integrations (GitHub, Slack, MCP) but contains no mention of scheduling, cron-like triggers, or recurring/automated workflow execution.",
     "evidenceIds": []
   },
   {
     "productId": "codex",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Codex supports reviewing diffs/summaries and running dedicated code reviews before opening a PR (git-based workflow implies some rollback via version control), and skills/plugins can be packaged for reuse, but there's no explicit evidence of a versioning or rollback system for the automations/skills themselves.",
+    "rationale": "Codex offers code review (diffs, dedicated review runs against commits/branches) and resumable chat sessions, and being git-based implies inherent versioning/rollback of code changes, but there is no explicit evidence of a first-class feature to version, review, or roll back 'automations' (e.g., skills, workflows, agent configs) themselves.",
     "evidenceIds": [
       "codex-docs-5",
       "codex-docs-10",
-      "codex-docs-20",
-      "codex-docs-11"
+      "codex-docs-11",
+      "codex-docs-24",
+      "codex-docs-20"
     ]
   },
   {
@@ -1386,14 +1457,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Codex docs clearly describe a cloud offering where tasks run in isolated cloud environments, in parallel, without tying up the local machine, and users can delegate a longer task and return when ready, then review diffs and open PRs. This directly matches the story, though community evidence raises caveats about speed, quotas, and reliability rather than disputing the core capability's existence.",
+    "rationale": "Docs clearly describe Codex cloud running tasks in isolated cloud environments in parallel, started from web/GitHub/GitLab/Linear/Slack, with results returned as diffs/PRs so developers can delegate and return later—directly matching the story. Community evidence corroborates real usage of Codex agents for coding tasks, though some complaints about speed/limits suggest caveats rather than contradicting the core capability.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-3",
       "codex-docs-6",
-      "codex-docs-4",
       "codex-docs-5",
-      "codex-docs-15"
+      "codex-docs-2",
+      "codex-comm-18"
     ]
   },
   {
@@ -1402,12 +1473,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs show Codex supports adding/removing MCP servers, authenticating them, and inspecting/approving tools and sandbox permissions before use, giving some control over external integrations at the individual/config level. However, this is CLI/session-level configuration rather than a centralized engineering-lead policy control, and community reports raise concerns about the agent reading sensitive data without explicit permission, undercutting full trust in this control.",
+    "rationale": "Codex lets users add/configure MCP servers and inspect available tools before use, and OpenAI's platform offers RBAC to scope org/project access, giving admins some control over integrations. However, this is mostly per-session/config-based rather than a centralized engineering-lead governance layer, and community reports raise concerns about tools acting on sensitive data without explicit gating.",
     "evidenceIds": [
       "codex-docs-16",
       "codex-docs-17",
+      "codex-docs-20",
       "codex-docs-21",
-      "codex-docs-22",
+      "codex-docs-28",
+      "codex-comm-7",
       "codex-comm-10"
     ]
   },
@@ -1417,13 +1490,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex's cloud task feature explicitly supports starting work from web/GitHub/Slack and later reviewing or continuing from the web or CLI, and CLI can browse cloud chats and apply results locally, which supports cross-device continuity. However, local CLI chat history is described as local-only ('reopen a recent chat from the current repository'), and there's no community evidence confirming smooth cross-device handoff in practice.",
+    "rationale": "Codex supports cloud tasks started from web/GitHub/Slack that can be continued via 'Start and review work from the web or Codex CLI', and CLI supports resuming recent chats from a repository, suggesting cross-device continuity. However, there's no explicit evidence of seamless session sync across devices/browsers beyond starting cloud tasks and later inspecting/reviewing them, and some 'resume' features are described as local-only (per-repository chat history).",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-2",
+      "codex-docs-6",
       "codex-docs-7",
       "codex-docs-15",
-      "codex-docs-11"
+      "codex-docs-11",
+      "codex-docs-24"
     ]
   },
   {
@@ -1432,24 +1507,24 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Codex CLI supports reopening recent chats and searching local chat history for continuity, which offers some cross-session recall, but there is no evidence of automatic memory building (e.g., persistent learned facts, summarized context, or codebase understanding retained without manual chat resume).",
+    "rationale": "Codex CLI supports resuming or searching prior local chats (codex resume), giving some session continuity, but there is no evidence of automatic memory building/recall (e.g., persistent facts about the codebase carried forward without user action) — it's manual retrieval of past transcripts, not an automatic memory system.",
     "evidenceIds": [
       "codex-docs-11",
-      "codex-docs-15"
+      "codex-docs-24"
     ]
   },
   {
     "productId": "codex",
     "storyId": "custom-agent-skills",
     "verdict": "full",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex explicitly supports packaging repeatable instructions as 'skills' and adding plugins/MCP servers to connect to team tools, directly matching the custom skills story (codex-docs-20). This is reinforced by MCP server configuration docs shared across CLI/IDE/desktop clients, though evidence is vendor-doc only with no independent hands-on validation of the skills feature specifically.",
+    "rationale": "Codex CLI docs explicitly describe packaging repeatable instructions as 'skills' and adding plugins to connect to team tools/data, plus MCP server support for extending capabilities with third-party tools (docs, browser, Figma, etc.), directly matching the custom-skills story.",
     "evidenceIds": [
       "codex-docs-20",
       "codex-docs-16",
       "codex-docs-21",
-      "codex-docs-22"
+      "codex-docs-26"
     ]
   },
   {
@@ -1457,12 +1532,14 @@
     "storyId": "desktop-visual-diff-review",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs confirm diff inspection ('Inspect the summary and diff') and running tasks in parallel across cloud sessions, and a native desktop app exists (referenced via ChatGPT desktop app config sharing and native app release comments). However, no evidence explicitly shows a side-by-side multi-session UI, and community reports note the desktop app is Mac-only, buggy (stuck on 'Loading projects...'), and not open source, undercutting a smooth visual review experience.",
+    "confidence": "medium",
+    "rationale": "Codex has a desktop/native app (codex-gh-8, codex-comm-9/18/20) and docs describe inspecting diffs on completed tasks (codex-docs-5) plus running tasks in parallel (codex-docs-1, codex-docs-3), but no evidence explicitly confirms a visual side-by-side multi-session diff review UI within the desktop app itself. Community feedback also flags the desktop app as buggy/slow to load and Mac-only, undercutting a smooth experience.",
     "evidenceIds": [
+      "codex-gh-8",
       "codex-docs-5",
       "codex-docs-3",
-      "codex-docs-21",
+      "codex-docs-1",
+      "codex-comm-9",
       "codex-comm-18",
       "codex-comm-20",
       "codex-comm-11"
@@ -1472,24 +1549,27 @@
     "productId": "codex",
     "storyId": "enterprise-grade-auth",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows sign-in via ChatGPT Plus/Pro/Business/Edu/Enterprise plans and API-key auth (codex-gh-3, codex-gh-4), which hints at enterprise account tiers but provides no detail on SSO/SAML, cloud IAM integration, or compliance-grade identity federation expected by engineering leads. No mention of enterprise identity providers (Okta, Azure AD, etc.) or scalable cloud auth mechanisms beyond plan tiers.",
+    "rationale": "Codex supports ChatGPT sign-in tied to Plus/Pro/Business/Edu/Enterprise plans, and OpenAI's platform offers RBAC for org/project access control, suggesting some enterprise identity/compliance support. However, there's no direct evidence of SSO/SAML, SCIM, or cloud-IAM integration specifically for Codex, so enterprise-grade authentication is only weakly substantiated.",
     "evidenceIds": [
       "codex-gh-3",
-      "codex-gh-4"
+      "codex-gh-7",
+      "codex-docs-28"
     ]
   },
   {
     "productId": "codex",
     "storyId": "existing-subscription-auth",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "OpenAI's own GitHub docs explicitly recommend signing into an existing ChatGPT account to use Codex under Plus, Pro, Business, Edu, or Enterprise plan subscriptions, with API key as an alternative requiring extra setup.",
+    "rationale": "GitHub docs explicitly recommend signing into ChatGPT to use Codex as part of an existing Plus, Pro, Business, Edu, or Enterprise plan, with sign-in flow via 'Sign in with ChatGPT'; API key use is offered only as an alternative. Community evidence corroborates users relying on subscription quotas (daily/weekly limits) rather than pure API billing.",
     "evidenceIds": [
       "codex-gh-3",
-      "codex-gh-4"
+      "codex-gh-7",
+      "codex-comm-8",
+      "codex-comm-12"
     ]
   },
   {
@@ -1498,26 +1578,29 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Codex supports MCP servers (local/remote) to connect to team tools and data, plus native integrations with Slack, GitHub, GitLab, and Linear for starting/reviewing tasks, which covers Slack and workflow triggers. However, Jira and Google Drive are not explicitly mentioned as native integrations, relying instead on generic MCP connectivity rather than confirmed direct connectors.",
+    "rationale": "Codex supports MCP servers (local/remote) that can connect it to third-party tools like Figma, browsers, or documentation, and integrates natively with GitHub, GitLab, Linear, and Slack for starting/reviewing tasks, but there is no explicit mention of Jira or Google Drive connectors—these would require custom MCP setup rather than out-of-the-box integration.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-2",
       "codex-docs-16",
       "codex-docs-20",
       "codex-docs-21",
-      "codex-docs-22"
+      "codex-docs-26"
     ]
   },
   {
     "productId": "codex",
     "storyId": "free-tier-account-access",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "GitHub docs explicitly recommend signing into a ChatGPT Plus/Pro/Business/Edu/Enterprise account to use Codex without needing an API key, with API key usage noted as an alternative requiring extra setup, indicating free/subscription-tier access via personal account login is the primary supported path.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Codex CLI supports 'Sign in with ChatGPT' to use Codex under Plus/Pro/Business/Edu/Enterprise plans without needing an API key, satisfying the no-API-key sign-in flow, but this requires a paid ChatGPT subscription tier rather than a distinct free tier, and community comments note tight usage limits even for paying users.",
     "evidenceIds": [
       "codex-gh-3",
-      "codex-gh-4"
+      "codex-gh-7",
+      "codex-gh-4",
+      "codex-comm-8",
+      "codex-comm-12"
     ]
   },
   {
@@ -1525,14 +1608,12 @@
     "storyId": "full-codebase-mapping",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs explicitly describe using Codex CLI to 'explore unfamiliar code, plan a change, edit files' (codex-docs-9), implying autonomous codebase exploration without manual file selection, and agents can delegate to specialized sub-agents to gather findings (codex-docs-13). However, there's no dedicated 'explain codebase' or architecture-mapping feature described, and community evidence focuses on coding/editing performance and reliability issues rather than confirming deep codebase comprehension quality.",
+    "confidence": "low",
+    "rationale": "Docs explicitly claim Codex CLI can 'explore unfamiliar code' when started in a repo, implying automatic codebase context gathering, and it can delegate work to specialized agents to gather findings. However, there's no detailed evidence of a dedicated 'map/explain codebase' feature or output, and community feedback focuses on coding/agentic performance rather than codebase-explanation quality, leaving the claim thinly supported.",
     "evidenceIds": [
       "codex-docs-9",
       "codex-docs-13",
-      "codex-docs-8",
-      "codex-comm-3",
-      "codex-comm-18"
+      "codex-docs-8"
     ]
   },
   {
@@ -1541,12 +1622,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codex is positioned as an agentic coding assistant/CLI/cloud task runner (delegated tasks, PR review, terminal automation) rather than an inline autocomplete tool. No evidence in the pack describes inline code completions or next-edit suggestions as the developer types; IDE extension mention (codex-gh-2) only references installing Codex in an editor, not autocomplete-style suggestions.",
-    "evidenceIds": [
-      "codex-gh-2",
-      "codex-docs-9",
-      "codex-docs-8"
-    ]
+    "rationale": "Codex is positioned as an agentic coding assistant/CLI/cloud task runner (delegated tasks, terminal edits, PR generation) rather than an inline autocomplete/next-edit suggestion tool like a copilot-style completions engine. No evidence describes inline completions or next-edit suggestions as you type.",
+    "evidenceIds": []
   },
   {
     "productId": "codex",
@@ -1554,15 +1631,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenAI's docs explicitly describe starting tasks from GitHub/Linear issues, running them in isolated cloud environments, and opening a PR from the resulting diff — directly matching the issue-to-PR workflow. However, community feedback raises real caveats about reliability, speed, and quality ('struggles with almost anything', slow at peak times, tight usage limits forcing switches to competitors), suggesting the end-to-end flow isn't consistently smooth in practice.",
+    "rationale": "Docs show Codex can start from tracked issues (GitHub/GitLab/Linear), work autonomously in cloud/local environments, and open a pull request when done, directly matching the end-to-end issue-to-PR workflow. However, community evidence raises concerns about reliability, agentic quality, and inconsistent UX, and no hands-on confirmation of a full issue-to-merged-PR flow is present.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-2",
       "codex-docs-5",
       "codex-docs-6",
-      "codex-comm-3",
-      "codex-comm-8",
-      "codex-comm-12"
+      "codex-comm-13",
+      "codex-comm-14",
+      "codex-comm-8"
     ]
   },
   {
@@ -1570,8 +1647,8 @@
     "storyId": "jetbrains-diff-integration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence only mentions IDE extensions for VS Code, Cursor, and Windsurf—JetBrains IDEs are never mentioned in any of the docs, GitHub, or community evidence. There is no indication of interactive diff viewing or code-context sharing within a JetBrains IDE specifically.",
+    "confidence": "low",
+    "rationale": "Evidence mentions IDE extension availability (VS Code, Cursor, Windsurf) but never JetBrains specifically, and no evidence describes interactive diffs or context-sharing features within a JetBrains IDE.",
     "evidenceIds": [
       "codex-gh-2"
     ]
@@ -1582,7 +1659,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack shows Codex providing license attribution or public-code match references for its suggestions; documentation covers agentic workflows, CLI, MCP, and review features but nothing about IP/license provenance checking.",
+    "rationale": "No evidence in the pack mentions license compliance checks, public-code matching, or provenance references for AI-suggested code; Codex's documented features focus on code generation, review of diffs, and agent tooling, not license/plagiarism detection.",
     "evidenceIds": []
   },
   {
@@ -1591,12 +1668,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codex is presented as a coding agent for editing files, running commands, and automating code tasks, but there is no evidence of any live debugging capability (e.g., attaching a debugger, breakpoints, inspecting runtime state of a running web app). Evidence focuses on code generation, review, and terminal/CLI workflows, not live application debugging.",
+    "rationale": "Codex is positioned as a coding agent for writing, reviewing, and editing code (CLI, IDE extension, cloud tasks), but there is no evidence of any live debugging capability—attaching to a running web application, inspecting runtime state, breakpoints, or interacting with a live process. All evidence covers code editing, terminal commands, code review, and MCP tool integration, not live application debugging.",
     "evidenceIds": [
-      "codex-docs-8",
+      "codex-gh-1",
       "codex-docs-9",
       "codex-docs-10",
-      "codex-docs-17"
+      "codex-docs-19"
     ]
   },
   {
@@ -1605,15 +1682,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Codex CLI is explicitly described as a coding agent that runs locally on your computer, installable via npm, and community evidence confirms widespread real-world terminal usage (editing files, running tests, agentic workflows) despite some quality/performance complaints.",
+    "rationale": "Codex CLI is explicitly documented as a coding agent that runs locally on your computer, installable via npm, with extensive local terminal capabilities (editing files, running commands, reviewing diffs, resuming sessions) confirmed by official docs and GitHub repo, and further validated by extensive hands-on community usage of Codex CLI.",
     "evidenceIds": [
       "codex-gh-1",
       "codex-gh-5",
       "codex-docs-8",
       "codex-docs-9",
+      "codex-docs-17",
       "codex-docs-19",
-      "codex-comm-8",
-      "codex-comm-9"
+      "codex-comm-9",
+      "codex-comm-15"
     ]
   },
   {
@@ -1622,20 +1700,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes a way to include multiple project directories/repositories in a single Codex session for combined context; docs focus on per-repository setup, single-repo CLI sessions, and cloud tasks tied to one repo at a time.",
+    "rationale": "Evidence describes single-repository sessions (e.g., 'Start Codex in a repository', per-repository configuration) but no mention of including multiple project directories in one session for broader cross-project context.",
     "evidenceIds": []
   },
   {
     "productId": "codex",
     "storyId": "multi-ide-chat-assistant",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Codex offers an IDE extension for VS Code, Cursor, and Windsurf (codex-gh-2) and shares chat/config context across the desktop app, CLI, and IDE extension (codex-docs-21), supporting in-IDE contextual chat. However, most detailed evidence describes CLI and cloud/web workflows rather than the IDE chat experience itself, and no direct hands-on evidence confirms IDE chat quality.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Codex offers an installable IDE extension for VS Code, Cursor, and Windsurf, and this extension shares MCP configuration with the CLI and desktop app, implying contextual chat is available inside the editor. However, the evidence pack contains almost no detail on the IDE chat UX itself, and community commentary focuses heavily on the CLI/agent and model quality rather than confirming the in-IDE chat experience works well.",
     "evidenceIds": [
       "codex-gh-2",
       "codex-docs-21",
-      "codex-docs-7"
+      "codex-docs-26"
     ]
   },
   {
@@ -1644,13 +1722,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codex is built around OpenAI's own GPT-5.3-Codex model family, with docs and community discussion referencing different Codex model variants (e.g., gpt-5.3-codex, gpt-5.3-codex-spark) but no evidence of selecting models from other providers like Anthropic or Google within the product itself. Community comments treat Claude/Gemini as separate tools users switch to outside Codex, not as options within it.",
+    "rationale": "Codex is built specifically around OpenAI's own GPT-5.x-codex model family (e.g., gpt-5.3-codex, gpt-5.3-codex-spark referenced in community threads), with no evidence of an ability to switch to third-party providers like Anthropic or Google within a Codex session. All docs and comparisons treat other providers (Claude, Gemini) as separate competing products users switch away to, not as selectable options inside Codex.",
     "evidenceIds": [
       "codex-comm-8",
       "codex-comm-12",
       "codex-comm-15",
-      "codex-gh-3",
-      "codex-gh-4"
+      "codex-gh-3"
     ]
   },
   {
@@ -1659,10 +1736,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Vendor docs explicitly state Codex cloud tasks can be started from GitHub pull requests, GitLab merge requests/issues, Linear issues, or Slack channels/threads, directly matching the story. No community evidence contradicts this specific integration claim, though most third-party discussion focuses on model quality rather than these entry points.",
+    "rationale": "Official docs explicitly state Codex cloud tasks can be started from GitHub pull requests/issues, GitLab merge requests/issues, Linear issues, and Slack channels/threads, directly matching the story. No hands-on community evidence disputes this specific integration capability.",
     "evidenceIds": [
       "codex-docs-1",
-      "codex-docs-2"
+      "codex-docs-2",
+      "codex-docs-5"
     ]
   },
   {
@@ -1671,10 +1749,9 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Codex CLI supports passing images (screenshots, architecture diagrams, design references) as prompts alongside coding tasks, suggesting some multimodal input capability for design-to-code work, but there's no evidence of a dedicated 'sketch/image/PDF to app' generation pipeline or PDF support specifically. This is inferred from a general coding-agent feature rather than a purpose-built app-generation-from-design workflow.",
+    "rationale": "Codex CLI docs confirm image/design input is supported ('Pass an error screenshot, architecture diagram, or design reference with the first prompt, or paste an image into the interactive composer'), which supports generating apps from sketches/images, but there is no explicit mention of PDF input or a full 'sketch-to-app' workflow, and no evidence pack item confirms PDF support.",
     "evidenceIds": [
       "codex-docs-12",
-      "codex-gh-1",
       "codex-docs-9"
     ]
   },
@@ -1684,16 +1761,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex CLI supports natural-language driven debugging workflows—exploring code, running local commands, reviewing diffs, accepting error screenshots for context, and even running dedicated code reviews—all documented as agentic features (codex-docs-9, codex-docs-10, codex-docs-12). However community feedback is mixed, citing inconsistent quality ('struggles with almost anything'), slowness, and sandboxing friction that can hamper real troubleshooting sessions (codex-comm-3, codex-comm-12, codex-comm-7).",
+    "rationale": "Codex CLI can inspect code, run commands, use live web search, review diffs, and attach error screenshots—capabilities that support natural-language debugging and troubleshooting workflows—but there is no dedicated 'debug' feature and community feedback is mixed, with some users praising fast fixes and others reporting it 'struggles with almost anything.'",
     "evidenceIds": [
       "codex-docs-8",
       "codex-docs-9",
-      "codex-docs-10",
       "codex-docs-12",
       "codex-docs-14",
-      "codex-comm-3",
-      "codex-comm-12",
-      "codex-comm-8"
+      "codex-docs-10",
+      "codex-comm-14",
+      "codex-comm-3"
     ]
   },
   {
@@ -1734,7 +1810,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data export or open-format portability; Codex's data is largely code stored in the user's own repos (not a proprietary data store), but there's no documentation or claim about exporting chats, configs, or other Codex-managed data in open formats.",
+    "rationale": "The evidence pack shows Codex operates on local repositories/git (code lives in user's own repos), but there is no mention of any data export feature, open-format export of chats/history/settings, or account data portability mechanism.",
     "evidenceIds": []
   },
   {
@@ -1757,8 +1833,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Codex CLI runs locally as a client, but it requires signing into a ChatGPT plan or an OpenAI API key to access the underlying model (codex-gh-3, codex-gh-4); there is no evidence the core model/service can be self-hosted, and a community comment explicitly wishes the app were open source (codex-comm-9), implying it isn't fully self-hostable.",
+    "rationale": "Codex CLI runs locally but requires signing into ChatGPT or using OpenAI's API — the core model/inference cannot be self-hosted, and a community comment explicitly wishes 'Codex App was open source,' implying it is not.",
     "evidenceIds": [
+      "codex-gh-1",
       "codex-gh-3",
       "codex-gh-4",
       "codex-comm-9"
@@ -1784,29 +1861,29 @@
     "storyId": "parallel-task-attempt-comparison",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Codex cloud explicitly supports running tasks in parallel in isolated environments, and results can be inspected via summary/diff before opening a PR, which supports comparing outcomes; however there's no explicit evidence of a dedicated multi-attempt comparison UI for the same task, and community feedback raises concerns about reliability and model behavior variance.",
+    "confidence": "low",
+    "rationale": "Docs confirm Codex cloud can run multiple tasks in parallel in isolated environments and let you inspect diffs/summaries before opening a PR, which supports running parallel attempts and reviewing results, but there's no explicit documentation of a feature to run several attempts of the *same* task and directly compare them side-by-side before choosing one.",
     "evidenceIds": [
       "codex-docs-1",
       "codex-docs-3",
       "codex-docs-5",
-      "codex-comm-3",
-      "codex-comm-15"
+      "codex-docs-6"
     ]
   },
   {
     "productId": "codex",
     "storyId": "partner-agent-app-integration",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Codex supports MCP (Model Context Protocol) to add local/remote third-party servers and 'plugins to connect Codex to your team's tools and data,' enabling integration of external agent/tool ecosystems into workflows; it also connects to GitHub, GitLab, Linear, and Slack as trigger sources. However, evidence focuses on tool/data connectors rather than partner-built 'agent apps' specifically, and the MCP server command itself is noted as deprecated in favor of a newer app server, indicating some integration instability.",
+    "rationale": "Codex supports connecting to local/remote MCP servers and 'plugins to connect Codex to your team's tools and data' (e.g., Figma, browsers), which enables integrating third-party-built tools/agents into workflows via a shared MCP config across CLI/IDE/desktop. However, there's no evidence of a curated partner-app marketplace or formal ecosystem program for third-party agent apps—MCP is a general protocol, and the dedicated MCP server mode is even noted as deprecated in favor of an 'app server'.",
     "evidenceIds": [
       "codex-docs-16",
       "codex-docs-20",
       "codex-docs-21",
-      "codex-docs-22",
-      "codex-docs-2",
+      "codex-docs-26",
+      "codex-docs-27",
+      "codex-gh-6",
       "codex-docs-23"
     ]
   },
@@ -1816,7 +1893,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack describes repository setup configuration (dependencies, tools, variables) but contains no mention of a project-level instructions file (e.g., AGENTS.md) for coding standards or conventions that the agent follows.",
+    "rationale": "The evidence pack does not mention any project-level instructions file (e.g., AGENTS.md) or a way to set persistent coding standards/conventions for Codex to follow; the closest item (repository setup configuration) covers dependencies and tooling, not coding conventions.",
     "evidenceIds": []
   },
   {
@@ -1838,7 +1915,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions data residency, region selection, or storage location controls for Codex; the pack focuses on features, CLI usage, and community sentiment.",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or any controls letting users choose where their data is stored. Only RBAC and general product/UX evidence are present, none addressing data residency.",
     "evidenceIds": []
   },
   {
@@ -1847,7 +1924,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation, settings, or claims about data usage/training opt-out, enterprise data privacy controls, or zero-retention policies for Codex. No mention of training-data exclusion appears anywhere in the docs, GitHub, or community evidence.",
+    "rationale": "The evidence pack contains no mention of data training opt-out, privacy controls, or data usage policies for Codex; only feature descriptions, RBAC access control, and community usage feedback are present.",
     "evidenceIds": []
   },
   {
@@ -1856,7 +1933,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or community discussion of data retention policies, deletion controls, or privacy settings for Codex; one community comment even raises unresolved concerns about Codex reading sensitive filesystem data without permission (codex-comm-10), but no actual retention/deletion capability is described.",
+    "rationale": "The evidence pack contains no mention of data retention settings, deletion controls, or privacy/data-handling options for Codex users; only RBAC (access control, not retention) and general product/feature docs are present.",
     "evidenceIds": []
   },
   {
@@ -1865,7 +1942,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, usage data collection, opt-out settings, or privacy controls for Codex; the pack covers features, capabilities, and user experience sentiment but never addresses data collection or opt-out mechanisms.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, data collection settings, or an opt-out mechanism for Codex; documentation covers features like cloud tasks, MCP, and CLI usage but nothing on privacy/telemetry controls.",
     "evidenceIds": []
   },
   {
@@ -1873,8 +1950,8 @@
     "storyId": "reproducible-cloud-environment-config",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state Codex cloud lets users 'configure the dependencies, tools, variables, and setup steps each repository needs' and run tasks in isolated cloud environments, directly matching the story. However, there is no detail on how reproducibility is guaranteed (e.g., container images, caching) and no community evidence validating this specific setup workflow, only general agent-quality complaints.",
+    "confidence": "low",
+    "rationale": "Docs explicitly mention configuring dependencies, tools, variables, and setup steps per repository for cloud tasks, and cloud environments run isolated tasks in parallel, suggesting reproducible environment configuration exists. However, no detailed evidence on how configuration is persisted/reproduced across runs, and community feedback focuses on model quality/UX rather than environment reproducibility, leaving significant gaps in verification.",
     "evidenceIds": [
       "codex-docs-4",
       "codex-docs-1",
@@ -1887,13 +1964,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Codex CLI/agent can explore unfamiliar code, edit files, run local dev tools/commands, and run dedicated reviews against diffs/commits to surface findings—supporting root-cause narrowing and fix verification (codex-docs-9, codex-docs-10, codex-docs-8). However, community evidence shows mixed real-world reliability, agentic struggles on hard problems, and inconsistent quality across models, so effectiveness at actually reproducing issues and pinpointing root causes is disputed in practice.",
+    "rationale": "Docs show Codex can explore unfamiliar code, run local dev tools/commands, and run dedicated code reviews against diffs/commits to surface findings—capabilities that map to reproducing issues, narrowing root causes, and verifying fixes. However, community feedback is mixed, with several developers reporting it 'struggles with almost anything' or fails to make real progress on hard problems, suggesting inconsistent real-world reliability for this workflow.",
     "evidenceIds": [
+      "codex-docs-8",
       "codex-docs-9",
       "codex-docs-10",
-      "codex-docs-8",
       "codex-comm-3",
-      "codex-comm-13",
       "codex-comm-14"
     ]
   },
@@ -1916,9 +1992,13 @@
     "storyId": "shared-knowledge-workspace",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Codex is presented as an individual/agentic coding tool (CLI, IDE extension, cloud tasks) operating on repos, but there is no evidence of a feature to create a shared team workspace aggregating docs and repos as a common source of truth. Config repos, MCP connections, and task delegation are agent-execution features, not a team knowledge/workspace hub.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Codex evidence covers running coding tasks from repos/PRs, CLI/cloud execution, and MCP tool integration, but nothing describes creating a persistent shared workspace combining docs and repos as a team-wide source of truth—RBAC exists at the org/API level but is unrelated to knowledge/workspace aggregation.",
+    "evidenceIds": [
+      "codex-docs-4",
+      "codex-docs-1",
+      "codex-docs-28"
+    ]
   },
   {
     "productId": "codex",
@@ -1926,12 +2006,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe running a non-interactive command in a repeatable workflow via the CLI, plus scriptable exec-style usage, MCP server mode, and automation of repeatable work without leaving the terminal, indicating first-party support for scripted/CI automation.",
+    "rationale": "Codex CLI explicitly documents a non-interactive mode ('Run a non-interactive command in a repeatable workflow') alongside terminal automation features like running commands and automating repeatable work without leaving the terminal, supporting scripting/CI use cases.",
     "evidenceIds": [
       "codex-docs-19",
       "codex-docs-8",
-      "codex-docs-20",
-      "codex-gh-6",
       "codex-docs-15"
     ]
   },
@@ -1941,7 +2019,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data usage, training opt-out settings, enterprise privacy controls, or any policy statement about whether code/prompts are used for model training. Nothing in the docs, GitHub, or community items addresses this axis.",
+    "rationale": "No evidence pack items mention data usage/training opt-out policies, enterprise data controls, or privacy settings for Codex; only feature/UX and RBAC-for-permissions items are present, none addressing model training on code/prompts.",
     "evidenceIds": []
   },
   {
@@ -1950,16 +2028,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe a unified workspace where you can run tasks in parallel across cloud, web, CLI and IDE, browse active/completed chats, and delegate/return to sessions later, directly matching the story. However community feedback cites tight usage limits, UX inconsistencies, and 'paper cuts' when juggling multiple sessions, indicating the experience isn't seamless in practice.",
+    "rationale": "Docs describe running tasks in parallel in the cloud, browsing active/completed chats, resuming sessions, and delegating to specialized agents from CLI/web/desktop, which supports managing multiple concurrent agent sessions. However, the 'unified workspace' spans separate surfaces (CLI, web, desktop app) rather than one integrated view, and community reports cite friction (app stuck loading projects, mac-only limitations, paper cuts) suggesting the experience is not seamless.",
     "evidenceIds": [
-      "codex-docs-1",
       "codex-docs-3",
-      "codex-docs-6",
-      "codex-docs-7",
       "codex-docs-15",
+      "codex-docs-7",
+      "codex-docs-13",
       "codex-docs-11",
-      "codex-comm-8",
-      "codex-comm-9"
+      "codex-gh-8",
+      "codex-comm-18",
+      "codex-comm-20"
     ]
   },
   {
