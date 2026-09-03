@@ -14,48 +14,26 @@ export const metadata: Metadata = {
 
 export default function Home() {
   const categories = loadAll()
-  const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   const megaRows = buildMegaTableRows(categories)
   const arenaOptions = buildMegaTableArenaOptions(categories)
 
   return (
     <div className="space-y-12">
-      <section>
+      <section className="mx-auto max-w-3xl text-center">
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           The unbiased, evidence-based arena for software in the AI era
         </h1>
-        <p className="mt-2 max-w-2xl text-zinc-400">
+        <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
           We crawl what vendors claim, collect what communities report, and probe what actually
-          works — then every one of the {totalProducts} products across {categories.length} arenas
-          is judged against identical user stories, with a citation behind every verdict and a
-          contest button on every score. Two questions drive the rankings: how friendly is it to
-          AI agents, and how AI-native is it for the humans using it?
+          works. Every product is judged against the same user stories as its arena rivals —
+          including a canon of AI-era stories shared by every arena — with a citation behind
+          every verdict and a contest button on every score. Two questions drive the rankings:
+          how friendly is it to AI agents, and how AI-native is it for the humans using it?
         </p>
       </section>
 
       <section>
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">All products</h2>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-            <Link href="/rankings/init" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-              Highest Arena Score →
-            </Link>
-            <Link href="/rankings/agentic" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-              Most agentic →
-            </Link>
-            <Link href="/rankings/ai-native" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-              Most AI-native →
-            </Link>
-          </div>
-        </div>
-        <p className="mt-1 text-sm text-zinc-500">
-          Every product, every arena, one table — sort any column, filter by arena or name. The
-          three links above are preset views of this same data (highest Arena Score, most
-          agentic, most AI-native).
-        </p>
-        <div className="mt-4">
-          <MegaTable rows={megaRows} arenas={arenaOptions} />
-        </div>
+        <MegaTable rows={megaRows} arenas={arenaOptions} />
       </section>
 
       <section>

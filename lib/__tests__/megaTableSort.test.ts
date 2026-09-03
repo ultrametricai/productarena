@@ -10,21 +10,21 @@ import {
   type MegaTableRow,
 } from '@/lib/megaTableSort'
 
-const glyph = { char: '—', className: 'text-zinc-400', title: '' }
+const glyph = { char: '—', className: 'text-zinc-400', title: '', href: '/arena/zeta/product/x#story-agentic-public-api' }
 const access = { MCP: glyph, CLI: glyph, API: glyph }
 
 const rows: MegaTableRow[] = [
   {
     productId: 'b', name: 'Bravo', vendor: 'Vendor B', type: 'commercial', arenaId: 'zeta', arenaName: 'Zeta',
-    hasLogo: false, initScore: 40, agentReady: 50, agenticApp: null, apiQuality: 20, popularity: 500, access,
+    hasLogo: false, initScore: 40, agentReady: 50, agenticApp: null, apiQuality: 20, apiUntested: false, popularity: 500, access,
   },
   {
     productId: 'a', name: 'Alpha', vendor: 'Vendor A', type: 'oss', arenaId: 'alpha-arena', arenaName: 'Alpha Arena',
-    hasLogo: false, initScore: 80, agentReady: null, agenticApp: 60, apiQuality: 70, popularity: null, access,
+    hasLogo: false, initScore: 80, agentReady: null, agenticApp: 60, apiQuality: 70, apiUntested: false, popularity: null, access,
   },
   {
     productId: 'c', name: 'Charlie', vendor: 'Vendor C', type: 'commercial', arenaId: 'zeta', arenaName: 'Zeta',
-    hasLogo: false, initScore: null, agentReady: 10, agenticApp: 20, apiQuality: null, popularity: 200_000, access,
+    hasLogo: false, initScore: null, agentReady: 10, agenticApp: 20, apiQuality: null, apiUntested: true, popularity: 200_000, access,
   },
 ]
 

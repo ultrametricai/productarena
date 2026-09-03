@@ -19,6 +19,9 @@ export interface MegaTableAccessGlyph {
   char: string
   className: string
   title: string
+  // Internal link to the story section on the product page that this glyph's verdict (and its
+  // evidence) lives on — the glyph is a citation, so clicking it goes to the receipts.
+  href: string
 }
 
 export interface MegaTableRow {
@@ -35,6 +38,9 @@ export interface MegaTableRow {
   agentReady: number | null
   agenticApp: number | null
   apiQuality: number | null
+  // True when every api-quality cell for this product is a zero-evidence none/na — i.e. we
+  // never found (or probed) anything either way, so the honest render is "untested", not "0".
+  apiUntested: boolean
   // GitHub star count — see lib/arenaTableSort.ts's ArenaTableRow.popularity doc.
   popularity: number | null
   access: { MCP: MegaTableAccessGlyph; CLI: MegaTableAccessGlyph; API: MegaTableAccessGlyph }

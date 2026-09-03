@@ -4,7 +4,6 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
-import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import { BusinessModelChip } from '@/components/BusinessModel'
 import ClaimsChip from '@/components/ClaimsChip'
@@ -13,7 +12,7 @@ import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
 import VerificationMixChip from '@/components/VerificationMixChip'
 import { claimsVerifiedPercent } from '@/lib/claims'
-import { battleSlug, type CategoryData } from '@/lib/data-helpers'
+import { battleSlug, isGroupUntested, type CategoryData } from '@/lib/data-helpers'
 import {
   type ArenaTableColumn,
   type ArenaTableRow,
@@ -257,14 +256,22 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                       }}
                     />
                   </td>
-                  <td className="px-3 py-2">
-                    <AgenticBadge kind="agent-ready" value={row.agentReady} size="sm" />
-                  </td>
-                  <td className="px-3 py-2">
-                    <AgenticBadge kind="agentic-app" value={row.agenticApp} size="sm" />
+                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                    {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : row.agentReady.toFixed(0)}
                   </td>
                   <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
-                    {row.apiQuality === null ? <span className="text-zinc-500">n/a</span> : row.apiQuality.toFixed(0)}
+                    {row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : row.agenticApp.toFixed(0)}
+                  </td>
+                  <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
+                    {isGroupUntested(data, row.productId, 'api-quality') ? (
+                      <span className="font-sans text-xs italic text-zinc-500" title="No API-quality evidence found or probed either way — unscored, not zero.">
+                        untested
+                      </span>
+                    ) : row.apiQuality === null ? (
+                      <span className="text-zinc-500">n/a</span>
+                    ) : (
+                      row.apiQuality.toFixed(0)
+                    )}
                   </td>
                   <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">
                     {row.openness === null ? <span className="text-zinc-500">n/a</span> : row.openness.toFixed(0)}

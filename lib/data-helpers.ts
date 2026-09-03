@@ -135,3 +135,16 @@ export function groupInOrder<T>(items: T[], keyOf: (item: T) => string): Array<[
   }
   return order.map((key) => [key, buckets.get(key)!])
 }
+
+// "Untested" = every cell in the group is a zero-evidence none/na: we found nothing pro or con
+// and never probed it, so rendering the group score as 0 would overstate what we know. Tables
+// use this to show "untested" instead of a hard 0 (e.g. API quality for CLI-first products
+// whose evidence packs simply never covered an API surface).
+export function isGroupUntested(data: CategoryData, productId: string, group: string): boolean {
+  const groupStories = data.stories.filter((s) => s.group === group)
+  if (groupStories.length === 0) return true
+  return groupStories.every((s) => {
+    const v = verdictFor(data, productId, s.id)
+    return (v.verdict === 'none' || v.verdict === 'na') && v.evidenceIds.length === 0
+  })
+}
