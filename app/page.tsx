@@ -23,12 +23,13 @@ export default function Home() {
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           The unbiased, evidence-based arena for software in the AI era
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
+        <p className="mx-auto mt-4 max-w-xl text-balance text-zinc-400">
           We crawl what vendors claim, collect what communities report, and probe what actually
-          works. Every product is judged against the same user stories as its arena rivals —
-          including a canon of AI-era stories shared by every arena — with a citation behind
-          every verdict and a contest button on every score. Two questions drive the rankings:
-          how friendly is it to AI agents, and how AI-native is it for the humans using it?
+          works — a citation behind every verdict, a contest button on every score.
+        </p>
+        <p className="mx-auto mt-3 text-balance text-sm text-zinc-500">
+          Two questions drive the rankings: how friendly is it to AI agents, and how AI-native
+          is it for the humans using it?
         </p>
       </section>
 
