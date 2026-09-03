@@ -21,7 +21,7 @@ evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **12 arenas, 62 products, 4,562 judged verdicts.**
+As of the last full pipeline run: **12 arenas, 61 products, 4,843 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
