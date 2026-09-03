@@ -138,11 +138,27 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   label: NAV_LABELS[c.id] ?? "",
                 }))}
               />
+              <ArenaMenu
+                title="Rankings"
+                hrefPrefix="/rankings"
+                items={[
+                  { id: "agentic", name: "Most agent-ready", label: "" },
+                  { id: "init", name: "Highest Arena Score", label: "" },
+                  { id: "ai-native", name: "Most AI-native", label: "" },
+                  { id: "claims-integrity", name: "Claims vs reality", label: "" },
+                ]}
+              />
               <Link
                 href="/stacks"
                 className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
                 Stacks
+              </Link>
+              <Link
+                href="/methodology"
+                className="hidden shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 md:flex"
+              >
+                Methodology
               </Link>
               <a
                 href={`https://github.com/${REPO}`}
