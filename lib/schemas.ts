@@ -21,6 +21,7 @@ export const ProductSchema = z.object({
     extra: z.array(z.string().url()).optional(),
   }),
   logo: z.string().optional(),
+  affiliation: z.string().optional(),
   links: z.object({
     app: z.string().url().optional(),
     api: z.string().url().optional(),
