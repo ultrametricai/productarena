@@ -7,25 +7,19 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
-import ContestLink from '@/components/ContestLink'
-import InstallCommands from '@/components/InstallCommands'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
-import ProductLinkChips from '@/components/ProductLinkChips'
+import ProductActions from '@/components/ProductActions'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
-import { originLabel } from '@/lib/data-helpers'
-import ThemeIcon from '@/components/ThemeIcon'
-import UncertaintyMarker from '@/components/UncertaintyMarker'
-import VerdictBadge from '@/components/VerdictBadge'
-import VerificationBadge from '@/components/VerificationBadge'
+import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import {
-  battleSlug, evidenceById, groupInOrder, loadAll, loadCategory, type CategoryData, uncertaintyFor, verdictFor,
+  battleSlug, groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
-import { strongestEvidence, verificationLevel } from '@/lib/verification'
+import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
 
 const AI_MODE_STORY_ID = 'agentic-builtin-assistant'
 
@@ -78,13 +72,15 @@ export default async function ProductPage({
   const entry = data.rankings.leaderboard.find((e) => e.productId === id)!
   const rank = data.rankings.leaderboard.indexOf(entry) + 1
   const freshness = productFreshness(data, id)
-  const evidence = evidenceById(data)
   const tierCounts = data.evidence[id].reduce<Record<string, number>>((acc, e) => {
     acc[e.tier] = (acc[e.tier] ?? 0) + 1
     return acc
   }, {})
   const idx = (pid: string) => data.products.findIndex((p) => p.id === pid)
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
+  // Flattened, serializable (story, verdict) rows for the client-side sortable table — the
+  // full CategoryData never crosses the server/client boundary.
+  const verdictRows = buildStoryVerdictRows(data, id)
 
   return (
     <div className="space-y-8">
@@ -119,12 +115,6 @@ export default async function ProductPage({
             Visit {product.name} ↗
           </a>
         </div>
-        <div className="mt-3">
-          <ProductLinkChips product={product} variant="label" />
-        </div>
-        <div className="mt-3">
-          <InstallCommands product={product} />
-        </div>
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase tracking-widest text-zinc-400">Arena Score</span>
@@ -148,6 +138,8 @@ export default async function ProductPage({
         </p>
       </div>
 
+      <ProductActions data={data} productId={id} />
+
       {product.affiliation && (
         <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">
           <span className="mr-2 rounded border border-emerald-400/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
@@ -162,10 +154,13 @@ export default async function ProductPage({
         <div className="grid gap-3 sm:grid-cols-2">
           {byTheme.map(([t]) => {
             const themeScore = entry.themeScores[t] ?? null
+            // The old per-theme anchors died with the vertical list — the sortable table below
+            // (id="story-verdicts") has its own theme dropdown, so every theme card lands on
+            // the same table rather than leaving a dead #theme-<t> link.
             return (
               <a
                 key={t}
-                href={`#theme-${t}`}
+                href="#story-verdicts"
                 title={`See the judged stories and evidence behind the ${t} score`}
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
@@ -186,76 +181,9 @@ export default async function ProductPage({
         </div>
       </div>
 
-      <div>
+      <div id="story-verdicts" className="scroll-mt-4">
         <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Story verdicts</h2>
-        <div className="space-y-6">
-          {byTheme.map(([theme, storiesInTheme]) => {
-            const byGroup = groupInOrder<Story>(storiesInTheme, (s) => s.group)
-            return (
-              <div key={theme} id={`theme-${theme}`} className="scroll-mt-4">
-                <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-emerald-400">
-                  <ThemeIcon theme={theme} className="text-emerald-400" />
-                  {theme}
-                </h3>
-                <div className="space-y-4">
-                  {byGroup.map(([group, stories]) => (
-                    <div key={group}>
-                      {group !== theme && <p className="mb-1 text-xs text-zinc-500">{group}</p>}
-                      <ul className="divide-y divide-zinc-800 rounded-xl border border-zinc-800">
-                        {stories.map((s) => {
-                          const v = verdictFor(data, id, s.id)
-                          const proof = strongestEvidence(v, evidence)
-                          const uncertainty = uncertaintyFor(data, id, s.id)
-                          return (
-                            <li key={s.id} id={`story-${s.id}`} className="scroll-mt-4 p-4">
-                              <div className="flex flex-wrap items-center justify-between gap-2">
-                                <p className="font-medium" title={originLabel(s)}>{s.title}</p>
-                                <span className="flex items-center gap-2">
-                                  <VerdictBadge verdict={v.verdict} />
-                                  <UncertaintyMarker agreement={uncertainty?.agreement} />
-                                  <VerificationBadge level={verificationLevel(v, evidence)} />
-                                  {v.verdict !== 'na' && (
-                                    <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
-                                  )}
-                                </span>
-                              </div>
-                              <p className="mt-1 text-sm text-zinc-500">{v.rationale}</p>
-                              {v.evidenceIds.length > 0 && (
-                                <p className="mt-1 text-xs text-zinc-400">
-                                  {v.evidenceIds.map((eid, i) => {
-                                    const e = evidence.get(eid)!
-                                    return (
-                                      <a key={eid} href={e.url} className="underline decoration-zinc-800 hover:text-emerald-300">
-                                        {i > 0 ? ' · ' : ''}[{e.tier}]
-                                      </a>
-                                    )
-                                  })}
-                                </p>
-                              )}
-                              <div className="mt-1 flex items-center justify-end gap-3">
-                                {proof && (
-                                  <a
-                                    href={proof.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-xs text-zinc-400 hover:text-emerald-300"
-                                  >
-                                    proof ↗
-                                  </a>
-                                )}
-                                <ContestLink category={category} productId={id} storyId={s.id} verdict={v} />
-                              </div>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <StoryVerdictsTable category={category} productId={id} rows={verdictRows} />
       </div>
 
       <ClaimsSection data={data} category={category} productId={id} />
