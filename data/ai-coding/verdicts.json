@@ -20,15 +20,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Claude Code offers strong agentic capabilities to analyze codebases, generate code review feedback, run CI failure analysis, and pull/query external data (Jira, Postgres, Slack) via MCP to produce insights and suggestions, per docs (docs-15, docs-12, docs-8, docs-24, docs-21). However, community reports describe significant reliability issues—self-verification failures, quality degradation over time, and inconsistent output—that undercut confidence in the quality of those AI-generated insights (comm-16, comm-17, comm-19, comm-20).",
+    "rationale": "Claude Code can generate insights/suggestions from a user's own data via agentic codebase mapping (docs-15), automated code review and security analysis (docs-12, docs-47), and MCP-connected queries against databases, Jira, Slack, etc. (docs-21, docs-24, docs-30). However, this is scoped to code/dev workflows rather than general data analytics, and community reports flag reliability issues, self-verification failures, and quality degradation that temper how trustworthy these generated insights are (claude-code-comm-16, comm-17, comm-20).",
     "evidenceIds": [
       "claude-code-docs-15",
       "claude-code-docs-12",
-      "claude-code-docs-8",
+      "claude-code-docs-47",
       "claude-code-docs-24",
       "claude-code-docs-21",
       "claude-code-comm-16",
-      "claude-code-comm-19",
       "claude-code-comm-20"
     ]
   },
@@ -38,16 +37,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe scheduling recurring runs (morning PR reviews, overnight CI analysis, weekly audits), CI/CD integration via GitHub Actions/GitLab, MCP-driven event channels (Telegram/Discord/webhooks) that trigger sessions while away, and long-running cloud/background tasks checked on later — all core to autonomous background automation. Community evidence doesn't directly dispute this specific capability, though general reliability complaints suggest some caveats on trustworthiness of unsupervised runs.",
+    "rationale": "Docs describe multiple background-automation mechanisms: scheduled runs for recurring work (PR reviews, CI analysis, dependency audits), CI/CD integration via GitHub Actions/GitLab, MCP channels that push Telegram/Discord/webhook events into a session 'while you're away', and remote/teleport features to kick off and check on long-running tasks. This directly matches the story of autonomous background automation, though evidence is vendor-sourced with no independent verification of reliability.",
     "evidenceIds": [
       "claude-code-docs-8",
-      "claude-code-docs-36",
       "claude-code-docs-31",
+      "claude-code-docs-36",
+      "claude-code-docs-9",
+      "claude-code-docs-10",
       "claude-code-docs-14",
-      "claude-code-docs-26",
-      "claude-code-docs-13",
-      "claude-code-comm-16",
-      "claude-code-comm-17"
+      "claude-code-docs-26"
     ]
   },
   {
@@ -73,17 +71,16 @@
     "productId": "claude-code",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe headless/CI usage (piping logs, running in CI, chaining tools), GitHub Actions/GitLab CI/CD integration for automated code review and issue triage, scheduled/cron-like runs, and non-interactive API key auth suitable for automation pipelines.",
+    "rationale": "Docs explicitly describe running Claude Code in CI via GitHub Actions/GitLab CI/CD, piping logs into it Unix-style, scheduled/recurring runs, and headless automation of code review and dependency audits, corroborated by a local CLI probe confirming subcommands. Community evidence raises reliability concerns about output quality but doesn't dispute headless/CI capability itself.",
     "evidenceIds": [
       "claude-code-docs-7",
       "claude-code-docs-8",
       "claude-code-docs-36",
       "claude-code-docs-12",
-      "claude-code-docs-39",
-      "claude-code-docs-40",
-      "claude-code-docs-18"
+      "claude-code-probe-4",
+      "claude-code-docs-13"
     ]
   },
   {
@@ -92,15 +89,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code has first-class MCP support documented with clear examples: connecting to hundreds of external tools/data sources via MCP, CLI commands to add MCP servers (e.g., 'claude mcp add --transport http notion'), integrating Google Drive, Jira, Slack, PostgreSQL, and even MCP servers acting as event channels pushing messages into sessions. This is a core, well-documented agentic capability, not a peripheral feature.",
+    "rationale": "Claude Code has first-class, well-documented MCP support: connecting to hundreds of external tools/servers (stdio, HTTP, SSE), CLI commands like `claude mcp add`, scaffolding servers, and even running itself as an MCP server — confirmed both in docs and a live CLI probe.",
     "evidenceIds": [
-      "claude-code-docs-21",
       "claude-code-docs-29",
       "claude-code-docs-35",
-      "claude-code-docs-30",
-      "claude-code-docs-24",
-      "claude-code-docs-31",
-      "claude-code-docs-38"
+      "claude-code-docs-45",
+      "claude-code-docs-49",
+      "claude-code-docs-21",
+      "claude-code-docs-38",
+      "claude-code-probe-4"
     ]
   },
   {
@@ -109,14 +106,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code has an official MCP integration documented with CLI commands (e.g., `claude mcp add`), supports hundreds of external tools/data sources, official server scaffolding via mcp-server-dev plugin, and MCP servers can act as event channels pushing messages into sessions — clear first-party support for connecting agents via MCP.",
+    "rationale": "Claude Code has robust official MCP support: it can connect as an MCP client to hundreds of external tools/servers (stdio and HTTP transports, e.g. `claude mcp add`), and can itself run as an official MCP server via `claude mcp serve`, confirmed by both docs and a live CLI probe. (Note: the judge model and Claude Code share a vendor, Anthropic — this verdict rests on mechanically verified evidence: an explicit vendor-docs section titled \"Use Claude Code as an MCP server\" plus a live, keyless `claude mcp serve --help` probe, not favorable interpretation.)",
     "evidenceIds": [
       "claude-code-docs-29",
       "claude-code-docs-35",
-      "claude-code-docs-38",
-      "claude-code-docs-31",
-      "claude-code-docs-21",
-      "claude-code-docs-30"
+      "claude-code-docs-45",
+      "claude-code-docs-49",
+      "claude-code-probe-4"
     ]
   },
   {
@@ -125,14 +121,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code is explicitly designed for natural-language driven agentic operation: users describe intent in plain language and it plans, writes code across files, runs tests, manages git, and integrates with external tools via MCP, with strong community corroboration that it excels at code assistant tasks driven by conversational instructions.",
+    "rationale": "Claude Code is fundamentally designed for natural-language operation: users describe intent in plain language and it plans, codes, tests, commits, and opens PRs, with core docs explicitly stating 'Describe what you want in plain language' and citing example NL commands across git, MCP tools, and issue trackers. This is corroborated by community testimony that it's used conversationally for real coding tasks, though some report reliability/quality issues with agentic execution.",
     "evidenceIds": [
       "claude-code-docs-2",
+      "claude-code-docs-28",
       "claude-code-docs-3",
-      "claude-code-docs-15",
-      "claude-code-docs-16",
       "claude-code-docs-30",
-      "claude-code-comm-5"
+      "claude-code-docs-16",
+      "claude-code-comm-5",
+      "claude-code-comm-19"
     ]
   },
   {
@@ -141,15 +138,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code is fundamentally an official CLI tool—install and run via `claude` command, documented setup, IAM/auth flows, and GitHub repo confirming terminal/IDE/GitHub usage. Community evidence confirms real-world CLI usage (with mixed sentiment on quality but not on CLI existence/functioning).",
+    "rationale": "Claude Code is delivered as an official CLI with documented install (curl install.sh), terminal usage (cd project && claude), extensive subcommands (mcp, teleport, etc.), and this is directly confirmed by a local probe running the installed binary. Community evidence, while critical of reliability/behavior in places, does not dispute that it is a functioning official CLI tool.",
     "evidenceIds": [
       "claude-code-docs-27",
-      "claude-code-gh-1",
+      "claude-code-docs-43",
       "claude-code-probe-3",
-      "claude-code-docs-37",
-      "claude-code-docs-39",
-      "claude-code-comm-6",
-      "claude-code-comm-7"
+      "claude-code-probe-4",
+      "claude-code-gh-1"
     ]
   },
   {
@@ -158,28 +153,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Claude Code exposes a documented Agent SDK for building custom agents with full control over orchestration/tool access, supports API key auth (ANTHROPIC_API_KEY), MCP for connecting external tools, hooks, headless/CI usage, and GitHub Actions integration—together constituting a documented programmatic surface for AI-native driving beyond the interactive CLI.",
+    "rationale": "Claude Code exposes a documented Agent SDK for building custom agents with full orchestration/tool/permission control, an MCP server/client interface (including running itself as an MCP server), CI/CLI scripting support, and API key-based auth (ANTHROPIC_API_KEY) — all documented publicly and confirmed via probe. This constitutes a genuine documented public API/SDK surface for agentic use, though it's less a traditional REST API and more CLI+SDK+MCP based.",
     "evidenceIds": [
       "claude-code-docs-18",
-      "claude-code-docs-40",
       "claude-code-docs-29",
-      "claude-code-docs-33",
-      "claude-code-docs-36",
+      "claude-code-docs-49",
+      "claude-code-docs-40",
+      "claude-code-docs-39",
+      "claude-code-probe-4",
       "claude-code-docs-7",
-      "claude-code-docs-8"
+      "claude-code-docs-36"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Claude Code supports API key auth (ANTHROPIC_API_KEY) and Enterprise adds SSO, role-based permissions, and managed policy settings, suggesting some scoping capability at the org level, but there's no explicit evidence of issuing per-agent scoped/least-privilege API credentials (e.g., fine-grained token scoping for individual agent instances). The Agent SDK offers 'permissions' control over tool access, which is adjacent but not the same as credential scoping.",
+    "rationale": "Claude Code supports API-key based auth (ANTHROPIC_API_KEY) with approval prompts, and Enterprise tier adds role-based permissions, managed policy settings, and restrictions on who can create API keys — but there's no evidence of per-agent scoped/least-privilege credential issuance (e.g., fine-grained token scopes tied to specific agent tasks or tool access).",
     "evidenceIds": [
-      "claude-code-docs-39",
       "claude-code-docs-40",
       "claude-code-docs-41",
+      "claude-code-docs-46",
       "claude-code-docs-18"
     ]
   },
@@ -187,23 +183,28 @@
     "productId": "claude-code",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Anthropic's official docs describe an Agent SDK that lets developers build custom agents on top of Claude Code's tool-use, orchestration, and permission model, directly satisfying the 'build against official SDKs' story; MCP support further extends programmatic integration.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Claude Code ships an official Agent SDK giving developers full control over orchestration, tool access, and permissions to build custom agents on top of Claude Code's engine, plus an official MCP server mode and MCP client integration for connecting external tools/data sources — all documented and verified via local CLI probe.",
     "evidenceIds": [
       "claude-code-docs-18",
-      "claude-code-docs-21"
+      "claude-code-docs-29",
+      "claude-code-docs-49",
+      "claude-code-probe-4",
+      "claude-code-docs-38"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "agentic-webhooks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The only related evidence (claude-code-docs-31) describes an MCP server pushing incoming webhook events into a Claude Code session, not Claude Code exposing outbound webhook subscriptions for external systems to receive its events. No documentation describes a webhook subscription API or event feed from Claude Code itself.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Claude Code doesn't offer a native webhook-subscription feature, but docs mention that an MCP server can act as a channel pushing webhook events into a session while the user is away, implying indirect support via third-party MCP servers rather than a built-in capability.",
     "evidenceIds": [
-      "claude-code-docs-31"
+      "claude-code-docs-31",
+      "claude-code-docs-29",
+      "claude-code-docs-49"
     ]
   },
   {
@@ -239,11 +240,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe ANTHROPIC_API_KEY environment variable support, sent as the X-Api-Key header for direct Anthropic API access with a key from the Claude Console, which bypasses the login prompt in favor of key approval—distinct from the Claude.ai account login flow.",
+    "rationale": "Official docs confirm setting ANTHROPIC_API_KEY lets Claude Code skip the account login prompt and use direct API-key auth (sent as X-Api-Key header), as an alternative to Claude.ai/Console account login.",
     "evidenceIds": [
       "claude-code-docs-39",
       "claude-code-docs-40",
-      "claude-code-docs-37"
+      "claude-code-docs-46"
     ]
   },
   {
@@ -252,7 +253,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of Claude Code providing a downloadable OpenAPI or machine-readable API spec for itself; evidence covers CLI usage, MCP integrations, and docs indexes but no API spec artifact.",
+    "rationale": "No evidence of a downloadable OpenAPI or machine-readable API spec for Claude Code itself; evidence covers CLI usage, MCP integration, and docs, but no API spec artifact is mentioned.",
     "evidenceIds": []
   },
   {
@@ -261,7 +262,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of sandbox environments, staging/test data isolation, or any mechanism to prevent Claude Code from touching production data; nothing addresses this specific safety/isolation axis.",
+    "rationale": "No evidence in the pack describes a sandbox mode, environment isolation, or a way to test against non-production data separate from the user's actual working directory/repo. Claude Code operates directly on local files, git repos, and connected tools (MCP, Slack, Jira, DBs) with no documented sandboxing or safe-mode for testing against non-production environments.",
     "evidenceIds": []
   },
   {
@@ -270,7 +271,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack discusses API versioning schemes or a documented deprecation policy for Claude Code's APIs/CLI; the docs focus on features and workflows, not on version stability guarantees.",
+    "rationale": "No evidence in the pack describes a versioned API contract or a documented deprecation policy for Claude Code's CLI, SDK, or MCP interfaces; the docs focus on features and usage, not API versioning/deprecation commitments.",
     "evidenceIds": []
   },
   {
@@ -293,26 +294,26 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Vendor docs explicitly state Claude Code stages changes, writes commit messages, creates branches, and opens pull requests, and integrates with GitHub/GitLab to submit PRs as part of the full workflow. Community evidence corroborates real-world use of the git/PR workflow (e.g., 'tag @Claude in Slack ... get a pull request back') without disputing this specific capability.",
+    "rationale": "Docs explicitly state Claude Code stages changes, writes commit messages, creates branches, and opens pull requests, and integrates with GitHub/GitLab to handle full workflows including PR submission; this is corroborated by GitHub repo mentioning @claude tagging and PR-based workflows.",
     "evidenceIds": [
       "claude-code-docs-3",
       "claude-code-docs-16",
       "claude-code-docs-11",
-      "claude-code-docs-12"
+      "claude-code-gh-1"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "automated-pr-review",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly advertise 'Get automatic code review on every PR' via GitHub integration and CI automation (GitHub Actions/GitLab CI/CD), giving direct support for this story. However, there's no independent/community evidence validating the quality or contextual depth of these automated reviews, and general reliability concerns about Claude Code's coding judgment (e.g., unreliable self-verification, degrading output quality) raise some doubt about consistency of feedback.",
+    "rationale": "Anthropic's docs explicitly describe a 'GitHub Code Review' feature that provides 'automatic code review on every PR,' plus CI integration for automating code review via GitHub Actions/GitLab CI, and scheduled 'morning PR reviews.' No community evidence directly contradicts this specific feature, though all support is vendor-sourced.",
     "evidenceIds": [
       "claude-code-docs-12",
       "claude-code-docs-36",
-      "claude-code-comm-18",
-      "claude-code-comm-16"
+      "claude-code-docs-8",
+      "claude-code-docs-47"
     ]
   },
   {
@@ -338,7 +339,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack describes automatic model selection/routing per task; users must manually choose models (e.g., mentions of Sonnet vs Opus in community comments suggest manual selection), and no docs claim automatic best-model picking.",
+    "rationale": "No evidence pack item describes automatic model selection per task; Claude Code documentation focuses on agentic coding features, MCP integrations, and workflow automation, but there's no mention of an automatic 'best model' routing capability for cost/performance optimization.",
     "evidenceIds": []
   },
   {
@@ -363,12 +364,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Claude Code's Hooks feature explicitly lets users define shell-command rules that trigger automatically before/after specific events like file edits or commits (e.g., auto-format after edit, lint before commit), and MCP servers can push webhook/Telegram/Discord events into sessions, plus scheduled runs for recurring triggers.",
+    "rationale": "Claude Code offers 'Hooks' to run shell commands automatically before/after actions (e.g., auto-format after edit, lint before commit), MCP servers that push events like Telegram/Discord/webhooks into a session, and CI/GitHub Actions triggers for automated review—directly matching event-driven rule automation.",
     "evidenceIds": [
       "claude-code-docs-33",
       "claude-code-docs-31",
-      "claude-code-docs-8",
-      "claude-code-docs-36"
+      "claude-code-docs-36",
+      "claude-code-docs-11",
+      "claude-code-docs-8"
     ]
   },
   {
@@ -390,11 +392,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Claude Code's automations (skills, hooks, CLAUDE.md) are stored as plain files and it has native git integration (staging, commits, branches, PRs) plus diff review UIs, which implicitly enables versioning and review of these artifacts. However, there's no explicit feature for versioning, reviewing, or rolling back 'automations' as a first-class concept (e.g., automation history/rollback), so this relies on inferring git usage rather than a dedicated capability.",
+    "rationale": "Claude Code's automations (skills, hooks, CLAUDE.md, scheduled tasks) are file-based and can be versioned/rolled back via its native git integration and diff review features, but there is no dedicated version-history or rollback UI specifically for automations themselves.",
     "evidenceIds": [
       "claude-code-docs-3",
       "claude-code-docs-13",
-      "claude-code-docs-25",
       "claude-code-docs-32",
       "claude-code-docs-33",
       "claude-code-docs-22"
@@ -425,10 +426,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe running Claude Code in the browser with 'no local setup' to kick off long-running tasks and check back later, working on repos not local, running multiple tasks in parallel, plus mobile/web kickoff with '--teleport' to pull sessions back into terminal—clearly describing isolated cloud sessions for background delegation. No community evidence directly disputes this cloud-session feature, though general reliability complaints exist elsewhere.",
+    "rationale": "Docs describe running Claude Code in the browser or cloud with no local setup for kicking off long-running tasks, working on remote repos, running tasks in parallel, and 'teleporting' between web/mobile/terminal, matching the delegated-background-cloud-execution story directly (docs-14, docs-26, docs-10, docs-13). Evidence is vendor-documentation only with no independent hands-on confirmation of the cloud sandbox feature specifically, so confidence is medium.",
     "evidenceIds": [
-      "claude-code-docs-26",
       "claude-code-docs-14",
+      "claude-code-docs-26",
       "claude-code-docs-10",
       "claude-code-docs-13",
       "claude-code-docs-9"
@@ -456,13 +457,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Anthropic's official docs describe explicit cross-device continuity features: 'Remote Control' to continue work from phone/browser, `claude --teleport` to pull a task started on web/mobile into a terminal, and browser-based cloud sessions for long-running tasks accessible from anywhere. These directly match the story of starting on one device and continuing on another.",
+    "rationale": "Claude Code explicitly supports cross-device continuity via 'Remote Control' (step away and continue from phone/browser) and 'claude --teleport' to pull a task started on web/mobile into a terminal, plus a browser-based version requiring no local setup for kicking off and checking on long-running tasks later.",
     "evidenceIds": [
       "claude-code-docs-9",
       "claude-code-docs-10",
-      "claude-code-docs-13",
       "claude-code-docs-26",
-      "claude-code-docs-14"
+      "claude-code-docs-14",
+      "claude-code-docs-13"
     ]
   },
   {
@@ -471,11 +472,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "medium",
-    "rationale": "Claude Code supports persistent context via CLAUDE.md, which is read at the start of every session, giving a form of cross-session memory, but this file must be manually authored/maintained rather than automatically built and recalled by the agent itself. Community evidence even notes users manually expanding CLAUDE.md as guardrails grow, indicating no automatic memory-building mechanism.",
+    "rationale": "Claude Code supports CLAUDE.md, a project file read at the start of every session to persist context/standards across sessions, giving some continuity. However, this is a manually authored file, not an agent that automatically builds and recalls memory from past interactions — no evidence of automatic memory formation or recall exists in the pack.",
     "evidenceIds": [
       "claude-code-docs-5",
-      "claude-code-docs-22",
-      "claude-code-comm-15"
+      "claude-code-docs-22"
     ]
   },
   {
@@ -484,13 +484,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Claude Code has explicit built-in support for custom Skills to package repeatable workflows (e.g., `/review-pr`, `/deploy-staging`), plus a plugin/MCP ecosystem and Agent SDK for deeper custom tooling, giving developers multiple ways to equip the agent with specialized capabilities.",
+    "rationale": "Claude Code has documented first-class support for custom 'Skills' (packaged repeatable workflows like /review-pr or /deploy-staging), plus complementary extensibility via MCP servers, hooks, subagents, and an Agent SDK for building custom tool/permission configurations, giving developers robust means to equip the agent with specialized capabilities.",
     "evidenceIds": [
       "claude-code-docs-32",
       "claude-code-docs-29",
-      "claude-code-docs-38",
+      "claude-code-docs-33",
       "claude-code-docs-18",
-      "claude-code-docs-33"
+      "claude-code-docs-38",
+      "claude-code-probe-4"
     ]
   },
   {
@@ -512,11 +513,13 @@
     "storyId": "enterprise-grade-auth",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state Claude for Enterprise adds SSO/SAML, domain capture, role-based permissions, and compliance API for org-wide Claude Code configurations, directly addressing enterprise identity/compliance/scalability needs; API key auth also supported for programmatic scaling.",
+    "confidence": "high",
+    "rationale": "Claude Code documentation explicitly supports enterprise SSO/SAML, domain capture, role-based permissions, and a compliance API via 'Claude for Enterprise,' plus API key/Console-based auth flows for organizational control, directly meeting the enterprise identity/compliance need.",
     "evidenceIds": [
       "claude-code-docs-41",
       "claude-code-docs-42",
+      "claude-code-docs-46",
+      "claude-code-docs-39",
       "claude-code-docs-40"
     ]
   },
@@ -526,11 +529,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Official docs explicitly state users can log in with their existing Claude Pro or Max subscription (via Claude.ai account) to authenticate Claude Code, in addition to API key auth.",
+    "rationale": "Official docs explicitly confirm developers can log in with an existing Claude Pro or Max subscription via a Claude.ai account, in addition to API key or Enterprise SSO options, directly enabling the coding agent without separate billing.",
     "evidenceIds": [
       "claude-code-docs-37",
       "claude-code-docs-39",
-      "claude-code-docs-40"
+      "claude-code-docs-46"
     ]
   },
   {
@@ -539,28 +542,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe MCP-based connections to Jira, Slack, and Google Drive (reading design docs, updating tickets, pulling data) plus concrete examples like implementing JIRA issues and syncing Slack/Figma content, and MCP supports hundreds of external tools including Notion. No community evidence disputes this specific integration capability.",
+    "rationale": "Official docs explicitly describe connecting Claude Code to Jira, Slack, and Google Drive via MCP, plus concrete examples (Jira issue implementation, Slack/Figma workflows, Notion MCP server add commands), and a probe confirms the MCP server functionality works locally.",
     "evidenceIds": [
       "claude-code-docs-4",
       "claude-code-docs-21",
-      "claude-code-docs-23",
-      "claude-code-docs-24",
       "claude-code-docs-29",
       "claude-code-docs-30",
-      "claude-code-docs-35"
+      "claude-code-docs-23",
+      "claude-code-docs-35",
+      "claude-code-probe-4"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "free-tier-account-access",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs confirm users can log in with a Claude.ai (Pro or Max) account to use Claude Code without an API key, and API key usage is presented as an alternative, not a requirement.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm you can log in with a Claude.ai account (Pro or Max subscription) instead of managing an API key, avoiding manual key setup. However, the evidence only mentions paid Pro/Max subscriptions for this login flow — there's no mention of a free tier for Claude Code access via personal account login.",
     "evidenceIds": [
       "claude-code-docs-37",
       "claude-code-docs-39",
-      "claude-code-docs-40"
+      "claude-code-docs-40",
+      "claude-code-docs-46"
     ]
   },
   {
@@ -569,11 +573,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Vendor docs explicitly state Claude Code uses agentic search to map and explain entire codebases in seconds without manual context file selection, and community evidence corroborates strong code-assistant capability, though some hands-on reports note reliability caveats on complex tasks.",
+    "rationale": "Anthropic's own product page explicitly states Claude Code 'maps and explains entire codebases in a few seconds' using agentic search 'without you having to manually select context files,' directly matching the story. This is reinforced by broader agentic capabilities (multi-file editing, git integration) but relies solely on vendor claims with no independent hands-on verification of this specific feature.",
     "evidenceIds": [
       "claude-code-docs-15",
       "claude-code-docs-16",
-      "claude-code-comm-5"
+      "claude-code-docs-28"
     ]
   },
   {
@@ -582,10 +586,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Claude Code is an agentic CLI/IDE assistant that works via prompts, diffs, and multi-file edits (e.g., inline diffs in VS Code, plan review) rather than real-time ghost-text completions or next-edit suggestions as the developer types; no evidence pack item describes autocomplete-style inline suggestions.",
+    "rationale": "Claude Code is fundamentally a CLI/agentic terminal and chat-driven tool; the evidence describes plan-then-write, diff review, and IDE integrations (VS Code, JetBrains) but nothing about inline-as-you-type autocomplete or next-edit suggestions like a Copilot-style ghost text feature. Its IDE plugins offer inline diffs and @-mentions, not predictive completions while typing.",
     "evidenceIds": [
       "claude-code-docs-25",
-      "claude-code-docs-19"
+      "claude-code-docs-19",
+      "claude-code-docs-28"
     ]
   },
   {
@@ -612,10 +617,9 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Official docs explicitly describe a JetBrains IDE plugin (IntelliJ IDEA, PyCharm, WebStorm) providing interactive diff viewing and selection context sharing, directly matching the story. No community evidence contradicts this specific JetBrains feature, though most hands-on commentary focuses on the CLI/terminal experience rather than the JetBrains plugin.",
+    "rationale": "Official docs explicitly describe a JetBrains plugin for IntelliJ IDEA, PyCharm, WebStorm, and other JetBrains IDEs with interactive diff viewing and selection context sharing, directly matching the story's requirements.",
     "evidenceIds": [
-      "claude-code-docs-19",
-      "claude-code-docs-13"
+      "claude-code-docs-19"
     ]
   },
   {
@@ -624,7 +628,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items mention license detection, public-code/training-data provenance matching, or any attribution/similarity reference feature for AI-suggested code; the docs focus on workflow, automation, and integration capabilities instead.",
+    "rationale": "No evidence in the pack indicates Claude Code provides license attribution or public-code matching/provenance references for AI-suggested code; docs focus on coding assistance, MCP integrations, and enterprise auth, with no mention of code-origin or license detection features.",
     "evidenceIds": []
   },
   {
@@ -632,10 +636,13 @@
     "storyId": "live-app-debugging",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs explicitly mention a 'Debug live web applications | Chrome' feature, indicating Claude Code integrates with Chrome to inspect/debug running web apps, but there's no detailed documentation or community evidence describing how well this works in practice, and no hands-on validation exists in the pack.",
+    "confidence": "medium",
+    "rationale": "Claude Code explicitly advertises a Chrome integration titled 'Debug live web applications' and can run in terminal/IDE with tool access, suggesting direct support for debugging live web apps. However, evidence is limited to a single docs headline with no elaboration on how live debugging works (e.g., DOM inspection, breakpoints), and community feedback raises reliability concerns about trusting the tool to self-verify fixes.",
     "evidenceIds": [
-      "claude-code-docs-17"
+      "claude-code-docs-17",
+      "claude-code-docs-48",
+      "claude-code-comm-16",
+      "claude-code-comm-17"
     ]
   },
   {
@@ -644,14 +651,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Claude Code is explicitly a terminal-based CLI agent (`cd your-project && claude`), confirmed by official docs and GitHub description ('Use it in your terminal, IDE, or tag @claude on GitHub'), with broad agentic capabilities (multi-file edits, git integration, MCP tools) run locally. Community evidence corroborates real-world usage as a terminal tool, though with mixed quality/trust feedback that doesn't negate core delivery.",
+    "rationale": "Claude Code is explicitly a terminal-installed CLI agent (curl install script, `cd your-project && claude`), directly confirmed by docs and a hands-on probe running the local CLI. Community sentiment on quality/reliability is mixed but confirms the core capability of running as a local terminal agent exists and functions.",
     "evidenceIds": [
       "claude-code-docs-27",
+      "claude-code-docs-43",
       "claude-code-gh-1",
-      "claude-code-docs-2",
-      "claude-code-docs-3",
-      "claude-code-comm-7",
-      "claude-code-comm-6"
+      "claude-code-probe-3",
+      "claude-code-probe-4",
+      "claude-code-comm-7"
     ]
   },
   {
@@ -660,7 +667,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items describe adding or attaching multiple project directories to a single Claude Code session for broader context; docs focus on single-project sessions, MCP integrations, subagents, and remote/cloud features but never mention multi-directory context.",
+    "rationale": "The evidence pack describes CLAUDE.md, agentic codebase search, and MCP integrations, but contains no mention of adding or working across multiple project directories within a single session (e.g., an --add-dir style feature).",
     "evidenceIds": []
   },
   {
@@ -668,12 +675,13 @@
     "storyId": "multi-ide-chat-assistant",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Claude Code ships official VS Code and JetBrains plugins offering inline diffs, @-mentions, plan review, and conversation history directly in the editor, plus terminal/IDE usage confirmed on GitHub.",
+    "confidence": "high",
+    "rationale": "Claude Code offers official IDE integrations (VS Code extension with inline diffs, @-mentions, plan review, conversation history; JetBrains plugin with diff viewing and selection context sharing) enabling in-editor contextual chat, plus terminal use, corroborated by GitHub repo stating 'Use it in your terminal, IDE, or tag @claude on Github.' Community feedback is mixed on quality/reliability but does not dispute the core IDE integration capability.",
     "evidenceIds": [
       "claude-code-docs-25",
       "claude-code-docs-19",
-      "claude-code-gh-1"
+      "claude-code-gh-1",
+      "claude-code-docs-48"
     ]
   },
   {
@@ -682,12 +690,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence ties Claude Code strictly to Anthropic's Claude models (via Claude.ai subscription or Anthropic API key), with no mention of supporting alternative AI providers like OpenAI or Google. While users can select among Claude model tiers (e.g., Opus vs Sonnet per community comments), there's no evidence of true multi-provider model selection.",
+    "rationale": "All evidence ties Claude Code exclusively to Anthropic's own models via Claude Pro/Max subscription or an ANTHROPIC_API_KEY — there is no mention of selecting alternate model providers (e.g., OpenAI, Google) within a session. The product is architected as a single-vendor tool, and no docs or community evidence describe multi-provider model switching.",
     "evidenceIds": [
       "claude-code-docs-37",
       "claude-code-docs-39",
-      "claude-code-docs-40",
-      "claude-code-comm-19"
+      "claude-code-docs-40"
     ]
   },
   {
@@ -696,15 +703,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show explicit GitHub/GitLab integration (tagging @claude on PRs/issues, GitHub Actions/GitLab CI code review) and Slack task routing via @Claude mentions, plus MCP connectors that can pull from Jira/issue trackers. However, there's no direct evidence of native Linear integration, and the Slack/GitHub routing is documented as vendor capability without independent community confirmation of reliability.",
+    "rationale": "Docs confirm agent kickoff from GitHub (@claude mentions, GitHub Actions, PR reviews), GitLab CI/CD, and Slack (@Claude mention creates a PR), but there is no evidence of direct Linear integration—only Jira via MCP is mentioned.",
     "evidenceIds": [
+      "claude-code-gh-1",
+      "claude-code-docs-36",
       "claude-code-docs-11",
       "claude-code-docs-12",
       "claude-code-docs-16",
-      "claude-code-docs-36",
-      "claude-code-gh-1",
-      "claude-code-docs-30",
-      "claude-code-docs-29"
+      "claude-code-docs-30"
     ]
   },
   {
@@ -713,7 +719,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack describes Claude Code accepting a sketch, image, or PDF design as input to generate an app; docs only cover code generation from text prompts, git workflows, and integrations like Google Drive/Jira/Slack, none referencing image/PDF-based design-to-code generation.",
+    "rationale": "The evidence pack shows Claude Code handling text-based coding tasks, git workflows, MCP integrations, and referencing external design docs (e.g., Figma links shared in Slack), but there is no evidence of it accepting a sketch, image, or PDF as direct input to generate a working app from a visual design.",
     "evidenceIds": []
   },
   {
@@ -722,15 +728,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe debugging live web apps, agentic codebase understanding, CI failure analysis, and piping logs into Claude Code via natural language (docs-17, docs-8, docs-15, docs-7), directly supporting NL-driven debugging. However, community reports raise real concerns about self-verification failures and unreliable fixes during troubleshooting sessions, tempering confidence in consistent quality.",
+    "rationale": "Docs explicitly market debugging via natural language (e.g., 'Debug live web applications', 'Build, debug, and ship', codebase mapping/explaining, plain-language task description), and one community comment praises its code-assistant ability. However, multiple hands-on reports describe unreliable self-verification, buggy replace_all fixes, and degraded output quality, indicating debugging support works but with significant caveats.",
     "evidenceIds": [
       "claude-code-docs-17",
-      "claude-code-docs-8",
+      "claude-code-docs-48",
       "claude-code-docs-15",
-      "claude-code-docs-7",
+      "claude-code-docs-2",
+      "claude-code-comm-5",
       "claude-code-comm-16",
-      "claude-code-comm-17",
-      "claude-code-comm-5"
+      "claude-code-comm-19"
     ]
   },
   {
@@ -759,14 +765,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Claude Code exposes a scriptable CLI, headless/CI modes, hooks, and an Agent SDK that gives 'full control over orchestration, tool access, and permissions' for building custom agents, plus direct API-key access bypassing the interactive UI login. However, some features (Remote Control, teleport, browser sessions, GitHub/Slack routing) are described as UI/product integrations rather than documented as fully API-addressable, so parity isn't explicitly claimed end-to-end.",
+    "rationale": "Claude Code offers an Agent SDK with 'full control over orchestration, tool access, and permissions,' a scriptable CLI built on Unix philosophy (pipeable, CI-friendly), and the ability to run itself as an MCP server — all suggesting strong programmatic parity with interactive use. However, there's no explicit documentation claiming full feature parity between the terminal/IDE UI and API/SDK, and some community reports point to hidden internal behaviors (decoy tool injection, undercover mode) that suggest the API surface may not be fully transparent or equivalent to what the UI does.",
     "evidenceIds": [
       "claude-code-docs-18",
       "claude-code-docs-7",
+      "claude-code-docs-49",
       "claude-code-docs-36",
-      "claude-code-docs-39",
-      "claude-code-docs-40",
-      "claude-code-docs-33"
+      "claude-code-docs-8",
+      "claude-code-comm-9",
+      "claude-code-comm-12"
     ]
   },
   {
@@ -774,9 +781,13 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "There is no evidence in the pack of any data export feature, open-format export, or account/data portability tooling in Claude Code; the evidence focuses on coding workflows, integrations, and community criticism (including closed-source concerns), not user data export/portability.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of any data-export feature, open-format export, or data-portability commitment for Claude Code. In fact, community evidence suggests the opposite spirit of openness—Claude Code is closed-source (unlike Codex CLI) and reportedly injects hidden decoy tool definitions and strips attribution from outputs, which cuts against transparency/openness claims.",
+    "evidenceIds": [
+      "claude-code-comm-4",
+      "claude-code-comm-9",
+      "claude-code-comm-10"
+    ]
   },
   {
     "productId": "claude-code",
@@ -784,10 +795,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Claude Code is closed-source; community evidence explicitly contrasts it with FOSS alternatives ('Codex CLI is FOSS, unlike Claude Code'), and no docs or repo evidence indicates any open-license source availability—only compiled distribution and CLI usage instructions are provided.",
+    "rationale": "Claude Code is closed-source; community evidence explicitly contrasts it with FOSS alternatives ('Codex CLI is FOSS, unlike Claude Code'), and no docs or license references indicate any open-source availability of its source code.",
     "evidenceIds": [
-      "claude-code-comm-4",
-      "claude-code-gh-1"
+      "claude-code-comm-4"
     ]
   },
   {
@@ -796,32 +806,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Claude Code is a closed-source CLI that requires an Anthropic API key or Claude.ai/Enterprise login to function (claude-code-docs-37/39/40); there is no self-hosted deployment option in the docs. Community evidence explicitly contrasts it with FOSS alternatives, confirming it cannot be self-hosted.",
+    "rationale": "Claude Code requires an Anthropic API key or Claude.ai subscription and routes all inference through Anthropic's cloud; there is no evidence of a self-hostable core model or server. Community commentary explicitly contrasts it as non-FOSS versus alternatives, confirming it cannot be self-hosted.",
     "evidenceIds": [
       "claude-code-docs-37",
       "claude-code-docs-39",
-      "claude-code-docs-40",
       "claude-code-comm-4"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "parallel-agent-fleets",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe spawning multiple coordinated agents, running long-running/background tasks, scheduling, and parallel cloud sessions (docs-6/34/14/26/8/13/18), directly matching the 'fleets working for hours/days' story. However, community reports describe unreliable self-verification, degrading quality over extended sessions, and repeated failures when left to work autonomously (comm-16, comm-17, comm-19, comm-20), casting doubt on how well this works unsupervised over long horizons.",
+    "rationale": "Docs describe spawning multiple agents coordinated by a lead agent, running long-running/background tasks, scheduling recurring jobs, and parallel cloud sessions — directly matching the fleet/parallel/long-duration story. However, there is no hands-on evidence confirming multi-day autonomous fleet runs actually succeed reliably, and community reports cite failure modes, self-verification issues, and quality degradation on long autonomous sessions, so real-world reliability at scale is uncertain.",
     "evidenceIds": [
       "claude-code-docs-6",
       "claude-code-docs-34",
+      "claude-code-docs-44",
       "claude-code-docs-14",
       "claude-code-docs-26",
-      "claude-code-docs-8",
       "claude-code-docs-13",
-      "claude-code-docs-18",
+      "claude-code-docs-8",
       "claude-code-comm-16",
       "claude-code-comm-17",
-      "claude-code-comm-19",
       "claude-code-comm-20"
     ]
   },
@@ -846,13 +854,17 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Claude Code integrates with an ecosystem of third-party partner-built MCP servers (e.g., Notion, Slack, Jira, Google Drive) via the Model Context Protocol, letting engineering leads plug external agent tools into their coding workflows, and even scaffold new MCP servers with an official plugin.",
+    "rationale": "Claude Code supports the Model Context Protocol (MCP) to connect to 'hundreds of external tools and data sources' including partner servers like Notion, Jira, Slack, GitHub/GitLab, plus a plugin system, Agent SDK for building custom agents, and Slack @mention routing—directly enabling integration of third-party agent apps into engineering workflows.",
     "evidenceIds": [
       "claude-code-docs-29",
-      "claude-code-docs-35",
       "claude-code-docs-21",
-      "claude-code-docs-31",
-      "claude-code-docs-38"
+      "claude-code-docs-4",
+      "claude-code-docs-35",
+      "claude-code-docs-38",
+      "claude-code-docs-18",
+      "claude-code-docs-11",
+      "claude-code-docs-36",
+      "claude-code-docs-49"
     ]
   },
   {
@@ -861,11 +873,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe CLAUDE.md, a markdown file placed in the project root that Claude Code reads at the start of every session, used to set coding standards, architecture decisions, preferred libraries, and review checklists—directly matching the story. Some community evidence notes users need to expand CLAUDE.md heavily over time, but core capability is well documented and confirmed.",
+    "rationale": "Docs explicitly confirm CLAUDE.md as a project-root markdown file read at the start of every session, explicitly intended for setting coding standards, architecture decisions, preferred libraries, and review checklists—directly matching the story.",
     "evidenceIds": [
       "claude-code-docs-5",
-      "claude-code-docs-22",
-      "claude-code-comm-15"
+      "claude-code-docs-22"
     ]
   },
   {
@@ -892,7 +903,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency or regional storage controls for Claude Code; only enterprise SSO/compliance API features are mentioned, with nothing about choosing storage region.",
+    "rationale": "The evidence pack contains no mention of data residency, regional storage options, or configurable data location controls for Claude Code; only enterprise SSO/compliance features are noted without residency specifics.",
     "evidenceIds": []
   },
   {
@@ -901,7 +912,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address data training opt-out or a 'don't train on my data' setting for Claude Code; enterprise items mention SSO/compliance but not training data controls, and community evidence even raises trust/security concerns rather than confirming such a control.",
+    "rationale": "The evidence pack contains no mention of data-training opt-out policies, privacy settings, or statements about whether user code/conversations are used for model training. Enterprise features like SSO and compliance API are noted, but nothing addresses this specific privacy control.",
     "evidenceIds": []
   },
   {
@@ -910,7 +921,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or community discussion of data retention policies, deletion controls, or privacy configuration options for Claude Code; instead it covers coding features and unrelated trust/security controversies (e.g., anti-distillation, undercover mode).",
+    "rationale": "The evidence pack contains no documentation or feature references about data retention settings, deletion controls, or privacy configuration options in Claude Code; only enterprise SSO/compliance API mentions exist, with no specifics on retention/deletion controls, and community evidence raises concerns about trust in data handling without confirming any user-facing retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -918,9 +929,12 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no documentation or claims about telemetry settings, opt-out flags, or usage-tracking controls in Claude Code. Some community comments raise general trust/privacy concerns (e.g., anti-distillation telemetry, undercover mode) but do not address an actual opt-out mechanism.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no documentation or claims about a telemetry/usage-tracking opt-out setting (e.g., environment variable or config flag) for Claude Code, only general product features and community commentary about trust and data-handling concerns.",
+    "evidenceIds": [
+      "claude-code-comm-9",
+      "claude-code-comm-11"
+    ]
   },
   {
     "productId": "claude-code",
@@ -941,16 +955,15 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs claim Claude Code can debug live web apps, analyze CI failures overnight, and 'verifies it works' after writing fixes (docs-2/17/8), suggesting strong reproduce/root-cause/verify support. However, hands-on community reports directly contradict the verification claim, citing self-inflicted bugs (e.g., replace_all corrupting a constant) and stating 'you absolutely can't trust it to self-verify,' plus reports of degrading output quality and high failure rates on iterative fixes.",
+    "rationale": "Docs claim Claude Code can debug live apps, map/explain codebases to find root causes, analyze CI failures overnight, and 'verifies it works' after making changes, which maps well to reproduce/root-cause/verify workflows. However, hands-on community reports describe unreliable self-verification (e.g., blind replace_all breaking code) and even '100% failure rate' for some debugging tasks, directly contradicting the vendor's verification claims.",
     "evidenceIds": [
-      "claude-code-docs-2",
+      "claude-code-docs-28",
       "claude-code-docs-17",
       "claude-code-docs-8",
       "claude-code-docs-15",
       "claude-code-comm-16",
       "claude-code-comm-17",
-      "claude-code-comm-19",
-      "claude-code-comm-5"
+      "claude-code-comm-19"
     ]
   },
   {
@@ -988,15 +1001,14 @@
     "storyId": "terminal-scripting-automation",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly describe non-interactive/automation usage: composable Unix-philosophy piping, running in CI, GitHub Actions/GitLab CI/CD automation of code review and issue triage, scheduled recurring tasks, and API-key-based non-interactive auth for scripts. Community evidence corroborates real-world CLI/CI usage though with mixed reliability complaints unrelated to the scripting axis itself.",
+    "confidence": "high",
+    "rationale": "Docs explicitly describe running Claude Code non-interactively for automation: piping logs into it, running it in CI, scheduling recurring tasks (PR reviews, CI failure analysis, dependency audits), and integrating with GitHub Actions/GitLab CI/CD for automated code review and issue triage, confirming its Unix-philosophy composability for scripted workflows.",
     "evidenceIds": [
       "claude-code-docs-7",
       "claude-code-docs-8",
       "claude-code-docs-36",
-      "claude-code-docs-39",
-      "claude-code-docs-40",
-      "claude-code-gh-1"
+      "claude-code-docs-14",
+      "claude-code-docs-49"
     ]
   },
   {
@@ -1005,7 +1017,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data-use/training opt-out policies for Claude Code; the pack covers features, IAM/enterprise SSO, and community sentiment but not training-data usage controls.",
+    "rationale": "The evidence pack contains no documentation or statements about Claude Code's data usage/training policies or an opt-out mechanism for code/prompt data; only general enterprise features (SSO, compliance API) are mentioned without specifics on training data handling.",
     "evidenceIds": []
   },
   {
@@ -1014,28 +1026,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe a dashboard for reviewing diffs, running multiple sessions side by side, scheduling recurring tasks, and kicking off cloud sessions, plus multi-agent orchestration with a 'lead agent' and cross-device teleport/remote control — directly supporting a unified multi-session workspace for a lead. However, all evidence is vendor documentation with no independent/community confirmation of this specific workspace UX, and other community feedback raises general reliability/trust concerns about Claude Code's operation.",
+    "rationale": "Docs describe a web interface where users can 'review diffs visually, run multiple sessions side by side, schedule recurring tasks, and kick off cloud sessions,' plus the ability to spawn multiple coordinated agents or run multiple tasks in parallel — directly supporting a unified multi-session workspace. However, this is vendor-claimed only, with no independent/community evidence validating the quality or reliability of managing multiple concurrent sessions, and most community feedback focuses on unrelated code-quality and trust issues.",
     "evidenceIds": [
       "claude-code-docs-13",
       "claude-code-docs-6",
       "claude-code-docs-34",
       "claude-code-docs-14",
       "claude-code-docs-26",
-      "claude-code-docs-9",
-      "claude-code-docs-10"
+      "claude-code-docs-44"
     ]
   },
   {
     "productId": "claude-code",
     "storyId": "vulnerability-autofix",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 6,
     "confidence": "low",
-    "rationale": "Claude Code offers general automatic code review on PRs and CI-integrated review/triage (docs-12, docs-36), which could surface security issues, but no evidence explicitly describes dedicated vulnerability detection, contextual security explanations, or automatic security fixes.",
+    "rationale": "Claude Code has explicit product messaging that it reviews code for security issues, drafts patches, and explains risk in plain language, plus GitHub Code Review integration for automatic PR review, supporting contextual explanation and fixing of vulnerabilities. However, there's no dedicated security-scanning feature evidence beyond general code-review claims, and community feedback raises reliability concerns about self-verification and code correctness in general.",
     "evidenceIds": [
+      "claude-code-docs-47",
       "claude-code-docs-12",
       "claude-code-docs-36",
-      "claude-code-docs-16"
+      "claude-code-comm-16"
     ]
   },
   {
