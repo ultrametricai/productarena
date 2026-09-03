@@ -6,7 +6,6 @@
 cites the evidence behind it, nothing is opinion.
 
 [![CI](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 
 ![ProductArena](https://ultrametric.ai/productarena/opengraph-image)
@@ -536,4 +535,7 @@ by `pnpm pipeline derive --category <category>` — before any verdict actually 
 
 ## License
 
-[MIT](./LICENSE) © 2026 Ultrametric Inc
+Code: © 2026 Ultrametric Inc, all rights reserved (source-available — see LICENSE).
+Data (`data/`): CC BY 4.0 (see DATA-LICENSE) — agents and researchers may reuse the
+rankings and evidence with attribution.
+

@@ -113,11 +113,21 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 antialiased">
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4">
-            <Link href="/" className="flex shrink-0 items-center gap-2 font-display text-lg font-bold tracking-tight">
-              <span>
-                Product<span className="text-emerald-400">Arena</span>
-              </span>
-            </Link>
+            <div className="flex shrink-0 items-baseline gap-2">
+              <a
+                href="https://ultrametric.ai"
+                className="hidden text-sm text-zinc-500 transition hover:text-emerald-300 sm:inline"
+                title="Ultrametric home"
+              >
+                ultrametric
+              </a>
+              <span aria-hidden className="hidden text-zinc-700 sm:inline">/</span>
+              <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+                <span>
+                  Product<span className="text-emerald-400">Arena</span>
+                </span>
+              </Link>
+            </div>
             <nav className="flex items-center gap-3 text-sm text-zinc-400">
               <ArenaMenu
                 items={categories.map((c) => ({
@@ -153,7 +163,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="mx-auto max-w-7xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
-            <span>ProductArena · MIT licensed · © 2026 Ultrametric Inc</span>
+            <span>© 2026 Ultrametric Inc · data CC BY 4.0</span>
             <div className="flex items-center gap-4">
               <a
                 href={`https://github.com/${REPO}/issues/new?template=request-a-product.md`}
