@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Scratch git worktrees created by coding-agent sessions (each has its own nested
+    // .next/** build output that the pattern above doesn't reach since it's not at repo root).
+    ".claude/**",
   ]),
 ]);
 
