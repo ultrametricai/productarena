@@ -28,6 +28,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         agenticApp: entry.agenticApp,
         apiQuality: entry.apiQuality,
         popularity: data.popularity[product.id]?.stars ?? null,
+        ycBatch: product.ycBatch,
         access: { MCP: glyphs.MCP, CLI: glyphs.CLI, API: glyphs.API },
       })
     }

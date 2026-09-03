@@ -1,0 +1,723 @@
+# YC ingestion + category-mapping lane report
+
+Generated from data/yc-map.json (1757 companies, batches W23-S26) and data/yc-batches.json (6 existing products verified as YC alumni).
+
+## Top proposed new arenas by density (>=3 candidates)
+
+### vertical-ai-agents (90)
+- Sameday (sameday, Winter 2023) — The leading AI workforce for the trades.
+- zudo.work (zudowork, Winter 2023) — AI Workers for Warranty
+- Avoca (avoca, Winter 2023) — AI-powered Sales Agent for Service-Based Industries
+- Struct (struct, Winter 2023) — Multi-lingual AI Voice Agents
+- Latent (latent, Winter 2023) — Medical language models to automate healthcare operations
+- Mulligan (mulligan, Winter 2023) — AI automation for insurance brokerages
+- FlexDesk (flexdesk, Winter 2023) — AI Agents for corporate real estate teams
+- Glass Health (glass-health, Winter 2023) — AI-Powered Clinical Decision Support & Ambient Scribing
+- Pledge Health (pledge-health, Winter 2023) — AI RCM assistant that handles any insurance task on payer portals for…
+- Tennr (tennr, Winter 2023) — Fast, Transparent Patient Experiences
+- OfOne (ofone, Winter 2023) — AI-powered order taker for restaurant drive-thrus
+- infra.new (infranew, Winter 2023) — AI Agent for Cloud Infrastructure
+- GovEagle (goveagle, Winter 2023) — AI for Government Contractors
+- Bluebirds (bluebirds, Winter 2023) — Automate outbound with signals
+- Pirros (pirros, Winter 2023) — AI Platform for Architects and Engineers
+- Haven (haven-2, Winter 2023) — AI workforce for property management
+- Floworks (floworks, Winter 2023) — Hire the best AI Sales employees | AI SDR | AI RevOps | AI EA
+- ShortLoop (shortloop, Winter 2023) — Phone AI that Captures Every Dealership Revenue Opportunity
+- Orchid (orchid, Winter 2023) — AI-powered EHR for independent mental health professionals
+- Variance (variance, Winter 2023) — AI Agents for Fraud Review and Investigations
+- compliant-llm (compliant-llm, Winter 2023) — Detect every data leak into third-party GenAI tools
+- Hadrius (hadrius, Winter 2023) — Automating Securities Compliance
+- Fairway Health (fairway-health, Winter 2023) — AI Co-Pilot for Health Insurers to Authorize Treatment Faster
+- Finic (finic, Winter 2023) — The AI fraud hunter
+- Hippo Scribe (hippo-scribe, Winter 2023) — AI assisted documentation for PT/OT/SLP
+- Hona (hona, Winter 2023) — Personal Injury Legal Work - Automated
+- nunu.ai (nunu-ai, Winter 2023) — Building the first multimodal agents to play and test games.
+- CombineHealth (combinehealth, Winter 2023) — Automating Healthcare Revenue Cycle Management with AI Workforce
+- Echo (echo, Winter 2023) — Founder-led sales co-pilot for B2B startups.
+- Retape (retape, Winter 2023) — AI Operating System for Debt Settlement
+- MagnaPlay (magnaplay, Winter 2023) — AI-powered game translation.
+- Coldreach (coldreach, Winter 2023) — Find the best leads with custom intent signals
+- Mantys (mantys, Winter 2023) — AI agents for healthcare and insurance operations in GCC
+- Sweetspot (sweetspot, Summer 2023) — AI for Government Contracting.
+- Lio (formerly askLio) (lio, Summer 2023) — The World's First Multi-Agent System for Procurement
+- Talc (talc, Summer 2023) — Event extraction for Medical Researchers
+- FleetWorks (fleetworks, Summer 2023) — AI enabled marketplace matching trucks with jobs
+- Dialtone (dialtone, Summer 2023) — AI Agents for Enterprises
+- Hiro (hiro, Summer 2023) — Agents that handle security work
+- Inari (inari, Summer 2023) — Your junior AI product manager
+- Silimate (silimate, Summer 2023) — Fast, efficient agents for chip design and debug
+- HappyRobot (happyrobot, Summer 2023) — Intelligence that runs your operations. 
+- Strada (strada, Summer 2023) — AI agents that run insurance operations
+- Cognitio Labs (cognitio-labs, Summer 2023) — AI back office for food product quality teams
+- Upsolve AI (upsolve-ai, Winter 2024) — Deploy trustworthy data agent that know your business
+- Navier AI (navier-ai, Winter 2024) — Agent-Driven Engineering
+- RadMate AI (radmate-ai, Winter 2024) — Copilot for radiologists
+- Scritch (scritch, Winter 2024) — AI operating system for veterinary care
+- Simplex (simplex, Summer 2024) — AI agents to enroll providers with payors
+- Trellis AI (trellis-ai, Winter 2024) — Accelerate Medication Access with AI
+- Carma (carma, Winter 2024) — The AI Operating System For Modern Fleets.
+- Conduit (conduit-ai, Winter 2024) — AI Agents for Hospitality
+- Reprompt (reprompt, Winter 2024) — AI Agents for Location
+- Spherecast (spherecast, Summer 2024) — AI Supply Chain Manager for CPG
+- Undermind (undermind, Summer 2024) — An AI agent for scientific research
+- Understood Care (understood-care, Summer 2024) — Healthcare personal assistants for Medicare patients.
+- ProhostAI (prohostai, Summer 2024) — AI Property Manager for Airbnb & Short-Term Rental Hosts
+- Pre (pre, Summer 2024) — The AI accountability agent for startup founders
+- Zuni (zuni, Summer 2024) — AI agents for high-value professional work
+- Cartage (cartage, Summer 2024) — Autonomous freight coordination
+- Bluedoor (bluedoor, Summer 2024) — AI for public records request fulfillment
+- Capitol AI (capitol-ai, Summer 2024) — Capitol: the sovereign operating system for intelligence.
+- Maive (maive, Winter 2025) — AI for Home Services
+- SalesPatriot (salespatriot, Winter 2025) — AI powered operating system for distributors and OEMs
+- Paragon (deployparagon, Winter 2025) — The AI Growth Engine for Industrials
+- Riviera (riviera, Winter 2025) — AI Employees for Hotels
+- TamLabs (tamlabs, Winter 2025) — Agent teams for complex work
+- Nixo (nixo, Summer 2025) — Make every FDE on your team capable of moving any account forward.
+- Async (withasync, Summer 2026) — AI agents that run small businesses
+- Wedge (wedge, Summer 2025) — Palantir for Healthcare AI Agents
+- Nautilus (nautilus, Summer 2025) — AI platform to grow and to optimize car washes
+- Reacher (reacher, Summer 2025) — We automate creator marketing for the world's largest brands
+- NOSO LABS (noso-labs, Summer 2025) — Build AI agents for field technicians to diagnose and sell 10x better
+- Avent (avent, Summer 2025) — AI agents for industrial commerce
+- Aemon (aemon, Winter 2026) — The Forward-Deployed AI Research Engineer 
+- Ventura (ventura, Winter 2026) — AI Workforce for Distributors and Manufacturers
+- Proximitty (proximitty, Winter 2026) — AI operating system for commercial loans
+- Rhizome AI (rhizome-ai, Winter 2026) — Agent Platform for Life Sciences
+- Revion (revion, Winter 2026) — Intelligence for Automotive Operations
+- MochaCare (mochacare, Winter 2026) — Agentic Management Service for Care Organizations
+- Zymbly (zymbly, Winter 2026) — The decision-support layer for aviation ops teams to know what to do…
+- Ossus (ossus, Winter 2026) — Intelligence for cultural institutions
+- Sidekick (textsidekick, Summer 2026) — AI agent that handles frontline operations over text
+- Kebra (kebra, Summer 2026) — Making the field queryable
+- Trope (trope, Summer 2026) — AI FDE that deploys custom AI agents into ERPs
+- Bernard (bernard, Summer 2026) — AI employees that run home appliance repair companies
+- Zaplar (zaplar, Summer 2026) — Agentic Hotel Operating System
+- Cerenovus (cerenovus, Summer 2026) — AI that finds value creation opportunities across enterprise…
+- Tenor (tenor, Summer 2026) — AI that own jobs end-to-end and learn from every outcome
+- CarSignal (carsignal, Summer 2026) — The AI Operating System for Auto Shops.
+
+### ai-agent-platforms (75)
+- Unify (unify, Winter 2023) — AI teammates for everyone else 🤖
+- Chima (chima, Winter 2023) — Building infrastructure tools to help large companies customize their…
+- StackAI (stackai, Winter 2023) — The Enterprise AI Transformation Platform
+- Trigger.dev (trigger-dev, Winter 2023) — Build and deploy fully‑managed AI agents and workflows
+- Versori (versori, Winter 2023) — Agentic integrations & automations for enterprise
+- Credal.ai (credal-ai, Winter 2023) — The Control Plane for Enterprise Agents
+- Backdrop (backdrop, Winter 2023) — AI coworkers for running projects and operations
+- Relace (relace, Winter 2023) — Models and infra for coding agents
+- Velos (velos, Winter 2023) — Platform to automate manual back-office work
+- TableFlow (tableflow, Winter 2023) — AI Teammates for Data Tasks
+- Helios (helios, Winter 2023) — Create your AI workforce
+- DAGWorks Inc. (dagworks-inc, Winter 2023) — Open source tools & services for reliable AI Agents & AI Applications
+- OpenTools (opentools, Summer 2023) — The API for LLM tool use
+- CORE (heysol, Summer 2023) — Your AI butler that understands you really well and proactively acts…
+- Spine AI (spine-ai, Summer 2023) — Manage a swarm of AI agents to get real work done
+- Epsilla (epsilla, Summer 2023) — All-in-one platform to create AI agents with your private knowledge
+- Khoj (khoj, Summer 2023) — AI for humans
+- Langdock (langdock, Summer 2023) — The all-in-one AI platform for companies.
+- Minded (minded, Summer 2023) — Cursor for AI Agents
+- Inconvo (inconvo, Summer 2023) — Build chat-with-data agents for customer-facing applications
+- FlowiseAI (flowiseai, Summer 2023) — Open source GenAI development platform
+- Autotab (autotab, Summer 2023) — AI agents reliable enough to do real work
+- Opensteer (opensteer, Summer 2023) — Specialized agents for real work
+- CloudCruise (cloudcruise, Winter 2024) — The developer platform for fast and reliable browser agents
+- Guide Labs (guide-labs, Winter 2024) — Frontier models and agents you can learn from, audit, and steer.
+- Vibrant Labs (vibrant-labs, Winter 2024) — Autonomously scaling environments
+- NanoCorp (nanocorp, Winter 2024) — Autonomous Companies Run by AI Working While You Sleep.
+- Pazi (pazi, Winter 2024) — Platform where autonomous companies are built
+- Solari AI (solari-ai, Winter 2024) — Gives non-technical team members agents that work right out of the box
+- Centauri AI (centauri-ai, Winter 2024) — Helps teams work effectively with AI coding agents.
+- Brainbase Labs (brainbase-labs, Winter 2024) — The AI Labor Company
+- Doublezero (doublezero, Summer 2024) — Platform to build, use, and monetize fully autonomous agents
+- Mem0 (mem0, Summer 2024) — The Memory layer for AI Agents
+- Maitai (maitai, Summer 2024) — Reliable, self-improving enterprise AI
+- Wordware (wordware, Summer 2024) — AI agents you can rely on
+- Decisional AI (decisional-ai, Summer 2024) — AI Coworkers for Business Automation
+- Proxis (proxis, Summer 2024) — The platform for enterprise AI agent automations, starting with email.
+- Dench.com (dench-com, Summer 2024) — Workspace for your AI Agents, Build any Workflow.
+- Kura AI (kura-ai, Summer 2024) — New State of the Art for Browser Agents
+- Refactor (refactor, Summer 2024) — Deploying secure and reliable AI agents across healthcare, retail,…
+- Dataleap (dataleap, Summer 2024) — AI Employees for the Enterprise
+- Rowboat Labs (rowboat-labs, Summer 2024) — Open-source AI coworker with memory 
+- A1Zap by A1Base (a1zap-by-a1base, Winter 2025) — The social network layer for AI apps
+- Lucidic AI (lucidic-ai, Winter 2025) — Reimagining how Machines Learn 
+- Mastra (mastra, Winter 2025) — The Javascript framework for building AI agents, from the Gatsby devs
+- Rebolt (rebolt, Winter 2025) — AI-Powered Company OS
+- Butter (butter, Winter 2025) — Embedded Sandboxes for Agents
+- Browser Use (browser-use, Winter 2025) — Agents that use the browser.
+- Dex (joindex, Winter 2025) — The AI Coworker in Chrome
+- Dedalus Labs (dedalus-labs, Summer 2025) — Compute substrate for AI agents
+- AgentMail (agentmail, Summer 2025) — Email Inboxes for AI Agents
+- Playgent (playgent, Summer 2025) — Sandboxes for AI agents
+- Janet AI (tryjanet, Summer 2025) — Agents that learn your company and work 24/7
+- Proliferate (proliferate, Summer 2025) — Do your life's work with agents
+- Trace (trace-so, Summer 2025) — Context-aware orchestration between humans and AI.
+- Manufact (manufact, Summer 2025) — Cloud infrastructure for MCP servers and Claude / ChatGPT apps.
+- Metis (metis, Summer 2025) — Infrastructure to build reliable agents
+- Okibi (okibi, Summer 2025) — Turns products into CLIs and agents into customers
+- Agentic Fabriq (agentic-fabriq, Winter 2026) — The control plane for AI agents.
+- Captain (captain, Winter 2026) — Self-tuning file search for AI agents
+- Zatanna (zatanna, Winter 2026) — Turning all software into agent-first APIs
+- Skillsync (skillsync, Winter 2026) — Move context across agents and teammates
+- Assemble (assemble, Summer 2026) — AI Coworkers for IT teams
+- Ressl AI (ressl-ai, Winter 2026) — Train, eval and build autonomous agents
+- Sila (sila, Winter 2026) — Message Agents
+- Amorphic Labs (amorphic-labs, Summer 2026) — OpenRouter for Agent Capabilities
+- Mosaic (mosaic-inc, Summer 2026) — Defining the frontier of multiplayer AI.
+- Glen (glen, Summer 2026) — Institutional Learning Layer for Every Agent in Your Company
+- Codag (codag, Summer 2026) — Tool call compression for agents.
+- machine0 (machine0, Summer 2026) — Cloud computers for AI agents
+- Executor (executor, Summer 2026) — The open source tool gateway
+- Inkbox (inkbox, Summer 2026) — The identity and communication layer for AI agents
+- Decawork (decawork, Summer 2026) — The Agent Control Plane for IT teams
+- Dock (dock, Summer 2026) — Multiplayer workspace for AI teammates and humans
+- Agent FM (agent-fm, Summer 2026) — One group chat to hear and steer your coding agents.
+
+### healthcare-practice-management (46)
+- Unstatiq (unstatiq, Winter 2023) — Single source of truth for your clinic's finances and supply chain.
+- Untether Labs (untether-labs, Winter 2023) — Scheduling software for digital health clinics to do more with less.
+- Finni Health (finni-health, Winter 2023) — Empowering Autism Care Providers to Go Independent
+- Clearest Health (clearest-health, Summer 2023) — AI revenue recovery for underpaid healthcare claims.
+- Remy (remy, Summer 2023) — Making it simpler for medical clinics to work with insurance
+- Sohar Health (sohar-health, Summer 2023) — AI-powered insurance verification to boost patient conversion.
+- Readily (readily, Summer 2023) — AI Compliance Platform for Healthcare Organizations
+- Contour (contour, Summer 2023) — AI voice agents for healthcare operational calls
+- Shasta Health (shasta-health, Summer 2023) — The last healthcare admin hire
+- Decoda Health (decoda-health, Summer 2023) — The all-in-one EMR built for med spas and elective care
+- VetRec (vetrec, Summer 2023) — AI Scribe for veterinarians. Saving time and improving patient care.
+- Egress Health (egress-health, Winter 2025) — Automated revenue cycle management, starting with dentists
+- Quill Bills (quill-bills, Summer 2023) — AI-Powered Medical Billing
+- Eden Care (eden-care, Summer 2023) — Claims infrastructure for African health insurance
+- Cair Health (cair-health, Summer 2023) — AI Agents for Healthcare RCM
+- Kips Health (kips-health, Summer 2023) — The only patient engagement software that pays you.
+- Simbie AI (simbie-ai, Summer 2023) — We get patients to their next appointment
+- Wattson Health (wattson-health, Summer 2023) — AI Voice and SMS Agents for Healthcare
+- Healthtech 1 (healthtech-1, Summer 2023) — Navigating patients to the right place, first time.
+- Copper Health (copper-health, Winter 2024) — Modern patient engagement and remote therapeutic monitoring platform
+- Attunement (attunement, Winter 2024) — Attunement turns fragmented behavioral health records into structured…
+- StarJar (starjar, Winter 2024) — Starjar automates inbound document processing workflows for hospitals
+- Clarion (clarion, Winter 2024) — The AI communication layer for healthcare
+- Parallel (parallel, Winter 2024) — AI agents for healthcare admin
+- Fuse (fuse-2, Summer 2024) — AI-powered workflow automation for US healthcare providers.
+- Dime (dime-2, Winter 2024) — Dime automates administrative busywork at healthcare clinics
+- Andy AI (andy-ai, Winter 2024) — Faster clinical documentation for home health nurses
+- Opencall (opencall, Winter 2024) — Practice admin run by AI
+- mdhub (mdhub, Summer 2024) — AI-native operating system for behavioral health clinics.
+- Sage Care (sagecare, Summer 2024) — Automating home care agency operations with AI
+- Tivara (tivara, Summer 2024) — The AI workforce for medical groups
+- Entropy (entropy, Summer 2024) — Autonomous intake and RCM for specialty clinics. 
+- Toothy AI (toothy-ai, Winter 2025) — AI for insurance verification & billing at dental clinics
+- Asteroid (asteroid, Winter 2025) — The integration layer for healthcare: EHRs, payer portals & more 
+- Harbera (harbera, Winter 2025) — AI Healthcare Provider Credentialing Software
+- G LNK (g-lnk, Winter 2025) — Simplifying Collaboration for Healthcare Organizations & Professionals
+- Overdrive Health (overdrive-health, Winter 2026) — AI-Native Medical Billing Services
+- CareSwift (careswift, Summer 2025) — AI scribe for Ambulance Reports
+- Locata (locata, Summer 2025) — AI Referral Automation for Primary Care Clinics
+- ClaimGlide (claimglide, Winter 2026) — AI automated prior-auths for private medical practices
+- Eos AI (eos-ai, Winter 2026) — Autonomous OS for healthcare
+- Tepali (tepali, Winter 2026) — AI operating system for modern medspas
+- Scheduling Wizard (scheduling-wizard, Winter 2026) — Logistics infrastructure to modernize healthcare operations
+- Patientdesk.ai (patientdeskai, Winter 2026) — AI front & back office agent for dental practices 
+- Care GP (care-gp, Summer 2026) — AI agents to run primary healthcare operations
+- Avoca Systems (avoca-systems, Summer 2026) — The AI-powered operating system for radiology networks
+
+### ai-finance-agents (37)
+- Alphawatch AI (alphawatch-ai, Winter 2023) — Discover new opportunities (jobs, deals, investors)
+- Finvest (finvest, Winter 2023) — AI Wealth Manager
+- Concourse (concourse, Winter 2023) — AI Agents for corporate finance teams
+- Numeral (numeral, Winter 2023) — The AI-native sales tax solution.
+- Mercoa (mercoa, Winter 2023) — AI Agent for Billpay platforms to pay invoices with virtual cards
+- Salient (salient, Winter 2023) — AI Servicing for Auto Lenders
+- Dataglade (dataglade, Winter 2023) — The smart way to research stocks.
+- Truewind (truewind, Winter 2023) — AI-Powered Accounting
+- Fintool (fintool, Winter 2023) — Financial copilot for institutional investors
+- FactIQ (factiq, Winter 2023) — Investment research data for AI agents
+- Onshore (onshore, Winter 2023) — AI for corporate tax
+- Rally Tax (rally-tax, Winter 2023) — AI-native tax platform to save $1T+ for Americans
+- Maxi (maxi, Winter 2023) — AI Agent for your personal finances
+- Accend (accend, Summer 2023) — AI agents for commercial underwriting at banks and fintechs
+- Diligent (diligent, Summer 2023) — AI agents for fintech risk and compliance operations
+- Casca (casca, Summer 2023) — Make Banking Magical
+- GovernGPT (governgpt, Winter 2024) — The RFP Platform Asset Managers Adopt
+- Bretton AI (bretton-ai, Summer 2023) — AI-native operations for the banks
+- AgentCollect (agentcollect, Summer 2023) — B2B debt collection powered by AI agents
+- Cedalio (cedalio, Summer 2023) — AI agents that automate AP, procurement, and finance
+- Monumint (monumint, Winter 2024) — Conversational AI purpose-built for financial services
+- Model ML (model-ml, Winter 2024) — AI Workspace for Financial Services.
+- Kenley (kenley, Summer 2024) — AI Agents for Advisory & Financial Services.
+- Thyme (thyme, Summer 2024) — The OS for financial advisors
+- TradeFlow (tradeflow, Summer 2024) — AI-powered settlement for financial securities
+- RentFlow (rentflow, Summer 2024) — The AI infrastructure for cash-flow-aligned business rent
+- Blaze (blaze-2, Summer 2024) — Agentic Finance for your Life and Business
+- PathPilot (pathpilot, Summer 2024) — AI Agents for Lending Operations
+- Veritus (veritus, Summer 2025) — AI agents for the consumer lending industry
+- Palus Finance (palus-finance, Winter 2026) — Your startup's financial advisor
+- Rapidfolio (rapidfolio, Summer 2026) — AI for fintechs & banks
+- Fenrock AI (fenrock-ai, Winter 2026) — AI agents for banks
+- Maywood (maywood, Winter 2026) — The first finance-compliant proactive AI that runs 24/7
+- Zomma (zomma, Summer 2026) — Computer-use agent swarms for financial back offices
+- Rex (rex-inc, Summer 2026) — AI-native BPO for enterprise order-to-cash
+- Lyon (lyon, Summer 2026) — Foundation models on enterprise transaction data.
+- Levocred AI (levocred-ai, Summer 2026) — AI Workforce for lenders
+
+### industrial-robotics-ai (37)
+- Tekton Dynamics (tekton-dynamics, Winter 2024) — AI control layer for welding robots
+- Pivot Robotics (pivot-robotics, Winter 2024) — AI for Robot Arms in Factories
+- Yondu (yondu, Winter 2024) — Robots to Automate Fulfillment
+- Ultra (ultra, Summer 2024) — Practical, general-purpose robots for repetitive industrial tasks
+- Saphira AI (saphira-ai, Summer 2024) — The Enablement Layer for Physical AI
+- Autumn Labs (autumn-labs, Summer 2024) — Datadog for industrial robots
+- Ember Robotics (ember-robotics, Summer 2024) — Datadog for robots
+- Cerulion (cerulion, Summer 2024) — Open source operating system for robots
+- Bucket Robotics (bucket-robotics, Summer 2024) — Defect detection for manufacturing built from CAD and synthetic data.
+- Pave Robotics (pave-robotics, Winter 2025) — Robots that repair roads
+- General Trajectory (general-trajectory, Winter 2025) — AI for the physical world
+- Proception Inc (proception-inc, Winter 2025) — Making humanoids dexterous enough to thread a needle
+- Verne Robotics (verne-robotics, Summer 2025) — AI models that teach robots new skills in hours
+- DeepAware AI (Robotics Center of Silicon Valley) (deepaware-ai-robotics-center-of-silicon-valley, Summer 2025) — Robots, parts & RL envs & evals - delivered in 48 hrs / pickup in SF.
+- Relling (relling, Summer 2025) — deploying the first billion robots for manufacturing
+- Iron Grid (iron-grid, Summer 2025) — Foundational models for risk and quality.
+- OS3 (os3, Summer 2026) — Deploying US-Built Robots & Training Video Action Models
+- Flywheel AI (flywheel-ai, Summer 2025) — Waymo for excavators
+- Tensr (tensr, Summer 2026) — Robotic factories that build robots.
+- Waddle Labs (waddle-labs, Summer 2026) — Agents for robotics control. 
+- OctaPulse (octapulse, Winter 2026) — CV and robotics to automate quality inspection in fish farms
+- Servo7 (servo7, Winter 2026) — Container unloading robots for warehouses
+- Libra Robotics (libra-robotics, Summer 2026) — Robotic crews for large-scale infrastructure construction
+- Remy AI (remy-ai, Winter 2026) — Automating dexterous tasks in warehouses with AI-powered robots
+- OpenVector (openvector, Summer 2026) — AI that turns any camera to an autonomous worker with real-time vision
+- Manifold (manifold-2, Summer 2026) — Deployment-ready robotic labor for the supply chain industry 
+- Agency Tool Company (agency-tool-company, Summer 2026) — Reliable infrastructure to build, deploy and manage real-world robots.
+- 6thSense (6thsense, Summer 2026) — Nervous System for Physical AI
+- Aktoria Robotics (aktoria-robotics, Summer 2026) — Human as API for robots
+- Neuron Industries (neuron-industries, Summer 2026) — Industrial Controllers built for AI
+- Moving Atoms (moving-atoms, Summer 2026) — World Models that Train Robots, #1 on Physics-IQ
+- Shiraz AI (shiraz-ai, Summer 2026) — Robots that learn on the job
+- Grip (grip, Summer 2026) — Robots for waste manipulation
+- Hebbian Robotics (hebbian-robotics, Summer 2026) — Open source SDK for building quality control pipelines for Physical AI
+- Dawn Industries (dawn-industries, Summer 2026) — Automatic Diagnosis & Fix for Industrial Automation Cells
+- Salem Robotics Inc (salem-robotics-inc, Summer 2026) — Deploying robots for inspections in hazardous spaces, like nuclear.
+- Osseus (osseus, Summer 2026) — The intelligent development platform for robotics
+
+### legal-tech-ai (33)
+- Common Paper (common-paper, Winter 2023) — The SAFE for commercial contracts
+- Edge (edge, Winter 2023) — The ultimate IP assistant.
+- Kyber (kyber, Winter 2023) — Instantly draft, review, and send complex regulatory notices.
+- Solve Intelligence (solve-intelligence, Summer 2023) — AI patent drafting, prosecution, litigation and more for legal teams.
+- Docsum (docsum, Summer 2023) — AI contract repository
+- Cembla (cembla, Summer 2023) — AI for legal & government
+- Legora (legora, Winter 2024) — The AI workspace for lawyers
+- Abel (abel, Winter 2024) — Transforming document review for litigation teams
+- Tower (tower, Winter 2024) — M&A due diligence platform powered by AI
+- Codes Health (codes-health, Summer 2024) — Medical Record Retrieval with Zero Human Error
+- Mage Legal (mage-legal, Summer 2024) — Automatic AI Legal Diligence
+- Parley (parley, Summer 2024) — Automating flat-fee legal work, starting with work visas + green cards
+- Brighterway (brighterway, Summer 2024) — Streamlining the medical record review process in workers comp
+- RiskAngle (riskangle, Summer 2024) — AI medical summaries in minutes
+- &AI (ai-2, Summer 2024) — Collaborative workspace for patent litigators
+- Rescript (rescript, Summer 2024) — AI for Legal & Public Policy Teams
+- Draft The Record (draft-the-record, Summer 2024) — AI For Litigation
+- Elayne (elayne, Summer 2024) — Estate settlement, from verified discovery to distribution
+- Caseflood.ai (caseflood-ai, Winter 2025) — How elite law firms do intake
+- Gale (gale, Winter 2025) — Fast and Data-Driven Immigration Platform
+- OpenIntake (openintake, Winter 2025) — The AI Front Door For Law Firms
+- SAMMY Labs (sammy-labs, Winter 2025) — Computational Law
+- Kalinda (kalinda, Summer 2025) — Deep research for class action law firms
+- Mimos (mimos, Summer 2025) — The growth OS for plaintiff-side law firms
+- Vector Legal (vector-legal, Winter 2026) — A premier AI-native law firm & legal operating system for Startups.
+- Moritz (moritz, Winter 2026) — Global AI-native law firm handling legal work with same-day turnaround
+- Stilta (stilta, Winter 2026) — Agentic AI for intellectual property
+- General Legal (general-legal, Winter 2026) — Elite AI law firm for high growth companies
+- Wayco (wayco, Winter 2026) — AI operator for medlegal cases
+- Osmaura (osmaura, Summer 2026) — AI growth engine for corporate law firms.
+- Erinys (erinys, Summer 2026) — We help lawyers start and scale AI-native law firms.
+- Perceptron ML (perceptron-ml, Summer 2026) — We make law firms AI-native.
+- Tarifflo Inc. (tarifflo-inc, Summer 2026) — Supply chain compliance and cost savings
+
+### ai-process-automation (32)
+- Lightski (lightski, Winter 2023) — Transform Document Workflows with AI Agents
+- Automat (automat, Winter 2023) — Agentic automation that understands context, recovers, and improves.
+- Linc. (linc, Summer 2023) — AI-Native Process Mining and Enterprise Transformation Platform
+- Cardinal Gray (cardinal-gray, Summer 2023) — Automating lenders' interactions with the DMV
+- Skyvern (skyvern, Summer 2023) — Open Source AI Agent to automate browser workflows via an API
+- Sidenote (sidenote, Summer 2023) — Meeting follow-up, automated
+- Sola (sola, Summer 2023) — Copilot for Robotic Process Automation
+- Fragment (fragment, Summer 2023) — Turn manual operations into scalable processes
+- Gumloop (gumloop, Winter 2024) — A no-code platform for creating agents and automating workflows with…
+- DryMerge (drymerge, Winter 2024) — AI that updates your CRM for you
+- OneGrep (onegrep, Winter 2024) — AI Agent for DevOps Workflow Automation
+- Diana (diana, Winter 2024) — Give Your Employee An Employee
+- Reform (reform, Winter 2024) — Workflow automation. Built for logistics.
+- Callback (callback, Summer 2024) — Effortless AI automation for business operations
+- RetroFix (retrofix, Summer 2024) — Automate any workflow using plain english
+- Stormy (stormy, Summer 2025) —  Stormy runs the office so your crew can run the work.
+- Handled (handled, Summer 2024) — Automating post-order operations for e-commerce brands and 3PLs
+- Altrina (altrina, Winter 2025) — The SOP Automation Platform
+- Agentin AI (agentin-ai, Winter 2025) — AI Agents that automate enterprise software processes
+- Mercura (mercura, Winter 2025) — AI Quote and Order Automation for Distributors & Manufacturers
+- Datafruit (datafruit, Summer 2025) — The AI workspace for software implementations
+- Doe (doe, Summer 2025) — The boring stuff, handled. Everything else, supercharged.
+- Risely AI (risely-ai, Summer 2025) — AI agents that automate administrative work across college campuses. 
+- RowFlow (rowflow, Summer 2025) — Replacing forms with AI conversations
+- RamAIn (ramain, Winter 2026) — Automate any UI task with natural language
+- EigenPal (eigenpal, Winter 2026) — AI Document Workflows for Enterprises
+- Unisson (unisson, Winter 2026) — AI agents that automate B2B software implementation
+- Mendral (mendral, Winter 2026) — AI DevOps Engineer
+- Khotan (formerly Pollinate) (khotan, Winter 2026) — FDE as a platform for rebuilding critical operations in software.
+- Marker (marker, Summer 2026) — Platform and FDEs for rebuilding businesses agent-first
+- Marble (joinmarble, Summer 2026) — The autonomous back-of-house for restaurants.
+- screenpipe (screenpipe, Summer 2026) — Turn your company's computer work into AI agents.
+
+### ai-sales-agents (32)
+- Cargo (cargo, Summer 2023) — Build your GTM workforce
+- AiSDR (aisdr, Summer 2023) — AI sales prospecting. Replace your SDR with AiSDR
+- Twine (twine, Summer 2023) — ai revenue engine for service businesses
+- Octolane AI (octolane-ai, Winter 2024) — Revenue Superintelligence
+- Artisan (artisan, Winter 2024) — The AI BDR for enterprise revenue teams, plus a full AI sales team
+- Ecliptor (ecliptor, Winter 2024) — AI and Embeddings. 
+- Topo (topo, Winter 2024) — All-in-one AI platform  for outbound sales
+- Meticulate (meticulate, Winter 2024) — Making it easy for B2B sales teams to send stellar outbound
+- Speck (speck, Winter 2024) — AI Notetaker that automates all your admin work
+- crmCopilot (crmcopilot, Winter 2024) — Give Salesforce the AI upgrade it deserves
+- Centralize (centralize, Winter 2024) — The relationship intelligence platform for enterprise revenue
+- Roger (roger-2, Summer 2024) — Roger is an AI SDR that automates outbound sales and follows up 24/7.
+- Apten (apten, Summer 2024) — Omnichannel AI agents that engage leads across SMS, voice, and email
+- Flyflow (flyflow, Summer 2024) — The easiest way to find high-quality sales leads
+- Distro (distro, Summer 2024) — The AI co-pilot for sales reps at industrial wholesale distributors.
+- Soff (soff, Summer 2024) — AI Agents for Distributors
+- Verbiflow (verbiflow, Winter 2025) — Outbound Sequencing Infrastructure for Startups
+- 10x (10x, Winter 2025) — AI Sales Teams for Dental Practices
+- Cenote (cenote, Winter 2025) — AI agents for conversational commerce
+- Fuse AI (fuse-ai, Winter 2025) — Agentic Sales Platform
+- Ergo (ergo, Winter 2025) — AI agents and unified data layer for revenue teams
+- Closera (closera, Summer 2025) — AI Shopping Agent for Your Ecommerce Store
+- Orange Slice (orange-slice, Summer 2025) — Agentic sales enrichment spreadsheet
+- CLODO (clodo, Summer 2025) — Planet-scale people discovery.
+- Bizzy AI (geo-ai, Summer 2025) — Bizzy works 24/7 so you never miss a lead.
+- Robby (robby, Winter 2026) — AI agents that grow revenue for home services businesses
+- Chasi (chasi, Winter 2026) — AI Revenue Engine for the Equipment Industry 
+- Veriad (veriad, Winter 2026) — Enterprise marketing agents
+- Cardinal (trycardinal-ai, Winter 2026) — Revenue Agents for GTM teams
+- Palisade (palisade, Summer 2026) — AI sales agents that run your marketplace
+- LemonLime (lemonlime, Summer 2026) — Fully automated GTM for small business
+- Nex (nex, Summer 2026) — Claude Cowork for high volume GTM workflows
+
+### voice-ai-platforms (30)
+- PlayAI (playai, Winter 2023) — Our mission is to make Voice AI accessible and useful to all.
+- Vocode (vocode, Winter 2023) — Open source Voice AI
+- Bland AI (bland-ai, Summer 2023) — The enterprise platform for AI phone calls
+- Prosper (prosper, Summer 2023) — AI Phone Agents for Healthcare Operations
+- Health Harbor (health-harbor, Summer 2023) — Using generative AI to call insurance for healthcare clinics
+- LemonSlice (lemonslice, Winter 2024) — Give your voice agents a face
+- Toma (toma, Winter 2024) — AI for Underserved Industries
+- VoxOps AI (voxops-ai, Winter 2024) — Voice AI for Automotive
+- Marr Labs (marr-labs, Winter 2024) — AI-voice agents that are indistinguishable from humans.
+- Phonely (phonely, Summer 2024) — AI call centers 
+- Dodo (dodo, Summer 2024) — AI agents that handle communications for clinics
+- Simple AI (simple-ai, Summer 2024) — AI voice that sells
+- Lilac Labs (lilac-labs, Summer 2024) — We automate the person taking orders at drive-thrus with a voice AI
+- Hey Revia (hey-revia, Summer 2024) — Voice AI to automate complex phone calls for healthcare providers
+- careCycle (carecycle, Winter 2025) — Voice AI teams for medicare agencies.
+- Cuckoo Labs (cuckoo-labs, Winter 2025) — Real-time AI translator for global sales and marketing
+- Calltree (calltree, Winter 2025) — Enterprise-grade AI support reps for call centers
+- Pinch (pinch, Winter 2025) — Real-time AI Voice Translation for Developers
+- Roark (roark, Winter 2025) — Test, monitor, and improve your voice agents
+- Acrely (acrely, Summer 2025) — Enterprise Voice Agents
+- Altur (altur, Summer 2025) — Voice AI Agents for Debt Collection
+- Certus AI (certus-ai, Summer 2025) — Replacing the restaurant phone line with Voice AI
+- Freya (freya, Summer 2025) — Voice AI for Enterprises
+- Uplift AI (uplift-ai, Summer 2025) — Foundational Voice Models for regional languages
+- Opalite Health (opalite-health, Winter 2026) — Helping Healthcare Providers Speak Any Language 
+- Samora AI (samora-ai, Winter 2026) — Multilingual voice agents that outperform humans
+- Talking Computers (talking-computers, Winter 2026) — Real-time interaction models for voice agents
+- Speko (speko, Summer 2026) — OpenRouter for Voice AI: one API, every call on the best speech model
+- Familiar (familiar, Summer 2026) — Real-Time AI Dubbing. Neolab for World Translation.
+- Touchy (touchy, Summer 2026) — AI iOS assistant that instantly uses voice and video to take action
+
+### ai-video-generation (29)
+- Rubbrband (rubbrband, Winter 2023) — A new kind of creative company.
+- Linum (linum, Winter 2023) — type text, dream video
+- Viddy (viddy, Winter 2023) — A new way to create landing pages that is video-native.
+- Gooseworks (gooseworks, Winter 2023) — Self-Improving Ad Creative Engines
+- Clueso (clueso, Winter 2023) — Create beautiful videos & docs for any product or process in minutes
+- Decohere (decohere, Winter 2023) — Real-time generative AI
+- AIVideo.com (aivideo-com, Summer 2023) — Superhuman video production as a service
+- Midrender (midrender, Summer 2023) — Turn product features into launch videos
+- Eggnog (eggnog, Winter 2024) — Fun with AI video
+- sync. (sync-2, Winter 2024) — AI lipsync tool for video content creators
+- Focal (focal, Winter 2024) — AI video creation tool for TV shows and movies
+- Latted (latted, Winter 2024) — A Unified Editor For AI Video
+- Yarn (yarn-2, Winter 2024) — Yarn is the video product for agentic GTM teams.
+- Comfy Deploy (comfy-deploy, Summer 2024) — ComfyUI for everyone on your team
+- VideoGen (videogen, Summer 2024) — Create professional videos in minutes with AI, online or via API
+- Palmier (palmier, Summer 2024) — Video editor built for AI
+- Argil (argil, Summer 2024) — The video generation engine for the creator economy 
+- Overlap (overlap, Summer 2024) — Multimodal AI agents for video
+- Mosaic (mosaic-2, Winter 2025) — Frontier Video Agents
+- Lucid (lucid, Winter 2025) — interactive video models
+- Golpo (golpo, Summer 2025) — Create Whiteboard Explainer Videos with AI from a Prompt or Document
+- Knowlify (knowlify, Summer 2025) — The AI Explainer Video Maker
+- Hera (hera-video, Summer 2025) — AI Motion Designer
+- Cardboard (cardboard, Winter 2026) — Agentic video editor
+- Remix (remix-3, Winter 2026) — Social media content auto-generated with your existing data
+- Martini (martini, Winter 2026) — AI Video Production for Professionals
+- Wideframe (wideframe, Winter 2026) — AI coworker for video editors to ship more video faster
+- Palette (palette-2, Summer 2026) — An AI-Native Media Platform
+- MOCHI.TV (mochitv, Summer 2026) — 1 Minute Anime
+
+### observability-platforms (28)
+- Middleware (middleware, Winter 2023) — AI-based full stack observability platform
+- Traceloop (traceloop, Winter 2023) — Know what your LLM is doing — and why it’s failing
+- DrDroid (drdroid, Winter 2023) — Your best friend in production.
+- Langfuse (langfuse, Winter 2023) — Open source LLM engineering platform
+- Wild Moose (wild-moose, Winter 2023) — Automating root cause analysis with generative AI
+- Magicflow 𐂂 (magicflow, Winter 2023) — The Gen AI evaluation and curation platform
+- Helicone (helicone, Winter 2023) — LLM Observability for Developers
+- Odigos Technologies Inc. (odigos-technologies-inc, Winter 2023) — Enterprise-Grade OpenTelemetry
+- Keep (keep, Winter 2023) — The open-source AIOps platform
+- highlight.io (highlight-io, Winter 2023) — The open source, fullstack monitoring platform: stop guessing why…
+- Bilanc (bilanc, Winter 2024) — AI-Powered Engineering Productivity
+- Raindrop (raindrop, Winter 2024) — Sentry for AI Agents
+- Entangl (entangl, Summer 2024) — Find & resolve issues in data center engineering & operations using AI
+- d_model (d_model, Summer 2024) — Look inside the model
+- Voker (voker, Summer 2024) — The Agent Analytics Platform
+- Confident AI (confident-ai, Winter 2025) — The LLM Eval and Observability Platform for AI Quality
+- Exla (exla, Winter 2025) — Building agents that reads logs and fixes issues on your behalf.
+- TraceRoot.AI (traceroot-ai, Summer 2025) — Open source self-improving layer for AI agents
+- Riverbank (riverbank, Summer 2025) — Infrastructure Cartography
+- Fulcrum (fulcrum, Summer 2025) — The agentic debugger for AI systems
+- Interfere (interfere, Summer 2025) — Give engineering, product, and design teams insight into unseen issues
+- IncidentFox (brownie, Winter 2026) — AI SRE agent that triages, coordinates, and fixes production incidents
+- Chamber (chamber, Winter 2026) — The AIOps Agent for ML Teams
+- Corelayer (corelayer, Winter 2026) — AI production engineer for regulated industries
+- Control Seat (control-seat, Summer 2026) — Predictive maintenance on your plant data and sensors.
+- Buildbox (buildbox, Summer 2026) — Agent analytics for real user outcomes
+- Agnost AI (agnost-ai, Summer 2026) — Product Analytics for Conversational Agents
+- HyperProbe (hyperprobe, Summer 2026) — AI engineer that fixes production issues on its own
+
+### insurtech-platforms (27)
+- SuretyNow (suretynow, Winter 2024) — The Modern Surety Bond Platform
+- Blume Benefits (blume-benefits, Winter 2024) — The AI copilot for health insurance brokers.
+- Lucite (lucite, Winter 2024) — Supercharging Insurance Brokers & Advisors
+- InQuery (inquery-2, Winter 2024) — Intelligent Medical Record Reviews
+- TrueClaim (trueclaim, Winter 2024) — Transparent, AI-powered healthcare TPA.
+- Healia (healia, Winter 2024) — Modern health insurance for dual income families
+- ClaimSorted (claimsorted, Summer 2024) — Making it easy for insurance companies to process claims
+- Corgi Insurance (corgi-insurance, Summer 2024) — Corgi is building an AI financial infrastructure company
+- SureBright (surebright, Summer 2024) — Apple Care-like warranty program for every retailer 
+- Harper (harper, Winter 2025) — AI-native commercial insurance brokerage
+- CopyCat (copycat, Winter 2025) — AI agents built for insurance brokers
+- Vantel (vantel, Winter 2025) — AI Platform for Commercial Insurance Brokerages
+- Adaptional (adaptional, Summer 2025) — AI-powered insurance claims review
+- Tesora (tesora, Summer 2025) — Frontier AI for Actuaries
+- Solva (solva, Summer 2025) — Automates insurance claims and stops incorrect payouts
+- Avelis Health (avelis-health, Summer 2025) — We audit medical claims for self-insured employers and health plans.
+- Evergrove (evergrove, Summer 2026) — Voice agents that accelerate care coordination in workers' comp
+- Valgo (valgo, Winter 2026) — Insurance risk layer for physical AI
+- Verdex (verdex, Winter 2026) — AI Verification for Insurance
+- InventoryQuant (inventoryquant, Winter 2026) — We automate the inventory process in insurance
+- Insurf (insurf, Summer 2026) — The AI-Native Decision Layer for Health Insurance
+- Veltha (veltha, Summer 2026) — AI native TPA starting with workers comp
+- Qlo (qlo, Summer 2026) — Legora for commercial insurance carriers
+- Risklytics (risklytics, Summer 2026) — AI-Native Insurance for Frontier Tech
+- Denta (denta, Summer 2026) — AI-Native Dental Insurance
+- PRINCEPS (princeps, Summer 2026) — AI-native insurance company for the compute economy
+- Florin (florin, Summer 2026) — Florin is the insurance carrier with zero underwriters
+
+### ai-app-builders (25)
+- Designbase (designbase, Winter 2023) — Design and build great interfaces
+- Reflex (reflex, Winter 2023) — The operating system for building mission-critical enterprise apps.
+- Magic Patterns (magic-patterns, Winter 2023) — Go from idea to production with AI.
+- Alloy (alloy, Winter 2023) — AI prototyping tool for product managers
+- co.dev (co-dev, Winter 2023) — Turn your ideas into full-stack apps
+- Portalform (portalform, Winter 2023) — Build and host internal tools
+- Boundary (boundary, Winter 2023) — The programming language for AI
+- Vellum (vellum, Winter 2023) — 
+- Magic Loops (magic-loops, Summer 2023) — Program computers with natural language
+- Repaint (repaint, Summer 2023) — Build a website by chatting with AI
+- Mocha (mocha, Summer 2023) — Build and publish web apps in minutes. No coding required.
+- Tempo (tempo-2, Summer 2023) — Visual Editor for React, powered by AI
+- ion design (ion-design, Winter 2024) — AI Website platform that grows revenue automatically
+- Toolify (toolify, Winter 2024) — Build internal tools with AI
+- renderlet (renderlet, Winter 2024) — Build interactive applications that run anywhere
+- Emergent (emergent, Summer 2024) — AI app builder that turns your ideas into monetizable software.
+- Polymet (polymet, Summer 2024) — AI Product Designer
+- a0.dev (a0-dev, Winter 2025) — We make mobile apps using AI.
+- Floot (floot, Summer 2025) — The app platform inside Claude and ChatGPT.
+- Modelence (modelence, Summer 2025) — Build production-ready apps with AI
+- CodeWisp (codewisp, Winter 2026) — Anyone can create real games with AI
+- Sparkles (sparkles, Winter 2026) — Make everyone on your team an engineer
+- Approxima (approxima, Winter 2026) — Your software should build itself.
+- Floracene (floracene, Summer 2026) — Vibecode + deploy HIPAA-compliant internal tools, no eng team needed
+- Vendo (vendo, Summer 2026) — Let your users build their own features on top of your product
+
+### ai-investment-research (25)
+- Constant (constant, Winter 2023) — AI Analysts for the Buy-Side
+- Benchmark (benchmark, Winter 2023) — Decision infrastructure for investment firms
+- Verata (verata, Winter 2023) — Network Intelligence for Investors
+- Metal (metal, Winter 2023) — The AI context platform for private capital. Everything your firm…
+- Metal (metal-2, Winter 2023) — Metal is an AI-driven operating system for fundraising
+- PropRise (proprise, Summer 2023) — The AI platform for CRE investment teams
+- VectorShift (vectorshift, Summer 2023) — AI Operating System for Private Market Investors
+- Event Horizon Labs (event-horizon-labs, Winter 2024) — AI research lab automating all of investing
+- Clarum (clarum, Winter 2024) — AI agents for private market diligence, monitoring, and reporting
+- Lumetric (lumetric, Winter 2024) — The AI Analyst For Deal Teams
+- Bayesline (bayesline, Summer 2024) — Highly customizable and blazingly fast analytics for asset managers.
+- Formula Insight (formula-insight, Summer 2024) — Help Institutional Investors manage, track & query their Excel models
+- finbar (finbar, Winter 2025) — The AI investment analyst
+- Trata (trata, Winter 2025) — AI-powered research desk for hedge funds
+- Fira (fira, Winter 2025) — Financial research platform for investment firms
+- Serafis (serafis, Summer 2025) — Narrative intelligence for investors
+- Preseen (preseen, Summer 2025) — The AI forecasting company for global macro events. 
+- Astor (astor, Summer 2025) — AI advisor for retail investors
+- Lotas (lotas, Summer 2025) — AI for quantitative trading
+- F2 (f2, Summer 2025) — The AI platform for private markets investors
+- Q2Q (q2q, Winter 2026) — We help private equity teams find acquisition targets faster
+- Ekpa (ekpa, Summer 2026) — Building Autonomous Research Agents for Trading
+- Prodigy Research (prodigy-research, Summer 2026) — Training the world's best foundation model for quantitative finance.
+- LATO (lato, Summer 2026) — Agentic deal diligence for institutional investors
+- Financial Datasets (financial-datasets, Summer 2026) — Connect your agent to the stock market 
+
+### ai-risk-compliance (25)
+- Kobalt Labs (kobalt-labs, Summer 2023) — AI-powered risk and compliance for financial institutions
+- SafetyKit (safetykit, Summer 2023) — AI agents for risk, compliance, and safety
+- Affinity (affinity, Summer 2023) — A compliance training platform built for regulated industries.
+- Catamaran (catamaran, Summer 2023) — The AI-powered risk decision platform 
+- PromptArmor (promptarmor, Winter 2024) — LLM Security and Compliance
+- Shiboleth (shiboleth, Winter 2024) — Shiboleth automates lending compliance for financial institutions…
+- Artos (artos, Winter 2024) — Authoring documents for life sciences in minutes, not months.
+- RetailReady (retailready, Winter 2024) — An AI-powered supply chain compliance engine
+- Indemni (indemni, Winter 2024) — Cargo Theft and Fraud Prevention Platform
+- Offstream (offstream, Summer 2024) — Vanta for carbon compliance
+- Patched (patched, Summer 2024) — Reliable AI for Regulated Ops
+- Arva AI (arva-ai, Summer 2024) — AI Agents to scale AML, KYB and KYC operations
+- Trava (trava, Winter 2025) — AI agents for global trade compliance
+- Cardamon (cardamon, Winter 2025) — AI compliance co-pilot for regulated financial businesses
+- Tire Swing (tire-swing, Winter 2025) — AI Compliance for Affordable Housing
+- truthsystems (truthsystems, Summer 2025) — Automatically blocking risky behavior with real-time governance agents
+- TwentyTwo (twentytwo, Summer 2025) — AI infrastructure for biosecurity
+- Socratix AI (socratix-ai, Summer 2025) — AI coworkers for fraud and compliance teams.
+- TectoAI (tectoai, Summer 2025) — A Platform for AI Governance
+- Oxus (oxus, Winter 2026) — AI-powered automation for internal audit workflows
+- MouseCat (mousecat, Winter 2026) — AI to fight financial crime
+- Oximy (oximy, Winter 2026) — Take command of the AI your company already runs on.
+- Shielded (shielded, Summer 2026) — The agentic origination desk for supply chain risk.
+- Pennant (pennant, Summer 2026) — The World Model for Corporate Governance
+- TovenAI (tovenai, Summer 2026) — AI agents for compliance at institutional trading firms
+
+Total distinct proposed arenas (any size): 57. With >=3 members: 54.
+
+## YC companies mapped to EXISTING arenas (direct add-candidates)
+
+Total: 75
+
+### ai-coding (36)
+- Double – Coding Copilot (double-coding-copilot, Winter 2023) — AI coding copilot engineered for performance
+- Cosine (cosine, Winter 2023) — Fully Agentic SWE
+- Sage AI (sage-ai, Winter 2023) — Your self-generating, self-maintaining code knowledge base.
+- SensorSurf (sensorsurf, Winter 2023) — Resolve PR check failures instantly with AI
+- Sherloq (sherloq, Winter 2023) — One place for all your queries, directly on your SQL editor
+- CodeParrot AI (codeparrot-ai, Winter 2023) — Helps Developers build stunning UI Lightning Fast ⚡️
+- Adri AI (adri-ai, Winter 2023) — Your AI Partner for SAP Development
+- Second (second, Winter 2023) — AI-Native Enterprise Codebase Maintenance
+- Corgea (corgea, Summer 2023) — Corgea finds, and fixes insecure code and packages autonomously. 
+- Continue (continue, Summer 2023) — Pioneering open-source coding agent
+- Sweep (sweep, Summer 2023) — The best AI coding assistant for JetBrains
+- sudocode (sudocode, Summer 2023) — orchestrate your coding agents with sudocode
+- Terracotta AI (terracotta-ai, Summer 2023) — AI-powered Infrastructure as Code PR reviews
+- Morph (morph, Summer 2023) — Fast Models Optimized for Coding Agents
+- CodeStory (codestory, Summer 2023) — Aide is an AI-native , privacy-first IDE built on top of VSCode
+- Driver (driver, Winter 2024) — Context for Codebases
+- Greptile (greptile, Winter 2024) — AI code review agent with complete context of your codebase
+- Nuanced (nuanced, Winter 2024) — the AI coding app for thinking. 
+- Leaping (leaping, Winter 2024) — Automate bug resolution
+- Firebender (firebender, Winter 2024) — Most powerful coding agent for Android engineers
+- Ellipsis (ellipsis, Winter 2024) — Cloud platform for coding agents
+- Random Labs (random-labs, Summer 2024) — Random labs is building long running autonomous coding agents.
+- Storia AI (storia-ai, Summer 2024) — Open source AI copilot that knows your company's code and its context
+- Vibe (vibe, Summer 2024) — Making everyone a software engineer
+- MagiCode (magicode, Summer 2024) — A Reliable AI Frontend Engineer
+- Haystack (haystackeditor, Summer 2024) — The agent-native control layer for code changes
+- Void (void, Summer 2024) — The open source Cursor alternative
+- Conductor (conductor, Summer 2024) — Run a team of coding agents on your Mac
+- Onlook (onlook, Winter 2025) — Cursor for Designers
+- Cyberdesk (cyberdesk, Summer 2025) — Self learning computer use agent for developers
+- Magnitude (magnitude, Summer 2025) — Code with local models, zero setup
+- Embedder (embedder, Summer 2025) — Hardware-Aware AI for Embedded Software Development
+- Omnara (omnara, Summer 2025) — The Open-Source Alternative to Claude Managed Agents
+- stagewise (stagewise, Summer 2025) — The Open Source Agentic IDE
+- Emdash (emdash, Winter 2026) — Open-source Agentic Development Environment
+- Jcode (jcode, Summer 2026) — The harness company
+
+### web-scraping (8)
+- Indexical (indexical, Winter 2023) — AI-powered data extraction engine
+- Reworkd (reworkd, Summer 2023) — The simplest way to extract web data at scale
+- Integuru (integuru, Winter 2024) — Generate fast, reliable APIs for any platform
+- expand.ai (expand-ai, Summer 2024) — Turn any website into an API.
+- Channel3 (channel3, Summer 2025) — Database of every product on the internet
+- Notte (notte, Summer 2025) — Reliable Web Agents for Enterprise
+- KERNEL (kernel, Summer 2025) — Crazy fast, open source infra for AI agents to use the Internet
+- Context.dev (contextdev, Summer 2026) — We give AI agents realtime web context.
+
+### startup-banking (7)
+- Ruby Card (ruby-card, Winter 2023) — Neobank for e-commerce businesses
+- Bujeti (bujeti, Winter 2023) — The Finance Control Centre for African Businesses
+- Alaan (alaan, Winter 2023) — Modern finance platform for the Middle East
+- Every (every, Summer 2023) — Banking + Payroll/Benefits + Bookkeeping + Tax in one place
+- Infinity (infinity, Winter 2024) — Business banking for cross-border SMBs & Startups
+- Givefront (givefront, Winter 2024) — Nonprofit Financial Management
+- Lucible (lucible, Summer 2024) — Combined checking and investment account
+
+### product-feedback (6)
+- Cardinal (cardinal, Winter 2023) — Your AI product backlog
+- Outset (outset, Summer 2023) — AI-powered user interviews
+- Aftercare (aftercare, Winter 2024) — Conversational AI surveys with intelligent follow-up questions
+- Voicepanel (voicepanel, Winter 2024) — Build with conviction
+- Promi (promi, Summer 2024) — Providing quick product and design feedback via digital twins
+- Lucent (lucent, Winter 2026) — AI that automatically improves products from user behavior
+
+### code-hosting (5)
+- Pierre (pierre, Winter 2023) — Pierre is a new, opinionated, git platform.
+- args (args, Summer 2025) — A better GItHub
+- /dev/fast (devfast, Winter 2026) — /dev/fast is the AI-native code forge
+- GitCafe (gitcafe, Summer 2026) — The Git forge for the next hundred billion commits
+- Akon Labs (akon-labs, Summer 2026) — The Github For Coding Agents
+
+### frontend-frameworks (4)
+- Dioxus Labs (dioxus-labs, Summer 2023) — Web, Desktop, and Mobile apps with one codebase in Rust
+- HeroUI (heroui, Summer 2024) — The UI framework for AI agents and developers to build beautiful apps.
+- assistant-ui (assistant-ui, Winter 2025) — Open Source React.js Library for AI Chat
+- 21st (21st, Winter 2026) — UI building blocks for the agentic internet
+
+### local-llm-runtimes (4)
+- nCompass Technologies (ncompass-technologies, Winter 2024) — Optimize performance on GPUs - 10x faster
+- RunLocal AI (runlocal-ai, Summer 2024) — AI agent that optimizes inference for embedded compute like Jetson
+- Cactus Compute (cactus-compute, Summer 2025) — Tiny Edge AI For Tiny Devices
+- RunAnywhere (runanywhere, Winter 2026) — The default way of running on-device AI at Scale
+
+### project-management (3)
+- OrgOrg (orgorg, Summer 2024) — Organizational productivity suite for companies
+- Weave (weave-3, Winter 2025) — AI to understand and then route engineering work
+- OpenSpec (openspec, Winter 2026) — Plan mode for complex features
+
+### edge-platforms (1)
+- Celest (celest, Winter 2024) — The Vercel of Flutter
+
+### mobile-dev (1)
+- bitrig (bitrig, Summer 2025) — Vibe code, test, and deploy Swift apps. All from your iPhone.
+
+## Existing products verified as YC alumni (data/yc-batches.json)
+
+- brex: W17
+- ramp: S15
+- firecrawl: S22
+- termius: W19
+- fly-io: W20
+- ollama: W21
+
+## Summary
+
+- Total modern-batch companies ingested: 1757
+- Mapped to existing arenas: 75
+- Proposed new arenas (>=3 members): 54, covering 986 companies
+- Not a rankable software product (null/null): 690
