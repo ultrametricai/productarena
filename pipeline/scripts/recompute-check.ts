@@ -18,6 +18,7 @@ const CATEGORIES = [
   'mobile-dev',
   'product-feedback',
   'project-management',
+  'software-factory',
   'startup-banking',
   'web-scraping',
 ]
