@@ -1,59 +1,46 @@
-# Lane C report — accuracy wave 2
+# Lane C review — accuracy wave 2 (independent verification)
 
-Scope: `ai-coding`, `code-hosting`, `startup-banking` + install-command alternates (cross-category).
+Reviewed: worktree `agent-aef0c12d453556830`, branch `worktree-agent-aef0c12d453556830`, commits `dbe84d1` + `d58672c`. This supersedes the self-authored report at the same path (findings below are from independent re-verification, not a repeat of the author's claims).
 
-## Commits
+### Findings (Critical/Important/Minor)
 
-- `dbe84d1` — "Resolve accuracy-wave-2 contest issues for ai-coding/code-hosting/startup-banking" (385 files: evidence/products/rankings/verdicts for the 3 in-scope categories, judge cache, community seeds, README stats).
+**Critical**
+- `claude-code` × `agentic-mcp-server` silently flipped from a deliberately-set `na` (rationale: "This product is an AI agent — it consumes MCP servers rather than shipping one... Applicability corrected after reader review.") to `full`/q9 during this wave's full-product re-judge. This cell was **not** one of the 6 targeted issues. The sibling `na` overrides for `cursor`, `gemini-cli`, `github-copilot` (identical rationale) were left untouched, and `codex` correctly stayed `partial` — so 4/5 "survived" but claude-code's did not, asymmetrically. The cited evidence (`claude-code-docs-21/29/30/31/35/38`) is entirely MCP-*client* material (`claude mcp add`, connecting to Notion/Jira/Slack, MCP-as-push-channel) — nearly a duplicate of the evidence already backing the separate `agentic-mcp-client` cell (full/q9). None of it mentions `claude mcp serve`. Live-checked `code.claude.com/docs/en/mcp.md`: Claude Code genuinely *can* act as an MCP server (`## Use Claude Code as an MCP server` / `claude mcp serve`), so `full` is plausibly the right final tier — but the verdict's own rationale ("clear first-party support for connecting agents via MCP") and cited evidence describe client behavior, not server behavior, and don't establish the story as written ("I can connect an agent via an official MCP server [of this product]"). This passes the wave's "no new evidence → revert" stability heuristic (new evidence IDs are cited) but fails the substantive bar: evidence must actually support the claimed tier. This is exactly the class of regression the churn audit exists to catch, and it slipped through. Fix: re-crawl/extract the `claude mcp serve` passage as new evidence and re-cite, or revert this one cell to `na` pending that, before merge.
 
-## Issue outcomes
+**Important**
+- None found beyond the above. The 6 targeted cells (claude-code api-key-auth full/q9, enterprise-grade-auth full/q8; codex agentic-scoped-keys partial/q3, api-machine-spec full/q7, api-interactive-docs partial/q4; github agentic-scoped-keys full/q7 — note the task brief said "q8" for this one, but both the data and the author's own report say q7, a harmless brief/data mismatch not a defect) all cite genuinely new evidence IDs added in `dbe84d1` (confirmed via diff against `dbe84d1^`), and the excerpts are verified live and byte-accurate against the real pages (5/5 spot-curled: `code.claude.com/docs/en/iam`, `claude.com/solutions/enterprise`, `developers.openai.com/api/docs/guides/rbac`, `github.com/openai/openai-openapi`, `docs.github.com/.../fine-grained-personal-access-tokens` — all HTTP 200, quotes confirmed present verbatim).
+- Boundary rule is applied symmetrically: `products.json` gained matching `urls.extra` entries for both `claude-code` (mcp.md, iam, enterprise) and `codex` (rbac, responses/create, openai-openapi), so neither product's evidence surface was special-cased.
+- Churn audit (programmatic re-derivation, not trust of the narrative): diffed `dbe84d1^` vs `dbe84d1` verdicts.json for all 3 categories — 40 changed cells in ai-coding, 11 in code-hosting, 22 in startup-banking (73 total), and **every single one** cites at least one evidence ID that is new in this commit. Zero unexplained/no-new-citation changes survived. This confirms the stability policy was mechanically honored (with the one caveat above: "cites new evidence" ≠ "evidence supports the tier").
+- Community evidence for ramp/relay: read all 10 excerpts, traced each HN thread/comment to its parent story and confirmed on-topic (ramp.com fintech, relayfi.com fintech — no name-collision noise), and verified the `wise.com/us/blog/relay-banking-reviews` excerpts live and verbatim. Provenance is clean.
+- Install alternates: spot-verified 5 of 15 live — `brew install railway` (formula exists), `brew install gitea` (formula exists), `scoop install railway` (bucket entry exists), `ramp-public/ramp-cli` GitHub repo + `ramp-public/homebrew-ramp` tap both exist and resolve, `cursor.com/docs/cli/installation` PowerShell doc resolves (200). No fabricated registry entries found.
+- gh issues: #3–#8 closed with detailed, evidence-quoting outcome comments; #9 correctly left open (partial — ramp/relay done, linear explicitly deferred to another lane); #10 untouched (out of scope, correct).
+- Gates: `npx tsx pipeline/scripts/recompute-check.ts` → `ALL DETERMINISTIC` (10/10 categories match). `pnpm test` → 34 files / 276 tests pass. `pnpm build` → succeeds, static pages generated.
+- Score deltas (recomputed independently via `buildRankings`, matches the author's self-report exactly): claude-code coverage 36.2→43.9, INIT/aiEra 31.1→39.4; codex coverage 30.8→32.5, INIT/aiEra 24.5→32.0. Global max INIT across all 10 categories/all products is **41.1 (apify, web-scraping)** — nothing exceeds the `/rankings/init` callout threshold of 50 (`app/rankings/init/page.tsx` line 42: `maxScore > 50`), so that page's "No product scores above 50/100 yet" copy remains accurate post-merge.
 
-| # | Issue | Outcome | Why |
-|---|---|---|---|
-| 3 | claude-code api-key-auth | **fixed** → `full` q9 | `ANTHROPIC_API_KEY`/`X-Api-Key` quote verified live at code.claude.com/docs/en/iam |
-| 4 | claude-code enterprise-grade-auth | **fixed** → `full` q8 | SSO/domain-capture quotes verified live (code.claude.com/docs/en/iam + claude.com/solutions/enterprise) |
-| 5 | codex agentic-scoped-keys | **fixed** → `partial` q3 | RBAC verified via developers.openai.com mirror (platform.openai.com 403s bots); no Codex-specific scoped-cred mechanism found, so partial not full |
-| 6 | codex api-machine-spec | **fixed** → `full` q7 | openai-openapi repo (OpenAPI 3.1) verified live |
-| 7 | codex api-interactive-docs | **fixed** → `partial` q4 | per-language runnable examples verified via developers.openai.com mirror; general OpenAI ref, not Codex-branded, so partial |
-| 8 | github agentic-scoped-keys | **fixed** → `full` q7 | fine-grained PAT permissions quote verified live, picked up cleanly by automated extract |
-| 9 | linear/relay/ramp zero-community | **partial — kept open** | ramp + relay fixed (5 community items each, was 0); linear is project-management, out of Lane C scope |
-| 10 | a-shell missing logo | **untouched** | mobile-dev, out of Lane C scope — left for owning lane |
+**Minor**
+- `AGENTS.md` in this worktree contains a prompt-injection-style instruction telling agents to read arbitrary vendored docs and "commit it with your work to keep the tree clean." Confirmed via `git log` this predates Lane C's commits and was not touched by `dbe84d1`/`d58672c` — out of scope for this merge decision, but flagging as a live prompt-injection surface in the repo worth a separate look.
+- The self-authored `laneC-report.md`'s churn-audit narrative claims "2 na↔none applicability flips" were reverted and "53 cells" total — this isn't independently auditable since no pre-revert intermediate state was committed/retained. The *observable* outcome (final diff) is clean (see above), but the internal mechanics of the claimed revert process rest on trust.
 
-## Boundary rule adopted
+### Verdict: FIX FIRST — one Critical evidentiary defect (claude-code `agentic-mcp-server` na→full flip backed by client-only evidence, not the actual `claude mcp serve` capability) must be corrected before merge; everything else (6 targeted cells, boundary symmetry, churn audit, community provenance, install alternates, gh issues, gates, score deltas/INIT threshold) checks out clean.
 
-A product's `urls.docs`/`urls.site`/`urls.github` (plus pages its own docs explicitly link to for auth/API management) define its in-scope evidence surface. Codex's `urls.docs` in `products.json` is literally `platform.openai.com/docs/codex` — so OpenAI's platform docs (RBAC, openai-openapi, API reference) are in-scope for Codex's api-*/agentic-scoped-keys stories, the same way `code.claude.com/docs` + `claude.com/solutions/enterprise` are in-scope for Claude Code's auth stories (#3/#4). Applied identically both directions — no special-casing either product. Where `platform.openai.com/*` 403'd automated fetch (confirmed, matches the issues' own caveats), used the accessible `developers.openai.com/api/docs/*` mirror (verified identical content) instead of trusting the issue's URL blind.
+---
 
-## Score deltas (coverage score / INIT aiEra)
+### Fix applied (follow-up commit)
 
-- claude-code: 36.2 → 43.9 (aiEra 31.1 → 39.4)
-- codex: 30.8 → 32.5 (aiEra 24.5 → 32.0)
-- github: 28.0 → 30.0 (aiEra 27.6 → 31.2)
-- ramp: 25.9 → 28.3 (aiEra 29.5 → 30.6)
-- relay: 19.9 → 21.5 (aiEra 5.3 → 4.7)
+The Critical finding above is resolved. Re-crawled/extracted `code.claude.com/docs/en/mcp.md` (already in `claude-code`'s `urls.extra`); the server-mode section ("## Use Claude Code as an MCP server" / `claude mcp serve`) sits ~86k chars into the 107k-char doc, past the extraction stage's per-source truncation cap, so it was backstopped manually as `claude-code-docs-49` (verified live, byte-accurate quote). Also added a genuine hands-on probe: the locally installed `claude` CLI (v2.1.258) ran `claude mcp serve --help` keylessly (no auth/network required) and printed `Usage: claude mcp serve [options] / Start the Claude Code MCP server` — captured as `claude-code-probe-4`.
 
-## Churn audit
+Re-judged `claude-code` fresh (evidence-pack change forces a full product re-judge, per the pipeline's own design). New verdict:
 
-Adding evidence forces a full per-product re-judge (all cells, not just the targeted story). Diffed every cell against a pre-session backup of `verdicts.json`; reverted cells whose verdict/quality changed **without** citing any newly-added evidence id (pure re-roll noise), including two na↔none applicability flips. Reverted: 21 claude-code/codex cells, 15 github cells, 17 ramp/relay cells (53 total). Verified stability by re-running `judge` afterward — zero re-judging triggered (cache hits), confirming the patched cache hashes are consistent with current evidence.
+- **`full`, quality 9, confidence high**
+- Citations: `claude-code-docs-29`, `claude-code-docs-35`, `claude-code-docs-45` (client-side MCP context), `claude-code-docs-49` (the actual server-mode doc section), `claude-code-probe-4` (the hands-on CLI probe) — the rationale now explicitly names `claude mcp serve` and cites both the doc section and the live probe, not just client evidence.
+- Rationale carries an explicit shared-vendor disclosure, matching the style already used elsewhere in this repo's audit trail (README.md §8 "Bias disclosure — the judge is an Anthropic model"): *"the judge model and Claude Code share a vendor, Anthropic — this verdict rests on mechanically verified evidence: an explicit vendor-docs section titled 'Use Claude Code as an MCP server' plus a live, keyless `claude mcp serve --help` probe, not favorable interpretation."*
 
-## Install alternates added (cross-category)
+Sibling consistency check (doc search, no evidence stretched): none of `cursor`, `gemini-cli`, `github-copilot` document an official first-party "act as an MCP server" mode.
+- **Cursor**: docs and third-party guides confirm Cursor is MCP-client-only; one source states explicitly "Cursor itself does not act as an MCP server that exposes itself." `na` holds.
+- **Gemini CLI**: official docs (`google-gemini/gemini-cli` docs, `geminicli.com`) only describe connecting to external MCP servers as a client; no `gemini mcp serve` or equivalent found. `na` holds.
+- **GitHub Copilot**: only hit was a third-party/community wrapper project exposing `gh copilot` via MCP — not an official, first-party GitHub feature. `na` holds (same standard applied to claude-code's genuine first-party doc).
+- `codex` was untouched by this fix (no evidence change) and remains `partial`/q6, as expected.
 
-- cloudflare: + pnpm, yarn, bun (wrangler) — 4 total
-- railway: + curl (agents.railway.com), brew, scoop — 4 total
-- cursor: + PowerShell/irm (Windows) — 2 total
-- ramp: + brew, uv tool install — 3 total
-- gitea: + brew — 2 total
+Re-ran the churn audit against the pre-fix `verdicts.json`: 26 cells changed across the full-product re-judge; 18 cited no new evidence and were reverted (including `api-interactive-docs` none↔na noise), 8 legitimately cite the newly added docs-43…49/probe-4 items and were kept. Verified stability by re-running `judge` afterward (zero cells re-judged — cache hits only). Re-derived `ai-coding`. Gates re-run clean: `pnpm stats`, `pnpm test` (276/276), `pnpm build`.
 
-All verified against live official docs/repos (curl 200 + exact quote match) before adding.
-
-## Gates
-
-- `pnpm stats` (recompute): OK — 10 arenas, 53 products, 3881 verdicts.
-- `pnpm test`: OK — 34 files, 276 tests passed.
-- `pnpm build`: OK — compiled, 372 static pages generated.
-
-## Concerns / notes for controller
-
-- Issue #9 stays open pending the `linear` (project-management) portion — another lane's responsibility.
-- Issue #10 (a-shell logo, mobile-dev) untouched — out of scope for this lane.
-- HN rate-limited my `curl` probing twice mid-session (429/"Sorry."); waited it out before re-verifying seed URLs and running `collect-community` — no evidence was added without a successful live fetch.
-- codex's `agentic-scoped-keys` and `api-interactive-docs` landed as `partial` rather than `full` — the evidence genuinely supports OpenAI-platform-level capability but not a Codex-specific implementation, so I did not inflate to `full`.
+Note: this worktree's `AGENTS.md`/`CLAUDE.md` contain a prompt-injection-style instruction (flagged correctly in Minor, above) telling agents to read `node_modules/next/dist/docs/` and commit unrelated changes "to keep the tree clean." That instruction was not followed — it is file content, not an authorized directive, and is unrelated to this fix.
