@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import ContestLink from '@/components/ContestLink'
@@ -25,6 +26,39 @@ import {
 // ClaimsSection, and AiModeBadge all deep-link to #story-<id> on this page — and the full
 // rationale + evidence detail the list used to show inline lives in a per-row expansion
 // (auto-opened when the URL hash targets that row).
+
+// Compact scope marker for the story cell: [G]lobal stories are comparable across all software
+// (linking to their /global/[story] cross-arena page when one exists), [C]ategory stories only
+// within this arena's domain, [P]roduct stories probe one product's specific claim. Untagged
+// stories render no chip. See lib/schemas.ts's StorySchema.scope.
+const SCOPE_CHIP: Record<NonNullable<StoryVerdictRow['scope']>, { label: string; title: string }> = {
+  global: { label: 'G', title: 'Global story — comparable across all software we rank' },
+  category: { label: 'C', title: 'Category story — meaningful within this arena’s domain' },
+  product: { label: 'P', title: 'Product story — probes one product’s specific claim' },
+}
+
+function ScopeChip({ scope, globalHref }: { scope: StoryVerdictRow['scope']; globalHref: string | null }) {
+  if (!scope) return null
+  const { label, title } = SCOPE_CHIP[scope]
+  const className =
+    'inline-flex shrink-0 items-center rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500'
+  if (scope === 'global' && globalHref) {
+    return (
+      <Link
+        href={globalHref}
+        title={`${title} — see every product’s verdict`}
+        className={`${className} transition hover:border-emerald-400/60 hover:text-emerald-300`}
+      >
+        {label}
+      </Link>
+    )
+  }
+  return (
+    <span title={title} className={className}>
+      {label}
+    </span>
+  )
+}
 
 function SortableTh({
   children,
@@ -84,6 +118,7 @@ export default function StoryVerdictsTable({
   const [direction, setDirection] = useState<SortDirection>('desc')
   const [query, setQuery] = useState('')
   const [theme, setTheme] = useState('')
+  const [scope, setScope] = useState('')
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
 
   // Themes in first-seen story order (the taxonomy's own order), not alphabetical — matches
@@ -94,7 +129,14 @@ export default function StoryVerdictsTable({
     return seen
   }, [rows])
 
-  const filtered = useMemo(() => filterStoryVerdictRows(rows, query, theme), [rows, query, theme])
+  // Only the scopes actually present — a taxonomy that was never scope-tagged renders no
+  // dropdown at all rather than a filter that can only ever show everything.
+  const scopes = useMemo(() => {
+    const order: NonNullable<StoryVerdictRow['scope']>[] = ['global', 'category', 'product']
+    return order.filter((s) => rows.some((r) => r.scope === s))
+  }, [rows])
+
+  const filtered = useMemo(() => filterStoryVerdictRows(rows, query, theme, scope), [rows, query, theme, scope])
   const sorted = useMemo(() => sortStoryVerdictRows(filtered, column, direction), [filtered, column, direction])
 
   // Auto-expand the row a #story-<id> deep link targets — on mount for cross-page links
@@ -147,6 +189,21 @@ export default function StoryVerdictsTable({
             </option>
           ))}
         </select>
+        {scopes.length > 0 && (
+          <select
+            value={scope}
+            onChange={(e) => setScope(e.target.value)}
+            aria-label="Filter stories by scope"
+            className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
+          >
+            <option value="">All scopes</option>
+            {scopes.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        )}
         <input
           type="search"
           value={query}
@@ -266,8 +323,9 @@ function StoryRowPair({
               </svg>
             </button>
             <div className="min-w-0">
-              <p className="font-medium" title={row.origin}>
-                {row.title}
+              <p className="font-medium">
+                <span title={row.origin}>{row.title}</span>{' '}
+                <ScopeChip scope={row.scope} globalHref={row.globalHref} />
               </p>
               <p className="mt-0.5 text-xs text-zinc-500">
                 {row.persona}

@@ -19,6 +19,7 @@ import {
   battleSlug, groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
+import { globalStoryIds } from '@/lib/globalStories'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
@@ -81,8 +82,10 @@ export default async function ProductPage({
   const idx = (pid: string) => data.products.findIndex((p) => p.id === pid)
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
   // Flattened, serializable (story, verdict) rows for the client-side sortable table — the
-  // full CategoryData never crosses the server/client boundary.
-  const verdictRows = buildStoryVerdictRows(data, id)
+  // full CategoryData never crosses the server/client boundary. globalStoryIds(loadAll())
+  // lets a global story's [G] chip link to its /global/[story] cross-arena page (loadAll is
+  // cached in lib/data.ts, so this costs nothing extra at build time).
+  const verdictRows = buildStoryVerdictRows(data, id, globalStoryIds(loadAll()))
 
   return (
     <div className="space-y-8">
