@@ -1,4 +1,4 @@
-// Accuracy Program wave 1, applicability correction #1: for 4 of the 5 ai-coding products,
+// Accuracy Program wave 1, applicability correction #1: for the ai-coding products below,
 // `agentic-mcp-server` ("I can connect an agent via an official MCP server") is the wrong
 // axis. These products ARE the agent — the meaningful question is whether they CONSUME MCP
 // servers (see the new `agentic-mcp-client` canonical story), not whether they ship one for
@@ -11,7 +11,16 @@
 // deprecated per its own docs) `codex mcp-server` / `codex-mcp-server` binary — see
 // codex-gh-6 / codex-docs-23 in data/ai-coding/evidence/codex.json. The axis genuinely
 // applies to codex, so its `agentic-mcp-server` cell is judged normally by the LLM from that
-// evidence, not forced to na. The other 4 products' na rulings stand.
+// evidence, not forced to na.
+//
+// EXCLUDES claude-code (removed post-merge, see fix commit "claude-code mcp-server verdict
+// backed by real server-mode evidence"): unlike the other 3 products, claude-code genuinely
+// ships a server mode — code.claude.com/docs/en/mcp.md documents `claude mcp serve` under a
+// dedicated "Use Claude Code as an MCP server" section, and a hands-on keyless probe
+// (`claude mcp serve --help`) confirmed the subcommand is live. The "serving" axis DOES apply
+// to claude-code, so it must be judged normally by the LLM from that evidence (verdict: full,
+// see data/ai-coding/verdicts.json), not forced to na. cursor/gemini-cli/github-copilot remain
+// forced na — doc search found no equivalent first-party server mode for any of them.
 //
 // Usage: pnpm exec tsx pipeline/scripts/apply-mcp-server-na.ts [--write]
 import fs from 'node:fs'
@@ -23,7 +32,7 @@ import { cellHash, PROMPT_VERSION, validateVerdictRules } from '../stages/judge'
 const WRITE = process.argv.includes('--write')
 const CATEGORY = 'ai-coding'
 const STORY_ID = 'agentic-mcp-server'
-const PRODUCTS = ['claude-code', 'cursor', 'github-copilot', 'gemini-cli']
+const PRODUCTS = ['cursor', 'github-copilot', 'gemini-cli']
 
 const RATIONALE =
   'This product is an AI agent — it consumes MCP servers rather than shipping one; the serving axis does not apply. See agentic-mcp-client. (Applicability corrected after reader review.)'
