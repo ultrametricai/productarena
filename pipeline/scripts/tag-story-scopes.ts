@@ -107,6 +107,7 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'software-factory': ['agent', 'code', 'repo', 'pull request', 'task', 'ci\\b', 'build', 'diff', 'model'],
   'api-platforms': ['api\\b', 'collection', 'request', 'spec', 'gateway', 'mock', 'endpoint', 'openapi', 'contract'],
   'team-chat': ['channel', 'message', 'thread', 'topic', 'huddle', 'meeting', 'call\\b', 'workspace', 'chat', 'bot\\b', 'emoji', 'dm\\b', 'notification', 'guest', 'slash command', 'workflow'],
+  'backend-as-a-service': ['database', 'schema', 'auth', 'storage', 'function', 'realtime', 'migration', 'row-level', 'vector', 'embedding', 'quer', 'backend', 'emulator', 'bucket', 'sign-in', 'postgres', 'sync', 'backup'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {
