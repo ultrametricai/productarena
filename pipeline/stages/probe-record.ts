@@ -437,6 +437,273 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 60_000,
     },
   ],
+  // Package & toolchain managers: a CLI-native arena, so the probes go beyond version prints —
+  // real installs into throwaway mktemp fixtures (self-cleaned; the global stores/caches these
+  // populate live under HOME and are the managers' normal operation). nix has a probe entry but
+  // is skipped gracefully where the multi-user install isn't present; bun is exercised from a
+  // scratch npm-prefix install prepended to PATH by the operator (binAvailable honors PATH).
+  'package-managers': [
+    {
+      probeId: 'cli-version',
+      productId: 'homebrew',
+      storyIds: ['agentic-official-cli'],
+      bin: 'brew',
+      argv: ['brew', '--version'],
+      displayCommand: 'brew --version',
+      expect: /Homebrew \d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'info-json-output',
+      productId: 'homebrew',
+      storyIds: ['machine-readable-cli-output', 'agentic-headless'],
+      bin: 'brew',
+      argv: ['sh', '-c', 'brew info --json=v2 ca-certificates | head -c 1200'],
+      displayCommand: 'brew info --json=v2 ca-certificates | head -c 1200',
+      expect: /"formulae"/,
+      timeoutMs: 60_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'nix',
+      storyIds: ['agentic-official-cli'],
+      bin: 'nix',
+      argv: ['nix', '--version'],
+      displayCommand: 'nix --version',
+      expect: /nix \(Nix\) \d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'pnpm',
+      storyIds: ['agentic-official-cli'],
+      bin: 'pnpm',
+      argv: ['pnpm', '--version'],
+      displayCommand: 'pnpm --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Real install into a throwaway fixture: manifest in, lockfile out — the headless
+      // install + reproducible-lockfile loop an agent runs, end to end, self-cleaned.
+      probeId: 'install-lockfile-roundtrip',
+      productId: 'pnpm',
+      storyIds: ['agent-headless-dependency-install', 'lockfile-reproducible-install'],
+      bin: 'pnpm',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && printf '{"name":"pa-probe-fixture","version":"1.0.0","dependencies":{"is-odd":"3.0.1"}}' > package.json && pnpm install --reporter=append-only && head -3 pnpm-lock.yaml && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && printf '{"dependencies":{"is-odd":"3.0.1"}}' > package.json && pnpm install --reporter=append-only && head -3 pnpm-lock.yaml`,
+      expect: /lockfileVersion/,
+      timeoutMs: 120_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'uv',
+      storyIds: ['agentic-official-cli'],
+      bin: 'uv',
+      argv: ['uv', '--version'],
+      displayCommand: 'uv --version',
+      expect: /uv \d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Real venv + install roundtrip in a throwaway fixture, finishing with --format=json so
+      // the transcript shows the machine-readable surface an agent parses. Self-cleaned.
+      probeId: 'venv-pip-install-roundtrip',
+      productId: 'uv',
+      storyIds: ['agent-headless-dependency-install', 'machine-readable-cli-output'],
+      bin: 'uv',
+      argv: [
+        'sh', '-c',
+        'd=$(mktemp -d) && cd "$d" && uv venv && uv pip install requests && uv pip list --format=json && rm -rf "$d"',
+      ],
+      displayCommand: 'mktemp -d && uv venv && uv pip install requests && uv pip list --format=json',
+      expect: /"requests"/,
+      timeoutMs: 120_000,
+    },
+    {
+      probeId: 'pip-interface-help',
+      productId: 'uv',
+      storyIds: ['incumbent-interface-compat', 'agentic-official-cli'],
+      bin: 'uv',
+      argv: ['sh', '-c', 'uv pip install --help | cat'],
+      displayCommand: 'uv pip install --help',
+      expect: /Install packages into an environment/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'bun',
+      storyIds: ['agentic-official-cli'],
+      bin: 'bun',
+      argv: ['bun', '--version'],
+      displayCommand: 'bun --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Real install into a throwaway fixture; bun.lock is text-based JSONC, so the transcript
+      // shows the parseable lockfile an agent can read and diff. Self-cleaned.
+      probeId: 'install-lockfile-roundtrip',
+      productId: 'bun',
+      storyIds: ['agent-headless-dependency-install', 'parseable-lockfile-format'],
+      bin: 'bun',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && printf '{"name":"pa-probe-fixture","version":"1.0.0","dependencies":{"is-odd":"3.0.1"}}' > package.json && bun install && head -3 bun.lock && bun pm ls && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && printf '{"dependencies":{"is-odd":"3.0.1"}}' > package.json && bun install && head -3 bun.lock && bun pm ls`,
+      expect: /lockfileVersion/,
+      timeoutMs: 120_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'mise',
+      storyIds: ['agentic-official-cli'],
+      bin: 'mise',
+      argv: ['mise', '--version'],
+      displayCommand: 'mise --version',
+      expect: /\d{4}\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'registry-and-json-ls',
+      productId: 'mise',
+      storyIds: ['machine-readable-cli-output', 'registry-breadth'],
+      bin: 'mise',
+      argv: ['sh', '-c', 'mise ls --json; mise registry | head -12'],
+      displayCommand: 'mise ls --json && mise registry | head -12',
+      expect: /aqua:|vfox:/,
+      timeoutMs: 60_000,
+    },
+  ],
+  // Vector databases: the signature keyless proof is "an agent provisions a collection through
+  // the public API without credentials" — run for real against ephemeral local instances
+  // (docker containers on throwaway ports, chroma's local server, milvus-lite's embedded file
+  // store, qdrant-client's in-process mode), all self-cleaned. MCP handshakes cover the two
+  // first-party stdio servers (uvx-published) plus Pinecone's keyless hosted docs MCP endpoint.
+  // The python3/uvx probes expect the operator to prepend a scratch venv (chromadb +
+  // qdrant-client + pymilvus[milvus_lite]) to PATH; binAvailable skips them gracefully otherwise.
+  'vector-databases': [
+    {
+      probeId: 'mcp-remote-handshake',
+      productId: 'pinecone',
+      storyIds: ['agentic-mcp-server', 'agentic-agent-docs'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://docs.pinecone.io/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://docs.pinecone.io/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /"serverInfo"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Full keyless provision roundtrip against a real self-hosted server: boot the official
+      // docker image on a throwaway port with anonymous access, create a collection via the
+      // REST API, read the schema back, tear the container down.
+      probeId: 'docker-provision-roundtrip',
+      productId: 'weaviate',
+      storyIds: ['openness-self-host', 'agentic-public-api'],
+      bin: 'docker',
+      argv: [
+        'sh', '-c',
+        'docker rm -f pa-weaviate-probe >/dev/null 2>&1; docker run -d --name pa-weaviate-probe -p 18080:8080 -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true -e PERSISTENCE_DATA_PATH=/var/lib/weaviate cr.weaviate.io/semitechnologies/weaviate:latest && n=0; while [ $n -lt 45 ] && ! curl -s http://localhost:18080/v1/.well-known/ready >/dev/null 2>&1; do sleep 2; n=$((n+1)); done; curl -s http://localhost:18080/v1/meta | head -c 240; echo; curl -s -X POST http://localhost:18080/v1/schema -H "Content-Type: application/json" -d "{\\"class\\":\\"PaProbe\\",\\"vectorizer\\":\\"none\\"}" | head -c 240; echo; curl -s http://localhost:18080/v1/schema | head -c 240; echo; docker rm -f pa-weaviate-probe >/dev/null 2>&1',
+      ],
+      displayCommand: 'docker run -d --name pa-weaviate-probe -p 18080:8080 -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true cr.weaviate.io/semitechnologies/weaviate:latest && curl -X POST localhost:18080/v1/schema -d \'{"class":"PaProbe","vectorizer":"none"}\' && curl localhost:18080/v1/schema',
+      expect: /"classes":\[\{"class":"PaProbe"/,
+      timeoutMs: 180_000,
+    },
+    {
+      // Same keyless provision roundtrip for qdrant: boot the official image on a throwaway
+      // port, PUT a collection through the REST API, list it back, tear down.
+      probeId: 'docker-provision-roundtrip',
+      productId: 'qdrant',
+      storyIds: ['openness-self-host', 'agentic-public-api'],
+      bin: 'docker',
+      argv: [
+        'sh', '-c',
+        'docker rm -f pa-qdrant-probe >/dev/null 2>&1; docker run -d --name pa-qdrant-probe -p 16333:6333 qdrant/qdrant && n=0; while [ $n -lt 45 ] && ! curl -s http://localhost:16333/readyz >/dev/null 2>&1; do sleep 2; n=$((n+1)); done; curl -s http://localhost:16333/ ; echo; curl -s -X PUT http://localhost:16333/collections/pa_probe -H "Content-Type: application/json" -d "{\\"vectors\\":{\\"size\\":8,\\"distance\\":\\"Cosine\\"}}"; echo; curl -s http://localhost:16333/collections; echo; docker rm -f pa-qdrant-probe >/dev/null 2>&1',
+      ],
+      displayCommand: 'docker run -d --name pa-qdrant-probe -p 16333:6333 qdrant/qdrant && curl -X PUT localhost:16333/collections/pa_probe -d \'{"vectors":{"size":8,"distance":"Cosine"}}\' && curl localhost:16333/collections',
+      expect: /"collections":\[\{"name":"pa_probe"\}\]/,
+      timeoutMs: 180_000,
+    },
+    {
+      // First-party MCP server (uvx-published mcp-server-qdrant) speaking stdio against a
+      // throwaway local store — no cloud, no credentials.
+      probeId: 'mcp-stdio-handshake',
+      productId: 'qdrant',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'uvx',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-qdrant-mcp; QDRANT_LOCAL_PATH=/tmp/pa-qdrant-mcp COLLECTION_NAME=pa-probe uvx mcp-server-qdrant',
+      ],
+      displayCommand: `echo '<jsonrpc initialize>' | QDRANT_LOCAL_PATH=/tmp/pa-qdrant-mcp COLLECTION_NAME=pa-probe uvx mcp-server-qdrant`,
+      stdinPayload: MCP_INITIALIZE,
+      expect: /"serverInfo"/,
+      longRunning: true,
+      timeoutMs: 90_000,
+    },
+    {
+      probeId: 'cli-help',
+      productId: 'chroma',
+      storyIds: ['agentic-official-cli'],
+      bin: 'chroma',
+      argv: ['sh', '-c', 'chroma --help | cat'],
+      displayCommand: 'chroma --help',
+      expect: /A CLI for Chroma/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Keyless provision roundtrip against chroma's own local server: `chroma run` on a
+      // throwaway port + path, create a collection via the v2 REST API, list it back, kill.
+      probeId: 'local-server-provision-roundtrip',
+      productId: 'chroma',
+      storyIds: ['embedded-local-mode', 'agentic-public-api'],
+      bin: 'chroma',
+      argv: [
+        'sh', '-c',
+        'pkill -f "chroma run --path /tmp/pa-chroma-probe" 2>/dev/null; rm -rf /tmp/pa-chroma-probe; (chroma run --path /tmp/pa-chroma-probe --port 8765 >/dev/null 2>&1 &); n=0; while [ $n -lt 30 ] && ! curl -s http://localhost:8765/api/v2/heartbeat >/dev/null 2>&1; do sleep 1; n=$((n+1)); done; curl -s http://localhost:8765/api/v2/heartbeat; echo; curl -s -X POST http://localhost:8765/api/v2/tenants/default_tenant/databases/default_database/collections -H "Content-Type: application/json" -d "{\\"name\\":\\"pa_probe\\"}" | head -c 240; echo; curl -s http://localhost:8765/api/v2/tenants/default_tenant/databases/default_database/collections | head -c 240; echo; pkill -f "chroma run --path /tmp/pa-chroma-probe"; rm -rf /tmp/pa-chroma-probe',
+      ],
+      displayCommand: 'chroma run --path /tmp/pa-chroma-probe --port 8765 & curl -X POST localhost:8765/api/v2/tenants/default_tenant/databases/default_database/collections -d \'{"name":"pa_probe"}\' && curl localhost:8765/api/v2/tenants/default_tenant/databases/default_database/collections',
+      expect: /"name":"pa_probe"/,
+      timeoutMs: 120_000,
+    },
+    {
+      // First-party chroma-mcp stdio server against an ephemeral in-memory client.
+      probeId: 'mcp-stdio-handshake',
+      productId: 'chroma',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'uvx',
+      argv: ['sh', '-c', 'uvx chroma-mcp --client-type ephemeral'],
+      displayCommand: `echo '<jsonrpc initialize>' | uvx chroma-mcp --client-type ephemeral`,
+      stdinPayload: MCP_INITIALIZE,
+      expect: /"serverInfo"/,
+      longRunning: true,
+      timeoutMs: 90_000,
+    },
+    {
+      // Milvus Lite embedded mode: create a collection against a throwaway local file store
+      // through the official pymilvus client — the documented laptop-scale deployment.
+      probeId: 'milvus-lite-provision-roundtrip',
+      productId: 'milvus',
+      storyIds: ['embedded-local-mode', 'agentic-sdks'],
+      bin: 'python3',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-milvus-probe.db && python3 -c \'from pymilvus import MilvusClient; c = MilvusClient("/tmp/pa-milvus-probe.db"); c.create_collection("pa_probe", dimension=8); print("PA_PROBE_OK", c.list_collections())\' ; rm -rf /tmp/pa-milvus-probe.db',
+      ],
+      displayCommand: `python3 -c 'from pymilvus import MilvusClient; c = MilvusClient("/tmp/pa-milvus-probe.db"); c.create_collection("pa_probe", dimension=8); print("PA_PROBE_OK", c.list_collections())'`,
+      expect: /PA_PROBE_OK \['pa_probe'\]/,
+      timeoutMs: 120_000,
+    },
+  ],
   'infra-as-code': [
     {
       probeId: 'cli-version',
