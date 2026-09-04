@@ -16,6 +16,7 @@ import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
 import ScoreTrend from '@/components/ScoreTrend'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
+import TryItSection from '@/components/TryIt/TryItSection'
 import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
 import {
@@ -27,6 +28,7 @@ import { loadScoreHistory } from '@/lib/scoreHistory'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
+import { hasTryIt } from '@/lib/tryit'
 
 const AI_MODE_STORY_ID = 'agentic-builtin-assistant'
 
@@ -94,6 +96,10 @@ export default async function ProductPage({
   // header chip links down to the verdicts table, where each response renders inside its
   // story's expanded row.
   const vendorResponseCount = data.vendorResponses.filter((r) => r.productId === id).length
+  // "Try it" (components/TryIt/*) exists for products with ≥1 replayable recorded proof or an
+  // allowlisted live MCP endpoint. Only then does the header's primary CTA become hands-on —
+  // products with neither keep "Visit" as primary (no fake try).
+  const tryable = hasTryIt(category, id)
 
   return (
     <div className="space-y-8">
@@ -122,14 +128,34 @@ export default async function ProductPage({
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-3">
             <WatchButton productId={id} productName={product.name} />
-            <a
-              href={product.urls.site}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 rounded-lg border border-emerald-400/60 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/10"
-            >
-              Visit {product.name} ↗
-            </a>
+            {tryable ? (
+              <>
+                {/* Vendor link stays, demoted to a secondary chip — trying beats bouncing. */}
+                <a
+                  href={product.urls.site}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 rounded-lg border border-zinc-800 px-4 py-2 text-sm text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                >
+                  Visit ↗
+                </a>
+                <a
+                  href="#try-it"
+                  className="shrink-0 rounded-lg bg-emerald-400 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-300"
+                >
+                  Try it →
+                </a>
+              </>
+            ) : (
+              <a
+                href={product.urls.site}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 rounded-lg border border-emerald-400/60 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/10"
+              >
+                Visit {product.name} ↗
+              </a>
+            )}
           </div>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-4">
@@ -167,7 +193,9 @@ export default async function ProductPage({
         </p>
       </div>
 
-      <ProductActions data={data} productId={id} />
+      <ProductActions data={data} productId={id} tryIt={tryable} />
+
+      <TryItSection category={category} productId={id} productName={product.name} stories={data.stories} />
 
       <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
 
