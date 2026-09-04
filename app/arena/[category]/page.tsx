@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import ArenaTable from '@/components/ArenaTable'
 import Legend from '@/components/Legend'
 import PersonaStacksSection from '@/components/PersonaStacksSection'
@@ -129,6 +130,14 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           {data.stories.length} user stories · {data.verdicts.length} judged cells · updated{' '}
           {data.rankings.generatedAt.slice(0, 10)}
           {freshness && <> · Evidence as of {freshness}</>}
+        </p>
+        <p className="mt-2 text-xs">
+          <Link
+            href={`/arena/${data.category.id}/checklist`}
+            className="text-zinc-400 underline decoration-zinc-800 hover:text-emerald-300"
+          >
+            Buyer checklist →
+          </Link>
         </p>
       </div>
       <Legend />

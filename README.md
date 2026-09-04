@@ -510,6 +510,11 @@ To refresh a single product's data after editing its evidence (e.g. after a cont
 correction), you don't need to re-run the whole category — see
 [CONTRIBUTING.md](./CONTRIBUTING.md) for the minimal `judge --product` + `derive` flow.
 
+After any re-judge/`derive` that changes rankings, re-run `node scripts/generate-badges.mjs`
+and commit the `public/badges/` diff — the embeddable score badges (see `/badges` on the site)
+are committed static SVGs, deliberately not generated during `pnpm build`, so consumers who
+hotlink them pick up the new scores on the next deploy.
+
 Requires `ANTHROPIC_API_KEY` in a local `.env` (see `.env.example`) for the LLM-driven stages
 (`extract`, `normalize`, `collect-community`, `judge`).
 

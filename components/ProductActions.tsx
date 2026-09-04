@@ -68,6 +68,11 @@ export default function ProductActions({ data, productId }: { data: CategoryData
                 </Link>
               ))}
             </div>
+            <p className="mt-1.5">
+              <Link href={`/alternatives/${productId}`} className={linkClass}>
+                Alternatives to {product.name} →
+              </Link>
+            </p>
           </div>
         )}
 
@@ -78,6 +83,16 @@ export default function ProductActions({ data, productId }: { data: CategoryData
           </a>
           <p className="mt-1 text-zinc-500">
             Prefilled GitHub issue — or use the ⚑ next to any verdict below.
+          </p>
+        </div>
+
+        <div>
+          <SectionLabel>Badge</SectionLabel>
+          <Link href={`/badges#${productId}`} className={linkClass}>
+            Embed this product&apos;s score badge →
+          </Link>
+          <p className="mt-1 text-zinc-500">
+            Hotlinked SVG — always shows the live current score.
           </p>
         </div>
 
