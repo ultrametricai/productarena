@@ -108,6 +108,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'api-platforms': ['api\\b', 'collection', 'request', 'spec', 'gateway', 'mock', 'endpoint', 'openapi', 'contract'],
   'team-chat': ['channel', 'message', 'thread', 'topic', 'huddle', 'meeting', 'call\\b', 'workspace', 'chat', 'bot\\b', 'emoji', 'dm\\b', 'notification', 'guest', 'slash command', 'workflow'],
   'backend-as-a-service': ['database', 'schema', 'auth', 'storage', 'function', 'realtime', 'migration', 'row-level', 'vector', 'embedding', 'quer', 'backend', 'emulator', 'bucket', 'sign-in', 'postgres', 'sync', 'backup'],
+  'llm-evals-observability': ['trace', 'tracing', 'span', 'eval', 'llm\\b', 'prompt', 'dataset', 'experiment', 'scorer', 'judge', 'annotation', 'token', 'guardrail', 'playground', 'model', 'latency', 'observab'],
+  'ai-search-apis': ['search', 'query', 'result', 'index', 'snippet', 'citation', 'crawl', 'extract', 'news', 'domain', 'web\\b', 'page', 'answer', 'rag\\b', 'serp', 'retrieval', 'freshness'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {

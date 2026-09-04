@@ -28,6 +28,8 @@ const NAV_LABELS: Record<string, string> = {
   "infra-as-code": "IaC",
   "vibe-coding": "Vibe coding",
   "model-gateways": "Gateways",
+  "llm-evals-observability": "LLM Evals",
+  "ai-search-apis": "AI Search",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
