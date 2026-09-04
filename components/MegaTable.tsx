@@ -8,6 +8,7 @@ import ConfidenceChip from '@/components/ConfidenceChip'
 import MomentumChip from '@/components/MomentumChip'
 import TableControls from '@/components/TableControls'
 import OssPill from '@/components/OssPill'
+import PopularTag, { isNotablyPopular } from '@/components/PopularTag'
 import ProductLogoView from '@/components/ProductLogoView'
 import TrendArrow from '@/components/TrendArrow'
 import WatchButton from '@/components/WatchButton'
@@ -257,7 +258,11 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     )}
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
-                    <MomentumChip popularity={row.popularity === null ? undefined : { fetchedAt: '', stars: row.popularity }} compact />
+                    {row.popularity === null ? (
+                      isNotablyPopular(row.productId) ? <PopularTag /> : null
+                    ) : (
+                      <MomentumChip popularity={{ fetchedAt: '', stars: row.popularity }} compact />
+                    )}
                   </td>
                   <td className="hidden px-2 py-2 sm:table-cell">
                     <div className="flex items-center gap-2.5 font-mono text-xs">
