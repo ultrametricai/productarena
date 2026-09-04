@@ -104,6 +104,7 @@ describe('verificationMix', () => {
       popularity: {},
       claims: {},
       uncertainty: [],
+      vendorResponses: [],
     }
   }
 

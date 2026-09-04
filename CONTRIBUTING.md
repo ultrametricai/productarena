@@ -62,6 +62,17 @@ secret. Until it's configured, contested verdicts still go through the manual fl
 
 You don't need to be a maintainer to do step 3 yourself — see the PR flow below.
 
+### Vendors: respond officially instead
+
+If you speak for the product's vendor, you can also put an official statement on the record
+next to the verdict itself (CVE-style) via the
+[Vendor response](./.github/ISSUE_TEMPLATE/vendor-response.yml) issue form. Responses are
+verified (company-domain email, vendor GitHub org membership, or DNS TXT token), published
+verbatim, and **never change a verdict by themselves** — they enter the evidence pool as
+claimed-docs-tier input for the next re-judge. If your point is demonstrable with keyless,
+reproducible commands, submit a proof spec instead (`docs/PROVE-IT.md`) — recordings beat
+statements. Full governance: [`docs/VENDOR-RESPONSES.md`](./docs/VENDOR-RESPONSES.md).
+
 ## 2. Add evidence (PR flow)
 
 If you have a source (docs, changelog, GitHub, a hands-on write-up) that should change a

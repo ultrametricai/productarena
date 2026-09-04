@@ -8,7 +8,7 @@ import ThemeIcon from '@/components/ThemeIcon'
 import UncertaintyMarker from '@/components/UncertaintyMarker'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
-import type { Verdict } from '@/lib/schemas'
+import type { VendorResponse, Verdict } from '@/lib/schemas'
 import {
   type SortDirection,
   type StoryVerdictColumn,
@@ -88,6 +88,61 @@ function SortableTh({
         {isCurrent && <span aria-hidden>{direction === 'asc' ? '▲' : '▼'}</span>}
       </button>
     </th>
+  )
+}
+
+// How we confirmed the responder actually speaks for the vendor — see docs/VENDOR-RESPONSES.md.
+const VERIFICATION_METHOD_LABEL: Record<VendorResponse['verification']['method'], string> = {
+  'domain-email': 'verified via company-domain email',
+  'github-org': 'verified via vendor GitHub org',
+  'dns-txt': 'verified via DNS TXT token',
+}
+
+// CVE-style official vendor statement on one verdict, rendered inside the expanded row.
+// Deliberately sky-tinted (vs the site's emerald accents) so a vendor's words are never
+// mistaken for our judge's — the statement is verbatim, the verification trail is shown, and
+// the inline rule makes the non-negotiable explicit: a response never moves a verdict by
+// itself. See lib/schemas.ts's VendorResponseSchema and docs/VENDOR-RESPONSES.md.
+function VendorResponseBlock({ response }: { response: VendorResponse }) {
+  return (
+    <div className="mt-3 rounded-lg border border-sky-400/40 bg-sky-400/5 px-3 py-2.5">
+      <p className="flex flex-wrap items-center gap-2 text-xs text-sky-300">
+        <span className="rounded border border-sky-400/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+          Vendor
+        </span>
+        <span className="font-medium">Official vendor response</span>
+        {response.status === 'superseded' && (
+          <span
+            className="rounded border border-zinc-700 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-400"
+            title="A later re-judge has already incorporated this response into the evidence pool."
+          >
+            superseded
+          </span>
+        )}
+      </p>
+      <blockquote className="mt-1.5 text-sm text-sky-100/90">&ldquo;{response.statement}&rdquo;</blockquote>
+      <p className="mt-1.5 text-xs text-zinc-400">
+        {response.contactRole} · {VERIFICATION_METHOD_LABEL[response.verification.method]}{' '}
+        <span className="text-zinc-500">({response.verification.evidence})</span> · {response.respondedAt.slice(0, 10)}
+        {response.url && (
+          <>
+            {' · '}
+            <a
+              href={response.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline decoration-zinc-700 hover:text-sky-300"
+            >
+              full statement ↗
+            </a>
+          </>
+        )}
+      </p>
+      <p className="mt-1.5 text-[11px] text-zinc-500">
+        Vendor responses are published verbatim and never change a verdict by themselves — they enter the
+        evidence pool for the next re-judge.
+      </p>
+    </div>
   )
 }
 
@@ -403,6 +458,7 @@ function StoryRowPair({
                 ))}
               </ul>
             )}
+            {row.vendorResponse && <VendorResponseBlock response={row.vendorResponse} />}
             <div className="mt-2 flex items-center justify-end gap-3">
               {row.proofUrl && (
                 <a

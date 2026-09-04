@@ -222,6 +222,39 @@ export const UncertaintyEntrySchema = z.object({
 // category only covers its decisive cells, not the full matrix.
 export const UncertaintyArraySchema = UncertaintyEntrySchema.array()
 
+// An official, verified vendor response to one (productId, storyId) verdict — CVE-style: the
+// vendor's own words, published verbatim next to the verdict (see docs/VENDOR-RESPONSES.md and
+// components/StoryVerdictsTable.tsx's response block). A response NEVER changes a verdict by
+// itself — it enters the evidence pool as claimed-docs-tier input for the next re-judge.
+// `verification` records how we confirmed the author actually speaks for the vendor (domain
+// email, public membership of the vendor's GitHub org, or a DNS TXT token — see the governance
+// doc); `status` flips to 'superseded' once a later re-judge has incorporated the response.
+export const VendorResponseSchema = z.object({
+  productId: z.string().min(1),
+  storyId: z.string().min(1),
+  // The vendor's statement, verbatim (never edited or paraphrased by maintainers) — hard cap
+  // keeps responses statements, not marketing pages; a fuller write-up belongs behind `url`.
+  statement: z.string().min(1).max(1200),
+  respondedAt: z.string().datetime(),
+  // Who at the vendor spoke, by role ("DevRel lead", "CTO") — a role, not a personal name.
+  contactRole: z.string().min(1),
+  verification: z.object({
+    method: z.enum(['domain-email', 'github-org', 'dns-txt']),
+    // Short human-auditable trail, e.g. "PR #42 from github.com/acme member".
+    evidence: z.string().min(1),
+  }),
+  // Optional link to the vendor's fuller public statement.
+  url: z.string().url().optional(),
+  status: z.enum(['standing', 'superseded']),
+})
+
+// data/{cat}/vendor-responses.json shape: an array of VendorResponse. Entirely optional/
+// additive — see lib/data.ts's tolerant-optional load, same "absence is not an error" contract
+// as popularity/claims/uncertainty — most categories have no vendor responses at all. At most
+// one 'standing' response per (productId, storyId) cell (enforced in lib/data.ts); superseded
+// responses stay in the file as the public record.
+export const VendorResponsesArraySchema = VendorResponseSchema.array()
+
 // data/yc-map.json shape: one entry per modern-batch (W23–S26) YC company, distilled from the
 // yc-oss/api mirror of YC's public directory (see pipeline/scripts/yc-fetch.ts) plus an
 // LLM-assigned arena mapping (see pipeline/scripts/yc-classify.ts). `mappedArena` is an existing
@@ -251,6 +284,7 @@ export type StoryOrigin = z.infer<typeof StoryOriginSchema>
 export type Evidence = z.infer<typeof EvidenceSchema>
 export type Popularity = z.infer<typeof PopularitySchema>
 export type UncertaintyEntry = z.infer<typeof UncertaintyEntrySchema>
+export type VendorResponse = z.infer<typeof VendorResponseSchema>
 export type Verdict = z.infer<typeof VerdictSchema>
 export type Claim = z.infer<typeof ClaimSchema>
 export type Stack = z.infer<typeof StackSchema>

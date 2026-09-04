@@ -42,6 +42,7 @@ function arena(
     popularity: {},
     claims: {},
     uncertainty: [],
+    vendorResponses: [],
   }
 }
 

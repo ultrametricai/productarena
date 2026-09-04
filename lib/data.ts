@@ -3,13 +3,13 @@ import path from 'node:path'
 import {
   type Category, CategorySchema, type Claim, ClaimSchema, EvidenceSchema,
   PopularityMapSchema, ProductSchema, RankingsSchema,
-  StackSchema, StorySchema, UncertaintyArraySchema, VerdictSchema,
+  StackSchema, StorySchema, UncertaintyArraySchema, VendorResponsesArraySchema, VerdictSchema,
 } from './schemas'
 
 export type { CategoryData } from './data-helpers'
 export {
   battleSlug, evidenceById, findBattleBySlug, groupInOrder, leadingBattle, originLabel,
-  parseBattleSlug, stripPersonaPrefix, uncertaintyFor, verdictFor,
+  parseBattleSlug, stripPersonaPrefix, uncertaintyFor, vendorResponseFor, verdictFor,
 } from './data-helpers'
 import type { CategoryData } from './data-helpers'
 
@@ -130,7 +130,26 @@ export function loadCategory(categoryId: string, dir: string = DEFAULT_DIR()): C
     if (!storyIds.has(u.storyId)) throw new Error(`uncertainty references unknown story ${u.storyId}`)
   }
 
-  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity, claims, uncertainty }
+  // Optional, same contract as popularity/claims/uncertainty above: most categories have no
+  // verified vendor responses at all. Each response must target a real cell, and a cell can
+  // carry at most one 'standing' response (superseded ones stay as the public record — see
+  // docs/VENDOR-RESPONSES.md's supersession rules).
+  const vendorResponsesPath = path.join(catDir, 'vendor-responses.json')
+  const vendorResponses = fs.existsSync(vendorResponsesPath)
+    ? VendorResponsesArraySchema.parse(read('vendor-responses.json'))
+    : []
+  const standingResponseCells = new Set<string>()
+  for (const r of vendorResponses) {
+    if (!productIds.has(r.productId)) throw new Error(`vendor response references unknown product ${r.productId}`)
+    if (!storyIds.has(r.storyId)) throw new Error(`vendor response references unknown story ${r.storyId}`)
+    if (r.status === 'standing') {
+      const key = `${r.productId}:${r.storyId}`
+      if (standingResponseCells.has(key)) throw new Error(`multiple standing vendor responses for cell ${key}`)
+      standingResponseCells.add(key)
+    }
+  }
+
+  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity, claims, uncertainty, vendorResponses }
   categoryCache.set(cacheKey, data)
   return data
 }
