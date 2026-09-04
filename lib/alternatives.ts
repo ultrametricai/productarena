@@ -133,5 +133,5 @@ export function adjacentProducts(
   return out
     .sort((a, b) => b.overlap - a.overlap || a.categoryId.localeCompare(b.categoryId))
     .slice(0, cap)
-    .map(({ overlap: _overlap, ...rest }) => rest)
+    .map(({ categoryId, categoryName, product, entry, sharedThemes }) => ({ categoryId, categoryName, product, entry, sharedThemes }))
 }
