@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now },
     { url: `${SITE_URL}/methodology`, lastModified: now },
+    { url: `${SITE_URL}/pipeline`, lastModified: now },
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
     { url: `${SITE_URL}/rankings/agentic`, lastModified: now },
