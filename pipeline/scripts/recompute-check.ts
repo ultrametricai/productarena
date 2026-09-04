@@ -11,6 +11,7 @@ const ROOT = path.resolve(__dirname, '..', '..')
 const CATEGORIES = [
   'accounting',
   'ai-coding',
+  'ai-search-apis',
   'api-platforms',
   'backend-as-a-service',
   'code-hosting',
@@ -18,6 +19,7 @@ const CATEGORIES = [
   'edge-platforms',
   'frontend-frameworks',
   'infra-as-code',
+  'llm-evals-observability',
   'local-llm-runtimes',
   'mobile-dev',
   'mobile-payments',
