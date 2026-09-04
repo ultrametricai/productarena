@@ -212,6 +212,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/llms.txt" className="hover:text-emerald-300">
                 For agents: /llms.txt
               </Link>
+              <Link href="/mcp" className="hover:text-emerald-300">
+                MCP
+              </Link>
             </div>
           </div>
         </footer>
