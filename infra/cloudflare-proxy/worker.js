@@ -9,6 +9,9 @@
 // ports, capped redirects with per-hop revalidation, short timeouts, bounded reads, and a
 // best-effort per-IP rate limit. It only ever GETs fixed well-known paths and treats every
 // response as inert text.
+//
+// Also hosts POST /productarena/mcp — a keyless, rate-limited remote MCP endpoint (see the
+// "Remote MCP endpoint" section below and this directory's README.md).
 const ORIGIN = 'https://productarena.vercel.app'
 const ALLOWED_CORS = new Set(['https://ultrametric.ai', 'https://productarena.vercel.app'])
 
@@ -17,6 +20,21 @@ const FETCH_TIMEOUT_MS = 6000
 const MAX_REDIRECTS = 3
 const RATE_LIMIT = { max: 10, windowMs: 5 * 60 * 1000 }
 const rateBuckets = new Map() // per-isolate, best-effort
+
+// Fixed-window, per-isolate, best-effort rate limiter shared by /api/scan and /mcp (each with
+// its own bucket map and limits). Returns true when the caller should get a 429.
+function isRateLimited(buckets, ip, { max, windowMs }) {
+  const now = Date.now()
+  const bucket = buckets.get(ip)
+  if (bucket && now - bucket.ts < windowMs) {
+    if (bucket.count >= max) return true
+    bucket.count++
+  } else {
+    buckets.set(ip, { ts: now, count: 1 })
+    if (buckets.size > 5000) buckets.clear()
+  }
+  return false
+}
 
 function corsHeaders(request) {
   const origin = request.headers.get('origin') ?? ''
@@ -119,14 +137,8 @@ async function handleScan(request) {
   if (request.method !== 'POST') return jsonResponse(request, 405, { error: 'POST only' })
 
   const ip = request.headers.get('cf-connecting-ip') ?? 'unknown'
-  const now = Date.now()
-  const bucket = rateBuckets.get(ip)
-  if (bucket && now - bucket.ts < RATE_LIMIT.windowMs) {
-    if (bucket.count >= RATE_LIMIT.max) return jsonResponse(request, 429, { error: 'rate limited — try again in a few minutes' })
-    bucket.count++
-  } else {
-    rateBuckets.set(ip, { ts: now, count: 1 })
-    if (rateBuckets.size > 5000) rateBuckets.clear()
+  if (isRateLimited(rateBuckets, ip, RATE_LIMIT)) {
+    return jsonResponse(request, 429, { error: 'rate limited — try again in a few minutes' })
   }
 
   let body
@@ -185,10 +197,509 @@ async function handleScan(request) {
   })
 }
 
+// ---------------------------------------------------------------------------------------------
+// Remote MCP endpoint: POST /productarena/mcp
+//
+// A keyless, rate-limited MCP server over the streamable-HTTP transport's plain-JSON response
+// mode (client POSTs one JSON-RPC message, server answers with one application/json body; no
+// SSE streams, no sessions — the server is fully stateless, which the MCP spec permits). It
+// exposes the same eight tools as the stdio `productarena-mcp` npm package (mcp/ in the repo —
+// keep the two in sync), fetching the Vercel origin's public /productarena/data/*.json files
+// with a short in-isolate cache.
+//
+// No auth by design: this is the same public site data anyone can GET from /data/*. If we ever
+// tier access ("API keys" for higher rate limits / bulk endpoints), gate it here — check an
+// Authorization header before handleMcp's rate limiter and branch to a bigger limit.
+// JSON-RPC handling is hand-rolled to keep the worker dependency-free.
+const MCP_SERVER_VERSION = '0.2.0'
+const MCP_PROTOCOL_VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05']
+const MCP_RATE_LIMIT = { max: 60, windowMs: 5 * 60 * 1000 }
+const mcpRateBuckets = new Map() // separate from /api/scan's buckets
+
+const DATA_CACHE_TTL_MS = 5 * 60 * 1000
+const dataCache = new Map() // path -> { expiresAt, value } — per-isolate, best-effort
+
+// Thrown for caller mistakes (unknown ids, bad params) — reported as a tool-error result.
+class ArenaError extends Error {}
+
+// GET one of the origin's static /productarena/data/*.json files, cached for 5 minutes.
+async function fetchArenaJson(path) {
+  const hit = dataCache.get(path)
+  if (hit && hit.expiresAt > Date.now()) return hit.value
+  const url = `${ORIGIN}/productarena${path}`
+  const res = await fetch(url, { cf: { cacheTtl: 300, cacheEverything: true } })
+  if (!res.ok) throw new Error(`upstream GET ${path} -> HTTP ${res.status}`)
+  const value = await res.json()
+  if (dataCache.size > 500) dataCache.clear()
+  dataCache.set(path, { expiresAt: Date.now() + DATA_CACHE_TTL_MS, value })
+  return value
+}
+
+async function assertKnownArena(fetchJson, arena) {
+  const categories = await fetchJson('/data/categories.json')
+  if (!categories.some((c) => c.id === arena)) {
+    throw new ArenaError(`unknown arena "${arena}" — see list_arenas for valid ids`)
+  }
+}
+
+function requireString(args, key) {
+  const value = args?.[key]
+  if (typeof value !== 'string' || !value.trim()) throw new ArenaError(`"${key}" must be a non-empty string`)
+  return value.trim()
+}
+
+// Flat (arena, product) index across every category (product ids are globally unique).
+async function productIndex(fetchJson) {
+  const categories = await fetchJson('/data/categories.json')
+  const perArena = await Promise.all(
+    categories.map(async (category) => {
+      const products = await fetchJson(`/data/${category.id}/products.json`)
+      return products.map((product) => ({ arena: category.id, product }))
+    }),
+  )
+  return perArena.flat()
+}
+
+const TOP_METRICS = ['score', 'arenaScore', 'agentReady', 'agenticApp', 'apiQuality']
+
+// Tool catalog — mirrors mcp/src/tools.ts + mcp/src/server.ts (the stdio npm package).
+const MCP_TOOLS = [
+  {
+    name: 'list_arenas',
+    title: 'List arenas',
+    description: 'List every ProductArena arena/category (id, name, description, personas, themes).',
+    inputSchema: { type: 'object', properties: {} },
+    handler: async (fetchJson) => fetchJson('/data/categories.json'),
+  },
+  {
+    name: 'get_rankings',
+    title: 'Get rankings',
+    description:
+      'Get one arena\'s full leaderboard (coverage score, Arena Score as "aiEra", agent-readiness, per-theme scores) plus its head-to-head battle log.',
+    inputSchema: {
+      type: 'object',
+      required: ['arena'],
+      properties: { arena: { type: 'string', description: 'Arena id, e.g. "desktop-os" — see list_arenas.' } },
+    },
+    handler: async (fetchJson, args) => {
+      const arena = requireString(args, 'arena')
+      await assertKnownArena(fetchJson, arena)
+      return fetchJson(`/data/${arena}/rankings.json`)
+    },
+  },
+  {
+    name: 'get_product',
+    title: 'Get product',
+    description:
+      "Get one product: metadata, leaderboard entry with rank, verdict counts, and a per-story verdict summary. For any single verdict's rationale and cited evidence URLs, follow up with get_verdict.",
+    inputSchema: {
+      type: 'object',
+      required: ['arena', 'product'],
+      properties: {
+        arena: { type: 'string', description: 'Arena id — see list_arenas.' },
+        product: { type: 'string', description: 'Product id within that arena — see get_rankings or search_products.' },
+      },
+    },
+    handler: async (fetchJson, args) => {
+      const arena = requireString(args, 'arena')
+      const productId = requireString(args, 'product')
+      await assertKnownArena(fetchJson, arena)
+      const [products, stories, verdicts, rankings] = await Promise.all([
+        fetchJson(`/data/${arena}/products.json`),
+        fetchJson(`/data/${arena}/stories.json`),
+        fetchJson(`/data/${arena}/verdicts.json`),
+        fetchJson(`/data/${arena}/rankings.json`),
+      ])
+      const product = products.find((p) => p.id === productId)
+      if (!product) throw new ArenaError(`unknown product "${productId}" in arena "${arena}" — see get_rankings or search_products`)
+      const storyTitleById = new Map(stories.map((s) => [s.id, s.title]))
+      const verdictCounts = { full: 0, partial: 0, none: 0, disputed: 0, na: 0 }
+      const summaries = verdicts
+        .filter((v) => v.productId === productId)
+        .map((v) => {
+          verdictCounts[v.verdict] += 1
+          return {
+            storyId: v.storyId,
+            storyTitle: storyTitleById.get(v.storyId) ?? null,
+            verdict: v.verdict,
+            quality: v.quality,
+            confidence: v.confidence,
+          }
+        })
+      const index = rankings.leaderboard.findIndex((e) => e.productId === productId)
+      const ranking = index === -1 ? null : { ...rankings.leaderboard[index], rank: index + 1 }
+      return { arena, product, ranking, verdictCounts, verdicts: summaries }
+    },
+  },
+  {
+    name: 'get_verdict',
+    title: 'Get verdict',
+    description:
+      'Get the full judged verdict for one (product, story) cell: verdict tier, quality, confidence, rationale, and the cited evidence URLs.',
+    inputSchema: {
+      type: 'object',
+      required: ['arena', 'product', 'story'],
+      properties: {
+        arena: { type: 'string', description: 'Arena id — see list_arenas.' },
+        product: { type: 'string', description: 'Product id within that arena.' },
+        story: { type: 'string', description: "Story id — see get_product's verdicts list for valid ids." },
+      },
+    },
+    handler: async (fetchJson, args) => {
+      const arena = requireString(args, 'arena')
+      const productId = requireString(args, 'product')
+      const storyId = requireString(args, 'story')
+      await assertKnownArena(fetchJson, arena)
+      const [products, stories, verdicts, evidence] = await Promise.all([
+        fetchJson(`/data/${arena}/products.json`),
+        fetchJson(`/data/${arena}/stories.json`),
+        fetchJson(`/data/${arena}/verdicts.json`),
+        fetchJson(`/data/${arena}/evidence/${productId}.json`).catch(() => []),
+      ])
+      const product = products.find((p) => p.id === productId)
+      if (!product) throw new ArenaError(`unknown product "${productId}" in arena "${arena}" — see get_rankings or search_products`)
+      const story = stories.find((s) => s.id === storyId)
+      if (!story) throw new ArenaError(`unknown story "${storyId}" in arena "${arena}" — see get_product's verdicts for valid story ids`)
+      const verdict = verdicts.find((v) => v.productId === productId && v.storyId === storyId)
+      if (!verdict) throw new ArenaError(`no verdict for product "${productId}" on story "${storyId}" in arena "${arena}"`)
+      const evidenceById = new Map(evidence.map((e) => [e.id, e]))
+      return {
+        arena,
+        productId,
+        productName: product.name,
+        storyId,
+        storyTitle: story.title,
+        storyWeight: story.weight ?? null,
+        verdict: verdict.verdict,
+        quality: verdict.quality,
+        confidence: verdict.confidence,
+        rationale: verdict.rationale,
+        evidence: verdict.evidenceIds
+          .map((id) => evidenceById.get(id))
+          .filter(Boolean)
+          .map((e) => ({ id: e.id, tier: e.tier, url: e.url })),
+      }
+    },
+  },
+  {
+    name: 'search_products',
+    title: 'Search products',
+    description:
+      'Search for products by id/name/vendor substring across every arena. Returns (arena, product) pairs to feed into get_product or compare.',
+    inputSchema: {
+      type: 'object',
+      required: ['query'],
+      properties: { query: { type: 'string', description: 'Case-insensitive substring to match against product id, name, or vendor.' } },
+    },
+    handler: async (fetchJson, args) => {
+      const q = requireString(args, 'query').toLowerCase()
+      const index = await productIndex(fetchJson)
+      return index.filter(
+        ({ product }) =>
+          product.id.toLowerCase().includes(q) ||
+          product.name.toLowerCase().includes(q) ||
+          product.vendor.toLowerCase().includes(q),
+      )
+    },
+  },
+  {
+    name: 'compare',
+    title: 'Compare products',
+    description:
+      "Compare products across arenas by score: coverage score, Arena Score, agent-readiness, AI-native score, API quality, and each product's rank within its own arena. Product ids are globally unique — no arena argument needed.",
+    inputSchema: {
+      type: 'object',
+      required: ['products'],
+      properties: {
+        products: { type: 'array', items: { type: 'string' }, minItems: 1, description: 'Product ids to compare — see search_products.' },
+      },
+    },
+    handler: async (fetchJson, args) => {
+      const raw = Array.isArray(args?.products) ? args.products : null
+      const ids = raw ? [...new Set(raw.filter((p) => typeof p === 'string').map((p) => p.trim().toLowerCase()).filter(Boolean))] : []
+      if (ids.length === 0) throw new ArenaError('compare requires at least one product id — see search_products to find ids')
+      const index = await productIndex(fetchJson)
+      const byId = new Map(index.map((entry) => [entry.product.id, entry]))
+      const found = ids.filter((id) => byId.has(id))
+      const notFound = ids.filter((id) => !byId.has(id))
+      const arenas = [...new Set(found.map((id) => byId.get(id).arena))]
+      const rankingsByArena = new Map(
+        await Promise.all(arenas.map(async (arena) => [arena, await fetchJson(`/data/${arena}/rankings.json`)])),
+      )
+      const products = found.map((id) => {
+        const { arena, product } = byId.get(id)
+        const leaderboard = rankingsByArena.get(arena)?.leaderboard ?? []
+        const rankIndex = leaderboard.findIndex((e) => e.productId === id)
+        const entry = rankIndex === -1 ? null : leaderboard[rankIndex]
+        return {
+          productId: id,
+          name: product.name,
+          vendor: product.vendor,
+          arena,
+          rank: rankIndex === -1 ? null : rankIndex + 1,
+          fieldSize: leaderboard.length,
+          score: entry?.score ?? null,
+          arenaScore: entry?.aiEra ?? null,
+          agentReady: entry?.agentReady ?? null,
+          agenticApp: entry?.agenticApp ?? null,
+          apiQuality: entry?.apiQuality ?? null,
+        }
+      })
+      return {
+        products,
+        notFound,
+        note:
+          'Scores use the same formula everywhere, but each arena judges its own story set — cross-arena numbers are indicative, not a strict total ordering. Products in the same arena are directly comparable (see get_rankings for their head-to-head battles).',
+      }
+    },
+  },
+  {
+    name: 'get_stacks',
+    title: 'Get AI stacks',
+    description:
+      'Get ProductArena\'s curated cross-arena AI stacks (e.g. "local sovereign stack") with every scored slot resolved LIVE from current arena leaderboards; editorial slots are labeled as such.',
+    inputSchema: { type: 'object', properties: {} },
+    handler: async (fetchJson) => {
+      const stacks = await fetchJson('/data/ai-stacks.json')
+      const arenaIds = new Set()
+      for (const stack of stacks) {
+        for (const slot of stack.slots) if (slot.pick.kind !== 'editorial') arenaIds.add(slot.pick.arenaId)
+      }
+      const arenaData = new Map(
+        await Promise.all(
+          [...arenaIds].map(async (arena) => {
+            const [products, rankings] = await Promise.all([
+              fetchJson(`/data/${arena}/products.json`).catch(() => null),
+              fetchJson(`/data/${arena}/rankings.json`).catch(() => null),
+            ])
+            return [arena, products && rankings ? { products, rankings } : null]
+          }),
+        ),
+      )
+      return stacks.map((stack) => ({
+        id: stack.id,
+        name: stack.name,
+        tagline: stack.tagline,
+        audience: stack.audience,
+        slots: stack.slots
+          .map((slot) => {
+            if (slot.pick.kind === 'editorial') {
+              return {
+                role: slot.role, why: slot.why, kind: 'editorial', arena: null, productId: null, productName: null,
+                metric: null, metricValue: null, rank: null, note: slot.pick.note, editorialUrl: slot.pick.url,
+              }
+            }
+            const data = arenaData.get(slot.pick.arenaId)
+            if (!data) return null
+            const metric = slot.pick.kind === 'product' ? (slot.pick.metric ?? 'agentReady') : slot.pick.metric
+            const ossIds = new Set(data.products.filter((p) => p.type === 'oss').map((p) => p.id))
+            const field = slot.pick.kind === 'arena-top' && slot.pick.ossOnly
+              ? data.rankings.leaderboard.filter((e) => ossIds.has(e.productId))
+              : data.rankings.leaderboard
+            const ranked = [...field].filter((e) => e[metric] !== null).sort((a, b) => b[metric] - a[metric])
+            const entry = slot.pick.kind === 'product' ? ranked.find((e) => e.productId === slot.pick.productId) : ranked[0]
+            if (!entry) return null
+            return {
+              role: slot.role,
+              why: slot.why,
+              kind: slot.pick.kind,
+              arena: slot.pick.arenaId,
+              productId: entry.productId,
+              productName: data.products.find((p) => p.id === entry.productId)?.name ?? entry.productId,
+              metric,
+              metricValue: entry[metric],
+              rank: ranked.indexOf(entry) + 1,
+              note: slot.pick.kind === 'product' ? slot.pick.note : null,
+              editorialUrl: null,
+            }
+          })
+          .filter(Boolean),
+      }))
+    },
+  },
+  {
+    name: 'top_products',
+    title: 'Top products',
+    description:
+      "Cross-arena top-N: flattens every arena's leaderboard and ranks all products by one metric. Metrics: score (story coverage), arenaScore (Arena Score / aiEra), agentReady, agenticApp, apiQuality.",
+    inputSchema: {
+      type: 'object',
+      required: ['metric'],
+      properties: {
+        metric: { type: 'string', enum: TOP_METRICS, description: 'Metric to rank by.' },
+        limit: { type: 'integer', minimum: 1, maximum: 50, description: 'How many products to return (default 10, max 50).' },
+      },
+    },
+    handler: async (fetchJson, args) => {
+      const metric = requireString(args, 'metric')
+      const normalized = metric === 'aiEra' ? 'arenaScore' : metric
+      if (!TOP_METRICS.includes(normalized)) throw new ArenaError(`unknown metric "${metric}" — use one of: ${TOP_METRICS.join(', ')}`)
+      const field = normalized === 'arenaScore' ? 'aiEra' : normalized
+      const rawLimit = typeof args?.limit === 'number' && Number.isFinite(args.limit) ? Math.floor(args.limit) : 10
+      const capped = Math.max(1, Math.min(rawLimit, 50))
+      const categories = await fetchJson('/data/categories.json')
+      const perArena = await Promise.all(
+        categories.map(async (category) => {
+          const [products, rankings] = await Promise.all([
+            fetchJson(`/data/${category.id}/products.json`).catch(() => null),
+            fetchJson(`/data/${category.id}/rankings.json`).catch(() => null),
+          ])
+          if (!products || !rankings) return []
+          const byId = new Map(products.map((p) => [p.id, p]))
+          return rankings.leaderboard
+            .filter((e) => e[field] !== null)
+            .map((e) => ({
+              productId: e.productId,
+              name: byId.get(e.productId)?.name ?? e.productId,
+              vendor: byId.get(e.productId)?.vendor ?? '',
+              arena: category.id,
+              metric: normalized,
+              value: e[field],
+              score: e.score,
+              arenaScore: e.aiEra,
+            }))
+        }),
+      )
+      return perArena.flat().sort((a, b) => b.value - a.value).slice(0, capped)
+    },
+  },
+]
+
+function rpcError(id, code, message) {
+  return { jsonrpc: '2.0', id: id ?? null, error: { code, message } }
+}
+
+function rpcResult(id, result) {
+  return { jsonrpc: '2.0', id, result }
+}
+
+// Handle one parsed JSON-RPC message. Returns { status, body } where body === null means
+// "202 Accepted, empty response" (notifications/responses per streamable HTTP). `fetchJson`
+// is injected so tests can run this without a network (see __tests__/mcp.test.ts).
+export async function handleJsonRpc(message, fetchJson = fetchArenaJson) {
+  if (Array.isArray(message)) {
+    // JSON-RPC batching was removed in MCP protocol 2025-06-18 — reject cleanly.
+    return { status: 400, body: rpcError(null, -32600, 'batch requests are not supported') }
+  }
+  if (!message || typeof message !== 'object' || message.jsonrpc !== '2.0' || typeof message.method !== 'string') {
+    return { status: 400, body: rpcError(message?.id, -32600, 'invalid JSON-RPC 2.0 request') }
+  }
+  const { id, method, params } = message
+
+  // Notifications (no id) and client responses: acknowledge with 202/empty.
+  if (id === undefined || id === null) return { status: 202, body: null }
+
+  switch (method) {
+    case 'initialize': {
+      const requested = typeof params?.protocolVersion === 'string' ? params.protocolVersion : ''
+      const protocolVersion = MCP_PROTOCOL_VERSIONS.includes(requested) ? requested : MCP_PROTOCOL_VERSIONS[0]
+      return {
+        status: 200,
+        body: rpcResult(id, {
+          protocolVersion,
+          capabilities: { tools: { listChanged: false } },
+          serverInfo: { name: 'productarena-mcp', version: MCP_SERVER_VERSION },
+          instructions:
+            'Evidence-graded product rankings from ProductArena (ultrametric.ai/productarena). Start with list_arenas, then get_rankings/get_product; every score traces to cited evidence via get_verdict. Data is © Ultrametric Inc — brief quotes with attribution are welcome (see the repo DATA-LICENSE).',
+        }),
+      }
+    }
+    case 'ping':
+      return { status: 200, body: rpcResult(id, {}) }
+    case 'tools/list':
+      return {
+        status: 200,
+        body: rpcResult(id, {
+          tools: MCP_TOOLS.map(({ name, title, description, inputSchema }) => ({ name, title, description, inputSchema })),
+        }),
+      }
+    case 'tools/call': {
+      const name = typeof params?.name === 'string' ? params.name : ''
+      const tool = MCP_TOOLS.find((t) => t.name === name)
+      if (!tool) return { status: 200, body: rpcError(id, -32602, `unknown tool "${name}"`) }
+      try {
+        const result = await tool.handler(fetchJson, params?.arguments ?? {})
+        return {
+          status: 200,
+          body: rpcResult(id, { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] }),
+        }
+      } catch (err) {
+        // Tool-level failures (bad ids, upstream hiccups) are tool results with isError, not
+        // protocol errors — the agent should see the message and self-correct.
+        const messageText = err instanceof Error ? err.message : String(err)
+        return {
+          status: 200,
+          body: rpcResult(id, { content: [{ type: 'text', text: `Error: ${messageText}` }], isError: true }),
+        }
+      }
+    }
+    default:
+      return { status: 200, body: rpcError(id, -32601, `method "${method}" not supported (this server implements initialize, ping, tools/list, tools/call)`) }
+  }
+}
+
+function mcpCorsHeaders() {
+  // Public, read-only data — permissive CORS is deliberate (unlike /api/scan). We don't rely
+  // on Origin for auth (there is none) and serve no user-specific state, so DNS-rebinding
+  // concerns from the MCP spec don't apply here.
+  return {
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'POST, OPTIONS',
+    'access-control-allow-headers': 'content-type, accept, authorization, mcp-protocol-version, mcp-session-id',
+    'access-control-max-age': '86400',
+    'cache-control': 'no-store',
+  }
+}
+
+// Returns a Response, or null to fall through to the transparent proxy — a plain browser GET
+// of /productarena/mcp serves the Next app's human-readable "Use ProductArena from your agent"
+// page at the same URL the JSON-RPC endpoint lives on.
+async function handleMcp(request) {
+  const headers = mcpCorsHeaders()
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers })
+  if (request.method === 'GET' && !(request.headers.get('accept') ?? '').includes('text/event-stream')) {
+    return null
+  }
+  if (request.method !== 'POST') {
+    // No SSE/GET stream and no sessions to DELETE — stateless plain-JSON mode only.
+    return new Response(JSON.stringify(rpcError(null, -32600, 'POST a single JSON-RPC message (streamable HTTP, JSON response mode)')), {
+      status: 405,
+      headers: { ...headers, allow: 'POST, OPTIONS', 'content-type': 'application/json' },
+    })
+  }
+
+  const ip = request.headers.get('cf-connecting-ip') ?? 'unknown'
+  if (isRateLimited(mcpRateBuckets, ip, MCP_RATE_LIMIT)) {
+    return new Response(JSON.stringify(rpcError(null, -32000, 'rate limited (60 requests / 5 min per IP) — try again in a few minutes')), {
+      status: 429,
+      headers: { ...headers, 'retry-after': '300', 'content-type': 'application/json' },
+    })
+  }
+
+  let parsed
+  try {
+    parsed = await request.json()
+  } catch {
+    return new Response(JSON.stringify(rpcError(null, -32700, 'parse error: body must be JSON')), {
+      status: 400,
+      headers: { ...headers, 'content-type': 'application/json' },
+    })
+  }
+
+  const { status, body } = await handleJsonRpc(parsed)
+  if (body === null) return new Response(null, { status, headers })
+  return new Response(JSON.stringify(body), { status, headers: { ...headers, 'content-type': 'application/json' } })
+}
+
 export default {
   async fetch(request) {
     const url = new URL(request.url)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
+    if (url.pathname === '/productarena/mcp') {
+      const mcpResponse = await handleMcp(request)
+      if (mcpResponse) return mcpResponse
+      // plain GET falls through: the proxy below serves the site's /mcp page at this URL
+    }
 
     const upstream = new URL(url.pathname + url.search, ORIGIN)
     const resp = await fetch(upstream, {

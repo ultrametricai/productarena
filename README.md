@@ -573,10 +573,14 @@ ProductArena is built to be read by agents, not just browsed by humans:
   the methodology below (evidence tiers, judging, scoring, Arena Score weights, story provenance,
   re-judge stability, bias disclosure), linked from the header next to Arenas and from
   `/llms.txt`.
-- **MCP server** (`mcp/`) — a stdio [MCP](https://modelcontextprotocol.io) server exposing this
-  same data as tools (`list_arenas`, `get_rankings`, `get_product`, `get_battle`,
-  `search_products`, `get_story_verdicts`). See [`mcp/README.md`](./mcp/README.md) for setup and
-  client config (Claude Code and generic stdio clients).
+- **MCP** — two [MCP](https://modelcontextprotocol.io) servers expose this same data as eight
+  tools (`list_arenas`, `get_rankings`, `get_product`, `get_verdict`, `search_products`,
+  `compare`, `get_stacks`, `top_products`): a hosted remote endpoint at
+  **[ultrametric.ai/productarena/mcp](https://ultrametric.ai/productarena/mcp)** (streamable
+  HTTP, keyless, rate-limited — served by `infra/cloudflare-proxy/worker.js`; opening the URL
+  in a browser shows the setup page) and the **`productarena-mcp`** npm package (stdio, `mcp/`
+  in this repo — `claude mcp add productarena -- npx -y productarena-mcp`). See
+  [`mcp/README.md`](./mcp/README.md) for full setup and client config.
 - **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
   metrics (`aiEra`, `score`, etc). No `aggregateRating` — we don't have star ratings, and faking

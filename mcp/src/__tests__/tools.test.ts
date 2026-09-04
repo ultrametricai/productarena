@@ -1,16 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createClient } from '../client'
 import {
-  getBattle,
+  ArenaError,
+  compare,
   getProduct,
-  getStoryVerdicts,
+  getStacks,
+  getVerdict,
   getRankings,
   listArenas,
-  InitError,
   searchProducts,
+  topProducts,
 } from '../tools'
 
-const BASE_URL = 'https://init.example'
+const BASE_URL = 'https://arena.example'
 
 const CATEGORIES = [
   { id: 'desktop-os', name: 'Desktop OS', description: 'Desktop operating systems.', personas: ['developer'] },
@@ -20,6 +22,10 @@ const CATEGORIES = [
 const PRODUCTS = [
   { id: 'macos', name: 'macOS', vendor: 'Apple', type: 'commercial' as const, urls: { site: 'https://apple.com/macos' } },
   { id: 'ubuntu', name: 'Ubuntu Desktop', vendor: 'Canonical', type: 'oss' as const, urls: { site: 'https://ubuntu.com' } },
+]
+
+const HOSTING_PRODUCTS = [
+  { id: 'github', name: 'GitHub', vendor: 'Microsoft', type: 'commercial' as const, urls: { site: 'https://github.com' } },
 ]
 
 const STORIES = [
@@ -33,19 +39,19 @@ const EVIDENCE_MACOS = [
 const VERDICTS = [
   {
     productId: 'macos', storyId: 'agentic-mcp-server', verdict: 'none' as const, quality: 0,
-    confidence: 'high' as const, rationale: 'No MCP server found.', evidenceIds: ['macos-docs-1'],
+    confidence: 'high' as const, rationale: 'No MCP server found.', evidenceIds: ['macos-docs-1', 'missing-evidence-id'],
   },
   {
-    productId: 'ubuntu', storyId: 'agentic-mcp-server', verdict: 'none' as const, quality: 0,
-    confidence: 'medium' as const, rationale: 'No MCP server found.', evidenceIds: [],
+    productId: 'ubuntu', storyId: 'agentic-mcp-server', verdict: 'partial' as const, quality: 4,
+    confidence: 'medium' as const, rationale: 'Community MCP server only.', evidenceIds: [],
   },
 ]
 
 const RANKINGS = {
   generatedAt: '2026-08-27T00:00:00Z',
   leaderboard: [
-    { productId: 'macos', score: 12, agentReady: 0, agenticApp: 4, apiQuality: 0, aiEra: 3.3, applicable: 72, total: 77, themeScores: {} },
-    { productId: 'ubuntu', score: 13.7, agentReady: 0, agenticApp: 0, apiQuality: 0, aiEra: 4.8, applicable: 70, total: 77, themeScores: {} },
+    { productId: 'ubuntu', score: 13.7, agentReady: 20, agenticApp: 0, apiQuality: null, aiEra: 4.8, applicable: 70, total: 77, themeScores: {} },
+    { productId: 'macos', score: 12, agentReady: 15, agenticApp: 4, apiQuality: null, aiEra: 3.3, applicable: 72, total: 77, themeScores: {} },
   ],
   battles: [
     {
@@ -55,15 +61,40 @@ const RANKINGS = {
   ],
 }
 
+const HOSTING_RANKINGS = {
+  generatedAt: '2026-08-27T00:00:00Z',
+  leaderboard: [
+    { productId: 'github', score: 55, agentReady: 60, agenticApp: 30, apiQuality: 70, aiEra: 50, applicable: 40, total: 44, themeScores: {} },
+  ],
+  battles: [],
+}
+
+const STACKS = [
+  {
+    id: 'local-sovereign',
+    name: 'Local sovereign stack',
+    tagline: 'Agents on your own metal.',
+    audience: 'Privacy-first builders.',
+    slots: [
+      { role: 'Operating system', why: 'The floor.', pick: { kind: 'arena-top' as const, arenaId: 'desktop-os', metric: 'agentReady' as const, ossOnly: true } },
+      { role: 'Code hosting', why: 'Where the code lives.', pick: { kind: 'product' as const, arenaId: 'code-hosting', productId: 'github', metric: 'agentReady' as const, note: 'Pairs with everything.' } },
+      { role: 'Model', why: 'The brain.', pick: { kind: 'editorial' as const, name: 'Qwen3-Coder', url: 'https://example.com', note: 'Not an arena yet.' } },
+      { role: 'Ghost slot', why: 'Arena not live.', pick: { kind: 'arena-top' as const, arenaId: 'not-live', metric: 'agentReady' as const } },
+    ],
+  },
+]
+
 const ROUTES: Record<string, unknown> = {
   '/data/categories.json': CATEGORIES,
+  '/data/ai-stacks.json': STACKS,
   '/data/desktop-os/products.json': PRODUCTS,
   '/data/desktop-os/stories.json': STORIES,
   '/data/desktop-os/verdicts.json': VERDICTS,
   '/data/desktop-os/rankings.json': RANKINGS,
   '/data/desktop-os/evidence/macos.json': EVIDENCE_MACOS,
   '/data/desktop-os/evidence/ubuntu.json': [],
-  '/data/code-hosting/products.json': [],
+  '/data/code-hosting/products.json': HOSTING_PRODUCTS,
+  '/data/code-hosting/rankings.json': HOSTING_RANKINGS,
 }
 
 let fetchMock: ReturnType<typeof vi.fn>
@@ -95,61 +126,70 @@ describe('listArenas', () => {
 })
 
 describe('getRankings', () => {
-  it('returns rankings for a known category', async () => {
+  it('returns rankings for a known arena', async () => {
     const result = await getRankings(client(), 'desktop-os')
     expect(result).toEqual(RANKINGS)
   })
 
-  it('rejects an unknown category before fetching rankings', async () => {
-    await expect(getRankings(client(), 'nope')).rejects.toThrow(InitError)
+  it('rejects an unknown arena before fetching rankings', async () => {
+    await expect(getRankings(client(), 'nope')).rejects.toThrow(ArenaError)
     expect(fetchMock).not.toHaveBeenCalledWith(expect.stringContaining('/nope/'))
   })
 })
 
 describe('getProduct', () => {
-  it('joins product, ranking, verdicts, and evidence urls', async () => {
+  it('joins product, rank, verdict counts, and verdict summaries', async () => {
     const result = await getProduct(client(), 'desktop-os', 'macos')
     expect(result.product.name).toBe('macOS')
-    expect(result.ranking?.score).toBe(12)
-    expect(result.verdicts).toHaveLength(1)
-    expect(result.verdicts[0]).toMatchObject({
-      storyId: 'agentic-mcp-server',
-      storyTitle: 'I can connect an agent via an official MCP server',
-      verdict: 'none',
-      evidenceUrls: ['https://apple.com/docs/1'],
-    })
+    expect(result.ranking).toMatchObject({ score: 12, rank: 2 })
+    expect(result.verdictCounts).toEqual({ full: 0, partial: 0, none: 1, disputed: 0, na: 0 })
+    expect(result.verdicts).toEqual([
+      {
+        storyId: 'agentic-mcp-server',
+        storyTitle: 'I can connect an agent via an official MCP server',
+        verdict: 'none',
+        quality: 0,
+        confidence: 'high',
+      },
+    ])
   })
 
-  it('drops evidence citations that fail to resolve, without throwing', async () => {
-    const result = await getProduct(client(), 'desktop-os', 'ubuntu')
-    expect(result.verdicts[0].evidenceUrls).toEqual([])
-  })
-
-  it('throws InitError for an unknown product', async () => {
+  it('throws ArenaError for an unknown product', async () => {
     await expect(getProduct(client(), 'desktop-os', 'nonexistent')).rejects.toThrow(/unknown product/)
   })
 })
 
-describe('getBattle', () => {
-  it('finds a battle regardless of a/b order', async () => {
-    const forward = await getBattle(client(), 'desktop-os', 'macos', 'ubuntu')
-    const reversed = await getBattle(client(), 'desktop-os', 'ubuntu', 'macos')
-    expect(forward).toEqual(reversed)
-    expect(forward.winner).toBe('ubuntu')
+describe('getVerdict', () => {
+  it('returns the full cell: rationale plus resolved evidence URLs, dropping dangling ids', async () => {
+    const result = await getVerdict(client(), 'desktop-os', 'macos', 'agentic-mcp-server')
+    expect(result).toMatchObject({
+      productName: 'macOS',
+      storyTitle: 'I can connect an agent via an official MCP server',
+      storyWeight: 3,
+      verdict: 'none',
+      rationale: 'No MCP server found.',
+    })
+    expect(result.evidence).toEqual([{ id: 'macos-docs-1', tier: 'claimed-docs', url: 'https://apple.com/docs/1' }])
   })
 
-  it('throws when no battle exists between the two ids', async () => {
-    await expect(getBattle(client(), 'desktop-os', 'macos', 'nonexistent')).rejects.toThrow(/no battle found/)
+  it('survives a missing evidence pack without throwing', async () => {
+    const result = await getVerdict(client(), 'desktop-os', 'ubuntu', 'agentic-mcp-server')
+    expect(result.evidence).toEqual([])
+    expect(result.verdict).toBe('partial')
+  })
+
+  it('throws ArenaError for an unknown story id', async () => {
+    await expect(getVerdict(client(), 'desktop-os', 'macos', 'nonexistent')).rejects.toThrow(/unknown story/)
   })
 })
 
 describe('searchProducts', () => {
-  it('matches by id, name, or vendor across all categories', async () => {
+  it('matches by id, name, or vendor across all arenas', async () => {
     const byVendor = await searchProducts(client(), 'canonical')
-    expect(byVendor).toEqual([{ category: 'desktop-os', product: PRODUCTS[1] }])
+    expect(byVendor).toEqual([{ arena: 'desktop-os', product: PRODUCTS[1] }])
 
-    const byName = await searchProducts(client(), 'macOS')
-    expect(byName).toEqual([{ category: 'desktop-os', product: PRODUCTS[0] }])
+    const byName = await searchProducts(client(), 'gitHub')
+    expect(byName).toEqual([{ arena: 'code-hosting', product: HOSTING_PRODUCTS[0] }])
   })
 
   it('returns an empty array for an empty query without fetching anything', async () => {
@@ -160,17 +200,60 @@ describe('searchProducts', () => {
   })
 })
 
-describe('getStoryVerdicts', () => {
-  it('returns the story plus every product verdict for it, with evidence urls', async () => {
-    const result = await getStoryVerdicts(client(), 'desktop-os', 'agentic-mcp-server')
-    expect(result.story.title).toBe('I can connect an agent via an official MCP server')
-    expect(result.verdicts).toHaveLength(2)
-    const macos = result.verdicts.find((v) => v.productId === 'macos')!
-    expect(macos.productName).toBe('macOS')
-    expect(macos.evidenceUrls).toEqual(['https://apple.com/docs/1'])
+describe('compare', () => {
+  it('locates each product in its own arena and reports rank + scores', async () => {
+    const result = await compare(client(), ['macos', 'github', 'ghost'])
+    expect(result.notFound).toEqual(['ghost'])
+    expect(result.products).toHaveLength(2)
+    const macos = result.products.find((p) => p.productId === 'macos')!
+    expect(macos).toMatchObject({ arena: 'desktop-os', rank: 2, fieldSize: 2, score: 12, arenaScore: 3.3 })
+    const github = result.products.find((p) => p.productId === 'github')!
+    expect(github).toMatchObject({ arena: 'code-hosting', rank: 1, apiQuality: 70 })
   })
 
-  it('throws InitError for an unknown story id', async () => {
-    await expect(getStoryVerdicts(client(), 'desktop-os', 'nonexistent')).rejects.toThrow(/unknown story/)
+  it('dedupes and normalizes ids, and rejects an empty list', async () => {
+    const result = await compare(client(), [' MacOS ', 'macos'])
+    expect(result.products).toHaveLength(1)
+    await expect(compare(client(), ['  '])).rejects.toThrow(ArenaError)
+  })
+})
+
+describe('getStacks', () => {
+  it('resolves arena-top (ossOnly), curated product, and editorial slots; drops dead arenas', async () => {
+    const [stack] = await getStacks(client())
+    expect(stack.id).toBe('local-sovereign')
+    expect(stack.slots).toHaveLength(3) // ghost slot dropped
+
+    const os = stack.slots[0]
+    // ossOnly: ubuntu wins even though it would win anyway; macos (commercial) excluded from field
+    expect(os).toMatchObject({ kind: 'arena-top', productId: 'ubuntu', productName: 'Ubuntu Desktop', metric: 'agentReady', metricValue: 20, rank: 1 })
+
+    const hosting = stack.slots[1]
+    expect(hosting).toMatchObject({ kind: 'product', productId: 'github', note: 'Pairs with everything.', metricValue: 60 })
+
+    const editorial = stack.slots[2]
+    expect(editorial).toMatchObject({ kind: 'editorial', productId: null, note: 'Not an arena yet.', editorialUrl: 'https://example.com' })
+  })
+})
+
+describe('topProducts', () => {
+  it('flattens every arena and ranks by the metric, capping at limit', async () => {
+    const top = await topProducts(client(), 'agentReady', 2)
+    expect(top.map((t) => t.productId)).toEqual(['github', 'ubuntu'])
+    expect(top[0]).toMatchObject({ arena: 'code-hosting', value: 60, metric: 'agentReady' })
+  })
+
+  it('maps arenaScore (and the aiEra alias) onto the aiEra field and skips nulls', async () => {
+    const top = await topProducts(client(), 'arenaScore')
+    expect(top[0]).toMatchObject({ productId: 'github', value: 50 })
+    const viaAlias = await topProducts(client(), 'aiEra')
+    expect(viaAlias[0].value).toBe(50)
+    // apiQuality is null for both desktop-os products — only github qualifies
+    const api = await topProducts(client(), 'apiQuality')
+    expect(api.map((t) => t.productId)).toEqual(['github'])
+  })
+
+  it('throws ArenaError for an unknown metric', async () => {
+    await expect(topProducts(client(), 'vibes')).rejects.toThrow(/unknown metric/)
   })
 })
