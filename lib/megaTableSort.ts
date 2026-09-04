@@ -151,9 +151,16 @@ export function filterMegaRowsByArena(rows: MegaTableRow[], arenaId: string): Me
 // Fixed rank identity: each product's position in the full (unfiltered) list sorted by the
 // default column (AGENTREADYNESS desc, nulls last) — doesn't jump around when the visible sort
 // or filter changes, same rationale as ArenaTable's rankOf.
+// Keyed by arenaId:productId — the same product can compete in two arenas (devin in
+// software-factory + ai-coding, square in payments + mobile-payments), and a bare productId
+// key would give both rows whichever rank was written last.
+export function megaRowKey(row: Pick<MegaTableRow, 'arenaId' | 'productId'>): string {
+  return `${row.arenaId}:${row.productId}`
+}
+
 export function rankMegaRows(rows: MegaTableRow[]): Map<string, number> {
   const sorted = sortMegaRows(rows, DEFAULT_COLUMN, DEFAULT_DIRECTION)
   const map = new Map<string, number>()
-  sorted.forEach((row, i) => map.set(row.productId, i + 1))
+  sorted.forEach((row, i) => map.set(megaRowKey(row), i + 1))
   return map
 }

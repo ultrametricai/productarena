@@ -21,6 +21,7 @@ import {
   defaultDirectionFor,
   filterMegaRowsByArena,
   filterMegaRowsByQuery,
+  megaRowKey,
   rankMegaRows,
   sortMegaRows,
   type MegaTableColumn,
@@ -180,9 +181,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
             {visible.map((row) => {
-              const rank = rankOf.get(row.productId) ?? sorted.length
+              const rank = rankOf.get(megaRowKey(row)) ?? sorted.length
               return (
-                <tr key={row.productId} className="transition hover:bg-zinc-900/50">
+                <tr key={megaRowKey(row)} className="transition hover:bg-zinc-900/50">
                   <td className="max-w-[220px] px-2 py-2">
                     <div className="flex items-center gap-2">
                       <span className="w-6 shrink-0 font-mono tabular-nums text-zinc-400">{rank}</span>
