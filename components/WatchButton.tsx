@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useSyncExternalStore } from 'react'
+import { WATCHLIST_ENABLED } from '@/lib/flags'
 import {
   parseWatchlist, readWatchlistRaw, subscribeWatchlist, toggleWatchlistId, writeWatchlist,
 } from '@/lib/watchlist'
@@ -10,6 +11,9 @@ import {
 // headers, in MegaTable rows, and on /watchlist itself. useSyncExternalStore keeps every star
 // on the page in sync through one snapshot (the raw stored string), with '[]' as the server
 // snapshot so static HTML always hydrates from the unstarred state.
+//
+// Renders nothing while WATCHLIST_ENABLED is off (see lib/flags.ts) — every call site can keep
+// its markup and just gets an empty render until the flag flips.
 
 function getServerSnapshot(): string {
   return '[]'
@@ -32,7 +36,9 @@ export default function WatchButton({
   size?: 'sm' | 'md'
   className?: string
 }) {
+  // Hooks run unconditionally (rules of hooks); the flag gate comes after.
   const ids = useWatchlist()
+  if (!WATCHLIST_ENABLED) return null
   const watched = ids.includes(productId)
   const name = productName ?? productId
   const label = watched

@@ -7,7 +7,7 @@ import { confidenceFor } from './confidence'
 import { isGroupUntested, type CategoryData } from './data-helpers'
 import { hasLogo } from './logos'
 import { type MegaTableAccessGlyph, type MegaTableRow } from './megaTableSort'
-import { arenaScoreTrendDelta } from './scoreHistory'
+import { metricTrendDelta } from './scoreHistory'
 
 function toClientGlyph(glyph: AccessGlyph, arenaId: string, productId: string): MegaTableAccessGlyph {
   return {
@@ -42,7 +42,8 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         apiUntested: isGroupUntested(data, product.id, 'api-quality'),
         popularity: data.popularity[product.id]?.stars ?? null,
         ycBatch: product.ycBatch,
-        trendDelta: arenaScoreTrendDelta(arenaId, product.id),
+        trendDelta: metricTrendDelta(arenaId, product.id, 'aiEra'),
+        agentReadyTrendDelta: metricTrendDelta(arenaId, product.id, 'agentReady'),
         confidence: confidenceFor(data, product.id),
         access: {
           MCP: toClientGlyph(glyphs.MCP, arenaId, product.id),

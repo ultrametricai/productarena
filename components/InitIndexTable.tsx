@@ -71,7 +71,7 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
                 </Link>
                 {row.product.type === 'oss' && (
                   <div className="mt-1">
-                    <OssPill />
+                    <OssPill variant="compact" />
                   </div>
                 )}
               </td>

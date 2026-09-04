@@ -35,13 +35,18 @@ export function BusinessModelSection({ product }: { product: Product }) {
   )
 }
 
-// Compact single chip for leaderboard rows: shows only the first model slug, full summary in the title tooltip.
-export function BusinessModelChip({ product }: { product: Product }) {
+// Compact single chip for leaderboard rows: shows only the first model slug, full summary in the
+// title tooltip. `skipOpenSource` is for call sites that already render an OssPill beside this
+// chip (e.g. ArenaTable rows) — an "open-source" model slug there would say the same thing
+// twice, so the chip falls through to the first non-open-source model (or nothing).
+export function BusinessModelChip({ product, skipOpenSource = false }: { product: Product; skipOpenSource?: boolean }) {
   const bm = product.businessModel
   if (!bm) return null
+  const model = skipOpenSource ? bm.models.find((m) => m !== 'open-source') : bm.models[0]
+  if (!model) return null
   return (
     <span title={bm.summary} className={CHIP_CLASS_SM}>
-      {bm.models[0]}
+      {model}
     </span>
   )
 }

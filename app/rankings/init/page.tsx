@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import InitIndexTable, { buildInitIndex } from '@/components/InitIndexTable'
 import { loadAll } from '@/lib/data'
 
@@ -30,6 +31,12 @@ export default function InitRankingPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by the blended Arena Score — agent-ready, API
           quality, openness, agentic app, and automation, all evidence-graded. Ties break on the raw coverage score.
+        </p>
+        <p className="mt-2 text-xs text-zinc-500">
+          This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Highest Arena Score&rdquo; preset —{' '}
+          <Link href="/" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
+            sort and filter it live there →
+          </Link>
         </p>
       </div>
       <div className="rounded-xl border border-emerald-800/60 bg-emerald-400/5 p-4">
