@@ -193,6 +193,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   <span className="font-mono">GitHub</span>
                 )}
               </a>
+              <Link
+                href="/watchlist"
+                title="Your watchlist — starred products, stored in this browser"
+                className="flex shrink-0 items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                <span aria-hidden className="text-emerald-400">☆</span>
+                <span className="hidden sm:inline">Watchlist</span>
+                <span className="sr-only sm:hidden">Watchlist</span>
+              </Link>
               <CommandPalette entries={searchEntries} />
             </nav>
           </div>
