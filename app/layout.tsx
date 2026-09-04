@@ -5,6 +5,7 @@ import "./globals.css";
 import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
+import { loadIcpTypes } from "@/lib/icp";
 import { REPO, SITE_URL } from "@/lib/site";
 import { buildSearchIndex, type SearchEntry } from "@/lib/search-index";
 
@@ -103,6 +104,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const categories = loadCategories();
+  const icpTypes = loadIcpTypes();
   const stars = await fetchStarCount();
   // The two full global rankings (see app/rankings/*) aren't arenas, but they're arena-shaped
   // (a ranked list you land on and browse) — surfacing them as `type: 'arena'` groups them with
@@ -160,6 +162,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "ai-native", name: "Most AI-native", label: "" },
                   { id: "claims-integrity", name: "Claims vs reality", label: "" },
                 ]}
+              />
+              <ArenaMenu
+                title="Lenses"
+                hrefPrefix="/icp"
+                items={icpTypes.map((icp) => ({ id: icp.id, name: icp.name, label: "" }))}
               />
               <Link
                 href="/stacks"
