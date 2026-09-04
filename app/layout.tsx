@@ -204,7 +204,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main className="mx-auto w-full min-w-0 max-w-7xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
-            <span>© 2026 Ultrametric Inc · data CC BY 4.0</span>
+            <span>© 2026 Ultrametric Inc</span>
             <div className="flex items-center gap-4">
               <a
                 href={`https://github.com/${REPO}/issues/new?template=request-a-product.yml`}

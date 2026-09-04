@@ -180,7 +180,7 @@ export async function GET() {
         'No auth, no rate limit beyond normal CDN caching. See /llms.txt for a full agent-facing index and /methodology for ' +
         'how the underlying scores and verdicts are produced.',
       contact: { url: `${SITE}/llms.txt` },
-      license: { name: 'MIT', url: `https://github.com/${REPO}/blob/main/LICENSE` },
+      license: { name: '© Ultrametric Inc — see DATA-LICENSE', url: `https://github.com/${REPO}/blob/main/DATA-LICENSE` },
     },
     servers: [{ url: SITE }],
     paths: {
