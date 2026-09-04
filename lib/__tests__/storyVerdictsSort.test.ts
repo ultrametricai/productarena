@@ -23,6 +23,7 @@ function row(overrides: Partial<StoryVerdictRow> & { storyId: string }): StoryVe
     evidence: [{ id: 'e1', tier: 'claimed-docs', url: 'https://example.com/doc', excerpt: 'quoted' }],
     proofUrl: null,
     globalHref: null,
+    vendorResponse: null,
     ...overrides,
   }
 }

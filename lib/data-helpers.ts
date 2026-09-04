@@ -4,7 +4,7 @@
 // statically importing a Node builtin, even if the code path is never actually called client-
 // side. lib/data.ts re-exports everything here for backward compatibility, so existing server
 // call sites (`import { verdictFor } from '@/lib/data'`) are unaffected.
-import type { Category, Claim, Evidence, Popularity, Product, Rankings, Stack, Story, UncertaintyEntry, Verdict } from './schemas'
+import type { Category, Claim, Evidence, Popularity, Product, Rankings, Stack, Story, UncertaintyEntry, VendorResponse, Verdict } from './schemas'
 
 // "canonical", "normalized · v2", etc — see lib/schemas.ts's StoryOriginSchema. Falls back to
 // "unknown" for stories migrated/authored before origin existed. Shared by both the (client)
@@ -43,6 +43,12 @@ export interface CategoryData {
   // claims above. Use uncertaintyFor(data, productId, storyId) rather than scanning this array
   // directly.
   uncertainty: UncertaintyEntry[]
+  // Verified official vendor responses to specific verdicts — see lib/schemas.ts's
+  // VendorResponseSchema and docs/VENDOR-RESPONSES.md. `data/{cat}/vendor-responses.json` is
+  // optional (most categories have none) — absence resolves to `[]`, same "absence is not an
+  // error" contract as popularity/claims/uncertainty above. Use vendorResponseFor(data,
+  // productId, storyId) rather than scanning this array directly.
+  vendorResponses: VendorResponse[]
 }
 
 export function battleSlug(a: string, b: string): string {
@@ -105,6 +111,19 @@ export function evidenceById(data: CategoryData): Map<string, Evidence> {
 // decisive agenticness-theme cells.
 export function uncertaintyFor(data: CategoryData, productId: string, storyId: string): UncertaintyEntry | undefined {
   return data.uncertainty.find((u) => u.productId === productId && u.storyId === storyId)
+}
+
+// Looks up the vendor response to show for one cell, if any — the 'standing' one when present
+// (lib/data.ts enforces at most one per cell), else the most recent 'superseded' one (still the
+// public record, just labeled as incorporated by a later re-judge). Undefined for the
+// overwhelming majority of cells — see CategoryData.vendorResponses's doc.
+export function vendorResponseFor(data: CategoryData, productId: string, storyId: string): VendorResponse | undefined {
+  const forCell = data.vendorResponses.filter((r) => r.productId === productId && r.storyId === storyId)
+  if (forCell.length === 0) return undefined
+  return (
+    forCell.find((r) => r.status === 'standing') ??
+    [...forCell].sort((a, b) => b.respondedAt.localeCompare(a.respondedAt))[0]
+  )
 }
 
 // Every story title is authored as "As a(n) {persona description}, I can {capability}" — or

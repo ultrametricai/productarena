@@ -4,9 +4,9 @@
 // (data-helpers + verification are explicitly client-safe), so the client bundle stays clean.
 
 import {
-  evidenceById, originLabel, uncertaintyFor, verdictFor, type CategoryData,
+  evidenceById, originLabel, uncertaintyFor, vendorResponseFor, verdictFor, type CategoryData,
 } from './data-helpers'
-import type { Evidence, Story, UncertaintyEntry, Verdict } from './schemas'
+import type { Evidence, Story, UncertaintyEntry, VendorResponse, Verdict } from './schemas'
 import { strongestEvidence, verificationLevel, type VerificationLevel } from './verification'
 
 export type StoryVerdictColumn =
@@ -56,6 +56,10 @@ export interface StoryVerdictRow {
   globalHref: string | null
   // Multi-judge agreement ('2/3' etc) when an uncertainty entry exists for this cell.
   agreement?: UncertaintyEntry['agreement']
+  // vendorResponseFor(...) for this cell, or null — the verified official vendor response the
+  // expanded row renders (see components/StoryVerdictsTable.tsx's block and
+  // docs/VENDOR-RESPONSES.md). Full VendorResponse shape is already serializable (plain JSON).
+  vendorResponse: VendorResponse | null
 }
 
 export function buildStoryVerdictRows(
@@ -90,6 +94,7 @@ export function buildStoryVerdictRows(
         .map((e) => ({ id: e.id, tier: e.tier, url: e.url, excerpt: e.excerpt })),
       proofUrl: proof?.url ?? null,
       agreement: uncertaintyFor(data, productId, s.id)?.agreement,
+      vendorResponse: vendorResponseFor(data, productId, s.id) ?? null,
     }
   })
 }

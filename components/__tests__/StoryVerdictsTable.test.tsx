@@ -69,6 +69,38 @@ describe('StoryVerdictsTable', () => {
     expect(visible.length).toBe(expected.length)
   })
 
+  it('renders the official vendor response block in the expanded row when one exists', () => {
+    // software-factory carries the one real seeded response: foreloop / agentic-agent-docs
+    // (see data/software-factory/vendor-responses.json and docs/VENDOR-RESPONSES.md).
+    const sf = loadCategory('software-factory', path.resolve(__dirname, '../../data'))
+    const sfRows = buildStoryVerdictRows(sf, 'foreloop')
+    const target = sfRows.find((r) => r.vendorResponse !== null)!
+    expect(target.storyId).toBe('agentic-agent-docs')
+    render(<StoryVerdictsTable category="software-factory" productId="foreloop" rows={sfRows} />)
+
+    // Collapsed: the block is not in the DOM yet.
+    expect(screen.queryByText('Official vendor response')).toBeNull()
+
+    fireEvent.click(screen.getByLabelText(`Details for story ${target.storyId}`))
+    expect(screen.getByText('Official vendor response')).toBeDefined()
+    expect(screen.getByText('Vendor')).toBeDefined()
+    // Statement renders verbatim, in quotes.
+    expect(screen.getByText(`“${target.vendorResponse!.statement}”`)).toBeDefined()
+    // Verification method + never-changes-a-verdict rule are stated inline.
+    expect(screen.getByText(/verified via vendor GitHub org/)).toBeDefined()
+    expect(screen.getByText(/never change a verdict by themselves/)).toBeDefined()
+    // The fuller-statement link points at the vendor's url.
+    expect(screen.getByText('full statement ↗').getAttribute('href')).toBe(target.vendorResponse!.url)
+  })
+
+  it('renders no vendor response block for rows without one', () => {
+    renderTable()
+    const target = rows.find((r) => r.evidence.length > 0)!
+    expect(target.vendorResponse).toBeNull()
+    fireEvent.click(screen.getByLabelText(`Details for story ${target.storyId}`))
+    expect(screen.queryByText('Official vendor response')).toBeNull()
+  })
+
   it('re-sorts when a column header is clicked, with aria-sort on the current column', () => {
     renderTable()
     const qualityHeader = screen.getByText('Quality').closest('th')

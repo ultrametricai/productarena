@@ -87,6 +87,10 @@ export default async function ProductPage({
   // lets a global story's [G] chip link to its /global/[story] cross-arena page (loadAll is
   // cached in lib/data.ts, so this costs nothing extra at build time).
   const verdictRows = buildStoryVerdictRows(data, id, globalStoryIds(loadAll()))
+  // Verified official vendor responses for this product (see docs/VENDOR-RESPONSES.md) — the
+  // header chip links down to the verdicts table, where each response renders inside its
+  // story's expanded row.
+  const vendorResponseCount = data.vendorResponses.filter((r) => r.productId === id).length
 
   return (
     <div className="space-y-8">
@@ -136,6 +140,18 @@ export default async function ProductPage({
         <div className="mt-2 flex flex-wrap gap-2">
           <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" />
           <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" />
+          {vendorResponseCount > 0 && (
+            <a
+              href="#story-verdicts"
+              title="Verified official statements from the vendor on specific verdicts — published verbatim, they never change a verdict by themselves. Expand the story's row below to read them."
+              className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/40 bg-sky-400/5 px-2.5 py-0.5 text-xs text-sky-300 transition hover:border-sky-400/70"
+            >
+              <span className="rounded border border-sky-400/60 px-1 text-[9px] font-semibold uppercase tracking-wide">
+                Vendor
+              </span>
+              {vendorResponseCount} vendor {vendorResponseCount === 1 ? 'response' : 'responses'}
+            </a>
+          )}
         </div>
         <p className="mt-2 text-xs text-zinc-400">
           {entry.applicable}/{entry.total} stories applicable · evidence:{' '}

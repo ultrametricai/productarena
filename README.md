@@ -609,6 +609,10 @@ contribution. Pick your angle:
   result) via the *Prove a story* issue form; our runner executes and records it, and the
   recording is published as probe-tier evidence — pass or fail. See
   [`docs/PROVE-IT.md`](./docs/PROVE-IT.md).
+- **Respond as a vendor** — put an official, verified statement on the record next to a
+  verdict about your product (CVE-style) via the *Vendor response* issue form. Published
+  verbatim; it never changes a verdict by itself, but feeds the next re-judge. See
+  [`docs/VENDOR-RESPONSES.md`](./docs/VENDOR-RESPONSES.md).
 - **Add evidence by PR** — new doc pages, changelogs, or community sources for any
   product; the pipeline re-judges only the cells whose evidence changed.
 - **Submit a product or arena** — the *Submit a product* issue form, or open a PR seeding
