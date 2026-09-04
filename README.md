@@ -33,7 +33,7 @@ evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **32 arenas, 167 products, 10,613 judged verdicts.**
+As of the last full pipeline run: **34 arenas, 177 products, 11,153 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -142,6 +142,8 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox, runloop |
 | Product Analytics (`product-analytics`) | posthog, amplitude, mixpanel, plausible |
 | CRM (`crm`) | hubspot, attio, salesforce, twenty |
+| Startup Legal & Incorporation (`legal-ops`) | clerky, docusign, firstbase, ironclad, legalzoom |
+| Robotics Software Platforms (`robotics-platforms`) | formant, gazebo, nvidia-isaac, ros2, viam |
 | Terminals (`terminals`) | warp, ghostty, iterm2, alacritty, wezterm, kitty |
 | AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot |
 | AI Research Agents (`ai-research-agents`) | elicit, consensus, futurehouse, undermind, sakana-marlin |
