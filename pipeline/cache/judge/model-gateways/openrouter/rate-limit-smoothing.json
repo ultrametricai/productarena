@@ -1,18 +1,17 @@
 {
-  "hash": "17adf1df8eb9c46a51b1374c115f47416ac33145318ad29ee78d22e6156628e3",
+  "hash": "f2adcb036a5070fca1e06f8f9d31ad36b3d84236afc8265473fae009931c7171",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenRouter provides model/provider fallback and load-balancing across providers to avoid rate-limit failures, plus a key-management API for creating/rotating multiple keys, which indirectly supports spreading traffic. However, there is no documented queuing/throttling mechanism, and evidence doesn't confirm a workflow for load-balancing across multiple API keys specifically for rate-limit smoothing.",
+    "rationale": "OpenRouter's default load balancing across providers and automatic model/provider fallbacks (docs-3,4,19) inherently smooths provider-side rate limits, and its key-management API (docs-8) plus BYOK (docs-9,24,32) let engineers create/distribute multiple keys with per-key limits (echoed by comm-12). But there is no explicit documentation of client-side request queuing or throttling, or of deliberately spreading traffic across multiple OpenRouter keys for load smoothing — the evidence covers provider-side resilience, not key-pool traffic shaping. Missing for 10: explicit queuing/throttling mechanism, documented multi-key load-balancing pattern, independent confirmation of rate-limit smoothing at scale.",
     "evidenceIds": [
       "openrouter-docs-3",
       "openrouter-docs-4",
-      "openrouter-docs-19",
       "openrouter-docs-8",
       "openrouter-docs-9",
-      "openrouter-comm-12",
-      "openrouter-comm-2"
+      "openrouter-docs-19",
+      "openrouter-comm-12"
     ],
     "productId": "openrouter",
     "storyId": "rate-limit-smoothing"

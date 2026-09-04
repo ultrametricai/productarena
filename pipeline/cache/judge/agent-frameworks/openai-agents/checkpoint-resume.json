@@ -1,15 +1,16 @@
 {
-  "hash": "5a1d89b3e50737d475a4157ea7f5e4207ccc6c4ed9f23a47c4e8d8e516d54c11",
+  "hash": "a7bd5504d000c54cadc7c96351eca974c68b92deaccc0914159960d2c1384a5b",
   "verdict": {
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The SDK supports pausing a run and resuming from a serialized `RunState` when a tool call needs approval (human-in-the-loop), which could in principle survive a restart, but this is a narrow interruption mechanism rather than general crash-safe checkpointing of arbitrary run state. Community discussion notes that full durable execution (e.g., surviving crashes) is achieved by wrapping the SDK in an external durability engine like Temporal, implying native checkpoint/resume-on-crash is not a first-class built-in feature.",
+    "rationale": "Docs show a RunState-based pause/resume mechanism for human-in-the-loop interruptions and mention 'resumable sandbox sessions,' plus built-in session memory across runs, which together provide some checkpoint/resume capability. However, there is no documented persistence layer for crashing/restarting a process and resuming an in-flight run exactly where it left off, and community discussion explicitly notes that achieving true durable, crash-resilient execution required wrapping the SDK with Temporal rather than using native SDK durability. missing for 10: explicit crash/restart recovery (not just interruption pauses), persisted run state to external storage, first-party durable-execution guarantees without external tools like Temporal.",
     "evidenceIds": [
       "openai-agents-docs-12",
       "openai-agents-docs-20",
-      "openai-agents-comm-4",
-      "openai-agents-docs-8"
+      "openai-agents-docs-8",
+      "openai-agents-docs-14",
+      "openai-agents-comm-4"
     ],
     "productId": "openai-agents",
     "storyId": "checkpoint-resume"

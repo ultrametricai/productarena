@@ -1,16 +1,15 @@
 {
-  "hash": "a767c1637690e60eb9347252eaec89ad735aacbdf421582ad729b6945d75bad9",
+  "hash": "02c4692718fd1f056ff08ca8685d99fdbde664ce0f8396547e6fadef748eddc3",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Pulumi's `pulumi preview` command explicitly diffs declared program state against actual live resources without applying changes, and a hands-on probe confirms this produces a structured JSON diff (steps[] with create/update/delete ops) usable by tooling. State backends (Pulumi Cloud or DIY S3/Blob/GCS) persist the source-of-truth needed for this comparison.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Pulumi's `pulumi preview` command computes a diff between declared program state and actual live resources, and this was verified hands-on (JSON steps output) without requiring cloud backend. State-and-backends docs also confirm Pulumi tracks resource state to compare against real infrastructure. However, the evidence never explicitly documents a dedicated `pulumi refresh` command or scheduled/automated drift-detection workflows (e.g. CI drift alerts), which are the more complete drift-detection story. missing for 10: explicit refresh command docs, automated/scheduled drift detection, independent community confirmation of drift-detection accuracy.",
     "evidenceIds": [
       "pulumi-docs-8",
       "pulumi-docs-19",
       "pulumi-probe-6",
-      "pulumi-docs-4",
-      "pulumi-docs-14"
+      "pulumi-docs-4"
     ],
     "productId": "pulumi",
     "storyId": "drift-detection"
