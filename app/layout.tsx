@@ -206,14 +206,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
             <span>© 2026 Ultrametric Inc</span>
             <div className="flex items-center gap-4">
-              <a
-                href={`https://github.com/${REPO}/issues/new?template=request-a-product.yml`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-emerald-300"
-              >
-                Submit a product →
-              </a>
+              <Link href="/submit" className="hover:text-emerald-300">
+                Test my product →
+              </Link>
               <Link href="/llms.txt" className="hover:text-emerald-300">
                 For agents: /llms.txt
               </Link>

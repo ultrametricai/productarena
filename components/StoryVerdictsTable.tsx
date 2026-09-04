@@ -377,7 +377,14 @@ function StoryRowPair({
       {isOpen && (
         <tr id={detailsId} className="bg-zinc-900/30">
           <td colSpan={7} className="px-3 py-3 pl-9">
-            <p className="text-sm text-zinc-500">{row.rationale}</p>
+            {/* Judge rationales are written for auditability, not skimming — collapse them by
+                default behind a plain-language one-liner so the row leads with evidence. */}
+            <details>
+              <summary className="cursor-pointer select-none text-sm text-zinc-400 hover:text-emerald-300">
+                Why the judge ruled &ldquo;{row.verdict}&rdquo;{row.quality > 0 ? ` at ${row.quality}/10` : ''} — full reasoning
+              </summary>
+              <p className="mt-1.5 text-sm text-zinc-500">{row.rationale}</p>
+            </details>
             {row.evidence.length > 0 && (
               <ul className="mt-2 space-y-1.5">
                 {row.evidence.map((e) => (
