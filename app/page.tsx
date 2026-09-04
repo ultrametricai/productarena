@@ -19,21 +19,10 @@ export default function Home() {
 
   return (
     <div className="space-y-12">
-      <section className="mx-auto max-w-3xl text-center">
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
-          The unbiased, evidence-based arena for software in the AI era
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-balance text-zinc-400">
-          We crawl what vendors claim, collect what communities report, and probe what actually
-          works — a citation behind every verdict, a contest button on every score.
-        </p>
-        <p className="mx-auto mt-3 text-balance text-sm text-zinc-500">
-          Two questions drive the rankings: how friendly is it to AI agents, and how AI-native
-          is it for the humans using it?
-        </p>
-      </section>
-
       <section>
+        {/* The homepage IS the table — no hero copy; the page title/description carry the
+            positioning for search/social, and /methodology carries the full story. */}
+        <h1 className="sr-only">ProductArena — evidence-based software rankings for the AI era</h1>
         <MegaTable rows={megaRows} arenas={arenaOptions} />
       </section>
 
