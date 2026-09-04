@@ -65,13 +65,21 @@ export async function runCollectCommunity({ category, product }: { category?: st
 
     for (const p of products) {
       try {
-        const sources = await hnCorpus(`${p.name}`)
+        // Curated seeds go FIRST: the corpus below is capped at 80k chars, and for products
+        // whose name is a common word (e.g. "Convex") the HN name-search returns off-topic
+        // threads that would otherwise consume the whole budget before any hand-picked seed
+        // is reached.
+        const sources: { url: string; text: string }[] = []
         for (const url of catSeeds[p.id] ?? []) {
           try {
             sources.push({ url, text: htmlToMarkdown(await fetchWithRetry(url)).slice(0, 20_000) })
           } catch (err) {
             console.warn(`collect-community: WARN seed ${url} failed: ${(err as Error).message}`)
           }
+        }
+        const seedUrls = new Set(sources.map((s) => s.url))
+        for (const source of await hnCorpus(`${p.name}`)) {
+          if (!seedUrls.has(source.url)) sources.push(source)
         }
         if (sources.length === 0) {
           console.warn(`collect-community: WARN no community sources found for ${cat.id}/${p.id}; skipping`)
