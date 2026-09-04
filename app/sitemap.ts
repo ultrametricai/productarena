@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { battleSlug, loadAll } from '@/lib/data'
 import { collectGlobalStories } from '@/lib/globalStories'
+import { loadIcpTypes } from '@/lib/icp'
 import { SITE_URL } from '@/lib/site'
 
 // Static export safety: no dynamic segments, all data is bundled at build time.
@@ -43,6 +44,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // (see lib/globalStories.ts and app/global/[story]/page.tsx).
   for (const story of collectGlobalStories(categories)) {
     entries.push({ url: `${SITE_URL}/global/${story.id}`, lastModified: now })
+  }
+
+  // ICP lens pages — the index plus one cross-arena ranking per buyer type (see lib/icp.ts and
+  // app/icp/[type]/page.tsx).
+  entries.push({ url: `${SITE_URL}/icp`, lastModified: now })
+  for (const icp of loadIcpTypes()) {
+    entries.push({ url: `${SITE_URL}/icp/${icp.id}`, lastModified: now })
   }
 
   return entries
