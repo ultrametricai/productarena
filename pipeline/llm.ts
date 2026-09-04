@@ -40,10 +40,15 @@ export async function llmJson<T>(opts: {
 }): Promise<T> {
   const messages: Anthropic.MessageParam[] = [{ role: 'user', content: opts.prompt }]
   let lastError = ''
+  // A response cut off by max_tokens can never parse — retrying at the same cap just burns
+  // attempts (observed under prompt v3, whose rubric rationales run longer). Escalate the cap
+  // on truncation and retry the ORIGINAL prompt (appending half a JSON object only confuses
+  // the model).
+  let maxTokens = opts.maxTokens ?? 4096
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const res = await getClient().messages.create({
       model: MODEL,
-      max_tokens: opts.maxTokens ?? 4096,
+      max_tokens: maxTokens,
       system: opts.system,
       messages,
     })
@@ -51,6 +56,11 @@ export async function llmJson<T>(opts: {
       .filter((b): b is Anthropic.TextBlock => b.type === 'text')
       .map((b) => b.text)
       .join('')
+    if (res.stop_reason === 'max_tokens' && maxTokens < 16384) {
+      maxTokens = Math.min(maxTokens * 2, 16384)
+      lastError = `response truncated at max_tokens; retrying with ${maxTokens}`
+      continue
+    }
     const json = extractJson(text)
     const parsed = json === undefined ? undefined : opts.schema.safeParse(json)
     if (parsed?.success) return parsed.data
