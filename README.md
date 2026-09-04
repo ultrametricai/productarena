@@ -43,7 +43,7 @@ never a hand-maintained claim; see "Status & roadmap" for what's next.
 
 ![ProductArena rankings — homepage snapshot](docs/assets/rankings-snapshot.png)
 
-*Snapshot from September 4, 2026 (29 arenas, judge v3) — rankings move whenever new evidence lands, so treat every
+*Snapshot from September 5, 2026 (38 arenas, judge v3) — rankings move whenever new evidence lands, so treat every
 number in this image as historical. The live table is at
 [ultrametric.ai/productarena](https://ultrametric.ai/productarena); machine-readable rankings
 are at `/data/<arena>/rankings.json` per arena.*
