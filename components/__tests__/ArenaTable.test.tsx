@@ -6,20 +6,22 @@ import ArenaTable from '@/components/ArenaTable'
 import { loadCategory } from '@/lib/data'
 
 describe('ArenaTable', () => {
-  it('renders every product and defaults to "Ranked by Arena Score"', () => {
+  it('renders every product with Arena Score as the default sort', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
     for (const p of data.products) {
       expect(screen.getAllByText(p.name).length).toBeGreaterThan(0)
     }
-    expect(screen.getByText(/Ranked by/).textContent).toMatch(/Arena Score/)
+    const initScoreHeader = screen.getAllByText('Arena Score').map((el) => el.closest('th')).find((th) => th !== null)
+    expect(initScoreHeader?.getAttribute('aria-sort')).toBe('descending')
   })
 
-  it('switches the "Ranked by" label when a preset button is clicked', () => {
+  it('activates the preset and re-sorts when a preset button is clicked', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
     fireEvent.click(screen.getByText('Most agent-ready'))
-    expect(screen.getByText(/Ranked by/).textContent).toMatch(/AGENTREADYNESS/)
+    const header = screen.getAllByText('Agent-ready').map((el) => el.closest('th')).find((th) => th !== null)
+    expect(header?.getAttribute('aria-sort')).toBe('descending')
   })
 
   it('filters rows by the text filter', () => {

@@ -11,7 +11,6 @@ import ProductLogoView from '@/components/ProductLogoView'
 import YcBadge from '@/components/YcBadge'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
-  COLUMN_LABELS,
   DEFAULT_COLUMN,
   DEFAULT_DIRECTION,
   defaultDirectionFor,
@@ -92,11 +91,18 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   const [direction, setDirection] = useState<SortDirection>(DEFAULT_DIRECTION)
   const [query, setQuery] = useState('')
   const [arenaId, setArenaId] = useState('all')
+  const [showAll, setShowAll] = useState(false)
 
-  const rankOf = useMemo(() => rankMegaRows(rows), [rows])
   const byArena = useMemo(() => filterMegaRowsByArena(rows, arenaId), [rows, arenaId])
+  // Rank is scoped to what's shown: global 1..N across all arenas by default, but 1..X within
+  // the selected arena when one is chosen — a reader picking an arena wants that arena's
+  // standings, not each product's position in the site-wide list.
+  const rankOf = useMemo(() => rankMegaRows(arenaId === 'all' ? rows : byArena), [rows, byArena, arenaId])
   const filtered = useMemo(() => filterMegaRowsByQuery(byArena, query), [byArena, query])
   const sorted = useMemo(() => sortMegaRows(filtered, column, direction), [filtered, column, direction])
+  // The homepage table caps at 50 rows — past that it's a wall, and every row is one click from
+  // its arena anyway. Filtering/sorting always applies to the full set; the cap is display-only.
+  const visible = showAll ? sorted : sorted.slice(0, 50)
 
   function handleSort(col: MegaTableColumn) {
     if (col === column) {
@@ -127,8 +133,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
         }}
         query={query}
         onQuery={setQuery}
-        rankedByLabel={COLUMN_LABELS[column]}
-        direction={direction}
       />
 
       <div className="overflow-x-auto rounded-2xl border border-zinc-800">
@@ -157,7 +161,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 API
               </SortableTh>
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
-                Popularity
+                GitHub ★
               </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 Access
@@ -165,7 +169,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
-            {sorted.map((row) => {
+            {visible.map((row) => {
               const rank = rankOf.get(row.productId) ?? sorted.length
               return (
                 <tr key={row.productId} className="transition hover:bg-zinc-900/50">
@@ -254,6 +258,15 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
           </tbody>
         </table>
       </div>
+      {!showAll && sorted.length > 50 && (
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          className="mx-auto block rounded-full border border-zinc-800 px-4 py-1.5 text-xs text-zinc-400 transition hover:border-emerald-400/40 hover:text-emerald-300"
+        >
+          Show all {sorted.length} products
+        </button>
+      )}
     </div>
   )
 }

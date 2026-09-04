@@ -25,8 +25,6 @@ export default function TableControls<C extends string>({
   scope,
   query,
   onQuery,
-  rankedByLabel,
-  direction,
   after,
 }: {
   presets: Array<TableControlsPreset<C>>
@@ -43,9 +41,7 @@ export default function TableControls<C extends string>({
   }
   query: string
   onQuery: (value: string) => void
-  rankedByLabel: string
-  direction: 'asc' | 'desc'
-  // Extra inline content for the "Ranked by …" line (e.g. the arena table's legend link).
+  // Extra inline content at the end of the controls row (e.g. the arena table's legend link).
   after?: ReactNode
 }) {
   return (
@@ -87,14 +83,10 @@ export default function TableControls<C extends string>({
           onChange={(e) => onQuery(e.target.value)}
           placeholder="Filter products…"
           aria-label="Filter products by name or vendor"
-          className="ml-auto w-full min-w-0 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:w-48"
+          className="ml-auto min-w-0 flex-1 basis-24 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:flex-none sm:w-48"
         />
+        {after && <span className="text-xs text-zinc-400">{after}</span>}
       </div>
-      <p className="text-xs text-zinc-400" aria-live="polite">
-        Ranked by <span className="font-semibold text-emerald-300">{rankedByLabel}</span>{' '}
-        ({direction === 'desc' ? 'high → low' : 'low → high'})
-        {after}
-      </p>
     </>
   )
 }
