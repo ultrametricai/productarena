@@ -11,6 +11,7 @@ const ROOT = path.resolve(__dirname, '..', '..')
 const CATEGORIES = [
   'ai-coding',
   'api-platforms',
+  'backend-as-a-service',
   'code-hosting',
   'desktop-os',
   'edge-platforms',
@@ -23,6 +24,7 @@ const CATEGORIES = [
   'project-management',
   'software-factory',
   'startup-banking',
+  'team-chat',
   'web-scraping',
 ]
 

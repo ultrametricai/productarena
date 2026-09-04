@@ -20,7 +20,12 @@ expected agent-access differentiators.
   3. As an ai-native user, I can let an agent search and write into my workspace safely (scoped access).
 - **Agent-access differentiators:** Notion has a mature public API, official MCP server, and SDKs; Obsidian is local-first with a plugin API but no official cloud API or MCP (community REST plugin only); Anytype is open-source with local-first sync. Expect Notion to win agent-access while Obsidian wins openness/privacy — a genuinely close Arena Score race.
 
-## 2. `team-chat` — Slack vs Discord vs Microsoft Teams (vs Zulip)
+## 2. `team-chat` — Slack vs Discord vs Microsoft Teams (vs Zulip) — ✅ SHIPPED
+
+Now a live arena (`data/team-chat/`): 22 manual stories + 29 canonical, hands-on probes
+confirmed Slack's official MCP server docs AND a live auth-gated remote MCP endpoint at
+api.slack.com/mcp, Zulip's full OpenAPI spec + keyless API on chat.zulip.org, and Microsoft
+Graph's $metadata as Teams' machine-readable surface.
 
 - **Products:** slack, discord, ms-teams, zulip
 - **Deciding stories:**
@@ -74,9 +79,17 @@ expected agent-access differentiators.
   3. As a finance-lead, I can reconcile settlements automatically via reports API/webhooks.
 - **Agent-access differentiators:** Stripe's docs, OpenAPI spec, llms.txt, and agent toolkit are the industry benchmark; Adyen is powerful but enterprise-gated (no self-serve sandbox parity); PayPal ships an official MCP server but legacy API sprawl. Already on the roadmap queue ("payments w/ Stripe") — this is the highest-priority new arena.
 
-## 8. `backend-as-a-service` — Supabase vs Firebase (vs Appwrite, PocketBase)
+## 8. `backend-as-a-service` — Supabase vs Firebase (vs Appwrite, Convex) — ✅ SHIPPED
 
-- **Products:** supabase, firebase, appwrite, pocketbase
+Now a live arena (`data/backend-as-a-service/`) with Convex taking the fourth slot
+(reactive TypeScript backend with an FSL→Apache open-source core) over PocketBase: 22
+manual stories + 29 canonical. Hands-on probes: all four CLIs install from npm and
+version-print headlessly (supabase 2.116.0, firebase-tools 15.29.0, convex 1.45.0,
+appwrite-cli 27.3.0); Convex and Firebase MCP servers answer stdio initialize keylessly;
+Supabase's remote MCP is live and auth-gated; `npx supabase init` scaffolds a project
+with no login.
+
+- **Products:** supabase, firebase, appwrite, convex
 - **Deciding stories:**
   1. As a developer, I can stand up auth + database + storage from the CLI in minutes.
   2. As an ai-native user, I can have an agent create and migrate schemas via MCP/CLI safely (branching).
@@ -150,8 +163,10 @@ expected agent-access differentiators.
 
 ## Recommended next five (priority order)
 
+~~backend-as-a-service~~ and ~~team-chat~~ shipped (see #2 and #8 above) — the queue moves up:
+
 1. **payments** (Stripe vs Adyen vs PayPal) — already queued internally; strongest evidence surface, benchmark-setting docs, huge search demand.
-2. **backend-as-a-service** (Supabase vs Firebase) — the default stack decision for every AI-built app; sharp openness contrast.
-3. **observability** (Datadog vs Grafana) — enormous spend, MCP servers on both sides, clean self-host axis.
-4. **team-chat** (Slack vs Discord vs Teams) — most iconic consumer-recognizable rivalry on the list; strong agent-access spread.
-5. **infra-as-code** (Terraform vs Pulumi vs OpenTofu) — license-fork drama supplies community evidence; CLI-first products score cleanly on our probes.
+2. **observability** (Datadog vs Grafana) — enormous spend, MCP servers on both sides, clean self-host axis.
+3. **infra-as-code** (Terraform vs Pulumi vs OpenTofu) — license-fork drama supplies community evidence; CLI-first products score cleanly on our probes.
+4. **auth-identity** (Auth0 vs Clerk vs Keycloak) — natural follow-on to backend-as-a-service; pricing-cliff community evidence is abundant.
+5. **error-monitoring** (Sentry vs Rollbar vs GlitchTip) — Sentry's MCP + AI autofix story makes the agent-triage gap dramatic.
