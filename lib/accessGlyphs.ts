@@ -43,7 +43,8 @@ const VERDICT_GLOSS: Record<Verdict['verdict'], string> = {
 }
 
 export function accessGlyphFor(label: AccessGlyphLabel, verdict: Verdict): AccessGlyph {
-  const title = `${label} access: ${VERDICT_GLOSS[verdict.verdict]}. ${verdict.rationale}`
+  // Deliberately short — the glyph itself links to the story's evidence for the full rationale.
+  const title = `${label} access: ${VERDICT_GLOSS[verdict.verdict]}`
   const storyId = verdict.storyId
   if (verdict.verdict === 'full') return { char: '✓', className: 'text-emerald-400', title, storyId }
   if (verdict.verdict === 'partial') return { char: '~', className: 'text-emerald-400', title, storyId }

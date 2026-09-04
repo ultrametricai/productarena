@@ -56,7 +56,7 @@ function SortableTh({
 }) {
   if (!sortable) {
     return (
-      <th scope="col" className={`px-3 py-2 font-normal ${className}`}>
+      <th scope="col" className={`sticky top-0 z-20 bg-zinc-950 px-3 py-2 font-normal ${className}`}>
         {children}
       </th>
     )
@@ -64,7 +64,7 @@ function SortableTh({
   const isCurrent = col === current
   const ariaSort: 'ascending' | 'descending' | 'none' = !isCurrent ? 'none' : direction === 'asc' ? 'ascending' : 'descending'
   return (
-    <th scope="col" aria-sort={ariaSort} className={`px-3 py-2 font-normal ${className}`}>
+    <th scope="col" aria-sort={ariaSort} className={`sticky top-0 z-20 bg-zinc-950 px-3 py-2 font-normal ${className}`}>
       <button
         type="button"
         onClick={() => onSort(col)}
@@ -135,7 +135,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
         onQuery={setQuery}
       />
 
-      <div className="overflow-x-auto rounded-2xl border border-zinc-800">
+      <div className="overflow-x-auto rounded-2xl border border-zinc-800 md:overflow-x-visible">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
@@ -198,6 +198,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     <AiEraBadge
                       value={row.initScore}
                       size="sm"
+                      href="/methodology#arena-score"
                       components={{
                         agentReady: row.agentReady,
                         apiQuality: row.apiQuality,

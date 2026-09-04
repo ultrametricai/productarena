@@ -19,6 +19,8 @@ export interface AiEraComponents {
 const FORMULA =
   'Arena Score (0–100): agent-ready ×0.30 · API quality ×0.20 · openness ×0.20 · agentic app ×0.15 · automation ×0.15 (n/a components excluded, weights renormalized). Every component is evidence-judged — see /methodology.'
 
+import Link from 'next/link'
+
 function tooltip(components?: AiEraComponents): string {
   if (!components) return FORMULA
   const fmt = (n: number | null) => (n === null ? 'n/a' : n.toFixed(0))
@@ -33,10 +35,14 @@ export default function AiEraBadge({
   value,
   size = 'md',
   components,
+  href,
 }: {
   value: number | null
   size?: 'md' | 'sm'
   components?: AiEraComponents
+  // Optional click-through (e.g. /methodology#arena-score). Callers must NOT set this when the
+  // badge is rendered inside another link (arena/battle cards) — nested anchors are invalid.
+  href?: string
 }) {
   const sizeClass = size === 'md' ? 'px-3 py-1 text-sm' : 'px-2 py-0.5 text-xs'
   if (value === null) {
@@ -49,7 +55,7 @@ export default function AiEraBadge({
       </span>
     )
   }
-  return (
+  const badge = (
     <span
       title={tooltip(components)}
       className={`inline-flex w-fit cursor-help items-center rounded-full bg-emerald-400 font-mono font-bold text-zinc-950 ring-1 ring-emerald-300 tabular-nums ${sizeClass}`}
@@ -58,4 +64,12 @@ export default function AiEraBadge({
       <span className="font-medium opacity-60">/100</span>
     </span>
   )
+  if (href) {
+    return (
+      <Link href={href} title="How is this calculated?" className="inline-flex">
+        {badge}
+      </Link>
+    )
+  }
+  return badge
 }

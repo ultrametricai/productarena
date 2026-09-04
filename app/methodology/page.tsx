@@ -75,7 +75,7 @@ export default function MethodologyPage() {
       </div>
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">
-        <h2 className="font-display leading-[1.1] text-lg font-semibold">The Arena Score</h2>
+        <h2 id="arena-score" className="scroll-mt-16 font-display leading-[1.1] text-lg font-semibold">The Arena Score</h2>
         <p className="mt-1 text-sm text-zinc-500">Formerly displayed as the &quot;AI-Era Index&quot; — same formula, new name.</p>
         <p className="mt-3 max-w-2xl text-sm text-zinc-400">
           Every leaderboard entry carries an Arena Score (0–100, <span className={CODE}>aiEra</span> internally) — a
