@@ -112,6 +112,7 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'backend-as-a-service': ['database', 'schema', 'auth', 'storage', 'function', 'realtime', 'migration', 'row-level', 'vector', 'embedding', 'quer', 'backend', 'emulator', 'bucket', 'sign-in', 'postgres', 'sync', 'backup'],
   'llm-evals-observability': ['trace', 'tracing', 'span', 'eval', 'llm\\b', 'prompt', 'dataset', 'experiment', 'scorer', 'judge', 'annotation', 'token', 'guardrail', 'playground', 'model', 'latency', 'observab'],
   'ai-search-apis': ['search', 'query', 'result', 'index', 'snippet', 'citation', 'crawl', 'extract', 'news', 'domain', 'web\\b', 'page', 'answer', 'rag\\b', 'serp', 'retrieval', 'freshness'],
+  terminals: ['terminal', 'shell', 'scrollback', 'pane', 'tab\\b', 'multiplex', 'tmux', 'prompt', 'command', 'ssh', 'rendering', 'gpu', 'font', 'ligature', 'color scheme', 'theme', 'dotfile', 'quake', 'graphics protocol', 'terminfo', 'kitten'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {
