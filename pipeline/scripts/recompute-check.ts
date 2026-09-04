@@ -17,11 +17,13 @@ const CATEGORIES = [
   'frontend-frameworks',
   'local-llm-runtimes',
   'mobile-dev',
+  'model-gateways',
   'payroll',
   'product-feedback',
   'project-management',
   'software-factory',
   'startup-banking',
+  'vibe-coding',
   'web-scraping',
 ]
 

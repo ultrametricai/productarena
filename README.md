@@ -21,7 +21,7 @@ evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **14 arenas, 70 products, 5,444 judged verdicts.**
+As of the last full pipeline run: **16 arenas, 80 products, 5,954 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -114,6 +114,8 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Payroll & HR Ops (`payroll`) | gusto, rippling, deel, justworks |
 | Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard |
 | Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules |
+| Vibe-Coding App Builders (`vibe-coding`) | lovable, bolt, v0, replit, base44 |
+| Model Gateways & Routers (`model-gateways`) | openrouter, litellm, portkey, vercel-ai-gateway, cloudflare-ai-gateway |
 | API platforms (`api-platforms`) | postman, kong, bruno, hoppscotch |
 <!-- arenas:end -->
 
