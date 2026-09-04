@@ -1,0 +1,2878 @@
+[
+  {
+    "productId": "adyen",
+    "storyId": "accept-card-payment-online",
+    "verdict": "disputed",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Docs show a fast, straightforward Checkout API integration (single /sessions call, test cards, webhooks) suggesting quick setup, but community evidence strongly contradicts this for founders: Adyen reportedly refuses small/early-stage clients, requires large reserves and minimum monthly volumes, and has notably harder integration than Stripe, making same-day acceptance unlikely for a new founder.",
+    "evidenceIds": [
+      "adyen-docs-1",
+      "adyen-docs-6",
+      "adyen-comm-1",
+      "adyen-comm-6",
+      "adyen-comm-9",
+      "adyen-comm-11"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agent-handles-dispute-end-to-end",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows general API, webhook, and MCP capabilities plus fraud/risk management (Protect) but contains no mention of a disputes API, evidence submission, or chargeback response workflow that an agent could drive end-to-end.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agent-monitors-dunning",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Adyen exposes webhooks for status changes, detailed refusal-reason codes, an idempotency-key API, and an official MCP server that lets LLM agents interact via natural language—these are solid building blocks for an agent to detect failed payments and act. However, there is no evidence of built-in retry scheduling or dunning-outreach orchestration; that logic would have to be custom-built on top of the API/webhooks/MCP, and community feedback flags Adyen's integration as more 'bare metal' and complex than turnkey competitors.",
+    "evidenceIds": [
+      "adyen-docs-3",
+      "adyen-docs-7",
+      "adyen-docs-4",
+      "adyen-docs-5",
+      "adyen-probe-4",
+      "adyen-comm-5",
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agent-provisions-payment-link",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Adyen documents payment links (adyen-docs-24) and an MCP server enabling LLM-driven API use (adyen-docs-5, adyen-probe-4), suggesting an agent could create a payment link via natural language. However, there's no evidence of a distinct 'product' or 'price' catalog object like Stripe's, so full product+price+link provisioning in one session is unconfirmed.",
+    "evidenceIds": [
+      "adyen-docs-24",
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agent-reconciles-payouts",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Adyen exposes reporting/dashboards for balances, sales, and payouts (adyen-docs-10, adyen-docs-12) and an MCP server enabling LLM-driven interaction with its APIs (adyen-docs-5, adyen-probe-4), suggesting an agent could in principle pull payout/transaction data. However, there's no explicit evidence of a dedicated balance-transaction/payout reconciliation API or documented workflow for matching bank deposits to underlying charges, and community feedback repeatedly flags Adyen's integration as complex and 'bare metal' (adyen-comm-5, adyen-comm-9).",
+    "evidenceIds": [
+      "adyen-docs-5",
+      "adyen-docs-10",
+      "adyen-docs-12",
+      "adyen-probe-4",
+      "adyen-comm-5",
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Adyen provides a live llms.txt file (HTTP 200) with a machine-readable summary, plus .md versions of docs pages confirmed by probe, and an official MCP server for LLM clients—directly satisfying agent-oriented documentation access.",
+    "evidenceIds": [
+      "adyen-probe-1",
+      "adyen-probe-2",
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Adyen offers ML-powered fraud detection (Protect) and visual reporting dashboards, which could generate some data-driven signals, and an MCP server lets LLMs query Adyen data via natural language. However, there's no explicit evidence of proactive AI-generated insights or recommendations surfaced within the product itself.",
+    "evidenceIds": [
+      "adyen-docs-20",
+      "adyen-docs-10",
+      "adyen-docs-8",
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Adyen offers webhooks and idempotency keys to build event-driven, asynchronous integrations, and an MCP server for LLM-based interaction with its API, but there is no evidence of a native, user-configurable automation/workflow feature that runs autonomously in the background—developers must build such automation themselves.",
+    "evidenceIds": [
+      "adyen-docs-3",
+      "adyen-docs-4",
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Adyen offers an MCP server enabling natural-language interaction via an external LLM client, which lets AI agents interact with Adyen's API, but this is not a built-in AI assistant embedded within Adyen's own product interface (e.g., Customer Area).",
+    "evidenceIds": [
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Adyen is fundamentally API-driven (Checkout API, idempotency keys, webhooks for async status instead of polling) and provides a dedicated test environment with test credentials, all of which support headless/CI-style automation. However, there is no explicit CLI, SDK-for-CI, or automation-pipeline documentation, so evidence is inferential rather than direct.",
+    "evidenceIds": [
+      "adyen-docs-1",
+      "adyen-docs-2",
+      "adyen-docs-3",
+      "adyen-docs-4",
+      "adyen-docs-6",
+      "adyen-docs-18"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-mcp-client",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Adyen documents an official MCP server that lets LLM clients use natural language to interact with Adyen's tools, but this describes Adyen providing an MCP server to be consumed by AI clients rather than Adyen itself acting as a host that lets users plug external MCP servers into it. No evidence describes Adyen's product supporting user-added third-party MCP servers as tools within its own platform.",
+    "evidenceIds": [
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Adyen documents an official MCP server enabling natural-language LLM client interaction, confirmed by both docs and a probe hit, though no community/hands-on validation exists to assess maturity.",
+    "evidenceIds": [
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Adyen provides an official MCP server enabling natural-language interaction with LLM clients, confirmed by both docs and a probe, but there's no independent/community evidence of hands-on usage or breadth of natural-language coverage beyond the docs claim.",
+    "evidenceIds": [
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-official-cli",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Adyen offers an MCP server for LLM natural-language interaction, but there is no mention anywhere of an official command-line interface (CLI) tool for developers.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Adyen provides extensive documented REST/Checkout APIs, webhooks, idempotency keys, testing tools, and even an official MCP server for LLM-driven natural language access, indicating strong AI-native accessibility. Community notes cite integration complexity/XML legacy for some flows, but core API is well documented and machine-consumable (llms.txt, docs.md endpoints present, though no discoverable OpenAPI spec at standard paths).",
+    "evidenceIds": [
+      "adyen-docs-1",
+      "adyen-docs-2",
+      "adyen-docs-3",
+      "adyen-docs-4",
+      "adyen-docs-5",
+      "adyen-probe-1",
+      "adyen-probe-2",
+      "adyen-probe-4",
+      "adyen-comm-3",
+      "adyen-comm-5"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence of scoped or least-privilege API key/credential issuance for agents; only mention of an MCP server for LLM use, but no details on credential scoping, permission granularity, or agent-specific access controls.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-sdks",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Adyen documents an official MCP server enabling LLM-driven natural-language interaction with its APIs, which supports agentic use, but the evidence pack lacks any explicit mention of official language SDKs (e.g., Node, Python, Java) that AI-native builders could target directly.",
+    "evidenceIds": [
+      "adyen-docs-5",
+      "adyen-probe-4",
+      "adyen-probe-3"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Adyen provides a documented webhooks system explicitly designed to let integrators subscribe to asynchronous status/event updates instead of polling, which directly satisfies the webhook-subscription story; it also offers an MCP server for LLM-based interaction, supporting agentic/AI-native use, though no dedicated event-based AI subscription API is shown.",
+    "evidenceIds": [
+      "adyen-docs-3",
+      "adyen-docs-17",
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows standard documentation, webhooks, testing guidance, and an MCP server for LLM natural-language use, but no mention of an interactive API reference or runnable code examples; a probe for OpenAPI/Swagger specs returned 404s, indicating no such interactive explorer was found.",
+    "evidenceIds": [
+      "adyen-probe-3",
+      "adyen-docs-6",
+      "adyen-docs-18"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Active probing for common OpenAPI/Swagger spec URLs on Adyen's docs site returned 404 for all candidates, and no evidence pack item references a downloadable machine-readable API spec; only an MCP server for LLM interaction is documented, which is a different capability.",
+    "evidenceIds": [
+      "adyen-probe-3",
+      "adyen-docs-5",
+      "adyen-probe-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Adyen provides a documented test environment with test credentials for full integration testing before going live (adyen-docs-6, adyen-docs-18), which supports sandbox testing generally. However, there's no specific evidence tying this sandbox to AI-native/agentic workflows (e.g., MCP server usage against sandbox) or confirming isolation guarantees from production data beyond standard docs claims.",
+    "evidenceIds": [
+      "adyen-docs-6",
+      "adyen-docs-18",
+      "adyen-docs-5"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation about API versioning scheme or a deprecation policy; the OpenAPI spec probe even returned 404s, and no docs item addresses version lifecycle or deprecation timelines.",
+    "evidenceIds": [
+      "adyen-probe-3"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "automatic-tax-calculation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers Adyen's payment processing, payouts, risk management, and platform features, but contains no mention of tax/VAT/GST calculation or collection capabilities anywhere in docs or community discussion.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "automation-bulk-operations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Adyen's API is built around single-item requests (payments, payouts, onboarding) and highlights idempotency/webhooks for individual transactions, with no documented batch or bulk-processing endpoints for handling many items in one call.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Adyen offers webhooks for event notifications and a risk-management rule builder to create custom fraud rules, but these are domain-specific (fraud/risk) rather than a general-purpose automation engine for arbitrary event-triggered actions.",
+    "evidenceIds": [
+      "adyen-docs-3",
+      "adyen-docs-17",
+      "adyen-docs-20",
+      "adyen-docs-8"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Adyen offers payout scheduling and webhooks for async payment status, but there is no evidence of a mechanism to schedule recurring jobs/workflows in an AI-native or automation-orchestration sense (e.g., cron-like triggers, agent workflow scheduling). The MCP server enables natural-language API access but not recurring job scheduling.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses versioning, reviewing, or rolling back automations; Adyen's docs cover payments, payouts, risk management, and an MCP server for LLM interaction, but nothing about automation workflow version control or rollback.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "dunning-failed-payment-recovery",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Adyen's core payments, payouts, risk, and platform APIs but contains no mention of subscription billing, dunning management, automated payment retries, or recovery emails—capabilities typically requiring a separate billing/subscription product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "embedded-checkout-components",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Adyen's docs confirm embeddable, customizable Components/Drop-in for web, iOS, Android, React Native, and Flutter with styling and localization support, directly supporting embedded (non-redirect) checkout. However, community feedback repeatedly notes the integration is more complex and 'bare metal' compared to competitors, requiring significant developer effort to achieve a fully embedded experience.",
+    "evidenceIds": [
+      "adyen-docs-1",
+      "adyen-docs-14",
+      "adyen-docs-15",
+      "adyen-docs-19",
+      "adyen-comm-5",
+      "adyen-comm-9",
+      "adyen-comm-10"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "fraud-screening-rules",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Adyen's Protect product explicitly offers ML-powered fraud detection using global transaction data plus a rule builder to create, backtest, and label custom rules, directly matching the story's requirements. However, evidence is limited to vendor docs with no community validation of rule granularity (block/review/allow) or finance-ops usability, and no independent hands-on confirmation of this specific feature.",
+    "evidenceIds": [
+      "adyen-docs-8",
+      "adyen-docs-20"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "hosted-checkout-page",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Adyen documents 'payment links' as a hosted, no-UI checkout option (adyen-docs-24), and general checkout docs mention styling/localization (adyen-docs-15/19), but the evidence pack lacks detail on conversion optimization or hosted-page specifics, and community feedback repeatedly flags Adyen's integration as more complex/'bare metal' compared to turnkey competitors (adyen-comm-5, adyen-comm-9).",
+    "evidenceIds": [
+      "adyen-docs-24",
+      "adyen-docs-15",
+      "adyen-docs-19",
+      "adyen-comm-5",
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "idempotent-api-retries",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Adyen's docs explicitly confirm idempotency key support via an `idempotency-key` header for safe retries, directly addressing the story, but there is no independent/community evidence validating reliability in practice, and community feedback highlights general integration complexity that could affect dev-experience confidence.",
+    "evidenceIds": [
+      "adyen-docs-4"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "integrate-from-docs-in-a-day",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Docs describe API flows, sessions/payments endpoints, testing, and multi-platform SDKs suggesting a documented integration path, but community evidence repeatedly contrasts Adyen's integration difficulty against Stripe's 'turnkey' experience, describing it as 'bare metal,' XML-heavy historically, and requiring hundreds of hours of integration work in at least one case.",
+    "evidenceIds": [
+      "adyen-docs-1",
+      "adyen-docs-2",
+      "adyen-docs-14",
+      "adyen-comm-5",
+      "adyen-comm-8",
+      "adyen-comm-9",
+      "adyen-comm-10"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "marketplace-split-payments",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Adyen for Platforms explicitly supports onboarding sellers with verification, splitting payments/deducting costs and holding funds, and configurable payouts (including instant, local, multi-currency) — directly matching the marketplace story. Community evidence notes integration complexity and reserve requirements as caveats, but the core platform capability is well-documented and mature.",
+    "evidenceIds": [
+      "adyen-docs-11",
+      "adyen-docs-21",
+      "adyen-docs-9",
+      "adyen-docs-12",
+      "adyen-docs-13",
+      "adyen-docs-22",
+      "adyen-comm-6",
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "multi-currency-charge-settle",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Adyen's docs confirm support for multiple payout currencies, local payouts to avoid SWIFT fees, and configurable payout accounts (docs-13, docs-22, docs-12), directly addressing local-currency acceptance and home-currency settlement. However, there's no explicit evidence of transparent, itemized FX markup/rates, and community feedback highlights Adyen's interchange-plus pricing as opaque/complex compared to flat-rate competitors, plus integration and reserve requirement friction for smaller founders (adyen-comm-6, adyen-comm-7, adyen-comm-9).",
+    "evidenceIds": [
+      "adyen-docs-13",
+      "adyen-docs-22",
+      "adyen-docs-12",
+      "adyen-docs-9",
+      "adyen-comm-7",
+      "adyen-comm-6"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "no-code-payment-links",
+    "verdict": "disputed",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Adyen's docs list 'Offer payment links' as a feature, but there is no detail on dashboard self-serve creation, and multiple community accounts say Adyen actively refuses small/early-stage merchants, requires large reserves and minimum volumes, and involves substantial integration complexity — directly undercutting the 'no-code, start selling immediately' founder experience.",
+    "evidenceIds": [
+      "adyen-docs-24",
+      "adyen-comm-1",
+      "adyen-comm-11",
+      "adyen-comm-6",
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Adyen's core payment, payout, and platform operations are fully API-driven, and it even offers an official MCP server enabling LLM/agent access to its capabilities. However, several UI-centric features (visual reporting dashboards, risk rule builder, Customer Area account management) are described as visual/UI tools without clear evidence of equivalent API parity, and no discoverable OpenAPI spec was found at standard probe locations.",
+    "evidenceIds": [
+      "adyen-docs-5",
+      "adyen-probe-4",
+      "adyen-docs-10",
+      "adyen-docs-20",
+      "adyen-docs-16",
+      "adyen-probe-3",
+      "adyen-docs-21"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence of any data export/portability feature or open-format data download in Adyen's docs; reporting features show visualization but not export/leave capability, and no mention of account data portability or account closure export.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Adyen is a closed commercial payments platform; no evidence of any open-licensed source code being available. Documentation and API references exist but source code is proprietary/closed.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Adyen is a hosted payments SaaS platform; there is no self-hosting option for the core product, as all evidence points to Adyen-hosted APIs and services rather than a deployable/on-prem software.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "payout-schedule-control",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Adyen docs confirm configurable payout frequency per merchant account, multi-currency payouts, and a reporting dashboard showing balances, sales, and payouts, plus platform features for splitting payments and deducting costs before payout. However, no direct evidence details a per-payout breakdown of individual charges, fees, and refunds, so full reconciliation transparency is not explicitly documented.",
+    "evidenceIds": [
+      "adyen-docs-12",
+      "adyen-docs-10",
+      "adyen-docs-21",
+      "adyen-docs-22",
+      "adyen-docs-13"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "pci-scope-reduction",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Adyen's Sessions/Components flow (adyen-docs-1) shows card data is handled client-side and via Adyen's API rather than the merchant's server, implying reduced PCI exposure, but no evidence explicitly discusses PCI DSS scope reduction, tokenization guarantees, or SAQ-A eligibility for developers.",
+    "evidenceIds": [
+      "adyen-docs-1",
+      "adyen-docs-2",
+      "adyen-docs-14"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of data residency, regional data storage options, or configurable data location controls for Adyen's platform or its MCP server.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI training data usage or opt-out controls for Adyen; the docs cover payments, payouts, risk management, and an MCP server but nothing about AI model training on user data or privacy controls preventing such use.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation or community discussion about data retention policies, deletion controls, or privacy/data lifecycle management for merchant or shopper data. Adyen's docs focus on payments, payouts, risk, and integration, with no mention of data retention/deletion tools.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out controls for AI-native tools or the MCP server; documentation covers payments, payouts, risk management, and integration but not privacy/telemetry settings.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "recurring-subscription-billing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Adyen's evidence covers payments, payouts, platforms, risk management, and reporting, but there is no mention of subscription billing constructs like plans, trial periods, upgrades, or proration; Adyen is fundamentally a payment processing/orchestration platform rather than a subscription management system.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "refunds-full-partial",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack never explicitly mentions refunds, partial refunds, or a dashboard refund action; only indirect hints like 'modification request' terminology and a general 'Customer Area' for managing transactions appear, none of which confirm the specific full/partial refund workflow from both dashboard and API.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "respond-to-disputes-evidence",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack items describe a dispute/chargeback management workflow, structured evidence submission, or lifecycle tracking in Adyen's docs; the only related mention is a negative community comment saying Adyen lags Stripe on chargebacks.",
+    "evidenceIds": [
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "sandbox-test-mode-fidelity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Adyen docs confirm a dedicated test environment/test credentials for full client+server integration testing, plus refusal reason codes for simulating declines, but there's no explicit evidence of documented test cards for every decline/dispute scenario, and community feedback describes the integration as complex and 'bare metal' compared to competitors.",
+    "evidenceIds": [
+      "adyen-docs-6",
+      "adyen-docs-18",
+      "adyen-docs-7",
+      "adyen-comm-5",
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "send-hosted-invoices",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Adyen's evidence covers payment processing, checkout, payouts, platforms, and risk management, but there is no mention of hosted invoicing, invoice generation, or automatic payment reminders—Adyen offers 'payment links' but no invoicing/billing-document workflow is documented.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "adyen",
+    "storyId": "settlement-reconciliation-reports",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Adyen offers reporting/dashboard visuals of balances, sales, and payouts, plus configurable payout frequency/currency, which supports basic reconciliation, but no evidence describes itemized settlement reports specifically breaking down fees, refunds, and chargebacks against bank deposits. Community feedback also flags weak back-office/chargeback handling versus competitors.",
+    "evidenceIds": [
+      "adyen-docs-10",
+      "adyen-docs-12",
+      "adyen-docs-22",
+      "adyen-comm-9"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "wallets-local-payment-methods",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Adyen's Checkout API (/paymentMethods, /sessions) is explicitly designed to surface and process cards, wallets, and local methods through one integration, with docs confirming localization and multi-channel support, and a community engineer confirms it 'allowed us to offer every payment option under the sun, including native options like iDEAL and Sofort.'",
+    "evidenceIds": [
+      "adyen-docs-2",
+      "adyen-docs-14",
+      "adyen-docs-19",
+      "adyen-probe-2",
+      "adyen-comm-10"
+    ]
+  },
+  {
+    "productId": "adyen",
+    "storyId": "webhook-delivery-reliability",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm webhooks exist to avoid polling for async status updates, but the evidence pack contains no mention of signed payload verification, automatic retry policies, event logs, or a replay mechanism for missed webhooks—capabilities that would be needed to fully satisfy this story.",
+    "evidenceIds": [
+      "adyen-docs-3",
+      "adyen-docs-17"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "accept-card-payment-online",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PayPal offers easy no-code onramps (Payment Links, PayPal Checkout button, business signup) that could let a founder accept card payments quickly, plus sandbox and REST APIs for faster developer integration. However, community evidence shows recurring account limitations, fund holds, and dispute risks that can delay or disrupt a new merchant's ability to actually receive funds, adding significant caveats to the 'within a day' promise.",
+    "evidenceIds": [
+      "paypal-docs-12",
+      "paypal-docs-29",
+      "paypal-docs-31",
+      "paypal-docs-2",
+      "paypal-docs-11",
+      "paypal-comm-2",
+      "paypal-comm-8",
+      "paypal-comm-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agent-handles-dispute-end-to-end",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "PayPal documents a Disputes API for programmatic retrieval and automated management of disputes, and an Agent Toolkit/MCP server that exposes PayPal APIs to agent frameworks via function calling, suggesting an agent could plausibly retrieve and respond to disputes end-to-end. However, there is no explicit evidence of an evidence-assembly or dispute-response submission endpoint, nor any documented example of an agent completing a full dispute workflow, and community evidence highlights inconsistent/adverse dispute outcomes even for human-handled cases.",
+    "evidenceIds": [
+      "paypal-docs-7",
+      "paypal-docs-26",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10",
+      "paypal-comm-4",
+      "paypal-comm-5"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agent-monitors-dunning",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "PayPal provides webhooks for event notifications (including subscription/payment events) and an Agent Toolkit that lets AI agents call PayPal APIs via function calling, which could be assembled into a failed-payment monitoring/retry workflow. However, there is no explicit evidence of built-in dunning management, automated retry logic, or failed-payment-specific tooling—an agent would need to build this logic itself on top of generic webhook/API primitives.",
+    "evidenceIds": [
+      "paypal-docs-9",
+      "paypal-docs-28",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-20",
+      "paypal-docs-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agent-provisions-payment-link",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "PayPal exposes REST APIs for subscription plans, invoicing, and an Agent Toolkit/MCP server that let agent frameworks call PayPal APIs via function calling, suggesting an agent could in principle create a plan/price and invoice/payment resource. However, there is no explicit evidence of a unified 'Product' + 'Price' + 'Payment Link' API resource (Payment Links are described as a no-code website feature, not an API call), so a single-session end-to-end agent provisioning flow is not clearly documented.",
+    "evidenceIds": [
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-20",
+      "paypal-docs-22",
+      "paypal-docs-31",
+      "paypal-docs-10",
+      "paypal-probe-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agent-reconciles-payouts",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence covers Payouts API (sending payouts) and general REST/agent-toolkit capabilities, but there is no mention of a balance-transaction or transaction-reporting API that would let an agent reconcile bank deposits to underlying charges.",
+    "evidenceIds": [
+      "paypal-docs-5",
+      "paypal-docs-24",
+      "paypal-docs-1",
+      "paypal-gh-1"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "PayPal has a live llms.txt (HTTP 200) confirmed by direct probe, .md-suffixed agent-readable docs across the developer site, plus an official MCP server and GitHub agent-toolkit enabling agent frameworks (LangChain, OpenAI SDK, MCP) to call PayPal APIs via function calling.",
+    "evidenceIds": [
+      "paypal-probe-1",
+      "paypal-probe-2",
+      "paypal-probe-3",
+      "paypal-docs-10",
+      "paypal-gh-1",
+      "paypal-gh-2"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-ai-insights",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows PayPal offers an MCP server and Agent Toolkit for developers to let AI agents call PayPal APIs (function calling for payments), but there is no evidence of PayPal itself surfacing AI-generated insights or suggestions from a user's transaction/financial data within its product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "PayPal offers an Agent Toolkit for function-calling with agent frameworks and an MCP server for natural-language interaction, plus webhooks and subscriptions APIs that could underpin autonomous background automations. However, there is no direct evidence of a built-in scheduler or 'set-and-forget' autonomous automation feature—developers would need to build such orchestration themselves using these building blocks.",
+    "evidenceIds": [
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10",
+      "paypal-docs-9",
+      "paypal-docs-3",
+      "paypal-probe-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "PayPal offers an MCP server and Agent Toolkit that let external AI agent frameworks call PayPal APIs via function calling, but this is developer infrastructure for building agents, not a built-in AI assistant inside the PayPal product that end-users can delegate tasks to directly.",
+    "evidenceIds": [
+      "paypal-docs-10",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-probe-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PayPal offers a full REST API with OAuth client-credential tokens (scriptable, headless-friendly), a sandbox for CI testing, webhooks, and an official Agent Toolkit/MCP server for agentic/automated integration—strong signals for headless/CI use. However, there's no explicit CLI or CI-pipeline documentation, and community evidence shows real friction (account freezes, disputes) that could disrupt automated workflows in production.",
+    "evidenceIds": [
+      "paypal-docs-1",
+      "paypal-docs-11",
+      "paypal-docs-9",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10",
+      "paypal-probe-3",
+      "paypal-comm-2",
+      "paypal-comm-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows PayPal exposes its own MCP server and agent toolkit for external AI agents/frameworks to call PayPal's APIs (paypal-docs-10, paypal-gh-1/2, paypal-probe-3), but there is no evidence that PayPal itself acts as a host into which users can plug arbitrary external MCP servers to extend its own tool use.",
+    "evidenceIds": [
+      "paypal-docs-10",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-probe-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal officially documents an MCP server enabling natural-language agent connections, corroborated by a dedicated docs page and probe confirming its existence, plus a GitHub Agent Toolkit explicitly supporting MCP alongside other agent frameworks.",
+    "evidenceIds": [
+      "paypal-docs-10",
+      "paypal-probe-3",
+      "paypal-gh-2",
+      "paypal-gh-1"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "PayPal offers an official MCP server enabling natural-language control via MCP clients, plus an Agent Toolkit for function-calling integration with agent frameworks like LangChain and OpenAI's Agent SDK, showing genuine agentic support. However, this is aimed at developers/merchants building integrations rather than end-users directly commanding PayPal in natural language, and evidence is vendor-documentation only with no hands-on community validation of the NL experience.",
+    "evidenceIds": [
+      "paypal-docs-10",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-probe-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-official-cli",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows PayPal offers an MCP server and an Agent Toolkit for agent frameworks, but no evidence of an official CLI tool being provided.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal offers a well-documented REST API with OAuth token auth, sandbox testing, webhooks, and OpenAPI specs for code generation, plus an official Agent Toolkit supporting OpenAI Agent SDK, LangChain, Vercel AI SDK, and MCP for function-calling integration, and a dedicated MCP server for natural-language agent access.",
+    "evidenceIds": [
+      "paypal-docs-1",
+      "paypal-docs-9",
+      "paypal-docs-11",
+      "paypal-docs-16",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10",
+      "paypal-probe-3",
+      "paypal-probe-1"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence shows standard OAuth client ID/secret token exchange and an Agent Toolkit/MCP server for function calling, but nothing describes scoped or least-privilege credential issuance for agents specifically (e.g., restricted permission sets, sub-app tokens).",
+    "evidenceIds": [
+      "paypal-docs-1",
+      "paypal-docs-18",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal provides official REST APIs, code generation tooling for SDKs (paypal-rest-api-specifications), an official Agent Toolkit supporting OpenAI Agent SDK, LangChain, Vercel AI SDK, and MCP for function calling, plus an official MCP server for natural-language agent integration—directly enabling AI-native developers to build against official SDKs/agent tooling.",
+    "evidenceIds": [
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10",
+      "paypal-docs-16",
+      "paypal-probe-3",
+      "paypal-docs-1"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal's REST API documentation explicitly supports webhooks: HTTPS POSTs to a subscribed endpoint URL for specific event types, with a documented setup process for subscribing listener URLs to apps.",
+    "evidenceIds": [
+      "paypal-docs-9",
+      "paypal-docs-28"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs mention REST APIs, OpenAPI specs, codegen, and sandbox testing, implying an API reference exists, but there's no direct evidence of an interactive reference with runnable/live examples (e.g., embedded API console). MCP server and agent toolkit support agentic access but don't confirm an interactive docs experience.",
+    "evidenceIds": [
+      "paypal-docs-1",
+      "paypal-docs-16",
+      "paypal-docs-11",
+      "paypal-probe-2",
+      "paypal-gh-2"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal publishes official OpenAPI JSON specs (e.g. checkout_orders_v2.json) via its paypal-rest-api-specifications repo with codegen tooling, and also exposes an llms.txt and markdown docs endpoints for machine consumption, confirmed by direct probes returning HTTP 200.",
+    "evidenceIds": [
+      "paypal-docs-16",
+      "paypal-probe-1",
+      "paypal-probe-2"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "api-sandbox",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal explicitly documents a dedicated sandbox environment described as a self-contained virtual replica of production for testing, plus REST API credential exchange flows and an agent toolkit/MCP server for AI-native integration and function calling.",
+    "evidenceIds": [
+      "paypal-docs-11",
+      "paypal-docs-1",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence shows PayPal has REST APIs (e.g., 'v2' in URLs like checkout_orders_v2.json) but no documentation of a versioning scheme or deprecation/sunset policy is present in the evidence pack.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "automatic-tax-calculation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack shows PayPal handles currency codes, checkout, invoicing, and payouts, but there is no mention of automatic sales tax, VAT, or GST calculation/collection functionality anywhere in the docs or community evidence.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "PayPal supports some bulk operations, notably Payouts to send money to thousands of recipients at once, plus an Agent Toolkit/MCP server enabling AI-driven function calling against its APIs. However, there's no evidence of general bulk operations across other resources (e.g., bulk invoicing, bulk order management, batch refunds), limiting bulk support to a narrow use case.",
+    "evidenceIds": [
+      "paypal-docs-24",
+      "paypal-docs-5",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "PayPal provides webhooks that fire on events and APIs (e.g., Disputes API) that can be scripted to automate actions, plus an Agent Toolkit/MCP server for AI agents to call PayPal functions—but there's no built-in no-code 'define rules' engine that autonomously triggers actions; automation still requires custom backend code to listen to webhooks and invoke APIs.",
+    "evidenceIds": [
+      "paypal-docs-9",
+      "paypal-docs-28",
+      "paypal-docs-7",
+      "paypal-docs-26",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "PayPal's Subscriptions API supports recurring billing plans (fixed/variable intervals, trials, upgrades) which is a narrow form of recurring job automation, and its Agent Toolkit/MCP server enable AI-driven function calling against PayPal APIs. However, there's no evidence of general-purpose recurring workflow/job scheduling beyond billing cycles, so this only partially satisfies an AI-native automation-depth story.",
+    "evidenceIds": [
+      "paypal-docs-3",
+      "paypal-docs-20",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-docs-10"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of any versioning, review, or rollback mechanism for automations/workflows in PayPal's docs, MCP server, or agent toolkit; the evidence covers payments, subscriptions, disputes, and webhooks but nothing about automation history or rollback.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "dunning-failed-payment-recovery",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence covers PayPal subscriptions (plans, trials, upgrades/downgrades) and webhooks, but there is no mention of automatic retry logic for failed payments, dunning management, or recovery email workflows anywhere in the pack.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "embedded-checkout-components",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PayPal offers embeddable checkout components (PayPal button, card fields) with business branding via Expanded Checkout and server-side endpoints for custom flows, rather than only hosted-page redirects. However, evidence emphasizes the 'PayPal button' and card field customization rather than a fully white-labeled embedded payment component, so full parity with hosted-page-free custom UI is not clearly documented.",
+    "evidenceIds": [
+      "paypal-docs-2",
+      "paypal-docs-19",
+      "paypal-docs-27",
+      "paypal-docs-30"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "fraud-screening-rules",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of ML fraud scoring tools or customizable block/review/allow rule engines for finance-ops; only dispute management (Resolution Center, Disputes API) and community reports of opaque risk holds/freezes are present, none of which describe configurable fraud-scoring or rule-writing capability.",
+    "evidenceIds": [
+      "paypal-docs-6",
+      "paypal-docs-7",
+      "paypal-docs-25",
+      "paypal-docs-26",
+      "paypal-comm-8"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "hosted-checkout-page",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal Checkout provides a hosted button/payment page where customers pay with linked funding sources without merchants building their own payment UI, and Payment Links offer a no-code hosted checkout page shareable via web/email/social. Docs confirm merchants only need server-side endpoints for refunds/captures, not the payment UI itself.",
+    "evidenceIds": [
+      "paypal-docs-2",
+      "paypal-docs-19",
+      "paypal-docs-31",
+      "paypal-docs-29",
+      "paypal-docs-30"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "idempotent-api-retries",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions idempotency keys, safe request retries, or duplicate-charge prevention; docs cover auth, checkout, subscriptions, invoicing, webhooks, and disputes but nothing on idempotency support.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "integrate-from-docs-in-a-day",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "PayPal's docs cover REST API auth, Checkout, webhooks, and a sandbox test environment, suggesting a full integration path exists, and SDK/codegen artifacts imply multi-language support. However, there's no direct evidence of copy-paste code samples in multiple languages or of developers successfully integrating in under a day; community evidence focuses on account/dispute issues rather than dev experience.",
+    "evidenceIds": [
+      "paypal-docs-1",
+      "paypal-docs-2",
+      "paypal-docs-9",
+      "paypal-docs-11",
+      "paypal-docs-16",
+      "paypal-probe-1",
+      "paypal-probe-2"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "marketplace-split-payments",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PayPal has dedicated 'Platforms' docs covering seller onboarding with local compliance, Payouts API for paying multiple recipients/sellers, and webhooks/REST APIs for building custom flows—directly supporting marketplace patterns. However, evidence lacks explicit documentation of split-payment mechanics (e.g., fee splitting between platform and seller at transaction time), and community evidence shows significant real-world friction with account holds, fund freezes, and dispute resolution that could disrupt marketplace payout reliability.",
+    "evidenceIds": [
+      "paypal-docs-8",
+      "paypal-docs-5",
+      "paypal-docs-24",
+      "paypal-docs-27",
+      "paypal-docs-9",
+      "paypal-docs-1",
+      "paypal-comm-2",
+      "paypal-comm-3",
+      "paypal-comm-8"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "multi-currency-charge-settle",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "PayPal supports multi-currency transactions via ISO-4217 currency codes and blocking/holding of unsupported currencies, and offers global seller onboarding with local regulatory compliance, implying support for charging in local currencies. However, there is no explicit documentation on FX conversion rates, transparency of fees, or settlement mechanics to the founder's home currency, leaving key transparency claims unsubstantiated.",
+    "evidenceIds": [
+      "paypal-docs-17",
+      "paypal-docs-33",
+      "paypal-docs-8"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "no-code-payment-links",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "PayPal explicitly offers a no-code Payment Link feature that can be created and shared via website, email, social media, or text, directly supporting dashboard-based link creation for immediate selling, backed by broad payment acceptance for 400M+ users.",
+    "evidenceIds": [
+      "paypal-docs-31",
+      "paypal-docs-12",
+      "paypal-docs-29"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PayPal exposes broad REST APIs (orders, subscriptions, invoicing, payouts, disputes, webhooks) plus an MCP server and agent toolkit for AI-native/agentic use, suggesting strong API-UI parity for core payment flows. However, some flows are explicitly marketed as 'no-code' web-only (Resolution Center, Payment Links) alongside their API equivalents, and there's no evidence every UI feature (e.g., Pay in 4, Savings, Pools) has a full programmatic equivalent, so parity is not fully confirmed.",
+    "evidenceIds": [
+      "paypal-docs-6",
+      "paypal-docs-7",
+      "paypal-docs-25",
+      "paypal-docs-26",
+      "paypal-docs-31",
+      "paypal-gh-1",
+      "paypal-gh-2",
+      "paypal-probe-3",
+      "paypal-docs-4",
+      "paypal-docs-3",
+      "paypal-docs-5",
+      "paypal-docs-9"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence covers payment APIs, invoicing, payouts, disputes, and an MCP/agent toolkit for integrating PayPal into workflows, but there is no mention of any account data export feature, open-format data portability, or account closure/data takeout mechanism for end users. Community evidence instead highlights account freezes and data being locked in, not portability.",
+    "evidenceIds": [
+      "paypal-comm-2",
+      "paypal-comm-3"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "PayPal is closed-source proprietary software; the evidence pack shows only API docs, SDKs, and an agent toolkit on GitHub, none of which constitute the product's core source being available under an open license.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "PayPal is a centralized financial/payments service, not software that can be self-hosted; the self-hosting axis doesn't apply to this type of product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "payout-schedule-control",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers checkout, subscriptions, invoicing, payouts, disputes, and webhooks, but contains no mention of payout scheduling controls or itemized payout reconciliation reports breaking down charges, fees, and refunds per payout.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "pci-scope-reduction",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "PayPal's checkout model (redirect/hosted button, server-side order handling) inherently keeps raw card data off merchant servers, and features like Fastlane and card field customization imply tokenized/hosted card capture, which supports reduced PCI scope. However, no evidence explicitly discusses PCI DSS compliance, tokenization mechanics, or SAQ scope reduction, so the claim is inferred rather than directly documented.",
+    "evidenceIds": [
+      "paypal-docs-2",
+      "paypal-docs-19",
+      "paypal-docs-27",
+      "paypal-docs-30"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data residency or region selection options for PayPal accounts or transaction data; documentation focuses on payments, APIs, and dispute handling, not data storage location controls.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI-training data usage or opt-out controls; PayPal's docs focus on payments, APIs, and developer tools with no privacy-posture statements about AI model training.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data retention or deletion controls for PayPal accounts or AI-related data; only unrelated payment/checkout/API documentation and community complaints about fund holds/disputes are present.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack items address telemetry/usage-tracking opt-out controls; in fact, community evidence shows PayPal monitors and demands data traffic statistics from partners, but nothing about an AI-native user opting out of tracking.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "recurring-subscription-billing",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PayPal's Subscriptions API docs confirm creation of billing plans with fixed/variable pricing, free/discounted trials, and upgrade/downgrade support, covering most of the story. However, no evidence explicitly addresses proration mechanics during upgrades, leaving a gap versus full delivery.",
+    "evidenceIds": [
+      "paypal-docs-3",
+      "paypal-docs-20",
+      "paypal-docs-21",
+      "paypal-docs-9"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "refunds-full-partial",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Docs confirm API-based refund support ('Add server-side endpoints to handle refunds, voids...'), but there's no explicit evidence of a dashboard UI for issuing full/partial refunds—only a Resolution Center for disputes, which is a different function. No mention of partial refund granularity either.",
+    "evidenceIds": [
+      "paypal-docs-19",
+      "paypal-docs-6",
+      "paypal-docs-25"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "respond-to-disputes-evidence",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "PayPal offers both a no-code Resolution Center and a Disputes API for programmatic evidence submission and lifecycle tracking, matching the story's requirements structurally. However, extensive community reports describe merchants losing disputes despite evidence, funds being frozen/held, and arbitrary or opaque resolution decisions, casting doubt on how reliably the process resolves in finance-ops' favor.",
+    "evidenceIds": [
+      "paypal-docs-6",
+      "paypal-docs-7",
+      "paypal-docs-25",
+      "paypal-docs-26",
+      "paypal-comm-4",
+      "paypal-comm-5",
+      "paypal-comm-7",
+      "paypal-comm-8"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "sandbox-test-mode-fidelity",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "PayPal provides a documented sandbox environment mirroring production (paypal-docs-11) plus REST APIs, webhooks, and a Disputes API for programmatic dispute handling (paypal-docs-7, paypal-docs-9, paypal-docs-26). However, evidence doesn't detail specific test card numbers for every decline/dispute scenario, and community reports raise concerns about real-world dispute/chargeback handling unpredictability, suggesting gaps between sandbox simulation and production behavior.",
+    "evidenceIds": [
+      "paypal-docs-11",
+      "paypal-docs-9",
+      "paypal-docs-26",
+      "paypal-docs-7",
+      "paypal-comm-4",
+      "paypal-comm-7"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "send-hosted-invoices",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PayPal's Invoicing product clearly supports creating, sending, and managing itemized invoices with a hosted secure payment page and branding customization, satisfying the hosted-invoice-and-online-payment core of the story. However, the evidence pack contains no mention of automatic payment reminders, so that specific sub-feature is unconfirmed.",
+    "evidenceIds": [
+      "paypal-docs-4",
+      "paypal-docs-22",
+      "paypal-docs-23"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "settlement-reconciliation-reports",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence covers payments, payouts, invoicing, disputes API, and webhooks, but there is no mention of settlement reconciliation reports, bank deposit matching, or itemized fee/refund/chargeback reconciliation tooling for finance-ops workflows.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "paypal",
+    "storyId": "wallets-local-payment-methods",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PayPal's docs confirm a single integration (PayPal Checkout/REST APIs) supports digital wallets like Apple Pay, Google Pay, Samsung Pay, plus PayPal/Venmo funding sources and Pay in 4 BNPL, with global compliance onboarding for local payment methods. This covers wallets, BNPL, and localization from one integration, though explicit bank-redirect method coverage isn't detailed.",
+    "evidenceIds": [
+      "paypal-docs-32",
+      "paypal-docs-29",
+      "paypal-docs-15",
+      "paypal-docs-2",
+      "paypal-docs-8",
+      "paypal-docs-27"
+    ]
+  },
+  {
+    "productId": "paypal",
+    "storyId": "webhook-delivery-reliability",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm webhooks exist with HTTPS delivery and a subscription setup, but the evidence pack lacks any mention of automatic retries, event log dashboards, or replay functionality for webhooks—key parts of the story remain unverified.",
+    "evidenceIds": [
+      "paypal-docs-9",
+      "paypal-docs-28"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "accept-card-payment-online",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Square is a well-known self-serve platform where founders can sign up and immediately accept online card payments via Online Payments/Checkout products or the Payments API, with docs covering card payments, sandbox testing, and go-live flows; no evidence suggests lengthy approval delays block same-day acceptance.",
+    "evidenceIds": [
+      "square-docs-5",
+      "square-docs-24",
+      "square-docs-21",
+      "square-docs-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agent-handles-dispute-end-to-end",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Square has a documented Disputes API for processing disputes (retrieve, submit evidence) and sandbox testing, which supports programmatic dispute handling, but there's no evidence of an agent-oriented or automated end-to-end workflow, and marketing copy even suggests Square manages chargebacks on the merchant's behalf rather than via self-service API automation.",
+    "evidenceIds": [
+      "square-docs-15",
+      "square-docs-16",
+      "square-docs-30"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agent-monitors-dunning",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Square exposes webhooks for event notifications and has Subscriptions/Invoices APIs that could be used to build custom failed-payment monitoring and retry logic, but there is no evidence of built-in dunning, automated retry, or agent-oriented tooling for this specific workflow.",
+    "evidenceIds": [
+      "square-docs-19",
+      "square-docs-20",
+      "square-docs-23",
+      "square-docs-18",
+      "square-comm-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agent-provisions-payment-link",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack shows Square has Payments, Invoices, and Subscriptions APIs, but there is no mention of a Catalog API for creating products/prices or a Payment Links API, which are needed to fulfill this specific workflow.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agent-reconciles-payouts",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Square has a documented Payouts API that presumably exposes payout and balance-transaction data, and its APIs support programmatic/agent access with idempotency and an official MCP server. However, there's no direct evidence detailing balance-transaction endpoints or reconciliation-specific fields linking deposits to underlying charges, so reconciliation capability is only inferred, not demonstrated.",
+    "evidenceIds": [
+      "square-docs-17",
+      "square-probe-4",
+      "square-docs-22",
+      "square-docs-26"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-agent-docs",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "high",
+    "rationale": "Square hosts a working llms.txt at developer.squareup.com/llms.txt (HTTP 200) describing its API/SDK platform, and also documents an official MCP server for agent integration, showing real agent-oriented tooling. However, docs.md and openapi.json endpoints 404, indicating incomplete agent-friendly documentation surface beyond the single llms.txt file.",
+    "evidenceIds": [
+      "square-probe-1",
+      "square-probe-4",
+      "square-probe-2",
+      "square-probe-3"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-ai-insights",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence shows Square offers reporting, fraud detection via ML, and payment/catalog APIs, but nothing indicates AI-generated insights or suggestions surfaced to users from their business data (e.g., no analytics copilot or recommendation feature is documented).",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Square offers webhooks, APIs, and subscriptions that developers could combine into automations, but there is no evidence of a built-in autonomous automation/agent-running feature for end users; MCP server existence doesn't demonstrate background autonomous automation setup.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of a built-in AI assistant within Square's product; evidence only covers payments, APIs, and an MCP server for developer integration, not an end-user delegable AI assistant.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Square exposes REST APIs and official SDKs (e.g., Node.js SDK with idempotent, versioned calls) that can be scripted and run headlessly outside any GUI, and even an official MCP server for agentic use. However, there is no explicit documentation or examples showing CI/CD pipeline integration, headless testing setups, or automation-specific guidance.",
+    "evidenceIds": [
+      "square-gh-1",
+      "square-gh-2",
+      "square-docs-22",
+      "square-probe-1",
+      "square-probe-4"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence that Square lets a user plug external MCP servers into it so it can consume their tools; the only MCP-related item indicates Square exposing its own API as an MCP server for other agents, not Square acting as an MCP client.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-mcp-server",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "While a probe item references a URL for an official MCP server, no actual documentation content, setup instructions, or corroborating evidence is provided to confirm its existence or functionality; other probes (llms.txt, openapi) show no mention of MCP support.",
+    "evidenceIds": [
+      "square-probe-4",
+      "square-probe-1",
+      "square-probe-3"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-nl-commands",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence covers Square's developer APIs and merchant features but shows no natural-language or conversational command interface for end users; the docs.md and openapi probes returned 404, and no agent/chat capability is demonstrated beyond an unverified mention of an MCP server link.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-official-cli",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack shows Square SDKs (Node.js) and an MCP server for AI agent integration, but no evidence of an official CLI tool for developers or AI-native users.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Square provides an extensive, well-documented public REST API covering payments, refunds, disputes, invoices, subscriptions, webhooks, and more, plus official SDKs (e.g., Node.js) and a Sandbox for testing, confirming AI-native/programmatic access. It even has a documented MCP server and llms.txt for AI agent discovery, though no public OpenAPI spec was found at standard paths.",
+    "evidenceIds": [
+      "square-docs-1",
+      "square-docs-5",
+      "square-docs-13",
+      "square-docs-17",
+      "square-docs-18",
+      "square-docs-19",
+      "square-docs-22",
+      "square-docs-23",
+      "square-gh-1",
+      "square-gh-2",
+      "square-probe-1",
+      "square-probe-4",
+      "square-probe-3"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents; docs cover payments, refunds, webhooks, and an MCP server exists, but nothing describes granular permission scoping or credential minting for AI agents specifically.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Square provides official SDKs (e.g., square-nodejs-sdk with concrete code examples), comprehensive API docs, an llms.txt for AI discoverability, and an official MCP server, all indicating strong support for AI-native developers building against official SDKs.",
+    "evidenceIds": [
+      "square-gh-1",
+      "square-gh-2",
+      "square-probe-1",
+      "square-probe-4",
+      "square-docs-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Square's official developer docs provide a dedicated Webhooks API with steps to subscribe, and verify/validate event notifications, indicating full webhook subscription support for programmatic/agentic consumption.",
+    "evidenceIds": [
+      "square-docs-19",
+      "square-docs-20"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Square has extensive API reference docs and a sandbox for testing payments, plus SDK code snippets, but there's no evidence of an interactive 'try it' runnable console in the docs themselves; OpenAPI spec probes 404'd, suggesting no discoverable machine-readable spec for interactive tooling.",
+    "evidenceIds": [
+      "square-docs-21",
+      "square-docs-5",
+      "square-gh-1",
+      "square-probe-3",
+      "square-probe-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Explicit probes for common OpenAPI/Swagger spec locations (openapi.json, swagger.json, etc.) all returned 404, and no other evidence item points to a downloadable machine-readable API spec; only an llms.txt discovery file exists, which is not an OpenAPI spec.",
+    "evidenceIds": [
+      "square-probe-3",
+      "square-probe-2",
+      "square-probe-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "api-sandbox",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Square provides dedicated developer documentation for sandbox testing, including 'Sandbox Payments' and 'Test in the Sandbox' for disputes, explicitly allowing developers to test API flows without touching production data.",
+    "evidenceIds": [
+      "square-docs-16",
+      "square-docs-21"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "api-versioning-policy",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Square's Node SDK shows explicit API versioning support (e.g., passing a \"version\" override like \"2024-05-04\"), indicating dated versioned APIs, and idempotency docs support reliable API usage. However, no evidence pack item documents an explicit deprecation policy, sunset timelines, or version lifecycle documentation, and OpenAPI spec probes returned 404s, weakening confidence in a fully documented, discoverable versioning contract.",
+    "evidenceIds": [
+      "square-gh-2",
+      "square-docs-22",
+      "square-probe-3"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "automatic-tax-calculation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers payments, refunds, disputes, subscriptions, and webhooks but contains no mention of tax calculation, VAT/GST handling, or automatic tax rate application on transactions.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "automation-bulk-operations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack lists individual API endpoints (payments, refunds, invoices, subscriptions, etc.) but contains no mention of batch/bulk endpoints or documentation for performing operations across many items in a single call.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "automation-rules-engine",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Square offers webhooks for event notifications, but there is no evidence of a user-facing or API mechanism to define custom rules that trigger automated actions on events (e.g., no workflow/automation engine or rule builder). Webhooks alone only notify external systems; they don't constitute rule-based automation within Square itself.",
+    "evidenceIds": [
+      "square-docs-19",
+      "square-docs-20",
+      "square-docs-28"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Square's Subscriptions API supports recurring payment billing, and webhooks allow event-driven automation, but there is no evidence of general-purpose recurring job/workflow scheduling beyond billing cycles—an old community comment even flags subscriptions as a historical gap.",
+    "evidenceIds": [
+      "square-docs-23",
+      "square-docs-19",
+      "square-comm-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Square's evidence pack is entirely about payments, commerce, and API infrastructure (payments, refunds, webhooks, subscriptions); there is no mention of automations, workflows, or any versioning/review/rollback mechanism for user-configured logic.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "dunning-failed-payment-recovery",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Square has a Subscriptions API but there is no evidence of automated dunning, smart retry logic, or recovery emails for failed subscription payments; a community comment even questions Square's subscription capabilities.",
+    "evidenceIds": [
+      "square-docs-23",
+      "square-comm-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "embedded-checkout-components",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Square's docs reference a Card Payments API and Node.js SDK for creating payments programmatically, implying developers can build custom checkout flows rather than redirecting to a hosted page, but the evidence pack never explicitly describes an embeddable, customizable UI component (e.g., Web Payments SDK widgets) for in-page card fields.",
+    "evidenceIds": [
+      "square-docs-5",
+      "square-gh-1",
+      "square-gh-2",
+      "square-docs-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "fraud-screening-rules",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Square's marketing claims ML-based fraud detection and 'custom rules and alerts' for risk management, but no documentation, API reference, or dashboard detail shows configurable block/review/allow rule authoring or exposed fraud scores for finance-ops to act on—only a Disputes API for post-hoc chargeback handling.",
+    "evidenceIds": [
+      "square-docs-28",
+      "square-docs-29",
+      "square-docs-30",
+      "square-docs-15",
+      "square-docs-16"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "hosted-checkout-page",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers Square's Payments, ACH, Afterpay, Cash App, Invoices, and Subscriptions APIs, but never mentions a vendor-hosted checkout page or 'Payment Links'/'Checkout API' product that developers could redirect customers to. Without explicit evidence of a hosted checkout redirect flow, this capability cannot be confirmed from the pack.",
+    "evidenceIds": [
+      "square-docs-5",
+      "square-docs-18",
+      "square-docs-23"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "idempotent-api-retries",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Square has a dedicated Idempotency doc explaining the pattern for safely retrying requests without duplicate charges, and the Node SDK examples show idempotency-style fields (idempotency keys) used in payment creation calls, confirming this is a core, documented API pattern.",
+    "evidenceIds": [
+      "square-docs-22",
+      "square-gh-1",
+      "square-docs-5"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "integrate-from-docs-in-a-day",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Square has extensive documented APIs (Payments, Refunds, Webhooks, Sandbox) and an official Node.js SDK with copy-paste code snippets, suggesting a quick-start path exists. However, the evidence pack lacks a concrete quickstart/tutorial artifact demonstrating a full end-to-end flow in under a day, and OpenAPI/docs.md probes returned 404s, indicating weaker machine-readable or consolidated onboarding docs.",
+    "evidenceIds": [
+      "square-docs-5",
+      "square-docs-21",
+      "square-docs-22",
+      "square-gh-1",
+      "square-gh-2",
+      "square-probe-1",
+      "square-probe-2",
+      "square-probe-3"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "marketplace-split-payments",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Square's docs show a Payouts API for sending funds out and a general Payments API, which could support paying sellers, but there is no evidence of seller onboarding (OAuth/Connect-style sub-merchant creation) or payment-splitting functionality needed for a true marketplace platform.",
+    "evidenceIds": [
+      "square-docs-17",
+      "square-docs-5",
+      "square-docs-18"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "multi-currency-charge-settle",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers payments, refunds, disputes, invoices, subscriptions, and webhooks but contains no mention of multi-currency charging, FX conversion, or settlement currency handling anywhere in Square's docs or community items.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "no-code-payment-links",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence pack covers Square's developer APIs (payments, invoices, subscriptions, disputes) but contains no mention of a no-code dashboard feature for generating shareable payment links, which is a well-known Square Dashboard feature but unsupported here.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Square exposes an extensive API surface covering payments, refunds, disputes, payouts, invoices, subscriptions, webhooks, and even an MCP server for AI agents, suggesting broad parity with UI functionality. However, there's no evidence of a public OpenAPI spec being discoverable (404s on standard paths), a community comment notes historical gaps (subscriptions API existence resolves this but suggests some UI features lag API support), and no explicit confirmation that all seller-facing dashboard features (e.g., fraud rule configuration, engagement/marketing tools) are fully API-accessible.",
+    "evidenceIds": [
+      "square-docs-5",
+      "square-docs-13",
+      "square-docs-15",
+      "square-docs-17",
+      "square-docs-18",
+      "square-docs-23",
+      "square-docs-19",
+      "square-probe-4",
+      "square-probe-3",
+      "square-comm-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence of a bulk/full data export feature or open-format data portability tool; evidence only covers APIs for payments, invoices, subscriptions, etc., which allow programmatic access but not a documented 'export all data and leave' capability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Square is a closed-source commercial platform; SDKs are open-source wrappers but the core product/service source is not available under an open license. No evidence in the pack indicates any open-license source availability for the product itself.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Square is a cloud-based payments/commerce SaaS platform with no self-hosted deployment option; the self-hosting axis does not apply to this product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "payout-schedule-control",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Square has a dedicated Payouts API and a sales reporting feature that mentions reconciling data across payment systems, suggesting payout scheduling and composition are technically addressable. However, there is no evidence detailing payout schedule controls or a breakdown of charges/fees/refunds per payout, leaving key finance-ops needs unconfirmed.",
+    "evidenceIds": [
+      "square-docs-17",
+      "square-docs-26",
+      "square-docs-13",
+      "square-docs-14"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "pci-scope-reduction",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Square's payments API uses tokenized sourceId values (e.g., 'ccof:...' card-on-file tokens) rather than raw card data, consistent with reducing PCI scope, but the evidence pack contains no explicit PCI DSS compliance documentation, SAQ-A eligibility statements, or explicit scope-reduction claims from Square.",
+    "evidenceIds": [
+      "square-gh-1",
+      "square-docs-5",
+      "square-docs-9"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of data residency, regional storage options, or data location controls for Square's platform or APIs.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Square is a payments/commerce platform with no evidence of AI model training data usage policies or opt-out controls; no documentation addresses AI training data exclusion at all.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers payments, invoices, subscriptions, and developer tooling, but contains no mention of data retention controls, deletion APIs, or privacy/data-lifecycle management features relevant to AI-native data governance.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or any opt-out/privacy controls for AI-native or developer usage of Square's platform.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "square",
+    "storyId": "recurring-subscription-billing",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Square does offer a dedicated Subscriptions API (square-docs-23) confirming plan-based recurring billing exists, but the evidence pack gives no detail on trial periods, plan upgrades, or proration support, and an old community comment even claims subscriptions were absent, leaving capability depth unverified.",
+    "evidenceIds": [
+      "square-docs-23",
+      "square-comm-1"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "refunds-full-partial",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Square's API docs explicitly cover 'Refund Payments' and 'Process an Unlinked Refund', confirming full/partial refund support via API with idempotency support, and dashboard-based refunds are a well-documented Square POS feature referenced implicitly via reconciliation/reporting docs. However, no direct evidence describes dashboard refund UI flows or explicit partial-refund parameters, leaving some gaps in confirming full dashboard parity with API capabilities.",
+    "evidenceIds": [
+      "square-docs-13",
+      "square-docs-14",
+      "square-docs-22"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "respond-to-disputes-evidence",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Square has a documented Disputes API for processing disputes with sandbox testing support, and marketing copy claims Square manages the chargeback process for sellers, but there is no evidence of structured evidence submission UI/fields or explicit lifecycle tracking/status detail beyond the API existing.",
+    "evidenceIds": [
+      "square-docs-15",
+      "square-docs-16",
+      "square-docs-30"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "sandbox-test-mode-fidelity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Square provides dedicated Sandbox docs (Sandbox Payments, Sandbox Testing for Disputes) and a full Disputes API, indicating a sandbox environment covering payments and dispute scenarios. However, evidence lacks detail on comprehensive test-card coverage for every decline/error scenario, limiting confidence in full parity with production.",
+    "evidenceIds": [
+      "square-docs-16",
+      "square-docs-21",
+      "square-docs-15"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "send-hosted-invoices",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Square has a dedicated Invoices API confirming invoicing capability exists, and webhooks/event notifications could support reminder-like automation, but the evidence pack gives no detail on hosted invoice pages, automatic reminder scheduling, or online payment collection specifics for invoices.",
+    "evidenceIds": [
+      "square-docs-18",
+      "square-docs-19",
+      "square-docs-20"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "settlement-reconciliation-reports",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Square provides Payouts API, Refunds API, and Disputes API which expose underlying data for fees, refunds, and chargebacks, and marketing copy mentions a unified sales report to reduce reconciliation effort, but there's no evidence of an itemized settlement-to-bank-deposit reconciliation report built for finance-ops use.",
+    "evidenceIds": [
+      "square-docs-17",
+      "square-docs-13",
+      "square-docs-15",
+      "square-docs-26",
+      "square-docs-30"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "wallets-local-payment-methods",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Square docs confirm ACH bank transfers and BNPL (Afterpay/Clearpay) and Cash App as alternative payment methods via one Payments API, but there is no explicit evidence of Apple Pay, Google Pay, or bank redirect support in the provided pack, so wallet coverage is unconfirmed.",
+    "evidenceIds": [
+      "square-docs-6",
+      "square-docs-7",
+      "square-docs-8",
+      "square-docs-5"
+    ]
+  },
+  {
+    "productId": "square",
+    "storyId": "webhook-delivery-reliability",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Square documents webhook subscriptions and signature verification/validation (square-docs-19, square-docs-20), covering signed delivery. However, the evidence pack lacks any documentation of automatic retries, event logs, or replay functionality for webhooks.",
+    "evidenceIds": [
+      "square-docs-19",
+      "square-docs-20"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "accept-card-payment-online",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Stripe provides no-code Payment Links and hosted Checkout pages that let a founder start accepting card payments almost immediately, and a first-hand HN account confirms being 'up and running and accepting recurring payments in less than an hour.' However, other community reports describe account denials for certain jurisdictions/business types and account terminations after signup, showing the 'within a day' promise doesn't hold universally.",
+    "evidenceIds": [
+      "stripe-docs-4",
+      "stripe-docs-2",
+      "stripe-docs-50",
+      "stripe-comm-9",
+      "stripe-comm-1",
+      "stripe-comm-4"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agent-handles-dispute-end-to-end",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Stripe's Disputes API explicitly supports retrieving disputes, uploading evidence, and submitting responses programmatically, and webhooks notify of dispute events, which together enable an agent to handle disputes end-to-end via API. However, there's no dedicated evidence that an AI agent (e.g., via MCP) specifically automates dispute assembly/submission — the MCP server is documented as a general API interface without dispute-specific agent workflows demonstrated.",
+    "evidenceIds": [
+      "stripe-docs-18",
+      "stripe-docs-41",
+      "stripe-docs-8",
+      "stripe-docs-35",
+      "stripe-docs-13",
+      "stripe-docs-28"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agent-monitors-dunning",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Stripe explicitly supports webhook-driven monitoring of payment failures, Smart Retries for automated recovery, and no-code revenue-recovery/dunning features, plus an MCP server and idempotent API for agents to programmatically manage these flows.",
+    "evidenceIds": [
+      "stripe-docs-8",
+      "stripe-docs-14",
+      "stripe-docs-15",
+      "stripe-docs-31",
+      "stripe-docs-56",
+      "stripe-docs-9",
+      "stripe-docs-53",
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-7"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agent-provisions-payment-link",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Stripe provides an official MCP server enabling AI agents to call the Stripe API directly (creating products, prices, payment links, etc.), plus agent-specific tooling like GitHub 'agent skills', a CLI sandbox that provisions API keys with no registration for coding agents, and idempotent requests that make multi-step agentic sessions safe. Payment Links and Checkout docs confirm the underlying product/price/payment-link creation flow is API-driven and no-code capable.",
+    "evidenceIds": [
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-55",
+      "stripe-gh-1",
+      "stripe-docs-16",
+      "stripe-docs-4",
+      "stripe-docs-9",
+      "stripe-docs-58",
+      "stripe-docs-45"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agent-reconciles-payouts",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Stripe docs confirm payouts are tracked with expected deposit dates (stripe-docs-34, stripe-docs-52) and the platform exposes a general API (keys, idempotency, versioning) plus an MCP server letting AI agents call the Stripe API (stripe-docs-13, stripe-docs-55, stripe-probe-4), which would support pulling payout data programmatically. However, there's no direct evidence of a balance-transaction API or reconciliation workflow/tooling specifically for matching bank deposits to underlying charges, so the exact reconciliation use case is only inferable, not demonstrated.",
+    "evidenceIds": [
+      "stripe-docs-34",
+      "stripe-docs-52",
+      "stripe-docs-13",
+      "stripe-docs-55",
+      "stripe-docs-58",
+      "stripe-docs-59",
+      "stripe-probe-4"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe has a confirmed live llms.txt at docs.stripe.com/llms.txt (HTTP 200) plus .md variants of docs pages (probed working), an official MCP server for agents to interact with the API and search docs, and dedicated agent-oriented resources like agents.md, sandboxes.md (with CLI setup for coding agents), and stripe/ai skills repo.",
+    "evidenceIds": [
+      "stripe-probe-1",
+      "stripe-probe-2",
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-29",
+      "stripe-docs-16",
+      "stripe-gh-1",
+      "stripe-probe-4"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Stripe offers some AI-driven analysis like Radar's fraud-risk scoring and revenue-recovery analytics, plus an MCP server letting external AI agents query Stripe data, but there is no evidence of a native in-product feature that proactively surfaces AI-generated insights or suggestions to users from their data.",
+    "evidenceIds": [
+      "stripe-docs-22",
+      "stripe-docs-15",
+      "stripe-docs-13",
+      "stripe-docs-28"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Stripe provides several autonomous background processes (recurring billing, smart retries/revenue recovery, Radar fraud scoring, webhooks) that run without ongoing intervention, and it offers agent-specific tooling (MCP server, CLI, agents.md) letting AI agents interact with the API. However, there's no evidence of a general-purpose automation/workflow builder for AI-native users to configure arbitrary autonomous tasks—these are pre-built, domain-specific automations rather than a flexible agentic automation platform.",
+    "evidenceIds": [
+      "stripe-docs-14",
+      "stripe-docs-15",
+      "stripe-docs-56",
+      "stripe-docs-8",
+      "stripe-docs-13",
+      "stripe-docs-29",
+      "stripe-docs-44",
+      "stripe-docs-22"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Stripe doesn't offer a built-in AI assistant inside its dashboard/product for users to delegate tasks to; instead it provides an MCP server and SDKs that let external AI agents (e.g., Claude, Copilot) call Stripe's API and search its docs, plus 'agent skills' for coding agents.",
+    "evidenceIds": [
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-39",
+      "stripe-gh-1",
+      "stripe-docs-29"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe is fundamentally an API-first, headless platform with a scriptable CLI, idempotent requests, versioned APIs, and sandbox provisioning explicitly designed for CI/agent use (`stripe sandbox create` requires no account registration, aimed at coding agents), plus an MCP server for agent-driven automation.",
+    "evidenceIds": [
+      "stripe-docs-16",
+      "stripe-docs-30",
+      "stripe-docs-9",
+      "stripe-docs-32",
+      "stripe-docs-45",
+      "stripe-docs-13",
+      "stripe-probe-5",
+      "stripe-probe-4"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "All evidence describes Stripe *providing* an MCP server so external AI agents can call Stripe's tools (stripe-docs-13,28,39,55,61), the opposite of the story's requirement that the product itself act as an MCP host/client into which users plug external MCP servers for it to consume. No evidence shows Stripe supporting inbound MCP server integrations.",
+    "evidenceIds": [
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-39",
+      "stripe-docs-55",
+      "stripe-docs-61"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe publishes an official MCP server (docs.stripe.com/mcp) that lets AI agents interact with the Stripe API and search its knowledge base, corroborated by an independent probe confirming the docs page exists; Stripe also provides agent-oriented tooling (agent skills, CLI sandbox provisioning) supporting AI-native connection.",
+    "evidenceIds": [
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-39",
+      "stripe-docs-55",
+      "stripe-probe-4",
+      "stripe-docs-16",
+      "stripe-gh-1"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Stripe ships an official MCP server that lets AI agents interact with the Stripe API and search its docs/support knowledge base, plus agent 'skills', a CLI sandbox provisioning flow made for coding agents, and llms.txt for LLM consumption — strong agentic tooling. However, this is developer/agent-oriented infrastructure (requires API keys, MCP client setup) rather than a natural-language interface for end-users to directly operate the product, and there's no community evidence validating real-world natural-language usage quality.",
+    "evidenceIds": [
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-39",
+      "stripe-docs-55",
+      "stripe-docs-61",
+      "stripe-probe-4",
+      "stripe-gh-1",
+      "stripe-gh-3",
+      "stripe-gh-4",
+      "stripe-docs-16",
+      "stripe-probe-1"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe provides an official CLI documented for building, testing, and managing integrations from the command line, and even explicitly supports AI coding agents installing it via npm to provision sandboxes with API keys.",
+    "evidenceIds": [
+      "stripe-docs-30",
+      "stripe-docs-16",
+      "stripe-probe-5"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe has a mature, well-documented REST API with SDKs, idempotency, versioning, webhooks, and API keys, plus explicit AI-native tooling: an official MCP server for agents to call the API, agent skills repo, AI SDK integrations, a CLI for sandbox provisioning suited to coding agents, and a dedicated agentic-commerce docs page. Probes confirm live docs (llms.txt, MCP, CLI) though a discoverable OpenAPI spec at standard paths wasn't found directly on docs.stripe.com.",
+    "evidenceIds": [
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-39",
+      "stripe-docs-55",
+      "stripe-docs-29",
+      "stripe-docs-44",
+      "stripe-gh-1",
+      "stripe-gh-3",
+      "stripe-gh-4",
+      "stripe-docs-16",
+      "stripe-docs-30",
+      "stripe-docs-9",
+      "stripe-docs-45",
+      "stripe-docs-58",
+      "stripe-probe-1",
+      "stripe-probe-4",
+      "stripe-probe-5",
+      "stripe-docs-46"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Stripe's docs mention that API keys determine which resources an integration can access (stripe-docs-58) and sandboxes offer isolated environments with working API keys (stripe-docs-16, stripe-docs-49), which could support least-privilege setups, but there is no explicit evidence of a dedicated mechanism for issuing scoped/restricted credentials specifically for AI agents.",
+    "evidenceIds": [
+      "stripe-docs-58",
+      "stripe-docs-16",
+      "stripe-docs-49",
+      "stripe-docs-13"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe provides official SDKs/CLI, an OpenAPI spec for generating client libraries, versioned backward-compatible APIs, and dedicated AI-native tooling (MCP server, agent skills, ai-sdk integration) confirmed by both docs and probes, making it well-suited for AI-native developers to build against.",
+    "evidenceIds": [
+      "stripe-docs-13",
+      "stripe-docs-28",
+      "stripe-docs-39",
+      "stripe-docs-46",
+      "stripe-docs-30",
+      "stripe-docs-45",
+      "stripe-gh-1",
+      "stripe-gh-3",
+      "stripe-gh-4",
+      "stripe-probe-4",
+      "stripe-probe-5",
+      "stripe-docs-29"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe provides robust native webhook support: create HTTPS endpoints to receive real-time event pushes for asynchronous events (payments, disputes, subscriptions), with documented event types and API/CLI tooling for testing and managing subscriptions, making it straightforward for an AI-native integration to subscribe to events.",
+    "evidenceIds": [
+      "stripe-docs-8",
+      "stripe-docs-35",
+      "stripe-docs-53",
+      "stripe-docs-18",
+      "stripe-docs-41",
+      "stripe-docs-30"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Stripe exposes machine-readable docs (llms.txt, docs.md endpoints) and an official MCP server that lets AI agents query and call the API, which supports AI-native exploration, but the evidence pack shows no interactive API reference/console with runnable code examples (an openapi.json probe even 404'd), so the classic 'try-it-now' experience isn't confirmed.",
+    "evidenceIds": [
+      "stripe-probe-1",
+      "stripe-probe-2",
+      "stripe-probe-3",
+      "stripe-docs-13",
+      "stripe-docs-55",
+      "stripe-gh-1"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Stripe maintains a public OpenAPI spec repo (stripe/openapi) explicitly stated to be used to 'generate SDKs or client libraries that support Stripe's API', confirming a downloadable, machine-readable spec exists. A probe confirms it isn't hosted directly under docs.stripe.com's common paths, but the GitHub-hosted spec is the canonical, well-documented source.",
+    "evidenceIds": [
+      "stripe-docs-46",
+      "stripe-probe-3"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "api-sandbox",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe provides explicit sandbox environments isolated from live/production data, provisionable via CLI with no account registration, designed for AI coding agents (stripe sandbox create), plus team isolation and test transactions that don't move funds.",
+    "evidenceIds": [
+      "stripe-docs-16",
+      "stripe-docs-32",
+      "stripe-docs-43",
+      "stripe-docs-49",
+      "stripe-docs-57",
+      "stripe-docs-10"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "api-versioning-policy",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe documents a clear monthly versioning policy stating each release is backward-compatible and integrations can safely upgrade without breaking existing code, plus an OpenAPI spec repo for SDK generation and API-key based auth, which together support a versioned, documented-deprecation-friendly API surface for AI-native/agentic use.",
+    "evidenceIds": [
+      "stripe-docs-45",
+      "stripe-docs-59",
+      "stripe-docs-46",
+      "stripe-docs-58"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "automatic-tax-calculation",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Stripe Tax explicitly automates calculation and collection of sales tax, VAT, and GST across transactions, including no-code tax collection on Payment Links, directly matching the story's requirement.",
+    "evidenceIds": [
+      "stripe-docs-20",
+      "stripe-docs-48"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "automation-bulk-operations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Stripe's API, CLI, and MCP server support programmatic, one-object-at-a-time operations with idempotency for safe retries, but there is no mention of any bulk/batch endpoint or capability for processing many items in a single call across payments, invoices, customers, etc.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Stripe supports event-driven automation via webhooks (react to events like disputes, payment failures) and built-in automated actions like Smart Retries and Radar's real-time risk scoring, but these are largely pre-built behaviors rather than a user-defined rules engine where an AI-native user configures arbitrary trigger→action logic. No evidence of a general-purpose 'if event X then action Y' rule builder.",
+    "evidenceIds": [
+      "stripe-docs-8",
+      "stripe-docs-35",
+      "stripe-docs-53",
+      "stripe-docs-14",
+      "stripe-docs-22",
+      "stripe-docs-56"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Stripe Billing automates recurring payment workflows (subscriptions, trials, renewals, smart retries) and can be driven via API/MCP by AI agents, but this is limited to payment-related recurring jobs rather than general-purpose workflow scheduling.",
+    "evidenceIds": [
+      "stripe-docs-6",
+      "stripe-docs-51",
+      "stripe-docs-14",
+      "stripe-docs-13",
+      "stripe-docs-28"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of versioning, review, or rollback of 'automations' (e.g., Workflows, webhook configs, or agent scripts). API versioning docs relate to API compatibility, not user-created automation version control, and sandboxes support testing but not automation versioning/rollback.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "dunning-failed-payment-recovery",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Stripe Billing's Revenue Recovery features explicitly provide Smart Retries for failed subscription payments, recovery analytics, and no-code setup, directly matching the dunning/recovery story; docs also reference invoicing and customer portal for managing billing. Evidence is vendor-documentation only with no independent hands-on validation of dunning email effectiveness, slightly limiting confidence.",
+    "evidenceIds": [
+      "stripe-docs-14",
+      "stripe-docs-15",
+      "stripe-docs-31",
+      "stripe-docs-56",
+      "stripe-docs-6",
+      "stripe-docs-7"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "embedded-checkout-components",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe Elements explicitly enables building a fully customized payment page embedded directly on a developer's own site (as opposed to Checkout's redirect option), with prebuilt UI components via the Checkout Sessions API/Elements, and secure PCI-reduced direct-to-Stripe data handling.",
+    "evidenceIds": [
+      "stripe-docs-1",
+      "stripe-docs-2",
+      "stripe-docs-23",
+      "stripe-docs-50",
+      "stripe-docs-11"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "fraud-screening-rules",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Stripe Radar is documented as using AI algorithms to score fraud risk in real time, satisfying the ML-scoring part of the story, but the evidence pack contains no mention of finance-ops writing custom block/review/allow rules, only the generic Radar description.",
+    "evidenceIds": [
+      "stripe-docs-22"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "hosted-checkout-page",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe Checkout explicitly supports redirecting customers to a Stripe-hosted, prebuilt payment page (via Checkout Sessions API or no-code Payment Links) with conversion-optimized UI, localization, and 125+ payment methods, requiring no custom payment UI build.",
+    "evidenceIds": [
+      "stripe-docs-2",
+      "stripe-docs-50",
+      "stripe-docs-4",
+      "stripe-docs-36",
+      "stripe-docs-3"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "idempotent-api-retries",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe's API natively supports idempotency keys for all requests, explicitly documented to let developers safely retry requests after connection errors without creating duplicate objects or charges, directly matching the story.",
+    "evidenceIds": [
+      "stripe-docs-9",
+      "stripe-docs-25",
+      "stripe-docs-42"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "integrate-from-docs-in-a-day",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Extensive docs cover Checkout/Elements integration, testing sandboxes, API keys, webhooks, and SDKs, with a well-known reputation for clear docs; community testimonial explicitly confirms rapid integration ('up and running and accepting recurring payments in less than an hour', docs 'clear and concise'). Some negative community sentiment exists but relates to support/pricing/account issues, not the docs/integration speed itself.",
+    "evidenceIds": [
+      "stripe-comm-9",
+      "stripe-docs-1",
+      "stripe-docs-50",
+      "stripe-docs-58",
+      "stripe-docs-32",
+      "stripe-docs-30",
+      "stripe-probe-1",
+      "stripe-probe-2"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "marketplace-split-payments",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe Connect is explicitly documented for building marketplaces/platforms that onboard sellers, split payments between parties, and automate payouts, supported by payouts tracking, webhooks, disputes API, and sandbox testing—directly matching the story's requirements.",
+    "evidenceIds": [
+      "stripe-docs-12",
+      "stripe-docs-38",
+      "stripe-docs-34",
+      "stripe-docs-52",
+      "stripe-docs-8",
+      "stripe-docs-18"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "multi-currency-charge-settle",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Stripe docs explicitly claim support for charging in 135+ currencies and settling to a preferred bank currency, with localized payment links and automated tax handling, directly matching the story. However, there's no direct evidence of FX transparency (rates, fees disclosure) and community feedback highlights account restrictions, unpredictable holds, and support issues that could undermine trust in cross-border settlement for some founders.",
+    "evidenceIds": [
+      "stripe-docs-19",
+      "stripe-docs-36",
+      "stripe-docs-34",
+      "stripe-docs-20",
+      "stripe-comm-4",
+      "stripe-comm-1"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "no-code-payment-links",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe's docs explicitly describe Payment Links as a no-code way to create a shareable payment page/link and share it via social media, email, or website, supporting local currencies/payment methods, no-code refunds, and even no-code tax collection—directly matching the founder story of creating a shareable payment link with no code.",
+    "evidenceIds": [
+      "stripe-docs-4",
+      "stripe-docs-5",
+      "stripe-docs-36",
+      "stripe-docs-48"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "openness-api-parity",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Stripe is fundamentally API-first: docs show full programmatic control over payments, billing, subscriptions, refunds, disputes, payouts, tax, and marketplace payouts (Connect), with webhooks for async events and idempotency/versioning for safe automation. It also ships dedicated AI-native tooling—an official MCP server, agent skills repo, and CLI sandbox provisioning—explicitly designed so AI agents can operate via API without the Dashboard.",
+    "evidenceIds": [
+      "stripe-docs-8",
+      "stripe-docs-9",
+      "stripe-docs-18",
+      "stripe-docs-33",
+      "stripe-docs-38",
+      "stripe-docs-13",
+      "stripe-docs-16",
+      "stripe-docs-30",
+      "stripe-docs-45",
+      "stripe-gh-1",
+      "stripe-probe-4",
+      "stripe-probe-5"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack describes a bulk data export or account-portability feature for users to extract their full data in open formats; evidence covers payments, billing, APIs, and AI-agent tooling but nothing about data export/portability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Stripe is a closed-source proprietary payments platform; there is no evidence of an open-licensed source code repository for its core product (SDKs are open-source but the core service/API is not). No evidence supports reading Stripe's product source under an open license.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Stripe is a hosted payments platform/service; there is no self-hostable core product—by nature it must run on Stripe's infrastructure to process payments and hold financial licenses. This axis fundamentally does not apply to a SaaS financial service like Stripe.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "payout-schedule-control",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm Stripe sends payouts from the balance and lets users track payouts with expected deposit dates in the Dashboard, but the evidence pack contains no mention of configuring payout schedule (daily/weekly/manual) or of itemized reconciliation reports breaking down each payout into constituent charges, fees, and refunds.",
+    "evidenceIds": [
+      "stripe-docs-34",
+      "stripe-docs-52"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "pci-scope-reduction",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe's docs explicitly state that using Elements/Checkout/hosted payment integrations lets you collect and transmit card data directly to Stripe without it touching your servers, explicitly reducing PCI obligations, and Checkout/Elements/Payment Links are all offered as ready-made tokenized solutions.",
+    "evidenceIds": [
+      "stripe-docs-11",
+      "stripe-docs-27",
+      "stripe-docs-37",
+      "stripe-docs-1",
+      "stripe-docs-2",
+      "stripe-docs-4"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data residency or region-specific data storage controls for Stripe; the docs cover payments, billing, and API features but nothing about choosing storage regions.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI training data opt-out or data usage controls for AI model training; Stripe's documentation focuses on payments, billing, and agentic commerce tooling with no privacy-posture statements on this axis.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation or claims about data retention controls, deletion policies, or privacy/data lifecycle management for Stripe's data; all evidence covers payments, billing, sandboxes, and AI-agent integration tooling.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Stripe's tools, CLI, MCP server, or AI agent integrations; the pack covers payments, billing, and API features but is silent on data collection or privacy toggles.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "stripe",
+    "storyId": "recurring-subscription-billing",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe Billing documentation directly confirms recurring subscriptions, custom pricing plans, trials, renewals, upgrades/proration handling, plus a customer portal for self-service management, invoicing, revenue recovery for failed payments, and testing sandboxes/webhooks to support the full billing lifecycle.",
+    "evidenceIds": [
+      "stripe-docs-6",
+      "stripe-docs-51",
+      "stripe-docs-7",
+      "stripe-docs-24",
+      "stripe-docs-14",
+      "stripe-docs-15",
+      "stripe-docs-21",
+      "stripe-docs-8",
+      "stripe-docs-32"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "refunds-full-partial",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe docs explicitly state refunds can be issued full or partial via both the Refunds API and the Dashboard, plus payment links support no-code refunds, directly matching the finance-ops story.",
+    "evidenceIds": [
+      "stripe-docs-17",
+      "stripe-docs-33",
+      "stripe-docs-40",
+      "stripe-docs-47",
+      "stripe-docs-5"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "respond-to-disputes-evidence",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Stripe's docs confirm dispute evidence submission and lifecycle tracking via API (upload evidence, respond to disputes) plus webhook events for dispute status changes, covering the core capability. However, evidence is limited to API-level docs with no dashboard UI workflow detail, structured evidence templates, or finance-ops-specific dispute management tooling described, and no community validation of this specific flow exists.",
+    "evidenceIds": [
+      "stripe-docs-18",
+      "stripe-docs-41",
+      "stripe-docs-8",
+      "stripe-docs-35"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "sandbox-test-mode-fidelity",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe documents a full sandbox environment mirroring production ('test Stripe functionality... without affecting your live integration'), isolated per-team sandboxes, a CLI for building/testing integrations, and explicit test-mode simulation of transactions with test values that don't move funds. Dispute handling (upload evidence, webhooks) and refunds are also documented as testable via API/dashboard, covering the key scenarios described in the story.",
+    "evidenceIds": [
+      "stripe-docs-10",
+      "stripe-docs-32",
+      "stripe-docs-43",
+      "stripe-docs-49",
+      "stripe-docs-57",
+      "stripe-docs-30",
+      "stripe-docs-18",
+      "stripe-docs-41",
+      "stripe-docs-33"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "send-hosted-invoices",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe Invoicing docs confirm creating, customizing, and sending Stripe-hosted invoices with no code, supporting online payment collection; revenue-recovery/Smart Retries docs confirm automated reminders/retries for failed or unpaid invoices, all no-code capable.",
+    "evidenceIds": [
+      "stripe-docs-21",
+      "stripe-docs-60",
+      "stripe-docs-14",
+      "stripe-docs-31",
+      "stripe-docs-56"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "settlement-reconciliation-reports",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Stripe docs confirm core building blocks—payout tracking with deposit dates (stripe-docs-34, stripe-docs-52), refund issuance via API/Dashboard (stripe-docs-17, stripe-docs-33), and dispute/chargeback management via API and webhooks (stripe-docs-18, stripe-docs-41)—but there is no evidence of a dedicated itemized reconciliation report that ties settlements to bank deposits including fees, refunds, and chargebacks in one view (e.g., no mention of Sigma, balance transaction reports, or reconciliation exports).",
+    "evidenceIds": [
+      "stripe-docs-34",
+      "stripe-docs-52",
+      "stripe-docs-17",
+      "stripe-docs-33",
+      "stripe-docs-18",
+      "stripe-docs-41"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "wallets-local-payment-methods",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe's Checkout/Elements docs explicitly state support for 125+ local payment methods, digital wallets, and localized currency/language via a single integration (Checkout Sessions API or Payment Links), which inherently covers Apple Pay, Google Pay, bank redirects, and BNPL without separate integrations.",
+    "evidenceIds": [
+      "stripe-docs-1",
+      "stripe-docs-2",
+      "stripe-docs-3",
+      "stripe-docs-4",
+      "stripe-docs-36",
+      "stripe-docs-50"
+    ]
+  },
+  {
+    "productId": "stripe",
+    "storyId": "webhook-delivery-reliability",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm Stripe pushes webhook events to an HTTPS endpoint for async state changes (e.g., dispute events) and that API idempotency prevents duplicate operations, but no evidence in the pack explicitly documents signed payload verification, automatic webhook delivery retries, an event log, or an event replay feature.",
+    "evidenceIds": [
+      "stripe-docs-8",
+      "stripe-docs-35",
+      "stripe-docs-53",
+      "stripe-docs-18",
+      "stripe-docs-25"
+    ]
+  }
+]
