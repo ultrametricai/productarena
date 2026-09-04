@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { battleSlug, loadAll } from '@/lib/data'
 import { collectGlobalStories } from '@/lib/globalStories'
+import { loadChains, loadProcesses, processSlug } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
 
 // Static export safety: no dynamic segments, all data is bundled at build time.
@@ -43,6 +44,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // (see lib/globalStories.ts and app/global/[story]/page.tsx).
   for (const story of collectGlobalStories(categories)) {
     entries.push({ url: `${SITE_URL}/global/${story.id}`, lastModified: now })
+  }
+
+  // Founder processes + curated chains (see lib/processes.ts and app/processes/*).
+  entries.push({ url: `${SITE_URL}/processes`, lastModified: now })
+  for (const task of loadProcesses()) {
+    entries.push({ url: `${SITE_URL}/processes/${processSlug(task.title)}`, lastModified: now })
+  }
+  for (const chain of loadChains()) {
+    entries.push({ url: `${SITE_URL}/processes/chains/${chain.id}`, lastModified: now })
   }
 
   return entries
