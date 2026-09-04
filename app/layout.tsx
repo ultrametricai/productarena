@@ -140,6 +140,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </a>
               <span aria-hidden className="hidden text-zinc-700 sm:inline">/</span>
               <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-tight">
+                {/* The arena mark: two facing triangles (same asset family as the landing site's
+                    product-menu icon). */}
+                <svg viewBox="0 0 24 24" width={16} height={16} className="shrink-0 text-emerald-400" fill="currentColor" aria-hidden>
+                  <path d="M4.5 5.6v12.8c0 .84.99 1.3 1.64.76l7.68-6.4a1 1 0 0 0 0-1.52L6.14 4.84c-.65-.54-1.64-.08-1.64.76Z" />
+                  <path opacity="0.5" d="M19.5 5.6v12.8c0 .84-.99 1.3-1.64.76l-7.68-6.4a1 1 0 0 1 0-1.52l7.68-6.4c.65-.54 1.64-.08 1.64.76Z" />
+                </svg>
                 <span>
                   Product<span className="text-emerald-400">Arena</span>
                 </span>

@@ -2,8 +2,20 @@
 
 *(formerly Product Arena)*
 
-**Evidence in, rankings out.** ProductArena scores how AI-ready real products are — every verdict
-cites the evidence behind it, nothing is opinion.
+**The open evidence layer for the agent economy.** ProductArena measures how ready the
+world's software is for AI agents — and how AI-native it is for humans — with evidence, not
+opinion: crawled docs, community sources, hands-on probes, recorded proofs, and an LLM judge
+whose every verdict carries citations, a confidence grade, and a contest button.
+
+It has grown past rankings into an operating map of the AI era:
+
+- **Arenas** — head-to-head, story-judged rankings across 29+ software categories
+- **Processes** — how startups actually run, step by step, with the honest agent ceiling:
+  what an agent can do today and where the market still forces a human
+- **Simulator** — dry-run a founder process through real market options and watch the API calls
+- **Stacks & lenses** — evidence-backed toolchains, buyer-type (ICP) views, comparisons
+- **Proofs** — recorded terminal/MCP sessions and a prove-it protocol vendors can submit to
+- **Agent-native access** — MCP server, JSON API, llms.txt: agents are first-class readers
 
 [![CI](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml)
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
