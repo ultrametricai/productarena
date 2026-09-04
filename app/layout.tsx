@@ -21,6 +21,8 @@ const NAV_LABELS: Record<string, string> = {
   "frontend-frameworks": "Frontend",
   "local-llm-runtimes": "Local LLM",
   "payroll": "Payroll",
+  "agent-frameworks": "Agent SDKs",
+  "agent-sandboxes": "Sandboxes",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

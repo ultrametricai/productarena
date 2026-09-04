@@ -56,6 +56,62 @@ const MCP_INITIALIZE = JSON.stringify({
 // Every command here is cheap, keyless, and read-only: --version/--help prints and stdio MCP
 // initialize handshakes. Nothing installs, mutates state, or needs credentials.
 const LOCAL_PROBES: Record<string, LocalProbe[]> = {
+  // The Claude Agent SDK drives the Claude Code CLI as its engine (code.claude.com/docs/en/
+  // agent-sdk/overview) — a keyless version print of that engine is the SDK's own runtime proof.
+  'agent-frameworks': [
+    {
+      probeId: 'cli-version',
+      productId: 'claude-agent-sdk',
+      storyIds: ['agentic-official-cli'],
+      bin: 'claude',
+      argv: ['claude', '--version'],
+      displayCommand: 'claude --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+  ],
+  'agent-sandboxes': [
+    {
+      probeId: 'cli-version',
+      productId: 'e2b',
+      storyIds: ['agentic-official-cli'],
+      bin: 'e2b',
+      argv: ['e2b', '--version'],
+      displayCommand: 'e2b --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-help',
+      productId: 'e2b',
+      storyIds: ['agentic-official-cli'],
+      bin: 'e2b',
+      argv: ['e2b', '--help'],
+      displayCommand: 'e2b --help',
+      expect: /sandbox templates/i,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'modal',
+      storyIds: ['agentic-official-cli'],
+      bin: 'modal',
+      argv: ['modal', '--version'],
+      displayCommand: 'modal --version',
+      expect: /modal client version: \d/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-help',
+      productId: 'modal',
+      storyIds: ['agentic-official-cli', 'agentic-headless'],
+      bin: 'modal',
+      argv: ['modal', '--help'],
+      displayCommand: 'modal --help',
+      expect: /run code in the cloud/i,
+      timeoutMs: 30_000,
+    },
+  ],
   'ai-coding': [
     {
       probeId: 'cli-version',

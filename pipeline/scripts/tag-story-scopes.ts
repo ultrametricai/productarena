@@ -92,6 +92,8 @@ export const WEAK_GLOBAL_PATTERNS: { rule: string; pattern: RegExp }[] = [
 // story is speaking the domain's language"; generic words (work, tool, platform, data) never
 // belong here or they would swallow the genuinely global stories.
 export const DOMAIN_VOCAB: Record<string, string[]> = {
+  'agent-frameworks': ['agent', 'tool', 'orchestrat', 'workflow', 'handoff', 'llm', 'model', 'guardrail', 'checkpoint', 'human-in-the-loop', 'human approval', 'memory', 'trace', 'eval', 'structured output', 'streaming', 'multi-agent', 'context window', 'scaffold'],
+  'agent-sandboxes': ['sandbox', 'isolat', 'untrusted', 'code execution', 'microvm', 'container', 'snapshot', 'cold start', 'egress', 'runtime', 'vcpu', 'gpu', 'per-second', 'fleet', 'agent', 'browser', 'filesystem', 'teardown', 'provision'],
   'desktop-os': ['desktop', 'kernel', 'driver', 'boot', 'hardware', 'window', 'disk', 'firewall', 'distro', 'wallpaper', 'clipboard', 'phone', 'tablet', 'virtual machine', 'app store', 'app catalog', 'operating system', 'linux', 'tpm', 'gpu'],
   'startup-banking': ['bank', 'payment', 'card', 'invoice', 'treasury', 'yield', 'currenc', 'ach', 'wire', 'deposit', 'accounting', 'ledger', 'vendor', 'spend', 'cash', 'fdic', 'transaction', 'bill', 'procurement', 'financ', 'exchange rate', 'money'],
   'project-management': ['task', 'sprint', 'issue', 'roadmap', 'project', 'initiative', 'backlog', 'kanban', 'whiteboard', 'portfolio', 'time.tracking', 'dependenc', 'agent'],
