@@ -1,15 +1,16 @@
 {
-  "hash": "20a2182fcb0c61b0d922ebb082d4681db25d78ede2a934c60c1458ce520586fa",
+  "hash": "5bde5e4887e4735cb5ca5ad06e82ef22703abdbb430baa2716728f7421763c74",
   "verdict": {
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows Snyk's CLI, MCP server, and Remediation Agent scan and directly apply fixes to a user's actual project/code (e.g., 'applies the fixes' snyk-docs-12/29), with no mention of a distinct sandbox environment that isolates testing from production data or code. The only isolation-like feature is testing a public npm package rather than one's own repo (snyk-gh-2), which is not a sandbox/production separation mechanism.",
+    "rationale": "Snyk's testing model is inherently non-production: CLI/IDE scans run against local source code, dependency manifests, container images or a public package (e.g. `snyk test ionic`), not live production systems, which implicitly satisfies 'not touching production data.' However there is no explicit sandbox environment, staging mode, or documented data-isolation guarantee for AI-agent workflows (MCP server, Remediation Agent) — those still scan real project directories and require authentication to a live Snyk account, not a defined sandbox. Missing for 10: explicit sandbox/staging environment concept, documentation of data isolation for AI-agent scans, and confirmation that agentic remediation flows don't touch production artifacts.",
     "evidenceIds": [
-      "snyk-docs-12",
-      "snyk-docs-29",
       "snyk-gh-2",
-      "snyk-probe-6"
+      "snyk-gh-4",
+      "snyk-docs-11",
+      "snyk-probe-6",
+      "snyk-probe-5"
     ],
     "productId": "snyk",
     "storyId": "api-sandbox"

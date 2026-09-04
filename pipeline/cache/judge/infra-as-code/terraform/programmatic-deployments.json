@@ -1,17 +1,18 @@
 {
-  "hash": "22a25aac2ea8574e15f8fe1eb2e2a1d257b954f00dadca709717c94f8f469d74",
+  "hash": "6ccac47b21623e75c8d37306202ff26d28de61174e4e055ee2594f938dce2e18",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Terraform's core interface remains the CLI, but it exposes machine-readable JSON output (`-json` on plan/apply/show/validate) and reliable exit codes that let application code drive plan→apply→destroy loops headlessly (as shown in local probes), effectively enabling programmatic orchestration via subprocess calls rather than a native SDK/API.",
+    "rationale": "Terraform's automation story is built around scripting the CLI: machine-readable JSON output, exit codes, and saved plan artifacts (terraform-docs-4/8/18/22, terraform-probe-6/7/8) let an application shell out to `terraform plan/apply -json` and parse structured results headlessly. However, this is still driving Terraform *through* its CLI binary via subprocess calls, not a genuine SDK/API for invoking runs directly from application code — no evidence of an official Go/Python SDK, embeddable library, or REST API for local runs is present in the evidence pack (Terraform Cloud's run API isn't detailed either). Missing for 10: an official application-embeddable SDK or library (e.g., a documented Go library for programmatic plan/apply) or a REST/gRPC API for triggering local runs, and any independent corroboration that developers embed Terraform this way outside CI scripts.",
     "evidenceIds": [
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
+      "terraform-docs-4",
+      "terraform-docs-8",
       "terraform-docs-18",
       "terraform-docs-22",
-      "terraform-docs-30"
+      "terraform-probe-6",
+      "terraform-probe-7",
+      "terraform-probe-8"
     ],
     "productId": "terraform",
     "storyId": "programmatic-deployments"

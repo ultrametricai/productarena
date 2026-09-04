@@ -1,20 +1,18 @@
 {
-  "hash": "5423f0f3d71af090086081cb526413900b6194ff45667e37f96c3f4137d41dd8",
+  "hash": "0fd76f94e8b01dc2255ef7414a32e076684f7b0ed8b3252563f9fc0cf7b56b8f",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Terraform's plan/apply separation, saved plan artifacts, and JSON machine-readable output give an agent a reviewable, gateable change process (verified live via probes), and Terraform Cloud policy-as-code (Sentinel/OPA) plus the official MCP server extend this to AI-agent workflows. However, there is no evidence of built-in least-privilege credential scoping/issuance for agents — that responsibility falls to the cloud provider/IAM layer, not Terraform itself, and -auto-approve can bypass the review gate if misused.",
+    "rationale": "Terraform's plan/apply workflow with saved plan artifacts, JSON output, and Terraform Cloud policy-as-code (Sentinel/OPA) gates provide the building blocks for an agent to propose changes that are reviewed before apply (terraform-docs-9, terraform-docs-30, terraform-probe-6, terraform-probe-7). However, least-privilege credential scoping per-run and enforced human/policy approval gates are primarily a Terraform Cloud/Enterprise feature, not core CLI, and the evidence doesn't show an integrated agent-specific approval workflow or credential-scoping mechanism tied to MCP/agent use; auto-approve exists and could bypass gates if misconfigured (terraform-docs-3/17). missing for 10: documented least-privilege credential scoping per agent run, an explicit agent-in-the-loop approval/gate mechanism (beyond generic TFC policy checks), and independent evidence of this being used safely with autonomous agents.",
     "evidenceIds": [
       "terraform-docs-9",
-      "terraform-docs-25",
+      "terraform-docs-30",
       "terraform-probe-6",
       "terraform-probe-7",
       "terraform-probe-8",
-      "terraform-docs-10",
-      "terraform-docs-23",
-      "terraform-probe-9",
-      "terraform-docs-17"
+      "terraform-docs-3",
+      "terraform-probe-9"
     ],
     "productId": "terraform",
     "storyId": "agent-least-privilege-gates"
