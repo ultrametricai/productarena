@@ -237,6 +237,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/pipeline" className="hover:text-emerald-300">
                 Testing pipeline
               </Link>
+              <Link href="/proofs" className="hover:text-emerald-300">
+                Recorded proofs
+              </Link>
               <Link href="/submit" className="hover:text-emerald-300">
                 Test my product →
               </Link>

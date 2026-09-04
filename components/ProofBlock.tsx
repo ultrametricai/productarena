@@ -11,13 +11,21 @@ function stripSgr(s: string): string {
   return s.replace(/\x1b\[[0-9;]*m/g, '')
 }
 
-function StoryChips({ storyIds, titles }: { storyIds: string[]; titles: Record<string, string> }) {
+function StoryChips({
+  storyIds,
+  titles,
+  hrefBase = '',
+}: {
+  storyIds: string[]
+  titles: Record<string, string>
+  hrefBase?: string
+}) {
   return (
     <span className="flex flex-wrap gap-1.5">
       {storyIds.map((id) => (
         <a
           key={id}
-          href={`#story-${id}`}
+          href={`${hrefBase}#story-${id}`}
           title={titles[id] ?? id}
           className="rounded-full border border-zinc-700 px-2 py-0.5 text-[10px] text-zinc-400 transition hover:border-emerald-400 hover:text-emerald-300"
         >
@@ -33,6 +41,7 @@ export default function ProofBlock({
   transcript,
   videoSrc,
   storyTitles = {},
+  storyHrefBase,
 }: {
   entry: ProofIndexEntry
   /** Sanitized transcript text for kind:'terminal' (null when the file is missing). */
@@ -41,6 +50,13 @@ export default function ProofBlock({
   videoSrc?: string
   /** storyId → display title for the "proves:" chips; ids fall back to themselves. */
   storyTitles?: Record<string, string>
+  /**
+   * Page prefix for the "proves:" story anchors. Omitted on the product page itself (the
+   * #story-<id> rows live on the same page); pages that aggregate proofs from elsewhere
+   * (e.g. /proofs) pass the basePath-prefixed product page URL so the chips still land on
+   * the right story row.
+   */
+  storyHrefBase?: string
 }) {
   const ok = entry.exitCode === 0
   const recordedOn = entry.recordedAt.slice(0, 10)
@@ -72,7 +88,7 @@ export default function ProofBlock({
       )}
 
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-zinc-800 px-3 py-1.5">
-        <StoryChips storyIds={entry.storyIds} titles={storyTitles} />
+        <StoryChips storyIds={entry.storyIds} titles={storyTitles} hrefBase={storyHrefBase} />
         <span className="ml-auto shrink-0 text-[10px] text-zinc-500">recorded {recordedOn}</span>
       </div>
     </figure>
