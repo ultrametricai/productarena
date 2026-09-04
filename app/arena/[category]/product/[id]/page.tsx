@@ -14,13 +14,16 @@ import ProductLogo from '@/components/ProductLogo'
 import ProductShowcase from '@/components/ProductShowcase'
 import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
+import ScoreTrend from '@/components/ScoreTrend'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
+import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
 import {
   battleSlug, groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
+import { loadScoreHistory } from '@/lib/scoreHistory'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
@@ -113,14 +116,17 @@ export default async function ProductPage({
               <MomentumChip popularity={data.popularity[id]} />
             </div>
           </div>
-          <a
-            href={product.urls.site}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto shrink-0 rounded-lg border border-emerald-400/60 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/10"
-          >
-            Visit {product.name} ↗
-          </a>
+          <div className="ml-auto flex shrink-0 items-center gap-3">
+            <WatchButton productId={id} productName={product.name} />
+            <a
+              href={product.urls.site}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="shrink-0 rounded-lg border border-emerald-400/60 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/10"
+            >
+              Visit {product.name} ↗
+            </a>
+          </div>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
@@ -146,6 +152,8 @@ export default async function ProductPage({
       </div>
 
       <ProductActions data={data} productId={id} />
+
+      <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
 
       <ProductShowcase product={product} />
 
