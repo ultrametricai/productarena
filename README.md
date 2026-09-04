@@ -33,7 +33,7 @@ evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **32 arenas, 158 products, 10,044 judged verdicts.**
+As of the last full pipeline run: **32 arenas, 167 products, 10,613 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -119,10 +119,10 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase |
 | Mobile AI Dev Tools (`mobile-dev`) | termius, tailscale, blink-shell, a-shell, working-copy, github-mobile |
 | Code Hosting (`code-hosting`) | github, gitlab, bitbucket, gitea |
-| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode |
+| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline |
 | Edge & App Platforms (`edge-platforms`) | cloudflare, vercel, netlify, fly-io, railway, render |
 | Frontend Frameworks (`frontend-frameworks`) | react, vue, svelte, angular, solid |
-| Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai |
+| Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai, llamafile |
 | Payroll & HR Ops (`payroll`) | gusto, rippling, deel, justworks |
 | Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard |
 | Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules |
@@ -135,11 +135,11 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Security Scanners (`security-scanners`) | trufflehog, semgrep, snyk, gitleaks, trivy |
 | Infrastructure as Code (`infra-as-code`) | terraform, pulumi, opentofu, crossplane |
 | Vibe-Coding App Builders (`vibe-coding`) | lovable, bolt, v0, replit, base44 |
-| Model Gateways & Routers (`model-gateways`) | openrouter, litellm, portkey, vercel-ai-gateway, cloudflare-ai-gateway |
-| LLM Evals & Observability (`llm-evals-observability`) | langfuse, langsmith, braintrust, arize-phoenix, wandb-weave, helicone |
+| Model Gateways & Routers (`model-gateways`) | openrouter, litellm, portkey, vercel-ai-gateway, cloudflare-ai-gateway, requesty |
+| LLM Evals & Observability (`llm-evals-observability`) | langfuse, langsmith, braintrust, arize-phoenix, wandb-weave, helicone, galileo |
 | AI Search APIs (`ai-search-apis`) | exa, tavily, perplexity-sonar, brave-search-api, serpapi |
-| Agent Frameworks & SDKs (`agent-frameworks`) | langgraph, openai-agents, claude-agent-sdk, crewai, pydantic-ai, mastra, google-adk |
-| Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox |
+| Agent Frameworks & SDKs (`agent-frameworks`) | langgraph, openai-agents, claude-agent-sdk, crewai, pydantic-ai, mastra, google-adk, autogen, smolagents |
+| Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox, runloop |
 | Product Analytics (`product-analytics`) | posthog, amplitude, mixpanel, plausible |
 | CRM (`crm`) | hubspot, attio, salesforce, twenty |
 | Terminals (`terminals`) | warp, ghostty, iterm2, alacritty, wezterm, kitty |
