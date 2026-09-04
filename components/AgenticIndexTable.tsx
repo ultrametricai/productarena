@@ -88,7 +88,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
                   <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                 </Link>
                 <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                  {row.product.type === 'oss' && <OssPill />}
+                  {row.product.type === 'oss' && <OssPill variant="compact" />}
                   <AiModeBadge
                     data={row.data}
                     productId={row.product.id}
@@ -102,7 +102,8 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
                 </Link>
               </td>
               <td className="px-3 py-2">
-                <AgenticBadge kind="agent-ready" value={row.entry.agentReady} size="sm" />
+                {/* Column header already says AGENTREADYNESS — the pill carries just the value. */}
+                <AgenticBadge kind="agent-ready" value={row.entry.agentReady} size="sm" showLabel={false} />
               </td>
               <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">
                 {row.entry.apiQuality === null ? '—' : row.entry.apiQuality.toFixed(0)}

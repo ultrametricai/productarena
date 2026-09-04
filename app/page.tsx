@@ -75,8 +75,6 @@ export default function Home() {
             if (!battle) return null
             const a = data.products.find((p) => p.id === battle.a)!
             const b = data.products.find((p) => p.id === battle.b)!
-            const aEntry = data.rankings.leaderboard.find((e) => e.productId === a.id)!
-            const bEntry = data.rankings.leaderboard.find((e) => e.productId === b.id)!
             const winnerName = battle.winner === 'draw' ? null : battle.winner === a.id ? a.name : b.name
             return (
               <Link
@@ -85,20 +83,16 @@ export default function Home() {
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
                 <p className="text-xs uppercase tracking-widest text-zinc-400">{data.category.name}</p>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <ProductLogo product={a} size={28} />
-                    <span className="text-sm font-medium group-hover:text-emerald-300">{a.name}</span>
-                  </div>
-                  <AiEraBadge value={aEntry.aiEra} size="sm" />
+                {/* No Arena Score badges here — those already render in the table and arena cards
+                    above; this card's own datum is the head-to-head record. */}
+                <div className="mt-2 flex items-center gap-2">
+                  <ProductLogo product={a} size={28} />
+                  <span className="text-sm font-medium group-hover:text-emerald-300">{a.name}</span>
                 </div>
                 <p className="my-1 text-center text-[10px] uppercase tracking-widest text-zinc-500">vs</p>
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <ProductLogo product={b} size={28} />
-                    <span className="text-sm font-medium group-hover:text-emerald-300">{b.name}</span>
-                  </div>
-                  <AiEraBadge value={bEntry.aiEra} size="sm" />
+                <div className="flex items-center gap-2">
+                  <ProductLogo product={b} size={28} />
+                  <span className="text-sm font-medium group-hover:text-emerald-300">{b.name}</span>
                 </div>
                 <p className="mt-3 text-center text-xs text-emerald-300">
                   {winnerName ? `${winnerName} wins` : 'Draw'} · {battle.record.aWins}–{battle.record.bWins}

@@ -40,17 +40,29 @@ export function loadScoreHistory(categoryId: string, dir: string = DEFAULT_DIR()
   return byProduct
 }
 
-// Convenience for table rows: the 30-day Arena Score (aiEra) trend delta for one product, null
-// when there aren't ≥2 plottable points yet.
+// Convenience for table rows: the 30-day trend delta of one tracked metric (Arena Score /
+// agent-readiness — the two series in score-history.jsonl) for one product, null when there
+// aren't ≥2 plottable points yet.
+export function metricTrendDelta(
+  categoryId: string,
+  productId: string,
+  metric: 'aiEra' | 'agentReady',
+  dir: string = DEFAULT_DIR(),
+  now: Date = new Date(),
+): number | null {
+  const entries = loadScoreHistory(categoryId, dir).get(productId)
+  if (!entries) return null
+  return trendDelta(seriesFor(entries, metric), now)
+}
+
+// Back-compat alias: the Arena Score (aiEra) flavor predates metricTrendDelta.
 export function arenaScoreTrendDelta(
   categoryId: string,
   productId: string,
   dir: string = DEFAULT_DIR(),
   now: Date = new Date(),
 ): number | null {
-  const entries = loadScoreHistory(categoryId, dir).get(productId)
-  if (!entries) return null
-  return trendDelta(seriesFor(entries, 'aiEra'), now)
+  return metricTrendDelta(categoryId, productId, 'aiEra', dir, now)
 }
 
 // Forward-fill: appends one line per product whose ROUNDED aiEra/agentReady differs from that
