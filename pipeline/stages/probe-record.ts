@@ -53,9 +53,97 @@ const MCP_INITIALIZE = JSON.stringify({
   },
 }) + '\n'
 
+// Remote MCP endpoints are probed with a bare curl initialize POST: a live, auth-gated MCP
+// server answers with its OAuth challenge (401 + protected-resource metadata), which is
+// exactly the keyless, read-only proof that the endpoint exists and speaks the protocol.
+const CURL_MCP_INIT = JSON.stringify({
+  jsonrpc: '2.0',
+  id: 1,
+  method: 'initialize',
+  params: {
+    protocolVersion: '2025-06-18',
+    capabilities: {},
+    clientInfo: { name: 'productarena-probe', version: '1.0' },
+  },
+})
+
 // Every command here is cheap, keyless, and read-only: --version/--help prints and stdio MCP
 // initialize handshakes. Nothing installs, mutates state, or needs credentials.
 const LOCAL_PROBES: Record<string, LocalProbe[]> = {
+  payments: [
+    {
+      probeId: 'cli-version',
+      productId: 'stripe',
+      storyIds: ['agentic-official-cli'],
+      bin: 'stripe',
+      argv: ['stripe', '--version'],
+      displayCommand: 'stripe --version',
+      expect: /stripe version \d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-resources-discovery',
+      productId: 'stripe',
+      storyIds: ['agentic-official-cli', 'agentic-headless'],
+      bin: 'stripe',
+      argv: ['stripe', 'resources'],
+      displayCommand: 'stripe resources',
+      expect: /payment_intents/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-webhook-listen-help',
+      productId: 'stripe',
+      storyIds: ['agentic-webhooks', 'webhook-delivery-reliability'],
+      bin: 'stripe',
+      argv: ['stripe', 'listen', '--help'],
+      displayCommand: 'stripe listen --help',
+      expect: /webhook/i,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'mcp-remote-handshake',
+      productId: 'stripe',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.stripe.com',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.stripe.com -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /docs\.stripe\.com\/mcp/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'mcp-remote-discovery',
+      productId: 'paypal',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['curl', '-s', '--max-time', '20', 'https://mcp.paypal.com/.well-known/oauth-protected-resource/mcp'],
+      displayCommand: 'curl -s https://mcp.paypal.com/.well-known/oauth-protected-resource/mcp',
+      expect: /"authorization_servers"/,
+      timeoutMs: 30_000,
+    },
+  ],
+  accounting: [
+    {
+      probeId: 'mcp-remote-handshake',
+      productId: 'xero',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.xero.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.xero.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/[12](?:\.1)? 401/,
+      timeoutMs: 30_000,
+    },
+  ],
   'ai-coding': [
     {
       probeId: 'cli-version',
