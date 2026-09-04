@@ -37,6 +37,8 @@ const NAV_LABELS: Record<string, string> = {
   "product-analytics": "Analytics",
   "crm": "CRM",
   "terminals": "Terminals",
+  "inference-providers": "Inference",
+  "auth-platforms": "Auth",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

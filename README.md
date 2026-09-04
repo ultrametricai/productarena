@@ -33,7 +33,7 @@ evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **30 arenas, 145 products, 9,352 judged verdicts.**
+As of the last full pipeline run: **32 arenas, 156 products, 9,950 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -142,6 +142,8 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox |
 | Product Analytics (`product-analytics`) | posthog, amplitude, mixpanel, plausible |
 | CRM (`crm`) | hubspot, attio, salesforce, twenty |
+| Auth & Identity (`auth-platforms`) | auth0, clerk, workos, keycloak, better-auth |
+| AI Inference Providers (`inference-providers`) | groq, together-ai, fireworks-ai, cerebras, deepinfra, baseten |
 | Terminals (`terminals`) | warp, ghostty, iterm2, alacritty, wezterm, kitty |
 <!-- arenas:end -->
 
