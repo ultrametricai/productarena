@@ -206,6 +206,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
             <span>© 2026 Ultrametric Inc</span>
             <div className="flex items-center gap-4">
+              <Link href="/proofs" className="hover:text-emerald-300">
+                Recorded proofs
+              </Link>
               <Link href="/submit" className="hover:text-emerald-300">
                 Test my product →
               </Link>
