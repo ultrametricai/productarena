@@ -28,6 +28,14 @@ export default function StacksPage() {
           rankings as the rest of the site; slots we can&rsquo;t score yet are labeled as
           editorial picks.
         </p>
+        <p className="mt-4">
+          <Link
+            href="/stacks/builder"
+            className="inline-flex items-center rounded-full border border-emerald-400/40 px-4 py-1.5 text-sm text-emerald-300 transition hover:border-emerald-400 hover:bg-emerald-400/10"
+          >
+            Build your own →
+          </Link>
+        </p>
       </section>
 
       {stacks.map((stack) => (

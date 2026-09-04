@@ -56,6 +56,7 @@ function makeData(products: Product[], stories: Story[], verdicts: Verdict[]): C
     popularity: {},
     claims: {},
     uncertainty: [],
+  vendorResponses: [],
   }
 }
 
