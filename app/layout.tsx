@@ -30,6 +30,8 @@ const NAV_LABELS: Record<string, string> = {
   "model-gateways": "Gateways",
   "llm-evals-observability": "LLM Evals",
   "ai-search-apis": "AI Search",
+  "agent-frameworks": "Agent SDKs",
+  "agent-sandboxes": "Sandboxes",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
