@@ -10,6 +10,7 @@ import ClaimsChip from '@/components/ClaimsChip'
 import ConfidenceChip from '@/components/ConfidenceChip'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
+import PopularTag, { isNotablyPopular } from '@/components/PopularTag'
 import ProductLogoView from '@/components/ProductLogoView'
 import TableControls from '@/components/TableControls'
 import VerificationMixChip from '@/components/VerificationMixChip'
@@ -276,7 +277,11 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                     {row.automation === null ? <span className="text-zinc-500">n/a</span> : <>{row.automation.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
-                    <MomentumChip popularity={data.popularity[row.productId]} compact />
+                    {data.popularity[row.productId]?.stars !== undefined || data.popularity[row.productId]?.npmWeekly !== undefined || data.popularity[row.productId]?.pypiWeekly !== undefined ? (
+                      <MomentumChip popularity={data.popularity[row.productId]} compact />
+                    ) : isNotablyPopular(row.productId) ? (
+                      <PopularTag />
+                    ) : null}
                   </td>
                   <td className="hidden px-2 py-2 sm:table-cell">
                     <AgentAccessGlyphs data={data} productId={row.productId} />

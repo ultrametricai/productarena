@@ -43,14 +43,8 @@ export function buildSearchIndex(sources: SearchIndexSource[]): SearchEntry[] {
       })
     }
 
-    for (const s of data.stories) {
-      entries.push({
-        type: 'story',
-        label: s.title,
-        sublabel: `${data.category.name} · ${s.theme}`,
-        href: `/arena/${data.category.id}#story-${s.id}`,
-      })
-    }
+    // Story entries deliberately omitted — search focuses on arenas and products; stories are
+    // discoverable inside each product/arena page where they have context.
   }
 
   return entries
