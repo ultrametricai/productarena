@@ -28,7 +28,7 @@ export default function MomentumChip({
   return (
     <span title={title} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 font-mono text-xs text-zinc-400">
       {popularity.stars !== undefined && (
-        <span className="text-zinc-300">★ {formatCompact(popularity.stars)}</span>
+        <span title="GitHub stars" className="text-zinc-300">★ {formatCompact(popularity.stars)}</span>
       )}
       {popularity.starsPerYear !== undefined && (
         <span className="text-emerald-400">▲ {formatCompact(popularity.starsPerYear)}/yr</span>

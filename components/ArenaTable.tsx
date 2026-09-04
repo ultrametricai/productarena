@@ -18,7 +18,6 @@ import {
   type ArenaTableColumn,
   type ArenaTableRow,
   type SortDirection,
-  COLUMN_LABELS,
   defaultDirectionFor,
   filterArenaRows,
   sortArenaRows,
@@ -154,15 +153,10 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
         onPreset={applyPreset}
         query={query}
         onQuery={setQuery}
-        rankedByLabel={COLUMN_LABELS[column]}
-        direction={direction}
         after={
-          <>
-            {' · '}
-            <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
-              legend
-            </a>
-          </>
+          <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
+            legend
+          </a>
         }
       />
 
