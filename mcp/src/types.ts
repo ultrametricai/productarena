@@ -81,3 +81,25 @@ export interface Rankings {
   leaderboard: LeaderboardEntry[]
   battles: Battle[]
 }
+
+// Cross-arena curated stacks (data/ai-stacks.json — mirrors lib/aiStacks.ts's zod schema).
+export type StackMetric = 'agentReady' | 'aiEra' | 'agenticApp'
+
+export type StackPick =
+  | { kind: 'arena-top'; arenaId: string; metric: StackMetric; ossOnly?: boolean }
+  | { kind: 'product'; arenaId: string; productId: string; metric?: StackMetric; note: string }
+  | { kind: 'editorial'; name: string; url: string; note: string }
+
+export interface StackSlot {
+  role: string
+  why: string
+  pick: StackPick
+}
+
+export interface Stack {
+  id: string
+  name: string
+  tagline: string
+  audience: string
+  slots: StackSlot[]
+}
