@@ -168,6 +168,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 Stacks
               </Link>
               <Link
+                href="/processes"
+                className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                Processes
+              </Link>
+              <Link
                 href="/methodology"
                 className="hidden shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 md:flex"
               >
