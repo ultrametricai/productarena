@@ -22,6 +22,7 @@ const CATEGORIES = [
   'mobile-dev',
   'mobile-payments',
   'payments',
+  'model-gateways',
   'payroll',
   'product-feedback',
   'project-management',
@@ -29,6 +30,7 @@ const CATEGORIES = [
   'software-factory',
   'startup-banking',
   'team-chat',
+  'vibe-coding',
   'web-scraping',
 ]
 
