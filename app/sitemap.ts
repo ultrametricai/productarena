@@ -9,6 +9,8 @@ export const dynamic = 'force-static'
 export default function sitemap(): MetadataRoute.Sitemap {
   const categories = loadAll()
   const now = new Date()
+  // One /alternatives/[product] page per unique product id (see that page's dedupe rule).
+  const seenProductIds = new Set<string>()
 
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now },
@@ -30,6 +32,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     for (const product of data.products) {
       entries.push({ url: `${SITE_URL}/arena/${data.category.id}/product/${product.id}`, lastModified: generatedAt })
       entries.push({ url: `${SITE_URL}/arena/${data.category.id}/product/${product.id}/llms.md`, lastModified: generatedAt })
+      if (!seenProductIds.has(product.id)) {
+        seenProductIds.add(product.id)
+        entries.push({ url: `${SITE_URL}/alternatives/${product.id}`, lastModified: generatedAt })
+      }
     }
 
     for (const battle of data.rankings.battles) {

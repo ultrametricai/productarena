@@ -68,6 +68,11 @@ export default function ProductActions({ data, productId }: { data: CategoryData
                 </Link>
               ))}
             </div>
+            <p className="mt-1.5">
+              <Link href={`/alternatives/${productId}`} className={linkClass}>
+                Alternatives to {product.name} →
+              </Link>
+            </p>
           </div>
         )}
 
