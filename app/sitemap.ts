@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
     { url: `${SITE_URL}/proofs`, lastModified: now },
+    { url: `${SITE_URL}/badges`, lastModified: now },
     { url: `${SITE_URL}/rankings/agentic`, lastModified: now },
     { url: `${SITE_URL}/rankings/ai-native`, lastModified: now },
     { url: `${SITE_URL}/rankings/claims-integrity`, lastModified: now },
