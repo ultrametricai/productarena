@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import ProductLogoView from '@/components/ProductLogoView'
+import VerdictBadge from '@/components/VerdictBadge'
 import {
   accessGlyphClass,
   encodeCompareParam,
@@ -14,14 +15,58 @@ import {
   themeLabel,
   type CompareProduct,
 } from '@/lib/compare'
+import {
+  DEFAULT_KEY_STORY_ROWS,
+  encodeStoriesParam,
+  MAX_COMPARE_STORIES,
+  parseStoriesParam,
+  searchStories,
+  sharedKeyStories,
+  storyCell,
+  storyUnion,
+  toArenaStoryData,
+  type ArenaFetchState,
+  type ArenaStoryData,
+  type StoryCellState,
+} from '@/lib/compareStories'
+import { stripPersonaPrefix } from '@/lib/data-helpers'
+import { withBase } from '@/lib/site'
 
 // /compare's client half: pick up to MAX_COMPARE products from anywhere on the site and see
 // them side by side. Selection state lives in `?p=stripe,mercury,claude-code` — read via
 // useSearchParams (the page wraps this in <Suspense>, so the subtree client-renders and the
 // static export never needs the query server-side) and written back via history.replaceState
 // (no history spam). The lean product list arrives as a server-built prop (lib/compareData.ts).
+//
+// Story-level rows are different: verdict data is never server-serialized into this page.
+// When products are selected, the component fetches each selected arena's static
+// stories.json + verdicts.json (public/data mirrors, CDN'd — see scripts/copy-data.mjs) at
+// runtime, only for the arenas actually selected, and caches per arena in-memory below. Key
+// stories (scope 'global', shared by every selected arena, weight-3 first) render by default;
+// `?s=storyId1,storyId2` carries user-added story rows the same replaceState way `?p=` does.
 
 const MAX_SUGGESTIONS = 8
+
+// Module-level per-arena cache: one in-flight/settled promise per arenaId, shared across
+// re-renders and re-mounts. Failed fetches are evicted so a later selection change can retry.
+const arenaStoryCache = new Map<string, Promise<ArenaStoryData>>()
+
+function fetchArenaStories(arenaId: string): Promise<ArenaStoryData> {
+  const hit = arenaStoryCache.get(arenaId)
+  if (hit) return hit
+  const promise = (async () => {
+    const [storiesRes, verdictsRes] = await Promise.all([
+      fetch(withBase(`/data/${arenaId}/stories.json`)),
+      fetch(withBase(`/data/${arenaId}/verdicts.json`)),
+    ])
+    if (!storiesRes.ok || !verdictsRes.ok) throw new Error(`failed to load story data for ${arenaId}`)
+    const [storiesJson, verdictsJson] = await Promise.all([storiesRes.json(), verdictsRes.json()])
+    return toArenaStoryData(storiesJson, verdictsJson)
+  })()
+  arenaStoryCache.set(arenaId, promise)
+  promise.catch(() => arenaStoryCache.delete(arenaId))
+  return promise
+}
 
 function ScoreCell({ value, winner }: { value: number | null; winner: boolean }) {
   if (value === null) return <span className="text-zinc-500">n/a</span>
@@ -33,6 +78,49 @@ function ScoreCell({ value, winner }: { value: number | null; winner: boolean })
   )
 }
 
+function formatQuality(q: number): string {
+  return Number.isInteger(q) ? String(q) : q.toFixed(1)
+}
+
+// One product's cell in a story row. Real verdicts reuse the site-wide chip (VerdictBadge)
+// plus quality n/10, and link to the product page's #story-<id> anchor. The three non-verdict
+// states are rendered honestly: skeleton while loading, an explicit failure message on fetch
+// error (never a fake verdict), and "n/a — different arena's story" when the story simply
+// doesn't exist in the product's arena.
+function StoryCellView({ cell, product, storyId }: { cell: StoryCellState; product: CompareProduct; storyId: string }) {
+  if (cell.kind === 'loading') {
+    return <span className="inline-block h-4 w-16 animate-pulse rounded bg-zinc-800" aria-hidden />
+  }
+  if (cell.kind === 'error') {
+    return <span className="text-xs text-zinc-500">couldn&rsquo;t load story data</span>
+  }
+  if (cell.kind === 'other-arena') {
+    return (
+      <span
+        className="text-xs italic text-zinc-500"
+        title={`This story belongs to a different arena — ${product.name} (${product.arenaName}) was never judged on it.`}
+      >
+        n/a — different arena&rsquo;s story
+      </span>
+    )
+  }
+  return (
+    <Link
+      href={`/arena/${product.arenaId}/product/${product.id}#story-${storyId}`}
+      className="group inline-flex items-center gap-1.5"
+      title={`See ${product.name}'s evidence for this story`}
+    >
+      <VerdictBadge verdict={cell.verdict} />
+      {cell.verdict !== 'none' && cell.verdict !== 'na' && (
+        <span className="font-mono text-xs tabular-nums text-zinc-400 transition group-hover:text-emerald-300">
+          {formatQuality(cell.quality)}
+          <span className="text-zinc-600">/10</span>
+        </span>
+      )}
+    </Link>
+  )
+}
+
 export default function CompareBuilder({ products }: { products: CompareProduct[] }) {
   const searchParams = useSearchParams()
   const byId = useMemo(() => new Map(products.map((p) => [p.id, p])), [products])
@@ -41,20 +129,105 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
   // Initial selection comes straight from `?p=` — a lazy initializer, not a mount effect:
   // useSearchParams already carries the real query on the first client render.
   const [ids, setIds] = useState<string[]>(() => parseCompareParam(searchParams.get('p'), validIds))
+  // User-added story rows from `?s=` — unlike `?p=`, story ids can't be validated here (arena
+  // data arrives async), so unknown ids are pruned later, once every selected arena has loaded.
+  const [storyIds, setStoryIds] = useState<string[]>(() => parseStoriesParam(searchParams.get('s')))
   const [query, setQuery] = useState('')
+  const [storyQuery, setStoryQuery] = useState('')
   const [copied, setCopied] = useState(false)
+  const [showAllKeyStories, setShowAllKeyStories] = useState(false)
+  const [arenaStates, setArenaStates] = useState<Record<string, ArenaFetchState>>({})
+
+  const selected = useMemo(() => ids.map((id) => byId.get(id)).filter((p): p is CompareProduct => p !== undefined), [ids, byId])
+  const selectedArenaIds = useMemo(() => [...new Set(selected.map((p) => p.arenaId))], [selected])
+
+  // Kick off story-data fetches for newly-selected arenas ONLY (payload stays proportional to
+  // the selection, and the module-level cache makes repeats free). The startedArenas ref keeps
+  // this effect from re-dispatching on its own state updates; a failed arena is removed from it
+  // so any later selection change retries the fetch.
+  const startedArenasRef = useRef<Set<string>>(new Set())
+  useEffect(() => {
+    for (const arenaId of selectedArenaIds) {
+      if (startedArenasRef.current.has(arenaId)) continue
+      startedArenasRef.current.add(arenaId)
+      setArenaStates((prev) => ({ ...prev, [arenaId]: { status: 'loading' } }))
+      fetchArenaStories(arenaId).then(
+        (data) => setArenaStates((prev) => ({ ...prev, [arenaId]: { status: 'ready', data } })),
+        () => {
+          startedArenasRef.current.delete(arenaId)
+          setArenaStates((prev) => ({ ...prev, [arenaId]: { status: 'error' } }))
+        },
+      )
+    }
+  }, [selectedArenaIds])
+
+  const readyArenaEntries = useMemo(
+    () =>
+      selectedArenaIds.flatMap((arenaId) => {
+        const state = arenaStates[arenaId]
+        return state?.status === 'ready' ? [{ arenaId, data: state.data }] : []
+      }),
+    [selectedArenaIds, arenaStates],
+  )
+  const anyStoryLoading = selectedArenaIds.some((id) => (arenaStates[id]?.status ?? 'loading') === 'loading')
+  const allStoriesReady = selectedArenaIds.length > 0 && readyArenaEntries.length === selectedArenaIds.length
+
+  // Key stories: global-scope stories every LOADED arena shares (weight-3 first). Computed over
+  // ready arenas only — an errored arena's columns render honest per-cell failures instead of
+  // silently shrinking the row set.
+  const keyStories = useMemo(() => sharedKeyStories(readyArenaEntries.map((e) => e.data)), [readyArenaEntries])
+  const visibleKeyStories = showAllKeyStories ? keyStories : keyStories.slice(0, DEFAULT_KEY_STORY_ROWS)
+  const visibleKeyIds = new Set(visibleKeyStories.map((s) => s.id))
+
+  const union = useMemo(() => storyUnion(readyArenaEntries), [readyArenaEntries])
+  const unionById = useMemo(() => new Map(union.map((s) => [s.id, s])), [union])
+
+  // Stale/unknown `?s=` ids (dead share links) prune themselves DERIVED, not via setState-in-
+  // effect — but only once every selected arena has loaded: pruning against a partial union
+  // would drop a legitimate id just because its arena's fetch failed. The add/remove handlers
+  // below also physically drop stale ids at the next interaction.
+  const effectiveStoryIds = useMemo(
+    () => (allStoriesReady ? storyIds.filter((id) => unionById.has(id)) : storyIds),
+    [allStoriesReady, storyIds, unionById],
+  )
+
+  // User-added rows: ids whose story is known, skipping any already visible as a key row.
+  const addedStories = effectiveStoryIds.flatMap((id) => {
+    const s = unionById.get(id)
+    return s && !visibleKeyIds.has(id) ? [s] : []
+  })
+
+  const storySuggestions = useMemo(() => {
+    const exclude = new Set([...keyStories.map((s) => s.id), ...effectiveStoryIds])
+    return searchStories(union, storyQuery, exclude, MAX_SUGGESTIONS)
+  }, [union, storyQuery, keyStories, effectiveStoryIds])
+
+  const arenaNameById = useMemo(() => new Map(selected.map((p) => [p.arenaId, p.arenaName])), [selected])
 
   // Mirror selection back into the URL (replaceState — no history spam). The first run
-  // re-writes the same `?p=` it was initialized from, which is a harmless no-op.
+  // re-writes the same `?p=`/`?s=` it was initialized from, which is a harmless no-op; once
+  // all arena data is in, stale story ids fall out of the URL via effectiveStoryIds.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (ids.length > 0) params.set('p', encodeCompareParam(ids))
     else params.delete('p')
+    if (effectiveStoryIds.length > 0) params.set('s', encodeStoriesParam(effectiveStoryIds))
+    else params.delete('s')
     const qs = params.toString()
     window.history.replaceState(null, '', `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`)
-  }, [ids])
+  }, [ids, effectiveStoryIds])
 
-  const selected = useMemo(() => ids.map((id) => byId.get(id)).filter((p): p is CompareProduct => p !== undefined), [ids, byId])
+  function addStory(id: string) {
+    setStoryIds((prev) => {
+      const base = allStoriesReady ? prev.filter((x) => unionById.has(x)) : prev
+      return base.includes(id) || base.length >= MAX_COMPARE_STORIES ? base : [...base, id]
+    })
+    setStoryQuery('')
+  }
+
+  function removeStory(id: string) {
+    setStoryIds((prev) => prev.filter((x) => x !== id && (!allStoriesReady || unionById.has(x))))
+  }
 
   const suggestions = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -163,6 +336,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
           Your selection lives in the URL, so the comparison is a link you can share.
         </p>
       ) : (
+        <>
         <div className="overflow-x-auto rounded-2xl border border-zinc-800">
           <table className="w-full border-collapse text-sm">
             <thead>
@@ -237,9 +411,156 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                   </td>
                 ))}
               </tr>
+
+              {/* --- Story-level rows: key stories every selected arena shares --- */}
+              <tr>
+                <th
+                  colSpan={selected.length + 1}
+                  scope="colgroup"
+                  className="bg-zinc-900/40 px-3 py-2 text-left text-[10px] font-normal uppercase tracking-widest text-zinc-400"
+                >
+                  Key stories
+                </th>
+              </tr>
+              {anyStoryLoading ? (
+                [0, 1, 2].map((i) => (
+                  <tr key={`story-skeleton-${i}`}>
+                    <th scope="row" className="px-3 py-2 text-left">
+                      <span className="inline-block h-4 w-44 animate-pulse rounded bg-zinc-800" aria-hidden />
+                      <span className="sr-only">loading story data</span>
+                    </th>
+                    {selected.map((p) => (
+                      <td key={p.id} className="px-3 py-2">
+                        <span className="inline-block h-4 w-16 animate-pulse rounded bg-zinc-800" aria-hidden />
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : keyStories.length === 0 ? (
+                <tr>
+                  <td colSpan={selected.length + 1} className="px-3 py-3 text-xs text-zinc-500">
+                    {readyArenaEntries.length === 0
+                      ? 'couldn’t load story data'
+                      : 'no shared key stories across this selection'}
+                  </td>
+                </tr>
+              ) : (
+                <>
+                  {visibleKeyStories.map((story) => (
+                    <tr key={story.id}>
+                      <th
+                        scope="row"
+                        className="min-w-[200px] max-w-[280px] px-3 py-2 text-left text-xs font-normal text-zinc-400"
+                      >
+                        {stripPersonaPrefix(story.title)}
+                      </th>
+                      {selected.map((p) => (
+                        <td key={p.id} className="px-3 py-2">
+                          <StoryCellView cell={storyCell(arenaStates[p.arenaId], p.id, story.id)} product={p} storyId={story.id} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  {keyStories.length > DEFAULT_KEY_STORY_ROWS && (
+                    <tr>
+                      <td colSpan={selected.length + 1} className="px-3 py-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowAllKeyStories((v) => !v)}
+                          className="text-xs text-zinc-400 transition hover:text-emerald-300"
+                        >
+                          {showAllKeyStories
+                            ? 'Show fewer stories'
+                            : `Show all ${keyStories.length} shared stories`}
+                        </button>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )}
+
+              {/* --- User-added story rows (`?s=`) --- */}
+              {addedStories.length > 0 && (
+                <>
+                  <tr>
+                    <th
+                      colSpan={selected.length + 1}
+                      scope="colgroup"
+                      className="bg-zinc-900/40 px-3 py-2 text-left text-[10px] font-normal uppercase tracking-widest text-zinc-400"
+                    >
+                      Added stories
+                    </th>
+                  </tr>
+                  {addedStories.map((story) => (
+                    <tr key={story.id}>
+                      <th
+                        scope="row"
+                        className="min-w-[200px] max-w-[280px] px-3 py-2 text-left text-xs font-normal text-zinc-400"
+                      >
+                        <span className="flex items-start gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => removeStory(story.id)}
+                            aria-label={`Remove story "${stripPersonaPrefix(story.title)}" from comparison`}
+                            className="text-zinc-600 transition hover:text-red-400"
+                          >
+                            ×
+                          </button>
+                          <span>{stripPersonaPrefix(story.title)}</span>
+                        </span>
+                      </th>
+                      {selected.map((p) => (
+                        <td key={p.id} className="px-3 py-2">
+                          <StoryCellView cell={storyCell(arenaStates[p.arenaId], p.id, story.id)} product={p} storyId={story.id} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </>
+              )}
             </tbody>
           </table>
         </div>
+
+        {/* Add-story search: union of the selected products' arenas' stories, title substring. */}
+        <div className="relative max-w-md">
+          <input
+            value={storyQuery}
+            onChange={(e) => setStoryQuery(e.target.value)}
+            placeholder={
+              anyStoryLoading
+                ? 'Loading story data…'
+                : union.length === 0
+                  ? 'Story data unavailable'
+                  : effectiveStoryIds.length >= MAX_COMPARE_STORIES
+                    ? `Up to ${MAX_COMPARE_STORIES} added stories`
+                    : 'Add a story to compare…'
+            }
+            disabled={anyStoryLoading || union.length === 0 || effectiveStoryIds.length >= MAX_COMPARE_STORIES}
+            aria-label="Search stories to add to the comparison"
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none disabled:opacity-60"
+          />
+          {storySuggestions.length > 0 && (
+            <div className="absolute z-30 mt-1 w-full overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 shadow-2xl">
+              {storySuggestions.map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => addStory(s.id)}
+                  className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm text-zinc-300 transition hover:bg-emerald-400/10 hover:text-emerald-300"
+                >
+                  <span className="font-medium">{stripPersonaPrefix(s.title)}</span>
+                  {s.arenaIds.length < selectedArenaIds.length && (
+                    <span className="text-xs text-zinc-500">
+                      {s.arenaIds.map((id) => arenaNameById.get(id) ?? id).join(', ')} only — other arenas will show n/a
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        </>
       )}
 
       {crossArena && (
