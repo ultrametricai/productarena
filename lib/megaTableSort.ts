@@ -125,11 +125,18 @@ export function sortMegaRows(rows: MegaTableRow[], column: MegaTableColumn, dire
   return [...rows].sort((a, b) => compareNullableNumber(a[field], b[field], direction))
 }
 
-// Case-insensitive substring match over product name + vendor.
+// Case-insensitive substring match over product name, vendor, AND arena name/id — people type
+// "payments" or "banking" expecting the category's products, not just literal product names.
 export function filterMegaRowsByQuery(rows: MegaTableRow[], query: string): MegaTableRow[] {
   const q = query.trim().toLowerCase()
   if (q === '') return rows
-  return rows.filter((r) => r.name.toLowerCase().includes(q) || r.vendor.toLowerCase().includes(q))
+  return rows.filter(
+    (r) =>
+      r.name.toLowerCase().includes(q)
+      || r.vendor.toLowerCase().includes(q)
+      || r.arenaName.toLowerCase().includes(q)
+      || r.arenaId.includes(q),
+  )
 }
 
 // Arena dropdown filter — `'all'` (the default) means every arena.
