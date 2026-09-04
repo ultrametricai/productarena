@@ -26,9 +26,20 @@ import { judgePrompt, RawVerdictSchema, SYSTEM } from '../stages/judge'
 
 const CLOSE_RACE_THRESHOLD = 3.0
 
-async function judgeOnce(productName: string, story: Story, evidence: Evidence[]) {
-  const raw = await llmJson({ schema: RawVerdictSchema, system: SYSTEM, prompt: judgePrompt(productName, story, evidence) })
-  return raw.verdict
+// One resample may still fail transiently (overload, non-JSON prose) even after llmJson's own
+// retries — a dropped sample is fine for a 3-sample agreement estimate, a crashed fleet pass is
+// not, so retry twice then return null and let the caller count only the samples that landed.
+async function judgeOnce(productName: string, story: Story, evidence: Evidence[]): Promise<Verdict['verdict'] | null> {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const raw = await llmJson({ schema: RawVerdictSchema, system: SYSTEM, prompt: judgePrompt(productName, story, evidence) })
+      return raw.verdict
+    } catch (err) {
+      console.warn(`uncertainty: sample failed for ${productName}:${story.id} (attempt ${attempt + 1}): ${err instanceof Error ? err.message.slice(0, 120) : err}`)
+      await new Promise((r) => setTimeout(r, 15_000 * (attempt + 1)))
+    }
+  }
+  return null
 }
 
 async function main(): Promise<void> {
@@ -76,6 +87,10 @@ async function main(): Promise<void> {
         }
         const extra1 = await judgeOnce(product.name, story, evidence)
         const extra2 = await judgeOnce(product.name, story, evidence)
+        if (extra1 === null || extra2 === null) {
+          console.warn(`uncertainty-pass: dropped ${cat.id}/${productId}:${story.id} — a resample failed persistently`)
+          continue
+        }
         const judgments: [Verdict['verdict'], Verdict['verdict'], Verdict['verdict']] = [cached.verdict, extra1, extra2]
         const agreement = agreementOf(judgments)
         if (agreement !== '3/3') splitCount++
