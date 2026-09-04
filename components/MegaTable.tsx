@@ -4,6 +4,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 import AiEraBadge from '@/components/AiEraBadge'
+import ConfidenceChip from '@/components/ConfidenceChip'
 import MomentumChip from '@/components/MomentumChip'
 import TableControls from '@/components/TableControls'
 import OssPill from '@/components/OssPill'
@@ -195,18 +196,21 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     {row.type === 'oss' ? <OssPill /> : <span className="text-zinc-600">—</span>}
                   </td>
                   <td className="px-2 py-2">
-                    <AiEraBadge
-                      value={row.initScore}
-                      size="sm"
-                      href="/methodology#arena-score"
-                      components={{
-                        agentReady: row.agentReady,
-                        apiQuality: row.apiQuality,
-                        openness: null,
-                        agenticApp: row.agenticApp,
-                        automation: null,
-                      }}
-                    />
+                    <div className="flex items-center gap-1.5">
+                      <AiEraBadge
+                        value={row.initScore}
+                        size="sm"
+                        href="/methodology#arena-score"
+                        components={{
+                          agentReady: row.agentReady,
+                          apiQuality: row.apiQuality,
+                          openness: null,
+                          agenticApp: row.agenticApp,
+                          automation: null,
+                        }}
+                      />
+                      {row.confidence && <ConfidenceChip confidence={row.confidence} />}
+                    </div>
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
                     {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}

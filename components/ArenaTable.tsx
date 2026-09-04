@@ -7,12 +7,14 @@ import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AiEraBadge from '@/components/AiEraBadge'
 import { BusinessModelChip } from '@/components/BusinessModel'
 import ClaimsChip from '@/components/ClaimsChip'
+import ConfidenceChip from '@/components/ConfidenceChip'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
 import TableControls from '@/components/TableControls'
 import VerificationMixChip from '@/components/VerificationMixChip'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
+import { confidenceFor } from '@/lib/confidence'
 import { battleSlug, isGroupUntested, type CategoryData } from '@/lib/data-helpers'
 import {
   type ArenaTableColumn,
@@ -108,6 +110,11 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
   const [query, setQuery] = useState('')
 
   const productById = useMemo(() => new Map(data.products.map((p) => [p.id, p])), [data])
+  // Confidence grades are pure over `data` — compute once per product, not per render pass.
+  const confidenceOf = useMemo(
+    () => new Map(data.products.map((p) => [p.id, confidenceFor(data, p.id)])),
+    [data],
+  )
   const allRows = useMemo(() => buildRows(data), [data])
   const filtered = useMemo(() => filterArenaRows(allRows, query), [allRows, query])
   const sorted = useMemo(() => sortArenaRows(filtered, column, direction), [filtered, column, direction])
@@ -234,18 +241,21 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                     )}
                   </td>
                   <td className="px-3 py-2">
-                    <AiEraBadge
-                      value={row.initScore}
-                      size="sm"
-                      href="/methodology#arena-score"
-                      components={{
-                        agentReady: row.agentReady,
-                        apiQuality: row.apiQuality,
-                        openness: row.openness,
-                        agenticApp: row.agenticApp,
-                        automation: row.automation,
-                      }}
-                    />
+                    <div className="flex items-center gap-1.5">
+                      <AiEraBadge
+                        value={row.initScore}
+                        size="sm"
+                        href="/methodology#arena-score"
+                        components={{
+                          agentReady: row.agentReady,
+                          apiQuality: row.apiQuality,
+                          openness: row.openness,
+                          agenticApp: row.agenticApp,
+                          automation: row.automation,
+                        }}
+                      />
+                      <ConfidenceChip confidence={confidenceOf.get(row.productId)!} />
+                    </div>
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
                     {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}

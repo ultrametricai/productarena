@@ -47,6 +47,10 @@ export interface MegaTableRow {
   // (not `| null`, unlike popularity) so existing MegaTableRow fixtures/callers built before this
   // field existed stay valid without every one needing an update.
   ycBatch?: string
+  // Score-confidence summary (see lib/confidence.ts): grade + the fractions behind it, rendered
+  // as the small chip next to the Arena Score badge. Optional for the same fixture-compat
+  // reason as ycBatch.
+  confidence?: import('./confidence').ProductConfidence
   access: { MCP: MegaTableAccessGlyph; CLI: MegaTableAccessGlyph; API: MegaTableAccessGlyph }
 }
 
