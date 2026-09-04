@@ -28,6 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const generatedAt = new Date(data.rankings.generatedAt)
     entries.push({ url: `${SITE_URL}/arena/${data.category.id}`, lastModified: generatedAt })
     entries.push({ url: `${SITE_URL}/arena/${data.category.id}/llms.md`, lastModified: generatedAt })
+    entries.push({ url: `${SITE_URL}/arena/${data.category.id}/checklist`, lastModified: generatedAt })
 
     for (const product of data.products) {
       entries.push({ url: `${SITE_URL}/arena/${data.category.id}/product/${product.id}`, lastModified: generatedAt })
