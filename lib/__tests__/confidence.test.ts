@@ -94,6 +94,7 @@ describe('confidenceFor', () => {
       popularity: {},
       claims: {},
       uncertainty: [],
+  vendorResponses: [],
     }
     const c = confidenceFor(data, 'p')
     expect(c.applicable).toBe(2)
