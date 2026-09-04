@@ -1,0 +1,106 @@
+{
+  "generatedAt": "2026-09-04T22:26:52.909Z",
+  "proofs": [
+    {
+      "probeId": "cli-help",
+      "productId": "chroma",
+      "storyIds": [
+        "agentic-official-cli"
+      ],
+      "command": "chroma --help",
+      "recordedAt": "2026-09-04T22:25:20.883Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "chroma/cli-help.txt"
+    },
+    {
+      "probeId": "local-server-provision-roundtrip",
+      "productId": "chroma",
+      "storyIds": [
+        "embedded-local-mode",
+        "agentic-public-api"
+      ],
+      "command": "chroma run --path /tmp/pa-chroma-probe --port 8765 & curl -X POST localhost:8765/api/v2/tenants/default_tenant/databases/default_database/collections -d '{\"name\":\"pa_probe\"}' && curl localhost:8765/api/v2/tenants/default_tenant/databases/default_database/collections",
+      "recordedAt": "2026-09-04T22:25:21.995Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "chroma/local-server-provision-roundtrip.txt"
+    },
+    {
+      "probeId": "mcp-stdio-handshake",
+      "productId": "chroma",
+      "storyIds": [
+        "agentic-mcp-server"
+      ],
+      "command": "echo '<jsonrpc initialize>' | uvx chroma-mcp --client-type ephemeral",
+      "recordedAt": "2026-09-04T22:26:52.000Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "chroma/mcp-stdio-handshake.txt"
+    },
+    {
+      "probeId": "milvus-lite-provision-roundtrip",
+      "productId": "milvus",
+      "storyIds": [
+        "embedded-local-mode",
+        "agentic-sdks"
+      ],
+      "command": "python3 -c 'from pymilvus import MilvusClient; c = MilvusClient(\"/tmp/pa-milvus-probe.db\"); c.create_collection(\"pa_probe\", dimension=8); print(\"PA_PROBE_OK\", c.list_collections())'",
+      "recordedAt": "2026-09-04T22:26:52.904Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "milvus/milvus-lite-provision-roundtrip.txt"
+    },
+    {
+      "probeId": "mcp-remote-handshake",
+      "productId": "pinecone",
+      "storyIds": [
+        "agentic-mcp-server",
+        "agentic-agent-docs"
+      ],
+      "command": "curl -si -X POST https://docs.pinecone.io/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'",
+      "recordedAt": "2026-09-04T22:24:58.864Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "pinecone/mcp-remote-handshake.txt"
+    },
+    {
+      "probeId": "docker-provision-roundtrip",
+      "productId": "qdrant",
+      "storyIds": [
+        "openness-self-host",
+        "agentic-public-api"
+      ],
+      "command": "docker run -d --name pa-qdrant-probe -p 16333:6333 qdrant/qdrant && curl -X PUT localhost:16333/collections/pa_probe -d '{\"vectors\":{\"size\":8,\"distance\":\"Cosine\"}}' && curl localhost:16333/collections",
+      "recordedAt": "2026-09-04T22:25:14.438Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "qdrant/docker-provision-roundtrip.txt"
+    },
+    {
+      "probeId": "mcp-stdio-handshake",
+      "productId": "qdrant",
+      "storyIds": [
+        "agentic-mcp-server"
+      ],
+      "command": "echo '<jsonrpc initialize>' | QDRANT_LOCAL_PATH=/tmp/pa-qdrant-mcp COLLECTION_NAME=pa-probe uvx mcp-server-qdrant",
+      "recordedAt": "2026-09-04T22:25:20.594Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "qdrant/mcp-stdio-handshake.txt"
+    },
+    {
+      "probeId": "docker-provision-roundtrip",
+      "productId": "weaviate",
+      "storyIds": [
+        "openness-self-host",
+        "agentic-public-api"
+      ],
+      "command": "docker run -d --name pa-weaviate-probe -p 18080:8080 -e AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true cr.weaviate.io/semitechnologies/weaviate:latest && curl -X POST localhost:18080/v1/schema -d '{\"class\":\"PaProbe\",\"vectorizer\":\"none\"}' && curl localhost:18080/v1/schema",
+      "recordedAt": "2026-09-04T22:25:12.079Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "weaviate/docker-provision-roundtrip.txt"
+    }
+  ]
+}

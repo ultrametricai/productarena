@@ -113,6 +113,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'llm-evals-observability': ['trace', 'tracing', 'span', 'eval', 'llm\\b', 'prompt', 'dataset', 'experiment', 'scorer', 'judge', 'annotation', 'token', 'guardrail', 'playground', 'model', 'latency', 'observab'],
   'ai-search-apis': ['search', 'query', 'result', 'index', 'snippet', 'citation', 'crawl', 'extract', 'news', 'domain', 'web\\b', 'page', 'answer', 'rag\\b', 'serp', 'retrieval', 'freshness'],
   terminals: ['terminal', 'shell', 'scrollback', 'pane', 'tab\\b', 'multiplex', 'tmux', 'prompt', 'command', 'ssh', 'rendering', 'gpu', 'font', 'ligature', 'color scheme', 'theme', 'dotfile', 'quake', 'graphics protocol', 'terminfo', 'kitten'],
+  'package-managers': ['package', 'dependenc', 'lockfile', 'install', 'registr', 'manifest', 'workspace', 'monorepo', 'toolchain', 'runtime', 'version', 'pin\\b', 'binar', 'cache', 'formula', 'tap\\b', 'overlay', 'mirror', 'vulnerab', 'supply.chain', 'node_modules', 'bootstrap'],
+  'vector-databases': ['vector', 'embedding', 'index', 'collection', 'similarity', 'ann\\b', 'hnsw', 'recall', 'rerank', 'hybrid', 'sparse', 'dense', 'metadata', 'namespace', 'tenant', 'shard', 'replica', 'quantiz', 'upsert', 'rag\\b', 'semantic', 'latency', 'serverless'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {
