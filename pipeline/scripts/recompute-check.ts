@@ -22,6 +22,7 @@ const CATEGORIES = [
   'project-management',
   'software-factory',
   'startup-banking',
+  'team-chat',
   'web-scraping',
 ]
 
