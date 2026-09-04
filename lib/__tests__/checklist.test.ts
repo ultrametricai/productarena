@@ -36,6 +36,7 @@ const data: CategoryData = {
   popularity: {},
   claims: {},
   uncertainty: [],
+  vendorResponses: [],
 }
 
 describe('priorityForWeight', () => {
