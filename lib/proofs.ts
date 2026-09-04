@@ -58,6 +58,26 @@ export function proofsForProduct(categoryId: string, productId: string, dir: str
   return loadProofIndex(categoryId, dir).filter((p) => p.productId === productId)
 }
 
+// Every recorded proof site-wide, grouped by category — the /proofs theater's data source
+// (app/proofs/page.tsx). Walks data/*/proofs/index.json directly off the filesystem rather
+// than going through loadAll(): proofs are sidecar files with their own optional-file
+// contract, so a category needs no rankings/verdicts to have its recordings listed. Sorted
+// by categoryId for a stable build output; categories without a single proof are omitted.
+export interface CategoryProofs {
+  categoryId: string
+  proofs: ProofIndexEntry[]
+}
+
+export function collectSiteProofs(dir: string = DEFAULT_DIR()): CategoryProofs[] {
+  if (!fs.existsSync(dir)) return []
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => ({ categoryId: d.name, proofs: loadProofIndex(d.name, dir) }))
+    .filter((g) => g.proofs.length > 0)
+    .sort((a, b) => a.categoryId.localeCompare(b.categoryId))
+}
+
 // Terminal transcripts are read server-side and rendered inline; video files are served as
 // static assets from the /data mirror instead (see components/ProofBlock.tsx). Missing or
 // non-terminal entries resolve to null, never an error — a stale index must not 500 a page.

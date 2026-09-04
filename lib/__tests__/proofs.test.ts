@@ -3,6 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import {
+  collectSiteProofs,
   containsForbiddenSecretPattern,
   loadProofIndex,
   proofsForProduct,
@@ -58,6 +59,25 @@ describe('loadProofIndex / proofsForProduct', () => {
     const dir = fixtureDir()
     writeIndex(dir, 'ai-coding', [{ ...ENTRY, kind: 'hologram' } as unknown as ProofIndexEntry])
     expect(() => loadProofIndex('ai-coding', dir)).toThrow()
+  })
+})
+
+describe('collectSiteProofs', () => {
+  it('walks every category with a proofs index, sorted, omitting empty ones', () => {
+    const dir = fixtureDir()
+    const other = { ...ENTRY, probeId: 'y', productId: 'stripe', file: 'stripe/y.txt' }
+    writeIndex(dir, 'payments', [other])
+    writeIndex(dir, 'ai-coding', [ENTRY])
+    writeIndex(dir, 'crm', []) // index exists but has no entries
+    fs.mkdirSync(path.join(dir, 'accounting'), { recursive: true }) // no proofs dir at all
+    expect(collectSiteProofs(dir)).toEqual([
+      { categoryId: 'ai-coding', proofs: [ENTRY] },
+      { categoryId: 'payments', proofs: [other] },
+    ])
+  })
+
+  it('returns [] for a missing data dir', () => {
+    expect(collectSiteProofs(path.join(fixtureDir(), 'nope'))).toEqual([])
   })
 })
 
