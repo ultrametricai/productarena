@@ -8,6 +8,7 @@ import {
   OPENNESS_STORIES,
   PRIVACY_STORIES,
 } from '@/pipeline/agentic-stories'
+import { PROMPT_VERSION } from '@/pipeline/stages/judge'
 import { assembleTaxonomy } from '@/pipeline/stages/normalize'
 
 const s = (over: Partial<Story>): Story => ({
@@ -112,7 +113,7 @@ describe('assembleTaxonomy', () => {
     const result = assembleTaxonomy(llmStories, recordedAt)
 
     const authored = result.find((r) => r.id === 'story-a')!
-    expect(authored.origin).toEqual({ kind: 'normalized', promptVersion: 'v2', recordedAt })
+    expect(authored.origin).toEqual({ kind: 'normalized', promptVersion: PROMPT_VERSION, recordedAt })
 
     const canonical = result.find((r) => r.id === 'agentic-public-api')!
     expect(canonical.origin).toEqual({ kind: 'canonical', recordedAt })

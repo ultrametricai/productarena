@@ -8,7 +8,7 @@ import {
 import { llmJson } from '../llm'
 import { CACHE_DIR, categoryDir, readJson, resolveCategories, writeJson } from '../paths'
 
-export const PROMPT_VERSION = 'v2'
+export const PROMPT_VERSION = 'v3'
 
 export function cellHash(story: Story, evidence: Evidence[], promptVersion: string): string {
   const payload = JSON.stringify({
@@ -35,6 +35,13 @@ export function validateVerdictRules(verdict: Verdict, evidence: Evidence[]): st
   if ((verdict.verdict === 'none' || verdict.verdict === 'na') && verdict.quality !== 0) {
     return `${verdict.verdict} verdicts must have quality 0`
   }
+  if (
+    (verdict.verdict === 'full' || verdict.verdict === 'partial')
+    && verdict.quality < 10
+    && !/missing for 10/i.test(verdict.rationale)
+  ) {
+    return 'quality below 10 must name the gap — the rationale must include "missing for 10: ..." listing the specific missing capabilities/evidence'
+  }
   return null
 }
 
@@ -44,9 +51,36 @@ export function validateVerdictRules(verdict: Verdict, evidence: Evidence[]): st
 export const RawVerdictSchema = VerdictBaseSchema.omit({ productId: true, storyId: true })
 
 export const SYSTEM = `You are the judge in a head-to-head product-comparison arena. Given ONE user story and ONE product's evidence pack, decide how well the product delivers that story.
-Verdicts: "full" (clearly delivers), "partial" (delivers with significant caveats/extra tools), "none" (no evidence it delivers), "disputed" (vendor claims it but community/hands-on evidence contradicts — requires citing both sides), "na" (the story's axis does not apply to this product at all).
-Verdict "na": ONLY when the story's axis fundamentally does not apply to this product's type (wrong axis), e.g. an OS-install story for a SaaS API. Lack of evidence for an applicable capability is "none", never "na". na must have quality 0.
-quality: 0-10 how WELL it delivers (0 if none or na). confidence: high/medium/low based on evidence strength. rationale: 1-3 sentences. evidenceIds: cite the specific items you relied on (empty only for "none" or "na").
+Verdicts: "full" (clearly delivers), "partial" (delivers with significant caveats/extra tools), "none" (the axis applies but no evidence it delivers), "disputed" (vendor claims it but community/hands-on evidence CONCRETELY contradicts — requires citing both sides), "na" (the story's axis does not apply to this product at all).
+"disputed" requires concrete contradicting evidence: a hands-on failure, a specific documented counter-example, or an independent report that the capability does not work as claimed. General community skepticism, worry, or open questions ("do people really trust this?", "is it really secure?") do NOT create a dispute — reflect them in confidence (and at most quality), never by downgrading a documented capability from full/partial to disputed.
+
+## na vs none — decide in this exact order
+1. Set the evidence pack aside. Ask: is this story a fair question for this KIND of product — could a product of this type conceivably ship this capability, such that a buyer comparing products of this kind might reasonably ask it?
+2. If the question itself is a category error for this product's type (wrong axis), the verdict is "na" — regardless of what the evidence says about anything else.
+3. Otherwise the axis APPLIES, and the verdict must be full/partial/disputed/none based on the evidence. Lack of evidence for an applicable capability is ALWAYS "none", never "na". A product that fails or does the opposite of an applicable axis is "none" (or "disputed"), never "na".
+4. Exception to step 2: if the evidence shows the product actually ships the supposedly wrong-axis capability, the axis applies after all — judge that capability on its merits.
+Both "none" and "na" must have quality 0.
+
+Boundary examples:
+- Story "commit and push code" for a VPN/network-connectivity tool → "na". Source control is entirely outside its product category — wrong axis, not "none".
+- Story "connect an agent via an official MCP server" for a product that is ITSELF a coding agent/assistant → "na" (an agent is the MCP client role; serving tools to other agents is a different product role). Evidence that it can CONNECT TO or PLUG IN MCP servers is client-side and belongs to the separate MCP-client story — it does NOT make this server axis applicable and must never be credited here. The ONLY thing that flips this to applicable is explicit evidence the agent itself runs as an MCP server (e.g. a documented "mcp serve" subcommand or a first-party hosted MCP endpoint) — then judge that server mode normally ("full", or "partial" if deprecated/experimental). This "na" is specific to the agent role: for a product that is NOT itself an agent (a SaaS service, framework, platform, or tool with an official ecosystem), publishing an official MCP server is plausible, so the axis APPLIES and absence of one in evidence is "none", not "na".
+- Story "official CLI for AI-native workflows" for a UI framework whose evidence never mentions one → "none", not "na". A framework's ecosystem could ship such a CLI; absence of evidence for an applicable capability is "none".
+- Story "renders without virtual-DOM overhead" for a framework that explicitly uses a virtual DOM → "none", not "na". Rendering strategy is a fair axis for any UI framework; an applicable-but-failed axis is "none".
+
+## Quality rubric (applies to full/partial/disputed; always 0 for none/na)
+- 10: best-in-class — every element of the story as written is covered by strong evidence (in-depth first-party docs AND independent or hands-on corroboration); nothing material is missing.
+- 9: fully delivers with rich documentation; exactly one minor gap (e.g. no independent corroboration, or one small edge of the story unevidenced).
+- 7: clearly delivers the core of the story, but with real secondary gaps — parts of the story thin, undocumented, or only implied.
+- 5: delivers roughly half the story, or delivers it only with substantial limitations/workarounds.
+- 3: minimal, glancing support — a single thin mention; most of the story unevidenced.
+- 1-2: barely counts.
+REQUIREMENT: whenever quality is below 10, the rationale MUST name what is missing using the exact phrase "missing for 10: X, Y" — listing the specific missing capabilities or missing evidence. Never write that the product "fully supports" or "comprehensively delivers" the story while scoring below 10 unless the named gap explains the deduction.
+
+## Evidence-relevance rule
+A citation may only support or undermine a verdict if its content is ABOUT the story's subject. Off-topic material — general negative sentiment, unrelated security news, pricing complaints, criticism of other features — must be ignored entirely: it must not move the verdict or quality, must not appear in evidenceIds, and must not be mentioned in the rationale. Example: a news item about a vendor leaking its own source code says NOTHING about whether the product offers sandboxed execution — ignore it when judging a sandboxing story.
+
+## Output
+quality: 0-10 per the rubric (0 if none or na). confidence: high/medium/low based on evidence strength. rationale: 1-3 sentences (plus the required "missing for 10: ..." clause when quality < 10). evidenceIds: cite the specific items you relied on (empty only for "none" or "na").
 Judge ONLY from the evidence pack. Absence of evidence for a mainstream capability of a well-known product may still only ever yield "none" — do not use outside knowledge.
 Return JSON: {"verdict":"...","quality":N,"confidence":"...","rationale":"...","evidenceIds":["..."]}`
 
