@@ -8,7 +8,7 @@ const ev = (id: string, tier: Evidence['tier']): Evidence => ({
 })
 const verdict = (over: Partial<Verdict>): Verdict => ({
   productId: 'p', storyId: 's1', verdict: 'full', quality: 8, confidence: 'high',
-  rationale: 'r', evidenceIds: ['e1'], ...over,
+  rationale: 'r. Missing for 10: independent corroboration.', evidenceIds: ['e1'], ...over,
 })
 
 describe('cellHash', () => {
@@ -46,5 +46,15 @@ describe('validateVerdictRules', () => {
   it('forces quality 0 for none', () => {
     expect(validateVerdictRules(verdict({ verdict: 'none', quality: 3, evidenceIds: [] }), evidence)).toMatch(/quality 0/)
     expect(validateVerdictRules(verdict({ verdict: 'none', quality: 0, evidenceIds: [] }), evidence)).toBeNull()
+  })
+  it('requires a "missing for 10" clause when a full/partial quality is below 10', () => {
+    expect(validateVerdictRules(verdict({ quality: 8, rationale: 'fully supports the story' }), evidence)).toMatch(/missing for 10/)
+    expect(validateVerdictRules(verdict({ verdict: 'partial', quality: 5, rationale: 'delivers with caveats' }), evidence)).toMatch(/missing for 10/)
+    // case-insensitive match on the required phrase
+    expect(validateVerdictRules(verdict({ quality: 8, rationale: 'solid docs. missing for 10: probe evidence.' }), evidence)).toBeNull()
+  })
+  it('does not require the clause at quality 10 or for none/na', () => {
+    expect(validateVerdictRules(verdict({ quality: 10, rationale: 'flawless, corroborated' }), evidence)).toBeNull()
+    expect(validateVerdictRules(verdict({ verdict: 'na', quality: 0, rationale: 'wrong axis', evidenceIds: [] }), evidence)).toBeNull()
   })
 })
