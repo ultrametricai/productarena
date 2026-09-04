@@ -107,10 +107,10 @@ describe('filterMegaRowsByArena', () => {
 })
 
 describe('rankMegaRows', () => {
-  it('assigns rank 1 to the global AGENTREADYNESS leader regardless of sort/filter applied elsewhere', () => {
+  it('assigns rank 1 to the global AGENTREADYNESS leader, keyed by arena:product (dual-arena products collide on bare ids)', () => {
     const ranks = rankMegaRows(rows)
-    expect(ranks.get('b')).toBe(1)
-    expect(ranks.get('c')).toBe(2)
-    expect(ranks.get('a')).toBe(3)
+    expect(ranks.get('zeta:b')).toBe(1)
+    expect(ranks.get('zeta:c')).toBe(2)
+    expect(ranks.get('alpha-arena:a')).toBe(3)
   })
 })
