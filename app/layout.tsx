@@ -39,6 +39,8 @@ const NAV_LABELS: Record<string, string> = {
   "terminals": "Terminals",
   "legal-ops": "Legal",
   "robotics-platforms": "Robotics",
+  "package-managers": "Pkg managers",
+  "vector-databases": "Vector DBs",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

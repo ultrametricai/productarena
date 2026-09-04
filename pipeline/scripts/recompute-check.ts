@@ -29,6 +29,7 @@ const CATEGORIES = [
   'local-llm-runtimes',
   'mobile-dev',
   'mobile-payments',
+  'package-managers',
   'payments',
   'model-gateways',
   'payroll',
@@ -41,6 +42,7 @@ const CATEGORIES = [
   'startup-banking',
   'team-chat',
   'terminals',
+  'vector-databases',
   'vibe-coding',
   'web-scraping',
 ]
