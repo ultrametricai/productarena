@@ -248,10 +248,10 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                     />
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
-                    {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : row.agentReady.toFixed(0)}
+                    {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
-                    {row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : row.agenticApp.toFixed(0)}
+                    {row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 md:table-cell">
                     {isGroupUntested(data, row.productId, 'api-quality') ? (
@@ -261,14 +261,14 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                     ) : row.apiQuality === null ? (
                       <span className="text-zinc-500">n/a</span>
                     ) : (
-                      row.apiQuality.toFixed(0)
+                      <>{row.apiQuality.toFixed(0)}<span className="text-zinc-600">/100</span></>
                     )}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
-                    {row.openness === null ? <span className="text-zinc-500">n/a</span> : row.openness.toFixed(0)}
+                    {row.openness === null ? <span className="text-zinc-500">n/a</span> : <>{row.openness.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
-                    {row.automation === null ? <span className="text-zinc-500">n/a</span> : row.automation.toFixed(0)}
+                    {row.automation === null ? <span className="text-zinc-500">n/a</span> : <>{row.automation.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
                     <MomentumChip popularity={data.popularity[row.productId]} compact />
