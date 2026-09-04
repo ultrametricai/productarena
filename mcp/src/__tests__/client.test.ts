@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createClient, DEFAULT_BASE_URL, resolveBaseUrl } from '../client'
+import { CACHE_TTL_MS, createClient, DEFAULT_BASE_URL, resolveBaseUrl } from '../client'
 
 describe('resolveBaseUrl', () => {
   const original = process.env.PA_BASE_URL
@@ -29,6 +29,7 @@ describe('createClient', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
+    vi.useRealTimers()
   })
 
   it('fetches baseUrl + path and parses JSON', async () => {
@@ -43,5 +44,35 @@ describe('createClient', () => {
     fetchMock.mockResolvedValue({ ok: false, status: 404, json: async () => ({}) })
     const client = createClient('https://example.test')
     await expect(client.fetchJson('/data/missing.json')).rejects.toThrow(/HTTP 404/)
+  })
+
+  it('wraps network failures in a readable error', async () => {
+    fetchMock.mockRejectedValue(new TypeError('fetch failed'))
+    const client = createClient('https://example.test')
+    await expect(client.fetchJson('/data/categories.json')).rejects.toThrow(/GET .* failed: fetch failed/)
+  })
+
+  it('caches successful responses for the TTL, then refetches', async () => {
+    vi.useFakeTimers()
+    fetchMock.mockResolvedValue({ ok: true, json: async () => ({ n: 1 }) })
+    const client = createClient('https://example.test')
+
+    await client.fetchJson('/data/categories.json')
+    await client.fetchJson('/data/categories.json')
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+
+    vi.advanceTimersByTime(CACHE_TTL_MS + 1)
+    await client.fetchJson('/data/categories.json')
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not cache failures', async () => {
+    fetchMock.mockResolvedValueOnce({ ok: false, status: 500, json: async () => ({}) })
+    fetchMock.mockResolvedValueOnce({ ok: true, json: async () => ({ recovered: true }) })
+    const client = createClient('https://example.test')
+
+    await expect(client.fetchJson('/data/x.json')).rejects.toThrow(/HTTP 500/)
+    await expect(client.fetchJson('/data/x.json')).resolves.toEqual({ recovered: true })
+    expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 })

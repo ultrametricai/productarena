@@ -61,6 +61,13 @@ ${leadingBattleLinks}
 - Per-category JSON (replace \`{category}\` with an id from categories.json above): \`/data/{category}/products.json\`, \`/data/{category}/stories.json\`, \`/data/{category}/verdicts.json\`, \`/data/{category}/rankings.json\`, \`/data/{category}/evidence/{product}.json\`.
 - [OpenAPI 3.1 spec](${SITE}/openapi.json): machine-readable schema for every endpoint above.
 
+## MCP (query the rankings as tools)
+
+Both servers expose the same eight tools: list_arenas, get_rankings, get_product, get_verdict, search_products, compare, get_stacks, top_products. Setup snippets: [${SITE}/mcp](${SITE}/mcp).
+
+- Remote endpoint (streamable HTTP, keyless, rate-limited): POST JSON-RPC to \`${SITE}/mcp\` — e.g. \`claude mcp add --transport http productarena ${SITE}/mcp\`.
+- npm package (stdio, runs locally): \`productarena-mcp\` — e.g. \`claude mcp add productarena -- npx -y productarena-mcp\`.
+
 ## Per-product deep dives (markdown)
 
 Every product also has an \`llms.md\` deep-dive with all of its verdicts, rationale, and proof URLs: \`/arena/{category}/product/{productId}/llms.md\` (see a category's own llms.md above for the exact product ids and links).
@@ -70,7 +77,7 @@ Every product also has an \`llms.md\` deep-dive with all of its verdicts, ration
 - [Methodology](${SITE}/methodology): evidence tiers, judging rules, scoring formula, Arena Score weights, story provenance, re-judge stability policy, bias disclosure.
 - [README](https://github.com/${REPO}/blob/main/README.md): full methodology writeup and data layout (source of truth; /methodology is a tighter summary of this).
 - [CONTRIBUTING](https://github.com/${REPO}/blob/main/CONTRIBUTING.md): how to contest a verdict or add evidence.
-- [MCP server](https://github.com/${REPO}/blob/main/mcp/README.md): a stdio MCP server exposing this same data as tools (list_arenas, get_rankings, get_product, get_battle, search_products, get_story_verdicts).
+- [MCP server docs](https://github.com/${REPO}/blob/main/mcp/README.md): full setup for the \`productarena-mcp\` stdio package and the remote endpoint (see the MCP section above).
 `
 
   return new Response(body, {
