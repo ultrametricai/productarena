@@ -146,16 +146,9 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
         ))}
       </div>
 
-      <p className="text-center">
-        <Link
-          href={`/arena/${data.category.id}#legend`}
-          className="text-xs text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300"
-        >
-          How to read this: legend →
-        </Link>
-      </p>
-
-      <BattleView data={data} battle={battle} />
+      {/* standalone={false}: the header + cards above already carry the names, business models
+          and agentic badges — BattleView contributes only the verdict line and judged rounds. */}
+      <BattleView data={data} battle={battle} standalone={false} />
     </div>
   )
 }

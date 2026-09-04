@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import AgenticBadge from '@/components/AgenticBadge'
 import { BusinessModelLine } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
@@ -10,7 +9,20 @@ import { strongestEvidence, verificationLevel } from '@/lib/verification'
 
 type Round = BattleRecord['rounds'][number]
 
-export default function BattleView({ data, battle }: { data: CategoryData; battle: BattleRecord }) {
+// `standalone` (default) renders the full header (h1, business models, agenticness strip) for
+// the bare /arena/{cat}/battle/{slug} page. The richer /vs/{slug} page passes false: its own
+// header + product cards already carry the names, business models, and agentic badges, so
+// rendering them here again would duplicate every one of them — only the verdict line and the
+// judged rounds are unique to this component there.
+export default function BattleView({
+  data,
+  battle,
+  standalone = true,
+}: {
+  data: CategoryData
+  battle: BattleRecord
+  standalone?: boolean
+}) {
   const productById = new Map(data.products.map((p) => [p.id, p]))
   const storyById = new Map(data.stories.map((s) => [s.id, s]))
   const entryById = new Map(data.rankings.leaderboard.map((e) => [e.productId, e]))
@@ -97,41 +109,39 @@ export default function BattleView({ data, battle }: { data: CategoryData; battl
   return (
     <div className="space-y-8">
       <div className="text-center">
-        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">
-          {a.name} <span className="text-zinc-400">vs</span> {b.name}
-        </h1>
-        <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-400">
-          <BusinessModelLine product={a} />
-          <span className="text-zinc-700">·</span>
-          <BusinessModelLine product={b} />
-        </div>
-        <p className="mt-1">
-          <Link
-            href={`/arena/${data.category.id}#legend`}
-            className="text-xs text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300"
-          >
-            How to read this: legend →
-          </Link>
-        </p>
+        {standalone && (
+          <>
+            <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">
+              {a.name} <span className="text-zinc-400">vs</span> {b.name}
+            </h1>
+            <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-400">
+              <BusinessModelLine product={a} />
+              <span className="text-zinc-700">·</span>
+              <BusinessModelLine product={b} />
+            </div>
+          </>
+        )}
         <p className="mt-2 text-emerald-300">
           {winnerName ? `${winnerName} wins` : 'Draw'} · {battle.record.aWins}–{battle.record.bWins}
           {battle.record.draws > 0 ? ` (${battle.record.draws} drawn)` : ''}
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl border border-zinc-800 p-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-zinc-400">{a.name}</span>
-          <AgenticBadge kind="agent-ready" value={aEntry?.agentReady ?? null} />
-          <AgenticBadge kind="agentic-app" value={aEntry?.agenticApp ?? null} />
+      {standalone && (
+        <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl border border-zinc-800 p-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-zinc-400">{a.name}</span>
+            <AgenticBadge kind="agent-ready" value={aEntry?.agentReady ?? null} />
+            <AgenticBadge kind="agentic-app" value={aEntry?.agenticApp ?? null} />
+          </div>
+          <span className="text-xs uppercase tracking-widest text-zinc-400">Agenticness</span>
+          <div className="flex items-center gap-2">
+            <AgenticBadge kind="agent-ready" value={bEntry?.agentReady ?? null} />
+            <AgenticBadge kind="agentic-app" value={bEntry?.agenticApp ?? null} />
+            <span className="text-sm text-zinc-400">{b.name}</span>
+          </div>
         </div>
-        <span className="text-xs uppercase tracking-widest text-zinc-400">Agenticness</span>
-        <div className="flex items-center gap-2">
-          <AgenticBadge kind="agent-ready" value={bEntry?.agentReady ?? null} />
-          <AgenticBadge kind="agentic-app" value={bEntry?.agenticApp ?? null} />
-          <span className="text-sm text-zinc-400">{b.name}</span>
-        </div>
-      </div>
+      )}
 
       <div className="space-y-8">
         {byTheme.map(([theme, rounds]) => {

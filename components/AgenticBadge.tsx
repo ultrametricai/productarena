@@ -29,29 +29,35 @@ const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
 // color family so the pair always reads as a matched set.
 // Since v2.4 (the Arena Score), these badges are secondary to AiEraBadge wherever both appear —
 // `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the Arena Score strip).
+// `showLabel={false}` drops the metric name from the pill (kept in the title + sr-only text) —
+// for table columns whose header already says AGENTREADYNESS/AGENTIC, where repeating the label
+// on every row says the same word N times.
 export default function AgenticBadge({
   kind,
   value,
   size = 'md',
+  showLabel = true,
 }: {
   kind: AgenticBadgeKind
   value: number | null
   size?: 'md' | 'sm'
+  showLabel?: boolean
 }) {
   const label = LABELS[kind]
   const palette = PALETTES[COLORS[kind]]
   const sizeClass = size === 'md' ? 'px-2 py-0.5 text-xs' : 'px-1.5 py-0 text-[10px]'
   if (value === null) {
     return (
-      <span className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
-        {label} n/a
+      <span title={label} className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
+        {showLabel ? `${label} n/a` : 'n/a'}
       </span>
     )
   }
   const style = value >= 66 ? palette.high : value >= 33 ? palette.mid : palette.low
   return (
-    <span className={`inline-flex w-fit items-center gap-1 rounded-full font-medium ring-1 ${style} ${sizeClass}`}>
-      {label} <span className="font-mono tabular-nums">{value.toFixed(0)}</span>
+    <span title={label} className={`inline-flex w-fit items-center gap-1 rounded-full font-medium ring-1 ${style} ${sizeClass}`}>
+      {showLabel ? label : <span className="sr-only">{label}</span>}
+      <span className="font-mono tabular-nums">{value.toFixed(0)}</span>
     </span>
   )
 }

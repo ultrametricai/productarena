@@ -94,7 +94,9 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
                       />
                       <span className="min-w-0 truncate font-medium">{row.productName}</span>
                     </Link>
-                    {row.type === 'oss' && <OssPill />}
+                    {/* On requireOss lenses every product is open source (the header already
+                        says so) — a per-row pill would repeat one fact N times. */}
+                    {row.type === 'oss' && !icp.emphasis.requireOss && <OssPill variant="compact" />}
                   </div>
                 </td>
                 <td className="hidden whitespace-nowrap px-3 py-2 text-xs text-zinc-400 sm:table-cell">

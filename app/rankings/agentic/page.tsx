@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import AgenticIndexTable from '@/components/AgenticIndexTable'
 import { loadAll } from '@/lib/data'
 
@@ -27,6 +28,12 @@ export default function AgenticRankingPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by AGENTREADYNESS: can an agent reach the product
           at all (API/CLI/MCP/webhooks/SDKs/docs)? Ties break on API quality, then Arena Score.
+        </p>
+        <p className="mt-2 text-xs text-zinc-500">
+          This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Most agent-ready&rdquo; preset —{' '}
+          <Link href="/" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
+            sort and filter it live there →
+          </Link>
         </p>
       </div>
       <AgenticIndexTable categories={categories} />

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import WatchlistClient from '@/components/WatchlistClient'
 import { loadAll } from '@/lib/data'
+import { WATCHLIST_ENABLED } from '@/lib/flags'
 import { loadScoreHistory } from '@/lib/scoreHistory'
 import type { WatchlistProduct } from '@/lib/watchlist'
 
@@ -38,6 +39,27 @@ function buildWatchlistProducts(): WatchlistProduct[] {
 }
 
 export default function WatchlistPage() {
+  // Flagged off until login lands (see lib/flags.ts) — the URL keeps resolving (old links,
+  // bookmarks) but renders a short shell instead of the list UI.
+  if (!WATCHLIST_ENABLED) {
+    return (
+      <div className="mx-auto max-w-3xl space-y-4">
+        <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Watchlist</h1>
+        <p className="text-sm text-zinc-400">
+          Coming soon — the watchlist will sync with your Ultrametric account, with alerts when a
+          verdict flips or a score moves.
+        </p>
+        <a
+          href="https://app.ultrametric.ai/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block rounded-lg border border-emerald-400/60 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-400/10"
+        >
+          Create an Ultrametric account ↗
+        </a>
+      </div>
+    )
+  }
   const products = buildWatchlistProducts()
   return (
     <div className="mx-auto max-w-3xl space-y-6">

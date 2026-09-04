@@ -160,11 +160,6 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
         onPreset={applyPreset}
         query={query}
         onQuery={setQuery}
-        after={
-          <a href="#legend" className="underline decoration-zinc-700 hover:text-emerald-300">
-            legend
-          </a>
-        }
       />
 
       <div className="overflow-x-auto rounded-xl border border-zinc-800">
@@ -228,8 +223,8 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                       <span className="min-w-0 truncate font-medium">{product.name}</span>
                     </Link>
                     <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                      {product.type === 'oss' && <OssPill />}
-                      <BusinessModelChip product={product} />
+                      {product.type === 'oss' && <OssPill variant="compact" />}
+                      <BusinessModelChip product={product} skipOpenSource={product.type === 'oss'} />
                     </div>
                     {rival && (
                       <Link

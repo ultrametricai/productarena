@@ -7,6 +7,9 @@ export interface ArenaMenuItem {
   id: string;
   name: string;
   label: string;
+  // Explicit destination — overrides `${hrefPrefix}/${id}` for menus whose items live under
+  // different roots (e.g. the header's Explore menu: /rankings/*, /icp, /methodology).
+  href?: string;
 }
 
 export default function ArenaMenu({
@@ -60,7 +63,7 @@ export default function ArenaMenu({
             <Link
               key={item.id}
               role="menuitem"
-              href={`${hrefPrefix}/${item.id}`}
+              href={item.href ?? `${hrefPrefix}/${item.id}`}
               onClick={() => setOpen(false)}
               className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-emerald-300"
             >

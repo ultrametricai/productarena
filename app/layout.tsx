@@ -5,6 +5,7 @@ import "./globals.css";
 import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
+import { WATCHLIST_ENABLED } from "@/lib/flags";
 import { loadIcpTypes } from "@/lib/icp";
 import { REPO, SITE_URL } from "@/lib/site";
 import { buildSearchIndex, type SearchEntry } from "@/lib/search-index";
@@ -151,6 +152,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 </span>
               </Link>
             </div>
+            {/* Primary IA: Arenas (the product), Explore (every secondary view: global rankings,
+                buyer lenses, methodology/pipeline/proofs/MCP), then the three tools (Stacks,
+                Processes, Compare), GitHub, and search. One menu for all secondary destinations
+                instead of the old Rankings + Lenses dropdowns + a Methodology link. */}
             <nav className="flex flex-wrap items-center gap-2 text-sm text-zinc-400 sm:gap-3">
               <ArenaMenu
                 items={categories.map((c) => ({
@@ -160,19 +165,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 }))}
               />
               <ArenaMenu
-                title="Rankings"
-                hrefPrefix="/rankings"
+                title="Explore"
                 items={[
-                  { id: "agentic", name: "Most agent-ready", label: "" },
-                  { id: "init", name: "Highest Arena Score", label: "" },
-                  { id: "ai-native", name: "Most AI-native", label: "" },
-                  { id: "claims-integrity", name: "Claims vs reality", label: "" },
+                  { id: "agentic", name: "Most agent-ready", label: "ranking", href: "/rankings/agentic" },
+                  { id: "init", name: "Highest Arena Score", label: "ranking", href: "/rankings/init" },
+                  { id: "ai-native", name: "Most AI-native", label: "ranking", href: "/rankings/ai-native" },
+                  { id: "claims-integrity", name: "Claims vs reality", label: "ranking", href: "/rankings/claims-integrity" },
+                  { id: "icp", name: `Buyer lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
+                  { id: "methodology", name: "Methodology", label: "docs", href: "/methodology" },
+                  { id: "pipeline", name: "Testing pipeline", label: "docs", href: "/pipeline" },
+                  { id: "proofs", name: "Recorded proofs", label: "docs", href: "/proofs" },
+                  { id: "mcp", name: "MCP server", label: "agents", href: "/mcp" },
                 ]}
-              />
-              <ArenaMenu
-                title="Lenses"
-                hrefPrefix="/icp"
-                items={icpTypes.map((icp) => ({ id: icp.id, name: icp.name, label: "" }))}
               />
               <Link
                 href="/stacks"
@@ -191,12 +195,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
                 Compare
-              </Link>
-              <Link
-                href="/methodology"
-                className="hidden shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300 md:flex"
-              >
-                Methodology
               </Link>
               <a
                 href={`https://github.com/${REPO}`}
@@ -218,15 +216,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   <span className="font-mono">GitHub</span>
                 )}
               </a>
-              <Link
-                href="/watchlist"
-                title="Your watchlist — starred products, stored in this browser"
-                className="flex shrink-0 items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-              >
-                <span aria-hidden className="text-emerald-400">☆</span>
-                <span className="hidden sm:inline">Watchlist</span>
-                <span className="sr-only sm:hidden">Watchlist</span>
-              </Link>
+              {WATCHLIST_ENABLED && (
+                <Link
+                  href="/watchlist"
+                  title="Your watchlist — starred products, stored in this browser"
+                  className="flex shrink-0 items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                >
+                  <span aria-hidden className="text-emerald-400">☆</span>
+                  <span className="hidden sm:inline">Watchlist</span>
+                  <span className="sr-only sm:hidden">Watchlist</span>
+                </Link>
+              )}
               <CommandPalette entries={searchEntries} />
             </nav>
           </div>

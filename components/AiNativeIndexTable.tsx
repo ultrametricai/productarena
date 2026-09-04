@@ -100,7 +100,8 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                   </Link>
                 </td>
                 <td className="px-3 py-2">
-                  <AgenticBadge kind="agentic-app" value={row.entry.agenticApp} size="sm" />
+                  {/* Column header already says AGENTIC — the pill carries just the value. */}
+                  <AgenticBadge kind="agentic-app" value={row.entry.agenticApp} size="sm" showLabel={false} />
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">
                   {automation === null ? '—' : automation.toFixed(0)}
