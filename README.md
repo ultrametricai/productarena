@@ -205,6 +205,35 @@ Verdicts are cached and keyed on a hash of `(storyId, story title, evidence ids+
 prompt version)`, so re-running `judge` is a no-op unless the story or evidence actually
 changed.
 
+#### Judge model & prompt version
+
+The judge is an Anthropic model — `claude-sonnet-5` by default, overridable via the
+`PA_MODEL` env var (`pipeline/llm.ts`) — driven by a versioned system prompt in
+`pipeline/stages/judge.ts` (`PROMPT_VERSION`, currently **`v3`**). Because the prompt
+version is part of every cell's cache key, bumping it deliberately invalidates all cached
+verdicts, so a prompt change is always followed by a full re-judge rather than mixing
+verdicts from different prompt generations.
+
+What each version added:
+
+- `v2` — evidence-only judging (no training knowledge), `na` wrong-axis tier, disputed
+  requires citations from two distinct evidence tiers.
+- `v3` — three calibration fixes, each traceable to an audited defect:
+  1. **`na` vs `none` decision procedure** with few-shot boundary examples (applicability is
+     decided *before* looking at evidence; lack of evidence for an applicable axis is always
+     `none`).
+  2. **Explicit 0–10 quality rubric**, plus a hard requirement that any quality below 10
+     names its gap in the rationale (`"missing for 10: …"`) — mechanically enforced by
+     `validateVerdictRules`, which rejects sub-10 `full`/`partial` verdicts missing the
+     clause.
+  3. **Evidence-relevance rule**: a citation may only support or undermine a verdict if its
+     content is *about the story's subject* — off-topic negative sentiment (e.g. unrelated
+     security news) must not move a verdict or appear in the rationale.
+
+Calibration is gated by `pnpm calibrate` (`pipeline/scripts/calibration-check.ts`), which
+re-runs the live judge against a hand-verified golden-cell set
+(`pipeline/golden/golden-cells.json`) and fails on more than 2 tier mismatches.
+
 ### 3. Scoring formula
 
 A cell's score is `story.weight × quality × verdictFactor`, where the verdict factor is
