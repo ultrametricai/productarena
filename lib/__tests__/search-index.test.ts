@@ -37,16 +37,9 @@ describe('buildSearchIndex', () => {
     expect(entries).toHaveLength(3)
   })
 
-  it('includes one story entry per story, linking to the arena page anchored at the story row', () => {
+  it('produces no per-story entries — search focuses on arenas and products', () => {
     const entries = buildSearchIndex(sources).filter((e) => e.type === 'story')
-    expect(entries).toEqual([
-      {
-        type: 'story',
-        label: 'I can connect an agent via an official MCP server',
-        sublabel: 'AI Coding Agents · agenticness',
-        href: '/arena/ai-coding#story-agentic-mcp-server',
-      },
-    ])
+    expect(entries).toEqual([])
   })
 
   it('produces no entries for an empty source list', () => {
@@ -67,6 +60,6 @@ describe('buildSearchIndex', () => {
         claims: {},
       },
     ]
-    expect(buildSearchIndex(wide)).toHaveLength(3)
+    expect(buildSearchIndex(wide)).toHaveLength(2)
   })
 })
