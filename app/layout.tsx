@@ -34,6 +34,7 @@ const NAV_LABELS: Record<string, string> = {
   "agent-sandboxes": "Sandboxes",
   "product-analytics": "Analytics",
   "crm": "CRM",
+  "terminals": "Terminals",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
