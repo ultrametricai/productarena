@@ -82,6 +82,16 @@ export default function ProductActions({ data, productId }: { data: CategoryData
         </div>
 
         <div>
+          <SectionLabel>Badge</SectionLabel>
+          <Link href={`/badges#${productId}`} className={linkClass}>
+            Embed this product&apos;s score badge →
+          </Link>
+          <p className="mt-1 text-zinc-500">
+            Hotlinked SVG — always shows the live current score.
+          </p>
+        </div>
+
+        <div>
           <SectionLabel>For agents</SectionLabel>
           <div className="flex flex-wrap gap-x-3 gap-y-1">
             <Link href={`/arena/${category}/product/${productId}/llms.md`} className={linkClass}>
