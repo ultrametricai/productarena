@@ -141,6 +141,9 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       ],
       displayCommand: `curl -si -X POST https://mcp.xero.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
       expect: /HTTP\/[12](?:\.1)? 401/,
+      timeoutMs: 30_000,
+    },
+  ],
   // The Claude Agent SDK drives the Claude Code CLI as its engine (code.claude.com/docs/en/
   // agent-sdk/overview) — a keyless version print of that engine is the SDK's own runtime proof.
   'agent-frameworks': [
