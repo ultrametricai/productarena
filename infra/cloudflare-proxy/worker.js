@@ -10,6 +10,10 @@
 // best-effort per-IP rate limit. It only ever GETs fixed well-known paths and treats every
 // response as inert text.
 //
+// Also hosts POST /productarena/api/mcp-probe — the product pages' "Try it" live MCP
+// handshake, which only ever contacts a static allowlist of vendor MCP endpoints (see the
+// "Live MCP handshake probe" section below).
+//
 // Also hosts POST /productarena/mcp — a keyless, rate-limited remote MCP endpoint (see the
 // "Remote MCP endpoint" section below and this directory's README.md).
 const ORIGIN = 'https://productarena.vercel.app'
@@ -194,6 +198,199 @@ async function handleScan(request) {
         mentionsDocs: /docs\.|\/docs\b|documentation/.test(homeText),
       },
     },
+  })
+}
+
+// ---------------------------------------------------------------------------------------------
+// Live MCP handshake probe: POST /productarena/api/mcp-probe {arena, product}
+//
+// Powers the product pages' "Try it → live MCP handshake": sends one JSON-RPC initialize (and,
+// when the server answers keyless, a tools/list) to the product's OWN documented remote MCP
+// endpoint and returns a sanitized summary. An auth failure is itself the result — a 401 with
+// OAuth metadata proves the server is live and tells the visitor what it takes to use it.
+//
+// The client NEVER supplies a URL: {arena, product} is looked up in MCP_ENDPOINTS, a static
+// allowlist generated at build time by scripts/generate-mcp-allowlist.mjs from committed data
+// (products.json links.mcp + evidence + proof transcripts, with a vendor-domain guard). The
+// same map is generated into lib/mcpEndpoints.ts for the site; a unit test
+// (__tests__/mcp-probe.test.ts) asserts the two never drift. Same timeout / bounded-read /
+// per-IP rate-limit patterns as /api/scan above.
+
+// GENERATED map — regenerate with `node scripts/generate-mcp-allowlist.mjs` and paste; do not
+// hand-edit. Exported for the allowlist-sync unit test.
+export const MCP_ENDPOINTS = {
+  'accounting/xero': 'https://mcp.xero.com/mcp',
+  'api-platforms/postman': 'https://mcp.postman.com/mcp',
+  'backend-as-a-service/supabase': 'https://mcp.supabase.com/mcp',
+  'mobile-payments/sumup': 'https://mcp.sumup.com/mcp',
+  'payments/paypal': 'https://mcp.paypal.com/mcp',
+  'payments/stripe': 'https://mcp.stripe.com/',
+  'startup-banking/mercury': 'https://mcp.mercury.com/mcp',
+  'web-scraping/scrapingbee': 'https://mcp.scrapingbee.com/',
+}
+
+const PROBE_RATE_LIMIT = { max: 10, windowMs: 5 * 60 * 1000 }
+const probeRateBuckets = new Map() // separate from /api/scan's and /mcp's buckets
+const PROBE_PROTOCOL_VERSION = '2025-06-18'
+
+// Read a response body as text with the same MAX_BODY_BYTES cap as safeGet.
+async function readBoundedBody(resp) {
+  const reader = resp.body?.getReader()
+  if (!reader) return ''
+  const decoder = new TextDecoder()
+  let text = ''
+  let bytes = 0
+  while (bytes < MAX_BODY_BYTES) {
+    const { done, value } = await reader.read()
+    if (done) break
+    bytes += value.byteLength
+    text += decoder.decode(value, { stream: true })
+  }
+  await reader.cancel().catch(() => {})
+  return text
+}
+
+// Streamable-HTTP servers may answer a POST as plain JSON or as an SSE stream containing the
+// JSON-RPC response in a `data:` line — accept both, treat anything unparseable as null.
+function parseJsonRpcBody(contentType, text) {
+  if ((contentType ?? '').includes('text/event-stream')) {
+    for (const line of text.split('\n')) {
+      if (!line.startsWith('data:')) continue
+      try {
+        const parsed = JSON.parse(line.slice(5).trim())
+        if (parsed && typeof parsed === 'object' && 'jsonrpc' in parsed) return parsed
+      } catch { /* keep scanning */ }
+    }
+    return null
+  }
+  try {
+    return JSON.parse(text)
+  } catch {
+    return null
+  }
+}
+
+// POST one JSON-RPC message to an allowlisted endpoint. Returns
+// { status, headers, message|null } or { error } (timeout / network failure).
+async function postJsonRpc(endpoint, message, fetchImpl, sessionId) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+  let resp
+  try {
+    resp = await fetchImpl(endpoint, {
+      method: 'POST',
+      redirect: 'manual', // allowlisted URLs only — never follow a server elsewhere
+      signal: controller.signal,
+      headers: {
+        'content-type': 'application/json',
+        accept: 'application/json, text/event-stream',
+        'mcp-protocol-version': PROBE_PROTOCOL_VERSION,
+        'user-agent': 'ProductArena-tryit/1.0 (+https://ultrametric.ai/productarena)',
+        ...(sessionId ? { 'mcp-session-id': sessionId } : {}),
+      },
+      body: JSON.stringify(message),
+    })
+  } catch {
+    clearTimeout(timer)
+    return { error: 'unreachable' }
+  }
+  clearTimeout(timer)
+  const text = await readBoundedBody(resp)
+  return {
+    status: resp.status,
+    headers: resp.headers,
+    message: parseJsonRpcBody(resp.headers.get('content-type'), text),
+  }
+}
+
+const clip = (value, max = 120) => String(value).slice(0, max)
+
+// The probe itself: initialize, then (only if the server answered keyless) tools/list.
+// Everything returned is reshaped into plain sanitized fields — no upstream body is ever
+// echoed through verbatim. `fetchImpl` is injectable for tests (like handleJsonRpc's
+// fetchJson).
+export async function probeMcpEndpoint(endpoint, fetchImpl = fetch) {
+  const init = await postJsonRpc(endpoint, {
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'initialize',
+    params: {
+      protocolVersion: PROBE_PROTOCOL_VERSION,
+      capabilities: {},
+      clientInfo: { name: 'productarena-try-it', version: '1.0' },
+    },
+  }, fetchImpl)
+
+  if (init.error) return { reachable: false, authRequired: false }
+
+  if (init.status === 401 || init.status === 403) {
+    const authHeader = init.headers.get('www-authenticate') ?? ''
+    return {
+      reachable: true,
+      authRequired: true,
+      httpStatus: init.status,
+      oauth: /bearer|resource_metadata|oauth/i.test(authHeader),
+    }
+  }
+
+  const serverInfo = init.message?.result?.serverInfo
+  if (init.status < 200 || init.status >= 300 || !serverInfo) {
+    // Live but not a handshake we understand (proxy page, redirect, protocol error) — still
+    // an honest finding, reported without pretending we spoke MCP.
+    return { reachable: true, authRequired: false, httpStatus: init.status, handshake: false }
+  }
+
+  const summary = {
+    reachable: true,
+    authRequired: false,
+    httpStatus: init.status,
+    handshake: true,
+    serverInfo: { name: clip(serverInfo.name ?? ''), version: clip(serverInfo.version ?? '') },
+    protocolVersion: clip(init.message.result.protocolVersion ?? ''),
+  }
+
+  const sessionId = init.headers.get('mcp-session-id') ?? undefined
+  const tools = await postJsonRpc(endpoint, { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }, fetchImpl, sessionId)
+  const toolList = tools.error ? null : tools.message?.result?.tools
+  if (Array.isArray(toolList)) {
+    summary.toolCount = toolList.length
+    summary.toolNames = toolList.slice(0, 10).map((t) => clip(t?.name ?? '', 80))
+  }
+  return summary
+}
+
+export async function handleMcpProbe(request, fetchImpl = fetch) {
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(request) })
+  if (request.method !== 'POST') return jsonResponse(request, 405, { error: 'POST only' })
+
+  const ip = request.headers.get('cf-connecting-ip') ?? 'unknown'
+  if (isRateLimited(probeRateBuckets, ip, PROBE_RATE_LIMIT)) {
+    return jsonResponse(request, 429, { error: 'rate limited — try again in a few minutes' })
+  }
+
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return jsonResponse(request, 400, { error: 'JSON body required' })
+  }
+  const arena = typeof body?.arena === 'string' ? body.arena.trim().slice(0, 100) : ''
+  const product = typeof body?.product === 'string' ? body.product.trim().slice(0, 100) : ''
+  if (!arena || !product) return jsonResponse(request, 400, { error: '"arena" and "product" are required' })
+
+  const endpoint = MCP_ENDPOINTS[`${arena}/${product}`]
+  if (!endpoint) {
+    return jsonResponse(request, 404, { error: 'no allowlisted MCP endpoint for this product' })
+  }
+
+  const result = await probeMcpEndpoint(endpoint, fetchImpl)
+  return jsonResponse(request, 200, {
+    ok: true,
+    arena,
+    product,
+    endpoint,
+    probedAt: new Date().toISOString(),
+    ...result,
   })
 }
 
@@ -695,6 +892,7 @@ export default {
   async fetch(request) {
     const url = new URL(request.url)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
+    if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request)
     if (url.pathname === '/productarena/mcp') {
       const mcpResponse = await handleMcp(request)
       if (mcpResponse) return mcpResponse

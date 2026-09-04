@@ -13,7 +13,16 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return <p className="mb-1.5 text-[10px] uppercase tracking-widest text-zinc-500">{children}</p>
 }
 
-export default function ProductActions({ data, productId }: { data: CategoryData; productId: string }) {
+export default function ProductActions({
+  data,
+  productId,
+  tryIt = false,
+}: {
+  data: CategoryData
+  productId: string
+  /** Whether the page renders a "Try it" section (lib/tryit.ts hasTryIt) — adds a rail entry. */
+  tryIt?: boolean
+}) {
   const product = data.products.find((p) => p.id === productId)!
   const category = data.category.id
   const rivals = data.products.filter((p) => p.id !== productId)
@@ -44,6 +53,18 @@ export default function ProductActions({ data, productId }: { data: CategoryData
     <div className="rounded-xl border border-zinc-800 p-4">
       <p className="text-[10px] uppercase tracking-widest text-emerald-400">What you can do here</p>
       <div className="mt-3 grid gap-x-6 gap-y-4 text-xs sm:grid-cols-2 lg:grid-cols-3">
+        {tryIt && (
+          <div>
+            <SectionLabel>Try</SectionLabel>
+            <a href="#try-it" className={linkClass}>
+              Run it in the microterminal →
+            </a>
+            <p className="mt-1 text-zinc-500">
+              Recorded agent sessions — and a live MCP handshake where the vendor ships one.
+            </p>
+          </div>
+        )}
+
         {hasLinks && (
           <div>
             <SectionLabel>Open</SectionLabel>
