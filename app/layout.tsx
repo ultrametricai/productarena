@@ -21,6 +21,8 @@ const NAV_LABELS: Record<string, string> = {
   "frontend-frameworks": "Frontend",
   "local-llm-runtimes": "Local LLM",
   "payroll": "Payroll",
+  "payments": "Payments",
+  "accounting": "Accounting",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
