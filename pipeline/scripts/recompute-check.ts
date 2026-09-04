@@ -10,11 +10,13 @@ import { buildRankings } from '../../lib/scoring'
 const ROOT = path.resolve(__dirname, '..', '..')
 const CATEGORIES = [
   'ai-coding',
+  'ai-search-apis',
   'api-platforms',
   'code-hosting',
   'desktop-os',
   'edge-platforms',
   'frontend-frameworks',
+  'llm-evals-observability',
   'local-llm-runtimes',
   'mobile-dev',
   'payroll',
