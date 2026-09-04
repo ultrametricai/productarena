@@ -363,6 +363,25 @@ openness/agenticApp/automation matter but are one step removed. If you think the
 wrong, [contest it via an issue](./CONTRIBUTING.md) — like every verdict on this site, the
 formula is open to challenge.
 
+#### Score confidence (A–D)
+
+Scores never pretend: untested cells can't score, and the confidence grade says how much of a
+score is backed by probes. Every Arena Score badge carries a small A–D chip
+(`lib/confidence.ts`) derived from two fractions over the product's applicable (non-`na`)
+cells:
+
+| Signal | Meaning |
+|---|---|
+| **coverage** | fraction of applicable cells whose verdict cites *any* evidence — the complement is "we found nothing either way," which already scores 0 but is unknown, not failed |
+| **testedShare** | fraction whose *strongest* cited evidence is a tested tier (`probe` or `github` — hands-on runs or inspectable source), per `lib/verification.ts`'s evidence ladder |
+
+Grades: **A** = coverage ≥ 0.85 and testedShare ≥ 0.40 · **B** = coverage ≥ 0.70 and
+testedShare ≥ 0.25 · **C** = coverage ≥ 0.55 · **D** = below that. The grade never changes any
+published score — two products can post the same 60 while one earned it from probes and the
+other from vendor docs, and the chip is where that difference shows. Thresholds are calibrated
+against the live dataset so the letters actually discriminate (see
+`CONFIDENCE_THRESHOLDS`), and, like the Arena Score weights, they're open to challenge.
+
 ### 6. Story provenance
 
 Every story in `data/{category}/stories.json` optionally carries an `origin` field

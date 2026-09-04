@@ -3,6 +3,7 @@
 // — no evidence, verdicts, stories, or claims — since this gets serialized as a client-component
 // prop and every extra field is bundle weight the table's columns never use.
 import { computeAccessGlyphs, type AccessGlyph } from './accessGlyphs'
+import { confidenceFor } from './confidence'
 import { isGroupUntested, type CategoryData } from './data-helpers'
 import { hasLogo } from './logos'
 import { type MegaTableAccessGlyph, type MegaTableRow } from './megaTableSort'
@@ -40,6 +41,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         apiUntested: isGroupUntested(data, product.id, 'api-quality'),
         popularity: data.popularity[product.id]?.stars ?? null,
         ycBatch: product.ycBatch,
+        confidence: confidenceFor(data, product.id),
         access: {
           MCP: toClientGlyph(glyphs.MCP, arenaId, product.id),
           CLI: toClientGlyph(glyphs.CLI, arenaId, product.id),
