@@ -1444,6 +1444,619 @@
     ]
   },
   {
+    "productId": "galileo",
+    "storyId": "agent-queries-own-traces",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Galileo has a documented official MCP server (galileo-docs-4, galileo-probe-4) enabling access to Galileo capabilities from a dev environment, but the explicitly listed MCP capabilities are creating/managing datasets, running experiments, and setting up prompt templates—not querying traces, metrics, or eval results directly. No OpenAPI/API reference was discoverable (galileo-probe-3 returned 404s), so there's no clear evidence an agent can query traces/metrics/eval results programmatically for debugging via API or MCP. missing for 10: explicit MCP/API support for querying traces and metrics, evidence of eval-result retrieval via MCP, and a discoverable REST/OpenAPI spec for programmatic trace queries.",
+    "evidenceIds": [
+      "galileo-docs-4",
+      "galileo-probe-4",
+      "galileo-docs-6",
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agent-session-traces",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe capturing sessions, traces, and spans with structured logging, and distributed tracing docs show spans joined via shared trace IDs (nested spans under a trace) plus the @log decorator for span-level instrumentation. Missing for 10: explicit worked example showing session/thread grouping across multiple agent runs and independent hands-on corroboration beyond first-party docs.",
+    "evidenceIds": [
+      "galileo-docs-6",
+      "galileo-docs-7",
+      "galileo-gh-1",
+      "galileo-docs-5"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agent-triggers-eval-run",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Galileo's official MCP server explicitly exposes dataset creation, experiment (eval) running, and prompt template management directly from an agent's dev environment, and separate SDK/decorator logging plus experiment docs confirm results are captured and queryable. Missing for 10: no hands-on/independent confirmation of an agent actually reading back structured eval results via MCP, and no explicit example showing the full create-dataset→run-eval→read-results loop end-to-end.",
+    "evidenceIds": [
+      "galileo-docs-4",
+      "galileo-docs-2",
+      "galileo-probe-4",
+      "galileo-gh-1",
+      "galileo-docs-6"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Direct probes confirm llms.txt returns HTTP 200 with a documentation index, and individual doc pages provide .md versions with pointers back to llms.txt, making the docs agent-consumable as claimed. missing for 10: no independent/third-party confirmation of an agent actually consuming these files successfully, and no evidence of broader machine-readable spec coverage (e.g., OpenAPI probe returned 404s).",
+    "evidenceIds": [
+      "galileo-probe-1",
+      "galileo-probe-2",
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Galileo offers LLM-as-a-judge and custom metrics that can evaluate outputs, natural-language feedback loops that auto-improve metric alignment, and alerts on anomalies, which imply some AI-assisted analysis of data — but there is no explicit documentation of a dedicated 'insights/suggestions' feature that proactively surfaces AI-generated recommendations to users. Missing for 10: a clear insights/suggestions UI or feature description, independent examples of such AI-generated recommendations in use, and confirmation this goes beyond metric scoring to actionable suggestions.",
+    "evidenceIds": [
+      "galileo-docs-8",
+      "galileo-docs-9",
+      "galileo-docs-10",
+      "galileo-docs-5"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Galileo documents background alerting ('get alerted whenever unexpected things happen') and continuous automatic capture of traces/spans, which are autonomous background processes, but there is no evidence of a general-purpose automation/scheduling system for agentic workflows that a user configures to run independently. missing for 10: explicit automation/workflow scheduler, triggers/conditions configuration, evidence of autonomous multi-step agent execution beyond monitoring/alerts.",
+    "evidenceIds": [
+      "galileo-docs-9",
+      "galileo-docs-6"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Galileo's evidence covers evaluating and monitoring external AI agents (agentic metrics, tracing, MCP access to its own capabilities from a dev environment) but nothing about a built-in assistant inside Galileo's own product that a user can delegate tasks to.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Galileo ships a Python SDK (with `@log` decorators, OpenTelemetry distributed tracing, and experiment/dataset APIs) that can be invoked programmatically without the console UI, implying headless/CI usage is possible. However, the evidence never explicitly documents a CI/CD pipeline example, a CLI, or headless-run guidance—experiments are largely framed around the console UI's 'Create Experiment' button. Missing for 10: explicit CI/CD integration docs or examples, a documented CLI/headless entrypoint, and confirmation that experiments can be fully triggered/scored outside the UI.",
+    "evidenceIds": [
+      "galileo-gh-1",
+      "galileo-docs-2",
+      "galileo-docs-3",
+      "galileo-docs-6",
+      "galileo-docs-7"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-mcp-client",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Galileo is an LLM observability/evaluation platform, not an agentic tool-using product; the MCP evidence shows Galileo exposing its own capabilities via an MCP server for other clients (dev environments) to consume, not Galileo itself consuming external MCP servers to gain new tool capabilities. This 'plug servers in so it can use their tools' axis is a category mismatch for this kind of product.",
+    "evidenceIds": [
+      "galileo-docs-4",
+      "galileo-probe-4"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Galileo, as an observability/evaluation platform (not itself an agent), documents an official MCP server that lets users access dataset management, experiments, and prompt templates directly from their dev environment, confirmed live via docs page. Missing for 10: independent/hands-on verification beyond first-party docs and details on broader client compatibility.",
+    "evidenceIds": [
+      "galileo-docs-4",
+      "galileo-probe-4"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Galileo ships an official MCP server that lets AI assistants create/manage datasets, run experiments, and set up prompt templates from a dev environment using natural language, and it supports continuous natural-language feedback to refine metrics — both are concrete NL-driven operation paths. However, there's no evidence of a native chat/NL command interface within the Galileo console itself; missing for 10: first-party in-app NL command console, broader coverage of all product actions via NL, and independent hands-on confirmation of the MCP NL workflow.",
+    "evidenceIds": [
+      "galileo-docs-4",
+      "galileo-docs-10",
+      "galileo-probe-4"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-official-cli",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence shows Python SDK, MCP server integration, and REST-like console features, but no mention of an official CLI tool for Galileo. missing for 10: any documentation of a dedicated CLI binary/command, install instructions, or command reference.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-public-api",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Galileo provides a Python SDK (galileo-python) with decorators for logging traces/spans, an MCP server for programmatic access to datasets/experiments, and OpenTelemetry-based distributed tracing support, indicating a documented API surface for AI-native/agentic use. However, no formal public REST/OpenAPI reference was found (openapi probe returned 404s across all candidate paths), so the API's full documented surface and versioning/auth details are unclear. missing for 10: a discoverable OpenAPI/REST API spec, formal API reference docs beyond SDK/MCP usage, and independent confirmation of API completeness.",
+    "evidenceIds": [
+      "galileo-gh-1",
+      "galileo-docs-4",
+      "galileo-docs-7",
+      "galileo-probe-3",
+      "galileo-probe-4"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Galileo is an AI observability/evaluation platform; evidence covers tracing, metrics, experiments, and MCP integration, but there is no mention of scoped or least-privilege API credential/key management for agents.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-sdks",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Galileo has an official Python SDK (galileo-python) with decorators/logging APIs referenced in GitHub docs, plus MCP server integration for accessing Galileo capabilities from dev environments, supporting AI-native/agentic workflows. However, evidence lacks details on multi-language SDK coverage, versioning/stability, or independent developer corroboration beyond first-party docs, and OpenAPI spec probes all 404'd. Missing for 10: multi-language SDK evidence, independent hands-on validation, public API reference/OpenAPI spec.",
+    "evidenceIds": [
+      "galileo-gh-1",
+      "galileo-docs-4",
+      "galileo-docs-6",
+      "galileo-docs-7",
+      "galileo-probe-4",
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "agentic-webhooks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "There is a mention of alerting (galileo-docs-9) but no evidence of webhook subscription support; the OpenAPI/API endpoints probe returned 404s and nothing in the evidence pack describes webhooks or event subscription mechanisms.",
+    "evidenceIds": [
+      "galileo-docs-9",
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of an interactive API reference with runnable examples; openapi probes all returned 404, and no Swagger/Redoc-style playground is mentioned anywhere in the docs pack.",
+    "evidenceIds": [
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "A direct probe for OpenAPI/Swagger spec files at all standard locations returned 404, and no documentation references a downloadable machine-readable API spec; only an llms.txt index and MCP server exist, neither of which is an OpenAPI spec.",
+    "evidenceIds": [
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Galileo's Experiments feature lets users evaluate prompts/models against well-defined inputs and datasets can be built from 'synthetic, development, and live production data,' implying some separation between test and production data, but there is no explicit sandbox/staging environment concept described. missing for 10: explicit sandbox/staging environment docs, isolation guarantees from production data, and independent confirmation of non-production testing workflow.",
+    "evidenceIds": [
+      "galileo-docs-2",
+      "galileo-docs-11"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probes returned 404 and no changelog/versioning docs are present in the evidence pack.",
+    "evidenceIds": [
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Galileo's Experiments feature runs evaluations across datasets of many inputs at once, and MCP/SDK access lets users programmatically create and manage datasets and run experiments in bulk from code rather than one item at a time (galileo-docs-2, galileo-docs-3, galileo-docs-4, galileo-docs-11). However, there is no explicit documentation of bulk edit/delete/tag/annotate operations across arbitrary large sets of existing items in the console or API. Missing for 10: explicit bulk CRUD operations (batch edit/delete/tag) across items, batch API endpoints/rate-limit guidance for large-scale automation, and independent confirmation of bulk-scale reliability.",
+    "evidenceIds": [
+      "galileo-docs-2",
+      "galileo-docs-3",
+      "galileo-docs-4",
+      "galileo-docs-11"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Galileo docs mention that users can set up alerts on logs to be notified of unexpected events, which is a basic rule-trigger-on-event capability, but there is no detail on defining custom rule logic, condition types, or automated actions beyond alerting (e.g., webhooks, workflow triggers, remediation actions). missing for 10: rule definition UI/API details, supported trigger conditions, and evidence of automated actions beyond simple alert notifications.",
+    "evidenceIds": [
+      "galileo-docs-9"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Galileo is an LLM observability/evaluation platform with experiments, alerts, and MCP integration, but no evidence describes scheduling recurring jobs or workflows (e.g., cron-like automation, scheduled evaluation runs). Alerts are reactive, not scheduled, and no scheduler feature is documented.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Galileo is an LLM evaluation/observability platform (traces, experiments, metrics, alerts) — it does not build or run 'automations' as workflows that would need versioning, review, or rollback; this axis targets a different product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "bulk-trace-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of any bulk-export capability to blob storage or a data warehouse; docs cover logging, tracing, experiments, and MCP dataset management but never mention exporting data out to S3/GCS/BigQuery/Snowflake, and the OpenAPI probe returned 404s with no export endpoint mentioned.",
+    "evidenceIds": [
+      "galileo-docs-6",
+      "galileo-docs-11",
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "ci-eval-gating",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows experiments/evals can be run via console or SDK, but there is no mention of a CI integration, CLI exit codes, or gating deployments based on eval results. missing for 10: CI/CD integration docs, pass/fail thresholds for gating, pipeline examples (GitHub Actions, Jenkins, etc.), any mention of 'CI' or 'gate' in evidence.",
+    "evidenceIds": [
+      "galileo-docs-2",
+      "galileo-docs-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "cost-attribution-metadata",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Galileo's logging captures sessions, traces, and spans (galileo-docs-6) and supports custom metrics (galileo-docs-8), and mentions Luna models monitoring traffic at lower cost (galileo-docs-12), implying some usage/cost tracking infrastructure exists. However, there is no explicit documentation of tagging traces/sessions with custom metadata fields (e.g., user ID, feature name) for cost attribution or cost breakdown by dimension. missing for 10: explicit custom metadata tagging API/fields for user/session/feature attribution, cost-per-tag reporting or dashboards, and any hands-on example of cost attribution via metadata.",
+    "evidenceIds": [
+      "galileo-docs-6",
+      "galileo-docs-8",
+      "galileo-docs-12"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "custom-code-scorers",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs explicitly mention custom code-based metrics as an extension to built-in metrics, alongside LLM-as-a-judge metrics, confirming the capability exists. However, evidence lacks concrete SDK examples, API reference, or hands-on walkthroughs showing how to author and register a custom scorer function. Missing for 10: code samples/API reference for writing custom scorers, independent corroboration of usage, details on scorer registration/execution lifecycle.",
+    "evidenceIds": [
+      "galileo-docs-8"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "custom-dashboards",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence covers logging/tracing (latency, spans), custom metrics, LLM-as-judge evals, and alerting, but no documentation describes a dashboard-building UI or customizable visualization layer combining latency, error, cost, and eval-score metrics. missing for 10: dashboard/widget customization UI, evidence of combining metrics types into a single view, cost-metric tracking, independent/hands-on confirmation of dashboarding.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "experiment-comparison",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Galileo's Experiments feature lets you evaluate prompts, models, and code against chosen metrics, and the console provides a way to create and add experiments to a project, implying some run-to-run evaluation tracking. However, no evidence explicitly describes a side-by-side comparison view or regression-detection UI/workflow between prompt or model versions. missing for 10: explicit side-by-side comparison UI, diffing/regression alerts between experiment runs, independent user confirmation of comparison workflow.",
+    "evidenceIds": [
+      "galileo-docs-2",
+      "galileo-docs-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "framework-auto-instrumentation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Galileo's own Python SDK (decorator-based logging) and generic OpenTelemetry distributed tracing support, but contains no mention of pre-built integrations for LangChain, the OpenAI SDK, or the Vercel AI SDK specifically. Since this is a well-known, plausible capability for a tracing/observability product, absence of evidence means 'none' rather than 'na'.",
+    "evidenceIds": [
+      "galileo-gh-1",
+      "galileo-docs-6",
+      "galileo-docs-7"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "human-annotation-queues",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Galileo docs mention capturing 'subject matter expert annotations' to build datasets and using natural-language feedback to align metrics, implying some human-in-the-loop capability, but there is no explicit documentation of a dedicated annotation queue, review workflow, task assignment, or labeling UI for routing outputs to human reviewers. missing for 10: dedicated annotation queue/workflow feature, reviewer assignment mechanism, labeling UI documentation, independent corroboration of human review routing.",
+    "evidenceIds": [
+      "galileo-docs-11",
+      "galileo-docs-10"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "llm-as-judge-scoring",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs explicitly describe LLM-as-a-judge as a configurable metric type alongside custom code-based metrics, plus continuous feedback loops to align metrics to domain needs, and experiments to run these metrics against outputs. Missing for 10: independent/hands-on corroboration beyond vendor docs and more detail on configuring specific judge prompts/models.",
+    "evidenceIds": [
+      "galileo-docs-8",
+      "galileo-docs-10",
+      "galileo-docs-2"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "multimodal-trace-payloads",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers tracing, spans, metrics, alerts, and MCP integration, but contains no mention of multimodal payload capture (images, audio, files) within traces or spans.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "offline-eval-datasets",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Galileo explicitly supports building datasets from production/live traces (galileo-docs-11), capturing traces/spans in production (galileo-docs-6, galileo-docs-7), and running offline evaluations/experiments against datasets with custom or LLM-as-judge metrics (galileo-docs-2, galileo-docs-8). This directly covers curating datasets from production traces and running offline evals. Missing for 10: independent/hands-on corroboration of the full production-trace-to-dataset-to-experiment workflow beyond vendor docs.",
+    "evidenceIds": [
+      "galileo-docs-11",
+      "galileo-docs-6",
+      "galileo-docs-2",
+      "galileo-docs-8",
+      "galileo-docs-7"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "online-evals-guardrails",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Galileo's docs describe real-time capture of every session/trace/span, alerting on live logs, and distilled 'Luna' models that monitor 100% of production traffic at lower cost, which directly supports continuous evaluator execution on live traffic (not just offline datasets), complemented by custom/LLM-as-judge metrics and datasets built from live production data. missing for 10: independent/hands-on verification that evaluators run continuously in production (all evidence is vendor docs) and clearer detail on evaluator scheduling/latency at scale.",
+    "evidenceIds": [
+      "galileo-docs-6",
+      "galileo-docs-9",
+      "galileo-docs-12",
+      "galileo-docs-11",
+      "galileo-docs-8"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Galileo exposes a Python SDK, decorators, and an MCP server that cover core workflows (tracing, experiments, datasets, prompt templates), suggesting many UI actions have API/SDK equivalents (galileo-docs-2, galileo-docs-4, galileo-gh-1). However, docs explicitly describe some actions (e.g., 'Create Experiment' button) as UI-only, and no public OpenAPI/swagger spec is discoverable (galileo-probe-3), so full API parity is unproven. Missing for 10: an explicit statement or spec confirming 1:1 API/UI feature parity, a discoverable OpenAPI reference, and evidence that console-only features (alerts setup, dashboards) have API equivalents.",
+    "evidenceIds": [
+      "galileo-docs-2",
+      "galileo-docs-3",
+      "galileo-docs-4",
+      "galileo-gh-1",
+      "galileo-probe-3"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack describes any data export feature, open-format export, or data portability mechanism for traces, datasets, or experiments — only ingestion, logging, and metric features are documented.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "openness-open-license",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows only a GitHub repo for the Python client SDK (galileo-python), with no license details or indication that the core Galileo platform/backend is open source. missing for 10: explicit open-source license text, evidence that the full product (not just a client SDK) is source-available, independent confirmation of license terms.",
+    "evidenceIds": [
+      "galileo-gh-1"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "openness-self-host",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence of a self-hostable/on-prem version of Galileo; all documentation points to a hosted console/SaaS product with SDKs and MCP integration, not a self-hosted deployment option. missing for 10: any mention of self-hosting, on-prem deployment, Docker/Helm packages, or enterprise private-cloud install instructions.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "otel-native-tracing",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm Galileo's SDK supports distributed tracing using OpenTelemetry's W3C traceparent header to propagate context and stitch spans into a single trace, showing OTel compatibility beyond a fully proprietary format. However, there's no evidence of a dedicated OTLP ingestion/export endpoint or explicit statement that Galileo accepts/emits OTLP-formatted traces from arbitrary OTel collectors. missing for 10: explicit OTLP endpoint/collector documentation, confirmation of both sending and receiving OTLP data, and independent verification of OTLP interoperability outside Galileo's own SDK.",
+    "evidenceIds": [
+      "galileo-docs-6",
+      "galileo-docs-7",
+      "galileo-gh-1"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "pii-masking-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions masking, redaction, PII scrubbing, or any data sanitization mechanism applied before storing traces; documentation focuses on logging, tracing, metrics, and experiments without addressing sensitive data handling.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions data residency, regional storage options, or compliance controls for data location; the evidence covers tracing, experiments, metrics, and MCP only. Since Galileo is a SaaS platform where data residency is a plausible and common enterprise concern, absence of evidence means 'none' rather than 'na'.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers Galileo's tracing, experiments, metrics, and MCP features but contains no mention of data usage policies, opt-out of model training, or privacy controls regarding customer data being used to train AI models.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers tracing, experiments, metrics, and MCP integration but contains no mention of data retention policies, deletion controls, or privacy/compliance configuration options for AI-native users. No documentation cites retention windows, data deletion APIs, or export/purge capabilities.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack items mention telemetry opt-out, usage tracking controls, or privacy settings for Galileo itself; the evidence only covers product features like tracing, experiments, and metrics.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "prompt-playground",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Galileo's Experiments feature lets users evaluate prompts and models against defined inputs and metrics via a console UI, and prompt templates can be set up through the MCP integration, which loosely maps to prompt iteration with variables. However, there's no evidence of a dedicated interactive 'playground' for live, real-time prompt testing against models — missing for 10: a documented playground UI, live model response preview, and variable substitution workflow distinct from formal experiment runs.",
+    "evidenceIds": [
+      "galileo-docs-2",
+      "galileo-docs-3",
+      "galileo-docs-4"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "prompt-versioning-deploy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Galileo supports experiments for evaluating prompts and mentions 'setting up prompt templates' via MCP, but there is no documentation of prompt versioning, a prompt registry, or a mechanism to deploy prompt changes to production independent of code deploys.",
+    "evidenceIds": [
+      "galileo-docs-2",
+      "galileo-docs-4"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "python-js-sdk-parity",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence confirms a Python SDK (galileo-python) with decorator-based span logging and OTel-based distributed tracing, but no evidence of an official JS/TS SDK or its documentation. missing for 10: JS/TS SDK repo or docs, parity of instrumentation features (decorators, spans) between Python and JS/TS.",
+    "evidenceIds": [
+      "galileo-gh-1",
+      "galileo-docs-6",
+      "galileo-docs-7"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "threshold-alerting",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Galileo docs confirm a general alerting capability (\"get alerted whenever unexpected things happen\" via a 'set up alerts on logs' guide), but the evidence pack contains no detail on which triggers (error rate, cost spike, eval-score drop) are supported nor which notification channels (Slack, PagerDuty, email) are integrated. Missing for 10: documented list of supported alert conditions, confirmation of Slack/PagerDuty/email integrations, and any hands-on/independent verification of alert delivery.",
+    "evidenceIds": [
+      "galileo-docs-9"
+    ]
+  },
+  {
+    "productId": "galileo",
+    "storyId": "token-cost-dashboards",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers tracing, experiments, metrics, and alerts, but contains no mention of cost or token usage tracking, nor dashboards broken down by request, model, or time period. This is a plausible axis for an LLM observability platform, so absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "galileo",
+    "storyId": "trace-llm-calls",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Galileo's docs describe capturing sessions, traces, and spans once instrumented, with a `@log` decorator for logging spans and OTel-based distributed tracing joining spans by trace ID, forming a structured real-time data stream. However, explicit confirmation that captured traces include latency and token usage fields specifically is not directly quoted, only implied via 'structured stream of real-time data.' Missing for 10: explicit documentation/screenshot confirming latency and token-usage fields are captured per trace, and independent/hands-on corroboration beyond vendor docs.",
+    "evidenceIds": [
+      "galileo-docs-1",
+      "galileo-docs-6",
+      "galileo-docs-7",
+      "galileo-gh-1"
+    ]
+  },
+  {
     "productId": "helicone",
     "storyId": "agent-queries-own-traces",
     "verdict": "partial",
