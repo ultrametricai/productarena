@@ -113,6 +113,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'llm-evals-observability': ['trace', 'tracing', 'span', 'eval', 'llm\\b', 'prompt', 'dataset', 'experiment', 'scorer', 'judge', 'annotation', 'token', 'guardrail', 'playground', 'model', 'latency', 'observab'],
   'ai-search-apis': ['search', 'query', 'result', 'index', 'snippet', 'citation', 'crawl', 'extract', 'news', 'domain', 'web\\b', 'page', 'answer', 'rag\\b', 'serp', 'retrieval', 'freshness'],
   terminals: ['terminal', 'shell', 'scrollback', 'pane', 'tab\\b', 'multiplex', 'tmux', 'prompt', 'command', 'ssh', 'rendering', 'gpu', 'font', 'ligature', 'color scheme', 'theme', 'dotfile', 'quake', 'graphics protocol', 'terminfo', 'kitten'],
+  'inference-providers': ['model', 'inference', 'token', 'llm', 'gpu', 'serverless', 'endpoint', 'fine-tun', 'lora', 'batch', 'throughput', 'latenc', 'openai', 'chat completion', 'completions', 'embedding', 'quantiz', 'serving', 'stream', 'tokens/s'],
+  'auth-platforms': ['auth', 'login', 'sign-in', 'sign-up', 'session', 'mfa', 'passkey', 'passwordless', 'sso\\b', 'saml', 'oidc', 'oauth', 'token', 'user', 'organization', 'tenant', 'rbac', 'permission', 'identity', 'scim', 'jwt', 'credential', 'idp\\b', 'consent'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {
