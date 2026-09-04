@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { battleSlug, loadAll } from '@/lib/data'
 import { collectGlobalStories } from '@/lib/globalStories'
 import { loadChains, loadProcesses, processSlug } from '@/lib/processes'
+import { loadIcpTypes } from '@/lib/icp'
 import { SITE_URL } from '@/lib/site'
 
 // Static export safety: no dynamic segments, all data is bundled at build time.
@@ -14,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now },
     { url: `${SITE_URL}/methodology`, lastModified: now },
+    { url: `${SITE_URL}/pipeline`, lastModified: now },
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
     { url: `${SITE_URL}/rankings/agentic`, lastModified: now },
@@ -53,6 +55,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
   for (const chain of loadChains()) {
     entries.push({ url: `${SITE_URL}/processes/chains/${chain.id}`, lastModified: now })
+  }
+
+  // ICP lens pages — the index plus one cross-arena ranking per buyer type (see lib/icp.ts and
+  // app/icp/[type]/page.tsx).
+  entries.push({ url: `${SITE_URL}/icp`, lastModified: now })
+  for (const icp of loadIcpTypes()) {
+    entries.push({ url: `${SITE_URL}/icp/${icp.id}`, lastModified: now })
   }
 
   return entries
