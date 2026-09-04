@@ -618,8 +618,8 @@ contribution. Pick your angle:
   evidence freshness, and contest triage.
 - **Run probes locally** — `pnpm pipeline probe --category <id>` needs no API key;
   publishing discrepancies you find is exactly the point.
-- **Build on the data** — everything under `data/` is CC BY 4.0; rankings, verdicts, and
-  evidence are free to reuse with attribution, including in your own agents.
+- **Cite the data** — verdicts, scores, and evidence excerpts may be quoted with
+  attribution (see DATA-LICENSE); bulk reuse needs written permission from Ultrametric.
 
 Found a verdict you think is wrong, or evidence we missed? See
 [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict and adding evidence are both
@@ -632,6 +632,6 @@ by `pnpm pipeline derive --category <category>` — before any verdict actually 
 ## License
 
 Code: © 2026 Ultrametric Inc, all rights reserved (source-available — see LICENSE).
-Data (`data/`): CC BY 4.0 (see DATA-LICENSE) — agents and researchers may reuse the
-rankings and evidence with attribution.
+Data (`data/`): © 2026 Ultrametric Inc, all rights reserved (see DATA-LICENSE) — viewable
+and quotable with attribution; bulk reuse requires written permission.
 
