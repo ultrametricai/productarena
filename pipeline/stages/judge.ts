@@ -38,7 +38,7 @@ export function validateVerdictRules(verdict: Verdict, evidence: Evidence[]): st
   if (
     (verdict.verdict === 'full' || verdict.verdict === 'partial')
     && verdict.quality < 10
-    && !/missing for 10/i.test(verdict.rationale)
+    && !/missing for (a )?10/i.test(verdict.rationale)
   ) {
     return 'quality below 10 must name the gap — the rationale must include "missing for 10: ..." listing the specific missing capabilities/evidence'
   }
@@ -113,16 +113,18 @@ export async function runJudge({ category, product }: { category?: string; produ
         let raw = await llmJson({ schema: RawVerdictSchema, system: SYSTEM, prompt: judgePrompt(p.name, story, evidence) })
         let verdict: Verdict = { ...raw, productId: p.id, storyId: story.id }
         let violation = validateVerdictRules(verdict, evidence)
-        if (violation) {
+        // Up to three correction rounds — one round proved brittle at fleet scale (a model that
+        // phrases the rubric clause loosely once tends to comply on the next explicit ask).
+        for (let round = 0; violation && round < 3; round++) {
           raw = await llmJson({
             schema: RawVerdictSchema,
             system: SYSTEM,
-            prompt: judgePrompt(p.name, story, evidence, `\nYour previous verdict violated a rule: ${violation}. Correct it.`),
+            prompt: judgePrompt(p.name, story, evidence, `\nYour previous verdict violated a rule: ${violation}. Correct it. If quality is below 10, the rationale MUST contain the literal phrase "missing for 10:" followed by the specific gaps.`),
           })
           verdict = { ...raw, productId: p.id, storyId: story.id }
           violation = validateVerdictRules(verdict, evidence)
-          if (violation) throw new Error(`judge: ${cat.id}/${p.id}:${story.id} still violates rules: ${violation}`)
         }
+        if (violation) throw new Error(`judge: ${cat.id}/${p.id}:${story.id} still violates rules: ${violation}`)
         writeJson(cacheFile, { hash, verdict })
         console.log(`judge: ${cat.id}/${p.id}:${story.id} → ${verdict.verdict} q${verdict.quality}`)
       }
