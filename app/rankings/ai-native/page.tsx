@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import AiNativeIndexTable from '@/components/AiNativeIndexTable'
 import { loadAll } from '@/lib/data'
 
@@ -28,6 +29,12 @@ export default function AiNativeRankingPage() {
           All {totalProducts} products across every arena, ranked by AGENTIC: does the product act agentically on
           its own behalf (built-in assistant, autonomous automation, natural-language commands)? Ties break on
           automation depth, then Arena Score.
+        </p>
+        <p className="mt-2 text-xs text-zinc-500">
+          This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Most AI-native&rdquo; preset —{' '}
+          <Link href="/" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
+            sort and filter it live there →
+          </Link>
         </p>
       </div>
       <AiNativeIndexTable categories={categories} />

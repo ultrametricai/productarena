@@ -12,6 +12,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import TrendArrow from '@/components/TrendArrow'
 import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
+import { WATCHLIST_ENABLED } from '@/lib/flags'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
   DEFAULT_COLUMN,
@@ -148,7 +149,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               <SortableTh col="arena" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 Arena
               </SortableTh>
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden md:table-cell">
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden w-12 md:table-cell">
                 OSS
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
@@ -169,9 +170,11 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 Access
               </SortableTh>
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
-                <span className="sr-only">Watch</span>
-              </SortableTh>
+              {WATCHLIST_ENABLED && (
+                <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
+                  <span className="sr-only">Watch</span>
+                </SortableTh>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
@@ -209,7 +212,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     </Link>
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
-                    {row.type === 'oss' ? <OssPill /> : <span className="text-zinc-600">—</span>}
+                    {row.type === 'oss' ? <OssPill variant="compact" /> : <span className="text-zinc-600">—</span>}
                   </td>
                   <td className="px-2 py-2">
                     <span className="flex items-center gap-1.5">
@@ -230,7 +233,14 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     </span>
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
-                    {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    {row.agentReady === null ? (
+                      <span className="text-zinc-500">n/a</span>
+                    ) : (
+                      <span className="flex items-center gap-1.5 whitespace-nowrap">
+                        <span>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></span>
+                        <TrendArrow delta={row.agentReadyTrendDelta} metric="agent-readiness" />
+                      </span>
+                    )}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
                     {row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
@@ -267,15 +277,17 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       })}
                     </div>
                   </td>
-                  <td className="px-2 py-2 text-center">
-                    <WatchButton productId={row.productId} productName={row.name} size="sm" />
-                  </td>
+                  {WATCHLIST_ENABLED && (
+                    <td className="px-2 py-2 text-center">
+                      <WatchButton productId={row.productId} productName={row.name} size="sm" />
+                    </td>
+                  )}
                 </tr>
               )
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={WATCHLIST_ENABLED ? 10 : 9} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>

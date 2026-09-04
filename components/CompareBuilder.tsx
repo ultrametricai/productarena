@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
 import {
   accessGlyphClass,
@@ -224,9 +223,17 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                 <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
                   Open source
                 </th>
+                {/* Row header already says "Open source" — a labeled pill here would repeat it,
+                    so the cell is a bare yes/no mark. */}
                 {selected.map((p) => (
                   <td key={p.id} className="px-3 py-2">
-                    {p.type === 'oss' ? <OssPill /> : <span className="text-zinc-600">—</span>}
+                    {p.type === 'oss' ? (
+                      <span className="text-emerald-400" title="Open source — the product's code is publicly available">
+                        ✓<span className="sr-only"> open source</span>
+                      </span>
+                    ) : (
+                      <span className="text-zinc-600">—</span>
+                    )}
                   </td>
                 ))}
               </tr>

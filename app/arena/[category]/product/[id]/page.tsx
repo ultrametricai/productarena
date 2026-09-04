@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
@@ -19,7 +18,7 @@ import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
 import {
-  battleSlug, groupInOrder, loadAll, loadCategory, type CategoryData,
+  groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
@@ -83,7 +82,6 @@ export default async function ProductPage({
     acc[e.tier] = (acc[e.tier] ?? 0) + 1
     return acc
   }, {})
-  const idx = (pid: string) => data.products.findIndex((p) => p.id === pid)
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
   // Flattened, serializable (story, verdict) rows for the client-side sortable table — the
   // full CategoryData never crosses the server/client boundary. globalStoryIds(loadAll())
@@ -112,8 +110,11 @@ export default async function ProductPage({
               <YcBadge ycBatch={product.ycBatch} />
               <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
             </div>
+            {/* The OssPill beside the name is the one open-source signal — repeating "open
+                source" here would say it twice, so the prose only ever adds "commercial". */}
             <p className="text-zinc-500">
-              {product.vendor} · {product.type === 'oss' ? 'open source' : 'commercial'}
+              {product.vendor}
+              {product.type === 'commercial' && ' · commercial'}
             </p>
             {freshness && <p className="text-xs text-zinc-400">Evidence as of {freshness}</p>}
             <div className="mt-1">
@@ -224,26 +225,8 @@ export default async function ProductPage({
       <ClaimsSection data={data} category={category} productId={id} />
 
       <BusinessModelSection product={product} />
-
-      <div>
-        <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Battles</h2>
-        <div className="flex flex-wrap gap-2">
-          {data.products
-            .filter((p) => p.id !== id)
-            .map((rival) => {
-              const [a, b] = idx(id) <= idx(rival.id) ? [id, rival.id] : [rival.id, id]
-              return (
-                <Link
-                  key={rival.id}
-                  href={`/arena/${category}/battle/${battleSlug(a, b)}`}
-                  className="rounded-full border border-zinc-800 px-3 py-1 text-sm hover:border-emerald-400 hover:text-emerald-300"
-                >
-                  vs {rival.name}
-                </Link>
-              )
-            })}
-        </div>
-      </div>
+      {/* No bottom "Battles" section: ProductActions' "Compare head-to-head" rail above is the
+          single authoritative list of this product's battles (same pairings, canonical /vs URLs). */}
     </div>
   )
 }

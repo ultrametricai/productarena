@@ -51,6 +51,9 @@ export interface MegaTableRow {
   // has <2 history points yet; optional for the same fixture-compat reason as ycBatch. Rendered
   // as the ▲/▼/— arrow next to the Arena Score badge, never sorted on.
   trendDelta?: number | null
+  // 30-day agent-readiness trend delta — same contract as trendDelta, rendered as the arrow in
+  // the Agent-ready column ("is this product getting more agent-friendly?").
+  agentReadyTrendDelta?: number | null
   // Score-confidence summary (see lib/confidence.ts): grade + the fractions behind it, rendered
   // as the small chip next to the Arena Score badge. Optional for the same fixture-compat
   // reason as ycBatch.
