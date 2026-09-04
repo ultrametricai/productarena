@@ -30,10 +30,39 @@ five verdicts:
 ## What the quality number (0–10) means
 
 Every `full`/`partial`/`disputed` verdict also gets a quality score from 0 (barely counts) to 10
-(best-in-class execution). It's not a vibe score — it reflects how complete and well-documented
-the capability is *in the evidence we found*, e.g. a one-line mention scores lower than a page
-of docs with examples and edge cases covered. `none` and `na` are always quality 0, since there's
-nothing to grade.
+(best-in-class execution). It's not a vibe score — the judge grades against a fixed rubric, and
+it reflects how complete and well-documented the capability is *in the evidence we found*, e.g.
+a one-line mention scores lower than a page of docs with examples and edge cases covered.
+`none` and `na` are always quality 0, since there's nothing to grade.
+
+The rubric anchors:
+
+| Quality | What it means |
+|---|---|
+| **10** | Best-in-class: every part of the capability is backed by strong evidence — in-depth official docs *and* independent or hands-on confirmation. Nothing material missing. |
+| **9** | Fully delivers with rich documentation; exactly one minor gap (e.g. nobody independent has confirmed it yet). |
+| **7** | Clearly delivers the core, but with real secondary gaps — parts thin, undocumented, or only implied. |
+| **5** | Delivers about half of it, or only with substantial limitations/workarounds. |
+| **3** | Minimal, glancing support — a single thin mention; most of it unevidenced. |
+| **1–2** | Barely counts. |
+
+And a transparency rule we enforce mechanically: **any score below 10 must say what's
+missing.** The judge's rationale has to include a "missing for 10: …" clause naming the
+specific missing capabilities or evidence — a verdict claiming "full support" at 8/10 with no
+stated gap is rejected and re-judged. If you see a sub-10 score, the reason is written next
+to it.
+
+## Only on-topic evidence counts
+
+A citation may only support — or count against — a verdict if it's actually *about* the
+capability being judged. General negative buzz about a product (an unrelated security story,
+pricing complaints, gripes about some other feature) is ignored entirely: it can't lower a
+verdict, and the judge isn't allowed to cite it. A real example we fixed: a product's
+sandboxing score was once dragged down by a forum thread about the vendor leaking its own
+source code — bad news, but it says nothing about whether the product sandboxes agent
+execution, so under the current judge it's inadmissible for that verdict. Negative evidence
+still matters when it's on-topic (e.g. a hands-on post showing the sandbox doesn't actually
+isolate anything) — that's exactly what the `disputed` verdict is for.
 
 ## `none` vs. `na`: the difference that matters most
 
