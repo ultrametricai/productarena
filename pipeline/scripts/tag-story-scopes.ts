@@ -115,6 +115,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   terminals: ['terminal', 'shell', 'scrollback', 'pane', 'tab\\b', 'multiplex', 'tmux', 'prompt', 'command', 'ssh', 'rendering', 'gpu', 'font', 'ligature', 'color scheme', 'theme', 'dotfile', 'quake', 'graphics protocol', 'terminfo', 'kitten'],
   'package-managers': ['package', 'dependenc', 'lockfile', 'install', 'registr', 'manifest', 'workspace', 'monorepo', 'toolchain', 'runtime', 'version', 'pin\\b', 'binar', 'cache', 'formula', 'tap\\b', 'overlay', 'mirror', 'vulnerab', 'supply.chain', 'node_modules', 'bootstrap'],
   'vector-databases': ['vector', 'embedding', 'index', 'collection', 'similarity', 'ann\\b', 'hnsw', 'recall', 'rerank', 'hybrid', 'sparse', 'dense', 'metadata', 'namespace', 'tenant', 'shard', 'replica', 'quantiz', 'upsert', 'rag\\b', 'semantic', 'latency', 'serverless'],
+  'inference-providers': ['model', 'inference', 'token', 'llm', 'gpu', 'serverless', 'endpoint', 'fine-tun', 'lora', 'batch', 'throughput', 'latenc', 'openai', 'chat completion', 'completions', 'embedding', 'quantiz', 'serving', 'stream', 'tokens/s'],
+  'auth-platforms': ['auth', 'login', 'sign-in', 'sign-up', 'session', 'mfa', 'passkey', 'passwordless', 'sso\\b', 'saml', 'oidc', 'oauth', 'token', 'user', 'organization', 'tenant', 'rbac', 'permission', 'identity', 'scim', 'jwt', 'credential', 'idp\\b', 'consent'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {

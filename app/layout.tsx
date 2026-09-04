@@ -41,6 +41,8 @@ const NAV_LABELS: Record<string, string> = {
   "robotics-platforms": "Robotics",
   "package-managers": "Pkg managers",
   "vector-databases": "Vector DBs",
+  "inference-providers": "Inference",
+  "auth-platforms": "Auth",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
