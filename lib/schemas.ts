@@ -179,6 +179,21 @@ export const RankingsSchema = z.object({
   ),
 })
 
+// One line of data/{cat}/score-history.jsonl — the append-only per-product time series of the
+// two headline scores (Arena Score / aiEra + agent-readiness), one line per product per CHANGE
+// (not per run — consecutive identical values are deduped, unlike popularity-history.jsonl's
+// one-line-per-run cadence). Values are stored rounded to 1 decimal so "changed" is a stable,
+// float-noise-free comparison. Seeded by pipeline/scripts/build-score-history.ts (a git-history
+// backfill, so `date` is a commit date with a TZ offset there) and grown forward by the derive
+// stage (which stamps rankings.generatedAt, a UTC instant). Display-only, like popularity —
+// never fed back into scoring.
+export const ScoreHistoryEntrySchema = z.object({
+  productId: z.string().min(1),
+  date: z.iso.datetime({ offset: true }),
+  aiEra: z.number().min(0).max(100).nullable(),
+  agentReady: z.number().min(0).max(100).nullable(),
+})
+
 // Keyless popularity/momentum signal for one product (see pipeline/stages/popularity.ts). Every
 // field is optional because coverage depends entirely on what's discoverable without an API
 // key: GitHub fields only for products with urls.github, npm/pypi fields only for products
@@ -250,6 +265,7 @@ export type Story = z.infer<typeof StorySchema>
 export type StoryOrigin = z.infer<typeof StoryOriginSchema>
 export type Evidence = z.infer<typeof EvidenceSchema>
 export type Popularity = z.infer<typeof PopularitySchema>
+export type ScoreHistoryEntry = z.infer<typeof ScoreHistoryEntrySchema>
 export type UncertaintyEntry = z.infer<typeof UncertaintyEntrySchema>
 export type Verdict = z.infer<typeof VerdictSchema>
 export type Claim = z.infer<typeof ClaimSchema>

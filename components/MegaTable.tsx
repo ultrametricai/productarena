@@ -8,6 +8,8 @@ import MomentumChip from '@/components/MomentumChip'
 import TableControls from '@/components/TableControls'
 import OssPill from '@/components/OssPill'
 import ProductLogoView from '@/components/ProductLogoView'
+import TrendArrow from '@/components/TrendArrow'
+import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
@@ -166,6 +168,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 Access
               </SortableTh>
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
+                <span className="sr-only">Watch</span>
+              </SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
@@ -195,18 +200,21 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     {row.type === 'oss' ? <OssPill /> : <span className="text-zinc-600">—</span>}
                   </td>
                   <td className="px-2 py-2">
-                    <AiEraBadge
-                      value={row.initScore}
-                      size="sm"
-                      href="/methodology#arena-score"
-                      components={{
-                        agentReady: row.agentReady,
-                        apiQuality: row.apiQuality,
-                        openness: null,
-                        agenticApp: row.agenticApp,
-                        automation: null,
-                      }}
-                    />
+                    <span className="flex items-center gap-1.5">
+                      <AiEraBadge
+                        value={row.initScore}
+                        size="sm"
+                        href="/methodology#arena-score"
+                        components={{
+                          agentReady: row.agentReady,
+                          apiQuality: row.apiQuality,
+                          openness: null,
+                          agenticApp: row.agenticApp,
+                          automation: null,
+                        }}
+                      />
+                      <TrendArrow delta={row.trendDelta} />
+                    </span>
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
                     {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
@@ -246,12 +254,15 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       })}
                     </div>
                   </td>
+                  <td className="px-2 py-2 text-center">
+                    <WatchButton productId={row.productId} productName={row.name} size="sm" />
+                  </td>
                 </tr>
               )
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={10} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>
