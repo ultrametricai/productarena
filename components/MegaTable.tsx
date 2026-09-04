@@ -184,6 +184,17 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                         <span className="min-w-0 truncate font-medium">{row.name}</span>
                       </Link>
                       <YcBadge ycBatch={row.ycBatch} />
+                      {/* Compact compare affordance: a plain link into /compare?p=<id> — the
+                          compare page owns all selection state via its URL, so no cross-page
+                          state is needed here. */}
+                      <Link
+                        href={`/compare?p=${row.productId}`}
+                        title={`Compare ${row.name} with other products`}
+                        aria-label={`Compare ${row.name} with other products`}
+                        className="shrink-0 rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
+                      >
+                        +⇆
+                      </Link>
                     </div>
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">
