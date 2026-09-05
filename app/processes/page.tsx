@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
+import ProcessesTable, { type ProcessRow } from '@/components/ProcessesTable'
 import {
   chainTasks, computeCeiling, formatMinutes, gapThemes, loadChains, loadProcesses,
   phaseRank, processSlug, siteCeiling, taskCeiling, VENDOR_ARENA, vendorLabel,
@@ -36,6 +37,21 @@ export default function ProcessesPage() {
   }
   const phases = [...byPhase.keys()].sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))
 
+  const tableRows: ProcessRow[] = tasks.map((t) => {
+    const c = taskCeiling(t)
+    return {
+      slug: processSlug(t.title),
+      title: t.title,
+      phase: t.phase,
+      pct: c.pct,
+      agentSteps: c.agentSteps,
+      totalSteps: c.totalSteps,
+      minutes: c.totalMinutes,
+      complexity: t.complexity,
+      vendors: [...new Set(t.vendors)].map((v) => ({ label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null })),
+    }
+  })
+
   return (
     <div className="space-y-12">
       <section className="mx-auto max-w-3xl text-center">
@@ -45,32 +61,6 @@ export default function ProcessesPage() {
           an agent can do today. Each step is routed honestly: agent-runnable via a recorded API
           call, a manual form with no API path, or genuinely human. The gaps are the finding.
         </p>
-      </section>
-
-      {/* Site-wide agent ceiling + the biggest gaps across the market */}
-      <section className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/5 p-5">
-          <p className="text-[10px] uppercase tracking-widest text-emerald-400/80">Site-wide agent ceiling</p>
-          <p className="mt-2 font-display text-4xl font-bold text-emerald-300">{site.pct}%</p>
-          <p className="mt-1 text-sm text-zinc-400">
-            {site.agentSteps} of {site.totalSteps} steps across {tasks.length} processes are
-            agent-runnable today — {site.approvalGates} of those behind a human approval gate ⏸.
-          </p>
-          <p className="mt-1 text-xs text-zinc-500">
-            By time: {formatMinutes(site.agentMinutes)} of {formatMinutes(site.totalMinutes)} of estimated work.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-zinc-800 p-5">
-          <p className="text-[10px] uppercase tracking-widest text-zinc-400">Still human / manual across the market</p>
-          <ul className="mt-2 space-y-1.5 text-sm">
-            {themes.map((t) => (
-              <li key={t.id} className="flex items-baseline justify-between gap-3">
-                <span className="text-zinc-300">{t.label}</span>
-                <span className="shrink-0 font-mono text-xs tabular-nums text-zinc-500">{t.count} steps</span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </section>
 
       {/* Curated chains — typical multi-process runs */}
@@ -112,58 +102,15 @@ export default function ProcessesPage() {
           })}
         </div>
       </section>
-
-      {/* Full corpus grouped by phase */}
-      <section className="space-y-8">
+      <section className="space-y-3">
         <div>
           <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">All processes</h2>
           <p className="mt-1 text-sm text-zinc-400">
-            {tasks.length} founder processes, grouped by company phase. The bar is each
-            process&rsquo;s agent ceiling; vendor chips link to the arena that ranks the market.
+            One controller over the full corpus — sort by how automatable a process is, filter by
+            phase or software, click through for the step-by-step and the simulator.
           </p>
         </div>
-        {phases.map((phase) => (
-          <div key={phase}>
-            <h3 className="text-[10px] uppercase tracking-widest text-zinc-400">
-              {phase} <span className="text-zinc-600">· {byPhase.get(phase)!.length}</span>
-            </h3>
-            <div className="mt-2 divide-y divide-zinc-800/70 rounded-2xl border border-zinc-800">
-              {byPhase.get(phase)!.map((t) => {
-                const ceiling = taskCeiling(t)
-                const mappedVendors = [...new Set(t.vendors)]
-                return (
-                  <div key={t.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 transition hover:bg-zinc-900/50">
-                    <Link
-                      href={`/processes/${processSlug(t.title)}`}
-                      className="min-w-[180px] flex-1 font-medium hover:text-emerald-300"
-                    >
-                      {t.title}
-                    </Link>
-                    <CeilingBar pct={ceiling.pct} />
-                    <span className="hidden w-24 text-xs text-zinc-500 sm:inline">{complexityLabel(t.complexity)}</span>
-                    <span className="flex flex-wrap gap-1.5">
-                      {mappedVendors.map((v) =>
-                        VENDOR_ARENA[v] ? (
-                          <Link
-                            key={v}
-                            href={`/arena/${VENDOR_ARENA[v]}`}
-                            className="rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-                          >
-                            {vendorLabel(v)}
-                          </Link>
-                        ) : (
-                          <span key={v} className="rounded-full border border-zinc-800 px-2 py-0.5 text-[11px] text-zinc-500">
-                            {vendorLabel(v)}
-                          </span>
-                        ),
-                      )}
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        ))}
+        <ProcessesTable rows={tableRows} phases={phases} />
       </section>
 
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
