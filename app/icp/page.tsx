@@ -42,7 +42,7 @@ export default function IcpIndexPage() {
             <Link
               key={icp.id}
               href={`/icp/${icp.id}`}
-              className="group rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/40"
+              className="group min-w-0 rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/40"
             >
               <h2 className="font-display text-lg font-semibold tracking-tight group-hover:text-emerald-300">
                 {icp.name}

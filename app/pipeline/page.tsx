@@ -157,7 +157,7 @@ export default function PipelinePage() {
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {nextUp.map((entry) => (
-              <div key={entry.id} className="rounded-2xl border border-zinc-800 p-4">
+              <div key={entry.id} className="min-w-0 rounded-2xl border border-zinc-800 p-4">
                 <h3 className="font-medium">{entry.name}</h3>
                 {entry.aiEraAngle && <p className="mt-1 text-xs text-zinc-400">{entry.aiEraAngle}</p>}
                 {entry.candidateProducts && entry.candidateProducts.length > 0 && (
