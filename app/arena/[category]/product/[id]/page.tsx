@@ -131,14 +131,14 @@ export default async function ProductPage({
             <WatchButton productId={id} productName={product.name} />
             {tryable ? (
               <>
-                {/* Vendor link stays, demoted to a secondary chip — trying beats bouncing. */}
+                {/* Vendor link stays, demoted to plain domain text — trying beats bouncing. */}
                 <a
                   href={product.urls.site}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="shrink-0 rounded-lg border border-zinc-800 px-4 py-2 text-sm text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                  className="shrink-0 font-mono text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-2 transition hover:text-emerald-300"
                 >
-                  Visit ↗
+                  {new URL(product.urls.site).hostname.replace(/^www\./, '')} ↗
                 </a>
                 <a
                   href="#try-it"
@@ -152,9 +152,9 @@ export default async function ProductPage({
                 href={product.urls.site}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="shrink-0 rounded-lg border border-emerald-400/60 px-4 py-2 text-sm font-medium text-emerald-300 transition hover:bg-emerald-400/10"
+                className="shrink-0 font-mono text-sm text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
               >
-                Visit {product.name} ↗
+                {new URL(product.urls.site).hostname.replace(/^www\./, '')} ↗
               </a>
             )}
           </div>

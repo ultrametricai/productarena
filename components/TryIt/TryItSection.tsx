@@ -50,19 +50,6 @@ export default function TryItSection({
         stories={recorded}
         probe={endpoint ? { arena: category, product: productId, endpoint } : null}
       />
-      {processes.length > 0 && (
-        <p className="mt-2 text-xs text-zinc-500">
-          Future stories — this product appears in:{' '}
-          {processes.map((p, i) => (
-            <span key={p.slug}>
-              {i > 0 && ' · '}
-              <Link href={`/processes/${p.slug}`} className="text-zinc-400 underline decoration-zinc-800 hover:text-emerald-300">
-                {p.title} →
-              </Link>
-            </span>
-          ))}
-        </p>
-      )}
     </div>
   )
 }
