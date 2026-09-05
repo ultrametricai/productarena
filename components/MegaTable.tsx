@@ -141,7 +141,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
         onQuery={setQuery}
       />
 
-      <div className="overflow-x-auto rounded-2xl border border-zinc-800 md:overflow-x-visible">
+      {/* lg (not md): with every sm/md column visible the table needs ~810px, so a 768–1023px
+          viewport still gets the horizontal scroll container instead of page-level overflow. */}
+      <div className="overflow-x-auto rounded-2xl border border-zinc-800 lg:overflow-x-visible">
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
