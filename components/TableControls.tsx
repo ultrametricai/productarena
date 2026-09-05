@@ -59,15 +59,14 @@ export default function TableControls<C extends string>({
           </button>
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-nowrap items-center gap-2">
         {scope && (
-          <>
-            <span className="text-xs uppercase tracking-widest text-zinc-500">Show</span>
+          <span className="relative inline-flex">
             <select
               value={scope.value}
               onChange={(e) => scope.onChange(e.target.value)}
               aria-label={scope.ariaLabel}
-              className="rounded-lg border border-zinc-800 bg-zinc-900 px-2.5 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
+              className="max-w-[11rem] appearance-none rounded-lg border border-zinc-800 bg-zinc-900 py-1.5 pl-2.5 pr-7 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
             >
               {scope.options.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -75,15 +74,17 @@ export default function TableControls<C extends string>({
                 </option>
               ))}
             </select>
-          </>
+            {/* native select arrows are near-invisible on dark backgrounds — draw our own */}
+            <span aria-hidden className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-emerald-400">▾</span>
+          </span>
         )}
         <input
           type="search"
           value={query}
           onChange={(e) => onQuery(e.target.value)}
-          placeholder="Filter products…"
+          placeholder="Filter…"
           aria-label="Filter products by name or vendor"
-          className="ml-auto min-w-0 flex-1 basis-24 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:flex-none sm:w-48"
+          className="ml-auto min-w-0 flex-1 basis-16 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:flex-none sm:w-48"
         />
         {after && <span className="text-xs text-zinc-400">{after}</span>}
       </div>
