@@ -1,3 +1,4 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
@@ -97,16 +98,28 @@ describe('classifyGapStep — keyword routing (pure, no disk)', () => {
 })
 
 describe('resolveGapStep — live-arena binding', () => {
-  it('skips rules whose arena is not live (voice-agents, workflow-automation)', () => {
-    expect(resolveGapStep(step('Schedule call', 'person'), DATA_DIR)).toBeNull()
-    expect(resolveGapStep(step('Wait for quotes (3-5 days)', 'person', true), DATA_DIR)).toBeNull()
+  it('resolves against an arena only when it is live, else skips (rule keyed by arena id)', () => {
+    const liveIds = new Set(
+      (JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'categories.json'), 'utf8')) as Array<{ id: string }>).map((c) => c.id),
+    )
+    const voice = resolveGapStep(step('Schedule call', 'person'), DATA_DIR)
+    if (liveIds.has('voice-agents')) expect(voice?.kind).toBe('closer')
+    else expect(voice).toBeNull()
+    const watcher = resolveGapStep(step('Wait for quotes (3-5 days)', 'person', true), DATA_DIR)
+    if (liveIds.has('workflow-automation')) {
+      expect(watcher?.kind).toBe('closer')
+      if (watcher?.kind === 'closer') expect(watcher.closer.arenaId).toBe('workflow-automation')
+    } else expect(watcher).toBeNull()
   })
 
-  it('falls back to web-scraping while browser-agents is absent, keeping blurb and caution', () => {
+  it('portal steps resolve to browser-agents when live, else the web-scraping fallback — blurb and caution intact', () => {
+    const liveIds = new Set(
+      (JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'categories.json'), 'utf8')) as Array<{ id: string }>).map((c) => c.id),
+    )
     const res = resolveGapStep(step('File on Delaware portal', 'form'), DATA_DIR)
     expect(res?.kind).toBe('closer')
     if (res?.kind !== 'closer') return
-    expect(res.closer.arenaId).toBe('web-scraping')
+    expect(res.closer.arenaId).toBe(liveIds.has('browser-agents') ? 'browser-agents' : 'web-scraping')
     expect(res.closer.blurb).toMatch(/browser agent/)
     expect(res.closer.caution).toMatch(/verify the portal/)
     // topProduct is the arena's live #1 by agent-readiness
