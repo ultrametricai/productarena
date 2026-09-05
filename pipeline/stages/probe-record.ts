@@ -1721,14 +1721,209 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       displayCommand: `echo '<jsonrpc initialize>' | npx -y @anyproto/anytype-mcp`,
       stdinPayload: MCP_INITIALIZE,
       expect: /Initializing Anytype MCP Server/,
-  // GPU clouds: the signature keyless proofs are (a) live market/catalog reads — Vast.ai's
-  // public offer-search works with NO account, from both the CLI and the bare REST endpoint,
-  // returning real per-GPU-hour prices — and (b) auth-gated provisioning APIs answering a bare
-  // request with 401 (RunPod REST, Lambda Cloud API next to its keyless OpenAPI spec, CoreWeave
-  // CKS API), plus real MCP initialize handshakes (RunPod's hosted API MCP OAuth-gates; the
-  // RunPod and CoreWeave docs MCP servers answer serverInfo fully keylessly). CLIs run for real:
-  // runpodctl via brew, vastai via uvx from pypi, pspace via the official installer into a
-  // throwaway HOME. All keyless, read-only, self-cleaned — no GPUs are rented.
+      longRunning: true,
+      timeoutMs: 180_000,
+    },
+    {
+      // The local API's machine-readable OpenAPI spec ships in the vendor's core repo
+      // (anytype-heart, the engine every desktop app embeds) — fetched keylessly.
+      probeId: 'openapi-spec-in-repo',
+      productId: 'anytype',
+      storyIds: ['api-machine-spec'],
+      bin: 'sh',
+      argv: [
+        'sh', '-c',
+        `curl -s --max-time 30 https://raw.githubusercontent.com/anyproto/anytype-heart/main/core/api/docs/openapi.json | python3 -c 'import json,sys; d=json.load(sys.stdin); print("PA_PROBE_OK anytype openapi:", d.get("openapi", d.get("swagger","spec")), "paths:", len(d.get("paths",{})))'`,
+      ],
+      displayCommand: `curl -s https://raw.githubusercontent.com/anyproto/anytype-heart/main/core/api/docs/openapi.json | python3 -c 'import json,sys; d=json.load(sys.stdin); print("PA_PROBE_OK anytype openapi:", d.get("openapi"), "paths:", len(d.get("paths",{})))'`,
+      expect: /PA_PROBE_OK anytype openapi: .* paths: \d+/,
+      timeoutMs: 60_000,
+    },
+    {
+      // Capacities publishes a machine-readable OpenAPI 3.1 spec and the live API answers a
+      // keyless request with a clean 401 — spec + live-endpoint pair.
+      probeId: 'openapi-and-live-api',
+      productId: 'capacities',
+      storyIds: ['agentic-public-api', 'api-machine-spec'],
+      bin: 'sh',
+      argv: [
+        'sh', '-c',
+        'curl -s --max-time 20 https://api.capacities.io/openapi.json | head -c 200; echo; curl -s -i --max-time 20 https://api.capacities.io/spaces | head -6',
+      ],
+      displayCommand: 'curl -s https://api.capacities.io/openapi.json | head -c 200; curl -si https://api.capacities.io/spaces | head -6',
+      expect: /"openapi":"3\.1\.0"[\s\S]*HTTP\/2 401/,
+      timeoutMs: 60_000,
+    },
+    {
+      // Hosted Capacities MCP server draws a keyless 401 with MCP OAuth resource metadata and
+      // mcp:read/mcp:write scopes — live, protocol-speaking endpoint.
+      probeId: 'mcp-remote-handshake',
+      productId: 'capacities',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.capacities.io/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.capacities.io/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401[\s\S]*mcp:read mcp:write/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Reflect's documented REST API (base reflect.app/api) answers keyless requests with a
+      // clean JSON 401 — the endpoint documented at reflect.academy/api is live.
+      probeId: 'api-keyless-401',
+      productId: 'reflect',
+      storyIds: ['agentic-public-api'],
+      bin: 'curl',
+      argv: ['curl', '-s', '-i', '--max-time', '20', 'https://reflect.app/api/graphs'],
+      displayCommand: 'curl -si https://reflect.app/api/graphs',
+      expect: /HTTP\/2 401[\s\S]*Authentication required/,
+      timeoutMs: 30_000,
+    },
+  ],
+  'meeting-ai': [
+    {
+      // Granola's hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'granola',
+      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.granola.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.granola.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Fireflies' hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'fireflies',
+      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.fireflies.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.fireflies.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Fireflies docs MCP completes a FULL keyless initialize handshake (Mintlify docs MCP).
+      probeId: 'docs-mcp-handshake',
+      productId: 'fireflies',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://docs.fireflies.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://docs.fireflies.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /"result":\{"protocolVersion"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Fireflies GraphQL API answers a keyless query with its documented auth challenge.
+      probeId: 'graphql-keyless-auth',
+      productId: 'fireflies',
+      storyIds: ['agentic-public-api', 'transcripts-via-api'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.fireflies.ai/graphql',
+        '-H', 'Content-Type: application/json',
+        '-d', '{"query":"{ user { email } }"}',
+      ],
+      displayCommand: `curl -si -X POST https://api.fireflies.ai/graphql -H 'Content-Type: application/json' -d '{"query":"{ user { email } }"}'`,
+      expect: /auth_failed/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Otter's hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'otter',
+      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.otter.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.otter.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Fathom's hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'fathom',
+      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.fathom.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.fathom.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Fathom's documented REST base answers keylessly with 401 plus its documented
+      // RateLimit-* headers — live endpoint matching developers.fathom.ai exactly.
+      probeId: 'api-keyless-401',
+      productId: 'fathom',
+      storyIds: ['agentic-public-api', 'transcripts-via-api'],
+      bin: 'curl',
+      argv: ['curl', '-s', '-i', '--max-time', '20', 'https://api.fathom.ai/external/v1/meetings'],
+      displayCommand: 'curl -si https://api.fathom.ai/external/v1/meetings',
+      expect: /HTTP\/2 401[\s\S]*ratelimit-limit/i,
+      timeoutMs: 30_000,
+    },
+    {
+      // Fathom publishes its machine-readable OpenAPI spec at the URL its own llms.txt
+      // advertises — fetched keylessly.
+      probeId: 'openapi-spec',
+      productId: 'fathom',
+      storyIds: ['api-machine-spec'],
+      bin: 'sh',
+      argv: [
+        'sh', '-c',
+        'curl -s --max-time 30 https://developers.fathom.ai/api-reference/openapi.yaml | head -8',
+      ],
+      displayCommand: 'curl -s https://developers.fathom.ai/api-reference/openapi.yaml | head -8',
+      expect: /openapi: 3\.\d/,
+      timeoutMs: 60_000,
+    },
+    {
+      // Fellow's hosted MCP server draws a keyless 401 Bearer challenge at the documented URL.
+      probeId: 'mcp-remote-handshake',
+      productId: 'fellow',
+      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://fellow.app/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://fellow.app/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401[\s\S]*Bearer/,
+      timeoutMs: 30_000,
+    },
+  ],
   'gpu-clouds': [
     {
       probeId: 'cli-version',
@@ -1894,17 +2089,6 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 180_000,
     },
   ],
-  // Feature flags & experimentation: the signature keyless proofs are REAL flag
-  // create-and-evaluate roundtrips against the three OSS platforms self-hosted via docker on
-  // throwaway ports (unleash: admin-API create + strategy + enable → client-API evaluation;
-  // flagsmith: API-registered first user → org → project → environment → flag → keyless
-  // environment-key evaluation; growthbook: API-registered user → org → feature → SDK
-  // connection → keyless SDK-payload endpoint), plus MCP surfaces run for real: LaunchDarkly's
-  // and GrowthBook's npm MCP servers complete stdio initialize handshakes keylessly, the
-  // hosted LaunchDarkly / Statsig / Flagsmith MCP endpoints answer bare initialize POSTs with
-  // their auth challenges, and the Statsig and Unleash docs MCP servers answer serverInfo fully
-  // keylessly. CLIs: ldcli via brew, @statsig/siggy via npx. All keyless, self-cleaned; the
-  // only flags created live in throwaway local containers.
   'feature-flags': [
     {
       probeId: 'cli-version',
@@ -1931,53 +2115,6 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 180_000,
     },
     {
-      // The local API's machine-readable OpenAPI spec ships in the vendor's core repo
-      // (anytype-heart, the engine every desktop app embeds) — fetched keylessly.
-      probeId: 'openapi-spec-in-repo',
-      productId: 'anytype',
-      storyIds: ['api-machine-spec'],
-      bin: 'sh',
-      argv: [
-        'sh', '-c',
-        `curl -s --max-time 30 https://raw.githubusercontent.com/anyproto/anytype-heart/main/core/api/docs/openapi.json | python3 -c 'import json,sys; d=json.load(sys.stdin); print("PA_PROBE_OK anytype openapi:", d.get("openapi", d.get("swagger","spec")), "paths:", len(d.get("paths",{})))'`,
-      ],
-      displayCommand: `curl -s https://raw.githubusercontent.com/anyproto/anytype-heart/main/core/api/docs/openapi.json | python3 -c 'import json,sys; d=json.load(sys.stdin); print("PA_PROBE_OK anytype openapi:", d.get("openapi"), "paths:", len(d.get("paths",{})))'`,
-      expect: /PA_PROBE_OK anytype openapi: .* paths: \d+/,
-      timeoutMs: 60_000,
-    },
-    {
-      // Capacities publishes a machine-readable OpenAPI 3.1 spec and the live API answers a
-      // keyless request with a clean 401 — spec + live-endpoint pair.
-      probeId: 'openapi-and-live-api',
-      productId: 'capacities',
-      storyIds: ['agentic-public-api', 'api-machine-spec'],
-      bin: 'sh',
-      argv: [
-        'sh', '-c',
-        'curl -s --max-time 20 https://api.capacities.io/openapi.json | head -c 200; echo; curl -s -i --max-time 20 https://api.capacities.io/spaces | head -6',
-      ],
-      displayCommand: 'curl -s https://api.capacities.io/openapi.json | head -c 200; curl -si https://api.capacities.io/spaces | head -6',
-      expect: /"openapi":"3\.1\.0"[\s\S]*HTTP\/2 401/,
-      timeoutMs: 60_000,
-    },
-    {
-      // Hosted Capacities MCP server draws a keyless 401 with MCP OAuth resource metadata and
-      // mcp:read/mcp:write scopes — live, protocol-speaking endpoint.
-      probeId: 'mcp-remote-handshake',
-      productId: 'capacities',
-      storyIds: ['agentic-mcp-server'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.capacities.io/mcp',
-        '-H', 'Content-Type: application/json',
-        '-H', 'Accept: application/json, text/event-stream',
-        '-d', CURL_MCP_INIT,
-      ],
-      displayCommand: `curl -si -X POST https://api.capacities.io/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /HTTP\/2 401[\s\S]*mcp:read mcp:write/,
-      timeoutMs: 30_000,
-    },
-    {
       // Documented hosted MCP endpoint draws a keyless 401 — live and auth-gated.
       probeId: 'mcp-remote-handshake',
       productId: 'launchdarkly',
@@ -1989,32 +2126,6 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
         '-H', 'Accept: application/json, text/event-stream',
         '-d', CURL_MCP_INIT,
       ],
-      displayCommand: `curl -si -X POST https://mcp.launchdarkly.com/mcp/launchdarkly -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /HTTP\/[12](?:\.1)? 401/,
-      timeoutMs: 30_000,
-    },
-    {
-      // Reflect's documented REST API (base reflect.app/api) answers keyless requests with a
-      // clean JSON 401 — the endpoint documented at reflect.academy/api is live.
-      probeId: 'api-keyless-401',
-      productId: 'reflect',
-      storyIds: ['agentic-public-api'],
-      bin: 'curl',
-      argv: ['curl', '-s', '-i', '--max-time', '20', 'https://reflect.app/api/graphs'],
-      displayCommand: 'curl -si https://reflect.app/api/graphs',
-      expect: /HTTP\/2 401[\s\S]*Authentication required/,
-      timeoutMs: 30_000,
-    },
-  ],
-  'meeting-ai': [
-    {
-      // Granola's hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
-      probeId: 'mcp-remote-handshake',
-      productId: 'granola',
-      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.granola.ai/mcp',
       displayCommand: `curl -si -X POST https://mcp.launchdarkly.com/mcp/launchdarkly -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
       expect: /HTTP\/2 401/,
       timeoutMs: 30_000,
@@ -2041,130 +2152,6 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
         '-H', 'Accept: application/json, text/event-stream',
         '-d', CURL_MCP_INIT,
       ],
-      displayCommand: `curl -si -X POST https://mcp.granola.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
-      timeoutMs: 30_000,
-    },
-    {
-      // Fireflies' hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
-      probeId: 'mcp-remote-handshake',
-      productId: 'fireflies',
-      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.fireflies.ai/mcp',
-        '-H', 'Content-Type: application/json',
-        '-H', 'Accept: application/json, text/event-stream',
-        '-d', CURL_MCP_INIT,
-      ],
-      displayCommand: `curl -si -X POST https://api.fireflies.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
-      timeoutMs: 30_000,
-    },
-    {
-      // Fireflies docs MCP completes a FULL keyless initialize handshake (Mintlify docs MCP).
-      probeId: 'docs-mcp-handshake',
-      productId: 'fireflies',
-      storyIds: ['agentic-agent-docs'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://docs.fireflies.ai/mcp',
-        '-H', 'Content-Type: application/json',
-        '-H', 'Accept: application/json, text/event-stream',
-        '-d', CURL_MCP_INIT,
-      ],
-      displayCommand: `curl -si -X POST https://docs.fireflies.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /"result":\{"protocolVersion"/,
-      timeoutMs: 30_000,
-    },
-    {
-      // Fireflies GraphQL API answers a keyless query with its documented auth challenge.
-      probeId: 'graphql-keyless-auth',
-      productId: 'fireflies',
-      storyIds: ['agentic-public-api', 'transcripts-via-api'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.fireflies.ai/graphql',
-        '-H', 'Content-Type: application/json',
-        '-d', '{"query":"{ user { email } }"}',
-      ],
-      displayCommand: `curl -si -X POST https://api.fireflies.ai/graphql -H 'Content-Type: application/json' -d '{"query":"{ user { email } }"}'`,
-      expect: /auth_failed/,
-      timeoutMs: 30_000,
-    },
-    {
-      // Otter's hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
-      probeId: 'mcp-remote-handshake',
-      productId: 'otter',
-      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.otter.ai/mcp',
-        '-H', 'Content-Type: application/json',
-        '-H', 'Accept: application/json, text/event-stream',
-        '-d', CURL_MCP_INIT,
-      ],
-      displayCommand: `curl -si -X POST https://mcp.otter.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
-      timeoutMs: 30_000,
-    },
-    {
-      // Fathom's hosted MCP server draws a keyless 401 with MCP OAuth resource metadata.
-      probeId: 'mcp-remote-handshake',
-      productId: 'fathom',
-      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.fathom.ai/mcp',
-        '-H', 'Content-Type: application/json',
-        '-H', 'Accept: application/json, text/event-stream',
-        '-d', CURL_MCP_INIT,
-      ],
-      displayCommand: `curl -si -X POST https://api.fathom.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /HTTP\/2 401[\s\S]*oauth-protected-resource/,
-      timeoutMs: 30_000,
-    },
-    {
-      // Fathom's documented REST base answers keylessly with 401 plus its documented
-      // RateLimit-* headers — live endpoint matching developers.fathom.ai exactly.
-      probeId: 'api-keyless-401',
-      productId: 'fathom',
-      storyIds: ['agentic-public-api', 'transcripts-via-api'],
-      bin: 'curl',
-      argv: ['curl', '-s', '-i', '--max-time', '20', 'https://api.fathom.ai/external/v1/meetings'],
-      displayCommand: 'curl -si https://api.fathom.ai/external/v1/meetings',
-      expect: /HTTP\/2 401[\s\S]*ratelimit-limit/i,
-      timeoutMs: 30_000,
-    },
-    {
-      // Fathom publishes its machine-readable OpenAPI spec at the URL its own llms.txt
-      // advertises — fetched keylessly.
-      probeId: 'openapi-spec',
-      productId: 'fathom',
-      storyIds: ['api-machine-spec'],
-      bin: 'sh',
-      argv: [
-        'sh', '-c',
-        'curl -s --max-time 30 https://developers.fathom.ai/api-reference/openapi.yaml | head -8',
-      ],
-      displayCommand: 'curl -s https://developers.fathom.ai/api-reference/openapi.yaml | head -8',
-      expect: /openapi: 3\.\d/,
-      timeoutMs: 60_000,
-    },
-    {
-      // Fellow's hosted MCP server draws a keyless 401 Bearer challenge at the documented URL.
-      probeId: 'mcp-remote-handshake',
-      productId: 'fellow',
-      storyIds: ['agentic-mcp-server', 'meeting-mcp-server'],
-      bin: 'curl',
-      argv: [
-        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://fellow.app/mcp',
-        '-H', 'Content-Type: application/json',
-        '-H', 'Accept: application/json, text/event-stream',
-        '-d', CURL_MCP_INIT,
-      ],
-      displayCommand: `curl -si -X POST https://fellow.app/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
-      expect: /HTTP\/2 401[\s\S]*Bearer/,
       displayCommand: `curl -si -X POST https://api.statsig.com/v1/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
       expect: /HTTP\/2 401/,
       timeoutMs: 30_000,
