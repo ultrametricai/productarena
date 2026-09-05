@@ -7,11 +7,14 @@
 //   For each story where (a) at least one product holds a positive verdict (full/partial/
 //   disputed) — proving a product of this kind can conceivably ship the capability, so the
 //   axis applies to the KIND — and (b) the non-positive products SPLIT between "none" and
-//   "na", flip the "na" cells to "none" (lack of evidence for an applicable axis is always
-//   none, per SYSTEM prompt step 3).
+//   "na", OR every non-positive product is "na" (the sole-na case: when every peer is
+//   positive, that is the strongest possible in-arena proof the axis applies — added at the
+//   workflow-automation/observability bring-up after temporal:agentic-mcp-server sat na
+//   against four full peers), flip the "na" cells to "none" (lack of evidence for an
+//   applicable axis is always none, per SYSTEM prompt step 3).
 //
-//   Stories where every non-positive product agreed on "na" are left alone, as are mixed
-//   na/none stories with NO positive peer (no in-arena proof the axis applies to the kind).
+//   Mixed na/none stories with NO positive peer are left alone (no in-arena proof the axis
+//   applies to the kind).
 //
 // Cache-edit mechanism (same as apply-mcp-server-na.ts / terminals-na-harmonize.ts): hand-write
 // the verdict and stamp the cache file with the CURRENT cellHash so `pnpm pipeline judge`
@@ -54,7 +57,8 @@ function main(): void {
     const positives = arr.filter((v) => v.verdict === 'full' || v.verdict === 'partial' || v.verdict === 'disputed')
     const nas = arr.filter((v) => v.verdict === 'na')
     const nones = arr.filter((v) => v.verdict === 'none')
-    if (positives.length > 0 && nas.length > 0 && nones.length > 0) {
+    const soleNa = positives.length + nas.length === arr.length
+    if (positives.length > 0 && nas.length > 0 && (nones.length > 0 || soleNa)) {
       for (const v of nas) flips.push({ productId: v.productId, storyId })
     }
   }
