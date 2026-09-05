@@ -24,6 +24,31 @@ export interface VendorRole {
   alternatives: SwapOption[]
 }
 
+// An agentic gap-closer: a live-arena workaround for a non-agent step, resolved server-side by
+// lib/gapClosers.ts (this type stays here so the client-side simulator can receive it as a prop).
+export interface GapCloser {
+  arenaId: string
+  arenaName: string
+  // The arena's current #1 by agent-readiness — the concrete product to hand the step to.
+  topProduct: SwapOption
+  blurb: string
+  // Honest fine print (e.g. "unofficial path — verify the portal's terms allow automation").
+  caution: string | null
+}
+
+// What we honestly know about a non-agent step: either today's market can close it (closer), or
+// it is judgment/identity work no agent should stand in for (irreducible). Steps with neither
+// resolve to null — no workaround yet, and we don't invent one.
+export type GapResolution =
+  | { kind: 'closer'; closer: GapCloser }
+  | { kind: 'irreducible'; reason: string }
+
+// The one-line honest reason a non-agent step blocks the agent — shared by the ceiling verdict,
+// the simulator transcript, and the gap-closer split.
+export function gapWhy(route: 'form' | 'person'): string {
+  return route === 'person' ? 'needs a human' : 'manual form/portal — no API path'
+}
+
 export interface SimStep {
   taskId: string
   taskTitle: string
@@ -39,6 +64,9 @@ export interface SimStep {
   riskLevel: 'low' | 'medium' | 'high' | null
   estimatedMinutes: number
   async: boolean
+  // Pre-resolved (server-side) agentic workaround for non-agent steps; null for agent steps and
+  // for gaps with no honest workaround.
+  gap: GapResolution | null
 }
 
 // Human-scale minutes: "12 min", "1.5 h", "2 d". Waiting-on-the-government steps run to days —

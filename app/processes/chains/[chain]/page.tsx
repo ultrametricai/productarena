@@ -57,7 +57,7 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
         </p>
       </section>
 
-      <ProcessVerdict ceiling={ceiling} />
+      <ProcessVerdict ceiling={ceiling} nodes={tasks.flatMap((t) => t.dag.nodes)} />
 
       <section className="space-y-6">
         {tasks.map((task, i) => {

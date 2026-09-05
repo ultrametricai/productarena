@@ -15,7 +15,7 @@ import { formatMinutes } from '@/lib/processSim'
 const CADENCE_MS = 600
 
 interface Line {
-  kind: 'agent' | 'gap' | 'approval' | 'task' | 'call' | 'done'
+  kind: 'agent' | 'gap' | 'workaround' | 'approval' | 'task' | 'call' | 'done'
   text: string
   mono?: boolean
 }
@@ -67,6 +67,14 @@ function buildTranscript(
         kind: 'gap',
         text: `⚠ GAP: ${step.label} — ${why} — agent hands off${step.async ? ' ⏳' : ''}`,
       })
+      // Pre-resolved server-side (lib/gapClosers.ts) — the client never runs the rule engine.
+      if (step.gap?.kind === 'closer') {
+        const { blurb, topProduct, caution } = step.gap.closer
+        lines.push({
+          kind: 'workaround',
+          text: `  ⚡ workaround: ${blurb} (top: ${topProduct.name})${caution ? ` — ${caution}` : ''}`,
+        })
+      }
     }
   }
   return lines
@@ -123,6 +131,7 @@ export default function ProcessSimulator({
     call: 'pl-6 text-zinc-400',
     approval: 'pl-4 text-amber-300',
     gap: 'text-red-300/90',
+    workaround: 'pl-4 text-emerald-300/80',
     task: 'pt-2 text-zinc-500',
     done: 'text-zinc-300',
   }
