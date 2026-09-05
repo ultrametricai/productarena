@@ -139,7 +139,7 @@ export default function ProcessSimulator({
       {roles.length > 0 && (
         <div className="mt-4 flex flex-wrap gap-3">
           {roles.map((role) => (
-            <label key={role.arenaId} className="flex flex-col gap-1 text-xs text-zinc-400">
+            <label key={role.arenaId} className="flex min-w-0 max-w-full flex-col gap-1 text-xs text-zinc-400">
               <span>
                 {role.arenaName}
                 {selections[role.arenaId] !== role.canonicalVendor && (
@@ -149,7 +149,7 @@ export default function ProcessSimulator({
               <select
                 value={selections[role.arenaId] ?? role.defaultProductId}
                 onChange={(e) => setSelections((s) => ({ ...s, [role.arenaId]: e.target.value }))}
-                className="rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-sm text-zinc-200 focus:border-emerald-400/60 focus:outline-none"
+                className="min-w-0 max-w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-sm text-zinc-200 focus:border-emerald-400/60 focus:outline-none"
               >
                 {role.alternatives.map((o) => (
                   <option key={o.id} value={o.id}>
@@ -174,7 +174,7 @@ export default function ProcessSimulator({
       </button>
 
       {lines.length > 0 && (
-        <div className="mt-4 space-y-1 rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4 font-mono text-xs leading-relaxed">
+        <div className="mt-4 space-y-1 break-words rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4 font-mono text-xs leading-relaxed">
           {lines.map((line, i) => (
             <p key={i} className={lineClass[line.kind]}>{line.text}</p>
           ))}
