@@ -1326,6 +1326,357 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 30_000,
     },
   ],
+  'ai-memory': [
+    {
+      // Official mem0 CLI (pypi mem0-cli), run keylessly through uvx — help prints the full
+      // memory command surface (add/search/get/list/update/delete) without an account.
+      probeId: 'cli-help',
+      productId: 'mem0',
+      storyIds: ['agentic-official-cli'],
+      bin: 'uvx',
+      argv: ['sh', '-c', 'uvx --from mem0-cli mem0 --help | cat'],
+      displayCommand: 'uvx --from mem0-cli mem0 --help',
+      expect: /Memory Layer for AI Agents/,
+      timeoutMs: 120_000,
+    },
+    {
+      // OSS SDK is pip-installable and importable with no key: `from mem0 import Memory`.
+      probeId: 'sdk-pip-import',
+      productId: 'mem0',
+      storyIds: ['agentic-sdks', 'self-host-oss-deployment'],
+      bin: 'uv',
+      argv: [
+        'uv', 'run', '--no-project', '--with', 'mem0ai', 'python3', '-c',
+        'import mem0; from mem0 import Memory; print("PA_PROBE_OK mem0ai", mem0.__version__)',
+      ],
+      displayCommand: `uv run --with mem0ai python3 -c 'import mem0; from mem0 import Memory; print("PA_PROBE_OK mem0ai", mem0.__version__)'`,
+      expect: /PA_PROBE_OK mem0ai \d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Hosted MCP server answers keylessly with its OAuth challenge + protected-resource
+      // metadata — live proof the endpoint exists and gates access (workos precedent).
+      probeId: 'mcp-remote-handshake',
+      productId: 'mem0',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.mem0.ai/mcp/',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.mem0.ai/mcp/ -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Zep docs MCP server completes a full keyless initialize handshake (open, no auth).
+      probeId: 'docs-mcp-handshake',
+      productId: 'zep',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://help.getzep.com/_mcp/server',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://help.getzep.com/_mcp/server -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /"serverInfo"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Zep Memory MCP server (api.getzep.com/mcp) is live and IdP-gated: keyless initialize
+      // draws the OAuth 401 challenge with protected-resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'zep',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.getzep.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.getzep.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource\/mcp/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Graphiti — Zep's open-source temporal-knowledge-graph engine — installs and imports
+      // from pypi with no key.
+      probeId: 'sdk-pip-import',
+      productId: 'zep',
+      storyIds: ['agentic-sdks', 'entity-graph-memory'],
+      bin: 'uv',
+      argv: [
+        'uv', 'run', '--no-project', '--with', 'graphiti-core', '--with', 'httpx', 'python3', '-c',
+        'import graphiti_core; from graphiti_core import Graphiti; print("PA_PROBE_OK graphiti-core imported")',
+      ],
+      displayCommand: `uv run --with graphiti-core python3 -c 'from graphiti_core import Graphiti; print("PA_PROBE_OK graphiti-core imported")'`,
+      expect: /PA_PROBE_OK graphiti-core imported/,
+      timeoutMs: 120_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'letta',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', '@letta-ai/letta-code', '--version'],
+      displayCommand: 'npx -y @letta-ai/letta-code --version',
+      expect: /\d+\.\d+\.\d+ \(Letta Code\)/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Keyless local App Server bring-up: `letta server --backend local` boots with no
+      // account and prints its listen URLs; the probe captures the startup banner then kills it.
+      probeId: 'local-server-keyless-boot',
+      productId: 'letta',
+      storyIds: ['self-host-oss-deployment', 'agentic-headless'],
+      bin: 'npx',
+      argv: [
+        'sh', '-c',
+        'pkill -f "letta-code" 2>/dev/null; (npx -y @letta-ai/letta-code server --backend local --listen ws://127.0.0.1:4500 >/tmp/pa-letta-app.log 2>&1 &); n=0; until grep -q "Listening on" /tmp/pa-letta-app.log 2>/dev/null; do n=$((n+1)); [ $n -ge 40 ] && break; sleep 2; done; cat /tmp/pa-letta-app.log; pkill -f "letta-code"; rm -f /tmp/pa-letta-app.log',
+      ],
+      displayCommand: 'npx -y @letta-ai/letta-code server --backend local --listen ws://127.0.0.1:4500  # keyless boot, then kill',
+      expect: /Listening on ws:\/\/127\.0\.0\.1:4500/,
+      timeoutMs: 180_000,
+    },
+    {
+      // Hosted MCP server answers keylessly with its OAuth challenge (no API key required
+      // by design — sign-in happens in the browser).
+      probeId: 'mcp-remote-handshake',
+      productId: 'supermemory',
+      storyIds: ['agentic-mcp-server', 'assistant-memory-plugins'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.supermemory.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.supermemory.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Published machine-readable OpenAPI spec + live gated v3 API: the spec is keyless,
+      // and a keyless POST to /v3/search draws a clean 401 from the live endpoint.
+      probeId: 'openapi-and-live-api',
+      productId: 'supermemory',
+      storyIds: ['api-machine-spec', 'agentic-public-api'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        'curl -s --max-time 20 https://supermemory.ai/openapi.json | head -c 200; echo; curl -s -i --max-time 20 -X POST https://api.supermemory.ai/v3/search -H "Content-Type: application/json" -d \'{"q":"probe"}\' | head -5',
+      ],
+      displayCommand: `curl -s https://supermemory.ai/openapi.json | head -c 200 && curl -si -X POST https://api.supermemory.ai/v3/search -d '{"q":"probe"}'`,
+      expect: /"openapi"[\s\S]*401/,
+      timeoutMs: 45_000,
+    },
+    {
+      // Keyless end-to-end memory roundtrip on the official CLI: `cognee-cli demo` loads a
+      // bundled knowledge graph (47 nodes/86 edges) and answers recall queries with no LLM
+      // key, then `forget` tears the dataset down.
+      probeId: 'cli-demo-roundtrip',
+      productId: 'cognee',
+      storyIds: ['agentic-official-cli', 'local-embedded-mode'],
+      bin: 'uvx',
+      argv: [
+        'sh', '-c',
+        'uvx --from cognee cognee-cli demo 2>/dev/null | tail -20; uvx --from cognee cognee-cli forget --dataset demo 2>/dev/null | tail -2',
+      ],
+      displayCommand: 'uvx --from cognee cognee-cli demo && uvx --from cognee cognee-cli forget --dataset demo',
+      expect: /Demo graph loaded into dataset 'demo'/,
+      timeoutMs: 300_000,
+    },
+    {
+      // First-party cognee MCP server (pypi cognee-mcp) answers a stdio initialize handshake.
+      probeId: 'mcp-stdio-handshake',
+      productId: 'cognee',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'uvx',
+      argv: ['sh', '-c', 'uvx cognee-mcp'],
+      displayCommand: `echo '<jsonrpc initialize>' | uvx cognee-mcp`,
+      stdinPayload: MCP_INITIALIZE,
+      expect: /"serverInfo"/,
+      longRunning: true,
+      timeoutMs: 300_000,
+    },
+  ],
+  'voice-agents': [
+    {
+      // Official Vapi CLI, installed via the vendor's install.sh into ~/.vapi/bin.
+      probeId: 'cli-version',
+      productId: 'vapi',
+      storyIds: ['agentic-official-cli'],
+      bin: 'sh',
+      argv: ['sh', '-c', '"$HOME/.vapi/bin/vapi" --version'],
+      displayCommand: 'vapi --version  # installed via `curl -sSL https://vapi.ai/install.sh | bash`',
+      expect: /vapi version \d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Hosted Vapi MCP server draws a keyless 401 — live, bearer-gated endpoint.
+      probeId: 'mcp-remote-handshake',
+      productId: 'vapi',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.vapi.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.vapi.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'retell',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', '@retell-ai/retell-cli', '--version'],
+      displayCommand: 'npx -y @retell-ai/retell-cli --version',
+      expect: /retell \d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Retell's hosted MCP server completes a full KEYLESS initialize handshake (tool calls
+      // authenticate later with a bearer key) — serverInfo "retell-sdk" comes back openly.
+      probeId: 'mcp-remote-handshake',
+      productId: 'retell',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.retellai.com',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.retellai.com -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /"serverInfo":\{"name":"retell-sdk"/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'elevenlabs-agents',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', '@elevenlabs/cli', '--version'],
+      displayCommand: 'npx -y @elevenlabs/cli --version',
+      expect: /elevenlabs \d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // ElevenLabs hosted MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'elevenlabs-agents',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.elevenlabs.io/v1/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.elevenlabs.io/v1/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'bland',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'bland-cli', '--version'],
+      displayCommand: 'npx -y bland-cli --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Bland's hosted MCP endpoint draws a keyless 401 — live, key-gated.
+      probeId: 'mcp-remote-handshake',
+      productId: 'bland',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.bland.ai/v1/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.bland.ai/v1/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'livekit-agents',
+      storyIds: ['agentic-official-cli'],
+      bin: 'lk',
+      argv: ['lk', '--version'],
+      displayCommand: 'lk --version',
+      expect: /lk version \d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Keyless self-host: `livekit-server --dev` boots locally with placeholder keys and
+      // serves HTTP 200 on :7880; probe polls it then tears down.
+      probeId: 'local-server-keyless-boot',
+      productId: 'livekit-agents',
+      storyIds: ['self-host-oss-runtime', 'openness-self-host'],
+      bin: 'livekit-server',
+      argv: [
+        'sh', '-c',
+        'pkill -f "livekit-server --dev" 2>/dev/null; (livekit-server --dev >/tmp/pa-livekit.log 2>&1 &); n=0; until curl -s --max-time 2 http://localhost:7880/ >/dev/null 2>&1; do n=$((n+1)); [ $n -ge 20 ] && break; sleep 1; done; curl -s -i --max-time 5 http://localhost:7880/ | head -2; grep -iE "starting in development mode|placeholder keys|starting LiveKit server" /tmp/pa-livekit.log | head -3; pkill -f "livekit-server --dev"; rm -f /tmp/pa-livekit.log',
+      ],
+      displayCommand: 'livekit-server --dev  # keyless boot, curl :7880, then kill',
+      expect: /HTTP\/1\.1 200 OK/,
+      timeoutMs: 90_000,
+    },
+    {
+      // livekit-agents framework installs and imports from pypi with no key.
+      probeId: 'sdk-pip-import',
+      productId: 'livekit-agents',
+      storyIds: ['agentic-sdks'],
+      bin: 'uv',
+      argv: [
+        'uv', 'run', '--no-project', '--with', 'livekit-agents', 'python3', '-c',
+        'import livekit.agents as a; print("PA_PROBE_OK livekit-agents", a.__version__)',
+      ],
+      displayCommand: `uv run --with livekit-agents python3 -c 'import livekit.agents as a; print("PA_PROBE_OK livekit-agents", a.__version__)'`,
+      expect: /PA_PROBE_OK livekit-agents \d+\.\d+\.\d+/,
+      timeoutMs: 180_000,
+    },
+    {
+      // Official Pipecat CLI (pypi pipecat-ai[cli]) runs keylessly via uvx.
+      probeId: 'cli-help',
+      productId: 'pipecat',
+      storyIds: ['agentic-official-cli'],
+      bin: 'uvx',
+      argv: ['sh', '-c', 'uvx --from "pipecat-ai[cli]" pipecat --help | cat'],
+      displayCommand: 'uvx --from "pipecat-ai[cli]" pipecat --help',
+      expect: /Command-line tools for building Pipecat AI applications/,
+      timeoutMs: 300_000,
+    },
+    {
+      // pipecat-ai framework installs and imports from pypi with no key.
+      probeId: 'sdk-pip-import',
+      productId: 'pipecat',
+      storyIds: ['agentic-sdks', 'self-host-oss-runtime'],
+      bin: 'uv',
+      argv: [
+        'uv', 'run', '--no-project', '--with', 'pipecat-ai', 'python3', '-c',
+        'import pipecat; print("PA_PROBE_OK pipecat-ai imported")',
+      ],
+      displayCommand: `uv run --with pipecat-ai python3 -c 'import pipecat; print("PA_PROBE_OK pipecat-ai imported")'`,
+      expect: /PA_PROBE_OK pipecat-ai imported/,
+      timeoutMs: 180_000,
+    },
+  ],
 }
 
 // Children never see the parent env (which may hold API keys): PATH to find the binary, HOME
