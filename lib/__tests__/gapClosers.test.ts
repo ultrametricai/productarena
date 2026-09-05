@@ -151,13 +151,13 @@ describe('splitGaps — the sharper ceiling story', () => {
       step('Countersign the NDA', 'form'),
       step('Board approves grant', 'person'),
       step('Collect company property', 'person'),
-      step('Schedule call', 'person'), // rule exists but arena absent → not closable, not irreducible
+      step('Schedule call', 'person'), // voice-agents rule — closable now that arena is live
     ], DATA_DIR)
-    expect(split.closable.map((g) => g.closer.arenaId)).toEqual(['browser-agents', 'legal-ops'])
-    expect(split.arenas.length).toBe(2)
+    expect(split.closable.map((g) => g.closer.arenaId)).toEqual(['browser-agents', 'legal-ops', 'voice-agents'])
+    expect(split.arenas.length).toBe(3)
     expect(split.human.filter((g) => g.irreducible).map((g) => g.label)).toEqual(['Board approves grant'])
     expect(split.human.filter((g) => !g.irreducible).map((g) => g.label))
-      .toEqual(['Collect company property', 'Schedule call'])
+      .toEqual(['Collect company property'])
     // every human gap keeps its honest why
     for (const g of split.human) expect(g.why).toMatch(/needs a human|manual form/)
   })
