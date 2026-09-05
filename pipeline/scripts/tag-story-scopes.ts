@@ -117,6 +117,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'vector-databases': ['vector', 'embedding', 'index', 'collection', 'similarity', 'ann\\b', 'hnsw', 'recall', 'rerank', 'hybrid', 'sparse', 'dense', 'metadata', 'namespace', 'tenant', 'shard', 'replica', 'quantiz', 'upsert', 'rag\\b', 'semantic', 'latency', 'serverless'],
   'inference-providers': ['model', 'inference', 'token', 'llm', 'gpu', 'serverless', 'endpoint', 'fine-tun', 'lora', 'batch', 'throughput', 'latenc', 'openai', 'chat completion', 'completions', 'embedding', 'quantiz', 'serving', 'stream', 'tokens/s'],
   'auth-platforms': ['auth', 'login', 'sign-in', 'sign-up', 'session', 'mfa', 'passkey', 'passwordless', 'sso\\b', 'saml', 'oidc', 'oauth', 'token', 'user', 'organization', 'tenant', 'rbac', 'permission', 'identity', 'scim', 'jwt', 'credential', 'idp\\b', 'consent'],
+  'ai-memory': ['memory', 'memories', 'recall', 'remember', 'forget', 'knowledge graph', 'entity', 'entities', 'session', 'context', 'retrieval', 'fact', 'graph', 'embedding', 'agent', 'llm', 'summariz', 'ingest', 'temporal', 'ttl\\b', 'expiration', 'multi-tenant', 'tenant'],
+  'voice-agents': ['voice', 'call\\b', 'calls', 'phone', 'telephony', 'sip\\b', 'dial', 'barge-in', 'interrupt', 'turn-taking', 'turn detection', 'tts\\b', 'stt\\b', 'transcri', 'latency', 'dtmf', 'ivr\\b', 'voicemail', 'agent', 'conversation', 'outbound', 'inbound', 'clon', 'speech', 'campaign', 'transfer'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {

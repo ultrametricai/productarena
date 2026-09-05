@@ -14,6 +14,7 @@ const CATEGORIES = [
   'agent-sandboxes',
   'ai-assistants',
   'ai-coding',
+  'ai-memory',
   'ai-research-agents',
   'ai-search-apis',
   'api-platforms',
@@ -46,6 +47,7 @@ const CATEGORIES = [
   'terminals',
   'vector-databases',
   'vibe-coding',
+  'voice-agents',
   'web-scraping',
 ]
 
