@@ -43,6 +43,8 @@ const NAV_LABELS: Record<string, string> = {
   "vector-databases": "Vector DBs",
   "inference-providers": "Inference",
   "auth-platforms": "Auth",
+  "ai-memory": "Memory",
+  "voice-agents": "Voice",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
