@@ -51,6 +51,8 @@ const NAV_LABELS: Record<string, string> = {
   "voice-agents": "Voice",
   "notes-knowledge": "Notes",
   "meeting-ai": "Meetings",
+  "gpu-clouds": "GPU clouds",
+  "feature-flags": "Flags",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
