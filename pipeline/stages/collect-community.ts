@@ -85,19 +85,37 @@ export async function runCollectCommunity({ category, product }: { category?: st
           console.warn(`collect-community: WARN no community sources found for ${cat.id}/${p.id}; skipping`)
           continue
         }
-        const corpus = sources.map((s) => `=== ${s.url} ===\n${s.text}`).join('\n\n').slice(0, 80_000)
         let siteDomain: string
         try {
           siteDomain = new URL(p.urls.site).hostname
         } catch {
           siteDomain = p.urls.site
         }
-        const { items } = await llmJson({
-          schema: CommunityItemsSchema,
-          system: buildSystemPrompt(p.name, p.vendor, siteDomain, cat.name),
-          prompt: `Product: ${p.name}\n\nDiscussions:\n\n${corpus}`,
-          maxTokens: 8192,
-        })
+        const buildCorpus = (srcs: { url: string; text: string }[]) =>
+          srcs.map((s) => `=== ${s.url} ===\n${s.text}`).join('\n\n').slice(0, 80_000)
+        const distill = (srcs: { url: string; text: string }[]) =>
+          llmJson({
+            schema: CommunityItemsSchema,
+            system: buildSystemPrompt(p.name, p.vendor, siteDomain, cat.name),
+            prompt: `Product: ${p.name}\n\nDiscussions:\n\n${buildCorpus(srcs)}`,
+            maxTokens: 8192,
+          })
+        let items: { url: string; excerpt: string }[]
+        const seedCount = (catSeeds[p.id] ?? []).length
+        try {
+          ;({ items } = await distill(sources))
+        } catch (err) {
+          // Name-collision corpora can flood the pack with off-topic threads that the model
+          // refuses to process at all (seen live: "Vapi" HN name-search returns vaping-illness
+          // threads → stop_reason "refusal" on every attempt). When curated seeds exist, retry
+          // once against the seed sources alone — they were hand-picked for the right product.
+          const seedSources = sources.slice(0, seedCount)
+          if (seedSources.length === 0) throw err
+          console.warn(
+            `collect-community: WARN ${cat.id}/${p.id} full corpus failed (${(err as Error).message}); retrying with ${seedSources.length} curated seed source(s) only`,
+          )
+          ;({ items } = await distill(seedSources))
+        }
         const now = new Date().toISOString()
         const community: Evidence[] = items.map((item, i) => ({
           id: `${p.id}-comm-${i + 1}`,

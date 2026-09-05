@@ -119,6 +119,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'auth-platforms': ['auth', 'login', 'sign-in', 'sign-up', 'session', 'mfa', 'passkey', 'passwordless', 'sso\\b', 'saml', 'oidc', 'oauth', 'token', 'user', 'organization', 'tenant', 'rbac', 'permission', 'identity', 'scim', 'jwt', 'credential', 'idp\\b', 'consent'],
   'mcp-infrastructure': ['mcp\\b', 'server', 'registr', 'tool', 'agent', 'gateway', 'oauth', 'connect', 'catalog', 'toolkit', 'integration', 'meta-tool', 'inspector', 'playground', 'uplink', 'publish', 'vault', 'end user', 'allowlist', 'trigger', 'openapi'],
   'browser-agents': ['browser', 'page', 'dom\\b', 'session', 'captcha', 'stealth', 'proxy', 'headless', 'playwright', 'puppeteer', 'cdp\\b', 'selector', 'click', 'form', 'web task', 'navigat', 'extract', 'screenshot', 'fingerprint', 'profile', 'replay', 'agent', 'login', '2fa', 'workflow'],
+  'ai-memory': ['memory', 'memories', 'recall', 'remember', 'forget', 'knowledge graph', 'entity', 'entities', 'session', 'context', 'retrieval', 'fact', 'graph', 'embedding', 'agent', 'llm', 'summariz', 'ingest', 'temporal', 'ttl\\b', 'expiration', 'multi-tenant', 'tenant'],
+  'voice-agents': ['voice', 'call\\b', 'calls', 'phone', 'telephony', 'sip\\b', 'dial', 'barge-in', 'interrupt', 'turn-taking', 'turn detection', 'tts\\b', 'stt\\b', 'transcri', 'latency', 'dtmf', 'ivr\\b', 'voicemail', 'agent', 'conversation', 'outbound', 'inbound', 'clon', 'speech', 'campaign', 'transfer'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {
