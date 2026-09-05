@@ -2,13 +2,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
-import type { SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
-import { formatMinutes } from './processSim'
+import { resolveGapStep } from './gapClosers'
+import type { GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
+import { formatMinutes, gapWhy } from './processSim'
 
 // Client-safe prop shapes + display helpers live in lib/processSim.ts (no node:fs) so the
 // simulator client component can import them; re-exported here for server-side callers.
-export { formatMinutes }
-export type { SimStep, StepRoute, SwapOption, VendorRole }
+export { formatMinutes, gapWhy }
+export type { GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
 // The founder-process corpus (data/processes.json): 96 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
@@ -169,10 +170,6 @@ export interface ProcessCeiling {
   // (the agent CAN run them), surfaced separately because a human still has to say yes.
   approvalGates: number
   gaps: ProcessGap[]
-}
-
-export function gapWhy(route: 'form' | 'person'): string {
-  return route === 'person' ? 'needs a human' : 'manual form/portal — no API path'
 }
 
 export function computeCeiling(nodes: DagNode[]): ProcessCeiling {
@@ -391,7 +388,7 @@ export function vendorRoles(tasks: ProcessTask[], dir?: string): VendorRole[] {
 // Simulator flattening (client-component props — keep these minimal and serializable)
 // ---------------------------------------------------------------------------
 
-export function buildSimSteps(tasks: ProcessTask[]): SimStep[] {
+export function buildSimSteps(tasks: ProcessTask[], dir?: string): SimStep[] {
   return tasks.flatMap((task) =>
     task.dag.nodes.map((n) => ({
       taskId: task.id,
@@ -407,6 +404,8 @@ export function buildSimSteps(tasks: ProcessTask[]): SimStep[] {
       riskLevel: n.riskLevel ?? null,
       estimatedMinutes: n.estimatedMinutes,
       async: n.async ?? false,
+      // Pre-resolved server-side so the client simulator never touches the rule engine or disk.
+      gap: resolveGapStep(n, dir),
     })),
   )
 }

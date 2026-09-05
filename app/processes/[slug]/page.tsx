@@ -71,7 +71,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
       </section>
 
-      <ProcessVerdict ceiling={ceiling} />
+      <ProcessVerdict ceiling={ceiling} nodes={task.dag.nodes} />
 
       <section>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">How it runs</h2>

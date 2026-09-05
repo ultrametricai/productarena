@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { resolveGapStep } from '@/lib/gapClosers'
 import type { DagNode } from '@/lib/processes'
 import { formatMinutes, VENDOR_ARENA, vendorLabel } from '@/lib/processes'
 
@@ -6,6 +7,10 @@ import { formatMinutes, VENDOR_ARENA, vendorLabel } from '@/lib/processes'
 // Route-coded: emerald = agent-runnable, amber = manual form/portal (no API path), red-ish
 // zinc = needs a human. ⏸ marks approval gates (agent-runnable, human-gated), ⏳ marks async
 // waits. Per-step recorded API/tool calls render in mono under the step.
+//
+// Non-agent steps with an agentic gap-closer (lib/gapClosers.ts, resolved at build time against
+// live arenas) get a compact "⚡ agentic workaround" line; irreducibly-human steps keep their
+// honest label — no workaround is invented for judgment/identity work.
 
 const ROUTE_STYLE: Record<DagNode['route'], { dot: string; chip: string; label: string }> = {
   agent: {
@@ -32,6 +37,8 @@ export default function ProcessDag({ nodes }: { nodes: DagNode[] }) {
         const style = ROUTE_STYLE[node.route]
         const arenaId = node.vendor ? VENDOR_ARENA[node.vendor] : undefined
         const calls = node.functionCalls ?? []
+        const gap = resolveGapStep(node)
+        const closer = gap?.kind === 'closer' ? gap.closer : null
         return (
           <li key={node.id} className="relative flex gap-3 pb-5 last:pb-0">
             {/* rail: colored dot + connector to the next step */}
@@ -88,6 +95,22 @@ export default function ProcessDag({ nodes }: { nodes: DagNode[] }) {
                     </p>
                   ))}
                 </div>
+              )}
+              {closer && (
+                <p className="mt-1.5 text-[11px] text-zinc-400">
+                  <span className="text-emerald-300/90">⚡ agentic workaround:</span> {closer.blurb} —{' '}
+                  <Link
+                    href={`/arena/${closer.arenaId}/product/${closer.topProduct.id}`}
+                    className="text-zinc-300 underline decoration-zinc-700 underline-offset-2 transition hover:text-emerald-300"
+                  >
+                    {closer.topProduct.name}
+                  </Link>
+                  {', '}
+                  <Link href={`/arena/${closer.arenaId}`} className="transition hover:text-emerald-300">
+                    top of {closer.arenaName} →
+                  </Link>
+                  {closer.caution && <span className="text-amber-400/80"> · {closer.caution}</span>}
+                </p>
               )}
             </div>
           </li>
