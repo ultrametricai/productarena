@@ -107,6 +107,32 @@ export default function McpPage() {
       </section>
 
       <section>
+        <h2 className="font-display text-xl font-semibold tracking-tight">CLI</h2>
+        <p className="mt-2 text-sm text-zinc-400">
+          Prefer a terminal to a protocol? The <code className="text-zinc-300">productarena</code> npm
+          package puts the same live data behind one command — rankings, cross-arena compare,{' '}
+          <code className="text-zinc-300">pick &lt;role&gt;</code> for a vendor pick with a runner-up and
+          close-race flag, live-resolved stacks, and an agent-readiness scan:
+        </p>
+        <pre className={CODE_BLOCK}>{`npx productarena rankings ai-coding
+npx productarena pick payroll
+npx productarena top --metric agentReady --oss`}</pre>
+        <p className="mt-3 text-sm text-zinc-400">
+          Every command takes <code className="text-zinc-300">--json</code> for scripts and agents. Source
+          and docs:{' '}
+          <a
+            href={`https://github.com/${REPO}/blob/main/cli/README.md`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-emerald-300 hover:underline"
+          >
+            cli/README.md
+          </a>
+          .
+        </p>
+      </section>
+
+      <section>
         <h2 className="font-display text-xl font-semibold tracking-tight">Tool catalog</h2>
         <div className="mt-3 overflow-x-auto rounded-2xl border border-zinc-800">
           <table className="w-full border-collapse text-sm">
