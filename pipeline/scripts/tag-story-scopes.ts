@@ -121,6 +121,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'browser-agents': ['browser', 'page', 'dom\\b', 'session', 'captcha', 'stealth', 'proxy', 'headless', 'playwright', 'puppeteer', 'cdp\\b', 'selector', 'click', 'form', 'web task', 'navigat', 'extract', 'screenshot', 'fingerprint', 'profile', 'replay', 'agent', 'login', '2fa', 'workflow'],
   'ai-memory': ['memory', 'memories', 'recall', 'remember', 'forget', 'knowledge graph', 'entity', 'entities', 'session', 'context', 'retrieval', 'fact', 'graph', 'embedding', 'agent', 'llm', 'summariz', 'ingest', 'temporal', 'ttl\\b', 'expiration', 'multi-tenant', 'tenant'],
   'voice-agents': ['voice', 'call\\b', 'calls', 'phone', 'telephony', 'sip\\b', 'dial', 'barge-in', 'interrupt', 'turn-taking', 'turn detection', 'tts\\b', 'stt\\b', 'transcri', 'latency', 'dtmf', 'ivr\\b', 'voicemail', 'agent', 'conversation', 'outbound', 'inbound', 'clon', 'speech', 'campaign', 'transfer'],
+  'notes-knowledge': ['note', 'notes', 'vault', 'backlink', 'wiki-link', 'graph', 'daily note', 'journal', 'markdown', 'plugin', 'template', 'local-first', 'offline', 'e2ee', 'end-to-end', 'publish', 'import', 'export', 'mobile', 'clip', 'block reference', 'transclusion', 'knowledge base', 'pkm\\b', 'sync'],
+  'meeting-ai': ['meeting', 'meetings', 'transcri', 'notetaker', 'recording', 'speaker', 'diariz', 'summar', 'action item', 'calendar', 'bot\\b', 'botless', 'zoom', 'google meet', 'teams\\b', 'consent', 'retention', 'crm\\b', 'follow-up', 'soundbite', 'highlight', 'call\\b', 'calls'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {
