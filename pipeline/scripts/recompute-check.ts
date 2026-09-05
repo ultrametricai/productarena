@@ -47,6 +47,8 @@ const CATEGORIES = [
   'vector-databases',
   'vibe-coding',
   'web-scraping',
+  'workflow-automation',
+  'observability',
 ]
 
 function readJson<T>(schema: { parse: (v: unknown) => T }, file: string): T {
