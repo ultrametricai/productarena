@@ -117,6 +117,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'vector-databases': ['vector', 'embedding', 'index', 'collection', 'similarity', 'ann\\b', 'hnsw', 'recall', 'rerank', 'hybrid', 'sparse', 'dense', 'metadata', 'namespace', 'tenant', 'shard', 'replica', 'quantiz', 'upsert', 'rag\\b', 'semantic', 'latency', 'serverless'],
   'inference-providers': ['model', 'inference', 'token', 'llm', 'gpu', 'serverless', 'endpoint', 'fine-tun', 'lora', 'batch', 'throughput', 'latenc', 'openai', 'chat completion', 'completions', 'embedding', 'quantiz', 'serving', 'stream', 'tokens/s'],
   'auth-platforms': ['auth', 'login', 'sign-in', 'sign-up', 'session', 'mfa', 'passkey', 'passwordless', 'sso\\b', 'saml', 'oidc', 'oauth', 'token', 'user', 'organization', 'tenant', 'rbac', 'permission', 'identity', 'scim', 'jwt', 'credential', 'idp\\b', 'consent'],
+  'mcp-infrastructure': ['mcp\\b', 'server', 'registr', 'tool', 'agent', 'gateway', 'oauth', 'connect', 'catalog', 'toolkit', 'integration', 'meta-tool', 'inspector', 'playground', 'uplink', 'publish', 'vault', 'end user', 'allowlist', 'trigger', 'openapi'],
+  'browser-agents': ['browser', 'page', 'dom\\b', 'session', 'captcha', 'stealth', 'proxy', 'headless', 'playwright', 'puppeteer', 'cdp\\b', 'selector', 'click', 'form', 'web task', 'navigat', 'extract', 'screenshot', 'fingerprint', 'profile', 'replay', 'agent', 'login', '2fa', 'workflow'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {

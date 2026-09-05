@@ -43,6 +43,8 @@ const NAV_LABELS: Record<string, string> = {
   "vector-databases": "Vector DBs",
   "inference-providers": "Inference",
   "auth-platforms": "Auth",
+  "mcp-infrastructure": "MCP infra",
+  "browser-agents": "Browser agents",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

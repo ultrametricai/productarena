@@ -579,6 +579,333 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 60_000,
     },
   ],
+  // MCP infrastructure: the signature keyless proofs are (a) real JSON-RPC initialize
+  // handshakes against each platform's hosted MCP endpoint — a live 401 OAuth challenge or a
+  // per-user JSON-RPC error IS the product surface (managed auth) — (b) a keyless registry
+  // search, and (c) real npm/pip/release installs of each platform's SDK or CLI into throwaway
+  // fixtures, self-cleaned. All keyless; no accounts are created and no tools are executed.
+  'mcp-infrastructure': [
+    {
+      probeId: 'npm-install-sdk-roundtrip',
+      productId: 'composio',
+      storyIds: ['agentic-sdks'],
+      bin: 'npm',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && npm init -y >/dev/null 2>&1 && npm install @composio/core --no-fund --no-audit --loglevel=error && node -e "const m=require('@composio/core'); console.log('PA_PROBE_OK Composio export:', typeof m.Composio)" && cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && npm install @composio/core && node -e "console.log('PA_PROBE_OK Composio export:', typeof require('@composio/core').Composio)"`,
+      expect: /PA_PROBE_OK Composio export: function/,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'pip-install-sdk-roundtrip',
+      productId: 'composio',
+      storyIds: ['agentic-sdks'],
+      bin: 'uv',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && uv venv -q && uv pip install -q composio && ./.venv/bin/python -c "import composio; print('PA_PROBE_OK composio', getattr(composio, '__version__', 'imported'))" && cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && uv venv && uv pip install composio && python -c "import composio; print('PA_PROBE_OK composio', composio.__version__)"`,
+      expect: /PA_PROBE_OK composio \d+\.\d+/,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'mcp-remote-handshake',
+      productId: 'composio',
+      storyIds: ['one-endpoint-hosted-connection', 'managed-oauth-vaulting', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://connect.composio.dev/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://connect.composio.dev/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /HTTP\/2 401/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'registry-keyless-search',
+      productId: 'smithery',
+      storyIds: ['registry-programmatic-api', 'server-registry-search', 'quality-scores-usage-signals'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        `curl -s --max-time 20 'https://registry.smithery.ai/servers?pageSize=3&q=browser' -H 'Accept: application/json' | head -c 900`,
+      ],
+      displayCommand: `curl -s 'https://registry.smithery.ai/servers?pageSize=3&q=browser' | head -c 900`,
+      expect: /"servers":\[\{/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'mcp-remote-handshake',
+      productId: 'smithery',
+      storyIds: ['one-endpoint-hosted-connection', 'managed-oauth-vaulting', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://server.smithery.ai/exa/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://server.smithery.ai/exa/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'docs-mcp-handshake',
+      productId: 'smithery',
+      storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        `curl -s --max-time 20 -X POST https://smithery.ai/docs/mcp -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' -d '${CURL_MCP_INIT.replace(/'/g, `'\\''`)}' | head -c 700`,
+      ],
+      displayCommand: `curl -s -X POST https://smithery.ai/docs/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /"serverInfo":\{"name":"Smithery Documentation"/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'npm-install-cli-version',
+      productId: 'smithery',
+      storyIds: ['publisher-cli-workflow', 'agentic-official-cli'],
+      bin: 'npm',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && npm init -y >/dev/null 2>&1 && npm install @smithery/cli --no-fund --no-audit --loglevel=error && ./node_modules/.bin/smithery --version && cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && npm install @smithery/cli && ./node_modules/.bin/smithery --version`,
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'registry-api-authgate',
+      productId: 'glama',
+      storyIds: ['registry-programmatic-api'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        `curl -s --max-time 20 'https://glama.ai/api/mcp/v1/servers?first=2' -H 'Accept: application/json' | head -c 700`,
+      ],
+      displayCommand: `curl -s 'https://glama.ai/api/mcp/v1/servers?first=2' | head -c 700`,
+      expect: /API key|unauthorized/i,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'openapi-spec-fetch',
+      productId: 'glama',
+      storyIds: ['agentic-public-api', 'api-machine-spec'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        `curl -s --max-time 20 https://glama.ai/api/mcp/openapi.json | head -c 500`,
+      ],
+      displayCommand: `curl -s https://glama.ai/api/mcp/openapi.json | head -c 500`,
+      expect: /"openapi"/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'mcp-remote-handshake',
+      productId: 'pipedream-mcp',
+      storyIds: ['one-endpoint-hosted-connection', 'per-end-user-multi-tenant-auth', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://remote.mcp.pipedream.net',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://remote.mcp.pipedream.net -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /external user id is required/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'npm-install-sdk-roundtrip',
+      productId: 'pipedream-mcp',
+      storyIds: ['agentic-sdks'],
+      bin: 'npm',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && npm init -y >/dev/null 2>&1 && npm install @pipedream/sdk --no-fund --no-audit --loglevel=error && node -e "const m=require('@pipedream/sdk'); console.log('PA_PROBE_OK PipedreamClient export:', typeof m.PipedreamClient)" && cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && npm install @pipedream/sdk && node -e "console.log('PA_PROBE_OK PipedreamClient export:', typeof require('@pipedream/sdk').PipedreamClient)"`,
+      expect: /PA_PROBE_OK PipedreamClient export: function/,
+      timeoutMs: 180_000,
+    },
+    {
+      // Real install of the vendor-published release binary — the same artifact the official
+      // installer script (go.getgram.ai/cli.sh) fetches — into a throwaway dir, then a version
+      // print. No sudo, self-cleaned.
+      probeId: 'cli-release-install-version',
+      productId: 'gram',
+      storyIds: ['publisher-cli-workflow', 'agentic-official-cli'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && tag=$(curl -sf https://raw.githubusercontent.com/speakeasy-api/gram/refs/heads/main/cli/package.json | grep -oE '"(name|version)": *"[^"]*"' | sed -E 's/.*: *"([^"]*)"/\\1/' | paste -sd@ -) && echo "tag=$tag" && curl -fsSL "https://github.com/speakeasy-api/gram/releases/download/$tag/gram_darwin_arm64.zip" -o gram.zip && unzip -q gram.zip && ./gram --version && cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && curl -fsSL https://github.com/speakeasy-api/gram/releases/download/cli@<latest>/gram_darwin_arm64.zip -o gram.zip && unzip gram.zip && ./gram --version`,
+      expect: /gram version \d+\.\d+\.\d+/,
+      timeoutMs: 180_000,
+    },
+  ],
+  // Browser automation for agents: the signature keyless proofs are (a) real MCP stdio
+  // initialize handshakes against the first-party servers the vendors publish (uvx/npx pulls
+  // the published package — an install AND a handshake in one transcript), (b) a full
+  // self-host roundtrip for the OSS browser API (docker up → create a live session through the
+  // REST API → teardown), and (c) real pip/npm/installer installs into throwaway fixtures.
+  // All keyless and self-cleaned; no cloud accounts, no tasks executed against third parties.
+  'browser-agents': [
+    {
+      probeId: 'mcp-stdio-handshake',
+      productId: 'browser-use',
+      storyIds: ['agentic-mcp-server', 'nl-task-to-completion'],
+      bin: 'uvx',
+      argv: ['sh', '-c', `uvx --from 'browser-use[cli]' browser-use --mcp`],
+      displayCommand: `echo '<jsonrpc initialize>' | uvx --from 'browser-use[cli]' browser-use --mcp`,
+      stdinPayload: MCP_INITIALIZE,
+      expect: /"serverInfo"/,
+      longRunning: true,
+      timeoutMs: 240_000,
+    },
+    {
+      probeId: 'pip-install-import-roundtrip',
+      productId: 'browser-use',
+      storyIds: ['agentic-sdks', 'local-browser-mode'],
+      bin: 'uv',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && uv venv -q && uv pip install -q browser-use && ./.venv/bin/python -c "from importlib.metadata import version; import browser_use; print('PA_PROBE_OK browser-use', version('browser-use'))" ; cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && uv venv && uv pip install browser-use && python -c "import browser_use; print('PA_PROBE_OK browser-use', version('browser-use'))"`,
+      expect: /PA_PROBE_OK browser-use \d+\.\d+/,
+      timeoutMs: 240_000,
+    },
+    {
+      probeId: 'npm-install-import-roundtrip',
+      productId: 'stagehand',
+      storyIds: ['agentic-sdks'],
+      bin: 'npm',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && npm init -y >/dev/null 2>&1 && npm install @browserbasehq/stagehand --no-fund --no-audit --loglevel=error && node -e "import('@browserbasehq/stagehand').then(m=>console.log('PA_PROBE_OK Stagehand export:', typeof m.Stagehand))" ; cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && npm install @browserbasehq/stagehand && node -e "import('@browserbasehq/stagehand').then(m=>console.log('PA_PROBE_OK Stagehand export:', typeof m.Stagehand))"`,
+      expect: /PA_PROBE_OK Stagehand export: function/,
+      timeoutMs: 240_000,
+    },
+    {
+      probeId: 'mcp-stdio-handshake',
+      productId: 'stagehand',
+      storyIds: ['agentic-mcp-server', 'dom-action-primitives'],
+      bin: 'npx',
+      argv: ['sh', '-c', 'npx -y @browserbasehq/mcp'],
+      displayCommand: `echo '<jsonrpc initialize>' | npx -y @browserbasehq/mcp`,
+      stdinPayload: MCP_INITIALIZE,
+      expect: /"serverInfo"/,
+      longRunning: true,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'mcp-remote-handshake',
+      productId: 'skyvern',
+      storyIds: ['agentic-mcp-server', 'hosted-task-api'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.skyvern.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.skyvern.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'pip-install-cli-roundtrip',
+      productId: 'skyvern',
+      storyIds: ['agentic-sdks', 'agentic-official-cli', 'local-browser-mode'],
+      bin: 'uv',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && uv venv -q && uv pip install -q skyvern && ./.venv/bin/python -c "from importlib.metadata import version; print('PA_PROBE_OK skyvern', version('skyvern'))" && ./.venv/bin/skyvern --help | head -8 ; cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && uv venv && uv pip install skyvern && skyvern --help`,
+      expect: /Manage and run your local Skyvern environment/,
+      timeoutMs: 300_000,
+    },
+    {
+      probeId: 'mcp-stdio-handshake',
+      productId: 'hyperbrowser',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'npx',
+      argv: ['sh', '-c', 'npx -y hyperbrowser-mcp'],
+      displayCommand: `echo '<jsonrpc initialize>' | npx -y hyperbrowser-mcp`,
+      stdinPayload: MCP_INITIALIZE,
+      expect: /"serverInfo"/,
+      longRunning: true,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'npm-install-import-roundtrip',
+      productId: 'hyperbrowser',
+      storyIds: ['agentic-sdks'],
+      bin: 'npm',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && npm init -y >/dev/null 2>&1 && npm install @hyperbrowser/sdk --no-fund --no-audit --loglevel=error && node -e "const m=require('@hyperbrowser/sdk'); console.log('PA_PROBE_OK Hyperbrowser export:', typeof m.Hyperbrowser)" ; cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && npm install @hyperbrowser/sdk && node -e "console.log('PA_PROBE_OK Hyperbrowser export:', typeof require('@hyperbrowser/sdk').Hyperbrowser)"`,
+      expect: /PA_PROBE_OK Hyperbrowser export: function/,
+      timeoutMs: 240_000,
+    },
+    {
+      // Full keyless self-host roundtrip for the OSS browser API: boot the official image on a
+      // throwaway port, wait for /v1/health, create a LIVE browser session through the REST
+      // API, list it back, tear the container down.
+      probeId: 'docker-selfhost-session-roundtrip',
+      productId: 'steel',
+      storyIds: ['openness-self-host', 'agentic-public-api', 'parallel-fleet-scale'],
+      bin: 'docker',
+      argv: [
+        'sh', '-c',
+        'docker rm -f pa-steel-probe >/dev/null 2>&1; docker run -d --name pa-steel-probe -p 13000:3000 ghcr.io/steel-dev/steel-browser && n=0; while [ $n -lt 60 ] && ! curl -s http://localhost:13000/v1/health >/dev/null 2>&1; do sleep 2; n=$((n+1)); done; curl -s http://localhost:13000/v1/health; echo; curl -s -X POST http://localhost:13000/v1/sessions -H "Content-Type: application/json" -d "{}" | head -c 300; echo; curl -s http://localhost:13000/v1/sessions | head -c 200; echo; docker rm -f pa-steel-probe >/dev/null 2>&1',
+      ],
+      displayCommand: `docker run -d --name pa-steel-probe -p 13000:3000 ghcr.io/steel-dev/steel-browser && curl localhost:13000/v1/health && curl -X POST localhost:13000/v1/sessions -d '{}' && curl localhost:13000/v1/sessions`,
+      expect: /"status":"live"/,
+      timeoutMs: 300_000,
+    },
+    {
+      // Official installer into a throwaway HOME (installs to ~/.steel/bin), then a version
+      // print — no PATH or shell-profile mutation escapes the fixture.
+      probeId: 'cli-install-version',
+      productId: 'steel',
+      storyIds: ['agentic-official-cli'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        `h=$(mktemp -d) && HOME="$h" sh -c 'curl -sSf https://setup.steel.dev | sh -s -- --non-interactive >/dev/null 2>&1; "$HOME/.steel/bin/steel" --version' ; rm -rf "$h"`,
+      ],
+      displayCommand: `HOME=$(mktemp -d) sh -c 'curl -sSf https://setup.steel.dev | sh -s -- --non-interactive && ~/.steel/bin/steel --version'`,
+      expect: /steel \d+\.\d+\.\d+/,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'npm-install-import-roundtrip',
+      productId: 'steel',
+      storyIds: ['agentic-sdks'],
+      bin: 'npm',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && npm init -y >/dev/null 2>&1 && npm install steel-sdk --no-fund --no-audit --loglevel=error && node -e "const m=require('steel-sdk'); console.log('PA_PROBE_OK Steel export:', typeof m.Steel)" ; cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && npm install steel-sdk && node -e "console.log('PA_PROBE_OK Steel export:', typeof require('steel-sdk').Steel)"`,
+      expect: /PA_PROBE_OK Steel export: function/,
+      timeoutMs: 240_000,
+    },
+  ],
   // Vector databases: the signature keyless proof is "an agent provisions a collection through
   // the public API without credentials" — run for real against ephemeral local instances
   // (docker containers on throwaway ports, chroma's local server, milvus-lite's embedded file
