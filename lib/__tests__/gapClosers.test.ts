@@ -153,7 +153,7 @@ describe('splitGaps — the sharper ceiling story', () => {
       step('Collect company property', 'person'),
       step('Schedule call', 'person'), // rule exists but arena absent → not closable, not irreducible
     ], DATA_DIR)
-    expect(split.closable.map((g) => g.closer.arenaId)).toEqual(['web-scraping', 'legal-ops'])
+    expect(split.closable.map((g) => g.closer.arenaId)).toEqual(['browser-agents', 'legal-ops'])
     expect(split.arenas.length).toBe(2)
     expect(split.human.filter((g) => g.irreducible).map((g) => g.label)).toEqual(['Board approves grant'])
     expect(split.human.filter((g) => !g.irreducible).map((g) => g.label))
