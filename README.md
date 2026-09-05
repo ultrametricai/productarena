@@ -607,6 +607,11 @@ ProductArena is built to be read by agents, not just browsed by humans:
   in a browser shows the setup page) and the **`productarena-mcp`** npm package (stdio, `mcp/`
   in this repo — `claude mcp add productarena -- npx -y productarena-mcp`). See
   [`mcp/README.md`](./mcp/README.md) for full setup and client config.
+- **CLI** — the **`productarena`** npm package (`cli/` in this repo) puts the same data in the
+  terminal: `npx productarena rankings ai-coding`, `productarena pick payroll` (top pick,
+  runner-up, close-race flag), `compare`, `top --oss`, live-resolved `stacks`, and an
+  agent-readiness `scan`. Every command takes `--json` for scripts and agents — see
+  [`cli/README.md`](./cli/README.md).
 - **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
   metrics (`aiEra`, `score`, etc). No `aggregateRating` — we don't have star ratings, and faking
