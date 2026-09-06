@@ -225,6 +225,8 @@ export const MCP_ENDPOINTS = {
   'mobile-payments/sumup': 'https://mcp.sumup.com/mcp',
   'payments/paypal': 'https://mcp.paypal.com/mcp',
   'payments/stripe': 'https://mcp.stripe.com/',
+  'search-infra/algolia': 'https://mcp.algolia.com/mcp',
+  'serverless-databases/neon': 'https://mcp.neon.tech/mcp',
   'startup-banking/mercury': 'https://mcp.mercury.com/mcp',
   'web-scraping/scrapingbee': 'https://mcp.scrapingbee.com/',
 }

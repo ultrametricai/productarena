@@ -1677,6 +1677,336 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 180_000,
     },
   ],
+  'serverless-databases': [
+    {
+      // Official Neon CLI (npm package renamed neonctl → neon): version prints keylessly.
+      probeId: 'cli-version',
+      productId: 'neon',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'neon@latest', '--version'],
+      displayCommand: 'npx -y neon@latest --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Hosted Neon MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'neon',
+      storyIds: ['agentic-mcp-server', 'agent-provisions-database'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.neon.tech/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.neon.tech/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Official Turso CLI, installed via the vendor's get.tur.so installer into ~/.turso.
+      probeId: 'cli-version',
+      productId: 'turso',
+      storyIds: ['agentic-official-cli', 'cli-daily-workflow'],
+      bin: 'sh',
+      argv: ['sh', '-c', '"$HOME/.turso/turso" --version'],
+      displayCommand: 'turso --version  # installed via `curl -sSfL https://get.tur.so/install.sh | bash`',
+      expect: /turso version v\d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // `turso dev` boots a KEYLESS local libSQL server (sqld); a real SQL roundtrip —
+      // CREATE / INSERT / SELECT — runs over the Hrana HTTP pipeline API, then the server dies.
+      probeId: 'local-dev-roundtrip',
+      productId: 'turso',
+      storyIds: ['local-keyless-engine', 'agentic-headless'],
+      bin: 'sh',
+      argv: [
+        'sh', '-c',
+        'export PATH="$HOME/.turso:$PATH"; rm -f /tmp/pa-turso-probe.db*; pkill -f "sqld" 2>/dev/null; (turso dev --db-file /tmp/pa-turso-probe.db --port 8085 >/tmp/pa-turso-probe.log 2>&1 &); n=0; until curl -s --max-time 2 http://127.0.0.1:8085/health >/dev/null 2>&1; do n=$((n+1)); [ $n -ge 20 ] && break; sleep 1; done; curl -s --max-time 10 -X POST http://127.0.0.1:8085/v2/pipeline -H "Content-Type: application/json" -d "{\\"requests\\":[{\\"type\\":\\"execute\\",\\"stmt\\":{\\"sql\\":\\"CREATE TABLE arenas (id INTEGER PRIMARY KEY)\\"}},{\\"type\\":\\"execute\\",\\"stmt\\":{\\"sql\\":\\"INSERT INTO arenas (id) VALUES (6)\\"}},{\\"type\\":\\"execute\\",\\"stmt\\":{\\"sql\\":\\"SELECT id*7 AS answer FROM arenas\\"}},{\\"type\\":\\"close\\"}]}"; echo; grep -i "sqld listening" /tmp/pa-turso-probe.log | head -1; pkill -f "sqld"; rm -f /tmp/pa-turso-probe.db* /tmp/pa-turso-probe.log',
+      ],
+      displayCommand: 'turso dev --db-file /tmp/pa-turso-probe.db --port 8085  # local libSQL, no account — then CREATE/INSERT/SELECT (6*7) over the Hrana HTTP API',
+      expect: /"type":"integer","value":"42"/,
+      timeoutMs: 90_000,
+    },
+    {
+      // Hosted Turso Cloud MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'turso',
+      storyIds: ['agentic-mcp-server', 'agent-provisions-database'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.turso.ai/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.turso.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'planetscale',
+      storyIds: ['agentic-official-cli'],
+      bin: 'pscale',
+      argv: ['pscale', '--version'],
+      displayCommand: 'pscale --version  # installed via `brew install planetscale/tap/pscale`',
+      expect: /pscale version \d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // `pscale --skill` prints a packaged agent guide (frontmatter name: pscale-cli) keylessly —
+      // vendor-shipped agent docs inside the CLI binary itself.
+      probeId: 'cli-agent-skill',
+      productId: 'planetscale',
+      storyIds: ['agentic-agent-docs', 'agentic-headless'],
+      bin: 'pscale',
+      argv: ['sh', '-c', 'pscale --skill | cat'],
+      displayCommand: 'pscale --skill',
+      expect: /name: pscale-cli/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Hosted PlanetScale MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'planetscale',
+      storyIds: ['agentic-mcp-server', 'agent-safe-sql-operations'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.pscale.dev/mcp/planetscale',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.pscale.dev/mcp/planetscale -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Single official binary from the vendor's `curl https://clickhouse.com/ | sh` installer.
+      probeId: 'cli-version',
+      productId: 'clickhouse',
+      storyIds: ['agentic-official-cli'],
+      bin: 'sh',
+      argv: ['sh', '-c', '"$HOME/.clickhouse-bin/clickhouse" --version'],
+      displayCommand: 'clickhouse --version  # installed via `curl https://clickhouse.com/ | sh`',
+      expect: /ClickHouse local version \d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // clickhouse-local runs a REAL analytical SQL roundtrip fully keylessly — CREATE TABLE,
+      // INSERT, aggregate SELECT — no server, no account, no config.
+      probeId: 'local-query-roundtrip',
+      productId: 'clickhouse',
+      storyIds: ['local-keyless-engine', 'analytical-queries', 'openness-self-host'],
+      bin: 'sh',
+      argv: [
+        'sh', '-c',
+        '"$HOME/.clickhouse-bin/clickhouse" local --query "CREATE TABLE arenas (id UInt32, name String) ENGINE = MergeTree ORDER BY id; INSERT INTO arenas VALUES (1, \'serverless\'), (2, \'databases\'); SELECT concat(\'PA_PROBE_OK rows=\', toString(count()), \' names=\', arrayStringConcat(groupArray(name), \'+\')) FROM arenas;"',
+      ],
+      displayCommand: `clickhouse local --query "CREATE TABLE arenas ...; INSERT INTO arenas VALUES ...; SELECT concat('PA_PROBE_OK rows=', toString(count()), ...) FROM arenas;"`,
+      expect: /PA_PROBE_OK rows=2 names=serverless\+databases/,
+      timeoutMs: 60_000,
+    },
+    {
+      // Official mcp-clickhouse (pypi) completes a FULL keyless stdio initialize handshake —
+      // serverInfo comes back openly; connection credentials are only needed at tool-call time.
+      probeId: 'mcp-stdio-handshake',
+      productId: 'clickhouse',
+      storyIds: ['agentic-mcp-server', 'agent-safe-sql-operations'],
+      bin: 'uvx',
+      argv: [
+        'sh', '-c',
+        `printf '%s\\n' '${MCP_INITIALIZE.trim().replace(/'/g, "'\\''")}' | CLICKHOUSE_HOST=localhost CLICKHOUSE_USER=default CLICKHOUSE_PASSWORD= uvx mcp-clickhouse 2>/dev/null | head -1`,
+      ],
+      displayCommand: `printf '<jsonrpc initialize>' | uvx mcp-clickhouse  # stdio handshake, no ClickHouse credentials`,
+      expect: /"serverInfo":\{"name":"mcp-clickhouse"/,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'cli-version',
+      productId: 'cockroachdb',
+      storyIds: ['agentic-official-cli'],
+      bin: 'cockroach',
+      argv: ['cockroach', 'version'],
+      displayCommand: 'cockroach version  # installed via `brew install cockroachdb/tap/cockroach`',
+      expect: /Build Tag:\s+v\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // `cockroach demo` boots a KEYLESS in-memory single-node cluster and runs a real SQL
+      // roundtrip — CREATE / INSERT / SELECT — then exits on its own.
+      probeId: 'local-demo-roundtrip',
+      productId: 'cockroachdb',
+      storyIds: ['local-keyless-engine', 'agentic-headless'],
+      bin: 'cockroach',
+      argv: [
+        'cockroach', 'demo', '--no-example-database', '--insecure=true',
+        '-e', "CREATE TABLE arenas (id INT PRIMARY KEY, name STRING); INSERT INTO arenas VALUES (1, 'serverless-databases'); SELECT 'ROUNDTRIP=' || count(*)::STRING FROM arenas;",
+      ],
+      displayCommand: `cockroach demo --no-example-database --insecure=true -e "CREATE TABLE arenas ...; INSERT ...; SELECT 'ROUNDTRIP=' || count(*)::STRING FROM arenas;"`,
+      expect: /ROUNDTRIP=1/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Hosted CockroachDB Cloud MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'cockroachdb',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://cockroachlabs.cloud/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://cockroachlabs.cloud/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+  ],
+  'search-infra': [
+    {
+      // Official Algolia CLI runs keylessly from npm.
+      probeId: 'cli-version',
+      productId: 'algolia',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', '@algolia/cli', '--version'],
+      displayCommand: 'npx -y @algolia/cli --version',
+      expect: /algolia version \d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Hosted Algolia MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'algolia',
+      storyIds: ['agentic-mcp-server', 'agent-search-tool'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.algolia.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.algolia.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The full Meilisearch engine binary (brew) prints its version with no account.
+      probeId: 'server-version',
+      productId: 'meilisearch',
+      storyIds: ['agentic-official-cli', 'self-host-full-featured'],
+      bin: 'meilisearch',
+      argv: ['meilisearch', '--version'],
+      displayCommand: 'meilisearch --version  # installed via `brew install meilisearch`',
+      expect: /meilisearch \d+\.\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Boots a fully keyless local Meilisearch (no master key = dev mode), indexes two
+      // documents, and runs a REAL typo-tolerant search ("serverles") over HTTP, then dies.
+      probeId: 'local-index-search-roundtrip',
+      productId: 'meilisearch',
+      storyIds: ['five-minute-quickstart', 'typo-tolerance', 'agentic-headless'],
+      bin: 'meilisearch',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-meili-probe; pkill -f "meilisearch --db-path /tmp/pa-meili-probe" 2>/dev/null; (meilisearch --db-path /tmp/pa-meili-probe --http-addr 127.0.0.1:7777 --no-analytics >/tmp/pa-meili-probe.log 2>&1 &); n=0; until curl -s --max-time 2 http://127.0.0.1:7777/health | grep -q available; do n=$((n+1)); [ $n -ge 30 ] && break; sleep 1; done; curl -s -X POST http://127.0.0.1:7777/indexes/arenas/documents -H "Content-Type: application/json" -d "[{\\"id\\":1,\\"name\\":\\"serverless databases\\"},{\\"id\\":2,\\"name\\":\\"search infrastructure\\"}]"; echo; sleep 2; curl -s "http://127.0.0.1:7777/indexes/arenas/search?q=serverles"; echo; pkill -f "meilisearch --db-path /tmp/pa-meili-probe"; rm -rf /tmp/pa-meili-probe /tmp/pa-meili-probe.log',
+      ],
+      displayCommand: 'meilisearch --db-path /tmp/pa-meili-probe --http-addr 127.0.0.1:7777  # no master key, then index 2 docs + typo search q=serverles over HTTP',
+      expect: /"hits":\[\{"id":1,"name":"serverless databases"\}\]/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Official meilisearch-mcp (pypi) completes a FULL keyless stdio initialize handshake.
+      probeId: 'mcp-stdio-handshake',
+      productId: 'meilisearch',
+      storyIds: ['agentic-mcp-server', 'agent-search-tool'],
+      bin: 'uvx',
+      argv: [
+        'sh', '-c',
+        `printf '%s\\n' '${MCP_INITIALIZE.trim().replace(/'/g, "'\\''")}' | uvx meilisearch-mcp 2>/dev/null | head -1`,
+      ],
+      displayCommand: `printf '<jsonrpc initialize>' | uvx meilisearch-mcp  # stdio handshake, no Meilisearch instance`,
+      expect: /"serverInfo":\{"name":"meilisearch"/,
+      timeoutMs: 180_000,
+    },
+    {
+      probeId: 'server-version',
+      productId: 'typesense',
+      storyIds: ['agentic-official-cli', 'self-host-full-featured'],
+      bin: 'sh',
+      argv: ['sh', '-c', '"/opt/homebrew/opt/typesense-server@30.2/bin/typesense-server" --version 2>&1 | head -1'],
+      displayCommand: 'typesense-server --version  # installed via `brew install typesense/tap/typesense-server@30.2`',
+      expect: /Typesense \d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Boots a local Typesense with a self-set local API key (no account, no cloud), creates a
+      // collection, indexes a document, and runs a REAL typo-tolerant search ("serch infra").
+      probeId: 'local-index-search-roundtrip',
+      productId: 'typesense',
+      storyIds: ['five-minute-quickstart', 'typo-tolerance', 'self-host-full-featured'],
+      bin: 'sh',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-ts-probe; mkdir -p /tmp/pa-ts-probe; pkill -f "typesense-server" 2>/dev/null; ("/opt/homebrew/opt/typesense-server@30.2/bin/typesense-server" --data-dir /tmp/pa-ts-probe --api-key=localdev --api-port 8188 >/tmp/pa-ts-probe.log 2>&1 &); n=0; until curl -s --max-time 2 http://127.0.0.1:8188/health | grep -q "\\"ok\\":true"; do n=$((n+1)); [ $n -ge 30 ] && break; sleep 1; done; curl -s -X POST http://127.0.0.1:8188/collections -H "X-TYPESENSE-API-KEY: localdev" -H "Content-Type: application/json" -d "{\\"name\\":\\"arenas\\",\\"fields\\":[{\\"name\\":\\"name\\",\\"type\\":\\"string\\"}]}" >/dev/null; curl -s -X POST http://127.0.0.1:8188/collections/arenas/documents -H "X-TYPESENSE-API-KEY: localdev" -d "{\\"name\\":\\"search infrastructure arena\\"}"; echo; curl -s "http://127.0.0.1:8188/collections/arenas/documents/search?q=serch%20infra&query_by=name" -H "X-TYPESENSE-API-KEY: localdev"; echo; pkill -f "typesense-server"; rm -rf /tmp/pa-ts-probe /tmp/pa-ts-probe.log',
+      ],
+      displayCommand: 'typesense-server --data-dir /tmp/pa-ts-probe --api-key=localdev --api-port 8188  # local self-set key, then create collection + index doc + typo search q="serch infra"',
+      expect: /<mark>search<\/mark> <mark>infra<\/mark>structure arena/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Official @elastic/mcp-server-elasticsearch (npm) completes a FULL keyless stdio
+      // initialize handshake — only a placeholder ES_URL is needed, no cluster, no credentials.
+      probeId: 'mcp-stdio-handshake',
+      productId: 'elastic',
+      storyIds: ['agentic-mcp-server', 'agent-search-tool'],
+      bin: 'npx',
+      argv: [
+        'sh', '-c',
+        `printf '%s\\n' '${MCP_INITIALIZE.trim().replace(/'/g, "'\\''")}' | ES_URL=http://127.0.0.1:9299 npx -y @elastic/mcp-server-elasticsearch 2>/dev/null | grep '"serverInfo"' | head -1`,
+      ],
+      displayCommand: `printf '<jsonrpc initialize>' | ES_URL=http://127.0.0.1:9299 npx -y @elastic/mcp-server-elasticsearch  # stdio handshake, no cluster`,
+      expect: /"serverInfo":\{"name":"elasticsearch-mcp"/,
+      timeoutMs: 180_000,
+    },
+    {
+      // Full Elasticsearch boots locally in docker with security disabled (the engine itself is
+      // free and runs with no account), then a REAL index + search roundtrip runs over HTTP.
+      probeId: 'local-docker-roundtrip',
+      productId: 'elastic',
+      storyIds: ['self-host-full-featured', 'five-minute-quickstart'],
+      bin: 'docker',
+      argv: [
+        'sh', '-c',
+        'docker rm -f pa-es >/dev/null 2>&1; docker run -d --name pa-es -e discovery.type=single-node -e xpack.security.enabled=false -e ES_JAVA_OPTS="-Xms512m -Xmx512m" -p 9299:9200 docker.elastic.co/elasticsearch/elasticsearch:9.5.3 >/dev/null; n=0; until curl -s --max-time 2 http://127.0.0.1:9299/ | grep -q "You Know, for Search"; do n=$((n+1)); [ $n -ge 90 ] && break; sleep 2; done; curl -s -X POST "http://127.0.0.1:9299/arenas/_doc/1?refresh=true" -H "Content-Type: application/json" -d "{\\"name\\":\\"search infrastructure arena\\"}"; echo; curl -s "http://127.0.0.1:9299/arenas/_search?q=name:infrastructure"; echo; docker rm -f pa-es >/dev/null',
+      ],
+      displayCommand: 'docker run docker.elastic.co/elasticsearch/elasticsearch:9.5.3 (single-node, security off)  # then index a doc + query q=name:infrastructure over HTTP',
+      expect: /"_source":\{"name":"search infrastructure arena"\}/,
+      timeoutMs: 420_000,
+    },
+    {
+      // The OSS TypeScript engine installs from npm and runs a REAL in-process index + insert +
+      // typo-tolerant search roundtrip in one node invocation — no server, no account at all.
+      probeId: 'sdk-node-roundtrip',
+      productId: 'orama',
+      storyIds: ['agentic-sdks', 'five-minute-quickstart', 'typo-tolerance'],
+      bin: 'npm',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-orama-probe; mkdir -p /tmp/pa-orama-probe; cd /tmp/pa-orama-probe; npm init -y >/dev/null 2>&1; npm i @orama/orama >/dev/null 2>&1; node --input-type=module -e \'import { create, insert, search } from "@orama/orama"; const db = create({ schema: { name: "string" } }); insert(db, { name: "serverless databases arena" }); insert(db, { name: "search infrastructure arena" }); const r = search(db, { term: "infrastucture", tolerance: 2 }); console.log("PA_PROBE_OK hits=" + r.count, JSON.stringify(r.hits.map((h) => h.document.name)));\'; cd /; rm -rf /tmp/pa-orama-probe',
+      ],
+      displayCommand: `npm i @orama/orama && node -e 'create → insert ×2 → search({ term: "infrastucture", tolerance: 2 })'  # in-process, no server`,
+      expect: /PA_PROBE_OK hits=1 \["search infrastructure arena"\]/,
+      timeoutMs: 180_000,
+    },
+  ],
 }
 
 // Children never see the parent env (which may hold API keys): PATH to find the binary, HOME
