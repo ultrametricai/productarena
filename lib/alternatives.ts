@@ -135,3 +135,32 @@ export function adjacentProducts(
     .slice(0, cap)
     .map(({ categoryId, categoryName, product, entry, sharedThemes }) => ({ categoryId, categoryName, product, entry, sharedThemes }))
 }
+
+export interface AdjacentArena {
+  categoryId: string
+  categoryName: string
+  productCount: number
+  leaderName: string | null
+  sharedThemes: string[]
+}
+
+// Arena-level adjacency for the "Adjacent arenas" strip at the bottom of arena pages — same
+// ≥2-shared-non-universal-themes rule as adjacentProducts, strongest overlap first.
+export function adjacentArenas(categories: CategoryData[], data: CategoryData, cap = 4): AdjacentArena[] {
+  const own = domainThemes(data)
+  const out: AdjacentArena[] = []
+  for (const other of categories) {
+    if (other.category.id === data.category.id) continue
+    const shared = [...domainThemes(other)].filter((t) => own.has(t))
+    if (shared.length < 2) continue
+    const top = other.rankings.leaderboard[0]
+    out.push({
+      categoryId: other.category.id,
+      categoryName: other.category.name,
+      productCount: other.products.length,
+      leaderName: top ? other.products.find((p) => p.id === top.productId)?.name ?? null : null,
+      sharedThemes: shared,
+    })
+  }
+  return out.sort((a, b) => b.sharedThemes.length - a.sharedThemes.length).slice(0, cap)
+}

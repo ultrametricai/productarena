@@ -6,6 +6,7 @@ import PersonaStacksSection from '@/components/PersonaStacksSection'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
+import { adjacentArenas } from '@/lib/alternatives'
 import { categoryFreshness } from '@/lib/freshness'
 import { hasLogo } from '@/lib/logos'
 import { SITE_URL } from '@/lib/site'
@@ -111,6 +112,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
   // Computed server-side and passed down as a plain prop: ArenaTable/StoryMatrix are client
   // components, so they can't call lib/logos.ts's fs-based hasLogo() themselves (see
   // components/ProductLogoView.tsx for why).
+  const adjacent = adjacentArenas(loadAll(), data)
   const logoMap = Object.fromEntries(data.products.map((p) => [p.id, hasLogo(p.id)]))
   return (
     <div className="space-y-8">
@@ -151,6 +153,27 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Story matrix</h2>
         <StoryMatrix data={data} logoMap={logoMap} />
       </div>
+      {adjacent.length > 0 && (
+        <div>
+          <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Adjacent arenas</h2>
+          <p className="mb-4 text-sm text-zinc-500">Shopping this category often means shopping these too.</p>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {adjacent.map((a) => (
+              <Link
+                key={a.categoryId}
+                href={`/arena/${a.categoryId}`}
+                className="group min-w-0 rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
+              >
+                <p className="font-medium group-hover:text-emerald-300">{a.categoryName}</p>
+                <p className="mt-1 text-xs text-zinc-500">
+                  {a.productCount} products{a.leaderName ? ` · leader: ${a.leaderName}` : ''}
+                </p>
+                <p className="mt-1 truncate text-[11px] text-zinc-600">shares: {a.sharedThemes.join(', ')}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
