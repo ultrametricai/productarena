@@ -23,6 +23,14 @@ export default function Home() {
         {/* The homepage IS the table — no hero copy; the page title/description carry the
             positioning for search/social, and /methodology carries the full story. */}
         <h1 className="sr-only">ProductArena — evidence-based software rankings for the AI era</h1>
+        {/* Slim banner into /everything (the power view) — one subtle line above the table. */}
+        <Link
+          href="/everything"
+          className="mb-3 flex items-center gap-2 truncate rounded-lg border border-zinc-800 px-3 py-1.5 text-xs text-zinc-400 transition hover:border-emerald-400/40 hover:text-emerald-300"
+        >
+          <span aria-hidden className="text-emerald-400">⚡</span>
+          <span className="truncate">Power view — the whole catalog on one page →</span>
+        </Link>
         <MegaTable rows={megaRows} arenas={arenaOptions} />
       </section>
 

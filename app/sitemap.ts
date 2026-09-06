@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // mega-table's default view already owns that ranking's search intent).
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now },
+    { url: `${SITE_URL}/everything`, lastModified: now },
     { url: `${SITE_URL}/methodology`, lastModified: now },
     { url: `${SITE_URL}/pipeline`, lastModified: now },
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
