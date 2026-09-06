@@ -213,6 +213,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               >
                 Compare
               </Link>
+              <Link
+                href="/everything"
+                title="The power view — the whole catalog on one page"
+                className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                Everything
+              </Link>
               <a
                 href={`https://github.com/${REPO}`}
                 target="_blank"

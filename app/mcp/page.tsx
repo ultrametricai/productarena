@@ -106,7 +106,8 @@ export default function McpPage() {
         </p>
       </section>
 
-      <section>
+      {/* id: deep-link target for /everything's link index ("CLI — npx productarena"). */}
+      <section id="cli" className="scroll-mt-4">
         <h2 className="font-display text-xl font-semibold tracking-tight">CLI</h2>
         <p className="mt-2 text-sm text-zinc-400">
           Prefer a terminal to a protocol? The <code className="text-zinc-300">productarena</code> npm
