@@ -168,7 +168,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
                 <p className="mt-1 text-xs text-zinc-500">
                   {a.productCount} products{a.leaderName ? ` · leader: ${a.leaderName}` : ''}
                 </p>
-                <p className="mt-1 truncate text-[11px] text-zinc-600">shares: {a.sharedThemes.join(', ')}</p>
+                {a.sharedThemes.length > 0 && (<p className="mt-1 truncate text-[11px] text-zinc-600">shares: {a.sharedThemes.join(', ')}</p>)}
               </Link>
             ))}
           </div>
