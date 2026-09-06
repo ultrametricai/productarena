@@ -53,6 +53,8 @@ const NAV_LABELS: Record<string, string> = {
   "meeting-ai": "Meetings",
   "gpu-clouds": "GPU clouds",
   "feature-flags": "Flags",
+  "serverless-databases": "Databases",
+  "search-infra": "Search",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
