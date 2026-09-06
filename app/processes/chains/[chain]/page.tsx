@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import CeilingBar from '@/components/CeilingBar'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
@@ -59,27 +58,28 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
 
       <ProcessVerdict ceiling={ceiling} nodes={tasks.flatMap((t) => t.dag.nodes)} />
 
-      <section className="space-y-6">
-        {tasks.map((task, i) => {
-          const tc = taskCeiling(task)
-          return (
-            <div key={`${task.id}-${i}`} className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="font-display text-lg font-semibold tracking-tight">
-                  <span className="mr-2 font-mono text-sm text-zinc-500">{i + 1}.</span>
-                  <Link href={`/processes/${processSlug(task.title)}`} className="hover:text-emerald-300">
-                    {task.title}
-                  </Link>
-                </h2>
-                <CeilingBar pct={tc.pct} />
-              </div>
-              <p className="mt-1 text-sm text-zinc-500">{task.description}</p>
-              <div className="mt-4">
-                <ProcessDag nodes={task.dag.nodes} />
-              </div>
-            </div>
-          )
-        })}
+      <section>
+        <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">The full run</h2>
+        <p className="mt-1 text-sm text-zinc-400">
+          One continuous flow, sectioned per process. Route-coded blocks:{' '}
+          <span className="text-emerald-300">emerald = agent</span>,{' '}
+          <span className="text-amber-300">amber = manual form/portal</span>,{' '}
+          <span className="text-red-300/90">red = needs a human</span>. ⏸ approval gate · ⏳ async wait.
+        </p>
+        <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
+          <ProcessDag
+            sections={tasks.map((task, i) => ({
+              key: `${task.id}-${i}`,
+              kicker: `process ${i + 1} of ${tasks.length}`,
+              title: task.title,
+              href: `/processes/${processSlug(task.title)}`,
+              meta: task.description,
+              pct: taskCeiling(task).pct,
+              nodes: task.dag.nodes,
+              edges: task.dag.edges,
+            }))}
+          />
+        </div>
       </section>
 
       <ProcessSimulator steps={simSteps} roles={roles} multiTask />

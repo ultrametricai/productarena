@@ -345,6 +345,23 @@ function arenaSwapOptions(arenaId: string, dir?: string): SwapOption[] {
     .map((e) => ({ id: e.productId, name: nameOf(e.productId), agentReady: e.agentReady }))
 }
 
+// Top arena alternatives for one mapped vendor — the same live leaderboard the swap options
+// use, minus the canonical vendor itself. Powers the "or:" row on DAG vendor blocks. Unmapped
+// vendors (irs, clerky, docusign…) have no arena, so they yield [] and the block shows only
+// the canonical chip.
+export interface VendorAlternative extends SwapOption {
+  arenaId: string
+}
+
+export function vendorAlternatives(vendor: string, limit = 2, dir?: string): VendorAlternative[] {
+  const arenaId = VENDOR_ARENA[vendor]
+  if (!arenaId || !isPopulated(arenaId, dir)) return []
+  return arenaSwapOptions(arenaId, dir)
+    .filter((o) => o.id !== vendor)
+    .slice(0, limit)
+    .map((o) => ({ ...o, arenaId }))
+}
+
 // The swappable market roles of one or more tasks: every mapped vendor (from DAG nodes first —
 // the canonical call targets — then the task's own vendors list) collapsed per arena. The
 // default pick is the DAG's canonical vendor; alternatives are the arena's live leaderboard.
