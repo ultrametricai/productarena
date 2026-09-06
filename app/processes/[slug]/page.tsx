@@ -76,21 +76,23 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
       <section>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">How it runs</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          Route-coded step flow: <span className="text-emerald-300">emerald = agent</span>,{' '}
+          Route-coded block flow: <span className="text-emerald-300">emerald = agent</span>,{' '}
           <span className="text-amber-300">amber = manual form/portal</span>,{' '}
           <span className="text-red-300/90">red = needs a human</span>. ⏸ approval gate · ⏳ async wait.
         </p>
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
-          <ProcessDag nodes={task.dag.nodes} />
+          <ProcessDag nodes={task.dag.nodes} edges={task.dag.edges} />
         </div>
         {task.contextNeeded.length > 0 && (
           <p className="mt-3 text-xs text-zinc-500">
             Context the agent needs first:{' '}
             {task.contextNeeded.map((c, i) => (
-              <span key={i} className="whitespace-nowrap">
+              <span key={i}>
                 {i > 0 && ' · '}
-                <span className="font-mono">{c.query ?? c.tool}</span>
-                {c.tier === 'user_input' && <span className="text-amber-400/80"> (from the founder)</span>}
+                <span className="whitespace-nowrap">
+                  <span className="font-mono">{c.query ?? c.tool}</span>
+                  {c.tier === 'user_input' && <span className="text-amber-400/80"> (from the founder)</span>}
+                </span>
               </span>
             ))}
           </p>
