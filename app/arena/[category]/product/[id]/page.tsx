@@ -14,7 +14,9 @@ import ProductShowcase from '@/components/ProductShowcase'
 import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
 import ScoreTrend from '@/components/ScoreTrend'
+import StoryMap from '@/components/StoryMap'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
+import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
 import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
@@ -245,7 +247,15 @@ export default async function ProductPage({
 
       <div id="story-verdicts" className="scroll-mt-4">
         <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Story verdicts</h2>
-        <StoryVerdictsTable category={category} productId={id} rows={verdictRows} />
+        {/* Two server-rendered views of the same verdict rows, toggled client-side via `hidden`
+            (static-export safe — both are in the HTML). Table = the flat, sortable evidence
+            surface every #story-<id> deep link targets; Map = the capability DAG (curated canon
+            graph + heuristic domain clusters) whose verdict-tinted blocks show where the
+            product's capability frontier greys out. */}
+        <StoryViewToggle
+          map={<StoryMap rows={verdictRows} productName={product.name} />}
+          table={<StoryVerdictsTable category={category} productId={id} rows={verdictRows} />}
+        />
       </div>
 
       <ProofsSection category={category} productId={id} stories={data.stories} />
