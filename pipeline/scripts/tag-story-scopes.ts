@@ -121,6 +121,8 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'browser-agents': ['browser', 'page', 'dom\\b', 'session', 'captcha', 'stealth', 'proxy', 'headless', 'playwright', 'puppeteer', 'cdp\\b', 'selector', 'click', 'form', 'web task', 'navigat', 'extract', 'screenshot', 'fingerprint', 'profile', 'replay', 'agent', 'login', '2fa', 'workflow'],
   'ai-memory': ['memory', 'memories', 'recall', 'remember', 'forget', 'knowledge graph', 'entity', 'entities', 'session', 'context', 'retrieval', 'fact', 'graph', 'embedding', 'agent', 'llm', 'summariz', 'ingest', 'temporal', 'ttl\\b', 'expiration', 'multi-tenant', 'tenant'],
   'voice-agents': ['voice', 'call\\b', 'calls', 'phone', 'telephony', 'sip\\b', 'dial', 'barge-in', 'interrupt', 'turn-taking', 'turn detection', 'tts\\b', 'stt\\b', 'transcri', 'latency', 'dtmf', 'ivr\\b', 'voicemail', 'agent', 'conversation', 'outbound', 'inbound', 'clon', 'speech', 'campaign', 'transfer'],
+  'serverless-databases': ['database', 'db\\b', 'postgres', 'mysql', 'sqlite', 'libsql', 'sql\\b', 'branch', 'schema', 'migration', 'replica', 'backup', 'restore', 'point-in-time', 'pitr', 'connection', 'pooler', 'pooling', 'serverless', 'scale-to-zero', 'autoscal', 'quer', 'vector', 'embedding', 'analytical', 'warehouse', 'ddl\\b', 'orm\\b', 'dump', 'table', 'row'],
+  'search-infra': ['search', 'index', 'indexes', 'indices', 'indexing', 'typo', 'facet', 'filter', 'relevance', 'ranking', 'rank', 'synonym', 'query', 'queries', 'hybrid', 'semantic', 'vector', 'embedding', 'autocomplete', 'instant', 'document', 'record', 'crawler', 'analytics', 'merchandis', 'federated', 'highlight'],
 }
 
 export function domainPattern(categoryId: string): RegExp | null {
