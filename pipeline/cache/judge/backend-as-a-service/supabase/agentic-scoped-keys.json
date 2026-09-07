@@ -1,16 +1,16 @@
 {
-  "hash": "16c439553eddc4c074074d0e26aacda51f1dfc2ef4fe43807f0a91b8fb1f6bad",
+  "hash": "58436ae9be62fce54f25054c5652a02534b174b62a043241de0b3dbd4336a713",
   "verdict": {
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Supabase offers RLS-based fine-grained authorization and says it encourages read-only access by default for its MCP integration (mitigating agent access scope), but a concrete hands-on community report shows the Cursor/Supabase MCP integration actually running with elevated service_role access that bypasses RLS entirely — the opposite of least-privilege scoping. This is a direct, concrete contradiction rather than general skepticism. Missing for 10: documented ability to mint scoped/least-privilege API keys or tokens specifically for agent use, and confirmation that MCP connections default to restricted roles rather than service_role.",
+    "rationale": "Supabase's RLS system and API-key model (docs-4, docs-15) provide a mechanism for scoped, least-privilege access, and the MCP integration docs (supabase-docs-1/27) frame agent access as project-scoped. However, a documented real-world incident shows the Cursor+Supabase MCP agent operated with the full-access service_role key, bypassing RLS entirely and leaking sensitive data (supabase-comm-1), directly contradicting the least-privilege claim; Supabase's own engineer response (supabase-comm-3) confirms they had to retroactively default MCP to read-only as a mitigation, acknowledging the gap. missing for 10: evidence of a dedicated agent-specific credential/token scoping mechanism (e.g., granular MCP API keys or per-agent RLS policies) rather than reliance on generic RLS/service-role keys, and confirmation the read-only default fully closes the least-privilege gap.",
     "evidenceIds": [
       "supabase-docs-4",
       "supabase-docs-15",
-      "supabase-comm-13",
-      "supabase-comm-15",
-      "supabase-probe-7"
+      "supabase-docs-1",
+      "supabase-comm-1",
+      "supabase-comm-3"
     ],
     "productId": "supabase",
     "storyId": "agentic-scoped-keys"
