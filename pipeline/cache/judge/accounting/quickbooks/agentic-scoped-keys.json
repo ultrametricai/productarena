@@ -1,15 +1,16 @@
 {
-  "hash": "acc390b4b8319b945279dcade78a67e538b1175834d66781e934ad154961cc9b",
+  "hash": "22f9275473bb4a02659e46bcb76e99a064470bb21006b04a0a1c33f7f95a444b",
   "verdict": {
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "QuickBooks exposes OAuth 2.0 authentication (via intuit oauth-jsclient) and has an MCP server with 145 tools covering the full QBO API, but there is no evidence of a mechanism to issue scoped or least-privilege credentials specifically for an AI agent (e.g., restricting which of the 145 tools/endpoints an agent's token can access). Missing for 10: documentation of OAuth scope granularity for agent use cases, any agent-specific API key/token issuance flow, or role-based restriction of MCP tool access.",
+    "rationale": "QuickBooks' official MCP server supports restricting which tool categories are registered and can suppress write operations via QUICKBOOKS_DISABLE_WRITE, giving a practical least-privilege mechanism for agent access, and OAuth 2.0 client libraries handle standard token issuance/refresh. However, there's no evidence of fine-grained, per-scope OAuth credential issuance (e.g., read-only vs. specific-entity scopes) at the API/auth-server level beyond the coarse standard QBO OAuth scope. Missing for 10: documented granular OAuth scopes for agents, first-party guidance on issuing narrowly-scoped tokens, and independent confirmation the write-suppression flag is enforced server-side rather than just client-side.",
     "evidenceIds": [
+      "quickbooks-gh-4",
+      "quickbooks-gh-5",
+      "quickbooks-gh-6",
       "quickbooks-gh-1",
-      "quickbooks-docs-31",
-      "quickbooks-gh-3",
-      "quickbooks-probe-3"
+      "quickbooks-docs-39"
     ],
     "productId": "quickbooks",
     "storyId": "agentic-scoped-keys"
