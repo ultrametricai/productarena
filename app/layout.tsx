@@ -55,6 +55,8 @@ const NAV_LABELS: Record<string, string> = {
   "feature-flags": "Flags",
   "serverless-databases": "Databases",
   "search-infra": "Search",
+  "agent-skills": "Skills",
+  "data-warehouses": "Warehouses",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
