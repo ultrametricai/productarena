@@ -1,0 +1,268 @@
+$ uvx --from snowflake-cli snow sql --help
+[37m⠋[0m [2mResolving dependencies...                                                     [0m
+[37m⠙[0m [2mResolving dependencies...                                                     [0m
+[37m⠋[0m [2mResolving dependencies...                                                     [0m
+[37m⠙[0m [2mResolving dependencies...                                                     [0m
+[37m⠙[0m [2msnowflake-cli==3.26.0                                                         [0m
+[37m⠙[0m [2mclick==8.1.8                                                                  [0m
+[37m⠙[0m [2mgitpython==3.1.58                                                             [0m
+[37m⠙[0m [2mid==1.5.0                                                                     [0m
+[37m⠙[0m [2mjinja2==3.1.6                                                                 [0m
+[37m⠙[0m [2mpackaging==25.0                                                               [0m
+[37m⠙[0m [2mpip==26.2.1                                                                   [0m
+[37m⠙[0m [2mpluggy==1.6.0                                                                 [0m
+[37m⠙[0m [2mprompt-toolkit==3.0.51                                                        [0m
+[37m⠙[0m [2mpydantic==2.12.5                                                              [0m
+[37m⠙[0m [2mpython-dotenv==1.2.2                                                          [0m
+[37m⠙[0m [2mpyyaml==6.0.2                                                                 [0m
+[37m⠙[0m [2mrequests==2.33.0                                                              [0m
+[37m⠙[0m [2mrequirements-parser==0.13.0                                                   [0m
+[37m⠙[0m [2mrich==14.0.0                                                                  [0m
+[37m⠙[0m [2msetuptools==80.8.0                                                            [0m
+[37m⠙[0m [2msnowflake-connector-python==4.7.1                                             [0m
+[37m⠙[0m [2msnowflake-connector-python==4.7.1                                             [0m
+[1m                                                                                [0m
+[1m [0m[1;33mUsage: [0m[1msnow sql [OPTIONS][0m[1m                                                     [0m[1m [0m
+[1m                                                                                [0m
+ Executes Snowflake query.
+
+ [2mUse either query, filename or input option.[0m
+
+ [2mQuery to execute can be specified using query option, filename option (all [0m
+ [2mqueries from file will be executed)[0m[2m [0m[2mor via stdin by piping output from other [0m
+ [2mcommand. For example [0m[1;2;36;40mcat my.sql | snow sql -i[0m[2m.[0m
+
+ [2mThe command supports variable substitution that happens on client-side.[0m
+
+[2m╭─[0m[2m Options [0m[2m───────────────────────────────────────────────────────────────────[0m[2m─╮[0m
+[2m│[0m [1;36m-[0m[1;36m-query[0m            [1;32m-q[0m                     [1;33mTEXT            [0m  Query to         [2m│[0m
+[2m│[0m                                                             execute.         [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-filename[0m         [1;32m-f[0m                     [1;33mFILE            [0m  File to execute. [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-stdin[0m            [1;32m-i[0m                     [1;33m                [0m  Read the query   [2m│[0m
+[2m│[0m                                                             from standard    [2m│[0m
+[2m│[0m                                                             input. Use it    [2m│[0m
+[2m│[0m                                                             when piping      [2m│[0m
+[2m│[0m                                                             input to this    [2m│[0m
+[2m│[0m                                                             command.         [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-variable[0m         [1;32m-D[0m                     [1;33mTEXT            [0m  String in format [2m│[0m
+[2m│[0m                                                             of [redacted]=value. If [2m│[0m
+[2m│[0m                                                             provided the SQL [2m│[0m
+[2m│[0m                                                             content will be  [2m│[0m
+[2m│[0m                                                             treated as       [2m│[0m
+[2m│[0m                                                             template and     [2m│[0m
+[2m│[0m                                                             rendered using   [2m│[0m
+[2m│[0m                                                             provided data.   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-retain[0m[1;36m-comments[0m                         [1;33m                [0m  Retains comments [2m│[0m
+[2m│[0m                                                             in queries       [2m│[0m
+[2m│[0m                                                             passed to        [2m│[0m
+[2m│[0m                                                             Snowflake        [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-single[0m[1;36m-transac…[0m      [1;35m-[0m[1;35m-no[0m[1;35m-single-tr…[0m    [1;33m                [0m  Connects with    [2m│[0m
+[2m│[0m                                                             autocommit       [2m│[0m
+[2m│[0m                                                             disabled. Wraps  [2m│[0m
+[2m│[0m                                                             BEGIN/COMMIT     [2m│[0m
+[2m│[0m                                                             around           [2m│[0m
+[2m│[0m                                                             statements to    [2m│[0m
+[2m│[0m                                                             execute them as  [2m│[0m
+[2m│[0m                                                             a single         [2m│[0m
+[2m│[0m                                                             transaction,     [2m│[0m
+[2m│[0m                                                             ensuring all     [2m│[0m
+[2m│[0m                                                             commands         [2m│[0m
+[2m│[0m                                                             complete         [2m│[0m
+[2m│[0m                                                             successfully or  [2m│[0m
+[2m│[0m                                                             no change is     [2m│[0m
+[2m│[0m                                                             applied.         [2m│[0m
+[2m│[0m                                                             [2m[default:       [0m [2m│[0m
+[2m│[0m                                                             [2mno-single-trans…[0m [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-enable[0m[1;36m-templat…[0m                         [1;2;33m[[0m[1;33mLEGACY[0m[1;2;33m|[0m[1;33mSTANDARD[0m  Syntax used to   [2m│[0m
+[2m│[0m                                           [1;2;33m|[0m[1;33mJINJA[0m[1;2;33m|[0m[1;33mALL[0m[1;2;33m|[0m[1;33mNONE[0m[1;2;33m][0m  resolve          [2m│[0m
+[2m│[0m                                                             variables before [2m│[0m
+[2m│[0m                                                             passing queries  [2m│[0m
+[2m│[0m                                                             to Snowflake.    [2m│[0m
+[2m│[0m                                                             [2m[default:       [0m [2m│[0m
+[2m│[0m                                                             [2mLEGACY,         [0m [2m│[0m
+[2m│[0m                                                             [2mSTANDARD]       [0m [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-local[0m[1;36m-only[0m                              [1;33m                [0m  Restrict !source [2m│[0m
+[2m│[0m                                                             and !load to     [2m│[0m
+[2m│[0m                                                             local files.     [2m│[0m
+[2m│[0m                                                             When set,        [2m│[0m
+[2m│[0m                                                             !source/!load    [2m│[0m
+[2m│[0m                                                             directives that  [2m│[0m
+[2m│[0m                                                             reference        [2m│[0m
+[2m│[0m                                                             http:// or       [2m│[0m
+[2m│[0m                                                             https:// URLs    [2m│[0m
+[2m│[0m                                                             are rejected     [2m│[0m
+[2m│[0m                                                             instead of being [2m│[0m
+[2m│[0m                                                             fetched. Use     [2m│[0m
+[2m│[0m                                                             this flag in     [2m│[0m
+[2m│[0m                                                             environments     [2m│[0m
+[2m│[0m                                                             where SQL inputs [2m│[0m
+[2m│[0m                                                             should not       [2m│[0m
+[2m│[0m                                                             trigger outbound [2m│[0m
+[2m│[0m                                                             network          [2m│[0m
+[2m│[0m                                                             requests, or     [2m│[0m
+[2m│[0m                                                             when running SQL [2m│[0m
+[2m│[0m                                                             files whose      [2m│[0m
+[2m│[0m                                                             content should   [2m│[0m
+[2m│[0m                                                             be reviewed      [2m│[0m
+[2m│[0m                                                             locally before   [2m│[0m
+[2m│[0m                                                             execution. [env  [2m│[0m
+[2m│[0m                                                             var:             [2m│[0m
+[2m│[0m                                                             SNOWFLAKE_CLI_S… [2m│[0m
+[2m│[0m                                                             | config:        [2m│[0m
+[2m│[0m                                                             cli.sql_local_o… [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-no[0m[1;36m-prompt-exit…[0m                         [1;33m                [0m  Do not prompt    [2m│[0m
+[2m│[0m                                                             before exiting   [2m│[0m
+[2m│[0m                                                             the REPL.        [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-project[0m          [1;32m-p[0m                     [1;33mTEXT            [0m  Path where the   [2m│[0m
+[2m│[0m                                                             Snowflake        [2m│[0m
+[2m│[0m                                                             project is       [2m│[0m
+[2m│[0m                                                             stored. Defaults [2m│[0m
+[2m│[0m                                                             to the current   [2m│[0m
+[2m│[0m                                                             working          [2m│[0m
+[2m│[0m                                                             directory.       [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-env[0m                                     [1;33mTEXT            [0m  String in the    [2m│[0m
+[2m│[0m                                                             format           [2m│[0m
+[2m│[0m                                                             [redacted]=value.       [2m│[0m
+[2m│[0m                                                             Overrides        [2m│[0m
+[2m│[0m                                                             variables from   [2m│[0m
+[2m│[0m                                                             the env section  [2m│[0m
+[2m│[0m                                                             used for         [2m│[0m
+[2m│[0m                                                             templates.       [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-help[0m             [1;32m-h[0m                     [1;33m                [0m  Show this        [2m│[0m
+[2m│[0m                                                             message and      [2m│[0m
+[2m│[0m                                                             exit.            [2m│[0m
+[2m╰──────────────────────────────────────────────────────────────────────────────╯[0m
+[2m╭─[0m[2m Connection configuration [0m[2m──────────────────────────────────────────────────[0m[2m─╮[0m
+[2m│[0m [1;36m-[0m[1;36m-connection[0m,[1;36m-[0m[1;36m-environment[0m    [1;32m-c[0m      [1;33mTEXT   [0m  Name of the connection, as    [2m│[0m
+[2m│[0m                                                defined in your [1;36;40mconfig.toml[0m   [2m│[0m
+[2m│[0m                                                file. Default: [1;36;40mdefault[0m.       [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-host[0m                                [1;33mTEXT   [0m  Host address for the          [2m│[0m
+[2m│[0m                                                connection. Overrides the     [2m│[0m
+[2m│[0m                                                value specified for the       [2m│[0m
+[2m│[0m                                                connection.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-port[0m                                [1;33mINTEGER[0m  Port for the connection.      [2m│[0m
+[2m│[0m                                                Overrides the value specified [2m│[0m
+[2m│[0m                                                for the connection.           [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-protocol[0m                            [1;33mTEXT   [0m  Protocol to use for the       [2m│[0m
+[2m│[0m                                                connection, for example       [2m│[0m
+[2m│[0m                                                [1;36;40mhttps[0m. Overrides the value    [2m│[0m
+[2m│[0m                                                specified for the connection. [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-account[0m,[1;36m-[0m[1;36m-accountname[0m               [1;33mTEXT   [0m  Name assigned to your         [2m│[0m
+[2m│[0m                                                Snowflake account. Overrides  [2m│[0m
+[2m│[0m                                                the value specified for the   [2m│[0m
+[2m│[0m                                                connection.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-user[0m,[1;36m-[0m[1;36m-username[0m                     [1;33mTEXT   [0m  Username to connect to        [2m│[0m
+[2m│[0m                                                Snowflake. Overrides the      [2m│[0m
+[2m│[0m                                                value specified for the       [2m│[0m
+[2m│[0m                                                connection.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-password[0m                            [1;33mTEXT   [0m  Snowflake password. Overrides [2m│[0m
+[2m│[0m                                                the value specified for the   [2m│[0m
+[2m│[0m                                                connection.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-authenticator[0m                       [1;33mTEXT   [0m  Snowflake authenticator.      [2m│[0m
+[2m│[0m                                                Overrides the value specified [2m│[0m
+[2m│[0m                                                for the connection.           [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-workload[0m[1;36m-identity-provider[0m          [1;33mTEXT   [0m  Workload identity provider    [2m│[0m
+[2m│[0m                                                (AWS, AZURE, GCP, OIDC).      [2m│[0m
+[2m│[0m                                                Overrides the value specified [2m│[0m
+[2m│[0m                                                for the connection            [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-private[0m[1;36m-[redacted]-file[0m,[1;36m-[0m[1;36m-privat…[0m          [1;33mTEXT   [0m  Snowflake private [redacted] file    [2m│[0m
+[2m│[0m                                                path. Overrides the value     [2m│[0m
+[2m│[0m                                                specified for the connection. [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-[redacted][0m                               [1;33mTEXT   [0m  OAuth [redacted] to use when       [2m│[0m
+[2m│[0m                                                connecting to Snowflake.      [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-[redacted][0m[1;36m-file-path[0m                     [1;33mTEXT   [0m  Path to file with an OAuth    [2m│[0m
+[2m│[0m                                                [redacted] to use when connecting  [2m│[0m
+[2m│[0m                                                to Snowflake.                 [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-database[0m,[1;36m-[0m[1;36m-dbname[0m                   [1;33mTEXT   [0m  Database to use. Overrides    [2m│[0m
+[2m│[0m                                                the value specified for the   [2m│[0m
+[2m│[0m                                                connection.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-schema[0m,[1;36m-[0m[1;36m-schemaname[0m                 [1;33mTEXT   [0m  Database schema to use.       [2m│[0m
+[2m│[0m                                                Overrides the value specified [2m│[0m
+[2m│[0m                                                for the connection.           [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-role[0m,[1;36m-[0m[1;36m-rolename[0m                     [1;33mTEXT   [0m  Role to use. Overrides the    [2m│[0m
+[2m│[0m                                                value specified for the       [2m│[0m
+[2m│[0m                                                connection.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-warehouse[0m                           [1;33mTEXT   [0m  Warehouse to use. Overrides   [2m│[0m
+[2m│[0m                                                the value specified for the   [2m│[0m
+[2m│[0m                                                connection.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-temporary[0m[1;36m-connection[0m        [1;32m-x[0m      [1;33m       [0m  Uses a connection defined     [2m│[0m
+[2m│[0m                                                with command-line parameters, [2m│[0m
+[2m│[0m                                                instead of one defined in     [2m│[0m
+[2m│[0m                                                config                        [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-mfa[0m[1;36m-passcode[0m                        [1;33mTEXT   [0m  [redacted] to use for multi-factor [2m│[0m
+[2m│[0m                                                authentication (MFA)          [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-enable[0m[1;36m-diag[0m                         [1;33m       [0m  Whether to generate a         [2m│[0m
+[2m│[0m                                                connection diagnostic report. [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-diag[0m[1;36m-log-path[0m                       [1;33mTEXT   [0m  Path for the generated        [2m│[0m
+[2m│[0m                                                report. Defaults to system    [2m│[0m
+[2m│[0m                                                temporary directory.          [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-diag[0m[1;36m-allowlist-path[0m                 [1;33mTEXT   [0m  Path to a JSON file that      [2m│[0m
+[2m│[0m                                                contains allowlist            [2m│[0m
+[2m│[0m                                                parameters.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-client-id[0m                     [1;33mTEXT   [0m  Value of client id provided   [2m│[0m
+[2m│[0m                                                by the Identity Provider for  [2m│[0m
+[2m│[0m                                                Snowflake integration.        [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-client-secret[0m                 [1;33mTEXT   [0m  Value of the client secret    [2m│[0m
+[2m│[0m                                                provided by the Identity      [2m│[0m
+[2m│[0m                                                Provider for Snowflake        [2m│[0m
+[2m│[0m                                                integration.                  [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-authorization-url[0m             [1;33mTEXT   [0m  Identity Provider endpoint    [2m│[0m
+[2m│[0m                                                supplying the authorization   [2m│[0m
+[2m│[0m                                                code to the driver.           [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-[redacted]-request-url[0m             [1;33mTEXT   [0m  Identity Provider endpoint    [2m│[0m
+[2m│[0m                                                supplying the access [redacted]s   [2m│[0m
+[2m│[0m                                                to the driver.                [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-redirect-uri[0m                  [1;33mTEXT   [0m  URI to use for authorization  [2m│[0m
+[2m│[0m                                                code redirection.             [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-scope[0m                         [1;33mTEXT   [0m  Scope requested in the        [2m│[0m
+[2m│[0m                                                Identity Provider             [2m│[0m
+[2m│[0m                                                authorization request.        [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-disable-pkce[0m                  [1;33m       [0m  Disables Proof [redacted] for Code   [2m│[0m
+[2m│[0m                                                Exchange (PKCE). Default:     [2m│[0m
+[2m│[0m                                                [1;36;40mFalse[0m.                        [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-enable-refresh-toke…[0m          [1;33m       [0m  Enables a silent              [2m│[0m
+[2m│[0m                                                re-authentication when the    [2m│[0m
+[2m│[0m                                                actual access [redacted] becomes   [2m│[0m
+[2m│[0m                                                outdated. Default: [1;36;40mFalse[0m.     [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-oauth[0m[1;36m-enable-single-use-r…[0m          [1;33m       [0m  Whether to opt-in to          [2m│[0m
+[2m│[0m                                                single-use refresh [redacted]      [2m│[0m
+[2m│[0m                                                semantics. Default: [1;36;40mFalse[0m.    [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-client[0m[1;36m-store-temporary-cr…[0m          [1;33m       [0m  Store the temporary           [2m│[0m
+[2m│[0m                                                credential.                   [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-secondary[0m[1;36m-roles[0m                     [1;33mTEXT   [0m  Secondary roles mode applied  [2m│[0m
+[2m│[0m                                                when the session starts.      [2m│[0m
+[2m│[0m                                                Supported values are [1;36;40mALL[0m and  [2m│[0m
+[2m│[0m                                                [1;36;40mNONE[0m; pass [1;36;40mNONE[0m to run the    [2m│[0m
+[2m│[0m                                                session only with the primary [2m│[0m
+[2m│[0m                                                role.                         [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-server[0m[1;36m-session-keep-alive[0m           [1;33m       [0m  Keep the session active       [2m│[0m
+[2m│[0m                                                indefinitely, even if there   [2m│[0m
+[2m│[0m                                                is no activity from the user. [2m│[0m
+[2m╰──────────────────────────────────────────────────────────────────────────────╯[0m
+[2m╭─[0m[2m Global configuration [0m[2m──────────────────────────────────────────────────────[0m[2m─╮[0m
+[2m│[0m [1;36m-[0m[1;36m-format[0m                       [1;2;33m[[0m[1;33mTABLE[0m[1;2;33m|[0m[1;33mJSON[0m[1;2;33m|[0m[1;33mJSON_EXT[0m[1;2;33m|[0m  Specifies the output   [2m│[0m
+[2m│[0m                                [1;33mCSV[0m[1;2;33m][0m[1;33m                 [0m  format.                [2m│[0m
+[2m│[0m                                                       [2m[default: TABLE]      [0m [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-verbose[0m              [1;32m-v[0m      [1;33m                     [0m  Displays log entries   [2m│[0m
+[2m│[0m                                                       for log levels [1;36;40minfo[0m    [2m│[0m
+[2m│[0m                                                       and higher.            [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-debug[0m                        [1;33m                     [0m  Displays log entries   [2m│[0m
+[2m│[0m                                                       for log levels [1;36;40mdebug[0m   [2m│[0m
+[2m│[0m                                                       and higher; debug logs [2m│[0m
+[2m│[0m                                                       contain additional     [2m│[0m
+[2m│[0m                                                       information.           [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-silent[0m                       [1;33m                     [0m  Turns off intermediate [2m│[0m
+[2m│[0m                                                       output to console.     [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-enhanced[0m[1;36m-exit-codes[0m          [1;33m                     [0m  Differentiate exit     [2m│[0m
+[2m│[0m                                                       error codes based on   [2m│[0m
+[2m│[0m                                                       failure type.          [2m│[0m
+[2m│[0m                                                       [2;33m[env var:             [0m [2m│[0m
+[2m│[0m                                                       [2;33mSNOWFLAKE_ENHANCED_EX…[0m [2m│[0m
+[2m│[0m [1;36m-[0m[1;36m-decimal[0m[1;36m-precision[0m            [1;33mINTEGER              [0m  Number of decimal      [2m│[0m
+[2m│[0m                                                       places to display for  [2m│[0m
+[2m│[0m                                                       decimal values. Uses   [2m│[0m
+[2m│[0m                                                       Python's default       [2m│[0m
+[2m│[0m                                                       precision if not       [2m│[0m
+[2m│[0m                                                       specified. [env var:   [2m│[0m
+[2m│[0m                                                       SNOWFLAKE_DECIMAL_PRE… [2m│[0m
+[2m╰──────────────────────────────────────────────────────────────────────────────╯[0m
