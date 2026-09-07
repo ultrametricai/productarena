@@ -10,6 +10,7 @@ import MomentumChip from '@/components/MomentumChip'
 import MomentumTrend from '@/components/MomentumTrend'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
+import PricingSignals from '@/components/PricingSignals'
 import ProductLogo from '@/components/ProductLogo'
 import ProductShowcase from '@/components/ProductShowcase'
 import ProofsSection from '@/components/ProofsSection'
@@ -27,6 +28,7 @@ import {
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
 import { loadPopularityHistory, popularitySeries } from '@/lib/popularityHistory'
+import { loadPricing } from '@/lib/pricing'
 import { loadScoreHistory } from '@/lib/scoreHistory'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
@@ -273,6 +275,10 @@ export default async function ProductPage({
       <ProofsSection category={category} productId={id} stories={data.stories} />
 
       <ClaimsSection data={data} category={category} productId={id} />
+
+      {/* Pricing-covered arenas only (lib/pricing.ts): renders nothing when this product has no
+          pricing entry, "pricing unclear" when the vendor's page couldn't be read honestly. */}
+      <PricingSignals entry={loadPricing(category)[id]} />
 
       <BusinessModelSection product={product} />
       {/* No bottom "Battles" section: ProductActions' "Compare head-to-head" rail above is the

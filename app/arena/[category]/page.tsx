@@ -9,6 +9,7 @@ import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { adjacentArenas } from '@/lib/alternatives'
 import { categoryFreshness } from '@/lib/freshness'
 import { hasLogo } from '@/lib/logos'
+import { loadPricing, pricingCellFor, type PricingCell } from '@/lib/pricing'
 import { SITE_URL } from '@/lib/site'
 
 // The leaderboard already sorts primarily by aiEra/Arena Score (see lib/scoring.ts), so entry 0
@@ -114,6 +115,18 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
   // components/ProductLogoView.tsx for why).
   const adjacent = adjacentArenas(loadAll(), data)
   const logoMap = Object.fromEntries(data.products.map((p) => [p.id, hasLogo(p.id)]))
+  // Pricing transparency index (lib/pricing.ts): serializable headline cells for the covered
+  // arenas' "$ / unit" leaderboard column, computed server-side (fs) for the client-side table.
+  // Empty map (arena not covered / stage not run) → undefined → the column doesn't render.
+  const pricingMap = loadPricing(category)
+  const pricingCells = Object.fromEntries(
+    data.products.flatMap((p) => {
+      const entry = pricingMap[p.id]
+      const cell = entry ? pricingCellFor(entry, category) : null
+      return cell ? [[p.id, cell] as [string, PricingCell]] : []
+    }),
+  )
+  const pricing = Object.keys(pricingCells).length > 0 ? pricingCells : undefined
   return (
     <div className="space-y-8">
       <script
@@ -145,7 +158,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
       <Legend />
       <div>
         <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Leaderboard</h2>
-        <ArenaTable data={data} logoMap={logoMap} />
+        <ArenaTable data={data} logoMap={logoMap} pricing={pricing} />
       </div>
       <PersonaStacksSection data={data} />
       <StacksSection data={data} />
