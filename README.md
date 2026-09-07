@@ -33,7 +33,7 @@ evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **52 arenas, 270 products, 16,231 judged verdicts.**
+As of the last full pipeline run: **54 arenas, 279 products, 16,707 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -162,6 +162,8 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | GPU Clouds (`gpu-clouds`) | runpod, lambda-labs, coreweave, vast-ai, paperspace |
 | Feature Flags & Experimentation (`feature-flags`) | launchdarkly, statsig, growthbook, flagsmith, unleash |
 | Serverless & Developer Databases (`serverless-databases`) | neon, turso, planetscale, clickhouse, cockroachdb |
+| Agent Skills & Extensions (`agent-skills`) | superpowers, anthropic-skills, mattpocock-skills, skills-cli, codex-plugins |
+| Data Warehouses & Lakehouses (`data-warehouses`) | snowflake, databricks, bigquery, motherduck |
 | Search Infrastructure (`search-infra`) | algolia, meilisearch, typesense, elastic, orama |
 | Scheduling & Calendar (`scheduling`) | cal-com, calendly, motion, reclaim, savvycal |
 | Design & Prototyping (`design-tools`) | figma, penpot, framer, sketch, canva |

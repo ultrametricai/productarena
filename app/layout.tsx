@@ -57,6 +57,8 @@ const NAV_LABELS: Record<string, string> = {
   "search-infra": "Search",
   "scheduling": "Scheduling",
   "design-tools": "Design",
+  "agent-skills": "Skills",
+  "data-warehouses": "Warehouses",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
