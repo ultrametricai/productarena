@@ -7,6 +7,7 @@ import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
 import MomentumChip from '@/components/MomentumChip'
+import MomentumTrend from '@/components/MomentumTrend'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
 import ProductLogo from '@/components/ProductLogo'
@@ -25,6 +26,7 @@ import {
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
+import { loadPopularityHistory, popularitySeries } from '@/lib/popularityHistory'
 import { loadScoreHistory } from '@/lib/scoreHistory'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
@@ -100,6 +102,15 @@ export default async function ProductPage({
   // allowlisted live MCP endpoint. Only then does the header's primary CTA become hands-on —
   // products with neither keep "Visit" as primary (no fake try).
   const tryable = hasTryIt(category, id)
+  // Momentum sparklines beside the chip — stars/downloads over time from
+  // popularity-history.jsonl (tolerant-optional; series with <2 distinct snapshots render
+  // nothing — see components/MomentumTrend.tsx).
+  const popularityLines = loadPopularityHistory(category).get(id) ?? []
+  const momentumSeries = [
+    { label: '★', points: popularitySeries(popularityLines, 'stars') },
+    { label: 'npm/wk', points: popularitySeries(popularityLines, 'npmWeekly') },
+    { label: 'pypi/wk', points: popularitySeries(popularityLines, 'pypiWeekly') },
+  ]
 
   return (
     <div className="space-y-8">
@@ -125,8 +136,9 @@ export default async function ProductPage({
               {product.type === 'commercial' && ' · commercial'}
             </p>
             {freshness && <p className="text-xs text-zinc-400">Evidence as of {freshness}</p>}
-            <div className="mt-1">
+            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
               <MomentumChip popularity={data.popularity[id]} />
+              <MomentumTrend series={momentumSeries} />
             </div>
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-3">

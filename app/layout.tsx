@@ -195,6 +195,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "ai-native", name: "Most AI-native", label: "ranking", href: "/rankings/ai-native" },
                   { id: "claims-integrity", name: "Claims vs reality", label: "ranking", href: "/rankings/claims-integrity" },
                   { id: "icp", name: `Buyer lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
+                  { id: "changelog", name: "Changelog", label: "history", href: "/changelog" },
+                  { id: "reports", name: "Weekly reports", label: "history", href: "/reports" },
                   { id: "methodology", name: "Methodology", label: "docs", href: "/methodology" },
                   { id: "pipeline", name: "Testing pipeline", label: "docs", href: "/pipeline" },
                   { id: "proofs", name: "Recorded proofs", label: "docs", href: "/proofs" },
@@ -270,6 +272,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
             <span>© 2026 Ultrametric Inc</span>
             <div className="flex items-center gap-4">
+              <Link href="/changelog" className="hover:text-emerald-300">
+                Changelog
+              </Link>
               <Link href="/pipeline" className="hover:text-emerald-300">
                 Testing pipeline
               </Link>
