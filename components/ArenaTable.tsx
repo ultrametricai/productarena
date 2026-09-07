@@ -16,6 +16,7 @@ import TableControls from '@/components/TableControls'
 import VerificationMixChip from '@/components/VerificationMixChip'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import { confidenceFor } from '@/lib/confidence'
+import type { PricingCell } from '@/lib/pricing'
 import { battleSlug, isGroupUntested, type CategoryData } from '@/lib/data-helpers'
 import {
   type ArenaTableColumn,
@@ -105,7 +106,11 @@ function SortableTh({
   )
 }
 
-export default function ArenaTable({ data, logoMap }: { data: CategoryData; logoMap: Record<string, boolean> }) {
+// `pricing` (optional, pricing-covered arenas only — see lib/pricing.ts) adds a non-sortable
+// "$ / unit" column: each cell is that product's headline extracted price in the arena's
+// canonical agent-action unit, with the source link and as-of date. Serializable cells are
+// computed server-side (app/arena/[category]/page.tsx) because this is a client component.
+export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryData; logoMap: Record<string, boolean>; pricing?: Record<string, PricingCell> }) {
   const [column, setColumn] = useState<ArenaTableColumn>('initScore')
   const [direction, setDirection] = useState<SortDirection>('desc')
   const [query, setQuery] = useState('')
@@ -194,6 +199,11 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
                 Popularity
               </SortableTh>
+              {pricing && (
+                <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden md:table-cell">
+                  $ / unit
+                </SortableTh>
+              )}
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 Access
               </SortableTh>
@@ -283,6 +293,39 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
                       <PopularTag />
                     ) : null}
                   </td>
+                  {pricing && (
+                    <td className="hidden px-2 py-2 md:table-cell">
+                      {(() => {
+                        const cell = pricing[row.productId]
+                        if (!cell) return null
+                        if ('unclear' in cell) {
+                          return (
+                            <span className="text-xs italic text-zinc-500" title={`Pricing unclear: ${cell.reason}. We never estimate a price we didn't extract.`}>
+                              unclear
+                            </span>
+                          )
+                        }
+                        return (
+                          <a
+                            href={cell.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`${cell.label} ${cell.unit} (${cell.tier}) — extracted verbatim from the vendor's pricing page, as of ${cell.asOf}`}
+                            className="whitespace-nowrap hover:text-emerald-300"
+                          >
+                            <span className="font-mono tabular-nums text-zinc-300">{cell.label}</span>
+                            {/* "free tier" stands alone; "per …" units read as "$X / unit";
+                                non-"per" units ("gateway fee") read as a plain suffix. */}
+                            {cell.tier !== 'free' && (
+                              <span className="ml-1 text-[10px] text-zinc-500">
+                                {cell.unit === 'gateway fee' ? cell.unit : `/ ${cell.unit}`}
+                              </span>
+                            )}
+                          </a>
+                        )
+                      })()}
+                    </td>
+                  )}
                   <td className="hidden px-2 py-2 sm:table-cell">
                     <AgentAccessGlyphs data={data} productId={row.productId} />
                   </td>
@@ -297,7 +340,7 @@ export default function ArenaTable({ data, logoMap }: { data: CategoryData; logo
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={12} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={pricing ? 13 : 12} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>
