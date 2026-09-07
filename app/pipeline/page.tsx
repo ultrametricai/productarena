@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
+import { pricingCoverage } from '@/lib/pricing'
 import {
   arenaPipelineStats,
   mostWantedUntested,
@@ -26,6 +27,11 @@ export default function PipelinePage() {
   const totals = sitePipelineTotals(stats)
   const mostWanted = mostWantedUntested(categories)
   const nextUp = nextUpArenas(new Set(categories.map((c) => c.category.id)))
+  // Pricing transparency index coverage (lib/pricing.ts): how many products in the covered
+  // arenas have verbatim-extracted unit pricing vs an honest "pricing unclear" record.
+  const pricing = pricingCoverage(
+    categories.map((c) => ({ arenaId: c.category.id, productIds: c.products.map((p) => p.id) })),
+  )
 
   return (
     <div className="space-y-10">
@@ -60,6 +66,17 @@ export default function PipelinePage() {
           </div>
         ))}
       </section>
+
+      {pricing.coveredArenas > 0 && (
+        <p className="max-w-2xl text-sm text-zinc-400">
+          <span className="font-medium text-zinc-200">Pricing coverage:</span>{' '}
+          {pricing.extracted} of {pricing.coveredProducts} products in the {pricing.coveredArenas}{' '}
+          pricing-covered arenas have unit pricing extracted verbatim from the vendor&rsquo;s own
+          pricing page ({pricing.unclear} record an honest &ldquo;pricing unclear&rdquo; — JS-shell
+          or quote-only pages we refuse to guess at). Every figure carries its source URL, exact
+          quote, and fetch date; we never compute a price we didn&rsquo;t extract.
+        </p>
+      )}
 
       <section>
         <h2 className="font-display text-xl font-semibold tracking-tight">Most-wanted untested cells</h2>
