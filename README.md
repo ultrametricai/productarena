@@ -694,6 +694,11 @@ contribution. Pick your angle:
   publishing discrepancies you find is exactly the point.
 - **Cite the data** — verdicts, scores, and evidence excerpts may be quoted with
   attribution (see DATA-LICENSE); bulk reuse needs written permission from Ultrametric.
+- **Spread the Weekly Arena Report** — `pnpm tsx pipeline/scripts/generate-weekly-report.ts`
+  renders the last 7 days (biggest movers, rank flips, new arenas, close races) into
+  committed markdown at `reports/YYYY-MM-DD.md`, listed on the site at `/reports`. The
+  markdown is copy-paste ready for a newsletter or community digest — links, attribution,
+  and honest empty-states included. The rolling equivalent lives at `/changelog`.
 
 Found a verdict you think is wrong, or evidence we missed? See
 [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict and adding evidence are both
