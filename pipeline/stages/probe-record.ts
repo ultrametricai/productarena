@@ -2593,6 +2593,212 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 180_000,
     },
   ],
+  scheduling: [
+    {
+      // Hosted Cal.com MCP server (documented at cal.com/docs/mcp-server) answers a keyless
+      // JSON-RPC initialize with its OAuth 2.1 challenge — live and speaking the MCP auth flow.
+      probeId: 'mcp-remote-handshake',
+      productId: 'cal-com',
+      storyIds: ['agentic-mcp-server', 'agent-scheduling-tool', 'agent-books-meeting'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.cal.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.cal.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The vendor-published self-host docker image boots a REAL full Cal.com instance against a
+      // throwaway postgres — the web app answers with its first-run setup wizard, then everything
+      // is torn down. (calcom/cal.diy on Docker Hub had no published tags at recording time, so
+      // this uses the last vendor-published calcom/cal.com image, v6.2.0-arm.)
+      probeId: 'self-host-docker-boot',
+      productId: 'cal-com',
+      storyIds: ['self-host-scheduling-engine', 'openness-self-host'],
+      bin: 'docker',
+      argv: [
+        'sh', '-c',
+        'docker rm -f pa-cal pa-cal-db >/dev/null 2>&1; docker network rm pa-cal-net >/dev/null 2>&1; docker network create pa-cal-net >/dev/null; docker run -d --name pa-cal-db --network pa-cal-net -e POSTGRES_PASSWORD=cal -e POSTGRES_DB=calendso postgres:16-alpine >/dev/null; sleep 5; docker run -d --name pa-cal --network pa-cal-net -p 3210:3000 -e DATABASE_URL="postgresql://postgres:cal@pa-cal-db:5432/calendso" -e DATABASE_DIRECT_URL="postgresql://postgres:cal@pa-cal-db:5432/calendso" -e NEXTAUTH_SECRET="pa-probe-nextauth-secret-0123456789abcdef" -e CALENDSO_ENCRYPTION_KEY="pa-probe-encryption-key-0123456789ab" -e NEXT_PUBLIC_WEBAPP_URL="http://localhost:3210" calcom/cal.com:v6.2.0-arm >/dev/null; n=0; until curl -s -o /dev/null -w "%{http_code}" --max-time 3 http://127.0.0.1:3210/auth/login | grep -qE "200|307"; do n=$((n+1)); [ $n -ge 120 ] && break; sleep 2; done; curl -s -o /dev/null -w "login page HTTP %{http_code}\\n" --max-time 5 -L http://127.0.0.1:3210/auth/login; curl -s --max-time 5 -L http://127.0.0.1:3210/auth/login | grep -oiE "<title>[^<]*</title>" | head -1; docker rm -f pa-cal pa-cal-db >/dev/null 2>&1; docker network rm pa-cal-net >/dev/null 2>&1',
+      ],
+      displayCommand: 'docker run calcom/cal.com:v6.2.0-arm (+ throwaway postgres:16)  # boot the vendor self-host image, poll /auth/login, print the page title',
+      expect: /Setup \| Cal\.com/,
+      timeoutMs: 420_000,
+    },
+    {
+      // Hosted Calendly MCP server (documented at developer.calendly.com/docs/mcp) answers a
+      // keyless JSON-RPC initialize with its OAuth challenge + resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'calendly',
+      storyIds: ['agentic-mcp-server', 'agent-scheduling-tool', 'agent-books-meeting'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.calendly.com',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.calendly.com -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Reclaim's hosted MCP server answers a keyless initialize with 401 + OAuth resource
+      // metadata (via the API-gateway-remapped WWW-Authenticate header).
+      probeId: 'mcp-remote-handshake',
+      productId: 'reclaim',
+      storyIds: ['agentic-mcp-server', 'agent-scheduling-tool'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.reclaim.ai',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.reclaim.ai -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The OAuth protected-resource metadata document the challenge points at is live too.
+      probeId: 'mcp-remote-discovery',
+      productId: 'reclaim',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['curl', '-s', '--max-time', '20', 'https://mcp.reclaim.ai/.well-known/oauth-protected-resource'],
+      displayCommand: 'curl -s https://mcp.reclaim.ai/.well-known/oauth-protected-resource',
+      expect: /"authorization_servers"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // SavvyCal publishes a machine-readable OpenAPI 3.0 spec of the Meetings API, fetchable
+      // keylessly (linked from developers.savvycal.com/api/savvycal-meetings-api).
+      probeId: 'openapi-spec-fetch',
+      productId: 'savvycal',
+      storyIds: ['api-machine-spec', 'scheduling-rest-api'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        'curl -s --max-time 20 https://api.savvycal.com/v1/spec | python3 -c \'import json,sys; d=json.load(sys.stdin); print("openapi", d["openapi"], "-", d["info"]["title"], "-", len(d["paths"]), "paths")\'',
+      ],
+      displayCommand: `curl -s https://api.savvycal.com/v1/spec | python3 -c '<print openapi version, title, path count>'`,
+      expect: /openapi 3\.0\.0 - SavvyCal Meetings API - \d+ paths/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Motion publishes an agent-oriented llms.txt on its main origin (the docs origin, which
+      // the publish-probe stage checks, does not carry one).
+      probeId: 'llms-txt-fetch',
+      productId: 'motion',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://www.usemotion.com/llms.txt | head -3'],
+      displayCommand: 'curl -s https://www.usemotion.com/llms.txt | head -3',
+      expect: /# Usemotion/,
+      timeoutMs: 30_000,
+    },
+  ],
+  'design-tools': [
+    {
+      // Official Code Connect CLI (npm @figma/code-connect, bin "figma") runs keylessly.
+      probeId: 'cli-version',
+      productId: 'figma',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', '@figma/code-connect', '--version'],
+      displayCommand: 'npx -y @figma/code-connect --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Figma's hosted remote MCP server (documented at developers.figma.com/docs/figma-mcp-server/
+      // remote-server-installation/) answers a keyless initialize with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'figma',
+      storyIds: ['agentic-mcp-server', 'agent-reads-design-context'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.figma.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.figma.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Boots the OFFICIAL Penpot docker compose (frontend+backend+exporter+postgres+valkey and
+      // the first-party penpotapp/mcp service that ships enabled in the vendor's own compose
+      // file), polls the real frontend, then completes a FULL keyless MCP initialize handshake
+      // against the self-hosted penpot-mcp service — serverInfo {"name":"penpot"} — and tears
+      // everything down.
+      probeId: 'self-host-mcp-roundtrip',
+      productId: 'penpot',
+      storyIds: ['self-host-design-platform', 'openness-self-host', 'agentic-mcp-server', 'agent-reads-design-context'],
+      bin: 'docker',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-penpot-probe; mkdir -p /tmp/pa-penpot-probe; curl -s -o /tmp/pa-penpot-probe/docker-compose.yaml https://raw.githubusercontent.com/penpot/penpot/main/docker/images/docker-compose.yaml; docker compose -p pa-penpot -f /tmp/pa-penpot-probe/docker-compose.yaml up -d >/dev/null 2>&1; n=0; until curl -s -o /dev/null -w "%{http_code}" --max-time 3 http://127.0.0.1:9001/ | grep -q 200; do n=$((n+1)); [ $n -ge 120 ] && break; sleep 2; done; curl -s --max-time 5 http://127.0.0.1:9001/ | grep -oiE "<title>[^<]*</title>" | head -1; docker exec pa-penpot-penpot-frontend-1 curl -s --max-time 10 -X POST http://penpot-mcp:4401/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d \'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"productarena-probe","version":"1.0"}}}\' | head -2; echo; docker compose -p pa-penpot -f /tmp/pa-penpot-probe/docker-compose.yaml down -v >/dev/null 2>&1; rm -rf /tmp/pa-penpot-probe',
+      ],
+      displayCommand: `docker compose up -d (official penpot docker-compose.yaml) # poll frontend :9001, then keyless MCP initialize against the bundled penpot-mcp service`,
+      expect: /"serverInfo":\{"name":"penpot"/,
+      timeoutMs: 420_000,
+    },
+    {
+      // Official Canva Apps CLI (npm @canva/cli, bin "canva") runs keylessly.
+      probeId: 'cli-version',
+      productId: 'canva',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', '@canva/cli', '--version'],
+      displayCommand: 'npx -y @canva/cli --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Canva's hosted MCP server (documented at canva.dev/docs/mcp) answers a keyless
+      // initialize with its OAuth challenge + resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'canva',
+      storyIds: ['agentic-mcp-server', 'agent-creates-design'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.canva.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.canva.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Framer publishes an agent-oriented llms.txt on its main origin.
+      probeId: 'llms-txt-fetch',
+      productId: 'framer',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://www.framer.com/llms.txt | head -3'],
+      displayCommand: 'curl -sL https://www.framer.com/llms.txt | head -3',
+      expect: /# Framer/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Sketch publishes an llms.txt docs index on its main origin.
+      probeId: 'llms-txt-fetch',
+      productId: 'sketch',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://www.sketch.com/llms.txt | head -3'],
+      displayCommand: 'curl -sL https://www.sketch.com/llms.txt | head -3',
+      expect: /# Sketch/,
+      timeoutMs: 30_000,
+    },
+  ],
 }
 
 // Children never see the parent env (which may hold API keys): PATH to find the binary, HOME
