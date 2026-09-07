@@ -2711,6 +2711,207 @@ const LOCAL_PROBES: Record<string, LocalProbe[]> = {
       timeoutMs: 60_000,
     },
   ],
+  'incident-management': [
+    {
+      // PagerDuty's hosted remote MCP server answers a keyless initialize with its OAuth
+      // challenge and protected-resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'pagerduty',
+      storyIds: ['agentic-mcp-server', 'agent-acks-escalates-api'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.pagerduty.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.pagerduty.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The Events API v2 ingestion endpoint is live and self-describing: an empty keyless POST
+      // returns a structured validation error naming the required routing_key/event_action.
+      probeId: 'events-api-live',
+      productId: 'pagerduty',
+      storyIds: ['agentic-public-api', 'alert-ingest-routing'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        `curl -s -i --max-time 20 -X POST https://events.pagerduty.com/v2/enqueue -H 'Content-Type: application/json' -d '{}' | sed -n '1p;$p'`,
+      ],
+      displayCommand: `curl -si -X POST https://events.pagerduty.com/v2/enqueue -H 'Content-Type: application/json' -d '{}'  # live endpoint answers with a structured validation error`,
+      expect: /'routing_key' cannot be blank/,
+      timeoutMs: 30_000,
+    },
+    {
+      // incident.io's hosted remote MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'incident-io',
+      storyIds: ['agentic-mcp-server', 'agent-acks-escalates-api'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.incident.io/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.incident.io/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // incident.io publishes per-tag OpenAPI specs keylessly (linked from docs llms.txt).
+      probeId: 'openapi-tag-spec',
+      productId: 'incident-io',
+      storyIds: ['api-machine-spec', 'agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.incident.io/openapi/tags/incidents-v2.json | head -8'],
+      displayCommand: 'curl -s https://docs.incident.io/openapi/tags/incidents-v2.json | head -8',
+      expect: /"openapi": "3\./,
+      timeoutMs: 30_000,
+    },
+    {
+      // Rootly's hosted remote MCP server answers keylessly with its OAuth challenge.
+      probeId: 'mcp-remote-handshake',
+      productId: 'rootly',
+      storyIds: ['agentic-mcp-server', 'agent-acks-escalates-api'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.rootly.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.rootly.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The official rootly-mcp-server installs keylessly from pypi and starts far enough to log
+      // its server_start audit event (124 tools, stdio transport) before cleanly gating on
+      // ROOTLY_API_TOKEN — the token requirement is itself documented behavior.
+      probeId: 'mcp-stdio-start',
+      productId: 'rootly',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'uvx',
+      argv: [
+        'sh', '-c',
+        `{ printf '%s\\n' '${MCP_INITIALIZE.trim().replace(/'/g, "'\\''")}'; sleep 12; } | uvx rootly-mcp-server 2>&1 | grep -m 2 -E 'server_start|ROOTLY_API_TOKEN'`,
+      ],
+      displayCommand: `printf '<jsonrpc initialize>' | uvx rootly-mcp-server  # pypi install + server_start audit line, then documented ROOTLY_API_TOKEN gate`,
+      expect: /"event_type": "server_start"/,
+      timeoutMs: 180_000,
+    },
+    {
+      // FireHydrant's official MCP server (npm) completes a FULL keyless stdio initialize
+      // handshake — serverInfo FireHydrant.
+      probeId: 'mcp-stdio-handshake',
+      productId: 'firehydrant',
+      storyIds: ['agentic-mcp-server', 'agent-acks-escalates-api'],
+      bin: 'npx',
+      argv: [
+        'sh', '-c',
+        `{ printf '%s\\n' '${MCP_INITIALIZE.trim().replace(/'/g, "'\\''")}'; sleep 10; } | npx -y firehydrant-mcp start --transport stdio 2>/dev/null | head -1 | cut -c 1-400`,
+      ],
+      displayCommand: `printf '<jsonrpc initialize>' | npx -y firehydrant-mcp start --transport stdio  # full keyless stdio handshake`,
+      expect: /"serverInfo":\{"name":"FireHydrant"/,
+      timeoutMs: 180_000,
+    },
+    {
+      // Better Stack's documented Uptime API endpoint is live and cleanly auth-gated keylessly.
+      probeId: 'api-auth-challenge',
+      productId: 'betterstack',
+      storyIds: ['agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s -i --max-time 20 https://uptime.betterstack.com/api/v2/monitors | head -4'],
+      displayCommand: 'curl -si https://uptime.betterstack.com/api/v2/monitors | head -4',
+      expect: /HTTP\/[12](?:\.1)? 401/,
+      timeoutMs: 30_000,
+    },
+  ],
+  email: [
+    {
+      // Missive's GitBook docs publish a full llms.txt index (missed by the generic probe,
+      // which only checks the site origin — the docs live under /docs).
+      probeId: 'llms-docs-index',
+      productId: 'missive',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://missiveapp.com/docs/llms.txt | head -6'],
+      displayCommand: 'curl -s https://missiveapp.com/docs/llms.txt | head -6',
+      expect: /# Missive Docs/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Missive's docs serve markdown at any page URL + .md — the MCP-server page names the
+      // hosted endpoint machine-readably.
+      probeId: 'docs-md-endpoint',
+      productId: 'missive',
+      storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://missiveapp.com/docs/ai/mcp/server.md | head -8'],
+      displayCommand: 'curl -s https://missiveapp.com/docs/ai/mcp/server.md | head -8',
+      expect: /mcp\.missiveapp\.com/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The hosted Missive MCP server answers a keyless initialize with its OAuth challenge —
+      // and the advertised scopes (conversations, contacts, drafts:deliver, calendars) are the
+      // agent capability surface in one header.
+      probeId: 'mcp-remote-handshake',
+      productId: 'missive',
+      storyIds: ['agentic-mcp-server', 'agent-email-end-to-end'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.missiveapp.com',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.missiveapp.com -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Fastmail's documented JMAP API endpoint is live and auth-gated: a keyless GET returns
+      // 401 with a Bearer challenge + OAuth protected-resource metadata.
+      probeId: 'jmap-session-challenge',
+      productId: 'fastmail',
+      storyIds: ['agentic-public-api', 'open-protocol-access'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s -i --max-time 20 https://api.fastmail.com/jmap/session | head -6'],
+      displayCommand: 'curl -si https://api.fastmail.com/jmap/session | head -6',
+      expect: /www-authenticate: Bearer/i,
+      timeoutMs: 30_000,
+    },
+    {
+      // RFC 8620 JMAP autodiscovery: /.well-known/jmap redirects to the live session endpoint.
+      probeId: 'jmap-autodiscovery',
+      productId: 'fastmail',
+      storyIds: ['open-protocol-access', 'agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s -i --max-time 20 https://api.fastmail.com/.well-known/jmap | head -6'],
+      displayCommand: 'curl -si https://api.fastmail.com/.well-known/jmap | head -6',
+      expect: /location: https:\/\/api\.fastmail\.com\/jmap\/session/i,
+      timeoutMs: 30_000,
+    },
+    {
+      // Zero is REALLY self-hostable from source: a keyless shallow clone lands MCP.md,
+      // AGENT.md, and the production docker-compose in a scratch dir.
+      probeId: 'scratch-clone-selfhost',
+      productId: 'zero',
+      storyIds: ['self-host-option', 'openness-self-host'],
+      bin: 'git',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-zero; git clone --depth 1 https://github.com/Mail-0/Zero.git /tmp/pa-zero 2>&1 | tail -1; echo "--- root files ---"; ls /tmp/pa-zero | head -16; echo "--- MCP.md ---"; sed -n 1,3p /tmp/pa-zero/MCP.md; echo "--- compose files ---"; ls /tmp/pa-zero/docker-compose.db.yaml /tmp/pa-zero/docker-compose.prod.yaml; rm -rf /tmp/pa-zero',
+      ],
+      displayCommand: 'git clone --depth 1 https://github.com/Mail-0/Zero.git /tmp/pa-zero  # then list root files, MCP.md head, compose files',
+      expect: /Zero MCP/,
+      timeoutMs: 180_000,
+    },
+  ],
   'search-infra': [
     {
       // Official Algolia CLI runs keylessly from npm.
