@@ -25,3 +25,42 @@ body {
   0% { box-shadow: 0 0 0 2px rgb(52 211 153 / 0.9); background: rgb(52 211 153 / 0.08); }
   100% { box-shadow: 0 0 0 2px transparent; background: transparent; }
 }
+
+/* Procurement report print layout (app/arena/[category]/report). The site is dark-on-dark;
+   a printed/PDF'd report must be black-on-white with sane page breaks. Scoped via body:has()
+   so printing any OTHER page keeps its normal appearance — only the report page opts in. */
+@media print {
+  body:has(.print-report) {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  body:has(.print-report) > header,
+  body:has(.print-report) > footer {
+    display: none !important;
+  }
+  /* Flatten the dark theme: black text, light hairlines, no dark fills. Blunt on purpose —
+     the report is a document, not a screen. */
+  .print-report,
+  .print-report * {
+    color: #111 !important;
+    background: transparent !important;
+    border-color: #d4d4d8 !important;
+    text-decoration-color: #d4d4d8 !important;
+  }
+  .print-report a {
+    text-decoration: none !important;
+  }
+  .print-report section {
+    break-inside: avoid-page;
+  }
+  .print-report .print-break-before {
+    break-before: page;
+  }
+  .print-report tr,
+  .print-report li {
+    break-inside: avoid;
+  }
+  .print-report thead {
+    display: table-header-group; /* repeat table headers across page breaks */
+  }
+}
