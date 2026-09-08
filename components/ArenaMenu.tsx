@@ -7,6 +7,7 @@ export interface ArenaMenuItem {
   id: string;
   name: string;
   label: string;
+  icon?: string;
   // Explicit destination — overrides `${hrefPrefix}/${id}` for menus whose items live under
   // different roots (e.g. the header's Explore menu: /rankings/*, /icp, /methodology).
   href?: string;
@@ -67,7 +68,10 @@ export default function ArenaMenu({
               onClick={() => setOpen(false)}
               className="flex items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 hover:bg-zinc-800 hover:text-emerald-300"
             >
-              <span className="text-sm text-zinc-200">{item.name}</span>
+              <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-200">
+                {item.icon && <span aria-hidden className="w-4 shrink-0 text-center text-xs leading-none opacity-80">{item.icon}</span>}
+                <span className="truncate">{item.name}</span>
+              </span>
               <span className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">
                 {item.label}
               </span>

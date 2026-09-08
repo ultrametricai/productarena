@@ -6,6 +6,7 @@ import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import { loadAll, loadCategories } from "@/lib/data";
 import { WATCHLIST_ENABLED } from "@/lib/flags";
+import arenaIcons from "@/data/arena-icons.json";
 import { loadIcpTypes } from "@/lib/icp";
 import { REPO, SITE_URL } from "@/lib/site";
 import { buildSearchIndex, type SearchEntry } from "@/lib/search-index";
@@ -187,6 +188,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   id: c.id,
                   name: c.name,
                   label: NAV_LABELS[c.id] ?? "",
+                  icon: (arenaIcons as Record<string, string>)[c.id],
                 }))}
               />
               <ArenaMenu
