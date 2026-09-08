@@ -1,0 +1,182 @@
+{
+  "generatedAt": "2026-09-08T19:59:47.837Z",
+  "proofs": [
+    {
+      "probeId": "docs-mcp-handshake",
+      "productId": "bigcommerce",
+      "storyIds": [
+        "agentic-agent-docs",
+        "agentic-mcp-server"
+      ],
+      "command": "curl -s -X POST https://docs.bigcommerce.com/_mcp/server -H 'Content-Type: application/json' -d '<jsonrpc initialize>'  # docs MCP from docs.bigcommerce.com/llms.txt",
+      "recordedAt": "2026-09-08T19:59:41.856Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "bigcommerce/docs-mcp-handshake.txt"
+    },
+    {
+      "probeId": "mcp-remote-auth-challenge",
+      "productId": "medusa",
+      "storyIds": [
+        "agentic-mcp-server"
+      ],
+      "command": "curl -si -X POST https://docs.medusajs.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'",
+      "recordedAt": "2026-09-08T19:59:40.479Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "medusa/mcp-remote-auth-challenge.txt"
+    },
+    {
+      "probeId": "npm-install-sdk-roundtrip",
+      "productId": "medusa",
+      "storyIds": [
+        "agentic-sdks"
+      ],
+      "command": "mktemp -d && npm install @medusajs/js-sdk && node -e \"import('@medusajs/js-sdk').then(m=>console.log('PA_PROBE_OK medusa js-sdk export:', typeof m.default))\"",
+      "recordedAt": "2026-09-08T19:59:41.046Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "medusa/npm-install-sdk-roundtrip.txt"
+    },
+    {
+      "probeId": "docs-md-agents",
+      "productId": "shopify",
+      "storyIds": [
+        "agentic-agent-docs"
+      ],
+      "command": "curl -s https://shopify.dev/docs/agents.md | sed -n 1,14p",
+      "recordedAt": "2026-09-08T19:59:39.513Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/docs-md-agents.txt"
+    },
+    {
+      "probeId": "llms-txt-fetch",
+      "productId": "shopify",
+      "storyIds": [
+        "agentic-agent-docs"
+      ],
+      "command": "curl -sL https://www.shopify.com/llms.txt | head -4",
+      "recordedAt": "2026-09-08T19:59:39.352Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/llms-txt-fetch.txt"
+    },
+    {
+      "probeId": "mcp-remote-handshake",
+      "productId": "shopify",
+      "storyIds": [
+        "agentic-mcp-server",
+        "agent-catalog-discovery"
+      ],
+      "command": "curl -si -X POST https://catalog.shopify.com/api/ucp/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'  # full keyless handshake",
+      "recordedAt": "2026-09-08T19:59:34.119Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/mcp-remote-handshake.txt"
+    },
+    {
+      "probeId": "npm-install-ucp-cli",
+      "productId": "shopify",
+      "storyIds": [
+        "agentic-official-cli",
+        "agentic-sdks"
+      ],
+      "command": "mktemp -d && npm install @shopify/ucp-cli && ucp --version && ucp --help",
+      "recordedAt": "2026-09-08T19:59:35.499Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/npm-install-ucp-cli.txt"
+    },
+    {
+      "probeId": "storefront-ucp-handshake",
+      "productId": "shopify",
+      "storyIds": [
+        "agent-storefront-commerce",
+        "agentic-mcp-server"
+      ],
+      "command": "curl -s -X POST https://hardware.shopify.com/api/ucp/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'  # merchant-storefront UCP endpoint",
+      "recordedAt": "2026-09-08T19:59:34.330Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/storefront-ucp-handshake.txt"
+    },
+    {
+      "probeId": "ucp-cart-create-keyless",
+      "productId": "shopify",
+      "storyIds": [
+        "agent-storefront-commerce",
+        "agent-order-lifecycle"
+      ],
+      "command": "ucp catalog search --business https://hardware.shopify.com --set /query='card reader' && ucp cart create --business https://hardware.shopify.com --set /line_items/0/item/id=<variant>  # real keyless cart on Shopify's own store",
+      "recordedAt": "2026-09-08T19:59:39.244Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/ucp-cart-create-keyless.txt"
+    },
+    {
+      "probeId": "ucp-catalog-search-keyless",
+      "productId": "shopify",
+      "storyIds": [
+        "agent-catalog-discovery",
+        "agentic-headless",
+        "agent-storefront-commerce"
+      ],
+      "command": "npm install @shopify/ucp-cli && ucp profile init --name pa-probe && ucp catalog search --set /query='wireless headphones'  # keyless live cross-merchant search",
+      "recordedAt": "2026-09-08T19:59:36.798Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/ucp-catalog-search-keyless.txt"
+    },
+    {
+      "probeId": "ucp-profile-gate",
+      "productId": "shopify",
+      "storyIds": [
+        "agentic-scoped-keys",
+        "agent-storefront-commerce"
+      ],
+      "command": "curl -s -X POST https://catalog.shopify.com/api/ucp/mcp -d '<tools/call search_catalog without agent profile>'  # documented profile gate answers with a structured error",
+      "recordedAt": "2026-09-08T19:59:34.494Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "shopify/ucp-profile-gate.txt"
+    },
+    {
+      "probeId": "npm-install-cli-version",
+      "productId": "swell",
+      "storyIds": [
+        "agentic-official-cli"
+      ],
+      "command": "mktemp -d && npm install @swell/cli && swell --version",
+      "recordedAt": "2026-09-08T19:59:47.777Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "swell/npm-install-cli-version.txt"
+    },
+    {
+      "probeId": "skills-readme-fetch",
+      "productId": "swell",
+      "storyIds": [
+        "agentic-agent-docs"
+      ],
+      "command": "curl -s https://raw.githubusercontent.com/swellstores/skills/main/README.md | head -8",
+      "recordedAt": "2026-09-08T19:59:47.832Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "swell/skills-readme-fetch.txt"
+    },
+    {
+      "probeId": "registry-plugin-info",
+      "productId": "woocommerce",
+      "storyIds": [
+        "app-extension-marketplace",
+        "openness-open-license"
+      ],
+      "command": "curl -s 'https://api.wordpress.org/plugins/info/1.2/?action=plugin_information&request[slug]=woocommerce' | python3 -c '<print slug, version, active_installs>'",
+      "recordedAt": "2026-09-08T19:59:41.548Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "woocommerce/registry-plugin-info.txt"
+    }
+  ]
+}
