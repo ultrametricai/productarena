@@ -12,6 +12,7 @@ export const MCP_ENDPOINTS: Record<string, string> = {
   'auth-platforms/better-auth': 'https://mcp.better-auth.com/mcp',
   'auth-platforms/workos': 'https://mcp.workos.com/mcp',
   'backend-as-a-service/supabase': 'https://mcp.supabase.com/mcp',
+  'customer-data-platforms/rudderstack': 'https://mcp.rudderstack.com/mcp',
   'design-tools/canva': 'https://mcp.canva.com/mcp',
   'design-tools/figma': 'https://mcp.figma.com/mcp',
   'email/missive': 'https://mcp.missiveapp.com/',
