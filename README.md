@@ -453,7 +453,47 @@ mechanical probe results only affect the story axis they actually test. Every re
 recorded in the commit that applies it. A future prompt version will pass the prior verdict
 as an anchor to reduce this variance at the source.
 
-### 8. Bias disclosure — the judge is an Anthropic model
+### 8. Score intervals — the ± band on every Arena Score
+
+Every Arena Score carries a **68% confidence band** ("42 ±3 /100" on product pages; the exact
+low–high band in the score badge's tooltip, including on the homepage mega-table). The band is
+an honest statement of how much the published number could move under the judge noise we have
+actually **measured** — it is *analytic v1*: computed from existing data with **no new judging**.
+
+How it's built (`pipeline/scripts/compute-confidence-intervals.ts`, math in
+`lib/scoreIntervals.ts`):
+
+- **Per-cell noise comes from measured re-roll statistics, never invented rates.** The
+  multi-judge uncertainty pass (`data/*/uncertainty.json`, see §7) re-judged 650+ decisive
+  cells twice more against unchanged evidence; ~20% showed some disagreement. From those
+  samples we build a cached-tier → re-rolled-tier transition matrix (e.g. a `full` cell
+  re-rolls to `partial` ~7% of the time), and every evidenced `full`/`partial`/`disputed`/`none`
+  cell resamples its verdict from its measured row.
+- **Untested cells carry wider, epistemic uncertainty.** A `none` verdict citing zero evidence
+  means "we found nothing either way", not "it failed" — it scores 0 today but could plausibly
+  be a `partial` on new evidence. Each such cell flips to `partial` with probability equal to
+  the measured any-disagreement rate (~0.20), with quality bounded to the plausible [3, 7]
+  range. Products whose score rests on many untested cells therefore get honestly wider bands.
+- **Applicability is pinned.** `na` cells never resample — the re-judge stability policy (§7)
+  reverts `na`↔`none` churn that cites no new evidence, so published applicability is
+  policy-stable and modeling it as noise would overstate the band.
+- **Propagation is exact.** Each of 500 Monte Carlo draws per product resamples every relevant
+  cell and recomputes the score through the *same* `weightedPercent` + `computeAiEra` code that
+  produces the published number (roundings included). The band is the 16th–84th percentile of
+  the resulting distribution; agent-readiness gets its own band the same way. The PRNG is
+  seeded (mulberry32, keyed per product) — builds are byte-reproducible, no `Math.random`.
+
+Results land in `data/{category}/score-intervals.json` (committed, re-run post-derive by the
+story-runner). Display is tolerant-optional (`lib/scoreIntervals.ts`): no interval data ⇒ no
+band is ever rendered — never a fabricated one. Fleet-wide as of the first pass the median band
+width is ~4.5 Arena Score points.
+
+**What the band is not (yet):** it reflects propagated judge-*sampling* noise plus
+untested-cell ignorance, **not** model-family disagreement — the same evidence judged by a
+non-Anthropic model could move scores in ways this band doesn't capture. Adding a second judge
+model and folding cross-model disagreement into the interval is listed as future work.
+
+### 9. Bias disclosure — the judge is an Anthropic model
 
 **Owner-product disclosure:** the Product Feedback & Intent arena includes Foreloop, built by
 Ultrametric Inc — the company that operates ProductArena. Foreloop is judged by the identical evidence
