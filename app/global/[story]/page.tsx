@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import DiffusionCurve, { formatMonth } from '@/components/DiffusionCurve'
 import VerdictBadge from '@/components/VerdictBadge'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
+import { adoptionNow, diffusionCurve, firstTrackedLookup } from '@/lib/diffusion'
 import { collectGlobalStories, findGlobalStory } from '@/lib/globalStories'
 
 // Cross-arena comparison page for one global story (scope: 'global', present in ≥2 arenas —
@@ -43,6 +45,12 @@ export default async function GlobalStoryPage({
   const entry = findGlobalStory(categories, story)
   if (!entry) notFound()
   const supported = entry.cells.filter((c) => c.verdict === 'full' || c.verdict === 'partial').length
+  // Capability diffusion (lib/diffusion.ts): headline adoption now + the % adoption vs month
+  // curve, built on the honest approximation documented there (adoption among products as they
+  // enter tracking, not per-cell verdict history).
+  const adoption = adoptionNow(entry.cells)
+  const curve = diffusionCurve(entry.cells, firstTrackedLookup())
+  const shortTitle = stripPersonaPrefix(entry.title)
 
   return (
     <div className="space-y-6">
@@ -62,6 +70,33 @@ export default async function GlobalStoryPage({
           the product&rsquo;s rationale and evidence
         </p>
       </div>
+
+      <section className="rounded-2xl border border-zinc-800 p-4">
+        <p className="text-[10px] uppercase tracking-widest text-zinc-500">Adoption among tracked products</p>
+        <p className="mt-1 font-mono text-3xl font-bold tabular-nums text-emerald-400">
+          {Number.isInteger(adoption.pct) ? adoption.pct : adoption.pct.toFixed(1)}%
+        </p>
+        <p className="text-xs text-zinc-500">
+          {shortTitle}: {adoption.adopters} of {adoption.total} tracked products pass (full or
+          partial), across {entry.arenaCount} arenas.
+        </p>
+        {curve.length >= 2 ? (
+          <DiffusionCurve points={curve} label={`Adoption of ${shortTitle} among tracked products, by month`} />
+        ) : (
+          curve.length === 1 && (
+            <p className="mt-3 text-xs text-zinc-500">
+              Tracking since {formatMonth(curve[0].month)} — the diffusion curve appears once a
+              second month of tracking accrues.
+            </p>
+          )
+        )}
+        <p className="mt-3 max-w-2xl text-[11px] text-zinc-500">
+          Honest approximation: we don&rsquo;t have per-verdict change history, so the curve shows
+          adoption among products <em>as they enter tracking</em> (first score-history entry),
+          with each product carrying its current verdict — not the moment each product shipped
+          the capability. Exact verdict history accrues from here forward.
+        </p>
+      </section>
 
       <div className="overflow-x-auto rounded-xl border border-zinc-800">
         {/* Arena is the one column that can go below sm — the verdict is this page's whole

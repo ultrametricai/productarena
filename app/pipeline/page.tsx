@@ -3,6 +3,12 @@ import Link from 'next/link'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
 import { pricingCoverage } from '@/lib/pricing'
 import {
+  currentlyDownSurfaces,
+  hasMatureSloHistory,
+  loadSloSummaries,
+  SLO_SURFACE_LABELS,
+} from '@/lib/slo'
+import {
   arenaPipelineStats,
   mostWantedUntested,
   nextUpArenas,
@@ -32,6 +38,23 @@ export default function PipelinePage() {
   const pricing = pricingCoverage(
     categories.map((c) => ({ arenaId: c.category.id, productIds: c.products.map((p) => p.id) })),
   )
+  // Agent-surface SLO monitoring (lib/slo.ts, grown every 6h by pipeline/scripts/slo-check.ts):
+  // the shame list of documented surfaces currently DOWN, plus coverage stats.
+  const now = new Date()
+  const slo = loadSloSummaries(undefined, now)
+  const sloDown = currentlyDownSurfaces(slo)
+  const sloProducts = new Set(slo.map((s) => `${s.arena}/${s.productId}`)).size
+  const sloBySurface = slo.reduce<Record<string, number>>((acc, s) => {
+    acc[s.surface] = (acc[s.surface] ?? 0) + 1
+    return acc
+  }, {})
+  const sloSince = slo.length > 0 ? slo.reduce((min, s) => (new Date(s.firstDate) < new Date(min) ? s.firstDate : min), slo[0].firstDate) : null
+  const sloMature = slo.length > 0 && slo.every((s) => hasMatureSloHistory(s, now))
+  const productNames = new Map(
+    categories.flatMap((c) => c.products.map((p) => [`${c.category.id}/${p.id}`, { productName: p.name, arenaName: c.category.name }] as const)),
+  )
+  const formatDay = (date: string) =>
+    new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 
   return (
     <div className="space-y-10">
@@ -163,6 +186,72 @@ export default function PipelinePage() {
           </table>
         </div>
       </section>
+
+      {slo.length > 0 && (
+        <section>
+          <h2 className="font-display text-xl font-semibold tracking-tight">Agent surface health</h2>
+          <p className="mt-1 max-w-2xl text-sm text-zinc-400">
+            Every 6 hours we keylessly ping each product&rsquo;s documented agent surfaces — its{' '}
+            <span className="font-mono text-xs">llms.txt</span>, remote MCP endpoint, and{' '}
+            <span className="font-mono text-xs">openapi.json</span> where we previously found one.
+            An auth-gated MCP endpoint answering 401 counts as up; only timeouts, 404/410 and 5xx
+            count as down. Currently monitoring{' '}
+            <span className="font-medium text-zinc-200">
+              {slo.length} surfaces across {sloProducts} products
+            </span>{' '}
+            ({Object.entries(sloBySurface)
+              .sort(([a], [b]) => a.localeCompare(b))
+              .map(([s, n]) => `${n} ${SLO_SURFACE_LABELS[s as keyof typeof SLO_SURFACE_LABELS]}`)
+              .join(' · ')}
+            ){sloSince ? `, tracking since ${formatDay(sloSince)}` : ''}
+            {!sloMature && ' — uptime percentages appear on product pages after a week of history'}.
+          </p>
+          {sloDown.length === 0 ? (
+            <p className="mt-4 rounded-xl border border-zinc-800 px-4 py-3 text-sm text-zinc-300">
+              <span className="font-mono text-emerald-400">all up</span> — every monitored agent
+              surface answered its last check.
+            </p>
+          ) : (
+            <div className="mt-4 overflow-x-auto rounded-xl border border-zinc-800">
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
+                    <th scope="col" className="px-3 py-2 font-normal">Product</th>
+                    <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Arena</th>
+                    <th scope="col" className="px-3 py-2 font-normal">Surface</th>
+                    <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell">URL</th>
+                    <th scope="col" className="px-3 py-2 font-normal">Down since</th>
+                    <th scope="col" className="px-3 py-2 font-normal">Last status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-800/70">
+                  {sloDown.map((s) => {
+                    const names = productNames.get(`${s.arena}/${s.productId}`)
+                    return (
+                      <tr key={`${s.arena}:${s.productId}:${s.surface}`} className="transition hover:bg-zinc-900/50">
+                        <td className="whitespace-nowrap px-3 py-2">
+                          <Link href={`/arena/${s.arena}/product/${s.productId}`} className="font-medium hover:text-emerald-300">
+                            {names?.productName ?? s.productId}
+                          </Link>
+                        </td>
+                        <td className="hidden whitespace-nowrap px-3 py-2 text-xs text-zinc-400 sm:table-cell">
+                          <Link href={`/arena/${s.arena}`} className="hover:text-emerald-300">
+                            {names?.arenaName ?? s.arena}
+                          </Link>
+                        </td>
+                        <td className="px-3 py-2 font-mono text-xs text-red-400">{SLO_SURFACE_LABELS[s.surface]}</td>
+                        <td className="hidden max-w-[280px] truncate px-3 py-2 font-mono text-xs text-zinc-400 md:table-cell">{s.url}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-xs text-zinc-300">{s.downSince ? formatDay(s.downSince) : '—'}</td>
+                        <td className="px-3 py-2 font-mono tabular-nums text-xs text-zinc-300">{s.lastStatus === 0 ? 'timeout' : s.lastStatus}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
 
       {nextUp.length > 0 && (
         <section>

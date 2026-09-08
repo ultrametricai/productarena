@@ -58,8 +58,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
-  // Cross-arena /global/[story] comparison pages — one per global story present in ≥2 arenas
-  // (see lib/globalStories.ts and app/global/[story]/page.tsx).
+  // Cross-arena capability pages: the /global adoption index (app/global/page.tsx) plus one
+  // /global/[story] comparison page per global story present in ≥2 arenas (see
+  // lib/globalStories.ts and app/global/[story]/page.tsx).
+  entries.push({ url: `${SITE_URL}/global`, lastModified: now })
   for (const story of collectGlobalStories(categories)) {
     entries.push({ url: `${SITE_URL}/global/${story.id}`, lastModified: now })
   }
