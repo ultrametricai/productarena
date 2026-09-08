@@ -150,6 +150,50 @@ export function stackAgentReadiness(results: RoleResult[]): number | null {
   return round1(values.reduce((a, b) => a + b, 0) / values.length)
 }
 
+// ---- interconnect check (verified integration edges between the stack's picks) ----
+
+// Same 'a|b' sorted-pair format as lib/integrations.ts's pairKey/verifiedPairKeys (that module
+// is server-only — it reads data/ with fs — so the one-liner is mirrored here for the client;
+// lib/__tests__/stackBuilder.test.ts cross-checks the two formats against each other).
+export function stackPairKey(a: string, b: string): string {
+  return [a, b].sort().join('|')
+}
+
+export interface InterconnectPair {
+  aId: string
+  aName: string
+  bId: string
+  bName: string
+  // true = a verified integration edge exists between the two picks (evidence-backed, see
+  // lib/integrations.ts). false means "no evidence found in our corpus" — the UI must NEVER
+  // render it as "doesn't integrate".
+  verified: boolean
+}
+
+// Every unordered pair of successful picks, in role order, checked against the verified-edge
+// pair keys /stacks/builder passes down from the server-side integration graph.
+export function stackInterconnects(
+  results: RoleResult[],
+  verifiedPairs: ReadonlyArray<string>,
+): InterconnectPair[] {
+  const verified = new Set(verifiedPairs)
+  const picks = results.flatMap((r) => (r.pick ? [r.pick.product] : []))
+  const out: InterconnectPair[] = []
+  for (let i = 0; i < picks.length; i++) {
+    for (let j = i + 1; j < picks.length; j++) {
+      if (picks[i].id === picks[j].id) continue // same product in two roles — nothing to check
+      out.push({
+        aId: picks[i].id,
+        aName: picks[i].name,
+        bId: picks[j].id,
+        bName: picks[j].name,
+        verified: verified.has(stackPairKey(picks[i].id, picks[j].id)),
+      })
+    }
+  }
+  return out
+}
+
 // ---- share-URL state (?roles=banking,payments&oss=1&sh=1&metric=agentReady) ----
 
 export interface StackUrlState {
