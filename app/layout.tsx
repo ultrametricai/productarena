@@ -203,6 +203,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "changelog", name: "Changelog", label: "history", href: "/changelog" },
                   { id: "predictions", name: "Predictions", label: "forecasts", href: "/predictions" },
                   { id: "reports", name: "Weekly reports", label: "history", href: "/reports" },
+                  { id: "notes", name: "Arena Notes", label: "editorial", href: "/notes" },
                   { id: "methodology", name: "Methodology", label: "docs", href: "/methodology" },
                   { id: "pipeline", name: "Testing pipeline", label: "docs", href: "/pipeline" },
                   { id: "proofs", name: "Recorded proofs", label: "docs", href: "/proofs" },

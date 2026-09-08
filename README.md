@@ -601,6 +601,22 @@ Requires `ANTHROPIC_API_KEY` in a local `.env` (see `.env.example`) for the LLM-
 on the Vercel project** — the deployed site only serves pre-computed static data from `data/`
 and never calls the Anthropic API at build or request time.
 
+### Arena Notes (editorial drafts — never auto-published)
+
+`pnpm tsx pipeline/scripts/generate-arena-notes.ts` drafts a short signed-POV essay (5
+paragraphs max: the week's flip that matters, the gap nobody's filling, the vendor move to
+watch, one honest self-critique of our own data, a closing line) into
+`drafts/arena-notes/YYYY-MM-DD.md`. It is LLM-drafted but honesty-gated in code: the model only
+sees a fact sheet derived from the committed changelog/report/uncertainty/gap-closers data, and
+every paragraph must cite its site source inline (`(source: /changelog)`, `(source:
+/arena/...)`) from that fact sheet — violations fail schema validation and are retried.
+
+Publishing is a human act, by design. Every generated file carries
+`status: draft — requires founder sign-off before publishing` in its frontmatter, and the
+[/notes](https://ultrametric.ai/productarena/notes) page (see `lib/notes.ts`) renders **only**
+files whose frontmatter a human has edited to exactly `status: published`. Review the draft,
+edit the frontmatter, commit — that's the whole publish flow. Unreviewed drafts never render.
+
 ## Data layout
 
 ```

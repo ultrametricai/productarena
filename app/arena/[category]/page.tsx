@@ -146,12 +146,18 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           {data.rankings.generatedAt.slice(0, 10)}
           {freshness && <> · Evidence as of {freshness}</>}
         </p>
-        <p className="mt-2 text-xs">
+        <p className="mt-2 flex flex-wrap gap-x-4 text-xs">
           <Link
             href={`/arena/${data.category.id}/checklist`}
             className="text-zinc-400 underline decoration-zinc-800 hover:text-emerald-300"
           >
             Buyer checklist →
+          </Link>
+          <Link
+            href={`/arena/${data.category.id}/report`}
+            className="text-zinc-400 underline decoration-zinc-800 hover:text-emerald-300"
+          >
+            Procurement report →
           </Link>
         </p>
       </div>
