@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { installVariants } from '@/lib/installVariants'
 import type { Product } from '@/lib/schemas'
 
 // Copy-pasteable install/try commands (schema: Product.install). Curation is a separate,
@@ -23,11 +24,14 @@ export default function InstallCommands({ product }: { product: Product }) {
 
 function InstallRow({ entry }: { entry: NonNullable<Product['install']>[number] }) {
   const [copied, setCopied] = useState(false)
-  const isPipedShell = /\|\s*(sh|bash|zsh)\b/.test(entry.command)
+  const variants = installVariants(entry.command)
+  const [variant, setVariant] = useState(0)
+  const command = variants[variant]?.command ?? entry.command
+  const isPipedShell = /\|\s*(sh|bash|zsh)\b/.test(command)
 
   async function onCopy() {
     try {
-      await navigator.clipboard.writeText(entry.command)
+      await navigator.clipboard.writeText(command)
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     } catch {
@@ -58,8 +62,26 @@ function InstallRow({ entry }: { entry: NonNullable<Product['install']>[number] 
         ) : (
           labelChip
         )}
+        {variants.length > 1 && (
+          <span className="flex shrink-0 gap-0.5" role="tablist" aria-label="Package manager">
+            {variants.map((v, i) => (
+              <button
+                key={v.manager}
+                type="button"
+                role="tab"
+                aria-selected={i === variant}
+                onClick={() => setVariant(i)}
+                className={`rounded px-1.5 py-0.5 text-[10px] font-medium transition ${
+                  i === variant ? 'bg-emerald-400/15 text-emerald-300' : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {v.manager}
+              </button>
+            ))}
+          </span>
+        )}
         <code className="min-w-0 overflow-x-auto whitespace-pre font-mono text-xs text-zinc-200">
-          {entry.command}
+          {command}
         </code>
         <button
           type="button"
