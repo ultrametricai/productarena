@@ -237,6 +237,28 @@ export const UncertaintyEntrySchema = z.object({
 // category only covers its decisive cells, not the full matrix.
 export const UncertaintyArraySchema = UncertaintyEntrySchema.array()
 
+// Analytic 68% confidence band on one product's Arena Score (aiEra) and agent-readiness — see
+// pipeline/scripts/compute-confidence-intervals.ts (which writes data/{cat}/score-intervals.json)
+// and lib/scoreIntervals.ts (the simulation math + tolerant-optional loader). Derived at pipeline
+// time by propagating the MEASURED judge re-roll variance (data/*/uncertainty.json) through the
+// exact scoring formula via a seeded Monte Carlo — no new judging, display-only, never feeds
+// lib/scoring.ts. Low/high are the 16th/84th percentiles of the simulated score distribution; a
+// null pair means the corresponding published score is itself null (nothing to band).
+export const ScoreIntervalEntrySchema = z.object({
+  productId: z.string().min(1),
+  aiEraLow: z.number().nullable(),
+  aiEraHigh: z.number().nullable(),
+  agentReadyLow: z.number().nullable(),
+  agentReadyHigh: z.number().nullable(),
+})
+export type ScoreIntervalEntry = z.infer<typeof ScoreIntervalEntrySchema>
+
+// data/{cat}/score-intervals.json shape: one entry per product in the arena. Optional/additive —
+// same tolerant contract as uncertainty.json above: an arena that hasn't been through the
+// intervals pass has no file, and display code must render no band at all (never a fabricated
+// one) when the entry or file is absent.
+export const ScoreIntervalsArraySchema = ScoreIntervalEntrySchema.array()
+
 // An official, verified vendor response to one (productId, storyId) verdict — CVE-style: the
 // vendor's own words, published verbatim next to the verdict (see docs/VENDOR-RESPONSES.md and
 // components/StoryVerdictsTable.tsx's response block). A response NEVER changes a verdict by

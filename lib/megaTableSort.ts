@@ -58,6 +58,10 @@ export interface MegaTableRow {
   // as the small chip next to the Arena Score badge. Optional for the same fixture-compat
   // reason as ycBatch.
   confidence?: import('./confidence').ProductConfidence
+  // 68% confidence band on the Arena Score (see lib/scoreIntervals.ts) — surfaced in the badge's
+  // title attr only, never a visible column. Optional/null for the same fixture-compat +
+  // tolerant-absence reasons as trendDelta: no interval data ⇒ no band rendered anywhere.
+  interval?: { low: number; high: number } | null
   access: { MCP: MegaTableAccessGlyph; CLI: MegaTableAccessGlyph; API: MegaTableAccessGlyph }
 }
 

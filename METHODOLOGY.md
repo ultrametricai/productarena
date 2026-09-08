@@ -133,6 +133,21 @@ pure churn is reverted under audited rules: applicability (`na`↔`none`) never 
 evidence, verdicts citing nothing new don't move close races, and negative mechanical probe
 results only affect the story axis they actually test.
 
+## Score intervals — the ± band
+
+Every Arena Score carries a 68% confidence band ("42 ±3 /100" on product pages; low–high in the
+score badge tooltip). Analytic v1, no new judging: per-cell verdict noise is modeled from the
+**measured** re-roll statistics in `data/*/uncertainty.json` (evidenced cells resample from the
+measured tier-transition rates; untested zero-evidence `none` cells get wider epistemic
+uncertainty — they may flip to a `partial` of bounded quality [3, 7] at the measured
+any-disagreement rate; `na` applicability is pinned per the stability policy above), then
+propagated through the exact published `weightedPercent` + `computeAiEra` formula via a
+500-draw, deterministically seeded Monte Carlo (`pipeline/scripts/compute-confidence-intervals.ts`,
+math + tolerant-optional loader in `lib/scoreIntervals.ts`, output in
+`data/{category}/score-intervals.json`). The band reflects judge-sampling noise plus
+untested-cell ignorance — **not** cross-model disagreement; a second judge model is future work.
+No interval data ⇒ no band rendered, never a fabricated one. See README §8 for the full writeup.
+
 ## Popularity — a signal, not a score
 
 Product pages, the arena table, and the global rankings pages show a **popularity/momentum

@@ -224,6 +224,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                         value={row.initScore}
                         size="sm"
                         href="/methodology#arena-score"
+                        interval={row.interval}
                         components={{
                           agentReady: row.agentReady,
                           apiQuality: row.apiQuality,

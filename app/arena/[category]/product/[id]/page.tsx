@@ -30,6 +30,7 @@ import { globalStoryIds } from '@/lib/globalStories'
 import { loadPopularityHistory, popularitySeries } from '@/lib/popularityHistory'
 import { loadPricing } from '@/lib/pricing'
 import { loadScoreHistory } from '@/lib/scoreHistory'
+import { aiEraBandFor, loadScoreIntervals } from '@/lib/scoreIntervals'
 import type { Product, Story } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
@@ -178,7 +179,9 @@ export default async function ProductPage({
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase tracking-widest text-zinc-400">Arena Score</span>
-            <AiEraBadge value={entry.aiEra} components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
+            {/* showBand renders the "±N" (68% interval, lib/scoreIntervals.ts) inline in muted
+                smaller type — only when interval data exists for this product, never fabricated. */}
+            <AiEraBadge value={entry.aiEra} interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           </div>
           <AgentAccessGlyphs data={data} productId={id} />
         </div>
