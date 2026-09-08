@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import StackBuilder from '@/components/StackBuilder'
 import { loadAll } from '@/lib/data'
 import { buildCompareProducts } from '@/lib/compareData'
+import { loadIntegrationGraph, verifiedPairKeys } from '@/lib/integrations'
 
 export const metadata: Metadata = {
   title: 'Stack builder — ProductArena',
@@ -15,7 +16,11 @@ export const metadata: Metadata = {
 // roles/constraints live in the query string, read client-side by StackBuilder via a
 // Suspense-wrapped useSearchParams (static-export safe).
 export default function StackBuilderPage() {
-  const products = buildCompareProducts(loadAll())
+  const categories = loadAll()
+  const products = buildCompareProducts(categories)
+  // Verified integration pair keys for the interconnect check (lib/integrations.ts) — a lean
+  // string list so the client never carries edge excerpts it doesn't render.
+  const verifiedPairs = verifiedPairKeys(loadIntegrationGraph(categories.map((d) => d.category.id)))
 
   return (
     <div className="space-y-8">
@@ -33,7 +38,7 @@ export default function StackBuilderPage() {
       </section>
 
       <Suspense fallback={null}>
-        <StackBuilder products={products} />
+        <StackBuilder products={products} verifiedPairs={verifiedPairs} />
       </Suspense>
     </div>
   )

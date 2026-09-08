@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CompareProduct } from '../compare'
+import { pairKey } from '../integrations'
 import {
   buildStack,
   DEFAULT_CONSTRAINTS,
@@ -9,6 +10,8 @@ import {
   STACK_PRESETS,
   STACK_ROLES,
   stackAgentReadiness,
+  stackInterconnects,
+  stackPairKey,
   type StackConstraints,
 } from '../stackBuilder'
 
@@ -156,5 +159,42 @@ describe('STACK_PRESETS', () => {
     for (const preset of STACK_PRESETS) {
       for (const role of preset.roles) expect(known.has(role), `${preset.id} → ${role}`).toBe(true)
     }
+  })
+})
+
+describe('stackInterconnects', () => {
+  const results = buildStack(
+    [
+      product({ id: 'stripe', name: 'Stripe', arenaId: 'payments', agentReady: 90 }),
+      product({ id: 'mercury', name: 'Mercury', arenaId: 'startup-banking', arenaName: 'Startup Banking', agentReady: 80 }),
+      product({ id: 'gusto', name: 'Gusto', arenaId: 'payroll', arenaName: 'Payroll', agentReady: 70 }),
+    ],
+    ['banking', 'payments', 'payroll', 'accounting'],
+    constraints(),
+  )
+
+  it('checks every pair of successful picks against the verified keys, in role order', () => {
+    const pairs = stackInterconnects(results, ['mercury|stripe'])
+    // accounting has no products above → 3 picks → 3 pairs; the empty role contributes none.
+    expect(pairs).toEqual([
+      { aId: 'mercury', aName: 'Mercury', bId: 'stripe', bName: 'Stripe', verified: true },
+      { aId: 'mercury', aName: 'Mercury', bId: 'gusto', bName: 'Gusto', verified: false },
+      { aId: 'stripe', aName: 'Stripe', bId: 'gusto', bName: 'Gusto', verified: false },
+    ])
+  })
+
+  it('verifies regardless of pair orientation (sorted key)', () => {
+    expect(stackPairKey('stripe', 'mercury')).toBe('mercury|stripe')
+    expect(stackInterconnects(results, ['gusto|mercury'])[1].verified).toBe(true)
+  })
+
+  it('mirrors lib/integrations.ts pairKey format exactly (drift guard)', () => {
+    expect(stackPairKey('b', 'a')).toBe(pairKey('b', 'a'))
+    expect(stackPairKey('a', 'b')).toBe(pairKey('a', 'b'))
+  })
+
+  it('returns [] when fewer than two picks succeed', () => {
+    const one = buildStack([product({ id: 'stripe', name: 'Stripe', agentReady: 90 })], ['payments'], constraints())
+    expect(stackInterconnects(one, ['mercury|stripe'])).toEqual([])
   })
 })
