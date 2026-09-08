@@ -689,6 +689,11 @@ contribution. Pick your angle:
   product; the pipeline re-judges only the cells whose evidence changed.
 - **Submit a product or arena** — the *Submit a product* issue form, or open a PR seeding
   `data/categories.json` + products following an existing arena's shape.
+- **Make a prediction** — `/predictions` auto-generates yes/no questions from live close
+  races ("will the #2 overtake the #1 within 30 days?") and settles them mechanically from
+  the changelog's rank-flip events. The "Predict" link opens a prefilled issue
+  (`.github/ISSUE_TEMPLATE/prediction.yml`) — v1 records predictions as submitted issues;
+  an accuracy leaderboard comes once enough questions have settled.
 - **Report an inaccuracy** — wrong metadata, broken link, stale evidence, missing logo.
 - **Adopt an arena** — become the standing reviewer for one arena's story taxonomy,
   evidence freshness, and contest triage.

@@ -90,6 +90,18 @@ jobs:
             echo "::endgroup::"
           done
 
+      # Prediction layer (LLM-free): open questions for any new close races the refresh
+      # created, then settle open ones against the re-derived changelog — generation before
+      # settlement so a question can never settle in the same instant it opens for the wrong
+      # reason (its window starts at the rankings snapshot it derives from). Both scripts are
+      # idempotent, so quiet runs write nothing; changes land in data/predictions.json and
+      # ride the same PR as the refresh below.
+      - name: Generate + settle predictions
+        if: steps.gate.outputs.enabled == 'true'
+        run: |
+          pnpm tsx pipeline/scripts/generate-predictions.ts
+          pnpm tsx pipeline/scripts/settle-predictions.ts
+
       - name: Tests + recompute check
         if: steps.gate.outputs.enabled == 'true'
         run: |
