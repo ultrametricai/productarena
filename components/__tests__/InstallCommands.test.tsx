@@ -25,7 +25,8 @@ describe('InstallCommands', () => {
         product={{ ...baseProduct, install: [{ label: 'npm', command: 'npm i react react-dom', url: 'https://react.dev/learn/installation' }] }}
       />,
     )
-    expect(screen.getByText('npm')).toBeDefined()
+    // 'npm' now appears both as the label chip and the variant tab — assert both exist
+    expect(screen.getAllByText('npm').length).toBeGreaterThan(0)
     expect(screen.getByText('npm i react react-dom')).toBeDefined()
   })
 
