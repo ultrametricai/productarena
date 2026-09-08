@@ -1,14 +1,10 @@
 #!/bin/sh
-# Poll the incident-management judge cache until complete (270 cells) or ~9 minutes pass.
-i=0
-while [ $i -lt 54 ]; do
-  n=$(find pipeline/cache/judge/incident-management -name '*.json' | wc -l | tr -d ' ')
-  if [ -f data/incident-management/verdicts.json ]; then
-    echo "verdicts.json written (cells: $n)"
-    exit 0
-  fi
-  echo "cells: $n"
-  sleep 10
-  i=$((i+1))
+# Poll the judge cell cache until the data-pipelines matrix is complete (bounded).
+n=0
+while [ $n -lt 190 ]; do
+  c=$(find pipeline/cache/judge/data-pipelines -name '*.json' | wc -l | tr -d ' ')
+  if [ "$c" = "265" ]; then break; fi
+  sleep 3
+  n=$((n+1))
 done
-echo "still running"
+find pipeline/cache/judge/data-pipelines -name '*.json' | wc -l

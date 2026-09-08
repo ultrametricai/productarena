@@ -229,6 +229,8 @@ export const MCP_ENDPOINTS = {
   'backend-as-a-service/supabase': 'https://mcp.supabase.com/mcp',
   'design-tools/canva': 'https://mcp.canva.com/mcp',
   'design-tools/figma': 'https://mcp.figma.com/mcp',
+  'docs-platforms/gitbook': 'https://mcp.gitbook.com/mcp',
+  'docs-platforms/mintlify': 'https://mcp.mintlify.com/',
   'email/missive': 'https://mcp.missiveapp.com/',
   'feature-flags/flagsmith': 'https://mcp.flagsmith.com/',
   'incident-management/incident-io': 'https://mcp.incident.io/mcp',

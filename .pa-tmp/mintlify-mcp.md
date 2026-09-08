@@ -1,0 +1,253 @@
+> ## Documentation Index
+> Fetch the complete documentation index at: https://www.mintlify.com/docs/llms.txt
+> Use this file to discover all available pages before exploring further.
+
+# Admin Model Context Protocol (MCP) server
+
+> Give AI tools like Claude, ChatGPT, and Cursor write access to your Mintlify content and dashboard so they can edit pages, update settings, and open PRs.
+
+## About the admin MCP
+
+The admin MCP server gives AI tools write access to your Mintlify content and settings. Use it to update content and access your dashboard. With the admin MCP, you can use your preferred AI tools to edit pages, restructure navigation, update `docs.json`, open pull requests, change settings, create workflows, and more.
+
+Connect an MCP client such as Claude, Claude Code, ChatGPT, or Cursor to the admin MCP server. Use it to collaborate on your Mintlify content and settings with the same tools you use to write code. Content edits happen on a branch and ship through a pull request or commit when you call `save`. [Deployment management](#deployment-management) changes, such as workflow and settings updates, apply immediately to the live deployment. If your organization has multiple deployments, a single admin MCP connection can access and switch between all of them.
+
+<Note>
+  The admin MCP server allows AI tools to access your Mintlify dashboard. Treat it as a tool with write access. Connect it only from trusted AI tools, review every pull request before merging, and be aware that deployment management changes apply immediately without a pull request.
+</Note>
+
+The admin MCP is a hosted Mintlify service at `https://mcp.mintlify.com`. Every client connects to the same endpoint and authenticates with your Mintlify account.
+
+### How the admin MCP differs from other Mintlify MCP servers
+
+|              | Admin MCP                                                        | Search MCP                                     | Index MCP                                               |
+| :----------- | :--------------------------------------------------------------- | :--------------------------------------------- | :------------------------------------------------------ |
+| **Audience** | Your team                                                        | Your end users                                 | All developers and agents                               |
+| **Access**   | Read, edit, restructure, save, create workflows, manage settings | Read and search one site's published pages     | Read and search all Mintlify sites                      |
+| **Endpoint** | `https://mcp.mintlify.com`                                       | `/mcp` on your site domain                     | `https://index.mintlify.com`                            |
+| **Output**   | Content edits, navigation changes, pull requests, workflow runs  | Search results and page content from your site | Search results and page content from all Mintlify sites |
+
+See the [Mintlify Index MCP reference](/docs/search-index/mcp) for its tool inputs and rate limits.
+
+## Prerequisites
+
+Before connecting the admin MCP, confirm the following:
+
+* **Mintlify account**: You need a Mintlify account with access to the project you want to edit. The OAuth session inherits your dashboard permissions, so admin-only actions (such as `update_config` on protected settings) require an admin role on the project.
+* **Git provider access**: The GitHub, GitLab, or Bitbucket connection for the project must have write access to the deploy branch's repository. `save` opens PRs through the same integration used for normal deploys.
+* **MCP client**: An MCP-capable AI tool such as Claude, Claude Code, ChatGPT, Cursor, or Codex.
+
+## Connect to the admin MCP
+
+You must have an interactive OAuth login against your Mintlify account to connect to the admin MCP. AI tools exchange that login for a session token scoped to one or more deployments, depending on how you grant access. A connection scoped to specific deployments can only check out those deployments. An organization-wide connection can check out any deployment in your organization.
+
+<Tabs>
+  <Tab title="Claude">
+    <Steps>
+      <Step title="Add the admin MCP as a custom connector">
+        1. Navigate to the [Connectors](https://claude.ai/settings/connectors) page in the Claude settings.
+        2. Click **Add custom connector**.
+        3. Add the connector:
+           * Name: Admin MCP
+           * URL: `https://mcp.mintlify.com`
+        4. Click **Add** and complete the OAuth login.
+      </Step>
+
+      <Step title="Use the MCP in a chat">
+        Click the attachments button (the plus icon), then select your admin MCP server. Claude can now call the Mintlify admin MCP tools while answering your prompt.
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="Claude Code">
+    Add the admin MCP server with the Claude Code CLI:
+
+    ```bash theme={null}
+    claude mcp add --transport http mintlify https://mcp.mintlify.com
+    ```
+
+    On first use, Claude Code opens a browser window to complete the OAuth login. After authenticating, Claude Code reuses the session for subsequent calls.
+  </Tab>
+
+  <Tab title="ChatGPT">
+    Install the official Mintlify connector from the [ChatGPT app directory](https://chatgpt.com/apps/mintlify-mcp/asdk_app_6a4d5a687f0881918be3cb8b4b93773d) and complete the OAuth login when prompted. Once installed, ChatGPT can call the Mintlify admin MCP tools during a chat.
+  </Tab>
+
+  <Tab title="Cursor">
+    1. Open the command palette with <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> on Windows).
+    2. Search for **Open MCP settings** and click **Add custom MCP**.
+    3. In `mcp.json`, add the admin MCP:
+
+    ```json theme={null}
+    {
+      "mcpServers": {
+        "mintlify": {
+          "url": "https://mcp.mintlify.com"
+        }
+      }
+    }
+    ```
+
+    4. Reload Cursor and complete the OAuth login when prompted.
+  </Tab>
+
+  <Tab title="Codex">
+    Add the admin MCP server to your Codex CLI config at `~/.codex/config.toml`:
+
+    ```toml theme={null}
+    [mcp_servers.mintlify]
+    url = "https://mcp.mintlify.com"
+    ```
+
+    On first use, Codex opens a browser window to complete the OAuth login. After authenticating, Codex reuses the session for subsequent calls.
+
+    See the [Codex MCP documentation](https://developers.openai.com/codex/mcp) for more details.
+  </Tab>
+</Tabs>
+
+## How a session works
+
+Every admin MCP session binds to a single Git branch. The flow is:
+
+<Steps>
+  <Step title="Discover deployments (optional)">
+    If your connection has access to more than one deployment, call `list_deployments` to see which `subdomain` values you can check out. Skip this step if your connection covers only a single deployment.
+  </Step>
+
+  <Step title="Check out a branch">
+    The first required call is `checkout {subdomain}`. It creates a fresh `mintlify-mcp/<slug>-<sha>` branch from that deployment's deploy branch (or attaches to an existing branch you name) and returns an `editorUrl` you can open to follow along in the dashboard editor.
+
+    Call `list_branches` before `checkout` if you need to discover or filter existing branches in a deployment's repository.
+  </Step>
+
+  <Step title="Read, search, and edit">
+    The AI uses tools like `search`, `read`, `list_nodes`, `edit_page`, `write_page`, `create_node`, and `update_config` to make changes. All edits buffer on the session branch in real time—nothing touches your deploy branch yet.
+  </Step>
+
+  <Step title="Review the diff">
+    Call `diff` at any time to see exactly what changed since `main`. Open the `editorUrl` in your dashboard to see the same changes rendered.
+  </Step>
+
+  <Step title="Save">
+    Call `save` to flush the branch to Git. `mode: "auto"` (default) opens a pull request. If the deployment's agent review setting is push-to-main and the deploy branch isn't protected, Mintlify merges the pull request immediately (the response includes `merged: true`). Use `mode: "pr"` to always open a pull request and leave it open for review. Use `mode: "commit"` to push directly to an existing PR branch without opening a new PR.
+  </Step>
+
+  <Step title="Discard if needed">
+    Call `discard_session` to drop all in-session changes and release the branch.
+  </Step>
+</Steps>
+
+<Tip>
+  If your connection has access to multiple deployments, each checked-out deployment keeps its own session and branch in memory at the same time.
+
+  Calling `checkout` again with a different `subdomain` or branch switches which session is active. It doesn't discard the others. To abandon an in-progress draft instead of switching away from it, call `discard_session`.
+</Tip>
+
+## Publishing
+
+The **Publishing** section on the admin MCP settings page in your dashboard controls what happens when `save` runs with `mode: "auto"`. Toggle **Push directly to your deploy branch** on to have Mintlify push changes straight to your deploy branch. Toggle it off to have `save` open a pull request instead.
+
+This toggle shares the same `agentReviewProcess` setting as the Slack and dashboard agent, so any change here also applies to those flows.
+
+The toggle is disabled in three cases:
+
+* **Your deploy branch requires a pull request.** If branch protection rules or required approvals prevent direct pushes, MCP changes always open a pull request regardless of this setting.
+* **Mintlify hosts your deployment.** For Mintlify-hosted sites, MCP changes always push directly, unless branch protection still requires a pull request.
+* **You aren't an admin.** Changing this setting requires the [admin role](/docs/dashboard/roles) on your project. Editors and viewers see the toggle disabled with a permission banner.
+
+You can also override the setting on a per-call basis by passing an explicit `mode` to `save`: `"pr"` always opens a pull request, and `"commit"` pushes to an existing PR branch without opening a new PR.
+
+## What the admin MCP can do
+
+### Content
+
+* **`read`**: Fetch the full MDX of any page on the session branch.
+* **`search`**: Find lines matching a substring or regular expression across every page.
+* **`edit_page`**: Apply a targeted edit to a page.
+* **`write_page`**: Overwrite a page's full MDX content.
+
+### Navigation
+
+* **`list_nodes`**: Walk the navigation tree with optional filters. Filter by `parentId` (use `recursive: true` to include all descendants), one or more node types, or any division scope: `language`, `version`, `tab`, `dropdown`, `anchor`, `product`, or `item`. Results paginate through an opaque `cursor`.
+* **`create_node`**: Add a new page, group, tab, anchor, version, language, product, or dropdown.
+* **`update_node`**: Update a node's properties in place (rename a group, change an icon, set a default version).
+* **`move_node`**: Move a node, including renaming a page's path.
+* **`delete_node`**: Remove a node from the navigation.
+
+### Configuration
+
+* **`update_config`**: Modify `docs.json` (theme, navigation roots, integrations, SEO settings).
+
+### Deployment management
+
+Code mode handles deployment-level operations that have no dedicated tool, such as managing workflows, deployment settings, members, billing, integrations, and analytics. Code mode tools don't require a `checkout`.
+
+* **`search_code_operations`**: Search the deployment management methods available to code mode. Each result includes the method's full input schema.
+* **`execute_code`**: Run a TypeScript script against the deployment management methods. The connection's granted scopes gate every method, and any method you weren't granted returns an authorization error.
+
+<Warning>
+  Code mode writes apply immediately to the live deployment. They don't create a branch or open a pull request. Confirm the intended change before prompting an AI tool to update workflows, settings, members, billing, or integrations.
+</Warning>
+
+### Session
+
+* **`list_deployments`**: List the deployments your connection can access, returning each `{subdomain, name}`. Call this to discover which `subdomain` to pass to `checkout`.
+* **`checkout`**: Bind a session to a branch for a given deployment `subdomain`, or switch which deployment's session is active.
+* **`list_branches`**: List Git branches available for a deployment's project, with optional `query` filtering. Returns the branch names, total count, and the deploy branch. Call this before `checkout` to attach to an existing branch by name.
+* **`get_session_state`**: Inspect the current branch, edited files, and pending nav diff.
+* **`diff`**: List all changes between the session and `main`.
+* **`save`**: Open a pull request or commit to the session branch. If your deployment allows the agent to push to main and you have no branch protection rules, auto-merges the PR.
+* **`discard_session`**: Drop the session and its in-flight changes.
+
+## Example prompts
+
+After you connect the admin MCP, you can drive it with natural-language prompts. For example:
+
+* *"Check out a branch called `add-billing-faq` and create a new page under the FAQ group titled 'Billing'. Draft answers for the five questions in this Linear issue."*
+* *"Find every page that mentions the deprecated `legacy_token` field and update the example to use `api_key` instead. Save as a PR titled 'docs: replace legacy\_token references'."*
+* *"Reorganize the API reference: move the webhooks pages into a new group called 'Webhooks' and update the icons to match the rest of the section."*
+
+## Best practices
+
+<AccordionGroup>
+  <Accordion title="Open the editor URL">
+    Every `checkout` returns an `editorUrl`. Open it in a separate tab so you can watch the AI's changes render live in the dashboard editor while you prompt.
+  </Accordion>
+
+  <Accordion title="Review every PR">
+    The admin MCP is powerful enough to rewrite hundreds of pages in a single session. Before merging, read the PR diff and skim the rendered preview. Don't rubber-stamp large changes.
+  </Accordion>
+
+  <Accordion title="Use slugs for branch names">
+    Pass a `slug` to `checkout` (for example, `add-quickstart`) so the auto-generated branch is human-readable. Without it, the branch name derives from the session token and is hard to recognize in your repository.
+  </Accordion>
+
+  <Accordion title="Keep sessions focused">
+    Keep each session focused on one change. Smaller sessions produce pull requests that are easier to review and preserve agents' context windows. Use `discard_session` and `checkout` again to pivot to unrelated work.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  Sessions hold an in-memory branch on the Mintlify side. If you abandon a session without saving or discarding it, the branch persists until your next checkout overwrites it. Avoid leaving stale `mintlify-mcp/*` branches in your repository. Clean them up periodically.
+</Note>
+
+## Disconnect or revoke access
+
+Disconnect the admin MCP when you no longer want an AI tool to edit your project, or when you want to force a fresh OAuth login.
+
+* **Revoke the OAuth grant**: In your Mintlify dashboard, navigate to **Settings → Security & access → Connected apps** and revoke the entry for the AI tool you connected. Revoking invalidates any active session tokens immediately, so in-flight tool calls fail and the tool must complete a new OAuth login on the next call.
+* **Remove the connector in the client**:
+  * Claude: **Settings → Connectors**, then remove the admin MCP entry.
+  * Claude Code: `claude mcp remove mintlify`.
+  * ChatGPT: **Settings → Connectors**, then remove the Mintlify entry.
+  * Cursor: delete the `mintlify` entry from `mcp.json` and reload.
+  * Codex: delete the `[mcp_servers.mintlify]` block from `~/.codex/config.toml`.
+
+Revoking the OAuth grant does not affect pull requests the MCP has already opened. Close or revert those PRs in your Git provider if you want to undo pending changes.
+
+
+## Related topics
+
+- [Search Model Context Protocol (MCP) server](/docs/ai/model-context-protocol.md)
+- [Glossary](/docs/reference/glossary.md)
+- [skill.md](/docs/ai/skillmd.md)
