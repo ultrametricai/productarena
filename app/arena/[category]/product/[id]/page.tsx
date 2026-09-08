@@ -17,6 +17,7 @@ import ProductShowcase from '@/components/ProductShowcase'
 import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
 import ScoreTrend from '@/components/ScoreTrend'
+import SloUptimeLine from '@/components/SloUptimeLine'
 import StoryMap from '@/components/StoryMap'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import StoryViewToggle from '@/components/StoryViewToggle'
@@ -190,6 +191,9 @@ export default async function ProductPage({
           </div>
           <AgentAccessGlyphs data={data} productId={id} />
         </div>
+        {/* 30-day uptime of the monitored agent surfaces (llms.txt / MCP / openapi.json) —
+            renders nothing until slo-check has history for this product (lib/slo.ts). */}
+        <SloUptimeLine arena={category} productId={id} />
         <div className="mt-2 flex max-w-md items-center gap-2">
           <span className="text-[10px] uppercase tracking-widest text-zinc-400">coverage</span>
           <ScoreBar score={entry.score} className="flex-1" />
