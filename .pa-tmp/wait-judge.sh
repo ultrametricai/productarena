@@ -1,10 +1,9 @@
 #!/bin/sh
-# Poll the judge cell cache until the data-pipelines matrix is complete (bounded).
-n=0
-while [ $n -lt 190 ]; do
-  c=$(find pipeline/cache/judge/data-pipelines -name '*.json' | wc -l | tr -d ' ')
-  if [ "$c" = "265" ]; then break; fi
-  sleep 3
-  n=$((n+1))
+# Usage: wait-judge.sh <category> <expected-cell-count>
+dir="pipeline/cache/judge/$1"
+want="$2"
+while :; do
+  n=$(find "$dir" -name '*.json' | wc -l | tr -d ' ')
+  if [ "$n" -ge "$want" ]; then echo "DONE: $n cells"; exit 0; fi
+  sleep 15
 done
-find pipeline/cache/judge/data-pipelines -name '*.json' | wc -l
