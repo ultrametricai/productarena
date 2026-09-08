@@ -1,4 +1,4 @@
-// Hand-rolled argv parsing — deliberately no commander/yargs (this CLI has two value flags and
+// Hand-rolled argv parsing — deliberately no commander/yargs (this CLI has five value flags and
 // three booleans; a parser dependency would outweigh the code). Pure and throw-based so it's
 // unit-testable: unknown flags and malformed values raise UsageError for exit code 1.
 import { UsageError } from './api.js'
@@ -43,6 +43,15 @@ export function parseArgs(argv: string[]): ParsedArgs {
         break
       case '--metric':
         flags.metric = value()
+        break
+      case '--report':
+        flags.report = value()
+        break
+      case '--mcp':
+        flags.mcp = value()
+        break
+      case '--api':
+        flags.api = value()
         break
       case '--limit': {
         const raw = value()

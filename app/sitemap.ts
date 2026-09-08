@@ -26,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
     { url: `${SITE_URL}/mcp`, lastModified: now },
     { url: `${SITE_URL}/proofs`, lastModified: now },
+    { url: `${SITE_URL}/certified`, lastModified: now },
     { url: `${SITE_URL}/changelog`, lastModified: now },
     { url: `${SITE_URL}/predictions`, lastModified: now },
     { url: `${SITE_URL}/reports`, lastModified: now },

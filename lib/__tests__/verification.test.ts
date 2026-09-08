@@ -105,6 +105,7 @@ describe('verificationMix', () => {
       claims: {},
       uncertainty: [],
       vendorResponses: [],
+      certifications: [],
     }
   }
 

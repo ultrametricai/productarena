@@ -43,6 +43,7 @@ function arena(
     claims: {},
     uncertainty: [],
     vendorResponses: [],
+    certifications: [],
   }
 }
 

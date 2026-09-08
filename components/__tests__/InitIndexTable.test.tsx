@@ -23,6 +23,7 @@ function makeData(entries: CategoryData['rankings']['leaderboard']): CategoryDat
     claims: {},
     uncertainty: [],
     vendorResponses: [],
+    certifications: [],
   }
 }
 

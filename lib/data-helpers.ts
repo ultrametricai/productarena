@@ -4,6 +4,7 @@
 // statically importing a Node builtin, even if the code path is never actually called client-
 // side. lib/data.ts re-exports everything here for backward compatibility, so existing server
 // call sites (`import { verdictFor } from '@/lib/data'`) are unaffected.
+import type { Certification } from './certifications'
 import type { Category, Claim, Evidence, Popularity, Product, Rankings, Stack, Story, UncertaintyEntry, VendorResponse, Verdict } from './schemas'
 
 // "canonical", "normalized · v2", etc — see lib/schemas.ts's StoryOriginSchema. Falls back to
@@ -49,6 +50,13 @@ export interface CategoryData {
   // error" contract as popularity/claims/uncertainty above. Use vendorResponseFor(data,
   // productId, storyId) rather than scanning this array directly.
   vendorResponses: VendorResponse[]
+  // Agent-Ready certifications earned through the self-serve conformance suite — see
+  // lib/certifications.ts and docs/CERTIFICATION.md. `data/{cat}/certifications.json` is
+  // optional (most arenas have none) — absence resolves to `[]`, same "absence is not an
+  // error" contract as everything above. Use activeCertificationFor(data.certifications,
+  // productId) rather than scanning this array directly: entries past their 180-day expiry
+  // must not render as current certifications.
+  certifications: Certification[]
 }
 
 export function battleSlug(a: string, b: string): string {

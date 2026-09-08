@@ -1,5 +1,7 @@
 // One function per CLI command: fetch via api.ts, render via format.ts, print. Every command
 // honors --json (raw data, no color) so scripts and agents can consume the same output.
+import fs from 'node:fs'
+import path from 'node:path'
 import {
   UsageError,
   accessSummary,
@@ -12,6 +14,7 @@ import {
   topProducts,
 } from './api.js'
 import { aliasesByArena, resolveRole } from './aliases.js'
+import { CERT_LEVEL_TITLES, runCertify, type CertCheckResult } from './certify.js'
 import type { ArenaClient } from './client.js'
 import { NetworkError } from './client.js'
 import { accessLine, fmtScore, palette, renderTable } from './format.js'
@@ -24,6 +27,9 @@ export interface Flags {
   oss: boolean
   metric?: string
   limit?: number
+  report?: string
+  mcp?: string
+  api?: string
 }
 
 export interface Ctx {
@@ -281,6 +287,53 @@ export async function cmdScan(ctx: Ctx, url: string, flags: Flags): Promise<void
   ctx.out(`  ${check(agentsAllowed, ctx.color)} Agents allowed  ${!ch.robots.found ? 'no robots.txt found' : ch.robots.blocksAllAgents ? 'robots.txt disallows everything' : 'robots.txt does not block all agents'}`)
   ctx.out()
   ctx.out(c.dim(`  Surface scan of well-known paths only — submit for a full evaluation: ${ctx.client.baseUrl}/submit`))
+}
+
+const CHECK_GLYPHS: Record<CertCheckResult['status'], (color: boolean) => string> = {
+  pass: (color) => palette(color).green('✓'),
+  fail: (color) => palette(color).red('✗'),
+  skip: (color) => palette(color).dim('−'),
+}
+
+// The self-serve Agent-Ready certification suite (docs/CERTIFICATION.md): keyless conformance
+// checks against the vendor's own product, a scored checklist, and an optional machine-
+// verifiable --report file a maintainer can re-run and diff. No ArenaClient involved — every
+// request goes to the target, not to ProductArena.
+export async function cmdCertify(ctx: Ctx, url: string, flags: Flags): Promise<void> {
+  const report = await runCertify(url, { mcpUrl: flags.mcp, apiUrl: flags.api })
+
+  if (flags.report) {
+    const file = path.resolve(flags.report)
+    fs.mkdirSync(path.dirname(file), { recursive: true })
+    fs.writeFileSync(file, JSON.stringify(report, null, 2) + '\n')
+  }
+  if (flags.json) {
+    ctx.out(json(report))
+    return
+  }
+
+  const c = palette(ctx.color)
+  ctx.out(c.bold(`Agent-Ready certification suite: ${report.target}`) + c.dim(`  (${report.startedAt.slice(0, 10)})`))
+  ctx.out()
+  for (const check of report.checks) {
+    ctx.out(`  ${CHECK_GLYPHS[check.status](ctx.color)} ${check.title}`)
+    ctx.out(c.dim(`      ${check.detail}`))
+  }
+  ctx.out()
+  const passed = report.checks.filter((ch) => ch.status === 'pass').length
+  const failed = report.checks.filter((ch) => ch.status === 'fail').length
+  const skipped = report.checks.filter((ch) => ch.status === 'skip').length
+  ctx.out(
+    `  Score: ${passed} pass · ${failed} fail${skipped > 0 ? ` · ${skipped} skipped` : ''}`,
+  )
+  if (report.level) {
+    ctx.out(`  ${c.green(c.bold(`Level earned: ${CERT_LEVEL_TITLES[report.level]}`))}`)
+  } else {
+    ctx.out(`  ${c.yellow('Level earned: none — Agent-Ready needs llms.txt + (MCP or OpenAPI) + robots-ok')}`)
+  }
+  if (flags.report) ctx.out(c.dim(`  Report written to ${flags.report}`))
+  ctx.out()
+  ctx.out(c.dim(`  Submit for certification: see docs/CERTIFICATION.md in the ProductArena repo`))
 }
 
 // Compact alias-map dump for `pick` errors and --help curiosity; exposed as `pick --list`.
