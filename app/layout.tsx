@@ -204,6 +204,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "methodology", name: "Methodology", label: "docs", href: "/methodology" },
                   { id: "pipeline", name: "Testing pipeline", label: "docs", href: "/pipeline" },
                   { id: "proofs", name: "Recorded proofs", label: "docs", href: "/proofs" },
+                  { id: "certified", name: "Certified Agent-Ready", label: "program", href: "/certified" },
                   { id: "mcp", name: "MCP server", label: "agents", href: "/mcp" },
                 ]}
               />

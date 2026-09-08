@@ -46,6 +46,7 @@ function makeData(claims: Claim[]): CategoryData {
     claims: { p: claims },
     uncertainty: [],
     vendorResponses: [],
+    certifications: [],
   }
 }
 

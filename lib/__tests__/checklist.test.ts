@@ -37,6 +37,7 @@ const data: CategoryData = {
   claims: {},
   uncertainty: [],
   vendorResponses: [],
+  certifications: [],
 }
 
 describe('priorityForWeight', () => {

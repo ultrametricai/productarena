@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import { CertificationsArraySchema } from './certifications'
 import {
   type Category, CategorySchema, type Claim, ClaimSchema, EvidenceSchema,
   PopularityMapSchema, ProductSchema, RankingsSchema,
@@ -149,7 +150,23 @@ export function loadCategory(categoryId: string, dir: string = DEFAULT_DIR()): C
     }
   }
 
-  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity, claims, uncertainty, vendorResponses }
+  // Optional, same contract as popularity/claims/uncertainty/vendor-responses above: most
+  // arenas have no certified products. Each certification must target a real product, and a
+  // product carries at most one entry (a re-certification replaces the old row — the prior
+  // report stays in git history). Expiry (180 days) is display-time, not load-time: an expired
+  // entry loads fine but activeCertificationFor() stops returning it.
+  const certificationsPath = path.join(catDir, 'certifications.json')
+  const certifications = fs.existsSync(certificationsPath)
+    ? CertificationsArraySchema.parse(read('certifications.json'))
+    : []
+  const certifiedProducts = new Set<string>()
+  for (const cert of certifications) {
+    if (!productIds.has(cert.productId)) throw new Error(`certification references unknown product ${cert.productId}`)
+    if (certifiedProducts.has(cert.productId)) throw new Error(`multiple certifications for product ${cert.productId}`)
+    certifiedProducts.add(cert.productId)
+  }
+
+  const data: CategoryData = { category, products, stories, evidence, verdicts, rankings, stacks, popularity, claims, uncertainty, vendorResponses, certifications }
   categoryCache.set(cacheKey, data)
   return data
 }

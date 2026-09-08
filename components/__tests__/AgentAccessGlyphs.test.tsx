@@ -23,6 +23,7 @@ function makeData(verdicts: Verdict[]): CategoryData {
     claims: {},
     uncertainty: [],
     vendorResponses: [],
+    certifications: [],
   }
 }
 

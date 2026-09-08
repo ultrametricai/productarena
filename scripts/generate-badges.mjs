@@ -1,6 +1,8 @@
 // Embeddable score badges: renders two static shield-style SVGs per ranked product into
 // public/badges/ — `<id>-agent-ready.svg` (the leaderboard's agentReady component) and
-// `<id>-arena-score.svg` (the blended Arena Score, internally `aiEra`). Plain node, no deps.
+// `<id>-arena-score.svg` (the blended Arena Score, internally `aiEra`) — plus one
+// `<id>-certified.svg` per Agent-Ready certification (data/<arena>/certifications.json,
+// docs/CERTIFICATION.md). Plain node, no deps.
 //
 // The SVGs are COMMITTED build inputs, not build artifacts (unlike public/data/): they only
 // change when rankings change, so the workflow is "re-run after a re-judge, commit the diff"
@@ -83,6 +85,43 @@ export function badgeSvg({ label, score }) {
 }
 
 /**
+ * The certification badge: same shield layout, right panel always emerald (a certification is
+ * only ever rendered for an earned, unexpired level — there is no "untested" variant), text
+ * "CERTIFIED AGENT-READY · 2026" (or AGENT-NATIVE), year taken from the certification date.
+ * See docs/CERTIFICATION.md; the registry entries live in data/<arena>/certifications.json.
+ *
+ * @param {{ level: 'agent-ready' | 'agent-native', date: string }} cert
+ * @returns {string} a complete standalone SVG document
+ */
+export function certBadgeSvg({ level, date }) {
+  const year = date.slice(0, 4)
+  const rightText = `CERTIFIED ${level === 'agent-native' ? 'AGENT-NATIVE' : 'AGENT-READY'} · ${year}`
+
+  const productW = textWidth('Product', { bold: true })
+  const arenaW = textWidth('Arena', { bold: true })
+  const leftW = PAD_X + productW + arenaW + PAD_X
+  const rightTextW = textWidth(rightText)
+  const rightW = PAD_X + rightTextW + PAD_X
+  const total = leftW + rightW
+  const title = `ProductArena: ${rightText}`
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${total}" height="${HEIGHT}" role="img" aria-label="${title}">
+  <title>${title}</title>
+  <clipPath id="r"><rect width="${total}" height="${HEIGHT}" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="${leftW}" height="${HEIGHT}" fill="${ZINC_950}"/>
+    <rect x="${leftW}" width="${rightW}" height="${HEIGHT}" fill="${EMERALD_600}"/>
+  </g>
+  <g font-family="${FONT}" font-size="11">
+    <text x="${PAD_X}" y="14" textLength="${productW}" font-weight="bold" fill="${ZINC_50}">Product</text>
+    <text x="${PAD_X + productW}" y="14" textLength="${arenaW}" font-weight="bold" fill="${EMERALD_400}">Arena</text>
+    <text x="${leftW + PAD_X}" y="14" textLength="${rightTextW}" fill="${ZINC_50}">${rightText}</text>
+  </g>
+</svg>
+`
+}
+
+/**
  * The two badge files for one leaderboard entry, as [filename, svg] pairs.
  *
  * @param {string} productId
@@ -122,6 +161,18 @@ function main() {
       const entry = rankings.leaderboard.find((e) => e.productId === product.id)
       for (const [file, svg] of badgeFiles(product.id, entry)) {
         fs.writeFileSync(path.join(outDir, file), svg)
+        written++
+      }
+    }
+
+    // Certification badges — one `<id>-certified.svg` per registry entry (see
+    // docs/CERTIFICATION.md). Regenerated on the same "re-run after data changes, commit the
+    // diff" cadence as the score badges; expiry is enforced by the site's display code, the
+    // badge simply carries the certification year.
+    const certsFile = path.join(dataDir, category.id, 'certifications.json')
+    if (fs.existsSync(certsFile)) {
+      for (const cert of JSON.parse(fs.readFileSync(certsFile, 'utf8'))) {
+        fs.writeFileSync(path.join(outDir, `${cert.productId}-certified.svg`), certBadgeSvg(cert))
         written++
       }
     }
