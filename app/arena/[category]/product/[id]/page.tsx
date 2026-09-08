@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import AgenticBadge from '@/components/AgenticBadge'
+import CertificationChip from '@/components/CertificationChip'
 import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
@@ -22,6 +23,7 @@ import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
 import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
+import { activeCertificationFor } from '@/lib/certifications'
 import {
   groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
@@ -100,6 +102,9 @@ export default async function ProductPage({
   // header chip links down to the verdicts table, where each response renders inside its
   // story's expanded row.
   const vendorResponseCount = data.vendorResponses.filter((r) => r.productId === id).length
+  // Active (unexpired) Agent-Ready certification, if the product has earned one through the
+  // self-serve conformance suite — see docs/CERTIFICATION.md and lib/certifications.ts.
+  const certification = activeCertificationFor(data.certifications, id)
   // "Try it" (components/TryIt/*) exists for products with ≥1 replayable recorded proof or an
   // allowlisted live MCP endpoint. Only then does the header's primary CTA become hands-on —
   // products with neither keep "Visit" as primary (no fake try).
@@ -189,6 +194,7 @@ export default async function ProductPage({
         <div className="mt-2 flex flex-wrap gap-2">
           <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" />
           <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" />
+          {certification && <CertificationChip cert={certification} />}
           {vendorResponseCount > 0 && (
             <a
               href="#story-verdicts"

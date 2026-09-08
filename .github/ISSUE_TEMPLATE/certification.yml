@@ -1,0 +1,81 @@
+name: Certification
+description: Submit your cert-report.json from `productarena certify` to earn a dated Agent-Ready certification — maintainer re-runs the same suite and, on a match, commits it to the registry
+title: "Certification: <product>"
+labels: ["certification"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the intake for ProductArena's **Agent-Ready Certification** (protocol:
+        `docs/CERTIFICATION.md`). The flow:
+
+        1. You ran `npx productarena certify <url> --report cert-report.json` against your own
+           product (keyless, read-only — the suite only touches public surfaces).
+        2. You paste that report below, with the exact command you ran.
+        3. We verify you speak for the product's domain (same methods as
+           `docs/VENDOR-RESPONSES.md`), then a maintainer re-runs the identical command from
+           our side and diffs the per-check statuses.
+        4. On a match, your certification (level + date + the report) is committed to
+           `data/<arena>/certifications.json` and appears on `/certified`, your product page,
+           and as an embeddable badge. Certifications expire after **180 days** — re-certify by
+           running the same command again.
+
+        Ground rules: the suite is the certification (levels are a pure function of the check
+        statuses — no negotiated exceptions), and only products already listed in an arena can
+        be certified (`data/{category}/products.json`; use *Request a product* first otherwise).
+  - type: input
+    id: product
+    attributes:
+      label: Product id
+      description: Your product's id in data/{category}/products.json, e.g. stripe
+      placeholder: stripe
+    validations:
+      required: true
+  - type: input
+    id: arena
+    attributes:
+      label: Arena id
+      description: The arena the product is listed in, e.g. payments
+      placeholder: payments
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Exact command run
+      description: The full certify invocation, including any --mcp/--api flags — the maintainer re-runs this verbatim
+      placeholder: npx productarena certify https://docs.stripe.com --mcp https://mcp.stripe.com --report cert-report.json
+    validations:
+      required: true
+  - type: textarea
+    id: report
+    attributes:
+      label: cert-report.json
+      description: Paste the full report file produced by --report (checks, timestamps, response digests)
+      render: json
+    validations:
+      required: true
+  - type: dropdown
+    id: verification-offer
+    attributes:
+      label: Domain verification offer
+      description: How you will prove you speak for the product's domain (see docs/VENDOR-RESPONSES.md for what each involves)
+      options:
+        - email from company domain
+        - PR from org GitHub account
+        - DNS TXT record
+    validations:
+      required: true
+  - type: input
+    id: role
+    attributes:
+      label: Your role
+      description: Your role at the vendor, e.g. "DevRel lead" — recorded on the submission, not published on the certification
+      placeholder: DevRel lead
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Optional — anything a maintainer should know before re-running (e.g. a WAF that rate-limits, an endpoint that needs the --mcp flag)

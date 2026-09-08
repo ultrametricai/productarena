@@ -27,6 +27,7 @@ Requires Node >= 20.
 | `pick <role> [--metric M] [--oss]` | THE vendor pick for a role: top pick with why, runner-up, and a "too close to call" flag at Δ≤3.0. `pick --list` prints the role→arena alias map. | `productarena pick payroll` |
 | `stacks [id]` | Curated cross-arena AI stacks, every scored slot resolved live from current leaderboards. | `productarena stacks local-sovereign` |
 | `scan <url>` | Agent-readiness quick scan of any product site (llms.txt, OpenAPI, MCP/API/CLI signals, robots). | `productarena scan https://stripe.com` |
+| `certify <url> [--report F] [--mcp URL] [--api URL]` | The Agent-Ready certification suite: six keyless conformance checks (llms.txt, docs `.md` mirrors, OpenAPI, a real MCP initialize handshake, robots posture, structured JSON errors) run from your machine against your own product, scored into the two published levels. `--report` writes the machine-verifiable cert-report JSON to submit for certification — see [docs/CERTIFICATION.md](https://github.com/ultrametricai/productarena/blob/main/docs/CERTIFICATION.md). | `productarena certify https://docs.stripe.com --report cert-report.json` |
 
 Roles for `pick` are arena ids plus friendly aliases: `banking`, `payments`, `payroll`,
 `accounting`, `pm`, `git`, `coding-agent`, `chat`, `baas`, `analytics`, `crm`, `edge`, `auth`,

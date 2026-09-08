@@ -45,6 +45,7 @@ function makeData(): CategoryData {
     claims: { p: [claim('p-claim-1', ['s1']), claim('p-claim-2', ['s2']), claim('p-claim-3', ['s3']), claim('p-claim-4', [])] },
     uncertainty: [],
     vendorResponses: [],
+    certifications: [],
   }
 }
 
