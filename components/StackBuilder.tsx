@@ -13,6 +13,7 @@ import {
   STACK_PRESETS,
   STACK_ROLES,
   stackAgentReadiness,
+  stackInterconnects,
   type StackConstraints,
   type StackMetric,
 } from '@/lib/stackBuilder'
@@ -28,7 +29,15 @@ const METRIC_OPTIONS: Array<{ metric: StackMetric; label: string }> = [
   { metric: 'aiEra', label: 'Highest Arena Score' },
 ]
 
-export default function StackBuilder({ products }: { products: CompareProduct[] }) {
+export default function StackBuilder({
+  products,
+  verifiedPairs = [],
+}: {
+  products: CompareProduct[]
+  // 'a|b' sorted-pair keys of every verified integration edge fleet-wide (see
+  // lib/integrations.ts's verifiedPairKeys) — powers the interconnect check below.
+  verifiedPairs?: string[]
+}) {
   const searchParams = useSearchParams()
   // Lazy initializers, not a mount effect: useSearchParams already carries the real query on
   // the first client render (the page's <Suspense> boundary makes this subtree client-rendered).
@@ -46,6 +55,12 @@ export default function StackBuilder({ products }: { products: CompareProduct[] 
   const results = useMemo(() => buildStack(products, roles, constraints), [products, roles, constraints])
   const readiness = stackAgentReadiness(results)
   const picks = results.filter((r) => r.pick !== null)
+  // Interconnect check: which picks have a verified integration edge to each other. An
+  // unverified pair reads "no evidence found" — absence of an edge is absence of evidence,
+  // never "doesn't integrate".
+  const interconnects = useMemo(() => stackInterconnects(results, verifiedPairs), [results, verifiedPairs])
+  const verifiedLinks = interconnects.filter((p) => p.verified)
+  const unverifiedLinks = interconnects.filter((p) => !p.verified)
 
   function toggleRole(id: string) {
     setRoles((prev) => (prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]))
@@ -230,6 +245,41 @@ export default function StackBuilder({ products }: { products: CompareProduct[] 
               </tbody>
             </table>
           </div>
+
+          {interconnects.length > 0 && (
+            <div className="rounded-2xl border border-zinc-800 p-4">
+              <h3 className="text-sm font-semibold">Interconnects</h3>
+              <p className="mt-1 text-xs text-zinc-500">
+                Verified integration edges between your picks, each backed by a verbatim evidence
+                quote (see the{' '}
+                <Link href="/integrations" className="underline decoration-zinc-700 hover:text-emerald-300">
+                  integration graph
+                </Link>
+                ). &ldquo;No evidence found&rdquo; means exactly that — not that two products
+                don&rsquo;t integrate.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                {verifiedLinks.map((p) => (
+                  <span
+                    key={`${p.aId}|${p.bId}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/5 px-2.5 py-1 text-emerald-300"
+                  >
+                    {p.aName} <span aria-hidden className="text-emerald-400/70">↔</span> {p.bName}
+                    <span className="text-[10px] uppercase tracking-wide text-emerald-400/80">verified</span>
+                  </span>
+                ))}
+                {unverifiedLinks.map((p) => (
+                  <span
+                    key={`${p.aId}|${p.bId}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 px-2.5 py-1 text-zinc-500"
+                  >
+                    {p.aName} <span aria-hidden className="text-zinc-600">↔</span> {p.bName}
+                    <span className="text-[10px] uppercase tracking-wide text-zinc-600">no evidence found</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           <p className="text-xs text-zinc-500">
             Ranks are within each pick&rsquo;s full arena field on the chosen metric — a

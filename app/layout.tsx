@@ -200,6 +200,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "claims-integrity", name: "Claims vs reality", label: "ranking", href: "/rankings/claims-integrity" },
                   { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
                   { id: "icp", name: `Buyer lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
+                  { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },
                   { id: "changelog", name: "Changelog", label: "history", href: "/changelog" },
                   { id: "predictions", name: "Predictions", label: "forecasts", href: "/predictions" },
                   { id: "reports", name: "Weekly reports", label: "history", href: "/reports" },

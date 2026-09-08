@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/predictions`, lastModified: now },
     { url: `${SITE_URL}/reports`, lastModified: now },
     { url: `${SITE_URL}/badges`, lastModified: now },
+    { url: `${SITE_URL}/integrations`, lastModified: now },
     { url: `${SITE_URL}/rankings/agentic`, lastModified: now },
     { url: `${SITE_URL}/rankings/ai-native`, lastModified: now },
     { url: `${SITE_URL}/rankings/claims-integrity`, lastModified: now },

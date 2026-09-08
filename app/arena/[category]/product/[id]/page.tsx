@@ -7,6 +7,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
+import IntegrationChips, { chipTitle } from '@/components/IntegrationChips'
 import MomentumChip from '@/components/MomentumChip'
 import MomentumTrend from '@/components/MomentumTrend'
 import OssPill from '@/components/OssPill'
@@ -30,6 +31,7 @@ import {
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
+import { loadIntegrationGraph, neighborsOf, productRefIndex } from '@/lib/integrations'
 import { loadPopularityHistory, popularitySeries } from '@/lib/popularityHistory'
 import { loadPricing } from '@/lib/pricing'
 import { loadScoreHistory } from '@/lib/scoreHistory'
@@ -120,6 +122,25 @@ export default async function ProductPage({
     { label: 'npm/wk', points: popularitySeries(popularityLines, 'npmWeekly') },
     { label: 'pypi/wk', points: popularitySeries(popularityLines, 'pypiWeekly') },
   ]
+  // Verified integration neighbors from the fleet-wide graph (lib/integrations.ts) — each chip's
+  // tooltip quotes the evidence excerpt(s) the edge rests on, verbatim. Renders nothing when the
+  // product has no verified edges (absence of evidence, displayed as absence).
+  const allCategories = loadAll()
+  const refs = productRefIndex(allCategories)
+  const nameOf = (pid: string) => refs.get(pid)?.name ?? pid
+  const integrationChips = neighborsOf(loadIntegrationGraph(allCategories.map((d) => d.category.id)), id)
+    .flatMap((n) => {
+      const ref = refs.get(n.productId)
+      if (!ref) return []
+      return [{
+        productId: n.productId,
+        name: ref.name,
+        arenaId: ref.arenaId,
+        arenaName: ref.arenaName,
+        title: chipTitle(n.sources, nameOf),
+      }]
+    })
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   return (
     <div className="space-y-8">
@@ -288,6 +309,8 @@ export default async function ProductPage({
       <ProofsSection category={category} productId={id} stories={data.stories} />
 
       <ClaimsSection data={data} category={category} productId={id} />
+
+      <IntegrationChips chips={integrationChips} />
 
       {/* Pricing-covered arenas only (lib/pricing.ts): renders nothing when this product has no
           pricing entry, "pricing unclear" when the vendor's page couldn't be read honestly. */}
