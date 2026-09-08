@@ -20,14 +20,14 @@ afterEach(() => {
 })
 
 describe('StoryVerdictsTable', () => {
-  it('renders one anchored row per story and defaults to "Sorted by quality"', () => {
+  it('renders one anchored row per story and defaults to "Sorted by importance"', () => {
     const { container } = renderTable()
     for (const row of rows) {
       const anchored = container.querySelector(`[id="story-${row.storyId}"]`)
       expect(anchored, `missing #story-${row.storyId}`).not.toBeNull()
       expect(anchored!.className).toContain('scroll-mt-4')
     }
-    expect(screen.getByText(/Sorted by/).textContent).toMatch(/quality/)
+    expect(screen.getByText(/Sorted by/).textContent).toMatch(/importance/)
   })
 
   it('expands a row to reveal the rationale and evidence links', () => {
@@ -103,8 +103,10 @@ describe('StoryVerdictsTable', () => {
 
   it('re-sorts when a column header is clicked, with aria-sort on the current column', () => {
     renderTable()
+    // importance is the default composite sort — no column header carries aria-sort until a
+    // column is explicitly clicked.
     const qualityHeader = screen.getByText('Quality').closest('th')
-    expect(qualityHeader?.getAttribute('aria-sort')).toBe('descending')
+    expect(qualityHeader?.getAttribute('aria-sort')).toBe('none')
     fireEvent.click(screen.getByText('Weight'))
     const weightHeader = screen.getByText('Weight').closest('th')
     expect(weightHeader?.getAttribute('aria-sort')).toBe('descending')
