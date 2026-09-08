@@ -10,6 +10,7 @@ import type { Evidence, Story, UncertaintyEntry, VendorResponse, Verdict } from 
 import { strongestEvidence, verificationLevel, type VerificationLevel } from './verification'
 
 export type StoryVerdictColumn =
+  | 'importance'
   | 'title'
   | 'theme'
   | 'weight'
@@ -129,6 +130,7 @@ const VERIFICATION_RANK: Record<VerificationLevel, number> = {
 // Human-readable label for the live "Sorted by ___" strip, mirroring arenaTableSort's
 // COLUMN_LABELS convention.
 export const COLUMN_LABELS: Record<StoryVerdictColumn, string> = {
+  importance: 'importance (agentic first)',
   title: 'story title',
   theme: 'theme',
   weight: 'weight',
@@ -144,6 +146,23 @@ export function defaultDirectionFor(column: StoryVerdictColumn): SortDirection {
   return column === 'title' || column === 'theme' ? 'asc' : 'desc'
 }
 
+// The default reading order: what matters most for the AI era first. Agenticness-theme stories
+// (the shared canon: MCP, CLI, API, headless, autonomy) lead, then story weight (3 = the
+// arena's decisive stories), then quality so within a tier the strongest showing reads first.
+// Title as the final tiebreaker keeps the order stable across re-renders.
+function importanceKey(row: StoryVerdictRow): [number, number, number] {
+  return [row.theme === 'agenticness' ? 0 : 1, -row.weight, -(isStoryUntested(row) ? -1 : row.quality)]
+}
+
+function compareImportance(a: StoryVerdictRow, b: StoryVerdictRow): number {
+  const ka = importanceKey(a)
+  const kb = importanceKey(b)
+  for (let i = 0; i < ka.length; i++) {
+    if (ka[i] !== kb[i]) return ka[i] - kb[i]
+  }
+  return a.title.localeCompare(b.title)
+}
+
 function compareNullableNumber(a: number | null, b: number | null, direction: SortDirection): number {
   // Nulls (untested cells on the quality column) always sort last regardless of direction —
   // "we don't know" is never honestly the best or worst quality.
@@ -153,7 +172,7 @@ function compareNullableNumber(a: number | null, b: number | null, direction: So
   return direction === 'desc' ? b - a : a - b
 }
 
-function numericValue(row: StoryVerdictRow, column: Exclude<StoryVerdictColumn, 'title' | 'theme'>): number | null {
+function numericValue(row: StoryVerdictRow, column: Exclude<StoryVerdictColumn, 'title' | 'theme' | 'importance'>): number | null {
   switch (column) {
     case 'weight':
       return row.weight
@@ -174,6 +193,10 @@ export function sortStoryVerdictRows(
   direction: SortDirection,
 ): StoryVerdictRow[] {
   return [...rows].sort((a, b) => {
+    if (column === 'importance') {
+      const cmp = compareImportance(a, b)
+      return direction === 'desc' ? cmp : -cmp
+    }
     if (column === 'title' || column === 'theme') {
       const cmp = a[column].localeCompare(b[column])
       return direction === 'desc' ? -cmp : cmp

@@ -169,7 +169,7 @@ export default function StoryVerdictsTable({
   productId: string
   rows: StoryVerdictRow[]
 }) {
-  const [column, setColumn] = useState<StoryVerdictColumn>('quality')
+  const [column, setColumn] = useState<StoryVerdictColumn>('importance')
   const [direction, setDirection] = useState<SortDirection>('desc')
   const [query, setQuery] = useState('')
   const [theme, setTheme] = useState('')
