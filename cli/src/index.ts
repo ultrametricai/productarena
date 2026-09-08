@@ -8,6 +8,7 @@ import { parseArgs } from './args.js'
 import { NetworkError, createClient, resolveBaseUrl } from './client.js'
 import {
   cmdArenas,
+  cmdCertify,
   cmdCompare,
   cmdPick,
   cmdPickList,
@@ -43,12 +44,18 @@ Commands
                                            $ productarena stacks
   scan <url>                             agent-readiness quick scan of any product site
                                            $ productarena scan https://stripe.com
+  certify <url>                          Agent-Ready certification suite (keyless conformance
+                                         checks run from YOUR machine — see docs/CERTIFICATION.md)
+                                           $ productarena certify https://docs.stripe.com --report cert-report.json
 
 Flags
   --json      machine-readable output (stable shapes — built for scripts and agents)
   --metric M  agentReady (default) | arenaScore | agenticApp | apiQuality | score
   --oss       open-source products only (top, pick)
   --limit N   rows for top (default 10, max 50)
+  --report F  certify: write the machine-verifiable cert-report JSON to F
+  --mcp URL   certify: explicit MCP endpoint (skips the conventional candidates)
+  --api URL   certify: explicit API root for the structured-errors check
   -h, --help  this help
 
 Data is fetched live with a 5-minute cache; PA_BASE_URL overrides the site.
@@ -96,6 +103,9 @@ async function main(): Promise<void> {
     case 'scan':
       need(1, 'scan <url>')
       return cmdScan(ctx, positional[0], flags)
+    case 'certify':
+      need(1, 'certify <url> [--report cert-report.json] [--mcp <url>] [--api <url>]')
+      return cmdCertify(ctx, positional[0], flags)
     default:
       throw new UsageError(`unknown command "${command}" — see productarena --help`)
   }

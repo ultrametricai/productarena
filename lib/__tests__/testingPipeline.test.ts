@@ -38,6 +38,7 @@ function makeData(id: string, products: Product[], stories: Story[], verdicts: V
     claims: {},
     uncertainty: [],
   vendorResponses: [],
+  certifications: [],
   }
 }
 
