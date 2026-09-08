@@ -89,6 +89,11 @@ jobs:
             pnpm tsx pipeline/cli.ts "$stage" --category "$CATEGORY"
             echo "::endgroup::"
           done
+          # Post-derive: refresh the analytic 68% score intervals for this arena — LLM-free,
+          # deterministic (seeded PRNG), and only meaningful after verdicts may have moved.
+          echo "::group::score-intervals"
+          pnpm tsx pipeline/scripts/compute-confidence-intervals.ts --category "$CATEGORY"
+          echo "::endgroup::"
 
       # Prediction layer (LLM-free): open questions for any new close races the refresh
       # created, then settle open ones against the re-derived changelog — generation before

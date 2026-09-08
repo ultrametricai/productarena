@@ -8,6 +8,7 @@ import { isGroupUntested, type CategoryData } from './data-helpers'
 import { hasLogo } from './logos'
 import { type MegaTableAccessGlyph, type MegaTableRow } from './megaTableSort'
 import { metricTrendDelta } from './scoreHistory'
+import { aiEraBandFor, loadScoreIntervals } from './scoreIntervals'
 
 function toClientGlyph(glyph: AccessGlyph, arenaId: string, productId: string): MegaTableAccessGlyph {
   return {
@@ -22,6 +23,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
   const rows: MegaTableRow[] = []
   for (const data of categories) {
     const productById = new Map(data.products.map((p) => [p.id, p]))
+    const intervals = loadScoreIntervals(data.category.id)
     for (const entry of data.rankings.leaderboard) {
       const product = productById.get(entry.productId)
       if (!product) continue
@@ -45,6 +47,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         trendDelta: metricTrendDelta(arenaId, product.id, 'aiEra'),
         agentReadyTrendDelta: metricTrendDelta(arenaId, product.id, 'agentReady'),
         confidence: confidenceFor(data, product.id),
+        interval: aiEraBandFor(intervals, product.id) ?? null,
         access: {
           MCP: toClientGlyph(glyphs.MCP, arenaId, product.id),
           CLI: toClientGlyph(glyphs.CLI, arenaId, product.id),
