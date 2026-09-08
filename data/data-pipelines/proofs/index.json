@@ -1,0 +1,149 @@
+{
+  "generatedAt": "2026-09-08T20:42:15.292Z",
+  "proofs": [
+    {
+      "probeId": "api-auth-challenge",
+      "storyIds": [
+        "agentic-public-api",
+        "agent-builds-pipeline"
+      ],
+      "command": "curl -si https://api.airbyte.com/v1/connections | head -4",
+      "recordedAt": "2026-09-08T20:41:00.766Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "airbyte",
+      "file": "airbyte/api-auth-challenge.txt"
+    },
+    {
+      "probeId": "mcp-stdio-handshake",
+      "storyIds": [
+        "agentic-mcp-server",
+        "agent-operates-pipelines"
+      ],
+      "command": "uv pip install airbyte && printf '<jsonrpc initialize>' | airbyte-mcp  # first-party stdio MCP bundled with PyAirbyte",
+      "recordedAt": "2026-09-08T20:41:00.583Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "airbyte",
+      "file": "airbyte/mcp-stdio-handshake.txt"
+    },
+    {
+      "probeId": "pyairbyte-install-import",
+      "storyIds": [
+        "agentic-sdks",
+        "pipelines-as-code"
+      ],
+      "command": "mktemp -d && uv venv && uv pip install airbyte && python -c \"import airbyte; print('PA_PROBE_OK pyairbyte', version('airbyte'))\"",
+      "recordedAt": "2026-09-08T20:40:31.111Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "airbyte",
+      "file": "airbyte/pyairbyte-install-import.txt"
+    },
+    {
+      "probeId": "cli-version",
+      "storyIds": [
+        "agentic-official-cli"
+      ],
+      "command": "uvx dagster --version",
+      "recordedAt": "2026-09-08T20:41:14.372Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "dagster",
+      "file": "dagster/cli-version.txt"
+    },
+    {
+      "probeId": "scaffold-dev-boot",
+      "storyIds": [
+        "agent-builds-pipeline",
+        "local-dev-testing",
+        "agentic-official-cli"
+      ],
+      "command": "mktemp -d && uvx create-dagster@latest project pa-probe --uv-sync && cd pa-probe && uv run dagster dev -p 13334 & curl http://127.0.0.1:13334/server_info  # scaffold + real webserver boot, keyless",
+      "recordedAt": "2026-09-08T20:41:13.771Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "dagster",
+      "file": "dagster/scaffold-dev-boot.txt"
+    },
+    {
+      "probeId": "cli-version",
+      "productId": "dlt",
+      "storyIds": [
+        "agentic-official-cli"
+      ],
+      "command": "uvx dlt --version",
+      "recordedAt": "2026-09-08T20:42:15.287Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "dlt/cli-version.txt"
+    },
+    {
+      "probeId": "init-scaffold",
+      "productId": "dlt",
+      "storyIds": [
+        "agent-builds-pipeline",
+        "pipelines-as-code",
+        "agentic-official-cli"
+      ],
+      "command": "mktemp -d && uvx --with 'dlt[duckdb]' dlt init chess duckdb && ls && head chess_pipeline.py  # real pipeline scaffold, no credentials",
+      "recordedAt": "2026-09-08T20:42:04.879Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "dlt/init-scaffold.txt"
+    },
+    {
+      "probeId": "mcp-stdio-handshake",
+      "productId": "dlt",
+      "storyIds": [
+        "agentic-mcp-server",
+        "agent-operates-pipelines"
+      ],
+      "command": "printf '<jsonrpc initialize>' | uv run --with 'dlt-mcp[duckdb]' dlt-mcp  # official dltHub MCP, stdio, keyless",
+      "recordedAt": "2026-09-08T20:42:15.002Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "file": "dlt/mcp-stdio-handshake.txt"
+    },
+    {
+      "probeId": "api-auth-challenge",
+      "storyIds": [
+        "agentic-public-api",
+        "agent-operates-pipelines"
+      ],
+      "command": "curl -si https://api.fivetran.com/v1/connectors | head -6",
+      "recordedAt": "2026-09-08T20:41:01.036Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "fivetran",
+      "file": "fivetran/api-auth-challenge.txt"
+    },
+    {
+      "probeId": "hub-registry-api",
+      "storyIds": [
+        "connector-catalog-breadth",
+        "agentic-public-api"
+      ],
+      "command": "curl -sL 'https://hub.meltano.com/meltano/api/v1/plugins/extractors/index' | head -c 400",
+      "recordedAt": "2026-09-08T20:41:28.447Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "meltano",
+      "file": "meltano/hub-registry-api.txt"
+    },
+    {
+      "probeId": "init-scaffold",
+      "storyIds": [
+        "agent-builds-pipeline",
+        "pipelines-as-code",
+        "agentic-official-cli"
+      ],
+      "command": "mktemp -d && uvx meltano init pa-probe && ls pa-probe",
+      "recordedAt": "2026-09-08T20:41:28.033Z",
+      "exitCode": 0,
+      "kind": "terminal",
+      "productId": "meltano",
+      "file": "meltano/init-scaffold.txt"
+    }
+  ]
+}
