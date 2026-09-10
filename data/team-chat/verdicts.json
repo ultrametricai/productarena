@@ -1252,27 +1252,33 @@
     "storyId": "admin-audit-logs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains export/data-management docs (slack-docs-22/23/35/36) but no mention of an audit log feature, admin action logging, or audit log API/export, so there is no evidence Slack delivers this capability despite it being a plausible enterprise feature.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack covers data/workspace export (message history) and MCP/API tooling, but nowhere mentions an audit log feature for admin/user actions (e.g., Enterprise Grid Audit Logs API) — the closest items (slack-docs-22/23/35/36) are about content export, not action auditing, and community evidence even highlights restrictions on exporting workspace data. Missing for 10: any documentation of an audit log API/dashboard tracking admin or user actions, retention/SIEM export details, or independent confirmation of such a feature.",
+    "evidenceIds": [
+      "slack-docs-22",
+      "slack-docs-23",
+      "slack-comm-2",
+      "slack-comm-4"
+    ]
   },
   {
     "productId": "slack",
     "storyId": "agent-channel-member",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Slack's Events API (subscribe to events, Slack calls you) plus Web API (send messages) and app installation (\"Add apps to your Slack workspace\") provide the building blocks for a bot that can be added to a channel and respond when mentioned, and the App Directory includes AI agents like ChatGPT alongside Slack's own Slackbot AI agent. However, the evidence never explicitly documents the app_mention event, bot channel membership, or an end-to-end example of an AI agent joining a channel and replying only when @mentioned. Missing for 10: explicit app_mention/mention-triggered event documentation, a first-party example of an AI agent bot being added as a channel member and conversing on mention, and independent confirmation this works hands-on.",
+    "rationale": "Slack supports bot/app members that can be @mentioned and respond via the Events API (message/app_mention events) and Web API chat.postMessage, and Slack explicitly markets AI agents (Slackbot, ChatGPT/Claude integrations, coding agents) participating in channels when addressed. However, evidence is mostly high-level marketing/docs rather than a concrete step-by-step 'add an agent as a channel member that responds to @mentions' walkthrough, and there's no independent/hands-on confirmation of this exact flow. Missing for 10: a dedicated tutorial/example showing bot channel membership + mention-triggered reply end-to-end, and independent verification that third-party AI agents work this way in practice.",
     "evidenceIds": [
       "slack-docs-6",
       "slack-docs-7",
-      "slack-docs-31",
       "slack-docs-8",
-      "slack-docs-32",
-      "slack-docs-42",
+      "slack-docs-47",
+      "slack-docs-48",
+      "slack-docs-13",
       "slack-docs-14",
-      "slack-docs-21",
-      "slack-docs-39"
+      "slack-docs-37",
+      "slack-docs-39",
+      "slack-docs-55"
     ]
   },
   {
@@ -1281,15 +1287,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slack's Web API (docs-8, docs-32) explicitly supports querying and enacting changes (including posting messages) using scoped OAuth tokens, and the live probe confirms the API is reachable and gated by token auth (probe-5). The official MCP server (docs-2, docs-28, docs-29) further exposes searching, sending, and retrieving messages for agent clients, and the hands-on MCP handshake probe confirms it is a live, auth-gated endpoint (probe-6). missing for 10: no first-party walkthrough showing an agent posting via scoped bot token end-to-end, and no independent third-party confirmation of successful message read/post via API.",
+    "rationale": "Slack's Web API (docs.slack.dev/apis/web-api, chat.postMessage) explicitly supports posting and reading channel messages via scoped bot/user tokens, and the official OpenAPI spec confirms coverage of user/bot token scopes; the MCP server further lets agents search, read, and send messages with admin-controlled scoped integrations. A live probe confirms the documented Web API endpoint is real and token-gated as described. Missing for 10: independent hands-on confirmation of an actual scoped chat.postMessage/read call succeeding (only the keyless api.test endpoint was probed) and no third-party audit of token scope enforcement.",
     "evidenceIds": [
       "slack-docs-8",
       "slack-docs-32",
-      "slack-docs-2",
+      "slack-docs-48",
       "slack-docs-28",
       "slack-docs-29",
+      "slack-docs-46",
       "slack-probe-5",
-      "slack-probe-6"
+      "slack-supp-openapi-spec"
     ]
   },
   {
@@ -1298,30 +1305,29 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Slack has a live, working llms.txt at docs.slack.dev/llms.txt (HTTP 200, describing the developer docs as agent-oriented), confirmed by a direct probe, plus extensive agent-oriented documentation (MCP server docs, CLI, Web API, Events API) that an agent could be pointed at. Missing for 10: independent/community corroboration of agents actually consuming llms.txt in practice.",
+    "rationale": "A live probe confirms docs.slack.dev/llms.txt returns HTTP 200 with a description explicitly framed for agents building on 'apps, agents, workflows,' and Slack also maintains extensive agent-oriented docs (MCP server, AI features, Web API) that such an llms.txt-aware agent could consume. Missing for 10: independent/third-party confirmation that agents actually consume this llms.txt successfully in practice.",
     "evidenceIds": [
       "slack-probe-1",
       "slack-docs-2",
-      "slack-probe-3",
-      "slack-docs-9"
+      "slack-docs-28",
+      "slack-probe-3"
     ]
   },
   {
     "productId": "slack",
     "storyId": "agentic-ai-insights",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Slack's first-party docs describe multiple AI-generated insight features surfaced directly in-product: daily 'Today' briefings, Slackbot AI agent for meeting prep/report analysis/project briefs, channel/thread summarization and recaps, AI-powered search across integrated data sources, and huddle note-taking with action items — all delivered natively within Slack's UI. This directly matches the story of getting AI-generated insights from one's own workspace data inside the product.  Missing for 10: independent/hands-on verification of summarization or briefing quality, and no detail on accuracy or limitations of these AI features.",
+    "rationale": "Slack ships native AI features (Slackbot AI agent, daily briefings, channel/thread summarization, cross-app search insights, AI meeting notes) that generate insights and suggestions directly from workspace data per first-party docs. Missing for 10: independent/hands-on verification of insight quality and no community corroboration of these AI features specifically (only unrelated complaints exist).",
     "evidenceIds": [
       "slack-docs-13",
       "slack-docs-14",
       "slack-docs-15",
       "slack-docs-16",
-      "slack-docs-19",
-      "slack-docs-34",
-      "slack-docs-38",
-      "slack-docs-39"
+      "slack-docs-44",
+      "slack-docs-55",
+      "slack-docs-57"
     ]
   },
   {
@@ -1330,32 +1336,36 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Slack's Workflow Builder lets users set up no-code automations triggered by events or external webhooks, including conditional branching, which run autonomously in the background without manual invocation once configured (slack-docs-10, slack-docs-11, slack-docs-12, slack-docs-41). The Events API further supports background-triggered automations that fire when Slack detects relevant activity (slack-docs-6, slack-docs-7, slack-docs-31). Missing for 10: independent/hands-on verification of long-running autonomous workflows in production, and clearer tie-in to AI-driven (vs. simple rule-based) automation logic.",
+    "rationale": "Slack's Workflow Builder supports no-code automations triggered by external events (webhook triggers) and conditional branching, and the Events API lets apps react to workspace activity in the background without a user present; AI agents can also read/write Slack Lists directly via the MCP server, enabling autonomous background actions. missing for 10: explicit documentation of scheduled/time-based triggers, independent hands-on verification that these automations run reliably unattended, and clearer framing of 'AI-native' agent-initiated automations beyond Lists.",
     "evidenceIds": [
       "slack-docs-10",
       "slack-docs-11",
       "slack-docs-12",
       "slack-docs-41",
+      "slack-docs-50",
+      "slack-docs-51",
       "slack-docs-6",
       "slack-docs-7",
-      "slack-docs-31"
+      "slack-docs-31",
+      "slack-docs-47",
+      "slack-docs-58"
     ]
   },
   {
     "productId": "slack",
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Slack ships built-in AI (Slackbot as \"personal AI agent\", AI-generated huddle notes, channel/thread summaries, daily recaps, and integrated assistants like Claude) directly inside the product, letting users delegate tasks such as meeting prep, report analysis, and note-taking without leaving Slack. Missing for 10: independent/hands-on verification of task delegation quality and outcomes, and detail on the scope/limits of what Slackbot can autonomously execute versus just summarize.",
+    "rationale": "Slack documents Slackbot as a built-in 'personal AI agent' that can be asked to prepare briefings, analyze reports, draft project briefs, answer open-ended questions, and update CRM deals, plus AI-generated summaries/recaps and meeting notes — all delivered natively inside Slack without external tools (slack-docs-13,14,15,17,38,55,57). This is first-party marketing/docs evidence with no independent hands-on corroboration of task delegation actually working end-to-end. Missing for 10: independent or hands-on verification of Slackbot task delegation, and clearer documentation of the range/reliability of delegable tasks beyond summarization and briefings.",
     "evidenceIds": [
       "slack-docs-13",
       "slack-docs-14",
       "slack-docs-15",
-      "slack-docs-19",
+      "slack-docs-17",
       "slack-docs-38",
-      "slack-docs-39",
-      "slack-docs-17"
+      "slack-docs-55",
+      "slack-docs-57"
     ]
   },
   {
@@ -1364,15 +1374,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Slack's Web API, Events API (webhooks/HTTP endpoints), and CLI/Bolt framework are all designed for programmatic, non-interactive use and were confirmed live (slack-probe-5 shows the Web API responding without a browser session), enabling headless automation in CI-like pipelines. However, there is no explicit documentation of Slack CLI/apps running inside CI systems, no CI/CD integration guides, and the MCP server requires auth tokens (slack-probe-6) rather than being a turnkey CI tool.\nmissing for 10: explicit CI/CD pipeline documentation, GitHub Actions/other CI examples, headless test/automation guides for Slack CLI or Bolt apps.",
+    "rationale": "Slack's Web API, Events API, CLI, and webhook triggers for Workflow Builder all support headless/programmatic automation (e.g. chat.postMessage, webhook-triggered workflows, Bolt CLI project scaffolding), which is commonly used from CI pipelines to post notifications or trigger workflows without a UI. However there is no explicit CI/CD documentation, GitHub Actions example, or dedicated 'headless mode' guide in the evidence pack, and the CLI (`slack create`, `slack deploy`) is oriented toward interactive app development rather than pure CI automation. Missing for 10: explicit CI/CD integration docs or examples, and independent/community confirmation of headless CI usage.",
     "evidenceIds": [
       "slack-docs-8",
-      "slack-docs-9",
+      "slack-docs-48",
+      "slack-docs-7",
       "slack-docs-31",
+      "slack-docs-11",
+      "slack-docs-9",
       "slack-docs-26",
       "slack-probe-4",
-      "slack-probe-5",
-      "slack-probe-6"
+      "slack-probe-5"
     ]
   },
   {
@@ -1381,27 +1393,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Slack shipping its own official MCP *server* (docs-2, docs-28, probe-3, probe-6) so other AI clients can call Slack's tools — the reverse direction of this story. There is no evidence that Slack itself acts as an MCP client, letting users plug external MCP servers into Slack so its AI features (Slackbot, agents) can call those servers' tools. Missing for 10: any documentation of Slack consuming/connecting to third-party MCP servers, a settings UI or API for registering external MCP servers, or first-party/community confirmation that Slack's AI agents can invoke tools from arbitrary MCP servers.",
+    "rationale": "The evidence shows Slack publishing its own official MCP server so external MCP clients (Claude, agents, etc.) can call Slack's tools (search, send messages, canvases, lists) — this is Slack acting as an MCP server/provider, not as a client that itself ingests third-party MCP servers to gain their tools. There is no evidence that Slack (e.g., Slackbot or its AI agent features) lets a user plug in arbitrary external MCP servers so Slack's own AI can use those tools. missing for 10: any documentation of Slack's AI/agent features consuming external MCP servers as a client, configuration UI/API for adding MCP server URLs to Slackbot, and community/hands-on confirmation of such client-side MCP support.",
     "evidenceIds": [
       "slack-docs-2",
       "slack-docs-28",
       "slack-probe-3",
       "slack-probe-6",
-      "slack-docs-37"
+      "slack-docs-46"
     ]
   },
   {
     "productId": "slack",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Slack ships an official documented MCP server (docs.slack.dev/ai/slack-mcp-server) exposing tools for search, messaging, canvases, lists, users, and file uploads, and a live hands-on probe confirms a real MCP endpoint (api.slack.com/mcp) responding to JSON-RPC initialize (auth-gated as expected). This is first-party and independently verified via hands-on probing. Missing for 10: no independent third-party community write-up of using the MCP server in production beyond the vendor docs and probe.",
+    "rationale": "Slack documents an official MCP server (docs.slack.dev/ai/slack-mcp-server/) exposing tools for search, messaging, canvases, lists, and file uploads, with admin approval controls for MCP client integrations, and a live hands-on probe confirms the remote endpoint at api.slack.com/mcp is reachable and auth-gated as expected. This directly satisfies the story of connecting an agent to Slack via an official MCP server. Missing for 10: independent/community corroboration of real-world agent connections and more detail on the connection/auth flow beyond the token-gated handshake.",
     "evidenceIds": [
       "slack-docs-2",
       "slack-docs-28",
-      "slack-docs-29",
-      "slack-docs-30",
+      "slack-docs-46",
       "slack-probe-3",
       "slack-probe-6"
     ]
@@ -1412,14 +1423,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Slack ships genuine natural-language AI features for end users — Slackbot as an 'AI agent' that answers questions, summarizes channels/threads, and lets users 'update deals just by asking Slackbot' or 'get fast answers with Claude' — showing users can already interact conversationally rather than via rigid UI clicks. However, most deeper actions (workflow automation, canvases, list management) still rely on no-code Workflow Builder or the MCP server aimed at external AI clients/agents rather than the human user issuing free-form NL commands for arbitrary actions. Missing for 10: evidence of broad NL-driven action execution (e.g., creating workflows, managing files/canvases) directly by a human user's natural-language command, and independent/hands-on confirmation of Slackbot's command scope beyond marketing copy.",
+    "rationale": "Slack markets Slackbot as an AI agent that lets users get answers, updates, and briefings via natural language (e.g., 'Update deals just by asking Slackbot', 'Get fast answers with Claude', Slackbot 'understands you and your workspace'), plus AI-driven summarization/search across integrated content, indicating natural-language operation is a real, documented capability rather than just a developer API. missing for 10: independent/hands-on verification of natural-language command accuracy or breadth, concrete examples of command syntax/results, and detail on limitations of the AI agent's natural-language understanding.",
     "evidenceIds": [
       "slack-docs-13",
       "slack-docs-14",
       "slack-docs-15",
+      "slack-docs-17",
       "slack-docs-38",
       "slack-docs-39",
-      "slack-docs-17"
+      "slack-docs-55",
+      "slack-docs-57",
+      "slack-docs-52"
     ]
   },
   {
@@ -1428,13 +1442,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slack ships an official CLI for developing Slack apps (docs.slack.dev/tools/slack-cli), with commands like `slack create` for scaffolding Bolt projects, confirmed by both docs and a live probe. This CLI is aimed at building agentic/AI apps on the platform, aligning with the ai-native/agenticness theme, though it's a developer/app-building tool rather than an end-user AI chat CLI. Missing for 10: independent/hands-on community corroboration of the CLI's AI-native workflows and more detail on CLI feature depth beyond scaffolding commands.",
+    "rationale": "Slack ships an official CLI (docs.slack.dev/tools/slack-cli) for creating and managing Slack apps, with commands like `slack create` for Bolt project scaffolding, confirmed via docs and a live probe. It's aimed at app/agent development (relevant to AI-native workflows building bots/agents), though it's a general app-dev CLI rather than specifically 'AI-native' branded. Missing for 10: independent/hands-on community corroboration of the CLI's usability, and no evidence of AI-specific CLI features beyond general app scaffolding.",
     "evidenceIds": [
       "slack-docs-9",
       "slack-docs-26",
       "slack-docs-40",
-      "slack-probe-4",
-      "slack-docs-1"
+      "slack-docs-60",
+      "slack-probe-4"
     ]
   },
   {
@@ -1443,16 +1457,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Slack documents and exposes a public Web API (with live probe confirming the endpoint responds), an Events API for real-time push, a CLI, and SDK/Bolt tooling, giving AI-native developers multiple documented ways to programmatically drive the product. Missing for 10: a discoverable formal OpenAPI/Swagger spec (probe found only 404s) and independent third-party corroboration beyond Slack's own docs.",
+    "rationale": "Slack ships an extensively documented Web API and Events API, an OpenAPI spec repo, an official CLI/SDKs, and a live keyless-reachable test endpoint confirming the API is real and callable, giving AI-native users clear, documented programmatic access. missing for 10: no independent third-party hands-on report of a full agentic workflow built purely against the public API (only first-party docs and probes).",
     "evidenceIds": [
       "slack-docs-8",
       "slack-docs-32",
-      "slack-docs-6",
       "slack-docs-7",
       "slack-docs-9",
-      "slack-probe-4",
+      "slack-supp-openapi-spec",
+      "slack-probe-2",
       "slack-probe-5",
-      "slack-probe-2"
+      "slack-docs-48"
     ]
   },
   {
@@ -1461,10 +1475,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Slack's Web API and MCP server require scoped bot/user tokens rather than open access (slack-probe-5, slack-probe-6), and the MCP endpoint is auth-gated, implying a credentialing system exists, but the evidence pack never documents how an AI-native user actually creates/scopes an OAuth token to least-privilege permissions for an agent specifically, nor any per-agent scope management UI or docs. Missing for 10: explicit docs on OAuth scope selection/granularity for agent tokens, guidance on least-privilege token issuance workflow, and independent confirmation that scopes can be finely restricted for an AI agent use case.",
+    "rationale": "Slack's Web API is documented as using scoped bot/user tokens (slack-probe-5, slack-supp-openapi-spec) and admins can approve/manage MCP client integrations for governance (slack-docs-46), which supports issuing least-privilege credentials for agent integrations. However, the evidence pack lacks explicit documentation of a scope-selection workflow, per-agent token issuance UI, or examples of restricting an agent's OAuth scopes specifically. Missing for 10: dedicated docs on creating/limiting OAuth scopes per agent, a scope-selection reference for MCP/agent use cases, and independent confirmation that least-privilege scoping works as intended in agent contexts.",
     "evidenceIds": [
       "slack-probe-5",
-      "slack-probe-6",
+      "slack-docs-46",
+      "slack-supp-openapi-spec",
       "slack-docs-8",
       "slack-docs-32"
     ]
@@ -1475,17 +1490,22 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slack ships an official CLI (slack-docs-9, slack-probe-4), Bolt SDK starter templates (slack-docs-26/40), a documented Web API (slack-docs-8/32, live-verified in slack-probe-5), Events API for realtime integration (slack-docs-6/7/31), and an official MCP server (slack-docs-2/28, live-verified via slack-probe-6), giving AI-native developers multiple official, hands-on-verified SDK/tooling paths. Missing for 10: no OpenAPI spec found (slack-probe-2 shows 404s) and no independent third-party corroboration beyond first-party docs/probes.",
+    "rationale": "Slack provides an extensive first-party developer platform for AI-native building: official CLI and Bolt SDK (docs-1, docs-9, docs-26/40/60), Web API and Events API (docs-8/32, docs-6/7/31/47), a documented official MCP server for AI agent integration (docs-2/28/46, probe-3), a live authenticated remote MCP endpoint (slack-probe-6), and official OpenAPI/AsyncAPI specs published in slackapi/slack-api-specs (slack-supp-openapi-spec), plus a developer sandbox for safe testing (docs-49/62). Missing for 10: a directly hosted openapi.json at docs.slack.dev (404s per slack-probe-2) and independent hands-on developer testimonials validating SDK ergonomics beyond Slack's own docs.",
     "evidenceIds": [
+      "slack-docs-1",
       "slack-docs-9",
       "slack-docs-26",
       "slack-docs-8",
+      "slack-docs-32",
+      "slack-docs-6",
+      "slack-docs-47",
       "slack-docs-2",
       "slack-docs-28",
+      "slack-docs-46",
       "slack-probe-3",
-      "slack-probe-4",
-      "slack-probe-5",
-      "slack-probe-6"
+      "slack-probe-6",
+      "slack-supp-openapi-spec",
+      "slack-docs-49"
     ]
   },
   {
@@ -1494,12 +1514,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slack's Events API explicitly supports webhook-style event subscriptions ('Slack calls you'), with the ability to subscribe to specific events and receive them via a public HTTP endpoint or Socket Mode, plus Workflow Builder's webhook triggers for external event kick-off — both well-documented first-party capabilities directly matching the story. Missing for 10: independent/hands-on verification of the Events API webhook flow (only the Web API and MCP endpoints were probed live) and more detail on event payload/subscription management UX.",
+    "rationale": "Slack's Events API is a well-documented webhook-style subscription system: apps can 'subscribe to only the events you want' and Slack pushes events via a public HTTP endpoint (or Socket Mode) so 'Slack calls you.' Workflow Builder also supports webhook triggers to start workflows from outside Slack, reinforcing agentic/event-driven integration patterns. Missing for 10: independent/hands-on confirmation of the Events API webhook delivery in production and more detail on payload/retry semantics beyond docs claims.",
     "evidenceIds": [
       "slack-docs-6",
       "slack-docs-7",
       "slack-docs-31",
-      "slack-docs-11"
+      "slack-docs-47",
+      "slack-docs-11",
+      "slack-docs-50"
     ]
   },
   {
@@ -1508,13 +1530,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Slack's official AI features page directly claims channel/thread summarization and daily recaps ('AI in Slack can summarize channels and threads and serve up daily recaps') plus an intelligent briefing feature, matching the story closely with first-party documentation. Missing for 10: independent/hands-on verification of summary quality and coverage across all channel types, and no third-party corroboration of accuracy.",
+    "rationale": "Slack's first-party AI features docs explicitly state AI in Slack can summarize channels and threads and serve daily recaps (slack-docs-15), backed by Slackbot as an intelligent daily briefing/agent (slack-docs-13, slack-docs-14) and huddle note-taking/recaps (slack-docs-19, slack-docs-34). This directly matches the story of AI-generated summaries/recaps of missed channels/threads. Missing for 10: independent/hands-on verification of summary quality or accuracy, and no community evidence corroborating real-world reliability of this specific feature (community evidence pack focuses on unrelated pain points like pricing/export/threads UX).",
     "evidenceIds": [
       "slack-docs-13",
       "slack-docs-14",
       "slack-docs-15",
-      "slack-docs-16",
-      "slack-docs-17"
+      "slack-docs-19",
+      "slack-docs-34"
     ]
   },
   {
@@ -1523,38 +1545,41 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Slack's docs explicitly state AI takes huddle notes with key takeaways, action items, and speaker attribution automatically organized when a huddle ends, plus daily recaps/summaries of channels and threads for missed content. This directly matches the story of getting AI notes/recaps for attended or missed meetings. Missing for 10: independent hands-on verification of huddle note accuracy/quality, and no explicit mention of recaps for formal 'meetings' (calls) beyond huddles/channels.",
+    "rationale": "Slack's docs directly claim AI note-taking for huddles (key takeaways, action items, who said what compiled at huddle end) and AI-generated channel/thread summaries and daily recaps for content missed, matching the story's core ask. Missing for 10: independent/hands-on corroboration of huddle-note accuracy or completeness, and no explicit confirmation that recaps cover 'missed' meetings specifically (recaps are framed around channels/threads more than scheduled meetings).",
     "evidenceIds": [
       "slack-docs-19",
       "slack-docs-34",
-      "slack-docs-20",
       "slack-docs-15",
       "slack-docs-17",
       "slack-docs-44",
-      "slack-docs-14"
+      "slack-docs-20",
+      "slack-docs-53"
     ]
   },
   {
     "productId": "slack",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Slack's Web API docs (slack-docs-8, slack-docs-32) describe endpoints but there's no evidence of an interactive API reference with runnable/live examples (e.g., a Swagger/OpenAPI explorer); the probe explicitly found no OpenAPI spec at any expected location (slack-probe-2). This axis applies to a developer platform but no evidence supports it.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Slack has a documented Web API reference (e.g. chat.postMessage method docs) and a separate official OpenAPI/AsyncAPI spec repo, plus a keyless api.test endpoint that can be hit directly, showing some API exploration surface. However, there is no evidence of an interactive in-docs 'try it' console with runnable examples embedded in docs.slack.dev itself (openapi.json probes 404 on the docs site), so the 'interactive reference' claim is only partially supported. Missing for 10: an in-browser runnable API console, live code-example execution within docs.slack.dev, and independent confirmation of interactivity.",
     "evidenceIds": [
-      "slack-docs-8",
-      "slack-docs-32",
-      "slack-probe-2"
+      "slack-docs-48",
+      "slack-supp-openapi-spec",
+      "slack-probe-2",
+      "slack-probe-5",
+      "slack-docs-32"
     ]
   },
   {
     "productId": "slack",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Slack documents its Web API and event API extensively but a direct probe for machine-readable OpenAPI/swagger specs at expected locations returned 404 on all candidate paths, and no other evidence pack item links to a downloadable OpenAPI/JSON spec.",
+    "rationale": "An official OpenAPI 2.0 spec for the Web API (and AsyncAPI spec for Events API) exists in the slackapi/slack-api-specs GitHub repo, satisfying the core ask of a machine-readable spec. However, live probes show the obvious/expected locations on docs.slack.dev (openapi.json, swagger.json, etc.) all 404, meaning the spec isn't directly downloadable from the primary docs site and requires knowing about a separate GitHub repo. Missing for 10: direct download link from docs.slack.dev, first-party documentation pointing users to the spec repo, and independent confirmation the spec is kept in sync with the live API.",
     "evidenceIds": [
+      "slack-supp-openapi-spec",
       "slack-probe-2",
       "slack-docs-8",
       "slack-docs-32"
@@ -1563,26 +1588,27 @@
   {
     "productId": "slack",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "No evidence in the pack mentions a sandbox, staging, or dedicated development workspace for testing Slack apps/bots/MCP integrations separate from production data; docs only cover CLI, MCP server tools, Web/Events APIs, and workflow builder without any sandboxing guidance.",
-    "evidenceIds": []
+    "rationale": "Slack's official docs describe a 'developer sandbox' as an Enterprise org environment explicitly built to let developers 'build against all Slack features safely and securely' and 'empower teams to build without putting production at risk,' directly matching the story of testing without touching production data. However, missing for 10: independent/hands-on confirmation of the sandbox in use, clarity on whether this is available outside Enterprise plans, and detail on how it isolates AI/agent-specific testing (e.g., MCP server or bot testing) within that sandbox.",
+    "evidenceIds": [
+      "slack-docs-49",
+      "slack-docs-62"
+    ]
   },
   {
     "productId": "slack",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Slack has a live, documented Web API and Events API (and even an OpenAPI probe attempt that 404s), but nothing in the pack references API versioning, version numbers, or a documented deprecation policy/timeline for retiring old API versions or endpoints. Without such documentation, an AI-native user cannot verify Slack commits to a stable, versioned API lifecycle. Missing for 10: explicit API versioning scheme, changelog/deprecation notices, migration guides, sunset timelines for old endpoints.",
+    "rationale": "Slack maintains official OpenAPI specs for its Web API and a dated, running deprecation changelog with explicit migration windows (e.g., classic app deprecation date), which supports documented deprecation policy; the Web API and Events API references also show first-party API documentation. However, there's no explicit evidence of a formal API versioning scheme (e.g., v1/v2 endpoint versioning) beyond method-level docs and changelog dates. Missing for 10: explicit versioning scheme documentation, independent/community corroboration of deprecation practices being honored reliably.",
     "evidenceIds": [
+      "slack-supp-openapi-spec",
+      "slack-supp-deprecations",
       "slack-docs-8",
-      "slack-docs-32",
-      "slack-docs-6",
-      "slack-docs-7",
-      "slack-probe-2",
-      "slack-probe-5"
+      "slack-docs-32"
     ]
   },
   {
@@ -1591,10 +1617,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slack explicitly documents an App Directory with 2,600+ apps and a help article on adding apps to a workspace, which is exactly the admin-installs-prebuilt-integrations story. Missing for 10: no evidence on admin-specific approval/permission controls for app installs or independent third-party corroboration of the directory experience.",
+    "rationale": "Slack explicitly advertises an App Directory with 2,600+ prebuilt apps (Salesforce, Jira, Google Drive, ChatGPT, etc.) and a help doc specifically for admins on how to add apps to a workspace. This directly matches the team-admin persona and app-platform theme. missing for 10: independent/hands-on confirmation of the admin install/approval workflow beyond the docs, and no detail on admin-specific approval controls for directory apps (only MCP client approval is mentioned).",
     "evidenceIds": [
       "slack-docs-21",
-      "slack-docs-42"
+      "slack-docs-42",
+      "slack-docs-54"
     ]
   },
   {
@@ -1617,31 +1644,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Slack's Web API, MCP server, and CLI operate on individual items (search, send one message, upload one file, create one canvas/list) with no documented batch/bulk endpongs or bulk-action tooling for AI agents to act across many items at once. Workflow Builder and other automation features are single-trigger, not bulk-oriented.",
-    "evidenceIds": [
-      "slack-docs-8",
-      "slack-docs-28",
-      "slack-docs-29",
-      "slack-docs-3",
-      "slack-docs-30",
-      "slack-probe-5"
-    ]
+    "rationale": "Evidence shows Slack's Web API, MCP server, and Workflow Builder operate on single items (send one message, upload one file, create one list) with no documented batch/bulk endpoints or mechanisms for operating on many items in one call. Export tools exist but are for full-workspace data export, not scriptable bulk item operations for an AI-native workflow.",
+    "evidenceIds": []
   },
   {
     "productId": "slack",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Slack Workflow Builder supports event-triggered automations with triggers, conditional branching, and webhook triggers, plus Events API for programmatic event-driven actions and a Web API for enacting changes — together enabling rule-based automatic actions on events. missing for 10: independent/hands-on verification of Workflow Builder's trigger-action rules in practice, and no evidence of AI-specific conditional rule authoring (e.g., natural-language rule definition) beyond generic workflow triggers.",
+    "rationale": "Slack's Workflow Builder lets users define triggers, conditional branches, and webhook-based automations that fire actions on events (message posted, emoji reaction, webhook call, etc.), directly matching the story; the Events API further supports event-driven automation. missing for 10: independent/hands-on verification of workflow trigger reliability and no evidence of AI-native rule authoring beyond no-code builder.",
     "evidenceIds": [
       "slack-docs-10",
       "slack-docs-11",
       "slack-docs-12",
+      "slack-docs-50",
+      "slack-docs-51",
       "slack-docs-6",
       "slack-docs-7",
-      "slack-docs-8",
-      "slack-docs-31"
+      "slack-docs-47"
     ]
   },
   {
@@ -1650,13 +1671,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Slack's Workflow Builder is documented with triggers (webhook, branching) and general automation capability, but no evidence explicitly describes a 'scheduled' or 'recurring' trigger type for jobs/workflows; the MCP server and Web/Events APIs also lack any documented scheduling primitive. Missing for 10: explicit documentation of a scheduled/recurring trigger in Workflow Builder or MCP server, and any cron-like automation mechanism.",
+    "rationale": "Slack's Workflow Builder is documented as a no-code automation tool with webhook triggers and conditional branching, which are automation-depth building blocks, but the evidence never explicitly mentions a 'scheduled' or 'recurring' trigger type for jobs/workflows. AI-native automation is described mostly around single-shot chat/AI features (summaries, briefings) rather than recurring job scheduling. missing for 10: explicit documentation of scheduled/recurring trigger type in Workflow Builder, independent confirmation of recurring automation use, and any AI-agent-specific recurring job scheduling capability.",
     "evidenceIds": [
       "slack-docs-10",
       "slack-docs-11",
       "slack-docs-12",
       "slack-docs-41",
-      "slack-docs-17"
+      "slack-docs-50",
+      "slack-docs-51"
     ]
   },
   {
@@ -1664,13 +1686,15 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Slack's Workflow Builder is documented for creating/editing workflows and branching logic, but no evidence describes version history, change review, or rollback capability for automations. missing for 10: version history for workflows, diff/review UI, rollback/undo mechanism, audit trail for automation changes.",
+    "confidence": "medium",
+    "rationale": "Slack's Workflow Builder and app-building docs (workflow steps, triggers, branching) are described, but no evidence anywhere in the pack mentions version history, change review, or rollback/undo capability for workflows or automations built in Slack.",
     "evidenceIds": [
       "slack-docs-10",
-      "slack-docs-41",
       "slack-docs-11",
-      "slack-docs-12"
+      "slack-docs-12",
+      "slack-docs-41",
+      "slack-docs-50",
+      "slack-docs-51"
     ]
   },
   {
@@ -1678,8 +1702,8 @@
     "storyId": "custom-slash-commands",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "While the evidence shows Slack has an app platform (CLI, Bolt starter templates, Web/Events APIs) for building custom functionality, none of the provided evidence specifically documents a slash-command registration feature for developers. Missing for 10: explicit docs/reference on defining or registering custom slash commands invoked from the message box.",
+    "confidence": "high",
+    "rationale": "No evidence item explicitly documents Slack's slash-command feature (registration or invocation) — the pack covers CLI, Bolt, Web API, Events API, Workflow Builder and MCP server but never mentions slash commands. Per evidence-only judging rules, absence of evidence for this capability yields 'none' even though the axis clearly applies to an app platform like Slack.",
     "evidenceIds": []
   },
   {
@@ -1687,8 +1711,8 @@
     "storyId": "external-guest-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of guest accounts, shared/external channels, or externally-scoped access controls anywhere in the docs, community, or probes. While this is a well-known Slack feature category, none of the provided evidence supports it, so per the rules absence of evidence for an applicable capability yields 'none'.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of guest accounts, Slack Connect, or shared channels with restricted external access—core admin features for cross-org collaboration. Nothing in the docs, community, or probe items addresses this capability at all.",
     "evidenceIds": []
   },
   {
@@ -1708,14 +1732,14 @@
     "productId": "slack",
     "storyId": "full-history-search",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Slack docs confirm searchability across all shared content and unlimited message history on paid plans (slack-docs-43, slack-docs-16), which supports team-admin search of message history, but the evidence never documents specific filter operators like sender, channel, or date scoping. Community evidence also notes that on free/lower tiers older messages disappear after limits, undercutting the 'full history' claim (slack-comm-10, slack-comm-15). missing for 10: explicit documentation of sender/channel/date search filters, admin-specific search tooling, and independent confirmation that filtered search works as described.",
+    "rationale": "Slack docs confirm full, unlimited searchable message history (slack-docs-43, slack-docs-16/52) and Slack's native search supports filtering, but the evidence pack does not explicitly document admin-specific advanced search operators (from:, in:, before:/after:) or an admin-console-level cross-workspace search UI beyond general user search claims; the MCP server also offers 'searching through Slack' but is a separate API-driven tool rather than the admin search UI itself. missing for 10: explicit documentation of native in-app search filter syntax (sender/channel/date), evidence of admin-level search scope (e.g. Enterprise-wide search across workspaces), and independent/hands-on confirmation of filter functionality.",
     "evidenceIds": [
       "slack-docs-43",
       "slack-docs-16",
-      "slack-comm-10",
-      "slack-comm-15"
+      "slack-docs-52",
+      "slack-docs-28"
     ]
   },
   {
@@ -1723,20 +1747,21 @@
     "storyId": "granular-notifications",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of Slack's notification preferences, keyword alerts, per-channel muting, or do-not-disturb scheduling features — the closest items (Events API subscriptions, Workflow Builder) are unrelated to personal notification tuning. Without evidence, this applicable axis cannot be credited even though it is plausible for this product category.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no documentation or community mentions of Slack's per-channel notification settings, keyword alerts, or Do Not Disturb/schedule controls; it only covers MCP servers, Web/Events APIs, huddles, AI features, and pricing/export disputes. This is clearly an applicable axis for a messaging platform like Slack, but nothing in the pack substantiates the capability.",
     "evidenceIds": []
   },
   {
     "productId": "slack",
     "storyId": "incoming-webhook-post",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "The evidence pack only shows webhook triggers for Workflow Builder (starting a workflow from outside Slack via a webhook), which can be configured to post a message, but this requires building a workflow rather than the classic simple 'incoming webhook URL that posts to a channel' feature. No direct documentation of a dedicated Incoming Webhooks app/URL is present in the pack. Missing for 10: explicit incoming webhook app documentation, a simple curl/webhook-to-channel example, and independent confirmation that this simple posting mechanism works as described.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Slack's docs evidence shows webhook-based triggers for Workflow Builder (\"how to start a workflow from outside of Slack\") and the chat.postMessage Web API method for sending messages, both of which can be used to post into a channel from an external system, but neither is the classic single-URL 'Incoming Webhook' integration developers commonly expect. Missing for 10: explicit documentation of the dedicated Incoming Webhooks app/URL for zero-config posting, and any hands-on confirmation that a bare webhook POST (without workflow setup or OAuth token) posts a message.",
     "evidenceIds": [
       "slack-docs-11",
-      "slack-docs-41",
+      "slack-docs-50",
+      "slack-docs-48",
       "slack-docs-8"
     ]
   },
@@ -1744,13 +1769,16 @@
     "productId": "slack",
     "storyId": "interactive-app-ui",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence confirms Slack has a CLI/Bolt SDK and Web API for building and modifying app behavior, plus workflow branching that presents users with different interactive options, which gestures toward interactive app UI. However, none of the evidence explicitly documents Block Kit, modals, buttons, or structured message layouts — the specific building blocks the story asks about. Missing for 10: explicit documentation of modals, buttons/interactive components, and Block Kit message layout building, plus any hands-on/independent confirmation of these UI primitives.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Evidence confirms Slack's app-building stack (Bolt SDK starter templates, chat.postMessage API, Events API, CLI, developer sandboxes, workflow branching, canvas creation) which are the building blocks for rich in-chat apps, but the pack never explicitly names Block Kit, modals, buttons, or structured interactive message layouts. Missing for 10: explicit documentation of Block Kit UI components, modal/dialog surfaces, interactive button/select elements, and hands-on examples of building rich chat UI beyond plain messages/canvases.",
     "evidenceIds": [
-      "slack-docs-8",
-      "slack-docs-9",
       "slack-docs-26",
+      "slack-docs-60",
+      "slack-docs-48",
+      "slack-docs-9",
+      "slack-docs-49",
+      "slack-docs-4",
       "slack-docs-12"
     ]
   },
@@ -1760,12 +1788,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slack's Workflow Builder is explicitly documented as a no-code way to build workflows inside Slack, supporting triggers, webhook triggers, conditional branching, and form-based steps, which directly matches the story of event/schedule/form-triggered no-code automation for admins. Missing for 10: independent/hands-on verification of Workflow Builder in use, and explicit documentation of schedule-based triggers alongside event and webhook triggers.",
+    "rationale": "Slack's Workflow Builder is documented as a no-code way to build workflows directly in Slack, supporting event/schedule/form-submission triggers, webhook triggers, and conditional branching. missing for 10: independent/hands-on corroboration of the builder in use, and detail on schedule-based triggers specifically beyond webhook/event mentions.",
     "evidenceIds": [
       "slack-docs-10",
       "slack-docs-11",
       "slack-docs-12",
-      "slack-docs-41"
+      "slack-docs-41",
+      "slack-docs-50",
+      "slack-docs-51"
     ]
   },
   {
@@ -1774,16 +1804,18 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Slack exposes a broad Web API, Events API, MCP server, and CLI covering messaging, search, files, canvases, lists, and workspace actions, suggesting strong parity between UI and API. However, community evidence shows real limits to 'everything': export of DMs/private channels requires special corporate approval rather than being freely available via API/UI parity (slack-comm-2), and moderation tooling is described as weak/nonexistent compared to UI-driven alternatives (slack-comm-9), indicating some UI-configurable behaviors aren't fully API-accessible or are gated. missing for 10: evidence of full parity for admin/compliance features, unrestricted data export via API, and moderation/workflow-builder actions being fully scriptable without UI-only gating.",
+    "rationale": "Slack ships a broad Web API, Events API, official CLI, Bolt SDK, MCP server, and Workflow Builder webhook triggers that cover messaging, search, canvases, lists, files, and automation (slack-docs-8,32,48,9,28,29,3,30,11). However, several UI-native capabilities have no clean API equivalent (huddles are UI-only real-time audio/video; Slackbot AI briefing/notes are UI features without documented API parity) and community evidence shows real restrictions on core actions like exporting DMs/private channels, which require legal/compliance approval rather than open API access (slack-comm-2). Missing for 10: API/CLI parity for huddles and real-time collaboration features, unrestricted programmatic export of all workspace data, and independent confirmation that AI/Slackbot UI features are fully scriptable via API.",
     "evidenceIds": [
       "slack-docs-8",
-      "slack-docs-9",
+      "slack-docs-32",
       "slack-docs-28",
-      "slack-probe-3",
-      "slack-probe-4",
-      "slack-probe-5",
+      "slack-docs-9",
+      "slack-docs-11",
+      "slack-docs-3",
+      "slack-docs-30",
       "slack-comm-2",
-      "slack-comm-9"
+      "slack-docs-18",
+      "slack-docs-14"
     ]
   },
   {
@@ -1792,13 +1824,15 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Slack does document export tools (slack-docs-22/23/35/36) suggesting workspace data export exists, but hands-on community reports concretely contradict open, self-service exit: Corporate Export of DMs/private channels requires legal/compliance justification and Slack's approval (slack-comm-2), and users question whether long-history exports are even feasible in practice (slack-comm-4). There's no evidence the export uses genuinely open/portable formats or covers all AI-surfaced data (canvases, lists, huddle notes). missing for 10: proof of open standard export format, self-service full-data export without approval gating, independent success story of a full data migration out.",
+    "rationale": "Slack documents workspace data export tools (slack-docs-22/23/35/36) but community evidence directly contradicts free, open self-service export: business customers cannot export DMs/private channels without legal/compliance justification and Slack's approval, and users question whether full multi-year history export is even feasible in practice (slack-comm-2, slack-comm-4). No evidence is provided of open/portable data formats for the export, and IRC/XMPP protocol gateways (open-standard access) were shut down (slack-comm-11), reinforcing lock-in concerns. missing for 10: documentation of open export formats, evidence of unrestricted self-service full-history export, and no contradicting community reports of export restrictions.",
     "evidenceIds": [
       "slack-docs-22",
       "slack-docs-23",
+      "slack-docs-35",
       "slack-docs-36",
       "slack-comm-2",
-      "slack-comm-4"
+      "slack-comm-4",
+      "slack-comm-11"
     ]
   },
   {
@@ -1816,12 +1850,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slack is a proprietary SaaS product; all evidence points to cloud-hosted infrastructure, APIs, and export/import tools, with no mention of a self-hostable core product. Community evidence even discusses restrictive data export policies, reinforcing that Slack remains vendor-hosted only.",
+    "rationale": "Slack is a proprietary SaaS product with no self-hosted/on-premise deployment option; evidence pack shows only cloud APIs, SDKs, and MCP server, with community complaints about vendor lock-in and export restrictions, but no self-hosting capability at all.",
     "evidenceIds": [
       "slack-comm-2",
-      "slack-comm-4",
-      "slack-docs-22",
-      "slack-docs-23"
+      "slack-comm-3",
+      "slack-comm-4"
     ]
   },
   {
@@ -1829,8 +1862,8 @@
     "storyId": "organize-channels",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation or discussion of channel creation, public/private channel types, or membership/permission controls — it covers AI features, MCP, huddles, workflows, and exports instead. Since this is an applicable, core Slack capability but no supporting evidence is present in the pack, the story cannot be credited as delivered.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation or references describing Slack's core public/private channel creation or membership control features for admins; only tangential mentions of channels for messaging (e.g. chat.postMessage) or unrelated moderation complaints exist. Missing for 10: any documentation of channel types, privacy settings, or admin membership management.",
     "evidenceIds": []
   },
   {
@@ -1839,7 +1872,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data residency, regional data storage options, or EKM/data localization controls; it focuses on MCP servers, workflows, export tools, and unrelated community complaints. No evidence supports or denies a residency choice, so the applicable axis is unaddressed rather than category-inapplicable.",
+    "rationale": "No evidence in the pack mentions data residency, regional data storage, or geographic controls for Slack workspace data; this is a plausible axis for an enterprise SaaS product but is entirely unaddressed here. missing for 10: any documentation of regional data storage options, data residency controls, or geo-specific hosting choices.",
     "evidenceIds": []
   },
   {
@@ -1847,8 +1880,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of Slack's AI-training data policies, opt-out settings, or controls preventing customer data from being used to train AI models. While this is a fair privacy-posture question for a workspace/AI product, none of the docs, community, or probe items address it, so there's no evidence the capability is delivered.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of AI-model-training data usage, opt-out settings, or privacy controls specific to training exclusion — only general AI features, export/import tools, and MCP integrations. This is a fair axis for a SaaS product with built-in AI features, but nothing in the evidence documents a mechanism to prevent data from being used for AI training.",
     "evidenceIds": []
   },
   {
@@ -1873,7 +1906,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out settings for Slack; documentation covers AI features, MCP server, exports, and workflows but nothing about disabling telemetry or analytics collection. Community items discuss pricing, exports, and moderation but do not concretely address telemetry opt-out.",
+    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out settings for Slack; docs cover MCP, workflows, huddles, and exports but nothing about analytics/telemetry controls or opting out of usage tracking.",
     "evidenceIds": []
   },
   {
@@ -1882,13 +1915,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slack's Events API explicitly supports real-time event delivery via Socket Mode or a public HTTP endpoint, with subscription to specific event types, and this is backed by first-party docs and a live probe confirming the Web API is reachable for building complementary bot actions. missing for 10: independent hands-on confirmation of an actual event delivery in production, and more detail on payload/verification handling.",
+    "rationale": "Slack's Events API lets developers subscribe to specific event types and receive real-time callbacks via HTTP endpoint or Socket Mode, explicitly documented as a way to 'build apps and bots that respond to activities in Slack,' backed by a live probe confirming the API surface exists. missing for 10: independent hands-on developer confirmation of a working bot receiving live events, and details on rate limits/retry behavior in production.",
     "evidenceIds": [
       "slack-docs-6",
       "slack-docs-7",
       "slack-docs-31",
-      "slack-docs-8",
-      "slack-probe-5"
+      "slack-docs-47",
+      "slack-probe-1"
     ]
   },
   {
