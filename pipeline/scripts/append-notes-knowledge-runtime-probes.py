@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # One-shot helper for the notes-knowledge arena bring-up (2026-09-05): appends probe-tier
 # evidence items distilled from the recorded runtime probes in data/notes-knowledge/proofs/
-# (see pipeline/stages/probe-record.ts LOCAL_PROBES['notes-knowledge'] — all 6 recorded probes
+# (see pipeline/probes/notes-knowledge.ts — all 6 recorded probes
 # passed). Run AFTER `pnpm pipeline probe --category notes-knowledge` — that stage
 # wholesale-replaces probe-tier evidence and would wipe these items (re-run this script after
 # any probe refresh).
