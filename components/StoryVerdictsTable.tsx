@@ -418,7 +418,7 @@ function StoryRowPair({
           )}
         </td>
         <td className="px-3 py-2">
-          <VerificationBadge level={row.verification} responsive />
+          <VerificationBadge level={row.verification} responsive href="/methodology#evidence-tiers" />
         </td>
         <td className="px-3 py-2">
           <button

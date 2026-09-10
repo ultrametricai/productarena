@@ -191,7 +191,7 @@ export default function PipelinePage() {
       </section>
 
       {slo.length > 0 && (
-        <section>
+        <section id="slo" className="scroll-mt-16">
           <h2 className="font-display text-xl font-semibold tracking-tight">Agent surface health</h2>
           <p className="mt-1 max-w-2xl text-sm text-zinc-400">
             Every 6 hours we keylessly ping each product&rsquo;s documented agent surfaces — its{' '}

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import VerdictBadge from '@/components/VerdictBadge'
 import { claimBucketCounts, claimEntriesByStatus, unmappedClaims, type ClaimStatus } from '@/lib/claims'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
@@ -40,12 +41,16 @@ export default function ClaimsSection({
     <div id="claims" className="scroll-mt-4">
       <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Claims vs evidence</h2>
       {integrity.score !== null && (
-        <p
-          className="mb-1 font-mono text-xs tabular-nums text-zinc-300"
-          title="Integrity = 100 × max(0, verified − 2×contradicted) / testable claims — see the README methodology's Claims-vs-reality subsection."
-        >
+        <p className="mb-1 font-mono text-xs tabular-nums text-zinc-300">
           {integrity.verified} of {testable} testable claims verified · {integrity.contradicted} contradicted
-          {' → '}integrity <span className={integrity.contradicted > 0 ? 'text-red-400' : 'text-emerald-400'}>{integrity.score}/100</span>
+          {' → '}
+          <Link
+            href="/methodology#claims-integrity"
+            title="Integrity = 100 × max(0, verified − 2×contradicted) / testable claims — full definitions on /methodology."
+            className="underline decoration-zinc-700 underline-offset-2 hover:decoration-emerald-400/60"
+          >
+            integrity <span className={integrity.contradicted > 0 ? 'text-red-400' : 'text-emerald-400'}>{integrity.score}/100</span>
+          </Link>
         </p>
       )}
       <p className="mb-3 text-xs text-zinc-400">
@@ -81,7 +86,11 @@ export default function ClaimsSection({
                         <a href={`#story-${story.id}`} className="underline decoration-zinc-700 hover:text-emerald-300">
                           {story.title}
                         </a>
-                        <VerdictBadge verdict={v.verdict} />
+                        <VerdictBadge
+                          verdict={v.verdict}
+                          href={`#story-${story.id}`}
+                          hrefTitle="jump to the story's rationale and evidence above"
+                        />
                         {proof && (
                           <a href={proof.url} target="_blank" rel="noopener noreferrer" className="hover:text-emerald-300">
                             proof ↗

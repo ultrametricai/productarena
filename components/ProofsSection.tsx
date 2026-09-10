@@ -24,7 +24,9 @@ export default function ProofsSection({
   const storyTitles = Object.fromEntries(stories.map((s) => [s.id, stripPersonaPrefix(s.title)]))
 
   return (
-    <div>
+    // id="proofs": deep-link target for evidence chips elsewhere on the site (only rendered —
+    // and therefore only linked to — when this product actually has recordings).
+    <div id="proofs" className="scroll-mt-4">
       <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Probe proofs</h2>
       <p className="mb-3 text-xs text-zinc-400">
         Replayable recordings from our probe harness — each command ran for real on our machines, keyless, with the

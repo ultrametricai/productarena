@@ -35,7 +35,7 @@ export default function MethodologyPage() {
       </a>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className={PILL}>
+        <div id="evidence-tiers" className={`scroll-mt-16 ${PILL}`}>
           <p className="font-semibold text-zinc-300">Evidence tiers</p>
           <p className="mt-1">
             <span className={CODE}>probe</span> (tested) &gt; <span className={CODE}>github</span> (code) &gt;{' '}
@@ -43,7 +43,7 @@ export default function MethodologyPage() {
             (vendor claim)
           </p>
         </div>
-        <div className={PILL}>
+        <div id="verdicts" className={`scroll-mt-16 ${PILL}`}>
           <p className="font-semibold text-zinc-300">Verdicts</p>
           <p className="mt-1">
             <span className={CODE}>full</span> / <span className={CODE}>partial</span> /{' '}
@@ -114,6 +114,35 @@ export default function MethodologyPage() {
         <p className="mt-3 text-xs text-zinc-400">
           Computed from story coverage × tested-evidence share (<span className={CODE}>lib/confidence.ts</span>).
           Grades move as probes land — the fastest way to raise one is to submit reproducible evidence.
+        </p>
+      </section>
+
+      <section id="claims-integrity" className="scroll-mt-16 rounded-xl border border-zinc-800 p-5">
+        <h2 className="font-display leading-[1.1] text-lg font-semibold">Claims integrity</h2>
+        <p className="mt-3 max-w-2xl text-sm text-zinc-400">
+          One number per product for &quot;does the vendor&apos;s website deliver what it
+          promises?&quot;: we extract capability claims from the vendor&apos;s own docs/GitHub
+          materials, map each onto this arena&apos;s stories, and reconcile them against our
+          judge&apos;s independent verdicts.
+        </p>
+        <p className="mt-3 max-w-2xl font-mono text-xs text-zinc-300">
+          testable = verified + unverified + contradicted
+          <br />
+          integrity = 100 × max(0, verified − 2 × contradicted) / testable
+        </p>
+        <table className="mt-3 w-full max-w-2xl border-collapse text-sm">
+          <tbody className="divide-y divide-zinc-800/70">
+            <tr><td className="py-1.5 pr-3 text-emerald-400">verified</td><td className="py-1.5 text-zinc-300">claim maps to a story with a probed/community-backed full or partial verdict — counts fully</td></tr>
+            <tr><td className="py-1.5 pr-3 text-zinc-400">unverified</td><td className="py-1.5 text-zinc-300">full/partial verdict, but only the vendor&apos;s own claim backs it — inflates the denominator only</td></tr>
+            <tr><td className="py-1.5 pr-3 text-red-400">contradicted</td><td className="py-1.5 text-zinc-300">our judge found disputed/none/na — each one cancels two verified claims (overpromising is worse than staying silent); the score is clamped at 0</td></tr>
+            <tr><td className="py-1.5 pr-3 text-zinc-500">untestable</td><td className="py-1.5 text-zinc-300">outside this arena&apos;s story taxonomy — excluded from both numerator and denominator (a taxonomy gap is never a mark for or against the product)</td></tr>
+          </tbody>
+        </table>
+        <p className="mt-3 text-xs text-zinc-400">
+          Products with no testable claims are unscored (null, never a fabricated 0) and sort last
+          in the <a href="/rankings/claims-integrity" className="underline decoration-zinc-700 hover:text-emerald-300">claims-vs-reality ranking</a>.
+          Computed in <span className={CODE}>lib/claimsIntegrity.ts</span>; each product page&apos;s
+          &quot;Claims vs evidence&quot; section shows the claim-by-claim breakdown.
         </p>
       </section>
 

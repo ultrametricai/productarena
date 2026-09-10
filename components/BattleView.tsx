@@ -63,8 +63,12 @@ export default function BattleView({
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold">{p.name}</span>
                   <span className="flex items-center gap-2">
-                    <VerdictBadge verdict={v.verdict} />
-                    <VerificationBadge level={verificationLevel(v, evidence)} />
+                    <VerdictBadge
+                      verdict={v.verdict}
+                      href={`/arena/${data.category.id}/product/${p.id}#story-${round.storyId}`}
+                      hrefTitle={`open ${p.name}'s full story row (rationale + citations)`}
+                    />
+                    <VerificationBadge level={verificationLevel(v, evidence)} href="/methodology#evidence-tiers" />
                     {v.verdict !== 'na' && (
                       <span className="font-mono text-sm tabular-nums text-zinc-400">{v.quality}/10</span>
                     )}
@@ -133,13 +137,13 @@ export default function BattleView({
         <div className="flex flex-wrap items-center justify-center gap-6 rounded-xl border border-zinc-800 p-4">
           <div className="flex items-center gap-2">
             <span className="text-sm text-zinc-400">{a.name}</span>
-            <AgenticBadge kind="agent-ready" value={aEntry?.agentReady ?? null} />
-            <AgenticBadge kind="agentic-app" value={aEntry?.agenticApp ?? null} />
+            <AgenticBadge kind="agent-ready" value={aEntry?.agentReady ?? null} href="/methodology#ai-era" />
+            <AgenticBadge kind="agentic-app" value={aEntry?.agenticApp ?? null} href="/methodology#ai-era" />
           </div>
           <span className="text-xs uppercase tracking-widest text-zinc-400">Agenticness</span>
           <div className="flex items-center gap-2">
-            <AgenticBadge kind="agent-ready" value={bEntry?.agentReady ?? null} />
-            <AgenticBadge kind="agentic-app" value={bEntry?.agenticApp ?? null} />
+            <AgenticBadge kind="agent-ready" value={bEntry?.agentReady ?? null} href="/methodology#ai-era" />
+            <AgenticBadge kind="agentic-app" value={bEntry?.agenticApp ?? null} href="/methodology#ai-era" />
             <span className="text-sm text-zinc-400">{b.name}</span>
           </div>
         </div>

@@ -152,8 +152,14 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">{data.category.description}</p>
         <p className="mt-2 text-xs text-zinc-400">
-          {data.stories.length} user stories · {data.verdicts.length} judged cells · updated{' '}
-          {data.rankings.generatedAt.slice(0, 10)}
+          <a
+            href="#story-matrix"
+            title="The full story matrix — every judged (product, story) cell below"
+            className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+          >
+            {data.stories.length} user stories · {data.verdicts.length} judged cells
+          </a>{' '}
+          · updated {data.rankings.generatedAt.slice(0, 10)}
           {freshness && <> · Evidence as of {freshness}</>}
         </p>
         <p className="mt-2 flex flex-wrap gap-x-4 text-xs">
@@ -178,7 +184,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
       </div>
       <PersonaStacksSection data={data} />
       <StacksSection data={data} />
-      <div>
+      <div id="story-matrix" className="scroll-mt-4">
         <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Story matrix</h2>
         <StoryMatrix data={data} logoMap={logoMap} />
       </div>

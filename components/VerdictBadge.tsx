@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { Verdict } from '@/lib/schemas'
 
 const STYLES: Record<Verdict['verdict'], string> = {
@@ -38,11 +39,23 @@ const TITLES: Record<Verdict['verdict'], string> = {
   na: "n/a — question doesn't apply to this kind of product",
 }
 
-export default function VerdictBadge({ verdict }: { verdict: Verdict['verdict'] }) {
+export default function VerdictBadge({
+  verdict,
+  href,
+  hrefTitle,
+}: {
+  verdict: Verdict['verdict']
+  // Optional click-through to where the verdict's full rationale + citations live (usually the
+  // product page's #story-<id> anchor). Callers must NOT set this when the chip already renders
+  // inside another link (StoryMatrix cells, compare story cells) — nested anchors are invalid.
+  href?: string
+  // Tooltip suffix saying where the link goes; appended to the plain-language verdict title.
+  hrefTitle?: string
+}) {
   const glyph = GLYPHS[verdict]
-  return (
+  const chip = (
     <span
-      title={TITLES[verdict]}
+      title={href ? undefined : TITLES[verdict]}
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ${STYLES[verdict]}`}
     >
       {glyph && (
@@ -52,5 +65,15 @@ export default function VerdictBadge({ verdict }: { verdict: Verdict['verdict'] 
       )}
       <span>{LABELS[verdict]}</span>
     </span>
+  )
+  if (!href) return chip
+  return (
+    <Link
+      href={href}
+      title={`${TITLES[verdict]} — ${hrefTitle ?? 'see the full rationale and cited evidence'}`}
+      className="inline-flex rounded-full transition hover:brightness-125 hover:ring-1 hover:ring-emerald-400/60"
+    >
+      {chip}
+    </Link>
   )
 }

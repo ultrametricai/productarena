@@ -90,6 +90,7 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
                 <AiEraBadge
                   value={row.entry.aiEra}
                   size="sm"
+                  href="/methodology#arena-score"
                   components={{
                     agentReady: row.entry.agentReady,
                     apiQuality: row.entry.apiQuality,

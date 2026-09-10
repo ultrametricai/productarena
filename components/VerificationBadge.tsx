@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import type { ReactNode } from 'react'
 import type { VerificationLevel } from '@/lib/verification'
 
 const STYLES: Record<Exclude<VerificationLevel, 'unverified'>, string> = {
@@ -38,33 +40,71 @@ export default function VerificationBadge({
   level,
   compact = false,
   responsive = false,
+  href,
 }: {
   level: VerificationLevel
   compact?: boolean
   // Letter below the sm breakpoint (where the column is cramped), small word pill from sm up.
   responsive?: boolean
+  // Optional click-through explaining the verification vocabulary (usually
+  // /methodology#evidence-tiers). Callers must NOT set this when the badge already renders
+  // inside another link (StoryMatrix cells) — nested anchors are invalid.
+  href?: string
 }) {
   if (level === 'unverified') return null
+  const wrap = (node: ReactNode) =>
+    href ? (
+      <Link
+        href={href}
+        title={`${TITLES[level]} — how evidence tiers work, on /methodology`}
+        className="inline-flex rounded-full transition hover:brightness-125 hover:ring-1 hover:ring-emerald-400/60"
+      >
+        {node}
+      </Link>
+    ) : (
+      node
+    )
   const letter = (extra = '') => (
     <span
-      title={TITLES[level]}
+      title={href ? undefined : TITLES[level]}
       className={`inline-flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold ring-1 ${STYLES[level]} ${extra}`}
     >
       {GLYPHS[level]}
     </span>
   )
-  if (compact) return letter()
+  if (compact) return wrap(letter())
   if (responsive) {
     return (
       <>
-        {letter('sm:hidden')}
-        <span
-          title={TITLES[level]}
-          className={`hidden rounded-full px-2 py-0.5 text-xs font-medium ring-1 sm:inline-flex ${STYLES[level]}`}
-        >
-          {LABELS[level]}
-        </span>
+        {wrap(letter('sm:hidden'))}
+        {href ? (
+          <Link
+            href={href}
+            title={`${TITLES[level]} — how evidence tiers work, on /methodology`}
+            className={`hidden rounded-full px-2 py-0.5 text-xs font-medium ring-1 transition hover:brightness-125 hover:ring-emerald-400/60 sm:inline-flex ${STYLES[level]}`}
+          >
+            {LABELS[level]}
+          </Link>
+        ) : (
+          <span
+            title={TITLES[level]}
+            className={`hidden rounded-full px-2 py-0.5 text-xs font-medium ring-1 sm:inline-flex ${STYLES[level]}`}
+          >
+            {LABELS[level]}
+          </span>
+        )}
       </>
+    )
+  }
+  if (href) {
+    return (
+      <Link
+        href={href}
+        title={`${TITLES[level]} — how evidence tiers work, on /methodology`}
+        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ring-1 transition hover:brightness-125 hover:ring-emerald-400/60 ${STYLES[level]}`}
+      >
+        {LABELS[level]}
+      </Link>
     )
   }
   return (

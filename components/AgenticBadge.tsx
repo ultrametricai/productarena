@@ -1,3 +1,6 @@
+import Link from 'next/link'
+import type { ReactNode } from 'react'
+
 const PALETTES = {
   emerald: {
     high: 'bg-emerald-950 text-emerald-300 ring-emerald-800',
@@ -45,27 +48,44 @@ export default function AgenticBadge({
   value,
   size = 'md',
   showLabel = true,
+  href,
 }: {
   kind: AgenticBadgeKind
   value: number | null
   size?: 'md' | 'sm'
   showLabel?: boolean
+  // Optional click-through to where the index is explained (usually /methodology#ai-era, the
+  // PA-Score component table these two indexes feed). Callers must NOT set this when the badge
+  // already renders inside another link — nested anchors are invalid.
+  href?: string
 }) {
   const label = LABELS[kind]
   const palette = PALETTES[COLORS[kind]]
   const sizeClass = size === 'md' ? 'px-2 py-0.5 text-xs' : 'px-1.5 py-0 text-[10px]'
+  const wrap = (badge: ReactNode) =>
+    href ? (
+      <Link
+        href={href}
+        title={`${TITLES[kind]} — how it's measured, on /methodology`}
+        className="inline-flex w-fit rounded-full transition hover:brightness-125 hover:ring-1 hover:ring-emerald-400/60"
+      >
+        {badge}
+      </Link>
+    ) : (
+      badge
+    )
   if (value === null) {
-    return (
-      <span title={TITLES[kind]} className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
+    return wrap(
+      <span title={href ? undefined : TITLES[kind]} className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
         {showLabel ? `${label} n/a` : 'n/a'}
-      </span>
+      </span>,
     )
   }
   const style = value >= 66 ? palette.high : value >= 33 ? palette.mid : palette.low
-  return (
-    <span title={TITLES[kind]} className={`inline-flex w-fit items-center gap-1 rounded-full font-medium ring-1 ${style} ${sizeClass}`}>
+  return wrap(
+    <span title={href ? undefined : TITLES[kind]} className={`inline-flex w-fit items-center gap-1 rounded-full font-medium ring-1 ${style} ${sizeClass}`}>
       {showLabel ? label : <span className="sr-only">{label}</span>}
       <span className="font-mono tabular-nums">{value.toFixed(0)}</span>
-    </span>
+    </span>,
   )
 }
