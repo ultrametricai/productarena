@@ -3,8 +3,11 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
+import arenaIcons from '@/data/arena-icons.json'
 import {
   accessGlyphClass,
   encodeCompareParam,
@@ -30,6 +33,7 @@ import {
   type StoryCellState,
 } from '@/lib/compareStories'
 import { stripPersonaPrefix } from '@/lib/data-helpers'
+import { metricIcon, metricTooltip, themeIcon, themeTooltip } from '@/lib/icons'
 import { withBase } from '@/lib/site'
 
 // /compare's client half: pick up to MAX_COMPARE products from anywhere on the site and see
@@ -259,13 +263,20 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
   const crossArena = new Set(selected.map((p) => p.arenaId)).size > 1
   const themes = sharedThemes(selected)
 
-  // Numeric rows in display order; each row's winner indices are computed once here.
-  const numericRows: Array<{ label: string; values: Array<number | null> }> = [
-    { label: 'PA Score', values: selected.map((p) => p.aiEra) },
-    { label: 'Agent-ready', values: selected.map((p) => p.agentReady) },
-    { label: 'AI-native', values: selected.map((p) => p.agenticApp) },
-    { label: 'API quality', values: selected.map((p) => p.apiQuality) },
-    ...themes.map((t) => ({ label: themeLabel(t), values: selected.map((p) => p.themeScores[t] ?? null) })),
+  // Numeric rows in display order; each row's winner indices are computed once here. Every row
+  // carries its concept's emoji + tooltip from lib/icons.ts — metric icons for the fixed rows,
+  // theme icons for the shared-theme rows (same icon that theme shows everywhere else).
+  const numericRows: Array<{ label: string; icon: string; iconTitle: string; values: Array<number | null> }> = [
+    { label: 'PA Score', icon: metricIcon('paScore'), iconTitle: metricTooltip('paScore'), values: selected.map((p) => p.aiEra) },
+    { label: 'Agent-ready', icon: metricIcon('agentReady'), iconTitle: metricTooltip('agentReady'), values: selected.map((p) => p.agentReady) },
+    { label: 'AI-native', icon: metricIcon('aiNative'), iconTitle: metricTooltip('aiNative'), values: selected.map((p) => p.agenticApp) },
+    { label: 'API quality', icon: metricIcon('apiQuality'), iconTitle: metricTooltip('apiQuality'), values: selected.map((p) => p.apiQuality) },
+    ...themes.map((t) => ({
+      label: themeLabel(t),
+      icon: themeIcon(t),
+      iconTitle: themeTooltip(t),
+      values: selected.map((p) => p.themeScores[t] ?? null),
+    })),
   ]
 
   return (
@@ -352,7 +363,14 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                         <ProductLogoView product={{ id: p.id, name: p.name }} size={28} hasLogo={p.hasLogo} />
                         {p.name}
                       </Link>
-                      <Link href={`/arena/${p.arenaId}`} className="text-xs text-zinc-500 hover:text-emerald-300">
+                      <Link
+                        href={`/arena/${p.arenaId}`}
+                        className="inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-emerald-300"
+                      >
+                        <IconChip
+                          icon={(arenaIcons as Record<string, string>)[p.arenaId] ?? ''}
+                          title={`${p.arenaName} arena`}
+                        />
                         {p.arenaName}
                       </Link>
                     </div>
@@ -366,7 +384,10 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                 return (
                   <tr key={row.label}>
                     <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
-                      {row.label}
+                      <span className="inline-flex items-center gap-1.5">
+                        <IconChip icon={row.icon} title={row.iconTitle} />
+                        {row.label}
+                      </span>
                     </th>
                     {row.values.map((value, i) => (
                       <td key={selected[i].id} className="px-3 py-2">
@@ -378,7 +399,10 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
               })}
               <tr>
                 <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
-                  Access
+                  <span className="inline-flex items-center gap-1.5">
+                    <IconChip icon={metricIcon('access')} title={metricTooltip('access')} />
+                    Access
+                  </span>
                 </th>
                 {selected.map((p) => (
                   <td key={p.id} className="px-3 py-2">
@@ -395,7 +419,10 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
               </tr>
               <tr>
                 <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
-                  Open source
+                  <span className="inline-flex items-center gap-1.5">
+                    <IconChip icon={metricIcon('openness')} title={metricTooltip('openness')} />
+                    Open source
+                  </span>
                 </th>
                 {/* Row header already says "Open source" — a labeled pill here would repeat it,
                     so the cell is a bare yes/no mark. */}
@@ -452,7 +479,10 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                         scope="row"
                         className="min-w-[200px] max-w-[280px] px-3 py-2 text-left text-xs font-normal text-zinc-400"
                       >
-                        {stripPersonaPrefix(story.title)}
+                        <span className="flex items-start gap-1.5">
+                          {story.theme && <ThemeIcon theme={story.theme} />}
+                          <span>{stripPersonaPrefix(story.title)}</span>
+                        </span>
                       </th>
                       {selected.map((p) => (
                         <td key={p.id} className="px-3 py-2">
@@ -506,6 +536,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                           >
                             ×
                           </button>
+                          {story.theme && <ThemeIcon theme={story.theme} />}
                           <span>{stripPersonaPrefix(story.title)}</span>
                         </span>
                       </th>
@@ -549,7 +580,10 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                   onClick={() => addStory(s.id)}
                   className="flex w-full flex-col items-start gap-0.5 px-3 py-2 text-left text-sm text-zinc-300 transition hover:bg-emerald-400/10 hover:text-emerald-300"
                 >
-                  <span className="font-medium">{stripPersonaPrefix(s.title)}</span>
+                  <span className="inline-flex items-center gap-1.5 font-medium">
+                    {s.theme && <ThemeIcon theme={s.theme} />}
+                    {stripPersonaPrefix(s.title)}
+                  </span>
                   {s.arenaIds.length < selectedArenaIds.length && (
                     <span className="text-xs text-zinc-500">
                       {s.arenaIds.map((id) => arenaNameById.get(id) ?? id).join(', ')} only — other arenas will show n/a

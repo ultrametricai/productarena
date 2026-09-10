@@ -20,6 +20,7 @@ import ScoreTrend from '@/components/ScoreTrend'
 import SloUptimeLine from '@/components/SloUptimeLine'
 import StoryMap from '@/components/StoryMap'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
+import ThemeIcon from '@/components/ThemeIcon'
 import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
 import WatchButton from '@/components/WatchButton'
@@ -29,7 +30,9 @@ import {
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
+import { humanizeTheme } from '@/lib/icons'
 import { loadIntegrationGraph, neighborsOf, productRefIndex } from '@/lib/integrations'
+import { hasLogo } from '@/lib/logos'
 import { loadPopularityHistory, popularitySeries } from '@/lib/popularityHistory'
 import { loadPricing } from '@/lib/pricing'
 import { loadScoreHistory } from '@/lib/scoreHistory'
@@ -129,6 +132,7 @@ export default async function ProductPage({
         arenaId: ref.arenaId,
         arenaName: ref.arenaName,
         title: chipTitle(n.sources, nameOf),
+        hasLogo: hasLogo(n.productId),
       }]
     })
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -257,11 +261,14 @@ export default async function ProductPage({
               <a
                 key={t}
                 href="#story-verdicts"
-                title={`See the judged stories and evidence behind the ${t} score`}
+                title={`See the judged stories and evidence behind the ${humanizeTheme(t)} score`}
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
                 <p className="mb-2 flex items-center justify-between text-sm text-zinc-400">
-                  {t}
+                  <span className="flex items-center gap-1.5">
+                    <ThemeIcon theme={t} />
+                    {humanizeTheme(t)}
+                  </span>
                   <span className="text-xs text-zinc-400 opacity-0 transition group-hover:opacity-100">
                     evidence →
                   </span>

@@ -1,3 +1,4 @@
+import { humanizeTheme } from './icons'
 import { CLAIM_STATUSES, claimBucketCounts, claimEntriesByStatus, unmappedClaims } from './claims'
 import type { CategoryData } from './data'
 import { evidenceById, groupInOrder, verdictFor } from './data'
@@ -103,12 +104,12 @@ export function renderArenaMarkdown(data: CategoryData, siteUrl: string): string
   lines.push('')
   const byTheme = groupInOrder(data.stories, (s) => s.theme)
   for (const [theme, storiesInTheme] of byTheme) {
-    lines.push(`### ${theme}`)
+    lines.push(`### ${humanizeTheme(theme)}`)
     const byGroup = groupInOrder(storiesInTheme, (s) => s.group)
     for (const [group, stories] of byGroup) {
       if (group !== theme) {
         lines.push('')
-        lines.push(`#### ${group}`)
+        lines.push(`#### ${humanizeTheme(group)}`)
       }
       for (const s of stories) {
         lines.push('')
@@ -174,12 +175,12 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
   for (const [theme, storiesInTheme] of byTheme) {
     lines.push('')
-    lines.push(`### ${theme}`)
+    lines.push(`### ${humanizeTheme(theme)}`)
     const byGroup = groupInOrder<Story>(storiesInTheme, (s) => s.group)
     for (const [group, stories] of byGroup) {
       if (group !== theme) {
         lines.push('')
-        lines.push(`#### ${group}`)
+        lines.push(`#### ${humanizeTheme(group)}`)
       }
       for (const s of stories) {
         const v = verdictFor(data, productId, s.id)

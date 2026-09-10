@@ -1,9 +1,11 @@
 import AgenticBadge from '@/components/AgenticBadge'
 import { BusinessModelLine } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
+import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { evidenceById, groupInOrder, type CategoryData, verdictFor } from '@/lib/data'
+import { humanizeTheme } from '@/lib/icons'
 import type { BattleRecord } from '@/lib/schemas'
 import { strongestEvidence, verificationLevel } from '@/lib/verification'
 
@@ -148,13 +150,14 @@ export default function BattleView({
           const byGroup = groupInOrder(rounds, (r) => storyById.get(r.storyId)!.group)
           return (
             <div key={theme}>
-              <h2 className="sticky top-0 z-10 -mx-5 border-b border-zinc-800 bg-zinc-950/95 px-5 py-2 text-sm font-semibold uppercase tracking-widest text-emerald-400 backdrop-blur">
-                {theme}
+              <h2 className="sticky top-0 z-10 -mx-5 flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-950/95 px-5 py-2 text-sm font-semibold uppercase tracking-widest text-emerald-400 backdrop-blur">
+                <ThemeIcon theme={theme} />
+                {humanizeTheme(theme)}
               </h2>
               <div className="mt-4 space-y-6">
                 {byGroup.map(([group, groupRounds]) => (
                   <div key={group}>
-                    {group !== theme && <p className="mb-2 text-xs text-zinc-500">{group}</p>}
+                    {group !== theme && <p className="mb-2 text-xs text-zinc-500">{humanizeTheme(group)}</p>}
                     <ol className="space-y-3">{groupRounds.map(renderRound)}</ol>
                   </div>
                 ))}
