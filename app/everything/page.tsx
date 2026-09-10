@@ -132,12 +132,13 @@ export default function EverythingPage() {
               <span className="hidden w-20 shrink-0 truncate text-[10px] uppercase tracking-wider text-zinc-500 sm:block">
                 {p.phase}
               </span>
-              <span
-                className="w-16 shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300"
-                title={`Agent ceiling: ${p.agentSteps} of ${p.totalSteps} steps agent-runnable today`}
+              <Link
+                href={`/processes/${p.slug}`}
+                className="w-16 shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+                title={`Agent ceiling: ${p.agentSteps} of ${p.totalSteps} steps agent-runnable today — see the step-by-step verdict`}
               >
                 {p.pct}% <span className="text-zinc-600">{p.agentSteps}/{p.totalSteps}</span>
-              </span>
+              </Link>
               <span className="hidden w-40 shrink-0 gap-1.5 truncate text-[11px] text-zinc-500 md:flex">
                 {p.vendors.map((v) =>
                   v.arenaId ? (

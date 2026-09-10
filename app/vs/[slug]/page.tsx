@@ -124,6 +124,7 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
               <span className="text-[10px] uppercase tracking-widest text-zinc-400">Arena</span>
               <AiEraBadge
                 value={entry.aiEra}
+                href="/methodology#arena-score"
                 components={{
                   agentReady: entry.agentReady,
                   apiQuality: entry.apiQuality,
@@ -132,15 +133,19 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
                   automation: entry.themeScores['automation-depth'] ?? null,
                 }}
               />
-              <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" />
-              <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" />
+              <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" href="/methodology#ai-era" />
+              <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" href="/methodology#ai-era" />
             </div>
             <div className="mt-2">
               <AgentAccessGlyphs data={data} productId={p.id} />
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <BusinessModelChip product={p} />
-              <ClaimsChip data={data} productId={p.id} />
+              <ClaimsChip
+                data={data}
+                productId={p.id}
+                href={`/arena/${data.category.id}/product/${p.id}#claims`}
+              />
             </div>
           </div>
         ))}

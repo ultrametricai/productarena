@@ -64,18 +64,20 @@ function CatalogRow({ row }: { row: EverythingRow }) {
       >
         {row.arenaName}
       </Link>
-      <span
-        className="w-[4.5rem] shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300"
-        title={`PA Score ${fmt(row.score)} · Agent-ready ${fmt(row.agentReady)} · Agentic ${fmt(row.agenticApp)} (each /100)`}
+      <Link
+        href="/methodology#arena-score"
+        className="w-[4.5rem] shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300 transition hover:text-emerald-300"
+        title={`PA Score ${fmt(row.score)} · Agent-ready ${fmt(row.agentReady)} · Agentic ${fmt(row.agenticApp)} (each /100) — how they're computed, on /methodology`}
       >
         {triplet}
-      </span>
-      <span
-        className={`w-3 shrink-0 text-center font-mono text-[11px] ${GRADE_CLASS[row.grade]}`}
-        title={`Score confidence ${row.grade} — how much of the score rests on tested vs claimed evidence (A strongest, D thinnest)`}
+      </Link>
+      <Link
+        href="/methodology#confidence"
+        className={`w-3 shrink-0 text-center font-mono text-[11px] transition hover:brightness-125 ${GRADE_CLASS[row.grade]}`}
+        title={`Score confidence ${row.grade} — how much of the score rests on tested vs claimed evidence (A strongest, D thinnest). What the grades mean, on /methodology`}
       >
         {row.grade}
-      </span>
+      </Link>
       <span
         className="flex w-[4.25rem] shrink-0 font-mono text-[11px]"
         title={`Agent access — MCP ${mcp} · CLI ${cli} · API ${api} (✓ full, ~ partial, ! disputed, — none)`}

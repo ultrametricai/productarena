@@ -101,7 +101,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                 </td>
                 <td className="px-3 py-2">
                   {/* Column header already says AI-NATIVE — the pill carries just the value. */}
-                  <AgenticBadge kind="agentic-app" value={row.entry.agenticApp} size="sm" showLabel={false} />
+                  <AgenticBadge kind="agentic-app" value={row.entry.agenticApp} size="sm" showLabel={false} href="/methodology#ai-era" />
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">
                   {automation === null ? '—' : automation.toFixed(0)}
@@ -113,6 +113,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                   <AiEraBadge
                     value={row.entry.aiEra}
                     size="sm"
+                    href="/methodology#arena-score"
                     components={{
                       agentReady: row.entry.agentReady,
                       apiQuality: row.entry.apiQuality,

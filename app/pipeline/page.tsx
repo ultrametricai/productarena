@@ -205,7 +205,7 @@ export default function PipelinePage() {
       </section>
 
       {slo.length > 0 && (
-        <section>
+        <section id="slo" className="scroll-mt-16">
           <h2 className="font-display flex items-center gap-2 text-xl font-semibold tracking-tight">
             <GeoMark seed="slo" title="Agent surface health — 6-hourly keyless uptime checks" size={18} className="text-zinc-500" />
             Agent surface health

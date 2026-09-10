@@ -203,10 +203,10 @@ export default async function ProductPage({
             <span className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score</span>
             {/* showBand renders the "±N" (68% interval, lib/scoreIntervals.ts) inline in muted
                 smaller type — only when interval data exists for this product, never fabricated. */}
-            <AiEraBadge value={entry.aiEra} interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
+            <AiEraBadge value={entry.aiEra} href="/methodology#arena-score" interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           </div>
-          <AgenticBadge kind="agent-ready" value={entry.agentReady} />
-          <AgenticBadge kind="agentic-app" value={entry.agenticApp} />
+          <AgenticBadge kind="agent-ready" value={entry.agentReady} href="/methodology#ai-era" />
+          <AgenticBadge kind="agentic-app" value={entry.agenticApp} href="/methodology#ai-era" />
           <AgentAccessGlyphs data={data} productId={id} size="md" />
         </div>
         {/* SECONDARY row — adoption signals (registry data, never part of the PA Score) and the
@@ -235,9 +235,13 @@ export default async function ProductPage({
             full-width bar but mostly restates what PA Score + its confidence band already say. */}
         <p className="mt-3 text-[10px] text-zinc-500">
           {freshness && <span>Evidence as of {freshness} · </span>}
-          <span title="Evidence-graded story coverage (0–100): how much of this arena's story set the product covers, weighted by story importance. The rank tie-breaker, not the PA Score.">
+          <a
+            href="#story-verdicts"
+            title="Evidence-graded story coverage (0–100): how much of this arena's story set the product covers, weighted by story importance. The rank tie-breaker, not the PA Score. Click for the judged story rows below."
+            className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+          >
             story coverage <span className="font-mono tabular-nums">{entry.score.toFixed(1)}/100</span>
-          </span>
+          </a>
         </p>
       </div>
 
