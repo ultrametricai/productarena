@@ -12,7 +12,7 @@ describe('parseArgs', () => {
 
   it('supports --metric with a space or =, and numeric --limit', () => {
     expect(parseArgs(['top', '--metric', 'agentReady', '--limit', '5']).flags).toMatchObject({ metric: 'agentReady', limit: 5 })
-    expect(parseArgs(['top', '--metric=arenaScore']).flags.metric).toBe('arenaScore')
+    expect(parseArgs(['top', '--metric=paScore']).flags.metric).toBe('paScore')
   })
 
   it('rejects unknown flags, missing values, and bad limits with UsageError', () => {

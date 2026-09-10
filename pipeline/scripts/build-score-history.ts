@@ -7,7 +7,7 @@
 //
 //   pnpm tsx pipeline/scripts/build-score-history.ts [--category <id>] [--ref <git-ref>]
 //
-// Snapshots that predate the Arena Score era (no aiEra/agentReady fields on leaderboard
+// Snapshots that predate the PA Score era (no aiEra/agentReady fields on leaderboard
 // entries at all — e.g. the old `agenticness`-only shape) are skipped entirely: a missing field
 // is "not measured yet", which is different from the schema's explicit null ("measured, not
 // applicable"), and recording it would fake a longer history than we honestly have.
@@ -114,7 +114,7 @@ function main(): void {
     const lines = buildHistoryLines(snapshots)
     const file = path.join(categoryDir(cat.id), SCORE_HISTORY_FILE)
     if (lines.length === 0) {
-      console.log(`build-score-history: ${cat.id} — no Arena Score era snapshots on ${ref}; skipped`)
+      console.log(`build-score-history: ${cat.id} — no PA Score era snapshots on ${ref}; skipped`)
       continue
     }
     fs.writeFileSync(file, lines.map((l) => JSON.stringify(l)).join('\n') + '\n')

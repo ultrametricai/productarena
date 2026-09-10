@@ -206,7 +206,7 @@ describe('compare', () => {
     expect(result.notFound).toEqual(['ghost'])
     expect(result.products).toHaveLength(2)
     const macos = result.products.find((p) => p.productId === 'macos')!
-    expect(macos).toMatchObject({ arena: 'desktop-os', rank: 2, fieldSize: 2, score: 12, arenaScore: 3.3 })
+    expect(macos).toMatchObject({ arena: 'desktop-os', rank: 2, fieldSize: 2, score: 12, paScore: 3.3 })
     const github = result.products.find((p) => p.productId === 'github')!
     expect(github).toMatchObject({ arena: 'code-hosting', rank: 1, apiQuality: 70 })
   })
@@ -243,8 +243,8 @@ describe('topProducts', () => {
     expect(top[0]).toMatchObject({ arena: 'code-hosting', value: 60, metric: 'agentReady' })
   })
 
-  it('maps arenaScore (and the aiEra alias) onto the aiEra field and skips nulls', async () => {
-    const top = await topProducts(client(), 'arenaScore')
+  it('maps paScore (and the aiEra alias) onto the aiEra field and skips nulls', async () => {
+    const top = await topProducts(client(), 'paScore')
     expect(top[0]).toMatchObject({ productId: 'github', value: 50 })
     const viaAlias = await topProducts(client(), 'aiEra')
     expect(viaAlias[0].value).toBe(50)

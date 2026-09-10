@@ -92,13 +92,13 @@ export function collectNoteFacts(input: {
   for (const e of input.events) {
     if (e.kind !== 'overtake') continue
     facts.push({
-      text: `${e.productName} overtook ${e.overtookName} in ${e.categoryName} on ${dayOf(e.date)} (${e.productAiEra.toFixed(1)} vs ${e.overtookAiEra.toFixed(1)} Arena Score)`,
+      text: `${e.productName} overtook ${e.overtookName} in ${e.categoryName} on ${dayOf(e.date)} (${e.productAiEra.toFixed(1)} vs ${e.overtookAiEra.toFixed(1)} PA Score)`,
       source: `/arena/${e.categoryId}`,
     })
   }
   for (const m of [...input.movers.up, ...input.movers.down]) {
     facts.push({
-      text: `${m.productName} moved ${fmtDelta(m.delta)} Arena Score this week to ${m.to.toFixed(1)} in ${m.categoryName}`,
+      text: `${m.productName} moved ${fmtDelta(m.delta)} PA Score this week to ${m.to.toFixed(1)} in ${m.categoryName}`,
       source: `/arena/${m.categoryId}`,
     })
   }

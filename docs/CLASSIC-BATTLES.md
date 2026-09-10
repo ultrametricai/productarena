@@ -18,7 +18,7 @@ expected agent-access differentiators.
   1. As a power-user, I can keep my notes as local plain-text files I own forever (offline/openness).
   2. As a developer, I can query and update my knowledge base through a documented API.
   3. As an ai-native user, I can let an agent search and write into my workspace safely (scoped access).
-- **Agent-access differentiators:** Notion has a mature public API, official MCP server, and SDKs; Obsidian is local-first with a plugin API but no official cloud API or MCP (community REST plugin only); Anytype is open-source with local-first sync. Expect Notion to win agent-access while Obsidian wins openness/privacy — a genuinely close Arena Score race.
+- **Agent-access differentiators:** Notion has a mature public API, official MCP server, and SDKs; Obsidian is local-first with a plugin API but no official cloud API or MCP (community REST plugin only); Anytype is open-source with local-first sync. Expect Notion to win agent-access while Obsidian wins openness/privacy — a genuinely close PA Score race.
 
 ## 2. `team-chat` — Slack vs Discord vs Microsoft Teams (vs Zulip) — ✅ SHIPPED
 
@@ -59,7 +59,7 @@ Graph's $metadata as Teams' machine-readable surface.
   1. As a developer, I can extract design tokens/components through a documented API.
   2. As an ai-native user, I can have an agent read a design file and generate code from it (MCP).
   3. As a designer, I can self-host the tool and own my design files in an open format.
-- **Agent-access differentiators:** Figma's Dev Mode MCP server is the flagship agent story of 2025-26; Penpot is open-source, self-hostable, SVG-native with an API; Sketch is macOS-native with file-format openness but a thin cloud API. Clean three-way split across the Arena Score components.
+- **Agent-access differentiators:** Figma's Dev Mode MCP server is the flagship agent story of 2025-26; Penpot is open-source, self-hostable, SVG-native with an API; Sketch is macOS-native with file-format openness but a thin cloud API. Clean three-way split across the PA Score components.
 
 ## 6. `infra-as-code` — Terraform vs Pulumi (vs OpenTofu)
 

@@ -51,7 +51,7 @@ capturing every possible buyer search phrase for review SEO. That is not our goa
 
 ## 2. Our organizing principle: the AI-era scoring spine
 
-Every ProductArena arena is judged on the same canon (see `lib/scoring.ts` — the Arena Score
+Every ProductArena arena is judged on the same canon (see `lib/scoring.ts` — the PA Score
 blends five components with renormalized weights):
 
 | Component | Weight | Question it answers |

@@ -114,7 +114,7 @@ describe('eventMarkdownLine', () => {
         { kind: 'score-move', date: '2026-09-04T00:00:00Z', categoryId: 'terminals', categoryName: 'Terminals', productId: 'warp', productName: 'Warp', delta: 5.4, to: 45.4 },
         SITE,
       ),
-    ).toBe(`- [Warp](${SITE}/arena/terminals/product/warp) +5.4 Arena Score in [Terminals](${SITE}/arena/terminals) (→ 45.4)`)
+    ).toBe(`- [Warp](${SITE}/arena/terminals/product/warp) +5.4 PA Score in [Terminals](${SITE}/arena/terminals) (→ 45.4)`)
     expect(
       eventMarkdownLine(
         { kind: 'product-added', date: '2026-09-02T00:00:00Z', categoryId: 'terminals', categoryName: 'Terminals', productId: 'ghostty', productName: 'Ghostty' },

@@ -14,7 +14,7 @@ export interface PickCandidate {
   rank: number
   value: number
   score: number
-  arenaScore: number | null
+  paScore: number | null
 }
 
 export interface PickResult {
@@ -51,7 +51,7 @@ export function pickTop(
     rank: i + 1,
     value: r.value,
     score: r.entry.score,
-    arenaScore: r.entry.aiEra,
+    paScore: r.entry.aiEra,
   }))
 
   const top = candidates[0] ?? null

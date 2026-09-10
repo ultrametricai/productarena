@@ -63,19 +63,19 @@ describe('metrics', () => {
   it('normalizes user spellings onto canonical metric names', () => {
     expect(normalizeMetric('agentReady')).toBe('agentReady')
     expect(normalizeMetric('agent-ready')).toBe('agentReady')
-    expect(normalizeMetric('arenascore')).toBe('arenaScore')
-    expect(normalizeMetric('aiEra')).toBe('arenaScore')
+    expect(normalizeMetric('arenascore')).toBe('paScore')
+    expect(normalizeMetric('aiEra')).toBe('paScore')
     expect(normalizeMetric('agentic')).toBe('agenticApp')
     expect(normalizeMetric('API')).toBe('apiQuality')
     expect(normalizeMetric('vibes')).toBeNull()
   })
 
-  it('reads arenaScore from the aiEra field and everything else verbatim', () => {
+  it('reads paScore from the aiEra field and everything else verbatim', () => {
     const entry: LeaderboardEntry = {
       productId: 'x', score: 1, agentReady: 2, agenticApp: 3, apiQuality: 4, aiEra: 5,
       applicable: 1, total: 1, themeScores: {},
     }
-    expect(metricValue(entry, 'arenaScore')).toBe(5)
+    expect(metricValue(entry, 'paScore')).toBe(5)
     expect(metricValue(entry, 'agentReady')).toBe(2)
     expect(metricValue(entry, 'score')).toBe(1)
   })

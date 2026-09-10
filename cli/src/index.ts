@@ -50,7 +50,7 @@ Commands
 
 Flags
   --json      machine-readable output (stable shapes — built for scripts and agents)
-  --metric M  agentReady (default) | arenaScore | agenticApp | apiQuality | score
+  --metric M  agentReady (default) | paScore | agenticApp | apiQuality | score
   --oss       open-source products only (top, pick)
   --limit N   rows for top (default 10, max 50)
   --report F  certify: write the machine-verifiable cert-report JSON to F

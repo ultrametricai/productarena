@@ -20,7 +20,7 @@ Requires Node >= 20.
 | Command | What it does | Example |
 |---|---|---|
 | `arenas` | List every arena: id, name, product count. | `productarena arenas` |
-| `rankings <arena>` | One arena's leaderboard: rank, Arena Score, agent-ready, agentic, API. | `productarena rankings ai-coding` |
+| `rankings <arena>` | One arena's leaderboard: rank, PA Score, agent-ready, agentic, API. | `productarena rankings ai-coding` |
 | `product <arena> <id>` | One product's scorecard: scores, MCP/CLI/API access, top full/none stories, links. | `productarena product payments stripe` |
 | `compare <id> <id> [...]` | Cross-arena comparison table (product ids are globally unique; max 6). | `productarena compare stripe adyen` |
 | `top [--metric M] [--oss] [--limit N]` | Cross-arena best by one metric; `--oss` restricts to open source. | `productarena top --metric agentReady --oss` |
