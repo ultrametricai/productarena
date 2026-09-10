@@ -52,7 +52,7 @@ export function createServer(client: ArenaClient = createClient()): McpServer {
     {
       title: 'Get rankings',
       description:
-        'Get one arena\'s full leaderboard (coverage score, Arena Score as "aiEra", agent-readiness, per-theme scores) plus its head-to-head battle log.',
+        'Get one arena\'s full leaderboard (coverage score, PA Score as "aiEra", agent-readiness, per-theme scores) plus its head-to-head battle log.',
       inputSchema: { arena: z.string().describe('Arena id, e.g. "desktop-os" — see list_arenas.') },
     },
     async ({ arena }) => wrap(() => fetchRankings(client, arena)),
@@ -103,7 +103,7 @@ export function createServer(client: ArenaClient = createClient()): McpServer {
     {
       title: 'Compare products',
       description:
-        'Compare products across arenas by score: coverage score, Arena Score, agent-readiness, AI-native score, API quality, and each product\'s rank within its own arena. Product ids are globally unique — no arena argument needed.',
+        'Compare products across arenas by score: coverage score, PA Score, agent-readiness, AI-native score, API quality, and each product\'s rank within its own arena. Product ids are globally unique — no arena argument needed.',
       inputSchema: {
         products: z.array(z.string()).min(1).describe('Product ids to compare, e.g. ["linear", "jira"] — see search_products.'),
       },
@@ -127,7 +127,7 @@ export function createServer(client: ArenaClient = createClient()): McpServer {
     {
       title: 'Top products',
       description:
-        'Cross-arena top-N: flattens every arena\'s leaderboard and ranks all products by one metric. Metrics: score (story coverage), arenaScore (Arena Score / aiEra), agentReady, agenticApp, apiQuality.',
+        'Cross-arena top-N: flattens every arena\'s leaderboard and ranks all products by one metric. Metrics: score (story coverage), paScore (PA Score / aiEra), agentReady, agenticApp, apiQuality.',
       inputSchema: {
         metric: z.enum(TOP_METRICS).describe('Metric to rank by.'),
         limit: z.number().int().min(1).max(50).optional().describe('How many products to return (default 10, max 50).'),

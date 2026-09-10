@@ -47,8 +47,8 @@ describe('pickTop', () => {
     expect(result.tooClose).toBe(false)
   })
 
-  it('reads arenaScore from the aiEra field', () => {
-    const result = pickTop([entry('a', { aiEra: 31.1 }), entry('b', { aiEra: 28.2 })], PRODUCTS, 'arenaScore')
+  it('reads paScore from the aiEra field', () => {
+    const result = pickTop([entry('a', { aiEra: 31.1 }), entry('b', { aiEra: 28.2 })], PRODUCTS, 'paScore')
     expect(result.top?.productId).toBe('a')
     expect(result.top?.value).toBe(31.1)
     expect(result.delta).toBe(2.9)

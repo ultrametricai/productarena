@@ -41,7 +41,7 @@ export interface RankingsView {
     productId: string
     name: string
     type: Product['type']
-    arenaScore: number | null
+    paScore: number | null
     agentReady: number | null
     agenticApp: number | null
     apiQuality: number | null
@@ -63,7 +63,7 @@ export async function getRankings(client: ArenaClient, arena: string): Promise<R
       productId: entry.productId,
       name: byId.get(entry.productId)?.name ?? entry.productId,
       type: byId.get(entry.productId)?.type ?? 'commercial',
-      arenaScore: entry.aiEra,
+      paScore: entry.aiEra,
       agentReady: entry.agentReady,
       agenticApp: entry.agenticApp,
       apiQuality: entry.apiQuality,
@@ -189,7 +189,7 @@ export interface CompareEntry {
   rank: number | null
   fieldSize: number
   score: number | null
-  arenaScore: number | null
+  paScore: number | null
   agentReady: number | null
   agenticApp: number | null
   apiQuality: number | null
@@ -234,7 +234,7 @@ export async function compareProducts(client: ArenaClient, productIds: string[])
       rank: rankIndex === -1 ? null : rankIndex + 1,
       fieldSize: leaderboard.length,
       score: entry?.score ?? null,
-      arenaScore: entry?.aiEra ?? null,
+      paScore: entry?.aiEra ?? null,
       agentReady: entry?.agentReady ?? null,
       agenticApp: entry?.agenticApp ?? null,
       apiQuality: entry?.apiQuality ?? null,
@@ -255,7 +255,7 @@ export interface TopEntry {
   type: Product['type']
   arena: string
   value: number
-  arenaScore: number | null
+  paScore: number | null
 }
 
 export const TOP_LIMIT_DEFAULT = 10
@@ -288,7 +288,7 @@ export async function topProducts(
           type: product.type,
           arena: category.id,
           value,
-          arenaScore: entry.aiEra,
+          paScore: entry.aiEra,
         }]
       })
     }),

@@ -102,6 +102,6 @@ Not listed yet? [Request the product](../.github/ISSUE_TEMPLATE/request-a-produc
 - **Our own products play by the same rules.** Anything Ultrametric ships that appears in an
   arena (see `affiliation` in `products.json`) can only be certified through this exact
   protocol, marked `initiatedBy: 'maintainer'` with the report committed like anyone else's.
-- **A certification is not a ranking.** It never moves an Arena Score, a verdict, or a
+- **A certification is not a ranking.** It never moves an PA Score, a verdict, or a
   leaderboard position — it is a conformance statement about agent-facing surfaces on a given
   date, nothing more.

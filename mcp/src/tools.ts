@@ -192,7 +192,7 @@ export interface CompareEntry {
   rank: number | null
   fieldSize: number
   score: number | null
-  arenaScore: number | null
+  paScore: number | null
   agentReady: number | null
   agenticApp: number | null
   apiQuality: number | null
@@ -238,7 +238,7 @@ export async function compare(client: ArenaClient, productIds: string[]): Promis
       rank: rankIndex === -1 ? null : rankIndex + 1,
       fieldSize: leaderboard.length,
       score: entry?.score ?? null,
-      arenaScore: entry?.aiEra ?? null,
+      paScore: entry?.aiEra ?? null,
       agentReady: entry?.agentReady ?? null,
       agenticApp: entry?.agenticApp ?? null,
       apiQuality: entry?.apiQuality ?? null,
@@ -353,7 +353,7 @@ export async function getStacks(client: ArenaClient): Promise<ResolvedStack[]> {
   }))
 }
 
-export const TOP_METRICS = ['score', 'arenaScore', 'agentReady', 'agenticApp', 'apiQuality'] as const
+export const TOP_METRICS = ['score', 'paScore', 'agentReady', 'agenticApp', 'apiQuality'] as const
 export type TopMetric = (typeof TOP_METRICS)[number]
 
 export interface TopProductEntry {
@@ -364,21 +364,21 @@ export interface TopProductEntry {
   metric: TopMetric
   value: number
   score: number
-  arenaScore: number | null
+  paScore: number | null
 }
 
 const TOP_LIMIT_DEFAULT = 10
 const TOP_LIMIT_MAX = 50
 
 // Flattens every arena's leaderboard into one list and ranks it by the chosen metric.
-// "arenaScore" maps to the data files' `aiEra` field (the Arena Score, formerly AI-Era Index).
+// "paScore" maps to the data files' `aiEra` field (the PA Score, formerly AI-Era Index).
 export async function topProducts(client: ArenaClient, metric: string, limit?: number): Promise<TopProductEntry[]> {
-  const normalized = metric === 'aiEra' ? 'arenaScore' : metric
+  const normalized = metric === 'aiEra' ? 'paScore' : metric
   if (!TOP_METRICS.includes(normalized as TopMetric)) {
     throw new ArenaError(`unknown metric "${metric}" — use one of: ${TOP_METRICS.join(', ')}`)
   }
   const field: 'score' | 'aiEra' | 'agentReady' | 'agenticApp' | 'apiQuality' =
-    normalized === 'arenaScore' ? 'aiEra' : (normalized as Exclude<TopMetric, 'arenaScore'>)
+    normalized === 'paScore' ? 'aiEra' : (normalized as Exclude<TopMetric, 'paScore'>)
   const capped = Math.max(1, Math.min(Math.floor(limit ?? TOP_LIMIT_DEFAULT), TOP_LIMIT_MAX))
 
   const categories = await fetchCategories(client)
@@ -400,7 +400,7 @@ export async function topProducts(client: ArenaClient, metric: string, limit?: n
           metric: normalized as TopMetric,
           value: e[field] as number,
           score: e.score,
-          arenaScore: e.aiEra,
+          paScore: e.aiEra,
         }))
     }),
   )

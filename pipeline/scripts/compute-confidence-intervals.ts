@@ -1,5 +1,5 @@
 // Analytic score-intervals pass (v1, no new judging) — writes data/{cat}/score-intervals.json,
-// the 68% confidence band on every product's Arena Score and agent-readiness. All the modeling
+// the 68% confidence band on every product's PA Score and agent-readiness. All the modeling
 // and math live in lib/scoreIntervals.ts (buildMeasuredNoiseModel + simulateScoreInterval — see
 // that module's doc for the precise method); this script only:
 //

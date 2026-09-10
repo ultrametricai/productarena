@@ -1,5 +1,5 @@
 // Weekly Arena Report generator: renders the last 7 days of changelog events (see
-// lib/changelog.ts — the same derivation /changelog uses), the biggest Arena Score movers, new
+// lib/changelog.ts — the same derivation /changelog uses), the biggest PA Score movers, new
 // arenas/products, and the current close races (arenas the multi-judge uncertainty pass covers)
 // into clean, newsletter-ready markdown at reports/YYYY-MM-DD.md (committed — app/reports lists
 // them). Deterministic given the data files and the clock; safe to re-run (same-day re-runs
@@ -64,7 +64,7 @@ export function eventsInWindow(events: ChangeEvent[], now: Date, windowDays: num
   })
 }
 
-// Biggest Arena Score movers over the window: latest aiEra minus the value in effect at the
+// Biggest PA Score movers over the window: latest aiEra minus the value in effect at the
 // window's start (trendDelta with a 7-day window — the change-only series carries values
 // forward; a series that only starts mid-window falls back to its earliest point). Products
 // whose TRACKING (any metric, not just aiEra) starts inside the window are excluded — their
@@ -132,7 +132,7 @@ export function eventMarkdownLine(event: ChangeEvent, siteUrl: string): string {
     case 'overtake':
       return `- ${productLink(event, siteUrl)} overtook [${event.overtookName}](${siteUrl}/arena/${event.categoryId}/product/${event.overtookId}) in ${arenaLink(event, siteUrl)} (${event.productAiEra.toFixed(1)} vs ${event.overtookAiEra.toFixed(1)})`
     case 'score-move':
-      return `- ${productLink(event, siteUrl)} ${fmtDelta(event.delta)} Arena Score in ${arenaLink(event, siteUrl)} (→ ${event.to.toFixed(1)})`
+      return `- ${productLink(event, siteUrl)} ${fmtDelta(event.delta)} PA Score in ${arenaLink(event, siteUrl)} (→ ${event.to.toFixed(1)})`
     case 'product-added':
       return `- ${productLink(event, siteUrl)} entered the ${arenaLink(event, siteUrl)} arena`
   }
@@ -144,7 +144,7 @@ export function renderWeeklyReport(input: WeeklyReportInput): string {
   lines.push(`# ProductArena Weekly — week ending ${dayLabel(weekEnding)}, ${weekEnding.slice(0, 4)}`)
   lines.push('')
   lines.push(
-    `The last ${REPORT_WINDOW_DAYS} days across every [ProductArena](${siteUrl}) arena — rank flips, Arena Score` +
+    `The last ${REPORT_WINDOW_DAYS} days across every [ProductArena](${siteUrl}) arena — rank flips, PA Score` +
       ` moves, new arenas and products, derived from the committed score history` +
       ` ([how scoring works](${siteUrl}/methodology)). Scores only move when evidence and verdicts are re-derived.`,
   )
@@ -154,7 +154,7 @@ export function renderWeeklyReport(input: WeeklyReportInput): string {
   }
   lines.push('')
 
-  lines.push('## Biggest movers (Arena Score)')
+  lines.push('## Biggest movers (PA Score)')
   lines.push('')
   if (movers.up.length === 0 && movers.down.length === 0) {
     lines.push(

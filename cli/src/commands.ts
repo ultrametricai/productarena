@@ -42,7 +42,7 @@ function resolveMetric(flags: Flags, fallback: Metric): Metric {
   if (flags.metric === undefined) return fallback
   const metric = normalizeMetric(flags.metric)
   if (!metric) {
-    throw new UsageError(`unknown metric "${flags.metric}" — use agentReady, arenaScore, agenticApp, apiQuality, or score`)
+    throw new UsageError(`unknown metric "${flags.metric}" — use agentReady, paScore, agenticApp, apiQuality, or score`)
   }
   return metric
 }
@@ -72,7 +72,7 @@ export async function cmdRankings(ctx: Ctx, arena: string, flags: Flags): Promis
     view.rows.map((r) => [
       String(r.rank),
       r.name + (r.type === 'oss' ? ' *' : ''),
-      fmtScore(r.arenaScore),
+      fmtScore(r.paScore),
       fmtScore(r.agentReady),
       fmtScore(r.agenticApp),
       fmtScore(r.apiQuality),
@@ -91,7 +91,7 @@ export async function cmdProduct(ctx: Ctx, arena: string, productId: string, fla
   const rank = detail.rank === null ? 'unranked' : `#${detail.rank} of ${detail.fieldSize}`
   ctx.out(`${c.bold(product.name)} — ${arena} ${c.green(rank)}  ${c.dim(`(${product.type}, by ${product.vendor})`)}`)
   ctx.out()
-  ctx.out(`  Arena Score     ${fmtScore(entry?.aiEra)}`)
+  ctx.out(`  PA Score     ${fmtScore(entry?.aiEra)}`)
   ctx.out(`  agent-ready     ${fmtScore(entry?.agentReady)}`)
   ctx.out(`  agentic app     ${fmtScore(entry?.agenticApp)}`)
   ctx.out(`  API quality     ${fmtScore(entry?.apiQuality)}`)
@@ -128,7 +128,7 @@ export async function cmdCompare(ctx: Ctx, ids: string[], flags: Flags): Promise
         p.name,
         p.arena,
         p.rank === null ? '—' : `#${p.rank}/${p.fieldSize}`,
-        fmtScore(p.arenaScore),
+        fmtScore(p.paScore),
         fmtScore(p.agentReady),
         fmtScore(p.agenticApp),
         fmtScore(p.apiQuality),
@@ -153,7 +153,7 @@ export async function cmdTop(ctx: Ctx, flags: Flags): Promise<void> {
   ctx.out()
   ctx.out(renderTable(
     ['#', 'PRODUCT', 'ARENA', METRIC_LABELS[metric].toUpperCase(), 'ARENA SCORE'],
-    entries.map((e, i) => [String(i + 1), e.name, e.arena, fmtScore(e.value), fmtScore(e.arenaScore)]),
+    entries.map((e, i) => [String(i + 1), e.name, e.arena, fmtScore(e.value), fmtScore(e.paScore)]),
     { align: ['r', 'l', 'l', 'r', 'r'], highlightRow: 0, color: ctx.color },
   ))
 }
@@ -232,7 +232,7 @@ export async function cmdStacks(ctx: Ctx, stackId: string | undefined, flags: Fl
       ctx.out(`  ${c.bold(slot.role)}: ${slot.productName ?? '—'} ${c.dim(`(editorial — ${slot.note ?? ''})`)}`)
     } else {
       const live = slot.kind === 'arena-top' ? ` — live #${slot.rank} of ${slot.arena}` : ` — #${slot.rank} of ${slot.arena}`
-      const metricLabel = slot.metric === 'aiEra' ? 'Arena Score' : slot.metric
+      const metricLabel = slot.metric === 'aiEra' ? 'PA Score' : slot.metric
       ctx.out(`  ${c.bold(slot.role)}: ${c.green(slot.productName ?? '')}${c.dim(`${live} by ${metricLabel} (${fmtScore(slot.metricValue)})`)}`)
     }
     ctx.out(c.dim(`    ${slot.why}`))
