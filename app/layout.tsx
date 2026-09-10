@@ -301,7 +301,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
             <span>© 2026 Ultrametric Inc</span>
-            <div className="flex items-center gap-4">
+            {/* flex-wrap: at narrow widths (375px) this link row is wider than the viewport and
+                was the page's only source of horizontal scroll. */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
               <Link href="/changelog" className="hover:text-emerald-300">
                 Changelog
               </Link>
