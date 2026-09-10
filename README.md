@@ -35,7 +35,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **60 arenas, 309 products, 18,302 judged verdicts.**
+As of the last full pipeline run: **60 arenas, 321 products, 18,986 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -121,27 +121,27 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase |
 | Mobile AI Dev Tools (`mobile-dev`) | termius, tailscale, blink-shell, a-shell, working-copy, github-mobile |
 | Code Hosting (`code-hosting`) | github, gitlab, bitbucket, gitea |
-| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline |
+| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline, cubic |
 | Edge & App Platforms (`edge-platforms`) | cloudflare, vercel, netlify, fly-io, railway, render |
 | Frontend Frameworks (`frontend-frameworks`) | react, vue, svelte, angular, solid |
 | Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai, llamafile |
 | Payroll & HR Ops (`payroll`) | gusto, rippling, deel, justworks |
 | Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard |
-| Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules |
+| Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules, omnara |
 | Mobile & In-Person Payments (`mobile-payments`) | stripe-terminal, square, sumup, adyen-pos |
 | API platforms (`api-platforms`) | postman, kong, bruno, hoppscotch |
-| Team Chat (`team-chat`) | slack, discord, ms-teams, zulip |
+| Team Chat (`team-chat`) | slack, discord, ms-teams, zulip, buzz |
 | Backend as a Service (`backend-as-a-service`) | supabase, firebase, convex, appwrite |
-| Online Payments (`payments`) | stripe, adyen, paypal, square |
+| Online Payments (`payments`) | stripe, adyen, paypal, square, autumn |
 | Accounting & Bookkeeping (`accounting`) | quickbooks, xero, puzzle, pilot |
 | Security Scanners (`security-scanners`) | trufflehog, semgrep, snyk, gitleaks, trivy |
 | Infrastructure as Code (`infra-as-code`) | terraform, pulumi, opentofu, crossplane |
-| Vibe-Coding App Builders (`vibe-coding`) | lovable, bolt, v0, replit, base44 |
+| Vibe-Coding App Builders (`vibe-coding`) | lovable, bolt, v0, replit, base44, floot |
 | Model Gateways & Routers (`model-gateways`) | openrouter, litellm, portkey, vercel-ai-gateway, cloudflare-ai-gateway, requesty |
 | LLM Evals & Observability (`llm-evals-observability`) | langfuse, langsmith, braintrust, arize-phoenix, wandb-weave, helicone, galileo |
 | AI Search APIs (`ai-search-apis`) | exa, tavily, perplexity-sonar, brave-search-api, serpapi |
 | Agent Frameworks & SDKs (`agent-frameworks`) | langgraph, openai-agents, claude-agent-sdk, crewai, pydantic-ai, mastra, google-adk, autogen, smolagents |
-| Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox, runloop |
+| Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox, runloop, blaxel |
 | Product Analytics (`product-analytics`) | posthog, amplitude, mixpanel, plausible |
 | CRM (`crm`) | hubspot, attio, salesforce, twenty |
 | Startup Legal & Incorporation (`legal-ops`) | clerky, docusign, firstbase, ironclad, legalzoom |
@@ -150,15 +150,15 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot |
 | AI Research Agents (`ai-research-agents`) | elicit, consensus, futurehouse, undermind, sakana-marlin |
 | Package & Toolchain Managers (`package-managers`) | homebrew, nix, pnpm, uv, bun, mise |
-| Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus |
+| Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus, helixdb |
 | Auth & Identity (`auth-platforms`) | auth0, clerk, workos, keycloak, better-auth |
 | AI Inference Providers (`inference-providers`) | groq, together-ai, fireworks-ai, cerebras, deepinfra, baseten |
 | Workflow Automation (`workflow-automation`) | n8n, zapier, make, temporal, pipedream |
 | Observability & Monitoring (`observability`) | datadog, grafana, sentry, new-relic, honeycomb |
-| MCP Infrastructure & Registries (`mcp-infrastructure`) | composio, smithery, glama, pipedream-mcp, gram |
-| Browser Automation for Agents (`browser-agents`) | browser-use, stagehand, skyvern, hyperbrowser, steel |
-| AI Memory Layers (`ai-memory`) | mem0, zep, letta, supermemory, cognee |
-| Voice Agent Platforms (`voice-agents`) | vapi, retell, elevenlabs-agents, bland, livekit-agents, pipecat |
+| MCP Infrastructure & Registries (`mcp-infrastructure`) | composio, smithery, glama, pipedream-mcp, gram, manufact |
+| Browser Automation for Agents (`browser-agents`) | browser-use, stagehand, skyvern, hyperbrowser, steel, notte |
+| AI Memory Layers (`ai-memory`) | mem0, zep, letta, supermemory, cognee, airweave |
+| Voice Agent Platforms (`voice-agents`) | vapi, retell, elevenlabs-agents, bland, livekit-agents, pipecat, bolna |
 | Notes & Knowledge Bases (`notes-knowledge`) | obsidian, logseq, anytype, capacities, reflect |
 | Meeting AI & Notetakers (`meeting-ai`) | granola, fireflies, otter, fathom, fellow |
 | GPU Clouds (`gpu-clouds`) | runpod, lambda-labs, coreweave, vast-ai, paperspace |
@@ -169,7 +169,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Search Infrastructure (`search-infra`) | algolia, meilisearch, typesense, elastic, orama |
 | Scheduling & Calendar (`scheduling`) | cal-com, calendly, motion, reclaim, savvycal |
 | Design & Prototyping (`design-tools`) | figma, penpot, framer, sketch, canva |
-| Email Clients & Email AI (`email`) | superhuman, shortwave, missive, zero, fastmail |
+| Email Clients & Email AI (`email`) | superhuman, shortwave, missive, zero, fastmail, agentmail |
 | Incident Management & On-call (`incident-management`) | pagerduty, incident-io, firehydrant, rootly, betterstack |
 | Developer Docs Platforms (`docs-platforms`) | mintlify, gitbook, readme, docusaurus, fern |
 | Data Pipelines & ELT (`data-pipelines`) | airbyte, fivetran, dagster, dlt, meltano |

@@ -222,8 +222,12 @@ describe('schemas', () => {
     const base = { id: 'p', name: 'P', vendor: 'V', type: 'commercial' as const, urls: { site: 'https://p.example' } }
     expect(ProductSchema.safeParse({ ...base, ycBatch: 'S22' }).success).toBe(true)
     expect(ProductSchema.safeParse({ ...base, ycBatch: 'W17' }).success).toBe(true)
+    // Four-batch era: Spring is X, Fall is F.
+    expect(ProductSchema.safeParse({ ...base, ycBatch: 'X25' }).success).toBe(true)
+    expect(ProductSchema.safeParse({ ...base, ycBatch: 'F25' }).success).toBe(true)
     expect(ProductSchema.safeParse({ ...base, ycBatch: 'Summer 2022' }).success).toBe(false)
     expect(ProductSchema.safeParse({ ...base, ycBatch: 's22' }).success).toBe(false)
+    expect(ProductSchema.safeParse({ ...base, ycBatch: 'A25' }).success).toBe(false)
   })
 
   it('caps a product claims array at 60 entries', () => {

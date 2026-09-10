@@ -6,20 +6,23 @@
 export const YC_ALL_COMPANIES_URL = 'https://yc-oss.github.io/api/companies/all.json'
 
 // "Modern" per the lane spec: W23 through the most recent batch, i.e. every 2023–2026 batch.
-// Ordered oldest → newest for deterministic report output.
+// YC moved to four batches a year starting with Fall 2024 (F24) and Spring 2025 (X25) — the
+// official short codes are W/X/S/F for Winter/Spring/Summer/Fall. Ordered oldest → newest for
+// deterministic report output.
 export const MODERN_BATCHES = [
   'Winter 2023', 'Summer 2023',
-  'Winter 2024', 'Summer 2024',
-  'Winter 2025', 'Summer 2025',
-  'Winter 2026', 'Summer 2026',
+  'Winter 2024', 'Summer 2024', 'Fall 2024',
+  'Winter 2025', 'Spring 2025', 'Summer 2025', 'Fall 2025',
+  'Winter 2026', 'Spring 2026', 'Summer 2026', 'Fall 2026',
 ]
 
-const SEASON_CODE: Record<string, string> = { Winter: 'W', Summer: 'S' }
+const SEASON_CODE: Record<string, string> = { Winter: 'W', Spring: 'X', Summer: 'S', Fall: 'F' }
 
-// "Winter 2023" -> "W23", "Summer 2026" -> "S26". Returns null for anything that doesn't match
-// YC's "<Season> <Year>" batch naming (e.g. the raw feed's occasional "Unspecified" value).
+// "Winter 2023" -> "W23", "Spring 2025" -> "X25" (YC's official code for Spring is X, not S),
+// "Fall 2025" -> "F25". Returns null for anything that doesn't match YC's "<Season> <Year>"
+// batch naming (e.g. the raw feed's occasional "Unspecified" value).
 export function batchCode(fullBatchName: string): string | null {
-  const m = /^(Winter|Summer) (\d{4})$/.exec(fullBatchName)
+  const m = /^(Winter|Spring|Summer|Fall) (\d{4})$/.exec(fullBatchName)
   if (!m) return null
   const season = SEASON_CODE[m[1]]
   const year = m[2].slice(2)

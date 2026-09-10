@@ -41,6 +41,9 @@ import { probes as email } from './email'
 import { probes as searchInfra } from './search-infra'
 import { probes as scheduling } from './scheduling'
 import { probes as designTools } from './design-tools'
+import { probes as teamChat } from './team-chat'
+import { probes as softwareFactory } from './software-factory'
+import { probes as vibeCoding } from './vibe-coding'
 
 export type { LocalProbe } from './types'
 
@@ -77,4 +80,7 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'search-infra': searchInfra,
   scheduling,
   'design-tools': designTools,
+  'team-chat': teamChat,
+  'software-factory': softwareFactory,
+  'vibe-coding': vibeCoding,
 }
