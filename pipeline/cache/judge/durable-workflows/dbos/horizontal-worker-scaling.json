@@ -1,0 +1,21 @@
+{
+  "hash": "729b10f39d5486099c4c90f7d181e2ee86e28306cac56c38e7fcb639f192daa8",
+  "verdict": {
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "DBOS's queue system provides 'managed concurrency' and flow control for running many workflows across a program (dbos-docs-6), and workflows/steps are checkpointed to Postgres so any worker crash leaves state recoverable and workflows can restart from where they left off (dbos-docs-3, dbos-docs-4). A competitor's technical critique (dbos-comm-6) confirms DBOS actually implements a Postgres 'FOR UPDATE SKIP LOCKED' pattern for distributing queued tasks among workers, which is the underlying mechanism that would let multiple worker processes pull tasks and load-balance without a central dispatcher, and worker/service crash tolerance is repeatedly emphasized (dbos-docs-11, dbos-comm-13, dbos-comm-14). However, there is no first-party documentation or benchmark that explicitly frames 'add workers → throughput scales linearly' or describes fleet-wide load-balancing guarantees, and one community note (dbos-comm-7) raises operational caveats about locking/lock contention at scale. Missing for 10: an explicit docs page/benchmark on horizontal worker scaling and throughput, and independent verification of load-balancing behavior under real multi-worker fleets.",
+    "evidenceIds": [
+      "dbos-docs-6",
+      "dbos-docs-3",
+      "dbos-docs-4",
+      "dbos-docs-11",
+      "dbos-comm-6",
+      "dbos-comm-13",
+      "dbos-comm-14",
+      "dbos-comm-7"
+    ],
+    "productId": "dbos",
+    "storyId": "horizontal-worker-scaling"
+  }
+}

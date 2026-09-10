@@ -1,0 +1,20 @@
+{
+  "hash": "4f9a4f93b95bfb28f290e332d0e48a469ad9bc58f90075c8c0817980ad5c5069",
+  "verdict": {
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Hatchet's architecture (separate control-plane service, Postgres-backed queue, retries/durability, concurrency-key limits) implies workers can be added to a fleet and tasks distributed/retried on failure (hatchet-gh-1, hatchet-gh-2, hatchet-docs-5/6/18), and the founder describes the control plane as coordinating worker execution independently of client polling (hatchet-comm-6). However, the founder's own account of a scaling pathology at ~25k queries/s with many workers long-polling causing 'runaway CPU deterioration' (hatchet-comm-11) shows real limits to clean horizontal scaling that aren't fully resolved in the evidence, and there's no explicit documentation of automatic failover/rebalancing when a worker dies. Missing for 10: explicit docs on worker-loss recovery/rebalancing, independent throughput benchmarks confirming linear scaling with added workers, and confirmation the 25k qps bottleneck is fully resolved.",
+    "evidenceIds": [
+      "hatchet-gh-1",
+      "hatchet-gh-2",
+      "hatchet-docs-5",
+      "hatchet-docs-6",
+      "hatchet-docs-18",
+      "hatchet-comm-6",
+      "hatchet-comm-11"
+    ],
+    "productId": "hatchet",
+    "storyId": "horizontal-worker-scaling"
+  }
+}
