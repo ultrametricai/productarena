@@ -156,11 +156,6 @@ export default async function ProductPage({
               {product.vendor}
               {product.type === 'commercial' && ' · commercial'}
             </p>
-            {freshness && <p className="text-xs text-zinc-400">Evidence as of {freshness}</p>}
-            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
-              <MomentumChip popularity={data.popularity[id]} />
-              <MomentumTrend series={momentumSeries} />
-            </div>
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-3">
             <WatchButton productId={id} productName={product.name} />
@@ -194,25 +189,26 @@ export default async function ProductPage({
             )}
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-4">
+        {/* PRIMARY metrics row — the "should I care" read: PA Score (+68% band), the two
+            agenticness indexes, and the MCP/CLI/API access glyphs. Everything below this row
+            is deliberately quieter (secondary: momentum/vendor responses/uptime; tertiary:
+            freshness + coverage in the muted footer line). */}
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score</span>
             {/* showBand renders the "±N" (68% interval, lib/scoreIntervals.ts) inline in muted
                 smaller type — only when interval data exists for this product, never fabricated. */}
             <AiEraBadge value={entry.aiEra} interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           </div>
-          <AgentAccessGlyphs data={data} productId={id} />
+          <AgenticBadge kind="agent-ready" value={entry.agentReady} />
+          <AgenticBadge kind="agentic-app" value={entry.agenticApp} />
+          <AgentAccessGlyphs data={data} productId={id} size="md" />
         </div>
-        {/* 30-day uptime of the monitored agent surfaces (llms.txt / MCP / openapi.json) —
-            renders nothing until slo-check has history for this product (lib/slo.ts). */}
-        <SloUptimeLine arena={category} productId={id} />
-        <div className="mt-2 flex max-w-md items-center gap-2">
-          <span className="text-[10px] uppercase tracking-widest text-zinc-400">coverage</span>
-          <ScoreBar score={entry.score} className="flex-1" />
-        </div>
-        <div className="mt-2 flex flex-wrap gap-2">
-          <AgenticBadge kind="agent-ready" value={entry.agentReady} size="sm" />
-          <AgenticBadge kind="agentic-app" value={entry.agenticApp} size="sm" />
+        {/* SECONDARY row — adoption signals (registry data, never part of the PA Score) and the
+            vendor-response chip. */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+          <MomentumChip popularity={data.popularity[id]} />
+          <MomentumTrend series={momentumSeries} />
           {vendorResponseCount > 0 && (
             <a
               href="#story-verdicts"
@@ -226,6 +222,18 @@ export default async function ProductPage({
             </a>
           )}
         </div>
+        {/* 30-day uptime of the monitored agent surfaces (llms.txt / MCP / openapi.json) —
+            renders nothing until slo-check has history for this product (lib/slo.ts). */}
+        <SloUptimeLine arena={category} productId={id} />
+        {/* TERTIARY footer line — provenance minutiae, demoted (not deleted): evidence
+            freshness (lib/freshness.ts) and the story-coverage score, which used to be a
+            full-width bar but mostly restates what PA Score + its confidence band already say. */}
+        <p className="mt-3 text-[10px] text-zinc-500">
+          {freshness && <span>Evidence as of {freshness} · </span>}
+          <span title="Evidence-graded story coverage (0–100): how much of this arena's story set the product covers, weighted by story importance. The rank tie-breaker, not the PA Score.">
+            story coverage <span className="font-mono tabular-nums">{entry.score.toFixed(1)}/100</span>
+          </span>
+        </p>
       </div>
 
       <ProductActions data={data} productId={id} tryIt={tryable} />
