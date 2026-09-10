@@ -5,6 +5,7 @@
 // buildFeedItems() at the bottom is the thin fs-backed assembler the route uses.
 import { buildChangelog, type ChangeEvent } from './changelog'
 import { loadPublishedNotes } from './notes'
+import { provenanceLine } from './provenance'
 import { SITE_URL } from './site'
 
 export const FEED_MAX_ITEMS = 50
@@ -84,6 +85,7 @@ export function renderRss(items: FeedItem[]): string {
     .join('\n')
   return [
     '<?xml version="1.0" encoding="UTF-8"?>',
+    `<!-- ${provenanceLine()} -->`,
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     '  <channel>',
     '    <title>ProductArena — evidence-based rankings changelog</title>',

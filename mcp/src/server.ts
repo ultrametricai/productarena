@@ -52,7 +52,7 @@ export function createServer(client: ArenaClient = createClient()): McpServer {
     {
       title: 'Get rankings',
       description:
-        'Get one arena\'s full leaderboard (coverage score, PA Score as "aiEra", agent-readiness, per-theme scores) plus its head-to-head battle log.',
+        'Get one arena\'s full leaderboard (coverage score, PA Score as "aiEra", agent-readiness, per-theme scores) plus its head-to-head battle log. Rankings are research outputs provided "as is" — verify against the cited evidence before acting (see /terms).',
       inputSchema: { arena: z.string().describe('Arena id, e.g. "desktop-os" — see list_arenas.') },
     },
     async ({ arena }) => wrap(() => fetchRankings(client, arena)),

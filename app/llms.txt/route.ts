@@ -1,4 +1,5 @@
 import { battleSlug, leadingBattle, loadAll, loadCategories } from '@/lib/data'
+import { provenanceLine } from '@/lib/provenance'
 import { REPO, SITE_URL as SITE } from '@/lib/site'
 
 // Static export safety: no dynamic segments, categories.json is bundled at build time.
@@ -30,7 +31,9 @@ export async function GET() {
     .filter((l): l is string => l !== null)
     .join('\n')
 
-  const body = `# ProductArena (${SITE})
+  const body = `<!-- ${provenanceLine()} -->
+
+# ProductArena (${SITE})
 
 > Evidence-graded, head-to-head rankings of software products against a shared taxonomy of user stories. Every score traces back to cited evidence (vendor docs, GitHub, community sources, or a hands-on probe) — never opinion. See /methodology for the full scoring writeup.
 

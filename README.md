@@ -783,4 +783,8 @@ by `pnpm pipeline derive --category <category>` — before any verdict actually 
 Code: © 2026 Ultrametric Inc, all rights reserved (source-available — see LICENSE).
 Data (`data/`): © 2026 Ultrametric Inc, all rights reserved (see DATA-LICENSE) — viewable
 and quotable with attribution; bulk reuse requires written permission.
+Rankings are research outputs provided "as is" — no responsibility for decisions made in
+reliance on them (see [/terms](https://ultrametric.ai/productarena/terms)); published
+`rankings.json` files carry a `_provenance` watermark, verifiable with
+`pnpm tsx pipeline/scripts/verify-provenance.ts <file>`.
 
