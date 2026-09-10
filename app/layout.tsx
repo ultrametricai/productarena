@@ -128,13 +128,27 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "ProductArena",
     type: "website",
+    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: "ProductArena — evidence in, rankings out" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "ProductArena",
     description: "The unbiased, evidence-based arena for software in the AI era.",
+    images: [`${SITE_URL}/og.png`],
   },
 };
+
+// Site-level structured data: tells crawlers what this site is and who publishes it. Per-page
+// ItemList/Product JSON-LD lives on the arena/product/vs pages; this is the umbrella node.
+const SITE_JSONLD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "ProductArena",
+  url: SITE_URL,
+  description:
+    "The unbiased, evidence-based arena for software in the AI era. Products judged on real user stories with a citation behind every verdict.",
+  publisher: { "@type": "Organization", name: "Ultrametric", url: "https://ultrametric.ai" },
+});
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const categories = loadCategories();
@@ -312,6 +326,17 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           </div>
         </footer>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: SITE_JSONLD }} />
+        {process.env.NEXT_PUBLIC_CF_BEACON_TOKEN && (
+          // Cloudflare Web Analytics — cookieless, only rendered once the beacon token env var
+          // is set (create one in the Cloudflare dash → Web Analytics, then add the env to
+          // Vercel and redeploy). Until then this is inert.
+          <script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({ token: process.env.NEXT_PUBLIC_CF_BEACON_TOKEN })}
+          />
+        )}
       </body>
     </html>
   );
