@@ -778,19 +778,21 @@
     "productId": "databricks",
     "storyId": "agent-runs-sql-headless",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Databricks docs show a governed, no-UI path: the CLI/SDK/REST API authenticate and operate against the platform (databricks-docs-2/48/49, probe-rt-1's `databricks api` wrapper), Unity Catalog governs and can be queried/discovered via CLI, SQL, or REST APIs (databricks-docs-56, 19, 38), and SQL warehouses execute ANSI SQL directly on the lakehouse (databricks-docs-32) — together covering authenticate→discover→query→read entirely outside a dashboard. missing for 10: an explicit end-to-end worked example (e.g., a documented Statement Execution API call returning query results) and independent/hands-on confirmation that an agent can chain these steps without a human touching the UI.",
+    "rationale": "Databricks documents a full non-UI path: CLI/API authentication (databricks-docs-2/48/64), schema and object discovery governed by Unity Catalog accessible via CLI/SQL/REST (databricks-docs-56, 19, 38, 70, 75), SQL execution via the Databricks SQL API/CLI (databricks-supp-api-versioning, databricks-docs-32), and reading results back programmatically (workspace REST API reference, databricks-docs-65), with runtime evidence that the CLI actually installs and exposes a raw `databricks api` wrapper keylessly (databricks-probe-rt-1). Missing for 10: an end-to-end documented/hands-on example chaining auth→discover→query→result specifically for an agent (no single walkthrough), and no independent corroboration of the full flow outside vendor docs.",
     "evidenceIds": [
       "databricks-docs-2",
       "databricks-docs-48",
-      "databricks-docs-49",
       "databricks-docs-56",
-      "databricks-docs-32",
       "databricks-docs-19",
       "databricks-docs-38",
-      "databricks-probe-rt-1",
-      "databricks-probe-4"
+      "databricks-docs-70",
+      "databricks-docs-75",
+      "databricks-docs-32",
+      "databricks-supp-api-versioning",
+      "databricks-docs-65",
+      "databricks-probe-rt-1"
     ]
   },
   {
@@ -799,28 +801,27 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Databricks hosts a live llms.txt file (HTTP 200) summarizing its documentation for agent consumption, and its CLI ships vendor-authored agent-oriented SKILL.md docs installable directly into Claude Code, Cursor, Copilot, etc., going beyond a static llms.txt to structured agent-ready docs. Missing for 10: independent third-party confirmation that agents actually use/parse the llms.txt effectively, and no evidence of a dedicated agents.md or similar broader agent-doc standard beyond llms.txt and skills.",
+    "rationale": "Databricks hosts an llms.txt file (probe confirms HTTP 200 with a structured documentation index) and also ships agent-oriented skill docs (SKILL.md files installable via `databricks aitools install`) that agents can be pointed at, going beyond a bare llms.txt. missing for 10: no independent third-party report of an agent successfully consuming llms.txt or the skills in practice, and no evidence of an /llms-full.txt or deeper machine-readable agent doc index.",
     "evidenceIds": [
       "databricks-probe-1",
       "databricks-probe-rt-2",
-      "databricks-docs-4"
+      "databricks-docs-3"
     ]
   },
   {
     "productId": "databricks",
     "storyId": "agentic-ai-insights",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Databricks delivers AI-generated insights natively via Genie (natural-language Q&A grounded in org data), AI/BI dashboards with AI-assisted authoring, automatic query optimization insights/recommendations, and Genie Code that generates code, builds pipelines/dashboards, and works with Unity Catalog lineage — all inside the product surface. This is well-documented first-party functionality spanning multiple product areas (SQL, dashboards, Genie), though independent hands-on corroboration of insight quality is thin. Missing for 10: independent/hands-on validation of insight accuracy or usefulness beyond vendor docs.",
+    "rationale": "Databricks ships multiple first-party AI-insight surfaces: Genie for natural-language Q&A grounded in org data, AI/BI dashboards with AI-assisted authoring, automatic query performance insights/recommendations, and a semantic layer (metric views) that standardizes metrics for consistent AI-driven analysis. This directly satisfies the story of getting AI-generated insights/suggestions inside the product. Missing for 10: independent/hands-on user corroboration specifically validating insight quality (community evidence is generic platform sentiment, not about Genie/AI-BI insight accuracy), and no benchmark of suggestion usefulness.",
     "evidenceIds": [
       "databricks-docs-8",
-      "databricks-docs-6",
       "databricks-docs-9",
+      "databricks-docs-6",
       "databricks-docs-22",
-      "databricks-docs-15",
-      "databricks-docs-30",
-      "databricks-docs-60"
+      "databricks-docs-42",
+      "databricks-docs-72"
     ]
   },
   {
@@ -844,16 +845,15 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Databricks ships a built-in AI assistant (Genie Code) that generates/runs code, builds pipelines and dashboards, debugs errors, and can run as an autonomous agent that plans, executes, and asks for approval before using tools — directly matching delegation of tasks to an in-product assistant, with SQL/BI surfaces also getting integrated AI assistance. missing for 10: independent/hands-on corroboration of the agentic delegation experience beyond first-party docs, and detail on reliability/limits of autonomous task execution.",
+    "confidence": "high",
+    "rationale": "Databricks ships Genie Code, a built-in AI assistant that generates/runs code, builds pipelines and dashboards, debugs errors, and can run as an autonomous agent that plans, executes code, fixes errors and asks approval before tool use — directly matching 'delegate tasks to a built-in AI assistant.' It also supports parallel chats and can be given governed tool access (Slack, GitHub, etc.) via MCP for agentic task execution. missing for 10: independent/hands-on user validation of agentic delegation quality is absent from community evidence.",
     "evidenceIds": [
-      "databricks-docs-3",
       "databricks-docs-15",
       "databricks-docs-28",
       "databricks-docs-29",
       "databricks-docs-30",
-      "databricks-docs-59",
-      "databricks-docs-5"
+      "databricks-docs-63",
+      "databricks-docs-31"
     ]
   },
   {
@@ -862,14 +862,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Databricks explicitly documents a CLI and SDK designed for automation/CI use (\"interact with the Databricks platform from your local terminal or automation scripts\"), plus REST APIs and Databricks Connect for programmatic/headless workflows, and a runtime probe confirms the CLI installs and runs keylessly with jobs/pipelines automation support. missing for 10: explicit first-party CI/CD pipeline examples (e.g., GitHub Actions/Jenkins integration guides) and independent community confirmation of headless CI usage.",
+    "rationale": "Databricks provides a documented, keylessly-installable CLI supporting scripting/automation of workspace, jobs, and Lakeflow pipelines (databricks-docs-2, databricks-docs-48, databricks-probe-rt-1), plus REST APIs and Python SDK explicitly for automating operations (databricks-docs-49, databricks-docs-65), enabling headless/CI use for orchestrating pipelines, jobs, and ML training. Jobs/pipelines can be triggered/orchestrated without UI interaction, matching CI automation needs. Missing for 10: no explicit CI/CD pipeline integration guide (e.g., GitHub Actions) or independent case study confirming CI usage beyond docs and CLI probes.",
     "evidenceIds": [
       "databricks-docs-2",
       "databricks-docs-48",
       "databricks-docs-49",
-      "databricks-probe-4",
+      "databricks-docs-65",
       "databricks-probe-rt-1",
-      "databricks-docs-47"
+      "databricks-docs-40"
     ]
   },
   {
@@ -878,11 +878,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Databricks documents plugging MCP servers into agent workflows: agents can 'discover, authenticate to, and call managed, MCP Service, and custom MCP servers,' wire up external clients like Claude/Cursor to MCP servers hosted on Databricks, and give agents governed access to third-party tools (Slack, GitHub, Google Drive, etc.) via MCP. Marketplace even lists MCP servers as discoverable/connectable assets, showing a full pipeline for consuming external MCP tool servers. Missing for 10: independent/hands-on confirmation beyond vendor docs and more detail on limitations of the MCP client integration in production.",
+    "rationale": "Databricks documents connecting agents to external, managed, and custom MCP servers (docs-45, docs-50, docs-71) and using their tools/third-party SaaS integrations (docs-31, docs-43), plus a Marketplace listing MCP servers for discovery (docs-34/69). This directly matches the story of plugging in MCP servers to gain tool access. Missing for 10: independent/hands-on community confirmation of the MCP-client integration working end-to-end (only vendor docs, no third-party validation).",
     "evidenceIds": [
-      "databricks-docs-31",
       "databricks-docs-45",
       "databricks-docs-50",
+      "databricks-docs-71",
+      "databricks-docs-43",
       "databricks-docs-34",
       "databricks-probe-3"
     ]
@@ -892,15 +893,16 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Databricks documents official MCP support: hosting managed/custom MCP servers, discovering and calling MCP servers (including MCP Service and Marketplace-listed MCP servers) from agent code, and wiring external clients (Claude, Cursor, MCP Inspector) to MCP servers hosted on Databricks. This is first-party documentation of an official MCP server integration point for agents. missing for 10: independent/hands-on third-party corroboration of the MCP server working end-to-end, and more detail on auth/governance edge cases beyond docs.",
+    "confidence": "medium",
+    "rationale": "Databricks documents official MCP server support extensively: it hosts managed/custom MCP servers as Databricks Apps, exposes Unity Catalog functions as MCP tools, provides built-in system.ai MCP Services for third-party SaaS tools, and explicitly supports wiring external clients (Claude, Cursor, MCP Inspector) to MCP servers hosted on Databricks; Marketplace also lists MCP servers as discoverable assets. Missing for 10: independent/hands-on third-party verification of the MCP connection flow (only first-party docs available).",
     "evidenceIds": [
       "databricks-docs-4",
       "databricks-docs-31",
       "databricks-docs-43",
       "databricks-docs-45",
       "databricks-docs-50",
-      "databricks-docs-34",
+      "databricks-docs-69",
+      "databricks-docs-71",
       "databricks-probe-3"
     ]
   },
@@ -926,10 +928,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Databricks ships an official, well-documented CLI (docs-2, docs-48, probe-4) with runtime verification of a real install and functional command surface spanning workspace, compute, jobs/pipelines, and REST wrapper (probe-rt-1), plus AI-native agent-skill installation support built into the CLI itself (probe-rt-2), directly matching the ai-native/agenticness framing. Missing for 10: independent third-party review specifically praising the CLI's AI-native features beyond vendor docs/runtime probe.",
+    "rationale": "Databricks ships an official CLI (docs, migration guides, REST wrapper) confirmed by hands-on runtime probe (v1.15.0), and it is explicitly AI-native: the CLI ships an `aitools install` subcommand that installs vendor agent skills (SKILL.md files) for Claude Code, Codex, Cursor, Copilot, etc. missing for 10: independent/community corroboration beyond the vendor docs and runtime probe.",
     "evidenceIds": [
       "databricks-docs-2",
       "databricks-docs-48",
+      "databricks-docs-11",
       "databricks-probe-4",
       "databricks-probe-rt-1",
       "databricks-probe-rt-2"
@@ -939,17 +942,17 @@
     "productId": "databricks",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Databricks documents a broad automation surface: a public REST API accessible via the CLI's raw `databricks api` wrapper, an official Python SDK for automating operations, Databricks Connect for programmatic compute access, and Unity Catalog objects governable via CLI/SQL/REST APIs — corroborated by a hands-on probe showing the CLI installs keylessly and exposes REST/API subcommands. Missing for 10: a discoverable OpenAPI/swagger spec at standard paths returned 404, so machine-readable API schema discovery is weaker than the prose documentation suggests.",
+    "rationale": "Databricks publishes a documented REST API reference (workspace-level APIs, versioned Jobs/SQL APIs with request/response examples), plus CLI, SDKs (Python), and Databricks Connect that all wrap this public API for automation and agentic use, and this is corroborated by a runtime probe confirming a working CLI with a raw `databricks api` REST wrapper. Missing for 10: a live interactive API try-it console or independent third-party API-quality corroboration beyond vendor docs.",
     "evidenceIds": [
-      "databricks-docs-2",
+      "databricks-docs-65",
+      "databricks-supp-versioned-apis",
+      "databricks-supp-api-reference-examples",
       "databricks-docs-48",
       "databricks-docs-49",
-      "databricks-docs-56",
-      "databricks-docs-47",
+      "databricks-docs-64",
       "databricks-probe-rt-1",
-      "databricks-probe-2",
       "databricks-probe-4"
     ]
   },
@@ -957,28 +960,33 @@
     "productId": "databricks",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Databricks shows agent-oriented governance building blocks — Unity Catalog enforces access control, lineage, and auditing on every data/AI interaction (docs-19, docs-38), and the MCP tooling docs mention giving 'your agent governed access to third-party and SaaS tools' (docs-31) with discovery/authentication flows for MCP servers (docs-50). However, none of this evidence specifically documents an API credential-issuance mechanism (e.g., scoped service-principal tokens or OAuth scopes) purpose-built for handing an agent least-privilege access; it's inferred from general Unity Catalog governance and MCP 'governed access' language rather than a dedicated credential-scoping feature description. Missing for 10: explicit documentation of scoped/least-privilege credential or token issuance workflow for agents, and any hands-on/independent confirmation that such scoping works as intended.",
+    "rationale": "Databricks documents Unity Catalog governance that enforces access control on data/AI assets and lets agents get 'governed access' to third-party tools via Unity Catalog functions and MCP services (docs-19, 38, 70, 71, 43), implying a permissions model that could scope agent access. However, there is no explicit documentation of an API/credential-issuance mechanism (e.g., scoped service-principal tokens or OAuth scopes specifically for agents) described as 'least-privilege API credentials for an agent.' Missing for 10: explicit credential/token issuance workflow scoped to an agent identity, documentation of OAuth/service-principal scoping granularity, and any hands-on or independent confirmation that credentials can be narrowly scoped per-agent.",
     "evidenceIds": [
       "databricks-docs-19",
       "databricks-docs-38",
-      "databricks-docs-31",
-      "databricks-docs-50"
+      "databricks-docs-70",
+      "databricks-docs-71",
+      "databricks-docs-43",
+      "databricks-docs-75"
     ]
   },
   {
     "productId": "databricks",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Databricks documents an official Python SDK for automation/development (databricks-docs-49) alongside Databricks Connect for IDE-based development against Databricks compute (databricks-docs-47), plus a CLI with REST API wrapper (probe-rt-1). This gives AI-native developers concrete, first-party SDK/tooling to build against. Missing for 10: explicit mention of SDKs for other languages (Go, Java, R) and independent hands-on validation beyond docs/CLI probes.",
+    "rationale": "Databricks publishes official SDKs (e.g., Databricks SDK for Python), a Databricks Connect library embeddable in any IDE, official CLI, and REST API reference with SDK-based examples, all first-party documented and independently verified via CLI runtime probes. This directly supports AI-native developers building against official SDKs/tools, further reinforced by agent-skill installs and MCP tool integration docs. missing for 10: no independent third-party benchmark of SDK reliability/coverage across languages beyond Python.",
     "evidenceIds": [
       "databricks-docs-49",
       "databricks-docs-47",
-      "databricks-docs-48",
-      "databricks-probe-rt-1"
+      "databricks-docs-64",
+      "databricks-docs-65",
+      "databricks-probe-rt-1",
+      "databricks-probe-rt-2",
+      "databricks-supp-versioned-apis"
     ]
   },
   {
@@ -986,12 +994,9 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows alerting features (query monitoring, automatic notifications) and REST APIs/CLI, but nowhere documents an official webhook subscription mechanism for events (e.g., job runs, pipeline status, Unity Catalog changes). Since a data platform plausibly could offer webhooks for event-driven integration, this axis applies, but no evidence supports it.",
-    "evidenceIds": [
-      "databricks-docs-26",
-      "databricks-docs-56"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence in the pack describes any webhook subscription mechanism (e.g., event notifications pushed to external endpoints); Databricks docs reference REST APIs, SQL alerts, and MCP tools but nothing about webhooks for event subscription.",
+    "evidenceIds": []
   },
   {
     "productId": "databricks",
@@ -1014,14 +1019,15 @@
   {
     "productId": "databricks",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Databricks has REST APIs, CLI, and SDKs, but no interactive API reference with runnable/try-it-out examples is documented, and a direct probe for OpenAPI/Swagger specs returned 404s on all candidate paths, indicating no such interactive spec-driven reference exists.",
+    "rationale": "Databricks publishes a detailed REST API reference with request/response payload examples and code samples via CLI/Terraform/SDKs (databricks-docs-65, databricks-supp-api-reference-examples), but the same doc explicitly states 'No live try-it runner is documented,' and probes found no OpenAPI/Swagger endpoint to power an interactive explorer (databricks-probe-2). This gives static, copyable examples rather than a true in-browser runnable API reference. Missing for 10: an in-page 'try it now' execution console, OpenAPI-based interactive explorer, and confirmation of live request execution against a user's workspace from the docs site.",
     "evidenceIds": [
-      "databricks-probe-2",
-      "databricks-docs-49",
-      "databricks-docs-56"
+      "databricks-docs-65",
+      "databricks-supp-api-reference-examples",
+      "databricks-supp-versioned-apis",
+      "databricks-probe-2"
     ]
   },
   {
@@ -1029,11 +1035,12 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Databricks documents a REST API and CLI, but a direct probe for a machine-readable OpenAPI/Swagger spec found all candidate paths (openapi.json, swagger.json, etc.) returning 404, and no evidence pack item points to a downloadable OpenAPI spec.",
+    "confidence": "medium",
+    "rationale": "Databricks publishes an extensive human-readable REST API reference (databricks-docs-65, databricks-supp-versioned-apis, databricks-supp-api-reference-examples) but there is no evidence of a downloadable machine-readable spec — the probe explicitly found openapi.json/swagger.json/api/openapi.json/.well-known/openapi.json all return 404 (databricks-probe-2), and the API reference page confirms 'No live try-it runner is documented.' This is an applicable axis for a platform with a large REST API surface, so absent evidence of an OpenAPI/Swagger artifact this is 'none' rather than 'na'.",
     "evidenceIds": [
       "databricks-probe-2",
-      "databricks-docs-56"
+      "databricks-docs-65",
+      "databricks-supp-api-reference-examples"
     ]
   },
   {
@@ -1041,21 +1048,22 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items describe a sandbox/staging environment, dev catalogs, data masking, or synthetic-data test setup that would let an AI-native user test without touching production data. Unity Catalog access control and lineage docs address governance, not sandbox isolation, and no dedicated 'test environment' or 'dev workspace' capability is documented.",
+    "confidence": "low",
+    "rationale": "Evidence shows Unity Catalog governance, Free Edition for learning, and an AI Playground for prototyping agents, but nothing documents a dedicated sandbox/test environment that isolates AI-native testing from production data (e.g., dev/test catalog cloning, data masking for test runs, or a documented sandbox mode). Missing for 10: explicit sandbox/test-environment feature, data isolation guarantees for testing, and any customer/community confirmation of safe non-production testing workflows.",
     "evidenceIds": []
   },
   {
     "productId": "databricks",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Databricks ships CLI and REST APIs (docs-48, docs-56) and even a CLI version migration guide (docs-11), but there is no documented API versioning scheme or deprecation policy cited anywhere in the pack, and a probe for an OpenAPI spec returned 404s (probe-2). No evidence of a stated deprecation/support-window policy for AI-native consumers of Databricks APIs.",
+    "rationale": "Databricks documents versioned REST APIs (e.g., Jobs v2.0) with explicit recommendations to use the latest version, and shows a concrete deprecation/migration case (legacy SQL API path deprecated in favor of api/2.0/sql/queries with a migration guide). This shows real-world versioning and deprecation practice, but there's no single consolidated deprecation policy document, no stated support timelines/sunset dates, and no explicit versioning scheme description (e.g., semver, LTS windows) across the whole API surface. missing for 10: a unified deprecation-policy page with timelines/sunset commitments, explicit API versioning scheme documentation, and independent confirmation that deprecations are reliably telegraphed in advance across all APIs.",
     "evidenceIds": [
-      "databricks-docs-11",
-      "databricks-docs-56",
-      "databricks-probe-2"
+      "databricks-supp-api-versioning",
+      "databricks-supp-versioned-apis",
+      "databricks-supp-api-reference-examples",
+      "databricks-docs-65"
     ]
   },
   {
@@ -1064,12 +1072,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Unity Catalog docs explicitly state it enforces access control, tracks lineage as data/AI assets are used, and logs activity for auditing across every interaction, and Genie Code/assistant docs confirm it works directly with Unity Catalog tables, columns, and lineage. Delta table history further supports auditing operations at the row/column level via time travel. Missing for 10: independent/hands-on verification of column-level lineage accuracy in production and detailed audit-log query examples (e.g., system tables for audit logs) beyond the general docs statement.",
+    "rationale": "Unity Catalog docs explicitly state it enforces access control, tracks lineage of data and AI assets, and logs activity for auditing automatically across the workspace, and Delta history supports auditing operations. missing for 10: no independent/hands-on corroboration of column-level lineage granularity or audit log query examples, and no explicit mention of 'who ran what' query-level attribution beyond general activity logging.",
     "evidenceIds": [
       "databricks-docs-19",
       "databricks-docs-38",
-      "databricks-docs-15",
-      "databricks-docs-30",
+      "databricks-docs-70",
       "databricks-docs-54",
       "databricks-docs-56"
     ]
@@ -1078,17 +1085,17 @@
     "productId": "databricks",
     "storyId": "automation-bulk-operations",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Databricks is built for bulk/batch data processing at scale — Spark-based ETL pipelines, Auto Loader for incremental bulk ingestion, structured streaming, and Unity Catalog governance operate across massive datasets, while the CLI, SDK, and REST APIs let automation scripts perform operations across many jobs/tables/workspaces programmatically. Runtime evidence confirms the CLI supports a raw REST wrapper and scriptable workspace/compute/pipeline commands for automation at scale. Missing for 10: a documented example specifically showing bulk operations across many discrete items (e.g., bulk grant/revoke across hundreds of tables, bulk job trigger) rather than general batch-processing/automation framing.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Databricks exposes bulk/automation capabilities via CLI, SDKs, REST APIs, and Lakeflow pipelines that let AI-native users script operations across many jobs, tables, or workspace objects at once (databricks-docs-2, databricks-docs-48, databricks-docs-49, databricks-docs-56, databricks-docs-65), and Unity Catalog governs bulk operations across catalogs/schemas with consistent access control. Runtime probes confirm the CLI actually works keylessly and covers workspace/compute/jobs/pipelines plus a raw REST wrapper (databricks-probe-rt-1). missing for 10: explicit documentation or example of a single bulk-operation command (e.g., batch update/delete across many items in one call) rather than iterating via scripts, and independent/hands-on evidence of bulk-operation reliability at scale.",
     "evidenceIds": [
       "databricks-docs-2",
       "databricks-docs-48",
       "databricks-docs-49",
-      "databricks-docs-13",
-      "databricks-docs-40",
       "databricks-docs-56",
-      "databricks-probe-rt-1"
+      "databricks-docs-65",
+      "databricks-probe-rt-1",
+      "databricks-docs-38"
     ]
   },
   {
@@ -1097,13 +1104,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Databricks documents several event-driven automation primitives — SQL alerts that 'evaluate conditions and deliver notifications automatically' (databricks-docs-26), Auto Loader/Structured Streaming that react to new data arriving in storage (databricks-docs-13, databricks-docs-51), and Lakeflow pipeline orchestration (databricks-docs-1, databricks-docs-40) — which collectively let a user set up conditions that trigger downstream actions. However, this is scattered across separate tools (alerts, streaming, jobs) rather than a single unified 'rules/automation' engine for arbitrary custom actions, and there is no first-party or independent evidence of a general-purpose event-rule builder (e.g., webhook-style triggers spanning any workspace event) or hands-on confirmation of reliability. Missing for 10: a unified rule-definition interface for arbitrary custom actions, evidence of broader event types (not just data-arrival/query-condition), independent corroboration of alerting/automation reliability.",
+    "rationale": "Databricks supports rule-like automation via SQL Alerts (monitor query results, evaluate conditions, deliver notifications automatically) and event-driven Lakeflow/Auto Loader pipelines that trigger on new file arrival, plus job triggers and the CLI/SDK for scripting automated actions. However, there is no dedicated general-purpose 'if event then action' rules engine documented beyond these specific mechanisms (alerts, streaming triggers, job schedules). Missing for 10: a unified event-rule/trigger API spanning arbitrary events, independent hands-on validation of alert/trigger reliability, and more detail on custom action types beyond notifications.",
     "evidenceIds": [
       "databricks-docs-26",
       "databricks-docs-13",
-      "databricks-docs-51",
+      "databricks-docs-36",
       "databricks-docs-1",
-      "databricks-docs-40"
+      "databricks-docs-48",
+      "databricks-docs-49"
     ]
   },
   {
@@ -1140,14 +1148,15 @@
   {
     "productId": "databricks",
     "storyId": "bi-driver-connectivity",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Databricks documents that BI tools like Power BI, Tableau, and Sigma can query metric views/dashboards without custom glue (databricks-docs-33, databricks-docs-9), implying standard connector support for common BI stacks. However, the evidence pack lacks explicit JDBC/ODBC driver documentation, connection setup guides, or independent confirmation that these drivers work seamlessly. Missing for 10: explicit JDBC/ODBC driver docs, connection-string/setup guides, and hands-on independent verification of BI-tool connectivity.",
+    "rationale": "Docs show that external BI tools (Power BI, Tableau, Sigma) can query Databricks metric views directly, and a JDBC-style connection library (Databricks Connect) is documented, indicating standard driver-based BI connectivity without custom glue. However, no dedicated JDBC/ODBC driver certification page or explicit ODBC integration guide is cited in the pack. missing for 10: a direct JDBC/ODBC driver download/certification doc, independent BI-tool hands-on validation.",
     "evidenceIds": [
       "databricks-docs-33",
-      "databricks-docs-9",
-      "databricks-docs-32"
+      "databricks-docs-64",
+      "databricks-docs-32",
+      "databricks-docs-42"
     ]
   },
   {
@@ -1156,11 +1165,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Databricks documents Auto Loader (Lakeflow) as a single, documented mechanism to incrementally load files that arrive in cloud object storage as part of an ETL pipeline, and a general ingestion connectors page for choosing a source/format, which broadly satisfies the story. However, the evidence never explicitly enumerates CSV, JSON, and Parquet support in one command syntax (e.g., no COPY INTO example, no explicit format list), so the exact 'single documented command for these three formats' claim is only indirectly supported. Missing for 10: explicit documentation showing a single command (like COPY INTO or Auto Loader syntax) with CSV/JSON/Parquet all listed as supported formats, and independent/hands-on confirmation of this specific bulk-load flow.",
+    "rationale": "Databricks documents ingestion tooling (a connector-selection page for cloud object storage sources) and Auto Loader for incrementally/bulk processing new files as they arrive in cloud storage, which covers CSV/JSON/Parquet ingestion, but no evidence names a single specific command (e.g., COPY INTO) or shows a concrete one-line bulk-load example spanning all three formats. Missing for 10: explicit single documented command syntax for bulk-loading CSV/JSON/Parquet, and independent/hands-on confirmation of ease-of-use.",
     "evidenceIds": [
-      "databricks-docs-1",
+      "databricks-docs-20",
       "databricks-docs-13",
-      "databricks-docs-20"
+      "databricks-docs-1"
     ]
   },
   {
@@ -1169,7 +1178,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Databricks maintains a Trust Center compliance page documenting SOC 2 Type II attestation and its certification portfolio, alongside Unity Catalog's built-in access control, lineage, and audit logging which supports compliance-driven security reviews. Missing for 10: explicit documentation/citations for HIPAA and PCI attestations specifically, and independent/third-party corroboration beyond vendor's own trust page.",
+    "rationale": "Databricks' Trust Center compliance page explicitly documents SOC 2 Type II reports and a broader certification portfolio, directly addressing platform-engineer compliance-review needs, and this is reinforced by Unity Catalog's built-in access control, lineage, and audit logging documentation which supports such attestations operationally. Missing for 10: explicit mention of HIPAA and PCI attestations/BAA details in the evidence pack, and no independent/third-party audit confirmation beyond the vendor's own trust page.",
     "evidenceIds": [
       "databricks-supp-compliance",
       "databricks-docs-19",
@@ -1182,15 +1191,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Databricks documents an ingestion hub for choosing 'a standard connector by data source' (docs-20), Auto Loader/Lakeflow pipelines for cloud storage ingestion (docs-1, docs-13), and dedicated partner docs for dbt setup (docs-10, docs-14, docs-35), plus a Lakeflow Connect skill surfaced via the CLI (probe-rt-2). However the pack lacks a concrete, itemized list of first-party/partner connectors for specific SaaS apps and databases with individual setup guides beyond dbt — missing for 10: enumerated SaaS/database connector catalog (e.g., Salesforce, Workday, Postgres, SQL Server) with per-connector setup docs, and independent evidence validating ease of setup.",
+    "rationale": "Databricks documents an ingestion hub for choosing 'standard connectors by data source' (Lakeflow Connect/Auto Loader) and a documented partner integration for dbt, plus a Marketplace listing partner data/tool assets — showing first-party and partner connector coverage with setup docs. However, the evidence pack lacks an explicit named catalog of SaaS-app/database connectors (e.g., Salesforce, Workday, specific DB connectors) with individual setup guides beyond dbt and generic Auto Loader ingestion. Missing for 10: an exhaustive/documented list of named SaaS and database connectors with per-connector setup instructions, and independent confirmation that connector coverage meets diverse source needs.",
     "evidenceIds": [
       "databricks-docs-20",
-      "databricks-docs-1",
-      "databricks-docs-13",
       "databricks-docs-10",
       "databricks-docs-14",
       "databricks-docs-35",
-      "databricks-probe-rt-2"
+      "databricks-docs-13",
+      "databricks-docs-55",
+      "databricks-docs-69"
     ]
   },
   {
@@ -1199,14 +1208,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Databricks documents Structured Streaming (incremental micro-batch and low-latency continuous processing), Lakeflow declarative pipelines with Auto Loader for ETL, and Jobs/tasks for orchestration, directly covering streams, tasks, declarative pipelines, and continuous queries. This is corroborated by extensive first-party docs on structured-streaming concepts and Lakeflow ETL pipelines, though independent hands-on validation of streaming reliability specifically is thin. Missing for 10: independent/hands-on verification of streaming/continuous-pipeline behavior in production beyond vendor docs.",
+    "rationale": "Databricks documents Structured Streaming for continuous/incremental processing with exactly-once guarantees and low-latency options, Lakeflow declarative pipelines with Auto Loader for incremental ingestion/ETL, and Databricks Workflows/Jobs orchestration referenced via CLI/tasks. This directly covers streams, declarative pipelines, and continuous/incremental transformations inside the platform. Missing for 10: no independent/hands-on benchmark validating claimed low-latency figures, and no explicit mention of scheduled/triggered task orchestration UI beyond CLI/Lakeflow docs.",
     "evidenceIds": [
       "databricks-docs-1",
       "databricks-docs-13",
       "databricks-docs-36",
       "databricks-docs-51",
-      "databricks-docs-40",
-      "databricks-docs-20"
+      "databricks-docs-68",
+      "databricks-docs-40"
     ]
   },
   {
@@ -1229,13 +1238,13 @@
     "storyId": "dataset-marketplace",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Databricks Marketplace lets analysts discover and connect third-party datasets, AI models, notebooks, apps, and MCP servers directly from their workspace, including an Open Marketplace requiring no workspace access, integrating enrichment data into the platform. missing for 10: independent/hands-on analyst reviews of the marketplace experience and details on how enriched data is joined/used in analyst workflows post-acquisition.",
+    "confidence": "high",
+    "rationale": "Databricks Marketplace is documented as an in-platform catalog where customers can discover, evaluate, and connect directly to third-party datasets (plus AI models, notebooks, apps, MCP servers) from within their workspace, and an Open Marketplace variant even works without a workspace. This directly matches the analyst story of enriching own data with third-party datasets inside the platform. Missing for 10: no independent/hands-on evidence of the enrichment workflow in practice, and no detail on how a discovered dataset is joined/merged with an analyst's own tables.",
     "evidenceIds": [
       "databricks-docs-18",
       "databricks-docs-34",
       "databricks-docs-55",
-      "databricks-docs-17"
+      "databricks-docs-69"
     ]
   },
   {
@@ -1244,7 +1253,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Databricks publishes a dedicated vendor doc page explaining what dbt is, how to install dbt Core, and how to connect it to Databricks (databricks-docs-10, -14, -35), making dbt a documented first-class integration path for data engineers. missing for 10: no evidence of a native dbt-Databricks adapter maintenance/versioning details, no independent/hands-on confirmation of the integration's reliability, and no mention of dbt Cloud-specific Databricks support.",
+    "rationale": "Databricks has a dedicated vendor docs page for dbt covering installation, connection, and dbt Core usage (databricks-docs-10, -14, -35), making dbt a documented first-class integration path for data engineers. missing for 10: no evidence of a native dbt-databricks adapter maintenance page, independent community corroboration of dbt workflow quality, or dbt Cloud-specific integration details.",
     "evidenceIds": [
       "databricks-docs-10",
       "databricks-docs-14",
@@ -1254,13 +1263,15 @@
   {
     "productId": "databricks",
     "storyId": "free-evaluation-path",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Databricks docs confirm a free trial signup path (databricks-docs-39) and a pay-as-you-go pricing model with no upfront costs (databricks-docs-21), suggesting some self-serve evaluation is possible. However, there is no evidence confirming that the trial requires no credit card or that it avoids a sales call, and community commentary focuses on cost complaints rather than trial mechanics. missing for 10: explicit confirmation that trial signup requires no credit card, evidence of real-data query access during trial without sales engagement, and independent corroboration of a frictionless self-serve trial experience.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Databricks offers a genuinely free, self-serve 'Free Edition' (replacing Community Edition) plus a free trial, explicitly for exploring datasets and running real queries/ML without needing a workspace purchase or sales call (docs-66, docs-73, docs-74, docs-39). This directly matches the analyst story of self-serve evaluation on real data. Missing for 10: explicit confirmation that no credit card is required to sign up, and independent/hands-on user corroboration of the free-tier experience (community evidence only discusses paid usage/cost complaints, not the free tier).",
     "evidenceIds": [
-      "databricks-docs-39",
-      "databricks-docs-21"
+      "databricks-docs-66",
+      "databricks-docs-73",
+      "databricks-docs-74",
+      "databricks-docs-39"
     ]
   },
   {
@@ -1282,12 +1293,12 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Unity Catalog docs describe enforcing access control at query time, table-level privilege grants, and auditing/lineage (databricks-docs-19, 38, 46, 56), but none of the evidence explicitly documents column-level masking policies or row-level filtering. A community comparison explicitly contradicts the fuller claim, stating Databricks security is 'just table level, only in SQL and Spark, none in R' versus Snowflake's table/column/row-level security and dynamic data masking (databricks-comm-9). Missing for 10: first-party documentation of column masking functions/policies, row-level security filters, and independent confirmation that these work in practice across a shared warehouse.",
+    "rationale": "Unity Catalog docs describe enforcing access control on tables and objects with grants (databricks-docs-19/38/46/56/70), which supports role-based table-level governance for many teams, but the evidence pack contains no first-party documentation of column-level masking policies or row-level filters. A community report explicitly contradicts the row/column-masking claim, stating Databricks security 'seems lacking - just table level, only in SQL and Spark, none in R' compared to competitors offering table/column/row-level security and dynamic masking (databricks-comm-9). Missing for 10: first-party docs on column masking policies, row-level security/filters, and independent confirmation these work as claimed to resolve the community-reported gap.",
     "evidenceIds": [
       "databricks-docs-19",
       "databricks-docs-38",
       "databricks-docs-46",
-      "databricks-docs-56",
+      "databricks-docs-70",
       "databricks-comm-9"
     ]
   },
@@ -1295,28 +1306,32 @@
     "productId": "databricks",
     "storyId": "live-data-sharing",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Databricks documents Delta Sharing/OpenSharing as a dedicated platform for sharing live data and AI assets with users outside the organization regardless of whether they use Databricks, explicitly avoiding data copies or export pipelines, plus a Marketplace/Open Marketplace for publishing and discovering shared listings across accounts. This directly matches the story of sharing live datasets cross-account/cross-org without copying data. Missing for 10: independent/hands-on corroboration of Delta Sharing in practice and more detail on live-query semantics vs. snapshotting.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Delta Sharing (OpenSharing) is documented as a secure data sharing platform for sharing data and AI assets outside the organization without requiring the recipient to be on Databricks, explicitly avoiding data copying/export pipelines, and the Marketplace/Open Marketplace extends this to discovery and listing of shared datasets across organizations. missing for 10: independent hands-on validation of cross-account sharing beyond vendor docs.",
     "evidenceIds": [
       "databricks-docs-17",
       "databricks-docs-18",
       "databricks-docs-34",
-      "databricks-docs-55"
+      "databricks-docs-55",
+      "databricks-docs-69"
     ]
   },
   {
     "productId": "databricks",
     "storyId": "local-dev-loop",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Databricks Connect and dbt Core let you code locally in your IDE, but both still execute against live Databricks cloud compute rather than a free/local engine or sandbox — there is no evidence of an offline emulator, local Spark runtime, or free dev-only environment that avoids touching production compute. Community comments (e.g. databricks-comm-5, databricks-comm-4) even highlight friction with local/serverless config work, reinforcing the gap.",
+    "rationale": "Databricks offers a free-tier workspace (Free Edition) and local-IDE tooling (Databricks Connect, dbt Core, CLI/SDK) that let a data-engineer author and test transformations from their laptop, but Databricks Connect still executes against real remote (Databricks) compute rather than a true local engine/emulator, and Free Edition is a hosted cloud workspace, not an offline sandbox. Community commentary even notes some engineers prefer spinning up their own local notebook/storage instead, underscoring the lack of a genuine local execution engine.  missing for 10: a true local/offline execution engine or emulator that fully mimics production compute without any cloud dependency, and evidence of hands-on validation of that local dev loop.",
     "evidenceIds": [
       "databricks-docs-47",
+      "databricks-docs-64",
+      "databricks-docs-66",
+      "databricks-docs-73",
       "databricks-docs-14",
-      "databricks-docs-10",
-      "databricks-comm-5"
+      "databricks-docs-35",
+      "databricks-comm-10"
     ]
   },
   {
@@ -1324,16 +1339,15 @@
     "storyId": "managed-continuous-ingestion",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Databricks documents Auto Loader ('Incrementally and efficiently process new data files as they arrive in cloud storage') combined with Lakeflow pipelines for managed ETL orchestration and Structured Streaming for continuous event processing with sub-5ms latency, all running as managed/serverless services rather than customer-operated infrastructure. Ingestion connectors are also documented as a standard, managed offering. Missing for 10: no independent/hands-on confirmation that the ingestion pipelines require zero customer-managed infrastructure in practice, and community feedback flags general serverless 'surprise gotchas' that add some caveats to the fully hands-off claim.",
+    "confidence": "high",
+    "rationale": "Databricks provides Auto Loader/Lakeflow pipelines to incrementally and efficiently ingest new files as they arrive in cloud storage, plus Structured Streaming for continuous event processing with low latency and exactly-once guarantees on Delta Lake, all as managed serverless/DLT-style pipelines rather than self-managed infra, and a broader ingestion connector catalog for various sources. Missing for 10: independent/hands-on evidence of production reliability at scale for continuous ingestion, and more detail on serverless auto-scaling/operational overhead reduction claims beyond docs.",
     "evidenceIds": [
       "databricks-docs-13",
       "databricks-docs-1",
-      "databricks-docs-20",
       "databricks-docs-36",
       "databricks-docs-51",
-      "databricks-docs-40",
-      "databricks-comm-4"
+      "databricks-docs-68",
+      "databricks-docs-20"
     ]
   },
   {
@@ -1355,7 +1369,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Genie lets business users ask natural-language data questions and get answers grounded in organizational data (docs-8, docs-22, docs-57), backed by a semantic layer (metric views, docs-7/16/42) that defines metrics once for consistent reuse, and Unity Catalog governance enforcing access control and lineage on every query (docs-19, docs-38). This directly matches the story of governed, semantically-grounded NL answers rather than ad-hoc hallucinated joins. Missing for 10: independent/hands-on evidence validating accuracy claims and no community corroboration specifically testing Genie's anti-hallucination behavior.",
+    "rationale": "Genie provides natural language Q&A grounded in organizational data (docs-8, docs-22, docs-57), backed by Unity Catalog governance enforcing access control and lineage (docs-19, docs-38) and metric views providing a semantic layer so metrics are defined once and computed consistently rather than via ad-hoc joins (docs-7, docs-16, docs-42, docs-72). Business-user-focused Genie One interface is explicitly documented for non-technical users (docs-57). missing for 10: independent/hands-on evidence of Genie's accuracy avoiding hallucinated joins in practice, and no community corroboration of semantic grounding quality specifically (community evidence pack is generic platform commentary, not about Genie/semantic layer).",
     "evidenceIds": [
       "databricks-docs-8",
       "databricks-docs-22",
@@ -1363,6 +1377,7 @@
       "databricks-docs-7",
       "databricks-docs-16",
       "databricks-docs-42",
+      "databricks-docs-72",
       "databricks-docs-19",
       "databricks-docs-38"
     ]
@@ -1385,17 +1400,16 @@
   {
     "productId": "databricks",
     "storyId": "openness-api-parity",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Databricks documents deep API/CLI parity for core platform objects — Unity Catalog objects are managed via Catalog Explorer, SQL, CLI, or REST APIs; the CLI wraps a raw `databricks api` command; and there are SDKs (Python) for automation — showing broad programmatic access to core data/compute operations mirroring the UI. However, no discoverable public OpenAPI/swagger spec was found (404s), and there is no explicit confirmation that newer AI-UI-only surfaces (Genie natural-language chat, AI Playground, AI/BI dashboard authoring) have full API equivalents. Missing for 10: a published OpenAPI/swagger spec, and explicit API parity evidence for Genie/AI Playground/dashboard-authoring UI features.",
+    "rationale": "Databricks documents an extensive, versioned REST API surface (workspace-level API reference, SDKs, Terraform provider, CLI that itself is a thin wrapper around the REST API — `databricks api`) and states that Unity Catalog objects can be managed via 'Catalog Explorer, SQL, the Databricks CLI, and REST APIs,' suggesting broad UI/API parity. However, a hands-on community report specifically contradicts full parity, stating 'no good way to get usage info programmatically' and calling out other CLI/SQL config gaps (e.g., can't set Spark config easily), showing some UI-visible functionality isn't cleanly exposed via API. Missing for 10: a documented comprehensive parity guarantee, independent confirmation that admin/UI-only features (budgets, workspace settings) are fully scriptable, and resolution of the community-reported programmatic usage-info gap.",
     "evidenceIds": [
+      "databricks-docs-65",
       "databricks-docs-56",
-      "databricks-docs-48",
       "databricks-docs-49",
-      "databricks-probe-4",
       "databricks-probe-rt-1",
-      "databricks-probe-2"
+      "databricks-comm-5"
     ]
   },
   {
@@ -1404,13 +1418,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Databricks data is stored in Delta Lake (open, Parquet-based) format and can be accessed/extracted via Delta Sharing/OpenSharing (an open protocol for sharing data with non-Databricks users), the CLI, REST APIs, and SQL (databricks-docs-17, databricks-docs-56, databricks-docs-48). This gives a credible path to bulk-export and exit without vendor lock-in, but there is no single first-party guide titled 'export all your data and leave', and community comments note some governance/config friction (e.g. cross-cloud volume mounting limits) that could complicate a full migration (databricks-comm-5). Missing for 10: an explicit end-to-end 'full data export/exit' tutorial, and independent verification that a full account's data (tables, ML models, dashboards) can be cleanly exported in open formats without residual lock-in.",
+    "rationale": "Databricks stores data in the open Delta Lake/Parquet format and offers Delta Sharing (OpenSharing) to share or export data outside the organization regardless of platform, plus CLI/SDK/REST API access for programmatic extraction of data and metadata. However, there's no single documented 'export everything and leave' workflow or bulk account-export tool, and community commentary (e.g., migrating workloads to Postgres) suggests migration is done piecemeal rather than via a turnkey export feature. missing for 10: a dedicated full-account/bulk data export or migration tool, and independent hands-on confirmation of frictionless full data egress.",
     "evidenceIds": [
       "databricks-docs-17",
-      "databricks-docs-54",
+      "databricks-docs-18",
       "databricks-docs-56",
-      "databricks-docs-48",
-      "databricks-comm-5"
+      "databricks-docs-65",
+      "databricks-comm-12"
     ]
   },
   {
@@ -1419,7 +1433,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Databricks is a closed-source commercial SaaS platform, not an open-source project; the evidence pack contains no indication of an open-licensed source repository for the core product. Reading a proprietary platform's source code is not a plausible axis for this category of product (though some components like Delta Lake/Spark connectors are open source, the platform itself is not), so this is a category mismatch rather than a failure.",
+    "rationale": "Databricks is a proprietary commercial data/AI platform; there is no evidence of its core source code being available under an open license, and 'read the product's source' is not a fair expectation for this category of SaaS platform (unlike an open-source library or framework). This axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -1427,12 +1441,12 @@
     "storyId": "openness-self-host",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Databricks is documented throughout as a managed cloud platform (workspaces on AWS/Azure/GCP, serverless compute, pricing per-second) with no mention of a self-hosted or on-premises deployment option; all docs and community evidence describe using Databricks as a hosted service, not a product you can run yourself.",
+    "confidence": "high",
+    "rationale": "Databricks is offered exclusively as a managed cloud service (AWS/Azure/GCP workspaces, pay-as-you-go billing) with no documented option to self-host the core platform on your own infrastructure; the closest analog (Free Edition) is still a hosted SaaS trial, not a self-hostable deployment. Community evidence even references how self-hosting Spark used to be painful specifically because Databricks replaced that with a hosted service, reinforcing that the core product is not self-hostable.",
     "evidenceIds": [
       "databricks-docs-21",
-      "databricks-comm-6",
-      "databricks-comm-10"
+      "databricks-docs-73",
+      "databricks-comm-6"
     ]
   },
   {
@@ -1441,38 +1455,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack includes general platform, governance, and compliance material (e.g., Unity Catalog governance, Trust Center SOC 2 attestation) but nothing that documents letting users choose a deployment region or ensures data residency controls. Missing for 10: explicit documentation of region/workspace deployment selection, data residency guarantees, or cross-region control settings.",
-    "evidenceIds": [
-      "databricks-docs-19",
-      "databricks-docs-38",
-      "databricks-supp-compliance"
-    ]
+    "rationale": "No evidence in the pack addresses regional deployment, data residency controls, or workspace region selection for Databricks; the compliance mention only covers SOC 2 attestations, not data-location choice.",
+    "evidenceIds": []
   },
   {
     "productId": "databricks",
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no policy or control that lets a user opt out of having their data used to train Databricks' or third-party AI models — only general governance (Unity Catalog access control/lineage) and a general SOC2 compliance mention, neither of which addresses AI training data usage. missing for 10: explicit no-training/opt-out policy documentation, contractual data-use guarantees for model training, or admin controls to restrict data from AI training pipelines.",
-    "evidenceIds": [
-      "databricks-docs-19",
-      "databricks-docs-38",
-      "databricks-supp-compliance"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack covers Databricks' data platform, governance, agent, and dev-tool features but contains no mention of any control to opt out of, or prevent, customer data being used to train Databricks' (or third-party) AI models — no data-use policy, model-training opt-out setting, or contractual guarantee is cited. missing for 10: an explicit AI-training opt-out/data-use policy, documentation of contractual or technical controls preventing model training on customer data, and any independent confirmation of such a guarantee.",
+    "evidenceIds": []
   },
   {
     "productId": "databricks",
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers Unity Catalog governance (access control, lineage, audit logging) and Delta Lake time-travel/history for auditing and rollback, plus a Trust Center compliance page mentioning SOC 2 attestation, but nothing describes configurable data retention periods, deletion/VACUUM controls, or a right-to-erasure/data-deletion workflow that an AI-native user could invoke. missing for 10: explicit retention-period configuration, data deletion/erasure APIs or workflows, GDPR/CCPA deletion compliance statements, and any user-facing control over how long data or AI interaction logs are kept before deletion.",
+    "confidence": "low",
+    "rationale": "Evidence covers Unity Catalog governance (access control, lineage, audit logging) and Delta Lake time-travel/versioning, but nothing documents user-controllable data retention periods, deletion/erasure APIs, or lifecycle policies for AI-native privacy control. Missing for 10: explicit retention configuration, right-to-delete/erasure mechanisms, data lifecycle/expiry policy documentation, and any independent verification of deletion behavior.",
     "evidenceIds": [
+      "databricks-docs-19",
       "databricks-docs-38",
       "databricks-docs-54",
-      "databricks-docs-19",
-      "databricks-supp-compliance"
+      "databricks-docs-70"
     ]
   },
   {
@@ -1480,8 +1486,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack describes a telemetry or usage-tracking opt-out control for Databricks or its AI features (Genie, Assistant, etc.); the closest item is a general SOC 2 compliance/Trust Center mention, which does not address telemetry opt-out. This is a fair question for a data/AI platform, but the pack shows no such capability.",
+    "confidence": "low",
+    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out settings for Databricks; documentation covers compliance/SOC2 but not a specific telemetry toggle. missing for 10: any mention of telemetry collection, opt-out settings, or usage-tracking controls.",
     "evidenceIds": []
   },
   {
@@ -1503,28 +1509,27 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Databricks docs confirm account-level budgets that track spending by team/project/workspace and alerting on inefficient or long-running queries, which covers cost-monitoring, but the evidence never shows an automatic auto-suspend or hard-stop mechanism that kills a runaway query or idle cluster to prevent overnight spend — budgets only track/notify, they don't state they terminate compute. missing for 10: explicit auto-suspend/cluster auto-termination policy enforcement, resource-monitor hard caps that kill jobs, and any hands-on confirmation that budgets actually halt spending rather than just alert.",
+    "rationale": "Databricks docs show account-level budgets for tracking spend by team/project/workspace and query-level alerting when conditions are met (databricks-docs-58, -61, -26), which partially covers cost monitoring, but the evidence never documents an automatic enforcement mechanism (e.g., warehouse auto-stop for idle compute or query kill/timeout) that actually halts a runaway query or idle cluster overnight — budgets are described as tracking/notifying, not stopping. missing for 10: explicit auto-suspend/auto-stop behavior for idle compute, automatic termination of runaway queries, and independent confirmation that budgets can enforce hard spend caps rather than just alert.",
     "evidenceIds": [
       "databricks-docs-58",
       "databricks-docs-61",
-      "databricks-docs-26",
-      "databricks-docs-60"
+      "databricks-docs-26"
     ]
   },
   {
     "productId": "databricks",
     "storyId": "semantic-model-metrics",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Databricks' Unity Catalog 'metric views' let analysts define a metric once (e.g., revenue/customer count) with grouping by any field, and these metrics can be queried consistently from external BI tools (Power BI, Tableau, Sigma) as well as reused across Databricks SQL queries and dashboards, matching the semantic-layer story fairly well (databricks-docs-7/16/42/33). Genie's natural-language BI layer is grounded in the same governed data, supporting the 'AI tools answer consistently' angle at a high level (databricks-docs-8/22).\nMissing for 10: explicit documentation of dimensions/joins being declared once within metric views (only metric aggregation and grouping are shown), and direct evidence that Genie/AI agents query the metric-view layer itself rather than raw tables.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Databricks Unity Catalog Metric Views let analysts define metrics, dimensions, and joins once ('you define the metric once... users can group by any available field. The query engine generates the correct computation') and this governed semantic layer is queryable consistently from SQL, AI/BI dashboards, Genie natural-language Q&A, and external BI tools like Power BI, Tableau, and Sigma. missing for 10: independent/hands-on corroboration of consistency across tools, and detail on join declaration beyond metric definition.",
     "evidenceIds": [
       "databricks-docs-7",
       "databricks-docs-16",
-      "databricks-docs-42",
+      "databricks-docs-72",
       "databricks-docs-33",
-      "databricks-docs-8",
-      "databricks-docs-22"
+      "databricks-docs-42",
+      "databricks-docs-8"
     ]
   },
   {
@@ -1533,12 +1538,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Structured Streaming (with Auto Loader) is documented as a first-party streaming ingestion API that lets data land incrementally and be queried using the same SQL/DataFrame API as batch, with claimed latency 'as low as five milliseconds' for real-time workloads. Missing for 10: independent/hands-on benchmarks confirming true seconds-level end-to-end write-to-query latency in production, and more detail on how streaming tables become queryable (e.g., checkpointing/commit visibility) beyond marketing claims.",
+    "rationale": "Databricks documents Structured Streaming as a first-class streaming API that treats streaming like batch, supports Delta Lake tables as streaming sources/sinks with exactly-once guarantees, and Auto Loader for incremental ingestion from cloud storage, with end-to-end latency claimed as low as 5ms — directly supporting near-real-time queryable ingestion. missing for 10: independent/hands-on benchmark confirming 'queryable within seconds' end-to-end, and no community corroboration specific to streaming latency claims.",
     "evidenceIds": [
-      "databricks-docs-13",
-      "databricks-docs-36",
       "databricks-docs-51",
-      "databricks-docs-20"
+      "databricks-docs-13",
+      "databricks-docs-68",
+      "databricks-docs-36",
+      "databricks-docs-1"
     ]
   },
   {
@@ -2304,14 +2310,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake CLI (`snow sql`) runs fully headless (verified via runtime probe: pipes SQL from stdin, inline queries, no dashboard), and the CLI is officially documented as keyless-installable with credential-based auth at execution time. Governance is native via RBAC (roles/privileges) and access-history logging, and the Snowflake-managed MCP server lets agents query Cortex Analyst/Search/Agents and run raw SQL as tools without extra infrastructure. Missing for 10: no explicit documented example of schema discovery (e.g., `snow sql -q \"SHOW SCHEMAS\"`) as a first-class agent workflow, and no independent/hands-on report of an agent doing the full auth→discover→query→read loop end-to-end.",
+    "rationale": "The Snowflake CLI runs headlessly (verified via runtime probe with snow sql supporting inline queries, file/stdin piping, and variable substitution) and the SQL API/REST API let an agent authenticate, submit SQL, and retrieve results entirely without Snowsight; RBAC governs access and Access History/Query History provide governance visibility over that programmatic activity. Combined with the documented Cortex MCP server for agent-native access, this covers authenticate to query to read-results end-to-end via CLI/API. missing for 10: explicit first-party example of schema discovery (e.g., SHOW/DESCRIBE) via CLI/API in an agent workflow, and independent non-Snowflake confirmation of full headless governed round-trips",
     "evidenceIds": [
       "snowflake-probe-rt-1",
       "snowflake-probe-rt-2",
-      "snowflake-docs-14",
-      "snowflake-docs-57",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
       "snowflake-docs-8",
-      "snowflake-docs-52"
+      "snowflake-docs-52",
+      "snowflake-docs-63",
+      "snowflake-probe-3"
     ]
   },
   {
@@ -2332,7 +2340,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake ships Cortex Analyst for natural-language Q&A over data, Cortex AI Functions for LLM-powered unstructured analytics, and Semantic Views to ground these insights in business context, directly delivering in-product AI-generated insights and suggestions. Missing for 10: independent/hands-on validation of insight quality and no evidence of proactive/unprompted suggestion surfacing (only query-driven Q&A is documented).",
+    "rationale": "Snowflake ships Cortex AI Functions for LLM-powered unstructured analytics on data in-place, and Cortex Analyst lets business users ask natural-language questions and get direct answers without SQL, plus semantic views to ground these insights in business context — all inside the product. missing for 10: independent/hands-on validation of insight quality and no evidence of proactive/automated suggestion surfacing (e.g., anomaly-based recommendations) beyond query-driven Q&A.",
     "evidenceIds": [
       "snowflake-docs-12",
       "snowflake-docs-13",
@@ -2348,13 +2356,17 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake documents several background-automation primitives — Snowpipe auto-ingests files without manual scheduling, Streams capture DML changes so actions can be taken automatically, and 'CREATE OR ALTER DYNAMIC TABLE' auto-refreshes transformations — plus a Cortex Agents/MCP server that lets AI agents pull data autonomously. However, there is no explicit documentation of Snowflake's Task/scheduling object for orchestrating multi-step autonomous jobs, and no first-party or hands-on evidence of an AI-native user actually wiring these primitives into a persistent background agent loop. missing for 10: explicit Tasks/scheduling docs, an end-to-end example of an AI agent autonomously orchestrating pipeline steps, and independent confirmation of this working in practice.",
+    "rationale": "Snowflake documents core primitives for background automation — Snowpipe continuous ingestion, Streams for change capture, GA Dynamic Tables that auto-refresh, and resource/anomaly monitors that autonomously suspend warehouses or alert on cost — plus a headless CLI (`snow sql`) that can be scripted/cron'd for autonomous execution. However there is no evidence of an AI-agent-specific scheduler or orchestration layer that lets an AI-native user set up an agent to run continuously/autonomously in the background; the Cortex Agents MCP server is described as an on-demand retrieval interface, not a background automation trigger. Missing for 10: explicit AI-agent scheduling/orchestration framework, autonomous multi-step agent workflows, and independent/hands-on confirmation that these primitives are actually used to run unattended AI automations.",
     "evidenceIds": [
       "snowflake-docs-6",
       "snowflake-docs-7",
       "snowflake-docs-15",
+      "snowflake-docs-53",
+      "snowflake-docs-60",
+      "snowflake-docs-17",
+      "snowflake-docs-33",
       "snowflake-docs-14",
-      "snowflake-docs-57"
+      "snowflake-probe-rt-2"
     ]
   },
   {
@@ -2363,7 +2375,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Snowflake's marketing page references 'Snowflake CoWork' and 'Snowflake CoCo' as built-in AI assistants ('Ask anything... Build anything...'), and Cortex Analyst lets business users delegate natural-language Q&A tasks without SQL, showing some built-in assistant capability. However, evidence is thin — only marketing taglines for CoWork/CoCo with no detailed documentation of task delegation, and Cortex Analyst is scoped to BI/analytics queries rather than general task delegation. Missing for 10: dedicated product docs for CoWork/CoCo describing task delegation scope, hands-on/independent verification of these assistants in use, and clarity on how broadly tasks (beyond Q&A) can be delegated.",
+    "rationale": "Snowflake's homepage advertises 'Snowflake CoWork' ('Ask anything') and 'Snowflake CoCo' ('Build anything') as built-in enterprise AI assistants, and Cortex Analyst lets business users get natural-language answers without SQL — both suggest task delegation to an in-product assistant. However, the evidence pack has no dedicated docs page, feature list, or independent/hands-on account of CoWork/CoCo's actual task-delegation capabilities, so the claim rests on thin marketing taglines rather than substantiated documentation. Missing for 10: dedicated CoWork/CoCo documentation detailing task-delegation scope, hands-on or independent corroboration of the assistant performing multi-step tasks, and clarity on how it differs from Cortex Analyst's NL query feature.",
     "evidenceIds": [
       "snowflake-docs-18",
       "snowflake-docs-19",
@@ -2377,11 +2389,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake CLI is documented and confirmed via runtime probe to install keylessly and run fully headless SQL execution (inline queries, file/stdin piping, variable substitution) — exactly the scripted/CI automation path an agent would drive. missing for 10: no independent/community CI-pipeline case study or first-party CI/CD reference architecture doc beyond the CLI headless probe.",
+    "rationale": "Snowflake CLI runs keylessly and headlessly (verified via probe: `uvx snow --version`), and `snow sql` supports inline queries, file execution, and stdin piping for fully scripted, credential-driven automation — exactly the CI/agent workflow described. This is backed by REST APIs (SQL API, resource management API) for programmatic access without any UI. Missing for 10: independent third-party CI pipeline case studies or GitHub Actions examples showing this in production use, and no mention of official CI/CD templates (e.g., GitHub Actions marketplace action).",
     "evidenceIds": [
       "snowflake-probe-rt-1",
       "snowflake-probe-rt-2",
-      "snowflake-docs-1",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
       "snowflake-probe-4"
     ]
   },
@@ -2391,10 +2404,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence documents Snowflake shipping a managed MCP *server* that other AI agents can call to use Snowflake's Cortex tools (docs-14, docs-57), i.e., Snowflake acts as an MCP tool provider, not as a client consuming external MCP servers. There is no evidence that Snowflake's Cortex Agents or any Snowflake surface can plug in third-party MCP servers to use their tools, so the client-side capability the story asks for is unevidenced.",
+    "rationale": "Evidence only shows Snowflake exposing its own capabilities via a Snowflake-managed MCP server (Cortex Agents MCP) for external AI agents to consume Snowflake as a tool — the reverse direction of this story. There is no evidence that Snowflake's Cortex Agents or any other component can act as an MCP client and plug in external MCP servers to use their tools.",
     "evidenceIds": [
       "snowflake-docs-14",
-      "snowflake-docs-57"
+      "snowflake-docs-57",
+      "snowflake-probe-3"
     ]
   },
   {
@@ -2403,7 +2417,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake documents a Snowflake-managed MCP server that lets AI agents securely retrieve data without deploying separate infrastructure, and it can be configured to serve Cortex Analyst, Cortex Search, and Cortex Agents as tools plus custom tools/SQL execution — a first-party, official MCP server offering. missing for 10: independent/hands-on third-party validation of the MCP server in production use beyond vendor docs.",
+    "rationale": "Snowflake documents a first-party, Snowflake-managed MCP server (Cortex Agents MCP) that lets AI agents securely retrieve data without deploying separate infrastructure, and it can be configured to serve Cortex Analyst, Cortex Search, Cortex Agents, custom tools, and SQL execution as MCP tools. This is explicit official documentation of a managed MCP server endpoint, not just a client integration. Missing for 10: independent/community hands-on validation of the MCP server in production use, and more detail on setup/auth specifics beyond docs.",
     "evidenceIds": [
       "snowflake-docs-14",
       "snowflake-docs-57",
@@ -2434,10 +2448,9 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Snowflake ships an official CLI (Snowflake CLI) documented for managing apps/workloads, and runtime probes confirm it installs keylessly via pypi/uvx and supports fully headless, scriptable SQL execution (stdin piping, inline queries, variable substitution) — exactly the kind of interface an AI agent would drive. missing for 10: no independent/third-party hands-on review beyond the vendor probe corroborating agent-friendly usage.",
+    "rationale": "Snowflake CLI is a well-documented official CLI, confirmed by hands-on probe showing it installs keylessly via pypi/uvx and supports headless scripted SQL execution (stdin piping, inline queries) suitable for agentic/automated workflows, plus docs on managing apps across workloads. missing for 10: no independent third-party review specifically praising AI-agent usage of the CLI beyond the runtime probe.",
     "evidenceIds": [
       "snowflake-docs-1",
-      "snowflake-docs-26",
       "snowflake-probe-4",
       "snowflake-probe-rt-1",
       "snowflake-probe-rt-2"
@@ -2446,16 +2459,18 @@
   {
     "productId": "snowflake",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Snowflake exposes SQL, a documented CLI that can run headlessly/keylessly (confirmed by runtime probe), and an official MCP server for agent access, giving AI-native users multiple documented programmatic entry points. However, no first-party REST/OpenAPI spec was found (openapi.json probes all 404), so a fully documented general-purpose public API is not clearly evidenced beyond CLI/SQL/MCP surfaces. missing for 10: a published OpenAPI/REST API spec, independent hands-on confirmation of full API coverage beyond CLI/MCP, and clearer documentation of REST endpoints for non-SQL operations.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Snowflake publishes multiple documented public APIs — the SQL REST API, general Resource Management REST API, and an official OpenAPI-spec repo with importable Postman collections — plus a headless CLI (verified runtime to work keylessly and support scripted SQL execution) and an official Snowflake-managed MCP server for AI agents, giving AI-native users several concrete, documented programmatic surfaces to drive the product. Missing for 10: a single unified OpenAPI/Swagger endpoint at the docs root (probe found 404s) and independent third-party corroboration of large-scale agentic API usage beyond vendor docs.",
     "evidenceIds": [
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
+      "snowflake-supp-openapi-specs",
       "snowflake-docs-14",
       "snowflake-docs-57",
-      "snowflake-probe-2",
+      "snowflake-probe-rt-1",
+      "snowflake-probe-rt-2",
       "snowflake-probe-4"
     ]
   },
@@ -2465,31 +2480,32 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake's RBAC model lets access privileges be scoped to roles that can be assigned narrowly (snowflake-docs-8/32/45), and the CLI/MCP server require credentials at execution time (snowflake-probe-rt-2, snowflake-docs-14/57), implying an agent could be given a limited-privilege role/key. However there is no explicit documentation of an API-credential/token issuance workflow (e.g., scoped PATs, OAuth scopes) purpose-built for AI agents — missing for 10: dedicated agent credential/token scoping docs, explicit least-privilege agent onboarding guide, and independent confirmation this is used in practice for agent credentialing.",
+    "rationale": "Snowflake's RBAC model lets admins create custom roles with narrowly scoped privileges and assign them to service/programmatic users, and the REST/SQL APIs plus MCP server support key-pair or token-based programmatic access that could be scoped to a limited role for an agent. But there is no dedicated agent-credential issuance flow, OAuth-scope UI, or documentation explicitly describing minting a scoped API key/token specifically for an AI agent; it relies on general-purpose RBAC repurposed for this use case. Missing for 10: dedicated agent-credential scoping/issuance workflow, explicit least-privilege API key generation docs for AI agents, hands-on confirmation of scoped-token issuance for an agent.",
     "evidenceIds": [
       "snowflake-docs-8",
       "snowflake-docs-32",
       "snowflake-docs-45",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
       "snowflake-docs-14",
-      "snowflake-docs-57",
-      "snowflake-probe-rt-2"
+      "snowflake-docs-57"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Snowflake exposes developer-facing surfaces relevant to AI-native/agentic building — a scriptable, headless CLI (snow sql supports piping/inline queries for scripted agents) and an official Cortex MCP server that lets agents call Cortex Analyst/Search/Agents and custom tools/SQL — plus Snowpark as a programmatic dev framework mentioned in CLI docs. However, the evidence pack never surfaces a dedicated 'official SDK' page (e.g., Python/Java/REST client library docs) that an AI-native builder would target directly. Missing for 10: explicit official SDK/client-library documentation (Python connector, REST API, Java/Node SDKs), and independent hands-on confirmation that agents build successfully against these SDKs beyond the CLI/MCP probes.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Snowflake documents official SDKs/connectors surfaces for developers: REST APIs for resource management and SQL API, official OpenAPI specs repo with Postman collections, official CLI (verified running keylessly via pypi), and Snowpark for Python/Java/Scala. These are all first-party, documented, and even runtime-verified for the CLI. missing for 10: explicit mention of language-specific SDK docs (e.g. Python/Java connector reference pages) and independent developer corroboration beyond docs/probes.",
     "evidenceIds": [
-      "snowflake-docs-1",
-      "snowflake-docs-14",
-      "snowflake-docs-57",
-      "snowflake-probe-3",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
+      "snowflake-supp-openapi-specs",
       "snowflake-probe-4",
       "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2"
+      "snowflake-probe-rt-2",
+      "snowflake-docs-26"
     ]
   },
   {
@@ -2498,15 +2514,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Snowflake has notification integrations for cost anomaly alerts and streams for tracking DML changes, but there is no documented webhook subscription API or mechanism letting an AI-native user or agent subscribe to Snowflake events via webhooks. The MCP server (docs-14, docs-57) is a pull-based tool-serving interface, not an event/webhook subscription model.",
-    "evidenceIds": [
-      "snowflake-docs-17",
-      "snowflake-docs-33",
-      "snowflake-docs-7",
-      "snowflake-docs-54",
-      "snowflake-docs-14",
-      "snowflake-docs-57"
-    ]
+    "rationale": "The evidence pack shows streams (change-data-capture) and notification integrations for cost anomalies, but nowhere documents a webhook subscription mechanism for AI agents or users to receive event notifications. No mention of 'webhook' or push-based external endpoint delivery appears anywhere in the pack.",
+    "evidenceIds": []
   },
   {
     "productId": "snowflake",
@@ -2527,60 +2536,75 @@
   {
     "productId": "snowflake",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; a probe explicitly found no OpenAPI/Swagger spec at the documented endpoints (all 404), and no docs reference a live 'try it' console or embedded runnable API playground.",
+    "rationale": "Snowflake publishes REST/SQL API docs and a separate GitHub repo with OpenAPI specs plus importable Postman collections that developers can run, giving some 'runnable examples' capability, but there is no interactive in-browser API reference (Swagger/OpenAPI explorer) on docs.snowflake.com — the probe explicitly found openapi.json/swagger.json paths returning 404. missing for 10: a hosted interactive/try-it-now API console on the docs site, embedded runnable code samples in the reference pages themselves, and confirmation the Postman collections are officially maintained/kept in sync with docs.",
     "evidenceIds": [
+      "snowflake-docs-65",
+      "snowflake-docs-66",
+      "snowflake-supp-openapi-specs",
       "snowflake-probe-2"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/Swagger spec endpoints on Snowflake's docs domain returned 404 for all candidate paths, and no evidence pack item shows a published machine-readable API spec (OpenAPI or equivalent) for Snowflake's REST/SQL APIs.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Snowflake maintains an official GitHub repo (snowflakedb/snowflake-rest-api-specs) containing OpenAPI-compliant specification files plus importable Postman collections for its REST APIs, which is exactly a downloadable machine-readable API spec; this is corroborated by docs describing the Snowflake REST APIs for resource management and the SQL API. The probe check on docs.snowflake.com/openapi.json 404s, but that doesn't negate the separately hosted official spec repo. Missing for 10: independent/hands-on confirmation of successfully downloading and using the spec, and no single canonical hosted spec URL on the docs site itself.",
     "evidenceIds": [
+      "snowflake-supp-openapi-specs",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
       "snowflake-probe-2"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Snowflake's warehouses, Time Travel, RBAC, Secure Data Sharing, and CLI/dbt tooling, but nowhere describes an explicit sandbox/dev-test environment feature (e.g., zero-copy cloning of production data into an isolated schema) that lets a user test against a copy without touching production. No citation ties any feature to isolating an AI/agent's test workflow from production data.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Snowflake's zero-copy cloning (clone inherits privileges, no data duplication) and RBAC/role isolation provide the underlying mechanisms to spin up an isolated copy of data for testing without touching production, and warehouses can be independently sized/scaled for a test workload. However, there is no first-party documentation framing this as an 'AI-native sandbox' or describing a dedicated test/dev environment workflow tied to AI agent development. Missing for 10: explicit sandbox/dev-environment documentation, AI-agent-specific sandbox guidance, and any hands-on/independent confirmation that cloning is used this way in practice.",
+    "evidenceIds": [
+      "snowflake-docs-67",
+      "snowflake-docs-71",
+      "snowflake-docs-8",
+      "snowflake-docs-32",
+      "snowflake-docs-45",
+      "snowflake-docs-14"
+    ]
   },
   {
     "productId": "snowflake",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of a versioned API scheme or deprecation policy for Snowflake's REST/SQL/CLI APIs; release notes list feature GA/preview status but not API versioning guarantees, and the openapi probe returned 404s with no deprecation policy page. Missing for 10: any docs page describing API version numbers, backward-compatibility guarantees, or a deprecation timeline/process.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Snowflake documents a formal change-management process via 'Behavior change announcements' organized into dated bundles to help users manage disruption, and publishes REST/SQL APIs with OpenAPI specs, which together imply some governance around API evolution. However there is no explicit documentation of API version numbers (e.g., v1/v2 semantics) or a stated deprecation/sunset timeline specifically for its REST/SQL APIs. missing for 10: explicit API versioning scheme, formal deprecation/sunset timeline for REST/SQL APIs, independent confirmation of policy adherence.",
     "evidenceIds": [
-      "snowflake-docs-15",
-      "snowflake-docs-16",
-      "snowflake-docs-17",
-      "snowflake-probe-2"
+      "snowflake-supp-behavior-changes",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
+      "snowflake-supp-openapi-specs"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "audit-lineage",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Snowflake provides strong audit trail via Query History (who ran what, last 14 days) and Access History (which reads/writes queries touched, queryable via ACCESS_HISTORY view), plus RBAC for access control — directly supporting 'who ran what' auditing. However, the evidence does not document an explicit column-level lineage graph/UI (e.g., a lineage explorer), only that Access History records data reads/writes, which is adjacent but thinner than a dedicated lineage feature. Missing for 10: explicit column-level lineage visualization/API documentation, and independent corroboration that lineage tracking works reliably in practice.",
+    "rationale": "Snowflake provides strong audit-log evidence via Query History (who ran what queries) and the ACCESS_HISTORY view, which explicitly tracks read/write operations for compliance auditing and highlights popular/frequently accessed tables and columns. However, the evidence pack does not document a full column-level lineage graph feature (e.g., a lineage/dependency explorer showing upstream-to-downstream column provenance), only column-level access tracking. Missing for 10: explicit documentation of a dedicated data lineage/graph feature, independent corroboration of lineage accuracy in practice.",
     "evidenceIds": [
       "snowflake-docs-51",
       "snowflake-docs-52",
       "snowflake-docs-59",
-      "snowflake-docs-8",
+      "snowflake-docs-62",
+      "snowflake-docs-63",
+      "snowflake-docs-70",
       "snowflake-docs-32"
     ]
   },
@@ -2590,14 +2614,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Snowflake's SQL engine and platform are built for set-based bulk operations (COPY INTO via Snowpipe for bulk file loads, streams tracking bulk DML changes, warehouses that resize to handle large bulk workloads), and the CLI/MCP surfaces let an AI-native user or agent drive these bulk SQL/DML operations headlessly (scripted `snow sql` with piped queries, MCP server exposing SQL execution as a tool). This gives genuine bulk-operation capability accessible to automated/AI workflows.\nmissing for 10: an explicit documented example of an AI agent issuing a single bulk operation across many discrete items (e.g., a batch API endpoint or agent-specific bulk-update tool) rather than inferring it from general SQL bulk-load/DML features.",
+    "rationale": "Snowflake supports bulk operations at scale via SQL (bulk UPDATE/DELETE/COPY INTO), Snowpipe micro-batch loading, streams for change capture, CLI and REST/SQL APIs for programmatic/scripted execution, and resizable warehouses to scale compute for large batch jobs — all usable by an AI-native/scripted user (e.g., headless `snow sql` piping shown in probe evidence). missing for 10: no explicit documentation or hands-on evidence of an AI agent issuing bulk operations across many items in one call (e.g., batch APIs for bulk row-level agent actions) or benchmarks/community validation of bulk-op performance/reliability at scale.",
     "evidenceIds": [
       "snowflake-docs-6",
       "snowflake-docs-7",
       "snowflake-docs-4",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
       "snowflake-probe-rt-1",
       "snowflake-probe-rt-2",
-      "snowflake-docs-57"
+      "snowflake-docs-26"
     ]
   },
   {
@@ -2606,14 +2632,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Snowflake provides native event-driven automation primitives — Streams capture DML changes so 'actions can be taken using the changed data' (snowflake-docs-7/21/38/54), Snowpipe auto-loads data as files arrive (snowflake-docs-6/20/29/34/44), and Resource Monitors/anomaly alerts trigger suspend or notification actions on threshold events (snowflake-docs-53/60/17/33). These are genuine rule-trigger-action mechanisms usable by any user including AI-native ones, but the evidence never frames this as a user-facing 'define a rule, agent executes on event' capability tailored for AI-native workflows, and there's no explicit task/orchestration scheduler doc shown. Missing for 10: explicit Tasks/orchestration docs pairing Streams for full CDC-to-action pipelines, and any AI-agent-specific rule-authoring interface beyond generic SQL-based automation.",
+    "rationale": "Snowflake offers building blocks that support event-driven automation — Streams capture DML changes for downstream actions, Snowpipe auto-ingests new files, resource monitors can auto-suspend warehouses on cost thresholds, and anomaly monitors trigger notification alerts — but there is no single unified 'rules engine' or declarative trigger-action framework exposed as one product for AI-native users to define arbitrary event-condition-action automations. missing for 10: a first-class, general-purpose rules/trigger-action framework (e.g., 'if X event then do Y') rather than disparate feature-specific mechanisms (streams+tasks, Snowpipe, resource monitors), and independent/hands-on evidence of composing these into end-to-end automated workflows.",
     "evidenceIds": [
       "snowflake-docs-7",
+      "snowflake-docs-54",
       "snowflake-docs-6",
+      "snowflake-docs-20",
       "snowflake-docs-53",
       "snowflake-docs-60",
-      "snowflake-docs-33",
-      "snowflake-docs-17"
+      "snowflake-docs-17",
+      "snowflake-docs-33"
     ]
   },
   {
@@ -2621,28 +2649,31 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Snowflake docs show orchestration capability via dbt Projects on Snowflake ('develop, deploy, orchestrate, and observe your transformations') and a headless Snowflake CLI ('snow sql') that can run SQL scripts non-interactively, which an AI-native user could wire into external schedulers or cron jobs. However, the evidence pack contains no mention of Snowflake's native recurring-job/scheduler primitive (e.g., a TASK object with cron syntax) or any first-party scheduling API tied to Cortex/agents. Missing for 10: explicit documentation of a native scheduled-task object, cron-style recurrence syntax, or an agent-facing API for creating/managing recurring jobs, and any hands-on confirmation that AI-native users actually use this for automation.",
+    "confidence": "low",
+    "rationale": "Evidence shows dbt Projects on Snowflake explicitly supports 'orchestrate' as part of the dbt lifecycle (implying scheduled/recurring transformation jobs) and Snowpipe/Streams enable event-driven or incremental data loads, but there is no direct documentation of Snowflake's native Task/cron scheduling object or CLI-driven recurring job scheduling in the evidence pack. missing for 10: explicit docs on native scheduled TASK objects, cron-based recurring execution, and CLI/agent-driven schedule management.",
     "evidenceIds": [
       "snowflake-docs-2",
       "snowflake-docs-55",
-      "snowflake-probe-rt-2",
-      "snowflake-docs-6"
+      "snowflake-docs-61",
+      "snowflake-docs-6",
+      "snowflake-docs-7"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Snowflake documents pieces that touch parts of this story — dbt Projects on Snowflake brings the 'develop, deploy, orchestrate, observe' lifecycle (implying versioning via dbt's git-based workflow) and Time Travel lets you restore/rollback data state — but there is no documented feature for versioning, reviewing, or rolling back automation logic itself (Tasks, Dynamic Tables, stored procedures, CLI-deployed apps). Missing for 10: explicit version history/diff for task or procedure definitions, a review/approval workflow for automation changes, and a documented rollback mechanism for automation code (not just underlying data).",
+    "rationale": "Snowflake docs show building blocks that touch pieces of this story — dbt Projects on Snowflake covers the 'develop, deploy, orchestrate, observe' lifecycle (implying dbt's git-based versioning) [snowflake-docs-2][snowflake-docs-55], Time Travel lets you restore/rollback objects and query past states [snowflake-docs-5][snowflake-docs-24][snowflake-docs-35], and object cloning/behavior-change bundles give some notion of state snapshots and change tracking [snowflake-docs-67][snowflake-supp-behavior-changes]. However there is no dedicated, documented capability for versioning, reviewing, and rolling back 'automations' (e.g., Tasks, Dynamic Tables pipelines, agent workflows) as a first-class AI-native feature — the evidence is inferential rather than a direct product answer to this story. Missing for 10: explicit versioning/review/rollback tooling for Tasks/Dynamic Tables/agent pipelines, a documented approval/review workflow for automation changes, and independent/hands-on confirmation of rollback working for automations specifically.",
     "evidenceIds": [
       "snowflake-docs-2",
-      "snowflake-docs-3",
+      "snowflake-docs-55",
       "snowflake-docs-5",
-      "snowflake-docs-15",
-      "snowflake-docs-24"
+      "snowflake-docs-24",
+      "snowflake-docs-35",
+      "snowflake-docs-67",
+      "snowflake-supp-behavior-changes"
     ]
   },
   {
@@ -2651,7 +2682,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no concrete documentation of JDBC/ODBC drivers or named BI-tool integrations (e.g., Tableau, Power BI, Looker) that would let an analyst connect dashboards without custom glue. The only tangentially relevant citation (snowflake-docs-27) is a generic pointer to 'applications and tools to access Snowflake' with no specifics on drivers or BI connectors, so this applicable ecosystem-integration axis has no supporting evidence in the pack.",
+    "rationale": "The evidence pack contains no documentation of JDBC/ODBC drivers or specific BI-tool integrations (e.g., Tableau, Power BI, Looker) — only a generic pointer ('Learn about the applications and tools that you can use to access Snowflake') and unrelated REST/SQL API and CLI docs. Since this axis clearly applies to a data platform serving analyst dashboards, but no concrete driver/BI-integration evidence is present, it must be judged 'none' rather than inferred from outside knowledge.",
     "evidenceIds": []
   },
   {
@@ -2660,10 +2691,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake's COPY INTO/Snowpipe mechanism for loading staged cloud-storage files is referenced (streams doc mentions 'inserts (including COPY INTO)', Snowpipe doc describes micro-batch loading from a stage) and corroborated by a community post confirming COPY skips already-loaded JSON Lines files, but the evidence pack never cites the actual COPY INTO command reference or a doc page explicitly confirming CSV, JSON, and Parquet support in one command from cloud storage. Missing for 10: direct COPY INTO syntax/reference docs, explicit multi-format (CSV+JSON+Parquet) confirmation, and independent hands-on validation covering all three formats.",
+    "rationale": "Evidence confirms Snowflake's COPY INTO/Snowpipe ingestion path from cloud stages (referenced via stream and Snowpipe docs, plus a community mention of COPY skipping already-loaded files and JSON Lines usage) and separate support for semi-structured JSON data types, but the pack never explicitly documents a single COPY INTO command example covering CSV, JSON, and Parquet together. missing for 10: explicit doc snippet naming CSV/Parquet file format support in COPY INTO, and a concrete single-command example spanning all three formats.",
     "evidenceIds": [
-      "snowflake-docs-7",
       "snowflake-docs-6",
+      "snowflake-docs-7",
+      "snowflake-supp-sql-semistructured",
       "snowflake-comm-4"
     ]
   },
@@ -2684,28 +2716,28 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows one documented ETL/ELT partner integration (dbt Projects on Snowflake, including migration docs) and native ingestion mechanisms like Snowpipe and streams, which cover part of the ingestion-pipeline story, but there is no evidence of a broader connector catalog for SaaS apps or databases (e.g., Salesforce, Kafka, or other partner connectors) with documented setup. missing for 10: documented first-party/partner connectors for SaaS apps, documented database connectors, a connector marketplace/catalog reference, evidence beyond dbt for ETL/ELT tool coverage.",
+    "rationale": "The pack shows Snowflake integrates with ETL/ELT tooling (dbt Projects on Snowflake, managed dbt runtimes) and general data-loading mechanisms (Snowpipe, COPY INTO, Iceberg tables for external lakes) with documented setup, but it never documents a first-party/partner connector catalog for specific SaaS apps (e.g., Salesforce, HubSpot) or databases (e.g., Postgres, MySQL) — no Partner Connect, native connectors gallery, or marketplace connector docs are cited. Missing for 10: documented SaaS-app connector catalog, database-source connector docs, partner ETL/ELT integration listings beyond dbt.",
     "evidenceIds": [
       "snowflake-docs-2",
-      "snowflake-docs-3",
       "snowflake-docs-6",
-      "snowflake-docs-7"
+      "snowflake-docs-50",
+      "snowflake-docs-61"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "continuous-transformations",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Snowflake's docs evidence covers CDC via Streams (7,21,38,54), continuous/micro-batch ingestion via Snowpipe (6,20,29,34,44), declarative incremental pipelines via GA'd Dynamic Tables (CREATE OR ALTER DYNAMIC TABLE, 15), and orchestrated transformation pipelines via dbt Projects on Snowflake (2,3,41,55). Together these map directly onto the story's streams/tasks/declarative-pipeline/continuous-query axes. Missing for 10: no explicit documentation snippet for the Tasks scheduling object itself, no dedicated mention of 'continuous queries' terminology, and no independent/hands-on corroboration of these pipeline features working end-to-end in production.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Snowflake provides native streaming/incremental transformation primitives — Streams for CDC (snowflake-docs-7), Snowpipe for continuous micro-batch ingestion (snowflake-docs-6), Dynamic Tables (declarative pipelines, GA per snowflake-docs-15), and Tasks orchestration referenced via dbt Projects on Snowflake pipeline orchestration (snowflake-docs-2/55/61). These map directly to streams, tasks, and declarative pipelines as described in the story. Missing for 10: no first-party benchmark or independent hands-on validation of continuous query latency/throughput at scale, and no explicit doc citation for the 'Tasks' object itself beyond dynamic tables/dbt orchestration.",
     "evidenceIds": [
       "snowflake-docs-7",
       "snowflake-docs-6",
       "snowflake-docs-15",
       "snowflake-docs-2",
       "snowflake-docs-55",
-      "snowflake-docs-41"
+      "snowflake-docs-61"
     ]
   },
   {
@@ -2714,17 +2746,19 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake's docs explain the core cost model (credit-based virtual warehouses, doubling costs per size tier, resource monitors to cap spend, cost-anomaly alerts, and pricing tiers) which in principle lets an engineer approximate a bill [snowflake-docs-36,40,43,53,60,42,49]. But hands-on community accounts concretely contradict easy bill estimation: one user reports costs 'could balloon pretty fast' even in a small trial and needing manual safeguards like XSMALL-only warehouses [snowflake-comm-1], and another notes Snowflake lacks query-level cost attribution and built-in recommendations, making it hard to forecast or control spend without extra tooling [snowflake-comm-7]. Missing for 10: a first-party cost calculator/estimator tool, documented per-query cost attribution, and independent case studies showing accurate pre-commitment bill forecasts.",
+    "rationale": "Snowflake documents a credit-based consumption pricing model (warehouses consume credits, user-managed control, resizing, resource monitors, cost-anomaly alerts) and lists pricing-tier names on its pricing page, giving a platform engineer some levers to reason about cost. However, hands-on community reports concretely contradict clean bill estimation: one user found costs 'balloon pretty fast' with credits doubling per warehouse size, another explicitly says Snowflake 'lacks query-level attribution of costs and no in-built features for monitoring or recommendations,' and a comparison notes companies can reach $100k/year bills without massive data — all indicating the documented model doesn't translate into reliable upfront estimation. missing for 10: an explicit per-credit/per-tier price table or cost calculator in the evidence, and any documentation walking through a concrete monthly-bill estimation example.",
     "evidenceIds": [
       "snowflake-docs-36",
       "snowflake-docs-40",
-      "snowflake-docs-43",
-      "snowflake-docs-53",
-      "snowflake-docs-60",
       "snowflake-docs-42",
       "snowflake-docs-49",
+      "snowflake-docs-53",
+      "snowflake-docs-60",
+      "snowflake-docs-17",
+      "snowflake-docs-33",
       "snowflake-comm-1",
-      "snowflake-comm-7"
+      "snowflake-comm-7",
+      "snowflake-comm-13"
     ]
   },
   {
@@ -2745,12 +2779,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake has a dedicated first-party feature, 'dbt Projects on Snowflake,' bringing the dbt lifecycle (develop/deploy/orchestrate/observe) natively into the platform, plus explicit migration docs from dbt Core, showing dbt is a documented, native citizen rather than a bolt-on. Community evidence (comm-9) independently confirms dbt models are used against Snowflake in production, corroborating real-world adoption of the integration.\nmissing for 10: standalone dbt-snowflake adapter documentation/versioning detail and independent commentary specifically validating the native dbt-Projects feature (vs. just dbt Core usage).",
+    "rationale": "Snowflake ships native 'dbt Projects on Snowflake' with vendor docs covering the full dbt lifecycle (develop/deploy/orchestrate/observe), a managed dbt Core/Fusion runtime, and an explicit migration guide from existing dbt Core projects — going beyond just a third-party adapter to first-class native support. Community evidence (comm-9) shows some real-world friction around auto-clustering interacting with dbt incremental full-refreshes, indicating a caveat rather than a dispute of the core capability. missing for 10: independent/hands-on adoption reports validating the native dbt Projects experience at scale, and detail on the classic dbt-snowflake adapter's parity/versioning docs.",
     "evidenceIds": [
       "snowflake-docs-2",
       "snowflake-docs-3",
-      "snowflake-docs-41",
       "snowflake-docs-55",
+      "snowflake-docs-61",
       "snowflake-comm-9"
     ]
   },
@@ -2800,10 +2834,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Snowflake's Secure Data Sharing lets accounts share live database objects with other Snowflake accounts (and via Data Marketplace/organizations) without copying or transferring data, explicitly stated in docs ('no actual data is copied or transferred between accounts'), and is included even at the entry Standard pricing tier. Missing for 10: independent hands-on corroboration of cross-organization sharing UX and any documented limitations/edge cases beyond vendor docs.",
+    "rationale": "Snowflake's Secure Data Sharing explicitly lets accounts share selected database objects with other Snowflake accounts (or via Data Marketplace/organizations) without copying or transferring data, and without building an export pipeline, backed by RBAC governance for controlling shared access. This directly matches the story's core requirement of live, no-copy sharing across accounts/orgs. Missing for 10: no independent/hands-on community corroboration of cross-account sharing specifically (community evidence is about cost/perf, not sharing), and no explicit cross-organization example beyond docs claims.",
     "evidenceIds": [
       "snowflake-docs-9",
       "snowflake-docs-46",
+      "snowflake-docs-8",
       "snowflake-docs-49"
     ]
   },
@@ -2813,12 +2848,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows only cloud-based development surfaces (Snowsight Notebooks, Snowflake CLI, dbt Projects on Snowflake) that require an active, billed Snowflake account/warehouse — there is no local engine, emulator, or sandbox to develop transformations before touching production compute. Community evidence even confirms that a trial account consumes real credits/costs from the start, underscoring the lack of a free/local dev loop.",
+    "rationale": "Snowflake's dev tooling (Snowflake CLI, Notebooks, dbt Projects on Snowflake) all execute against live Snowflake warehouses/compute in the cloud — there is no documented local engine, emulator, or free/offline sandbox for developing transformations before touching production compute. Pricing docs only describe cloud tiers (Standard, etc.), not a local dev loop.",
     "evidenceIds": [
-      "snowflake-docs-2",
+      "snowflake-docs-10",
       "snowflake-docs-39",
-      "snowflake-docs-4",
-      "snowflake-comm-1"
+      "snowflake-docs-2",
+      "snowflake-docs-42"
     ]
   },
   {
@@ -2827,17 +2862,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowpipe is a fully managed, serverless ingestion service that auto-loads files as soon as they land in a stage without customer-run pipeline infrastructure, and Streams complement this by capturing change data for downstream processing, all managed by Snowflake. Missing for 10: independent/hands-on evidence of continuous event-based (Snowpipe Streaming/Kafka) ingestion reliability at scale and any community corroboration of the 'without running pipeline infrastructure' claim beyond docs.",
+    "rationale": "Snowpipe (and Snowpipe Streaming) is a first-party managed service that continuously ingests files as soon as they arrive in a stage without requiring the customer to run pipeline infrastructure, complemented by Streams for change capture and Dynamic Tables for incremental transformation orchestration. Missing for 10: independent/hands-on validation of Snowpipe's continuous-ingestion latency/reliability at scale, and no direct evidence of event-based (e.g., cloud storage event) auto-ingest configuration details beyond the docs summary.",
     "evidenceIds": [
       "snowflake-docs-6",
       "snowflake-docs-20",
       "snowflake-docs-29",
-      "snowflake-docs-34",
       "snowflake-docs-44",
       "snowflake-docs-7",
-      "snowflake-docs-21",
-      "snowflake-docs-38",
-      "snowflake-docs-54"
+      "snowflake-docs-15"
     ]
   },
   {
@@ -2859,16 +2891,15 @@
     "storyId": "nl-governed-answers",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Snowflake's Cortex Analyst explicitly lets business users ask natural-language questions and get direct answers without writing SQL, grounded against Semantic Views that define business metrics/entities relationships, layered on top of RBAC governance — directly matching the story's 'governed, semantically-grounded' framing. missing for 10: independent/hands-on evidence validating hallucination/accuracy claims, and no explicit documentation tying Cortex Analyst's answer generation directly to preventing 'hallucinated joins' beyond the semantic model grounding.",
+    "confidence": "high",
+    "rationale": "Cortex Analyst explicitly enables business users to ask natural-language questions and get direct answers without writing SQL, grounded on Snowflake's Semantic Views which model business metrics/entities to prevent hallucinated joins, all governed under Snowflake's RBAC and access-history/auditing layers. This directly matches the story's requirement for governed, semantically-grounded NL answers. Missing for 10: independent/hands-on evidence (e.g., third-party benchmark or user report) validating accuracy/quality of Cortex Analyst's answers in practice, and more detail on how governance controls specifically apply within Cortex Analyst queries.",
     "evidenceIds": [
       "snowflake-docs-13",
       "snowflake-docs-25",
       "snowflake-docs-11",
-      "snowflake-docs-23",
       "snowflake-docs-47",
       "snowflake-docs-8",
-      "snowflake-docs-32"
+      "snowflake-docs-52"
     ]
   },
   {
@@ -2889,32 +2920,31 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Snowflake's SQL-centric architecture and CLI (snow sql headless execution, app/workload management, MCP server for agents) give strong evidence that most core operations (warehouses, RBAC, streams, data sharing, dbt, Cortex functions) are scriptable outside the UI, and probes confirm the CLI runs keylessly and can pipe SQL non-interactively. However, no public OpenAPI/REST spec was found (probe-2: all openapi.json paths 404), and UI-native experiences like Snowsight Notebooks, cost anomaly monitors, and semantic view visual authoring aren't shown to have documented API-only equivalents. Missing for 10: a discoverable unified REST/OpenAPI surface, explicit API parity for Snowsight-only features (notebooks, cost anomaly dashboards), and independent confirmation from developers that they can fully replace Snowsight with the CLI/API.",
+    "rationale": "Snowflake exposes strong programmatic surfaces — a SQL REST API, a general resource-management REST API, an official CLI (verified runtime-executable), OpenAPI specs, and even an MCP server for agents — which together cover most administrative and query workloads an AI-native user would need. However, there's no explicit documentation claiming full UI/API parity, and several UI-centric experiences (Snowsight Notebooks, Cortex Analyst's natural-language UI, cost-anomaly dashboards) aren't shown to have equivalent API-driven paths in this evidence pack. Missing for 10: explicit parity documentation, API equivalents for Notebooks/Cortex Analyst UI flows, and independent confirmation that all Snowsight actions are API-accessible.",
     "evidenceIds": [
-      "snowflake-docs-1",
-      "snowflake-docs-26",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
+      "snowflake-docs-68",
+      "snowflake-probe-4",
       "snowflake-probe-rt-1",
       "snowflake-probe-rt-2",
-      "snowflake-probe-2",
-      "snowflake-docs-14",
-      "snowflake-docs-57",
-      "snowflake-docs-39",
-      "snowflake-docs-17"
+      "snowflake-supp-openapi-specs",
+      "snowflake-docs-14"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake supports Apache Iceberg tables backed by customer-managed external cloud storage in an open table format, explicitly positioned for data lakes you 'cannot or choose not to store in Snowflake,' and the headless Snowflake CLI/SQL surface lets an agent script bulk queries/extracts. However, there's no documented bulk 'export everything' tooling (e.g., COPY INTO unload workflows to Parquet/CSV en masse) or migration-out guide in the evidence pack. Missing for 10: explicit bulk data-export/unload documentation, a stated data-portability or account-migration-out guide, and independent confirmation that full account data can be moved out losslessly.",
+    "rationale": "Snowflake supports Apache Iceberg tables backed by open, customer-managed cloud storage, which is a genuine open-format, portable-data path, and it exposes SQL/REST APIs for programmatic data extraction. However, there is no direct documentation in the evidence pack of a comprehensive 'export all your data and leave' workflow (e.g., bulk UNLOAD/COPY INTO to open formats for all tables, migration tooling, or explicit anti-lock-in guidance), and community commentary even frames Snowflake's stickiness/lock-in as a concern rather than confirming easy full data egress. Missing for 10: documented bulk export/unload feature for all data, first-party migration/exit tooling, and independent confirmation that a full data exit is straightforward.",
     "evidenceIds": [
       "snowflake-docs-50",
       "snowflake-docs-58",
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
-      "snowflake-probe-4"
+      "snowflake-docs-65",
+      "snowflake-docs-66",
+      "snowflake-comm-11"
     ]
   },
   {
@@ -2923,7 +2953,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Snowflake is a closed, proprietary cloud data platform SaaS; there is no evidence of open-sourcing its core engine/source code, and no reasonable buyer would expect a hosted data warehouse product to publish its source under an open license — the axis is a category error for this product type.",
+    "rationale": "Snowflake is a closed-source, proprietary commercial data platform; the story asks about reading the product's own source code under an open license, which is a category error — Snowflake does not distribute or claim to open-source its core platform (evidence only covers clients like the CLI or connectors, not the platform itself).",
     "evidenceIds": []
   },
   {
@@ -2932,7 +2962,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Snowflake is a fully managed cloud SaaS data platform with no self-hosted/on-prem deployment option documented anywhere in the evidence; self-hosting is a category error for this product type, not a missing feature.",
+    "rationale": "Snowflake is a fully managed cloud SaaS data platform with no on-premises or self-hostable distribution; self-hosting the core product is a category error for this kind of offering, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -2941,8 +2971,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation on selecting a Snowflake account region/cloud provider or data residency guarantees; only general compliance certifications are mentioned, not region/residency controls. Absence of evidence for this applicable capability means it is judged 'none'.",
-    "evidenceIds": []
+    "rationale": "The evidence pack includes compliance certifications (SOC, ISO, FedRAMP) but contains no mention of Snowflake's account/region selection, data residency controls, or cross-region replication options that would let a user choose where their data is stored. Missing for 10: explicit documentation of region/cloud selection at account creation, data residency guarantees, or replication controls for geo-restriction.",
+    "evidenceIds": [
+      "snowflake-supp-compliance"
+    ]
   },
   {
     "productId": "snowflake",
@@ -2950,12 +2982,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Snowflake offers Cortex AI Functions built on third-party LLMs, so a data-training privacy control is a fair question, but the evidence pack contains no documentation, policy statement, or contractual guarantee that customer data is excluded from model training — only generic RBAC, data sharing, and compliance certification mentions.",
-    "evidenceIds": [
-      "snowflake-docs-12",
-      "snowflake-docs-56",
-      "snowflake-supp-compliance"
-    ]
+    "rationale": "The evidence pack contains no documentation about Snowflake's policy on using customer data to train AI/LLM models, opt-out controls, or data-use guarantees for Cortex AI features — only general RBAC, compliance certifications, and access-history auditing are mentioned, none of which address AI training data usage.",
+    "evidenceIds": []
   },
   {
     "productId": "snowflake",
@@ -2985,14 +3013,17 @@
   {
     "productId": "snowflake",
     "storyId": "query-profiling",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Snowflake docs confirm a Query History page in Snowsight for monitoring individual/grouped queries over the last 14 days and an Access History view for read/write lineage, which are adjacent to query diagnostics, but the evidence pack never cites Snowflake's dedicated 'Query Profile' graphical execution-plan feature (operator tree, bytes scanned, spilling, pruning stats) that data engineers typically use to root-cause slow/expensive queries. missing for 10: explicit documentation of the Query Profile / execution plan visualization, cost/performance breakdown per operator, and independent hands-on confirmation that it surfaces the causes of slowness.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Snowsight's Query History page lets data engineers monitor executed queries and drill into a detailed query profile that explores each step of execution, directly supporting root-cause analysis of slow/expensive queries; this is corroborated by community mention of Snowsight's query/visualize UI. missing for 10: no independent hands-on account of using query profile specifically to diagnose a slow query, and no detail on cost-per-query attribution tooling (one community comment even notes lack of query-level cost attribution).",
     "evidenceIds": [
       "snowflake-docs-51",
       "snowflake-docs-59",
-      "snowflake-docs-52"
+      "snowflake-docs-62",
+      "snowflake-docs-69",
+      "snowflake-comm-3",
+      "snowflake-comm-7"
     ]
   },
   {
@@ -3001,19 +3032,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake documents resource monitors that track credit usage and can auto-suspend a warehouse (or disable an Adaptive Warehouse) when it hits a credit limit, warehouses that auto-suspend/auto-resume and can be started/stopped anytime, per-user quotas (GA), and newer cost-anomaly detection with notification integrations (GA) plus anomaly monitors (preview) — directly matching the 'stop a runaway query or idle compute overnight' story. Community evidence corroborates real-world use of resource monitors as a recommended cost-control practice, though one commenter notes Snowflake lacks query-level cost attribution/recommendations, a real secondary gap. Missing for 10: independent hands-on validation that auto-suspend/resource-monitor limits reliably halt a genuinely runaway single query mid-execution (vs. just capping warehouse-level spend), and more detail on the maturity of the preview anomaly-monitor feature.",
+    "rationale": "Snowflake ships resource monitors that track credit usage and can auto-suspend a virtual warehouse (or disable an Adaptive Warehouse) when a threshold is hit, plus GA cost-anomaly monitors, per-user quotas, and notification integrations for cost alerts, directly matching the platform-engineer need to stop runaway spend. Community commentary independently corroborates this as standard practice (setting up resource monitors and using small warehouses to control cost), and warehouses can also be manually started, stopped, and resized to control burn. Missing for 10: independent hands-on confirmation that resource monitors reliably kill an in-flight runaway query versus only suspending future warehouse starts, and detail on statement-level timeout controls.",
     "evidenceIds": [
       "snowflake-docs-53",
       "snowflake-docs-60",
+      "snowflake-docs-64",
       "snowflake-docs-16",
       "snowflake-docs-17",
       "snowflake-docs-33",
       "snowflake-docs-36",
-      "snowflake-docs-40",
-      "snowflake-docs-37",
-      "snowflake-docs-51",
-      "snowflake-comm-1",
-      "snowflake-comm-7"
+      "snowflake-docs-43",
+      "snowflake-comm-1"
     ]
   },
   {
@@ -3054,13 +3083,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Snowflake's Time Travel is well-documented: it allows querying historical data within a defined retention window (data updated/deleted since) and restoring accidentally or intentionally deleted objects such as tables, at individual or container level. This directly matches the story's requirements for both time-based querying and undrop/restore of dropped tables. Missing for 10: no independent/hands-on community corroboration of Time Travel specifically (community evidence covers other topics), and no detail on retention limits across edition tiers.",
+    "rationale": "Snowflake's documented Time Travel feature explicitly supports querying data as of a past point and restoring accidentally/intentionally deleted objects (tables, schemas, databases) within a retention window, directly matching the story; Clone/UNDROP mechanics and object cloning (inheriting privileges) further support restoration workflows. Missing for 10: no independent/hands-on corroboration of restore success or retention-period limits from community evidence.",
     "evidenceIds": [
       "snowflake-docs-5",
       "snowflake-docs-24",
       "snowflake-docs-30",
       "snowflake-docs-35",
-      "snowflake-docs-48"
+      "snowflake-docs-48",
+      "snowflake-docs-67",
+      "snowflake-docs-71"
     ]
   }
 ]
