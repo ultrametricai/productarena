@@ -104,6 +104,8 @@ function formatCompact(n: number): string {
   return String(n);
 }
 
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-80Q6FSJYY9";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -329,15 +331,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </footer>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: SITE_JSONLD }} />
-        {process.env.NEXT_PUBLIC_GA_ID && (
-          // Google Analytics 4 — only rendered once NEXT_PUBLIC_GA_ID (a G-XXXXXXX measurement
-          // id) is set in Vercel env. Create the property at analytics.google.com, add the env,
-          // redeploy. Inert until then.
+        {GA_ID && (
+          // Google Analytics 4 — the site-wide ultrametric.ai property (G-80Q6FSJYY9);
+          // NEXT_PUBLIC_GA_ID overrides if ProductArena ever gets its own property.
           <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
             <script
               dangerouslySetInnerHTML={{
-                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}');`,
+                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','${GA_ID}');`,
               }}
             />
           </>
