@@ -34,7 +34,7 @@ export async function GET() {
 
 > Evidence-graded, head-to-head rankings of software products against a shared taxonomy of user stories. Every score traces back to cited evidence (vendor docs, GitHub, community sources, or a hands-on probe) — never opinion. See /methodology for the full scoring writeup.
 
-ProductArena crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, an PA Score, and a head-to-head battle log per arena — all reproducible from the cited evidence.
+ProductArena crawls vendor docs, GitHub, and community sources for ${categories.length} product categories ("arenas"), extracts per-product evidence, and has an LLM judge every product against a shared set of user stories (weight 1-3, tiered verdicts full/partial/none/disputed/na). The result is a coverage score, a PA Score, and a head-to-head battle log per arena — all reproducible from the cited evidence.
 
 ## Arenas (markdown, one per category)
 
@@ -53,7 +53,7 @@ ${leadingBattleLinks}
 ## Global rankings (every product, every arena, one flat list)
 
 - [Most agentic](${SITE}/rankings/agentic): every product ranked by AGENT-READY (can an agent reach and operate it at all).
-- [Most AI-native](${SITE}/rankings/ai-native): every product ranked by AGENTIC (does the product act agentically on its own behalf).
+- [Most AI-native](${SITE}/rankings/ai-native): every product ranked by AI-NATIVE (does the product act agentically on its own behalf).
 
 ## Data API (JSON, no auth)
 

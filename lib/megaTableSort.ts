@@ -68,19 +68,19 @@ export interface MegaTableRow {
   access: { MCP: MegaTableAccessGlyph; CLI: MegaTableAccessGlyph; API: MegaTableAccessGlyph }
 }
 
-// AGENTREADYNESS is this table's whole reason for existing (a cross-arena "can your agent even
+// AGENT-READY is this table's whole reason for existing (a cross-arena "can your agent even
 // reach this product" view), so it — not the per-row PA Score — is both the default sort
 // column and what `rank` re-derives when no other sort is active.
 export const DEFAULT_COLUMN: MegaTableColumn = 'agentReady'
 export const DEFAULT_DIRECTION: SortDirection = 'desc'
 
 export const COLUMN_LABELS: Record<MegaTableColumn, string> = {
-  rank: 'AGENTREADYNESS',
+  rank: 'AGENT-READY',
   name: 'product name',
   arena: 'arena',
   initScore: 'PA Score',
-  agentReady: 'AGENTREADYNESS',
-  agenticApp: 'AGENTIC',
+  agentReady: 'AGENT-READY',
+  agenticApp: 'AI-NATIVE',
   apiQuality: 'API quality',
   popularity: 'Popularity',
 }
@@ -107,7 +107,7 @@ function stringFieldFor(column: MegaTableColumn): StringField | null {
 }
 
 // The column a given MegaTableColumn actually reads from a row (rank has no own field; it
-// re-derives the default AGENTREADYNESS order).
+// re-derives the default AGENT-READY order).
 const NUMERIC_FIELDS: Record<MegaTableColumn, NumericField | null> = {
   rank: 'agentReady',
   name: null,
@@ -156,7 +156,7 @@ export function filterMegaRowsByArena(rows: MegaTableRow[], arenaId: string): Me
 }
 
 // Fixed rank identity: each product's position in the full (unfiltered) list sorted by the
-// default column (AGENTREADYNESS desc, nulls last) — doesn't jump around when the visible sort
+// default column (AGENT-READY desc, nulls last) — doesn't jump around when the visible sort
 // or filter changes, same rationale as ArenaTable's rankOf.
 // Keyed by arenaId:productId — the same product can compete in two arenas (devin in
 // software-factory + ai-coding, square in payments + mobile-payments), and a bare productId

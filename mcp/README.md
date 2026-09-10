@@ -16,11 +16,11 @@ client at it.
 | Tool | Arguments | Description |
 |---|---|---|
 | `list_arenas` | — | List every arena/category (id, name, description, personas, themes). |
-| `get_rankings` | `arena` | One arena's full leaderboard (coverage score, Arena Score, agent-readiness, per-theme scores) plus its head-to-head battle log. |
+| `get_rankings` | `arena` | One arena's full leaderboard (coverage score, PA Score, agent-readiness, per-theme scores) plus its head-to-head battle log. |
 | `get_product` | `arena`, `product` | One product: metadata, leaderboard entry with rank, verdict counts, and a per-story verdict summary. |
 | `get_verdict` | `arena`, `product`, `story` | The full judged verdict for one (product, story) cell: tier, quality, confidence, rationale, and cited evidence URLs. |
 | `search_products` | `query` | Find products by id/name/vendor substring across every arena. |
-| `compare` | `products[]` | Cross-arena score comparison — rank, coverage score, Arena Score, agent-readiness, AI-native, API quality per product. Product ids are globally unique. |
+| `compare` | `products[]` | Cross-arena score comparison — rank, coverage score, PA Score, agent-readiness, AI-native, API quality per product. Product ids are globally unique. |
 | `get_stacks` | — | Curated cross-arena AI stacks with every scored slot resolved live from current leaderboards. |
 | `top_products` | `metric`, `limit?` | Cross-arena top-N by one metric: `score`, `arenaScore`, `agentReady`, `agenticApp`, or `apiQuality`. |
 

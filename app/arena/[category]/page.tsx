@@ -22,7 +22,7 @@ function topEntry(data: CategoryData) {
 }
 
 function scoreText(aiEra: number | null): string {
-  return aiEra === null ? 'the top evidence-graded coverage score' : `an PA Score of ${aiEra.toFixed(0)}/100`
+  return aiEra === null ? 'the top evidence-graded coverage score' : `a PA Score of ${aiEra.toFixed(0)}/100`
 }
 
 // Honest FAQPage JSON-LD — both answers are derived straight from this arena's own computed

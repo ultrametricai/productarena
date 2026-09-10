@@ -14,7 +14,7 @@ interface IndexRow {
   entry: CategoryData['rankings']['leaderboard'][number]
 }
 
-// Flattens every category's leaderboard into one global list, then sorts by the AGENTREADYNESS
+// Flattens every category's leaderboard into one global list, then sorts by the AGENT-READY
 // score (desc, nulls last) — the whole point of "The Agentic Index" is a cross-arena view of
 // how friendly products are to AI agents, so agentReady (not the per-category aiEra/score) is
 // the primary sort key. Ties break on apiQuality, then aiEra, both desc/nulls-last.
@@ -68,7 +68,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
             <th className="sticky left-0 z-10 w-10 bg-zinc-950 px-3 py-2 font-normal">#</th>
             <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
             <th className="px-3 py-2 font-normal">Arena</th>
-            <th className="px-3 py-2 font-normal">Agentreadyness</th>
+            <th className="px-3 py-2 font-normal">Agent-ready</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">API quality</th>
             <th className="px-3 py-2 font-normal">Access</th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
@@ -102,7 +102,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
                 </Link>
               </td>
               <td className="px-3 py-2">
-                {/* Column header already says AGENTREADYNESS — the pill carries just the value. */}
+                {/* Column header already says AGENT-READY — the pill carries just the value. */}
                 <AgenticBadge kind="agent-ready" value={row.entry.agentReady} size="sm" showLabel={false} />
               </td>
               <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">
