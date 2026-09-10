@@ -116,6 +116,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  alternates: {
+    types: { "application/rss+xml": `${SITE_URL}/feed.xml` },
+  },
   title: "ProductArena",
   description:
     "ProductArena — the unbiased, evidence-based arena for software in the AI era. Evidence in, rankings out.",
@@ -302,6 +305,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </Link>
               <Link href="/mcp" className="hover:text-emerald-300">
                 MCP
+              </Link>
+              <Link href="/feed.xml" className="hover:text-emerald-300">
+                RSS
               </Link>
             </div>
           </div>
