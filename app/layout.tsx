@@ -70,6 +70,8 @@ const NAV_LABELS: Record<string, string> = {
   "customer-data-platforms": "CDPs",
   "durable-workflows": "Durable exec",
   "ai-support-agents": "Support AI",
+  "ai-code-review": "Code review",
+  "document-extraction": "Doc extraction",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
