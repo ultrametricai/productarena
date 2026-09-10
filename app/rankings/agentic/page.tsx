@@ -26,7 +26,7 @@ export default function AgenticRankingPage() {
         <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Most agent-ready — best for AI agents</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          All {totalProducts} products across every arena, ranked by AGENTREADYNESS: can an agent reach the product
+          All {totalProducts} products across every arena, ranked by AGENT-READY: can an agent reach the product
           at all (API/CLI/MCP/webhooks/SDKs/docs)? Ties break on API quality, then PA Score.
         </p>
         <p className="mt-2 text-xs text-zinc-500">

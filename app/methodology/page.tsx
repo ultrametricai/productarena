@@ -76,9 +76,9 @@ export default function MethodologyPage() {
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">
         <h2 id="arena-score" className="scroll-mt-16 font-display leading-[1.1] text-lg font-semibold">The PA Score</h2>
-        <p className="mt-1 text-sm text-zinc-500">Formerly displayed as the &quot;AI-Era Index&quot; — same formula, new name.</p>
+        <p className="mt-1 text-sm text-zinc-500">Formerly displayed as the &quot;Arena Score&quot; (and before that the &quot;AI-Era Index&quot;) — same formula, new name.</p>
         <p className="mt-3 max-w-2xl text-sm text-zinc-400">
-          Every leaderboard entry carries an PA Score (0–100, <span className={CODE}>aiEra</span> internally) — a
+          Every leaderboard entry carries a PA Score (0–100, <span className={CODE}>aiEra</span> internally) — a
           weighted, renormalized blend of five components:
         </p>
         <table className="mt-3 w-full max-w-2xl border-collapse text-sm">

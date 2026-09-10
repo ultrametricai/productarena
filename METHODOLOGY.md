@@ -1,6 +1,6 @@
 # ProductArena Methodology
 
-The full methodology writeup — evidence tiers, judging, scoring, the Arena Score, story
+The full methodology writeup — evidence tiers, judging, scoring, the PA Score, story
 provenance, re-judge stability, and bias disclosure. The on-site [/methodology](https://ultrametric.ai/productarena/methodology)
 page is a tight one-screen summary of this document; this file is the source of truth. See also
 [README.md](./README.md) for the arena list, data layout, and pipeline workflow, and
@@ -76,12 +76,14 @@ and the overall battle winner is whoever wins more story-weight.
 product with a thin crawl (fewer/weaker evidence items) will score lower even if it's
 objectively excellent — the judge can only score what's in the evidence pack.
 
-## The Arena Score (formerly INIT Score / AI-Era Index)
+## The PA Score (formerly Arena Score / INIT Score / AI-Era Index)
 
-Every leaderboard entry carries an **Arena Score** — displayed on-site as `Arena {n}/100` — a
+Every leaderboard entry carries a **PA Score** — displayed on-site as a bare `{n}/100` badge
+under a "PA Score" label — a
 single number meant to answer "how ready is this product for a world where agents, not just
 humans, are the primary users?" Internally it's still the `aiEra` field; only the display name
-changed (the score, formula, and weights are identical to what shipped as the "AI-Era Index").
+changed (the score, formula, and weights are identical to what shipped as the "Arena Score"
+and, before that, the "AI-Era Index").
 It's a weighted blend of five existing leaderboard components:
 
 | Component | Weight | What it measures |
@@ -99,7 +101,7 @@ aiEra = Σ(component × weight) / Σ(weight)   — over non-null components only
 Weights are renormalized over whichever components are non-null for a given product, so a
 product missing one axis isn't penalized twice — once for the missing axis, once for a shrunken
 blend. `aiEra` is `null` only when every component is null. The exact weights live in
-`AI_ERA_WEIGHTS` in `lib/scoring.ts`. Leaderboards sort primarily by the Arena Score (nulls last,
+`AI_ERA_WEIGHTS` in `lib/scoring.ts`. Leaderboards sort primarily by the PA Score (nulls last,
 ties broken by the coverage score).
 
 **These weights are a starting position, not a verdict.** If you think the weighting is wrong,
@@ -135,7 +137,7 @@ results only affect the story axis they actually test.
 
 ## Score intervals — the ± band
 
-Every Arena Score carries a 68% confidence band ("42 ±3 /100" on product pages; low–high in the
+Every PA Score carries a 68% confidence band ("42 ±3 /100" on product pages; low–high in the
 score badge tooltip). Analytic v1, no new judging: per-cell verdict noise is modeled from the
 **measured** re-roll statistics in `data/*/uncertainty.json` (evidenced cells resample from the
 measured tier-transition rates; untested zero-evidence `none` cells get wider epistemic
@@ -148,6 +150,26 @@ math + tolerant-optional loader in `lib/scoreIntervals.ts`, output in
 untested-cell ignorance — **not** cross-model disagreement; a second judge model is future work.
 No interval data ⇒ no band rendered, never a fabricated one. See README §8 for the full writeup.
 
+## Confidence grades (A–D)
+
+Separately from the ± band, every PA Score carries a letter grade — A, B, C, or D — computed in
+`lib/confidence.ts` from two fractions over a product's applicable (non-`na`) cells: **coverage**
+(the share of cells whose verdict cites any evidence at all) and **tested share** (the share
+whose strongest cited evidence is a tested tier — `probe` or `github` — rather than vendor docs
+or community commentary). The grade rates the receipts, not the product:
+
+| Grade | Meaning |
+|---|---|
+| A | broad story coverage and a high share of probe/tested verdicts |
+| B | solid coverage, mostly tested — a few cells still rest on vendor docs alone |
+| C | meaningful gaps: thin coverage or verdicts leaning on claimed docs |
+| D | treat the score as provisional — little tested evidence behind it yet |
+
+The exact thresholds live in `CONFIDENCE_THRESHOLDS` (`lib/confidence.ts`), calibrated against
+the live dataset so the letters discriminate rather than clump. Grades are display-only — they
+never move a score or a ranking — and they improve as hands-on probes land, so the fastest way
+to raise one is to submit reproducible evidence.
+
 ## Popularity — a signal, not a score
 
 Product pages, the arena table, and the global rankings pages show a **popularity/momentum
@@ -156,7 +178,7 @@ registries (`api.github.com`, `api.npmjs.org`, `pypistats.org`), no API key requ
 a different question than everything else on this site: not "is this AI-ready" but "will this
 project still be alive tomorrow" — a reader-requested survival/support signal.
 
-It is **deliberately not part of the Arena Score** and never affects rankings, leaderboard
+It is **deliberately not part of the PA Score** and never affects rankings, leaderboard
 position, or any battle outcome (`pnpm pipeline popularity` makes no LLM calls and its output,
 `data/{category}/popularity.json`, isn't read by `lib/scoring.ts`). Popularity measures
 *adoption* — how many people already use something — which is a lagging, momentum-driven

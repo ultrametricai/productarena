@@ -8,7 +8,7 @@ export function generateMetadata(): Metadata {
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
     title: `Full AI-native ranking — all ${totalProducts} products — ProductArena`,
-    description: `Every product across every arena ranked by AGENTIC — does the product act agentically on its own behalf (built-in assistant, autonomous automation, natural-language commands)? Evidence-graded, no opinion.`,
+    description: `Every product across every arena ranked by AI-NATIVE — does the product act agentically on its own behalf (built-in assistant, autonomous automation, natural-language commands)? Evidence-graded, no opinion.`,
   }
 }
 
@@ -26,7 +26,7 @@ export default function AiNativeRankingPage() {
         <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Most AI-native — best for humans working with AI</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          All {totalProducts} products across every arena, ranked by AGENTIC: does the product act agentically on
+          All {totalProducts} products across every arena, ranked by AI-NATIVE: does the product act agentically on
           its own behalf (built-in assistant, autonomous automation, natural-language commands)? Ties break on
           automation depth, then PA Score.
         </p>

@@ -88,7 +88,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
           {rivals.length} {data.category.name} rivals, ranked by the same evidence-graded leaderboard —{' '}
           {product.name} itself ranks{' '}
           <Link href={`/arena/${data.category.id}/product/${product.id}`} className="text-emerald-300 hover:underline">
-            #{baseRank} with an PA Score of {fmtScore(baseEntry?.aiEra ?? null)}
+            #{baseRank} with a PA Score of {fmtScore(baseEntry?.aiEra ?? null)}
           </Link>
           . Every &ldquo;beats {product.name} on&rdquo; below comes from a judged head-to-head round with cited
           evidence — see the{' '}
