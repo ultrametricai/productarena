@@ -80,7 +80,7 @@ function InstallRow({ entry }: { entry: NonNullable<Product['install']>[number] 
             ))}
           </span>
         )}
-        <code className="min-w-0 overflow-x-auto whitespace-pre font-mono text-xs text-zinc-200">
+        <code className="min-w-0 whitespace-pre-wrap break-all font-mono text-xs text-zinc-200">
           {command}
         </code>
         <button
