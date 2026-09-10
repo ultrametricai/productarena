@@ -27,7 +27,7 @@ const TOOLS: Array<{ name: string; args: string; description: string }> = [
 ]
 
 const CODE_BLOCK =
-  'mt-2 overflow-x-auto rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs leading-relaxed text-zinc-300'
+  'mt-2 whitespace-pre-wrap break-all rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs leading-relaxed text-zinc-300'
 
 export default function McpPage() {
   const arenaCount = loadCategories().length
