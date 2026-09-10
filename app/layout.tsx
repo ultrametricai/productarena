@@ -66,6 +66,8 @@ const NAV_LABELS: Record<string, string> = {
   "data-pipelines": "Pipelines",
   "ecommerce-platforms": "E-commerce",
   "customer-data-platforms": "CDPs",
+  "durable-workflows": "Durable exec",
+  "ai-support-agents": "Support AI",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
