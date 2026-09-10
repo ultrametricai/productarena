@@ -39,7 +39,7 @@ export default function EverythingPage() {
       title: 'Global rankings',
       links: [
         { href: '/rankings/agentic', label: 'Most agent-ready', note: 'all products' },
-        { href: '/rankings/init', label: 'Highest Arena Score', note: 'all products' },
+        { href: '/rankings/init', label: 'Highest PA Score', note: 'all products' },
         { href: '/rankings/ai-native', label: 'Most AI-native', note: 'all products' },
         { href: '/rankings/claims-integrity', label: 'Claims vs reality', note: 'all products' },
       ],
@@ -106,7 +106,7 @@ export default function EverythingPage() {
       <section id="products" className="space-y-2">
         <h2 className="font-display leading-[1.1] text-lg font-semibold tracking-tight">Products</h2>
         <p className="text-xs text-zinc-500">
-          Every ranked product. Triplet is Arena Score · agent-ready · agentic (each /100); the letter is the
+          Every ranked product. Triplet is PA Score · agent-ready · agentic (each /100); the letter is the
           score-confidence grade; M/C/A are MCP, CLI, and API access.
         </p>
         <EverythingCatalog rows={rows} arenas={arenas} />

@@ -7,7 +7,7 @@ import {
 import { REPO } from '@/lib/site'
 
 // The prediction layer, v1: yes/no questions auto-generated from live close races (arena #1 vs
-// #2 within CLOSE_RACE_THRESHOLD Arena Score points — the same definition the multi-judge
+// #2 within CLOSE_RACE_THRESHOLD PA Score points — the same definition the multi-judge
 // uncertainty pass uses) and settled mechanically from the public changelog's rank-flip events.
 // Nothing here is editorial: the generator (pipeline/scripts/generate-predictions.ts) and the
 // settler (pipeline/scripts/settle-predictions.ts) are both deterministic on the committed data.
@@ -79,7 +79,7 @@ export default function PredictionsPage() {
         <p className="text-sm uppercase tracking-widest text-emerald-400">Predictions</p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Close races, called in advance</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          Whenever an arena&rsquo;s #1 and #2 are within {CLOSE_RACE_THRESHOLD.toFixed(1)} Arena Score points — the same
+          Whenever an arena&rsquo;s #1 and #2 are within {CLOSE_RACE_THRESHOLD.toFixed(1)} PA Score points — the same
           &ldquo;close race&rdquo; bar that triggers the multi-judge uncertainty pass — a yes/no question opens
           automatically: will the challenger overtake the leader within {PREDICTION_WINDOW_DAYS} days? Settlement is
           mechanical: <span className="text-zinc-300">yes</span> cites the exact rank-flip event on the{' '}
@@ -195,7 +195,7 @@ export default function PredictionsPage() {
         <ul className="mt-2 list-disc space-y-1.5 pl-5">
           <li>
             Questions are auto-generated from judges-split close races: when an arena&rsquo;s top two are within{' '}
-            {CLOSE_RACE_THRESHOLD.toFixed(1)} Arena Score points, the ranking is genuinely uncertain (it&rsquo;s the
+            {CLOSE_RACE_THRESHOLD.toFixed(1)} PA Score points, the ranking is genuinely uncertain (it&rsquo;s the
             same threshold that triggers extra judge samples in the{' '}
             <Link href="/methodology" className={ARENA_LINK}>methodology</Link>&rsquo;s uncertainty pass), so the
             question is worth asking. One open question per arena pair; a new one can open after the old one settles.

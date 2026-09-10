@@ -8,7 +8,7 @@ export type StackMetric = 'agentReady' | 'aiEra'
 
 export const STACK_METRIC_LABELS: Record<StackMetric, string> = {
   agentReady: 'agent-ready',
-  aiEra: 'Arena Score',
+  aiEra: 'PA Score',
 }
 
 export interface StackRole {
@@ -255,14 +255,14 @@ export const STACK_PRESETS: StackPreset[] = [
   {
     id: 'solo-founder',
     label: 'Solo founder',
-    description: 'The whole company in six tools, picked by overall Arena Score.',
+    description: 'The whole company in six tools, picked by overall PA Score.',
     roles: ['banking', 'payments', 'accounting', 'pm', 'coding-agent', 'analytics'],
     constraints: { ossOnly: false, selfHostPreferred: false, metric: 'aiEra' },
   },
   {
     id: 'oss-purist',
     label: 'OSS purist',
-    description: 'Open-source only, self-hostable preferred, ranked by Arena Score.',
+    description: 'Open-source only, self-hostable preferred, ranked by PA Score.',
     roles: ['code-hosting', 'chat', 'baas', 'analytics', 'crm', 'pm'],
     constraints: { ossOnly: true, selfHostPreferred: true, metric: 'aiEra' },
   },

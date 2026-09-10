@@ -3,7 +3,7 @@ import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Methodology — ProductArena',
-  description: 'Evidence tiers, judging, scoring, the Arena Score, story provenance, and bias disclosure — full writeup on GitHub.',
+  description: 'Evidence tiers, judging, scoring, the PA Score, story provenance, and bias disclosure — full writeup on GitHub.',
 }
 
 // Static page — no data dependency, no dynamic segments.
@@ -69,16 +69,16 @@ export default function MethodologyPage() {
           <p className="font-semibold text-zinc-300">Popularity (not scored)</p>
           <p className="mt-1">
             GitHub stars/npm/PyPI downloads, shown as a survival signal only — measures adoption, not AI-readiness,
-            so it&apos;s never part of the Arena Score or rankings.
+            so it&apos;s never part of the PA Score or rankings.
           </p>
         </div>
       </div>
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">
-        <h2 id="arena-score" className="scroll-mt-16 font-display leading-[1.1] text-lg font-semibold">The Arena Score</h2>
+        <h2 id="arena-score" className="scroll-mt-16 font-display leading-[1.1] text-lg font-semibold">The PA Score</h2>
         <p className="mt-1 text-sm text-zinc-500">Formerly displayed as the &quot;AI-Era Index&quot; — same formula, new name.</p>
         <p className="mt-3 max-w-2xl text-sm text-zinc-400">
-          Every leaderboard entry carries an Arena Score (0–100, <span className={CODE}>aiEra</span> internally) — a
+          Every leaderboard entry carries an PA Score (0–100, <span className={CODE}>aiEra</span> internally) — a
           weighted, renormalized blend of five components:
         </p>
         <table className="mt-3 w-full max-w-2xl border-collapse text-sm">
@@ -93,6 +93,27 @@ export default function MethodologyPage() {
         <p className="mt-3 text-xs text-zinc-400">
           n/a components are excluded and weights renormalized over the rest. See the full methodology (link above)
           for the exact formula and the case for leading with this number over raw coverage.
+        </p>
+      </section>
+
+      <section id="confidence" className="scroll-mt-16 rounded-xl border border-zinc-800 p-5">
+        <h2 className="font-display leading-[1.1] text-lg font-semibold">Confidence grades (A–D)</h2>
+        <p className="mt-3 max-w-2xl text-sm text-zinc-400">
+          The letter next to a PA Score says how much of that score rests on evidence we tested
+          ourselves versus evidence the vendor merely claims. It grades the receipts, not the
+          product — a great product can carry a C simply because we haven&apos;t probed it deeply yet.
+        </p>
+        <table className="mt-3 w-full max-w-2xl border-collapse text-sm">
+          <tbody className="divide-y divide-zinc-800/70">
+            <tr><td className="py-1.5 pr-3 font-mono text-emerald-300">A</td><td className="py-1.5 text-zinc-300">broad story coverage and a high share of probe/community-tested verdicts</td></tr>
+            <tr><td className="py-1.5 pr-3 font-mono text-emerald-400/80">B</td><td className="py-1.5 text-zinc-300">solid coverage, mostly tested — a few cells still rest on vendor docs alone</td></tr>
+            <tr><td className="py-1.5 pr-3 font-mono text-amber-400/90">C</td><td className="py-1.5 text-zinc-300">meaningful gaps: thin coverage or verdicts leaning on claimed docs</td></tr>
+            <tr><td className="py-1.5 pr-3 font-mono text-red-400/90">D</td><td className="py-1.5 text-zinc-300">treat the score as provisional — little tested evidence behind it yet</td></tr>
+          </tbody>
+        </table>
+        <p className="mt-3 text-xs text-zinc-400">
+          Computed from story coverage × tested-evidence share (<span className={CODE}>lib/confidence.ts</span>).
+          Grades move as probes land — the fastest way to raise one is to submit reproducible evidence.
         </p>
       </section>
 

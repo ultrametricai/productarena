@@ -32,7 +32,7 @@ export interface MegaTableRow {
   arenaId: string
   arenaName: string
   hasLogo: boolean
-  // Blended Arena Score (see AiEraBadge) — kept as `initScore` for naming parity with
+  // Blended PA Score (see AiEraBadge) — kept as `initScore` for naming parity with
   // lib/arenaTableSort.ts's ArenaTableRow.
   initScore: number | null
   agentReady: number | null
@@ -43,22 +43,25 @@ export interface MegaTableRow {
   apiUntested: boolean
   // GitHub star count — see lib/arenaTableSort.ts's ArenaTableRow.popularity doc.
   popularity: number | null
+  // Repo link for the GitHub ★ cell's click-through (product.urls.github when curated). Optional
+  // so fixtures/callers predating it stay valid.
+  githubUrl?: string
   // Verified YC batch code (e.g. "S22") — see lib/schemas.ts's ProductSchema.ycBatch doc. Optional
   // (not `| null`, unlike popularity) so existing MegaTableRow fixtures/callers built before this
   // field existed stay valid without every one needing an update.
   ycBatch?: string
-  // 30-day Arena Score trend delta (see lib/scoreTrend.ts's trendDelta) — null when the product
+  // 30-day PA Score trend delta (see lib/scoreTrend.ts's trendDelta) — null when the product
   // has <2 history points yet; optional for the same fixture-compat reason as ycBatch. Rendered
-  // as the ▲/▼/— arrow next to the Arena Score badge, never sorted on.
+  // as the ▲/▼/— arrow next to the PA Score badge, never sorted on.
   trendDelta?: number | null
   // 30-day agent-readiness trend delta — same contract as trendDelta, rendered as the arrow in
   // the Agent-ready column ("is this product getting more agent-friendly?").
   agentReadyTrendDelta?: number | null
   // Score-confidence summary (see lib/confidence.ts): grade + the fractions behind it, rendered
-  // as the small chip next to the Arena Score badge. Optional for the same fixture-compat
+  // as the small chip next to the PA Score badge. Optional for the same fixture-compat
   // reason as ycBatch.
   confidence?: import('./confidence').ProductConfidence
-  // 68% confidence band on the Arena Score (see lib/scoreIntervals.ts) — surfaced in the badge's
+  // 68% confidence band on the PA Score (see lib/scoreIntervals.ts) — surfaced in the badge's
   // title attr only, never a visible column. Optional/null for the same fixture-compat +
   // tolerant-absence reasons as trendDelta: no interval data ⇒ no band rendered anywhere.
   interval?: { low: number; high: number } | null
@@ -66,7 +69,7 @@ export interface MegaTableRow {
 }
 
 // AGENTREADYNESS is this table's whole reason for existing (a cross-arena "can your agent even
-// reach this product" view), so it — not the per-row Arena Score — is both the default sort
+// reach this product" view), so it — not the per-row PA Score — is both the default sort
 // column and what `rank` re-derives when no other sort is active.
 export const DEFAULT_COLUMN: MegaTableColumn = 'agentReady'
 export const DEFAULT_DIRECTION: SortDirection = 'desc'
@@ -75,7 +78,7 @@ export const COLUMN_LABELS: Record<MegaTableColumn, string> = {
   rank: 'AGENTREADYNESS',
   name: 'product name',
   arena: 'arena',
-  initScore: 'Arena Score',
+  initScore: 'PA Score',
   agentReady: 'AGENTREADYNESS',
   agenticApp: 'AGENTIC',
   apiQuality: 'API quality',

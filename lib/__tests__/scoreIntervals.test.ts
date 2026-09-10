@@ -17,7 +17,7 @@ const v = (storyId: string, verdict: Verdict['verdict'], quality: number, eviden
   evidenceIds: evidenced && verdict !== 'na' ? ['e1'] : [],
 })
 
-// A small but fully-populated Arena Score surface: one story per component group/theme.
+// A small but fully-populated PA Score surface: one story per component group/theme.
 const stories = [
   story('aa', 'agenticness', 'agent-access', 2),
   story('af', 'agenticness', 'agentic-features'),

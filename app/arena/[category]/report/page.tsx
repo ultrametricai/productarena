@@ -129,7 +129,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
               <tr className="border-b border-zinc-800 bg-zinc-900/60 text-left text-xs text-zinc-400">
                 <th className="px-3 py-2 font-medium">#</th>
                 <th className="px-3 py-2 font-medium">Product</th>
-                <th className="px-3 py-2 text-right font-medium">Arena Score</th>
+                <th className="px-3 py-2 text-right font-medium">PA Score</th>
                 <th className="px-3 py-2 text-right font-medium">Coverage score</th>
                 <th className="px-3 py-2 text-right font-medium">Applicable cells</th>
                 <th className="px-3 py-2 text-right font-medium">Confidence</th>
@@ -161,7 +161,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
           </table>
         </div>
         <p className="mt-2 text-xs text-zinc-500">
-          Arena Score = agent-readiness blend (see methodology). Coverage score = weighted share of judged
+          PA Score = agent-readiness blend (see methodology). Coverage score = weighted share of judged
           requirements met. Confidence = how much of the score rests on tested vs claimed evidence (A–D).
         </p>
       </section>
@@ -174,7 +174,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
             This arena is currently a <span className="font-semibold text-zinc-300">close race</span>:{' '}
             {closeRace.top1Name} ({closeRace.top1AiEra.toFixed(1)}) vs {closeRace.top2Name} (
             {closeRace.top2AiEra.toFixed(1)}), a gap of{' '}
-            {Math.abs(closeRace.top1AiEra - closeRace.top2AiEra).toFixed(1)} Arena Score. The ordering was
+            {Math.abs(closeRace.top1AiEra - closeRace.top2AiEra).toFixed(1)} PA Score. The ordering was
             re-checked with extra judge samples: {closeRace.contested} decisive cells were triple-judged and{' '}
             {closeRace.unstable} came back unstable. Treat the #1/#2 ordering as contested — shortlist both.
           </p>

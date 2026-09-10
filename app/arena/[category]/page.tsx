@@ -12,7 +12,7 @@ import { hasLogo } from '@/lib/logos'
 import { loadPricing, pricingCellFor, type PricingCell } from '@/lib/pricing'
 import { SITE_URL } from '@/lib/site'
 
-// The leaderboard already sorts primarily by aiEra/Arena Score (see lib/scoring.ts), so entry 0
+// The leaderboard already sorts primarily by aiEra/PA Score (see lib/scoring.ts), so entry 0
 // is the "most agent-friendly" product for both metadata and the FAQ answer below — no
 // fabricated ratings, just the same number rendered on the page.
 function topEntry(data: CategoryData) {
@@ -22,7 +22,7 @@ function topEntry(data: CategoryData) {
 }
 
 function scoreText(aiEra: number | null): string {
-  return aiEra === null ? 'the top evidence-graded coverage score' : `an Arena Score of ${aiEra.toFixed(0)}/100`
+  return aiEra === null ? 'the top evidence-graded coverage score' : `an PA Score of ${aiEra.toFixed(0)}/100`
 }
 
 // Honest FAQPage JSON-LD — both answers are derived straight from this arena's own computed

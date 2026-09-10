@@ -9,7 +9,7 @@ import { buildMegaTableArenaOptions, buildMegaTableRows } from '@/lib/megaTable'
 export const metadata: Metadata = {
   title: 'ProductArena — which software is most AI-friendly?',
   description:
-    "One sortable table across every arena: every product judged on AGENTREADYNESS (can an agent reach it?), AGENTIC (does it act agentically for humans?), API quality, and popularity. No opinion, every score traces back to cited evidence.",
+    "One sortable table across every arena: every product judged on AGENT-READY (can an agent reach and operate it?), AI-NATIVE (does it act agentically for its users?), API quality, and popularity. No opinion, every score traces back to cited evidence.",
 }
 
 export default function Home() {
@@ -60,7 +60,7 @@ export default function Home() {
                 </h3>
                 <div className="mt-2 flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-widest text-zinc-400">Arena Score leader</p>
+                    <p className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score leader</p>
                     <p className="truncate text-sm font-medium">{leader.name}</p>
                   </div>
                   <AiEraBadge value={leaderEntry.aiEra} size="sm" />
@@ -91,7 +91,7 @@ export default function Home() {
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
                 <p className="text-xs uppercase tracking-widest text-zinc-400">{data.category.name}</p>
-                {/* No Arena Score badges here — those already render in the table and arena cards
+                {/* No PA Score badges here — those already render in the table and arena cards
                     above; this card's own datum is the head-to-head record. */}
                 <div className="mt-2 flex items-center gap-2">
                   <ProductLogo product={a} size={28} />

@@ -41,7 +41,7 @@ describe('sortMegaRows', () => {
     expect(sorted.map((r) => r.productId)).toEqual(['c', 'b', 'a'])
   })
 
-  it('sorts the Arena Score column descending by default, nulls last', () => {
+  it('sorts the PA Score column descending by default, nulls last', () => {
     const sorted = sortMegaRows(rows, 'initScore', 'desc')
     expect(sorted.map((r) => r.productId)).toEqual(['a', 'b', 'c'])
   })

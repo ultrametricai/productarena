@@ -1,4 +1,4 @@
-// Analytic score intervals (v1) — honest 68% confidence bands on every Arena Score, derived
+// Analytic score intervals (v1) — honest 68% confidence bands on every PA Score, derived
 // WITHOUT any new judging. See README "Score intervals" for the full writeup; the model, exactly:
 //
 //   Per product, each verdict cell gets a noise distribution built from the MEASURED re-roll
@@ -171,7 +171,7 @@ function sampleTier(row: Record<NoiseTier, number>, r: number): NoiseTier {
 const percentile = (sorted: number[], q: number): number => sorted[Math.round((sorted.length - 1) * q)]
 
 // Simulates `draws` re-rolls of one product's verdict matrix under `model` and returns the 68%
-// (16th–84th percentile) band on the Arena Score and agent-readiness, each recomputed per draw
+// (16th–84th percentile) band on the PA Score and agent-readiness, each recomputed per draw
 // through lib/scoring.ts's exact weightedPercent + computeAiEra. Deterministic for a given
 // (cells, model, seedKey, draws) — see the seeded-PRNG section above. Null bounds exactly when
 // the corresponding published score is null (nullness only depends on the na-pattern, which is
@@ -184,7 +184,7 @@ export function simulateScoreInterval(
 ): ScoreInterval {
   const rand = mulberry32(hashSeed(seedKey))
 
-  // Only cells feeding the Arena Score components matter; everything else can't move the band.
+  // Only cells feeding the PA Score components matter; everything else can't move the band.
   const agentAccess = cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'agent-access')
   const agenticFeatures = cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'agentic-features')
   const apiQuality = cells.filter((c) => c.story.theme === 'agenticness' && c.story.group === 'api-quality')

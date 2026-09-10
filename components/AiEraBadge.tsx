@@ -1,10 +1,10 @@
-// The Arena Score's lead badge — deliberately more prominent than AgenticBadge (bigger type,
+// The PA Score's lead badge — deliberately more prominent than AgenticBadge (bigger type,
 // solid emerald ring) since v2.4 re-prioritizes the whole site around this number. Internally
-// still keyed on the `aiEra` field/formula (see README's "Arena Score (formerly AI-Era Index)"
+// still keyed on the `aiEra` field/formula (see README's "PA Score (formerly AI-Era Index)"
 // section for the blend formula and weights) — only the display label changed.
 //
 // The pill itself renders a bare number (`32/100`, mono/bold) with no "Arena" prefix — the
-// surrounding heading/column-header/label is responsible for saying "Arena Score" once so a
+// surrounding heading/column-header/label is responsible for saying "PA Score" once so a
 // bare number is never ambiguous in context (see callers). The tooltip still carries the full
 // formula + component breakdown regardless.
 
@@ -25,7 +25,7 @@ export interface ScoreBand {
 }
 
 const FORMULA =
-  'Arena Score (0–100): agent-ready ×0.30 · API quality ×0.20 · openness ×0.20 · agentic app ×0.15 · automation ×0.15 (n/a components excluded, weights renormalized). Every component is evidence-judged — see /methodology.'
+  'PA Score (0–100): agent-ready ×0.30 · API quality ×0.20 · openness ×0.20 · agentic app ×0.15 · automation ×0.15 (n/a components excluded, weights renormalized). Every component is evidence-judged — see /methodology.'
 
 import Link from 'next/link'
 

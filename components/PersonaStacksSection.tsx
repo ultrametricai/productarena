@@ -17,7 +17,7 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
       <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Best by user type</h2>
       <p className="mb-4 text-sm text-zinc-400">
         Per persona, the product with the highest persona-weighted coverage over just that persona&apos;s stories —
-        not the same ranking as the overall Arena Score leaderboard above.
+        not the same ranking as the overall PA Score leaderboard above.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
         {results.map((r) => {

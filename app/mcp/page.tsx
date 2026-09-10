@@ -17,13 +17,13 @@ const MCP_ENDPOINT = 'https://ultrametric.ai/productarena/mcp'
 // Keep in sync with mcp/src/server.ts and infra/cloudflare-proxy/worker.js (the two servers).
 const TOOLS: Array<{ name: string; args: string; description: string }> = [
   { name: 'list_arenas', args: '—', description: 'Every arena/category: id, name, description, personas, themes.' },
-  { name: 'get_rankings', args: 'arena', description: 'One arena’s full leaderboard (coverage score, Arena Score, agent-readiness, per-theme scores) plus its head-to-head battle log.' },
+  { name: 'get_rankings', args: 'arena', description: 'One arena’s full leaderboard (coverage score, PA Score, agent-readiness, per-theme scores) plus its head-to-head battle log.' },
   { name: 'get_product', args: 'arena, product', description: 'One product: metadata, leaderboard entry with rank, verdict counts, and a per-story verdict summary.' },
   { name: 'get_verdict', args: 'arena, product, story', description: 'The full judged verdict for one (product, story) cell: tier, quality, confidence, rationale, and cited evidence URLs.' },
   { name: 'search_products', args: 'query', description: 'Find products by id/name/vendor substring across every arena.' },
-  { name: 'compare', args: 'products[]', description: 'Cross-arena score comparison: rank, coverage score, Arena Score, agent-readiness, AI-native, API quality per product.' },
+  { name: 'compare', args: 'products[]', description: 'Cross-arena score comparison: rank, coverage score, PA Score, agent-readiness, AI-native, API quality per product.' },
   { name: 'get_stacks', args: '—', description: 'Curated cross-arena AI stacks with every scored slot resolved live from current leaderboards.' },
-  { name: 'top_products', args: 'metric, limit?', description: 'Cross-arena top-N by one metric: score, arenaScore, agentReady, agenticApp, or apiQuality.' },
+  { name: 'top_products', args: 'metric, limit?', description: 'Cross-arena top-N by one metric: score, paScore, agentReady, agenticApp, or apiQuality.' },
 ]
 
 const CODE_BLOCK =

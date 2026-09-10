@@ -6,13 +6,13 @@ import ArenaTable from '@/components/ArenaTable'
 import { loadCategory } from '@/lib/data'
 
 describe('ArenaTable', () => {
-  it('renders every product with Arena Score as the default sort', () => {
+  it('renders every product with PA Score as the default sort', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
     for (const p of data.products) {
       expect(screen.getAllByText(p.name).length).toBeGreaterThan(0)
     }
-    const initScoreHeader = screen.getAllByText('Arena Score').map((el) => el.closest('th')).find((th) => th !== null)
+    const initScoreHeader = screen.getAllByText('PA Score').map((el) => el.closest('th')).find((th) => th !== null)
     expect(initScoreHeader?.getAttribute('aria-sort')).toBe('descending')
   })
 
@@ -35,7 +35,7 @@ describe('ArenaTable', () => {
   it('sets aria-sort on the current sort column header', () => {
     const data = loadCategory('desktop-os', path.resolve(__dirname, '../../data'))
     render(<ArenaTable data={data} logoMap={{}} />)
-    const initScoreHeader = screen.getAllByText('Arena Score').map((el) => el.closest('th')).find((th) => th !== null)
+    const initScoreHeader = screen.getAllByText('PA Score').map((el) => el.closest('th')).find((th) => th !== null)
     expect(initScoreHeader?.getAttribute('aria-sort')).toBe('descending')
   })
 })

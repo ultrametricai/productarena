@@ -28,7 +28,7 @@ export default function AiNativeRankingPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by AGENTIC: does the product act agentically on
           its own behalf (built-in assistant, autonomous automation, natural-language commands)? Ties break on
-          automation depth, then Arena Score.
+          automation depth, then PA Score.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
           This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Most AI-native&rdquo; preset —{' '}

@@ -2,7 +2,7 @@
 // mechanically from the public changelog. Questions live in data/predictions.json (committed,
 // append-then-settle — see PredictionQuestionSchema below); they are CREATED by
 // pipeline/scripts/generate-predictions.ts whenever an arena's #1 and #2 are within
-// CLOSE_RACE_THRESHOLD Arena Score points (the same "close race" definition as
+// CLOSE_RACE_THRESHOLD PA Score points (the same "close race" definition as
 // pipeline/scripts/uncertainty-pass.ts, via lib/uncertainty.ts's isCloseRace), and SETTLED by
 // pipeline/scripts/settle-predictions.ts against the rank-flip (overtake) events that
 // lib/changelog.ts derives from the committed score history.

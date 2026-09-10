@@ -261,7 +261,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
 
   // Numeric rows in display order; each row's winner indices are computed once here.
   const numericRows: Array<{ label: string; values: Array<number | null> }> = [
-    { label: 'Arena Score', values: selected.map((p) => p.aiEra) },
+    { label: 'PA Score', values: selected.map((p) => p.aiEra) },
     { label: 'Agent-ready', values: selected.map((p) => p.agentReady) },
     { label: 'AI-native', values: selected.map((p) => p.agenticApp) },
     { label: 'API quality', values: selected.map((p) => p.apiQuality) },

@@ -7,8 +7,8 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Full Arena Score ranking — all ${totalProducts} products — ProductArena`,
-    description: `Every product across every arena ranked by the blended Arena Score (agent-ready, API quality, openness, agentic app, automation). Evidence-graded, no opinion.`,
+    title: `Full PA Score ranking — all ${totalProducts} products — ProductArena`,
+    description: `Every product across every arena ranked by the blended PA Score (agent-ready, API quality, openness, agentic app, automation). Evidence-graded, no opinion.`,
   }
 }
 
@@ -27,13 +27,13 @@ export default function InitRankingPage() {
     <div className="space-y-4">
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Highest Arena Score</h1>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Highest PA Score</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          All {totalProducts} products across every arena, ranked by the blended Arena Score — agent-ready, API
+          All {totalProducts} products across every arena, ranked by the blended PA Score — agent-ready, API
           quality, openness, agentic app, and automation, all evidence-graded. Ties break on the raw coverage score.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
-          This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Highest Arena Score&rdquo; preset —{' '}
+          This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Highest PA Score&rdquo; preset —{' '}
           <Link href="/" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
             sort and filter it live there →
           </Link>

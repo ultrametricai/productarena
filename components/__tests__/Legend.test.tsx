@@ -22,7 +22,7 @@ describe('Legend', () => {
     expect(screen.getByText(/tested by us/)).toBeDefined()
     expect(screen.getByText('D contradicted')).toBeDefined()
     expect(screen.getByText(/evidence disagrees/)).toBeDefined()
-    expect(screen.getAllByText(/Arena Score/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/PA Score/).length).toBeGreaterThan(0)
   })
 
   it('accepts a custom id for anchor linking', () => {

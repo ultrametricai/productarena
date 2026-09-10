@@ -12,7 +12,7 @@ import type { Story } from './schemas'
 // weight multipliers. lib/icp.ts then re-weights the SAME canonical verdicts (never re-judging
 // anything — see icpScore below) into a per-ICP cross-arena ranking rendered at /icp/[type].
 //
-// Deliberately NOT part of canonical scoring: lib/scoring.ts's Arena Score is untouched. An ICP
+// Deliberately NOT part of canonical scoring: lib/scoring.ts's PA Score is untouched. An ICP
 // score is a derived, clearly-labeled re-weighting, same spirit as lib/personaStacks.ts (one
 // persona within one arena) but cross-arena and multiplier-based.
 

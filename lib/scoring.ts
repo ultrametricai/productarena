@@ -10,7 +10,7 @@ export const VERDICT_FACTORS: Record<Verdict['verdict'], number> = {
 
 const round1 = (n: number) => Math.round(n * 10) / 10
 
-// The Arena Score (internally `aiEra`, formerly displayed as "AI-Era Index") blends five
+// The PA Score (internally `aiEra`, formerly displayed as "AI-Era Index") blends five
 // leaderboard components into one number: how well a product works for an agent (agentReady),
 // how good its API surface is once an agent is there (apiQuality), how open it is to
 // leave/inspect/self-host (openness — themeScores.openness), how agentically it behaves on its
@@ -131,7 +131,7 @@ export function buildRankings(
         themeScores,
       }
     })
-    // Primary sort is the Arena Score (nulls last — a product with no agent-readiness signal at
+    // Primary sort is the PA Score (nulls last — a product with no agent-readiness signal at
     // all ranks below one with any), tie-broken by the coverage score so ordering stays stable
     // when aiEra ties (including the common all-null case, which falls back to score order).
     .sort((x, y) => {
