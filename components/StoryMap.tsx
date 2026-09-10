@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import ThemeIcon from '@/components/ThemeIcon'
 import { groupInOrder } from '@/lib/data-helpers'
-import { humanizeTheme } from '@/lib/icons'
+import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import { stripPersonaPrefix } from '@/lib/data-helpers'
 import {
   clusterDomainStories, layerByEdges, tidyGroupLabel, type DomainCluster,
@@ -246,10 +246,12 @@ export default function StoryMap({ rows, productName }: { rows: StoryVerdictRow[
         const domainGroups = groupInOrder(domainRows, (r) => r.group)
         return (
           <section key={theme} aria-label={`${theme} story map`}>
-            <h3 className="mb-2 flex items-center gap-1.5 text-sm text-zinc-400">
+            <h3 className="flex items-center gap-1.5 text-sm text-zinc-400">
               <ThemeIcon theme={theme} className="text-zinc-500" />
               {humanizeTheme(theme)}
             </h3>
+            {/* Visible one-liner for the grouping — the icon tooltip alone isn't discoverable. */}
+            <p className="mb-2 mt-0.5 truncate text-xs text-zinc-600">{themeExplanation(theme)}</p>
             <div className="grid min-w-0 items-start gap-3 lg:grid-cols-2">
               {canonClusters.map(({ cluster, rows: clusterRows }) => (
                 <CanonCluster key={cluster.id} cluster={cluster} rows={clusterRows} />

@@ -5,7 +5,7 @@ import { checklistThemes, priorityForWeight } from '@/lib/checklist'
 import { confidenceFor } from '@/lib/confidence'
 import ThemeIcon from '@/components/ThemeIcon'
 import { loadAll, loadCategory, stripPersonaPrefix } from '@/lib/data'
-import { humanizeTheme } from '@/lib/icons'
+import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import { categoryFreshness } from '@/lib/freshness'
 import { isPricingUnavailable, loadPricing, pricingCellFor } from '@/lib/pricing'
 import { loadProofIndex } from '@/lib/proofs'
@@ -195,7 +195,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
         <p className="mb-4 max-w-2xl text-xs text-zinc-500">
           The arena&apos;s {data.stories.length} judged user stories as requirements, grouped by theme.
           Priorities mirror the story weights our scoring uses (3 = must-have, 2 = should-have, 1 =
-          nice-to-have). Interactive version with the current verdict matrix:{' '}
+          nice-to-have). Interactive version with per-requirement verdicts for the top products:{' '}
           <Link href={`/arena/${category}/checklist`} className="text-emerald-300 hover:underline">
             /arena/{category}/checklist
           </Link>
@@ -203,10 +203,12 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
         <div className="space-y-5">
           {themes.map(([theme, stories]) => (
             <div key={theme}>
-              <h3 className="font-display leading-[1.1] mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-zinc-200">
+              <h3 className="font-display leading-[1.1] flex items-center gap-1.5 text-sm font-semibold text-zinc-200">
                 <ThemeIcon theme={theme} />
                 {humanizeTheme(theme)}
               </h3>
+              {/* Visible one-liner explaining this story grouping — not just the icon tooltip. */}
+              <p className="mb-1.5 mt-0.5 truncate text-xs text-zinc-500">{themeExplanation(theme)}</p>
               <ul className="space-y-1">
                 {stories.map((s) => (
                   <li key={s.id} className="flex items-start gap-2 text-sm text-zinc-300">
