@@ -41,6 +41,8 @@ import { probes as email } from './email'
 import { probes as searchInfra } from './search-infra'
 import { probes as scheduling } from './scheduling'
 import { probes as designTools } from './design-tools'
+import { probes as aiCodeReview } from './ai-code-review'
+import { probes as documentExtraction } from './document-extraction'
 
 export type { LocalProbe } from './types'
 
@@ -77,4 +79,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'search-infra': searchInfra,
   scheduling,
   'design-tools': designTools,
+  'ai-code-review': aiCodeReview,
+  'document-extraction': documentExtraction,
 }
