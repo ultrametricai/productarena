@@ -1,17 +1,19 @@
 {
-  "hash": "f659e4e6ff1a84f30f866ad91446b8ebd8cef8c3be346cce810cca3467b634ad",
+  "hash": "8b5389c09ca0d1c08e61e205f08b9f247cc2581ef035ba59c2d89d163e80727f",
   "verdict": {
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake CLI (`snow sql`) runs fully headless (verified via runtime probe: pipes SQL from stdin, inline queries, no dashboard), and the CLI is officially documented as keyless-installable with credential-based auth at execution time. Governance is native via RBAC (roles/privileges) and access-history logging, and the Snowflake-managed MCP server lets agents query Cortex Analyst/Search/Agents and run raw SQL as tools without extra infrastructure. Missing for 10: no explicit documented example of schema discovery (e.g., `snow sql -q \"SHOW SCHEMAS\"`) as a first-class agent workflow, and no independent/hands-on report of an agent doing the full auth→discover→query→read loop end-to-end.",
+    "rationale": "The Snowflake CLI runs headlessly (verified via runtime probe with snow sql supporting inline queries, file/stdin piping, and variable substitution) and the SQL API/REST API let an agent authenticate, submit SQL, and retrieve results entirely without Snowsight; RBAC governs access and Access History/Query History provide governance visibility over that programmatic activity. Combined with the documented Cortex MCP server for agent-native access, this covers authenticate to query to read-results end-to-end via CLI/API. missing for 10: explicit first-party example of schema discovery (e.g., SHOW/DESCRIBE) via CLI/API in an agent workflow, and independent non-Snowflake confirmation of full headless governed round-trips",
     "evidenceIds": [
       "snowflake-probe-rt-1",
       "snowflake-probe-rt-2",
-      "snowflake-docs-14",
-      "snowflake-docs-57",
+      "snowflake-docs-65",
+      "snowflake-docs-66",
       "snowflake-docs-8",
-      "snowflake-docs-52"
+      "snowflake-docs-52",
+      "snowflake-docs-63",
+      "snowflake-probe-3"
     ],
     "productId": "snowflake",
     "storyId": "agent-runs-sql-headless"

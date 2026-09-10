@@ -5,7 +5,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a work management/PM platform, not a coding agent runtime with session/version-history checkpointing; this axis is a category error for its product type.",
+    "rationale": "Asana is a work-management/project-tracking platform, not an AI coding agent; the concept of restoring an AI coding agent's session to a version-history checkpoint is a category error for this product type—no evidence suggests Asana ships or hosts coding agent sessions with checkpoint history.",
     "evidenceIds": []
   },
   {
@@ -14,7 +14,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a work-management/PM SaaS product, not a coding agent or dev environment; toolchain/dependency auto-installation is a category error for this product type.",
+    "rationale": "Asana is a work-management/project-tracking platform, not a coding agent or dev toolchain runtime; auto-detecting and installing toolchains/dependencies for a coding task is entirely outside its product category.",
     "evidenceIds": []
   },
   {
@@ -23,7 +23,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a project/task management platform, not a browser-navigation or UI-testing tool; capturing before/after screenshots of an app's implementation is outside its product category and axis.",
+    "rationale": "Asana is a work-management SaaS, not a browser/UI-automation or coding tool; the story about an agent navigating an app and capturing before/after screenshots to verify implementation work is a category error for this kind of product, not something Asana's API/platform is designed to support.",
     "evidenceIds": []
   },
   {
@@ -32,10 +32,9 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A live probe confirms Asana hosts an actual llms.txt file at developers.asana.com/llms.txt, returning HTTP 200 with structured documentation guidance and markdown-append instructions, directly satisfying the story. This is corroborated by first-party developer docs describing the API/platform. Missing for 10: independent/community confirmation of agents actually using this llms.txt successfully, and no OpenAPI spec was found alongside it.",
+    "rationale": "A direct probe confirms Asana hosts a working llms.txt at developers.asana.com/llms.txt returning HTTP 200 with structured documentation guidance (including markdown-append instructions for pages), which is exactly the agent-oriented docs entry point the story asks for. This is independently verified via probe rather than just vendor claim, though there's no broader agent-doc ecosystem (e.g., no confirmed OpenAPI json endpoint) beyond this single file. Missing for 10: independent commentary/community validation of the llms.txt usage, and confirmation of additional agent-oriented doc formats beyond the single llms.txt file.",
     "evidenceIds": [
-      "asana-probe-1",
-      "asana-docs-1"
+      "asana-probe-1"
     ]
   },
   {
@@ -73,7 +72,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Asana's vendor docs describe pre-built AI Teammates/agents that work within workflows with shared memory and context, plus AI Studio for no-code automation and an 'AI Chief of Staff' (Dash) product, which supports delegating tasks to built-in AI assistants. However, these are first-party marketing claims without independent/hands-on corroboration or detail on how task delegation actually works in practice. Missing for 10: independent verification of AI Teammates/Dash functioning as claimed, concrete examples of task delegation workflows, and community hands-on feedback on the AI assistant features specifically.",
+    "rationale": "Asana markets built-in AI capabilities—AI Teammates, AI Studio automations, and 'Asana Dash: Your AI Chief of Staff'—that align with delegating tasks to an in-product assistant, but these are vendor marketing lines rather than detailed docs or hands-on accounts of task delegation workflows. Missing for 10: independent/hands-on verification of delegating tasks to the assistant, detailed documentation of how delegation works, and community confirmation of real-world use.",
     "evidenceIds": [
       "asana-docs-5",
       "asana-docs-6",
@@ -85,13 +84,16 @@
     "productId": "asana",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Asana exposes a REST API with token-based auth, plus webhooks and rule actions, which lets scripts/CI pipelines create tasks and automate workflows without the UI (asana-docs-1, asana-docs-2). However there's no CLI, no documented CI/CD-specific integration, and the OpenAPI spec probe returned 404s, so headless/CI usage is inferable but not concretely documented as a first-class workflow. Missing for 10: explicit CI/pipeline integration guides, a CLI or SDK for scripted/headless runs, working OpenAPI spec discovery, and independent evidence of real CI usage.",
+    "rationale": "Asana exposes a full REST API with token-based auth, webhooks, and rule actions that let external scripts/CI pipelines create tasks and automate workflows headlessly, backed by an API explorer, OpenAPI spec, and a developer sandbox for testing. However, there is no explicit CLI, CI/CD integration guide, or documented headless automation pattern (e.g., service-account/CI recipes) in the evidence. Missing for 10: dedicated CI/CD tutorials or CLI tooling, explicit 'headless mode' documentation, and independent evidence of teams running Asana automation unattended in pipelines.",
     "evidenceIds": [
       "asana-docs-1",
       "asana-docs-2",
-      "asana-probe-2"
+      "asana-docs-11",
+      "asana-docs-12",
+      "asana-supp-openapi-spec",
+      "asana-docs-13"
     ]
   },
   {
@@ -100,12 +102,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Asana exposing its own official MCP server (Asana acting as an MCP server for others to connect to), not Asana functioning as an MCP client that can plug in and use external MCP servers' tools. AI Studio and AI Teammates features are described but never tied to MCP server integration.",
+    "rationale": "Evidence shows Asana has its own AI agents (AI Studio, AI Teammates, Dash) and even an official MCP server that exposes Asana's tools to other agents (asana-probe-3), but nothing indicates Asana itself can act as an MCP client—i.e., that a user can plug external MCP servers into Asana so its AI agents can call those tools. No documentation, API reference, or community report describes this client-side MCP integration.",
     "evidenceIds": [
       "asana-probe-3",
       "asana-docs-5",
       "asana-docs-6",
-      "asana-docs-7"
+      "asana-docs-7",
+      "asana-docs-8"
     ]
   },
   {
@@ -125,12 +128,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Asana markets AI Teammates, AI Studio no-code automations, and 'Asana Dash' as an AI Chief of Staff, and a confirmed official MCP server exists (asana-probe-3) that would let AI agents/LLM clients issue natural-language commands against Asana data. However, all detail is vendor marketing copy with no independent or hands-on verification that natural-language commands reliably operate the product end-to-end. Missing for 10: independent/hands-on demonstration of natural-language task/workflow operation, detail on scope/limits of AI Teammates and Dash, and confirmation the MCP server supports full read/write command coverage.",
+    "rationale": "Asana markets natural-language-driven AI features (Dash as an 'AI Chief of Staff', AI Teammates, AI Studio) and has an official MCP server that lets AI agents/assistants issue natural-language commands against Asana data, which directly supports this story. However, all evidence is first-party marketing/docs with no independent or hands-on confirmation that these NL interactions actually work reliably, and details on command scope/limitations are thin. Missing for 10: independent/hands-on verification of NL command execution, concrete examples of commands and outcomes, and clarity on feature maturity/rollout.",
     "evidenceIds": [
+      "asana-docs-8",
       "asana-docs-5",
       "asana-docs-6",
       "asana-docs-7",
-      "asana-docs-8",
       "asana-probe-3"
     ]
   },
@@ -139,23 +142,25 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an official Asana CLI anywhere in the pack; the evidence only covers REST API, webhooks, app components, and an MCP server, not a command-line interface.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Asana's REST API, app components, MCP server, and OpenAPI spec, but no evidence of an official CLI tool for Asana.",
     "evidenceIds": []
   },
   {
     "productId": "asana",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Asana has a dedicated developer portal with documented API authentication (tokens), task creation, webhooks, and rule actions, plus an llms.txt confirming structured docs accessible to AI agents; an official MCP server is also documented, further supporting programmatic/agentic access. Missing for 10: no discoverable OpenAPI/swagger spec endpoint (probe returned 404s) and no independent hands-on developer corroboration of API robustness.",
+    "rationale": "Asana provides a well-documented public REST API with token-based auth, task creation, webhooks, an interactive API explorer, developer sandbox, published OpenAPI spec, and a formal deprecation/versioning process, giving AI-native users a clear path to programmatic control. missing for 10: independent hands-on developer corroboration of API reliability/limits beyond vendor docs.",
     "evidenceIds": [
       "asana-docs-1",
       "asana-docs-2",
-      "asana-probe-1",
-      "asana-probe-3",
-      "asana-probe-2"
+      "asana-docs-11",
+      "asana-docs-12",
+      "asana-supp-openapi-spec",
+      "asana-supp-deprecations",
+      "asana-probe-1"
     ]
   },
   {
@@ -164,10 +169,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows basic token-based API authentication (asana-docs-1) with no mention of scoped or least-privilege credential options for agents; no OpenAPI/scopes documentation was found (asana-probe-2 confirms no discoverable spec). Missing for 10: any documentation of granular OAuth scopes, role-restricted tokens, or agent-specific credential issuance.",
+    "rationale": "Evidence shows only basic token-based authorization ('create and authorize with a token') and general API/automation docs, but nothing about scoped, least-privilege, or agent-specific credential issuance (e.g., granular permission scopes, service-account style tokens). Missing for 10: documentation of OAuth scopes or permission granularity, agent-specific credential types, and any least-privilege access control mechanism.",
     "evidenceIds": [
       "asana-docs-1",
-      "asana-probe-2"
+      "asana-docs-14"
     ]
   },
   {
@@ -176,12 +181,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Asana has a REST API, webhooks, app components, and an MCP server, but nothing in the pack documents official client SDKs (e.g., language-specific libraries) for developers to build against; probes even show no discoverable OpenAPI spec. This is an applicable axis for a platform with a developer API, so absence of SDK evidence yields 'none'.",
-    "evidenceIds": [
-      "asana-docs-1",
-      "asana-docs-2",
-      "asana-probe-2"
-    ]
+    "rationale": "The evidence pack covers Asana's REST API, developer sandbox, app components, and OpenAPI spec repo, but nowhere mentions official client SDKs or libraries (e.g., Python/Node/Java SDKs) for building against the platform. Missing for 10: explicit mention of an official SDK, language coverage, and SDK versioning/support docs.",
+    "evidenceIds": []
   },
   {
     "productId": "asana",
@@ -189,10 +190,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Asana's developer docs explicitly list webhooks as a platform feature alongside the API and rule actions, confirming event subscription capability. missing for 10: detailed webhook setup docs (payload format, signature verification), independent hands-on confirmation of webhook reliability.",
+    "rationale": "Asana's developer platform explicitly documents webhooks as a first-class automation mechanism alongside the REST API, positioned for building event-driven integrations (asana-docs-2). This directly supports subscribing to events programmatically, which an AI-native agent could leverage. missing for 10: dedicated webhook API reference/payload schema details, independent hands-on confirmation of webhook reliability, and explicit AI-agent usage examples with webhooks.",
     "evidenceIds": [
       "asana-docs-2",
-      "asana-docs-1"
+      "asana-docs-11",
+      "asana-supp-openapi-spec"
     ]
   },
   {
@@ -201,11 +203,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Asana markets 'AI Teammates' with Work Graph context and 'Asana Dash' as an 'AI Chief of Staff', suggesting some conversational AI querying of workspace content, but there is no documentation confirming an instant Q&A feature that returns answers with explicit citations from workspace content. Missing for 10: documentation of a chat/ask interface, evidence of citation formatting or source-linking, and any hands-on confirmation of accuracy or usage.",
+    "rationale": "Asana markets 'Dash' as an 'AI Chief of Staff' and AI Teammates with 'shared memory, governance, and context from the Work Graph,' implying some conversational AI/Q&A capability grounded in workspace data, but the evidence never explicitly describes a Q&A interface returning cited answers from workspace content. Missing for 10: explicit description of instant Q&A with source citations, documentation of how citations are surfaced, and any independent/hands-on confirmation of this specific feature.",
     "evidenceIds": [
       "asana-docs-5",
-      "asana-docs-6",
-      "asana-docs-8"
+      "asana-docs-8",
+      "asana-docs-6"
     ]
   },
   {
@@ -214,12 +216,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "While Asana's evidence pack mentions general AI features (AI Teammates, AI Studio, 'AI Chief of Staff' Dash) and API access to status updates, none of the citations describe an AI capability that drafts a project or initiative status update from recent activity. Missing for 10: explicit documentation of an AI status-update drafting feature, evidence of it summarizing recent task/activity data, and any hands-on or community confirmation it works.",
+    "rationale": "Evidence mentions general AI features (AI Teammates, AI Studio, 'AI Chief of Staff' Dash) and separately mentions reading/sharing status updates via API, but nothing ties AI drafting specifically to project/initiative status updates from recent activity. Missing for 10: any documentation of an AI-generated status update feature, examples of AI summarizing recent activity into a draft update, or hands-on confirmation of this workflow.",
     "evidenceIds": [
       "asana-docs-4",
       "asana-docs-5",
       "asana-docs-6",
-      "asana-docs-8"
+      "asana-docs-8",
+      "asana-docs-15"
     ]
   },
   {
@@ -227,14 +230,14 @@
     "storyId": "ai-auto-triage-bugs",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Asana's AI Studio (no-code automations), AI Teammates, and Dash are marketed as capable of handling coordination/triage-like work and could plausibly automate task prioritization, but no evidence specifically shows AI auto-triaging or prioritizing incoming bugs/tasks in practice. Missing for 10: concrete documentation or hands-on example of AI-driven bug/task triage and prioritization rules, independent corroboration of this specific workflow working in production.",
+    "confidence": "medium",
+    "rationale": "Asana offers AI-driven workflow tools (AI Teammates, AI Studio no-code automations, rule actions/webhooks) that could be configured to triage and prioritize tasks, but no evidence specifically documents an out-of-the-box 'triage incoming bugs' capability or automatic prioritization logic — it would require custom setup via AI Studio/rules. missing for 10: explicit documentation of automatic bug/task triage or prioritization workflows, and any hands-on/independent confirmation that this works as described.",
     "evidenceIds": [
       "asana-docs-5",
       "asana-docs-6",
       "asana-docs-7",
-      "asana-docs-8",
-      "asana-docs-2"
+      "asana-docs-2",
+      "asana-docs-8"
     ]
   },
   {
@@ -243,7 +246,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a work-management/PM platform, not a code-review or diff-analysis tool; breaking code diffs into explanations is a wrong-axis capability for this product category.",
+    "rationale": "Asana is a work/project management platform, not a code-authoring or code-review tool; breaking down code diffs is entirely outside its product category (wrong axis).",
     "evidenceIds": []
   },
   {
@@ -251,56 +254,69 @@
     "storyId": "ai-personalized-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Asana's AI agents/AI Studio/Dash offer workflow automation, but nothing indicates the AI assistant learns a user's tone, shorthand, or personal preferences to tailor its output. No mention of personalization, memory of user writing style, or adaptive tone in any of the docs or community items. Missing for 10: any documentation of personalized tone/style learning, user-specific memory of shorthand/preferences, or examples of tailored output based on individual user habits.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows Asana's AI features (AI Teammates, AI Studio, Dash) but nothing about the assistant learning an individual user's tone, shorthand, or personal preferences to tailor output — this personalization capability is not documented anywhere in the pack.",
+    "evidenceIds": [
+      "asana-docs-5",
+      "asana-docs-6",
+      "asana-docs-7",
+      "asana-docs-8"
+    ]
   },
   {
     "productId": "asana",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Asana has developer documentation and API guides (asana-docs-1/2), but there's no evidence of an interactive API reference with runnable/try-it examples (e.g., Swagger/OpenAPI console); probes for OpenAPI/swagger files all returned 404 (asana-probe-2), suggesting no such tooling is exposed.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Asana's official REST API reference explicitly features a built-in, in-context API explorer for each endpoint allowing requests and responses to be tried live, plus a published OpenAPI spec and developer sandbox for testing. Missing for 10: no independent/community corroboration of hands-on use of the explorer, and no evidence of runnable code snippets across multiple languages.",
     "evidenceIds": [
-      "asana-docs-1",
+      "asana-docs-11",
+      "asana-docs-12",
+      "asana-supp-openapi-spec",
       "asana-probe-2"
     ]
   },
   {
     "productId": "asana",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows an explicit probe for OpenAPI/Swagger spec files at Asana's developer docs domain returning 404 on all candidate paths, and no docs citation claims a downloadable machine-readable API spec — only human-readable guides and an llms.txt for markdown docs are found.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Asana publishes an official OpenAPI specification repository (Asana/openapi) containing YAML spec files for both the REST API and app components, which is machine-readable and downloadable, and docs also mention a built-in API explorer per endpoint. Missing for 10: the spec isn't hosted at a standard discoverable endpoint on developers.asana.com itself (probe found 404s at common openapi.json paths), requiring users to know to find it via GitHub rather than a documented direct download link.",
     "evidenceIds": [
-      "asana-probe-2",
-      "asana-probe-1",
-      "asana-docs-1"
+      "asana-supp-openapi-spec",
+      "asana-docs-11",
+      "asana-probe-2"
     ]
   },
   {
     "productId": "asana",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a sandbox/test environment for Asana's API, MCP server, or AI features that isolates from production data; docs mention API/token creation and automation but nothing about sandbox testing.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Asana explicitly documents a Developer Sandbox — 'a temporary Asana domain with limited users' — for testing apps/integrations without touching production data, plus an API explorer and deprecation-period feature flags (Asana-Enable/Disable headers) that let developers safely test changes. Missing for 10: independent/hands-on confirmation of the sandbox's fidelity and limitations, and no explicit mention of AI-agent-specific sandbox testing workflows.",
+    "evidenceIds": [
+      "asana-docs-12",
+      "asana-docs-11",
+      "asana-docs-17",
+      "asana-supp-deprecations"
+    ]
   },
   {
     "productId": "asana",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Asana has a public REST API with docs, authentication, tasks, webhooks, and even an MCP server, but nowhere is there mention of API versioning scheme or a documented deprecation policy; probes for an OpenAPI spec even 404'd. Missing for 10: any documentation of API version numbers, backward-compatibility guarantees, or deprecation/sunset policy.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Asana documents a formal deprecation process with Asana-Enable/Asana-Disable headers, Asana-Change deprecation notices, migration plans, and dual old/new behavior periods during transitions, plus an official OpenAPI spec repo enabling versioned schema tracking. missing for 10: explicit semantic versioning scheme (e.g., v1/v2 URI versioning) and independent third-party confirmation that the deprecation policy is reliably honored in practice.",
     "evidenceIds": [
-      "asana-docs-1",
-      "asana-docs-2",
-      "asana-probe-1",
-      "asana-probe-2"
+      "asana-docs-13",
+      "asana-docs-17",
+      "asana-docs-18",
+      "asana-supp-deprecations",
+      "asana-supp-openapi-spec"
     ]
   },
   {
@@ -308,8 +324,8 @@
     "storyId": "audit-log-admin-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions an admin audit log feature, security/compliance controls, or workspace action tracking for Asana; all cited items are about API/AI features or general community sentiment unrelated to audit logging.",
+    "confidence": "high",
+    "rationale": "No evidence pack items reference an admin audit log, security event log, or workspace-wide action tracking feature; documentation focuses on API/dev tooling, AI agents, and automations, not audit/compliance logging.",
     "evidenceIds": []
   },
   {
@@ -317,21 +333,25 @@
     "storyId": "auto-generate-release-changelogs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Asana is a project/task management tool with API, automation rules, and AI agents, but there is no evidence of any changelog-generation feature tied to releases or shipping progress — no mention of release notes, changelog templates, or git/version-control integration for this purpose.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Asana offers general APIs, webhooks, and rule automation, plus a tutorial for generating status update reports, but there is no evidence of any built-in or documented changelog-generation feature tied to releases.",
+    "evidenceIds": [
+      "asana-docs-2",
+      "asana-docs-4",
+      "asana-docs-15"
+    ]
   },
   {
     "productId": "asana",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Asana's API and automation docs (creating tasks via API, rule actions, webhooks) imply that a developer could script operations across many items, but no evidence explicitly documents a bulk/batch API endpoint or bulk-edit UI capability. missing for 10: explicit documentation of a batch/bulk API endpoint, evidence of bulk update/delete across many tasks, and confirmation that automation rules can act on many items simultaneously.",
+    "rationale": "Asana's API docs mention creating tasks programmatically and automating tedious work via rule actions, webhooks and API calls, which implies scriptable multi-item operations, but no evidence explicitly documents a bulk/batch API endpoint or multi-item transaction support. Missing for 10: explicit bulk/batch API endpoint documentation, evidence of rate-limit-aware batch processing, and independent confirmation that many items can be updated in a single call.",
     "evidenceIds": [
       "asana-docs-1",
       "asana-docs-2",
-      "asana-probe-2"
+      "asana-docs-14"
     ]
   },
   {
@@ -340,11 +360,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Asana's docs explicitly describe rule actions, webhooks, and API-driven automation, and AI Studio is marketed as enabling no-code automations triggered by workflow events. This directly supports rule-based, event-triggered automation. Missing for 10: independent/hands-on verification of AI-specific rule triggers and detailed documentation of trigger/action configuration depth.",
+    "rationale": "Asana's documented Rules feature explicitly supports rule actions triggered by events, and this is combined with webhooks/API to automate actions, plus AI Studio for no-code automations tied to workflow triggers. Missing for 10: independent hands-on validation of rule-trigger reliability, and more detail on the breadth of trigger/action types available to AI-native users.",
     "evidenceIds": [
       "asana-docs-2",
       "asana-docs-3",
-      "asana-docs-7"
+      "asana-docs-7",
+      "asana-docs-16"
     ]
   },
   {
@@ -353,7 +374,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Asana's automation platform (rule actions, webhooks, API, AI Studio no-code automations) provides building blocks that could support recurring workflows, but no evidence explicitly documents a scheduling/cron-like trigger or AI-native recurring job capability. missing for 10: explicit documentation of time-based/recurring triggers, AI-native scheduling API, and independent confirmation of recurring workflow execution.",
+    "rationale": "Asana's docs point to a general automation platform (rule actions, webhooks, API, and AI Studio 'no-code automations') that could support workflow automation, but no evidence explicitly documents scheduling recurring/timed jobs or cron-like triggers for an AI-native user. missing for 10: explicit documentation of recurring/scheduled triggers, cron-based rules, or AI Studio workflow scheduling, independent confirmation of recurring automation working in practice.",
     "evidenceIds": [
       "asana-docs-2",
       "asana-docs-7",
@@ -366,19 +387,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of version history, review workflows, or rollback capability for Asana Rules/automations or AI Studio automations; docs mention building automations (rules, webhooks, AI Studio) but nothing about versioning or reverting them.",
+    "rationale": "Evidence covers rule/automation features, AI Studio, API deprecation headers, and API versioning, but nothing addresses versioning, reviewing, or rolling back automations/rules themselves; no changelog, history, or rollback mechanism for automations is documented.",
     "evidenceIds": []
   },
   {
     "productId": "asana",
     "storyId": "code-repo-issue-sync",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows only generic API, webhooks, and rule-based automation capabilities, with no specific documentation of a bi-directional sync integration with a code repository issue tracker (e.g., GitHub Issues, GitLab, Jira). The axis is plausible for a project management tool, but nothing in the pack confirms this specific capability exists.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Asana's evidence shows general integration primitives (REST API, webhooks, App Directory apps that 'create Asana tasks and kick start workflow from other tools') that could support a repo-issue-tracker sync, but there is no first-party documentation of a dedicated, bi-directional GitHub/GitLab/Jira issue sync feature. missing for 10: explicit native bi-directional issue-tracker integration docs, evidence of two-way sync (not just task creation from other tools), engineer hands-on confirmation the sync avoids duplication.",
     "evidenceIds": [
-      "asana-docs-1",
-      "asana-docs-2"
+      "asana-docs-2",
+      "asana-docs-10",
+      "asana-docs-11",
+      "asana-supp-openapi-spec"
     ]
   },
   {
@@ -386,14 +409,15 @@
     "storyId": "cross-platform-context-handoff",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "low",
-    "rationale": "Asana provides technical hooks for handoff — an official MCP server, REST API, webhooks, app components embedding, and status-update sharing to other tools — plus 'AI Teammates' described as having shared memory and Work Graph context. However there's no concrete evidence of end-to-end context preservation when handing off between multiple tools/agents, only first-party marketing claims. Missing for 10: independent/hands-on validation of lossless context transfer, documented examples of multi-agent handoff, and detail on how Work Graph context persists across external tool boundaries.",
+    "confidence": "medium",
+    "rationale": "Asana provides mechanisms for context-preserving handoff: an API/webhooks, app components embedded in tasks, a documented MCP server for agent access, and AI Teammates described as having 'shared memory, governance, and context from the Work Graph' plus explicit tutorials on reading status updates and sharing them in another tool. This shows first-party support for moving work/context between Asana and other tools/agents, but there's no independent or hands-on verification that context/information is preserved without loss in practice. Missing for 10: independent case studies or hands-on tests confirming lossless context transfer, technical detail on how shared memory/context persists across agent handoffs, and evidence of real-world multi-tool agent workflows succeeding end-to-end.",
     "evidenceIds": [
-      "asana-docs-2",
-      "asana-docs-3",
       "asana-docs-4",
       "asana-docs-5",
-      "asana-probe-3"
+      "asana-docs-10",
+      "asana-docs-15",
+      "asana-probe-3",
+      "asana-docs-9"
     ]
   },
   {
@@ -402,7 +426,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or community mentions of dependency tracking, portfolios, or cross-team coordination features—only API/automation docs and AI teammate marketing. Since dependency tracking is a core, plausible capability for a project-management tool, its absence from evidence yields 'none' rather than 'na'.",
+    "rationale": "The evidence pack contains no documentation or community evidence specifically describing Asana's task/dependency-tracking feature for coordinating cross-team launches; it covers API/developer platform, AI agents, and general sentiment but nothing about dependency mapping or cross-team launch coordination.",
     "evidenceIds": []
   },
   {
@@ -410,9 +434,13 @@
     "storyId": "cross-tool-task-aggregation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a unified cross-tool task view aggregating assignments from other PM tools (e.g., Jira, Trello) into Asana; docs only cover Asana's own API, webhooks, app components, and AI features, none of which describe pulling in tasks from other systems into one view.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows Asana's API, webhooks, app directory and app-component integrations that let other tools create tasks in Asana or push data via automation, but there is no documented feature for surfacing an engineer's assigned tasks from other PM tools (e.g., Jira, Trello) inside a single unified Asana view. missing for 10: a native cross-tool unified task/assignment view, evidence of aggregating external tool tasks into one dashboard.",
+    "evidenceIds": [
+      "asana-docs-2",
+      "asana-docs-10",
+      "asana-docs-16"
+    ]
   },
   {
     "productId": "asana",
@@ -431,11 +459,13 @@
     "productId": "asana",
     "storyId": "custom-dashboard-widgets",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Asana's developer docs mention 'app components' that can be built to plug directly into the Asana UI, on tasks or rules surfaces, which suggests some native-feeling extensibility — but there's no explicit documentation of building custom views or dashboard widgets specifically for designers. missing for 10: explicit dashboard widget/custom view APIs, design guidelines for native-feel UI extensions, and independent evidence of designers actually building such integrations.",
+    "rationale": "Asana's developer docs mention 'app components' that let third-party apps plug into the UI on the surface of tasks or rules, which is the closest analog to embedding native-feeling widgets, but there's no evidence of a dedicated dashboard-widget or custom-view builder SDK for designers specifically. Missing for 10: documented dashboard/widget builder APIs, custom view creation tools, and any hands-on/independent confirmation that these app components render as native Asana views or dashboards.",
     "evidenceIds": [
-      "asana-docs-3"
+      "asana-docs-3",
+      "asana-docs-9",
+      "asana-docs-16"
     ]
   },
   {
@@ -443,8 +473,8 @@
     "storyId": "custom-fields-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses custom fields, workflow/status customization, or project templates in Asana; the docs cited focus on API/automation/AI features, not field/workflow customization capability.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no documentation or mention of Asana's native custom fields, statuses, or workflow configuration features—only developer API/app-component docs, AI agent marketing, and unrelated community commentary on performance and hiring. Missing for 10: any first-party or hands-on evidence describing custom field creation, status/section customization, or workflow templates within the Asana product UI.",
     "evidenceIds": []
   },
   {
@@ -452,18 +482,24 @@
     "storyId": "dashboard-reporting",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation or mention of Asana's dashboard/reporting/widget capabilities for tracking project progress—only API/automation docs, AI agent features, and unrelated community commentary. Reporting dashboards are a plausible and expected axis for a project management tool like Asana, but nothing in this evidence pack substantiates it.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack describes dashboards, reporting widgets, or progress-tracking visualizations for product managers; the evidence is limited to developer API/platform features, AI agent products, and unrelated community commentary. Since building reporting dashboards is a plausible and expected capability for a PM tool like Asana, absence of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
     "productId": "asana",
     "storyId": "design-tool-sync",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows only generic API/webhook/rule/app-component platform capabilities, with no specific mention of a design-tool (e.g., Figma, Sketch, Adobe) integration that lets a designer update project status without leaving their design tool.",
-    "evidenceIds": []
+    "rationale": "Asana provides API, webhooks, and 'app components' that let third-party apps update Asana directly from the UI, and its App Directory lists apps that create/update tasks from other tools, which could technically enable status updates from a design tool — but no evidence names a specific design-tool (e.g., Figma, Sketch) integration or shows a designer updating project status without leaving that tool. missing for 10: a named design-tool integration/plugin, an in-context demo of status updates flowing from a design app to Asana without switching apps.",
+    "evidenceIds": [
+      "asana-docs-2",
+      "asana-docs-3",
+      "asana-docs-9",
+      "asana-docs-10",
+      "asana-docs-16"
+    ]
   },
   {
     "productId": "asana",
@@ -471,7 +507,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes any workspace export feature, let alone one preserving comments, attachments, or audit trails; evidence only covers API/automation/AI features and unrelated community sentiment.",
+    "rationale": "No evidence describes a workspace export feature that preserves comments, attachments, or audit trails; the pack only covers API/developer platform features (webhooks, app components, MCP server) and unrelated community sentiment. missing for 10: any documentation of an export/backup feature, evidence of comment/attachment preservation, or audit-trail retention during export.",
     "evidenceIds": []
   },
   {
@@ -479,26 +515,29 @@
     "storyId": "granular-permission-roles",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses granular permissions, roles, or view/edit access controls in Asana; all docs entries focus on API, automation, and AI features rather than access control. Missing for 10: any documentation of role-based permissions, project/task visibility controls, or admin permission settings.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains only developer-API docs, deprecation policy notes, and unrelated community commentary; none of it addresses Asana's permission/role management for controlling who can view or edit work. This is a fair axis for a PM tool, but no supporting evidence is present.",
     "evidenceIds": []
   },
   {
     "productId": "asana",
     "storyId": "guided-first-time-setup",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "No evidence of a guided onboarding walkthrough or workspace setup wizard for engineers; docs focus on API/developer integration and AI features, not first-time workspace setup guidance.",
-    "evidenceIds": []
+    "rationale": "Asana documents a step-by-step 'quick start guide' for building an app and creating tasks via the API (asana-docs-1, asana-docs-14), which offers a guided path for developers integrating with Asana, but there is no evidence of a guided in-product walkthrough for setting up a workspace itself as a first-time user. missing for 10: dedicated first-run workspace setup walkthrough/onboarding flow, evidence of interactive UI onboarding for engineers using Asana as a PM tool (not just API docs).",
+    "evidenceIds": [
+      "asana-docs-1",
+      "asana-docs-14"
+    ]
   },
   {
     "productId": "asana",
     "storyId": "import-from-other-tools",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention data import tools, CSV/Trello/Jira import wizards, or migration assistance for onboarding; only general API/webhook docs and AI feature marketing are present, none addressing import from another PM tool.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no documentation of a dedicated data-import feature (e.g., CSV import, Trello/Jira/Excel migration tools) for onboarding from another tool; it only covers API access, app directory integrations, and AI features, none of which document an import-from-another-tool capability.",
     "evidenceIds": []
   },
   {
@@ -521,8 +560,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation or mention of Asana's Portfolios, Goals, or Initiative-tracking features (status updates, priority fields, owning team) — the docs items focus on the API, automation, app components, and AI agents, not on initiative-level tracking constructs. Since this is a fair question for a project-management product but no supporting evidence exists, it falls to 'none' rather than 'na'.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains only developer/API documentation (task creation, webhooks, app components) and community commentary on UI/performance/hiring — none of it describes Asana's native initiative-tracking constructs (e.g., Goals/Portfolios) with status, priority, and owning-team fields. Mentions of 'reading status updates' (asana-docs-4, asana-docs-15) are about relaying update text via API, not about initiative status/priority/owner fields as a PM feature.",
+    "evidenceIds": [
+      "asana-docs-4",
+      "asana-docs-15"
+    ]
   },
   {
     "productId": "asana",
@@ -530,7 +572,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions inline comments on specific text or images within a task/item description; only general API, automation, and AI-teammate features are documented.",
+    "rationale": "The evidence pack contains no mention of inline commenting on specific text or images within a task/item description; only general API/developer docs and community sentiment are present, none addressing this collaboration feature.",
     "evidenceIds": []
   },
   {
@@ -539,7 +581,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows general API/developer docs (auth, task creation, webhooks, MCP server) but no mention of documented rate limits or concurrency caps for the Asana API. Missing for 10: any explicit rate-limit/quota documentation, concurrency cap specifications, or guidance for scaling automation.",
+    "rationale": "The evidence pack covers Asana's API docs, quick starts, deprecation process, and developer sandbox, but nowhere mentions documented rate limits, concurrency caps, or throttling behavior for the API. This is a fair question for an API-driven platform like Asana, but no evidence shows it delivers.",
     "evidenceIds": []
   },
   {
@@ -548,7 +590,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation addresses performance characteristics or item/task caps at scale (tens of thousands of tasks); available evidence is unrelated (API docs, AI agents, automation features). Community reports actually describe poor performance ('worst performing web app', suspected O(n^2) algorithms), reinforcing that no positive evidence of scale handling exists.",
+    "rationale": "The evidence pack contains no vendor documentation on item caps, performance benchmarks, or scaling behavior for large workspaces; only a couple of dated community complaints about poor performance/suspected O(n^2) issues, with no concrete data on limits or benchmarks for tens of thousands of tasks.",
     "evidenceIds": [
       "asana-comm-11",
       "asana-comm-12"
@@ -559,8 +601,8 @@
     "storyId": "mobile-app-parity",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses Asana's native mobile app or its feature parity with desktop; all citations concern API/docs, AI features, or unrelated community sentiment about web performance and interviews.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of Asana's native mobile app, its feature parity with desktop, or any mobile-specific documentation; all evidence concerns API/developer platform, AI features, and general community sentiment. Mobile app capability is a fair axis for a task-management product, but nothing in the pack supports it.",
     "evidenceIds": []
   },
   {
@@ -569,7 +611,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a work management/project tracking platform, not a code review or coding-agent tool; reviewing code diffs and commenting on specific lines is a code-review-tool axis, not something Asana's product category addresses.",
+    "rationale": "Asana is a work-management/task platform, not a coding tool with a code review interface, diff/line-commenting, or an AI coding agent that iterates on code changes; there is no evidence of code review or line-level commenting capability. This is a category mismatch, not a missing feature of the product type.",
     "evidenceIds": []
   },
   {
@@ -578,7 +620,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of Asana's board, list, calendar, or timeline views or the ability to switch between them; docs cited focus on API, automation, AI Teammates, and unrelated community commentary. Missing for 10: any documentation or mention of multiple view types (board/list/calendar/timeline) and switching between them.",
+    "rationale": "The evidence pack contains only developer/API docs, AI feature marketing, and community sentiment—none of it describes or confirms board/list/calendar/timeline view switching in the product UI. This is a fair and applicable axis for a work-management tool like Asana, but no citation here substantiates it.",
     "evidenceIds": []
   },
   {
@@ -611,24 +653,33 @@
     "productId": "asana",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Asana's developer docs show a robust REST API (task creation, automation, webhooks, rules, app components) suggesting broad functional coverage, but there is no explicit claim or evidence that every UI capability is exposed via API, and the OpenAPI/swagger spec could not be located (all probe paths 404), making it hard to verify completeness. Missing for 10: explicit statement of 1:1 API/UI parity, a machine-readable API spec, and independent/hands-on confirmation that advanced UI features (e.g., custom fields, portfolios, reporting) are fully API-accessible.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Asana's API and app-component docs show broad coverage (task creation, rules, webhooks, app UI surfaces, published OpenAPI spec) suggesting most core PM workflows are scriptable, but there is no explicit claim of full UI/API parity, and newer AI-native surfaces (AI Studio, AI Teammates, Dash) are described only as UI features with no evidence of API-equivalent access. missing for 10: explicit parity statement, API coverage for AI Studio/Teammates/Dash, independent developer confirmation of full feature parity.",
     "evidenceIds": [
-      "asana-docs-1",
       "asana-docs-2",
       "asana-docs-3",
-      "asana-probe-2"
+      "asana-docs-9",
+      "asana-docs-16",
+      "asana-supp-openapi-spec",
+      "asana-docs-5",
+      "asana-docs-7",
+      "asana-docs-8"
     ]
   },
   {
     "productId": "asana",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Asana's API/developer docs (task creation, webhooks, app components) but no documentation of a bulk data export feature or open-format export/portability tool for users wanting to leave the platform.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Asana exposes a REST API and OpenAPI spec that could be used to export tasks/projects programmatically, which supports data portability, but there is no documented native 'export all data' or GDPR-style full account export feature, no mention of open standard export formats (CSV/JSON bulk export), and no evidence of a data portability policy for leaving the platform. missing for 10: dedicated bulk data export feature, documentation of export file formats, evidence of full account data portability/exit process, independent confirmation of export completeness.",
+    "evidenceIds": [
+      "asana-docs-1",
+      "asana-docs-2",
+      "asana-supp-openapi-spec",
+      "asana-probe-2"
+    ]
   },
   {
     "productId": "asana",
@@ -636,7 +687,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a closed-source SaaS product; source code availability under an open license is not a plausible axis for this product category.",
+    "rationale": "Asana is a closed-source SaaS product; the story asks about reading the product's own source code under an open license, which is a category error for a proprietary work-management platform (its API/OpenAPI spec being public does not equal source availability).",
     "evidenceIds": []
   },
   {
@@ -653,8 +704,8 @@
     "storyId": "portfolio-progress-rollup",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions Asana Portfolios or any cross-project rollup/reporting view; the docs cited are about API/automation/AI agents, not portfolio reporting. Missing for 10: any documentation or community mention of Portfolios feature, cross-project progress rollup, or status reporting dashboards.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains only developer/API documentation, MCP/AI-agent marketing copy, and general community sentiment about Asana as a product — nothing describes a portfolio feature that rolls up progress across multiple projects into one view. Missing for 10: any documentation or mention of Asana's Portfolios feature, cross-project rollup reporting, or dashboards aggregating project status.",
     "evidenceIds": []
   },
   {
@@ -662,8 +713,8 @@
     "storyId": "prebuilt-project-templates",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions pre-built project templates or template galleries; the docs focus on API, automation, AI agents, and MCP server, none of which address template-based project creation. Missing for 10: any mention of Asana's template library/gallery, template categories, or docs describing starting a project from a template.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of project templates, template galleries, or template-based project creation anywhere in Asana's docs or community discussion. This is a plausible and expected capability for a project management tool, but nothing in the provided evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -672,7 +723,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data localization controls for Asana; the evidence focuses on API, AI features, and general product sentiment. This is a plausible axis for an enterprise SaaS product, so absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "No evidence in the pack addresses data residency, regional data storage, or any location-based data controls for Asana; all citations concern API docs, integrations, or unrelated community sentiment. Missing for 10: any mention of data residency options, regional hosting, or EU/US data center choice, plus documentation of controls to select storage location.",
     "evidenceIds": []
   },
   {
@@ -681,7 +732,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI-training data opt-out or data usage controls for AI model training; all citations concern APIs, AI Teammates features, and unrelated community sentiment. missing for 10: any privacy policy, admin control, or documentation on opting out of AI training data usage.",
+    "rationale": "No evidence in the pack addresses AI training data opt-out, privacy controls for model training, or any data-usage policy statements specific to AI features like AI Studio or AI Teammates. The evidence is entirely about developer API/platform features and unrelated community commentary. Missing for 10: any documentation or policy statement on AI training data usage, opt-out mechanisms, or data governance controls.",
     "evidenceIds": []
   },
   {
@@ -690,7 +741,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or data lifecycle management for AI features; all citations concern API/automation docs, AI Teammates, and unrelated community sentiment. Missing for 10: any documentation on data retention settings, deletion workflows, or privacy controls for AI-generated content.",
+    "rationale": "No evidence pack items address data retention policies, data export/deletion controls, or privacy/compliance settings for AI-native use; the docs focus on API usage, app components, and deprecation processes, not retention/deletion controls. Missing for 10: documentation of data retention settings, deletion/export APIs, DPA/privacy controls relevant to AI usage, and any admin controls over AI data lifecycle.",
     "evidenceIds": []
   },
   {
@@ -699,7 +750,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for AI-native users; the docs cover API/AI features and community comments are unrelated to privacy settings.",
+    "rationale": "No evidence pack items address telemetry opt-out, usage tracking controls, or privacy settings for AI-native usage; the docs cover API access, app components, and deprecation headers, none of which relate to telemetry/tracking opt-out.",
     "evidenceIds": []
   },
   {
@@ -708,7 +759,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention teams, sub-teams, membership restrictions, or privacy settings within Asana's org structure; all evidence concerns API/AI features or unrelated community commentary. Missing for 10: any documentation of team/sub-team creation, privacy controls, or member restriction settings.",
+    "rationale": "No evidence pack items mention sub-teams, private teams, or membership restriction features in Asana; all docs cover API, developer tooling, AI features, and community sentiment unrelated to team privacy/permissions.",
     "evidenceIds": []
   },
   {
@@ -717,7 +768,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions an SLA, uptime commitment, or a public status page for incident tracking; the evidence covers API docs, AI features, and community sentiment unrelated to this axis.",
+    "rationale": "No evidence of a published uptime SLA or a public status page for incident status; evidence pack covers API docs, developer tools, and community sentiment unrelated to this axis.",
     "evidenceIds": []
   },
   {
@@ -726,7 +777,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes real-time sync/live updates across open sessions without refreshing; docs cover API, webhooks, automations, and AI features but nothing about real-time collaborative UI refresh, and community comments even flag performance issues rather than confirming instant sync.",
+    "rationale": "No evidence describes real-time sync/live update UI behavior (e.g., WebSocket push, live collaborative cursors, instant task/comment updates across open sessions); evidence covers API, webhooks, deprecation headers, and unrelated community sentiment/performance complaints. Real-time collaboration presence is a plausible axis for a project-management tool, but nothing in the pack confirms it works as described.",
     "evidenceIds": []
   },
   {
@@ -735,11 +786,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Asana's docs explicitly reference 'rule actions' and platform automation features (webhooks, API, rules) plus a no-code 'AI Studio' for building automations, indicating native trigger-and-action rule building. Missing for 10: independent/hands-on verification of rule builder specifics (trigger types, conditions), and no community confirmation of engineers actually using it for automation.",
+    "rationale": "Asana explicitly documents Rules (trigger-and-action automation), rule actions, webhooks, and API-based automation for eliminating manual steps, plus a no-code AI Studio for building automations. missing for 10: independent hands-on validation of rule-building UX and concrete examples/limits of trigger-action combinations from third parties.",
     "evidenceIds": [
       "asana-docs-2",
+      "asana-docs-3",
       "asana-docs-7",
-      "asana-docs-3"
+      "asana-docs-16"
     ]
   },
   {
@@ -748,7 +800,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack describes saved/custom filtered views or shareable links to such views in Asana; the docs excerpts focus on API, AI Teammates, and automation, not filter/view sharing.",
+    "rationale": "The evidence pack contains no mention of saved filtered views, custom saved searches, or shareable links to filtered work in Asana; content focuses on API docs, AI features, and unrelated community discussion.",
     "evidenceIds": []
   },
   {
@@ -769,8 +821,8 @@
     "storyId": "seat-minimum-billing-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses Asana's pricing plans, seat minimums, or annual billing commitment terms; all citations concern API/docs, AI features, or unrelated community sentiment.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses Asana's pricing plans, seat minimums, or annual billing commitments — all cited material concerns API/developer docs and unrelated community discussion. Missing for 10: pricing page or plan documentation disclosing seat minimums or annual commitment terms.",
     "evidenceIds": []
   },
   {
@@ -778,8 +830,8 @@
     "storyId": "shared-docs-knowledge-base",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no vendor documentation or claims about Asana's in-app docs/notes feature (all 'claimed-docs' items concern the developer API, webhooks, and AI Teammates, not document/notes creation); the only relevant community comment (asana-comm-1) explicitly states the product lacks 'free form notes and wiki'. No evidence demonstrates the capability works as described.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains only Asana's developer/API documentation (task creation, webhooks, app components, MCP server) and general community commentary on performance, hiring, and pricing — none of it describes a native docs/notes/wiki feature for organizing project-related documentation. One community comment even suggests Asana's paradigm is boards/tasks without 'free form notes and wiki'. There is no first-party or hands-on evidence that Asana offers shared docs/notes creation and organization tied to project work.",
     "evidenceIds": [
       "asana-comm-1"
     ]
@@ -790,7 +842,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a work management/project tracking platform, not a source control or commit-signing tool; requiring cryptographic signing of AI-authored commits is entirely outside its product category.",
+    "rationale": "Asana is a work management/project tracking platform, not a source control or code commit tool; requiring cryptographic signing of AI-authored commits is entirely outside its product category and axis.",
     "evidenceIds": []
   },
   {
@@ -799,13 +851,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only generic task/board/rule/API features and AI-agent marketing; nothing in the pack documents agile-specific capabilities like backlogs, sprint boards, story points, or burndown reports that engineers need for sprint planning. Community comments even contrast Asana's board/task-list model unfavorably with Jira for structured ticket management, but this is not a concrete contradiction of a claimed feature, just absence of evidence for the capability.",
-    "evidenceIds": [
-      "asana-docs-3",
-      "asana-comm-1",
-      "asana-comm-2",
-      "asana-comm-10"
-    ]
+    "rationale": "The evidence pack covers Asana's developer API, app components, MCP server, and general community sentiment comparing Asana to Jira/Planner, but contains no documentation of sprint-specific features (sprint boards, backlogs, velocity, iteration planning) that would demonstrate agile sprint planning support. Missing for 10: any documentation of sprint boards, backlog management, story points/velocity tracking, or sprint-specific templates within Asana.",
+    "evidenceIds": []
   },
   {
     "productId": "asana",
@@ -813,7 +860,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions SSO, SAML, or organization-level authentication security controls; one community comment references a competitor's SSO support but nothing about Asana's own SSO/SAML capability.",
+    "rationale": "No evidence in the pack discusses SSO, SAML, or organization-level authentication/access security features; all citations relate to API/dev tooling, AI features, and unrelated community sentiment.",
     "evidenceIds": []
   },
   {
@@ -822,21 +869,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items reference support response times, SLAs, or plan-tier support commitments; all documentation excerpts concern API/automation/AI features and community sentiment about product usability, not support SLAs.",
+    "rationale": "No evidence pack items mention support response times, SLAs, or plan-tier support commitments; the evidence only covers API docs, MCP server, and community sentiment. This is a fair axis for a SaaS product to document, but absent evidence means none.",
     "evidenceIds": []
   },
   {
     "productId": "asana",
     "storyId": "task-creation-assignment",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Asana's core product is task/project management, and its API docs (create tasks via API, automate work with rules/webhooks) plus community testimony describing it as a task/ticket management tool used like GTD-style workflows confirm core task creation and assignment functionality. Missing for 10: explicit first-party documentation of the standard UI flow for setting assignee and due date fields, and independent hands-on verification of that specific UI workflow.",
+    "rationale": "Evidence confirms Asana's core purpose as a task/project management tool used by engineers (e.g., docs on creating tasks via API, community comments about using Asana for team task tracking), but no citation explicitly describes assigning tasks to teammates or setting due dates. Missing for 10: explicit documentation or evidence of assignee fields, due-date fields, and UI walkthrough for task assignment.",
     "evidenceIds": [
       "asana-docs-1",
-      "asana-docs-2",
-      "asana-comm-7",
-      "asana-comm-4"
+      "asana-docs-14",
+      "asana-docs-10",
+      "asana-comm-4",
+      "asana-comm-7"
     ]
   },
   {
@@ -844,21 +892,23 @@
     "storyId": "task-dependencies-subtasks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or community mentions of subtasks or task dependency features specifically; the docs cover API/automation/AI agents, and community comments focus on UI/performance/business sentiment, not planning structures like subtasks or blocking dependencies. Missing for 10: any first-party documentation of subtasks, dependency linking, or blocking-order visualization features.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains only developer/API documentation, AI feature blurbs, and community commentary on hiring/performance/UI — nothing describes or demonstrates Asana's native subtasks or task-dependency (blocking) functionality. Missing for 10: any docs, screenshots, or hands-on evidence of creating subtasks or setting task dependencies to show blocking order.",
     "evidenceIds": []
   },
   {
     "productId": "asana",
     "storyId": "third-party-app-marketplace",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs show Asana has a developer platform (API, webhooks, rule actions, app components that plug into the Asana UI) enabling third-party integrations, which supports the general integrations story, but no evidence explicitly describes an 'app marketplace' or quantifies 'thousands' of available integrations. Missing for 10: explicit marketplace/app directory documentation, count or breadth of available third-party apps, and independent confirmation of marketplace scale.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Asana documents an App Directory where third-party apps integrate to create tasks and kick off workflows (asana-docs-10), plus a public API, webhooks, and app-components framework for building/plugging in integrations (asana-docs-2, asana-docs-3, asana-docs-9, asana-docs-16), supporting a marketplace-style ecosystem. Missing for 10: an authoritative count or listing of 'thousands' of apps in the directory, and independent/community corroboration of marketplace breadth or ease-of-connection experience.",
     "evidenceIds": [
+      "asana-docs-10",
       "asana-docs-2",
       "asana-docs-3",
-      "asana-docs-4"
+      "asana-docs-9",
+      "asana-docs-16"
     ]
   },
   {
@@ -866,8 +916,8 @@
     "storyId": "time-tracking",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions native time-tracking fields, time logging, or timesheet functionality in Asana; only task creation, automation, AI teammates, and general community sentiment are covered. missing for 10: any documentation of built-in time-tracking/logging fields, timesheet reporting, or first-party time-log API endpoints.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Asana's API/app ecosystem for creating tasks, rules, and integrations, but nothing documents a native time-tracking field or built-in time-logging feature for tasks/projects. Time tracking in Asana is typically achieved via third-party integrations, and no such integration or native capability is evidenced here.",
     "evidenceIds": []
   },
   {
@@ -876,7 +926,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of a search feature spanning tasks, docs, and comments, nor any mention of search speed or accuracy; evidence pack covers API access, AI teammates, and unrelated community sentiment/performance complaints. Missing for 10: documentation of a unified search feature, evidence of search performance/accuracy, coverage across comments/docs/tasks.",
+    "rationale": "No evidence describes a unified search feature across tasks, docs, and comments, nor any claims about search speed or accuracy; evidence only covers API/dev platform features, AI teammates, and unrelated community commentary. Missing for 10: documentation of a search/search API feature, evidence of search scope (tasks/docs/comments), any performance or accuracy claims, and independent corroboration.",
     "evidenceIds": []
   },
   {
@@ -885,7 +935,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Asana is a work management/project tracking tool built around tasks, boards, and lists, not a visual whiteboard collaboration product; no evidence pack item describes freeform visual canvas or whiteboard features. This axis is a category error for this product type.",
+    "rationale": "Asana is a task/project management tool, not a visual whiteboard/canvas product; nothing in the evidence indicates a shared visual whiteboard feature for designers, and this capability is outside Asana's product category.",
     "evidenceIds": []
   },
   {
@@ -894,7 +944,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack describes rate limits, quotas, overage charges, throttling behavior, or hard stops for API/automation usage; docs only cover general API/automation capabilities without limit disclosures.",
+    "rationale": "No evidence in the pack documents rate limits, throttling behavior, overage charges, or hard stops tied to Asana's automation/API/plan limits; deprecation and header-toggle docs address feature versioning, not usage caps. The axis clearly applies (Asana has API, rules, and AI Studio automation features with presumable plan tiers), but no citation describes what happens at limit thresholds.",
     "evidenceIds": []
   },
   {
