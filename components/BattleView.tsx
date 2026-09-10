@@ -5,7 +5,7 @@ import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { evidenceById, groupInOrder, type CategoryData, verdictFor } from '@/lib/data'
-import { humanizeTheme } from '@/lib/icons'
+import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import type { BattleRecord } from '@/lib/schemas'
 import { strongestEvidence, verificationLevel } from '@/lib/verification'
 
@@ -154,7 +154,10 @@ export default function BattleView({
                 <ThemeIcon theme={theme} />
                 {humanizeTheme(theme)}
               </h2>
-              <div className="mt-4 space-y-6">
+              {/* Visible one-liner explaining this grouping; lives OUTSIDE the sticky bar so the
+                  pinned header stays one compact line while scrolling. */}
+              <p className="mt-2 truncate text-xs text-zinc-500">{themeExplanation(theme)}</p>
+              <div className="mt-3 space-y-6">
                 {byGroup.map(([group, groupRounds]) => (
                   <div key={group}>
                     {group !== theme && <p className="mb-2 text-xs text-zinc-500">{humanizeTheme(group)}</p>}

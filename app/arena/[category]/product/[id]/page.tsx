@@ -30,7 +30,7 @@ import {
 } from '@/lib/data'
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
-import { humanizeTheme } from '@/lib/icons'
+import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import { loadIntegrationGraph, neighborsOf, productRefIndex } from '@/lib/integrations'
 import { hasLogo } from '@/lib/logos'
 import { loadPopularityHistory, popularitySeries } from '@/lib/popularityHistory'
@@ -272,7 +272,7 @@ export default async function ProductPage({
                 title={`See the judged stories and evidence behind the ${humanizeTheme(t)} score`}
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
-                <p className="mb-2 flex items-center justify-between text-sm text-zinc-400">
+                <p className="flex items-center justify-between text-sm text-zinc-400">
                   <span className="flex items-center gap-1.5">
                     <ThemeIcon theme={t} />
                     {humanizeTheme(t)}
@@ -281,6 +281,9 @@ export default async function ProductPage({
                     evidence →
                   </span>
                 </p>
+                {/* Visible one-line explanation of what this grouping means (founder rule:
+                    don't hide it behind the icon tooltip) — truncated, never wrapping the card. */}
+                <p className="mb-2 mt-0.5 truncate text-xs text-zinc-500">{themeExplanation(t)}</p>
                 {themeScore === null ? (
                   <p className="text-xs italic text-zinc-400">n/a</p>
                 ) : (

@@ -9,7 +9,7 @@ import VerificationBadge from '@/components/VerificationBadge'
 import {
   evidenceById, groupInOrder, originLabel, stripPersonaPrefix, verdictFor, type CategoryData,
 } from '@/lib/data-helpers'
-import { humanizeTheme } from '@/lib/icons'
+import { humanizeTheme, themeTooltip } from '@/lib/icons'
 import type { Story, Verdict } from '@/lib/schemas'
 import { verificationLevel } from '@/lib/verification'
 
@@ -76,7 +76,12 @@ export default function StoryMatrix({ data, logoMap }: { data: CategoryData; log
           const byGroup = groupInOrder(storiesInTheme, (s) => s.group)
           return (
             <div key={theme}>
-              <h3 className="mb-4 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-emerald-400">
+              {/* Compact spot: the explanation stays a hover tooltip on the whole header (and
+                  the ThemeIcon), not a visible subtitle — the matrix below is dense enough. */}
+              <h3
+                title={themeTooltip(theme)}
+                className="mb-4 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-emerald-400"
+              >
                 <ThemeIcon theme={theme} className="text-emerald-400" />
                 {humanizeTheme(theme)}
               </h3>
