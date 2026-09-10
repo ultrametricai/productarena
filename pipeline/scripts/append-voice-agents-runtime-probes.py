@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # One-shot helper for the voice-agents arena bring-up (2026-09-05): appends probe-tier evidence
 # items distilled from the recorded runtime probes in data/voice-agents/proofs/ (see
-# pipeline/stages/probe-record.ts LOCAL_PROBES['voice-agents'] — all 13 recorded probes passed).
+# pipeline/probes/voice-agents.ts — all 13 recorded probes passed).
 # Run AFTER `pnpm pipeline probe --category voice-agents` — that stage wholesale-replaces
 # probe-tier evidence and would wipe these items (re-run this script after any probe refresh).
 import json

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # One-shot helper for the incident-management arena bring-up (2026-09-06): appends probe-tier
 # evidence items distilled from the recorded runtime probes in data/incident-management/proofs/
-# (see pipeline/stages/probe-record.ts LOCAL_PROBES['incident-management'] — all 8 recorded
+# (see pipeline/probes/incident-management.ts — all 8 recorded
 # probes passed). Run AFTER `pnpm pipeline probe --category incident-management` — that stage
 # wholesale-replaces probe-tier evidence and would wipe these items (re-run this script after
 # any probe refresh).

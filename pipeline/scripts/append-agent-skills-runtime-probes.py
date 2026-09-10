@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # One-shot helper for the agent-skills arena bring-up (2026-09-06): appends probe-tier evidence
 # items distilled from the recorded runtime probes in data/agent-skills/proofs/ (see
-# pipeline/stages/probe-record.ts LOCAL_PROBES['agent-skills'] — all 7 recorded probes passed).
+# pipeline/probes/agent-skills.ts — all 7 recorded probes passed).
 # Run AFTER `pnpm pipeline probe --category agent-skills` — that stage wholesale-replaces
 # probe-tier evidence and would wipe these items (re-run this script after any probe refresh).
 import datetime
