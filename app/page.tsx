@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import AiEraBadge from '@/components/AiEraBadge'
+import IconChip from '@/components/IconChip'
 import MegaTable from '@/components/MegaTable'
 import ProductLogo from '@/components/ProductLogo'
+import arenaIcons from '@/data/arena-icons.json'
 import { battleSlug, leadingBattle, loadAll } from '@/lib/data'
 import { buildMegaTableArenaOptions, buildMegaTableRows } from '@/lib/megaTable'
 
@@ -55,7 +57,11 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <h3 className="font-display leading-[1.1] mt-3 text-base font-semibold group-hover:text-emerald-300">
+                <h3 className="font-display leading-[1.1] mt-3 flex items-center gap-1.5 text-base font-semibold group-hover:text-emerald-300">
+                  <IconChip
+                    icon={(arenaIcons as Record<string, string>)[data.category.id] ?? ''}
+                    title={`${data.category.name} arena`}
+                  />
                   {data.category.name}
                 </h3>
                 <div className="mt-2 flex items-center justify-between gap-2">

@@ -70,11 +70,9 @@ export function rowWinners(values: Array<number | null>): number[] {
   return values.flatMap((v, i) => (v === max ? [i] : []))
 }
 
-// 'automation-depth' → 'Automation depth' — display label for a theme id.
-export function themeLabel(theme: string): string {
-  const words = theme.replace(/-/g, ' ')
-  return words.charAt(0).toUpperCase() + words.slice(1)
-}
+// 'automation-depth' → 'Automation depth' — display label for a theme id. Re-exported from
+// lib/icons.ts (the site's one kebab-id humanizer) under this module's historical name.
+export { humanizeTheme as themeLabel } from './icons'
 
 // Client-side styling for the serialized access glyph chars (mirrors lib/accessGlyphs.ts's
 // accessGlyphFor, which isn't imported here to keep verdict types out of the client bundle).

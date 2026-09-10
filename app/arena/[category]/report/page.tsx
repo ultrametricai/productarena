@@ -3,7 +3,9 @@ import Link from 'next/link'
 import PrintButton from '@/components/PrintButton'
 import { checklistThemes, priorityForWeight } from '@/lib/checklist'
 import { confidenceFor } from '@/lib/confidence'
+import ThemeIcon from '@/components/ThemeIcon'
 import { loadAll, loadCategory, stripPersonaPrefix } from '@/lib/data'
+import { humanizeTheme } from '@/lib/icons'
 import { categoryFreshness } from '@/lib/freshness'
 import { isPricingUnavailable, loadPricing, pricingCellFor } from '@/lib/pricing'
 import { loadProofIndex } from '@/lib/proofs'
@@ -201,7 +203,10 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
         <div className="space-y-5">
           {themes.map(([theme, stories]) => (
             <div key={theme}>
-              <h3 className="font-display leading-[1.1] mb-1.5 text-sm font-semibold text-zinc-200">{theme}</h3>
+              <h3 className="font-display leading-[1.1] mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-zinc-200">
+                <ThemeIcon theme={theme} />
+                {humanizeTheme(theme)}
+              </h3>
               <ul className="space-y-1">
                 {stories.map((s) => (
                   <li key={s.id} className="flex items-start gap-2 text-sm text-zinc-300">

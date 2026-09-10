@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import ProductLogoView from '@/components/ProductLogoView'
 import OssPill from '@/components/OssPill'
 import { loadAll } from '@/lib/data'
+import ThemeIcon from '@/components/ThemeIcon'
+import { humanizeTheme } from '@/lib/icons'
 import { hasLogo } from '@/lib/logos'
 import { buildIcpRanking, icpTopThemes, loadIcpTypes, MIN_ICP_APPLICABLE } from '@/lib/icp'
 
@@ -33,10 +35,7 @@ export async function generateMetadata({
   }
 }
 
-// Human-readable label for a kebab-case theme id.
-function themeLabel(theme: string): string {
-  return theme.replace(/-/g, ' ')
-}
+
 
 export default async function IcpPage({ params }: { params: Promise<{ type: string }> }) {
   const { type } = await params
@@ -72,7 +71,10 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
               <th scope="col" className="px-3 py-2 font-normal">Lens score</th>
               {themes.map((theme) => (
                 <th key={theme} scope="col" className="hidden px-3 py-2 font-normal md:table-cell">
-                  {themeLabel(theme)}
+                  <span className="inline-flex items-center gap-1">
+                    <ThemeIcon theme={theme} />
+                    {humanizeTheme(theme)}
+                  </span>
                 </th>
               ))}
             </tr>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
+import { hasLogo } from '@/lib/logos'
 import { pricingCoverage } from '@/lib/pricing'
 import {
   currentlyDownSurfaces,
@@ -125,8 +127,9 @@ export default function PipelinePage() {
                   <td className="whitespace-nowrap px-3 py-2">
                     <Link
                       href={`/arena/${cell.arenaId}/product/${cell.productId}#story-${cell.storyId}`}
-                      className="font-medium hover:text-emerald-300"
+                      className="inline-flex items-center gap-1.5 font-medium hover:text-emerald-300"
                     >
+                      <ProductLogoView product={{ id: cell.productId, name: cell.productName }} size={16} hasLogo={hasLogo(cell.productId)} />
                       {cell.productName}
                     </Link>
                   </td>
@@ -230,7 +233,15 @@ export default function PipelinePage() {
                     return (
                       <tr key={`${s.arena}:${s.productId}:${s.surface}`} className="transition hover:bg-zinc-900/50">
                         <td className="whitespace-nowrap px-3 py-2">
-                          <Link href={`/arena/${s.arena}/product/${s.productId}`} className="font-medium hover:text-emerald-300">
+                          <Link
+                            href={`/arena/${s.arena}/product/${s.productId}`}
+                            className="inline-flex items-center gap-1.5 font-medium hover:text-emerald-300"
+                          >
+                            <ProductLogoView
+                              product={{ id: s.productId, name: names?.productName ?? s.productId }}
+                              size={16}
+                              hasLogo={hasLogo(s.productId)}
+                            />
                             {names?.productName ?? s.productId}
                           </Link>
                         </td>
