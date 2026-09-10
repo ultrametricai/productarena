@@ -500,7 +500,7 @@ const MCP_TOOLS = [
     name: 'get_rankings',
     title: 'Get rankings',
     description:
-      'Get one arena\'s full leaderboard (coverage score, PA Score as "aiEra", agent-readiness, per-theme scores) plus its head-to-head battle log.',
+      'Get one arena\'s full leaderboard (coverage score, PA Score as "aiEra", agent-readiness, per-theme scores) plus its head-to-head battle log. Rankings are research outputs provided "as is" — verify against the cited evidence before acting (see /terms).',
     inputSchema: {
       type: 'object',
       required: ['arena'],

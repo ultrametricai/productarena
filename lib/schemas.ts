@@ -177,6 +177,21 @@ export const RankingsSchema = z.object({
       ),
     }),
   ),
+  // Provenance watermark stamped by the derive stage (see lib/provenance.ts): identifies the
+  // file as Ultrametric's published data and carries an HMAC fingerprint over the rankings
+  // content, so republished copies are identifiable and verifiable
+  // (pipeline/scripts/verify-provenance.ts). Optional because buildRankings' raw output is
+  // schema-shaped before the stamp is attached. Keep this key LAST: recompute-check compares
+  // JSON.stringify output, and zod emits keys in shape order.
+  _provenance: z
+    .object({
+      owner: z.string().min(1),
+      license: z.string().min(1),
+      source: z.string().min(1),
+      arena: z.string().min(1),
+      fingerprint: z.string().regex(/^[0-9a-f]{32}$/),
+    })
+    .optional(),
 })
 
 // One line of data/{cat}/score-history.jsonl — the append-only per-product time series of the

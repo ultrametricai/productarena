@@ -2,6 +2,7 @@ import { humanizeTheme } from './icons'
 import { CLAIM_STATUSES, claimBucketCounts, claimEntriesByStatus, unmappedClaims } from './claims'
 import type { CategoryData } from './data'
 import { evidenceById, groupInOrder, verdictFor } from './data'
+import { provenanceLine } from './provenance'
 import type { Product, Story } from './schemas'
 import { strongestEvidence } from './verification'
 
@@ -68,6 +69,10 @@ export function renderArenaMarkdown(data: CategoryData, siteUrl: string): string
   const evidence = evidenceById(data)
 
   const lines: string[] = []
+  // Provenance header (see lib/provenance.ts) — the fingerprint is the arena's rankings.json
+  // watermark, so a republished copy of this markdown still points back at verifiable data.
+  lines.push(`<!-- ${provenanceLine(rankings._provenance?.fingerprint)} -->`)
+  lines.push('')
   lines.push(`# ${category.name} Arena`)
   lines.push('')
   lines.push(category.description)
@@ -138,6 +143,8 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
   const evidence = evidenceById(data)
 
   const lines: string[] = []
+  lines.push(`<!-- ${provenanceLine(data.rankings._provenance?.fingerprint)} -->`)
+  lines.push('')
   lines.push(`# ${product.name} — ${data.category.name} Arena`)
   lines.push('')
   lines.push(
