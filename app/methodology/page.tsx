@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
@@ -125,6 +126,15 @@ export default function MethodologyPage() {
       >
         New here? Read the plain-language scoring guide →
       </a>
+
+      <p className="text-xs text-zinc-500">
+        Rankings, verdicts, and scores are research outputs derived from cited evidence at a point in time, provided
+        &quot;as is&quot; — verify against the evidence before acting on them. See{' '}
+        <Link href="/terms" className="underline decoration-zinc-700 hover:text-emerald-300">
+          terms of use
+        </Link>
+        .
+      </p>
 
       <div className="flex flex-wrap gap-3 text-sm">
         <a href="/llms.txt" className="underline decoration-zinc-700 hover:text-emerald-300">

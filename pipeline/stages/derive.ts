@@ -1,4 +1,5 @@
 import path from 'node:path'
+import { attachProvenance } from '../../lib/provenance'
 import { ProductSchema, RankingsSchema, StorySchema, VerdictSchema } from '../../lib/schemas'
 import { appendScoreHistoryOnChange } from '../../lib/scoreHistory'
 import { buildRankings } from '../../lib/scoring'
@@ -10,7 +11,11 @@ export async function runDerive({ category }: { category?: string; product?: str
     const products = readJson(ProductSchema.array(), path.join(dataDir, 'products.json'))
     const stories = readJson(StorySchema.array(), path.join(dataDir, 'stories.json'))
     const verdicts = readJson(VerdictSchema.array(), path.join(dataDir, 'verdicts.json'))
-    const rankings = RankingsSchema.parse(buildRankings(products, stories, verdicts, new Date().toISOString()))
+    // attachProvenance stamps the ownership watermark (lib/provenance.ts) — a pure function of
+    // (arena id, rankings content), so recompute-check can reproduce it byte-for-byte.
+    const rankings = RankingsSchema.parse(
+      attachProvenance(cat.id, buildRankings(products, stories, verdicts, new Date().toISOString())),
+    )
     writeJson(path.join(dataDir, 'rankings.json'), rankings)
     // Forward-fill the score time series (same pattern as popularity's popularity-history.jsonl
     // append, but change-only): one line per product whose rounded aiEra/agentReady moved since

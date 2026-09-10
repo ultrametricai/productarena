@@ -306,6 +306,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {/* flex-wrap: at narrow widths (375px) this link row is wider than the viewport and
                 was the page's only source of horizontal scroll. */}
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+              <Link href="/terms" className="hover:text-emerald-300">
+                Terms
+              </Link>
               <Link href="/changelog" className="hover:text-emerald-300">
                 Changelog
               </Link>
