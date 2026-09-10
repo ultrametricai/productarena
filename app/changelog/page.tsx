@@ -15,7 +15,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Changelog — ProductArena',
   description:
-    'What changed across every arena — rank flips, Arena Score moves, new products, and new arenas, derived from the committed score history. Nothing hand-written.',
+    'What changed across every arena — rank flips, PA Score moves, new products, and new arenas, derived from the committed score history. Nothing hand-written.',
 }
 
 function dayLabel(day: string): string {
@@ -72,7 +72,7 @@ function EventLine({ event }: { event: ChangeEvent }) {
           <span className={`font-mono text-sm ${event.delta > 0 ? 'text-emerald-400' : 'text-zinc-400'}`}>
             {fmtDelta(event.delta)}
           </span>{' '}
-          Arena Score in {arena}{' '}
+          PA Score in {arena}{' '}
           <span className="font-mono text-xs text-zinc-500">(→ {event.to.toFixed(1)})</span>
         </span>
       )
@@ -100,7 +100,7 @@ export default function ChangelogPage() {
         <p className="text-sm uppercase tracking-widest text-emerald-400">Changelog</p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">What changed, honestly</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          Rank flips, Arena Score moves of {SCORE_MOVE_THRESHOLD.toFixed(1)}+ points, new products, and new arenas —
+          Rank flips, PA Score moves of {SCORE_MOVE_THRESHOLD.toFixed(1)}+ points, new products, and new arenas —
           derived at build time from the committed score history, never hand-written. Scores only move when evidence
           and verdicts are re-derived, so a quiet day means nothing changed.
         </p>

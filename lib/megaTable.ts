@@ -33,6 +33,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         productId: product.id,
         name: product.name,
         vendor: product.vendor,
+        githubUrl: product.urls.github,
         type: product.type,
         arenaId: data.category.id,
         arenaName: data.category.name,

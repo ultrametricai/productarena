@@ -66,7 +66,7 @@ function CatalogRow({ row }: { row: EverythingRow }) {
       </Link>
       <span
         className="w-[4.5rem] shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300"
-        title={`Arena Score ${fmt(row.score)} · Agent-ready ${fmt(row.agentReady)} · Agentic ${fmt(row.agenticApp)} (each /100)`}
+        title={`PA Score ${fmt(row.score)} · Agent-ready ${fmt(row.agentReady)} · Agentic ${fmt(row.agenticApp)} (each /100)`}
       >
         {triplet}
       </span>

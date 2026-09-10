@@ -88,7 +88,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
           {rivals.length} {data.category.name} rivals, ranked by the same evidence-graded leaderboard —{' '}
           {product.name} itself ranks{' '}
           <Link href={`/arena/${data.category.id}/product/${product.id}`} className="text-emerald-300 hover:underline">
-            #{baseRank} with an Arena Score of {fmtScore(baseEntry?.aiEra ?? null)}
+            #{baseRank} with an PA Score of {fmtScore(baseEntry?.aiEra ?? null)}
           </Link>
           . Every &ldquo;beats {product.name} on&rdquo; below comes from a judged head-to-head round with cited
           evidence — see the{' '}
@@ -116,7 +116,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
               </div>
               <div className="ml-auto flex shrink-0 items-center gap-3">
                 <span className="text-xs text-zinc-400">
-                  Arena Score{' '}
+                  PA Score{' '}
                   <span className="font-mono text-emerald-300">{fmtScore(rival.entry.aiEra)}</span>
                 </span>
                 <Link
@@ -173,7 +173,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
               >
                 <p className="font-semibold">{adj.product.name}</p>
                 <p className="mt-0.5 text-xs text-zinc-500">
-                  Top-ranked in {adj.categoryName} · Arena Score{' '}
+                  Top-ranked in {adj.categoryName} · PA Score{' '}
                   <span className="font-mono text-emerald-300">{fmtScore(adj.entry.aiEra)}</span>
                 </p>
                 <p className="mt-2 text-[11px] text-zinc-500">shares: {adj.sharedThemes.join(', ')}</p>

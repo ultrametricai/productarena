@@ -27,7 +27,7 @@ export default function IcpIndexPage() {
           Rankings through your eyes
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          The Arena Score is one deliberately-contestable blend — but an open-source purist and an
+          The PA Score is one deliberately-contestable blend — but an open-source purist and an
           AI-native startup don&rsquo;t weigh evidence the same way. Each lens below re-weights the
           same evidence-judged verdicts (never re-judging anything) by the personas and themes that
           buyer type actually cares about, across every arena at once.

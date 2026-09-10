@@ -159,8 +159,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // the per-category arenas in the palette instead of inventing a one-off section for two items.
   const searchEntries: SearchEntry[] = [
     ...buildSearchIndex(loadAll()),
-    { type: "arena", label: "Most agentic (full ranking)", sublabel: "All products, ranked by agentreadyness", href: "/rankings/agentic" },
-    { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by agentic", href: "/rankings/ai-native" },
+    { type: "arena", label: "Most agent-ready (full ranking)", sublabel: "All products, ranked by agent-readiness", href: "/rankings/agentic" },
+    { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by AI-native features", href: "/rankings/ai-native" },
     { type: "arena", label: "Claims vs reality (full ranking)", sublabel: "All products, ranked by claims integrity", href: "/rankings/claims-integrity" },
   ];
 
@@ -216,7 +216,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 title="Explore"
                 items={[
                   { id: "agentic", name: "Most agent-ready", label: "ranking", href: "/rankings/agentic" },
-                  { id: "init", name: "Highest Arena Score", label: "ranking", href: "/rankings/init" },
+                  { id: "init", name: "Highest PA Score", label: "ranking", href: "/rankings/init" },
                   { id: "ai-native", name: "Most AI-native", label: "ranking", href: "/rankings/ai-native" },
                   { id: "claims-integrity", name: "Claims vs reality", label: "ranking", href: "/rankings/claims-integrity" },
                   { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
@@ -327,6 +327,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </footer>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: SITE_JSONLD }} />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          // Google Analytics 4 — only rendered once NEXT_PUBLIC_GA_ID (a G-XXXXXXX measurement
+          // id) is set in Vercel env. Create the property at analytics.google.com, add the env,
+          // redeploy. Inert until then.
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}');`,
+              }}
+            />
+          </>
+        )}
         {process.env.NEXT_PUBLIC_CF_BEACON_TOKEN && (
           // Cloudflare Web Analytics — cookieless, only rendered once the beacon token env var
           // is set (create one in the Cloudflare dash → Web Analytics, then add the env to

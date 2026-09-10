@@ -14,12 +14,12 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Score badges — ProductArena',
   description:
-    'Embeddable agent-ready and Arena Score badges for every product ProductArena ranks — hotlink the SVG and your badge always shows the live current score.',
+    'Embeddable agent-ready and PA Score badges for every product ProductArena ranks — hotlink the SVG and your badge always shows the live current score.',
 }
 
 const BADGE_KINDS = [
   { suffix: 'agent-ready', alt: 'ProductArena agent-ready score' },
-  { suffix: 'arena-score', alt: 'ProductArena Arena Score' },
+  { suffix: 'arena-score', alt: 'ProductArena PA Score' },
 ] as const
 
 function snippets(productId: string, categoryId: string, suffix: string, alt: string) {
@@ -53,7 +53,7 @@ export default function BadgesPage() {
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Score badges</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Two embeddable SVG badges for each of the {total} products we rank: the agent-ready component and the
-          blended Arena Score. Drop one in a README or docs page and link it back to the product&apos;s evidence.
+          blended PA Score. Drop one in a README or docs page and link it back to the product&apos;s evidence.
         </p>
         <div className="mt-4 max-w-2xl rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">
           <span className="mr-2 rounded border border-emerald-400/60 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">

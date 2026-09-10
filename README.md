@@ -359,7 +359,7 @@ Two sibling group-scoped indexes live under the same `agenticness` theme: `agent
 ("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
 `api-quality` (see below).
 
-### 5. The Arena Score (formerly the AI-Era Index)
+### 5. The PA Score (formerly the AI-Era Index)
 
 v2.4 adds a sixth canonical group, **API quality** (theme `agenticness`, group `api-quality`),
 alongside `agent-access`. Where `agent-access` asks "can an agent reach the product at all,"
@@ -372,7 +372,7 @@ alongside `agent-access`. Where `agent-access` asks "can an agent reach the prod
 | `api-versioning-policy` | I can rely on versioned APIs with a documented deprecation policy | 2 |
 | `api-sandbox` | I can test against a sandbox environment without touching production data | 1 |
 
-On top of that, every leaderboard entry now carries an **Arena Score** (`aiEra` internally,
+On top of that, every leaderboard entry now carries an **PA Score** (`aiEra` internally,
 displayed on-site as "Arena {n}/100" — this section used to be called the "AI-Era Index," same
 formula, new name) — a single
 number meant to answer "how ready is this product for a world where agents, not just humans,
@@ -411,7 +411,7 @@ formula is open to challenge.
 #### Score confidence (A–D)
 
 Scores never pretend: untested cells can't score, and the confidence grade says how much of a
-score is backed by probes. Every Arena Score badge carries a small A–D chip
+score is backed by probes. Every PA Score badge carries a small A–D chip
 (`lib/confidence.ts`) derived from two fractions over the product's applicable (non-`na`)
 cells:
 
@@ -425,7 +425,7 @@ testedShare ≥ 0.25 · **C** = coverage ≥ 0.55 · **D** = below that. The gra
 published score — two products can post the same 60 while one earned it from probes and the
 other from vendor docs, and the chip is where that difference shows. Thresholds are calibrated
 against the live dataset so the letters actually discriminate (see
-`CONFIDENCE_THRESHOLDS`), and, like the Arena Score weights, they're open to challenge.
+`CONFIDENCE_THRESHOLDS`), and, like the PA Score weights, they're open to challenge.
 
 ### 6. Story provenance
 
@@ -459,9 +459,9 @@ mechanical probe results only affect the story axis they actually test. Every re
 recorded in the commit that applies it. A future prompt version will pass the prior verdict
 as an anchor to reduce this variance at the source.
 
-### 8. Score intervals — the ± band on every Arena Score
+### 8. Score intervals — the ± band on every PA Score
 
-Every Arena Score carries a **68% confidence band** ("42 ±3 /100" on product pages; the exact
+Every PA Score carries a **68% confidence band** ("42 ±3 /100" on product pages; the exact
 low–high band in the score badge's tooltip, including on the homepage mega-table). The band is
 an honest statement of how much the published number could move under the judge noise we have
 actually **measured** — it is *analytic v1*: computed from existing data with **no new judging**.
@@ -492,7 +492,7 @@ How it's built (`pipeline/scripts/compute-confidence-intervals.ts`, math in
 Results land in `data/{category}/score-intervals.json` (committed, re-run post-derive by the
 story-runner). Display is tolerant-optional (`lib/scoreIntervals.ts`): no interval data ⇒ no
 band is ever rendered — never a fabricated one. Fleet-wide as of the first pass the median band
-width is ~4.5 Arena Score points.
+width is ~4.5 PA Score points.
 
 **What the band is not (yet):** it reflects propagated judge-*sampling* noise plus
 untested-cell ignorance, **not** model-family disagreement — the same evidence judged by a
@@ -509,7 +509,7 @@ any other.
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
 (`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
-product, Claude Code, which leads that arena's **Arena Score** (29.5) as of v2.4 — though on
+product, Claude Code, which leads that arena's **PA Score** (29.5) as of v2.4 — though on
 raw coverage score it now sits second (34.6) behind GitHub Copilot (35.0), a lead that flipped
 when the v2.4 `api-quality` cells were added (Claude Code's own coverage score was 35.2 as of
 the last full audit below, before those cells existed). This is a real conflict of interest and
@@ -676,7 +676,7 @@ ProductArena is built to be read by agents, not just browsed by humans:
   describing every data endpoint above, with hand-written JSON Schema summaries of each shape
   (mirrors `lib/schemas.ts`).
 - **[/methodology](https://ultrametric.ai/productarena/methodology)** — a tight, on-site summary of
-  the methodology below (evidence tiers, judging, scoring, Arena Score weights, story provenance,
+  the methodology below (evidence tiers, judging, scoring, PA Score weights, story provenance,
   re-judge stability, bias disclosure), linked from the header next to Arenas and from
   `/llms.txt`.
 - **MCP** — two [MCP](https://modelcontextprotocol.io) servers expose this same data as eight

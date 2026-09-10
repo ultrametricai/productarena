@@ -39,7 +39,7 @@ import {
 // and `rank` is a fixed identity derived from that same default order, not a re-derived row
 // index, so it doesn't reshuffle when a reader sorts by another column.
 //
-// The three /rankings/* pages (highest Arena Score, most agentic, most AI-native) remain the
+// The three /rankings/* pages (highest PA Score, most agentic, most AI-native) remain the
 // "preset view" links above the table — this table is the single-honest-view superset of what
 // those three (plus the old per-arena ArenaTable trio) used to render separately.
 
@@ -87,7 +87,7 @@ function SortableTh({
 // the same rows (they just set the sort column), replacing the old links out to /rankings/*.
 const RANK_PRESETS: Array<{ col: MegaTableColumn; label: string }> = [
   { col: 'agentReady', label: 'Most agent-ready' },
-  { col: 'initScore', label: 'Highest Arena Score' },
+  { col: 'initScore', label: 'Highest PA Score' },
   { col: 'agenticApp', label: 'Most AI-native' },
   { col: 'popularity', label: 'Most popular' },
 ]
@@ -157,13 +157,13 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 OSS
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                Arena Score
+                PA Score
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
-                Agent-ready
+                <span title="Can an outside agent access and operate it — API, MCP, CLI, headless runs, agent docs">Agent-ready</span>
               </SortableTh>
               <SortableTh col="agenticApp" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">
-                Agentic
+                <span title="How much the product itself acts agentically for its users — built-in assistants, autonomous features">AI-native</span>
               </SortableTh>
               <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 API
@@ -265,7 +265,13 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     {row.popularity === null ? (
                       isNotablyPopular(row.productId) ? <PopularTag /> : null
                     ) : (
+                      row.githubUrl ? (
+                      <a href={row.githubUrl} target="_blank" rel="noopener noreferrer" title="Open the GitHub repo" className="hover:text-emerald-300">
+                        <MomentumChip popularity={{ fetchedAt: '', stars: row.popularity }} compact />
+                      </a>
+                    ) : (
                       <MomentumChip popularity={{ fetchedAt: '', stars: row.popularity }} compact />
+                    )
                     )}
                   </td>
                   <td className="hidden px-2 py-2 sm:table-cell">

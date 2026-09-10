@@ -26,7 +26,7 @@ import {
 
 const METRIC_OPTIONS: Array<{ metric: StackMetric; label: string }> = [
   { metric: 'agentReady', label: 'Most agent-ready' },
-  { metric: 'aiEra', label: 'Highest Arena Score' },
+  { metric: 'aiEra', label: 'Highest PA Score' },
 ]
 
 export default function StackBuilder({

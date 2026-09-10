@@ -5,7 +5,7 @@ import type { SeriesPoint } from '@/lib/scoreTrend'
 // Tiny momentum sparklines for the product-page header — stars (and npm/pypi weekly downloads,
 // when tracked) over time from data/{cat}/popularity-history.jsonl (see lib/popularityHistory.ts),
 // rendered next to MomentumChip's point-in-time numbers. Same visual restraint as the chip: this
-// is adoption data from public registries, never part of the Arena Score, so it stays small,
+// is adoption data from public registries, never part of the PA Score, so it stays small,
 // mono, and mostly zinc. Series with <2 distinct snapshots render nothing at all — one
 // measurement is a number (the chip already shows it), not a trend.
 
@@ -36,7 +36,7 @@ export default function MomentumTrend({ series }: { series: MomentumSeries[] }) 
         return (
           <span
             key={label}
-            title={`${label}: ${formatCompact(first.value)} on ${shortDate(first.date)} → ${formatCompact(last.value)} on ${shortDate(last.date)} — public registry snapshots, not part of the Arena Score.`}
+            title={`${label}: ${formatCompact(first.value)} on ${shortDate(first.date)} → ${formatCompact(last.value)} on ${shortDate(last.date)} — public registry snapshots, not part of the PA Score.`}
             className="flex items-center gap-1.5"
           >
             <Sparkline

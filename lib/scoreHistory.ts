@@ -1,5 +1,5 @@
 // Loader + forward-fill appender for data/{cat}/score-history.jsonl — the append-only,
-// change-only time series of each product's Arena Score (aiEra) and agent-readiness (see
+// change-only time series of each product's PA Score (aiEra) and agent-readiness (see
 // lib/schemas.ts's ScoreHistoryEntrySchema doc). Seeded from git history by
 // pipeline/scripts/build-score-history.ts; grown by pipeline/stages/derive.ts via
 // appendScoreHistoryOnChange below. The pure helpers (parsing, series, 30d trend delta) live in
@@ -40,7 +40,7 @@ export function loadScoreHistory(categoryId: string, dir: string = DEFAULT_DIR()
   return byProduct
 }
 
-// Convenience for table rows: the 30-day trend delta of one tracked metric (Arena Score /
+// Convenience for table rows: the 30-day trend delta of one tracked metric (PA Score /
 // agent-readiness — the two series in score-history.jsonl) for one product, null when there
 // aren't ≥2 plottable points yet.
 export function metricTrendDelta(
@@ -55,8 +55,8 @@ export function metricTrendDelta(
   return trendDelta(seriesFor(entries, metric), now)
 }
 
-// Back-compat alias: the Arena Score (aiEra) flavor predates metricTrendDelta.
-export function arenaScoreTrendDelta(
+// Back-compat alias: the PA Score (aiEra) flavor predates metricTrendDelta.
+export function paScoreTrendDelta(
   categoryId: string,
   productId: string,
   dir: string = DEFAULT_DIR(),

@@ -14,8 +14,16 @@ const PALETTES = {
 export type AgenticBadgeKind = 'agent-ready' | 'agentic-app'
 
 const LABELS: Record<AgenticBadgeKind, string> = {
-  'agent-ready': 'AGENTREADYNESS',
-  'agentic-app': 'AGENTIC',
+  'agent-ready': 'AGENT-READY',
+  'agentic-app': 'AI-NATIVE',
+}
+
+// Hover text spelling out the distinction the short labels can't carry — the two indexes are
+// easy to conflate ("agent-ready vs agentic sounds like the same thing") but measure opposite
+// directions: can YOUR agent drive the product, vs does the product itself act agentically.
+const TITLES: Record<AgenticBadgeKind, string> = {
+  'agent-ready': 'Agent-ready — can an outside agent access and operate it: API, MCP, CLI, headless runs, agent docs',
+  'agentic-app': 'AI-native — how much the product itself acts agentically for its users: built-in assistants, autonomous features',
 }
 
 const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
@@ -27,8 +35,8 @@ const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
 // drive it" — group agent-access, emerald) or agentic-app ("does the product act agentically
 // itself" — group agentic-features, violet). null renders a muted n/a badge in the same
 // color family so the pair always reads as a matched set.
-// Since v2.4 (the Arena Score), these badges are secondary to AiEraBadge wherever both appear —
-// `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the Arena Score strip).
+// Since v2.4 (the PA Score), these badges are secondary to AiEraBadge wherever both appear —
+// `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the PA Score strip).
 // `showLabel={false}` drops the metric name from the pill (kept in the title + sr-only text) —
 // for table columns whose header already says AGENTREADYNESS/AGENTIC, where repeating the label
 // on every row says the same word N times.
@@ -48,14 +56,14 @@ export default function AgenticBadge({
   const sizeClass = size === 'md' ? 'px-2 py-0.5 text-xs' : 'px-1.5 py-0 text-[10px]'
   if (value === null) {
     return (
-      <span title={label} className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
+      <span title={TITLES[kind]} className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
         {showLabel ? `${label} n/a` : 'n/a'}
       </span>
     )
   }
   const style = value >= 66 ? palette.high : value >= 33 ? palette.mid : palette.low
   return (
-    <span title={label} className={`inline-flex w-fit items-center gap-1 rounded-full font-medium ring-1 ${style} ${sizeClass}`}>
+    <span title={TITLES[kind]} className={`inline-flex w-fit items-center gap-1 rounded-full font-medium ring-1 ${style} ${sizeClass}`}>
       {showLabel ? label : <span className="sr-only">{label}</span>}
       <span className="font-mono tabular-nums">{value.toFixed(0)}</span>
     </span>

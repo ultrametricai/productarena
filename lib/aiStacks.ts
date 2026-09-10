@@ -103,7 +103,7 @@ export interface ResolvedStack {
 
 const METRIC_LABELS: Record<string, string> = {
   agentReady: 'agent-ready',
-  aiEra: 'Arena Score',
+  aiEra: 'PA Score',
   agenticApp: 'AI-native',
 }
 

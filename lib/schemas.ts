@@ -180,7 +180,7 @@ export const RankingsSchema = z.object({
 })
 
 // One line of data/{cat}/score-history.jsonl — the append-only per-product time series of the
-// two headline scores (Arena Score / aiEra + agent-readiness), one line per product per CHANGE
+// two headline scores (PA Score / aiEra + agent-readiness), one line per product per CHANGE
 // (not per run — consecutive identical values are deduped, unlike popularity-history.jsonl's
 // one-line-per-run cadence). Values are stored rounded to 1 decimal so "changed" is a stable,
 // float-noise-free comparison. Seeded by pipeline/scripts/build-score-history.ts (a git-history
@@ -218,8 +218,8 @@ export const PopularityMapSchema = z.record(z.string(), PopularitySchema)
 
 // Multi-judge uncertainty result for one decisive cell — see pipeline/scripts/uncertainty-pass.ts.
 // Only computed for cells belonging to a "close race" arena (the #1 and #2 leaderboard products
-// within 3.0 Arena Score points of each other) on their agenticness-theme cells (agent-access,
-// agentic-features, api-quality groups — the axes that actually move the Arena Score). `judgments`
+// within 3.0 PA Score points of each other) on their agenticness-theme cells (agent-access,
+// agentic-features, api-quality groups — the axes that actually move the PA Score). `judgments`
 // is exactly 3 independently-sampled verdict tiers for the SAME (productId, storyId) cell: the
 // tier already cached in verdicts.json plus two fresh re-judgments against the same evidence
 // pack. `agreement` is how many of those 3 agree with the plurality tier — '3/3' means the judge
@@ -237,7 +237,7 @@ export const UncertaintyEntrySchema = z.object({
 // category only covers its decisive cells, not the full matrix.
 export const UncertaintyArraySchema = UncertaintyEntrySchema.array()
 
-// Analytic 68% confidence band on one product's Arena Score (aiEra) and agent-readiness — see
+// Analytic 68% confidence band on one product's PA Score (aiEra) and agent-readiness — see
 // pipeline/scripts/compute-confidence-intervals.ts (which writes data/{cat}/score-intervals.json)
 // and lib/scoreIntervals.ts (the simulation math + tolerant-optional loader). Derived at pipeline
 // time by propagating the MEASURED judge re-roll variance (data/*/uncertainty.json) through the

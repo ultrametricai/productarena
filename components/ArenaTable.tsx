@@ -61,7 +61,7 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
 // identically on every leaderboard; only the columns differ per table.
 const RANK_PRESETS: Array<{ col: ArenaTableColumn; label: string }> = [
   { col: 'agentReady', label: 'Most agent-ready' },
-  { col: 'initScore', label: 'Highest Arena Score' },
+  { col: 'initScore', label: 'Highest PA Score' },
   { col: 'agenticApp', label: 'Most AI-native' },
   { col: 'popularity', label: 'Most popular' },
 ]
@@ -179,13 +179,13 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
                 Product
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                Arena Score
+                PA Score
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
-                Agent-ready
+                <span title="Can an outside agent access and operate it — API, MCP, CLI, headless runs, agent docs">Agent-ready</span>
               </SortableTh>
               <SortableTh col="agenticApp" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">
-                Agentic
+                <span title="How much the product itself acts agentically for its users — built-in assistants, autonomous features">AI-native</span>
               </SortableTh>
               <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
                 API
@@ -288,7 +288,13 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
                     {data.popularity[row.productId]?.stars !== undefined || data.popularity[row.productId]?.npmWeekly !== undefined || data.popularity[row.productId]?.pypiWeekly !== undefined ? (
-                      <MomentumChip popularity={data.popularity[row.productId]} compact />
+                      productById.get(row.productId)?.urls.github ? (
+                        <a href={productById.get(row.productId)!.urls.github} target="_blank" rel="noopener noreferrer" title="Open the GitHub repo" className="hover:text-emerald-300">
+                          <MomentumChip popularity={data.popularity[row.productId]} compact />
+                        </a>
+                      ) : (
+                        <MomentumChip popularity={data.popularity[row.productId]} compact />
+                      )
                     ) : isNotablyPopular(row.productId) ? (
                       <PopularTag />
                     ) : null}

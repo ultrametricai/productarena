@@ -65,7 +65,7 @@ export default function WatchlistClient({ products }: { products: WatchlistProdu
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-                <ScoreCell label="Arena Score" value={p.aiEra} values={seriesFor(entries, 'aiEra').map((pt) => pt.value)} />
+                <ScoreCell label="PA Score" value={p.aiEra} values={seriesFor(entries, 'aiEra').map((pt) => pt.value)} />
                 <ScoreCell label="Agent-ready" value={p.agentReady} values={seriesFor(entries, 'agentReady').map((pt) => pt.value)} />
               </div>
             </div>

@@ -1,4 +1,4 @@
-// Confidence layer over the published scores — scoring v2's honesty pass. The Arena Score and
+// Confidence layer over the published scores — scoring v2's honesty pass. The PA Score and
 // coverage score are UNTOUCHED (lib/scoring.ts is never imported here); this is a derived,
 // display-only read of how much of a product's verdict matrix actually rests on evidence, and
 // how much of that evidence is *tested* (probe/github tiers — see lib/verification.ts's

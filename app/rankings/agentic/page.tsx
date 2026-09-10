@@ -8,7 +8,7 @@ export function generateMetadata(): Metadata {
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
     title: `Full agentic ranking — all ${totalProducts} products — ProductArena`,
-    description: `Every product across every arena ranked by AGENTREADYNESS — can an agent reach it at all (API/CLI/MCP/webhooks/SDKs/docs)? Evidence-graded, no opinion.`,
+    description: `Every product across every arena ranked by AGENT-READY — can an agent reach it at all (API/CLI/MCP/webhooks/SDKs/docs)? Evidence-graded, no opinion.`,
   }
 }
 
@@ -24,10 +24,10 @@ export default function AgenticRankingPage() {
     <div className="space-y-4">
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Most agentic — best for AI agents</h1>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Most agent-ready — best for AI agents</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by AGENTREADYNESS: can an agent reach the product
-          at all (API/CLI/MCP/webhooks/SDKs/docs)? Ties break on API quality, then Arena Score.
+          at all (API/CLI/MCP/webhooks/SDKs/docs)? Ties break on API quality, then PA Score.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
           This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Most agent-ready&rdquo; preset —{' '}
