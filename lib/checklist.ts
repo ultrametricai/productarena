@@ -24,14 +24,9 @@ export function checklistThemes(stories: Story[]): Array<[string, Story[]]> {
   ])
 }
 
-// The matrix's column set: the arena's top-N stories by weight (stable within a weight, so
-// taxonomy order breaks ties deterministically).
-export function topWeightedStories(stories: Story[], n = 10): Story[] {
-  return [...stories].sort((a, b) => b.weight - a.weight).slice(0, n)
-}
-
 // Same glyph vocabulary as VerdictBadge/the access-glyph strips, plus an explicit 'n/a' for
-// the matrix (where a blank cell would read as "missing data", not "not applicable").
+// the checklist's product chips (where a blank would read as "missing data", not "not
+// applicable").
 export const VERDICT_GLYPHS: Record<Verdict['verdict'], string> = {
   full: '✓',
   partial: '~',
@@ -40,8 +35,43 @@ export const VERDICT_GLYPHS: Record<Verdict['verdict'], string> = {
   na: 'n/a',
 }
 
-export function matrixGlyph(data: CategoryData, productId: string, storyId: string): string {
-  return VERDICT_GLYPHS[verdictFor(data, productId, storyId).verdict]
+// How the field does on one requirement today — feeds the checklist item's muted "why it
+// matters" line. 'na' verdicts are excluded from the denominator so a requirement most products
+// can't even attempt doesn't read as universally failed.
+export function storyPassStats(
+  data: CategoryData,
+  storyId: string,
+): { full: number; applicable: number } {
+  let full = 0
+  let applicable = 0
+  for (const p of data.products) {
+    const verdict = verdictFor(data, p.id, storyId).verdict
+    if (verdict === 'na') continue
+    applicable += 1
+    if (verdict === 'full') full += 1
+  }
+  return { full, applicable }
+}
+
+// The checklist item's one-line "why it matters": what the priority means for scoring (the
+// honest mechanical truth — weight is the multiplier lib/scoring.ts applies) plus how much of
+// the field fully delivers it today, so a buyer can tell table stakes from frontier asks.
+const PRIORITY_WHY: Record<Priority, string> = {
+  'must-have': 'Core requirement — weighs 3× in arena scoring',
+  'should-have': 'Important, not disqualifying — weighs 2× in arena scoring',
+  'nice-to-have': 'Differentiator, not a dealbreaker — weighs 1× in arena scoring',
+}
+
+export function checklistWhy(weight: number, stats: { full: number; applicable: number }): string {
+  const base = PRIORITY_WHY[priorityForWeight(weight)]
+  if (stats.applicable === 0) return base
+  const status =
+    stats.full === 0
+      ? 'no product fully delivers this yet'
+      : stats.full === stats.applicable
+        ? `all ${stats.applicable} products fully deliver this today`
+        : `${stats.full} of ${stats.applicable} products fully deliver this today`
+  return `${base} · ${status}`
 }
 
 // The "copy as markdown" payload: a clean, self-contained RFP checklist — GitHub-flavored

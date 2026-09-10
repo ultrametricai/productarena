@@ -105,23 +105,97 @@ export function themeIcon(theme: string): string {
   return THEME_FALLBACK_ICON
 }
 
-// Hand-written tooltips for the high-level (global/cross-arena) themes; everything else gets an
-// honest generic line. Tooltips are REQUIRED wherever a theme icon renders — founder rule.
+// Hand-written one-liners for the themes buyers actually meet: every global/cross-arena theme
+// plus the most common category themes across arenas (everything appearing in ≥7 stories in
+// data/*/stories.json — enforced for the top 40 by lib/__tests__/icons.test.ts). Arena-specific
+// niche ids get an honest generic instead. Tooltips are REQUIRED wherever a theme icon renders —
+// founder rule — and the same text renders VISIBLY as a subtitle under theme group headers.
+// Style: lowercase fragment (it follows "Name — " in tooltips; themeExplanation() capitalizes).
 const THEME_DESCRIPTIONS: Record<string, string> = {
-  'privacy-posture': 'data-handling and privacy stories',
+  // Global themes — scored on every product, comparable across all arenas.
   agenticness: 'how well agents can access and operate the product',
   'agent-access': 'MCP, CLI, and API access for agents',
   'agentic-features': 'AI/agent features built into the product',
-  'api-quality': 'depth and reliability of the public API',
+  'api-quality': 'depth and reliability of the public API — machine specs, docs, versioning discipline',
+  'privacy-posture': 'data-handling and privacy stories',
   openness: 'open source, data portability, and self-hosting stories',
   'automation-depth': 'how much of the product can run unattended',
-  onboarding: 'getting started and time-to-first-value stories',
-  ecosystem: 'integrations, plugins, and third-party ecosystem stories',
+  // Common category themes, ordered roughly by how many stories carry them.
+  'pricing-limits': 'free-tier ceilings, usage caps, and rate limits before you have to pay',
+  'dev-experience': 'day-to-day developer experience — setup friction, docs, debugging, iteration speed',
   security: 'security posture and hardening stories',
+  'performance-hardware': 'raw speed and hardware efficiency — throughput, latency, resource use',
+  'pricing-plans': 'plan structure and value — what each tier costs and what it unlocks',
+  'automation-workflows': 'building automations — triggers, actions, branching, scheduling',
+  'accounts-payments': 'opening accounts and moving money — setup, transfers, payment rails',
+  ecosystem: 'integrations, plugins, and third-party ecosystem stories',
+  'scale-reliability': 'behavior under load — scaling limits, uptime, failure handling',
+  'edge-compute': 'running code at the edge — regions, cold starts, runtime limits',
+  'git-code': 'core git and code operations — cloning, branching, pushing, code browsing',
+  'ecosystem-tooling': 'surrounding tooling — plugins, templates, community packages',
+  'deploy-workflow': 'the commit-to-production path — builds, previews, rollbacks',
+  'planning-tracking': 'planning and tracking work — issues, sprints, boards, status',
+  onboarding: 'getting started and time-to-first-value stories',
+  'components-reactivity': 'the component model — state, reactivity, rendering, composition',
+  'cards-spend': 'issuing cards and controlling spend — limits, approvals, expense capture',
+  'ux-tooling': 'the working surface itself — layout, ergonomics, quality-of-life tooling',
+  'serving-api': 'serving models over an API — endpoints, compatibility, reliability',
+  integrations: 'connecting to other tools — breadth and depth of built-in integrations',
+  'extraction-quality': 'how faithfully content is extracted — structure, fidelity, edge cases',
+  'terminal-ssh': 'terminal and SSH workflows — shells, sessions, remote access',
+  'repos-collaboration': 'working on repos together — pull requests, reviews, permissions',
+  'networking-security': 'network controls and isolation — private access, firewalls, encryption',
+  'storage-data': 'storing and moving data — persistence, formats, durability',
+  'review-quality-gates': 'quality gates on changes — review flow, required checks, merge protection',
+  performance: 'speed in practice — latency, throughput, responsiveness',
+  observability: 'seeing what the system is doing — logs, metrics, traces, alerts',
+  customization: 'bending the product to your needs — settings, theming, extension points',
+  collaboration: 'working as a team — sharing, comments, roles, simultaneous editing',
+  'capture-intake': 'getting things in fast — capture, import, inbox flows',
+  'tracing-instrumentation': 'instrumenting code and tracing requests end to end',
+  'review-safety': 'keeping generated changes safe — diffs, approvals, guardrails',
+  'model-support': 'which models run and how well — coverage, formats, update cadence',
+  'js-rendering': 'handling JavaScript-heavy pages — rendering, waiting, dynamic content',
+  'install-setup': 'getting it installed and running — prerequisites, packaging, first run',
+  'evals-datasets': 'measuring quality — datasets, eval runs, regression tracking',
+  'ci-cd': 'continuous integration and delivery — pipelines, runners, caching',
+  'autonomous-implementation': 'end-to-end implementation by the agent — multi-file changes, task completion',
+  'scale-parallelism': 'running many jobs at once — concurrency, fleets, queueing',
+  'running-agents': 'operating agents in production — sessions, persistence, recovery',
+  'provisioning-lifecycle': 'creating, updating, and tearing down resources across their lifecycle',
+  'plan-apply': 'the plan/apply loop — previewing infrastructure changes and applying them safely',
+  'ide-terminal-integration': 'meeting you in the IDE and terminal — extensions, inline flows, context',
+  'human-oversight': 'keeping a human in the loop — approvals, checkpoints, interrupts',
+  'ecosystem-integrations': 'the surrounding ecosystem — integrations, marketplaces, community packages',
+  'database-realtime': 'database and realtime features — queries, subscriptions, live sync',
+  'code-generation': 'quality of generated code — correctness, style, fit to the codebase',
+  'anti-bot': 'getting past bot defenses — CAPTCHAs, fingerprinting, blocks',
+  'agent-building': 'building agents — abstractions, tool wiring, control flow',
 }
 
+// Honest fallback for an arena-specific niche theme no bespoke line covers.
+function genericThemeDetail(theme: string): string {
+  return `stories about ${humanizeTheme(theme).toLowerCase()} in this arena`
+}
+
+// True when a theme has a bespoke hand-written explanation (vs the generic fallback) — the
+// coverage test asserts this for the top-40 most-used themes across data/*/stories.json.
+export function hasBespokeThemeExplanation(theme: string): boolean {
+  return theme in THEME_DESCRIPTIONS
+}
+
+// One-line explanation of a theme WITHOUT the theme name — for visible subtitles under group
+// titles that already print the name (product-page "By theme" cards, checklist/report group
+// headers, battle sections). Sentence-cased for standalone display.
+export function themeExplanation(theme: string): string {
+  const detail = THEME_DESCRIPTIONS[theme] ?? genericThemeDetail(theme)
+  return detail.charAt(0).toUpperCase() + detail.slice(1)
+}
+
+// Name + explanation, for hover tooltips in compact spots (matrix headers, icon chips) where a
+// visible subtitle wouldn't fit.
 export function themeTooltip(theme: string): string {
-  const detail = THEME_DESCRIPTIONS[theme] ?? 'user stories judged under this theme'
+  const detail = THEME_DESCRIPTIONS[theme] ?? genericThemeDetail(theme)
   return `${humanizeTheme(theme)} — ${detail}`
 }
 

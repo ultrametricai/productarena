@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  checklistMarkdown, checklistThemes, matrixGlyph, priorityForWeight, topWeightedStories,
+  checklistMarkdown, checklistThemes, checklistWhy, priorityForWeight, storyPassStats,
 } from '@/lib/checklist'
 import type { CategoryData } from '@/lib/data-helpers'
 import type { Story, Verdict } from '@/lib/schemas'
@@ -48,24 +48,34 @@ describe('priorityForWeight', () => {
   })
 })
 
-describe('checklistThemes / topWeightedStories', () => {
+describe('checklistThemes', () => {
   it('groups by theme in first-seen order, heaviest first within a theme', () => {
     const themes = checklistThemes(stories)
     expect(themes.map(([t]) => t)).toEqual(['checkout', 'payouts'])
     expect(themes[0][1].map((s) => s.id)).toEqual(['take-payment', 'refund'])
   })
+})
 
-  it('selects the top-N stories by weight with stable tie-breaks', () => {
-    expect(topWeightedStories(stories, 2).map((s) => s.id)).toEqual(['take-payment', 'instant-payout'])
-    expect(topWeightedStories(stories).map((s) => s.id)).toEqual(['take-payment', 'instant-payout', 'refund'])
+describe('storyPassStats', () => {
+  it('counts full verdicts over applicable products, excluding n/a from the denominator', () => {
+    expect(storyPassStats(data, 'take-payment')).toEqual({ full: 1, applicable: 1 })
+    expect(storyPassStats(data, 'instant-payout')).toEqual({ full: 0, applicable: 1 })
+    expect(storyPassStats(data, 'refund')).toEqual({ full: 0, applicable: 0 })
   })
 })
 
-describe('matrixGlyph', () => {
-  it('uses the shared glyph vocabulary, with an explicit n/a', () => {
-    expect(matrixGlyph(data, 'x', 'take-payment')).toBe('✓')
-    expect(matrixGlyph(data, 'x', 'instant-payout')).toBe('—')
-    expect(matrixGlyph(data, 'x', 'refund')).toBe('n/a')
+describe('checklistWhy', () => {
+  it('names the scoring weight for each priority tier', () => {
+    expect(checklistWhy(3, { full: 1, applicable: 2 })).toContain('weighs 3× in arena scoring')
+    expect(checklistWhy(2, { full: 1, applicable: 2 })).toContain('weighs 2× in arena scoring')
+    expect(checklistWhy(1, { full: 1, applicable: 2 })).toContain('weighs 1× in arena scoring')
+  })
+
+  it('reports the field honestly — none, some, all, or nothing applicable', () => {
+    expect(checklistWhy(3, { full: 0, applicable: 4 })).toContain('no product fully delivers this yet')
+    expect(checklistWhy(3, { full: 2, applicable: 4 })).toContain('2 of 4 products fully deliver this today')
+    expect(checklistWhy(3, { full: 4, applicable: 4 })).toContain('all 4 products fully deliver this today')
+    expect(checklistWhy(3, { full: 0, applicable: 0 })).toBe('Core requirement — weighs 3× in arena scoring')
   })
 })
 
