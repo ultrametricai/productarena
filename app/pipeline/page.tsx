@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import GeoMark from '@/components/GeoMark'
 import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
@@ -61,7 +62,11 @@ export default function PipelinePage() {
   return (
     <div className="space-y-10">
       <div>
-        <p className="text-sm uppercase tracking-widest text-emerald-400">Testing pipeline</p>
+        {/* seed "pipeline": same concept mark as the Explore menu's Testing pipeline entry. */}
+        <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-emerald-400">
+          <GeoMark seed="pipeline" title="Testing pipeline — coverage and gaps" size={16} className="text-zinc-500" />
+          Testing pipeline
+        </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           What we have <span className="text-emerald-400">not</span> tested
         </h1>
@@ -80,12 +85,15 @@ export default function PipelinePage() {
 
       <section className="grid gap-4 sm:grid-cols-3">
         {[
-          { label: 'cells judged', value: totals.totalCells.toLocaleString(), sub: `${totals.arenas} arenas` },
-          { label: 'still untested', value: `${totals.untestedPct}%`, sub: `${totals.untestedCells.toLocaleString()} zero-evidence cells` },
-          { label: 'probed hands-on', value: `${totals.probedPct}%`, sub: `${totals.probedCells.toLocaleString()} cells cite a probe` },
+          { id: 'cells-judged', label: 'cells judged', value: totals.totalCells.toLocaleString(), sub: `${totals.arenas} arenas` },
+          { id: 'untested', label: 'still untested', value: `${totals.untestedPct}%`, sub: `${totals.untestedCells.toLocaleString()} zero-evidence cells` },
+          { id: 'probed', label: 'probed hands-on', value: `${totals.probedPct}%`, sub: `${totals.probedCells.toLocaleString()} cells cite a probe` },
         ].map((stat) => (
           <div key={stat.label} className="rounded-2xl border border-zinc-800 p-4">
-            <p className="text-[10px] uppercase tracking-widest text-zinc-500">{stat.label}</p>
+            <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-zinc-500">
+              <GeoMark seed={stat.id} title={stat.label} size={14} className="text-zinc-600" />
+              {stat.label}
+            </p>
             <p className="mt-1 font-mono text-3xl font-bold tabular-nums text-emerald-400">{stat.value}</p>
             <p className="mt-1 text-xs text-zinc-500">{stat.sub}</p>
           </div>
@@ -104,7 +112,10 @@ export default function PipelinePage() {
       )}
 
       <section>
-        <h2 className="font-display text-xl font-semibold tracking-tight">Most-wanted untested cells</h2>
+        <h2 className="font-display flex items-center gap-2 text-xl font-semibold tracking-tight">
+          <GeoMark seed="most-wanted" title="Most-wanted untested cells — the highest-impact gaps" size={18} className="text-zinc-500" />
+          Most-wanted untested cells
+        </h2>
         <p className="mt-1 max-w-2xl text-sm text-zinc-400">
           The ten untested (product, story) pairs whose testing would move the most-read scores
           the most — heaviest stories on the most-watched products (capped at two per product so
@@ -153,7 +164,10 @@ export default function PipelinePage() {
       </section>
 
       <section>
-        <h2 className="font-display text-xl font-semibold tracking-tight">Coverage per arena</h2>
+        <h2 className="font-display flex items-center gap-2 text-xl font-semibold tracking-tight">
+          <GeoMark seed="coverage" title="Coverage per arena — untested and probed shares" size={18} className="text-zinc-500" />
+          Coverage per arena
+        </h2>
         <p className="mt-1 max-w-2xl text-sm text-zinc-400">
           Sorted worst-first: the arenas with the largest untested share are where the rankings
           deserve the most skepticism — and the most contributed evidence.
@@ -192,7 +206,10 @@ export default function PipelinePage() {
 
       {slo.length > 0 && (
         <section>
-          <h2 className="font-display text-xl font-semibold tracking-tight">Agent surface health</h2>
+          <h2 className="font-display flex items-center gap-2 text-xl font-semibold tracking-tight">
+            <GeoMark seed="slo" title="Agent surface health — 6-hourly keyless uptime checks" size={18} className="text-zinc-500" />
+            Agent surface health
+          </h2>
           <p className="mt-1 max-w-2xl text-sm text-zinc-400">
             Every 6 hours we keylessly ping each product&rsquo;s documented agent surfaces — its{' '}
             <span className="font-mono text-xs">llms.txt</span>, remote MCP endpoint, and{' '}
@@ -266,7 +283,10 @@ export default function PipelinePage() {
 
       {nextUp.length > 0 && (
         <section>
-          <h2 className="font-display text-xl font-semibold tracking-tight">Next up</h2>
+          <h2 className="font-display flex items-center gap-2 text-xl font-semibold tracking-tight">
+            <GeoMark seed="next-up" title="Next up — tier-1 arenas awaiting the pipeline" size={18} className="text-zinc-500" />
+            Next up
+          </h2>
           <p className="mt-1 max-w-2xl text-sm text-zinc-400">
             Tier-1 arenas on the roadmap that haven&rsquo;t been through the evidence pipeline
             yet — the categories we think matter most in an agent-first world, in no particular

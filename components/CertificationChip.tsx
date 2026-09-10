@@ -1,4 +1,5 @@
 import { CERT_LEVEL_LABELS, certificationExpires, type Certification } from '@/lib/certifications'
+import GeoMark from '@/components/GeoMark'
 import { withBase } from '@/lib/site'
 
 // The Agent-Ready certification chip (docs/CERTIFICATION.md): level + certification date +
@@ -18,6 +19,9 @@ export default function CertificationChip({ cert }: { cert: Certification }) {
         cert.initiatedBy === 'vendor' ? 'vendor-submitted, maintainer-verified' : 'maintainer-initiated'
       }); expires ${certificationExpires(cert)}. The linked report carries every check, timestamp, and response digest.`}
     >
+      {/* The level's star-polygon seal (components/GeoMark.tsx), seeded by the level id so
+          agent-ready and agent-native each wear one distinct mark site-wide. */}
+      <GeoMark seed={cert.level} title={CERT_LEVEL_LABELS[cert.level]} size={14} variant="star" />
       <span className="rounded border border-emerald-400/60 px-1 text-[9px] font-semibold uppercase tracking-wide">
         Certified
       </span>

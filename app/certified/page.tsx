@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import CertificationChip from '@/components/CertificationChip'
+import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import {
   CERT_LEVEL_LABELS,
@@ -73,8 +74,18 @@ function ProgramExplainer() {
         and writes a machine-verifiable report (every check, timestamp, and response digest).
       </p>
       <p>
-        <span className="text-emerald-300">Certified Agent-Ready</span> = llms.txt + (MCP or OpenAPI) + robots-ok.{' '}
-        <span className="text-emerald-300">Certified Agent-Native</span> = every check passes. Submissions are
+        {/* The two level marks: star-polygon seals seeded by the level id — the same marks
+            CertificationChip wears wherever a certification renders. */}
+        <span className="inline-flex items-center gap-1 text-emerald-300">
+          <GeoMark seed="agent-ready" title="Certified Agent-Ready — llms.txt + (MCP or OpenAPI) + robots-ok" size={15} variant="star" />
+          Certified Agent-Ready
+        </span>{' '}
+        = llms.txt + (MCP or OpenAPI) + robots-ok.{' '}
+        <span className="inline-flex items-center gap-1 text-emerald-300">
+          <GeoMark seed="agent-native" title="Certified Agent-Native — every conformance check passes" size={15} variant="star" />
+          Certified Agent-Native
+        </span>{' '}
+        = every check passes. Submissions are
         domain-verified, a maintainer re-runs the identical suite from our side, and on a match the certification is
         committed with the report attached — dated, public, and expiring after 180 days.
       </p>
@@ -102,7 +113,11 @@ export default function CertifiedPage() {
   return (
     <div className="space-y-10">
       <div>
-        <p className="text-sm uppercase tracking-widest text-emerald-400">Certification registry</p>
+        {/* seed "certified": same concept mark as the Explore menu's Certified entry. */}
+        <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-emerald-400">
+          <GeoMark seed="certified" title="Certified Agent-Ready — the certification registry" size={16} className="text-zinc-500" />
+          Certification registry
+        </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Certified Agent-Ready</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Products that passed ProductArena&apos;s Agent-Ready conformance suite, each with a dated,

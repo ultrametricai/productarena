@@ -1,3 +1,4 @@
+import GeoMark from '@/components/GeoMark'
 import VerdictBadge from '@/components/VerdictBadge'
 import { claimBucketCounts, claimEntriesByStatus, unmappedClaims, type ClaimStatus } from '@/lib/claims'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
@@ -38,7 +39,12 @@ export default function ClaimsSection({
 
   return (
     <div id="claims" className="scroll-mt-4">
-      <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Claims vs evidence</h2>
+      {/* seed "claims-integrity": same concept mark as the Explore menu's Claims-vs-reality
+          ranking — one mark for the claims-integrity concept everywhere. */}
+      <h2 className="font-display leading-[1.1] mb-3 flex items-center gap-2 text-lg font-semibold">
+        <GeoMark seed="claims-integrity" title="Claims vs evidence — vendor claims reconciled against independent verdicts" size={18} className="text-zinc-500" />
+        Claims vs evidence
+      </h2>
       {integrity.score !== null && (
         <p
           className="mb-1 font-mono text-xs tabular-nums text-zinc-300"
