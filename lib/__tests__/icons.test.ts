@@ -2,29 +2,35 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import {
+  hasBespokeThemeExplanation,
   humanizeTheme,
   metricIcon,
   metricTooltip,
   THEME_FALLBACK_ICON,
+  themeExplanation,
   themeIcon,
   themeTooltip,
 } from '../icons'
 
-// Every theme id actually judged in data/*/stories.json — the live taxonomy the icon rules
-// must cover. Read directly (not via loadAll) so a data-validation failure elsewhere can't
-// mask an icon gap.
-function liveThemes(): string[] {
+// Every theme id actually judged in data/*/stories.json, with how many stories carry it — the
+// live taxonomy the icon rules must cover. Read directly (not via loadAll) so a data-validation
+// failure elsewhere can't mask an icon gap.
+function liveThemeCounts(): Map<string, number> {
   const dataDir = path.join(process.cwd(), 'data')
-  const themes = new Set<string>()
+  const counts = new Map<string, number>()
   for (const entry of fs.readdirSync(dataDir, { withFileTypes: true })) {
     if (!entry.isDirectory()) continue
     const file = path.join(dataDir, entry.name, 'stories.json')
     if (!fs.existsSync(file)) continue
     for (const story of JSON.parse(fs.readFileSync(file, 'utf8')) as Array<{ theme: string }>) {
-      themes.add(story.theme)
+      counts.set(story.theme, (counts.get(story.theme) ?? 0) + 1)
     }
   }
-  return [...themes]
+  return counts
+}
+
+function liveThemes(): string[] {
+  return [...liveThemeCounts().keys()]
 }
 
 describe('themeIcon', () => {
@@ -54,6 +60,30 @@ describe('themeTooltip', () => {
     expect(themeTooltip('privacy-posture')).not.toContain('privacy-posture')
     // Generic themes still get an honest tooltip.
     expect(themeTooltip('billing-invoicing')).toContain('Billing invoicing — ')
+  })
+})
+
+describe('themeExplanation', () => {
+  it('sentence-cases a bespoke description without repeating the theme name', () => {
+    expect(themeExplanation('privacy-posture')).toBe('Data-handling and privacy stories')
+    expect(themeExplanation('agent-access')).toBe('MCP, CLI, and API access for agents')
+  })
+
+  it('falls back to an honest arena-scoped generic for niche themes', () => {
+    expect(themeExplanation('zzz-not-a-real-theme-zzz')).toBe(
+      'Stories about zzz not a real theme zzz in this arena',
+    )
+    expect(hasBespokeThemeExplanation('zzz-not-a-real-theme-zzz')).toBe(false)
+  })
+
+  it('covers the 40 most-used live themes with bespoke (non-generic) explanations', () => {
+    const top40 = [...liveThemeCounts().entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 40)
+      .map(([theme]) => theme)
+    expect(top40.length).toBe(40)
+    const generic = top40.filter((t) => !hasBespokeThemeExplanation(t))
+    expect(generic).toEqual([])
   })
 })
 
