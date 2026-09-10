@@ -9,6 +9,7 @@ import VerificationBadge from '@/components/VerificationBadge'
 import {
   evidenceById, groupInOrder, originLabel, stripPersonaPrefix, verdictFor, type CategoryData,
 } from '@/lib/data-helpers'
+import { humanizeTheme } from '@/lib/icons'
 import type { Story, Verdict } from '@/lib/schemas'
 import { verificationLevel } from '@/lib/verification'
 
@@ -77,7 +78,7 @@ export default function StoryMatrix({ data, logoMap }: { data: CategoryData; log
             <div key={theme}>
               <h3 className="mb-4 flex items-center gap-1.5 text-sm font-semibold uppercase tracking-widest text-emerald-400">
                 <ThemeIcon theme={theme} className="text-emerald-400" />
-                {theme}
+                {humanizeTheme(theme)}
               </h3>
               <div className="space-y-6">
                 {byGroup.map(([group, stories]) => (
@@ -121,7 +122,7 @@ function StoryMatrixGroup({
     // viewports — column identity (logos/names) stays visible while scrolling a long group.
     <div className="max-h-[70vh] overflow-auto rounded-xl border border-zinc-800">
       {group !== theme && (
-        <p className="sticky left-0 border-b border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-500">{group}</p>
+        <p className="sticky left-0 border-b border-zinc-800 bg-zinc-950 px-4 py-2 text-xs text-zinc-500">{humanizeTheme(group)}</p>
       )}
       <table className="w-full min-w-[560px] border-collapse text-sm">
         <thead className="sticky top-0 z-10 bg-zinc-950">

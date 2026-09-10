@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ProductLogoView from '@/components/ProductLogoView'
+import { hasLogo } from '@/lib/logos'
 import {
   buildChangelog, capChangelog, groupByDay, SCORE_MOVE_THRESHOLD, type ChangeEvent,
   CHANGELOG_MAX_DAYS, CHANGELOG_MAX_EVENTS,
@@ -29,6 +31,20 @@ function fmtDelta(delta: number): string {
 const ARENA_LINK = 'text-zinc-300 underline decoration-zinc-700 underline-offset-2 transition hover:text-emerald-300'
 const PRODUCT_LINK = 'font-medium text-zinc-100 underline decoration-zinc-700 underline-offset-2 transition hover:text-emerald-300'
 
+// Product mention in an event line: the product's logo (16px, server-resolved hasLogo — this is
+// a server component, so lib/logos.ts's fs check is free here) beside the linked name.
+function ProductRef({ categoryId, productId, name }: { categoryId: string; productId: string; name: string }) {
+  return (
+    <Link
+      href={`/arena/${categoryId}/product/${productId}`}
+      className={`${PRODUCT_LINK} inline-flex items-center gap-1.5 align-middle`}
+    >
+      <ProductLogoView product={{ id: productId, name }} size={16} hasLogo={hasLogo(productId)} />
+      {name}
+    </Link>
+  )
+}
+
 function EventLine({ event }: { event: ChangeEvent }) {
   const arena = (
     <Link href={`/arena/${event.categoryId}`} className={ARENA_LINK}>
@@ -47,13 +63,9 @@ function EventLine({ event }: { event: ChangeEvent }) {
       return (
         <span>
           <span aria-hidden className="mr-2 text-emerald-400">⇅</span>
-          <Link href={`/arena/${event.categoryId}/product/${event.productId}`} className={PRODUCT_LINK}>
-            {event.productName}
-          </Link>{' '}
+          <ProductRef categoryId={event.categoryId} productId={event.productId} name={event.productName} />{' '}
           overtook{' '}
-          <Link href={`/arena/${event.categoryId}/product/${event.overtookId}`} className={PRODUCT_LINK}>
-            {event.overtookName}
-          </Link>{' '}
+          <ProductRef categoryId={event.categoryId} productId={event.overtookId} name={event.overtookName} />{' '}
           in {arena}{' '}
           <span className="font-mono text-xs text-zinc-500">
             ({event.productAiEra.toFixed(1)} vs {event.overtookAiEra.toFixed(1)})
@@ -66,9 +78,7 @@ function EventLine({ event }: { event: ChangeEvent }) {
           <span aria-hidden className={`mr-2 ${event.delta > 0 ? 'text-emerald-400' : 'text-zinc-500'}`}>
             {event.delta > 0 ? '▲' : '▼'}
           </span>
-          <Link href={`/arena/${event.categoryId}/product/${event.productId}`} className={PRODUCT_LINK}>
-            {event.productName}
-          </Link>{' '}
+          <ProductRef categoryId={event.categoryId} productId={event.productId} name={event.productName} />{' '}
           <span className={`font-mono text-sm ${event.delta > 0 ? 'text-emerald-400' : 'text-zinc-400'}`}>
             {fmtDelta(event.delta)}
           </span>{' '}
@@ -80,9 +90,7 @@ function EventLine({ event }: { event: ChangeEvent }) {
       return (
         <span>
           <span aria-hidden className="mr-2 text-emerald-400">+</span>
-          <Link href={`/arena/${event.categoryId}/product/${event.productId}`} className={PRODUCT_LINK}>
-            {event.productName}
-          </Link>{' '}
+          <ProductRef categoryId={event.categoryId} productId={event.productId} name={event.productName} />{' '}
           entered the {arena} arena
         </span>
       )

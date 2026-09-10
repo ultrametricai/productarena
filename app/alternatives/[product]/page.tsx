@@ -5,6 +5,7 @@ import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { adjacentProducts, findProductArena, rivalsFor } from '@/lib/alternatives'
 import { loadAll } from '@/lib/data'
+import { humanizeTheme } from '@/lib/icons'
 import { SITE_URL } from '@/lib/site'
 
 // "Alternatives to <X>": X's arena rivals ranked by the same evidence-graded leaderboard,
@@ -176,7 +177,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
                   Top-ranked in {adj.categoryName} · PA Score{' '}
                   <span className="font-mono text-emerald-300">{fmtScore(adj.entry.aiEra)}</span>
                 </p>
-                <p className="mt-2 text-[11px] text-zinc-500">shares: {adj.sharedThemes.join(', ')}</p>
+                <p className="mt-2 text-[11px] text-zinc-500">shares: {adj.sharedThemes.map(humanizeTheme).join(', ')}</p>
               </Link>
             ))}
           </div>

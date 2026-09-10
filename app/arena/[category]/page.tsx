@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ArenaTable from '@/components/ArenaTable'
+import IconChip from '@/components/IconChip'
 import Legend from '@/components/Legend'
 import PersonaStacksSection from '@/components/PersonaStacksSection'
 import StacksSection from '@/components/StacksSection'
 import StoryMatrix from '@/components/StoryMatrix'
+import arenaIcons from '@/data/arena-icons.json'
 import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { adjacentArenas } from '@/lib/alternatives'
+import { humanizeTheme } from '@/lib/icons'
 import { categoryFreshness } from '@/lib/freshness'
 import { hasLogo } from '@/lib/logos'
 import { loadPricing, pricingCellFor, type PricingCell } from '@/lib/pricing'
@@ -139,7 +142,14 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
       />
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Arena</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">{data.category.name}</h1>
+        <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
+          {/* Same emoji this arena wears in the header's Arenas menu (data/arena-icons.json). */}
+          <IconChip
+            icon={(arenaIcons as Record<string, string>)[data.category.id] ?? ''}
+            title={`${data.category.name} arena`}
+          />
+          {data.category.name}
+        </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">{data.category.description}</p>
         <p className="mt-2 text-xs text-zinc-400">
           {data.stories.length} user stories · {data.verdicts.length} judged cells · updated{' '}
@@ -183,11 +193,17 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
                 href={`/arena/${a.categoryId}`}
                 className="group min-w-0 rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
-                <p className="font-medium group-hover:text-emerald-300">{a.categoryName}</p>
+                <p className="flex items-center gap-1.5 font-medium group-hover:text-emerald-300">
+                  <IconChip
+                    icon={(arenaIcons as Record<string, string>)[a.categoryId] ?? ''}
+                    title={`${a.categoryName} arena`}
+                  />
+                  {a.categoryName}
+                </p>
                 <p className="mt-1 text-xs text-zinc-500">
                   {a.productCount} products{a.leaderName ? ` · leader: ${a.leaderName}` : ''}
                 </p>
-                {a.sharedThemes.length > 0 && (<p className="mt-1 truncate text-[11px] text-zinc-600">shares: {a.sharedThemes.join(', ')}</p>)}
+                {a.sharedThemes.length > 0 && (<p className="mt-1 truncate text-[11px] text-zinc-600">shares: {a.sharedThemes.map(humanizeTheme).join(', ')}</p>)}
               </Link>
             ))}
           </div>
