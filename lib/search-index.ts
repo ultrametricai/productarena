@@ -7,6 +7,11 @@ export interface SearchEntry {
   label: string
   sublabel: string
   href: string
+  /** For product rows: render the product's committed logo in the palette. */
+  productId?: string
+  hasLogo?: boolean
+  /** For arena rows: the arena's emoji from data/arena-icons.json. */
+  icon?: string
 }
 
 // Structural subset of CategoryData — narrowed so this module (and its tests) don't need to
@@ -23,7 +28,7 @@ export interface SearchIndexSource {
 // and story across all populated categories. Story entries link to the arena page's matrix,
 // anchored at that story's row (see the `id="story-{storyId}"` added to StoryMatrix rows) —
 // there's no single-story page, so the matrix is the closest addressable location.
-export function buildSearchIndex(sources: SearchIndexSource[]): SearchEntry[] {
+export function buildSearchIndex(sources: SearchIndexSource[], opts?: { arenaIcons?: Record<string, string>; hasLogo?: (id: string) => boolean }): SearchEntry[] {
   const entries: SearchEntry[] = []
 
   for (const data of sources) {
@@ -32,6 +37,7 @@ export function buildSearchIndex(sources: SearchIndexSource[]): SearchEntry[] {
       label: data.category.name,
       sublabel: `${data.products.length} product${data.products.length === 1 ? '' : 's'}`,
       href: `/arena/${data.category.id}`,
+      icon: opts?.arenaIcons?.[data.category.id],
     })
 
     for (const p of data.products) {
@@ -40,6 +46,8 @@ export function buildSearchIndex(sources: SearchIndexSource[]): SearchEntry[] {
         label: p.name,
         sublabel: data.category.name,
         href: `/arena/${data.category.id}/product/${p.id}`,
+        productId: p.id,
+        hasLogo: opts?.hasLogo?.(p.id),
       })
     }
 

@@ -28,12 +28,15 @@ describe('buildSearchIndex', () => {
 
   it('includes one product entry per product, linking to its product page', () => {
     const entries = buildSearchIndex(sources).filter((e) => e.type === 'product')
-    expect(entries).toContainEqual({
-      type: 'product',
-      label: 'Claude Code',
-      sublabel: 'AI Coding Agents',
-      href: '/arena/ai-coding/product/claude-code',
-    })
+    expect(entries).toContainEqual(
+      expect.objectContaining({
+        type: 'product',
+        label: 'Claude Code',
+        sublabel: 'AI Coding Agents',
+        href: '/arena/ai-coding/product/claude-code',
+        productId: 'claude-code',
+      }),
+    )
     expect(entries).toHaveLength(3)
   })
 
