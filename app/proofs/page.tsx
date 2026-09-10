@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import GeoMark from '@/components/GeoMark'
 import ProofBlock from '@/components/ProofBlock'
 import { groupInOrder, loadCategory, stripPersonaPrefix } from '@/lib/data'
 import { collectSiteProofs, readProofTranscript, type ProofIndexEntry } from '@/lib/proofs'
@@ -62,7 +63,12 @@ export default function ProofsPage() {
   return (
     <div className="space-y-10">
       <div>
-        <p className="text-sm uppercase tracking-widest text-emerald-400">Proof theater</p>
+        {/* seed "proofs": same concept mark as the Explore menu entry and every product page's
+            Probe proofs section. */}
+        <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-emerald-400">
+          <GeoMark seed="proofs" title="Recorded proofs — replayable probe recordings" size={16} className="text-zinc-500" />
+          Proof theater
+        </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Recorded proofs</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Every replayable recording from our probe harness, site-wide. Each command ran for real on our machines,

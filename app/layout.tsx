@@ -4,6 +4,7 @@ import Link from "next/link";
 import "./globals.css";
 import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
+import GeoMark from "@/components/GeoMark";
 import { loadAll, loadCategories } from "@/lib/data";
 import { WATCHLIST_ENABLED } from "@/lib/flags";
 import arenaIcons from "@/data/arena-icons.json";
@@ -214,8 +215,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   icon: (arenaIcons as Record<string, string>)[c.id],
                 }))}
               />
+              {/* geo: every Explore destination wears its deterministic concept mark
+                  (components/GeoMark.tsx), the same mark it wears on its own page header. */}
               <ArenaMenu
                 title="Explore"
+                geo
                 items={[
                   { id: "agentic", name: "Most agent-ready", label: "ranking", href: "/rankings/agentic" },
                   { id: "init", name: "Highest PA Score", label: "ranking", href: "/rankings/init" },
@@ -235,29 +239,35 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "mcp", name: "MCP server", label: "agents", href: "/mcp" },
                 ]}
               />
+              {/* The three tools + the power view each wear their GeoMark (same seed as their
+                  page headers/sections), hidden on the smallest screens to keep the row tight. */}
               <Link
                 href="/stacks"
-                className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
+                <GeoMark seed="stacks" title="Stacks — proven product combinations" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Stacks
               </Link>
               <Link
                 href="/processes"
-                className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
+                <GeoMark seed="processes" title="Processes — end-to-end workflows across products" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Processes
               </Link>
               <Link
                 href="/compare"
-                className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
+                <GeoMark seed="compare" title="Compare — side-by-side product comparison" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Compare
               </Link>
               <Link
                 href="/everything"
                 title="The power view — the whole catalog on one page"
-                className="flex shrink-0 items-center rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
+                <GeoMark seed="everything" title="Everything — the whole catalog on one page" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Everything
               </Link>
               <a

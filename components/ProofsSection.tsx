@@ -1,3 +1,4 @@
+import GeoMark from '@/components/GeoMark'
 import ProofBlock from '@/components/ProofBlock'
 import { proofsForProduct, readProofTranscript } from '@/lib/proofs'
 import type { Story } from '@/lib/schemas'
@@ -25,7 +26,11 @@ export default function ProofsSection({
 
   return (
     <div>
-      <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Probe proofs</h2>
+      {/* seed "proofs": same concept mark as the Explore menu entry and the /proofs page. */}
+      <h2 className="font-display leading-[1.1] mb-1 flex items-center gap-2 text-lg font-semibold">
+        <GeoMark seed="proofs" title="Probe proofs — replayable recordings from the probe harness" size={18} className="text-zinc-500" />
+        Probe proofs
+      </h2>
       <p className="mb-3 text-xs text-zinc-400">
         Replayable recordings from our probe harness — each command ran for real on our machines, keyless, with the
         session captured verbatim (secrets are redacted before publication). See the{' '}
