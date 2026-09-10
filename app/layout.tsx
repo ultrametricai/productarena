@@ -8,6 +8,7 @@ import { loadAll, loadCategories } from "@/lib/data";
 import { WATCHLIST_ENABLED } from "@/lib/flags";
 import arenaIcons from "@/data/arena-icons.json";
 import { loadIcpTypes } from "@/lib/icp";
+import { hasLogo } from "@/lib/logos";
 import { REPO, SITE_URL } from "@/lib/site";
 import { buildSearchIndex, type SearchEntry } from "@/lib/search-index";
 
@@ -160,7 +161,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // (a ranked list you land on and browse) — surfacing them as `type: 'arena'` groups them with
   // the per-category arenas in the palette instead of inventing a one-off section for two items.
   const searchEntries: SearchEntry[] = [
-    ...buildSearchIndex(loadAll()),
+    ...buildSearchIndex(loadAll(), { arenaIcons: arenaIcons as Record<string, string>, hasLogo }),
     { type: "arena", label: "Most agent-ready (full ranking)", sublabel: "All products, ranked by agent-readiness", href: "/rankings/agentic" },
     { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by AI-native features", href: "/rankings/ai-native" },
     { type: "arena", label: "Claims vs reality (full ranking)", sublabel: "All products, ranked by claims integrity", href: "/rankings/claims-integrity" },

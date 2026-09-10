@@ -1,6 +1,13 @@
 import Image from 'next/image'
+import darkLogos from '@/data/dark-logos.json'
 import type { Product } from '@/lib/schemas'
 import { withBase } from '@/lib/site'
+
+// Logos whose mark is near-black on a transparent canvas — invisible on the site's dark
+// zinc backgrounds (e.g. Retell). Detected by a build-time luminance sweep (mean opaque-pixel
+// luminance < 70 with a mostly-transparent canvas); these render on a light chip instead.
+// Regenerate data/dark-logos.json when adding logos (see the sweep in scripts history).
+const DARK_LOGO_IDS = new Set<string>(darkLogos)
 
 // Pure rendering half of ProductLogo, split out so it can be safely imported from CLIENT
 // components (ArenaTable, StoryMatrix) without dragging lib/logos.ts's `node:fs` import into
@@ -19,6 +26,7 @@ export default function ProductLogoView({
   hasLogo: boolean
 }) {
   if (hasLogo) {
+    const chip = DARK_LOGO_IDS.has(product.id) ? 'bg-zinc-200 p-0.5' : 'bg-zinc-900'
     return (
       <Image
         src={withBase(`/logos/${product.id}.png`)}
@@ -26,7 +34,7 @@ export default function ProductLogoView({
         width={size}
         height={size}
         unoptimized
-        className="shrink-0 rounded-lg bg-zinc-900 object-contain ring-1 ring-zinc-800"
+        className={`shrink-0 rounded-lg object-contain ring-1 ring-zinc-800 ${chip}`}
         style={{ width: size, height: size }}
       />
     )
