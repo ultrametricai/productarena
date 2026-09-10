@@ -154,4 +154,32 @@ export const probes: LocalProbe[] = [
       expect: /PA_PROBE_OK Steel export: function/,
       timeoutMs: 240_000,
     },
+    {
+      // Notte's docs publish a full llms.txt index with explicit agent instructions.
+      probeId: 'llms-docs-index',
+      productId: 'notte',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.notte.cc/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.notte.cc/llms.txt | head -6',
+      expect: /# Notte/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Notte's hosted MCP (api.notte.cc/mcp/) answers a keyless initialize with its OAuth
+      // challenge + protected-resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'notte',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.notte.cc/mcp/',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.notte.cc/mcp/ -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]

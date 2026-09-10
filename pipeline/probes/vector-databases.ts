@@ -124,4 +124,32 @@ export const probes: LocalProbe[] = [
       expect: /PA_PROBE_OK \['pa_probe'\]/,
       timeoutMs: 120_000,
     },
+    {
+      // HelixDB's docs publish a full llms.txt index.
+      probeId: 'llms-docs-index',
+      productId: 'helixdb',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.helix-db.com/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.helix-db.com/llms.txt | head -6',
+      expect: /# HelixDB/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Helix Cloud's hosted MCP answers a keyless initialize with its OAuth challenge
+      // (WorkOS-backed per docs) — live and speaking the protocol.
+      probeId: 'mcp-remote-handshake',
+      productId: 'helixdb',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.helix-db.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.helix-db.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]

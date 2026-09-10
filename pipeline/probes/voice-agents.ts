@@ -171,4 +171,32 @@ export const probes: LocalProbe[] = [
       expect: /PA_PROBE_OK pipecat-ai imported/,
       timeoutMs: 180_000,
     },
+    {
+      // Bolna's docs publish a full llms.txt index (bare docs domain redirects; follow it).
+      probeId: 'llms-docs-index',
+      productId: 'bolna',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.bolna.ai/llms.txt | head -6'],
+      displayCommand: 'curl -sL https://docs.bolna.ai/llms.txt | head -6',
+      expect: /# Bolna Docs/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Bolna's hosted MCP (82 account tools per docs) answers a keyless initialize with a
+      // Bearer challenge + protected-resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'bolna',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.bolna.ai/api/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.bolna.ai/api/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]

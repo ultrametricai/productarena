@@ -1,5 +1,666 @@
 [
   {
+    "productId": "airweave",
+    "storyId": "agent-self-managed-memory",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's documented capabilities center on syncing data sources and letting agents *search* that data (via MCP server, CLI, direct/agentic search) — there is no evidence of agent-invoked add, update, or delete operations on memory content mid-conversation. missing for 10: evidence of write/update/delete APIs or tools callable by an agent, evidence of a memory object model distinct from synced source data, any documentation of mutating memory via tool calls.",
+    "evidenceIds": [
+      "airweave-docs-4",
+      "airweave-docs-5",
+      "airweave-docs-6",
+      "airweave-docs-2"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "A probe confirms llms.txt is live (HTTP 200) with explicit agent instructions, and docs show every page is available as clean Markdown via .md suffix, plus published 'skills' so agents in Cursor/Claude Code/Gemini CLI can set up integrations without manual explanation. missing for 10: independent/community confirmation that agents successfully consume llms.txt in practice.",
+    "evidenceIds": [
+      "airweave-probe-1",
+      "airweave-docs-7",
+      "airweave-docs-6"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-ai-insights",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave is positioned as search/retrieval infrastructure (vector search, agentic tool-calling search, MCP server, CLI) that lets external AI agents query synced data — the evidence never shows Airweave itself generating insights, summaries, or proactive suggestions from the data inside its own product/UI. Missing for 10: any documentation of an insights/analytics dashboard, generated summaries, or proactive suggestion feature.",
+    "evidenceIds": [
+      "airweave-docs-3",
+      "airweave-docs-4",
+      "airweave-docs-12"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Airweave supports automatic background syncing of source connections (docs-2) and webhook notifications when syncs/collections change (docs-9), which are forms of autonomous background operation, but there's no evidence of a broader automation/workflow builder (e.g., scheduled tasks, multi-step triggers/actions) that a user could configure to run autonomously beyond data sync. Missing for 10: evidence of configurable trigger-action automations, scheduling UI, or autonomous agent tasks beyond syncing/search.",
+    "evidenceIds": [
+      "airweave-docs-2",
+      "airweave-docs-9"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Airweave is a data-integration/search backend that other AI agents (Cursor, Claude Code, etc.) query via MCP/API — it explicitly positions itself as 'a building block for developers to set up integrations for their internal agent/agent product,' not as a product with its own built-in assistant to delegate tasks to. The user-delegation-to-built-in-assistant axis is a category mismatch for this kind of infrastructure/tool product.",
+    "evidenceIds": [
+      "airweave-docs-5",
+      "airweave-docs-12",
+      "airweave-comm-8"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Airweave exposes a full REST API (OpenAPI spec), a self-hosted deployment path (docker/start.sh), a terminal CLI, and webhooks for event-driven automation — all of which support headless/programmatic use outside a UI, which is the core requirement for CI automation. However there is no explicit CI/CD example, GitHub Actions integration, or documented non-interactive auth flow (e.g., API-key-only headless setup) confirming CI-specific usage. Missing for 10: explicit CI/CD pipeline examples, documented non-interactive authentication for automated environments, and independent confirmation of headless operation in production automation.",
+    "evidenceIds": [
+      "airweave-probe-2",
+      "airweave-docs-11",
+      "airweave-probe-4",
+      "airweave-docs-9"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's documented architecture is the reverse of this story: it exposes its own MCP server (docs-5, probe-3) so external AI agents (Cursor, Claude, etc.) can call ITS tools, and it connects to third-party apps via its own 'source connections' and auth providers (docs-2, docs-10) rather than by consuming other MCP servers. No evidence shows Airweave itself acting as an MCP client that plugs in and uses tools from external MCP servers. Missing for 10: any documentation or example of Airweave importing/connecting to third-party MCP servers and invoking their tools.",
+    "evidenceIds": [
+      "airweave-docs-5",
+      "airweave-docs-2",
+      "airweave-docs-10",
+      "airweave-probe-3"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Airweave is not itself an agent but a data-integration/search platform, so the MCP-server axis applies; docs explicitly describe an official MCP server implementing the Model Context Protocol so AI assistants (e.g., Cursor, Claude) can search synced data, corroborated by a probe confirming the docs page and community feedback praising its integration with Cursor. Missing for 10: no independent hands-on verification of the MCP server's setup/connection process beyond docs and a single community mention, and no detail on protocol compliance testing.",
+    "evidenceIds": [
+      "airweave-docs-5",
+      "airweave-probe-3",
+      "airweave-comm-4"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-nl-commands",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Airweave supports natural-language operation via its MCP server, CLI, and AI-agent tool-calling search, letting agents in Cursor, Claude Code, etc. issue natural-language queries against synced data, and community feedback confirms it works well with Cursor. Missing for 10: independent hands-on verification of natural-language control beyond search/retrieval (e.g., managing connections or collections via NL) and broader third-party corroboration.",
+    "evidenceIds": [
+      "airweave-docs-4",
+      "airweave-docs-5",
+      "airweave-docs-6",
+      "airweave-docs-7",
+      "airweave-comm-4",
+      "airweave-probe-3",
+      "airweave-probe-4"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Airweave documents an official CLI whose primary use case is searching collections directly from the terminal, confirmed by both docs and a probe hit on the CLI page. This fits an AI-native, agentic workflow (terminal-based search alongside MCP server and agent skills), though evidence lacks independent hands-on review of the CLI itself. Missing for 10: independent/community verification of CLI usage and more detail on CLI command coverage beyond search.",
+    "evidenceIds": [
+      "airweave-docs-6",
+      "airweave-probe-4"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Airweave exposes a documented public REST API (OpenAPI spec at docs.airweave.ai/openapi.json) alongside quickstart docs describing collections, source connections, search, webhooks, and a CLI/MCP server built on that API, giving AI-native users multiple documented ways to drive the product programmatically. Missing for 10: a dedicated human-readable API reference page beyond the raw OpenAPI JSON, and independent hands-on validation of the API's completeness/reliability.",
+    "evidenceIds": [
+      "airweave-probe-2",
+      "airweave-docs-1",
+      "airweave-docs-2",
+      "airweave-docs-3",
+      "airweave-docs-9",
+      "airweave-probe-4",
+      "airweave-docs-6"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack discusses scoped or least-privilege API key/credential issuance for agents; documentation covers collections, source connections, MCP server, and CLI but not credential scoping. Missing for 10: any mention of API key permission scopes, role-based access control, or least-privilege credential generation.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-sdks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows an OpenAPI spec, CLI, MCP server, and agent 'skills', but nowhere is an official SDK (e.g., Python/JS client library) documented or referenced. The axis of building against official SDKs is fair for an API-first product but no such SDK evidence exists.",
+    "evidenceIds": [
+      "airweave-probe-2",
+      "airweave-probe-3",
+      "airweave-probe-4",
+      "airweave-docs-7"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Airweave's docs explicitly describe a webhooks system that sends real-time notifications for events like sync completion, source connection creation, and collection updates, directly matching the story's subscribe-to-events use case. Missing for 10: independent/hands-on corroboration of webhook reliability, and detail on subscription setup (signing, retries, event filtering).",
+    "evidenceIds": [
+      "airweave-docs-9"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "An OpenAPI spec is served (airweave-probe-2) and docs include code samples (airweave-comm-5 mentions code samples on the site), suggesting an auto-generated API reference, but there is no explicit evidence of a 'try it out' or runnable-example interface. missing for 10: explicit confirmation of interactive 'try it' execution in the API reference, independent verification that examples are runnable rather than static code blocks.",
+    "evidenceIds": [
+      "airweave-probe-2",
+      "airweave-comm-5"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A probe confirms a machine-readable OpenAPI spec is publicly downloadable at docs.airweave.ai/openapi.json returning a valid 'openapi' key, and Airweave's docs also expose llms.txt for AI-native consumption. Missing for 10: no independent/community corroboration of developers actually using the OpenAPI spec.",
+    "evidenceIds": [
+      "airweave-probe-2",
+      "airweave-probe-1"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "api-sandbox",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence of a sandbox/test environment, staging mode, or data isolation feature that would let a user test without touching production data; docs cover collections, sources, search, MCP, CLI, and connect widget but nothing about sandboxing. Missing for 10: any mention of sandbox/staging environment, test-mode API keys, or data isolation guarantees.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "There's an OpenAPI spec confirming an API exists, but no evidence of versioning scheme (e.g., v1/v2 paths) or any documented deprecation policy for the API. Missing for 10: API versioning scheme documentation, deprecation policy or changelog, migration guides between versions.",
+    "evidenceIds": [
+      "airweave-probe-2"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "assistant-memory-plugins",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Airweave exposes a standard MCP server so any MCP-capable assistant (Claude, Cursor, etc.) can query the same synced knowledge, and ships official skills for Cursor, Claude Code, Gemini CLI, and OpenCode, with community confirmation that Cursor integration works well. Missing for 10: explicit documentation/evidence of ChatGPT connecting via MCP or plugins, and independent proof that multiple different assistants actually share the same live memory simultaneously.",
+    "evidenceIds": [
+      "airweave-docs-5",
+      "airweave-docs-7",
+      "airweave-probe-3",
+      "airweave-comm-4"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "async-batch-processing",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Airweave's source connections auto-sync data and webhooks notify when syncs complete, implying async background processing with some status signaling, but there is no explicit documentation of batch-at-scale ingestion controls or a dedicated status/polling API for sync jobs. missing for 10: explicit batch/async ingestion configuration at scale, a documented status-check endpoint for sync progress, and independent verification of ingestion throughput.",
+    "evidenceIds": [
+      "airweave-docs-2",
+      "airweave-docs-9"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "automatic-memory-extraction",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Airweave is a data-source sync and search/RAG platform (collections, source connections, vector/agent search over connected apps) — it is not a conversational memory layer that autonomously extracts salient facts from chat and consolidates them in the background. This capability is a different product category (conversational memory systems) and is a category error for Airweave's connector/search architecture.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Airweave's core sync and search architecture inherently processes many items at once (source connections auto-sync entire datasets, collections span multiple sources, single queries search across large data sets), but there is no explicit documentation of a bulk API for batch creating/updating/deleting many items or connections in one call. Missing for 10: explicit bulk/batch API endpoints, evidence of bulk item management (not just sync), and any hands-on confirmation of bulk operation performance at scale.",
+    "evidenceIds": [
+      "airweave-docs-1",
+      "airweave-docs-2",
+      "airweave-docs-12"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "automation-rules-engine",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave documents webhooks that fire notifications on events (sync completed, connection created, collection updated), but this is one-way notification, not a rule engine where users define conditional logic that triggers automated actions. No evidence of any trigger-action automation framework, conditional rules, or workflow builder exists in the evidence pack.",
+    "evidenceIds": [
+      "airweave-docs-9"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Source connections 'automatically sync data' on a recurring basis and webhooks fire when syncs complete, implying built-in recurring sync jobs, but there is no documentation of configurable scheduling (cron-like intervals), triggering multi-step workflows, or general job orchestration beyond data sync. Missing for 10: explicit scheduling/cron configuration API, documentation of workflow (multi-step) automation beyond sync, and independent confirmation that recurring jobs can be customized.",
+    "evidenceIds": [
+      "airweave-docs-2",
+      "airweave-docs-9"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Airweave is a data integration/search platform (syncing sources into searchable collections), not an automation/workflow builder with defined automation steps to version or roll back. The story's premise of versioning, reviewing, and rolling back automations does not map to any capability in Airweave's product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "business-data-ingestion",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Airweave is explicitly built to sync and index data from diverse sources (databases, cloud drives, SaaS tools, business apps) into searchable collections, not just chat transcripts — docs describe source connections to apps/databases and cross-source search, and community feedback confirms it ingests real data via RAG rather than being a chat-log tool. missing for 10: no explicit mention of raw file/JSON upload API distinct from connector sync, and no independent benchmark of document/JSON ingestion fidelity.",
+    "evidenceIds": [
+      "airweave-docs-1",
+      "airweave-docs-2",
+      "airweave-docs-12",
+      "airweave-docs-4",
+      "airweave-comm-2",
+      "airweave-comm-8"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "custom-ontology-schema",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's evidence describes collections, source connections, vector/agent search, MCP server, and CLI, but nothing mentions a customizable memory schema, entity/edge types, or ontology configuration for graph-entity-memory. No documentation or community evidence supports ml-engineers customizing an underlying schema to fit domain-specific entities/relations.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "entity-graph-memory",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Airweave's agentic search can 'navigate entity hierarchies (parent/child/sibling)' during retrieval, which hints at some structured entity relationships, but there is no documentation of a true knowledge-graph store, explicit relationship modeling, or multi-hop graph traversal for entity-centric queries. Missing for 10: explicit graph database/schema of entities and relationships, multi-hop query support, and any documentation or examples of multi-hop entity-centric question answering.",
+    "evidenceIds": [
+      "airweave-docs-4"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "framework-integrations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack documents Airweave's MCP server, CLI, skills for Cursor/Claude Code/Gemini CLI, and REST/OpenAPI access, but contains no mention of LangChain, LangGraph, CrewAI, or Vercel AI SDK integrations. Missing for 10: any documented first-party SDK/package or integration guide for these specific agent frameworks.",
+    "evidenceIds": [
+      "airweave-docs-5",
+      "airweave-docs-6",
+      "airweave-docs-7",
+      "airweave-probe-2"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "hybrid-filtered-recall",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs show two search modes (fast direct vector search vs. an agentic search that iterates with 'multiple strategies' and navigates entity hierarchies), implying more than a single fixed similarity search, but there is no explicit documentation of metadata filters, keyword/hybrid search toggles, or reranking controls that a developer could configure. Missing for 10: explicit metadata-filter API/params, documented keyword/hybrid search mode, and a reranking feature or parameter.",
+    "evidenceIds": [
+      "airweave-docs-3",
+      "airweave-docs-4"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "local-embedded-mode",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Airweave can be self-hosted via docker-compose (git clone + start.sh) but there is no mention of an embedded in-process mode or support for local models (e.g., local embedding/LLM providers) that would eliminate all cloud dependency; the docs focus on syncing to third-party SaaS sources and vector search, implying cloud API dependencies remain.",
+    "evidenceIds": [
+      "airweave-docs-11",
+      "airweave-docs-1",
+      "airweave-docs-3"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "long-term-memory-add-search",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's documented model is syncing external data sources (Slack, GitHub, Drive, databases) into collections and searching them (docs-1, docs-2, docs-3, docs-4, docs-12) — there is no evidence of an API or workflow for explicitly writing/adding conversational memories that are later retrieved for session continuity. The product's design centers on connector-based data ingestion and RAG/agentic search, not a memory-write/memory-recall loop for conversation turns.",
+    "evidenceIds": [
+      "airweave-docs-1",
+      "airweave-docs-2",
+      "airweave-docs-12"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "low-latency-retrieval-claims",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs give a single approximate latency figure (~0.5sec for direct vector search) but no p50/p95 percentiles, no methodology, no benchmark dataset, and no independent measurement corroborating it. Missing for 10: documented p50/p95 or SLA-style latency targets, benchmark methodology, independent/hands-on latency measurements.",
+    "evidenceIds": [
+      "airweave-docs-3"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "memory-access-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of RBAC, ACLs, policy controls, or audit logging for governing memory/data access in Airweave; docs focus on collections, sync, search, and MCP integration but never mention access governance or auditing.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "memory-deletion-erasure",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence describes syncing, searching, and connecting data sources but contains no mention of deletion capabilities—no docs on deleting a single memory/entity, purging a user's data, or full erasure for privacy compliance. missing for 10: deletion API/endpoint documentation, per-entity or per-user erasure workflow, retention/privacy compliance guidance.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "memory-expiration-ttl",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Airweave is a data sync/search platform (collections, source connections, MCP search) but no evidence describes TTL, expiration, decay, or recency-weighting mechanisms for indexed data — sync updates data but nothing indicates stale-fact expiry logic.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "memory-export-portability",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's docs describe syncing data in, search, MCP/CLI access, and webhooks, but there is no evidence of an export or bulk-download capability that would let a platform engineer extract synced memories in a machine-readable format for portability. The axis is fair for a memory/data store product, but no documentation or community evidence shows an export feature.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "memory-update-reconcile",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Airweave's evidence describes data syncing, search (vector and agentic), MCP/CLI access, and connectors, but nothing about detecting contradictions, updating, superseding, or merging stored memories when new information conflicts with old. Missing for 10: any documentation of conflict detection, memory versioning, supersession logic, or merge strategies for contradictory data.",
+    "evidenceIds": [
+      "airweave-docs-2",
+      "airweave-docs-3",
+      "airweave-docs-4"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "multi-language-sdks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence in the pack mentions Python or TypeScript SDKs, memory APIs, or any client library at all; only an OpenAPI spec, CLI, and MCP server are documented. Missing for 10: any mention of official SDKs in Python/TypeScript, evidence of 'memory API' concept, or documentation of SDK parity between languages.",
+    "evidenceIds": [
+      "airweave-probe-2",
+      "airweave-probe-4",
+      "airweave-probe-3"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "multimodal-memory-ingestion",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's evidence describes syncing from apps/databases (Slack, GitHub, Google Drive, Notion) and vector/agent search over that synced data, but there is no mention of direct file upload, image/PDF ingestion, or multimodal parsing as a source type or memory input, nor any documentation of storing/recalling from raw files.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Airweave exposes a full OpenAPI spec, CLI, and MCP server, and its core concepts (collections, source connections, search) are documented as API-first primitives that the UI is built on top of, suggesting strong API/UI parity. However, there is no explicit documentation or independent confirmation stating that every UI action (e.g., webhook configuration, Connect widget setup, auth-provider linking) is fully replicable via API. Missing for 10: explicit UI/API parity statement, evidence that all admin/UI-only features (billing, org settings, Connect widget config) are API-accessible, and independent verification of parity.",
+    "evidenceIds": [
+      "airweave-probe-2",
+      "airweave-probe-3",
+      "airweave-probe-4",
+      "airweave-docs-1",
+      "airweave-docs-2",
+      "airweave-comm-8"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "While Airweave is open-source and self-hostable with an API (openapi.json) and CLI, there is no evidence of an explicit data export feature or open-format export capability that would let a user extract all synced/processed data and leave. The evidence pack covers search, sync, MCP, and connectors but never addresses data portability/export.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "openness-open-license",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Airweave's source is publicly hosted on GitHub (git clone https://github.com/airweave-ai/airweave.git), indicating an open repository, though the evidence pack does not state the specific license under which it is released. missing for 10: explicit license text/name (e.g. MIT/Apache) confirming open-license terms, and independent confirmation of license compliance.",
+    "evidenceIds": [
+      "airweave-docs-11"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "openness-self-host",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "First-party docs show a straightforward self-host path via 'git clone' + './start.sh' from the official GitHub repo, confirming core-product self-hosting is supported out of the box. Missing for 10: independent/hands-on community confirmation of a successful self-hosted deployment, and documentation detail on licensing/scaling/production self-host requirements.",
+    "evidenceIds": [
+      "airweave-docs-11"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "per-user-memory-isolation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's docs describe collections and source connections as data-organization units, but there is no evidence of explicit per-user/agent/tenant scoping controls or guarantees preventing cross-tenant retrieval leakage; the founder's own comment (airweave-comm-8) implies the interface is agnostic to downstream tenancy rather than enforcing isolation.",
+    "evidenceIds": [
+      "airweave-docs-1",
+      "airweave-docs-2",
+      "airweave-comm-8"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data residency, region selection, or storage location controls for Airweave; while self-hosting via git clone is mentioned, this is not framed as a residency/region choice feature.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Airweave's evidence pack covers data syncing, search, and integrations, but there is no mention of any AI-training opt-out policy, data-usage terms, or controls preventing customer data from being used to train models. This is an applicable privacy-posture axis for any data platform, but no evidence addresses it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack items describe data retention policies, deletion endpoints/APIs, or user controls to purge synced data or source connections; the docs cover syncing, search, MCP, CLI, and connectors but nothing about retention/deletion controls. missing for 10: documented deletion/retention API or settings, data expiry policy, evidence of user-initiated data purge or collection deletion controls.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or opt-out mechanisms for Airweave; the docs and community items focus on functionality (search, connectors, MCP) rather than privacy/telemetry controls. missing for 10: any mention of telemetry collection, privacy policy, or opt-out settings/flags.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "prompt-ready-context-block",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's docs describe search endpoints (direct vector search and agentic search) returning results from connected sources, but there is no mention of a token-budgeted or prompt-ready context assembly feature. Missing for 10: any documentation of token-limit controls, context-window formatting, or a single-call 'assemble context' endpoint.",
+    "evidenceIds": [
+      "airweave-docs-3",
+      "airweave-docs-4",
+      "airweave-docs-12"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "published-memory-benchmarks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of any published benchmark results like LongMemEval or LoCoMo; only anecdotal community claims of 'retrieval accuracy' without data or methodology. Missing for 10: any benchmark citation, dataset, methodology, or quantitative recall metrics.",
+    "evidenceIds": [
+      "airweave-comm-1"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "self-host-oss-deployment",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Airweave is explicitly open-source and documents a self-host path via git clone + ./start.sh (Docker-based quickstart), letting a platform engineer run the memory layer on their own infrastructure. Missing for 10: no detailed docs on production-grade Docker Compose/K8s configs, scaling, or independent hands-on confirmation of a self-hosted deployment beyond the quickstart script.",
+    "evidenceIds": [
+      "airweave-docs-11",
+      "airweave-docs-12",
+      "airweave-probe-1"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "session-summarization",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Airweave is a data-sync/search platform for connecting and querying external data sources (docs, SaaS apps, databases) via search or MCP, not a conversation/session management tool. There is no concept of session or thread history summarization in the evidence — this axis is a category error for this product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "shared-team-memory",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Airweave's docs describe collections, source connections, and search but contain no mention of per-user/per-agent access scoping, permissions, or a mechanism to keep some memory private while sharing other memory across a team — the tenancy/permissions axis is unaddressed in the evidence pack.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "temporal-fact-memory",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions temporal validity tracking, fact versioning, or bi-temporal reasoning for entities; Airweave's docs focus on syncing, search strategies, and connectors only. missing for 10: any mention of temporal metadata, valid/invalid timestamps on facts, or versioning of synced entity data.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "airweave",
+    "storyId": "transparent-usage-pricing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack item shows a published pricing page, free tier, or per-unit rates; the only pricing-related mentions are community complaints that pricing is 'complex to reason about' and 'prohibitive,' with no usage-based/per-unit structure surfaced, suggesting the opposite of a clear self-service pricing model.",
+    "evidenceIds": [
+      "airweave-comm-5",
+      "airweave-comm-6"
+    ]
+  },
+  {
+    "productId": "airweave",
+    "storyId": "voice-realtime-memory",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of any integration, guide, or mention of LiveKit, Pipecat, ElevenLabs, or other real-time voice pipeline frameworks; Airweave's documented integrations focus on search/MCP/CLI/agent tooling, not voice pipelines or latency-sensitive live conversation use cases.",
+    "evidenceIds": []
+  },
+  {
     "productId": "cognee",
     "storyId": "agent-self-managed-memory",
     "verdict": "full",
