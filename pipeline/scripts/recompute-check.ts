@@ -30,6 +30,8 @@ const CATEGORIES = [
   'data-warehouses',
   'data-pipelines',
   'desktop-os',
+  'durable-workflows',
+  'ai-support-agents',
   'docs-platforms',
   'ecommerce-platforms',
   'email',

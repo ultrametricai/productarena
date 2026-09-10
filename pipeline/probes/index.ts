@@ -44,6 +44,8 @@ import { probes as designTools } from './design-tools'
 import { probes as teamChat } from './team-chat'
 import { probes as softwareFactory } from './software-factory'
 import { probes as vibeCoding } from './vibe-coding'
+import { probes as aiSupportAgents } from './ai-support-agents'
+import { probes as durableWorkflows } from './durable-workflows'
 
 export type { LocalProbe } from './types'
 
@@ -83,4 +85,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'team-chat': teamChat,
   'software-factory': softwareFactory,
   'vibe-coding': vibeCoding,
+  'ai-support-agents': aiSupportAgents,
+  'durable-workflows': durableWorkflows,
 }

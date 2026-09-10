@@ -1,0 +1,19 @@
+{
+  "hash": "4e8666c966c146dfc14adfaacb858e6a45eadd584ca4df32da6ef5d1fe014efc",
+  "verdict": {
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "DBOS's architecture stores workflow state as checkpoints in Postgres with no separate orchestration server, and docs explicitly describe workflows/agents that must 'reliably wait for a long time' (hours to days) while surviving restarts, upgrades, and crashes without holding a live process. Scheduled/cron workflows and crash-recovery from checkpoints further support long-duration waits with no dedicated compute held. Missing for 10: an explicit doc reference to a dedicated `DBOS.sleep()`/durable-sleep API guaranteeing month-long waits, and independent benchmarking confirming zero billable compute during long sleeps (one community comment flags that long-running steps can keep a DB transaction open, a tangential risk not clearly resolved for the sleep primitive specifically).",
+    "evidenceIds": [
+      "dbos-docs-2",
+      "dbos-docs-4",
+      "dbos-docs-7",
+      "dbos-docs-12",
+      "dbos-comm-13",
+      "dbos-comm-7"
+    ],
+    "productId": "dbos",
+    "storyId": "long-sleeps-without-compute"
+  }
+}
