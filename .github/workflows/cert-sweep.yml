@@ -1,0 +1,93 @@
+# Weekly Agent-Ready certification sweep — keeps /certified self-sustaining without keys:
+#
+#   1. Re-verifies every currently certified product by re-running the same keyless conformance
+#      suite vendors run themselves (cli/src/certify.ts): passes inside the renewal window get a
+#      fresh date + report, level changes are recorded, and former passers that fail TODAY are
+#      removed with the failing report committed as evidence (expiry semantics in
+#      lib/certifications.ts — absence is how a lapsed certification is expressed).
+#   2. Certifies new passers from the probe-evidence candidate queue
+#      (pipeline/scripts/cert-candidates.ts): uncertified products whose committed probe
+#      evidence shows a live llms.txt or documented MCP server. Capped at 15 per run
+#      (pipeline/scripts/cert-sweep.ts CANDIDATE_CAP) so runs stay bounded; the deterministic
+#      queue ordering pages through the backlog week by week and the skip list is logged.
+#
+# Requires ZERO repo secrets — the certify suite only GETs/POSTs public vendor surfaces
+# (llms.txt, docs .md mirrors, OpenAPI paths, an MCP initialize handshake, robots.txt), exactly
+# like daily-snapshot's SLO checks. secrets.GITHUB_TOKEN is auto-provided by Actions and only
+# used for git push / gh pr|issue create.
+name: cert-sweep
+
+on:
+  schedule:
+    - cron: '29 7 * * 1' # weekly, Mondays 07:29 UTC — offset from story-runner's '17 */6 * * *' and daily-snapshot's '43 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write # for the PR→issue fallback below (org policy may forbid Actions creating PRs)
+
+concurrency:
+  group: cert-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Keyless and bounded: ~1 suite (≤ a dozen public HTTP requests, 20s timeout each) per
+      # certified product for re-verification, plus at most 15 candidate suites. Updates
+      # data/*/certifications.json + data/*/cert-reports/*.json; never touches verdicts/rankings.
+      - name: Certification sweep (re-verify + candidates)
+        run: pnpm tsx pipeline/scripts/cert-sweep.ts
+
+      # Re-render the /badges SVGs from the updated registry — same "re-run after data changes,
+      # commit the diff" cadence the script documents.
+      - name: Regenerate badges
+        run: node scripts/generate-badges.mjs
+
+      - name: Tests
+        run: pnpm test
+
+      - name: Open PR if anything changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          if git diff --quiet -- data public/badges; then
+            echo "No certification changes — done."
+            exit 0
+          fi
+          pnpm stats   # keep the README's generated counts in sync with the refreshed data
+          BRANCH="cert-sweep/$RUN_ID"
+          git config user.name "productarena-cert-sweep"
+          git config user.email "noreply@ultrametric.ai"
+          git checkout -b "$BRANCH"
+          git add data public/badges README.md
+          git commit -m "chore(cert-sweep): weekly certification re-verify + new passers"
+          git push -u origin "$BRANCH"
+          # Org policy currently forbids Actions from creating PRs ("Write permissions for
+          # workflows are disabled by the organization") — fall back to an issue carrying the
+          # compare link so the sweep is never silently stranded on a branch (mirrors
+          # daily-snapshot.yml; reuses the existing "story-runner" label so the fallback never
+          # fails on a missing label).
+          if ! gh pr create \
+            --title "cert-sweep: weekly certification re-verify + new passers" \
+            --body "Automated weekly keyless certification sweep: re-ran the Agent-Ready conformance suite (\`cli/src/certify.ts\`) against every certified product and the top of the probe-evidence candidate queue (\`pipeline/scripts/cert-candidates.ts\`). Updates \`data/*/certifications.json\`, \`data/*/cert-reports/*.json\` and \`public/badges/*-certified.svg\` only — no verdicts or rankings touched. Removals mean a former passer failed the live suite today (failing report committed as evidence); see the run log for the per-product breakdown." \
+            --base main --head "$BRANCH"; then
+            gh issue create \
+              --title "cert-sweep: ready on $BRANCH" \
+              --body "The weekly certification sweep is committed on [\`$BRANCH\`](https://github.com/${GITHUB_REPOSITORY}/compare/main...$BRANCH) but Actions may not open PRs (org policy). Open the PR from the compare link — this workflow only updates the certification registry, cert reports and badges. Enable org Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests' to remove this manual step." \
+              --label "story-runner" || echo "issue creation also failed — branch $BRANCH is pushed; see run logs"
+          fi
