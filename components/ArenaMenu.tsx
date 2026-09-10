@@ -58,7 +58,7 @@ export default function ArenaMenu({
       {open && (
         <div
           role="menu"
-          className="absolute left-0 z-50 mt-2 max-h-[70vh] w-64 max-w-[calc(100vw-2.5rem)] overflow-y-auto rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 shadow-xl shadow-black/40 sm:left-auto sm:right-0"
+          className="absolute left-0 z-50 mt-2 max-h-[70vh] w-80 max-w-[calc(100vw-2.5rem)] overflow-y-auto rounded-xl border border-zinc-800 bg-zinc-900 p-1.5 shadow-xl shadow-black/40 sm:left-auto sm:right-0 sm:w-96"
         >
           {items.map((item) => (
             <Link

@@ -13,7 +13,7 @@ import { collectGlobalStories } from '@/lib/globalStories'
 export const metadata: Metadata = {
   title: 'Everything — ProductArena',
   description:
-    'The power view: the whole catalog on one page. Every ranked product with bare scores and access glyphs, every founder process with its agent ceiling, every stack, every buyer lens, and a link index to the rest of the site.',
+    'The power view: the whole catalog on one page. Every ranked product with bare scores and access glyphs, every founder process with its agent ceiling, every stack, every ICP lens, and a link index to the rest of the site.',
 }
 
 // The /everything power view — one deliberately long, deliberately dense page: maximum
@@ -182,7 +182,7 @@ export default function EverythingPage() {
       <section id="lenses" className="space-y-2">
         <div className="flex items-baseline gap-2">
           <h2 className="font-display leading-[1.1] text-lg font-semibold tracking-tight">
-            <Link href="/icp" className="hover:text-emerald-300">Buyer lenses</Link>
+            <Link href="/icp" className="hover:text-emerald-300">ICP lenses</Link>
           </h2>
           <span className="font-mono text-xs tabular-nums text-zinc-500">{lenses.length}</span>
         </div>
