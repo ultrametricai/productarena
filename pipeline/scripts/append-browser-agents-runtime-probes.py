@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # Keyless runtime probes for the browser-agents arena bring-up (2026-09): live-checks the hosted
 # MCP endpoint and machine-readable API specs, and appends evidence distilled from the recorded
-# runtime probes in data/browser-agents/proofs/ (see pipeline/stages/probe-record.ts
-# LOCAL_PROBES['browser-agents']). Mirrors append-mcp-infra-runtime-probes.py: live checks FAIL
+# runtime probes in data/browser-agents/proofs/ (see pipeline/probes/browser-agents.ts).
+# Mirrors append-mcp-infra-runtime-probes.py: live checks FAIL
 # (exit 1) when an observation no longer matches, so stale claims can't be re-appended.
 #
 # Run AFTER `pnpm pipeline probe --category browser-agents` — that stage wholesale-replaces
