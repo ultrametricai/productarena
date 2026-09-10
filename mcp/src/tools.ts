@@ -371,7 +371,7 @@ const TOP_LIMIT_DEFAULT = 10
 const TOP_LIMIT_MAX = 50
 
 // Flattens every arena's leaderboard into one list and ranks it by the chosen metric.
-// "arenaScore" maps to the data files' `aiEra` field (the Arena Score, formerly AI-Era Index).
+// "arenaScore" maps to the data files' `aiEra` field (the PA Score, formerly Arena Score / AI-Era Index).
 export async function topProducts(client: ArenaClient, metric: string, limit?: number): Promise<TopProductEntry[]> {
   const normalized = metric === 'aiEra' ? 'arenaScore' : metric
   if (!TOP_METRICS.includes(normalized as TopMetric)) {

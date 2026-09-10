@@ -1,4 +1,4 @@
-// Metric-name normalization shared by `top` and `pick`. The data files call the Arena Score
+// Metric-name normalization shared by `top` and `pick`. The data files call the PA Score
 // `aiEra` (its old name) — user-facing names accept both spellings plus kebab-case variants.
 import type { LeaderboardEntry } from './types.js'
 
@@ -26,10 +26,10 @@ export function normalizeMetric(raw: string): Metric | null {
   return METRIC_ALIASES[raw.trim().toLowerCase()] ?? null
 }
 
-// Human label for tables/why-lines: agentReady -> "agent-ready", arenaScore -> "Arena Score".
+// Human label for tables/why-lines: agentReady -> "agent-ready", arenaScore -> "PA Score".
 export const METRIC_LABELS: Record<Metric, string> = {
   agentReady: 'agent-ready',
-  arenaScore: 'Arena Score',
+  arenaScore: 'PA Score',
   agenticApp: 'agentic app',
   apiQuality: 'API quality',
   score: 'coverage score',

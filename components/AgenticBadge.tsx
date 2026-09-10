@@ -38,7 +38,7 @@ const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
 // Since v2.4 (the PA Score), these badges are secondary to AiEraBadge wherever both appear —
 // `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the PA Score strip).
 // `showLabel={false}` drops the metric name from the pill (kept in the title + sr-only text) —
-// for table columns whose header already says AGENTREADYNESS/AGENTIC, where repeating the label
+// for table columns whose header already says AGENT-READY/AI-NATIVE, where repeating the label
 // on every row says the same word N times.
 export default function AgenticBadge({
   kind,

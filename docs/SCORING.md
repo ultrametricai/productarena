@@ -89,7 +89,14 @@ Alongside every verdict, we show a confidence level: high, medium, or low. Low c
 we only found one weak or indirect signal — take that verdict as a starting point, not a final
 word. It's a flag to double-check, not proof the verdict is wrong.
 
-## How the overall Arena Score is built
+## What the letter grade (A–D) next to a PA Score means
+
+Separately from per-verdict confidence, every PA Score carries a letter grade — A, B, C, or D —
+that says how much of that score rests on evidence we tested ourselves versus evidence the
+vendor merely claims. It grades the receipts, not the product: a great product can carry a C
+simply because we haven't probed it deeply yet, and grades move as hands-on probes land.
+
+## How the overall PA Score is built
 
 Each product's score is a percentage: how much of its *applicable* (non-`na`) capability weight
 it actually earned, given the verdicts and quality scores above. Bigger, more important
@@ -97,7 +104,7 @@ capabilities (a "core" story) count for more than nice-to-haves. A product that 
 isn't "40% as good as a perfect product" in some absolute sense — it earned 40% of the
 evidence-backed credit available to it.
 
-On top of the raw coverage score, we also publish a single **Arena Score** (0–100) per product —
+On top of the raw coverage score, we also publish a single **PA Score** (0–100) per product —
 a blend of five angles, and the first two are easy to conflate so it's worth being precise:
 
 - **agentReady = reach.** Does an agent have a *way in* at all — an MCP server, an official CLI,
