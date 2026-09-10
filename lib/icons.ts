@@ -29,6 +29,11 @@ export const THEME_FALLBACK_ICON = '🏷️'
 // Bucketing by keyword keeps ~400 live theme ids covered by ~60 rules and gives new themes a
 // sensible icon for free whenever they reuse existing vocabulary.
 const THEME_RULES: Array<[RegExp, string]> = [
+  // Code review & extraction arenas
+  [/codebase-understanding/, '🧭'],
+  [/ocr|multilingual|handwriting/, '🔤'],
+  [/^interaction$|interaction/, '💬'],
+  [/^surfaces$|surfaces/, '🧩'],
   // Trust & safety
   [/privacy|consent|cookieless|tracking/, '🔒'],
   [/security|guardrails|safety|anti-bot|stealth|isolation|secret|sast|scanning|supply-chain|dependency|vulnerab/, '🛡️'],
@@ -169,6 +174,9 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'ecosystem-integrations': 'the surrounding ecosystem — integrations, marketplaces, community packages',
   'database-realtime': 'database and realtime features — queries, subscriptions, live sync',
   'code-generation': 'quality of generated code — correctness, style, fit to the codebase',
+  'codebase-understanding': 'how deeply the tool maps your repo — cross-file context, architecture awareness, history',
+  'interaction': 'how you steer it — commands, replies, review conversations, configurability in the loop',
+  'surfaces': 'where it meets your workflow — IDE, CLI, web, PR comments, CI checks',
   'anti-bot': 'getting past bot defenses — CAPTCHAs, fingerprinting, blocks',
   'agent-building': 'building agents — abstractions, tool wiring, control flow',
 }
