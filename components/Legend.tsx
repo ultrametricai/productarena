@@ -8,13 +8,17 @@ import Link from 'next/link'
 // (T X C D) sit beside their word so the dense StoryMatrix letters are learnable here too.
 // Deliberately terse: [the actual badge] + a 2–4 word gloss; full explanations on /methodology.
 // (`defaultOpen` kept for call-site compatibility; the legend is always open now.)
-function Chip({ className, children }: { className: string; children: string }) {
+// Each chip deep-links to the methodology entry for its vocabulary (verdicts / evidence tiers)
+// — the legend explains the words in four, the methodology in full, so no chip is a dead end.
+function Chip({ className, href, title, children }: { className: string; href: string; title: string; children: string }) {
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-1.5 py-px text-[10px] font-medium ring-1 ${className}`}
+    <Link
+      href={href}
+      title={title}
+      className={`inline-flex items-center rounded-full px-1.5 py-px text-[10px] font-medium ring-1 transition hover:brightness-125 hover:ring-emerald-400/60 ${className}`}
     >
       {children}
-    </span>
+    </Link>
   )
 }
 
@@ -43,17 +47,17 @@ export default function Legend({ id = 'legend' }: { id?: string; defaultOpen?: b
       className="scroll-mt-4 flex flex-col gap-y-2 rounded-xl border border-zinc-800 px-4 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-8"
     >
       <Group label="Verdict">
-        <Item chip={<Chip className="bg-emerald-950 text-emerald-300 ring-emerald-800">✓ full</Chip>} gloss="clear evidence" />
-        <Item chip={<Chip className="bg-amber-950 text-amber-300 ring-amber-800">~ partial</Chip>} gloss="with caveats" />
-        <Item chip={<Chip className="bg-red-950 text-red-300 ring-red-800">! disputed</Chip>} gloss="evidence conflicts" />
-        <Item chip={<Chip className="bg-zinc-900 text-zinc-500 ring-zinc-700">— none</Chip>} gloss="no evidence found" />
-        <Item chip={<Chip className="bg-zinc-900 text-zinc-400 ring-zinc-800">n/a</Chip>} gloss="question doesn't apply to this kind of product" />
+        <Item chip={<Chip href="/methodology#verdicts" title="How verdicts work — /methodology" className="bg-emerald-950 text-emerald-300 ring-emerald-800">✓ full</Chip>} gloss="clear evidence" />
+        <Item chip={<Chip href="/methodology#verdicts" title="How verdicts work — /methodology" className="bg-amber-950 text-amber-300 ring-amber-800">~ partial</Chip>} gloss="with caveats" />
+        <Item chip={<Chip href="/methodology#verdicts" title="How verdicts work — /methodology" className="bg-red-950 text-red-300 ring-red-800">! disputed</Chip>} gloss="evidence conflicts" />
+        <Item chip={<Chip href="/methodology#verdicts" title="How verdicts work — /methodology" className="bg-zinc-900 text-zinc-500 ring-zinc-700">— none</Chip>} gloss="no evidence found" />
+        <Item chip={<Chip href="/methodology#verdicts" title="How verdicts work — /methodology" className="bg-zinc-900 text-zinc-400 ring-zinc-800">n/a</Chip>} gloss="question doesn't apply to this kind of product" />
       </Group>
       <Group label="Proof">
-        <Item chip={<Chip className="bg-emerald-950 text-emerald-300 ring-emerald-800">T probed</Chip>} gloss="tested by us" />
-        <Item chip={<Chip className="bg-sky-950 text-sky-300 ring-sky-800">X community</Chip>} gloss="users back it" />
-        <Item chip={<Chip className="bg-zinc-900 text-zinc-400 ring-zinc-700">C claimed</Chip>} gloss="vendor claim only" />
-        <Item chip={<Chip className="bg-red-950 text-red-300 ring-red-800">D contradicted</Chip>} gloss="evidence disagrees" />
+        <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-emerald-950 text-emerald-300 ring-emerald-800">T probed</Chip>} gloss="tested by us" />
+        <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-sky-950 text-sky-300 ring-sky-800">X community</Chip>} gloss="users back it" />
+        <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-zinc-900 text-zinc-400 ring-zinc-700">C claimed</Chip>} gloss="vendor claim only" />
+        <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-red-950 text-red-300 ring-red-800">D contradicted</Chip>} gloss="evidence disagrees" />
       </Group>
       <span className="text-[11px] text-zinc-500">
         quality 0–10 · PA Score /100 ·{' '}

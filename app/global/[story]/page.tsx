@@ -128,9 +128,11 @@ export default async function GlobalStoryPage({
                     </Link>
                   </td>
                   <td className="px-3 py-2">
-                    <Link href={href} aria-label={`${cell.productName} verdict details`}>
-                      <VerdictBadge verdict={cell.verdict} />
-                    </Link>
+                    <VerdictBadge
+                      verdict={cell.verdict}
+                      href={href}
+                      hrefTitle={`open ${cell.productName}'s full story row (rationale + citations)`}
+                    />
                   </td>
                   <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">
                     {cell.verdict === 'none' || cell.verdict === 'na' ? (

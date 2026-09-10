@@ -266,11 +266,13 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
   // Numeric rows in display order; each row's winner indices are computed once here. Every row
   // carries its concept's emoji + tooltip from lib/icons.ts — metric icons for the fixed rows,
   // theme icons for the shared-theme rows (same icon that theme shows everywhere else).
-  const numericRows: Array<{ label: string; icon: string; iconTitle: string; values: Array<number | null> }> = [
-    { label: 'PA Score', icon: metricIcon('paScore'), iconTitle: metricTooltip('paScore'), values: selected.map((p) => p.aiEra) },
-    { label: 'Agent-ready', icon: metricIcon('agentReady'), iconTitle: metricTooltip('agentReady'), values: selected.map((p) => p.agentReady) },
-    { label: 'AI-native', icon: metricIcon('aiNative'), iconTitle: metricTooltip('aiNative'), values: selected.map((p) => p.agenticApp) },
-    { label: 'API quality', icon: metricIcon('apiQuality'), iconTitle: metricTooltip('apiQuality'), values: selected.map((p) => p.apiQuality) },
+  // `href` (fixed metric rows only) links the row label to the methodology entry explaining how
+  // that number is computed — theme rows have no per-theme anchor, so they stay plain text.
+  const numericRows: Array<{ label: string; icon: string; iconTitle: string; href?: string; values: Array<number | null> }> = [
+    { label: 'PA Score', icon: metricIcon('paScore'), iconTitle: metricTooltip('paScore'), href: '/methodology#arena-score', values: selected.map((p) => p.aiEra) },
+    { label: 'Agent-ready', icon: metricIcon('agentReady'), iconTitle: metricTooltip('agentReady'), href: '/methodology#ai-era', values: selected.map((p) => p.agentReady) },
+    { label: 'AI-native', icon: metricIcon('aiNative'), iconTitle: metricTooltip('aiNative'), href: '/methodology#ai-era', values: selected.map((p) => p.agenticApp) },
+    { label: 'API quality', icon: metricIcon('apiQuality'), iconTitle: metricTooltip('apiQuality'), href: '/methodology#ai-era', values: selected.map((p) => p.apiQuality) },
     ...themes.map((t) => ({
       label: themeLabel(t),
       icon: themeIcon(t),
@@ -384,10 +386,21 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                 return (
                   <tr key={row.label}>
                     <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
-                      <span className="inline-flex items-center gap-1.5">
-                        <IconChip icon={row.icon} title={row.iconTitle} />
-                        {row.label}
-                      </span>
+                      {row.href ? (
+                        <Link
+                          href={row.href}
+                          title={`${row.iconTitle} — how it's computed, on /methodology`}
+                          className="inline-flex items-center gap-1.5 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+                        >
+                          <IconChip icon={row.icon} title={row.iconTitle} />
+                          {row.label}
+                        </Link>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <IconChip icon={row.icon} title={row.iconTitle} />
+                          {row.label}
+                        </span>
+                      )}
                     </th>
                     {row.values.map((value, i) => (
                       <td key={selected[i].id} className="px-3 py-2">
