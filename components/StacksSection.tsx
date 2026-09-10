@@ -35,17 +35,21 @@ export default function StacksSection({ data }: { data: CategoryData }) {
               <div className="mt-4 space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score</span>
-                  <AiEraBadge value={coverage.aiEra} size="sm" />
+                  <AiEraBadge value={coverage.aiEra} size="sm" href="/methodology#arena-score" />
                 </div>
                 <ScoreBar score={coverage.score} />
                 <div className="flex items-center justify-between">
                   <div className="flex flex-wrap gap-2">
-                    <AgenticBadge kind="agent-ready" value={coverage.agentReady} size="sm" />
-                    <AgenticBadge kind="agentic-app" value={coverage.agenticApp} size="sm" />
+                    <AgenticBadge kind="agent-ready" value={coverage.agentReady} size="sm" href="/methodology#ai-era" />
+                    <AgenticBadge kind="agentic-app" value={coverage.agenticApp} size="sm" href="/methodology#ai-era" />
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <a
+                    href="#story-matrix"
+                    title="Which stories apply — the arena's full story matrix below"
+                    className="text-xs text-zinc-400 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+                  >
                     {coverage.applicable}/{coverage.total} stories applicable
-                  </p>
+                  </a>
                 </div>
               </div>
               <p className="mt-3 text-xs italic text-zinc-400">

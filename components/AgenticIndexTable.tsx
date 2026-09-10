@@ -103,7 +103,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
               </td>
               <td className="px-3 py-2">
                 {/* Column header already says AGENT-READY — the pill carries just the value. */}
-                <AgenticBadge kind="agent-ready" value={row.entry.agentReady} size="sm" showLabel={false} />
+                <AgenticBadge kind="agent-ready" value={row.entry.agentReady} size="sm" showLabel={false} href="/methodology#ai-era" />
               </td>
               <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">
                 {row.entry.apiQuality === null ? '—' : row.entry.apiQuality.toFixed(0)}
@@ -118,6 +118,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
                 <AiEraBadge
                   value={row.entry.aiEra}
                   size="sm"
+                  href="/methodology#arena-score"
                   components={{
                     agentReady: row.entry.agentReady,
                     apiQuality: row.entry.apiQuality,

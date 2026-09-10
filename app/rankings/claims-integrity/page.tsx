@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import ClaimsIntegrityIndexTable from '@/components/ClaimsIntegrityIndexTable'
 import { loadAll } from '@/lib/data'
 
@@ -27,9 +28,15 @@ export default function ClaimsIntegrityRankingPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by claims integrity: each vendor&rsquo;s own
           capability claims, reconciled against our judge&rsquo;s independent verdicts. Verified claims count fully,
-          unverified ones count for nothing, and each contradicted claim cancels two verified ones —
-          <span className="font-mono text-xs"> 100 × max(0, verified − 2×contradicted) / testable</span>. Products
-          with no testable claims are unscored (null, never zero) and sort last.
+          unverified ones count for nothing, and each contradicted claim cancels two verified ones —{' '}
+          <Link
+            href="/methodology#claims-integrity"
+            title="How claims integrity is computed — full definitions on /methodology"
+            className="font-mono text-xs underline decoration-zinc-700 hover:text-emerald-300"
+          >
+            100 × max(0, verified − 2×contradicted) / testable
+          </Link>
+          . Products with no testable claims are unscored (null, never zero) and sort last.
         </p>
       </div>
       <ClaimsIntegrityIndexTable categories={categories} />

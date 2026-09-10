@@ -336,10 +336,18 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
                     <AgentAccessGlyphs data={data} productId={row.productId} />
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">
-                    <VerificationMixChip data={data} productId={row.productId} />
+                    <VerificationMixChip
+                      data={data}
+                      productId={row.productId}
+                      href={`/arena/${data.category.id}/product/${row.productId}#story-verdicts`}
+                    />
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">
-                    <ClaimsChip data={data} productId={row.productId} />
+                    <ClaimsChip
+                      data={data}
+                      productId={row.productId}
+                      href={`/arena/${data.category.id}/product/${row.productId}#claims`}
+                    />
                   </td>
                 </tr>
               )

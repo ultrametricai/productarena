@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import {
   formatUptimePct,
   hasMatureSloHistory,
@@ -38,7 +39,13 @@ export default function SloUptimeLine({ arena, productId }: { arena: string; pro
 
   return (
     <p className="mt-1 text-[11px] text-zinc-500">
-      <span className="uppercase tracking-widest">Agent surface uptime</span>{' '}
+      <Link
+        href="/pipeline#slo"
+        title="How we monitor agent surfaces (llms.txt / MCP / openapi.json) — fleet-wide health on /pipeline"
+        className="uppercase tracking-widest underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+      >
+        Agent surface uptime
+      </Link>{' '}
       {slos.map((s, i) => (
         <span key={s.surface}>
           {i > 0 && ' · '}

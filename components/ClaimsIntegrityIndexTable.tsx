@@ -80,7 +80,13 @@ export default function ClaimsIntegrityIndexTable({ categories, limit }: { categ
                 </Link>
               </td>
               <td className="px-3 py-2">
-                <ClaimsChip data={row.data} productId={row.product.id} />
+                {/* The score itself deep-links to the product's claim-by-claim breakdown — same
+                    target as the "claims →" cell, so the number is never a dead end. */}
+                <ClaimsChip
+                  data={row.data}
+                  productId={row.product.id}
+                  href={`/arena/${row.data.category.id}/product/${row.product.id}#claims`}
+                />
               </td>
               <td className="px-3 py-2 font-mono tabular-nums text-emerald-400">{row.integrity.verified}</td>
               <td className={`px-3 py-2 font-mono tabular-nums ${row.integrity.contradicted > 0 ? 'text-red-400' : 'text-zinc-500'}`}>
