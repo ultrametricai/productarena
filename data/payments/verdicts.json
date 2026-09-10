@@ -657,6 +657,627 @@
     ]
   },
   {
+    "productId": "autumn",
+    "storyId": "accept-card-payment-online",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Autumn is a billing/metering layer built on top of Stripe, with an `attach` API that handles new subscriptions/upgrades/downgrades and a CLI that syncs pricing plans in a single command, suggesting reasonably fast setup. However, there's no direct evidence of a turnkey checkout page or explicit same-day payment acceptance flow, and the product only works atop Stripe (comm-4), meaning a founder still needs a separate Stripe account/setup for actual card processing. Missing for 10: an end-to-end checkout UI or hosted payment page, explicit time-to-first-payment claims, and independent confirmation of same-day integration speed.",
+    "evidenceIds": [
+      "autumn-docs-13",
+      "autumn-docs-5",
+      "autumn-comm-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agent-handles-dispute-end-to-end",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/metering/entitlements infrastructure product (pricing plans, feature gating, usage tracking, credits) — it has no concept of disputes, chargebacks, or fraud evidence handling. Dispute-resolution workflows are entirely outside its category, making this a wrong-axis question.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agent-monitors-dunning",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Autumn webhooks fire only on plan changes (new subscriptions, upgrades, downgrades) and covers usage/credit tracking, but there is no mention of failed-payment events, retry logic, or dunning outreach workflows anywhere in the docs, changelog, or community threads. This is a fair axis for a billing product (Stripe-based dunning is a common billing capability) but no evidence supports Autumn delivering it.",
+    "evidenceIds": [
+      "autumn-docs-8",
+      "autumn-docs-13",
+      "autumn-docs-9"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agent-provisions-payment-link",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Autumn's API/CLI supports creating products/plans (attach, config.ts, atmn CLI) and MCP server exposes billing/plan/customer tools to AI assistants, suggesting an agent could provision products and prices programmatically, but there is no direct evidence of generating a 'payment link' via API or of a documented single-session workflow combining product+price+payment link creation. missing for 10: explicit payment-link creation endpoint/API, end-to-end example of an agent provisioning product+price+payment link in one session, independent verification of this workflow.",
+    "evidenceIds": [
+      "autumn-docs-5",
+      "autumn-docs-13",
+      "autumn-docs-7",
+      "autumn-probe-3",
+      "autumn-probe-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agent-reconciles-payouts",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a pricing/billing and feature-gating layer built on top of Stripe (plans, usage tracking, entitlements) — it has no concept of payouts, balance transactions, or bank deposit reconciliation, which is a Stripe Connect/platform-payments concern, not part of Autumn's product surface.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "A probe confirms llms.txt is live at docs.useautumn.com/llms.txt returning HTTP 200 with structured doc links, directly satisfying the ability to point an agent at agent-oriented docs; this is reinforced by an official MCP server for AI assistants. Missing for 10: no independent/community confirmation of an agent successfully consuming llms.txt in practice, and no openapi.json fallback.",
+    "evidenceIds": [
+      "autumn-probe-1",
+      "autumn-docs-7",
+      "autumn-probe-3"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-ai-insights",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/metering/entitlements infrastructure product for developers, not an end-user data product; it has no concept of surfacing AI-generated insights or suggestions from user data. This story targets analytics/insights features, which is a wrong axis for a billing control layer.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements/metering control layer for SaaS and AI products, not an automation or workflow-orchestration platform; there is no concept of user-defined autonomous background automations in its evidence. This axis is a category error for this product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/pricing/entitlements infrastructure product for developers; it has no built-in AI assistant for end users to delegate tasks to. Its MCP server (autumn-docs-7) lets external AI assistants call Autumn's APIs, which is the opposite role (Autumn as a tool provider, not an agent host) — this does not constitute a built-in assistant inside the product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Autumn ships an `atmn` CLI that syncs pricing configs (`autumn.config.ts`) with a single command and supports non-interactive actions like `preview` and `pull`, which are scriptable and could run in CI, plus SDK calls (`check`, `track`) that are inherently headless. However, there's no explicit documentation or example of running Autumn in a CI/CD pipeline, no mention of non-interactive auth/token flags for automated environments, and no community confirmation of headless CI usage. Missing for 10: explicit CI/CD pipeline examples, non-interactive authentication guidance, and independent confirmation of automated/headless runs.",
+    "evidenceIds": [
+      "autumn-docs-5",
+      "autumn-docs-6",
+      "autumn-docs-11",
+      "autumn-docs-1",
+      "autumn-docs-2",
+      "autumn-probe-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-mcp-client",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements SaaS platform, not an AI agent — the story asks whether the product can consume/plug in external MCP servers to use their tools, which only applies to agentic products. Evidence shows the opposite direction: Autumn ships an MCP *server* so other AI assistants can call Autumn's own billing tools (autumn-docs-7, autumn-probe-3), which does not make this client-side axis applicable.",
+    "evidenceIds": [
+      "autumn-docs-7",
+      "autumn-probe-3"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Autumn is a billing/entitlements SaaS platform (not itself an agent), and it documents an official MCP server that connects AI assistants to its billing, customer, plan, balance, and log tools, confirmed by both docs and probe. Missing for 10: independent hands-on confirmation of the MCP server working and more detail on its tool coverage/setup.",
+    "evidenceIds": [
+      "autumn-docs-7",
+      "autumn-probe-3"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Autumn ships an official MCP server that 'connects AI assistants to Autumn's billing, customer, plan, balance, and log tools,' enabling AI-native/natural-language operation indirectly through an MCP-connected assistant rather than a built-in chat interface. There's no first-party or community evidence of actual natural-language command usage in practice, and the product is fundamentally a CLI/API/dashboard tool otherwise. Missing for 10: direct natural-language command interface (not just MCP passthrough), hands-on demonstration of NL commands working, independent user corroboration.",
+    "evidenceIds": [
+      "autumn-docs-7",
+      "autumn-probe-3"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Autumn ships an official `atmn` CLI documented in first-party docs, supporting config-as-code (autumn.config.ts), pushing/syncing plans, previewing changes (bunx atmn preview), and pulling existing dashboard products (atmn pull) — clearly enabling AI-native, code-first workflows. Missing for 10: independent/hands-on community verification of the CLI itself (community evidence covers billing/security topics, not CLI usage) and no evidence of scripting/automation-specific features beyond basic commands.",
+    "evidenceIds": [
+      "autumn-docs-5",
+      "autumn-docs-6",
+      "autumn-docs-11",
+      "autumn-probe-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Autumn ships a documented public API with clear reference pages (check, track, attach) and code examples, webhooks, and an API-reference section, letting an AI-native user drive billing/entitlements programmatically. Missing for 10: a discoverable machine-readable OpenAPI/swagger spec (probe found only 404s at expected paths), and independent hands-on confirmation of API robustness beyond docs.",
+    "evidenceIds": [
+      "autumn-docs-1",
+      "autumn-docs-2",
+      "autumn-docs-12",
+      "autumn-docs-13",
+      "autumn-docs-8",
+      "autumn-probe-2"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn's docs describe customerId-based check/track/attach calls and an MCP server for billing tools, but there is no evidence of an API-key or credential system that lets an AI-native user mint scoped, least-privilege credentials for an agent. Community reports even describe unauthenticated server actions and customer_id spoofing (IDOR), the opposite of least-privilege access control.",
+    "evidenceIds": [
+      "autumn-docs-1",
+      "autumn-docs-2",
+      "autumn-docs-7",
+      "autumn-comm-6",
+      "autumn-comm-7"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs consistently show official SDK code (autumn.check, autumn.track, autumn.attach) across many endpoints, plus a companion CLI (atmn) for config sync, indicating a first-party SDK for building AI-native billing integrations. Missing for 10: explicit multi-language SDK coverage/package registry links and independent developer corroboration of SDK usage beyond docs.",
+    "evidenceIds": [
+      "autumn-docs-1",
+      "autumn-docs-2",
+      "autumn-docs-5",
+      "autumn-docs-13",
+      "autumn-probe-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "agentic-webhooks",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Autumn documents webhooks fired on plan/subscription changes (autumn-docs-8), giving basic event subscription capability, but evidence doesn't cover a broad event catalog (e.g. usage/track events), payload schemas, signing/verification, or subscription management API — missing for 10: full webhook event catalog, payload/signature docs, subscription management endpoints, independent hands-on confirmation.",
+    "evidenceIds": [
+      "autumn-docs-8"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn's docs include static code snippets for API endpoints (e.g. check, attach) but there is no evidence of an interactive, runnable API console—probes for openapi/swagger specs all 404'd, indicating no interactive reference tooling exists.",
+    "evidenceIds": [
+      "autumn-docs-1",
+      "autumn-docs-13",
+      "autumn-probe-2"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "There's an api-reference section implying documented endpoints, but a direct probe for OpenAPI/Swagger specs at standard paths returned 404s with no alternate machine-readable spec found or linked anywhere in the docs.",
+    "evidenceIds": [
+      "autumn-probe-2"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "api-sandbox",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn is a billing/entitlements layer where sandbox/test-mode testing is a reasonable ask (similar to Stripe test mode), but the evidence pack has no mention of a dedicated sandbox/test environment separate from production—only 'atmn preview' for previewing pricing plan changes before pushing config, which is not the same as isolating test transactions/customers from production data.",
+    "evidenceIds": [
+      "autumn-docs-6"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of API versioning scheme or documented deprecation policy; changelog entries show ongoing changes but no version numbers or deprecation guarantees, and OpenAPI/spec probes 404. missing for 10: versioned API endpoints/headers, explicit deprecation policy documentation, migration guides for breaking changes.",
+    "evidenceIds": [
+      "autumn-probe-2",
+      "autumn-docs-9",
+      "autumn-docs-10"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "automatic-tax-calculation",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/metering/entitlements layer for SaaS pricing built on Stripe; the evidence pack shows no tax/VAT/GST calculation or collection capability, and this is not the axis this product addresses—it relies on Stripe or other systems for tax handling, which is outside its documented scope.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "automation-bulk-operations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn's docs show only single-item operations (check, track, attach for one customer/feature at a time) and CLI commands (pull/preview/push) that sync a single config, but no batch/bulk API for operating across many customers, features, or items at once. missing for 10: bulk/batch API endpoints, documentation of batch customer or feature updates, evidence of any multi-item transaction support.",
+    "evidenceIds": [
+      "autumn-docs-1",
+      "autumn-docs-2",
+      "autumn-docs-13",
+      "autumn-docs-5"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Autumn supports event-driven mechanisms like webhooks fired on plan changes and usage alerts with configurable thresholds (basis field), which act as simple automated triggers tied to billing state. However, there is no evidence of a general-purpose rule engine where users can define custom trigger→action logic across arbitrary events; the automation is scoped narrowly to billing/entitlement events. Missing for 10: a documented rules/automation DSL or workflow builder, support for arbitrary custom triggers/actions beyond billing events, and evidence of chaining multiple actions per rule.",
+    "evidenceIds": [
+      "autumn-docs-8",
+      "autumn-docs-9",
+      "autumn-docs-2",
+      "autumn-docs-12"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/metering/entitlements control layer for SaaS and AI products, not a workflow/job scheduling or automation orchestration tool; scheduling recurring jobs or workflows is outside its product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements infrastructure product (plans, metering, checks, webhooks) rather than a workflow/automation builder with 'automations' that a user could version, review, and roll back; its config-as-code CLI (push/pull/preview) applies to pricing plans, not automations. This story is a category mismatch for the product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "dunning-failed-payment-recovery",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn's evidence covers metering, entitlements, plan attachment, and Stripe catalog sync, but there is no mention of dunning, retry logic for failed payments, or recovery emails anywhere in the docs, changelog, or community discussion.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "embedded-checkout-components",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn's evidence describes a billing/metering/entitlements API, CLI, and MCP integration built on top of Stripe, but nothing in the pack mentions embeddable payment/checkout UI components as an alternative to hosted checkout pages—attach/billing calls appear to route through Stripe's own flows.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "fraud-screening-rules",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/pricing/entitlements control layer for SaaS and AI products, not a fraud-detection or transaction-screening system; ML fraud scoring and block/review/allow rule authoring for disputes-fraud workflows are entirely outside its product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "hosted-checkout-page",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Autumn's metering, entitlements, CLI, MCP, and plan-attach APIs, but nowhere describes a vendor-hosted, conversion-optimized checkout page that a developer can redirect customers to; 'attach' only documents subscription state changes, not a hosted checkout flow.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "idempotent-api-retries",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions idempotency keys or request-retry safety mechanisms anywhere in Autumn's docs, changelog, or community discussion; the API examples shown (check, track, attach) don't reference idempotency handling.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "integrate-from-docs-in-a-day",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs provide multiple copy-paste TypeScript/JS snippets (check, track, attach, gating) and a CLI/config flow that suggest a fast path to a working payment flow, and community comments (comm-2, comm-5) reflect developers finding it appealing to integrate quickly. However all examples are JS/TS only (no other languages), there's no explicit hands-on confirmation of a 'under a day' integration timeline, and separate security reports (comm-6/7) show at least one integration built from the docs' approach ended up with an IDOR vulnerability, suggesting the docs alone may not guarantee a fully working/secure flow without extra care. Missing for 10: multi-language code samples, an independent hands-on report confirming rapid end-to-end integration, and evidence the documented flow is secure by default.",
+    "evidenceIds": [
+      "autumn-docs-1",
+      "autumn-docs-2",
+      "autumn-docs-5",
+      "autumn-docs-6",
+      "autumn-docs-11",
+      "autumn-docs-13",
+      "autumn-comm-2",
+      "autumn-comm-5",
+      "autumn-comm-7"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "marketplace-split-payments",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn's evidence focuses entirely on single-party SaaS billing—metering, plans, entitlements, customer subscriptions via Stripe—with no mention of multi-party marketplace features like seller onboarding, payment splitting, or payouts (e.g., Stripe Connect-style functionality). No evidence pack item addresses marketplace/platform payment distribution.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "multi-currency-charge-settle",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses multi-currency charging, FX conversion, or settlement to a founder's home currency; documentation covers pricing models, metering, and Stripe catalog sync only. Community threads even highlight Autumn's dependency on Stripe alone with no other payment processors, but nothing on currency/FX handling either way.",
+    "evidenceIds": [
+      "autumn-docs-10",
+      "autumn-comm-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "no-code-payment-links",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn is a code-first billing/entitlements layer requiring SDK calls, an autumn.config.ts file, or CLI (atmn) to define and attach plans—there is no evidence of a no-code, dashboard-generated shareable payment link feature for founders to start selling immediately.",
+    "evidenceIds": [
+      "autumn-docs-5",
+      "autumn-docs-11",
+      "autumn-docs-13",
+      "autumn-docs-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Autumn exposes a broad API (check, track, attach, credit systems, usage-based pricing) plus a CLI (`atmn push/pull/preview`) that can define and sync pricing config as code, and an MCP server for AI-native access to billing/customer/plan tools — strong evidence of API-driven control. However, the docs also show a 'pull' workflow for dashboard-created products, implying some setup still originates in the dashboard UI, and there's no explicit statement or independent test confirming full 1:1 parity between every UI action and API/CLI capability. Missing for 10: explicit parity documentation or proof that all dashboard-only actions (e.g., initial product/catalog creation, Stripe processor linking) are fully replicable via API/CLI without ever touching the UI, and independent verification of this parity.",
+    "evidenceIds": [
+      "autumn-docs-1",
+      "autumn-docs-2",
+      "autumn-docs-3",
+      "autumn-docs-5",
+      "autumn-docs-6",
+      "autumn-docs-7",
+      "autumn-docs-11",
+      "autumn-probe-3",
+      "autumn-probe-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn's docs show CLI sync/pull for pricing config (autumn.config.ts) and webhooks for event data, but there is no documented feature for exporting all customer/usage/billing data in an open format to allow a user or team to leave the platform. missing for 10: a documented full data-export or account-portability feature, open-format bulk export of customer/usage records, evidence of data portability upon offboarding.",
+    "evidenceIds": [
+      "autumn-docs-5",
+      "autumn-docs-11",
+      "autumn-docs-8"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "openness-open-license",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only evidence is a fragment from Autumn's llms.txt describing it as 'Drop-in, open-source control layer for AI and Sa[aS]', suggesting an open-source posture, but there is no link to an actual repository, license file, or license type (e.g., MIT/Apache) in the evidence pack, and no independent confirmation of a public code repo. Missing for 10: a direct GitHub/source repo link, an explicit license name/file, and corroboration that the full source (not just docs) is publicly readable.",
+    "evidenceIds": [
+      "autumn-probe-1"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "openness-self-host",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn's docs describe it as an 'open-source control layer' (autumn-probe-1), which would make self-hosting a fair question, but the evidence pack contains no self-hosting guide, Docker/deployment instructions, or infrastructure requirements — all documentation and CLI references (atmn, MCP, API) point to using Autumn as a hosted SaaS. missing for 10: self-host deployment docs, infrastructure/Docker setup instructions, confirmation of a self-hostable server component.",
+    "evidenceIds": [
+      "autumn-probe-1"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "payout-schedule-control",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements control layer built on top of Stripe (pricing, metering, feature gating), not a payments/payout processor; payout scheduling and payout-level reconciliation of charges/fees/refunds is a Stripe Connect/platform payouts concern, outside Autumn's product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "pci-scope-reduction",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements/metering layer built on Stripe, not a payment processor handling card data directly; PCI scope reduction via tokenization is a payment-gateway concern (e.g., Stripe's), not something Autumn's product category addresses. This is a category error for this product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements layer for AI and SaaS products; there is no mention anywhere in the evidence pack of data residency, region selection, or data storage location controls. This is an applicable axis for a data-handling SaaS product, but no evidence supports it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "privacy-no-training",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/metering/entitlements control layer for SaaS/AI products, not an AI model or data platform; the story about preventing user data from being used for AI model training is a category error for this product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "privacy-retention-controls",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements/metering control layer, not an AI system that stores/retains user data or conversation history; data retention and deletion controls are not a fair axis for this product category. The evidence pack contains nothing about data retention policies since it's off-topic for a billing/metering tool.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements infrastructure product, and its own telemetry/tracking APIs (track, check) are core product features for customer usage billing, not analytics on the developer's own usage of Autumn itself—so the axis of opting out of Autumn's own telemetry collection about its users is applicable but no evidence addresses it. No docs, changelog, or community evidence mention any telemetry opt-out, privacy settings, or data collection disclosure for Autumn's own tooling (CLI, SDK, MCP). missing for 10: any privacy policy or opt-out mechanism documentation, any mention of what usage data Autumn collects from its own users, any CLI/SDK flag to disable telemetry.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "recurring-subscription-billing",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Autumn's docs explicitly cover defining plans (autumn.config.ts + atmn CLI), attaching plans to customers with automatic handling of new subscriptions, upgrades, and downgrades, usage-based/pay-per-use pricing with proration-like billing period logic, and webhooks firing on plan changes (new subscriptions, upgrades, downgrades). Community feedback corroborates real-world use for billing/entitlements and notes Autumn's team handling of annual/monthly billing transitions and race conditions. Missing for 10: explicit first-party documentation of free trials and detailed proration mechanics, plus independent hands-on verification of trial/upgrade billing flows.",
+    "evidenceIds": [
+      "autumn-docs-5",
+      "autumn-docs-13",
+      "autumn-docs-8",
+      "autumn-docs-4",
+      "autumn-docs-10",
+      "autumn-comm-1",
+      "autumn-comm-5"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "refunds-full-partial",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack items mention refunds at all—no dashboard refund UI, no refund API endpoint, or partial-refund logic; docs cover checks, tracking, attach/subscriptions, credit systems, and CLI/MCP but never refunds.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "respond-to-disputes-evidence",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements/metering control layer built on Stripe; it has no chargeback/dispute management functionality (evidence covers metering, plans, CLI, MCP, webhooks—none touch chargebacks or dispute lifecycle). Chargeback handling is a payment-processor/fraud-ops axis, not something this product category ships.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "sandbox-test-mode-fidelity",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence in the pack mentions a sandbox/test mode, test cards, or simulated decline/dispute scenarios; Autumn's docs cover CLI, config, gating, webhooks, and MCP but nothing about a testing environment mirroring production payment flows. Since Autumn sits atop Stripe, this is a fair and applicable axis for a billing product, but it's simply undocumented here.",
+    "evidenceIds": [
+      "autumn-docs-5",
+      "autumn-docs-6",
+      "autumn-docs-11",
+      "autumn-docs-13"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "send-hosted-invoices",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements control layer built on top of Stripe for pricing, metering, and feature-gating — not a hosted-invoicing/AP tool. There is no evidence of hosted invoice pages, invoice-specific payment links, or automated reminder emails; the product's focus is subscription/usage billing logic, so this invoicing-specific axis is a category mismatch.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "settlement-reconciliation-reports",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Autumn is a billing/entitlements/metering control layer for SaaS/AI products, not a payments settlement or banking reconciliation tool; there is no concept of bank deposit reconciliation in its evidence pack. This story targets a payments-processor/finance-ops reconciliation product, which is a different category from Autumn's feature-gating and subscription billing focus.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "autumn",
+    "storyId": "wallets-local-payment-methods",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Autumn is a billing/entitlement/metering layer built on top of Stripe (confirmed by autumn-comm-4, which notes it lacks support for other payment providers like Paystack), but the evidence pack contains no mention of Autumn configuring or exposing digital wallets, local payment methods, bank redirects, or BNPL options in checkout. Missing for 10: any documentation of wallet/BNPL/local payment method support, checkout configuration options, or evidence Autumn surfaces Stripe's payment-method capabilities to founders.",
+    "evidenceIds": [
+      "autumn-comm-4"
+    ]
+  },
+  {
+    "productId": "autumn",
+    "storyId": "webhook-delivery-reliability",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Docs mention webhooks are fired for plan changes, but there is no evidence of signed payloads, automatic retries, event logs, or replay functionality for webhook deliveries; the evidence pack shows only a single event type description with no delivery guarantees.",
+    "evidenceIds": [
+      "autumn-docs-8"
+    ]
+  },
+  {
     "productId": "paypal",
     "storyId": "accept-card-payment-online",
     "verdict": "full",

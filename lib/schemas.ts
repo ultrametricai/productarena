@@ -43,11 +43,12 @@ export const ProductSchema = z.object({
     command: z.string().min(2),
     url: z.string().url().optional(),
   })).max(4).optional(),
-  // YC batch code (e.g. "S22", "W23") for products verified — by website domain, never by name
+  // YC batch code (e.g. "S22", "W23", and since YC's 2024 move to four batches a year the
+  // Spring/Fall codes "X25"/"F25") for products verified — by website domain, never by name
   // alone — to be alumni of a Y Combinator batch (see pipeline/scripts/yc-cross-reference.ts and
   // data/yc-batches.json, the source of truth this field is stamped from). Display-only, like
   // PopularitySchema: never fed into scoring (lib/scoring.ts never imports it).
-  ycBatch: z.string().regex(/^[WS]\d{2}$/, 'ycBatch must look like "S22" or "W23"').optional(),
+  ycBatch: z.string().regex(/^[WXSF]\d{2}$/, 'ycBatch must look like "S22", "W23", "X25", or "F25"').optional(),
 })
 
 // Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by

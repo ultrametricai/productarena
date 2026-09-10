@@ -56,4 +56,44 @@ export const probes: LocalProbe[] = [
       expect: /"authorization_servers"/,
       timeoutMs: 30_000,
     },
+    {
+      // Autumn's docs publish a full llms.txt index.
+      probeId: 'llms-docs-index',
+      productId: 'autumn',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.useautumn.com/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.useautumn.com/llms.txt | head -6',
+      expect: /# Autumn/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Docs serve clean markdown at page URL + .md — the MCP page documents the hosted server.
+      probeId: 'docs-md-endpoint',
+      productId: 'autumn',
+      storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.useautumn.com/documentation/mcp.md | head -8'],
+      displayCommand: 'curl -s https://docs.useautumn.com/documentation/mcp.md | head -8',
+      expect: /Documentation Index/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Autumn's hosted MCP answers a keyless initialize with an OAuth challenge whose
+      // www-authenticate header enumerates the full scope surface (customers, plans, billing,
+      // analytics…) — the agent capability map in one header.
+      probeId: 'mcp-remote-handshake',
+      productId: 'autumn',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.useautumn.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.useautumn.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]

@@ -81,4 +81,44 @@ export const probes: LocalProbe[] = [
       expect: /Zero MCP/,
       timeoutMs: 180_000,
     },
+    {
+      // AgentMail's site-root llms.txt is written FOR agents — step-by-step onboarding
+      // instructions, not a docs index (the docs domain has its own).
+      probeId: 'llms-site-agent-onboarding',
+      productId: 'agentmail',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://www.agentmail.to/llms.txt | head -6'],
+      displayCommand: 'curl -sL https://www.agentmail.to/llms.txt | head -6',
+      expect: /# AgentMail: Email for AI Agents/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Docs domain publishes its own llms.txt index (Fern docs).
+      probeId: 'llms-docs-index',
+      productId: 'agentmail',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.agentmail.to/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.agentmail.to/llms.txt | head -6',
+      expect: /# AgentMail \| Documentation/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The hosted AgentMail MCP server answers a keyless initialize with its OAuth challenge
+      // (Bearer + protected-resource metadata) — endpoint exists and speaks the protocol.
+      probeId: 'mcp-remote-handshake',
+      productId: 'agentmail',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.agentmail.to/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.agentmail.to/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]

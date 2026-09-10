@@ -171,4 +171,44 @@ export const probes: LocalProbe[] = [
       expect: /gram version \d+\.\d+\.\d+/,
       timeoutMs: 180_000,
     },
+    {
+      // Manufact's site-root llms.txt is a real agent-oriented index.
+      probeId: 'llms-site-index',
+      productId: 'manufact',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://manufact.com/llms.txt | head -6'],
+      displayCommand: 'curl -s https://manufact.com/llms.txt | head -6',
+      expect: /# Manufact/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Docs serve clean markdown at page URL + .md — the /mcp page names Manufact's own
+      // hosted MCP server machine-readably.
+      probeId: 'docs-md-endpoint',
+      productId: 'manufact',
+      storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.manufact.com/mcp.md | head -8'],
+      displayCommand: 'curl -s https://docs.manufact.com/mcp.md | head -8',
+      expect: /Manufact MCP server/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The MCP-cloud vendor's own hosted MCP server answers a keyless initialize with its
+      // OAuth challenge — it ships what it sells.
+      probeId: 'mcp-remote-handshake',
+      productId: 'manufact',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.manufact.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.manufact.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]

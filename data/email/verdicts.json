@@ -1,5 +1,607 @@
 [
   {
+    "productId": "agentmail",
+    "storyId": "agent-email-end-to-end",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "AgentMail exposes a hosted MCP server with inbox/message/thread/draft/attachment tools plus REST API, webhooks, and human-in-the-loop cc/bcc, giving external agents like Claude a documented path to read, triage, draft, and send email end to end. Missing for 10: independent hands-on confirmation that Claude/ChatGPT specifically completes a full triage-to-send workflow via this connection.",
+    "evidenceIds": [
+      "agentmail-docs-12",
+      "agentmail-docs-3",
+      "agentmail-docs-4",
+      "agentmail-docs-5",
+      "agentmail-docs-6",
+      "agentmail-probe-3"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "AgentMail hosts a live llms.txt at docs.agentmail.to/llms.txt (confirmed via probe returning HTTP 200 with agent-oriented summary content), and its docs are structured with .md-suffixed pages clearly meant for agent/LLM consumption, plus an OpenAPI spec and MCP server for machine-readable access. Missing for 10: no independent/community confirmation of an agent successfully using llms.txt in practice.",
+    "evidenceIds": [
+      "agentmail-probe-1",
+      "agentmail-probe-2",
+      "agentmail-docs-12"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-ai-insights",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email infrastructure API for AI agents, not an analytics/insights product; the evidence shows email inbox/message/thread management, search, and MCP/CLI integrations but no AI-generated insights or suggestions surfaced from user data. This story is a category error for an email API product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AgentMail provides webhook and WebSocket infrastructure so an agent's inbox can react to new email events in real time without polling, which supports autonomous background operation, and its human-in-the-loop cc/bcc feature suggests it's designed for agent-driven workflows. However, there's no documented scheduler, cron, or dedicated 'automation' orchestration feature — it only provides the event-plumbing an agent could use to build such automations itself. Missing for 10: a first-party scheduling/automation-run feature, evidence of actual autonomous agent workflows running unattended, and independent confirmation of reliability of webhooks/websockets in production.",
+    "evidenceIds": [
+      "agentmail-docs-6",
+      "agentmail-docs-7",
+      "agentmail-docs-4",
+      "agentmail-docs-12"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email infrastructure API/platform for building AI agents that use email, not a product with its own built-in AI assistant for end users to delegate tasks to. This story asks about a category of product (an assistant-embedded app) that AgentMail is not — it's infrastructure other agents plug into, not an agent itself.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "AgentMail is API-first: agents register via API key (agentmail-docs-1), manage inboxes/messages/threads entirely through REST calls with an OpenAPI spec (agentmail-docs-2, agentmail-docs-3, agentmail-probe-2), and receive events via webhooks instead of polling, enabling fully headless event-driven automation (agentmail-docs-6). A CLI is documented for scriptable automation (agentmail-docs-13, agentmail-probe-4) and an MCP server exposes the same tools programmatically (agentmail-docs-12). missing for 10: explicit CI/CD pipeline example (e.g. GitHub Actions) and independent hands-on confirmation of headless/CI usage.",
+    "evidenceIds": [
+      "agentmail-docs-1",
+      "agentmail-docs-2",
+      "agentmail-docs-6",
+      "agentmail-docs-13",
+      "agentmail-probe-2",
+      "agentmail-probe-4"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-mcp-client",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email infrastructure/API service for agents, not an agentic runtime that itself consumes external tools; the evidence only shows it hosting its own MCP server (docs-12, probe-3) for others to call, which is the opposite (server) role, not the client-side 'plug in other MCP servers' capability this story asks about.",
+    "evidenceIds": [
+      "agentmail-docs-12",
+      "agentmail-probe-3"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "AgentMail documents a hosted official MCP server at https://mcp.agentmail.to/mcp exposing inbox, message, thread, draft, and attachment tools to any compatible client, confirmed by both docs and probe. AgentMail is an email API service (not itself an agent), so serving MCP tools is a legitimate first-party integration axis. Missing for 10: independent/hands-on community confirmation that the MCP server works reliably in practice.",
+    "evidenceIds": [
+      "agentmail-docs-12",
+      "agentmail-probe-3"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AgentMail exposes a hosted MCP server that lets any compatible AI agent (e.g. Claude) operate inboxes/messages/threads via natural-language tool calls, and offers a no-code CLI, which supports AI-native operation indirectly through a connected client rather than a built-in NL interface. Missing for 10: no first-party conversational/NL interface within AgentMail itself, no evidence of natural-language command parsing in the CLI (docs only say 'without writing code'), and no independent hands-on confirmation of MCP-driven natural-language workflows.",
+    "evidenceIds": [
+      "agentmail-docs-12",
+      "agentmail-docs-13",
+      "agentmail-probe-3",
+      "agentmail-probe-4"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "AgentMail documents an official CLI that can create inboxes, send messages, and manage threads without writing code, confirmed by both docs and a probe. Missing for 10: independent/hands-on community corroboration of the CLI's usability or completeness, and more detail on CLI command coverage beyond the brief description.",
+    "evidenceIds": [
+      "agentmail-docs-13",
+      "agentmail-probe-4"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "AgentMail is fundamentally API-first: docs cover registration, inbox creation, messaging, webhooks/websockets, multi-tenancy, and a live OpenAPI spec (openapi.json) confirms a documented public API, with SDK examples in the dashboard corroborated by community feedback. missing for 10: independent third-party API usage report or hands-on developer walkthrough beyond vendor docs.",
+    "evidenceIds": [
+      "agentmail-docs-1",
+      "agentmail-docs-2",
+      "agentmail-docs-3",
+      "agentmail-probe-2",
+      "agentmail-probe-1",
+      "agentmail-comm-7"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe scoped API keys restricted to a single pod or single inbox, enabling least-privilege credential issuance per agent/customer, plus per-agent registration issuing distinct API keys and inbox IDs. Missing for 10: independent/hands-on verification of scope enforcement and finer-grained permission types (e.g., read-only vs send).",
+    "evidenceIds": [
+      "agentmail-docs-9",
+      "agentmail-docs-10",
+      "agentmail-docs-1"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs show agents registering programmatically and receiving API keys, and community feedback references dashboard SDK code examples and switching between Python and curl usage, indicating real official SDKs backed by an OpenAPI spec. This supports AI-native developers building directly against official SDKs. Missing for 10: an explicit first-party page enumerating supported SDK languages/versions, and independent hands-on validation of SDK reliability beyond the dashboard popover mention.",
+    "evidenceIds": [
+      "agentmail-docs-1",
+      "agentmail-comm-7",
+      "agentmail-comm-4",
+      "agentmail-probe-2"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "AgentMail's docs explicitly describe a webhooks feature where users register a URL and receive POST requests for email events instead of polling, directly matching the story. Missing for 10: independent/hands-on confirmation of webhook reliability or delivery guarantees beyond first-party docs.",
+    "evidenceIds": [
+      "agentmail-docs-6"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "ai-drafts-in-my-voice",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is developer email infrastructure (APIs, inboxes, webhooks, MCP tools) for AI agents to send/receive mail — it is plumbing, not an AI assistant that learns a user's voice/tone and drafts reviewable replies. That drafting behavior would be built by a developer on top of AgentMail, not shipped by AgentMail itself, so this axis is a category mismatch for this product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "ai-inbox-answers",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "AgentMail provides full-text search across threads and an MCP server exposing inbox/message/thread tools that a downstream assistant could use to answer email questions, but it is an email API/infrastructure product, not an assistant itself — there is no built-in natural-language Q&A over an inbox and no calendar integration or 'what's outstanding' reasoning capability mentioned anywhere in the evidence. missing for 10: any calendar integration, any native grounded-answer/Q&A assistant experience (only keyword search + raw tool access), and evidence of end-to-end 'ask questions, get grounded answers' behavior rather than raw API primitives.",
+    "evidenceIds": [
+      "agentmail-docs-5",
+      "agentmail-docs-12"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "ai-triage-labels",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail's docs describe inbox/message/thread infrastructure (search, webhooks, multi-tenancy, MCP/CLI) for building agent-driven email systems, but there is no evidence of built-in AI triage features — no auto-labeling, categorization, priority surfacing, or steerable/auditable triage behavior for a user's own inbox.",
+    "evidenceIds": [
+      "agentmail-docs-3",
+      "agentmail-docs-5",
+      "agentmail-docs-6",
+      "agentmail-docs-9"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AgentMail exposes a machine-readable OpenAPI spec (agentmail-probe-2) and its docs site includes language-switchable code snippets (Python/curl) plus SDK example popovers praised by users (agentmail-comm-2, agentmail-comm-7), suggesting an interactive reference. However, there is no evidence of a true 'try it now' runnable/executable API console, and independent reports note the docs site itself is slow and glitchy (agentmail-comm-1, agentmail-comm-3), undermining a smooth interactive experience. Missing for 10: confirmation of an actual runnable/sandboxed request execution feature, and resolution of the reported performance/UX issues on the docs site.",
+    "evidenceIds": [
+      "agentmail-probe-2",
+      "agentmail-comm-2",
+      "agentmail-comm-7",
+      "agentmail-comm-1",
+      "agentmail-comm-3"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A probe confirms a live OpenAPI spec at https://docs.agentmail.to/openapi.json returning HTTP 200 with an 'openapi' key, and docs also expose an llms.txt for machine consumption. Missing for 10: no independent third-party confirmation of spec completeness/versioning beyond the probe check.",
+    "evidenceIds": [
+      "agentmail-probe-2",
+      "agentmail-probe-1"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "api-sandbox",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence of a dedicated sandbox/test environment separate from production—docs describe creating on-demand inboxes and pods, but nothing indicates a non-production testing mode that isolates test data from real inbox/production data.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "There's an OpenAPI spec (agentmail-probe-2) confirming an API exists, but no evidence anywhere in the pack of API versioning scheme or a documented deprecation policy. missing for 10: versioning scheme documentation, deprecation policy, changelog/migration guides.",
+    "evidenceIds": [
+      "agentmail-probe-2"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "assignment-and-routing",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents, not a team helpdesk or shared-inbox collaboration tool; there is no concept of human teammates, conversation assignment, or routing rules for team ownership in the evidence—only inbox/pod creation, CC/BCC human-in-the-loop, and webhooks for agent workflows. This story targets a team-collaboration/ticketing use case that is a category mismatch for AgentMail's agent-inbox API model.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm agents can programmatically create tens/hundreds/thousands of inboxes on demand and manage many pods/inboxes via scoped API keys, which supports bulk-scale automation. However, there's no documented batch/bulk endpoint for operations like mass message sending, bulk thread updates, or batch deletes—only single-item message/thread APIs are described. missing for 10: explicit bulk/batch API operations for messages or threads, evidence of rate-limit-aware bulk processing, independent confirmation of bulk usage at scale.",
+    "evidenceIds": [
+      "agentmail-docs-2",
+      "agentmail-docs-9",
+      "agentmail-docs-10",
+      "agentmail-docs-3",
+      "agentmail-docs-5"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "AgentMail provides webhooks and WebSocket event streams that notify external systems when new emails/events occur, which can be used to build automated event-triggered workflows, but there's no evidence of a native rules engine within AgentMail itself (e.g., conditional filters, if-this-then-that logic) that autonomously triggers actions — the actual 'action' still has to be coded by the developer's own listener. missing for 10: a documented in-product rules/automation engine, conditional filtering, or declarative trigger-action configuration rather than raw event delivery.",
+    "evidenceIds": [
+      "agentmail-docs-6",
+      "agentmail-docs-7"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents (inboxes, messages, webhooks, MCP tools) and does not offer any scheduling/cron/recurring-job orchestration capability; scheduling workflows is outside its product category as an email service.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents, not an automation/workflow builder with versioned, reviewable, rollback-able 'automations'; this axis doesn't apply to its product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "beyond-email-channels",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is exclusively an email API/infrastructure product for AI agents; all evidence concerns email inboxes, messages, threads, and IMAP/SMTP/webhooks. There is no indication it handles SMS, WhatsApp, social, or live chat channels — this is a category error for the product's scope, not a missing feature.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "bulk-triage-actions",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is a developer-facing email API/infrastructure product for AI agents (inboxes, messages, threads, webhooks, MCP/CLI for programmatic use), not a human email client with a triage UI; bulk-select-and-archive/label/mark-done is a UI/UX capability for an end-user inbox app, which is outside this product's category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "calendar-inside-client",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents, not a calendar or email client with a UI for viewing calendars or responding to invites; this story concerns end-user calendar features that fall outside its category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "full-history-import",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents, not a consumer mail client aimed at 'switchers' migrating from another provider. There is no concept of importing mail history/contacts from a prior provider in this product's evidence, and the axis of provider-switching migration does not fit its category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "instant-search-operators",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm full-text search across sender, recipients, subject, and body with relevance ranking, covering the core 'ranked results' and 'across full mail history' aspects. However, there's no evidence of specific search operators (e.g., date ranges, boolean logic) or advanced filters, and no independent benchmarking of speed/precision. missing for 10: documented search operators/filters syntax, evidence of performance at scale, independent verification of search speed/precision.",
+    "evidenceIds": [
+      "agentmail-docs-5"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "internal-comments-mentions",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents, not a collaboration/inbox UI tool with internal commenting or @mention side-threads; this is a category error for the product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "keyboard-first-speed",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "AgentMail's evidence covers its email API, SDK, MCP server, and CLI, but there is no mention of keyboard shortcuts or a command palette in its dashboard/web UI. In fact, community reports describe the web interface as laggy and slow to load (WebGL errors, notable UI lag), undermining any 'fast enough to never wait' claim even though no such claim was made. missing for 10: any documentation of keyboard shortcuts, command palette, or UI speed benchmarks.",
+    "evidenceIds": [
+      "agentmail-comm-1",
+      "agentmail-comm-2",
+      "agentmail-comm-3"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "masked-aliases",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is developer infrastructure for provisioning email inboxes for AI agents (bulk inbox creation, sending/receiving, webhooks, MCP/CLI integrations), not a consumer email service offering alias/masked-address privacy protection for a human switcher's sign-ups. There is no evidence of a masking/forwarding feature that hides a user's real personal address from websites or strangers — the product's inboxes are agent-owned mailboxes, not privacy aliases for an individual's real inbox.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "multi-account-unified",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email-infrastructure API for provisioning new inboxes for AI agents, not a personal unified-inbox client for consolidating a switcher's existing Gmail/Microsoft 365/IMAP accounts. Its IMAP/SMTP support runs in the opposite direction — connecting external clients like Outlook or Thunderbird to an AgentMail-hosted inbox — rather than importing or aggregating a user's pre-existing multi-provider accounts, so this axis does not apply to the product's category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "offline-access",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is a cloud email API/service for AI agents, not an offline-capable client application; there is no concept of local offline storage or sync-on-reconnect in its architecture (it's API/webhook/websocket/IMAP based, always requiring connectivity). Offline-first read/write/sync is a category error for this kind of hosted API product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "open-protocol-access",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AgentMail explicitly documents IMAP/SMTP connectivity so any standard mail client (Outlook, Thunderbird, Apple Mail) can access inboxes, directly supporting openness and switcher portability. However, there's no mention of JMAP support or a dedicated standards-based bulk export/backup feature (e.g., mbox/eml export), so full protocol-and-format portability isn't fully evidenced. Missing for 10: JMAP protocol support, documented data export/backup format, independent confirmation that IMAP/SMTP works reliably in practice.",
+    "evidenceIds": [
+      "agentmail-docs-8"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "AgentMail is API-first: docs show a full OpenAPI spec and comprehensive API coverage (inboxes, messages, threads, webhooks, websockets, multi-tenancy, custom domains) plus a CLI that mirrors dashboard actions ('without writing code'), suggesting the API is the primary and most complete surface. However, there's no explicit comparison confirming every UI-only feature (e.g., dashboard SDK popovers, onboarding flows) has an API equivalent, and community feedback focuses on UI performance/onboarding issues rather than parity. Missing for 10: explicit UI-vs-API feature parity documentation, independent confirmation that dashboard-only actions are all exposed via API.",
+    "evidenceIds": [
+      "agentmail-docs-2",
+      "agentmail-docs-3",
+      "agentmail-docs-5",
+      "agentmail-docs-6",
+      "agentmail-docs-7",
+      "agentmail-docs-9",
+      "agentmail-docs-13",
+      "agentmail-probe-2",
+      "agentmail-comm-7"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "openness-full-export",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AgentMail supports connecting standard IMAP/SMTP clients (Outlook, Thunderbird, Apple Mail), which gives users open-protocol access to their mailbox data rather than lock-in to a proprietary format, and the OpenAPI spec/CLI allow programmatic retrieval of messages. However there is no explicit documented 'export all data' or account-portability/data-takeout feature, and no evidence of exporting threads/attachments in bulk open formats. Missing for 10: explicit bulk export/backup tooling, documented data-portability guarantees, and confirmation of full account deletion with data takeout.",
+    "evidenceIds": [
+      "agentmail-docs-8",
+      "agentmail-probe-2",
+      "agentmail-docs-13"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is a hosted email API/SaaS product; no evidence in the pack indicates its source code is published under any open license—docs, SDKs, CLI and MCP server are described but not their licensing. Missing for 10: any mention of an open-source repository, license file, or public source code availability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "openness-self-host",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "AgentMail is presented entirely as a hosted API/service (inboxes, MCP server, CLI, webhooks) with no mention of self-hosting the core product; a community comment even notes a competitor positions itself as the 'self-hosted' alternative, implying AgentMail itself is not self-hostable.",
+    "evidenceIds": [
+      "agentmail-comm-9"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for AgentMail; this is a plausible axis for an email API product but no documentation or community evidence addresses it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data-training opt-out, privacy policy commitments, or AI-training data usage controls; all evidence covers product features like inboxes, messaging, MCP, and community feedback unrelated to this axis. missing for 10: any privacy policy statement, data-training opt-out mechanism, or terms-of-service language regarding AI model training use.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy/compliance settings for inboxes, messages, or accounts. missing for 10: any documentation on retention periods, deletion APIs/endpoints, data export, or privacy policy controls.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or opt-out controls for AgentMail; the docs focus on inbox/messaging/API features with no privacy-posture disclosures.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "read-statuses",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "AgentMail is an agent-focused email API; the evidence pack documents sending, threads, webhooks, search, and inbox management but contains no mention of read receipts, open tracking, or delivery/open status notifications for messages sent.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "scheduled-send-undo",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack of scheduled send-later functionality or an undo-send grace window feature; AgentMail's documented capabilities focus on immediate sending, inboxes, threads, and integrations, not delayed/undo sending.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "self-host-option",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "AgentMail is documented throughout as a hosted API/SaaS platform (pods, scoped API keys, hosted MCP server, custom domains for sending reputation) with no mention of a self-hosted deployment option; a competitor is explicitly noted as positioning itself as 'a self-hosted drop-in replacement' for AgentMail, implying AgentMail itself is not self-hostable.",
+    "evidenceIds": [
+      "agentmail-docs-9",
+      "agentmail-docs-10",
+      "agentmail-docs-11",
+      "agentmail-comm-9"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "share-availability",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents (sending, receiving, threading, webhooks) — it has no calendar/scheduling or meeting-booking functionality. Sharing availability or inserting bookable meeting times is a calendar-integration feature entirely outside its product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "shared-team-inbox",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "AgentMail's docs focus on agents each owning an Inbox, cc/bcc-ing humans for oversight, and multi-tenant pods scoped by API key for separating customers — there is no evidence of a shared inbox/shared conversation-state view for a human team to collaborate together on the same inbox.",
+    "evidenceIds": [
+      "agentmail-docs-9",
+      "agentmail-docs-10",
+      "agentmail-docs-4"
+    ]
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "snippets-templates",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack of any snippet/template library, reusable variables, or attachment-template feature for composing messages — the docs only show ad hoc message sending, threads, and human-in-the-loop cc/bcc, not saved templates.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "snooze-and-reminders",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents, not an inbox UI or triage tool with snooze/reminder scheduling features; this story applies to end-user email client apps, not a developer email API.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "split-inbox-triage",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for provisioning agent inboxes (sending, receiving, search, webhooks), not a human-facing email client with inbox categorization or triage views; splitting a single inbox into prioritized streams (important/team/newsletters/calendar) is a wrong axis for this product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "agentmail",
+    "storyId": "tracker-blocking",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AgentMail is an email API/infrastructure product for AI agents, not a consumer email client that a 'switcher' would migrate to for personal inbox privacy; tracking-pixel blocking and switcher-facing privacy transparency are not applicable axes for this developer-facing product category.",
+    "evidenceIds": []
+  },
+  {
     "productId": "fastmail",
     "storyId": "agent-email-end-to-end",
     "verdict": "partial",
