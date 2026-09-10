@@ -1,9 +1,10 @@
 import Link from 'next/link'
+import ProductLogoView from '@/components/ProductLogoView'
 
 // One chip = one verified integration neighbor: links to the neighbor's product page, and the
 // title carries the verbatim evidence excerpt the edge rests on (plus which side's evidence said
 // it). Server component, pure over serializable props — callers assemble ChipData from
-// lib/integrations.ts's graph + productRefIndex.
+// lib/integrations.ts's graph + productRefIndex, resolving hasLogo server-side (lib/logos.ts).
 export interface IntegrationChipData {
   productId: string
   name: string
@@ -11,6 +12,7 @@ export interface IntegrationChipData {
   arenaName: string
   // Tooltip: the verbatim excerpt(s) + provenance ("from <product>'s evidence").
   title: string
+  hasLogo: boolean
 }
 
 // Tooltip text for one neighbor relation: every evidence-backed mention behind the edge, quoted
@@ -32,6 +34,7 @@ export function IntegrationChip({ chip }: { chip: IntegrationChipData }) {
       title={chip.title}
       className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
     >
+      <ProductLogoView product={{ id: chip.productId, name: chip.name }} size={16} hasLogo={chip.hasLogo} />
       <span className="font-medium">{chip.name}</span>
       <span className="text-[10px] uppercase tracking-wide text-zinc-500">{chip.arenaName}</span>
     </Link>

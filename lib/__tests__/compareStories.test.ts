@@ -15,7 +15,7 @@ import {
 } from '../compareStories'
 
 function story(overrides: Partial<CompareStoryMeta> & { id: string }): CompareStoryMeta {
-  return { title: `Story ${overrides.id}`, weight: 1, scope: 'global', ...overrides }
+  return { title: `Story ${overrides.id}`, weight: 1, scope: 'global', theme: null, ...overrides }
 }
 
 function arena(
@@ -67,14 +67,14 @@ describe('toArenaStoryData', () => {
       [{ id: 's1', title: 'T1', weight: 3, scope: 'global', persona: 'x', theme: 't', group: 'g' }],
       [{ productId: 'p1', storyId: 's1', verdict: 'partial', quality: 6.5, rationale: 'r', evidenceIds: [] }],
     )
-    expect(data.stories).toEqual([{ id: 's1', title: 'T1', weight: 3, scope: 'global' }])
+    expect(data.stories).toEqual([{ id: 's1', title: 'T1', weight: 3, scope: 'global', theme: 't' }])
     expect(data.storyIds.has('s1')).toBe(true)
     expect(data.cells.get('p1:s1')).toEqual({ verdict: 'partial', quality: 6.5 })
   })
 
   it('tolerates missing weight/scope (older data) with lenient defaults', () => {
     const data = toArenaStoryData([{ id: 's1', title: 'T1' }], [])
-    expect(data.stories[0]).toEqual({ id: 's1', title: 'T1', weight: 1, scope: null })
+    expect(data.stories[0]).toEqual({ id: 's1', title: 'T1', weight: 1, scope: null, theme: null })
   })
 
   it('throws on malformed input rather than producing fake verdicts', () => {

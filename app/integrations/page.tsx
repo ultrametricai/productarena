@@ -10,6 +10,7 @@ import {
   type IntegrationGraph,
   type ProductRef,
 } from '@/lib/integrations'
+import { hasLogo } from '@/lib/logos'
 
 export const metadata: Metadata = {
   title: 'Integration graph — ProductArena',
@@ -30,6 +31,7 @@ function chipFor(
     arenaId: ref.arenaId,
     arenaName: ref.arenaName,
     title: chipTitle(sources, (pid) => refs.get(pid)?.name ?? pid),
+    hasLogo: hasLogo(productId),
   }
 }
 

@@ -74,8 +74,8 @@ describe('checklistMarkdown', () => {
 
   it('produces a titled, theme-grouped GFM task list with priority tags', () => {
     expect(md).toContain('# Payments — buyer checklist (RFP)')
-    expect(md).toContain('## checkout')
-    expect(md).toContain('## payouts')
+    expect(md).toContain('## Checkout')
+    expect(md).toContain('## Payouts')
     expect(md).toContain('- [ ] **[must-have]** Take payment')
     expect(md).toContain('- [ ] **[nice-to-have]** Refund')
     expect(md).toContain('- [ ] **[should-have]** Instant payout')

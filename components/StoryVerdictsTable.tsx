@@ -8,6 +8,7 @@ import ThemeIcon from '@/components/ThemeIcon'
 import UncertaintyMarker from '@/components/UncertaintyMarker'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
+import { humanizeTheme } from '@/lib/icons'
 import type { VendorResponse, Verdict } from '@/lib/schemas'
 import {
   type SortDirection,
@@ -238,9 +239,11 @@ export default function StoryVerdictsTable({
           className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
         >
           <option value="">All themes</option>
+          {/* Option VALUES stay raw ids (filter logic matches row.theme); only the visible
+              label is humanized — dashes never reach the UI. */}
           {themes.map((t) => (
             <option key={t} value={t}>
-              {t}
+              {humanizeTheme(t)}
             </option>
           ))}
         </select>
@@ -324,7 +327,7 @@ export default function StoryVerdictsTable({
             {sorted.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-3 py-6 text-center text-zinc-500">
-                  No stories match{theme !== '' ? ` theme “${theme}”` : ''}{query.trim() !== '' ? ` “${query}”` : ''}.
+                  No stories match{theme !== '' ? ` theme “${humanizeTheme(theme)}”` : ''}{query.trim() !== '' ? ` “${query}”` : ''}.
                 </td>
               </tr>
             )}
@@ -384,7 +387,7 @@ function StoryRowPair({
               </p>
               <p className="mt-0.5 text-xs text-zinc-500">
                 {row.persona}
-                {row.group !== row.theme && <> · {row.group}</>}
+                {row.group !== row.theme && <> · {humanizeTheme(row.group)}</>}
               </p>
             </div>
           </div>
@@ -392,7 +395,7 @@ function StoryRowPair({
         <td className="whitespace-nowrap px-3 py-2 text-xs text-zinc-400">
           <span className="inline-flex items-center gap-1.5">
             <ThemeIcon theme={row.theme} />
-            {row.theme}
+            {humanizeTheme(row.theme)}
           </span>
         </td>
         <td className="px-3 py-2 font-mono tabular-nums text-zinc-300">{row.weight}</td>

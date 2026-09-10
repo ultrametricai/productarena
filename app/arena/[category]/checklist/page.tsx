@@ -5,7 +5,9 @@ import {
   checklistMarkdown, checklistThemes, matrixGlyph, priorityForWeight, topWeightedStories,
   type Priority,
 } from '@/lib/checklist'
+import ThemeIcon from '@/components/ThemeIcon'
 import { loadAll, loadCategory, stripPersonaPrefix } from '@/lib/data'
+import { humanizeTheme } from '@/lib/icons'
 import { SITE_URL } from '@/lib/site'
 
 // Buyer checklist / RFP view of one arena (see lib/checklist.ts): every judged story as a
@@ -72,7 +74,10 @@ export default async function ChecklistPage({ params }: { params: Promise<{ cate
       <div className="space-y-6">
         {themes.map(([theme, stories]) => (
           <section key={theme}>
-            <h2 className="font-display leading-[1.1] mb-2 text-lg font-semibold">{theme}</h2>
+            <h2 className="font-display leading-[1.1] mb-2 flex items-center gap-1.5 text-lg font-semibold">
+              <ThemeIcon theme={theme} />
+              {humanizeTheme(theme)}
+            </h2>
             <ul className="space-y-1.5">
               {stories.map((s) => {
                 const priority = priorityForWeight(s.weight)

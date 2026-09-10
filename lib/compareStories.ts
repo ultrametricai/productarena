@@ -9,12 +9,14 @@ import type { Verdict } from './schemas'
 export type VerdictKind = Verdict['verdict']
 
 // The slice of a Story the compare table renders/searches — everything else in stories.json
-// (persona, theme, group, origin) is dropped at parse time to keep in-memory caches small.
+// (persona, group, origin) is dropped at parse time to keep in-memory caches small. `theme`
+// survives so story rows can carry their theme's emoji + tooltip (components/ThemeIcon.tsx).
 export interface CompareStoryMeta {
   id: string
   title: string
   weight: number
   scope: 'global' | 'category' | 'product' | null
+  theme: string | null
 }
 
 // One arena's story-level data, parsed from its fetched stories.json + verdicts.json.
@@ -81,7 +83,7 @@ export function toArenaStoryData(storiesJson: unknown, verdictsJson: unknown): A
   }
   const stories: CompareStoryMeta[] = storiesJson.map((s) => {
     if (typeof s !== 'object' || s === null) throw new Error('malformed story entry')
-    const { id, title, weight, scope } = s as Record<string, unknown>
+    const { id, title, weight, scope, theme } = s as Record<string, unknown>
     if (typeof id !== 'string' || id === '' || typeof title !== 'string' || title === '') {
       throw new Error('malformed story entry')
     }
@@ -90,6 +92,7 @@ export function toArenaStoryData(storiesJson: unknown, verdictsJson: unknown): A
       title,
       weight: typeof weight === 'number' ? weight : 1,
       scope: typeof scope === 'string' && SCOPES.has(scope) ? (scope as CompareStoryMeta['scope']) : null,
+      theme: typeof theme === 'string' && theme !== '' ? theme : null,
     }
   })
   const cells = new Map<string, { verdict: VerdictKind; quality: number }>()
