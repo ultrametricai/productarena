@@ -47,7 +47,12 @@ function resolveMetric(flags: Flags, fallback: Metric): Metric {
   return metric
 }
 
-const json = (data: unknown) => JSON.stringify(data, null, 2)
+// One-line disclaimer stamped onto every object-shaped --json payload (arrays stay arrays so
+// `| jq '.[]'` pipelines keep working). Additive only — existing keys are untouched.
+const DISCLAIMER =
+  'Research output derived from cited evidence at a point in time, provided "as is" — verify before acting on it. © Ultrametric Inc; see https://ultrametric.ai/productarena/terms'
+const json = (data: unknown) =>
+  JSON.stringify(Array.isArray(data) ? data : { ...(data as Record<string, unknown>), disclaimer: DISCLAIMER }, null, 2)
 
 export async function cmdArenas(ctx: Ctx, flags: Flags): Promise<void> {
   const arenas = await listArenas(ctx.client)

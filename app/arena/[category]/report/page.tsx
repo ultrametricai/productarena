@@ -308,6 +308,12 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
           evaluate, contest, or contribute corrections. Bulk copying, redistribution, or use to build
           competing datasets requires prior written permission (see DATA-LICENSE in the repository).
         </p>
+        <p className="mt-2">
+          <span className="font-semibold text-zinc-400">No liability:</span> rankings, verdicts, and scores are
+          research outputs derived from the cited evidence at a point in time, provided &quot;as is&quot;, without
+          warranties. Ultrametric Inc accepts no responsibility for procurement, purchasing, or other decisions made
+          in reliance on them — verify against the cited evidence before acting ({SITE_URL}/terms).
+        </p>
       </section>
     </div>
   )

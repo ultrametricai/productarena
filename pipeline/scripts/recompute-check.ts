@@ -4,6 +4,7 @@
 // step was applied cleanly and rankings.json isn't stale/drifted.
 import fs from 'node:fs'
 import path from 'node:path'
+import { attachProvenance } from '../../lib/provenance'
 import { ProductSchema, RankingsSchema, StorySchema, VerdictSchema } from '../../lib/schemas'
 import { buildRankings } from '../../lib/scoring'
 
@@ -83,7 +84,9 @@ for (const cat of CATEGORIES) {
   const stories = readJson(StorySchema.array(), path.join(dataDir, 'stories.json'))
   const verdicts = readJson(VerdictSchema.array(), path.join(dataDir, 'verdicts.json'))
   const persisted = readJson(RankingsSchema, path.join(dataDir, 'rankings.json'))
-  const recomputed = buildRankings(products, stories, verdicts, persisted.generatedAt)
+  // Same stamp the derive stage applies — the provenance watermark is a pure function of the
+  // rankings content, so it must reproduce exactly too.
+  const recomputed = attachProvenance(cat, buildRankings(products, stories, verdicts, persisted.generatedAt))
   const match = JSON.stringify(recomputed) === JSON.stringify(persisted)
   results.push(`${cat} ${match ? 'MATCH' : 'MISMATCH'}`)
   if (!match) allMatch = false

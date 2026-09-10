@@ -163,6 +163,19 @@ const SCHEMAS = {
       generatedAt: { type: 'string', format: 'date-time' },
       leaderboard: { type: 'array', items: { $ref: '#/components/schemas/LeaderboardEntry' } },
       battles: { type: 'array', items: { $ref: '#/components/schemas/Battle' } },
+      _provenance: {
+        type: 'object',
+        description:
+          'Ownership watermark: an HMAC fingerprint over the rankings content identifying this as Ultrametric-published data (see DATA-LICENSE and /terms).',
+        required: ['owner', 'license', 'source', 'arena', 'fingerprint'],
+        properties: {
+          owner: { type: 'string' },
+          license: { type: 'string' },
+          source: { type: 'string' },
+          arena: { type: 'string' },
+          fingerprint: { type: 'string' },
+        },
+      },
     },
   },
 } as const
