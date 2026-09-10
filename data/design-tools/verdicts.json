@@ -678,34 +678,31 @@
     "productId": "figma",
     "storyId": "agent-creates-design",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Figma explicitly documents write-capable surfaces for agents: the MCP server supports writing to the canvas, generating designs from live UI, and generating FigJam diagrams (figma-docs-1, figma-docs-5, figma-docs-6), and the Plugin API explicitly supports read/write access to create and modify file contents (figma-docs-8, figma-docs-32). This is corroborated by a live runtime probe confirming the hosted MCP endpoint is real and speaks MCP/OAuth (figma-probe-rt-2). Missing for 10: independent hands-on verification specifically of the write-to-canvas MCP tool succeeding in practice (only the auth handshake was probed, not an actual write operation).",
+    "rationale": "Figma's MCP server explicitly supports writing to the canvas (create/modify native content), plus Plugin API documented with read/write access to create and modify file contents, and this is corroborated by a live runtime probe showing the hosted MCP endpoint is live and speaking MCP OAuth. missing for 10: independent hands-on community confirmation of write-capable MCP/plugin usage (community evidence only discusses read/export workflows, not agent-driven writes), and no independent third-party audit of the write API's reliability.",
     "evidenceIds": [
       "figma-docs-1",
-      "figma-docs-5",
-      "figma-docs-6",
+      "figma-docs-38",
       "figma-docs-8",
       "figma-docs-32",
-      "figma-probe-rt-2",
-      "figma-probe-3"
+      "figma-probe-3",
+      "figma-probe-rt-2"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agent-exports-assets",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Figma's MCP server and REST/Plugin APIs let an agent extract layer/object data, generate code from frames, and even push live UI into Figma files (figma-docs-1,3,5,7,8), and the REST API exposes read access to file/layer data programmatically (figma-docs-7,26). However, there is no documented programmatic surface for rendering/exporting images or production-format screenshots via the MCP server itself — the REST API's image export endpoint isn't cited, and MCP docs focus on code/context generation rather than image/PNG/SVG export. missing for 10: explicit documentation of an image/screenshot export endpoint reachable by an agent (e.g., REST API's image rendering endpoint) being surfaced through the MCP server or agent-facing tool, and independent confirmation that agents can retrieve rendered exports (not just layer data or code) through this surface.",
+    "rationale": "While the evidence pack documents Figma's MCP server (writing to canvas, generating code, extracting design context) and REST/Plugin APIs for extracting objects and layer properties, none of the citations mention rendering images, exporting screenshots, or producing production image formats (PNG/SVG/JPEG) through a documented programmatic surface. The closest items (figma-docs-5/41, figma-docs-7/26/49) describe capturing live UI into Figma files or extracting layer data, not exporting visual renders out of Figma.",
     "evidenceIds": [
-      "figma-docs-1",
-      "figma-docs-3",
       "figma-docs-5",
       "figma-docs-7",
-      "figma-docs-8",
-      "figma-probe-3",
-      "figma-probe-rt-2"
+      "figma-docs-38",
+      "figma-docs-39",
+      "figma-docs-41"
     ]
   },
   {
@@ -713,16 +710,16 @@
     "storyId": "agent-reads-design-context",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Figma ships an official MCP server (confirmed live via runtime probe) that extracts variables, components, and layout data into the IDE, generates code from frames, and Code Connect maps design components to real codebase code; REST API also allows extracting objects/layers and properties. This directly covers the story's frames/variables/component-mapping needs for coding agents. Missing for 10: explicit documentation of screenshot extraction via MCP (only implied through live-UI capture) and independent hands-on user reports specifically validating MCP-based design-context pulls (community evidence cited predates/doesn't address MCP usage).",
+    "confidence": "high",
+    "rationale": "Figma's official MCP server documentation directly supports this story: it extracts design context (variables, components, layout data) into IDEs, generates code from selected frames, supports Code Connect for consistent code generation, and the hosted remote MCP endpoint was independently confirmed live and speaking the MCP OAuth protocol. REST API and Plugin API further back extraction of objects/layers/properties for agent consumption. missing for 10: no independent hands-on report of an agent actually completing an end-to-end implement-from-design workflow, and no evidence of screenshot-specific extraction beyond 'generate designs from live UI' framing.",
     "evidenceIds": [
       "figma-docs-3",
-      "figma-docs-2",
-      "figma-gh-2",
+      "figma-docs-39",
+      "figma-docs-40",
       "figma-docs-25",
-      "figma-docs-7",
       "figma-probe-3",
-      "figma-probe-rt-2"
+      "figma-probe-rt-2",
+      "figma-docs-22"
     ]
   },
   {
@@ -741,14 +738,16 @@
     "productId": "figma",
     "storyId": "agentic-ai-insights",
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma markets an AI agent that generates design directions, diagrams, and can summarize data into slides (figma-docs-17, figma-docs-34, figma-comm-9), but hands-on community feedback specifically says FigJam's AI tools are 'really bad and often broken' (figma-comm-8), directly contradicting the polished vendor narrative. Missing for 10: independent benchmarking of insight/suggestion quality, resolution of the broken/buggy AI complaints, and clearer documentation of what 'insights from data' actually means beyond generative design suggestions.",
+    "rationale": "Figma markets an in-product AI agent that generates design directions, diagrams, edits images, and searches files from your data (figma-docs-17, figma-docs-34, figma-docs-51, figma-docs-43), which matches the story of AI-generated insights/suggestions from data. However, hands-on community feedback directly contradicts this for at least part of the surface: 'the AI tools in FigJam are really bad and often broken' (figma-comm-8), while another user reports positive use of AI summarization (figma-comm-9), creating a real dispute rather than mere skepticism. Missing for 10: independent benchmarking of the core Figma (not just FigJam) AI agent's accuracy/reliability, and clearer evidence the insight-generation quality matches vendor claims broadly.",
     "evidenceIds": [
       "figma-docs-17",
       "figma-docs-34",
-      "figma-comm-9",
-      "figma-comm-8"
+      "figma-docs-51",
+      "figma-docs-43",
+      "figma-comm-8",
+      "figma-comm-9"
     ]
   },
   {
@@ -771,14 +770,12 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma ships a built-in AI agent (figma-docs-17, figma-docs-34) that can generate designs, diagrams, edit images, and search files, and even collaborate in FigJam (figma-docs-6), sold via AI credits (figma-docs-24). However, hands-on community feedback specifically calls the AI tools in FigJam 'really bad and often broken' (figma-comm-8), directly contradicting the polished vendor framing, while another user reports positive real-world use of the AI for summarization (figma-comm-9). missing for 10: independent benchmark of the core canvas AI agent (not just FigJam), clear reliability data, and confirmation the paid-credit gating doesn't limit 'delegate tasks' functionality.",
+    "rationale": "Figma ships a built-in 'Figma AI' agent that generates designs, edits images, searches files, and creates diagrams (figma-docs-17, figma-docs-34, figma-docs-51), fitting the delegate-to-assistant story. However, a first-hand community report states the AI tools (in FigJam, part of the same AI credit system) are 'really bad and often broken' (figma-comm-8), directly contradicting the polished vendor narrative. Missing for 10: independent hands-on validation of the core Figma AI agent's reliability, and resolution of the FigJam AI quality complaints.",
     "evidenceIds": [
       "figma-docs-17",
       "figma-docs-34",
-      "figma-docs-6",
-      "figma-docs-24",
-      "figma-comm-8",
-      "figma-comm-9"
+      "figma-docs-51",
+      "figma-comm-8"
     ]
   },
   {
@@ -801,9 +798,14 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "All evidence describes Figma exposing its own MCP server so external AI clients (IDEs, agents) can use Figma's tools — the reverse direction of this story, which asks whether Figma itself can consume external MCP servers' tools. No evidence shows Figma's AI agent or Dev Mode connecting outward to third-party MCP servers.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "All evidence describes Figma shipping its own MCP server so external tools (IDEs, coding agents) can call Figma's design data — the reverse relationship. There is no evidence Figma itself acts as an MCP client that can plug in and invoke third-party MCP servers' tools.",
+    "evidenceIds": [
+      "figma-docs-1",
+      "figma-probe-3",
+      "figma-probe-rt-2",
+      "figma-docs-23"
+    ]
   },
   {
     "productId": "figma",
@@ -811,28 +813,30 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Figma ships an official, well-documented MCP server (local and remote/hosted variants) with capabilities like writing to canvas, generating code, extracting design context, and generating designs from live UI, confirmed by docs and a live runtime probe showing the hosted MCP endpoint responding with proper MCP OAuth handshake. Missing for 10: independent hands-on user reports of connecting third-party agents via the MCP server (only vendor docs and a technical probe, no community usage confirmation).",
+    "rationale": "Figma ships an official, well-documented MCP server (local and remote) letting MCP clients write to canvas, extract design context, and generate code, confirmed live via a runtime probe against mcp.figma.com that correctly speaks the MCP OAuth handshake. Missing for 10: independent third-party hands-on review of the MCP server beyond Figma's own docs and the runtime probe.",
     "evidenceIds": [
       "figma-docs-1",
-      "figma-docs-2",
       "figma-docs-3",
-      "figma-docs-5",
+      "figma-docs-38",
+      "figma-docs-40",
       "figma-probe-3",
       "figma-probe-rt-2",
-      "figma-docs-22"
+      "figma-docs-23"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agentic-nl-commands",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Figma docs describe a natural-language 'Figma agent' for generating designs, diagrams, image edits, and file search, plus MCP-driven natural-language workflows (figma-docs-17, figma-docs-34, figma-docs-22), suggesting agentic/natural-language operation. However, hands-on community feedback specifically calls the AI tools 'really bad and often broken' (figma-comm-8), directly contradicting the polish implied by vendor docs. Missing for 10: independent corroboration of the core canvas agent's reliability (not just FigJam AI), and detailed examples of successful complex natural-language commands beyond marketing copy.",
+    "rationale": "Figma ships a natural-language 'Figma agent' for generating designs, diagrams, images, and file search (figma-docs-17, figma-docs-51, figma-docs-34), plus prompt-driven FigJam diagram generation (figma-docs-6/42) and an MCP server for NL-driven design/code workflows. However, community hands-on feedback specifically flags FigJam's AI tools as 'really bad and often broken' (figma-comm-8), undercutting reliability claims. Missing for 10: independent corroboration that the core Figma-agent (not just FigJam AI) reliably executes broad natural-language commands, and clearer documentation of command scope/limits.",
     "evidenceIds": [
       "figma-docs-17",
+      "figma-docs-51",
       "figma-docs-34",
-      "figma-docs-22",
+      "figma-docs-6",
+      "figma-docs-42",
       "figma-comm-8"
     ]
   },
@@ -856,15 +860,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Figma publishes a documented REST API with endpoints for reading/writing file objects, webhooks, and usage data, plus a Plugin API supporting read/write access, and an official MCP server (both remote hosted and local) confirmed live via runtime probes and OAuth-compliant. This gives AI-native users multiple documented, verified programmatic surfaces to drive the product. Missing for 10: no discoverable OpenAPI/swagger spec (404s on probe) and no independent third-party corroboration beyond Figma's own docs/GitHub.",
+    "rationale": "Figma exposes a documented, well-specified REST API (with OpenAPI spec, changelog, scoped tokens, webhooks), a Plugin API for read/write access, and MCP server support, all confirmed live via runtime probes (REST spec repo, MCP OAuth handshake). This clearly lets AI-native users drive Figma programmatically through public, documented interfaces. missing for 10: no independent hands-on developer confirmation of REST/Plugin API reliability at scale, and openapi.json isn't hosted at the expected discovery path (404s in probe).",
     "evidenceIds": [
       "figma-docs-7",
-      "figma-docs-8",
       "figma-docs-20",
-      "figma-docs-21",
-      "figma-probe-1",
+      "figma-docs-46",
+      "figma-docs-8",
       "figma-probe-3",
-      "figma-probe-rt-2"
+      "figma-probe-rt-2",
+      "figma-docs-21"
     ]
   },
   {
@@ -872,13 +876,12 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Figma's hosted MCP server enforces OAuth with a documented scope (`mcp:connect`) rather than an all-or-nothing token, and SCIM/admin role controls exist, showing some support for least-privilege access. However, there is no documented ability to mint fine-grained, scoped personal API tokens (e.g., read-only vs write, per-resource) specifically for an agent's REST/Plugin API use. Missing for 10: explicit scoped/permissioned personal access token creation UI or docs, granular scope list for REST/Plugin API credentials, and independent confirmation of least-privilege enforcement beyond the single MCP scope.",
+    "confidence": "medium",
+    "rationale": "Figma's REST API supports plan-scoped access tokens (figma-docs-48) and its hosted MCP server enforces an OAuth flow with a specific limited scope (`mcp:connect`) rather than full account access (figma-probe-rt-2), showing some least-privilege credentialing for agent connections. However there's no evidence of a granular scope catalog (e.g., read-only vs. write, per-file scoping) for issuing tailored least-privilege tokens to individual agents. Missing for 10: documented fine-grained scope options for REST/PAT tokens, explicit UI/API for creating per-agent restricted credentials, and independent confirmation that scopes can be narrowed beyond org/enterprise plan level.",
     "evidenceIds": [
+      "figma-docs-48",
       "figma-probe-rt-2",
-      "figma-docs-31",
-      "figma-docs-21",
-      "figma-docs-7"
+      "figma-docs-31"
     ]
   },
   {
@@ -887,17 +890,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Figma ships multiple official SDKs/APIs for AI-native workflows: REST API, Plugin API, Code Connect CLI, and an official MCP server (both local and hosted, confirmed live via runtime probe with proper OAuth flow). Docs are extensive and first-party, with a working llms.txt and confirmed keyless CLI execution. missing for 10: independent third-party developer case studies building production integrations against these SDKs, and a discoverable OpenAPI spec (probe found only 404s for openapi.json variants).",
+    "rationale": "Figma ships official SDKs/APIs for AI-native building: REST API with OpenAPI spec and TypeScript types (figma-docs-46), a Plugin API (figma-docs-8), Code Connect CLI (figma-probe-4, figma-probe-rt-1 confirming it runs keylessly), and an official MCP server both local and hosted with live OAuth-protected endpoint (figma-probe-3, figma-probe-rt-2). These are well-documented with quickstart guides and changelogs (figma-docs-47, figma-docs-48). missing for 10: independent third-party developer testimonials building production integrations against these SDKs, and a working OpenAPI discovery endpoint (figma-probe-2 shows all standard openapi.json paths 404 despite the spec existing on GitHub).",
     "evidenceIds": [
-      "figma-docs-1",
-      "figma-docs-7",
+      "figma-docs-46",
       "figma-docs-8",
-      "figma-gh-2",
       "figma-probe-3",
       "figma-probe-4",
       "figma-probe-rt-1",
       "figma-probe-rt-2",
-      "figma-probe-1"
+      "figma-docs-47",
+      "figma-docs-48",
+      "figma-probe-2"
     ]
   },
   {
@@ -905,13 +908,13 @@
     "storyId": "agentic-webhooks",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Figma's REST API docs explicitly document creating and managing webhooks and listening for events, a first-party feature directly matching the story. missing for 10: independent/hands-on corroboration of webhook reliability or usage in an AI-agent workflow specifically.",
+    "confidence": "medium",
+    "rationale": "Figma's REST API docs explicitly document webhook creation/management and event listening (\"Create and manage webhooks\", \"listen for events with webhooks\"), giving AI-native users a way to subscribe to platform events programmatically. missing for 10: independent/hands-on confirmation of webhook reliability or usage in an agentic workflow, and details on event payload/latency for automation use cases.",
     "evidenceIds": [
-      "figma-docs-21",
       "figma-docs-7",
+      "figma-docs-21",
       "figma-docs-26",
-      "figma-docs-20"
+      "figma-docs-49"
     ]
   },
   {
@@ -920,14 +923,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma docs confirm a built-in 'Figma agent' that can generate new design directions, edit images, create diagrams, and search files, plus purchasable AI credits for team use (figma-docs-17, figma-docs-24, figma-docs-29, figma-docs-34), showing genuine in-editor generative AI. However, the story's specific asset chores—background removal, content-aware fill, and copy/text suggestions—are never explicitly documented, and community feedback flags Figma's AI tools (in FigJam) as 'really bad and often broken' (figma-comm-8), tempering confidence in polish/reliability. Missing for 10: explicit evidence of background removal, content-aware fill, and copy-suggestion features, plus independent hands-on validation of quality for core Figma (not just FigJam) AI tools.",
+    "rationale": "Figma docs describe a built-in \"Figma agent\" that can generate new design directions, edit images, create diagrams, and search files (figma-docs-17, figma-docs-34), plus paid AI credits for team use (figma-docs-24), showing some in-editor AI asset handling. However, there's no specific documentation of background removal, content-aware fill, or copy/text suggestion tools, and community feedback flags Figma's AI features (in FigJam) as \"really bad and often broken\" (figma-comm-8), undercutting confidence in polish. Missing for 10: explicit background-removal feature, content-aware fill feature, copy-suggestion feature, and independent hands-on validation of AI image tools working reliably.",
     "evidenceIds": [
       "figma-docs-17",
-      "figma-docs-24",
-      "figma-docs-29",
       "figma-docs-34",
-      "figma-comm-8",
-      "figma-comm-9"
+      "figma-docs-24",
+      "figma-comm-8"
     ]
   },
   {
@@ -936,22 +937,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Figma documents a REST API and MCP server but there is no evidence of an interactive, runnable API reference (e.g., a Swagger/OpenAPI explorer or live code sandbox); the probe explicitly found all candidate OpenAPI spec URLs returning 404, suggesting no such interactive reference exists.",
+    "rationale": "Figma has REST API docs and an OpenAPI spec repo (figma-docs-46, figma-docs-7), but there is no evidence of an interactive API reference with runnable/try-it-now examples — probes for standard openapi/swagger endpoints all 404'd (figma-probe-2), and no docs mention a live sandbox or code playground.",
     "evidenceIds": [
-      "figma-docs-20",
-      "figma-docs-7",
-      "figma-probe-2"
+      "figma-probe-2",
+      "figma-docs-46",
+      "figma-docs-7"
     ]
   },
   {
     "productId": "figma",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "high",
-    "rationale": "The probe explicitly checked for a machine-readable API spec and found all candidate OpenAPI/swagger paths returned 404, with no evidence pack item pointing to a downloadable OpenAPI/Swagger spec for Figma's REST API despite the API being documented in prose.",
+    "rationale": "Figma publishes an OpenAPI specification and TypeScript types for its REST API in a public GitHub repo (figma-docs-46), which is a machine-readable API spec exactly matching the story. Missing for 10: the main developer docs site doesn't expose it at standard openapi.json paths (figma-probe-2), requiring users to know about the GitHub repo rather than a directly discoverable link.",
     "evidenceIds": [
-      "figma-probe-2"
+      "figma-docs-46",
+      "figma-probe-2",
+      "figma-docs-20"
     ]
   },
   {
@@ -966,23 +969,32 @@
   {
     "productId": "figma",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents Figma's REST API, Plugin API, MCP server, and Code Connect features, but nowhere mentions API versioning schemes or a documented deprecation policy for these APIs. No changelog, version-tagging, or sunset-notice process is cited anywhere in the pack.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "There is evidence of API versioning (v2 endpoints) and a changelog tracking API changes, plus an OpenAPI spec repo, but no documented deprecation policy or explicit version-lifecycle commitments were found. missing for 10: explicit deprecation policy/timeline, sunset notices for old API versions, guarantees around backward compatibility.",
+    "evidenceIds": [
+      "figma-docs-47",
+      "figma-docs-48",
+      "figma-docs-46"
+    ]
   },
   {
     "productId": "figma",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Figma's REST API and Plugin API allow programmatic reads/writes across objects/layers, and community mentions a 'bulk export plugin' for icons, suggesting some bulk automation is possible via third-party plugins or scripting rather than a native bulk-operations feature. There's no first-party documentation of a dedicated bulk-edit/bulk-update capability across many items at once. missing for 10: first-party documentation of a native bulk operations feature (e.g., batch edit/update across many nodes via API or UI), independent hands-on verification of bulk operations at scale, and evidence of reliability/limits when doing so.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Figma's REST API and Plugin API expose read/write/create/modify access across files and objects, which developers can script to perform bulk operations (e.g., extracting or modifying many layers/components at once), and community evidence confirms users rely on 'bulk export plugins' to batch-process assets like icons. However, this capability is not a native built-in bulk-operations feature — it requires third-party plugins or custom API scripting, and community feedback (figma-comm-2, figma-comm-3) explicitly describes the default manual, one-by-one workflow as tedious before a workaround plugin is applied. Missing for 10: a documented first-party bulk-edit/bulk-export feature, evidence of AI-native agents performing bulk operations via MCP at scale, and confirmation that the MCP server itself supports batched multi-item writes rather than single-object edits.",
     "evidenceIds": [
       "figma-docs-7",
       "figma-docs-8",
-      "figma-comm-3"
+      "figma-docs-26",
+      "figma-docs-49",
+      "figma-docs-50",
+      "figma-comm-2",
+      "figma-comm-3",
+      "figma-docs-38"
     ]
   },
   {
@@ -1014,8 +1026,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers Figma's MCP server, plugins, and REST API for writing/generating content, but nothing describes versioning, reviewing, or rolling back automations (e.g., MCP-driven edits, plugin runs, or agent actions) — no changelog, diff/review UI, or undo/rollback mechanism tied to automation workflows is documented.",
-    "evidenceIds": []
+    "rationale": "Figma documents general file version history (figma-docs-44) but there is no evidence of versioning, reviewing, or rolling back automations themselves (e.g., MCP server configs, plugin code, or agent workflows) — the axis is applicable since automation platforms could plausibly offer this, but no such capability is evidenced.",
+    "evidenceIds": [
+      "figma-docs-44"
+    ]
   },
   {
     "productId": "figma",
@@ -1038,15 +1052,18 @@
     "productId": "figma",
     "storyId": "clear-plan-pricing",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Figma's pricing page snippets mention plan-gated features like 'Advanced Dev Mode inspection and MCP Server', 'Centralized admin tools', and AI credit purchasing/allocation controls, implying some tier and AI-feature gating exists, but the evidence pack contains no explicit breakdown of seat types (viewer/editor/dev), tier names, or a full feature-comparison table needed for procurement clarity. Missing for 10: explicit seat-type definitions, named plan tiers with feature matrices, and clear AI-feature gating documentation across all tiers.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Figma's pricing page fragments show plan-gated features (e.g., 'Advanced Dev Mode inspection and MCP Server', 'Unlimited files and projects for a single team', 'Centralized admin tools', 'Publish resources across teams') and AI-specific monetization via purchasable credits (figma-docs-24, figma-docs-29), indicating some tier/feature-gating disclosure exists. However, the evidence never surfaces explicit seat-type definitions, named tiers (e.g., Starter/Professional/Organization/Enterprise) or a clear AI-feature-to-tier mapping, and a community comment even flags confusion over Dev Mode being split into a separate paid license, suggesting gating isn't fully transparent. Missing for 10: explicit seat-type breakdown, named plan tiers with feature comparison, and clear documentation of which AI features are included vs. credit-based per tier.",
     "evidenceIds": [
+      "figma-docs-12",
+      "figma-docs-13",
       "figma-docs-23",
+      "figma-docs-37",
+      "figma-docs-45",
       "figma-docs-24",
       "figma-docs-29",
-      "figma-docs-13",
-      "figma-docs-37"
+      "figma-comm-4"
     ]
   },
   {
@@ -1067,28 +1084,31 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Figma offers concrete design-to-code paths: Code Connect maps design system components to true production code snippets shown in Dev Mode, and the MCP server can generate code from selected frames while pulling variables/components/layout as context, with Code Connect keeping generated code consistent with the real codebase. However, community feedback shows friction in practice (manual SVG export workflows, complaints about generated CSS using absolute positioning), and Dev Mode/MCP features are gated behind paid tiers. missing for 10: independent hands-on verification that MCP-generated code is production-ready/shippable without heavy manual cleanup, broader framework coverage beyond React examples, and resolution of community complaints about output quality (e.g., absolute-positioning CSS).",
+    "rationale": "Figma provides multiple first-party mechanisms mapping design to code: Code Connect (maps design components to real codebase components, verified live via CLI probe), and the MCP server which generates code from selected frames and extracts variables/components/layout into an IDE, with the MCP endpoint confirmed live in probes. However, community hands-on feedback indicates the raw generated output (e.g., CSS with absolute positioning, manual SVG re-export) often isn't directly shippable without cleanup, showing a gap between docs claims and dev experience. Missing for 10: independent verification that MCP/Code Connect output is production-ready without manual rework, and broader real-world case studies beyond the vendor's own docs.",
     "evidenceIds": [
       "figma-docs-2",
-      "figma-docs-3",
       "figma-docs-25",
+      "figma-docs-39",
+      "figma-docs-40",
       "figma-gh-1",
       "figma-gh-2",
-      "figma-docs-22",
+      "figma-probe-3",
+      "figma-probe-rt-1",
       "figma-comm-1",
-      "figma-comm-2",
-      "figma-docs-23"
+      "figma-comm-2"
     ]
   },
   {
     "productId": "figma",
     "storyId": "design-tokens-variables",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The only relevant evidence is a passing MCP-related mention of pulling 'variables, components, and layout data' into an IDE; there is no documentation in the pack of Figma's Variables feature supporting color/spacing/typography tokens with modes or theme switching across designs. Missing for 10: explicit documentation of variable collections, modes/themes, and applying them across components/designs.",
+    "rationale": "Evidence confirms Figma exposes 'variables' as a concept (pulled into IDE via MCP, referenced in components docs) but the pack contains no first-party documentation of the Variables panel itself, mode/theme switching, or applying variable modes across frames — only mentions of extracting variables for code generation. Missing for 10: dedicated docs on creating/managing variable collections, defining modes (e.g., light/dark), and applying themes across designs, plus any independent confirmation of this workflow.",
     "evidenceIds": [
-      "figma-docs-3"
+      "figma-docs-3",
+      "figma-docs-40",
+      "figma-docs-30"
     ]
   },
   {
@@ -1097,7 +1117,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Community evidence confirms Figma supports exporting individual layers as SVG (right-click > Copy/Paste as SVG, plus bulk export plugins) and that this is a known part of designer-to-dev workflows, but the evidence pack contains no first-party documentation describing PNG/SVG/PDF format options, per-layer export presets, custom scales, or slice tooling — the pain points cited (comm-2, comm-3) actually highlight manual, repetitive export as a workflow gap rather than confirm a robust presets/scales system. Missing for 10: first-party docs on export presets UI, scale multipliers, slice tool, and PDF export, plus any independent confirmation of batch/preset export beyond community workaround plugins.",
+    "rationale": "Community evidence confirms Figma supports asset export (e.g., right-click 'Copy as SVG', individual per-layer export) and that users rely on third-party bulk-export plugins to speed up repetitive per-asset exporting, implying native export works but is manual/limited for scale. No first-party documentation in the pack describes the per-layer export panel, PNG/PDF/scale/slice presets, or batch export UI. Missing for 10: official docs on export presets, multiple scale/format settings, slice tool, and any independent corroboration of bulk/production-scale export workflows.",
     "evidenceIds": [
       "figma-comm-2",
       "figma-comm-3"
@@ -1108,25 +1128,30 @@
     "storyId": "free-tier-real-design",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains general marketing copy about Figma's design, collaboration, and prototyping features (e.g., figma-docs-14, figma-docs-15, figma-docs-27) but nothing that specifically confirms what is included in the free tier versus paid seats, nor any claim that a full editor and real-time collaboration work without payment. Pricing-related items (figma-docs-12, figma-docs-23, figma-docs-37) only describe advanced/paid capabilities like Dev Mode and MCP Server access, leaving the free-tier experience unaddressed.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no direct claims about what the free tier includes—no free-plan feature list, seat limits, or confirmation that multiplayer editing/comments work without payment. Community commentary (figma-comm-4) even suggests Figma has been moving previously-free capabilities (like Dev Mode) behind paid licenses, but nothing here concretely describes or evaluates the free tier's usability for real design work.",
+    "evidenceIds": [
+      "figma-docs-14",
+      "figma-docs-23",
+      "figma-comm-4"
+    ]
   },
   {
     "productId": "figma",
     "storyId": "inspect-code-handoff",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma's Dev Mode (evidenced via figma-docs-23 'Advanced Dev Mode inspection', figma-docs-30 'Translate designs into code', figma-gh-1/figma-docs-25 Code Connect true-to-production snippets) is documented as inspecting layers and generating code snippets, and community evidence (figma-comm-4) confirms a separate Dev Mode license distinct from a full editor seat. However, community hands-on comments describe real friction — CSS-only/absolute-positioning snippets and tedious manual SVG asset export (figma-comm-1, figma-comm-2) — rather than the seamless multi-platform (iOS/Android) snippet and asset pipeline implied by the story. Missing for 10: explicit documentation of iOS/Android code snippet generation, and independent confirmation that asset export/measurement workflows work smoothly without extra plugins.",
+    "rationale": "Figma's Dev Mode (referenced via figma-docs-23 'Advanced Dev Mode inspection') and Code Connect (figma-gh-1, showing true-to-production code snippets) plus the REST API's ability to 'view and extract any objects or layers, and their properties from files' (figma-docs-49/7/26) support layer inspection, measurements, and code snippet retrieval outside full editing. Community comments (figma-comm-1, figma-comm-2, figma-comm-4) confirm real-world use of CSS/asset export and note Dev Mode is a separate license tier (implying no full editor seat needed) but also flag friction points like manual SVG export and CSS-only snippet limitations. Missing for 10: explicit documentation of iOS/Android code snippet formats, confirmation that Dev Mode requires no editor seat, and independent validation that all asset types are inspectable without one.",
     "evidenceIds": [
       "figma-docs-23",
-      "figma-docs-30",
       "figma-gh-1",
-      "figma-docs-25",
-      "figma-comm-4",
+      "figma-docs-49",
+      "figma-docs-7",
+      "figma-docs-26",
       "figma-comm-1",
-      "figma-comm-2"
+      "figma-comm-2",
+      "figma-comm-4"
     ]
   },
   {
@@ -1135,26 +1160,25 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Figma's prototyping tools are explicitly documented as enabling high-fidelity, no-code, interactive prototypes (figma-docs-16, figma-docs-33), which directly matches the story of wiring screens with triggers/transitions/overlays. However, the evidence pack lacks detail on specific interaction elements like overlays or transition types, and there's no independent hands-on corroboration of the prototyping workflow itself (community evidence focuses on dev handoff/export pain points, not prototyping). Missing for 10: explicit documentation of overlay/trigger/transition mechanics, independent user validation of the prototyping experience specifically.",
+    "rationale": "Figma's own product docs explicitly state its prototyping tools enable building and sharing high-fidelity, no-code, interactive prototypes (figma-docs-16, figma-docs-33), which directly matches the story of wiring screens with clickable interactions. However, the evidence pack lacks detail on specific mechanics like triggers, transitions, and overlays, or independent/hands-on corroboration of the prototyping experience itself. missing for 10: explicit documentation of trigger/transition/overlay mechanics, hands-on or community validation of prototyping workflow quality.",
     "evidenceIds": [
       "figma-docs-16",
-      "figma-docs-33",
-      "figma-docs-15"
+      "figma-docs-33"
     ]
   },
   {
     "productId": "figma",
     "storyId": "nl-design-generation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Figma's own docs describe an AI agent that can 'generate new design directions,' 'edit images,' and even 'generate designs from live UI' or diagrams from prompts (figma-docs-17, figma-docs-34, figma-docs-5, figma-docs-6, figma-docs-22), which directly matches the story of prompt-driven mockup/layout generation. However, this is entirely first-party marketing copy with no independent or hands-on validation of quality, and one community report explicitly calls the AI tools in the related FigJam product 'really bad and often broken' (figma-comm-8), casting doubt on real-world reliability. Missing for 10: independent/hands-on evidence that the Figma agent actually produces usable first drafts or full mockups, and resolution of the reported brokenness of adjacent AI features.",
+    "rationale": "Figma's own marketing docs describe a 'Figma agent' that can 'generate new design directions, create diagrams, edit images, search your files' from prompts, and FigJam supports prompt-driven diagram generation (figma-docs-17, figma-docs-34, figma-docs-42, figma-docs-51, figma-docs-43). However, this evidence is largely thin marketing copy rather than technical documentation of prompt-to-mockup fidelity, and a community report specifically calls FigJam's AI generation features 'really bad and often broken' (figma-comm-8), casting doubt on real-world quality. Missing for 10: independent hands-on validation of the design-generation agent's output quality, deeper technical documentation of the prompt-to-design pipeline, and resolution of the reported reliability issues.",
     "evidenceIds": [
       "figma-docs-17",
       "figma-docs-34",
-      "figma-docs-22",
-      "figma-docs-5",
-      "figma-docs-6",
+      "figma-docs-42",
+      "figma-docs-51",
+      "figma-docs-43",
       "figma-comm-8"
     ]
   },
@@ -1164,11 +1188,10 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Figma documents a REST API and Plugin API that expose file objects, layers, and properties for external tooling (figma-docs-7, figma-docs-26, figma-docs-32), suggesting some level of documented access outside the editor. However, this is not an open file format spec, and hands-on community feedback explicitly contradicts the portability claim: 'you don't get to keep a local file... your full fidelity work is locked up in a proprietary format' (figma-comm-7). Missing for 10: an actual open/published file-format specification (not just API endpoints), and evidence that full-fidelity design data can be losslessly exported/round-tripped outside Figma's own editor.",
+    "rationale": "Figma exposes file data via REST/Plugin APIs (view/extract objects, layers, properties) which gives some tooling access, but Figma does not publish an open native file-format spec, and a developer explicitly reports that 'your full fidelity work is locked up in a proprietary format' with no way to keep an offline, portable local file. This directly contradicts the story's expectation of an open/documented format for portability outside the vendor's editor. Missing for 10: a documented open file-format specification, native export to a non-proprietary interchange format, and confirmation that full design fidelity (not just extracted metadata) is portable outside Figma.",
     "evidenceIds": [
       "figma-docs-7",
-      "figma-docs-26",
-      "figma-docs-32",
+      "figma-docs-49",
       "figma-comm-7"
     ]
   },
@@ -1178,16 +1201,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma exposes broad but not fully-parity API surfaces: the REST API is largely read/extract plus webhooks, the Plugin API supports read/write within the plugin sandbox, and the new MCP server can write to canvas and generate code/designs, but these are separate, partially-overlapping mechanisms rather than a single API that mirrors every UI action (e.g. full prototyping, animation, FigJam collaboration features are not exposed as controllable API operations). Community feedback also notes real friction points (manual SVG export, no bulk API equivalent, Dev Mode paywalled) confirming gaps versus UI capability. Missing for 10: a unified API/SDK with documented parity for prototyping, animation, and FigJam actions, and independent confirmation that Plugin/REST/MCP APIs together cover the full UI feature set.",
+    "rationale": "Figma exposes multiple APIs (REST, Plugin, MCP) that cover many UI actions—reading objects/layers, webhooks, writing to canvas via MCP/Plugin API, generating code/designs—but the REST API is explicitly read/webhook-oriented (figma-docs-7, figma-docs-26, figma-docs-49) while write access is confined to the Plugin API (which runs inside the Figma editor context) and the MCP server, not a full external API surface. There's no evidence of full parity for things like commenting with images, FigJam games, version history editing, or admin/collaboration features via API. missing for 10: evidence of write/automation parity for comments, FigJam interactive features, version history, and admin controls; independent confirmation that Plugin API can fully replace UI-only actions.",
     "evidenceIds": [
       "figma-docs-7",
       "figma-docs-8",
-      "figma-docs-1",
-      "figma-docs-3",
-      "figma-docs-21",
-      "figma-comm-1",
-      "figma-comm-2",
-      "figma-comm-4"
+      "figma-docs-26",
+      "figma-docs-32",
+      "figma-docs-38",
+      "figma-docs-46",
+      "figma-comm-5"
     ]
   },
   {
@@ -1196,11 +1218,10 @@
     "verdict": "disputed",
     "quality": 3,
     "confidence": "medium",
-    "rationale": "Figma offers a REST API and Plugin API that can extract objects, layers, and properties (figma-docs-7, figma-docs-26, figma-docs-32), suggesting some data extraction is possible, but there is no documented full-fidelity open-format export or bulk data-portability path, and a hands-on community report explicitly states user work is 'locked up in a proprietary format' with no way to keep an up-to-date local copy without constant manual export (figma-comm-7). Missing for 10: a documented bulk/open-format export tool or data-portability guarantee, and independent confirmation that full designs (not just metadata) can be losslessly exported and reused elsewhere.",
+    "rationale": "Figma provides REST/Plugin APIs to extract objects, layers, and metadata (figma-docs-7, figma-docs-49), but this is developer-level partial extraction, not a full open-format data export enabling clean migration. Community evidence explicitly contradicts the openness claim, noting that 'your full fidelity work is locked up in a proprietary format' with no way to keep a fully synced local copy (figma-comm-7). Missing for 10: a documented full-account/data export feature in an open standard format, evidence of successful migration away from Figma, and confirmation that exported data preserves full fidelity.",
     "evidenceIds": [
       "figma-docs-7",
-      "figma-docs-26",
-      "figma-docs-32",
+      "figma-docs-49",
       "figma-comm-7"
     ]
   },
@@ -1210,10 +1231,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Figma is closed-source proprietary software; there is no evidence of an open-source license for its core product source code (Code Connect and plugin samples are open-source tooling, not the Figma application itself), and community comments even note designs are locked in a proprietary format. missing for 10: any open-source license for Figma's core application source, any repository containing the product's actual source code.",
-    "evidenceIds": [
-      "figma-comm-7"
-    ]
+    "rationale": "Figma is a closed, proprietary SaaS product; the evidence pack shows only auxiliary open-source tooling (Code Connect CLI, REST API spec repo) rather than the actual Figma application/editor source being released under an open license. No documentation or community evidence indicates Figma's core product source is open or inspectable.",
+    "evidenceIds": []
   },
   {
     "productId": "figma",
@@ -1221,7 +1240,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Figma is a proprietary SaaS product with no evidence of any self-hostable core (design editor, backend, or storage); all evidence concerns cloud APIs, plugins, MCP server, and collaboration features that run on Figma's own infrastructure. No self-hosting option, on-prem deployment, or open-source core is documented anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -1247,7 +1266,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention data residency, regional storage options, or any control over where data is hosted; enterprise features cited (SCIM, admin tools) do not address data location choice. missing for 10: any documentation of region/residency selection, data center choice, or geographic storage controls.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or geographic data controls for Figma; all evidence concerns MCP server features, plugins, collaboration, and pricing. Missing for 10: any documentation on data residency options, regional hosting, EU/US data storage choice, or compliance certifications tied to location.",
     "evidenceIds": []
   },
   {
@@ -1256,7 +1275,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions an AI-training opt-out, data-usage controls for AI model training, or any privacy settings addressing this concern; the pack covers MCP, plugins, REST API, and collaboration features but nothing about AI training data opt-out.",
+    "rationale": "No evidence pack items mention AI-training opt-out, data usage controls for model training, or any privacy settings related to preventing content from being used to train AI models; all evidence concerns MCP/plugin/API features and general collaboration tools. Missing for 10: any documentation of an AI training opt-out toggle, data-usage/privacy policy statement, or admin control specifically preventing AI training on user content.",
     "evidenceIds": []
   },
   {
@@ -1265,7 +1284,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or configurable retention windows for AI/MCP usage or Figma data generally; SCIM/admin items relate to identity management, not retention/deletion. missing for 10: retention period documentation, data deletion API/controls, AI-specific data handling/opt-out policy, independent confirmation.",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or AI-data handling settings for Figma; only tangential admin/SCIM and version-history mentions exist, none of which describe retention/deletion control. Missing for 10: documented data retention settings, deletion/export controls, AI training data opt-out or deletion mechanisms, and any independent confirmation of these controls.",
     "evidenceIds": []
   },
   {
@@ -1274,7 +1293,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Figma or its MCP/AI tools; all citations concern design, collaboration, API, and admin features unrelated to privacy controls.",
+    "rationale": "No evidence pack items mention telemetry, analytics opt-out, or usage-tracking controls for Figma; the pack covers MCP server features, plugins, pricing, and collaboration but nothing about privacy/telemetry settings.",
     "evidenceIds": []
   },
   {
@@ -1283,10 +1302,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Figma's core product docs explicitly describe multiplayer files with live cursors, cursor chat, and shared real-time editing space, matching the story directly. Missing for 10: independent hands-on verification of simultaneous multi-user editing performance/latency and any large-team scale caveats.",
+    "rationale": "Figma's core marketing/docs explicitly describe multiplayer files with live cursors and shared collaborative space, matching the story directly ([figma-docs-14], [figma-docs-27], [figma-docs-51]). Community commentary corroborates Figma's strength as a collaborative, feature-rich design tool rather than disputing real-time sync ([figma-comm-6]). Missing for 10: independent hands-on verification specifically of live-cursor sync at scale (e.g., large team files) and no mention of sync-conflict edge cases.",
     "evidenceIds": [
       "figma-docs-14",
-      "figma-docs-27"
+      "figma-docs-27",
+      "figma-docs-51",
+      "figma-comm-6"
     ]
   },
   {
@@ -1318,20 +1339,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "rationale": "Figma is a closed, proprietary SaaS platform (evidence includes complaints about proprietary file formats and locked-in local copies); there is no evidence of an open-source license or any self-hostable version of the full platform.",
+    "evidenceIds": [
+      "figma-comm-7"
+    ]
   },
   {
     "productId": "figma",
     "storyId": "shared-team-libraries",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack only glancingly references library publishing via marketing bullet points ('Publish resources across teams', 'centralize assets, libraries, and workflows across departments') without any documentation of the actual mechanics of shared library publishing, component/style syncing, or controlled update notifications when a source file changes. Code Connect items relate to code-to-design mapping, not library update propagation. Missing for 10: dedicated documentation of shared library creation/publishing workflow, update notification/approval UI, team library permissions, and any independent corroboration of controlled update behavior.",
+    "rationale": "Figma's marketing docs mention publishing/centralizing libraries and assets across teams (figma-docs-12, figma-docs-37) and general component-to-code guidance (figma-docs-30), implying shared library publishing exists, but no evidence details the controlled-update workflow (e.g., update notifications, accept/reject changes, library version history for components) that the story specifically asks about. missing for 10: documentation of library update notifications/controlled push mechanism, component override handling, and independent/hands-on confirmation of the update-control workflow.",
     "evidenceIds": [
       "figma-docs-12",
       "figma-docs-37",
-      "figma-docs-13"
+      "figma-docs-30",
+      "figma-docs-45"
     ]
   },
   {
@@ -1340,7 +1364,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence pack only offers a generic marketing line about 'best-in-class layout tools, type tools, and more' with 'full control over how you design' (figma-docs-15), with no explicit mention of pen/path editing, boolean operations, or precise alignment tools. Missing for 10: explicit documentation of pen tool/vector path editing, boolean union/subtract/intersect operations, and alignment/distribution tooling, plus any hands-on corroboration of these specific features.",
+    "rationale": "The pack only vaguely gestures at design tooling (\"best-in-class layout tools, type tools, and more, you have full control over how you design\") without any explicit mention of pen/path editing, boolean operations, or alignment tools that the story specifically asks about. Missing for 10: explicit documentation of pen tool/vector path editing, boolean union/subtract/intersect operations, and precise alignment/snapping tools, plus any hands-on corroboration of vector editing quality.",
     "evidenceIds": [
       "figma-docs-15",
       "figma-docs-27"
@@ -1349,11 +1373,13 @@
   {
     "productId": "figma",
     "storyId": "version-history-restore",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "No evidence pack items mention version history, named milestones, file comparison, or restoring earlier states of a Figma file; the pack only covers MCP, plugins, REST API, and collaboration features.",
-    "evidenceIds": []
+    "rationale": "Only one thin doc reference confirms Figma has a 'file version history' feature (figma-docs-44), but the evidence pack gives no detail on naming milestones, comparing versions, or restoring an earlier state. Missing for 10: explicit documentation of naming/tagging versions, side-by-side comparison functionality, and restore workflow evidence, plus any independent/hands-on corroboration.",
+    "evidenceIds": [
+      "figma-docs-44"
+    ]
   },
   {
     "productId": "framer",
