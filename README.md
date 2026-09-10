@@ -9,7 +9,7 @@ whose every verdict carries citations, a confidence grade, and a contest button.
 
 It has grown past rankings into an operating map of the AI era:
 
-- **Arenas** — head-to-head, story-judged rankings across 29+ software categories
+- **Arenas** — head-to-head, story-judged rankings across 60 software categories
 - **Processes** — how startups actually run, step by step, with the honest agent ceiling:
   what an agent can do today and where the market still forces a human
 - **Simulator** — dry-run a founder process through real market options and watch the API calls
@@ -18,6 +18,8 @@ It has grown past rankings into an operating map of the AI era:
 - **Agent-native access** — MCP server, JSON API, llms.txt: agents are first-class readers
 
 [![CI](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml)
+
+> ⭐ **If evidence-based software rankings are useful to you, [star the repo](https://github.com/ultrametricai/productarena)** — stars are how other builders find this, and every ranking, verdict, and proof here is open for you to audit or contest.
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 
 ![ProductArena](https://ultrametric.ai/productarena/opengraph-image)
