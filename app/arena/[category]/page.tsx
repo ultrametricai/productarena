@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ArenaTable from '@/components/ArenaTable'
+import GeoMark, { GeoBackdrop } from '@/components/GeoMark'
 import IconChip from '@/components/IconChip'
 import Legend from '@/components/Legend'
 import PersonaStacksSection from '@/components/PersonaStacksSection'
@@ -140,7 +141,10 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(arenaFaqJsonLd(data)) }}
       />
-      <div>
+      {/* relative isolate: contains the GeoBackdrop (a faint phyllotaxis field seeded by the
+          arena id, so every arena header is subtly its own) behind the header text. */}
+      <div className="relative isolate">
+        <GeoBackdrop seed={data.category.id} />
         <p className="text-sm uppercase tracking-widest text-emerald-400">Arena</p>
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
           {/* Same emoji this arena wears in the header's Arenas menu (data/arena-icons.json). */}
@@ -173,18 +177,27 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
       </div>
       <Legend />
       <div>
-        <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Leaderboard</h2>
+        <h2 className="font-display leading-[1.1] mb-4 flex items-center gap-2 text-lg font-semibold">
+          <GeoMark seed="leaderboard" title="Leaderboard — every product ranked by evidence" size={18} className="text-zinc-500" />
+          Leaderboard
+        </h2>
         <ArenaTable data={data} logoMap={logoMap} pricing={pricing} />
       </div>
       <PersonaStacksSection data={data} />
       <StacksSection data={data} />
       <div>
-        <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Story matrix</h2>
+        <h2 className="font-display leading-[1.1] mb-4 flex items-center gap-2 text-lg font-semibold">
+          <GeoMark seed="story-matrix" title="Story matrix — every product × every judged story" size={18} className="text-zinc-500" />
+          Story matrix
+        </h2>
         <StoryMatrix data={data} logoMap={logoMap} />
       </div>
       {adjacent.length > 0 && (
         <div>
-          <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Adjacent arenas</h2>
+          <h2 className="font-display leading-[1.1] mb-1 flex items-center gap-2 text-lg font-semibold">
+            <GeoMark seed="arenas" title="Adjacent arenas — categories often shopped together" size={18} className="text-zinc-500" />
+            Adjacent arenas
+          </h2>
           <p className="mb-4 text-sm text-zinc-500">Shopping this category often means shopping these too.</p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {adjacent.map((a) => (

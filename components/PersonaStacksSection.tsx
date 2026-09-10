@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import type { CategoryData } from '@/lib/data'
 import { allPersonaStacks } from '@/lib/personaStacks'
@@ -14,7 +15,12 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
 
   return (
     <div>
-      <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Best by user type</h2>
+      {/* seed "icp": same concept mark as the Explore menu's ICP lenses entry — buyer-persona
+          views share one mark. */}
+      <h2 className="font-display leading-[1.1] mb-1 flex items-center gap-2 text-lg font-semibold">
+        <GeoMark seed="icp" title="Best by user type — persona-weighted winners" size={18} className="text-zinc-500" />
+        Best by user type
+      </h2>
       <p className="mb-4 text-sm text-zinc-400">
         Per persona, the product with the highest persona-weighted coverage over just that persona&apos;s stories —
         not the same ranking as the overall PA Score leaderboard above.

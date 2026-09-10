@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import GeoMark from "@/components/GeoMark";
 
 export interface ArenaMenuItem {
   id: string;
@@ -17,10 +18,15 @@ export default function ArenaMenu({
   items,
   title = "Arenas",
   hrefPrefix = "/arena",
+  geo = false,
 }: {
   items: ArenaMenuItem[];
   title?: string;
   hrefPrefix?: string;
+  /** Render a deterministic GeoMark (components/GeoMark.tsx) for items without an emoji icon —
+      the Explore menu's concept-mark family, seeded by item id so each destination's mark is
+      the same one it wears on its own page. */
+  geo?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -70,6 +76,9 @@ export default function ArenaMenu({
             >
               <span className="flex min-w-0 items-center gap-2 text-sm text-zinc-200">
                 {item.icon && <span aria-hidden className="w-4 shrink-0 text-center text-xs leading-none opacity-80">{item.icon}</span>}
+                {!item.icon && geo && (
+                  <GeoMark seed={item.id} title={item.name} size={16} className="w-4 justify-center text-zinc-500" />
+                )}
                 <span className="truncate">{item.name}</span>
               </span>
               <span className="font-mono text-[10px] uppercase tracking-wide text-zinc-500">

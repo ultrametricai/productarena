@@ -1,5 +1,6 @@
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
+import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import type { CategoryData } from '@/lib/data'
@@ -11,7 +12,11 @@ export default function StacksSection({ data }: { data: CategoryData }) {
 
   return (
     <div>
-      <h2 className="font-display leading-[1.1] mb-4 text-lg font-semibold">Stacks</h2>
+      {/* seed "stacks": same concept mark as the header's Stacks nav link. */}
+      <h2 className="font-display leading-[1.1] mb-4 flex items-center gap-2 text-lg font-semibold">
+        <GeoMark seed="stacks" title="Stacks — proven product combinations in this arena" size={18} className="text-zinc-500" />
+        Stacks
+      </h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {data.stacks.map((stack) => {
           const coverage = stackCoverage(stack, data)
