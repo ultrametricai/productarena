@@ -178,4 +178,26 @@ export const probes: LocalProbe[] = [
       longRunning: true,
       timeoutMs: 300_000,
     },
+    {
+      // Airweave's docs publish a full llms.txt index (agent instructions + .md links).
+      probeId: 'llms-docs-index',
+      productId: 'airweave',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.airweave.ai/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.airweave.ai/llms.txt | head -6',
+      expect: /# Airweave/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Docs serve clean markdown at page URL + .md and advertise the convention in-band.
+      probeId: 'docs-md-endpoint',
+      productId: 'airweave',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.airweave.ai/quickstart.md | head -6'],
+      displayCommand: 'curl -s https://docs.airweave.ai/quickstart.md | head -6',
+      expect: /append \.md to the page URL/,
+      timeoutMs: 30_000,
+    },
 ]

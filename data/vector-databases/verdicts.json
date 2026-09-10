@@ -679,6 +679,656 @@
     ]
   },
   {
+    "productId": "helixdb",
+    "storyId": "access-control-rbac",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm scoped API keys with read-only/read-write/operation-restricted roles and least-privilege credentials per service/environment (helixdb-docs-11), plus row-level isolation for tenancy (helixdb-docs-7) and per-database rate/limit overrides (helixdb-docs-13). However, there's no evidence of true per-collection (per-node-type/index) permission scoping — isolation is described at row-level/application-layer, not as fine-grained collection ACLs, and no independent/hands-on confirmation exists. Missing for 10: explicit per-collection/per-schema-object permission granularity, independent validation of RBAC enforcement in production.",
+    "evidenceIds": [
+      "helixdb-docs-11",
+      "helixdb-docs-7",
+      "helixdb-docs-13"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A probe confirms a live, working llms.txt at docs.helix-db.com/llms.txt describing HelixDB for agent consumption, and the docs/GitHub bootstrapper (helix chef) explicitly installs 'docs MCP' to let agents query docs directly, reinforcing agent-oriented documentation access. Missing for 10: independent (non-vendor) confirmation that agents actually consume and act correctly on the llms.txt content.",
+    "evidenceIds": [
+      "helixdb-probe-1",
+      "helixdb-gh-1",
+      "helixdb-probe-3"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-ai-insights",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence describes HelixDB as a graph/vector/text database with MCP-based query access and an AI-assisted bootstrapper for scaffolding, but there is no mention of the product itself generating insights, summaries, or suggestions from stored data — it only lets external AI agents issue read/write queries against the data.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "HelixDB is a database product (graph/vector/text storage engine with SDKs, MCP access, and cloud hosting); autonomous background automations is a workflow-orchestration/agent-runtime capability that doesn't apply to a database's product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "HelixDB documents an MCP server for external AI agents/tools to connect to it, and a 'helix chef' bootstrapper that scaffolds projects, but there is no evidence of a built-in AI assistant inside the product itself that a user can delegate tasks to.",
+    "evidenceIds": [
+      "helixdb-docs-8",
+      "helixdb-gh-1",
+      "helixdb-probe-3"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs show a CLI-driven quickstart (initialize, start a local instance, run query, stop it) and an embedded in-process mode, both of which are amenable to scripting/CI automation, and a CLI is documented separately. However, there is no explicit CI/CD example, non-interactive flag documentation, or Docker/headless deployment guidance in the pack. missing for 10: explicit CI pipeline example, non-interactive/headless flags, containerized automation docs.",
+    "evidenceIds": [
+      "helixdb-docs-1",
+      "helixdb-docs-2",
+      "helixdb-probe-4",
+      "helixdb-gh-1"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-mcp-client",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "HelixDB is a database/backend product that exposes its own functionality via an MCP server (helixdb-docs-8, helixdb-probe-3) for other agents to consume — it is not itself an AI agent or assistant that would plug in and consume other MCP servers' tools. This story's axis (a product acting as an MCP client to use external tools) is a category error for a database product, not a gap in its offering.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "HelixDB documents an official MCP server (helix-cloud/connect/mcp) with tools like helix_execute_read_query requiring scoped permissions, and a probe confirms this MCP endpoint exists; the helix chef bootstrapper also installs a 'docs MCP'. Missing for 10: independent/hands-on confirmation of an agent successfully connecting via this MCP server, and fuller documentation of the full tool set beyond read queries.",
+    "evidenceIds": [
+      "helixdb-docs-8",
+      "helixdb-probe-3",
+      "helixdb-gh-1"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-nl-commands",
+    "verdict": "disputed",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "HelixDB offers an MCP server and a 'chef' bootstrapper that installs query skills for AI agents, suggesting some agentic tooling, but interaction still requires exact HelixQL syntax or precise JSON request_type payloads (helixdb-docs-8), not free natural-language commands. Multiple hands-on community reports explicitly contradict any natural-language-command capability, calling HelixQL an added 'barrier to entry' that isn't 'AI coding friendly' and asking to 'sidestep the DSL' so LLMs can generate queries more easily (helixdb-comm-1, helixdb-comm-2, helixdb-comm-5, helixdb-comm-10). Missing for 10: evidence of a true NL-to-query interface, first-party benchmarks showing NL command success, and resolution of the DSL-friction complaints.",
+    "evidenceIds": [
+      "helixdb-gh-1",
+      "helixdb-docs-8",
+      "helixdb-comm-1",
+      "helixdb-comm-2",
+      "helixdb-comm-5",
+      "helixdb-comm-10"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "HelixDB ships an official CLI (documented at docs.helix-db.com/cli/getting-started) used for init/start/stop workflows and a 'helix chef' bootstrapper that installs AI query skills, scaffolds projects, and seeds data — clearly geared toward AI-native/agentic workflows. missing for 10: independent hands-on confirmation of the CLI's AI-specific features and no detail on full command surface beyond quickstart/bootstrap.",
+    "evidenceIds": [
+      "helixdb-probe-4",
+      "helixdb-docs-1",
+      "helixdb-gh-1"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "HelixDB exposes a documented, machine-readable public API surface: an OpenAPI spec (helixdb-probe-2), an llms.txt for LLM consumption (helixdb-probe-1), a unified operation-tree request model across Rust/TypeScript/Go/Python SDKs (helixdb-docs-6), a documented CLI (helixdb-probe-4), and an official MCP server with concrete tool definitions like helix_execute_read_query (helixdb-docs-8, helixdb-probe-3). This gives an AI-native user multiple first-party, documented entry points to drive the product programmatically. Missing for 10: independent/hands-on corroboration that the documented API surface is complete and stable in practice (community comments focus on the HelixQL query language's AI-friendliness rather than the API/documentation itself, so they don't concretely contradict this story).",
+    "evidenceIds": [
+      "helixdb-docs-6",
+      "helixdb-docs-8",
+      "helixdb-probe-1",
+      "helixdb-probe-2",
+      "helixdb-probe-3",
+      "helixdb-probe-4"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "HelixDB docs explicitly describe scoped API keys with read-only, read-write, or operation-restricted permissions for least-privilege credentials per service/environment (RBAC), and the MCP tool docs show specific permission scopes (e.g., database.query.read) required per operation, directly matching the story for issuing scoped credentials to an agent. Missing for 10: independent/hands-on verification that these scoped keys work as documented in practice, and more detail on credential issuance workflow (e.g., via CLI/dashboard) rather than just a feature description.",
+    "evidenceIds": [
+      "helixdb-docs-11",
+      "helixdb-docs-8",
+      "helixdb-docs-13"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "HelixDB documents official SDKs across Rust, TypeScript, Go, and Python built on a unified v3 operation-tree request model, plus a CLI and MCP integration for AI-native tooling. Missing for 10: independent hands-on validation of SDK quality/parity and more detail on SDK-specific docs beyond the overview page.",
+    "evidenceIds": [
+      "helixdb-docs-6",
+      "helixdb-probe-4",
+      "helixdb-probe-3",
+      "helixdb-gh-1"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "agentic-webhooks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of webhook subscription or event-notification capability anywhere in the docs, CLI, MCP, or API references; the evidence covers queries, indexes, security, and multi-tenancy but nothing about event-driven webhooks.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "There's an OpenAPI spec exposed (openapi.json) and a quickstart doc that walks through initializing, running, and stopping a generated query, showing some runnable-example content, but no evidence of an actual interactive API reference UI (e.g., Swagger/Redoc-style 'try it out' explorer) tied to that spec. Missing for 10: evidence of an interactive browsable API reference with embedded runnable/executable examples, not just a static OpenAPI JSON file and CLI quickstart.",
+    "evidenceIds": [
+      "helixdb-probe-2",
+      "helixdb-docs-1",
+      "helixdb-probe-4"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "A live probe confirms an OpenAPI spec is served at docs.helix-db.com/openapi.json returning HTTP 200 with an 'openapi' key, plus an llms.txt machine-readable doc endpoint, giving concrete evidence of downloadable machine-readable specs. Missing for 10: no independent/community confirmation of the spec's completeness or usage in the wild, and no first-party doc page explicitly describing/linking the OpenAPI spec as a supported artifact.",
+    "evidenceIds": [
+      "helixdb-probe-2",
+      "helixdb-probe-1"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs describe running a local/embedded HelixDB instance (quickstart, embedded engine) and a one-shot 'helix chef' bootstrapper that scaffolds a project, starts a local instance, and seeds example data — effectively a local sandbox distinct from any production deployment. Scoped, environment-specific API keys (read-only/read-write) further support separating test vs prod credentials. However, there is no explicit 'sandbox mode' or staging/production isolation feature documented, and no community/hands-on confirmation that this local setup is used specifically to avoid touching production data. Missing for 10: explicit sandbox/staging environment documentation, isolation guarantees between local and prod data, and independent user confirmation of this workflow.",
+    "evidenceIds": [
+      "helixdb-docs-1",
+      "helixdb-docs-2",
+      "helixdb-gh-1",
+      "helixdb-docs-11"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "There is mention of a v3 request model and release notes, but no evidence of a formal API versioning scheme or documented deprecation policy for HelixDB's APIs/SDKs/query language.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "automation-bulk-operations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of batch/bulk insert, bulk update, or multi-item operation APIs; the closest is a single operation-tree request model (helixdb-docs-6) and ACID transactions (helixdb-docs-9), but neither describes performing operations across many items at once.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "automation-rules-engine",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "HelixDB is a graph/vector/text database with query and transaction capabilities, but no evidence describes event-driven triggers, rules engines, or automatic actions firing on data events; the evidence pack only covers queries, indexes, SDKs, MCP access, and access control.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "HelixDB is a database (graph/vector/text) product, not a workflow/job scheduler; scheduling recurring jobs or automation workflows is outside its product category and no evidence pack item addresses it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "HelixDB is a database product (graph/vector/text storage), not an automation/workflow orchestration tool; versioning, reviewing, and rolling back 'automations' is not a fair capability to expect from a database engine.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "backup-restore-snapshots",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of any backup/snapshot or restore capability for collections; docs cover embedded storage, indexes, transactions, RBAC, and multi-tenancy but never mention backup or restore workflows. missing for 10: any documentation of snapshot creation, backup scheduling, or restore procedures.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "builtin-full-text-search",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe durable BM25 text indexes over string properties on nodes/edges as a native feature, confirmed by llms.txt describing BM25 full-text search as a first-class part of the engine alongside graph and vector search — no separate search engine needed. Missing for 10: independent hands-on benchmarks or community confirmation of full-text search quality/performance in practice.",
+    "evidenceIds": [
+      "helixdb-docs-4",
+      "helixdb-probe-1",
+      "helixdb-docs-10"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "bulk-import-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of a documented bulk-import/export mechanism for vectors and metadata in specific formats; docs cover vector indexes, transactions, and query capabilities but not batch load/dump tooling or file formats. missing for 10: bulk import/export commands or APIs, documented file formats (e.g. CSV/Parquet/JSON), and any example or CLI reference for data migration.",
+    "evidenceIds": [
+      "helixdb-docs-3",
+      "helixdb-docs-9",
+      "helixdb-docs-13"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "embedded-local-mode",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "First-party docs explicitly describe an embedded mode (\"run the same engine and queries in process with memory, disk, or object storage\") and a quickstart/CLI flow for starting and stopping a local instance for development, corroborated by the helix chef bootstrapper that scaffolds and starts a local instance. Missing for 10: independent/hands-on confirmation that embedded mode works as described, and a direct answer to the community question about running it like an embedded SQLite-style DB.",
+    "evidenceIds": [
+      "helixdb-docs-1",
+      "helixdb-docs-2",
+      "helixdb-gh-1",
+      "helixdb-comm-2"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "free-tier-prototyping",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "HelixDB is Apache 2.0 open source and can be run locally/embedded entirely free for prototyping (helixdb-docs-12, helixdb-docs-1, helixdb-docs-2), satisfying the 'free before paying' story via self-hosting. However, for the managed Helix Cloud offering there is no documented free tier, and a community report states cloud pricing starts around $600/mo, well above an experimentation budget (helixdb-comm-8), contradicting a 'meaningful free tier' for the hosted product path. missing for 10: an explicit low/no-cost Helix Cloud tier, first-party pricing page confirming free-tier limits, and evidence rebutting the $600/mo complaint.",
+    "evidenceIds": [
+      "helixdb-docs-12",
+      "helixdb-docs-1",
+      "helixdb-docs-2",
+      "helixdb-comm-8",
+      "helixdb-docs-13"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "horizontal-scaling-sharding",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of sharding, clustering, or distributed multi-node deployment; docs focus on embedded/single-instance database and Helix Cloud's row-level multi-tenancy at the application layer, not horizontal scaling across nodes. Community threads even question source availability and self-hosting scale, but nothing confirms distributed/sharded architecture.",
+    "evidenceIds": [
+      "helixdb-docs-2",
+      "helixdb-docs-7",
+      "helixdb-comm-7",
+      "helixdb-comm-9"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "hybrid-dense-sparse-search",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "HelixDB documents separate vector indexes (distance-based ranking) and BM25 text indexes, and describes a unified operation-tree model that 'combines a property graph, approximate vector search, and BM25 full-text search' in one query engine, implying they can be used together. However, there is no explicit documentation of a fusion-ranking mechanism (e.g., weighted score combination or reciprocal rank fusion) that merges BM25 and vector scores into a single ranked result set within one query. Missing for 10: explicit fusion-ranking algorithm/API, a worked example combining BM25 and vector scores in one query, and independent confirmation of hybrid ranking quality.",
+    "evidenceIds": [
+      "helixdb-docs-3",
+      "helixdb-docs-4",
+      "helixdb-docs-5",
+      "helixdb-probe-1"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "index-tuning-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Docs mention that vector indexes require a dimension and distance metric, but there is no evidence of exposing HNSW-specific tuning knobs (e.g., M, ef_construction, ef_search) or alternative index types that would let an ml-engineer trade recall against latency/memory. Community threads even raise unresolved performance concerns on multi-hop queries with no mention of tunable index parameters.",
+    "evidenceIds": [
+      "helixdb-docs-3",
+      "helixdb-comm-6",
+      "helixdb-comm-9"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "integrated-embedding-generation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows vector indexes for storing and ranking embeddings, but there is no mention of built-in embedding generation or configurable model providers at ingest/query time — users still appear to supply vectors themselves. missing for 10: any documentation of built-in embedding generation, model provider configuration, or automatic text-to-vector conversion at ingest/query time.",
+    "evidenceIds": [
+      "helixdb-docs-3",
+      "helixdb-docs-9",
+      "helixdb-docs-10"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "kubernetes-production-deploy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of a Helm chart, Kubernetes operator, or any Kubernetes-specific deployment guidance; the evidence pack only covers local/embedded quickstart, Helix Cloud (managed multi-tenant), CLI, and MCP setup. Community threads even question self-hosting options versus Helix Cloud, with no mention of K8s tooling.",
+    "evidenceIds": [
+      "helixdb-docs-1",
+      "helixdb-docs-2",
+      "helixdb-comm-8",
+      "helixdb-probe-4"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "live-upserts-freshness",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs claim ACID transactions across graph, vector, and text data in a single transaction, implying consistent updates, and search/filtering across nodes and edges, but there is no explicit documentation of upsert/delete operations or freshness/consistency guarantees for how quickly search results reflect changes. Missing for 10: explicit upsert/delete API documentation, documented latency/consistency model for index updates, and independent verification of update-to-search-visibility timing.",
+    "evidenceIds": [
+      "helixdb-docs-9",
+      "helixdb-docs-10",
+      "helixdb-docs-3",
+      "helixdb-docs-4"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "managed-cloud-offering",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Helix Cloud is documented as a real managed offering with multi-tenancy, RBAC/API keys, and configurable rate limits, and a CLI plus OpenAPI spec exist, implying some programmatic control-plane surface. However there is no explicit documentation of an API/CLI command dedicated to provisioning or spinning up new cloud database instances programmatically, and community threads note pricing (~$600/mo) without confirming a self-serve programmatic provisioning flow. Missing for 10: explicit provisioning API/CLI examples (create/delete/scale a Helix Cloud instance), infra-as-code (e.g. Terraform) support, and independent confirmation of automated provisioning working end-to-end.",
+    "evidenceIds": [
+      "helixdb-docs-7",
+      "helixdb-docs-11",
+      "helixdb-docs-13",
+      "helixdb-probe-4",
+      "helixdb-probe-2",
+      "helixdb-comm-8"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "metadata-filtered-search",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe pre-filtering an exact candidate set via graph traversal before vector ranking, plus vector indexes with distance metrics, search/filtering on nodes and edges, and text/BM25 indexes that can combine with vector search — supporting metadata-constrained vector search. However there is no benchmark or independent evidence quantifying recall/latency impact of filtering, and community comments raise concerns about performance on multi-hop queries and small benchmark datasets, which is adjacent but not a direct contradiction of filtered-vector-search quality. missing for 10: quantified recall/latency benchmarks specifically for filtered vector search, independent hands-on validation that filtering doesn't degrade recall/latency.",
+    "evidenceIds": [
+      "helixdb-docs-5",
+      "helixdb-docs-3",
+      "helixdb-docs-10",
+      "helixdb-docs-4",
+      "helixdb-comm-6",
+      "helixdb-comm-9"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "multi-tenant-isolation",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Helix Cloud docs describe only row-level isolation implemented at the application layer, explicitly noting 'no structural constraints on the database' rather than native namespaces, partitions, or per-tenant collections; RBAC/scoped API keys and rate-limit overrides exist but are not tied to a documented per-tenant isolation model with limits. missing for 10: native namespace/partition/collection-based tenant isolation, documented per-tenant resource limits, and any benchmark or case study showing cheap multi-tenant scaling.",
+    "evidenceIds": [
+      "helixdb-docs-7",
+      "helixdb-docs-11",
+      "helixdb-docs-13"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "openness-api-parity",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack documents SDKs, CLI, MCP server, and OpenAPI spec but never describes a HelixDB UI/console or compares its feature set against the API, so there's no basis to confirm API-UI parity. missing for 10: any description of a HelixDB web console/UI feature set, and evidence that all such features are also exposed via API/CLI/SDK.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "While HelixDB is Apache 2.0 open source (helixdb-docs-12) and can run embedded/self-hosted (helixdb-docs-2), there is no evidence of an explicit data export/migration tool or open-format data dump capability, and community comments explicitly raise vendor lock-in concerns about the bespoke query language (helixdb-comm-3, helixdb-comm-8) with no rebuttal shown for data portability.",
+    "evidenceIds": [
+      "helixdb-docs-12",
+      "helixdb-docs-2",
+      "helixdb-comm-3",
+      "helixdb-comm-8"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "openness-open-license",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "HelixDB's docs and site state it is Apache 2.0 licensed and developed in the open on GitHub, with a public repo. However, a firsthand community report explicitly questions this, noting 'Where's the source code for the database itself? Looks like the repo is just a client,' suggesting the core engine may not be fully open despite the license claim. missing for 10: a rebuttal or confirmation that the full database engine (not just client/SDK code) is in the public repo, and independent verification of build-from-source for the core engine.",
+    "evidenceIds": [
+      "helixdb-docs-12",
+      "helixdb-gh-1",
+      "helixdb-comm-7"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "openness-self-host",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "HelixDB docs show a working local self-host quickstart, an embedded-database mode (memory/disk/object storage), and Apache-2.0 open-source licensing, directly supporting self-hosting the core engine. Community skepticism (e.g., asking whether the public repo is 'just a client') raises an open question but is not a confirmed hands-on failure, so it tempers confidence rather than the verdict. Missing for 10: independent third-party confirmation that a self-hosted instance matches Helix Cloud's full feature set, and clarification of the 'is the core engine actually in the repo' community question.",
+    "evidenceIds": [
+      "helixdb-docs-1",
+      "helixdb-docs-2",
+      "helixdb-docs-12",
+      "helixdb-comm-7",
+      "helixdb-comm-8"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "polyglot-sdk-breadth",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state a single operation-tree request model spanning Rust, TypeScript, Go, and Python SDKs, covering three of the four named languages plus Rust instead of Java. No evidence of a Java SDK exists in the pack. missing for 10: Java SDK, independent/hands-on corroboration of SDK quality across languages, deeper per-language SDK docs.",
+    "evidenceIds": [
+      "helixdb-docs-6"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "HelixDB can be self-hosted or embedded (giving implicit control over data location), but there is no evidence of an explicit region/residency selection feature for Helix Cloud or any documented data-residency controls. missing for 10: explicit region selection options, data residency guarantees/documentation, compliance certifications tied to geography.",
+    "evidenceIds": [
+      "helixdb-docs-2",
+      "helixdb-docs-7"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "HelixDB is a graph/vector/text database product; the evidence pack contains no statement about AI-training data usage policies, opt-out mechanisms, or data-use commitments regarding customer data. This is an applicable axis for any cloud-hosted data product (buyers can reasonably ask about data-training policy), but no evidence addresses it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, TTL/expiry, or user-initiated data purge; documentation covers RBAC, multi-tenancy, and query features but nothing about retention/deletion controls for AI-native users.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions telemetry, usage analytics, or an opt-out setting for HelixDB; the docs cover open-source licensing, security, and MCP but not data collection practices. missing for 10: any mention of telemetry collection, opt-out flags/env vars, or privacy policy addressing usage tracking.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "published-latency-benchmarks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no first-party (claimed-docs) benchmark tables, latency, or recall numbers for HelixDB; the only performance data referenced comes from community discussion (e.g., a mention of a benchmark page running on 5M records with 5s count(*) latency, and unanswered questions about p99 multi-hop latency), which is not corroborated by any vendor-tier documentation in this pack. Because disputed verdicts require citations from two distinct tiers and only community-tier evidence exists here, this axis cannot be marked disputed and instead shows no vendor-backed performance evidence. missing for 10: published first-party benchmark methodology, latency percentiles (p50/p95/p99), recall metrics for vector/BM25 search, and independent reproduction of any performance claims.",
+    "evidenceIds": [
+      "helixdb-comm-6",
+      "helixdb-comm-9"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "quantization-compression",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Evidence covers vector indexes (dimension/distance metric) but nowhere mentions quantization, compression, or any documented accuracy/memory trade-off; no evidence of such a feature existing. missing for 10: quantization/compression feature docs, memory/storage savings data, accuracy trade-off benchmarks.",
+    "evidenceIds": [
+      "helixdb-docs-3"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "rag-framework-integrations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows HelixDB has SDKs for Rust/TS/Go/Python and an MCP server, but there is no mention of any maintained LangChain, LlamaIndex, or other RAG/agent-framework integration. Community feedback even highlights the custom HelixQL query language as a barrier to easy AI-framework tooling, reinforcing the absence of first-class integrations.",
+    "evidenceIds": [
+      "helixdb-docs-6",
+      "helixdb-comm-1",
+      "helixdb-comm-2",
+      "helixdb-comm-10"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "replication-high-availability",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of any replication, multi-node clustering, or documented consistency model; docs mention row-level tenancy isolation and RBAC but nothing about cross-node/zone replication or HA guarantees. missing for 10: replication architecture, multi-zone/multi-node deployment topology, consistency model documentation (e.g., CP/AP tradeoffs), failover/HA guarantees.",
+    "evidenceIds": [
+      "helixdb-docs-7",
+      "helixdb-docs-11"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "reranking-integration",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "HelixDB documents vector, BM25 text, and hybrid graph-filtered vector search, but there is no evidence of built-in or first-party-integrated reranking models (e.g., cross-encoder rerankers) applied to search results; the pack only covers indexing and candidate retrieval, not a reranking stage.",
+    "evidenceIds": [
+      "helixdb-docs-3",
+      "helixdb-docs-4",
+      "helixdb-docs-5"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "rich-filter-expressions",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Docs mention generic 'search and filtering on nodes and edges' and vector/text indexes, but there is no evidence of range queries, geo filters, nested boolean logic, or array-membership filtering in HelixQL. missing for 10: range filter examples, geo/spatial filter support, nested AND/OR/NOT boolean composition, array/IN membership filters.",
+    "evidenceIds": [
+      "helixdb-docs-10",
+      "helixdb-docs-3",
+      "helixdb-docs-4"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "serverless-usage-pricing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence in the pack shows HelixDB offering serverless, usage-based, per-unit transparent pricing; the only pricing signal is a community report that Helix Cloud 'starts at like $600/mo' — suggesting a flat/tiered plan rather than metered usage-based billing. Rate-limit docs (sustained rate, burst capacity) describe throttling, not a pricing model.",
+    "evidenceIds": [
+      "helixdb-comm-8",
+      "helixdb-docs-13"
+    ]
+  },
+  {
+    "productId": "helixdb",
+    "storyId": "vector-similarity-search",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe vector indexes ranking node/edge embeddings by distance, requiring a non-zero dimension and a distance metric, plus approximate vector search confirmed in the llms.txt probe. This directly matches the ANN + configurable distance metric story, and it's combined with graph filtering for hybrid search. Missing for 10: no independent benchmark or hands-on confirmation of ANN recall/performance, and no enumeration of which specific distance metrics (cosine, L2, dot) are supported.",
+    "evidenceIds": [
+      "helixdb-docs-3",
+      "helixdb-probe-1",
+      "helixdb-docs-5"
+    ]
+  },
+  {
     "productId": "milvus",
     "storyId": "access-control-rbac",
     "verdict": "full",

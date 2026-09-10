@@ -1,4 +1,4 @@
-import { MCP_INITIALIZE, type LocalProbe } from './types'
+import { CURL_MCP_INIT, MCP_INITIALIZE, type LocalProbe } from './types'
 
 export const probes: LocalProbe[] = [
     {
@@ -53,6 +53,34 @@ export const probes: LocalProbe[] = [
       argv: ['codex', 'exec', '--help'],
       displayCommand: 'codex exec --help',
       expect: /non-interactively/i,
+      timeoutMs: 30_000,
+    },
+    {
+      // cubic's docs publish a full llms.txt index — first line names the product docs.
+      probeId: 'llms-docs-index',
+      productId: 'cubic',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.cubic.dev/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.cubic.dev/llms.txt | head -6',
+      expect: /# cubic documentation/,
+      timeoutMs: 30_000,
+    },
+    {
+      // cubic's hosted MCP server (docs warn to use the www host exactly) answers a keyless
+      // initialize with its OAuth challenge — protected-resource metadata + scopes in one header.
+      probeId: 'mcp-remote-handshake',
+      productId: 'cubic',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://www.cubic.dev/api/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://www.cubic.dev/api/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
 ]
