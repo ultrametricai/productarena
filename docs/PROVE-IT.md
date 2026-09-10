@@ -8,7 +8,8 @@ scraping vendors' marketing, **vendors prove their own stories** by submitting r
 proof specs that our runner executes, records, and publishes — pass *or* fail.
 
 This document is the protocol. The current implementation (v1) is the probe recorder
-(`pipeline/stages/probe-record.ts`), the browser-proof pilot
+(`pipeline/stages/probe-record.ts`, with per-arena probe definitions in
+`pipeline/probes/<arena-id>.ts`), the browser-proof pilot
 (`pipeline/scripts/record-browser-proof.ts`), the proof store (`lib/proofs.ts`,
 `data/<category>/proofs/`), and the intake form
 (`.github/ISSUE_TEMPLATE/prove-a-story.yml`).
