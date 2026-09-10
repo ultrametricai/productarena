@@ -24,13 +24,13 @@ It has grown past rankings into an operating map of the AI era:
 
 ![ProductArena](https://ultrametric.ai/productarena/opengraph-image)
 
-ProductArena is an evidence-based comparison site: evidence in, rankings out. For each of ten-plus
-product arenas (50+ products and growing) we crawl vendor docs, GitHub, and community sources,
+ProductArena is an evidence-based comparison site: evidence in, rankings out. For each of 60+
+product arenas (300+ products and growing) we crawl vendor docs, GitHub, and community sources,
 extract per-product evidence, and
 have an LLM judge every product against a shared set of user stories. The result is a
 leaderboard, a head-to-head battle log, a per-product story matrix, and — across every arena —
-a global Agentic Index ranking how AI-ready every product is. Every score traces back to cited
-evidence, not opinion.
+global rankings of how agent-ready and AI-native every product is. Every score traces back to
+cited evidence, not opinion.
 
 Live site: https://ultrametric.ai/productarena
 
@@ -359,7 +359,7 @@ Two sibling group-scoped indexes live under the same `agenticness` theme: `agent
 ("does the product act agentically itself" — `agenticApp` on the leaderboard) and, since v2.4,
 `api-quality` (see below).
 
-### 5. The PA Score (formerly the AI-Era Index)
+### 5. The PA Score (formerly the Arena Score / AI-Era Index)
 
 v2.4 adds a sixth canonical group, **API quality** (theme `agenticness`, group `api-quality`),
 alongside `agent-access`. Where `agent-access` asks "can an agent reach the product at all,"
@@ -372,8 +372,9 @@ alongside `agent-access`. Where `agent-access` asks "can an agent reach the prod
 | `api-versioning-policy` | I can rely on versioned APIs with a documented deprecation policy | 2 |
 | `api-sandbox` | I can test against a sandbox environment without touching production data | 1 |
 
-On top of that, every leaderboard entry now carries an **PA Score** (`aiEra` internally,
-displayed on-site as "Arena {n}/100" — this section used to be called the "AI-Era Index," same
+On top of that, every leaderboard entry now carries a **PA Score** (`aiEra` internally,
+displayed on-site as a bare "{n}/100" badge under a "PA Score" label — this score used to be
+called the "Arena Score" and before that the "AI-Era Index," same
 formula, new name) — a single
 number meant to answer "how ready is this product for a world where agents, not just humans,
 are the primary users?" It's a weighted blend of five existing leaderboard components:
@@ -447,7 +448,7 @@ story title or matrix cell on any product page to see its origin in the tooltip 
 ### 7. Judge model and prompt version
 
 The judge model is `claude-sonnet-5` by default (override with the `PA_MODEL` env var), and
-the judge prompt is versioned (`PROMPT_VERSION = 'v2'` in `pipeline/stages/judge.ts`) — the
+the judge prompt is versioned (`PROMPT_VERSION = 'v3'` in `pipeline/stages/judge.ts`) — the
 cache key includes the prompt version, so bumping it forces a full re-judge.
 
 **Re-judge stability policy.** LLM judging has measurable re-roll variance (~9% of cells can

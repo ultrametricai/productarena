@@ -122,7 +122,7 @@ const SCHEMAS = {
       agentReady: { type: 'number', minimum: 0, maximum: 100, nullable: true },
       agenticApp: { type: 'number', minimum: 0, maximum: 100, nullable: true },
       apiQuality: { type: 'number', minimum: 0, maximum: 100, nullable: true },
-      aiEra: { type: 'number', minimum: 0, maximum: 100, nullable: true, description: 'PA Score (formerly INIT Score / AI-Era Index) — see /methodology.' },
+      aiEra: { type: 'number', minimum: 0, maximum: 100, nullable: true, description: 'PA Score (formerly Arena Score / INIT Score / AI-Era Index) — see /methodology.' },
       applicable: { type: 'integer', minimum: 0 },
       total: { type: 'integer', minimum: 0 },
       themeScores: { type: 'object', additionalProperties: { type: 'number', minimum: 0, maximum: 100, nullable: true } },

@@ -56,7 +56,7 @@ blends five components with renormalized weights):
 
 | Component | Weight | Question it answers |
 |-----------|--------|---------------------|
-| **Agentreadyness** (`agentReady`) | 0.30 | Can an AI agent drive this product? (MCP, CLI, API auth for non-humans) |
+| **Agent-ready** (`agentReady`) | 0.30 | Can an AI agent drive this product? (MCP, CLI, API auth for non-humans) |
 | **API quality** (`apiQuality`) | 0.20 | Once an agent is in, how good is the surface? (docs, SDKs, webhooks, idempotency) |
 | **Openness** | 0.20 | Can you leave, inspect, self-host, export? |
 | **Agentic features** (`agenticApp`) | 0.15 | Does the product act agentically itself? |

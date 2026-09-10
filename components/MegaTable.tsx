@@ -35,7 +35,7 @@ import {
 // own arena's rankings.json; rows are pre-flattened + stripped server-side (lib/megaTable.ts) so
 // this client component never carries evidence/verdicts/stories over the wire.
 //
-// AGENTREADYNESS is the default sort (desc) — see lib/megaTableSort.ts's DEFAULT_COLUMN doc —
+// AGENT-READY is the default sort (desc) — see lib/megaTableSort.ts's DEFAULT_COLUMN doc —
 // and `rank` is a fixed identity derived from that same default order, not a re-derived row
 // index, so it doesn't reshuffle when a reader sorts by another column.
 //
