@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import GeoMark from '@/components/GeoMark'
 import { IntegrationChip, chipTitle, type IntegrationChipData } from '@/components/IntegrationChips'
 import { loadAll } from '@/lib/data'
 import {
@@ -70,7 +71,11 @@ export default function IntegrationsPage() {
   return (
     <div className="space-y-10">
       <section className="mx-auto max-w-3xl text-center">
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Integration graph</h1>
+        {/* seed "integrations": same concept mark as the Explore menu's Integration graph entry. */}
+        <h1 className="font-display leading-[1.1] mt-1 flex items-center justify-center gap-2.5 text-3xl font-bold tracking-tight">
+          <GeoMark seed="integrations" title="Integration graph — who verifiably connects to whom" size={26} className="text-zinc-500" />
+          Integration graph
+        </h1>
         <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
           Who verifiably connects to whom. Every edge is extracted from evidence we already
           collected and carries a verbatim quote from a specific evidence item — verified
@@ -82,13 +87,16 @@ export default function IntegrationsPage() {
 
       <section className="grid gap-3 sm:grid-cols-3">
         {[
-          { label: 'verified connections', value: stats.totalPairs, note: 'unique product pairs with ≥1 evidence-backed edge' },
-          { label: 'evidence-backed mentions', value: stats.totalMentions, note: 'verbatim integration quotes behind those pairs' },
-          { label: 'connected products', value: stats.connectedProducts, note: `of ${refs.size} tracked products fleet-wide` },
+          { id: 'connections', label: 'verified connections', value: stats.totalPairs, note: 'unique product pairs with ≥1 evidence-backed edge' },
+          { id: 'mentions', label: 'evidence-backed mentions', value: stats.totalMentions, note: 'verbatim integration quotes behind those pairs' },
+          { id: 'connected-products', label: 'connected products', value: stats.connectedProducts, note: `of ${refs.size} tracked products fleet-wide` },
         ].map((stat) => (
           <div key={stat.label} className="rounded-2xl border border-zinc-800 p-4 text-center">
             <p className="font-mono text-3xl font-semibold tabular-nums text-emerald-300">{stat.value}</p>
-            <p className="mt-1 text-[10px] uppercase tracking-widest text-zinc-400">{stat.label}</p>
+            <p className="mt-1 flex items-center justify-center gap-1.5 text-[10px] uppercase tracking-widest text-zinc-400">
+              <GeoMark seed={stat.id} title={stat.label} size={14} className="text-zinc-600" />
+              {stat.label}
+            </p>
             <p className="mt-1 text-xs text-zinc-500">{stat.note}</p>
           </div>
         ))}

@@ -6,6 +6,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
+import GeoMark from '@/components/GeoMark'
 import IntegrationChips, { chipTitle } from '@/components/IntegrationChips'
 import MomentumChip from '@/components/MomentumChip'
 import MomentumTrend from '@/components/MomentumTrend'
@@ -258,7 +259,10 @@ export default async function ProductPage({
       )}
 
       <div>
-        <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">By theme</h2>
+        <h2 className="font-display leading-[1.1] mb-3 flex items-center gap-2 text-lg font-semibold">
+          <GeoMark seed="themes" title="By theme — the product's score on each story theme" size={18} className="text-zinc-500" />
+          By theme
+        </h2>
         <div className="grid gap-3 sm:grid-cols-2">
           {byTheme.map(([t]) => {
             const themeScore = entry.themeScores[t] ?? null
@@ -296,7 +300,10 @@ export default async function ProductPage({
       </div>
 
       <div id="story-verdicts" className="scroll-mt-4">
-        <h2 className="font-display leading-[1.1] mb-3 text-lg font-semibold">Story verdicts</h2>
+        <h2 className="font-display leading-[1.1] mb-3 flex items-center gap-2 text-lg font-semibold">
+          <GeoMark seed="story-verdicts" title="Story verdicts — every judged story with its evidence" size={18} className="text-zinc-500" />
+          Story verdicts
+        </h2>
         {/* Two server-rendered views of the same verdict rows, toggled client-side via `hidden`
             (static-export safe — both are in the HTML). Table = the flat, sortable evidence
             surface every #story-<id> deep link targets; Map = the capability DAG (curated canon

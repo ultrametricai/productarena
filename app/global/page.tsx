@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import GeoMark from '@/components/GeoMark'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
 import { adoptionNow } from '@/lib/diffusion'
 import { collectGlobalStories } from '@/lib/globalStories'
@@ -32,7 +33,11 @@ export default function GlobalIndexPage() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm uppercase tracking-widest text-emerald-400">Global stories</p>
+        {/* seed "global": same concept mark as the Explore menu's Capability adoption entry. */}
+        <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-emerald-400">
+          <GeoMark seed="global" title="Capability adoption — cross-arena industry stats" size={16} className="text-zinc-500" />
+          Global stories
+        </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           Capability adoption across the industry
         </h1>
