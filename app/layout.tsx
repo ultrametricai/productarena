@@ -110,7 +110,7 @@ function formatCompact(n: number): string {
   return String(n);
 }
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-80Q6FSJYY9";
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-WWC2ZJRDCB";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -350,7 +350,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </footer>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: SITE_JSONLD }} />
         {GA_ID && (
-          // Google Analytics 4 — the site-wide ultrametric.ai property (G-80Q6FSJYY9);
+          // Google Analytics 4 — the site-wide ultrametric.ai property (G-WWC2ZJRDCB);
           // NEXT_PUBLIC_GA_ID overrides if ProductArena ever gets its own property.
           <>
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} />
