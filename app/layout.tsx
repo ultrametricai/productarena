@@ -233,6 +233,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
                   { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
                   { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },
+                  { id: "my-stack", name: "My Stack", label: "tool", href: "/my-stack" },
+                  { id: "stack-battle", name: "Battle of the stacks", label: "tool", href: "/stacks/battle" },
                   { id: "changelog", name: "Changelog", label: "history", href: "/changelog" },
                   { id: "predictions", name: "Predictions", label: "forecasts", href: "/predictions" },
                   { id: "reports", name: "Weekly reports", label: "history", href: "/reports" },
