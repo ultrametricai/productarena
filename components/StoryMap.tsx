@@ -6,6 +6,7 @@ import { stripPersonaPrefix } from '@/lib/data-helpers'
 import {
   clusterDomainStories, layerByEdges, tidyGroupLabel, type DomainCluster,
 } from '@/lib/storyDag'
+import { unlockHints, type UnlockHint } from '@/lib/storyEdges'
 import { canonGraphStoryIds, clusterEdges, storyGraph, type StoryGraphCluster } from '@/lib/storyGraph'
 import { isStoryUntested, type StoryVerdictRow } from '@/lib/storyVerdictsSort'
 
@@ -73,10 +74,16 @@ function Connector() {
   )
 }
 
-function StoryBlock({ row }: { row: StoryVerdictRow }) {
+// Hints map: storyId → dependent stories this product fails that the story enables (see
+// lib/storyEdges.ts's unlockHints). Threaded down from StoryMap; empty map keeps blocks silent.
+type Hints = Map<string, UnlockHint[]>
+const NO_HINTS: Hints = new Map()
+
+function StoryBlock({ row, hints = NO_HINTS }: { row: StoryVerdictRow; hints?: Hints }) {
   const untested = isStoryUntested(row)
   const style = VERDICT_STYLE[row.verdict]
   const quality = row.verdict === 'na' ? 'n/a' : untested ? '–' : `${row.quality}/10`
+  const unlocks = hints.get(row.storyId)
   return (
     <a
       id={`map-story-${row.storyId}`}
@@ -102,21 +109,38 @@ function StoryBlock({ row }: { row: StoryVerdictRow }) {
           {'○'.repeat(Math.max(0, 3 - row.weight))}
         </span>
       </p>
+      {/* "Unlocks →": this story passes but a story it's a curated prerequisite/enabler of does
+          not — honest framing (the miss is the dependent's, this one delivers), kept to one
+          subtle line with the full story titles in the tooltip. */}
+      {unlocks && unlocks.length > 0 && (
+        <p
+          className="mt-1 truncate text-[10px] text-zinc-500"
+          title={unlocks
+            .map(
+              (u) =>
+                `Passing this story but failing “${stripPersonaPrefix(u.title)}”, which this one enables (curated dependency — data/story-edges.json).`,
+            )
+            .join('\n')}
+        >
+          <span className="text-emerald-400/70">unlocks →</span>{' '}
+          {unlocks.map((u) => stripPersonaPrefix(u.label)).join(' · ')}
+        </p>
+      )}
     </a>
   )
 }
 
 // A sibling layer: one block full-width, several side by side (ProcessDag's parallel-group grid,
 // minus the dashed box — the cluster border already scopes them).
-function BlockLayer({ rows }: { rows: StoryVerdictRow[] }) {
-  if (rows.length === 1) return <StoryBlock row={rows[0]} />
+function BlockLayer({ rows, hints }: { rows: StoryVerdictRow[]; hints: Hints }) {
+  if (rows.length === 1) return <StoryBlock row={rows[0]} hints={hints} />
   // 2 and 4 siblings pack a 2-col grid exactly; any other count gets 3 cols at lg so a wrapped
   // odd block doesn't read as a child of the row above it.
   const three = rows.length !== 2 && rows.length !== 4
   return (
     <div className={`grid gap-2 sm:grid-cols-2 ${three ? 'lg:grid-cols-3' : ''}`}>
       {rows.map((r) => (
-        <StoryBlock key={r.storyId} row={r} />
+        <StoryBlock key={r.storyId} row={r} hints={hints} />
       ))}
     </div>
   )
@@ -128,10 +152,12 @@ function ClusterFlow({
   rows,
   edges,
   rootId,
+  hints,
 }: {
   rows: StoryVerdictRow[]
   edges: Array<[string, string]>
   rootId?: string
+  hints: Hints
 }) {
   const byId = new Map(rows.map((r) => [r.storyId, r]))
   const ids = rows.map((r) => r.storyId)
@@ -143,7 +169,7 @@ function ClusterFlow({
         {layers.map((layer, li) => (
           <Fragment key={layer[0]}>
             {li > 0 && <Connector />}
-            <BlockLayer rows={layer.map((id) => byId.get(id)!)} />
+            <BlockLayer rows={layer.map((id) => byId.get(id)!)} hints={hints} />
           </Fragment>
         ))}
       </>
@@ -153,11 +179,11 @@ function ClusterFlow({
   const siblings = rows.filter((r) => r !== root)
   return (
     <>
-      <StoryBlock row={root} />
+      <StoryBlock row={root} hints={hints} />
       {siblings.length > 0 && (
         <>
           <Connector />
-          <BlockLayer rows={siblings} />
+          <BlockLayer rows={siblings} hints={hints} />
         </>
       )}
     </>
@@ -182,20 +208,20 @@ function ClusterBox({
   )
 }
 
-function CanonCluster({ cluster, rows }: { cluster: StoryGraphCluster; rows: StoryVerdictRow[] }) {
+function CanonCluster({ cluster, rows, hints }: { cluster: StoryGraphCluster; rows: StoryVerdictRow[]; hints: Hints }) {
   return (
     <ClusterBox label={cluster.label} wide={rows.length > 4}>
-      <ClusterFlow rows={rows} edges={clusterEdges(cluster)} rootId={cluster.rootId} />
+      <ClusterFlow rows={rows} edges={clusterEdges(cluster)} rootId={cluster.rootId} hints={hints} />
     </ClusterBox>
   )
 }
 
 // One taxonomy group's box for domain-mined stories: shared-stem clusters (root + siblings under
 // it) stacked inside, singleton stems as bare blocks. Singleton *groups* skip the box entirely.
-function DomainGroup({ group, rows }: { group: string; rows: StoryVerdictRow[] }) {
+function DomainGroup({ group, rows, hints }: { group: string; rows: StoryVerdictRow[]; hints: Hints }) {
   const byId = new Map(rows.map((r) => [r.storyId, r]))
   const clusters = clusterDomainStories(rows.map((r) => ({ id: r.storyId, title: r.title, weight: r.weight })))
-  if (rows.length === 1) return <StoryBlock row={rows[0]} />
+  if (rows.length === 1) return <StoryBlock row={rows[0]} hints={hints} />
   return (
     <ClusterBox label={tidyGroupLabel(group)} wide={rows.length > 4}>
       <div className="space-y-2.5">
@@ -206,7 +232,7 @@ function DomainGroup({ group, rows }: { group: string; rows: StoryVerdictRow[] }
             {c.label !== null && clusters.length > 1 && (
               <p className="mb-1.5 px-1 font-mono text-[10px] uppercase tracking-wide text-zinc-600">{c.label}</p>
             )}
-            <ClusterFlow rows={c.storyIds.map((id) => byId.get(id)!)} edges={[]} rootId={c.rootId} />
+            <ClusterFlow rows={c.storyIds.map((id) => byId.get(id)!)} edges={[]} rootId={c.rootId} hints={hints} />
           </div>
         ))}
       </div>
@@ -217,6 +243,10 @@ function DomainGroup({ group, rows }: { group: string; rows: StoryVerdictRow[] }
 export default function StoryMap({ rows, productName }: { rows: StoryVerdictRow[]; productName: string }) {
   const canonById = new Map(rows.map((r) => [r.storyId, r]))
   const themes = groupInOrder(rows, (r) => r.theme)
+  // "Unlocks →" hints: curated cross-story dependencies (lib/storyEdges.ts) plus theme-rule
+  // attachments of this arena's domain stories, filtered to (passing prerequisite → failing
+  // dependent) pairs for THIS product.
+  const hints = unlockHints(rows, canonGraphStoryIds)
   // A curated cluster belongs to the theme its stories carry (they all share one — the graph
   // partitions the canon along taxonomy lines). Filtered to stories present in this arena.
   const canonClustersByTheme = new Map<string, Array<{ cluster: StoryGraphCluster; rows: StoryVerdictRow[] }>>()
@@ -254,10 +284,10 @@ export default function StoryMap({ rows, productName }: { rows: StoryVerdictRow[
             <p className="mb-2 mt-0.5 truncate text-xs text-zinc-600">{themeExplanation(theme)}</p>
             <div className="grid min-w-0 items-start gap-3 lg:grid-cols-2">
               {canonClusters.map(({ cluster, rows: clusterRows }) => (
-                <CanonCluster key={cluster.id} cluster={cluster} rows={clusterRows} />
+                <CanonCluster key={cluster.id} cluster={cluster} rows={clusterRows} hints={hints} />
               ))}
               {domainGroups.map(([group, groupRows]) => (
-                <DomainGroup key={group} group={group} rows={groupRows} />
+                <DomainGroup key={group} group={group} rows={groupRows} hints={hints} />
               ))}
             </div>
           </section>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import GeoMark from '@/components/GeoMark'
 import { IntegrationChip, chipTitle, type IntegrationChipData } from '@/components/IntegrationChips'
+import { classifyClassicPairs, loadClassicPairs } from '@/lib/classicPairs'
 import { loadAll } from '@/lib/data'
 import {
   integrationStats,
@@ -68,6 +69,14 @@ export default function IntegrationsPage() {
     return ref ? [{ productId, neighborCount, ...ref }] : []
   })
 
+  // Classic pairings: curated expectations classified against the verified graph — a pair only
+  // ever renders as "verified" (edge + quote exists) or "no evidence found yet". Pairs whose ids
+  // don't resolve to tracked products are dropped defensively (tests forbid them anyway).
+  const classic = classifyClassicPairs(
+    loadClassicPairs().filter((p) => refs.has(p.a) && refs.has(p.b)),
+    graph,
+  )
+
   return (
     <div className="space-y-10">
       <section className="mx-auto max-w-3xl text-center">
@@ -119,6 +128,60 @@ export default function IntegrationsPage() {
           </div>
         </section>
       )}
+
+      <section aria-label="classic pairings">
+        <h2 className="font-display leading-[1.1] flex items-center gap-2 text-lg font-semibold">
+          <GeoMark seed="classic-pairs" title="Classic pairings — the interconnects everyone expects, checked against our evidence" size={18} className="text-zinc-500" />
+          Classic pairings
+        </h2>
+        <p className="mb-3 mt-1 max-w-2xl text-xs text-zinc-500">
+          {classic.statuses.length} pairings the industry simply expects (payments↔accounting,
+          chat↔issues, repo↔deploys…), checked against the evidence graph:{' '}
+          <span className="text-emerald-300">{classic.verified} verified</span> ·{' '}
+          <span className="text-zinc-400">{classic.unverified} no evidence found yet</span>.
+          &ldquo;No evidence yet&rdquo; means exactly that — our corpus hasn&rsquo;t surfaced a
+          quote — never that the integration doesn&rsquo;t exist. The unverified half is our
+          evidence-coverage to-do list.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {classic.statuses.map((s) => {
+            const a = refs.get(s.a)!
+            const b = refs.get(s.b)!
+            return (
+              <div
+                key={s.key}
+                title={
+                  s.verified
+                    ? `${s.expectation}\n\n${chipTitle(s.sources, (pid) => refs.get(pid)?.name ?? pid)}`
+                    : `${s.expectation}\n\nNo evidence-backed edge in our corpus yet — not a claim that they don't integrate.`
+                }
+                className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2 ${
+                  s.verified ? 'border-emerald-400/30 bg-emerald-400/[0.04]' : 'border-zinc-800'
+                }`}
+              >
+                <p className="min-w-0 truncate text-sm">
+                  <Link href={`/arena/${a.arenaId}/product/${s.a}`} className="font-medium text-zinc-200 transition hover:text-emerald-300">
+                    {a.name}
+                  </Link>
+                  <span aria-hidden className="mx-1.5 text-zinc-600">↔</span>
+                  <Link href={`/arena/${b.arenaId}/product/${s.b}`} className="font-medium text-zinc-200 transition hover:text-emerald-300">
+                    {b.name}
+                  </Link>
+                </p>
+                {s.verified ? (
+                  <span className="shrink-0 rounded bg-emerald-400/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-emerald-300">
+                    ✓ verified
+                  </span>
+                ) : (
+                  <span className="shrink-0 rounded bg-zinc-800/60 px-1.5 py-0.5 font-mono text-[10px] text-zinc-500">
+                    no evidence yet
+                  </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </section>
 
       <section className="space-y-6">
         <h2 className="font-display leading-[1.1] text-lg font-semibold">By arena</h2>
