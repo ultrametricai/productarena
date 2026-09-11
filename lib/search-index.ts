@@ -107,6 +107,8 @@ const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/certified', label: 'Certified Agent-Ready', sublabel: 'The certification registry' },
   { href: '/stacks', label: 'AI Stacks', sublabel: 'Curated cross-arena stacks' },
   { href: '/stacks/builder', label: 'Stack builder', sublabel: 'Build your own evidence-backed stack' },
+  { href: '/my-stack', label: 'My stack', sublabel: 'Enter your stack, get evidence-based upgrades' },
+  { href: '/stacks/battle', label: 'Battle of the stacks', sublabel: 'Two stacks, side by side' },
 ]
 
 export function buildPageEntries(keywords?: Record<string, string[]>): SearchEntry[] {
