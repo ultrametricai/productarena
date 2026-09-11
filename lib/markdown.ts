@@ -4,6 +4,7 @@ import type { CategoryData } from './data'
 import { evidenceById, groupInOrder, verdictFor } from './data'
 import { provenanceLine } from './provenance'
 import type { Product, Story } from './schemas'
+import { coverageMapFor } from './storyCoverage'
 import { parseStoryPersona } from './storyText'
 import { strongestEvidence } from './verification'
 
@@ -216,6 +217,25 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
           lines.push(`- Cited evidence: ${cites}`)
         }
       }
+    }
+  }
+
+  // Coverage map (lib/storyCoverage.ts): which docs area / API section / community source the
+  // cited evidence behind each covered verdict came from — the inverse index agents want
+  // ("the API reference alone covers 14 stories"). Pure derivation from the citations above.
+  const coverage = coverageMapFor(data, productId)
+  if (coverage.length > 0) {
+    lines.push('')
+    lines.push('## Coverage')
+    lines.push('')
+    lines.push(
+      'Evidence surfaces behind the covered (full/partial/disputed) verdicts above, most-covering first — clustered by evidence URL host + first path segment.',
+    )
+    lines.push('')
+    for (const c of coverage) {
+      lines.push(
+        `- Coverage: [${c.label}](${c.url}) → ${c.storyIds.length} ${c.storyIds.length === 1 ? 'story' : 'stories'} (strongest tier: ${c.tier})`,
+      )
     }
   }
 

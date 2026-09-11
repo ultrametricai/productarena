@@ -6,6 +6,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
+import CoverageMapSection from '@/components/CoverageMapSection'
 import GeoMark from '@/components/GeoMark'
 import IntegrationChips, { chipTitle } from '@/components/IntegrationChips'
 import MomentumChip from '@/components/MomentumChip'
@@ -318,6 +319,11 @@ export default async function ProductPage({
           table={<StoryVerdictsTable category={category} productId={id} rows={verdictRows} />}
         />
       </div>
+
+      {/* The inverse of the table's per-row "Covered by" chips: each evidence surface with the
+          stories it covers (lib/storyCoverage.ts) — collapsed by default, pure derivation from
+          the citations above. */}
+      <CoverageMapSection data={data} productId={id} />
 
       <ProofsSection category={category} productId={id} stories={data.stories} />
 
