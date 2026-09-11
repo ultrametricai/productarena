@@ -136,7 +136,7 @@ describe('filterSearchEntries — the classic queries', () => {
   it('page aliases resolve: compare products, certified agent ready, my stack', () => {
     expect(firstHref('compare products')).toBe('/compare')
     expect(firstHref('certified agent ready')).toBe('/certified')
-    expect(firstHref('my stack')).toBe('/stacks/builder')
+    expect(firstHref('my stack')).toBe('/my-stack')
   })
 
   it('empty query returns every entry in index order', () => {
