@@ -11,7 +11,9 @@ import arenaIcons from "@/data/arena-icons.json";
 import { loadIcpTypes } from "@/lib/icp";
 import { hasLogo } from "@/lib/logos";
 import { REPO, SITE_URL } from "@/lib/site";
-import { buildSearchIndex, type SearchEntry } from "@/lib/search-index";
+import { buildPageEntries, buildSearchIndex, buildStackEntries, type SearchEntry } from "@/lib/search-index";
+import { loadAiStacks } from "@/lib/aiStacks";
+import searchAliases from "@/data/search-aliases.json";
 
 // Short labels used inside the Arenas dropdown alongside full names.
 const NAV_LABELS: Record<string, string> = {
@@ -165,11 +167,20 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   // The two full global rankings (see app/rankings/*) aren't arenas, but they're arena-shaped
   // (a ranked list you land on and browse) — surfacing them as `type: 'arena'` groups them with
   // the per-category arenas in the palette instead of inventing a one-off section for two items.
+  // Alias phrases people actually type ("agent harness", "etl", "mcp adoption") come from
+  // data/search-aliases.json — see lib/search-index.ts for the matcher that consumes them.
+  const pageAliases = searchAliases.pages as Record<string, string[]>;
   const searchEntries: SearchEntry[] = [
-    ...buildSearchIndex(loadAll(), { arenaIcons: arenaIcons as Record<string, string>, hasLogo }),
-    { type: "arena", label: "Most agent-ready (full ranking)", sublabel: "All products, ranked by agent-readiness", href: "/rankings/agentic" },
-    { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by AI-native features", href: "/rankings/ai-native" },
-    { type: "arena", label: "Claims vs reality (full ranking)", sublabel: "All products, ranked by claims integrity", href: "/rankings/claims-integrity" },
+    ...buildSearchIndex(loadAll(), {
+      arenaIcons: arenaIcons as Record<string, string>,
+      hasLogo,
+      keywords: searchAliases.arenas as Record<string, string[]>,
+    }),
+    { type: "arena", label: "Most agent-ready (full ranking)", sublabel: "All products, ranked by agent-readiness", href: "/rankings/agentic", keywords: pageAliases["/rankings/agentic"] },
+    { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by AI-native features", href: "/rankings/ai-native", keywords: pageAliases["/rankings/ai-native"] },
+    { type: "arena", label: "Claims vs reality (full ranking)", sublabel: "All products, ranked by claims integrity", href: "/rankings/claims-integrity", keywords: pageAliases["/rankings/claims-integrity"] },
+    ...buildStackEntries(loadAiStacks(), searchAliases.stacks as Record<string, string[]>),
+    ...buildPageEntries(pageAliases),
   ];
 
   return (
