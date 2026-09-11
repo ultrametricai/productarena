@@ -9,12 +9,28 @@ discussions, emails, or form submissions were created.
 
 | Draft | Arena | Type | Venue | Status |
 | --- | --- | --- | --- | --- |
+| [GIFT-LIST](./GIFT-LIST.md) | (cross-arena) | ranked gift-PR program (18 candidates) | various — see list | draft — requires founder sign-off |
 | [gitea](./gitea/issue-body.md) | code-hosting | gift (llms.txt offer) | github.com/go-gitea/gitea issue or gitea.com/gitea/docs PR | draft — requires founder sign-off |
+| [linear](./linear/issue-body.md) | project-management | gift (passing cert report + invitation) | github.com/linear/linear issue (docs source closed — no PR possible) | draft — requires founder sign-off |
+| [vllm](./vllm/PR.md) | local-llm-runtimes | gift PR (llms.txt, 50 links verified) | vllm-project/vllm → `docs/llms.txt` (DCO sign-off required) | draft — requires founder sign-off |
+| [crawl4ai](./crawl4ai/PR.md) | web-scraping | gift PR (llms.txt, 49 links verified) | unclecode/crawl4ai → `docs/md_v2/llms.txt` | draft — requires founder sign-off |
+| [homebrew](./homebrew/PR.md) | package-managers | gift PR (llms.txt, 49 links verified) | Homebrew/brew → `docs/llms.txt` (Responsible-AI disclosure included) | draft — requires founder sign-off |
+| [docusaurus](./docusaurus/PR.md) | docs-platforms | gift PR (llms.txt, 54 links verified) | facebook/docusaurus → `website/static/llms.txt` (Meta CLA required) | draft — requires founder sign-off |
 | [gemini-cli](./gemini-cli/notification.md) | ai-coding | disputed-verdict notification | github.com/google-gemini/gemini-cli/discussions | draft — requires founder sign-off |
 | [cloudflare](./cloudflare/notification.md) | edge-platforms | disputed-verdict notification | github.com/cloudflare/workers-sdk/discussions | draft — requires founder sign-off |
 | [logseq](./logseq/notification.md) | notes-knowledge | disputed-verdict notification | github.com/logseq/logseq/discussions | draft — requires founder sign-off |
 | [sentry](./sentry/notification.md) | observability | disputed-verdict notification | github.com/getsentry/sentry/discussions | draft — requires founder sign-off |
 | [cockroachdb](./cockroachdb/notification.md) | serverless-databases | disputed-verdict notification | github.com/cockroachdb/cockroach/discussions | draft — requires founder sign-off |
+
+## Gift-PR drafts: selection rationale
+
+See [GIFT-LIST.md](./GIFT-LIST.md) for the full 18-candidate ranking (acceptance likelihood ×
+visibility × score impact), the re-verification log, and the rules of engagement. The five
+full drafts: linear (mandated; its "one file from certified" gap was fixed upstream, so the
+gift became a passing cert report), then the four highest-leverage llms.txt gifts (vllm,
+crawl4ai, homebrew, docusaurus). Every URL in every drafted llms.txt was verified HTTP 200 on
+2026-09-11; each vendor's `NOTES.md` carries the dated verification log and repo-policy notes
+(DCO/CLA/AI-disclosure).
 
 ## Disputed-verdict notifications: selection rationale
 
