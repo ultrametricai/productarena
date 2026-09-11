@@ -28,19 +28,40 @@ export default function StacksPage() {
           rankings as the rest of the site; slots we can&rsquo;t score yet are labeled as
           editorial picks.
         </p>
-        <p className="mt-4">
+        <p className="mt-4 flex flex-wrap items-center justify-center gap-2">
           <Link
             href="/stacks/builder"
             className="inline-flex items-center rounded-full border border-emerald-400/40 px-4 py-1.5 text-sm text-emerald-300 transition hover:border-emerald-400 hover:bg-emerald-400/10"
           >
             Build your own →
           </Link>
+          <Link
+            href="/my-stack"
+            className="inline-flex items-center rounded-full border border-zinc-800 px-4 py-1.5 text-sm text-zinc-300 transition hover:border-emerald-400/40 hover:text-emerald-300"
+          >
+            Get upgrades for the stack you run →
+          </Link>
+          <Link
+            href="/stacks/battle"
+            className="inline-flex items-center rounded-full border border-zinc-800 px-4 py-1.5 text-sm text-zinc-300 transition hover:border-emerald-400/40 hover:text-emerald-300"
+          >
+            Battle of the stacks →
+          </Link>
         </p>
       </section>
 
       {stacks.map((stack) => (
         <section key={stack.id} id={stack.id} className="scroll-mt-4">
-          <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">{stack.name}</h2>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">{stack.name}</h2>
+            <Link
+              href={`/stacks/battle?a=${stack.id}`}
+              title={`Put the ${stack.name} up against another stack's aggregates`}
+              className="rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-400 transition hover:border-emerald-400/40 hover:text-emerald-300"
+            >
+              Battle this stack →
+            </Link>
+          </div>
           <p className="mt-1 text-sm text-zinc-400">{stack.tagline}</p>
           <p className="mt-0.5 text-xs text-zinc-500">For: {stack.audience}</p>
           <div className="mt-4 rounded-2xl border border-zinc-800">
