@@ -38,6 +38,10 @@ export const FamilySubProductSchema = z.object({
   // For arenaRef: null lines — WHY it isn't judged (no fitting arena / covered inside the
   // parent's entry). Rendered verbatim in the "not yet judged" state.
   note: z.string().min(1).max(300).optional(),
+  // Set when the line joined the family by acquisition rather than organically (e.g. Clerky →
+  // Stripe). Rendered as a distinct chip so an acquired product that still competes against a
+  // sibling (Clerky vs Atlas, same arena) reads as history, not as a contradiction.
+  acquired: z.string().min(1).max(160).optional(),
 })
 
 export const FamilySchema = z.object({
