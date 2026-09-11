@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import PersonaChip from '@/components/PersonaChip'
 import PrintButton from '@/components/PrintButton'
 import { checklistThemes, priorityForWeight } from '@/lib/checklist'
 import { confidenceFor } from '@/lib/confidence'
 import ThemeIcon from '@/components/ThemeIcon'
-import { loadAll, loadCategory, stripPersonaPrefix } from '@/lib/data'
+import { loadAll, loadCategory } from '@/lib/data'
+import { parseStoryPersona } from '@/lib/storyText'
 import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import { categoryFreshness } from '@/lib/freshness'
 import { isPricingUnavailable, loadPricing, pricingCellFor } from '@/lib/pricing'
@@ -210,15 +212,23 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
               {/* Visible one-liner explaining this story grouping — not just the icon tooltip. */}
               <p className="mb-1.5 mt-0.5 truncate text-xs text-zinc-500">{themeExplanation(theme)}</p>
               <ul className="space-y-1">
-                {stories.map((s) => (
+                {stories.map((s) => {
+                  // Checklist lines lead with the action; the "As a {persona}," frame becomes
+                  // a chip (lib/storyText.ts) instead of repeating on every requirement.
+                  const parsed = parseStoryPersona(s.title)
+                  return (
                   <li key={s.id} className="flex items-start gap-2 text-sm text-zinc-300">
                     <span aria-hidden className="mt-0.5 inline-block size-3.5 shrink-0 rounded-sm border border-zinc-600" />
-                    <span className="min-w-0">{stripPersonaPrefix(s.title)}</span>
+                    <span className="min-w-0">
+                      <PersonaChip persona={parsed.persona ?? s.persona} className="mr-1.5" />
+                      {parsed.action}
+                    </span>
                     <span className="ml-auto shrink-0 text-[10px] uppercase tracking-wide text-zinc-500">
                       {priorityForWeight(s.weight)}
                     </span>
                   </li>
-                ))}
+                  )
+                })}
               </ul>
             </div>
           ))}
