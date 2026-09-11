@@ -3,16 +3,17 @@
 import ProductLogoView from '@/components/ProductLogoView'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { SearchEntry, SearchEntryType } from '@/lib/search-index'
+import { filterSearchEntries, prepareSearchEntries, type SearchEntry, type SearchEntryType } from '@/lib/search-index'
 
-const TYPE_ORDER: SearchEntryType[] = ['arena', 'product', 'story']
-const TYPE_LABEL: Record<SearchEntryType, string> = { arena: 'Arenas', product: 'Products', story: 'Stories' }
-const MAX_RESULTS = 40
-
-function matches(entry: SearchEntry, query: string): boolean {
-  const q = query.toLowerCase()
-  return entry.label.toLowerCase().includes(q) || entry.sublabel.toLowerCase().includes(q)
+const TYPE_ORDER: SearchEntryType[] = ['arena', 'stack', 'page', 'product', 'story']
+const TYPE_LABEL: Record<SearchEntryType, string> = {
+  arena: 'Arenas',
+  stack: 'Stacks',
+  page: 'Pages',
+  product: 'Products',
+  story: 'Stories',
 }
+const MAX_RESULTS = 40
 
 // Global ⌘K/Ctrl+K search over every arena, product, and story (see lib/search-index.ts).
 // Self-contained: renders both its own header trigger button and the overlay, so it can be
@@ -43,14 +44,17 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
     return () => cancelAnimationFrame(id)
   }, [open])
 
-  // Results are pre-grouped by type (arena, product, story) so rendering can walk one flat
-  // array in display order — no index bookkeeping needed at render time.
+  // Lowercased + plural-folded haystacks, computed once per mount so each keystroke is pure
+  // substring checks (see lib/search-index.ts).
+  const prepared = useMemo(() => prepareSearchEntries(entries), [entries])
+
+  // Results are pre-grouped by type (arena, stack, page, product, story) so rendering can walk
+  // one flat array in display order — no index bookkeeping needed at render time. Within each
+  // group, filterSearchEntries has already ordered matches best-first.
   const results = useMemo(() => {
-    const trimmed = query.trim()
-    const filtered = trimmed === '' ? entries : entries.filter((e) => matches(e, trimmed))
-    const limited = filtered.slice(0, MAX_RESULTS)
+    const limited = filterSearchEntries(prepared, query).slice(0, MAX_RESULTS)
     return TYPE_ORDER.flatMap((type) => limited.filter((e) => e.type === type))
-  }, [entries, query])
+  }, [prepared, query])
 
   function close() {
     setOpen(false)
