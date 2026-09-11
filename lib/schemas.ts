@@ -49,6 +49,13 @@ export const ProductSchema = z.object({
   // data/yc-batches.json, the source of truth this field is stamped from). Display-only, like
   // PopularitySchema: never fed into scoring (lib/scoring.ts never imports it).
   ycBatch: z.string().regex(/^[WXSF]\d{2}$/, 'ycBatch must look like "S22", "W23", "X25", or "F25"').optional(),
+  // Product-family membership (e.g. "stripe" for Stripe, Stripe Terminal, Stripe Atlas): the id
+  // of an entry in data/product-families.json (see lib/families.ts, the source of truth for
+  // family structure — this field is a denormalized back-reference kept in sync by the families
+  // test). Display-only, like ycBatch/PopularitySchema: never fed into scoring, and never part
+  // of the judge's cellHash (pipeline/stages/judge.ts hashes story+evidence only), so stamping
+  // it on existing products never busts the judge cache.
+  familyId: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'familyId must be kebab-case').optional(),
 })
 
 // Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by
