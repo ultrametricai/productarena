@@ -219,8 +219,9 @@ export default function IntegrationsPage() {
       </section>
 
       <p className="text-xs text-zinc-500">
-        Edges come from the existing evidence corpus only (product docs, GitHub, community posts we
-        already collected — no extra crawling): an exact-name prefilter finds mentions of other
+        Edges come from each product&rsquo;s collected evidence corpus — its docs, GitHub, community
+        posts, and (for the most-connected products) its official integrations-directory page,
+        which we crawl as a first-party source: an exact-name prefilter finds mentions of other
         tracked products, an LLM classifies each mention (real integration vs comparison vs
         coincidence), and every kept edge&rsquo;s quote is verified verbatim against its evidence
         item in code — unverifiable ones are dropped. Hover any chip to read the quote.
