@@ -160,10 +160,10 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 PA Score
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
-                <span title="Can an outside agent access and operate it — API, MCP, CLI, headless runs, agent docs">Agent-ready</span>
+                <span title="AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).">Agent-ready</span>
               </SortableTh>
               <SortableTh col="agenticApp" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">
-                <span title="How much the product itself acts agentically for its users — built-in assistants, autonomous features">AI-native</span>
+                <span title="AI-NATIVE = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.">AI-native</span>
               </SortableTh>
               <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 API

@@ -25,8 +25,8 @@ const LABELS: Record<AgenticBadgeKind, string> = {
 // easy to conflate ("agent-ready vs agentic sounds like the same thing") but measure opposite
 // directions: can YOUR agent drive the product, vs does the product itself act agentically.
 const TITLES: Record<AgenticBadgeKind, string> = {
-  'agent-ready': 'Agent-ready — can an outside agent access and operate it: API, MCP, CLI, headless runs, agent docs',
-  'agentic-app': 'AI-native — how much the product itself acts agentically for its users: built-in assistants, autonomous features',
+  'agent-ready': 'AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).',
+  'agentic-app': 'AI-NATIVE = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.',
 }
 
 const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
