@@ -61,8 +61,9 @@ export default function AiEraBadge({
   href?: string
   // 68% confidence band from score-intervals.json (undefined/null when no interval data exists —
   // the badge then renders exactly as before; a band is never fabricated). When present it is
-  // always appended to the tooltip; `showBand` additionally renders the "±N" inline (product
-  // page header — "42 ±3 /100"), which table callers leave off to keep columns tight.
+  // always appended to the tooltip. `showBand` is retired (the inline "±N" read as noise —
+  // founder feedback 2026-09-11); the band now lives only in the tooltip. Prop kept so existing
+  // call sites don't churn.
   interval?: ScoreBand | null
   showBand?: boolean
 }) {
@@ -84,9 +85,6 @@ export default function AiEraBadge({
       className={`inline-flex w-fit cursor-help items-center rounded-full bg-emerald-400 font-mono font-bold text-zinc-950 ring-1 ring-emerald-300 tabular-nums ${sizeClass}`}
     >
       {value.toFixed(0)}
-      {showBand && band && (
-        <span className="pl-1 text-[0.72em] font-medium opacity-60">±{bandHalfWidth(band)}</span>
-      )}
       <span className="font-medium opacity-60">/100</span>
     </span>
   )
