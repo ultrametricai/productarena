@@ -8,8 +8,13 @@ import {
 } from '@/lib/storyVerdictsSort'
 
 function row(overrides: Partial<StoryVerdictRow> & { storyId: string }): StoryVerdictRow {
+  const title = overrides.title ?? `Story ${overrides.storyId}`
   return {
-    title: `Story ${overrides.storyId}`,
+    title,
+    // Mirrors buildStoryVerdictRows: action/personaLabel derive from parseStoryPersona(title);
+    // these fixture titles carry no persona frame, so action === title.
+    action: title,
+    personaLabel: 'a developer',
     persona: 'a developer',
     origin: 'canonical',
     theme: 'core',

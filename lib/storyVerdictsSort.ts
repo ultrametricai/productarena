@@ -7,6 +7,7 @@ import {
   evidenceById, originLabel, uncertaintyFor, vendorResponseFor, verdictFor, type CategoryData,
 } from './data-helpers'
 import type { Evidence, Story, UncertaintyEntry, VendorResponse, Verdict } from './schemas'
+import { parseStoryPersona } from './storyText'
 import { strongestEvidence, verificationLevel, type VerificationLevel } from './verification'
 
 export type StoryVerdictColumn =
@@ -36,6 +37,12 @@ export interface StoryVerdictRow {
   storyId: string
   title: string
   persona: string
+  // parseStoryPersona(title) split, precomputed here so the client table renders and sorts the
+  // de-framed text without re-parsing per render: `action` is the standalone capability
+  // sentence the Story column displays, `personaLabel` the prose persona for the PersonaChip
+  // (falls back to the story's machine persona tag so the chip never goes missing).
+  action: string
+  personaLabel: string
   // originLabel(story) — surfaced as the title tooltip, same as the old vertical list.
   origin: string
   theme: string
@@ -74,10 +81,13 @@ export function buildStoryVerdictRows(
   return data.stories.map((s) => {
     const v = verdictFor(data, productId, s.id)
     const proof = strongestEvidence(v, evidence)
+    const parsed = parseStoryPersona(s.title)
     return {
       storyId: s.id,
       title: s.title,
       persona: s.persona,
+      action: parsed.action,
+      personaLabel: parsed.persona ?? s.persona,
       origin: originLabel(s),
       theme: s.theme,
       group: s.group,
@@ -160,7 +170,7 @@ function compareImportance(a: StoryVerdictRow, b: StoryVerdictRow): number {
   for (let i = 0; i < ka.length; i++) {
     if (ka[i] !== kb[i]) return ka[i] - kb[i]
   }
-  return a.title.localeCompare(b.title)
+  return a.action.localeCompare(b.action)
 }
 
 function compareNullableNumber(a: number | null, b: number | null, direction: SortDirection): number {
@@ -198,7 +208,10 @@ export function sortStoryVerdictRows(
       return direction === 'desc' ? cmp : -cmp
     }
     if (column === 'title' || column === 'theme') {
-      const cmp = a[column].localeCompare(b[column])
+      // The Story column displays row.action (persona frame stripped) — sort by what the
+      // reader sees, not the hidden "As a …" prefix that would bucket rows by persona.
+      const key = column === 'title' ? ('action' as const) : ('theme' as const)
+      const cmp = a[key].localeCompare(b[key])
       return direction === 'desc' ? -cmp : cmp
     }
     return compareNullableNumber(numericValue(a, column), numericValue(b, column), direction)

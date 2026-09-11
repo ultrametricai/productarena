@@ -2,13 +2,15 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import CopyButton from '@/components/CopyButton'
 import IconChip from '@/components/IconChip'
+import PersonaChip from '@/components/PersonaChip'
 import ThemeIcon from '@/components/ThemeIcon'
 import arenaIcons from '@/data/arena-icons.json'
 import {
   checklistMarkdown, checklistThemes, checklistWhy, priorityForWeight, storyPassStats,
   VERDICT_GLYPHS, type Priority,
 } from '@/lib/checklist'
-import { loadAll, loadCategory, stripPersonaPrefix, verdictFor } from '@/lib/data'
+import { loadAll, loadCategory, verdictFor } from '@/lib/data'
+import { parseStoryPersona } from '@/lib/storyText'
 import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import type { Verdict } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
@@ -146,6 +148,9 @@ export default async function ChecklistPage({ params }: { params: Promise<{ cate
             <ul className="mt-3 divide-y divide-zinc-800/70 overflow-hidden rounded-xl border border-zinc-800">
               {stories.map((s) => {
                 const priority = priorityForWeight(s.weight)
+                // Requirement leads with the action; the "As a {persona}," frame becomes a
+                // chip (lib/storyText.ts) so the list stops repeating it on every row.
+                const parsed = parseStoryPersona(s.title)
                 return (
                   <li key={s.id} className="px-4 py-3">
                     <div className="flex items-start gap-3">
@@ -156,7 +161,10 @@ export default async function ChecklistPage({ params }: { params: Promise<{ cate
                         className="mt-1 inline-block size-3.5 shrink-0 rounded-sm border border-zinc-600"
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-zinc-200">{stripPersonaPrefix(s.title)}</p>
+                        <p className="text-sm font-medium text-zinc-200">
+                          <PersonaChip persona={parsed.persona ?? s.persona} className="mr-1.5" />
+                          {parsed.action}
+                        </p>
                         <p className="mt-1 text-xs text-zinc-500">
                           {checklistWhy(s.weight, storyPassStats(data, s.id))}
                         </p>

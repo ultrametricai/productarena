@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
+import PersonaChip from '@/components/PersonaChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
@@ -149,9 +150,7 @@ function StoryMatrixGroup({
             <tr key={s.id} id={`story-${s.id}`} className="scroll-mt-4">
               <td className="sticky left-0 z-[5] bg-zinc-950 px-4 py-3 text-zinc-300">{stripPersonaPrefix(s.title)}</td>
               <td className="px-2 py-3 text-center">
-                <span className="rounded border border-zinc-800 px-1.5 py-0.5 font-mono text-[10px] text-zinc-400">
-                  {s.persona}
-                </span>
+                <PersonaChip persona={s.persona} />
               </td>
               {data.products.map((p) => {
                 const v = verdictFor(data, p.id, s.id)

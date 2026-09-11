@@ -3,7 +3,7 @@ import GeoMark from '@/components/GeoMark'
 import VerdictBadge from '@/components/VerdictBadge'
 import { claimBucketCounts, claimEntriesByStatus, unmappedClaims, type ClaimStatus } from '@/lib/claims'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
-import { evidenceById, type CategoryData } from '@/lib/data'
+import { evidenceById, stripPersonaPrefix, type CategoryData } from '@/lib/data'
 import { REPO } from '@/lib/site'
 import { strongestEvidence } from '@/lib/verification'
 
@@ -90,7 +90,7 @@ export default function ClaimsSection({
                       {claim && <p className="text-zinc-300">&ldquo;{claim.text}&rdquo;</p>}
                       <p className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-zinc-500">
                         <a href={`#story-${story.id}`} className="underline decoration-zinc-700 hover:text-emerald-300">
-                          {story.title}
+                          {stripPersonaPrefix(story.title)}
                         </a>
                         <VerdictBadge
                           verdict={v.verdict}
