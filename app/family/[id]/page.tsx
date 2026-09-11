@@ -107,7 +107,14 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
           return (
             <div key={sub.id} className="flex flex-col rounded-xl border border-zinc-800 p-4">
               <div className="flex items-baseline justify-between gap-2">
-                <h2 className="font-display text-lg font-semibold leading-tight">{sub.name}</h2>
+                <h2 className="font-display flex items-baseline gap-2 text-lg font-semibold leading-tight">
+                  {sub.name}
+                  {sub.acquired && (
+                    <span title={sub.acquired} className="rounded-full border border-amber-800 bg-amber-950/60 px-1.5 py-px text-[9px] font-medium uppercase tracking-wide text-amber-300">
+                      acquired
+                    </span>
+                  )}
+                </h2>
                 {judged ? (
                   <span className="shrink-0 rounded-full border border-emerald-400/40 bg-emerald-400/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300">
                     Judged

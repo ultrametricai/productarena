@@ -4,34 +4,43 @@ import { familyForProduct, loadFamilies } from '@/lib/families'
 
 // "Product lines" block on a product page — rendered for EVERY product that belongs to a
 // family in data/product-families.json (parent or judged sub-product — see lib/families.ts),
-// never vendor-special-cased. Links to the /family/[id] breakdown page plus directly to the
-// sibling lines already judged in their own arenas. Renders nothing for the ~all products
-// with no family entry (absence of a family is not a state worth announcing).
+// never vendor-special-cased. A mini leaderboard of the company's judged lines (rank, PA
+// Score, agent-ready, access) with the page-only lines listed honestly below. Acquired lines
+// carry a distinct chip so Clerky-vs-Atlas reads as history, not a contradiction. Renders
+// nothing for the ~all products with no family entry.
 export default function FamilySection({ arenaId, productId }: { arenaId: string; productId: string }) {
   const family = familyForProduct(loadFamilies(), arenaId, productId)
   if (!family) return null
 
-  // Judged sibling lines (not the product being viewed), with their live rank pulled from
-  // their own arena — same read the family page does, kept to a chip's worth of data here.
-  const siblings = family.subProducts.flatMap((sub) => {
+  const judged = family.subProducts.flatMap((sub) => {
     const ref = sub.arenaRef
-    if (!ref || (ref.arenaId === arenaId && ref.productId === productId)) return []
+    if (!ref) return []
     try {
       const data = loadCategory(ref.arenaId)
       const idx = data.rankings.leaderboard.findIndex((e) => e.productId === ref.productId)
       if (idx === -1) return []
+      const entry = data.rankings.leaderboard[idx]
       return [{
         key: `${ref.arenaId}/${ref.productId}`,
         name: sub.name,
+        blurb: sub.blurb,
+        acquired: sub.acquired,
         href: `/arena/${ref.arenaId}/product/${ref.productId}`,
+        arenaId: ref.arenaId,
         arenaName: data.category.name,
+        arenaHref: `/arena/${ref.arenaId}`,
         rank: idx + 1,
+        fieldSize: data.rankings.leaderboard.length,
+        paScore: entry.aiEra,
+        agentReady: entry.agentReady,
+        isCurrent: ref.arenaId === arenaId && ref.productId === productId,
       }]
     } catch {
       return []
     }
   })
-  const pageOnly = family.subProducts.filter((sub) => sub.arenaRef === null).length
+  const pageOnly = family.subProducts.filter((sub) => sub.arenaRef === null)
+  if (judged.length < 2 && pageOnly.length === 0) return null
 
   return (
     <div className="rounded-xl border border-zinc-800 p-4">
@@ -45,20 +54,72 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
         </Link>
       </div>
       <p className="mt-1 text-sm text-zinc-500">
-        {family.name} ships more than one product
-        {siblings.length > 0 && ' — these lines are judged in their own arenas'}
-        {pageOnly > 0 && `${siblings.length > 0 ? ';' : ' —'} ${pageOnly} more ${pageOnly === 1 ? 'line has' : 'lines have'} no fitting arena yet`}.
+        {family.name} ships more than one product — each judged line competes in its own arena
+        on the same stories as everyone else.
       </p>
-      {siblings.length > 0 && (
-        <p className="mt-3 flex flex-wrap gap-1.5 text-xs">
-          {siblings.map((s) => (
-            <Link
-              key={s.key}
-              href={s.href}
-              className="rounded-full border border-zinc-800 px-2.5 py-1 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-            >
-              {s.name} · #{s.rank} in {s.arenaName}
-            </Link>
+      {judged.length > 0 && (
+        <div className="mt-3 overflow-x-auto rounded-lg border border-zinc-800/70 md:overflow-x-visible">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
+                <th scope="col" className="px-2 py-1.5 font-normal">Line</th>
+                <th scope="col" className="px-2 py-1.5 font-normal">Arena</th>
+                <th scope="col" className="px-2 py-1.5 font-normal"><span title="Rank in its own arena's leaderboard">Rank</span></th>
+                <th scope="col" className="px-2 py-1.5 font-normal"><span title="PA Score /100 — the blended headline score">PA Score</span></th>
+                <th scope="col" className="hidden px-2 py-1.5 font-normal sm:table-cell"><span title="AGENT-READY /100 — can an outside agent access and operate it">Agent-ready</span></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-800/70">
+              {judged.map((s) => (
+                <tr key={s.key} className={`transition hover:bg-zinc-900/50 ${s.isCurrent ? 'bg-zinc-900/40' : ''}`}>
+                  <td className="max-w-[240px] px-2 py-1.5">
+                    <span className="flex flex-wrap items-center gap-1.5">
+                      {s.isCurrent ? (
+                        <span className="font-medium text-zinc-200">{s.name}</span>
+                      ) : (
+                        <Link href={s.href} className="font-medium hover:text-emerald-300" title={s.blurb}>
+                          {s.name}
+                        </Link>
+                      )}
+                      {s.isCurrent && (
+                        <span className="rounded-full border border-zinc-700 px-1.5 py-px text-[9px] uppercase tracking-wide text-zinc-500">this page</span>
+                      )}
+                      {s.acquired && (
+                        <span
+                          title={s.acquired}
+                          className="rounded-full border border-amber-800 bg-amber-950/60 px-1.5 py-px text-[9px] uppercase tracking-wide text-amber-300"
+                        >
+                          acquired
+                        </span>
+                      )}
+                    </span>
+                  </td>
+                  <td className="px-2 py-1.5 text-xs text-zinc-400">
+                    <Link href={s.arenaHref} className="hover:text-emerald-300">{s.arenaName}</Link>
+                  </td>
+                  <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
+                    #{s.rank}<span className="text-zinc-600">/{s.fieldSize}</span>
+                  </td>
+                  <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
+                    {s.paScore === null ? <span className="italic text-zinc-500">n/a</span> : <>{s.paScore.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                  </td>
+                  <td className="hidden px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
+                    {s.agentReady === null ? <span className="italic text-zinc-500">n/a</span> : <>{s.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {pageOnly.length > 0 && (
+        <p className="mt-2 text-xs text-zinc-500">
+          Not yet judged ({pageOnly.length} — no arena where they compete):{' '}
+          {pageOnly.map((s, i) => (
+            <span key={s.id} title={s.note ?? s.blurb}>
+              {i > 0 && ' · '}
+              <a href={s.docsUrl} target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-emerald-300">{s.name}</a>
+            </span>
           ))}
         </p>
       )}
