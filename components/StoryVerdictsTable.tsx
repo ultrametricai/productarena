@@ -5,12 +5,14 @@ import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import ContestLink from '@/components/ContestLink'
 import PersonaChip from '@/components/PersonaChip'
+import SurfaceChip from '@/components/SurfaceChip'
 import ThemeIcon from '@/components/ThemeIcon'
 import UncertaintyMarker from '@/components/UncertaintyMarker'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { humanizeTheme } from '@/lib/icons'
 import type { VendorResponse, Verdict } from '@/lib/schemas'
+import { isCoveredVerdict, surfacesForEvidence } from '@/lib/storyCoverage'
 import {
   type SortDirection,
   type StoryVerdictColumn,
@@ -355,6 +357,11 @@ function StoryRowPair({
   onToggle: () => void
 }) {
   const detailsId = `story-details-${row.storyId}`
+  // Which docs area / API section / community source the cited evidence came from
+  // (lib/storyCoverage.ts) — derived on demand from the row's already-serialized evidence
+  // links, so no new data crosses the server/client boundary. Empty for none/na verdicts:
+  // their citations are absence-evidence, not coverage.
+  const surfaces = isOpen && isCoveredVerdict(row.verdict) ? surfacesForEvidence(row.evidence) : []
   return (
     <>
       <tr id={`story-${row.storyId}`} className="scroll-mt-4 align-top transition hover:bg-zinc-900/50">
@@ -448,6 +455,19 @@ function StoryRowPair({
               </summary>
               <p className="mt-1.5 text-sm text-zinc-500">{row.rationale}</p>
             </details>
+            {surfaces.length > 0 && (
+              <p className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+                <span
+                  className="text-zinc-500"
+                  title="The docs area / API section / community source each cited evidence item came from — chips link to the actual evidence URL."
+                >
+                  Covered by
+                </span>
+                {surfaces.map((s) => (
+                  <SurfaceChip key={s.key} surface={s} />
+                ))}
+              </p>
+            )}
             {row.evidence.length > 0 && (
               <ul className="mt-2 space-y-1.5">
                 {row.evidence.map((e) => (
