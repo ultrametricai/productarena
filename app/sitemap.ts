@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next'
 import { battleSlug, loadAll } from '@/lib/data'
 import { collectGlobalStories } from '@/lib/globalStories'
 import { loadChains, loadProcesses, processSlug } from '@/lib/processes'
+import { loadFamilies } from '@/lib/families'
 import { loadIcpTypes } from '@/lib/icp'
 import { SITE_URL } from '@/lib/site'
 
@@ -77,6 +78,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
   for (const chain of loadChains()) {
     entries.push({ url: `${SITE_URL}/processes/chains/${chain.id}`, lastModified: now })
+  }
+
+  // Product-family breakdown pages — one per multi-product vendor (see lib/families.ts and
+  // app/family/[id]/page.tsx).
+  for (const family of loadFamilies()) {
+    entries.push({ url: `${SITE_URL}/family/${family.id}`, lastModified: now })
   }
 
   // ICP lens pages — the index plus one cross-arena ranking per buyer type (see lib/icp.ts and

@@ -6,6 +6,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
+import FamilySection from '@/components/FamilySection'
 import GeoMark from '@/components/GeoMark'
 import IntegrationChips, { chipTitle } from '@/components/IntegrationChips'
 import MomentumChip from '@/components/MomentumChip'
@@ -252,6 +253,10 @@ export default async function ProductPage({
       <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
 
       <ProductShowcase product={product} />
+
+      {/* Multi-product vendors: the family breakdown block (lib/families.ts) — renders for any
+          product with a data/product-families.json entry, nothing for everyone else. */}
+      <FamilySection arenaId={category} productId={id} />
 
       {product.affiliation && (
         <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">
