@@ -1,12 +1,14 @@
 import AgenticBadge from '@/components/AgenticBadge'
 import { BusinessModelLine } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
+import PersonaChip from '@/components/PersonaChip'
 import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
 import { evidenceById, groupInOrder, type CategoryData, verdictFor } from '@/lib/data'
 import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import type { BattleRecord } from '@/lib/schemas'
+import { parseStoryPersona } from '@/lib/storyText'
 import { strongestEvidence, verificationLevel } from '@/lib/verification'
 
 type Round = BattleRecord['rounds'][number]
@@ -39,6 +41,9 @@ export default function BattleView({
 
   const renderRound = (round: Round) => {
     const story = storyById.get(round.storyId)!
+    // Rounds lead with the de-framed action (lib/storyText.ts) — fifty "As a developer, …"
+    // openers in a row buried what each round actually tests; the persona survives as a chip.
+    const parsed = parseStoryPersona(story.title)
     const va = verdictFor(data, battle.a, round.storyId)
     const vb = verdictFor(data, battle.b, round.storyId)
     const roundWinner =
@@ -46,7 +51,10 @@ export default function BattleView({
     return (
       <li key={round.storyId} className="rounded-xl border border-zinc-800 p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h4 className="font-medium">{story.title}</h4>
+          <h4 className="font-medium">
+            <PersonaChip persona={parsed.persona ?? story.persona} className="mr-1.5" />
+            {parsed.action}
+          </h4>
           <span className="text-xs text-zinc-500">
             weight {story.weight} ·{' '}
             {roundWinner === null ? 'not comparable' : roundWinner === 'draw' ? 'round drawn' : `round to ${roundWinner}`}

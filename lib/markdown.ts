@@ -4,6 +4,7 @@ import type { CategoryData } from './data'
 import { evidenceById, groupInOrder, verdictFor } from './data'
 import { provenanceLine } from './provenance'
 import type { Product, Story } from './schemas'
+import { parseStoryPersona } from './storyText'
 import { strongestEvidence } from './verification'
 
 const CLAIM_STATUS_LABEL: Record<(typeof CLAIM_STATUSES)[number], string> = {
@@ -117,8 +118,12 @@ export function renderArenaMarkdown(data: CategoryData, siteUrl: string): string
         lines.push(`#### ${humanizeTheme(group)}`)
       }
       for (const s of stories) {
+        // Story heading leads with the action; the persona survives as an explicit labeled
+        // field (lib/storyText.ts) — agents get the structured persona without every heading
+        // re-opening "As a {persona}, …".
+        const parsed = parseStoryPersona(s.title)
         lines.push('')
-        lines.push(`**${s.title}** (weight ${s.weight})`)
+        lines.push(`**${parsed.action}** (weight ${s.weight} · persona: ${parsed.persona ?? s.persona})`)
         for (const p of products) {
           const v = verdictFor(data, p.id, s.id)
           const proof = strongestEvidence(v, evidence)
@@ -192,8 +197,12 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
       for (const s of stories) {
         const v = verdictFor(data, productId, s.id)
         const proof = strongestEvidence(v, evidence)
+        // Same de-framing as the arena markdown above: action as the heading, persona as a
+        // labeled bullet so agents keep the field without the repetitive prefix.
+        const parsed = parseStoryPersona(s.title)
         lines.push('')
-        lines.push(`**${s.title}**`)
+        lines.push(`**${parsed.action}**`)
+        lines.push(`- Persona: ${parsed.persona ?? s.persona}`)
         const quality = v.verdict === 'na' ? '' : ` — quality ${v.quality}/10`
         lines.push(`- Verdict: ${v.verdict}${quality} (confidence: ${v.confidence})`)
         lines.push(`- Rationale: ${v.rationale}`)
@@ -236,7 +245,7 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
         const story = storyById.get(storyId)!
         const v = verdictFor(data, productId, storyId)
         const claimText = claim ? `"${claim.text}" — ` : ''
-        lines.push(`- ${claimText}${story.title} → ${v.verdict}${v.verdict === 'na' ? '' : ` q${v.quality}/10`}`)
+        lines.push(`- ${claimText}${parseStoryPersona(story.title).action} → ${v.verdict}${v.verdict === 'na' ? '' : ` q${v.quality}/10`}`)
       }
     }
     const unmapped = unmappedClaims(data, productId)

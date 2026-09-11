@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import DiffusionCurve, { formatMonth } from '@/components/DiffusionCurve'
+import PersonaChip from '@/components/PersonaChip'
 import VerdictBadge from '@/components/VerdictBadge'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
 import { adoptionNow, diffusionCurve, firstTrackedLookup } from '@/lib/diffusion'
 import { collectGlobalStories, findGlobalStory } from '@/lib/globalStories'
+import { parseStoryPersona } from '@/lib/storyText'
 
 // Cross-arena comparison page for one global story (scope: 'global', present in ≥2 arenas —
 // see lib/globalStories.ts): every ranked product's verdict on the same capability, across
@@ -50,14 +52,20 @@ export default async function GlobalStoryPage({
   // enter tracking, not per-cell verdict history).
   const adoption = adoptionNow(entry.cells)
   const curve = diffusionCurve(entry.cells, firstTrackedLookup())
-  const shortTitle = stripPersonaPrefix(entry.title)
+  // Header leads with the action; the "As a {persona}," frame becomes a chip in the eyebrow
+  // line (lib/storyText.ts) — same de-framing every story list on the site now applies.
+  const parsed = parseStoryPersona(entry.title)
+  const shortTitle = parsed.action
 
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm uppercase tracking-widest text-emerald-400">Global story</p>
+        <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-emerald-400">
+          Global story
+          <PersonaChip persona={parsed.persona} className="normal-case tracking-normal" />
+        </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
-          {stripPersonaPrefix(entry.title)}
+          {shortTitle}
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           A global story is meaningful for any software product, so it can be compared across the
