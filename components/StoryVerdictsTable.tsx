@@ -4,6 +4,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import ContestLink from '@/components/ContestLink'
+import PersonaChip from '@/components/PersonaChip'
 import ThemeIcon from '@/components/ThemeIcon'
 import UncertaintyMarker from '@/components/UncertaintyMarker'
 import VerdictBadge from '@/components/VerdictBadge'
@@ -381,14 +382,18 @@ function StoryRowPair({
               </svg>
             </button>
             <div className="min-w-0">
+              {/* Persona chip leads instead of the repetitive "As a {persona}," title frame —
+                  parseStoryPersona splits the canonical title (lib/storyText.ts); the full
+                  authored title stays in row.title for filtering/contest links. Inline chip
+                  (not a column) so narrow viewports gain no horizontal scroll. */}
               <p className="font-medium">
-                <span title={row.origin}>{row.title}</span>{' '}
+                <PersonaChip persona={row.personaLabel} className="mr-1.5" />
+                <span title={row.origin}>{row.action}</span>{' '}
                 <ScopeChip scope={row.scope} globalHref={row.globalHref} />
               </p>
-              <p className="mt-0.5 text-xs text-zinc-500">
-                {row.persona}
-                {row.group !== row.theme && <> · {humanizeTheme(row.group)}</>}
-              </p>
+              {row.group !== row.theme && (
+                <p className="mt-0.5 text-xs text-zinc-500">{humanizeTheme(row.group)}</p>
+              )}
             </div>
           </div>
         </td>

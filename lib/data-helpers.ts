@@ -6,6 +6,7 @@
 // call sites (`import { verdictFor } from '@/lib/data'`) are unaffected.
 import type { Certification } from './certifications'
 import type { Category, Claim, Evidence, Popularity, Product, Rankings, Stack, Story, UncertaintyEntry, VendorResponse, Verdict } from './schemas'
+import { parseStoryPersona } from './storyText'
 
 // "canonical", "normalized · v2", etc — see lib/schemas.ts's StoryOriginSchema. Falls back to
 // "unknown" for stories migrated/authored before origin existed. Shared by both the (client)
@@ -134,19 +135,15 @@ export function vendorResponseFor(data: CategoryData, productId: string, storyId
   )
 }
 
-// Every story title is authored as "As a(n) {persona description}, I can {capability}" — or
-// "..., I know {concrete fact}" for the pricing/limits stories depth-mine.ts authors (see
+// Every story title is authored as "As a(n) {persona description}, {clause}" (see
 // pipeline/agentic-stories.ts + normalize.ts + depth-mine.ts's commonRules). The persona clause
-// is redundant once a story has its own persona tag/column (StoryMatrix), so this strips it for
+// is redundant once a story has its own persona tag/column/chip, so this strips it for
 // *display only* — the underlying Story.title is never mutated, and if a title doesn't match
 // the expected shape (defensive: hand-edited/legacy titles), it's returned unchanged rather
-// than mangled.
-const PERSONA_PREFIX = /^As an? .+?,\s*I (?:can|know)\s+/i
-
+// than mangled. Thin wrapper over lib/storyText.ts's parseStoryPersona — call that directly
+// when you also want the persona label (e.g. to render a PersonaChip next to the action).
 export function stripPersonaPrefix(title: string): string {
-  const stripped = title.replace(PERSONA_PREFIX, '')
-  if (stripped === title || stripped.length === 0) return title
-  return stripped.charAt(0).toUpperCase() + stripped.slice(1)
+  return parseStoryPersona(title).action
 }
 
 // Buckets items by a key, preserving the order each key was first seen. Used to group

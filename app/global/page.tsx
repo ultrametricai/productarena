@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import GeoMark from '@/components/GeoMark'
+import PersonaChip from '@/components/PersonaChip'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
+import { parseStoryPersona } from '@/lib/storyText'
 import { adoptionNow } from '@/lib/diffusion'
 import { collectGlobalStories } from '@/lib/globalStories'
 
@@ -63,9 +65,12 @@ export default function GlobalIndexPage() {
             {stories.map(({ story, adoption }) => (
               <tr key={story.id} className="transition hover:bg-zinc-900/50">
                 <td className="max-w-[420px] px-3 py-2">
+                  {/* Action first, persona as a trailing chip (lib/storyText.ts) — the "As a
+                      {persona}," frame would otherwise open every row of this table. */}
                   <Link href={`/global/${story.id}`} className="font-medium hover:text-emerald-300">
                     {stripPersonaPrefix(story.title)}
                   </Link>
+                  <PersonaChip persona={parseStoryPersona(story.title).persona} className="ml-1.5" />
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">{story.arenaCount}</td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">

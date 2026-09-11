@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import IconChip from '@/components/IconChip'
+import PersonaChip from '@/components/PersonaChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
@@ -34,6 +35,7 @@ import {
 } from '@/lib/compareStories'
 import { stripPersonaPrefix } from '@/lib/data-helpers'
 import { metricIcon, metricTooltip, themeIcon, themeTooltip } from '@/lib/icons'
+import { parseStoryPersona } from '@/lib/storyText'
 import { withBase } from '@/lib/site'
 
 // /compare's client half: pick up to MAX_COMPARE products from anywhere on the site and see
@@ -494,7 +496,10 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                       >
                         <span className="flex items-start gap-1.5">
                           {story.theme && <ThemeIcon theme={story.theme} />}
-                          <span>{stripPersonaPrefix(story.title)}</span>
+                          <span>
+                            <PersonaChip persona={parseStoryPersona(story.title).persona} className="mr-1.5" />
+                            {stripPersonaPrefix(story.title)}
+                          </span>
                         </span>
                       </th>
                       {selected.map((p) => (
@@ -550,7 +555,10 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                             ×
                           </button>
                           {story.theme && <ThemeIcon theme={story.theme} />}
-                          <span>{stripPersonaPrefix(story.title)}</span>
+                          <span>
+                            <PersonaChip persona={parseStoryPersona(story.title).persona} className="mr-1.5" />
+                            {stripPersonaPrefix(story.title)}
+                          </span>
                         </span>
                       </th>
                       {selected.map((p) => (
