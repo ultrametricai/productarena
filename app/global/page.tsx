@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import CapabilityDag, { capabilityDagStats, type CapabilityAdoption } from '@/components/CapabilityDag'
 import GeoMark from '@/components/GeoMark'
 import PersonaChip from '@/components/PersonaChip'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
 import { parseStoryPersona } from '@/lib/storyText'
 import { adoptionNow } from '@/lib/diffusion'
 import { collectGlobalStories } from '@/lib/globalStories'
+import { canonGraphStoryIds } from '@/lib/storyGraph'
 
 // THE industry-stats page: every global story (capability comparable across ≥2 arenas — see
 // lib/globalStories.ts) with its adoption share among all tracked products, sorted most-adopted
@@ -50,6 +52,33 @@ export default function GlobalIndexPage() {
           for every product&rsquo;s verdict and the month-by-month diffusion curve.
         </p>
       </div>
+
+      <section aria-label="capability dependency graph">
+        <h2 className="font-display leading-[1.1] flex items-center gap-2 text-lg font-semibold">
+          <GeoMark seed="capability-dag" title="Capability dependency graph — which capabilities enable which" size={18} className="text-zinc-500" variant="dendro" />
+          Capability dependency graph
+        </h2>
+        <p className="mb-3 mt-1 max-w-2xl text-xs text-zinc-500">
+          {(() => { const s = capabilityDagStats(); return `${s.nodes} canon capabilities, ${s.edges} curated dependency edges (${s.crossEdges} cross-cluster interconnects, dashed)` })()}
+          {' '}— an arrow means the left capability is a prerequisite or strong enabler of the
+          right one (hover an edge for the justification, a node for its adoption and what it
+          requires/unlocks). Edges are hand-curated in{' '}
+          <code className="text-zinc-400">data/story-edges.json</code>, never inferred; the meter
+          is the same evidence-backed adoption share as the table below.
+        </p>
+        <CapabilityDag
+          adoption={Object.fromEntries(
+            stories
+              .filter(({ story }) => canonGraphStoryIds.has(story.id))
+              .map(({ story, adoption }): [string, CapabilityAdoption] => [story.id, adoption]),
+          )}
+          titles={Object.fromEntries(
+            stories
+              .filter(({ story }) => canonGraphStoryIds.has(story.id))
+              .map(({ story }) => [story.id, stripPersonaPrefix(story.title)]),
+          )}
+        />
+      </section>
 
       <div className="overflow-x-auto rounded-xl border border-zinc-800">
         <table className="w-full border-collapse text-sm">
