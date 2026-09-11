@@ -154,10 +154,10 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 Arena
               </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden w-12 md:table-cell">
-                OSS
+                <span title="Open source — the code is publicly available">OSS</span>
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                PA Score
+                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, AI-native ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
                 <span title="AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).">Agent-ready</span>
@@ -166,13 +166,13 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 <span title="AI-NATIVE = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.">AI-native</span>
               </SortableTh>
               <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
-                API
+                <span title="API quality /100 — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.">API</span>
               </SortableTh>
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
-                GitHub ★
+                <span title="GitHub stars — adoption signal from public registries; never part of the PA Score. Click a count to open the repo.">GitHub ★</span>
               </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
-                Access
+                <span title="Agent access surfaces — MCP server / CLI / API, from judged evidence: ✓ full, ~ partial, ! disputed, — none found">Access</span>
               </SortableTh>
               {WATCHLIST_ENABLED && (
                 <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
