@@ -243,6 +243,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "ai-native", name: "Most AI-native", label: "ranking", href: "/rankings/ai-native" },
                   { id: "claims-integrity", name: "Claims vs reality", label: "ranking", href: "/rankings/claims-integrity" },
                   { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
+                  { id: "missing", name: "Missing startups", label: "gaps", href: "/missing" },
                   { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
                   { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },
                   { id: "my-stack", name: "My Stack", label: "tool", href: "/my-stack" },
