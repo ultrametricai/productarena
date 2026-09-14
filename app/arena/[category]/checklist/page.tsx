@@ -3,6 +3,7 @@ import Link from 'next/link'
 import CopyButton from '@/components/CopyButton'
 import IconChip from '@/components/IconChip'
 import PersonaChip from '@/components/PersonaChip'
+import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
 import arenaIcons from '@/data/arena-icons.json'
 import {
@@ -10,6 +11,7 @@ import {
   VERDICT_GLYPHS, type Priority,
 } from '@/lib/checklist'
 import { loadAll, loadCategory, verdictFor } from '@/lib/data'
+import { hasLogo } from '@/lib/logos'
 import { parseStoryPersona } from '@/lib/storyText'
 import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import type { Verdict } from '@/lib/schemas'
@@ -123,12 +125,12 @@ export default async function ChecklistPage({ params }: { params: Promise<{ cate
         </div>
       </div>
 
+      {/* Legend only — that a chip opens the judged evidence is already its tooltip. */}
       {topProducts.length > 0 && (
         <p className="text-xs text-zinc-500">
           Chips show the top {topProducts.length} ranked products&apos; current verdict on each requirement —{' '}
           <span className="text-emerald-300">✓ full</span> · ~ partial ·{' '}
-          <span className="text-red-300">! disputed</span> · — none · n/a not applicable. Each chip opens
-          that product&apos;s judged evidence.
+          <span className="text-red-300">! disputed</span> · — none · n/a not applicable.
         </p>
       )}
 
@@ -182,6 +184,7 @@ export default async function ChecklistPage({ params }: { params: Promise<{ cate
                                   <span aria-hidden className="font-mono">
                                     {VERDICT_GLYPHS[tier]}
                                   </span>
+                                  <ProductLogoView product={{ id: p.id, name: p.name }} size={16} hasLogo={hasLogo(p.id)} />
                                   <span className="truncate">{p.name}</span>
                                 </Link>
                               )

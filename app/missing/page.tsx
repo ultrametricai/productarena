@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import GeoMark from '@/components/GeoMark'
+import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
 import arenaIcons from '@/data/arena-icons.json'
 import { loadAll } from '@/lib/data'
+import { hasLogo } from '@/lib/logos'
 import { globallyUnservedStories, OPPORTUNITY_FORMULA, rankMissingStartups } from '@/lib/missingStartups'
-import { REPO } from '@/lib/site'
 
 // The agent-startup gap map: every arena ranked by how much room it leaves a new agent-native
 // entrant (lib/missingStartups.ts) — low fleet agent-readiness, hard "none" verdicts on the
@@ -49,17 +50,23 @@ export default function MissingStartupsPage() {
           serves, and how weak the current leader is. Every input is a judged, evidence-backed
           verdict — click through to any arena for the citations.
         </p>
-        <p className="mt-2 max-w-2xl text-xs text-zinc-500">
-          Honest caveat: this measures <em>our evidence</em> on <em>our stories</em> — not market
-          size, demand, or funding white-space. A high score can mean incumbents genuinely lack
-          agent surfaces, or that their public evidence is thin. Both are worth knowing; neither is
-          a business plan. Formula on every score; weights are contestable like everything else
-          (see the{' '}
-          <Link href="/methodology" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
-            methodology
-          </Link>
-          ).
-        </p>
+        {/* The full caveat matters (it's the page's honesty contract) but doesn't need to be
+            read before the table — collapsed by default, one click away. */}
+        <details className="mx-auto mt-2 max-w-2xl text-xs text-zinc-500">
+          <summary className="cursor-pointer text-zinc-400 transition hover:text-emerald-300">
+            Honest caveat: what this score does and doesn&rsquo;t measure
+          </summary>
+          <p className="mt-1.5">
+            It measures <em>our evidence</em> on <em>our stories</em> — not market size, demand, or
+            funding white-space. A high score can mean incumbents genuinely lack agent surfaces, or
+            that their public evidence is thin. Both are worth knowing; neither is a business plan.
+            Formula on every score; weights are contestable like everything else (see the{' '}
+            <Link href="/methodology" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
+              methodology
+            </Link>
+            ).
+          </p>
+        </details>
       </div>
 
       {globalGaps.length > 0 && (
@@ -70,7 +77,7 @@ export default function MissingStartupsPage() {
           </h2>
           <p className="mt-1 text-xs text-zinc-500">
             Cross-arena capabilities where no tracked product — in any arena carrying the story —
-            has a full or partial verdict. Fleet-wide white space.
+            has a full or partial verdict.
           </p>
           <ul className="mt-2 space-y-1">
             {globalGaps.map((g) => (
@@ -135,8 +142,13 @@ export default function MissingStartupsPage() {
                   <Link
                     href={`/arena/${arena.arenaId}/product/${arena.leader.productId}`}
                     title="The arena's #1 by PA Score — the bar a new entrant has to clear"
-                    className="text-zinc-300 underline decoration-zinc-700 underline-offset-2 hover:text-emerald-300"
+                    className="inline-flex items-center gap-1.5 align-middle text-zinc-300 underline decoration-zinc-700 underline-offset-2 hover:text-emerald-300"
                   >
+                    <ProductLogoView
+                      product={{ id: arena.leader.productId, name: arena.leader.name }}
+                      size={16}
+                      hasLogo={hasLogo(arena.leader.productId)}
+                    />
                     {arena.leader.name}
                   </Link>{' '}
                   <span className="font-mono tabular-nums" title="The leader's PA Score (0–100) — a low bar is itself the opportunity">
@@ -181,16 +193,7 @@ export default function MissingStartupsPage() {
       </div>
 
       <p className="text-xs text-zinc-500">
-        Sibling views: queries with no arena live in{' '}
-        <a
-          href={`https://github.com/${REPO}/blob/main/docs/search-gaps.md`}
-          className="underline decoration-zinc-800 underline-offset-2 hover:text-emerald-300"
-        >
-          docs/search-gaps.md
-        </a>
-        ; per-product improvement lists live in each product page&rsquo;s Opportunities section.
-        Verdicts wrong? Every verdict row has a Flag link, and vendors can publish verified
-        responses — see the{' '}
+        Think a score is wrong? Every verdict row has a Flag link — see the{' '}
         <Link href="/methodology" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
           methodology
         </Link>

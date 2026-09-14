@@ -25,6 +25,7 @@ export default function Home() {
         {/* The homepage IS the table — no hero copy; the page title/description carry the
             positioning for search/social, and /methodology carries the full story. */}
         <h1 className="sr-only">ProductArena — evidence-based software rankings for the AI era</h1>
+        {/* /everything is unlisted by founder call — no banner into it (route stays alive). */}
         <MegaTable rows={megaRows} arenas={arenaOptions} />
       </section>
 
