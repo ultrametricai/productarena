@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { fetchLogoutUrl, loginUrl, useSession } from '@/lib/session'
 import { SITE_URL } from '@/lib/site'
 
 // The header's account corner. Anonymous (and still-loading — same render, so the header never
-// jumps while whoami is in flight) readers get one quiet "Log in" text link; nothing else about
+// jumps while /auth/me is in flight) readers get one quiet "Log in" text link — currently
+// hidden behind the pa-auth-test flag until the WorkOS flow is signed off; nothing else about
 // the site changes for them. Authenticated readers get a small chip (their email's first
 // letter) opening a menu: Watchlist + Log out. Menu open/close behavior mirrors
 // components/ArenaMenu.tsx (outside pointerdown + Escape).
@@ -19,9 +20,34 @@ function currentUrl(): string {
   return typeof window === 'undefined' ? SITE_URL : window.location.href
 }
 
+// Founder-only test switch (see docs/AUTH.md): localStorage.setItem('pa-auth-test', '1') then
+// reload reveals the login link on this device only. Read via useSyncExternalStore with a
+// `false` server snapshot — same pattern as components/DoViaAfk.tsx's pa-admin flag — so the
+// static HTML never includes the link.
+export const AUTH_TEST_FLAG_KEY = 'pa-auth-test'
+
+function readAuthTestFlag(): boolean {
+  try {
+    return window.localStorage.getItem(AUTH_TEST_FLAG_KEY) === '1'
+  } catch {
+    // localStorage unavailable (privacy mode) — stay hidden.
+    return false
+  }
+}
+
+function subscribeAuthTestFlag(callback: () => void): () => void {
+  window.addEventListener('storage', callback)
+  return () => window.removeEventListener('storage', callback)
+}
+
+function getServerAuthTestFlag(): boolean {
+  return false
+}
+
 export default function AccountMenu() {
   const session = useSession()
   const [open, setOpen] = useState(false)
+  const testFlag = useSyncExternalStore(subscribeAuthTestFlag, readAuthTestFlag, getServerAuthTestFlag)
   const rootRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -41,10 +67,24 @@ export default function AccountMenu() {
   }, [open])
 
   if (session.state !== 'authenticated') {
-    // Founder call 2026-09-14: no visible "Log in" until the auth work (moving to WorkOS) is
-    // finished and tested. Existing sessions still get the account chip below; anonymous
-    // readers see nothing.
-    return null
+    // Founder call 2026-09-14: no visible "Log in" until the WorkOS auth is tested. Signed-in
+    // readers still get the account chip below; anonymous readers see nothing — UNLESS the
+    // pa-auth-test localStorage flag is set (localStorage['pa-auth-test'] = '1'), which reveals
+    // the link so the founder can exercise the full flow invisibly to everyone else. Go-live =
+    // drop the testFlag condition (docs/AUTH.md "Going live").
+    if (!testFlag) return null
+    return (
+      <a
+        href={loginUrl(SITE_URL)}
+        onClick={(e) => {
+          e.preventDefault()
+          window.location.href = loginUrl(currentUrl())
+        }}
+        className="shrink-0 px-1 text-xs text-zinc-500 transition hover:text-emerald-300"
+      >
+        Log in
+      </a>
+    )
   }
 
   const email = session.email

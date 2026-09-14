@@ -9,7 +9,7 @@ import type { WatchlistProduct } from '@/lib/watchlist'
 // (id/name/arena/scores/history — see lib/watchlist.ts's WatchlistProduct doc), and
 // components/WatchlistClient.tsx filters it against the starred ids in this browser's
 // localStorage. No per-user build output — the whole list ships to everyone, the star selection
-// stays on the device. WatchlistGate (Ory session, lib/session.ts) decides client-side who sees
+// stays on the device. WatchlistGate (WorkOS session, lib/session.ts) decides client-side who sees
 // the list: logged-in readers get it, anonymous readers get a log-in prompt — the page itself
 // stays open (no notFound) but is left out of app/sitemap.ts, since the content is session-gated.
 

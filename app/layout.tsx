@@ -336,7 +336,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               </a>
               <CommandPalette entries={searchEntries} />
               {/* Account corner (components/AccountMenu.tsx): a quiet "Log in" link for
-                  anonymous readers, an initial chip (menu: Watchlist + Log out) once an Ory
+                  anonymous readers, an initial chip (menu: Watchlist + Log out) once a WorkOS
                   session exists. The Watchlist link lives inside the chip menu, so the header
                   is unchanged for logged-out readers. */}
               <AccountMenu />
