@@ -35,7 +35,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **64 arenas, 346 products, 20,312 judged verdicts.**
+As of the last full pipeline run: **64 arenas, 348 products, 20,419 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -129,7 +129,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard |
 | Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules, omnara |
 | Mobile & In-Person Payments (`mobile-payments`) | stripe-terminal, square, sumup, adyen-pos |
-| API platforms (`api-platforms`) | postman, kong, bruno, hoppscotch |
+| API platforms (`api-platforms`) | postman, kong, bruno, hoppscotch, insomnia |
 | Team Chat (`team-chat`) | slack, discord, ms-teams, zulip, buzz |
 | Backend as a Service (`backend-as-a-service`) | supabase, firebase, convex, appwrite |
 | Online Payments (`payments`) | stripe, adyen, paypal, square, autumn |
@@ -137,7 +137,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Security Scanners (`security-scanners`) | trufflehog, semgrep, snyk, gitleaks, trivy |
 | Infrastructure as Code (`infra-as-code`) | terraform, pulumi, opentofu, crossplane |
 | Vibe-Coding App Builders (`vibe-coding`) | lovable, bolt, v0, replit, base44, floot |
-| Model Gateways & Routers (`model-gateways`) | openrouter, litellm, portkey, vercel-ai-gateway, cloudflare-ai-gateway, requesty |
+| Model Gateways & Routers (`model-gateways`) | openrouter, litellm, portkey, vercel-ai-gateway, cloudflare-ai-gateway, requesty, kong-ai-gateway |
 | LLM Evals & Observability (`llm-evals-observability`) | langfuse, langsmith, braintrust, arize-phoenix, wandb-weave, helicone, galileo |
 | AI Search APIs (`ai-search-apis`) | exa, tavily, perplexity-sonar, brave-search-api, serpapi |
 | Agent Frameworks & SDKs (`agent-frameworks`) | langgraph, openai-agents, claude-agent-sdk, crewai, pydantic-ai, mastra, google-adk, autogen, smolagents |

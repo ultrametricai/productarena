@@ -88,6 +88,100 @@ Microsoft owning GitHub) are also not merged into one family: families follow pr
 branding, not cap tables — GitHub and Microsoft stay separate families, and Intercom is its own
 family with its Salesforce ownership stated in the vendor field.
 
+## Wave 2 (2026-09-14): Kong, Postman, Linear mapped; Mercury audited
+
+Same rules as the Stripe spike: every vendor's REAL 2026 product nav/docs crawled first (all
+`docsUrl`s fetch-verified), no forced sub-products, acquisitions flagged with `acquired`, and any
+judged bring-up runs the full pipeline on the same stories as everyone else. Two new judged
+products came out of this wave (`model-gateways/kong-ai-gateway`, `api-platforms/insomnia`) plus
+one honest re-scope of an existing entry (see the Kong table).
+
+### Kong decision table
+
+Kong's `api-platforms` entry had been built as "Kong Inc., the whole company": 20 of its extra
+doc URLs and 30 of its 71 evidence items were Insomnia's, and 35 of its 57 verdicts cited them.
+Bringing Insomnia up as its own judged product while the parent kept claiming Insomnia's
+collections/mocking/testing capabilities would double-list one product's evidence in one arena —
+exactly what the Stripe Billing precedent forbids. So the bring-up came with a **re-scope**: the
+`kong` entry is now Kong Gateway + Konnect (insomnia/inso evidence pruned, Konnect platform docs
+added, all affected cells re-judged), and Insomnia competes as itself. Kong's client-side stories
+now na/none out the way Bruno's gateway stories always have — the arena reads gateway vs clients
+honestly instead of one row wearing both hats.
+
+| Product line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| Kong Gateway + Konnect | api-platforms | **judged** (re-scoped `kong` entry) | The gateway/platform IS the parent entry; gateway-traffic, catalog, portal, and CLI stories are its rows. |
+| AI Gateway | model-gateways | **judged — NEW bring-up (`kong-ai-gateway`)** | 2.0 went GA 2026-09-01 as a dedicated runtime: OpenAI-compatible API over 15+ providers, semantic routing/fallbacks, token rate limits + pricing catalog, semantic caching, prompt guards, MCP/A2A proxying. A genuine LiteLLM/OpenRouter/Portkey competitor; the arena's stories fit line by line. |
+| Insomnia | api-platforms | **judged — NEW bring-up (`insomnia`)** | Alive and actively sold (13.2.0 Aug 2026, Apache-2.0, own pricing tiers) — the 2024-25 deprioritization rumors don't hold. Competes with Postman/Bruno/Hoppscotch on the client half of the arena. Acquired 2019 — flagged. |
+| Kong Mesh | none | page-only | No service-mesh arena. |
+| Event Gateway | none | page-only | Kafka-native proxy; no event-streaming arena. |
+| Ingress Controller & Operator | api-platforms? No. | page-only | A Kubernetes deployment form of the gateway, judged inside the parent — not a separate competitor. |
+| Dev Portal / Service Catalog / Kong Identity | none | page-only | Konnect platform services; portal/catalog stories judged inside the parent. Identity is auth for Kong-managed traffic, not developer login infra (same reasoning as Stripe Identity ≠ auth-platforms). |
+| decK & kongctl | none | page-only | Platform tooling, judged inside the parent's CLI/headless/declarative-config stories. |
+| Metering & Billing (OpenMeter, acq. 2025) | none | page-only | No API-monetization arena. Acquisition flagged. |
+| Volcano SDK | agent-frameworks? Not yet. | page-only | Real OSS TypeScript agent SDK (Oct 2025) but a young entrant; watchlist bring-up candidate, out of this wave's cap. |
+| Context Mesh, KAi Agent, MCP Registry | none | not lines | Tech-preview/embedded Konnect features, not sold product lines — listing them would inflate the surface. |
+
+**Results (same stories, no special treatment):** kong-ai-gateway debuts **#6 of 7** in
+model-gateways (PA Score 19.3, just behind Cloudflare AI Gateway at 19.4) — the arena's OSS
+incumbents keep their lead. Insomnia debuts **#2 of 5** in api-platforms (PA Score 34.3),
+0.1 ahead of its own parent. The re-scoped kong entry moved **#1 → #3** (39.4 → 34.2): the old
+#1 was partly built on Insomnia's docs, which is exactly what the re-scope existed to stop.
+One churn audit was needed: adding Insomnia's Apache-2.0 LICENSE evidence (a contest-precedent
+fix — the judge had weighed a 2016 "not open source" comment) re-rolled 8 cells of which only 2
+cited the new evidence; the other 6 no-new-citation flips were reverted via cache-edit per the
+standing churn policy.
+
+### Postman decision table
+
+| Product line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| API Client & Collections (incl. Spec Hub, Vault, VS Code, Interceptor) | api-platforms | **judged** (existing `postman` entry) | This IS the parent entry. |
+| Fern | docs-platforms | **judged** (existing `fern` entry, now flagged acquired) | Acquired Jan 2026, kept as its own brand and product — already #2 in docs-platforms. The Clerky pattern: vendor field updated, `acquired` chip on the family page, zero judging changes. |
+| Flows | workflow-automation? **No.** | page-only | Honest verdict: a real deployed automation runtime (webhooks, schedules, MCP-tool deploys, TS blocks) but with **7 app connectors total** vs Zapier's thousands, not sold standalone, credits-metered. It competes on the developer-HTTP slice; judging it in workflow-automation would misrepresent the category's job. Watchlist if a developer-automation arena ever splits out. |
+| AI Agent Builder | agent-frameworks? **No — it no longer exists.** | not a line | The 2025 brand was quietly absorbed: its docs URL now 301s to a generic AI-features page; capabilities live on in Flows AI blocks and Agent Mode. Never was a LangGraph-style framework. |
+| Agent Mode (Postbot's successor) | none | page-only | Built-in assistant, judged inside the parent's built-in-assistant/NL-command stories. Postbot docs redirect here — Postbot retired as a brand. |
+| Mock Servers / Monitors / CLI+newman / API Network & MCP Catalog / API Catalog & Governance | none | page-only | All judged inside the parent entry's own stories (mock-servers-from-examples, scheduled-api-monitors, run-tests-in-ci, internal-api-catalog, lint-specs). newman is legacy with an official migration path. |
+| Insights (Akita, acq. 2023) | observability? **No.** | page-only | Agent-based API-endpoint discovery, Enterprise-only — not general observability (metrics/logs/traces). Forcing it in would be a vendor favor. |
+| SDK Generator (liblab, acq. 2025) | none | page-only | No SDK-generation arena. |
+| AI Engineer | software-factory? **No.** | page-only | Early access (June 2026); an API-scoped autonomous engineer, not a software builder — and too early to judge either way. |
+| Fabric Gateway | model-gateways? **Not yet.** | page-only | Real self-hosted AI/MCP/API gateway but early access, onboarding-gated, absent from pricing. Watchlist bring-up candidate once GA. |
+| Passport | none | page-only | Beta credential-brokering proxy; no secrets-management arena. |
+| Astro AI | none | not a line | Announcement-stage "agent OS" with no public docs depth — listing it would launder marketing into a product line. |
+
+### Linear decision table
+
+The honest finding: **one app, one data model, one pricing ladder.** Most named surfaces
+(Insights, Dashboards, Customer Requests, Triage Intelligence, Priority Inbox, Documents,
+Loops) are plan-gated features, so the family is deliberately small: the judged core plus the
+three genuinely separable adoption surfaces. No judged bring-ups.
+
+| Surface | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| Linear (core app) | project-management | **judged** (existing `linear` entry) | The parent entry. |
+| Asks | none | page-only | Genuinely separately adopted (non-Linear-users file tickets from Slack/email/forms) but no internal-ticketing/ITSM arena exists, and its output is ordinary Linear issues. |
+| Linear for Agents (+ MCP server, Agent Sessions API) | none | page-only | Real platform surface (agents as assignable teammates; mcp.linear.app verified live) — but it's the same workspace's agent-facing half, already judged inside the parent's agenticness stories. |
+| Coding Sessions | ai-coding? **No.** | page-only | Runs Claude Code/Codex in sandboxes from an issue — it orchestrates the ai-coding arena's contestants rather than competing with them; judging it there would double-count its engines. Economically distinct (AI credits), so it earns a family card, not a ranking. |
+| Insights / Dashboards / Customer Requests / Triage Intelligence / Mobile / Loops | — | not lines | Plan-gated features or companion clients of the one app ("Product Intelligence" is literally a 307 redirect to Triage Intelligence now). Forcing them into cards would fabricate a product surface Linear doesn't sell. |
+
+### Mercury re-audit (family existed; 8 → 13 lines)
+
+Every prior line re-verified against mercury.com's September 2026 nav. Fixes: Business Banking's
+docsUrl pointed at docs.mercury.com (which 302s to the **API reference**, not the banking page) —
+now mercury.com/business-banking; Personal Banking's blurb now reflects the single $240/yr plan
+(free with any business plan). IO card (1.5% cashback) and Treasury ($250k minimum) claims
+re-verified current. Mercury Raise stays excluded (confirmed shut down Sept 2025; /raise now
+redirects to the homepage).
+
+| New line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| Spend Management (Aug 2026) | none | page-only | Free-with-banking expense management; card/spend stories judged inside the parent. No expense-management arena. |
+| Insights (Mar 2026) | none | page-only | AI analytics feature of the banking product. |
+| SAFEs | legal-ops? **No.** | page-only | Only the SAFE-issuance slice of that arena's job — it would na out of nearly all 54 stories (incorporation, compliance, contracts); a 2-story contestant is noise, not signal. |
+| Working Capital Loans | none | page-only | Ecommerce lending; no financing arena. |
+| Central — Payroll & HR (acq. Apr 2026) | payroll? **Not yet.** | page-only, acquired-flagged | A payroll arena exists (Gusto, Rippling, Deel, Justworks) and Central genuinely does the job — but its public surface is a JS-rendered Framer site with no crawlable docs, and thin-crawl bias is our #1 recurring failure mode. Watchlist: bring up when a real docs surface exists. |
+| Accounting (Teal, acq. 2024) | accounting? **No.** | not a line | No standalone bookkeeping product shipped — it's in-app automations + accounting *integrations* (QuickBooks/Xero/NetSuite). Revisit if "Mercury Accounting" ever ships. |
+
 ## Mechanics (for the next person)
 
 - `lib/schemas.ts`: `Product.familyId` (optional, display-only, never in the judge's cellHash —
@@ -101,3 +195,9 @@ family with its Salesforce ownership stated in the vendor field.
 - Stripe Atlas bring-up: keyless recorded probes live in `pipeline/probes/legal-ops.ts`
   (EXPECTED_TOTAL_PROBES 413 → 415); evidence is 12 claimed-docs + 20 community + 3 probe items;
   confidence intervals recomputed for legal-ops.
+- Wave 2 bring-ups: keyless recorded probes in `pipeline/probes/api-platforms.ts` (insomnia) and
+  `pipeline/probes/model-gateways.ts` (kong-ai-gateway) — EXPECTED_TOTAL_PROBES 415 → 419;
+  confidence intervals recomputed for both arenas. The kong re-scope precedent: when a family
+  bring-up splits a product out of a parent entry judged in the SAME arena, the parent's evidence
+  must be pruned to its own scope and its cells re-judged — one product's docs never back two rows
+  in one arena.

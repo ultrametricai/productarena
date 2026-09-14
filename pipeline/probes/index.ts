@@ -49,6 +49,8 @@ import { probes as durableWorkflows } from './durable-workflows'
 import { probes as aiCodeReview } from './ai-code-review'
 import { probes as documentExtraction } from './document-extraction'
 import { probes as legalOps } from './legal-ops'
+import { probes as apiPlatforms } from './api-platforms'
+import { probes as modelGateways } from './model-gateways'
 
 export type { LocalProbe } from './types'
 
@@ -93,4 +95,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'ai-code-review': aiCodeReview,
   'document-extraction': documentExtraction,
   'legal-ops': legalOps,
+  'api-platforms': apiPlatforms,
+  'model-gateways': modelGateways,
 }
