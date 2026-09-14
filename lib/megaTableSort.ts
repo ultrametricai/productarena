@@ -55,6 +55,10 @@ export interface MegaTableRow {
   // (not `| null`, unlike popularity) so existing MegaTableRow fixtures/callers built before this
   // field existed stay valid without every one needing an update.
   ycBatch?: string
+  // 🔥 "hot right now" reason string (see lib/hotProducts.ts) — null when not hot; optional for
+  // the same fixture-compat reason as ycBatch. Rendered as the small HotChip next to the name
+  // (tooltip = the reason), never sorted on and never part of any score.
+  hotReason?: string | null
   // 30-day PA Score trend delta (see lib/scoreTrend.ts's trendDelta) — null when the product
   // has <2 history points yet; optional for the same fixture-compat reason as ycBatch. Rendered
   // as the ▲/▼/— arrow next to the PA Score badge, never sorted on.

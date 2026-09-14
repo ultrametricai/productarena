@@ -12,6 +12,7 @@ export const GLOBAL_RANKINGS = [
   { id: 'most-connected', name: 'Most connected', href: '/rankings/most-connected' },
   { id: 'most-tested', name: 'Most tested', href: '/rankings/most-tested' },
   { id: 'rising', name: 'Rising & falling', href: '/rankings/rising' },
+  { id: 'popular', name: 'Most popular', href: '/rankings/popular' },
   { id: 'most-open', name: 'Most open', href: '/rankings/most-open' },
   { id: 'best-api', name: 'Best API', href: '/rankings/best-api' },
 ] as const

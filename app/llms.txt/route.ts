@@ -61,6 +61,7 @@ ${leadingBattleLinks}
 - [Most connected](${SITE}/rankings/most-connected): products ranked by verified integration edges (every edge carries a verbatim evidence quote).
 - [Most tested](${SITE}/rankings/most-tested): products ranked by the share of verdicts backed by tested evidence (hands-on probe or inspectable source) rather than vendor claims.
 - [Rising & falling](${SITE}/rankings/rising): the biggest 30-day PA Score gains and falls, derived from the committed score history.
+- [Most popular](${SITE}/rankings/popular): popularity measured fairly in segments (GitHub stars, weekly npm/PyPI installs, curated no-public-counter products) plus a 🔥 "hot right now" section with measured reasons; never blended into one number and never part of the PA Score.
 - [Most open](${SITE}/rankings/most-open): products ranked by evidence-graded openness (self-hosting, full export, open license, API parity).
 - [Best API](${SITE}/rankings/best-api): products ranked by API quality (machine-readable specs, sandboxes, versioning, interactive docs); untested APIs are unscored, never zero.
 
