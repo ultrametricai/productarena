@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { Fragment } from 'react'
 import CeilingBar from '@/components/CeilingBar'
+import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
-import { formatMinutes, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
+import { vendorAlternatives, vendorChipInfo } from '@/lib/processes'
 
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
@@ -30,6 +31,9 @@ export interface DagSection {
   key: string
   kicker?: string
   title: string
+  // Curated process emoji (lib/processIcons.ts) + its REQUIRED tooltip naming the concept.
+  icon?: string
+  iconTitle?: string
   href?: string
   meta?: string
   pct?: number
@@ -172,7 +176,6 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
 
       <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[11px]">
         {vendorInfo && <VendorChip info={vendorInfo} />}
-        <span className="font-mono tabular-nums text-zinc-500">{formatMinutes(node.estimatedMinutes)}</span>
         {node.approvalRequired && (
           <span
             className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300"
@@ -215,8 +218,9 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
               {i > 0 && <span className="mx-1.5 text-zinc-700">·</span>}
               <Link
                 href={`/arena/${o.arenaId}/product/${o.id}`}
-                className="text-zinc-300 transition hover:text-emerald-300"
+                className="inline-flex items-center gap-1 align-middle text-zinc-300 transition hover:text-emerald-300"
               >
+                <ProductLogoView product={{ id: o.id, name: o.name }} size={14} hasLogo={hasLogo(o.id)} />
                 {o.name}
               </Link>
               {o.agentReady !== null && (
@@ -315,7 +319,10 @@ function SectionHeader({ section }: { section: DagSection }) {
           {section.kicker && (
             <p className="text-[10px] uppercase tracking-widest text-zinc-500">{section.kicker}</p>
           )}
-          <h3 className="font-display text-base font-semibold tracking-tight text-zinc-100">
+          <h3 className="font-display flex items-center gap-1.5 text-base font-semibold tracking-tight text-zinc-100">
+            {section.icon && (
+              <IconChip icon={section.icon} title={section.iconTitle ?? section.title} />
+            )}
             {section.href ? (
               <Link href={section.href} className="transition hover:text-emerald-300">
                 {section.title}
