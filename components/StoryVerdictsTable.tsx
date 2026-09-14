@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
+import AuthGatedMarker from '@/components/AuthGatedMarker'
 import ContestLink from '@/components/ContestLink'
 import PersonaChip from '@/components/PersonaChip'
 import SurfaceChip from '@/components/SurfaceChip'
@@ -430,7 +431,10 @@ function StoryRowPair({
           )}
         </td>
         <td className="px-3 py-2">
-          <VerificationBadge level={row.verification} responsive href="/methodology#evidence-tiers" />
+          <span className="inline-flex items-center gap-1.5">
+            <VerificationBadge level={row.verification} responsive href="/methodology#evidence-tiers" />
+            {row.authGated && <AuthGatedMarker compact />}
+          </span>
         </td>
         <td className="px-3 py-2">
           <button

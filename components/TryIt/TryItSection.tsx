@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Microterminal from '@/components/TryIt/Microterminal'
 import { mcpEndpointFor } from '@/lib/mcpEndpoints'
 import type { Story } from '@/lib/schemas'
-import { buildRecordedStories, processesFeaturing } from '@/lib/tryit'
+import { buildRecordedStories, mcpDocsUrlFor, processesFeaturing } from '@/lib/tryit'
 
 // Server component: the product page's "Try it" section — the destination of the header's
 // primary "Try it →" CTA (id="try-it"). Assembles the microterminal's story menu from this
@@ -48,7 +48,7 @@ export default function TryItSection({
       <Microterminal
         productName={productName}
         stories={recorded}
-        probe={endpoint ? { arena: category, product: productId, endpoint } : null}
+        probe={endpoint ? { arena: category, product: productId, endpoint, docsUrl: mcpDocsUrlFor(category, productId) } : null}
       />
     </div>
   )

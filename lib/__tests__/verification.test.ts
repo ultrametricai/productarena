@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { CategoryData } from '@/lib/data'
 import type { Category, Evidence, Product, Story, Verdict } from '@/lib/schemas'
-import { strongestEvidence, verificationLevel, verificationMix } from '@/lib/verification'
+import { cellAuthGated, isAuthGatedEvidence, strongestEvidence, verificationLevel, verificationMix } from '@/lib/verification'
 
 const ev = (id: string, tier: Evidence['tier']): Evidence => ({
   id, tier, url: 'https://example.com', excerpt: 'x', fetchedAt: '2026-08-26T00:00:00.000Z',
@@ -132,5 +132,38 @@ describe('verificationMix', () => {
       })),
     )
     expect(verificationMix(data, 'p')).toEqual({ 'vendor-claim': 0, corroborated: 0, tested: 0, disputed: 0 })
+  })
+})
+
+describe('isAuthGatedEvidence + cellAuthGated (the auth-wall honesty marker)', () => {
+  const wall = (id: string, excerpt: string, tier: Evidence['tier'] = 'probe'): Evidence => ({
+    id, tier, url: 'https://mcp.example.com/mcp', excerpt, fetchedAt: '2026-09-05T00:00:00.000Z',
+  })
+
+  it('matches the corpus wordings for probe-recorded auth walls', () => {
+    // composio (data/mcp-infrastructure/evidence/composio.json)
+    expect(isAuthGatedEvidence(wall('a', 'PROBE mcp-endpoint (2026-09-05): POST initialize returned HTTP 401 with an OAuth challenge — live and vaults access behind managed auth'))).toBe(true)
+    // mem0 (data/ai-memory/evidence/mem0.json)
+    expect(isAuthGatedEvidence(wall('b', 'PROBE runtime: keyless JSON-RPC initialize POST returned HTTP 401 with a `WWW-Authenticate: Bearer` OAuth challenge and protected-resource metadata'))).toBe(true)
+    // glama (data/mcp-infrastructure/evidence/glama.json)
+    expect(isAuthGatedEvidence(wall('c', 'PROBE registry-api: HTTP 401 with a JSON auth challenge ({"error":{"code":"unauthorized","message":"This endpoint requires an API key"}})'))).toBe(true)
+    // 403 walls count too
+    expect(isAuthGatedEvidence(wall('d', 'PROBE runtime: POST returned HTTP 403 Forbidden with an OAuth challenge'))).toBe(true)
+  })
+
+  it('never fires on non-probe tiers, plain 404s, or auth-less probes', () => {
+    expect(isAuthGatedEvidence(wall('e', 'HTTP 401 with an OAuth challenge', 'claimed-docs'))).toBe(false)
+    expect(isAuthGatedEvidence(wall('f', 'PROBE llms.txt: HTTP 404 at https://x.example/llms.txt'))).toBe(false)
+    expect(isAuthGatedEvidence(wall('g', 'PROBE llms.txt: HTTP 200 at https://x.example/llms.txt'))).toBe(false)
+    // status code without any auth context (e.g. a bare CDN retry mention) stays quiet
+    expect(isAuthGatedEvidence(wall('h', 'PROBE runtime: HTTP 403 from CDN edge, retried'))).toBe(false)
+  })
+
+  it('cellAuthGated fires only when the verdict CITES an auth-wall probe', () => {
+    const authWall = wall('wall-1', 'PROBE runtime: HTTP 401 with an OAuth challenge')
+    const map = new Map<string, Evidence>([['wall-1', authWall], ['docs-1', ev('docs-1', 'claimed-docs')]])
+    expect(cellAuthGated(v('partial', ['wall-1']), map)).toBe(true)
+    expect(cellAuthGated(v('partial', ['docs-1']), map)).toBe(false)
+    expect(cellAuthGated(v('none', []), map)).toBe(false)
   })
 })

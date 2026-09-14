@@ -41,6 +41,11 @@ export interface MegaTableRow {
   // True when every api-quality cell for this product is a zero-evidence none/na — i.e. we
   // never found (or probed) anything either way, so the honest render is "untested", not "0".
   apiUntested: boolean
+  // Same rule for the other two group-scoped PA-Score components (agent-access →
+  // agentReady, agentic-features → agenticApp). Optional so fixtures/callers predating them
+  // stay valid — absent reads as "not untested" (render the number as before).
+  agentReadyUntested?: boolean
+  agenticAppUntested?: boolean
   // GitHub star count — see lib/arenaTableSort.ts's ArenaTableRow.popularity doc.
   popularity: number | null
   // Repo link for the GitHub ★ cell's click-through (product.urls.github when curated). Optional

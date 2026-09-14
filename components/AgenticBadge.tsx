@@ -48,12 +48,18 @@ export default function AgenticBadge({
   value,
   size = 'md',
   showLabel = true,
+  untested = false,
   href,
 }: {
   kind: AgenticBadgeKind
   value: number | null
   size?: 'md' | 'sm'
   showLabel?: boolean
+  // "Untested" honesty (lib/data-helpers.ts isGroupUntested): when every cell behind this index
+  // is a zero-evidence none/na, a numeric 0 would overstate what we know — callers with
+  // CategoryData in hand pass this to render "untested" instead. Optional so existing callers
+  // keep the numeric render.
+  untested?: boolean
   // Optional click-through to where the index is explained (usually /methodology#ai-era, the
   // PA-Score component table these two indexes feed). Callers must NOT set this when the badge
   // already renders inside another link — nested anchors are invalid.
@@ -74,6 +80,16 @@ export default function AgenticBadge({
     ) : (
       badge
     )
+  if (untested) {
+    return wrap(
+      <span
+        title={href ? undefined : `${TITLES[kind]} — no evidence found or probed either way for this index: unscored, not zero.`}
+        className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-500 ring-1 ring-zinc-800 ${sizeClass}`}
+      >
+        {showLabel ? `${label} untested` : 'untested'}
+      </span>,
+    )
+  }
   if (value === null) {
     return wrap(
       <span title={href ? undefined : TITLES[kind]} className={`inline-flex w-fit items-center rounded-full bg-zinc-900 font-medium italic text-zinc-400 ring-1 ring-zinc-800 ${sizeClass}`}>
