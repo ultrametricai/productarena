@@ -22,9 +22,12 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <section>
-        {/* The homepage IS the table — no hero copy; the page title/description carry the
+        {/* The homepage IS the table — one visible title above the rank-by controls (founder
+            call, 2026-09-14), no further hero copy; the page title/description carry the
             positioning for search/social, and /methodology carries the full story. */}
-        <h1 className="sr-only">ProductArena — evidence-based software rankings for the AI era</h1>
+        <h1 className="font-display mb-3 text-2xl font-bold leading-tight tracking-tight">
+          Software, ranked by evidence.
+        </h1>
         {/* /everything is unlisted by founder call — no banner into it (route stays alive). */}
         <MegaTable rows={megaRows} arenas={arenaOptions} />
       </section>
