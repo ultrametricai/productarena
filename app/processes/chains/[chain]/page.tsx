@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
 import { chainIcon, processIcon } from '@/lib/processIcons'
+import { chainManifestPath, chainManifestUrl } from '@/lib/processManifest'
 import {
   buildSimSteps, chainTasks, computeCeiling, loadChains, processSlug, taskCeiling, vendorRoles,
 } from '@/lib/processes'
@@ -56,8 +58,11 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
           {def.name}
         </h1>
         <p className="mt-3 max-w-2xl text-zinc-400">{def.tagline}</p>
-        <p className="mt-2 text-sm text-zinc-500">
+        <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
           {tasks.length} processes · {ceiling.totalSteps} steps end to end
+          {/* Admin-only (Ory allowlist or the pa-admin localStorage switch) — renders nothing
+              for everyone else. The manifest it hands off is public regardless. */}
+          <DoViaAfk manifestUrl={chainManifestUrl(def.id)} />
         </p>
       </section>
 
@@ -90,6 +95,20 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
       </section>
 
       <ProcessSimulator steps={simSteps} roles={roles} multiTask />
+
+      {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}
+      <section className="border-t border-zinc-800 pt-4 text-xs text-zinc-500">
+        <span className="text-[10px] uppercase tracking-widest text-zinc-600">For agents</span>{' '}
+        <Link
+          href={chainManifestPath(def.id)}
+          className="text-zinc-400 hover:text-emerald-300"
+          title="Versioned machine-readable run plan for this whole playbook: every process's steps typed api / computer-use / human, vendor options with agent-readiness and MCP endpoints, approval gates"
+        >
+          Process manifest (JSON)
+        </Link>
+        <span className="mx-1.5 text-zinc-700">·</span>
+        <Link href="/llms.txt" className="text-zinc-400 hover:text-emerald-300">/llms.txt</Link>
+      </section>
     </div>
   )
 }

@@ -40,6 +40,12 @@ export const DagNodeSchema = z.object({
   vendorOptions: z.string().min(1).array().optional(),
   toolCall: z.string().min(1).optional(),
   functionCalls: FunctionCallSchema.array().optional(),
+  // Forward-compat action links being added to the corpus in a parallel lane: the deep link an
+  // executor (or a human) opens to actually perform the step, and the vendor's signup page.
+  // Declared here so zod doesn't strip them — lib/processManifest.ts passes them through when
+  // present; nothing else depends on them yet.
+  actionUrl: z.string().min(1).optional(),
+  signupUrl: z.string().min(1).optional(),
   approvalRequired: z.boolean().optional(),
   riskLevel: z.enum(['low', 'medium', 'high']).optional(),
   estimatedMinutes: z.number().min(0),
