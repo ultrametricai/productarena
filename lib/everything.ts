@@ -4,6 +4,7 @@
 // extra field is bundle weight). The product rows feed the page's only client component
 // (components/EverythingCatalog.tsx, via the pure helpers in lib/everythingFacets.ts); the
 // process/stack/lens rows render server-side and never hydrate.
+import { hasLogo } from './logos'
 import { computeAccessGlyphs } from './accessGlyphs'
 import { resolveAllStacks } from './aiStacks'
 import { confidenceFor } from './confidence'
@@ -31,6 +32,7 @@ export function buildEverythingRows(categories: CategoryData[]): EverythingRow[]
         arenaId,
         arenaName: data.category.name,
         oss: product.type === 'oss',
+        hasLogo: hasLogo(product.id),
         score: entry.aiEra,
         agentReady: entry.agentReady,
         agenticApp: entry.agenticApp,

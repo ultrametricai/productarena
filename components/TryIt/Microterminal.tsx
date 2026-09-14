@@ -121,27 +121,20 @@ export default function Microterminal({
       {/* Story menu: the prefixed user stories each recording proves, plus the one live probe. */}
       <div className="flex flex-wrap items-center gap-2">
         {stories.map((story) => (
-          <button key={story.id} type="button" onClick={() => runStory(story.id)} className={menuButton(activeId === story.id)}>
+          <button key={story.id} type="button" onClick={() => runStory(story.id)} title={`Play the recorded proof: ${story.title}`} className={menuButton(activeId === story.id)}>
+            <span aria-hidden className="mr-1 text-[10px]">▶</span>
             {story.title}
           </button>
         ))}
         {probe && (
-          <button type="button" onClick={() => runStory(LIVE_ID)} className={menuButton(isLive)}>
+          <button type="button" onClick={() => runStory(LIVE_ID)} title="Run one real JSON-RPC initialize against the vendor's MCP endpoint, from our edge, right now" className={menuButton(isLive)}>
+            <span aria-hidden className="mr-1 text-[10px]">▶</span>
             Live MCP handshake
             <span className="ml-1.5 rounded border border-emerald-400/60 px-1 text-[9px] font-semibold uppercase tracking-wide text-emerald-300">
               live
             </span>
           </button>
         )}
-        <button
-          type="button"
-          disabled
-          title="Real E2B/Daytona-sandboxed sessions where you drive the CLI — coming online when sandbox capacity ships (design: docs/TRY-IT.md)."
-          className="cursor-not-allowed rounded-full border border-zinc-800/70 px-3 py-1 text-xs text-zinc-600"
-        >
-          Run it yourself (sandboxed)
-          <span className="ml-1.5 rounded border border-zinc-700 px-1 text-[9px] font-semibold uppercase tracking-wide">soon</span>
-        </button>
       </div>
 
       {/* The terminal window. */}
@@ -156,8 +149,17 @@ export default function Microterminal({
             <span className="mr-1.5 select-none text-emerald-400">$</span>
             {isLive ? `mcp-probe → ${probe?.endpoint ?? ''}` : active?.command ?? `try ${productName}`}
           </code>
+          <button
+            type="button"
+            onClick={() => activeId && runStory(activeId)}
+            disabled={!activeId || liveBusy}
+            title={isLive ? 'Run the live handshake again' : 'Replay this recording from the start'}
+            className="ml-auto shrink-0 rounded border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            ▶ {liveBusy ? 'running…' : isLive ? 'run' : 'replay'}
+          </button>
           <span
-            className={`ml-auto shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+            className={`shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
               isLive ? 'border-emerald-400/60 text-emerald-300' : 'border-zinc-600 text-zinc-400'
             }`}
           >

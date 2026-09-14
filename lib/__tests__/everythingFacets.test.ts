@@ -18,6 +18,7 @@ function row(overrides: Partial<EverythingRow>): EverythingRow {
     arenaId: 'arena-a',
     arenaName: 'Arena A',
     oss: false,
+    hasLogo: false,
     score: 50,
     agentReady: 50,
     agenticApp: 50,
