@@ -9,6 +9,7 @@ export default function PrintButton({ label = 'Download PDF' }: { label?: string
     <button
       type="button"
       onClick={() => window.print()}
+      title="Opens your browser's print dialog — choose 'Save as PDF' there"
       className="rounded-lg border border-emerald-400/60 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-400/10 print:hidden"
     >
       {label}

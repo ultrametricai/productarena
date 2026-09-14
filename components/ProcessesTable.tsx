@@ -172,14 +172,21 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
                         </span>
                       ),
                     )}
-                    {r.vendors.length > 3 && <span className="text-[10px] text-zinc-600">+{r.vendors.length - 3}</span>}
+                    {r.vendors.length > 3 && (
+                      <span className="text-[10px] text-zinc-600" title={r.vendors.slice(3).map((v) => v.label).join(', ')}>
+                        +{r.vendors.length - 3}
+                      </span>
+                    )}
                   </span>
                 </td>
               </tr>
             ))}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-zinc-500">No processes match.</td>
+                <td colSpan={5} className="px-3 py-6 text-center text-zinc-500">
+                  {/* Echo the active filters — same convention as the product tables. */}
+                  No processes match{query.trim() ? <> &ldquo;{query}&rdquo;</> : ''}{phase !== 'all' ? ` in the ${phase} phase` : ''}.
+                </td>
               </tr>
             )}
           </tbody>

@@ -83,7 +83,10 @@ export default async function GlobalStoryPage({
 
       <section className="rounded-2xl border border-zinc-800 p-4">
         <p className="text-[10px] uppercase tracking-widest text-zinc-500">Adoption among tracked products</p>
-        <p className="mt-1 font-mono text-3xl font-bold tabular-nums text-emerald-400">
+        <p
+          className="mt-1 font-mono text-3xl font-bold tabular-nums text-emerald-400"
+          title="Share of tracked products carrying this story that pass it with a full or partial verdict"
+        >
           {Number.isInteger(adoption.pct) ? adoption.pct : adoption.pct.toFixed(1)}%
         </p>
         <p className="text-xs text-zinc-500">

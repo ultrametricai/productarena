@@ -12,7 +12,9 @@ export interface TableControlsPreset<C extends string> {
 }
 
 function presetButtonClass(active: boolean): string {
-  const base = 'rounded-full border px-3 py-1.5 text-xs font-medium transition'
+  // focus-visible ring so keyboard users can see which preset pill has focus (the inputs in
+  // this same strip already carry focus styles).
+  const base = 'rounded-full border px-3 py-1.5 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60'
   return active
     ? `${base} border-emerald-400/60 bg-emerald-400/10 text-emerald-300`
     : `${base} border-zinc-800 text-zinc-400 hover:border-emerald-400/40 hover:text-emerald-300`

@@ -23,7 +23,8 @@ function ScoreCell({ label, value, values }: { label: string; value: number | nu
     <div className="flex items-center gap-2">
       <span className="text-[10px] uppercase tracking-widest text-zinc-400" title={SCORE_LABEL_TITLES[label]}>{label}</span>
       <span className="font-mono text-sm tabular-nums text-zinc-200">
-        {value === null ? <span className="text-zinc-500">n/a</span> : value.toFixed(0)}
+        {/* N/100 with dimmed /100 — same convention as every other score cell on the site. */}
+        {value === null ? <span className="italic text-zinc-500">n/a</span> : <>{value.toFixed(0)}<span className="text-zinc-600">/100</span></>}
       </span>
       <Sparkline values={values} width={72} height={20} />
     </div>

@@ -100,7 +100,7 @@ export default function ProductActions({
 
         <div>
           <SectionLabel>Flag</SectionLabel>
-          <a href={contestUrl} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          <a href={contestUrl} target="_blank" rel="noopener noreferrer" title="Opens a prefilled GitHub issue contesting a verdict" className={linkClass}>
             ⚑ Flag a verdict
           </a>
           <p className="mt-1 text-zinc-500">

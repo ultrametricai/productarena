@@ -38,6 +38,7 @@ export default function PricingSignals({ entry }: { entry?: ProductPricing }) {
                 href={entry.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                title="Open the vendor pricing page we checked"
                 className="text-zinc-500 underline decoration-zinc-700 underline-offset-2 hover:text-emerald-300"
               >
                 page checked ↗
