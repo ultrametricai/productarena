@@ -5,6 +5,7 @@
 import { computeAccessGlyphs, type AccessGlyph } from './accessGlyphs'
 import { confidenceFor } from './confidence'
 import { isGroupUntested, type CategoryData } from './data-helpers'
+import { computeHotFlags } from './hotProducts'
 import { hasLogo } from './logos'
 import { type MegaTableAccessGlyph, type MegaTableRow } from './megaTableSort'
 import { metricTrendDelta } from './scoreHistory'
@@ -21,6 +22,9 @@ function toClientGlyph(glyph: AccessGlyph, arenaId: string, productId: string): 
 
 export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
   const rows: MegaTableRow[] = []
+  // 🔥 flags (see lib/hotProducts.ts) are global per product — computed once over the whole
+  // fleet, then serialized as a plain reason string per row.
+  const hotFlags = computeHotFlags(categories)
   for (const data of categories) {
     const productById = new Map(data.products.map((p) => [p.id, p]))
     const intervals = loadScoreIntervals(data.category.id)
@@ -46,6 +50,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         agentReadyUntested: isGroupUntested(data, product.id, 'agent-access'),
         agenticAppUntested: isGroupUntested(data, product.id, 'agentic-features'),
         popularity: data.popularity[product.id]?.stars ?? null,
+        hotReason: hotFlags.get(product.id)?.reason ?? null,
         ycBatch: product.ycBatch,
         trendDelta: metricTrendDelta(arenaId, product.id, 'aiEra'),
         agentReadyTrendDelta: metricTrendDelta(arenaId, product.id, 'agentReady'),
