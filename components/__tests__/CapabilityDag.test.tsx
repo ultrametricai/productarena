@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import CapabilityDag, { capabilityDagStats } from '@/components/CapabilityDag'
 import { canonGraphStoryIds } from '@/lib/storyGraph'
 import { CANON_SHORT_LABELS, combinedCanonEdges } from '@/lib/storyEdges'
+import { withBase } from '@/lib/site'
 
 describe('CapabilityDag', () => {
   const adoption = Object.fromEntries(
@@ -16,7 +17,8 @@ describe('CapabilityDag', () => {
     const links = [...container.querySelectorAll('a')]
     expect(links.length).toBe(canonGraphStoryIds.size)
     for (const id of canonGraphStoryIds) {
-      expect(links.some((a) => a.getAttribute('href') === `/global/${id}`), `no node link for ${id}`).toBe(true)
+      // SVG <a> can't go through next/link, so the component bakes in the basePath by hand.
+      expect(links.some((a) => a.getAttribute('href') === withBase(`/global/${id}`)), `no node link for ${id}`).toBe(true)
     }
     // Edge tooltips carry the curated why — spot-check one cross edge.
     const cross = combinedCanonEdges().find((e) => e.kind === 'cross')!
