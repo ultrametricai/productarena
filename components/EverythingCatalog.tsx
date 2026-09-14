@@ -1,5 +1,6 @@
 'use client'
 
+import ProductLogoView from '@/components/ProductLogoView'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import TrendArrow from '@/components/TrendArrow'
@@ -54,9 +55,10 @@ function CatalogRow({ row }: { row: EverythingRow }) {
     <li className="flex items-center gap-2 px-2 py-[9px] text-[13px] leading-none odd:bg-zinc-900/40 sm:gap-3">
       <Link
         href={`/arena/${row.arenaId}/product/${row.productId}`}
-        className="min-w-0 flex-1 truncate font-medium hover:text-emerald-300"
+        className="flex min-w-0 flex-1 items-center gap-2 truncate font-medium hover:text-emerald-300"
       >
-        {row.name}
+        <ProductLogoView product={{ id: row.productId, name: row.name }} size={16} hasLogo={row.hasLogo} />
+        <span className="min-w-0 truncate">{row.name}</span>
       </Link>
       <Link
         href={`/arena/${row.arenaId}`}

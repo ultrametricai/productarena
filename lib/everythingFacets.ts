@@ -15,6 +15,7 @@ export interface EverythingRow {
   arenaId: string
   arenaName: string
   oss: boolean
+  hasLogo: boolean
   /** Blended PA Score (initScore/aiEra) — first number of the "42·77·23" triplet. */
   score: number | null
   agentReady: number | null

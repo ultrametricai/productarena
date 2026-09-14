@@ -32,9 +32,10 @@ export default function ContestLink({
       href={`${REPO_ISSUES_URL}?${params.toString()}`}
       target="_blank"
       rel="noopener noreferrer"
+      title="Think this verdict is wrong? Flag it — opens a prefilled public GitHub issue with the evidence attached"
       className="text-xs text-zinc-400 hover:text-emerald-300"
     >
-      ⚑ contest
+      ⚑ flag
     </a>
   )
 }
