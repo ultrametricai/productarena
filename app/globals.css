@@ -14,12 +14,29 @@ body {
   font-family: var(--font-display);
 }
 
+/* Keyboard navigation: a visible emerald focus ring on whatever is focused via keyboard.
+   :focus-visible only — mouse/touch interactions stay ring-free. Several inputs set
+   focus:outline-none with just a border-color swap, and the browser default outline is nearly
+   invisible on zinc-950, so without this a keyboard user can't tell where they are. */
+:focus-visible {
+  outline: 2px solid rgb(52 211 153 / 0.8);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* Landing on a story anchor (proof links, AI-mode badges, theme cards) briefly glows the row
-   so the jump is unmistakable. */
+   so the jump is unmistakable. Static highlight only for prefers-reduced-motion users. */
 [id^="story-"]:target,
 [id^="theme-"]:target {
-  animation: init-target-glow 1.6s ease-out 1;
   border-radius: 0.5rem;
+  background: rgb(52 211 153 / 0.06);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [id^="story-"]:target,
+  [id^="theme-"]:target {
+    animation: init-target-glow 1.6s ease-out 1;
+    background: transparent;
+  }
 }
 @keyframes init-target-glow {
   0% { box-shadow: 0 0 0 2px rgb(52 211 153 / 0.9); background: rgb(52 211 153 / 0.08); }

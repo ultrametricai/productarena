@@ -1,4 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+
+// Without this the 404 tab reads bare "ProductArena" — every other page carries a descriptive
+// title. noindex keeps soft-404 URLs out of search results.
+export const metadata: Metadata = {
+  title: 'Page not found — ProductArena',
+  robots: { index: false },
+}
 
 // 404: minimal, on-brand — no illustration. Same evidence-tier language the rest of the site
 // uses ("verdict: none q0") rendered as plain mono text instead of an illustrated scene.
