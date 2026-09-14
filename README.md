@@ -35,7 +35,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **65 arenas, 354 products, 20,755 judged verdicts.**
+As of the last full pipeline run: **65 arenas, 358 products, 20,977 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
@@ -121,7 +121,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase |
 | Mobile AI Dev Tools (`mobile-dev`) | termius, tailscale, blink-shell, a-shell, working-copy, github-mobile |
 | Code Hosting (`code-hosting`) | github, gitlab, bitbucket, gitea |
-| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline, cubic |
+| AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline, cubic, antigravity |
 | Edge & App Platforms (`edge-platforms`) | cloudflare, vercel, netlify, fly-io, railway, render |
 | Frontend Frameworks (`frontend-frameworks`) | react, vue, svelte, angular, solid |
 | Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai, llamafile |
@@ -147,8 +147,8 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Startup Legal & Incorporation (`legal-ops`) | stripe-atlas, clerky, docusign, firstbase, ironclad, legalzoom |
 | Robotics Software Platforms (`robotics-platforms`) | formant, gazebo, nvidia-isaac, ros2, viam |
 | Terminals (`terminals`) | warp, ghostty, iterm2, alacritty, wezterm, kitty |
-| AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot |
-| AI Research Agents (`ai-research-agents`) | elicit, consensus, futurehouse, undermind, sakana-marlin |
+| AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot, grok |
+| AI Research Agents (`ai-research-agents`) | elicit, consensus, futurehouse, undermind, sakana-marlin, notebooklm |
 | Package & Toolchain Managers (`package-managers`) | homebrew, nix, pnpm, uv, bun, mise |
 | Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus, helixdb |
 | Auth & Identity (`auth-platforms`) | auth0, clerk, workos, keycloak, better-auth |
@@ -168,7 +168,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Data Warehouses & Lakehouses (`data-warehouses`) | snowflake, databricks, bigquery, motherduck |
 | Search Infrastructure (`search-infra`) | algolia, meilisearch, typesense, elastic, orama |
 | Scheduling & Calendar (`scheduling`) | cal-com, calendly, motion, reclaim, savvycal |
-| Design & Prototyping (`design-tools`) | figma, penpot, framer, sketch, canva |
+| Design & Prototyping (`design-tools`) | figma, penpot, framer, sketch, canva, claude-design |
 | Email Clients & Email AI (`email`) | superhuman, shortwave, missive, zero, fastmail, agentmail |
 | Incident Management & On-call (`incident-management`) | pagerduty, incident-io, firehydrant, rootly, betterstack |
 | Developer Docs Platforms (`docs-platforms`) | mintlify, gitbook, readme, docusaurus, fern |

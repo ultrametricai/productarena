@@ -83,4 +83,29 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // Antigravity publishes a full llms.txt index (products, pricing, and the whole docs
+      // tree — subagents, skills, hooks, MCP) — agent-oriented docs verified keylessly.
+      // Added at the 2026-09-14 bring-up (LLM-lab families wave).
+      probeId: 'llms-docs-index',
+      productId: 'antigravity',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://antigravity.google/llms.txt | head -4'],
+      displayCommand: 'curl -s https://antigravity.google/llms.txt | head -4',
+      expect: /# Google Antigravity[\s\S]*agentic coding platform/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Every Antigravity docs page is served as raw markdown at <path>.md (content-type
+      // text/markdown) — the docs surface an agent reads without a browser.
+      probeId: 'docs-md-endpoint',
+      productId: 'antigravity',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --compressed --max-time 20 https://antigravity.google/docs/getting-started.md | head -6'],
+      displayCommand: 'curl -s --compressed https://antigravity.google/docs/getting-started.md | head -6',
+      expect: /# Getting Started with Antigravity/,
+      timeoutMs: 30_000,
+    },
 ]

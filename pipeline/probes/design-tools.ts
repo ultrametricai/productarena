@@ -97,4 +97,29 @@ export const probes: LocalProbe[] = [
       expect: /# Sketch/,
       timeoutMs: 30_000,
     },
+    {
+      // Claude Design's design-system capability is documented on a live, keylessly crawlable
+      // support article (Intercom help center serves server-rendered HTML). Added at the
+      // 2026-09-14 bring-up (LLM-lab families wave).
+      probeId: 'design-system-doc',
+      productId: 'claude-design',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', "curl -sL --max-time 30 -A 'Mozilla/5.0 (compatible; ProductArena/1.0)' 'https://support.claude.com/en/articles/14604397-set-up-your-design-system-in-claude-design' | grep -o -i -E 'design system|brand guidelines' | sort | uniq -c"],
+      displayCommand: "curl -sL 'https://support.claude.com/en/articles/14604397-set-up-your-design-system-in-claude-design' | grep -oiE 'design system|brand guidelines' | sort | uniq -c",
+      expect: /design system/i,
+      timeoutMs: 60_000,
+    },
+    {
+      // The get-started article documents the prototype-and-handoff loop (including handoff to
+      // Claude Code) — fetched keylessly from the vendor's own help center.
+      probeId: 'prototype-handoff-doc',
+      productId: 'claude-design',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', "curl -sL --max-time 30 -A 'Mozilla/5.0 (compatible; ProductArena/1.0)' 'https://support.claude.com/en/articles/14604416-get-started-with-claude-design' | grep -o -i -E 'prototypes?|Claude Code' | sort | uniq -c"],
+      displayCommand: "curl -sL 'https://support.claude.com/en/articles/14604416-get-started-with-claude-design' | grep -oiE 'prototypes?|Claude Code' | sort | uniq -c",
+      expect: /prototype/i,
+      timeoutMs: 60_000,
+    },
 ]
