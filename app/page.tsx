@@ -26,7 +26,7 @@ export default function Home() {
             call, 2026-09-14), no further hero copy; the page title/description carry the
             positioning for search/social, and /methodology carries the full story. */}
         <h1 className="font-display mb-3 text-2xl font-bold leading-tight tracking-tight">
-          Software, ranked for the AI era
+          Companies, ranked for the AI era
         </h1>
         {/* /everything is unlisted by founder call — no banner into it (route stays alive). */}
         <MegaTable rows={megaRows} arenas={arenaOptions} />
