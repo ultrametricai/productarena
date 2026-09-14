@@ -11,10 +11,10 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Move "For agents" (page-as-markdown / llms.txt) rail cell to bottom of product page | in-lane (startup-sim/page-order) — re-scoped 2026-09-14 |
 | Move "Badge / embed score badge" rail cell to bottom of product page | in-lane (startup-sim/page-order) — re-scoped 2026-09-14 |
 | Homepage title → "Companies, ranked for the AI era" + refresh share image | shipped 2026-09-14 |
-| Tables rankable by OSS status | in-lane (functional-100) |
-| Compare link → fixed right end of row | in-lane (functional-100) |
-| YC pill in YC orange | in-lane (functional-100) |
-| 100 functional improvements (top ~25 implemented) | in-lane (functional-100) |
+| Tables rankable by OSS status | shipped 2026-09-14 |
+| Compare link → fixed right end of row | shipped 2026-09-14 |
+| YC pill in YC orange | shipped 2026-09-14 |
+| 100 functional improvements | shipped 2026-09-14 (46 done, 54 catalogued in docs/FUNCTIONAL-100.md) |
 | 50 growth ideas doc + execution start | shipped 2026-09-14 (doc) — execution rolling |
 | Pricing-tier dimension on user stories (free/paid/enterprise) fleet-wide | open — queued next wave (big LLM pass) |
 | Stripe-style exhaustive passes for major startups + hot repos (incl. buzz) | open — queued next wave |
