@@ -1,13 +1,14 @@
 {
-  "hash": "b25d64ad0e1ea7be98b1bf5cca79a5fde09bd05376f68781888f88ccd42a58e7",
+  "hash": "bb77293448e7e8361a4f5c3ceb78abd1c36cc31d375491717f90f6f2583ff002",
   "verdict": {
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Lambda's docs explicitly state ODC instances are priced hourly but billed in one-minute increments, and billing only accrues while an instance is running/attached — corroborated by a community report where a user was billed for the full duration their instance remained running (idle counted as running, confirming billing follows instance lifecycle rather than usage activity). Missing for 10: true per-second billing granularity (only per-minute is documented), and independent/user confirmation that billing precisely matches the one-minute increment claim.",
+    "rationale": "Lambda's docs explicitly state ODC 'prices instances by hourly usage and bills in one-minute increments' (docs-10), satisfying per-minute granularity while running, and usage can be tracked on a per-instance basis (docs-20). However, billing is only per-minute (not per-second), and a community report shows a user billed for 391 hours because Lambda 'does not distinguish between idle and in use instance states'—meaning the meter keeps running whenever the instance is up, with no auto-stop protection, which undercuts the practical 'only while running=only while useful' expectation. missing for 10: per-second granularity, independent confirmation of billing accuracy, and auto-stop/idle-detection to prevent unexpected charges.",
     "evidenceIds": [
       "lambda-labs-docs-10",
-      "lambda-labs-comm-1"
+      "lambda-labs-docs-20",
+      "lambda-labs-comm-2"
     ],
     "productId": "lambda-labs",
     "storyId": "per-second-billing"
