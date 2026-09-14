@@ -9,17 +9,30 @@ each labeled for exactly what it is.
 | Layer | What it is | Status |
 |---|---|---|
 | 1. Recorded sessions | Replays of real probe-harness transcripts (`data/*/proofs/`), character-paced in a microterminal | **Live** |
-| 2. Live MCP handshake | One real JSON-RPC `initialize` (+ keyless `tools/list`) against the vendor's own documented remote MCP endpoint, run from our Cloudflare edge | **Live** (allowlisted products) |
+| 2. Live MCP | Real JSON-RPC against the vendor's own documented remote MCP endpoint, run from our Cloudflare edge, in three credential tiers (below) | **Live** (allowlisted products) |
 | 3. Full sandbox | An ephemeral VM where the visitor drives the vendor CLI themselves | **Designed, gated** — this document |
+
+Layer 2's credential tiers (all through the worker's `/api/mcp-probe`; the client never sends a
+URL, tool name, or arguments):
+
+| Tier | What runs | Status |
+|---|---|---|
+| Keyless | `initialize` + `tools/list`; for curated endpoints, ONE real read-only demo tool call with canned args (`data/mcp-demo-calls.json`, every entry live-verified) | **Live** |
+| BYO key | The visitor pastes their own credential — forwarded once vendor-ward as `Authorization`, never logged/stored, scrubbed from responses (tested invariants) | **Live** |
+| Sandbox account | Server-side `DEMO_CRED_<PRODUCTID>` wrangler secrets → "use our sandbox account" | **Mechanism shipped**; activation = provisioning (`docs/TRY-IT-DEMO-ACCOUNTS.md`) |
 
 Implementation map:
 
-- `components/TryIt/Microterminal.tsx` — the terminal UI (client), replay + live probe.
+- `components/TryIt/Microterminal.tsx` — the terminal UI (client), replay + live tiers.
 - `components/TryIt/TryItSection.tsx` — server assembly, process cross-links.
-- `lib/tryit.ts` / `lib/tryitReplay.ts` — eligibility, story building, pure replay logic.
+- `lib/tryit.ts` / `lib/tryitReplay.ts` — eligibility, story building, pure replay/render logic.
 - `lib/mcpEndpoints.ts` — GENERATED static allowlist (`scripts/generate-mcp-allowlist.mjs`).
-- `infra/cloudflare-proxy/worker.js` — `POST /productarena/api/mcp-probe` (`MCP_ENDPOINTS`
-  hardcoded copy of the same allowlist; clients send `{arena, product}`, never URLs).
+- `lib/mcpDemoCalls.ts` — GENERATED curated demo calls (`scripts/generate-mcp-demo-calls.mjs`
+  from `data/mcp-demo-calls.json`).
+- `infra/cloudflare-proxy/worker.js` — `POST /productarena/api/mcp-probe` (`MCP_ENDPOINTS` and
+  `MCP_DEMO_CALLS` hardcoded copies of the same maps; clients send `{arena, product}` + tier
+  flags, never URLs or tools).
+- `docs/TRY-IT-DEMO-ACCOUNTS.md` — sandbox-tier provisioning checklist (top-10 endpoint list).
 
 A product gets the section when it has ≥1 replayable terminal proof OR an allowlisted MCP
 endpoint. Products with neither keep their old primary CTA — **no fake try**.
