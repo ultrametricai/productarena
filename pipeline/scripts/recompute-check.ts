@@ -39,6 +39,8 @@ const CATEGORIES = [
   'email',
   'edge-platforms',
   'equity-management',
+  'error-tracking',
+  'expense-management',
   'feature-flags',
   'frontend-frameworks',
   'gpu-clouds',

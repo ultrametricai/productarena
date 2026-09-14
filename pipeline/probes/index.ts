@@ -52,6 +52,8 @@ import { probes as legalOps } from './legal-ops'
 import { probes as apiPlatforms } from './api-platforms'
 import { probes as modelGateways } from './model-gateways'
 import { probes as equityManagement } from './equity-management'
+import { probes as errorTracking } from './error-tracking'
+import { probes as expenseManagement } from './expense-management'
 
 export type { LocalProbe } from './types'
 
@@ -99,4 +101,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'api-platforms': apiPlatforms,
   'model-gateways': modelGateways,
   'equity-management': equityManagement,
+  'error-tracking': errorTracking,
+  'expense-management': expenseManagement,
 }
