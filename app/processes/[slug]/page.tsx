@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessSimulator from '@/components/ProcessSimulator'
@@ -8,6 +9,7 @@ import ProcessVerdict from '@/components/ProcessVerdict'
 import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
+import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
   buildSimSteps, findProcessBySlug, loadProcesses, processSlug, taskCeiling, vendorRoles,
 } from '@/lib/processes'
@@ -74,6 +76,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>
           )}
+          {/* Admin-only (Ory allowlist or the pa-admin localStorage switch) — renders nothing
+              for everyone else. The manifest it hands off is public regardless. */}
+          <DoViaAfk manifestUrl={processManifestUrl(slug)} />
         </div>
         <p className="mt-3 max-w-2xl text-zinc-400">{task.description}</p>
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
@@ -155,6 +160,20 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
       )}
 
       <ProcessSimulator steps={simSteps} roles={roles} />
+
+      {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}
+      <section className="border-t border-zinc-800 pt-4 text-xs text-zinc-500">
+        <span className="text-[10px] uppercase tracking-widest text-zinc-600">For agents</span>{' '}
+        <Link
+          href={processManifestPath(slug)}
+          className="text-zinc-400 hover:text-emerald-300"
+          title="Versioned machine-readable run plan for this process: steps typed api / computer-use / human, vendor options with agent-readiness and MCP endpoints, approval gates"
+        >
+          Process manifest (JSON)
+        </Link>
+        <span className="mx-1.5 text-zinc-700">·</span>
+        <Link href="/llms.txt" className="text-zinc-400 hover:text-emerald-300">/llms.txt</Link>
+      </section>
     </div>
   )
 }
