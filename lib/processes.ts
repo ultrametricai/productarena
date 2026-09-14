@@ -11,7 +11,7 @@ import { formatMinutes, gapWhy } from './processSim'
 export { formatMinutes, gapWhy }
 export type { GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
-// The founder-process corpus (data/processes.json): 96 real startup operating processes, each
+// The founder-process corpus (data/processes.json): 106 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
 // API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (genuinely
 // needs a human: signatures, meetings, judgment, waiting on a third party). The whole feature's
@@ -86,8 +86,8 @@ export type ProcessChain = z.infer<typeof ProcessChainSchema>
 // Display order for the corpus's phases — grouping on the index page follows the life of the
 // company, not the alphabet. Unknown phases (future corpus additions) sort last, alphabetically.
 export const PHASE_ORDER = [
-  'formation', 'fundraising', 'legal', 'compliance', 'finance', 'hr',
-  'operations', 'product', 'sales', 'growth',
+  'startup', 'formation', 'fundraising', 'legal', 'compliance', 'finance', 'hr',
+  'operations', 'product', 'software', 'sales', 'growth',
 ] as const
 
 export function phaseRank(phase: string): number {
@@ -329,6 +329,14 @@ export const VENDOR_ARENA: Record<string, string> = {
   lovable: 'vibe-coding',
   v0: 'vibe-coding',
   bolt: 'vibe-coding',
+  // The software-making loop (ship-a-feature / cut-a-release processes).
+  claude_code: 'ai-coding',
+  codex: 'ai-coding',
+  cursor: 'ai-coding',
+  coderabbit: 'ai-code-review',
+  greptile: 'ai-code-review',
+  cursor_bugbot: 'ai-code-review',
+  datadog: 'observability',
 }
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
@@ -364,6 +372,14 @@ const VENDOR_LABELS: Record<string, string> = {
   google_workspace: 'Google Workspace',
   name_com: 'Name.com',
   v0: 'v0',
+  legalzoom: 'LegalZoom',
+  northwest: 'Northwest Registered Agent',
+  producthunt: 'Product Hunt',
+  betalist: 'BetaList',
+  hackernews: 'Hacker News',
+  google_search_console: 'Google Search Console',
+  iubenda: 'iubenda',
+  coderabbit: 'CodeRabbit',
 }
 
 export function vendorLabel(vendor: string): string {

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { SimStep, VendorRole } from '@/lib/processSim'
-import { formatMinutes } from '@/lib/processSim'
 
 // Client-side dry-run theater over the mapped process data — no network calls are ever made.
 // The user picks a product per swappable market role (each role is one arena, defaulting to the
@@ -121,7 +120,6 @@ export default function ProcessSimulator({
   const gaps = steps.filter((s) => s.route !== 'agent')
   const approvals = agentSteps.filter((s) => s.approvalRequired)
   const apiCalls = agentSteps.reduce((n, s) => n + (s.calls.length || (s.toolCall ? 1 : 0)), 0)
-  const agentMinutes = agentSteps.reduce((n, s) => n + s.estimatedMinutes, 0)
   const roleNames = roles.map(
     (r) => r.alternatives.find((o) => o.id === (selections[r.arenaId] ?? r.defaultProductId))?.name ?? r.defaultProductName,
   )
@@ -194,11 +192,9 @@ export default function ProcessSimulator({
                 {gaps.length} human handoff{gaps.length === 1 ? '' : 's'}, {approvals.length} approval
                 gate{approvals.length === 1 ? '' : 's'}, {apiCalls} API call{apiCalls === 1 ? '' : 's'} made
               </p>
-              <p className="mt-1 text-zinc-500">
-                est. agent time {formatMinutes(agentMinutes)} of{' '}
-                {formatMinutes(steps.reduce((n, s) => n + s.estimatedMinutes, 0))} total
-                {roleNames.length > 0 ? ` · products: ${roleNames.join(', ')}` : ''}
-              </p>
+              {roleNames.length > 0 && (
+                <p className="mt-1 text-zinc-500">products: {roleNames.join(', ')}</p>
+              )}
             </div>
           )}
         </div>
