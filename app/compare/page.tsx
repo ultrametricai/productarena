@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import CompareBuilder from '@/components/CompareBuilder'
+import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll } from '@/lib/data'
 import { buildCompareProducts } from '@/lib/compareData'
 import { withBase } from '@/lib/site'
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
 // makes that static-export safe (the builder subtree client-renders; no server sees the query).
 export default function ComparePage() {
   const products = buildCompareProducts(loadAll())
-  const validIds = new Set(products.map((p) => p.id))
-  const starters = STARTERS.filter((s) => s.ids.every((id) => validIds.has(id)))
+  const productById = new Map(products.map((p) => [p.id, p]))
+  const starters = STARTERS.filter((s) => s.ids.every((id) => productById.has(id)))
 
   return (
     <div className="space-y-8">
@@ -47,9 +48,20 @@ export default function ComparePage() {
               <a
                 key={s.label}
                 href={withBase(`/compare?p=${s.ids.join(',')}`)}
-                className="rounded-full border border-zinc-800 px-3 py-1 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 py-1 pl-2 pr-3 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
               >
-                {s.label}
+                {/* Each product wears its real logo (same 16px ProductLogoView as the tables);
+                    ids were validated against the catalog above, so the lookup can't miss. */}
+                {s.ids.map((id, i) => {
+                  const p = productById.get(id)!
+                  return (
+                    <span key={id} className="inline-flex items-center gap-1.5">
+                      {i > 0 && <span className="text-zinc-600">vs</span>}
+                      <ProductLogoView product={{ id: p.id, name: p.name }} size={16} hasLogo={p.hasLogo} />
+                      {p.name}
+                    </span>
+                  )
+                })}
               </a>
             ))}
           </p>

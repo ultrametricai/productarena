@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import AiEraBadge from '@/components/AiEraBadge'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
 import { adjacentProducts, findProductArena, rivalsFor } from '@/lib/alternatives'
@@ -116,9 +117,8 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
                 <p className="text-xs text-zinc-500">{rival.product.vendor}</p>
               </div>
               <div className="ml-auto flex shrink-0 items-center gap-3">
-                <span className="text-xs text-zinc-400">
-                  PA Score{' '}
-                  <span className="font-mono text-emerald-300">{fmtScore(rival.entry.aiEra)}</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-zinc-400">
+                  PA Score <AiEraBadge value={rival.entry.aiEra} size="xs" />
                 </span>
                 <Link
                   href={`/vs/${rival.battleSlug}`}
@@ -173,9 +173,8 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
                 className="rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
                 <p className="font-semibold">{adj.product.name}</p>
-                <p className="mt-0.5 text-xs text-zinc-500">
-                  Top-ranked in {adj.categoryName} · PA Score{' '}
-                  <span className="font-mono text-emerald-300">{fmtScore(adj.entry.aiEra)}</span>
+                <p className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-zinc-500">
+                  Top-ranked in {adj.categoryName} · PA Score <AiEraBadge value={adj.entry.aiEra} size="xs" />
                 </p>
                 <p className="mt-2 text-[11px] text-zinc-500">shares: {adj.sharedThemes.map(humanizeTheme).join(', ')}</p>
               </Link>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import AiEraBadge from '@/components/AiEraBadge'
 import GeoMark from '@/components/GeoMark'
 import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
@@ -151,8 +152,8 @@ export default function MissingStartupsPage() {
                     />
                     {arena.leader.name}
                   </Link>{' '}
-                  <span className="font-mono tabular-nums" title="The leader's PA Score (0–100) — a low bar is itself the opportunity">
-                    PA {fmt(arena.leader.paScore)}
+                  <span className="inline-flex items-center gap-1 align-middle" title="The leader's PA Score (0–100) — a low bar is itself the opportunity">
+                    PA Score <AiEraBadge value={arena.leader.paScore} size="xs" />
                   </span>{' '}
                   · {arena.productCount} products tracked
                 </>

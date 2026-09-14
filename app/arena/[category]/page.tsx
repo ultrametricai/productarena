@@ -185,7 +185,6 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           </Link>
         </p>
       </div>
-      <Legend />
       <div>
         <h2 className="font-display leading-[1.1] mb-4 flex items-center gap-2 text-lg font-semibold">
           <GeoMark seed="leaderboard" title="Leaderboard — every product ranked by evidence" size={18} className="text-zinc-500" />
@@ -202,6 +201,10 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         </h2>
         <StoryMatrix data={data} logoMap={logoMap} />
       </div>
+      {/* Legend AFTER the last table it explains (story matrix) — founder principle: optimize
+          for first use, bulk value (the leaderboard) seen straight away, vocabulary below.
+          Chip tooltips + StoryMatrix's #legend link cover mid-scroll lookups. */}
+      <Legend />
       {adjacent.length > 0 && (
         <div>
           <h2 className="font-display leading-[1.1] mb-1 flex items-center gap-2 text-lg font-semibold">

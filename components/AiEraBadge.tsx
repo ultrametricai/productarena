@@ -45,6 +45,17 @@ function tooltip(components?: AiEraComponents, band?: ScoreBand): string {
   )
 }
 
+// One pill, three densities — the compact variants exist so every PA Score on the site wears
+// the SAME visual (founder feedback 2026-09-14: no bare-text scores anywhere):
+//   md — headline placements (product page hero)
+//   sm — table cells (arena/mega leaderboards)
+//   xs — inline/dense spots (family mini-table, stack chips, battle aggregates, /missing)
+const SIZE_CLASS = {
+  md: 'px-3 py-1 text-sm',
+  sm: 'px-2 py-0.5 text-xs',
+  xs: 'px-1.5 py-px text-[10px]',
+} as const
+
 export default function AiEraBadge({
   value,
   size = 'md',
@@ -54,7 +65,7 @@ export default function AiEraBadge({
   showBand = false,
 }: {
   value: number | null
-  size?: 'md' | 'sm'
+  size?: 'md' | 'sm' | 'xs'
   components?: AiEraComponents
   // Optional click-through (e.g. /methodology#arena-score). Callers must NOT set this when the
   // badge is rendered inside another link (arena/battle cards) — nested anchors are invalid.
@@ -67,7 +78,7 @@ export default function AiEraBadge({
   interval?: ScoreBand | null
   showBand?: boolean
 }) {
-  const sizeClass = size === 'md' ? 'px-3 py-1 text-sm' : 'px-2 py-0.5 text-xs'
+  const sizeClass = SIZE_CLASS[size]
   if (value === null) {
     return (
       <span
