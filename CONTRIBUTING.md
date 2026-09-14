@@ -1,8 +1,9 @@
 # Contributing to ProductArena
 
 ProductArena's whole premise is that every score should trace back to cited evidence, and
-that anyone can contest a verdict. This document covers the two contribution paths (contest
-a verdict, or add evidence) plus local setup and style rules.
+that anyone can contest a verdict. This document covers the three contribution paths (contest
+a verdict, add evidence, or [add your product](#3-add-your-product) to an arena) plus local
+setup and style rules.
 
 ## 1. Contest a verdict
 
@@ -114,6 +115,118 @@ The judge cache (`pipeline/cache/judge/`) **is committed** to the repo, keyed by
   `data/{category}/stories.json` length), each a small JSON-mode call. This is expected
   and intentional (it keeps the judge honest about re-evaluating the whole pack), just budget
   for it — a single-evidence-item PR is not a single-LLM-call PR.
+
+## 3. Add your product
+
+Founders and vendors: this is how you get your product into an arena — and how you make sure
+the pipeline actually *sees* what you've built. Scores only credit cited evidence, so the single
+biggest failure mode is not "the judge was harsh," it's "the crawl never saw your best pages."
+(Real precedent: both Asana and Linear sat at API-quality **0** — despite shipping OpenAPI specs
+and full rate-limit docs — until their deep developer-docs URLs were added to `urls.extra`.)
+
+### 3a. Quick path: prefilled issue (no repo knowledge needed)
+
+Go to [/submit](https://ultrametric.ai/productarena/submit), paste your product URL, and run the
+instant agent-readiness scan (llms.txt / OpenAPI / MCP / robots signals). The result page links
+to a **prefilled GitHub issue** with the scan attached — add which arena you belong in and why,
+and you're done. A maintainer takes it from there.
+
+### 3b. PR path: add yourself directly
+
+One file gets you in: append an entry to `data/<arena>/products.json` (arena ids live in
+`data/categories.json`; if no arena fits, open a [Submit a product](./.github/ISSUE_TEMPLATE/request-a-product.yml)
+issue proposing a new one instead). A real, current entry for shape reference:
+
+```jsonc
+{
+  "id": "linear",                      // lowercase, stable, unique within the arena
+  "name": "Linear",
+  "vendor": "Linear Orbit, Inc.",
+  "type": "commercial",                // or "oss"
+  "urls": {
+    "site": "https://linear.app",                    // marketing claims get extracted too
+    "docs": "https://developers.linear.app",         // the main evidence source
+    "changelog": "https://linear.app/changelog",     // recency + shipping-velocity signals
+    "extra": [
+      "https://linear.app/developers/graphql.md",            // API reference
+      "https://linear.app/developers/webhooks.md",           // events/webhooks
+      "https://linear.app/developers/oauth-2-0-authentication.md",
+      "https://linear.app/developers/rate-limiting.md",      // documented limits
+      "https://linear.app/developers/deprecations.md",       // versioning/deprecation policy
+      "https://linear.app/llms.txt"
+    ]
+  },
+  "links": {
+    "app": "https://linear.app/login",
+    "api": "https://developers.linear.app/",
+    "mcp": "https://linear.app/docs/mcp"             // your MCP docs page — see 3c
+  },
+  "businessModel": {
+    "models": ["free-tier", "subscription-per-seat"],
+    "summary": "Free tier; per-seat subscriptions; custom Enterprise.",
+    "url": "https://linear.app/pricing"
+  }
+}
+```
+
+Why the URLs matter so much: the pipeline crawls **exactly** `urls.site`, `urls.docs`,
+`urls.changelog`, `urls.github` (README) and every `urls.extra` entry — nothing else. That crawl
+is the entire corpus your docs-tier evidence is extracted from (community and probe evidence are
+collected separately). Judging is evidence-or-nothing, so a capability documented only on a page
+you didn't list scores `none`/0.
+`urls.extra` is where you point us at the deep pages a homepage crawl misses, in rough priority:
+
+1. **API reference** (and GraphQL/OpenAPI reference pages) — feeds the API-quality stories
+2. **Rate limits / quotas** — its own scored story in most arenas
+3. **Versioning + deprecation policy** — ditto
+4. **Webhooks, OAuth/auth, sandbox/test-mode docs**
+5. **Integrations/marketplace directory** — feeds the integration graph
+6. **A raw GitHub README** (`raw.githubusercontent.com/...`) for your SDK/spec repo
+
+Validate before opening the PR: `pnpm test` (schema checks). You do **not** need to run the
+LLM pipeline or touch `stories.json`/`verdicts.json`/`rankings.json` — those are
+pipeline-owned; maintainers run the stages on your entry. If you *do* have an
+`ANTHROPIC_API_KEY` and want to include results, the sequence is
+`crawl → extract → probe → judge → derive` (all `pnpm pipeline <stage> --category <arena>
+--product <id>`), committing evidence + verdicts + rankings together.
+
+### 3c. Make your product probe well (this is the score-moving part)
+
+The pipeline runs keyless, reproducible probes against public conventions, and the
+[certification suite](./docs/CERTIFICATION.md) checks the same surfaces. Each artifact below
+maps directly to scored stories:
+
+| Ship this | Convention the probe checks | What it moves |
+| --- | --- | --- |
+| **`llms.txt`** | `GET {your-origin}/llms.txt` → 200, plain text | `agentic-agent-docs` story → Agent-ready index; cert `llms-txt` check |
+| **Machine-readable API spec** | OpenAPI JSON at `/openapi.json`, `/swagger.json`, `/api/openapi.json`, or `/.well-known/openapi.json` (GraphQL: introspection + published SDL) | `api-machine-spec` + strengthens `agentic-public-api` → API-quality index; cert `openapi` check |
+| **Remote MCP server** | hostname **must start with `mcp.`** on your own domain (e.g. `mcp.linear.app`), path `/`, `/mcp`, or `/sse` — that hostname rule is how our static allowlist admits your endpoint for the live "Try it" handshake on your product page | `agentic-mcp-server` (weight 3) → Agent-ready index; cert `mcp` check |
+| **Keyless docs `.md` mirrors** | any docs page + `.md` serves raw markdown (Mintlify-style) | cleaner extraction of *all* your docs evidence; cert `docs-md` check |
+| **Documented rate limits** | a crawlable page with actual numbers | `interface-rate-limit-disclosure` story |
+| **Versioning/deprecation policy page** | ditto | `api-versioning-policy` story |
+| **Sandbox/test environment docs** | ditto | `api-sandbox` story |
+| **robots.txt that doesn't block everything** | `User-agent: *` not fully disallowed | cert `robots` check; agents can read you at all |
+
+Then run the suite yourself before anyone else does:
+`npx productarena certify https://docs.your-product.com` (see
+[docs/CERTIFICATION.md](./docs/CERTIFICATION.md) — passing earns a dated, badge-backed
+certification).
+
+### 3d. What happens after
+
+1. **Pipeline runs** on your entry: crawl → extract (LLM lifts verbatim claims into your
+   evidence pack) → probes (keyless checks recorded as `probe`-tier evidence) → community
+   evidence → judge (every story gets a verdict citing evidence ids) → derive (rankings).
+2. **Stability policy**: the judge cache is keyed on your full evidence pack, so verdicts only
+   re-roll when evidence changes — and on re-judges, any verdict flip that cites **no new
+   evidence** is reverted as noise (see the `revert-churn-*` scripts). Your scores don't drift
+   because a model had a different day.
+3. **Disagree with a verdict?** Every verdict on the site has a ⚑ contest link (section 1).
+   Vendors can also put an official statement on the record (the
+   [vendor-response lane](./docs/VENDOR-RESPONSES.md)) or, better, submit a reproducible proof
+   spec ([docs/PROVE-IT.md](./docs/PROVE-IT.md)) — recordings beat statements.
+4. **Keep it fresh**: ship a new API surface? PR the new docs URL into `urls.extra` — coverage
+   gaps, not judge harshness, are the #1 cause of undeserved zeros.
 
 ## Local setup
 

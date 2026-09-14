@@ -56,6 +56,21 @@ ITEMS = {
         ('hubspot-supp-openapi-spec', 'https://developers.hubspot.com/docs/api-reference/latest/account/account-information/get-account-details.md',
          'Every endpoint reference page publishes its machine-readable spec inline ("## OpenAPI ... specs/2026-09/account-account-info-v2026-09.json GET /account-info/2026-09/details openapi: 3.0.1"), and the docs are agent-readable: "Fetch the complete documentation index at: https://developers.hubspot.com/docs/llms.txt", "Append .md to any documentation page URL to get its markdown version."'),
     ],
+    # 2026-09-14 follow-up: linear was on the same 54-offender audit list as asana but never got
+    # the fix — agentic-public-api full yet ALL api-quality stories none/q0. Live checks
+    # (curl, this date) confirm every URL below is 200 and every excerpt is verbatim from the
+    # crawled .md mirror / repo. Note api-sandbox stays na — Linear documents no developer
+    # sandbox environment (verified honest, figma precedent).
+    ('project-management', 'linear'): [
+        ('linear-supp-graphql-introspection', 'https://linear.app/developers/graphql.md',
+         'Docs, "Getting started": "Linear\'s GraphQL endpoint is: https://api.linear.app/graphql — It supports introspection so you can query the whole schema." The full schema SDL is also published in the official linear/linear repo at packages/sdk/src/schema.graphql (kept current by the repo\'s schema GitHub Action).'),
+        ('linear-supp-apollo-explorer', 'https://linear.app/developers/graphql.md',
+         'Docs, "Getting Started": "Our GraphQL API is explorable and queryable via Apollo Studio (studio.apollographql.com/public/Linear-API), no download or log in required. Click the Schema tab to browse the schema, and click the Explorer tab to run queries."'),
+        ('linear-supp-rate-limits', 'https://linear.app/developers/rate-limiting.md',
+         'Docs, "Rate limiting" publishes exact per-auth limits ("API key — 2,500 requests per User per 1 hour; OAuth App — 5,000 per User; Unauthenticated — 600 per IP Address"), leaky-bucket refill, complexity limits, and response headers: "X-RateLimit-Requests-Limit — The maximum number of API requests you\'re permitted to make per hour."'),
+        ('linear-supp-deprecations', 'https://linear.app/developers/deprecations.md',
+         'Docs, "Deprecations": "Linear\'s GraphQL API doesn\'t have versioning like many REST APIs... we take breaking changes and deprecations seriously... If there\'s a noticeable breaking change in the API, we\'ll proactively reach out to developers that use that part of the API and give you plenty of time to make changes... We utilize the @deprecated directive to annotate deprecation warnings in the schema. In addition, changes to the API are listed with [API] prefix in the Linear changelog."'),
+    ],
     ('project-management', 'asana'): [
         ('asana-supp-openapi-spec', 'https://github.com/Asana/openapi',
          'Official Asana/openapi repo, "Asana\'s OpenAPI Specifications": "This repository contains the OpenAPI Specification for Asana\'s APIs", publishing the REST API spec (./defs/asana_oas.yaml) and app components spec (./defs/app_components_oas.yaml).'),
@@ -68,11 +83,18 @@ for (category, pid), items in ITEMS.items():
     path = f'data/{category}/evidence/{pid}.json'
     ev = json.load(open(path))
     existing = {e['id'] for e in ev}
+    appended = 0
     for iid, url, excerpt in items:
         if iid in existing:
             print(f'{category}/{pid}: {iid} already present, skipping')
             continue
         ev.append({'id': iid, 'tier': 'claimed-docs', 'url': url, 'excerpt': excerpt, 'fetchedAt': NOW})
         print(f'{category}/{pid}: appended {iid}')
-    with open(path, 'w') as f:
-        f.write(json.dumps(ev, indent=2) + '\n')
+        appended += 1
+    # Only rewrite when something was actually appended, and match the pipeline's writeJson
+    # formatting (ensure_ascii=False) — an all-skips rewrite with ASCII-escaped unicode dirties
+    # untouched evidence files for zero content change (parsed packs identical, so judge cell
+    # hashes are unaffected either way — cellHash hashes parsed excerpts, not file bytes).
+    if appended:
+        with open(path, 'w') as f:
+            f.write(json.dumps(ev, indent=2, ensure_ascii=False) + '\n')

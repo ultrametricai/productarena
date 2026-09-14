@@ -24,6 +24,24 @@ export default function SubmitPage() {
         robots.txt, homepage) with strict limits — it never executes anything from the target,
         rejects internal or non-public addresses, and is rate-limited.
       </p>
+      <p className="text-sm text-zinc-400">
+        Prefer a PR? You can add your product directly: one entry in{' '}
+        <code className="text-zinc-300">data/&lt;arena&gt;/products.json</code> gets you in, and
+        the URLs you list are the entire corpus our judge ever sees — so include your API
+        reference, rate-limit and deprecation pages. The exact entry shape, why each URL matters,
+        and how to probe well (llms.txt, OpenAPI at a conventional path, a remote MCP server at{' '}
+        <code className="text-zinc-300">mcp.&lt;your-domain&gt;</code>, keyless <code className="text-zinc-300">.md</code> docs
+        mirrors) are in{' '}
+        <a
+          href="https://github.com/ultrametricai/productarena/blob/main/CONTRIBUTING.md#3-add-your-product"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300"
+        >
+          CONTRIBUTING.md &sect; Add your product
+        </a>
+        .
+      </p>
     </div>
   )
 }
