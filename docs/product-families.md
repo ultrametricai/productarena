@@ -182,6 +182,88 @@ redirects to the homepage).
 | Central — Payroll & HR (acq. Apr 2026) | payroll? **Not yet.** | page-only, acquired-flagged | A payroll arena exists (Gusto, Rippling, Deel, Justworks) and Central genuinely does the job — but its public surface is a JS-rendered Framer site with no crawlable docs, and thin-crawl bias is our #1 recurring failure mode. Watchlist: bring up when a real docs surface exists. |
 | Accounting (Teal, acq. 2024) | accounting? **No.** | not a line | No standalone bookkeeping product shipped — it's in-app automations + accounting *integrations* (QuickBooks/Xero/NetSuite). Revisit if "Mercury Accounting" ever ships. |
 
+## Wave 3 (2026-09-14): the LLM labs, capability-centric
+
+Founder brief: map each frontier lab's product surface completely, judged on **user stories, not
+model benchmarks** — "what can a person actually do with this product." Every line below was
+live-verified against the vendor's own pages on 2026-09-14 (all docsUrls fetch 200; discontinued
+products confirmed against the vendor's own deprecations pages). Four judged bring-ups came out
+of the honest audit: `design-tools/claude-design`, `ai-coding/antigravity`,
+`ai-research-agents/notebooklm`, and `ai-assistants/grok` (new `xai` family). Blurbs on
+`/family/anthropic|openai|google|xai` are written as user capabilities ("ship a PR end-to-end
+from a terminal", "generate and edit images in conversation") — never benchmark language.
+
+### Anthropic decision table (zero home-team treatment — the neutrality is the product)
+
+| Line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| Claude (app) | ai-assistants | **judged** (existing) | The parent entry — web/desktop/mobile are one product. |
+| Claude Code | ai-coding | **judged** (existing) | — |
+| Claude Design | design-tools | **judged — NEW bring-up (`claude-design`)** | Real product (claude.com/product/design, Anthropic Labs beta, broadly available on Pro/Max/Team): brief→prototypes/decks/collateral, design-system application, Claude Code handoff. Judged on the same 53 stories as Figma/Canva; it na/nones out of vector craft and multiplayer exactly as honesty demands. |
+| Claude Cowork | none | page-only | A surface of the Claude app subscription (the Claude Code harness for non-coders); its delegate-work capabilities score inside the claude entry — a second row would double-list. |
+| Claude in Chrome | browsers? **No.** | page-only | Browsers arena is planned, not live; browser-agents ranks developer automation frameworks (Comet precedent). |
+| @Claude (Slack & Teams) | team-chat? **No.** | page-only | A bot inside team-chat products, not a chat platform — wrong axis. |
+| Claude for Microsoft 365 | none | page-only | Integration surface of the subscription; no office-suite arena. |
+| Claude Science | ai-research-agents? **No.** | page-only | Beta compute-and-analysis workbench; the arena ranks literature-review agents — neighboring but different job. |
+| Claude Security | security-scanners? **Not yet.** | page-only | Enterprise public beta; that arena ranks GA scanners anyone can adopt. Watchlist. |
+| Managed Agents / Developer Platform | none | page-only | Proprietary model platform surfaces (roadmap: frontier-model-apis). |
+| Agent SDK, Skills | agent-frameworks / agent-skills | **judged** (existing) | — |
+
+### OpenAI decision table
+
+| Line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| ChatGPT | ai-assistants | **judged** (existing) | One consolidated app (Chat/Work/Codex modes) since the March 2026 desktop merge. |
+| ChatGPT Work | none | page-only | The mode that replaced agent mode (July 2026); judged inside the chatgpt entry's long-running-work stories. |
+| Image generation (GPT-Image-2.5 Sunburst/Flare) | image-generation? **Not live.** | page-only | The founder's "ChatGPT image 2.5" — verified current naming. A capability of ChatGPT + the API; no image-generation arena yet (roadmap updated with 2026 candidates). |
+| Codex (+ Remote, SDK, App Server) | ai-coding | **judged** (existing) | — |
+| Codex Security | security-scanners? **Not yet.** | page-only | Launched Sept 2026 — no record beyond launch week. Watchlist alongside Claude Security. |
+| Agents SDK | agent-frameworks | **judged** (existing) | Agent Builder is deprecated (dies Nov 2026); the SDK is the live framework track. |
+| Plugins (skills+MCP+UI directory) | agent-skills | **judged** (existing `codex-plugins`) | Renamed line — now runs in both ChatGPT and Codex; family card renamed to "Plugins". |
+| ChatKit / Agents API / API Platform | none | page-only | Developer components and the proprietary platform (roadmap: frontier-model-apis). |
+| **Sora** | — | **excluded** | Re-verified: app closed 2026-04-26; Videos API removed 2026-09-24. OpenAI currently has NO video product. |
+| **ChatGPT Atlas** | — | **excluded** | Shut down 2026-08-09; capabilities folded into the ChatGPT desktop app. Removed from the browsers roadmap candidates. |
+| Operator / ChatGPT agent / GPT Store / Ads platform | — | not lines | Twice-replaced (→Work), legacy channel, and a B2B ad surface with no arena, respectively. |
+
+### Google decision table
+
+| Line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| Gemini app | ai-assistants | **judged** (existing) | Blurb now carries the capability set (Nano Banana image gen, Deep Research, Canvas, scheduled actions, Windows app). |
+| Antigravity (2.0 / IDE / CLI / SDK) | ai-coding | **judged — NEW bring-up (`antigravity`)** | GA, free-tier, no waitlist; absorbed consumer Gemini CLI + Code Assist individual tiers in June 2026. Google's flagship dev surface belongs in the flagship arena. Rich llms.txt + .md docs recorded as probes. |
+| Gemini CLI | ai-coding | **judged** (existing) | Still real for API-key/Code Assist users (npm ships nightly); blurb states the June 2026 consumer-tier transition honestly. |
+| Gemini Notebook (NotebookLM) | ai-research-agents | **judged — NEW bring-up (`notebooklm`)** | Verified rename (notebook.google). NOT notes-knowledge: that arena is local-first personal knowledge graphs — a source-grounded research notebook there would na/none out of ~everything (Mercury-SAFEs precedent). In ai-research-agents its own-corpus grounding, inline citations, Deep Research, and report outputs are the arena's job. |
+| Jules / ADK / Firebase / Angular | software-factory / agent-frameworks / baas / frontend | **judged** (existing) | ADK docsUrl moved to adk.dev. |
+| AI Studio | vibe-coding? **Not yet.** | page-only | Build surface sits behind login; watchlist. |
+| Flow (absorbed Whisk + ImageFX) | image/video-generation? **Not live.** | page-only | Roadmap candidates updated. |
+| Gemini in Chrome | browsers? **Not live.** | page-only | Paid-tier feature of Chrome, and the arena is planned. |
+| Gemini Code Assist | ai-coding? **No.** | page-only | Individual tiers ended June 2026; the enterprise remnant duplicates capability already judged via Antigravity/Gemini CLI. |
+
+### xAI decision table (NEW family — founder: "work out grok's stories eg grok bot etc")
+
+| Line | Arena fit | Decision | Why |
+| --- | --- | --- | --- |
+| Grok (grok.com, iOS/Android, in X) | ai-assistants | **judged — NEW bring-up (`grok`)** | A major general assistant with the arena's whole story surface: files analysis, connectors (Gmail/Drive/Teams/Salesforce/custom MCP), voice, image+video via Imagine, org management. Vendor self-brands "SpaceXAI" in docs — recorded as-is. |
+| Grok in X | none | page-only | The same assistant distributed inside X (X Premium): thread/reply summarization, real-time X context, image gen in the feed. Judged inside the grok entry where the arena's research stories apply. |
+| Grok Build | ai-coding? **Deferred.** | page-only | A real Claude-Code-class terminal agent (beta May 2026, curl-installed, skills/plugins/worktrees/MCP). First-priority next-wave bring-up — deferred to keep this wave's judged additions at four, not excluded on the merits. |
+| Grok Bot | none | page-only | GA Aug 2026 persistent AI teammates on cloud computers, bundled with Cursor plans — a computer-use-teammate category with no arena; judging it in browser-agents or software-factory would misstate the job. |
+| Grok Imagine | image-generation? **Not live.** | page-only | Capability of Grok + API (mandatory watermark); roadmap candidate. |
+| Grokipedia | none | page-only | Content destination, not a tool with rankable user stories. |
+| xAI API | none | page-only | Roadmap: frontier-model-apis. |
+
+### Meta and Mistral: no families this wave (both close calls, documented)
+
+- **Mistral**: Le Chat is now **"Mistral Vibe"** (rebrand verified via mistral.ai redirects);
+  Vibe for Code (ex-Mistral Code) is a real coding agent (PyPI `mistral-vibe`), Studio/La
+  Plateforme the platform. A family needs a judged anchor; `vibe → ai-assistants` is the obvious
+  next-wave bring-up (docs.mistral.ai llms.txt + api.mistral.ai clean 401 already probe-ready).
+- **Meta**: Muse (personal agent, launched 2026-09-08 — six days old) + Muse Code (terminal
+  coding agent) + Meta AI app. Too fresh to judge honestly (thin track record is the finding);
+  revisit in a month. api.meta.ai answers keyless 401 — probe surface exists when we do.
+- Cross-lab observation for the ai-coding roadmap: xAI (Grok Build), Meta (Muse Code), and
+  Mistral (Vibe for Code) all now ship curl-installed terminal coding agents — three honest
+  bring-up candidates queued for one wave.
+
 ## Mechanics (for the next person)
 
 - `lib/schemas.ts`: `Product.familyId` (optional, display-only, never in the judge's cellHash —
@@ -201,3 +283,9 @@ redirects to the homepage).
   bring-up splits a product out of a parent entry judged in the SAME arena, the parent's evidence
   must be pruned to its own scope and its cells re-judged — one product's docs never back two rows
   in one arena.
+- Wave 3 bring-ups: recorded probes in `pipeline/probes/ai-coding.ts` (antigravity),
+  `pipeline/probes/design-tools.ts` (claude-design), and two NEW arena modules
+  `pipeline/probes/ai-assistants.ts` (grok) and `pipeline/probes/ai-research-agents.ts`
+  (notebooklm) — EXPECTED_TOTAL_PROBES 428 → 437; confidence intervals recomputed for all four
+  arenas. Gotcha: antigravity.google serves compressed bytes even without Accept-Encoding — probe
+  curls there need `--compressed`.
