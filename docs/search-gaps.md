@@ -8,6 +8,12 @@ the arena ("left to a future arena"), that's cited.
 
 No arenas were created for this report.
 
+Sibling view: [/missing](https://productarena.vercel.app/missing) (`app/missing/page.tsx`,
+`lib/missingStartups.ts`) is the other half of the gap map — this file lists **queries with no
+arena**; /missing ranks **arenas with no strong players** (weak fleet agent-readiness, stories
+no product serves, low-PA-Score leaders). New-arena candidates come from here; agent-startup
+candidates come from there.
+
 | # | Classic query | Closest today | Suggested disposition |
 |---|---|---|---|
 | 1 | email marketing / newsletter platforms | `email` arena explicitly excludes it | **Future arena** (Mailchimp, Loops, beehiiv, Kit) |
