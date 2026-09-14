@@ -58,13 +58,14 @@ export default function GlobalIndexPage() {
           <GeoMark seed="capability-dag" title="Capability dependency graph — which capabilities enable which" size={18} className="text-zinc-500" variant="dendro" />
           Capability dependency graph
         </h2>
-        <p className="mb-3 mt-1 max-w-2xl text-xs text-zinc-500">
-          {(() => { const s = capabilityDagStats(); return `${s.nodes} canon capabilities, ${s.edges} curated dependency edges (${s.crossEdges} cross-cluster interconnects, dashed)` })()}
-          {' '}— an arrow means the left capability is a prerequisite or strong enabler of the
-          right one (hover an edge for the justification, a node for its adoption and what it
-          requires/unlocks). Edges are hand-curated in{' '}
-          <code className="text-zinc-400">data/story-edges.json</code>, never inferred; the meter
-          is the same evidence-backed adoption share as the table below.
+        {/* One line only — hover instructions are self-evident in use; the curation caveat rides
+            the tooltip so the honesty stays discoverable without a paragraph. */}
+        <p
+          className="mb-3 mt-1 max-w-2xl text-xs text-zinc-500"
+          title="Edges are hand-curated in data/story-edges.json, never inferred; each node's meter is the same evidence-backed adoption share as the table below. Hover an edge for its justification, a node for its adoption and what it requires/unlocks."
+        >
+          {(() => { const s = capabilityDagStats(); return `${s.nodes} canon capabilities, ${s.edges} curated dependency edges (${s.crossEdges} cross-cluster, dashed)` })()}
+          {' '}— an arrow reads &ldquo;prerequisite of&rdquo;; edges are hand-curated, never inferred.
         </p>
         <CapabilityDag
           adoption={Object.fromEntries(

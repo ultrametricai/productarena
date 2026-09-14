@@ -16,11 +16,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const seenProductIds = new Set<string>()
 
   // Deliberately absent: /watchlist (feature-flagged off — see lib/flags.ts's
-  // WATCHLIST_ENABLED; add it here when the flag flips) and /rankings/init (the homepage
-  // mega-table's default view already owns that ranking's search intent).
+  // WATCHLIST_ENABLED; add it here when the flag flips), /rankings/init (the homepage
+  // mega-table's default view already owns that ranking's search intent), and /everything
+  // (unlisted by founder call — the route stays alive for old links but isn't advertised).
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now },
-    { url: `${SITE_URL}/everything`, lastModified: now },
     { url: `${SITE_URL}/methodology`, lastModified: now },
     { url: `${SITE_URL}/terms`, lastModified: now },
     { url: `${SITE_URL}/pipeline`, lastModified: now },

@@ -261,13 +261,13 @@ export default function StoryMap({ rows, productName }: { rows: StoryVerdictRow[
 
   return (
     <div className="space-y-6">
+      {/* Legend only — that blocks are clickable is self-evident on hover. */}
       <p className="text-xs text-zinc-400">
         Follow the green: where the map greys out is where {productName} stops today.{' '}
         <span className="whitespace-nowrap text-zinc-500">
           <span className="text-emerald-300">✓ full</span> · <span className="text-emerald-300/70">~ partial</span> ·{' '}
           <span className="text-red-300">! disputed</span> · — none · n/a not applicable.
-        </span>{' '}
-        <span className="text-zinc-500">Click a block to open its rationale and evidence in the table.</span>
+        </span>
       </p>
       {themes.map(([theme, themeRows]) => {
         const canonClusters = canonClustersByTheme.get(theme) ?? []

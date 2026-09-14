@@ -57,9 +57,80 @@ export default function McpPage() {
           Streamable HTTP, keyless, rate-limited (60 requests / 5 minutes per IP). POST JSON-RPC to:
         </p>
         <pre className={CODE_BLOCK}>{MCP_ENDPOINT}</pre>
-        <p className="mt-3 text-sm text-zinc-400">Claude Code:</p>
+        <p className="mt-3 text-sm text-zinc-400">Or try it with plain curl:</p>
+        <pre className={CODE_BLOCK}>{`curl -X POST ${MCP_ENDPOINT} \\
+  -H 'content-type: application/json' \\
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call",
+       "params":{"name":"top_products","arguments":{"metric":"agentReady","limit":5}}}'`}</pre>
+      </section>
+
+      {/* Per-client setup, hosted endpoint first (nothing to install). Every snippet below was
+          verified against the client's own current docs on 2026-09-14 — the shapes genuinely
+          differ (Cursor: mcpServers+url; VS Code: servers+type:http; Windsurf: serverUrl;
+          Codex: TOML [mcp_servers.*]; Gemini CLI: httpUrl, NOT url which means SSE there):
+          - Cursor:    https://cursor.com/docs/context/mcp
+          - VS Code:   https://code.visualstudio.com/docs/copilot/chat/mcp-servers
+          - Windsurf:  https://docs.windsurf.com/windsurf/cascade/mcp
+          - Codex CLI: https://developers.openai.com/codex/mcp
+          - Gemini:    https://google-gemini.github.io/gemini-cli/docs/tools/mcp-server.html */}
+      <section id="clients" className="scroll-mt-4">
+        <h2 className="font-display text-xl font-semibold tracking-tight">Set it up in your client</h2>
+        <p className="mt-2 text-sm text-zinc-400">
+          Same hosted endpoint, each client&rsquo;s own config shape (they differ — these match each
+          tool&rsquo;s current docs).
+        </p>
+
+        <h3 className="mt-5 text-sm font-semibold text-zinc-200">Claude Code</h3>
         <pre className={CODE_BLOCK}>{`claude mcp add --transport http productarena ${MCP_ENDPOINT}`}</pre>
-        <p className="mt-3 text-sm text-zinc-400">Any client with an HTTP-transport MCP config:</p>
+
+        <h3 className="mt-5 text-sm font-semibold text-zinc-200">Cursor</h3>
+        <p className="mt-1 text-xs text-zinc-500"><code className="text-zinc-400">~/.cursor/mcp.json</code> (or <code className="text-zinc-400">.cursor/mcp.json</code> per project):</p>
+        <pre className={CODE_BLOCK}>{`{
+  "mcpServers": {
+    "productarena": {
+      "url": "${MCP_ENDPOINT}"
+    }
+  }
+}`}</pre>
+
+        <h3 className="mt-5 text-sm font-semibold text-zinc-200">VS Code / GitHub Copilot</h3>
+        <p className="mt-1 text-xs text-zinc-500"><code className="text-zinc-400">.vscode/mcp.json</code> (or the user-level file via &ldquo;MCP: Open User Configuration&rdquo;) — note the top-level key is <code className="text-zinc-400">servers</code>:</p>
+        <pre className={CODE_BLOCK}>{`{
+  "servers": {
+    "productarena": {
+      "type": "http",
+      "url": "${MCP_ENDPOINT}"
+    }
+  }
+}`}</pre>
+
+        <h3 className="mt-5 text-sm font-semibold text-zinc-200">Windsurf</h3>
+        <p className="mt-1 text-xs text-zinc-500"><code className="text-zinc-400">~/.codeium/windsurf/mcp_config.json</code> — remote servers use <code className="text-zinc-400">serverUrl</code>:</p>
+        <pre className={CODE_BLOCK}>{`{
+  "mcpServers": {
+    "productarena": {
+      "serverUrl": "${MCP_ENDPOINT}"
+    }
+  }
+}`}</pre>
+
+        <h3 className="mt-5 text-sm font-semibold text-zinc-200">OpenAI Codex CLI</h3>
+        <p className="mt-1 text-xs text-zinc-500"><code className="text-zinc-400">~/.codex/config.toml</code>:</p>
+        <pre className={CODE_BLOCK}>{`[mcp_servers.productarena]
+url = "${MCP_ENDPOINT}"`}</pre>
+
+        <h3 className="mt-5 text-sm font-semibold text-zinc-200">Gemini CLI</h3>
+        <p className="mt-1 text-xs text-zinc-500"><code className="text-zinc-400">~/.gemini/settings.json</code> — streamable HTTP is <code className="text-zinc-400">httpUrl</code> (<code className="text-zinc-400">url</code> means SSE there):</p>
+        <pre className={CODE_BLOCK}>{`{
+  "mcpServers": {
+    "productarena": {
+      "httpUrl": "${MCP_ENDPOINT}"
+    }
+  }
+}`}</pre>
+
+        <h3 className="mt-5 text-sm font-semibold text-zinc-200">Anything else</h3>
+        <p className="mt-1 text-xs text-zinc-500">Any client with an HTTP-transport MCP config:</p>
         <pre className={CODE_BLOCK}>{`{
   "mcpServers": {
     "productarena": {
@@ -68,21 +139,19 @@ export default function McpPage() {
     }
   }
 }`}</pre>
-        <p className="mt-3 text-sm text-zinc-400">Or try it with plain curl:</p>
-        <pre className={CODE_BLOCK}>{`curl -X POST ${MCP_ENDPOINT} \\
-  -H 'content-type: application/json' \\
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/call",
-       "params":{"name":"top_products","arguments":{"metric":"agentReady","limit":5}}}'`}</pre>
       </section>
 
       <section>
         <h2 className="font-display text-xl font-semibold tracking-tight">npm package (stdio)</h2>
         <p className="mt-2 text-sm text-zinc-400">
-          Runs locally, fetches the same live data with a 5-minute cache. Claude Code:
+          Prefer a local process? <code className="text-zinc-300">productarena-mcp</code> runs over
+          stdio and fetches the same live data with a 5-minute cache. Claude Code:
         </p>
         <pre className={CODE_BLOCK}>{`claude mcp add productarena -- npx -y productarena-mcp`}</pre>
         <p className="mt-3 text-sm text-zinc-400">
-          Claude Desktop (<code className="text-zinc-300">claude_desktop_config.json</code>) or any stdio client:
+          Claude Desktop (<code className="text-zinc-300">claude_desktop_config.json</code>), Cursor,
+          Windsurf, Gemini CLI, or any stdio client — same shape, in each client&rsquo;s config file
+          from the section above:
         </p>
         <pre className={CODE_BLOCK}>{`{
   "mcpServers": {
@@ -92,6 +161,12 @@ export default function McpPage() {
     }
   }
 }`}</pre>
+        <p className="mt-3 text-sm text-zinc-400">
+          OpenAI Codex CLI (<code className="text-zinc-300">~/.codex/config.toml</code>):
+        </p>
+        <pre className={CODE_BLOCK}>{`[mcp_servers.productarena]
+command = "npx"
+args = ["-y", "productarena-mcp"]`}</pre>
         <p className="mt-3 text-sm text-zinc-400">
           Source and full docs live in the repo:{' '}
           <a

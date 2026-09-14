@@ -78,14 +78,16 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
       close()
       return
     }
+    // ArrowDown/ArrowUp cycle through the results and wrap at both ends (last + down → first,
+    // first + up → last). The handler lives on the dialog, so it works straight from the input.
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setActiveIndex((i) => Math.min(i + 1, results.length - 1))
+      if (results.length > 0) setActiveIndex((i) => (i + 1) % results.length)
       return
     }
     if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setActiveIndex((i) => Math.max(i - 1, 0))
+      if (results.length > 0) setActiveIndex((i) => (i - 1 + results.length) % results.length)
       return
     }
     if (e.key === 'Enter') {
@@ -137,6 +139,9 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
                     )}
                     <button
                       type="button"
+                      // Keep the active row visible while arrow keys cycle the (scrollable) list.
+                      // block:'nearest' is a no-op when already in view, so hover never jitters.
+                      ref={active ? (el) => el?.scrollIntoView({ block: 'nearest' }) : undefined}
                       onMouseEnter={() => setActiveIndex(index)}
                       onClick={() => go(entry)}
                       className={`flex w-full flex-col items-start rounded-lg px-2 py-2 text-left text-sm transition ${
