@@ -103,7 +103,7 @@ export function createServer(client: ArenaClient = createClient()): McpServer {
     {
       title: 'Compare products',
       description:
-        'Compare products across arenas by score: coverage score, PA Score, agent-readiness, AI-native score, API quality, and each product\'s rank within its own arena. Product ids are globally unique — no arena argument needed.',
+        'Compare products across arenas by score: coverage score, PA Score, agent-readiness, Built-in AI score, API quality, and each product\'s rank within its own arena. Product ids are globally unique — no arena argument needed.',
       inputSchema: {
         products: z.array(z.string()).min(1).describe('Product ids to compare, e.g. ["linear", "jira"] — see search_products.'),
       },

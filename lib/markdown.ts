@@ -159,7 +159,7 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
   )
   lines.push('')
   lines.push(
-    `Rank #${rank} · PA Score ${fmtNum(entry.aiEra)} · Score ${fmtNum(entry.score)} · Agent-ready ${fmtNum(entry.agentReady)} · AI-native ${fmtNum(entry.agenticApp)} · API quality ${fmtNum(entry.apiQuality)} · ${entry.applicable}/${entry.total} stories applicable`,
+    `Rank #${rank} · PA Score ${fmtNum(entry.aiEra)} · Score ${fmtNum(entry.score)} · Agent-ready ${fmtNum(entry.agentReady)} · Built-in AI ${fmtNum(entry.agenticApp)} · API quality ${fmtNum(entry.apiQuality)} · ${entry.applicable}/${entry.total} stories applicable`,
   )
   lines.push('')
   lines.push(`Business model: ${businessModelLine(product)}`)

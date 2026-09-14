@@ -46,7 +46,7 @@ export const COLUMN_LABELS: Record<ArenaTableColumn, string> = {
   name: 'product name',
   initScore: 'PA Score',
   agentReady: 'AGENT-READY',
-  agenticApp: 'AI-NATIVE',
+  agenticApp: 'BUILT-IN AI',
   apiQuality: 'API quality',
   openness: 'Openness',
   automation: 'Automation',

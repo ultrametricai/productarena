@@ -40,7 +40,7 @@ import {
 // and `rank` is a fixed identity derived from that same default order, not a re-derived row
 // index, so it doesn't reshuffle when a reader sorts by another column.
 //
-// The three /rankings/* pages (highest PA Score, most agentic, most AI-native) remain the
+// The three /rankings/* pages (highest PA Score, most agentic, best built-in AI) remain the
 // "preset view" links above the table — this table is the single-honest-view superset of what
 // those three (plus the old per-arena ArenaTable trio) used to render separately.
 
@@ -89,7 +89,7 @@ function SortableTh({
 const RANK_PRESETS: Array<{ col: MegaTableColumn; label: string }> = [
   { col: 'agentReady', label: 'Most agent-ready' },
   { col: 'initScore', label: 'Highest PA Score' },
-  { col: 'agenticApp', label: 'Most AI-native' },
+  { col: 'agenticApp', label: 'Best built-in AI' },
   { col: 'popularity', label: 'Most popular' },
 ]
 
@@ -161,13 +161,13 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 <span title="Open source — the code is publicly available">OSS</span>
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, AI-native ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
+                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
                 <span title="AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).">Agent-ready</span>
               </SortableTh>
               <SortableTh col="agenticApp" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">
-                <span title="AI-NATIVE = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.">AI-native</span>
+                <span title="BUILT-IN AI = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.">Built-in AI</span>
               </SortableTh>
               <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 <span title="API quality /100 — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.">API</span>

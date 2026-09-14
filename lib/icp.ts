@@ -7,7 +7,7 @@ import type { Story } from './schemas'
 
 // ICP lenses (data/icp-types.json): ~10 cross-arena buyer types — not company-size tiers but
 // genuinely different ways of weighing the same evidence (an open-source purist and an
-// AI-native startup read the same verdict matrix and reach different shortlists). Each lens
+// Built-in AI startup read the same verdict matrix and reach different shortlists). Each lens
 // declares an *emphasis*: the story personas that matter to that buyer plus per-theme/per-group
 // weight multipliers. lib/icp.ts then re-weights the SAME canonical verdicts (never re-judging
 // anything — see icpScore below) into a per-ICP cross-arena ranking rendered at /icp/[type].

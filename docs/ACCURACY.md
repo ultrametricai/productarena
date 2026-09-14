@@ -65,9 +65,9 @@ capability behind the wall, not less. Surfaced as:
 
 **Untested ≠ zero** (`lib/data-helpers.ts` `isGroupUntested` / `isThemeUntested`). A component
 score built entirely from zero-evidence none/na cells renders italic *untested*, never `0/100`:
-- ArenaTable: agent-ready, AI-native, API-quality, openness, automation columns;
-- MegaTable: agent-ready, AI-native, API-quality columns;
-- product page: the AGENT-READY / AI-NATIVE badges (`AgenticBadge untested` prop) and the
+- ArenaTable: agent-ready, Built-in AI, API-quality, openness, automation columns;
+- MegaTable: agent-ready, Built-in AI, API-quality columns;
+- product page: the AGENT-READY / BUILT-IN AI badges (`AgenticBadge untested` prop) and the
   per-story quality column (`isStoryUntested`);
 - StoryMap quality cells.
 

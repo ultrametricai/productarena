@@ -126,8 +126,8 @@ export default function MissingStartupsPage() {
               <span title="Fleet mean of the agent-ready index (how well agents can drive these products) — lower means more room">
                 agent-ready x̄ <span className="font-mono tabular-nums text-zinc-300">{fmt(arena.components.meanAgentReady)}</span>
               </span>
-              <span title="Fleet mean of the AI-native index (how agentic the products themselves are) — lower means more room">
-                AI-native x̄ <span className="font-mono tabular-nums text-zinc-300">{fmt(arena.components.meanAiNative)}</span>
+              <span title="Fleet mean of the Built-in AI index (how agentic the products themselves are) — lower means more room">
+                Built-in AI x̄ <span className="font-mono tabular-nums text-zinc-300">{fmt(arena.components.meanAiNative)}</span>
               </span>
               <span title="Share of applicable agent-access / agentic-features verdicts judged 'none' across the whole fleet">
                 agentic none-share{' '}

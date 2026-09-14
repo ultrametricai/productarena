@@ -220,7 +220,7 @@ export function themeTooltip(theme: string): string {
 const METRICS: Record<string, { icon: string; tooltip: string }> = {
   paScore: { icon: '🏆', tooltip: 'PA Score — overall evidence-graded score for the AI era (0–100)' },
   agentReady: { icon: '🤖', tooltip: 'Agent-ready — how well AI agents can access and operate the product' },
-  aiNative: { icon: '✨', tooltip: 'AI-native — how agentic the product experience itself is' },
+  aiNative: { icon: '✨', tooltip: 'Built-in AI — how agentic the product experience itself is' },
   apiQuality: { icon: '🔌', tooltip: 'API quality — depth and reliability of the public API' },
   openness: { icon: '🔓', tooltip: 'Openness — open source, data portability, and self-hosting' },
   automation: { icon: '⚙️', tooltip: 'Automation — how much of the product can run unattended' },

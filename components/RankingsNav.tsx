@@ -7,7 +7,7 @@ import GeoMark from '@/components/GeoMark'
 export const GLOBAL_RANKINGS = [
   { id: 'agentic', name: 'Most agent-ready', href: '/rankings/agentic' },
   { id: 'init', name: 'Highest PA Score', href: '/rankings/init' },
-  { id: 'ai-native', name: 'Most AI-native', href: '/rankings/ai-native' },
+  { id: 'ai-native', name: 'Best built-in AI', href: '/rankings/ai-native' },
   { id: 'claims-integrity', name: 'Claims vs reality', href: '/rankings/claims-integrity' },
   { id: 'most-connected', name: 'Most connected', href: '/rankings/most-connected' },
   { id: 'most-tested', name: 'Most tested', href: '/rankings/most-tested' },

@@ -14,7 +14,7 @@
 export interface ParsedStory {
   // Lowercased, whitespace-collapsed persona ("founder", "ai-native user") with the leading
   // "a"/"an" article dropped — lowercasing dedupes the authored casing drift ("As a Founder"
-  // vs "as a founder", "AI-native user" vs "ai-native user") so chips and future filters treat
+  // vs "as a founder", "Built-in AI user" vs "ai-native user") so chips and future filters treat
   // equal personas as equal. Null when the text doesn't match the Connextra frame.
   persona: string | null
   // The story minus its persona frame, reading as a standalone sentence: first-person leads
