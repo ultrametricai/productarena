@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-67-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-372-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-21728-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-373-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-21801-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **67 arenas, 372 products, 21,728 judged verdicts.**
+As of the last full pipeline run: **67 arenas, 373 products, 21,801 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -160,7 +160,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai, llamafile |
 | Payroll & HR Ops (`payroll`) | gusto, rippling, deel, justworks |
 | Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard |
-| Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules, omnara |
+| Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules, omnara, yylo |
 | Mobile & In-Person Payments (`mobile-payments`) | stripe-terminal, square, sumup, adyen-pos |
 | API platforms (`api-platforms`) | postman, kong, bruno, hoppscotch, insomnia |
 | Team Chat (`team-chat`) | slack, discord, ms-teams, zulip, buzz |
