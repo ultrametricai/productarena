@@ -16,20 +16,26 @@ describe('classifyGapStep — keyword routing (pure, no disk)', () => {
     expect(classifyGapStep(step('File on Delaware portal', 'agent'))).toBeNull()
   })
 
-  it('routes form portal/filing/website/form/console steps to browser-agents with the ToS caution', () => {
+  it('marks form portal/filing/signup/provisioning steps computer-use candidates (browser-agents) with the assisted caution', () => {
     for (const label of [
       'File on Delaware portal',
       'Submit incorporation filing',
       'Complete IRS SS-4 form online',
       'Publish to website',
       'Configure project in cloud console',
+      'Create Workspace user',
+      'Create company email',
+      'Create Slack workspace',
+      'Set up benefits enrollment',
     ]) {
       const cls = classifyGapStep(step(label, 'form'))
       expect(cls?.kind, label).toBe('closer')
       if (cls?.kind !== 'closer') continue
       expect(cls.arenaId).toBe('browser-agents')
       expect(cls.fallbackArenaId).toBe('web-scraping')
-      expect(cls.caution).toMatch(/unofficial path/)
+      expect(cls.blurb).toMatch(/computer-use candidate/)
+      expect(cls.caution).toMatch(/assisted, not autonomous/)
+      expect(cls.caution).toMatch(/verify the portal/)
     }
   })
 
@@ -91,9 +97,27 @@ describe('classifyGapStep — keyword routing (pure, no disk)', () => {
     }
   })
 
+  it('routes cap-table paperwork to equity-management (board still approves)', () => {
+    for (const label of ['Issue founder stock', 'Prepare stock option paperwork']) {
+      expect(classifyGapStep(step(label, 'form')), label)
+        .toMatchObject({ kind: 'closer', arenaId: 'equity-management' })
+    }
+  })
+
+  it('routes manual code changes (install SDK, add snippet) to ai-coding', () => {
+    expect(classifyGapStep(step('Install SDK in codebase', 'form')))
+      .toMatchObject({ kind: 'closer', arenaId: 'ai-coding' })
+  })
+
+  it('routes choose/select steps to ai-research-agents on either non-agent route', () => {
+    expect(classifyGapStep(step('Choose formation service', 'person')))
+      .toMatchObject({ kind: 'closer', arenaId: 'ai-research-agents' })
+    expect(classifyGapStep(step('Choose bank provider', 'person')))
+      .toMatchObject({ kind: 'closer', arenaId: 'ai-research-agents' })
+  })
+
   it('returns null for gaps no rule honestly covers', () => {
     expect(classifyGapStep(step('Collect company property', 'person'))).toBeNull()
-    expect(classifyGapStep(step('Create Slack workspace', 'form'))).toBeNull()
   })
 })
 
@@ -181,7 +205,7 @@ describe('buildSimSteps carries pre-resolved gap closers (serialized props)', ()
     const portal = steps.find((s) => s.label === 'File on Delaware portal')!
     expect(portal.gap?.kind).toBe('closer')
     if (portal.gap?.kind === 'closer') {
-      expect(portal.gap.closer.caution).toMatch(/unofficial path/)
+      expect(portal.gap.closer.caution).toMatch(/assisted, not autonomous/)
     }
     for (const s of steps.filter((x) => x.route === 'agent')) expect(s.gap).toBeNull()
     expect(JSON.parse(JSON.stringify(steps))).toEqual(steps)

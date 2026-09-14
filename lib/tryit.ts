@@ -1,6 +1,6 @@
 import { stripPersonaPrefix } from './data'
 import { mcpEndpointFor } from './mcpEndpoints'
-import { loadProcesses, processSlug, VENDOR_ARENA, type ProcessTask } from './processes'
+import { loadProcesses, processSlug, VENDOR_ARENA, vendorProductId, type ProcessTask } from './processes'
 import { proofsForProduct, readProofTranscript } from './proofs'
 import type { Story } from './schemas'
 import { stripSgr, type TryItStory } from './tryitReplay'
@@ -52,12 +52,17 @@ export interface ProcessLink {
 
 // Founder processes (lib/processes.ts) whose DAG runs on this product — surfaced under the
 // microterminal as future prefixed stories ("this product appears in: run-payroll →"). Uses
-// the VENDOR_ARENA reverse mapping: a corpus vendor key equals the product id in its mapped
-// arena, so `VENDOR_ARENA[productId] === category` means this product IS that vendor here.
+// the VENDOR_ARENA reverse mapping: a corpus vendor key resolves to its judged product id via
+// vendorProductId (usually identical), so finding the key whose product id and arena both match
+// means this product IS that vendor here.
 export function processesFeaturing(category: string, productId: string, dir?: string): ProcessLink[] {
-  if (VENDOR_ARENA[productId] !== category) return []
+  const vendorKey = Object.keys(VENDOR_ARENA).find(
+    (v) => VENDOR_ARENA[v] === category && vendorProductId(v) === productId,
+  )
+  if (!vendorKey) return []
   const featuring = (task: ProcessTask) =>
-    task.dag.nodes.some((n) => n.vendor === productId) || task.vendors.includes(productId)
+    task.dag.nodes.some((n) => n.vendor === vendorKey || (n.vendorOptions ?? []).includes(vendorKey)) ||
+    task.vendors.includes(vendorKey)
   return loadProcesses(dir)
     .filter(featuring)
     .slice(0, 6)

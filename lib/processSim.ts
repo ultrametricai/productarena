@@ -14,7 +14,8 @@ export interface SwapOption {
 export interface VendorRole {
   arenaId: string
   arenaName: string
-  // The corpus vendor key the DAG canonically records calls against.
+  // The judged product id of the vendor the DAG canonically records calls against
+  // (vendorProductId of the corpus vendor key) — comparable against SwapOption.id.
   canonicalVendor: string
   defaultProductId: string
   defaultProductName: string
