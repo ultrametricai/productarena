@@ -347,8 +347,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/proofs" className="hover:text-emerald-300">
                 Recorded proofs
               </Link>
-              <Link href="/submit" className="hover:text-emerald-300">
-                Test my product →
+              <Link href="/submit" className="hover:text-emerald-300" title="Scan your product and add it to the arenas — via a prefilled GitHub issue or PR">
+                Add your product →
               </Link>
               <Link href="/llms.txt" className="hover:text-emerald-300">
                 For agents: /llms.txt

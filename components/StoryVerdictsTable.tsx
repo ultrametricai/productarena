@@ -289,6 +289,9 @@ export default function StoryVerdictsTable({
               <SortableTh col="title" current={column} direction={direction} onSort={handleSort}>
                 Story
               </SortableTh>
+              <SortableTh col="persona" current={column} direction={direction} onSort={handleSort}>
+                <span title="Whose perspective the story is told from">User type</span>
+              </SortableTh>
               <SortableTh col="theme" current={column} direction={direction} onSort={handleSort}>
                 Theme
               </SortableTh>
@@ -329,7 +332,7 @@ export default function StoryVerdictsTable({
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={8} className="px-3 py-6 text-center text-zinc-500">
                   No stories match{theme !== '' ? ` theme “${humanizeTheme(theme)}”` : ''}{query.trim() !== '' ? ` “${query}”` : ''}.
                 </td>
               </tr>
@@ -389,12 +392,9 @@ function StoryRowPair({
               </svg>
             </button>
             <div className="min-w-0">
-              {/* Persona chip leads instead of the repetitive "As a {persona}," title frame —
-                  parseStoryPersona splits the canonical title (lib/storyText.ts); the full
-                  authored title stays in row.title for filtering/contest links. Inline chip
-                  (not a column) so narrow viewports gain no horizontal scroll. */}
+              {/* Persona moved to its own "User type" column (founder request) — the full
+                  authored title stays in row.title for filtering/flag links. */}
               <p className="font-medium">
-                <PersonaChip persona={row.personaLabel} className="mr-1.5" />
                 <span title={row.origin}>{row.action}</span>{' '}
                 <ScopeChip scope={row.scope} globalHref={row.globalHref} />
               </p>
@@ -446,7 +446,7 @@ function StoryRowPair({
       </tr>
       {isOpen && (
         <tr id={detailsId} className="bg-zinc-900/30">
-          <td colSpan={7} className="px-3 py-3 pl-9">
+          <td colSpan={8} className="px-3 py-3 pl-9">
             {/* Judge rationales are written for auditability, not skimming — collapse them by
                 default behind a plain-language one-liner so the row leads with evidence. */}
             <details>
