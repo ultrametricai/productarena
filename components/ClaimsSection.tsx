@@ -128,6 +128,7 @@ export default function ClaimsSection({
                   href={c.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title="Open the vendor page this claim was extracted from"
                   className="text-xs text-zinc-500 hover:text-emerald-300"
                 >
                   source ↗
@@ -139,6 +140,7 @@ export default function ClaimsSection({
             href={`https://github.com/${REPO}/issues/new?title=${encodeURIComponent(`[taxonomy gap] ${category}/${productId}`)}&labels=contest`}
             target="_blank"
             rel="noopener noreferrer"
+            title="Opens a prefilled taxonomy-gap issue on GitHub"
             className="mt-2 inline-block text-xs text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300"
           >
             Suggest a story for these →

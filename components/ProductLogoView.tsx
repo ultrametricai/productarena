@@ -39,13 +39,16 @@ export default function ProductLogoView({
       />
     )
   }
+  // A <span> (not <div>) so the fallback stays valid phrasing content — call sites render it
+  // inside <p>/<a> (e.g. /missing's "Current leader" line), where a <div> is invalid HTML and
+  // caused a real hydration mismatch (React #418: "<div> cannot be a descendant of <p>").
   return (
-    <div
+    <span
       aria-hidden
       className="flex shrink-0 items-center justify-center rounded-lg bg-zinc-900 font-mono font-bold text-emerald-300 ring-1 ring-zinc-800"
       style={{ width: size, height: size, fontSize: Math.round(size * 0.42) }}
     >
       {product.name.charAt(0).toUpperCase()}
-    </div>
+    </span>
   )
 }

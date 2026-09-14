@@ -118,7 +118,7 @@ export default function MissingStartupsPage() {
                 title={OPPORTUNITY_FORMULA}
                 className="ml-auto cursor-help rounded-full border border-emerald-400/40 bg-emerald-400/5 px-2.5 py-0.5 font-mono text-sm tabular-nums text-emerald-300"
               >
-                {arena.score}/100
+                {arena.score}<span className="text-emerald-300/50">/100</span>
               </span>
             </p>
             {/* The measurable inputs behind the score — plain numbers, every one hoverable. */}

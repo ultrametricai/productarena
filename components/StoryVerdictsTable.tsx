@@ -137,6 +137,7 @@ function VendorResponseBlock({ response }: { response: VendorResponse }) {
               href={response.url}
               target="_blank"
               rel="noopener noreferrer"
+              title="Open the vendor's full public statement"
               className="underline decoration-zinc-700 hover:text-sky-300"
             >
               full statement ↗
@@ -262,7 +263,8 @@ export default function StoryVerdictsTable({
             <option value="">All scopes</option>
             {scopes.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {/* Humanized, not the raw value — "Global stories", not "global". */}
+                {s === 'global' ? 'Global stories' : s === 'category' ? 'Category stories' : 'Product stories'}
               </option>
             ))}
           </select>
@@ -493,6 +495,7 @@ function StoryRowPair({
                       href={e.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      title={`Open the cited source (tier ${e.tier} evidence)`}
                       className="underline decoration-zinc-800 hover:text-emerald-300"
                     >
                       [{e.tier}]
@@ -510,6 +513,7 @@ function StoryRowPair({
                   href={row.proofUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title="Open the recorded probe proof for this verdict"
                   className="text-xs text-zinc-400 hover:text-emerald-300"
                 >
                   proof ↗

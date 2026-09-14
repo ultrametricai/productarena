@@ -30,7 +30,8 @@ export default function CopyButton({ text, label }: { text: string; label: strin
           : 'border-zinc-800 text-zinc-300 hover:border-emerald-400/60 hover:text-emerald-300'
       }`}
     >
-      {copied ? 'Copied ✓' : label}
+      {/* aria-live so the "Copied ✓" confirmation is announced, not just shown. */}
+      <span aria-live="polite">{copied ? 'Copied ✓' : label}</span>
     </button>
   )
 }

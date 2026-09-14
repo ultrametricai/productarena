@@ -20,7 +20,11 @@ export default function MomentumChip({
 }) {
   if (!hasSignal(popularity)) {
     if (compact) return null
-    return <span className="text-xs text-zinc-500">no public signals</span>
+    return (
+      <span className="text-xs text-zinc-500" title="No adoption signal found on public registries (GitHub stars, npm/PyPI installs) — absence of a public repo, not a judgment">
+        no public signals
+      </span>
+    )
   }
 
   const title = `Popularity signal as of ${popularity.fetchedAt.slice(0, 10)} — sourced from public registries (GitHub/npm/PyPI), not part of the PA Score.`

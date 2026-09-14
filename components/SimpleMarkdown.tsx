@@ -19,8 +19,15 @@ function renderInline(text: string): ReactNode[] {
       const close = token.indexOf('](')
       const label = token.slice(1, close)
       const href = token.slice(close + 2, -1)
+      // Reports can cite external vendor/GitHub URLs — new tab + rel like every external link.
+      const external = /^https?:\/\//.test(href)
       nodes.push(
-        <a key={key++} href={href} className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200">
+        <a
+          key={key++}
+          href={href}
+          {...(external ? { target: '_blank', rel: 'noopener noreferrer', title: `Open ${label} (external link)` } : {})}
+          className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
+        >
           {label}
         </a>,
       )

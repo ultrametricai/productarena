@@ -173,7 +173,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 <span title="API quality /100 — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.">API</span>
               </SortableTh>
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
-                <span title="GitHub stars — adoption signal from public registries; never part of the PA Score. Click a count to open the repo.">GitHub ★</span>
+                <span title="GitHub stars — adoption signal from public registries; never part of the PA Score. When the repo is known, clicking a count opens it.">GitHub ★</span>
               </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 <span title="Agent access surfaces — MCP server / CLI / API, from judged evidence: ✓ full, ~ partial, ! disputed, — none found">Access</span>
