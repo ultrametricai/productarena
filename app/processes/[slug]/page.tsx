@@ -101,7 +101,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>
           )}
-          {/* Admin-only (Ory allowlist or the pa-admin localStorage switch) — renders nothing
+          {/* Admin-only (session allowlist or the pa-admin localStorage switch) — renders nothing
               for everyone else. The manifest it hands off is public regardless. */}
           <DoViaAfk manifestUrl={processManifestUrl(slug)} />
         </div>
