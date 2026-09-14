@@ -196,6 +196,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 antialiased">
+        {/* Keyboard/screen-reader escape hatch: the header carries ~30 tab stops (two dropdown
+            menus, tool links, search) on every page. Visually hidden until focused. */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:border focus:border-emerald-400/60 focus:bg-zinc-950 focus:px-4 focus:py-2 focus:text-sm focus:text-emerald-300"
+        >
+          Skip to content
+        </a>
         <header className="border-b border-zinc-800">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-4">
             <div className="flex shrink-0 items-baseline gap-2">
@@ -329,7 +337,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             item's automatic minimum width tracks its content's min-content width — wide tables
             inside overflow-x-auto wrappers would push the whole page wider than the viewport
             on phones instead of scrolling inside their wrapper. */}
-        <main className="mx-auto w-full min-w-0 max-w-7xl px-5 py-10">{children}</main>
+        <main id="main" className="mx-auto w-full min-w-0 max-w-7xl px-5 py-10">{children}</main>
         <footer className="border-t border-zinc-800 py-6">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-5 text-xs text-zinc-400">
             <span>© 2026 Ultrametric Inc</span>
