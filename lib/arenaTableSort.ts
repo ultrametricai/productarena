@@ -5,6 +5,7 @@
 export type ArenaTableColumn =
   | 'rank'
   | 'name'
+  | 'oss'
   | 'initScore'
   | 'agentReady'
   | 'agenticApp'
@@ -20,6 +21,9 @@ export interface ArenaTableRow {
   productId: string
   name: string
   vendor: string
+  // True when the product is open source (product.type === 'oss') — backs the `oss` sort
+  // column: desc puts open-source rows first (true sorts as 1, false as 0), ties keep order.
+  oss: boolean
   initScore: number | null
   agentReady: number | null
   agenticApp: number | null
@@ -44,6 +48,7 @@ export interface ArenaTableRow {
 export const COLUMN_LABELS: Record<ArenaTableColumn, string> = {
   rank: 'PA Score',
   name: 'product name',
+  oss: 'open source',
   initScore: 'PA Score',
   agentReady: 'AGENT-READY',
   agenticApp: 'BUILT-IN AI',
@@ -55,7 +60,8 @@ export const COLUMN_LABELS: Record<ArenaTableColumn, string> = {
 }
 
 // Every numeric column defaults to descending (highest value first) the first time it's
-// clicked; `name` defaults to ascending (A→Z) since "highest name" isn't meaningful.
+// clicked; `name` defaults to ascending (A→Z) since "highest name" isn't meaningful. `oss`
+// defaults to descending too — first click puts open-source products first.
 export function defaultDirectionFor(column: ArenaTableColumn): SortDirection {
   return column === 'name' ? 'asc' : 'desc'
 }
@@ -82,6 +88,11 @@ export function sortArenaRows(
   column: ArenaTableColumn,
   direction: SortDirection,
 ): ArenaTableRow[] {
+  if (column === 'oss') {
+    // Stable boolean partition — desc puts open-source rows first; ties keep input order.
+    const ossRank = (r: ArenaTableRow) => (r.oss ? 1 : 0)
+    return [...rows].sort((a, b) => (direction === 'desc' ? ossRank(b) - ossRank(a) : ossRank(a) - ossRank(b)))
+  }
   const field = fieldFor(column)
   return [...rows].sort((a, b) => {
     if (field === null) {

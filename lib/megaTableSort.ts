@@ -7,6 +7,7 @@ export type MegaTableColumn =
   | 'rank'
   | 'name'
   | 'arena'
+  | 'oss'
   | 'initScore'
   | 'agentReady'
   | 'agenticApp'
@@ -87,6 +88,7 @@ export const COLUMN_LABELS: Record<MegaTableColumn, string> = {
   rank: 'AGENT-READY',
   name: 'product name',
   arena: 'arena',
+  oss: 'open source',
   initScore: 'PA Score',
   agentReady: 'AGENT-READY',
   agenticApp: 'BUILT-IN AI',
@@ -94,6 +96,8 @@ export const COLUMN_LABELS: Record<MegaTableColumn, string> = {
   popularity: 'Popularity',
 }
 
+// `oss` defaults to desc like the numeric columns: desc = open-source rows first (oss sorts as
+// 1, commercial as 0), so the first click answers "which of these are open source?".
 export function defaultDirectionFor(column: MegaTableColumn): SortDirection {
   return column === 'name' || column === 'arena' ? 'asc' : 'desc'
 }
@@ -121,6 +125,7 @@ const NUMERIC_FIELDS: Record<MegaTableColumn, NumericField | null> = {
   rank: 'agentReady',
   name: null,
   arena: null,
+  oss: null, // boolean-backed (row.type), special-cased in sortMegaRows
   initScore: 'initScore',
   agentReady: 'agentReady',
   agenticApp: 'agenticApp',
@@ -133,6 +138,11 @@ function numericFieldFor(column: MegaTableColumn): NumericField | null {
 }
 
 export function sortMegaRows(rows: MegaTableRow[], column: MegaTableColumn, direction: SortDirection): MegaTableRow[] {
+  if (column === 'oss') {
+    // Stable partition on row.type — desc puts open-source rows first; ties keep input order.
+    const ossRank = (r: MegaTableRow) => (r.type === 'oss' ? 1 : 0)
+    return [...rows].sort((a, b) => (direction === 'desc' ? ossRank(b) - ossRank(a) : ossRank(a) - ossRank(b)))
+  }
   const strField = stringFieldFor(column)
   if (strField !== null) {
     return [...rows].sort((a, b) => {

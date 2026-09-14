@@ -14,6 +14,13 @@ describe('YcBadge', () => {
     expect(container.querySelector('[title]')?.getAttribute('title')).toBe('Y Combinator batch W17')
   })
 
+  it('wears YC brand orange with white text so it reads as the YC mark', () => {
+    const { container } = render(<YcBadge ycBatch="S22" />)
+    const cls = container.querySelector('span')?.className ?? ''
+    expect(cls).toContain('bg-[#f26522]')
+    expect(cls).toContain('text-white')
+  })
+
   it('renders nothing when ycBatch is absent', () => {
     const { container } = render(<YcBadge ycBatch={undefined} />)
     expect(container.textContent).toBe('')
