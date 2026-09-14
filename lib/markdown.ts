@@ -2,6 +2,7 @@ import { humanizeTheme } from './icons'
 import { CLAIM_STATUSES, claimBucketCounts, claimEntriesByStatus, unmappedClaims } from './claims'
 import type { CategoryData } from './data'
 import { evidenceById, groupInOrder, verdictFor } from './data'
+import { opportunitiesFor } from './opportunities'
 import { provenanceLine } from './provenance'
 import type { Product, Story } from './schemas'
 import { coverageMapFor } from './storyCoverage'
@@ -181,6 +182,30 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
       lines.push(entry.command)
       lines.push('```')
     }
+    lines.push('')
+  }
+
+  // Top improvement opportunities (lib/opportunities.ts) — the vendor's own to-do list, derived
+  // purely from the judged verdicts below, so a vendor's agent reading this file finds "what
+  // would move our scores" without parsing the whole matrix. Compact top-3 here; the product
+  // page's Opportunities section has the full capped list.
+  const report = opportunitiesFor(data, productId)
+  if (report.total > 0) {
+    const top = report.opportunities.slice(0, 3)
+    lines.push('## Top opportunities')
+    lines.push('')
+    lines.push(
+      `What would move ${product.name}'s scores, from its own judged verdicts (${report.total} stories with headroom; ranked by story weight × (10 − quality), agentic stories boosted):`,
+    )
+    lines.push('')
+    for (const o of top) {
+      const q = o.verdict === 'partial' ? ` q${o.quality}/10` : ''
+      lines.push(`- **${o.title}** — ${o.verdict}${q} · moves ${o.scoreLever} · ${o.why}`)
+    }
+    lines.push('')
+    lines.push(
+      `Verdicts wrong? Flag them or publish a vendor response — see ${siteUrl}/methodology. Scores move when the evidence does.`,
+    )
     lines.push('')
   }
 
