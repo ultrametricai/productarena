@@ -2,6 +2,16 @@
 
 *(formerly Product Arena)*
 
+[![CI](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml)
+[![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
+<!-- stat-badges:start -->
+[![arenas](https://img.shields.io/badge/arenas-65-34d399)](https://ultrametric.ai/productarena)
+[![products](https://img.shields.io/badge/products-354-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-20755-34d399)](https://ultrametric.ai/productarena/methodology)
+<!-- stat-badges:end -->
+[![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
+[![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
+
 **The open evidence layer for the agent economy.** ProductArena measures how ready the
 world's software is for AI agents — and how AI-native it is for humans — with evidence, not
 opinion: crawled docs, community sources, hands-on probes, recorded proofs, and an LLM judge
@@ -17,10 +27,7 @@ It has grown past rankings into an operating map of the AI era:
 - **Proofs** — recorded terminal/MCP sessions and a prove-it protocol vendors can submit to
 - **Agent-native access** — MCP server, JSON API, llms.txt: agents are first-class readers
 
-[![CI](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml)
-
 > ⭐ **If evidence-based software rankings are useful to you, [star the repo](https://github.com/ultrametricai/productarena)** — stars are how other builders find this, and every ranking, verdict, and proof here is open for you to audit or contest.
-[![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 
 ![ProductArena](https://ultrametric.ai/productarena/opengraph-image)
 
@@ -38,8 +45,31 @@ Live site: https://ultrametric.ai/productarena
 As of the last full pipeline run: **65 arenas, 354 products, 20,755 judged verdicts.**
 <!-- stats:end -->
 
-Arena, product, and verdict counts above are regenerated from data/ by `pnpm stats` —
-never a hand-maintained claim; see "Status & roadmap" for what's next.
+Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
+`pnpm stats` — never a hand-maintained claim; see "Status & roadmap" for what's next.
+
+## Try it in 10 seconds
+
+Nothing to install — the rankings are a public JSON API, agent-readable markdown, and a hosted
+MCP server:
+
+```bash
+curl https://ultrametric.ai/productarena/data/ai-coding/rankings.json   # any arena, machine-readable
+curl https://ultrametric.ai/productarena/arena/ai-coding/llms.md        # same arena, markdown for agents
+```
+
+Agents: point any HTTP-transport MCP client at
+**`https://ultrametric.ai/productarena/mcp`** (keyless, rate-limited — the URL doubles as its
+own setup page), or run the stdio server locally:
+`claude mcp add productarena -- npx -y productarena-mcp`.
+
+## What's new
+
+The news is generated from the committed score history, never hand-written: the live
+[changelog](https://ultrametric.ai/productarena/changelog) (rank flips, PA Score moves, new
+arenas), [weekly arena reports](https://ultrametric.ai/productarena/reports), and point-in-time
+[dataset releases](https://github.com/ultrametricai/productarena/releases) if you want a stable
+snapshot to build against.
 
 ## The rankings, at a glance
 
@@ -790,6 +820,27 @@ that opens a prefilled GitHub issue with the category/product/story and current 
 already filled in; a maintainer (or, in the future, a GitHub Action) does the deeper check —
 adding evidence, then `pnpm pipeline judge --category <category> --product <product>` followed
 by `pnpm pipeline derive --category <category>` — before any verdict actually changes.
+
+## Citing ProductArena
+
+Quoting a ranking, verdict, or evidence excerpt (with attribution, per DATA-LICENSE) in a
+paper, post, or dataset card:
+
+> ProductArena — evidence-graded software rankings for the agent economy. Ultrametric Inc,
+> 2026. https://ultrametric.ai/productarena
+
+```bibtex
+@misc{productarena,
+  title        = {ProductArena: evidence-graded software rankings for the agent economy},
+  author       = {{Ultrametric Inc}},
+  year         = {2026},
+  howpublished = {\url{https://ultrametric.ai/productarena}},
+  note         = {Methodology: \url{https://ultrametric.ai/productarena/methodology}}
+}
+```
+
+Rankings move as evidence lands — cite the dataset release tag (e.g. `data-2026-09-02`) when
+you need a pinned snapshot.
 
 ## License
 

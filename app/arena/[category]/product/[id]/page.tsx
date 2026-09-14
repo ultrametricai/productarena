@@ -250,11 +250,13 @@ export default async function ProductPage({
 
       <ProductActions data={data} productId={id} tryIt={tryable} />
 
+      {/* Showcase (screenshots) above the microterminal — founder rule: show what the product
+          looks like before the hands-on replay. */}
+      <ProductShowcase product={product} />
+
       <TryItSection category={category} productId={id} productName={product.name} stories={data.stories} />
 
       <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
-
-      <ProductShowcase product={product} />
 
       {/* Multi-product vendors: the family breakdown block (lib/families.ts) — renders for any
           product with a data/product-families.json entry, nothing for everyone else. */}

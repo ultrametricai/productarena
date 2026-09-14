@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import CopyButton from '@/components/CopyButton'
+import CopyPreview from '@/components/CopyPreview'
 import { loadAll } from '@/lib/data'
 import { SITE_URL, withBase } from '@/lib/site'
 
@@ -84,18 +85,25 @@ export default function BadgesPage() {
                   {BADGE_KINDS.map(({ suffix, alt }) => {
                     const s = snippets(product.id, arena.categoryId, suffix, alt)
                     return (
-                      <div key={suffix} className="flex flex-wrap items-center gap-2">
-                        {/* Committed static asset, plain <img>: basePath applied by hand (lib/site.ts). */}
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={withBase(`/badges/${product.id}-${suffix}.svg`)}
-                          alt={alt}
-                          className="h-5"
-                        />
-                        <span className="ml-auto flex gap-2">
-                          <CopyButton text={s.markdown} label="Copy markdown" />
-                          <CopyButton text={s.html} label="Copy HTML" />
-                        </span>
+                      <div key={suffix}>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {/* Committed static asset, plain <img>: basePath applied by hand (lib/site.ts). */}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={withBase(`/badges/${product.id}-${suffix}.svg`)}
+                            alt={alt}
+                            className="h-5"
+                          />
+                          <span className="ml-auto flex gap-2">
+                            <CopyButton text={s.markdown} label="Copy markdown" />
+                            <CopyButton text={s.html} label="Copy HTML" />
+                          </span>
+                        </div>
+                        {/* The exact embed code the buttons copy — collapsed so the gallery
+                            stays scannable, but never invisible. */}
+                        <div className="mt-1.5">
+                          <CopyPreview summary="Show the embed code" text={`${s.markdown}\n\n${s.html}`} />
+                        </div>
                       </div>
                     )
                   })}
