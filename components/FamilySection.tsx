@@ -1,8 +1,9 @@
 import Link from 'next/link'
+import AiEraBadge from '@/components/AiEraBadge'
 import { loadCategory } from '@/lib/data'
 import { familyForProduct, loadFamilies } from '@/lib/families'
 
-// "Product lines" block on a product page — rendered for EVERY product that belongs to a
+// "Products" block on a product page — rendered for EVERY product that belongs to a
 // family in data/product-families.json (parent or judged sub-product — see lib/families.ts),
 // never vendor-special-cased. A mini leaderboard of the company's judged lines (rank, PA
 // Score, agent-ready, access) with the page-only lines listed honestly below. Acquired lines
@@ -45,7 +46,7 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
   return (
     <div className="rounded-xl border border-zinc-800 p-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-display text-lg font-semibold leading-tight">Product lines</h2>
+        <h2 className="font-display text-lg font-semibold leading-tight">Products</h2>
         <Link
           href={`/family/${family.id}`}
           className="text-sm text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
@@ -98,10 +99,17 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
                     <Link href={s.arenaHref} className="hover:text-emerald-300">{s.arenaName}</Link>
                   </td>
                   <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
-                    #{s.rank}<span className="text-zinc-600">/{s.fieldSize}</span>
+                    {/* Click through to the ranking table the rank comes from (founder feedback). */}
+                    <Link
+                      href={s.arenaHref}
+                      title={`Rank ${s.rank} of ${s.fieldSize} — the full ${s.arenaName} leaderboard`}
+                      className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+                    >
+                      #{s.rank}<span className="text-zinc-600">/{s.fieldSize}</span>
+                    </Link>
                   </td>
-                  <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
-                    {s.paScore === null ? <span className="italic text-zinc-500">n/a</span> : <>{s.paScore.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                  <td className="px-2 py-1.5">
+                    <AiEraBadge value={s.paScore} size="xs" />
                   </td>
                   <td className="hidden px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
                     {s.agentReady === null ? <span className="italic text-zinc-500">n/a</span> : <>{s.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}

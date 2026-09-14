@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import AiEraBadge from '@/components/AiEraBadge'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import arenaIcons from '@/data/arena-icons.json'
@@ -192,9 +193,7 @@ export default function MyStackBuilder({
                       <Link href={`/arena/${p.arenaId}/product/${p.id}`} className="hover:text-emerald-300">
                         {p.name}
                       </Link>
-                      {p.aiEra !== null && (
-                        <span className="font-mono text-[10px] tabular-nums text-zinc-500">{p.aiEra.toFixed(0)}/100</span>
-                      )}
+                      {p.aiEra !== null && <AiEraBadge value={p.aiEra} size="xs" />}
                       <button
                         type="button"
                         onClick={() => remove(p.id)}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import AiEraBadge from '@/components/AiEraBadge'
 import { battleSlug, loadCategory } from '@/lib/data'
 import { loadFamilies, type Family, type FamilyProductRef } from '@/lib/families'
 
@@ -156,13 +157,21 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                       {judged.productName} in the {judged.arenaName} arena →
                     </Link>
                   </p>
-                  <p className="text-sm text-zinc-400">
-                    Rank <span className="font-mono tabular-nums text-zinc-200">#{judged.rank}</span> of{' '}
-                    <span className="font-mono tabular-nums">{judged.of}</span>
+                  <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-zinc-400">
+                    {/* Rank clicks through to the leaderboard it comes from (founder feedback);
+                        the score wears the same emerald pill as every PA Score on the site. */}
+                    <Link
+                      href={`/arena/${judged.arenaId}`}
+                      title={`Rank ${judged.rank} of ${judged.of} — the full ${judged.arenaName} leaderboard`}
+                      className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+                    >
+                      Rank <span className="font-mono tabular-nums text-zinc-200">#{judged.rank}</span> of{' '}
+                      <span className="font-mono tabular-nums">{judged.of}</span>
+                    </Link>
                     {judged.paScore !== null && (
                       <>
-                        {' · PA Score '}
-                        <span className="font-mono tabular-nums text-zinc-200">{judged.paScore.toFixed(1)}</span>
+                        <span>· PA Score</span>
+                        <AiEraBadge value={judged.paScore} size="xs" />
                       </>
                     )}
                   </p>
