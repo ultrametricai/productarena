@@ -192,10 +192,15 @@ export function prepareSearchEntries(entries: SearchEntry[]): PreparedSearchEntr
 
 function scoreEntry(p: PreparedSearchEntry, q: string, fq: string): number | null {
   if (p.labelLc === q || p.labelFolded === fq) return 0
-  if (p.keywordsLc.includes(q) || p.keywordsFolded.includes(fq)) return 1
-  if (p.labelLc.includes(q) || p.labelFolded.includes(fq)) return 2
-  if (p.keywordsLc.some((k) => k.includes(q)) || p.keywordsFolded.some((k) => k.includes(fq))) return 3
-  if (p.sublabelLc.includes(q) || p.sublabelFolded.includes(fq)) return 4
+  // Label PREFIX beats everything except an exact label match — typing "merc" must put
+  // Mercury above arenas that merely contain the substring (founder feedback 2026-09-14).
+  if (p.labelLc.startsWith(q) || p.labelFolded.startsWith(fq)) return 1
+  if (p.keywordsLc.includes(q) || p.keywordsFolded.includes(fq)) return 2
+  // Word-boundary prefix inside the label ("goog" → "Google Antigravity"-style second words).
+  if (p.labelLc.split(/\s+/).some((w) => w.startsWith(q)) || p.labelFolded.split(/\s+/).some((w) => w.startsWith(fq))) return 3
+  if (p.labelLc.includes(q) || p.labelFolded.includes(fq)) return 4
+  if (p.keywordsLc.some((k) => k.includes(q)) || p.keywordsFolded.some((k) => k.includes(fq))) return 5
+  if (p.sublabelLc.includes(q) || p.sublabelFolded.includes(fq)) return 6
   return null
 }
 

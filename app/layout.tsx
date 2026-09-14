@@ -143,13 +143,13 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "ProductArena",
     type: "website",
-    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: "ProductArena — evidence in, rankings out" }],
+    images: [{ url: `${SITE_URL}/og2.png`, width: 1200, height: 630, alt: "ProductArena — software, ranked for the AI era" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "ProductArena",
     description: "The unbiased, evidence-based arena for software in the AI era.",
-    images: [`${SITE_URL}/og.png`],
+    images: [`${SITE_URL}/og2.png`],
   },
 };
 
