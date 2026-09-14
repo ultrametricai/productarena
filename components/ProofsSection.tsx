@@ -33,9 +33,12 @@ export default function ProofsSection({
         <GeoMark seed="proofs" title="Probe proofs — replayable recordings from the probe harness" size={18} className="text-zinc-500" />
         Probe proofs
       </h2>
-      <p className="mb-3 text-xs text-zinc-400">
-        Replayable recordings from our probe harness — each command ran for real on our machines, keyless, with the
-        session captured verbatim (secrets are redacted before publication). See the{' '}
+      {/* One line — the keyless/verbatim/redaction details ride the tooltip. */}
+      <p
+        className="mb-3 text-xs text-zinc-400"
+        title="Each command ran for real on our machines, keyless, with the session captured verbatim; secrets are redacted before publication."
+      >
+        Replayable recordings from our probe harness — see the{' '}
         <a
           href="https://github.com/ultrametricai/productarena/blob/main/docs/PROVE-IT.md"
           target="_blank"

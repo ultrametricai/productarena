@@ -43,8 +43,8 @@ export default function PersonaStacksSection({ data }: { data: CategoryData }) {
                 </div>
               </Link>
               {runnerUp && (
-                <p className="mt-3 text-xs text-zinc-500">
-                  Runner-up: {runnerUp.name} ({r.runnerUp!.score.toFixed(0)}/100)
+                <p className="mt-3 flex items-center gap-1.5 text-xs text-zinc-500">
+                  Runner-up: <ProductLogo product={runnerUp} size={16} /> {runnerUp.name} ({r.runnerUp!.score.toFixed(0)}/100)
                 </p>
               )}
               <p className="mt-2 text-xs text-zinc-500">

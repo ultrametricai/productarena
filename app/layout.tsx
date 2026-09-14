@@ -3,7 +3,8 @@ import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import AccountMenu from "@/components/AccountMenu";
-import ArenaMenu from "@/components/ArenaMenu";
+import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
+import { loadArenaSections } from "@/lib/arenaSections";
 import CommandPalette from "@/components/CommandPalette";
 import GeoMark from "@/components/GeoMark";
 import { loadAll, loadCategories } from "@/lib/data";
@@ -164,6 +165,19 @@ const SITE_JSONLD = JSON.stringify({
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const categories = loadCategories();
   const icpTypes = loadIcpTypes();
+  // The Arenas dropdown's curated sections (data/arena-sections.json): every arena appears in
+  // exactly one section (enforced by lib/__tests__/arenaSections.test.ts), so grouping is a pure
+  // regrouping of `categories` — nothing is added or lost.
+  const categoryById = new Map(categories.map((c) => [c.id, c]));
+  const arenaMenuSections = loadArenaSections().map((section) => ({
+    name: section.name,
+    items: section.arenaIds.flatMap((id): ArenaMenuItem[] => {
+      const c = categoryById.get(id);
+      return c
+        ? [{ id: c.id, name: c.name, label: NAV_LABELS[c.id] ?? "", icon: (arenaIcons as Record<string, string>)[c.id] }]
+        : [];
+    }),
+  }));
   const stars = await fetchStarCount();
   // The two full global rankings (see app/rankings/*) aren't arenas, but they're arena-shaped
   // (a ranked list you land on and browse) — surfacing them as `type: 'arena'` groups them with
@@ -229,14 +243,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 Processes, Compare), GitHub, and search. One menu for all secondary destinations
                 instead of the old Rankings + Lenses dropdowns + a Methodology link. */}
             <nav className="flex flex-wrap items-center gap-2 text-sm text-zinc-400 sm:gap-3">
-              <ArenaMenu
-                items={categories.map((c) => ({
-                  id: c.id,
-                  name: c.name,
-                  label: NAV_LABELS[c.id] ?? "",
-                  icon: (arenaIcons as Record<string, string>)[c.id],
-                }))}
-              />
+              <ArenaMenu sections={arenaMenuSections} searchable />
               {/* geo: every Explore destination wears its deterministic concept mark
                   (components/GeoMark.tsx), the same mark it wears on its own page header. */}
               <ArenaMenu
@@ -292,14 +299,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <GeoMark seed="compare" title="Compare — side-by-side product comparison" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Compare
               </Link>
-              <Link
-                href="/everything"
-                title="The power view — the whole catalog on one page"
-                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-              >
-                <GeoMark seed="everything" title="Everything — the whole catalog on one page" size={13} className="hidden text-zinc-500 sm:inline-flex" />
-                Everything
-              </Link>
+              {/* /everything is deliberately unlisted (founder call: "don't show the everything
+                  page") — the route stays alive so old links don't 404, but nothing links to it. */}
               <a
                 href={`https://github.com/${REPO}`}
                 target="_blank"

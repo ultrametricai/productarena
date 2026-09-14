@@ -12,8 +12,8 @@ import arenaIcons from '@/data/arena-icons.json'
 import {
   accessGlyphClass,
   encodeCompareParam,
+  initialCompareIds,
   MAX_COMPARE,
-  parseCompareParam,
   rowWinners,
   sharedThemes,
   themeLabel,
@@ -133,8 +133,9 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
   const validIds = useMemo(() => new Set(products.map((p) => p.id)), [products])
 
   // Initial selection comes straight from `?p=` — a lazy initializer, not a mount effect:
-  // useSearchParams already carries the real query on the first client render.
-  const [ids, setIds] = useState<string[]>(() => parseCompareParam(searchParams.get('p'), validIds))
+  // useSearchParams already carries the real query on the first client render. No `?p=` at all
+  // → the default pairing (lib/compare.ts's DEFAULT_COMPARE_IDS), so the page opens populated.
+  const [ids, setIds] = useState<string[]>(() => initialCompareIds(searchParams.get('p'), validIds))
   // User-added story rows from `?s=` — unlike `?p=`, story ids can't be validated here (arena
   // data arrives async), so unknown ids are pruned later, once every selected arena has loaded.
   const [storyIds, setStoryIds] = useState<string[]>(() => parseStoriesParam(searchParams.get('s')))

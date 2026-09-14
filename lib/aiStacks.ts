@@ -82,6 +82,8 @@ export interface ResolvedSlot {
   metricValue: number | null
   rank: number | null
   fieldSize: number | null
+  // Runner-up id kept alongside the name so display code can resolve its logo (16px chip).
+  runnerUpId: string | null
   runnerUpName: string | null
   // "X or Y" — set on arena-top slots when the race is within CLOSE_CALL_DELTA.
   coPick: ResolvedCoPick | null
@@ -120,6 +122,7 @@ const EMPTY_SLOT_FIELDS = {
   metricValue: null,
   rank: null,
   fieldSize: null,
+  runnerUpId: null,
   runnerUpName: null,
   coPick: null,
   curatedNote: null,
@@ -199,6 +202,7 @@ export function resolveStack(stack: AiStack, categories: CategoryData[]): Resolv
       metricValue: top[metric] as number,
       rank: 1,
       fieldSize: ranked.length,
+      runnerUpId: second && !closeCall ? second.productId : null,
       runnerUpName: second && !closeCall ? nameOf(second.productId) : null,
       coPick: closeCall,
     })

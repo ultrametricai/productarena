@@ -92,8 +92,13 @@ function AggregateRows({ agg }: { agg: StackAggregates }) {
           {agg.weakestLink ? (
             <Link
               href={`/arena/${agg.weakestLink.arenaId}/product/${agg.weakestLink.id}`}
-              className="hover:text-emerald-300"
+              className="inline-flex items-center gap-1.5 hover:text-emerald-300"
             >
+              <ProductLogoView
+                product={{ id: agg.weakestLink.id, name: agg.weakestLink.name }}
+                size={16}
+                hasLogo={agg.weakestLink.hasLogo}
+              />
               {agg.weakestLink.name}{' '}
               <span className="font-mono tabular-nums text-zinc-500">
                 {(agg.weakestLink.aiEra as number).toFixed(0)}/100
@@ -385,14 +390,22 @@ export default function StackBattle({
                 </tbody>
               </table>
             </div>
+            {/* One line visible; the cross-arena + no-evidence caveats stay one click away. */}
             <p className="text-xs text-zinc-500">
-              A slot&rsquo;s green side has the higher published PA Score in that arena; an
-              empty cell means that stack has nothing there. Scores are computed within each
-              product&rsquo;s own arena, so cross-arena aggregates are directional — this page
-              compares evidence aggregates, it does not judge one stack against the other. And
-              &ldquo;0 verified interconnects&rdquo; means no evidence found in our corpus,
-              never &ldquo;doesn&rsquo;t integrate&rdquo;.
+              A slot&rsquo;s green side has the higher published PA Score in that arena.
             </p>
+            <details className="mt-1 text-xs text-zinc-500">
+              <summary className="cursor-pointer text-zinc-400 transition hover:text-emerald-300">
+                How to read the aggregates
+              </summary>
+              <p className="mt-1.5">
+                An empty cell means that stack has nothing in the slot. Scores are computed within
+                each product&rsquo;s own arena, so cross-arena aggregates are directional — this
+                page compares evidence aggregates, it does not judge one stack against the other.
+                And &ldquo;0 verified interconnects&rdquo; means no evidence found in our corpus,
+                never &ldquo;doesn&rsquo;t integrate&rdquo;.
+              </p>
+            </details>
           </section>
         </>
       )}

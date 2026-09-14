@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
+  DEFAULT_COMPARE_IDS,
   encodeCompareParam,
+  initialCompareIds,
   MAX_COMPARE,
   parseCompareParam,
   rowWinners,
@@ -28,6 +30,29 @@ function product(overrides: Partial<CompareProduct>): CompareProduct {
     ...overrides,
   }
 }
+
+describe('initialCompareIds', () => {
+  it('defaults to linear vs asana when ?p= is entirely absent', () => {
+    expect(DEFAULT_COMPARE_IDS).toEqual(['linear', 'asana'])
+    expect(initialCompareIds(null, new Set(['linear', 'asana', 'jira']))).toEqual(['linear', 'asana'])
+  })
+
+  it('filters the default against the live product set instead of erroring', () => {
+    expect(initialCompareIds(null, new Set(['linear', 'jira']))).toEqual(['linear'])
+    expect(initialCompareIds(null, new Set(['jira']))).toEqual([])
+  })
+
+  it('respects an explicit ?p= (deep links keep working, empty means empty)', () => {
+    expect(initialCompareIds('stripe,mercury', VALID)).toEqual(['stripe', 'mercury'])
+    expect(initialCompareIds('', VALID)).toEqual([])
+  })
+
+  it('every default id is a real tracked product (guards renames)', async () => {
+    const { loadAll } = await import('../data')
+    const ids = new Set(loadAll().flatMap((d) => d.products.map((p) => p.id)))
+    for (const id of DEFAULT_COMPARE_IDS) expect(ids.has(id), `${id} tracked`).toBe(true)
+  })
+})
 
 describe('parseCompareParam', () => {
   it('parses a comma-separated id list', () => {

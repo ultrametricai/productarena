@@ -32,11 +32,13 @@ export function IntegrationChip({ chip }: { chip: IntegrationChipData }) {
     <Link
       href={`/arena/${chip.arenaId}/product/${chip.productId}`}
       title={chip.title}
-      className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-zinc-800 px-3 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
     >
       <ProductLogoView product={{ id: chip.productId, name: chip.name }} size={16} hasLogo={chip.hasLogo} />
       <span className="font-medium">{chip.name}</span>
-      <span className="text-[10px] uppercase tracking-wide text-zinc-500">{chip.arenaName}</span>
+      {/* min-w-0 + truncate: the arena tag gives way first on narrow screens, so one long chip
+          can never widen the page past the viewport. */}
+      <span className="min-w-0 truncate text-[10px] uppercase tracking-wide text-zinc-500">{chip.arenaName}</span>
     </Link>
   )
 }
@@ -45,11 +47,16 @@ export default function IntegrationChips({ chips }: { chips: IntegrationChipData
   if (chips.length === 0) return null
   return (
     <div>
-      <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Verified integrations</h2>
+      {/* One line — the "missing ≠ doesn't integrate" caveat rides the heading's tooltip. */}
+      <h2
+        className="font-display leading-[1.1] mb-1 text-lg font-semibold"
+        title="A product missing here means no evidence of an integration was found in our corpus — never that it doesn't integrate."
+      >
+        Verified integrations
+      </h2>
       <p className="mb-3 text-xs text-zinc-500">
-        Connections to other tracked products, each backed by a verbatim quote from collected
-        evidence (hover a chip to read it). A product missing here means no evidence of an
-        integration was found in our corpus — never that it doesn&rsquo;t integrate.
+        Connections to other tracked products — hover a chip for the verbatim evidence quote
+        behind it.
       </p>
       <div className="flex flex-wrap gap-2">
         {chips.map((chip) => (

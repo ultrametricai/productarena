@@ -3,8 +3,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import DiffusionCurve, { formatMonth } from '@/components/DiffusionCurve'
 import PersonaChip from '@/components/PersonaChip'
+import ProductLogoView from '@/components/ProductLogoView'
 import VerdictBadge from '@/components/VerdictBadge'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
+import { hasLogo } from '@/lib/logos'
 import { adoptionNow, diffusionCurve, firstTrackedLookup } from '@/lib/diffusion'
 import { collectGlobalStories, findGlobalStory } from '@/lib/globalStories'
 import { parseStoryPersona } from '@/lib/storyText'
@@ -98,12 +100,18 @@ export default async function GlobalStoryPage({
             </p>
           )
         )}
-        <p className="mt-3 max-w-2xl text-[11px] text-zinc-500">
-          Honest approximation: we don&rsquo;t have per-verdict change history, so the curve shows
-          adoption among products <em>as they enter tracking</em> (first score-history entry),
-          with each product carrying its current verdict — not the moment each product shipped
-          the capability. Exact verdict history accrues from here forward.
-        </p>
+        {/* The approximation caveat matters but is reference material — collapsed by default. */}
+        <details className="mt-3 max-w-2xl text-xs text-zinc-500">
+          <summary className="cursor-pointer text-zinc-400 transition hover:text-emerald-300">
+            Honest approximation: what this curve can and can&rsquo;t show
+          </summary>
+          <p className="mt-1.5">
+            We don&rsquo;t have per-verdict change history, so the curve shows adoption among
+            products <em>as they enter tracking</em> (first score-history entry), with each product
+            carrying its current verdict — not the moment each product shipped the capability.
+            Exact verdict history accrues from here forward.
+          </p>
+        </details>
       </section>
 
       <div className="overflow-x-auto rounded-xl border border-zinc-800">
@@ -126,7 +134,12 @@ export default async function GlobalStoryPage({
               return (
                 <tr key={`${cell.categoryId}:${cell.productId}`} className="transition hover:bg-zinc-900/50">
                   <td className="px-3 py-2">
-                    <Link href={href} className="font-medium hover:text-emerald-300">
+                    <Link href={href} className="flex items-center gap-2 font-medium hover:text-emerald-300">
+                      <ProductLogoView
+                        product={{ id: cell.productId, name: cell.productName }}
+                        size={16}
+                        hasLogo={hasLogo(cell.productId)}
+                      />
                       {cell.productName}
                     </Link>
                   </td>

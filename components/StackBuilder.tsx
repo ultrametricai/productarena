@@ -59,6 +59,9 @@ export default function StackBuilder({
   // unverified pair reads "no evidence found" — absence of an edge is absence of evidence,
   // never "doesn't integrate".
   const interconnects = useMemo(() => stackInterconnects(results, verifiedPairs), [results, verifiedPairs])
+  // id → hasLogo for the interconnect pills (pair entries carry ids/names only — the boolean was
+  // resolved server-side onto each CompareProduct, see lib/compareData.ts).
+  const hasLogoById = useMemo(() => new Map(products.map((p) => [p.id, p.hasLogo])), [products])
   const verifiedLinks = interconnects.filter((p) => p.verified)
   const unverifiedLinks = interconnects.filter((p) => !p.verified)
 
@@ -232,7 +235,18 @@ export default function StackBuilder({
                           </span>
                         </td>
                         <td className="hidden px-3 py-2.5 align-top text-xs text-zinc-500 sm:table-cell">
-                          {pick.runnerUp ? pick.runnerUp.name : '—'}
+                          {pick.runnerUp ? (
+                            <span className="flex items-center gap-1.5">
+                              <ProductLogoView
+                                product={{ id: pick.runnerUp.id, name: pick.runnerUp.name }}
+                                size={16}
+                                hasLogo={pick.runnerUp.hasLogo}
+                              />
+                              {pick.runnerUp.name}
+                            </span>
+                          ) : (
+                            '—'
+                          )}
                         </td>
                       </>
                     ) : (
@@ -249,31 +263,39 @@ export default function StackBuilder({
           {interconnects.length > 0 && (
             <div className="rounded-2xl border border-zinc-800 p-4">
               <h3 className="text-sm font-semibold">Interconnects</h3>
+              {/* One line — the "no evidence ≠ doesn't integrate" caveat rides each unverified
+                  pill's tooltip instead of a standing paragraph. */}
               <p className="mt-1 text-xs text-zinc-500">
-                Verified integration edges between your picks, each backed by a verbatim evidence
-                quote (see the{' '}
+                Verified integration edges between your picks — see the{' '}
                 <Link href="/integrations" className="underline decoration-zinc-700 hover:text-emerald-300">
                   integration graph
                 </Link>
-                ). &ldquo;No evidence found&rdquo; means exactly that — not that two products
-                don&rsquo;t integrate.
+                .
               </p>
               <div className="mt-3 flex flex-wrap gap-2 text-xs">
                 {verifiedLinks.map((p) => (
                   <span
                     key={`${p.aId}|${p.bId}`}
+                    title="A verbatim evidence quote backs this edge — see /integrations"
                     className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/5 px-2.5 py-1 text-emerald-300"
                   >
-                    {p.aName} <span aria-hidden className="text-emerald-400/70">↔</span> {p.bName}
+                    <ProductLogoView product={{ id: p.aId, name: p.aName }} size={16} hasLogo={hasLogoById.get(p.aId) ?? false} />
+                    {p.aName} <span aria-hidden className="text-emerald-400/70">↔</span>{' '}
+                    <ProductLogoView product={{ id: p.bId, name: p.bName }} size={16} hasLogo={hasLogoById.get(p.bId) ?? false} />
+                    {p.bName}
                     <span className="text-[10px] uppercase tracking-wide text-emerald-400/80">verified</span>
                   </span>
                 ))}
                 {unverifiedLinks.map((p) => (
                   <span
                     key={`${p.aId}|${p.bId}`}
+                    title="No evidence of an integration found in our corpus yet — never a claim that these two don't integrate"
                     className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 px-2.5 py-1 text-zinc-500"
                   >
-                    {p.aName} <span aria-hidden className="text-zinc-600">↔</span> {p.bName}
+                    <ProductLogoView product={{ id: p.aId, name: p.aName }} size={16} hasLogo={hasLogoById.get(p.aId) ?? false} />
+                    {p.aName} <span aria-hidden className="text-zinc-600">↔</span>{' '}
+                    <ProductLogoView product={{ id: p.bId, name: p.bName }} size={16} hasLogo={hasLogoById.get(p.bId) ?? false} />
+                    {p.bName}
                     <span className="text-[10px] uppercase tracking-wide text-zinc-600">no evidence found</span>
                   </span>
                 ))}
