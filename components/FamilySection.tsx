@@ -71,7 +71,7 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
             </thead>
             <tbody className="divide-y divide-zinc-800/70">
               {judged.map((s) => (
-                <tr key={s.key} className={`transition hover:bg-zinc-900/50 ${s.isCurrent ? 'bg-zinc-900/40' : ''}`}>
+                <tr key={s.key} className={`transition hover:bg-zinc-800/70 ${s.isCurrent ? 'bg-zinc-900/40' : ''}`}>
                   <td className="max-w-[240px] px-2 py-1.5">
                     <span className="flex flex-wrap items-center gap-1.5">
                       {s.isCurrent ? (

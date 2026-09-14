@@ -76,7 +76,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
           {rows.map((row, i) => {
             const automation = row.entry.themeScores['automation-depth'] ?? null
             return (
-              <tr key={`${row.data.category.id}:${row.product.id}`} className="group transition hover:bg-zinc-900/50">
+              <tr key={`${row.data.category.id}:${row.product.id}`} className="group transition hover:bg-zinc-800/70">
                 <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">{i + 1}</td>
                 <td className="px-3 py-2">
                   <Link

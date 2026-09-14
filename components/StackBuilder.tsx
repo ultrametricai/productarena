@@ -198,7 +198,7 @@ export default function StackBuilder({
               </thead>
               <tbody className="divide-y divide-zinc-800/70">
                 {results.map(({ role, pick, emptyReason }) => (
-                  <tr key={role.id} className="transition hover:bg-zinc-900/50">
+                  <tr key={role.id} className="transition hover:bg-zinc-800/70">
                     <td className="whitespace-nowrap px-3 py-2.5 align-top font-medium">{role.label}</td>
                     {pick ? (
                       <>

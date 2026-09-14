@@ -221,7 +221,7 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
               const rank = rankOf.get(row.productId) ?? sorted.length
               const rival = row.productId === topRivalId ? data.rankings.leaderboard[1] : data.rankings.leaderboard[0]
               return (
-                <tr key={row.productId} className="transition hover:bg-zinc-900/50">
+                <tr key={row.productId} className="transition hover:bg-zinc-800/70">
                   <td className="w-8 px-2 py-2 font-mono tabular-nums text-zinc-400">
                     {rank}
                   </td>
