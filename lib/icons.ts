@@ -56,7 +56,9 @@ const THEME_RULES: Array<[RegExp, string]> = [
   [/payment|checkout|payout|cards|spend|disputes|refund|accept/, '💳'],
   [/banking|treasury|yield|equity|fundraising|cap-table/, '🏦'],
   [/payroll|benefits|contractor|hiring|onboarding-hiring/, '💰'],
-  [/invoic|billing|bills|ledger|accounting|reconciliation|statements|coa|close-collaboration/, '🧾'],
+  [/invoic|billing|bills|ledger|accounting|reconciliation|statements|coa|close-collaboration|subscription|dunning|metering|revenue-recognition/, '🧾'],
+  [/entitlement/, '🎛️'],
+  [/fraud|risk-scoring|rules-engine|review-queue/, '🕵️'],
   [/pricing|cost|economics|valuation|409a/, '💲'],
   [/tax|currency/, '🌐'],
   // Commerce & CRM
