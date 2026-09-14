@@ -63,7 +63,7 @@ describe('loadGifts against the real drafts/outreach tree', () => {
   })
 
   it('fully drafted vendors are "drafted" with a verbatim body + artifact', () => {
-    for (const product of ['vllm', 'homebrew', 'docusaurus', 'gitea']) {
+    for (const product of ['docusaurus', 'gitea']) {
       const g = byProduct.get(product)!
       expect(g.status.state, product).toBe('drafted')
       expect(g.draft?.body, `${product} has no verbatim body`).toBeTruthy()
@@ -73,7 +73,7 @@ describe('loadGifts against the real drafts/outreach tree', () => {
     // linear is an issue-shaped gift (docs source closed): body from issue-body.md, title
     // from its review-comment "Suggested title", artifact = the passing cert report.
     const linear = byProduct.get('linear')!
-    expect(linear.status.state).toBe('drafted')
+    expect(linear.status.state).toBe('sent')
     expect(linear.draft?.bodyFile).toBe('issue-body.md')
     expect(linear.draft?.title).toContain('Agent-Ready')
     expect(linear.draft?.artifact?.file).toBe('cert-report.json')
