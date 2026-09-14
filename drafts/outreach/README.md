@@ -1,9 +1,23 @@
 # Outreach drafts
 
-**Nothing in this directory has been posted anywhere.** Every file is a draft awaiting founder
-review; sending (or discarding) is a human decision. Venue URLs and the live product-page URLs
-were checked read-only (HTTP 200) on the date noted in each draft's frontmatter — no issues,
-discussions, emails, or form submissions were created.
+**Default state: nothing in this directory has been posted anywhere.** Every file is a draft
+awaiting founder review; sending (or discarding) is a human decision. Venue URLs and the live
+product-page URLs were checked read-only (HTTP 200) on the date noted in each draft's
+frontmatter — no issues, discussions, emails, or form submissions were created. The one
+exception so far: **crawl4ai — SENT** (see its `status.json`).
+
+## Lifecycle: `status.json` (read by `lib/gifts.ts` → the unlinked `/gifts` review page)
+
+When a gift actually goes out, add (or update) `<vendor>/status.json`:
+
+```json
+{ "status": "sent", "url": "<live PR/issue URL>", "date": "YYYY-MM-DD", "note": "optional" }
+```
+
+That file is the single source of truth for lifecycle state. Without it, `lib/gifts.ts` infers:
+vendor dir with a draft → `drafted`; ranked in GIFT-LIST.md with no dir → `listed`. Future
+outreach lanes: write `status.json` the moment a PR/issue is opened — do not rewrite PR.md or
+this README's index table to track state.
 
 ## Index
 
@@ -13,7 +27,7 @@ discussions, emails, or form submissions were created.
 | [gitea](./gitea/issue-body.md) | code-hosting | gift (llms.txt offer) | github.com/go-gitea/gitea issue or gitea.com/gitea/docs PR | draft — requires founder sign-off |
 | [linear](./linear/issue-body.md) | project-management | gift (passing cert report + invitation) | github.com/linear/linear issue (docs source closed — no PR possible) | draft — requires founder sign-off |
 | [vllm](./vllm/PR.md) | local-llm-runtimes | gift PR (llms.txt, 50 links verified) | vllm-project/vllm → `docs/llms.txt` (DCO sign-off required) | draft — requires founder sign-off |
-| [crawl4ai](./crawl4ai/PR.md) | web-scraping | gift PR (llms.txt, 49 links verified) | unclecode/crawl4ai → `docs/md_v2/llms.txt` | draft — requires founder sign-off |
+| [crawl4ai](./crawl4ai/PR.md) | web-scraping | gift PR (llms.txt, 49 links verified) | unclecode/crawl4ai → `docs/md_v2/llms.txt` | **SENT** — [unclecode/crawl4ai#2267](https://github.com/unclecode/crawl4ai/pull/2267) (see `status.json`) |
 | [homebrew](./homebrew/PR.md) | package-managers | gift PR (llms.txt, 49 links verified) | Homebrew/brew → `docs/llms.txt` (Responsible-AI disclosure included) | draft — requires founder sign-off |
 | [docusaurus](./docusaurus/PR.md) | docs-platforms | gift PR (llms.txt, 54 links verified) | facebook/docusaurus → `website/static/llms.txt` (Meta CLA required) | draft — requires founder sign-off |
 | [gemini-cli](./gemini-cli/notification.md) | ai-coding | disputed-verdict notification | github.com/google-gemini/gemini-cli/discussions | draft — requires founder sign-off |

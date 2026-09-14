@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import AiEraBadge from '@/components/AiEraBadge'
 import IconChip from '@/components/IconChip'
 import PersonaChip from '@/components/PersonaChip'
 import ProductLogoView from '@/components/ProductLogoView'
@@ -271,8 +272,11 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
   // theme icons for the shared-theme rows (same icon that theme shows everywhere else).
   // `href` (fixed metric rows only) links the row label to the methodology entry explaining how
   // that number is computed — theme rows have no per-theme anchor, so they stay plain text.
-  const numericRows: Array<{ label: string; icon: string; iconTitle: string; href?: string; values: Array<number | null> }> = [
-    { label: 'PA Score', icon: metricIcon('paScore'), iconTitle: metricTooltip('paScore'), href: '/methodology#arena-score', values: selected.map((p) => p.aiEra) },
+  // `pill` marks the PA Score row: it renders the site-wide AiEraBadge emerald pill (same as
+  // every leaderboard) instead of ScoreCell's winner-tinted text — PA Score never appears as
+  // bare text anywhere on the site. Other metrics keep ScoreCell (winner highlighting intact).
+  const numericRows: Array<{ label: string; icon: string; iconTitle: string; href?: string; pill?: boolean; values: Array<number | null> }> = [
+    { label: 'PA Score', icon: metricIcon('paScore'), iconTitle: metricTooltip('paScore'), href: '/methodology#arena-score', pill: true, values: selected.map((p) => p.aiEra) },
     { label: 'Agent-ready', icon: metricIcon('agentReady'), iconTitle: metricTooltip('agentReady'), href: '/methodology#ai-era', values: selected.map((p) => p.agentReady) },
     { label: 'AI-native', icon: metricIcon('aiNative'), iconTitle: metricTooltip('aiNative'), href: '/methodology#ai-era', values: selected.map((p) => p.agenticApp) },
     { label: 'API quality', icon: metricIcon('apiQuality'), iconTitle: metricTooltip('apiQuality'), href: '/methodology#ai-era', values: selected.map((p) => p.apiQuality) },
@@ -407,7 +411,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                     </th>
                     {row.values.map((value, i) => (
                       <td key={selected[i].id} className="px-3 py-2">
-                        <ScoreCell value={value} winner={winners.has(i)} />
+                        {row.pill ? <AiEraBadge value={value} size="sm" /> : <ScoreCell value={value} winner={winners.has(i)} />}
                       </td>
                     ))}
                   </tr>

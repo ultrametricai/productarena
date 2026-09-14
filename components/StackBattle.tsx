@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import AiEraBadge from '@/components/AiEraBadge'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import arenaIcons from '@/data/arena-icons.json'
@@ -63,7 +64,14 @@ function AggregateRows({ agg }: { agg: StackAggregates }) {
     <dl className="space-y-1.5 text-sm">
       <div className="flex items-baseline justify-between gap-2">
         <dt className="text-xs text-zinc-500" title="Mean of the stack's published PA Scores — an aggregate, not a judged result.">mean PA Score</dt>
-        <dd>{mean(agg.meanAiEra, agg.aiEraCount, agg.productCount)}</dd>
+        {/* Same emerald pill as every PA Score on the site (AiEraBadge) — the plain mean()
+            rendering stays for agent-ready below, which is a different metric. */}
+        <dd className="flex items-center gap-1">
+          <AiEraBadge value={agg.meanAiEra} size="xs" />
+          {agg.meanAiEra !== null && agg.aiEraCount < agg.productCount && (
+            <span className="text-[10px] text-zinc-500">({agg.aiEraCount} of {agg.productCount} scored)</span>
+          )}
+        </dd>
       </div>
       <div className="flex items-baseline justify-between gap-2">
         <dt className="text-xs text-zinc-500" title="Mean of the stack's agent-ready scores — how drivable the stack is for an agent overall.">mean agent-ready</dt>
@@ -100,9 +108,7 @@ function AggregateRows({ agg }: { agg: StackAggregates }) {
                 hasLogo={agg.weakestLink.hasLogo}
               />
               {agg.weakestLink.name}{' '}
-              <span className="font-mono tabular-nums text-zinc-500">
-                {(agg.weakestLink.aiEra as number).toFixed(0)}/100
-              </span>
+              <AiEraBadge value={agg.weakestLink.aiEra} size="xs" />
             </Link>
           ) : (
             <span className="text-zinc-500">n/a</span>
@@ -308,11 +314,7 @@ export default function StackBattle({
           >
             <ProductLogoView product={{ id: p.id, name: p.name }} size={18} hasLogo={p.hasLogo} />
             <span className="font-medium">{p.name}</span>
-            {p.aiEra !== null && (
-              <span className={`font-mono tabular-nums ${winner ? 'text-emerald-400' : 'text-zinc-500'}`}>
-                {p.aiEra.toFixed(0)}/100
-              </span>
-            )}
+            {p.aiEra !== null && <AiEraBadge value={p.aiEra} size="xs" />}
           </Link>
         ))}
       </div>
