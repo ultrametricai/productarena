@@ -88,7 +88,7 @@ export default function BattleView({
                     const e = evidence.get(id)!
                     return (
                       <li key={id} className="text-xs text-zinc-500">
-                        <a href={e.url} target="_blank" rel="noopener noreferrer" className="underline decoration-zinc-700 hover:text-emerald-300">
+                        <a href={e.url} target="_blank" rel="noopener noreferrer" title={`Open the cited source (tier ${e.tier} evidence)`} className="underline decoration-zinc-700 hover:text-emerald-300">
                           [{e.tier}]
                         </a>{' '}
                         &ldquo;{e.excerpt.length > 140 ? e.excerpt.slice(0, 140) + '…' : e.excerpt}&rdquo;
@@ -102,6 +102,7 @@ export default function BattleView({
                       href={proof.url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      title="Open the recorded probe proof for this verdict"
                       className="text-xs text-zinc-500 hover:text-emerald-300"
                     >
                       proof ↗

@@ -233,6 +233,7 @@ function SidePicker({
                   type="button"
                   onClick={() => remove(p.id)}
                   aria-label={`Remove ${p.name} from ${label}`}
+                  title={`Remove ${p.name} from ${label}`}
                   className="text-zinc-500 transition hover:text-red-400"
                 >
                   ×

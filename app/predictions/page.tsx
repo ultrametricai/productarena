@@ -122,7 +122,7 @@ export default function PredictionsPage() {
                     const a = currentScore(q.arena, q.productA)
                     const b = currentScore(q.arena, q.productB)
                     return a !== null && b !== null ? (
-                      <span className="font-mono text-xs text-zinc-500">current gap {Math.abs(b - a).toFixed(1)}</span>
+                      <span className="font-mono text-xs text-zinc-500" title="Absolute difference between the two products' current PA Scores — the margin the challenger has to close">current gap {Math.abs(b - a).toFixed(1)}</span>
                     ) : null
                   })()}
                 </div>

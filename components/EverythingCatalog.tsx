@@ -148,10 +148,10 @@ export default function EverythingCatalog({
           </select>
           <span aria-hidden className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-emerald-400">▾</span>
         </span>
-        <button type="button" onClick={() => set({ ossOnly: !facets.ossOnly })} className={toggleClass(facets.ossOnly)} aria-pressed={facets.ossOnly}>
+        <button type="button" onClick={() => set({ ossOnly: !facets.ossOnly })} className={toggleClass(facets.ossOnly)} aria-pressed={facets.ossOnly} title="Only open-source products">
           OSS
         </button>
-        <button type="button" onClick={() => set({ mcpOnly: !facets.mcpOnly })} className={toggleClass(facets.mcpOnly)} aria-pressed={facets.mcpOnly}>
+        <button type="button" onClick={() => set({ mcpOnly: !facets.mcpOnly })} className={toggleClass(facets.mcpOnly)} aria-pressed={facets.mcpOnly} title="Only products with a judged full or partial MCP server">
           has MCP
         </button>
         <button

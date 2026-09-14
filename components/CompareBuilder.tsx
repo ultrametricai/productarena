@@ -76,7 +76,8 @@ function fetchArenaStories(arenaId: string): Promise<ArenaStoryData> {
 }
 
 function ScoreCell({ value, winner }: { value: number | null; winner: boolean }) {
-  if (value === null) return <span className="text-zinc-500">n/a</span>
+  // Italic like every other n/a/untested rendering site-wide (AiEraBadge, ArenaTable cells).
+  if (value === null) return <span className="italic text-zinc-500">n/a</span>
   return (
     <span className={`font-mono tabular-nums ${winner ? 'font-semibold text-emerald-300' : 'text-zinc-300'}`}>
       {value.toFixed(0)}
@@ -361,7 +362,9 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-zinc-800 text-left">
-                <th scope="col" className="px-3 py-3 text-[10px] font-normal uppercase tracking-widest text-zinc-400" />
+                <th scope="col" className="px-3 py-3 text-[10px] font-normal uppercase tracking-widest text-zinc-400">
+                  <span className="sr-only">Metric</span>
+                </th>
                 {selected.map((p) => (
                   <th key={p.id} scope="col" className="min-w-[140px] px-3 py-3 font-normal align-top">
                     <div className="flex flex-col items-start gap-1">
@@ -421,7 +424,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                 <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
                   <span className="inline-flex items-center gap-1.5">
                     <IconChip icon={metricIcon('access')} title={metricTooltip('access')} />
-                    <span title="Which agent doorways exist: MCP server, official command-line tool (CLI), public API — ✓ full, ~ partial, — none found">Access</span>
+                    <span title="Which agent doorways exist: MCP server, official command-line tool (CLI), public API — ✓ full, ~ partial, ! disputed, — none found">Access</span>
                   </span>
                 </th>
                 {selected.map((p) => (

@@ -7,9 +7,9 @@ import {
 } from '@/lib/arenaTableSort'
 
 const rows: ArenaTableRow[] = [
-  { productId: 'b', name: 'Bravo', vendor: 'Vendor B', initScore: 40, agentReady: 50, agenticApp: null, apiQuality: 20, openness: 30, automation: 10, popularity: 500, claimsIntegrity: 60 },
-  { productId: 'a', name: 'Alpha', vendor: 'Vendor A', initScore: 80, agentReady: null, agenticApp: 60, apiQuality: 70, openness: 90, automation: 40, popularity: null, claimsIntegrity: null },
-  { productId: 'c', name: 'Charlie', vendor: 'Vendor C', initScore: null, agentReady: 10, agenticApp: 20, apiQuality: null, openness: null, automation: 5, popularity: 200_000, claimsIntegrity: 90 },
+  { productId: 'b', name: 'Bravo', vendor: 'Vendor B', oss: false, initScore: 40, agentReady: 50, agenticApp: null, apiQuality: 20, openness: 30, automation: 10, popularity: 500, claimsIntegrity: 60 },
+  { productId: 'a', name: 'Alpha', vendor: 'Vendor A', oss: true, initScore: 80, agentReady: null, agenticApp: 60, apiQuality: 70, openness: 90, automation: 40, popularity: null, claimsIntegrity: null },
+  { productId: 'c', name: 'Charlie', vendor: 'Vendor C', oss: false, initScore: null, agentReady: 10, agenticApp: 20, apiQuality: null, openness: null, automation: 5, popularity: 200_000, claimsIntegrity: 90 },
 ]
 
 describe('sortArenaRows', () => {
@@ -60,6 +60,16 @@ describe('sortArenaRows', () => {
     expect(sorted.map((r) => r.name)).toEqual(['Charlie', 'Bravo', 'Alpha'])
   })
 
+  it('sorts open-source products first on oss desc, stable within each group', () => {
+    const sorted = sortArenaRows(rows, 'oss', 'desc')
+    expect(sorted.map((r) => r.productId)).toEqual(['a', 'b', 'c'])
+  })
+
+  it('sorts commercial products first on oss asc', () => {
+    const sorted = sortArenaRows(rows, 'oss', 'asc')
+    expect(sorted.map((r) => r.productId)).toEqual(['b', 'c', 'a'])
+  })
+
   it('treats rank as an alias for initScore ordering', () => {
     expect(sortArenaRows(rows, 'rank', 'desc').map((r) => r.productId)).toEqual(
       sortArenaRows(rows, 'initScore', 'desc').map((r) => r.productId),
@@ -83,6 +93,10 @@ describe('defaultDirectionFor', () => {
 
   it('defaults name to ascending', () => {
     expect(defaultDirectionFor('name')).toBe('asc')
+  })
+
+  it('defaults oss to descending (open source first)', () => {
+    expect(defaultDirectionFor('oss')).toBe('desc')
   })
 })
 

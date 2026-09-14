@@ -26,6 +26,9 @@ export default function TermsPage() {
           Plain-language terms for the ProductArena site and datasets. The authoritative data license is{' '}
           <a
             href={`https://github.com/${REPO}/blob/main/DATA-LICENSE`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="The data license on GitHub"
             className="underline decoration-zinc-700 hover:text-emerald-300"
           >
             DATA-LICENSE

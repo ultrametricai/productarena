@@ -157,8 +157,8 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               <SortableTh col="arena" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 <span title="The product category (arena) it competes in — click through for that arena's full leaderboard">Arena</span>
               </SortableTh>
-              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden w-12 md:table-cell">
-                <span title="Open source — the code is publicly available">OSS</span>
+              <SortableTh col="oss" current={column} direction={direction} onSort={handleSort} className="hidden w-12 md:table-cell">
+                <span title="Open source — the code is publicly available. Click to sort open-source products first.">OSS</span>
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
                 <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
@@ -173,10 +173,15 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 <span title="API quality /100 — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.">API</span>
               </SortableTh>
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
-                <span title="GitHub stars — adoption signal from public registries; never part of the PA Score. Click a count to open the repo.">GitHub ★</span>
+                <span title="GitHub stars — adoption signal from public registries; never part of the PA Score. When the repo is known, clicking a count opens it.">GitHub ★</span>
               </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 <span title="Agent access surfaces — MCP server / CLI / API, from judged evidence: ✓ full, ~ partial, ! disputed, — none found">Access</span>
+              </SortableTh>
+              {/* Fixed slim compare column at the row's end — the affordance used to sit next to
+                  the product name, so it shifted with name width and made the layout move. */}
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
+                <span className="sr-only">Compare</span>
               </SortableTh>
               {watchlistOn && (
                 <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
@@ -202,17 +207,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       </Link>
                       {row.hotReason && <HotChip reason={row.hotReason} />}
                       <YcBadge ycBatch={row.ycBatch} />
-                      {/* Compact compare affordance: a plain link into /compare?p=<id> — the
-                          compare page owns all selection state via its URL, so no cross-page
-                          state is needed here. */}
-                      <Link
-                        href={`/compare?p=${row.productId}`}
-                        title={`Compare ${row.name} with other products`}
-                        aria-label={`Compare ${row.name} with other products`}
-                        className="shrink-0 rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
-                      >
-                        +⇆
-                      </Link>
                     </div>
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">
@@ -305,6 +299,19 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       })}
                     </div>
                   </td>
+                  {/* Compact compare affordance in its own fixed-width end cell: a plain link
+                      into /compare?p=<id> — the compare page owns all selection state via its
+                      URL, so no cross-page state is needed here. */}
+                  <td className="w-8 px-2 py-2 text-center">
+                    <Link
+                      href={`/compare?p=${row.productId}`}
+                      title={`Compare ${row.name} with other products`}
+                      aria-label={`Compare ${row.name} with other products`}
+                      className="inline-block rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
+                    >
+                      +⇆
+                    </Link>
+                  </td>
                   {watchlistOn && (
                     <td className="px-2 py-2 text-center">
                       <WatchButton productId={row.productId} productName={row.name} size="sm" />
@@ -315,7 +322,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={watchlistOn ? 10 : 9} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={watchlistOn ? 11 : 10} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>

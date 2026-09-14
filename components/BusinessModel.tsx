@@ -26,6 +26,7 @@ export function BusinessModelSection({ product }: { product: Product }) {
           href={bm.url}
           target="_blank"
           rel="noopener noreferrer"
+          title="Open the vendor's pricing page"
           className="mt-2 inline-block text-xs text-zinc-400 hover:text-emerald-300"
         >
           pricing ↗

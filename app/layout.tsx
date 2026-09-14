@@ -232,6 +232,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="flex shrink-0 items-baseline gap-2">
               <a
                 href="https://ultrametric.ai"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="hidden text-sm text-zinc-500 transition hover:text-emerald-300 sm:inline"
                 title="Ultrametric home"
               >
