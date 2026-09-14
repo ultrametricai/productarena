@@ -21,6 +21,7 @@ discussions, emails, or form submissions were created.
 | [logseq](./logseq/notification.md) | notes-knowledge | disputed-verdict notification | github.com/logseq/logseq/discussions | draft — requires founder sign-off |
 | [sentry](./sentry/notification.md) | observability | disputed-verdict notification | github.com/getsentry/sentry/discussions | draft — requires founder sign-off |
 | [cockroachdb](./cockroachdb/notification.md) | serverless-databases | disputed-verdict notification | github.com/cockroachdb/cockroach/discussions | draft — requires founder sign-off |
+| [stripe](./stripe/AGENTIC-ROADMAP.md) | payments | agentic roadmap (gift/outreach package: full 2026 agent-surface map + ranked gap list from the Opportunities engine) | mcp@stripe.com / partner channel — founder decides | draft — requires founder sign-off |
 
 ## Gift-PR drafts: selection rationale
 
