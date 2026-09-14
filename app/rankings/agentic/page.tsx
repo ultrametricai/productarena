@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import AgenticIndexTable from '@/components/AgenticIndexTable'
+import RankingsNav from '@/components/RankingsNav'
 import { loadAll } from '@/lib/data'
 
 export function generateMetadata(): Metadata {
@@ -37,6 +38,7 @@ export default function AgenticRankingPage() {
         </p>
       </div>
       <AgenticIndexTable categories={categories} />
+      <RankingsNav current="agentic" />
     </div>
   )
 }

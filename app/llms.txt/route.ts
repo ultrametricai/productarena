@@ -57,6 +57,12 @@ ${leadingBattleLinks}
 
 - [Most agentic](${SITE}/rankings/agentic): every product ranked by AGENT-READY (can an agent reach and operate it at all).
 - [Most AI-native](${SITE}/rankings/ai-native): every product ranked by AI-NATIVE (does the product act agentically on its own behalf).
+- [Claims vs reality](${SITE}/rankings/claims-integrity): every product ranked by how well its own website claims survive independent verification.
+- [Most connected](${SITE}/rankings/most-connected): products ranked by verified integration edges (every edge carries a verbatim evidence quote).
+- [Most tested](${SITE}/rankings/most-tested): products ranked by the share of verdicts backed by tested evidence (hands-on probe or inspectable source) rather than vendor claims.
+- [Rising & falling](${SITE}/rankings/rising): the biggest 30-day PA Score gains and falls, derived from the committed score history.
+- [Most open](${SITE}/rankings/most-open): products ranked by evidence-graded openness (self-hosting, full export, open license, API parity).
+- [Best API](${SITE}/rankings/best-api): products ranked by API quality (machine-readable specs, sandboxes, versioning, interactive docs); untested APIs are unscored, never zero.
 
 ## Data API (JSON, no auth)
 
