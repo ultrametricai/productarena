@@ -59,7 +59,8 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
   const allRows = buildIndex(categories)
   const rows = limit === undefined ? allRows : allRows.slice(0, limit)
   return (
-    <div className="overflow-x-auto rounded-xl border border-zinc-800">
+    // `relative`: see AgenticIndexTable — keeps absolute sr-only spans inside the scroll clip.
+    <div className="relative overflow-x-auto rounded-xl border border-zinc-800">
       <table className="w-full min-w-[640px] border-collapse text-sm">
         <thead>
           <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-500">

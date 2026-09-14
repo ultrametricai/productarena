@@ -146,7 +146,7 @@ export default function MethodologyPage() {
         </table>
         <p className="mt-3 text-xs text-zinc-400">
           Products with no testable claims are unscored (null, never a fabricated 0) and sort last
-          in the <a href="/rankings/claims-integrity" className="underline decoration-zinc-700 hover:text-emerald-300">claims-vs-reality ranking</a>.
+          in the <Link href="/rankings/claims-integrity" className="underline decoration-zinc-700 hover:text-emerald-300">claims-vs-reality ranking</Link>.
           Computed in <span className={CODE}>lib/claimsIntegrity.ts</span>; each product page&apos;s
           &quot;Claims vs evidence&quot; section shows the claim-by-claim breakdown.
         </p>
@@ -171,12 +171,12 @@ export default function MethodologyPage() {
       </p>
 
       <div className="flex flex-wrap gap-3 text-sm">
-        <a href="/llms.txt" className="underline decoration-zinc-700 hover:text-emerald-300">
+        <Link href="/llms.txt" className="underline decoration-zinc-700 hover:text-emerald-300">
           /llms.txt
-        </a>
-        <a href="/openapi.json" className="underline decoration-zinc-700 hover:text-emerald-300">
+        </Link>
+        <Link href="/openapi.json" className="underline decoration-zinc-700 hover:text-emerald-300">
           /openapi.json
-        </a>
+        </Link>
         <a href={`https://github.com/${REPO}/blob/main/CONTRIBUTING.md`} className="underline decoration-zinc-700 hover:text-emerald-300">
           CONTRIBUTING.md
         </a>

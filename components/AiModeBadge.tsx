@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { verdictFor, type CategoryData } from '@/lib/data'
 
 const STORY_ID = 'agentic-builtin-assistant'
@@ -22,12 +23,14 @@ export default function AiModeBadge({
   const v = verdictFor(data, productId, STORY_ID)
   if (v.verdict !== 'full' && v.verdict !== 'partial') return null
   return (
-    <a
+    // next/link, not a plain <a>: the site lives under the /productarena basePath, which Next
+    // only applies to Link/router navigations — a raw <a href="/arena/..."> escapes the app.
+    <Link
       href={href}
       title={`Has a built-in AI assistant you can delegate tasks to (${v.verdict}). ${v.rationale}`}
       className={`inline-flex w-fit items-center gap-1 rounded-full bg-violet-950 px-2 py-0.5 text-xs font-medium text-violet-300 ring-1 ring-violet-800 transition hover:ring-violet-600 ${className}`}
     >
       <span aria-hidden>✨</span> Built-in AI assistant
-    </a>
+    </Link>
   )
 }
