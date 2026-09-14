@@ -3,6 +3,7 @@ import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import AccountMenu from "@/components/AccountMenu";
+import InstantTooltip from "@/components/InstantTooltip";
 import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
 import { loadArenaSections } from "@/lib/arenaSections";
 import CommandPalette from "@/components/CommandPalette";
@@ -380,6 +381,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           </div>
         </footer>
+        <InstantTooltip />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: SITE_JSONLD }} />
         {GA_ID && (
           // Google Analytics 4 — the site-wide ultrametric.ai property (G-WWC2ZJRDCB);
