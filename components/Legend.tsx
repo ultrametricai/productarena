@@ -23,10 +23,13 @@ function Chip({ className, href, title, children }: { className: string; href: s
 }
 
 function Item({ chip, gloss }: { chip: React.ReactNode; gloss: string }) {
+  // No whitespace-nowrap on the gloss: the auth-gated entry's long gloss must wrap inside a
+  // 375px viewport instead of forcing horizontal page scroll (chip and gloss still start on
+  // the same line — the chip itself never breaks).
   return (
-    <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
+    <span className="inline-flex min-w-0 items-center gap-1.5">
       {chip}
-      <span className="text-[11px] text-zinc-400">{gloss}</span>
+      <span className="min-w-0 text-[11px] text-zinc-400">{gloss}</span>
     </span>
   )
 }

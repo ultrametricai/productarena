@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import AiEraBadge from '@/components/AiEraBadge'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import RankingsNav from '@/components/RankingsNav'
@@ -117,8 +118,9 @@ function TrendTable({ rows, direction }: { rows: TrendRow[]; direction: 'up' | '
               <td className="hidden px-3 py-2 sm:table-cell">
                 <Sparkline values={row.values} label={`${row.product.name} PA Score, every recorded point`} />
               </td>
-              <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
-                {row.aiEra === null ? <span className="text-zinc-500">n/a</span> : <>{row.aiEra.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+              <td className="hidden px-3 py-2 sm:table-cell">
+                {/* Same emerald pill every leaderboard uses for the PA Score (AiEraBadge). */}
+                <AiEraBadge value={row.aiEra} size="sm" href="/methodology#arena-score" />
               </td>
             </tr>
           ))}
