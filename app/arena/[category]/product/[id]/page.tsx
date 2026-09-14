@@ -12,6 +12,7 @@ import GeoMark from '@/components/GeoMark'
 import IntegrationChips, { chipTitle } from '@/components/IntegrationChips'
 import MomentumChip from '@/components/MomentumChip'
 import MomentumTrend from '@/components/MomentumTrend'
+import OpportunitiesSection from '@/components/OpportunitiesSection'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
 import PricingSignals from '@/components/PricingSignals'
@@ -324,6 +325,10 @@ export default async function ProductPage({
           table={<StoryVerdictsTable category={category} productId={id} rows={verdictRows} />}
         />
       </div>
+
+      {/* The vendor's to-do list: every none/partial verdict above, ranked by score headroom
+          (lib/opportunities.ts) — collapsed by default, pure derivation from the verdicts. */}
+      <OpportunitiesSection data={data} productId={id} productName={product.name} />
 
       {/* The inverse of the table's per-row "Covered by" chips: each evidence surface with the
           stories it covers (lib/storyCoverage.ts) — collapsed by default, pure derivation from

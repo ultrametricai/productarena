@@ -103,6 +103,7 @@ export function buildStackEntries(stacks: StackSearchSource[], keywords?: Record
 // data); alias phrases come from data/search-aliases.json `pages`, keyed by href.
 const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
   { href: '/global', label: 'Capability adoption', sublabel: 'MCP, llms.txt & more across the industry' },
+  { href: '/missing', label: 'Missing startups', sublabel: 'Arena gaps where agent startups are missing' },
   { href: '/compare', label: 'Compare', sublabel: 'Any products, side by side' },
   { href: '/certified', label: 'Certified Agent-Ready', sublabel: 'The certification registry' },
   { href: '/stacks', label: 'AI Stacks', sublabel: 'Curated cross-arena stacks' },
