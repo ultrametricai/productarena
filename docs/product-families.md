@@ -257,9 +257,17 @@ from a terminal", "generate and edit images in conversation") — never benchmar
   Vibe for Code (ex-Mistral Code) is a real coding agent (PyPI `mistral-vibe`), Studio/La
   Plateforme the platform. A family needs a judged anchor; `vibe → ai-assistants` is the obvious
   next-wave bring-up (docs.mistral.ai llms.txt + api.mistral.ai clean 401 already probe-ready).
-- **Meta**: Muse (personal agent, launched 2026-09-08 — six days old) + Muse Code (terminal
-  coding agent) + Meta AI app. Too fresh to judge honestly (thin track record is the finding);
-  revisit in a month. api.meta.ai answers keyless 401 — probe surface exists when we do.
+- **Meta**: Muse (personal agent, launched 2026-09-08) + Muse Code (terminal coding agent) +
+  Meta AI app. The previous wave deferred Muse as too fresh; a founder directive ("go deep on
+  muse.ai", 2026-09-14) brought Muse up in ai-assistants on its launch-week surface — the
+  verdicts are honest about the thinness (#8/9, mostly none/na: login-walled product, no public
+  API/docs/llms.txt — /pricing, /api, /docs, /llms.txt all 307 to the auth wall, verified). The
+  muse.ai DOMAIN history is documented in data/arena-roadmap.json (video-hosting entry): the
+  original muse.ai video startup rebranded to Skiv (skiv.com, March 2026) and the domain now
+  serves Meta's agent. Still no Meta family — one judged product plus page-only candidates
+  doesn't clear the bar; revisit with Muse Code. api.meta.ai answers keyless 401 — probe
+  surface exists for Meta AI's developer edge, but that is not Muse's API, so Muse honestly
+  records no probes (same call as ChatGPT/Claude/Gemini/Copilot).
 - Cross-lab observation for the ai-coding roadmap: xAI (Grok Build), Meta (Muse Code), and
   Mistral (Vibe for Code) all now ship curl-installed terminal coding agents — three honest
   bring-up candidates queued for one wave.

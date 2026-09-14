@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-65-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-354-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-20755-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-361-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-21133-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **65 arenas, 358 products, 20,977 judged verdicts.**
+As of the last full pipeline run: **65 arenas, 361 products, 21,133 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -180,7 +180,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Startup Legal & Incorporation (`legal-ops`) | stripe-atlas, clerky, docusign, firstbase, ironclad, legalzoom |
 | Robotics Software Platforms (`robotics-platforms`) | formant, gazebo, nvidia-isaac, ros2, viam |
 | Terminals (`terminals`) | warp, ghostty, iterm2, alacritty, wezterm, kitty |
-| AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot, grok |
+| AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot, grok, muse, poke, martin |
 | AI Research Agents (`ai-research-agents`) | elicit, consensus, futurehouse, undermind, sakana-marlin, notebooklm |
 | Package & Toolchain Managers (`package-managers`) | homebrew, nix, pnpm, uv, bun, mise |
 | Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus, helixdb |
