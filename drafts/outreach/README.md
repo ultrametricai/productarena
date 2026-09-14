@@ -74,3 +74,14 @@ consequential the dispute is (headline score or a close race), (c) having a real
    `docs/VENDOR-RESPONSES.md` — both exist in this repo; the repo must remain public for the
    links to work.
 5. Post from a human account, one vendor at a time; space them out.
+
+## Pre-send checklist (MANDATORY — learned from Homebrew #23967 being bot-closed)
+
+1. Read the target repo's `.github/PULL_REQUEST_TEMPLATE.md` and CONTRIBUTING.md — the PR BODY
+   MUST contain their template, checkboxes verbatim (unticked where honestly not done), our
+   content woven into their sections.
+2. Read any AI-usage policy (e.g. https://docs.brew.sh/Responsible-AI-Usage) — disclose AI
+   assistance honestly in the designated place; never tick "no AI" falsely.
+3. DCO/CLA: sign-off trailers where required; CLA repos need the founder's signature first.
+4. Re-verify the gap (llms.txt still 404) and every artifact URL (200) on send day.
+5. One AI-assisted PR open at a time per repo policy where stated.
