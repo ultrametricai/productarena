@@ -14,7 +14,8 @@
         {
           "id": "n1",
           "label": "Choose formation service",
-          "route": "form",
+          "route": "person",
+          "vendorOptions": ["clerky", "stripe_atlas", "firstbase", "doola"],
           "estimatedMinutes": 10
         },
         {
@@ -2326,6 +2327,7 @@
           "id": "n1",
           "label": "Connect Stripe",
           "route": "agent",
+          "vendor": "stripe",
           "estimatedMinutes": 3,
           "async": true,
           "functionCalls": [
@@ -2340,6 +2342,7 @@
           "id": "n2",
           "label": "Sync customers and subscriptions",
           "route": "agent",
+          "vendor": "stripe",
           "estimatedMinutes": 5,
           "async": true,
           "functionCalls": [
@@ -2354,6 +2357,7 @@
           "id": "n3",
           "label": "Sync payment history",
           "route": "agent",
+          "vendor": "stripe",
           "estimatedMinutes": 3,
           "functionCalls": [
             {
@@ -2409,12 +2413,14 @@
           "id": "n2",
           "label": "Choose bank provider",
           "route": "person",
+          "vendorOptions": ["mercury", "brex", "relay"],
           "estimatedMinutes": 10
         },
         {
           "id": "n3",
           "label": "Apply for business account",
           "route": "person",
+          "vendorOptions": ["mercury", "brex"],
           "estimatedMinutes": 20,
           "async": true
         },
@@ -2887,6 +2893,7 @@
           "id": "n1",
           "label": "Fetch account balances",
           "route": "agent",
+          "vendor": "mercury",
           "estimatedMinutes": 2,
           "functionCalls": [
             {
@@ -3169,12 +3176,14 @@
           "id": "n2",
           "label": "Compare payroll providers",
           "route": "agent",
+          "vendorOptions": ["gusto", "rippling", "deel", "justworks"],
           "estimatedMinutes": 5
         },
         {
           "id": "n3",
           "label": "Sign up for payroll",
           "route": "person",
+          "vendorOptions": ["gusto", "rippling", "deel"],
           "estimatedMinutes": 30,
           "async": true
         },
@@ -3232,12 +3241,14 @@
           "id": "n1",
           "label": "Compare accounting tools",
           "route": "agent",
+          "vendorOptions": ["quickbooks", "xero", "pilot"],
           "estimatedMinutes": 5
         },
         {
           "id": "n2",
           "label": "Sign up and configure",
           "route": "person",
+          "vendorOptions": ["quickbooks", "xero"],
           "estimatedMinutes": 30,
           "async": true
         },
@@ -3353,7 +3364,7 @@
     "complexity": "complex",
     "category": "payroll_hiring",
     "supportLevel": "partial",
-    "supportReason": "Gusto API supports onboarding and payroll. Offer letter drafting automatable. Background checks and benefits selection require human interaction.",
+    "supportReason": "Gusto's Embedded Payroll API supports onboarding, pay schedules, and payroll; Carta's API drafts option grants for board approval. Offer letter drafting automatable. Background checks and benefits selection require human interaction.",
     "vendors": ["gusto", "gmail", "docusign", "slack", "carta"],
     "dag": {
       "nodes": [
@@ -3408,11 +3419,18 @@
         {
           "id": "n5",
           "label": "Set up payroll schedule",
-          "route": "form",
+          "route": "agent",
           "vendor": "gusto",
           "approvalRequired": true,
           "riskLevel": "medium",
-          "estimatedMinutes": 10
+          "estimatedMinutes": 10,
+          "functionCalls": [
+            {
+              "method": "PUT /v1/companies/{company_id}/pay_schedules/{pay_schedule_id}",
+              "type": "rest",
+              "description": "Configure the pay schedule via Gusto's Embedded Payroll REST API (probe-verified llms.txt and per-page API docs)"
+            }
+          ]
         },
         {
           "id": "n6",
@@ -3465,11 +3483,18 @@
         {
           "id": "n10",
           "label": "Grant stock options",
-          "route": "form",
+          "route": "agent",
           "vendor": "carta",
           "approvalRequired": true,
           "riskLevel": "high",
-          "estimatedMinutes": 15
+          "estimatedMinutes": 15,
+          "functionCalls": [
+            {
+              "method": "carta.draftOptionGrants.create()",
+              "type": "rest",
+              "description": "Create a draft option grant via Carta's OAuth API — board approval finalizes it (the gate stays)"
+            }
+          ]
         }
       ],
       "edges": [
@@ -4234,7 +4259,7 @@
     "complexity": "complex",
     "category": "bookkeeping",
     "supportLevel": "partial",
-    "supportReason": "QuickBooks API enables transaction categorization and reports. Bank reconciliation and review need human oversight.",
+    "supportReason": "QuickBooks API and official Intuit MCP server enable transaction categorization, bank auto-matching for reconciliation, and reports. Final review and approval stay human.",
     "vendors": ["quickbooks", "mercury"],
     "dag": {
       "nodes": [
@@ -4271,10 +4296,18 @@
         {
           "id": "n3",
           "label": "Reconcile bank statement",
-          "route": "form",
+          "route": "agent",
           "vendor": "quickbooks",
+          "approvalRequired": true,
           "riskLevel": "medium",
-          "estimatedMinutes": 15
+          "estimatedMinutes": 15,
+          "functionCalls": [
+            {
+              "method": "qbo.banking.matchTransactions()",
+              "type": "sdk",
+              "description": "Auto-match imported bank transactions via the QBO API / official Intuit MCP server — a human signs off on the close"
+            }
+          ]
         },
         {
           "id": "n4",
@@ -4321,6 +4354,7 @@
           "id": "n8",
           "label": "Accountant review and approval",
           "route": "person",
+          "vendorOptions": ["pilot"],
           "approvalRequired": true,
           "riskLevel": "high",
           "estimatedMinutes": 1440,
@@ -7186,17 +7220,24 @@
     "complexity": "moderate",
     "category": "data_analytics",
     "supportLevel": "partial",
-    "supportReason": "PostHog has API for event/dashboard management. Initial instrumentation requires code changes.",
+    "supportReason": "PostHog's public REST API (live OpenAPI spec, official MCP server) covers project creation and event/dashboard management. Initial instrumentation is a code change — a coding agent can make it, a human reviews the diff.",
     "vendors": ["posthog"],
     "dag": {
       "nodes": [
         {
           "id": "n1",
           "label": "Create PostHog project",
-          "route": "form",
+          "route": "agent",
           "vendor": "posthog",
           "approvalRequired": true,
-          "estimatedMinutes": 10
+          "estimatedMinutes": 10,
+          "functionCalls": [
+            {
+              "method": "POST /api/organizations/@current/projects/",
+              "type": "rest",
+              "description": "Create the project via PostHog's public REST API (live OpenAPI spec, official MCP server)"
+            }
+          ]
         },
         {
           "id": "n2",
@@ -8516,6 +8557,7 @@
           "id": "n1",
           "label": "Create Workspace user",
           "route": "form",
+          "vendor": "google_workspace",
           "estimatedMinutes": 2
         }
       ],
@@ -8793,6 +8835,7 @@
           "id": "n1",
           "label": "Search + check availability",
           "route": "agent",
+          "vendor": "name_com",
           "estimatedMinutes": 1
         }
       ],
@@ -8819,15 +8862,24 @@
         {
           "id": "n1",
           "label": "Quote + checkout (Stripe)",
-          "route": "form",
+          "route": "agent",
+          "vendor": "stripe",
           "estimatedMinutes": 2,
           "approvalRequired": true,
-          "riskLevel": "medium"
+          "riskLevel": "medium",
+          "functionCalls": [
+            {
+              "method": "stripe.checkout.sessions.create()",
+              "type": "sdk",
+              "description": "Create the Checkout Session for the domain quote — a human approves and pays (spend gate)"
+            }
+          ]
         },
         {
           "id": "n2",
           "label": "Register at Name.com",
           "route": "agent",
+          "vendor": "name_com",
           "estimatedMinutes": 3,
           "async": true
         },
@@ -8835,6 +8887,7 @@
           "id": "n3",
           "label": "Provision DNS/SSL (Cloudflare)",
           "route": "agent",
+          "vendor": "cloudflare",
           "estimatedMinutes": 5,
           "async": true
         }
@@ -8872,6 +8925,7 @@
           "id": "n1",
           "label": "Agent generates site code",
           "route": "agent",
+          "vendorOptions": ["lovable", "v0", "bolt"],
           "estimatedMinutes": 8,
           "async": true
         },
@@ -8879,6 +8933,7 @@
           "id": "n2",
           "label": "Content firewall + publish to CDN",
           "route": "agent",
+          "vendorOptions": ["cloudflare", "vercel"],
           "estimatedMinutes": 3,
           "async": true
         }

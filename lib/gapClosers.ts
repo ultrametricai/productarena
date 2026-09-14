@@ -51,14 +51,32 @@ export const CLOSER_RULES: CloserRule[] = [
       /signature|docusign|counter-?sign|\bnda\b|\bsigns?\b|agreement|bylaws|resolution|consent/.test(l),
   },
   {
+    // Cap-table paperwork (stock issuance, option grants) — the judged equity platforms expose
+    // draft-grant APIs, so an agent can prepare the issuance; the board still approves.
+    id: 'equity',
+    arenaId: 'equity-management',
+    blurb: 'draft the issuance on a cap-table platform’s API — the board still approves',
+    test: (l) => /founder stock|stock option|option grant|cap table|\bvesting\b|409a/.test(l),
+  },
+  {
+    // Code changes dressed up as manual steps (install the SDK, add the snippet) — a coding
+    // agent makes the change; a human reviews the diff.
+    id: 'coding',
+    arenaId: 'ai-coding',
+    blurb: 'a coding agent can make this code change — a human reviews the diff',
+    test: (l) => /\bsdk\b|codebase|instrument|snippet/.test(l),
+  },
+  {
+    // Deterministic web flows with no API path — 2026 computer-use browser agents can drive
+    // them, honestly marked assisted (a human supervises), never autonomous.
     id: 'browser',
     arenaId: 'browser-agents',
     fallbackArenaId: 'web-scraping',
-    blurb: 'an operator browser agent can drive this portal',
-    caution: 'unofficial path — verify the portal’s terms allow automation',
+    blurb: 'computer-use candidate — a browser agent can drive this deterministic web flow',
+    caution: 'assisted, not autonomous — a human supervises; verify the portal’s terms allow automation',
     test: (l, step) =>
       step.route === 'form' &&
-      /portal|filing|\bfiles?\b|website|\bforms?\b|console|\bsubmit\b|regist|checkout|\.gov/.test(l),
+      /portal|filing|\bfiles?\b|website|\bforms?\b|console|\bsubmit\b|regist|checkout|\.gov|wizard|provision|enroll|set ?up|sign ?up|signup|create ([a-z0-9.&-]+ )?(user|workspace|account|email|project)/.test(l),
   },
   {
     id: 'voice',
@@ -67,11 +85,14 @@ export const CLOSER_RULES: CloserRule[] = [
     test: (l) => /\bphone\b|\bcalls?\b|\bdial\b/.test(l),
   },
   {
+    // "Choose/select/pick" steps match on either non-agent route — a choose step is a decision
+    // whichever way the corpus routed it, and the honest assist is the same: research in, pick out.
     id: 'research',
     arenaId: 'ai-research-agents',
     blurb: 'a research agent can gather and compare the options — a human makes the pick',
     test: (l, step) =>
-      step.route === 'person' && /research|compar|\bfind\b|\bevaluate\b|get quotes|shortlist|scout/.test(l),
+      /\bchoose\b|\bselect\b|\bpick\b/.test(l) ||
+      (step.route === 'person' && /research|compar|\bfind\b|\bevaluate\b|get quotes|shortlist|scout/.test(l)),
   },
   {
     id: 'doc-prep',

@@ -4,8 +4,8 @@ import CeilingBar from '@/components/CeilingBar'
 import ProductLogoView from '@/components/ProductLogoView'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { hasLogo } from '@/lib/logos'
-import type { DagNode } from '@/lib/processes'
-import { formatMinutes, VENDOR_ARENA, vendorAlternatives, vendorLabel } from '@/lib/processes'
+import type { DagNode, VendorChipInfo } from '@/lib/processes'
+import { formatMinutes, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
 
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
@@ -106,24 +106,53 @@ function Connector() {
   )
 }
 
+// One vendor as a chip: tracked vendors (judged in an arena) link to their product page with a
+// rank/agent-readiness tooltip; untracked vendors render as an honest unlinked chip. Logos are
+// resolved server-side via hasLogo(product id).
+function VendorChip({ info }: { info: VendorChipInfo }) {
+  const logoId = info.productId ?? info.vendor
+  const body = (
+    <>
+      <ProductLogoView product={{ id: logoId, name: info.label }} size={16} hasLogo={hasLogo(logoId)} />
+      <span className="truncate">{info.label}</span>
+      {info.agentReady !== null && (
+        <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">
+          {info.agentReady.toFixed(0)}
+        </span>
+      )}
+    </>
+  )
+  if (info.productId && info.arenaId) {
+    return (
+      <Link
+        href={`/arena/${info.arenaId}/product/${info.productId}`}
+        title={`${info.label} — #${info.rank} by agent-readiness in ${info.arenaName}${
+          info.agentReady !== null ? ` · ${info.agentReady.toFixed(0)}/100 agent-ready` : ''
+        } — see the judged product page`}
+        className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-300"
+      >
+        {body}
+      </Link>
+    )
+  }
+  return (
+    <span
+      title={`${info.label} — not yet judged on ProductArena`}
+      className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-400"
+    >
+      {body}
+    </span>
+  )
+}
+
 function NodeBlock({ node, index }: { node: DagNode; index: number }) {
   const style = ROUTE_STYLE[node.route]
-  const arenaId = node.vendor ? VENDOR_ARENA[node.vendor] : undefined
+  const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
   const alts = node.vendor ? vendorAlternatives(node.vendor) : []
+  const options = (node.vendorOptions ?? []).map((v) => vendorChipInfo(v))
   const calls = node.functionCalls ?? []
   const gap = resolveGapStep(node)
   const closer = gap?.kind === 'closer' ? gap.closer : null
-
-  const vendorChip = node.vendor && (
-    <>
-      <ProductLogoView
-        product={{ id: node.vendor, name: vendorLabel(node.vendor) }}
-        size={16}
-        hasLogo={hasLogo(node.vendor)}
-      />
-      <span className="truncate">{vendorLabel(node.vendor)}</span>
-    </>
-  )
 
   return (
     <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
@@ -142,19 +171,7 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[11px]">
-        {node.vendor &&
-          (arenaId ? (
-            <Link
-              href={`/arena/${arenaId}/product/${node.vendor}`}
-              className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-300"
-            >
-              {vendorChip}
-            </Link>
-          ) : (
-            <span className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-400">
-              {vendorChip}
-            </span>
-          ))}
+        {vendorInfo && <VendorChip info={vendorInfo} />}
         <span className="font-mono tabular-nums text-zinc-500">{formatMinutes(node.estimatedMinutes)}</span>
         {node.approvalRequired && (
           <span
@@ -175,6 +192,20 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
           </span>
         )}
       </div>
+
+      {options.length > 0 && (
+        <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
+          <span
+            className="text-[10px] uppercase tracking-wide text-zinc-500"
+            title="Companies that can perform this step — judged ones link to their arena product page"
+          >
+            via:
+          </span>
+          {options.map((o) => (
+            <VendorChip key={o.vendor} info={o} />
+          ))}
+        </div>
+      )}
 
       {alts.length > 0 && (
         <p className="mt-1.5 text-[11px] text-zinc-500">

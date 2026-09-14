@@ -34,6 +34,10 @@ export const DagNodeSchema = z.object({
   label: z.string().min(1),
   route: z.enum(['agent', 'form', 'person']),
   vendor: z.string().min(1).optional(),
+  // Companies that can perform this step — the market for a "choose/sign up" step. Tracked
+  // vendors render as chips linking to their judged product page; untracked ones (e.g. doola)
+  // render as honest unlinked chips. Distinct from `vendor` (the canonical call target).
+  vendorOptions: z.string().min(1).array().optional(),
   toolCall: z.string().min(1).optional(),
   functionCalls: FunctionCallSchema.array().optional(),
   approvalRequired: z.boolean().optional(),
@@ -275,8 +279,9 @@ export function gapThemes(tasks: ProcessTask[]): GapTheme[] {
 // ---------------------------------------------------------------------------
 
 // Corpus vendor key -> categories.json arena id, for vendors we actually rank. A mapped vendor's
-// product id equals the vendor key in every arena below (verified by lib/__tests__/processes
-// tests), so the DAG's canonical vendor resolves straight to a product page.
+// product id is vendorProductId(key) — usually the key itself, snake_case normalized to the
+// site's kebab-case product ids (stripe_atlas → stripe-atlas), verified against real product ids
+// by lib/__tests__/processes tests — so the DAG's canonical vendor resolves to a product page.
 export const VENDOR_ARENA: Record<string, string> = {
   gusto: 'payroll',
   rippling: 'payroll',
@@ -305,6 +310,36 @@ export const VENDOR_ARENA: Record<string, string> = {
   cloudflare: 'edge-platforms',
   supabase: 'backend-as-a-service',
   firebase: 'backend-as-a-service',
+  // Formation & legal paperwork — judged in legal-ops.
+  clerky: 'legal-ops',
+  stripe_atlas: 'legal-ops',
+  firstbase: 'legal-ops',
+  docusign: 'legal-ops',
+  // Cap table & option grants.
+  carta: 'equity-management',
+  pulley: 'equity-management',
+  // Ops tooling that founder processes lean on.
+  calendly: 'scheduling',
+  sentry: 'observability',
+  pagerduty: 'incident-management',
+  segment: 'customer-data-platforms',
+  snowflake: 'data-warehouses',
+  intercom: 'ai-support-agents',
+  // Site generation options (launch-website chain).
+  lovable: 'vibe-coding',
+  v0: 'vibe-coding',
+  bolt: 'vibe-coding',
+}
+
+// Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
+const VENDOR_PRODUCT_ID: Record<string, string> = {
+  intercom: 'intercom-fin', // Fin is Intercom's judged support-agent product
+}
+
+// The judged product id for a corpus vendor key: explicit override, else the key with
+// snake_case normalized to the site's kebab-case product-id convention.
+export function vendorProductId(vendor: string): string {
+  return VENDOR_PRODUCT_ID[vendor] ?? vendor.replace(/_/g, '-')
 }
 
 // Pretty display names for corpus vendor keys (snake_case, lowercase). Fallback title-cases.
@@ -326,6 +361,9 @@ const VENDOR_LABELS: Record<string, string> = {
   pagerduty: 'PagerDuty',
   sendgrid: 'SendGrid',
   bamboohr: 'BambooHR',
+  google_workspace: 'Google Workspace',
+  name_com: 'Name.com',
+  v0: 'v0',
 }
 
 export function vendorLabel(vendor: string): string {
@@ -356,10 +394,47 @@ export interface VendorAlternative extends SwapOption {
 export function vendorAlternatives(vendor: string, limit = 2, dir?: string): VendorAlternative[] {
   const arenaId = VENDOR_ARENA[vendor]
   if (!arenaId || !isPopulated(arenaId, dir)) return []
+  const productId = vendorProductId(vendor)
   return arenaSwapOptions(arenaId, dir)
-    .filter((o) => o.id !== vendor)
+    .filter((o) => o.id !== productId)
     .slice(0, limit)
     .map((o) => ({ ...o, arenaId }))
+}
+
+// One vendor rendered as a DAG chip, resolved against the live market. Tracked vendors carry
+// their judged product id, arena, agent-readiness and 1-based rank on the arena's
+// agent-readiness ladder (the same ordering the "or:" row and swap options use); untracked
+// vendors resolve with productId null and render as honest unlinked chips.
+export interface VendorChipInfo {
+  vendor: string
+  label: string
+  productId: string | null
+  arenaId: string | null
+  arenaName: string | null
+  agentReady: number | null
+  rank: number | null
+}
+
+export function vendorChipInfo(vendor: string, dir?: string): VendorChipInfo {
+  const untracked: VendorChipInfo = {
+    vendor, label: vendorLabel(vendor),
+    productId: null, arenaId: null, arenaName: null, agentReady: null, rank: null,
+  }
+  const arenaId = VENDOR_ARENA[vendor]
+  if (!arenaId || !isPopulated(arenaId, dir)) return untracked
+  const productId = vendorProductId(vendor)
+  const options = arenaSwapOptions(arenaId, dir)
+  const i = options.findIndex((o) => o.id === productId)
+  if (i === -1) return untracked
+  return {
+    vendor,
+    label: options[i].name,
+    productId,
+    arenaId,
+    arenaName: loadCategory(arenaId, dir).category.name,
+    agentReady: options[i].agentReady,
+    rank: i + 1,
+  }
 }
 
 // The swappable market roles of one or more tasks: every mapped vendor (from DAG nodes first —
@@ -376,7 +451,10 @@ export function vendorRoles(tasks: ProcessTask[], dir?: string): VendorRole[] {
     else byArena.set(arenaId, { canonical: vendor, stepCount: steps })
   }
   for (const task of tasks) {
-    for (const n of task.dag.nodes) if (n.vendor) claim(n.vendor, 1)
+    for (const n of task.dag.nodes) {
+      if (n.vendor) claim(n.vendor, 1)
+      for (const v of n.vendorOptions ?? []) claim(v, 1)
+    }
   }
   for (const task of tasks) {
     for (const v of task.vendors) claim(v, 0)
@@ -386,12 +464,13 @@ export function vendorRoles(tasks: ProcessTask[], dir?: string): VendorRole[] {
   for (const [arenaId, { canonical, stepCount }] of byArena) {
     const data = loadCategory(arenaId, dir)
     const alternatives = arenaSwapOptions(arenaId, dir)
-    const def = alternatives.find((o) => o.id === canonical) ?? alternatives[0]
+    const canonicalId = vendorProductId(canonical)
+    const def = alternatives.find((o) => o.id === canonicalId) ?? alternatives[0]
     if (!def) continue
     roles.push({
       arenaId,
       arenaName: data.category.name,
-      canonicalVendor: canonical,
+      canonicalVendor: canonicalId,
       defaultProductId: def.id,
       defaultProductName: def.name,
       stepCount,
