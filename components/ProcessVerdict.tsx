@@ -1,6 +1,5 @@
 import { splitGaps } from '@/lib/gapClosers'
 import type { DagNode, ProcessCeiling } from '@/lib/processes'
-import { formatMinutes } from '@/lib/processes'
 
 // The agent-ceiling verdict box: the single honest sentence for a process — how much an agent
 // can run today, and exactly which steps still need a human or a manual portal. The gaps split
@@ -8,7 +7,7 @@ import { formatMinutes } from '@/lib/processes'
 // step), irreducibly human (judgment/identity — no workaround is invented), and no workaround
 // yet (still manual, market hasn't closed it).
 export default function ProcessVerdict({ ceiling, nodes }: { ceiling: ProcessCeiling; nodes: DagNode[] }) {
-  const { agentSteps, totalSteps, agentMinutes, totalMinutes, approvalGates, gaps } = ceiling
+  const { agentSteps, totalSteps, approvalGates, gaps } = ceiling
   const split = splitGaps(nodes)
   const irreducible = split.human.filter((g) => g.irreducible)
   const unclosed = split.human.filter((g) => !g.irreducible)
@@ -17,7 +16,6 @@ export default function ProcessVerdict({ ceiling, nodes }: { ceiling: ProcessCei
       <p className="text-[10px] uppercase tracking-widest text-emerald-400/80">Agent ceiling</p>
       <p className="mt-1 text-lg font-medium text-zinc-100">
         An agent can run {agentSteps} of {totalSteps} steps
-        <span className="text-zinc-400"> ({formatMinutes(agentMinutes)} of {formatMinutes(totalMinutes)})</span>
         {approvalGates > 0 && (
           <span className="text-zinc-400">
             {' '}— {approvalGates} of them behind a human approval gate ⏸
