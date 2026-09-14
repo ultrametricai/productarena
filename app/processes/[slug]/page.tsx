@@ -1,9 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
+import ProductLogoView from '@/components/ProductLogoView'
+import { hasLogo } from '@/lib/logos'
+import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import {
   buildSimSteps, findProcessBySlug, loadProcesses, processSlug, taskCeiling, vendorRoles,
 } from '@/lib/processes'
@@ -53,9 +57,13 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         <p className="text-[10px] uppercase tracking-widest text-zinc-400">
           <Link href="/processes" className="hover:text-emerald-300">Processes</Link>
           <span className="mx-1 text-zinc-600">/</span>
+          <IconChip icon={phaseIcon(task.phase)} title={phaseTooltip(task.phase)} className="mr-1" />
           {task.phase}
         </p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">{task.title}</h1>
+        <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
+          <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} process`} />
+          {task.title}
+        </h1>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
           <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
             {task.complexity.replace('_', ' ')}
@@ -119,12 +127,13 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
                 </div>
                 <ul className="mt-2 space-y-1.5 text-sm">
                   {role.alternatives.map((o) => (
-                    <li key={o.id} className="flex items-baseline justify-between gap-3">
+                    <li key={o.id} className="flex items-center justify-between gap-3">
                       <Link
                         href={`/arena/${role.arenaId}/product/${o.id}`}
-                        className={`hover:text-emerald-300 ${o.id === role.defaultProductId ? 'font-medium text-zinc-100' : 'text-zinc-400'}`}
+                        className={`inline-flex min-w-0 items-center gap-2 hover:text-emerald-300 ${o.id === role.defaultProductId ? 'font-medium text-zinc-100' : 'text-zinc-400'}`}
                       >
-                        {o.name}
+                        <ProductLogoView product={{ id: o.id, name: o.name }} size={18} hasLogo={hasLogo(o.id)} />
+                        <span className="truncate">{o.name}</span>
                         {o.id === role.canonicalVendor && (
                           <span className="ml-1.5 rounded-full border border-emerald-400/40 px-1.5 py-px text-[10px] uppercase tracking-wide text-emerald-300">
                             default

@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
+import IconChip from '@/components/IconChip'
 import ProcessesTable, { type ProcessRow } from '@/components/ProcessesTable'
+import { hasLogo } from '@/lib/logos'
+import { chainIcon, processIcon } from '@/lib/processIcons'
 import {
-  chainTasks, computeCeiling, formatMinutes, gapThemes, loadChains, loadProcesses,
-  phaseRank, processSlug, siteCeiling, taskCeiling, VENDOR_ARENA, vendorLabel,
+  chainTasks, computeCeiling, loadChains, loadProcesses,
+  phaseRank, processSlug, taskCeiling, VENDOR_ARENA, vendorLabel, vendorProductId,
 } from '@/lib/processes'
 
 export const metadata: Metadata = {
@@ -19,15 +22,9 @@ const ROUTE_DOT: Record<string, string> = {
   person: 'bg-red-400/70',
 }
 
-function complexityLabel(c: string): string {
-  return c.replace('_', ' ')
-}
-
 export default function ProcessesPage() {
   const tasks = loadProcesses()
   const chains = loadChains()
-  const site = siteCeiling(tasks)
-  const themes = gapThemes(tasks).slice(0, 5)
 
   const byPhase = new Map<string, typeof tasks>()
   for (const t of tasks) {
@@ -42,13 +39,16 @@ export default function ProcessesPage() {
     return {
       slug: processSlug(t.title),
       title: t.title,
+      icon: processIcon(t.id),
       phase: t.phase,
       pct: c.pct,
       agentSteps: c.agentSteps,
       totalSteps: c.totalSteps,
-      minutes: c.totalMinutes,
       complexity: t.complexity,
-      vendors: [...new Set(t.vendors)].map((v) => ({ label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null })),
+      vendors: [...new Set(t.vendors)].map((v) => {
+        const id = vendorProductId(v)
+        return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
+      }),
     }
   })
 
@@ -63,14 +63,14 @@ export default function ProcessesPage() {
         </p>
       </section>
 
-      {/* Curated chains — typical multi-process runs */}
+      {/* Curated playbooks — several processes run back to back as one walkthrough */}
       <section>
-        <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Chained runs</h2>
+        <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">End-to-end playbooks</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          How the processes actually chain together in a company&rsquo;s life — each with a combined
-          ceiling and a chain-level simulator.
+          Common startup journeys — several processes run back to back as one walkthrough, each
+          with a combined agent ceiling and its own start-to-finish simulator.
         </p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {chains.map((chain) => {
             const cTasks = chainTasks(chain)
             const ceiling = computeCeiling(cTasks.flatMap((t) => t.dag.nodes))
@@ -81,8 +81,11 @@ export default function ProcessesPage() {
                 className="group rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/40"
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="font-medium group-hover:text-emerald-300">{chain.name}</h3>
-                  <CeilingBar pct={ceiling.pct} />
+                  <h3 className="flex min-w-0 items-center gap-1.5 font-medium group-hover:text-emerald-300">
+                    <IconChip icon={chainIcon(chain.id)} title={`${chain.name} — end-to-end playbook`} />
+                    <span className="min-w-0 truncate">{chain.name}</span>
+                  </h3>
+                  <CeilingBar pct={ceiling.pct} className="shrink-0" />
                 </div>
                 <p className="mt-1 text-xs text-zinc-500">{chain.tagline}</p>
                 <ol className="mt-3 space-y-1.5">
@@ -93,7 +96,8 @@ export default function ProcessesPage() {
                           <span key={j} aria-hidden className={`h-1.5 w-1.5 rounded-full ${ROUTE_DOT[n.route]}`} />
                         ))}
                       </span>
-                      <span className="truncate">{t.title}</span>
+                      <IconChip icon={processIcon(t.id)} title={`${t.title} — ${t.phase} process`} />
+                      <span className="min-w-0 truncate">{t.title}</span>
                     </li>
                   ))}
                 </ol>

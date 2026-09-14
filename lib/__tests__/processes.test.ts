@@ -19,9 +19,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 96 processes with unique, non-empty slugs', () => {
+  it('loads all 106 processes with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(96)
+    expect(tasks.length).toBe(106)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -96,7 +96,11 @@ describe('vendor -> arena mapping', () => {
   it('every corpus vendorOption is either arena-tracked or an intentional unlinked chip', () => {
     const tracked = new Set(Object.keys(VENDOR_ARENA))
     // Untracked options we still show honestly (no arena yet) — keep this list deliberate.
-    const allowedUntracked = new Set(['doola'])
+    const allowedUntracked = new Set([
+      'doola', 'google_sheets', 'google_drive', 'dropbox', 'legalzoom', 'northwest',
+      'vanta', 'termly', 'iubenda', 'producthunt', 'betalist', 'hackernews',
+      'ahrefs', 'semrush', 'google_search_console', 'apollo', 'mailchimp', 'sendgrid',
+    ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {
         for (const v of n.vendorOptions ?? []) {
@@ -136,6 +140,18 @@ describe('vendor -> arena mapping', () => {
     const chips = choose.vendorOptions!.map((v) => vendorChipInfo(v, DATA_DIR))
     expect(chips.filter((c) => c.productId).length).toBe(3)
     expect(chips.filter((c) => !c.productId).map((c) => c.label)).toEqual(['Doola'])
+  })
+
+  it('track-runway lists the real market: banking AND accounting options, not just Mercury', () => {
+    const runway = loadProcesses(DATA_DIR).find((t) => t.id === 'qs_050')!
+    const optionVendors = new Set(runway.dag.nodes.flatMap((n) => n.vendorOptions ?? []))
+    for (const v of ['mercury', 'brex', 'relay', 'quickbooks', 'xero', 'pilot']) {
+      expect(optionVendors.has(v), `track-runway should list ${v}`).toBe(true)
+    }
+    const roles = vendorRoles([runway], DATA_DIR)
+    const arenas = roles.map((r) => r.arenaId)
+    expect(arenas).toContain('startup-banking')
+    expect(arenas).toContain('accounting')
   })
 
   it('vendorRoles dedupes per arena, defaults to the canonical vendor, and ranks by agentReady', () => {
