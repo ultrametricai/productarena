@@ -74,6 +74,7 @@ const NAV_LABELS: Record<string, string> = {
   "ai-support-agents": "Support AI",
   "ai-code-review": "Code review",
   "document-extraction": "Doc extraction",
+  "equity-management": "Equity",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

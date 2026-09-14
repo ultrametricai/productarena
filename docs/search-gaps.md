@@ -18,23 +18,22 @@ No arenas were created for this report.
 | 6 | static site generators | `docs-platforms` (Docusaurus only) | **Future arena** — its description says Astro Starlight "was left for a future static-site-generator arena" |
 | 7 | website builders | `ecommerce-platforms` excludes them | **Future arena** (Framer, Webflow, Wix) — distinct from vibe-coding's prompt-to-app |
 | 8 | password manager / secrets management | none | **Future arena** — two related arenas: consumer/team password managers (1Password, Bitwarden) and dev secrets (Doppler, Infisical, Vault); the latter is more on-thesis (agents need scoped secrets) |
-| 9 | cap table management | `legal-ops` is adjacent but doesn't score it | **Future arena** (Carta, Pulley) — pairs with the incorporation-day stack |
-| 10 | error tracking / crash reporting | `observability` is metrics/logs/traces | **Future arena** (Sentry, Rollbar) or fold into observability at next refresh with an explicit boundary note |
-| 11 | CI/CD platforms (standalone) | `code-hosting` scores CI only as a hosting feature | **Future arena** (Buildkite, CircleCI, GitHub Actions-as-product) — agents queue builds all day |
-| 12 | feature stores / ML feature platforms | none (`feature-flags` is a false friend people will hit) | **Future arena or ignore** — classic MLOps query (Tecton, Feast); lower AI-era momentum than agent infra |
-| 13 | fine-tuning / model training platforms | `inference-providers` scores fine-tune *serving* only | **Future arena** (Modal training, Together fine-tuning, Axolotl-hosting) |
-| 14 | text-to-speech / speech-to-text APIs | `voice-agents` uses them but doesn't rank them | **Future arena** (ElevenLabs, Deepgram, Cartesia) — agents speak; strong fit |
-| 15 | image / video generation | none | **Future arena** (fal, Replicate media side) or **ignore** if the site stays builder-infra-focused |
-| 16 | business intelligence / dashboards | `data-warehouses` is adjacent | **Future arena** (Metabase, Looker, Evidence) — "BI tools" is a top-tier classic query |
-| 17 | VPN / private networking / zero trust | Tailscale appears only as a stack pick | **Future arena** (Tailscale, ZeroTier) — the mobile-agentic stack already leans on it |
-| 18 | container orchestration / kubernetes platforms | `infra-as-code` provisions it, doesn't rank it | **Future arena or ignore** — huge query, weak agent angle so far |
-| 19 | domain registrar / DNS | none | **Ignore for now** — commodity; revisit if a founder-ops arena wave lands |
-| 20 | spreadsheets / Airtable-style databases | `project-management` is a false neighbor | **Future arena** (Airtable, Rows, Grist) — agents read/write tables constantly |
-| 21 | AI browsers | `browser-agents` is agents-driving-browsers, not browsers-with-AI | **Future arena** (Dia, Comet, Fellou) — watch the category settle first |
-| 22 | data labeling / annotation | none | **Ignore / watch** (Labelbox, Scale) — enterprise-ML skew, off the current builder thesis |
-| 23 | embedding & reranking APIs | `vector-databases` stores them, `inference-providers` serves some | **Future arena or stack slot** (Voyage, Cohere, Jina) — could start as a slot in an agent-builder stack |
-| 24 | video conferencing | `meeting-ai` rides on top of it | **Ignore** — Zoom/Meet duopoly, no evidence angle we score |
-| 25 | marketing automation | `crm` + `customer-data-platforms` cover fragments | **Ignore until email-marketing arena exists**, then evaluate as its sibling |
+| 9 | error tracking / crash reporting | `observability` is metrics/logs/traces | **Future arena** (Sentry, Rollbar) or fold into observability at next refresh with an explicit boundary note |
+| 10 | CI/CD platforms (standalone) | `code-hosting` scores CI only as a hosting feature | **Future arena** (Buildkite, CircleCI, GitHub Actions-as-product) — agents queue builds all day |
+| 11 | feature stores / ML feature platforms | none (`feature-flags` is a false friend people will hit) | **Future arena or ignore** — classic MLOps query (Tecton, Feast); lower AI-era momentum than agent infra |
+| 12 | fine-tuning / model training platforms | `inference-providers` scores fine-tune *serving* only | **Future arena** (Modal training, Together fine-tuning, Axolotl-hosting) |
+| 13 | text-to-speech / speech-to-text APIs | `voice-agents` uses them but doesn't rank them | **Future arena** (ElevenLabs, Deepgram, Cartesia) — agents speak; strong fit |
+| 14 | image / video generation | none | **Future arena** (fal, Replicate media side) or **ignore** if the site stays builder-infra-focused |
+| 15 | business intelligence / dashboards | `data-warehouses` is adjacent | **Future arena** (Metabase, Looker, Evidence) — "BI tools" is a top-tier classic query |
+| 16 | VPN / private networking / zero trust | Tailscale appears only as a stack pick | **Future arena** (Tailscale, ZeroTier) — the mobile-agentic stack already leans on it |
+| 17 | container orchestration / kubernetes platforms | `infra-as-code` provisions it, doesn't rank it | **Future arena or ignore** — huge query, weak agent angle so far |
+| 18 | domain registrar / DNS | none | **Ignore for now** — commodity; revisit if a founder-ops arena wave lands |
+| 19 | spreadsheets / Airtable-style databases | `project-management` is a false neighbor | **Future arena** (Airtable, Rows, Grist) — agents read/write tables constantly |
+| 20 | AI browsers | `browser-agents` is agents-driving-browsers, not browsers-with-AI | **Future arena** (Dia, Comet, Fellou) — watch the category settle first |
+| 21 | data labeling / annotation | none | **Ignore / watch** (Labelbox, Scale) — enterprise-ML skew, off the current builder thesis |
+| 22 | embedding & reranking APIs | `vector-databases` stores them, `inference-providers` serves some | **Future arena or stack slot** (Voyage, Cohere, Jina) — could start as a slot in an agent-builder stack |
+| 23 | video conferencing | `meeting-ai` rides on top of it | **Ignore** — Zoom/Meet duopoly, no evidence angle we score |
+| 24 | marketing automation | `crm` + `customer-data-platforms` cover fragments | **Ignore until email-marketing arena exists**, then evaluate as its sibling |
 
 ## Notes
 
