@@ -62,7 +62,10 @@ pnpm test
 ```
 
 Then see [CONTRIBUTING.md](./CONTRIBUTING.md) — contesting a verdict or adding evidence is a
-first-class workflow, not a favor.
+first-class workflow, not a favor. Founders: the ["Add your product"](./CONTRIBUTING.md#3-add-your-product)
+section covers both the quick issue path (via [/submit](https://ultrametric.ai/productarena/submit))
+and the PR path, plus how to make your product probe well (llms.txt, OpenAPI, remote MCP,
+`.md` docs mirrors) so the pipeline sees everything you've shipped.
 
 **I want to consume the data (curl or an agent via MCP):**
 
@@ -190,7 +193,9 @@ See `data/categories.json` for each arena's full description, personas, and them
 
 New to the site and just want plain-language answers ("what does `na` mean," "why does this
 score look low," "how do I disagree")? See **[docs/SCORING.md](./docs/SCORING.md)** — a
-one-page, jargon-free companion to the technical writeup below.
+one-page, jargon-free companion to the technical writeup below. For a critical self-assessment
+of the scoring formula's limits (coverage sensitivity, judge noise, blend-weight choices) and
+the improvement roadmap, see [docs/SCORING-REVIEW.md](./docs/SCORING-REVIEW.md).
 
 ### 1. Evidence tiers
 
@@ -755,8 +760,11 @@ contribution. Pick your angle:
   [`docs/VENDOR-RESPONSES.md`](./docs/VENDOR-RESPONSES.md).
 - **Add evidence by PR** — new doc pages, changelogs, or community sources for any
   product; the pipeline re-judges only the cells whose evidence changed.
-- **Submit a product or arena** — the *Submit a product* issue form, or open a PR seeding
-  `data/categories.json` + products following an existing arena's shape.
+- **Submit a product or arena** — the *Submit a product* issue form (prefilled from the
+  [/submit](https://ultrametric.ai/productarena/submit) quick scan), or open a PR adding your
+  `data/<arena>/products.json` entry — the exact entry shape, which URLs to include and why,
+  and how to make your product probe well are all in
+  [CONTRIBUTING.md § Add your product](./CONTRIBUTING.md#3-add-your-product).
 - **Make a prediction** — `/predictions` auto-generates yes/no questions from live close
   races ("will the #2 overtake the #1 within 30 days?") and settles them mechanically from
   the changelog's rank-flip events. The "Predict" link opens a prefilled issue
