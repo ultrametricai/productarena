@@ -437,6 +437,9 @@ function StoryRowPair({
           </span>
         </td>
         <td className="px-3 py-2">
+          {row.evidence.length === 0 ? (
+            <span className="font-mono text-xs tabular-nums italic text-zinc-600" title="No evidence collected for this story yet — the verdict rests on absence, which the pipeline re-checks on refresh">none yet</span>
+          ) : (
           <button
             type="button"
             onClick={onToggle}
@@ -446,6 +449,7 @@ function StoryRowPair({
           >
             {row.evidence.length} {row.evidence.length === 1 ? 'source' : 'sources'}
           </button>
+          )}
         </td>
       </tr>
       {isOpen && (
