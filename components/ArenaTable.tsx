@@ -8,6 +8,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import { BusinessModelChip } from '@/components/BusinessModel'
 import ClaimsChip from '@/components/ClaimsChip'
 import ConfidenceChip from '@/components/ConfidenceChip'
+import HotChip from '@/components/HotChip'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import PopularTag, { isNotablyPopular } from '@/components/PopularTag'
@@ -110,7 +111,10 @@ function SortableTh({
 // "$ / unit" column: each cell is that product's headline extracted price in the arena's
 // canonical agent-action unit, with the source link and as-of date. Serializable cells are
 // computed server-side (app/arena/[category]/page.tsx) because this is a client component.
-export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryData; logoMap: Record<string, boolean>; pricing?: Record<string, PricingCell> }) {
+// `hotReasons` (optional, same server-side contract): productId -> 🔥 reason string from
+// lib/hotProducts.ts — the fleet-relative threshold needs every arena's history, so it can't
+// be derived from this arena's `data` alone.
+export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { data: CategoryData; logoMap: Record<string, boolean>; pricing?: Record<string, PricingCell>; hotReasons?: Record<string, string> }) {
   const [column, setColumn] = useState<ArenaTableColumn>('initScore')
   const [direction, setDirection] = useState<SortDirection>('desc')
   const [query, setQuery] = useState('')
@@ -232,6 +236,7 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
                     >
                       <ProductLogoView product={product} size={24} hasLogo={logoMap[product.id] ?? false} />
                       <span className="min-w-0 truncate font-medium">{product.name}</span>
+                      {hotReasons?.[row.productId] && <HotChip reason={hotReasons[row.productId]} />}
                     </Link>
                     <div className="mt-1 flex flex-wrap items-center gap-1.5">
                       {product.type === 'oss' && <OssPill variant="compact" />}

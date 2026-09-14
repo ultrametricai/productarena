@@ -5,6 +5,7 @@ import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 import AiEraBadge from '@/components/AiEraBadge'
 import ConfidenceChip from '@/components/ConfidenceChip'
+import HotChip from '@/components/HotChip'
 import MomentumChip from '@/components/MomentumChip'
 import TableControls from '@/components/TableControls'
 import OssPill from '@/components/OssPill'
@@ -199,6 +200,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                         <ProductLogoView product={{ id: row.productId, name: row.name }} size={24} hasLogo={row.hasLogo} />
                         <span className="min-w-0 truncate font-medium">{row.name}</span>
                       </Link>
+                      {row.hotReason && <HotChip reason={row.hotReason} />}
                       <YcBadge ycBatch={row.ycBatch} />
                       {/* Compact compare affordance: a plain link into /compare?p=<id> — the
                           compare page owns all selection state via its URL, so no cross-page

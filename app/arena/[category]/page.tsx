@@ -12,6 +12,7 @@ import { loadAll, loadCategory, type CategoryData } from '@/lib/data'
 import { adjacentArenas } from '@/lib/alternatives'
 import { humanizeTheme } from '@/lib/icons'
 import { categoryFreshness } from '@/lib/freshness'
+import { hotReasonsForCategory } from '@/lib/hotProducts'
 import { hasLogo } from '@/lib/logos'
 import { loadPricing, pricingCellFor, type PricingCell } from '@/lib/pricing'
 import { SITE_URL } from '@/lib/site'
@@ -131,6 +132,9 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
     }),
   )
   const pricing = Object.keys(pricingCells).length > 0 ? pricingCells : undefined
+  // 🔥 flags (lib/hotProducts.ts) need the whole fleet's popularity history (the hot threshold
+  // is fleet-relative), so they're computed here server-side and passed down as plain strings.
+  const hotReasons = hotReasonsForCategory(loadAll(), data)
   return (
     <div className="space-y-8">
       <script
@@ -187,7 +191,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           <GeoMark seed="leaderboard" title="Leaderboard — every product ranked by evidence" size={18} className="text-zinc-500" />
           Leaderboard
         </h2>
-        <ArenaTable data={data} logoMap={logoMap} pricing={pricing} />
+        <ArenaTable data={data} logoMap={logoMap} pricing={pricing} hotReasons={Object.keys(hotReasons).length > 0 ? hotReasons : undefined} />
       </div>
       <PersonaStacksSection data={data} />
       <StacksSection data={data} />
