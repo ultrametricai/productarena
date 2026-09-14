@@ -17,7 +17,7 @@ import VerificationMixChip from '@/components/VerificationMixChip'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
 import { confidenceFor } from '@/lib/confidence'
 import type { PricingCell } from '@/lib/pricing'
-import { battleSlug, isGroupUntested, type CategoryData } from '@/lib/data-helpers'
+import { battleSlug, isGroupUntested, isThemeUntested, type CategoryData } from '@/lib/data-helpers'
 import {
   type ArenaTableColumn,
   type ArenaTableRow,
@@ -264,10 +264,18 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
                     </div>
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
-                    {row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    {isGroupUntested(data, row.productId, 'agent-access') ? (
+                      <span className="font-sans text-xs italic text-zinc-500" title="No agent-access evidence found or probed either way — unscored, not zero.">
+                        untested
+                      </span>
+                    ) : row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
-                    {row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    {isGroupUntested(data, row.productId, 'agentic-features') ? (
+                      <span className="font-sans text-xs italic text-zinc-500" title="No agentic-features evidence found or probed either way — unscored, not zero.">
+                        untested
+                      </span>
+                    ) : row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 md:table-cell">
                     {isGroupUntested(data, row.productId, 'api-quality') ? (
@@ -281,10 +289,18 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
                     )}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
-                    {row.openness === null ? <span className="text-zinc-500">n/a</span> : <>{row.openness.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    {isThemeUntested(data, row.productId, 'openness') ? (
+                      <span className="font-sans text-xs italic text-zinc-500" title="No openness evidence found or probed either way — unscored, not zero.">
+                        untested
+                      </span>
+                    ) : row.openness === null ? <span className="text-zinc-500">n/a</span> : <>{row.openness.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 xl:table-cell">
-                    {row.automation === null ? <span className="text-zinc-500">n/a</span> : <>{row.automation.toFixed(0)}<span className="text-zinc-600">/100</span></>}
+                    {isThemeUntested(data, row.productId, 'automation-depth') ? (
+                      <span className="font-sans text-xs italic text-zinc-500" title="No automation-depth evidence found or probed either way — unscored, not zero.">
+                        untested
+                      </span>
+                    ) : row.automation === null ? <span className="text-zinc-500">n/a</span> : <>{row.automation.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 md:table-cell">
                     {data.popularity[row.productId]?.stars !== undefined || data.popularity[row.productId]?.npmWeekly !== undefined || data.popularity[row.productId]?.pypiWeekly !== undefined ? (

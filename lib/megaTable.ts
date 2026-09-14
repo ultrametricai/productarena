@@ -43,6 +43,8 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         agenticApp: entry.agenticApp,
         apiQuality: entry.apiQuality,
         apiUntested: isGroupUntested(data, product.id, 'api-quality'),
+        agentReadyUntested: isGroupUntested(data, product.id, 'agent-access'),
+        agenticAppUntested: isGroupUntested(data, product.id, 'agentic-features'),
         popularity: data.popularity[product.id]?.stars ?? null,
         ycBatch: product.ycBatch,
         trendDelta: metricTrendDelta(arenaId, product.id, 'aiEra'),

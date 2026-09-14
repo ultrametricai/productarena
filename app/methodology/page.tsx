@@ -43,6 +43,11 @@ export default function MethodologyPage() {
             <span className={CODE}>community</span> (independent) &gt; <span className={CODE}>claimed-docs</span>{' '}
             (vendor claim)
           </p>
+          <p className="mt-1">
+            <span className={CODE}>⚿ auth-gated</span>: a probe reached the live endpoint and hit a vendor sign-in
+            wall (HTTP 401/403, OAuth) — verified reachable, untestable keylessly. Proof of life, never evidence of
+            absence; the marker never changes a verdict or score.
+          </p>
         </div>
         <div id="verdicts" className={`scroll-mt-16 ${PILL}`}>
           <p className="font-semibold text-zinc-300">Verdicts</p>

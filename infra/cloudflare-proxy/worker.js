@@ -345,6 +345,80 @@ async function postJsonRpc(endpoint, message, fetchImpl, sessionId) {
 
 const clip = (value, max = 120) => String(value).slice(0, max)
 
+// When the handshake hits an auth wall, the wall itself often tells us more: RFC 9728
+// protected-resource metadata (advertised via WWW-Authenticate resource_metadata="…", with the
+// spec's well-known path as fallback) names the resource, its scopes, and its authorization
+// server. Fetch it so the visitor leaves the 401 with something actionable — never a URL the
+// vendor could point off-host (same-hostname guard), and every field re-shaped/clipped like the
+// rest of the probe summary. Any failure returns {} — enrichment only, never an error.
+async function fetchAuthWallMetadata(endpoint, authHeader, fetchImpl) {
+  let metaUrl = null
+  const advertised = /resource_metadata="?([^",\s]+)"?/i.exec(authHeader ?? '')?.[1]
+  const endpointUrl = new URL(endpoint)
+  if (advertised) {
+    try {
+      const candidate = new URL(advertised)
+      if (candidate.protocol === 'https:' && candidate.hostname === endpointUrl.hostname) {
+        metaUrl = candidate.toString()
+      }
+    } catch { /* malformed advertisement — fall through to the well-known path */ }
+  }
+  if (!metaUrl) {
+    const suffix = endpointUrl.pathname === '/' ? '' : endpointUrl.pathname
+    metaUrl = `${endpointUrl.origin}/.well-known/oauth-protected-resource${suffix}`
+  }
+
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+  let resp
+  try {
+    resp = await fetchImpl(metaUrl, {
+      method: 'GET',
+      redirect: 'manual', // stay on the vendor host — never follow the wall elsewhere
+      signal: controller.signal,
+      headers: {
+        accept: 'application/json',
+        'user-agent': 'ProductArena-tryit/1.0 (+https://ultrametric.ai/productarena)',
+      },
+    })
+  } catch {
+    clearTimeout(timer)
+    return {}
+  }
+  clearTimeout(timer)
+  if (resp.status !== 200) return {}
+  let meta
+  try {
+    meta = JSON.parse(await readBoundedBody(resp))
+  } catch {
+    return {}
+  }
+  if (!meta || typeof meta !== 'object') return {}
+
+  const out = {}
+  if (typeof meta.resource_name === 'string' && meta.resource_name.trim()) {
+    out.resourceName = clip(meta.resource_name.trim(), 80)
+  }
+  if (Array.isArray(meta.scopes_supported)) {
+    const scopes = meta.scopes_supported.filter((s) => typeof s === 'string' && s.trim()).slice(0, 12).map((s) => clip(s.trim(), 60))
+    if (scopes.length > 0) out.scopes = scopes
+  }
+  if (Array.isArray(meta.authorization_servers)) {
+    const servers = meta.authorization_servers
+      .map((s) => {
+        try {
+          return new URL(String(s)).hostname
+        } catch {
+          return null
+        }
+      })
+      .filter(Boolean)
+      .slice(0, 3)
+    if (servers.length > 0) out.authServers = servers
+  }
+  return out
+}
+
 // The probe itself: initialize, then (only if the server answered keyless) tools/list.
 // Everything returned is reshaped into plain sanitized fields — no upstream body is ever
 // echoed through verbatim. `fetchImpl` is injectable for tests (like handleJsonRpc's
@@ -365,11 +439,14 @@ export async function probeMcpEndpoint(endpoint, fetchImpl = fetch) {
 
   if (init.status === 401 || init.status === 403) {
     const authHeader = init.headers.get('www-authenticate') ?? ''
+    // Enrich the honest 401 with what the wall itself discloses (RFC 9728) — best-effort.
+    const meta = await fetchAuthWallMetadata(endpoint, authHeader, fetchImpl)
     return {
       reachable: true,
       authRequired: true,
       httpStatus: init.status,
       oauth: /bearer|resource_metadata|oauth/i.test(authHeader),
+      ...meta,
     }
   }
 

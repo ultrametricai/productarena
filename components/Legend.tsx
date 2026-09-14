@@ -58,6 +58,7 @@ export default function Legend({ id = 'legend' }: { id?: string; defaultOpen?: b
         <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-sky-950 text-sky-300 ring-sky-800">X community</Chip>} gloss="users back it" />
         <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-zinc-900 text-zinc-400 ring-zinc-700">C claimed</Chip>} gloss="vendor claim only" />
         <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-red-950 text-red-300 ring-red-800">D contradicted</Chip>} gloss="evidence disagrees" />
+        <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-amber-950 text-amber-300 ring-amber-800">⚿ auth-gated</Chip>} gloss="probe hit a live sign-in wall — verified reachable, untestable keylessly" />
       </Group>
       <span className="text-[11px] text-zinc-500">
         quality 0–10 · PA Score /100 ·{' '}

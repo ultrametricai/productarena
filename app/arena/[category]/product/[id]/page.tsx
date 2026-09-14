@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
+import { AuthGatedChip } from '@/components/AuthGatedMarker'
 import AgenticBadge from '@/components/AgenticBadge'
 import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
@@ -32,6 +33,7 @@ import YcBadge from '@/components/YcBadge'
 import {
   groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
+import { isGroupUntested } from '@/lib/data-helpers'
 import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
 import { humanizeTheme, themeExplanation } from '@/lib/icons'
@@ -42,6 +44,7 @@ import { loadPricing } from '@/lib/pricing'
 import { loadScoreHistory } from '@/lib/scoreHistory'
 import { aiEraBandFor, loadScoreIntervals } from '@/lib/scoreIntervals'
 import type { Product, Story } from '@/lib/schemas'
+import { authGatedProbeCount } from '@/lib/verification'
 import { SITE_URL } from '@/lib/site'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
 import { hasTryIt } from '@/lib/tryit'
@@ -208,8 +211,8 @@ export default async function ProductPage({
                 smaller type — only when interval data exists for this product, never fabricated. */}
             <AiEraBadge value={entry.aiEra} href="/methodology#arena-score" interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           </div>
-          <AgenticBadge kind="agent-ready" value={entry.agentReady} href="/methodology#ai-era" />
-          <AgenticBadge kind="agentic-app" value={entry.agenticApp} href="/methodology#ai-era" />
+          <AgenticBadge kind="agent-ready" value={entry.agentReady} untested={isGroupUntested(data, id, 'agent-access')} href="/methodology#ai-era" />
+          <AgenticBadge kind="agentic-app" value={entry.agenticApp} untested={isGroupUntested(data, id, 'agentic-features')} href="/methodology#ai-era" />
           <AgentAccessGlyphs data={data} productId={id} size="md" />
         </div>
         {/* SECONDARY row — adoption signals (registry data, never part of the PA Score) and the
@@ -217,6 +220,9 @@ export default async function ProductPage({
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
           <MomentumChip popularity={data.popularity[id]} />
           <MomentumTrend series={momentumSeries} />
+          {/* Auth-gated honesty (lib/verification.ts): probes that hit a live 401/OAuth wall are
+              proof of a live endpoint, not absence — surface them instead of silence. */}
+          <AuthGatedChip count={authGatedProbeCount(data, id)} />
           {vendorResponseCount > 0 && (
             <a
               href="#story-verdicts"
