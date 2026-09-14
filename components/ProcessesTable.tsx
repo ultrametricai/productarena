@@ -127,11 +127,11 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
-              <SortableTh col="title" current={column} direction={direction} onSort={handleSort}>Process</SortableTh>
-              <SortableTh col="phase" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">Phase</SortableTh>
-              <SortableTh col="pct" current={column} direction={direction} onSort={handleSort}>Current agent ceiling</SortableTh>
-              <SortableTh col="steps" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">Steps</SortableTh>
-              <SortableTh col="title" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell">Software</SortableTh>
+              <SortableTh col="title" current={column} direction={direction} onSort={handleSort}><span title="A real startup operating process, mapped step by step">Process</span></SortableTh>
+              <SortableTh col="phase" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell"><span title="Where in the life of the company this process happens (formation, finance, hiring…)">Phase</span></SortableTh>
+              <SortableTh col="pct" current={column} direction={direction} onSort={handleSort}><span title="Agent ceiling: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Current agent ceiling</span></SortableTh>
+              <SortableTh col="steps" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell"><span title="Agent-runnable steps out of the total steps in the process">Steps</span></SortableTh>
+              <SortableTh col="title" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main software this process runs on — judged vendors link to their product page">Software</span></SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">

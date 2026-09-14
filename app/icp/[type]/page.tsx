@@ -67,8 +67,8 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
               <th scope="col" className="px-3 py-2 font-normal"># / Product</th>
-              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Arena</th>
-              <th scope="col" className="px-3 py-2 font-normal">Lens score</th>
+              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="The product category (arena) it competes in">Arena</span></th>
+              <th scope="col" className="px-3 py-2 font-normal"><span title="The product's theme scores re-weighted for this buyer type — same evidence, this lens's priorities">Lens score</span></th>
               {themes.map((theme) => (
                 <th key={theme} scope="col" className="hidden px-3 py-2 font-normal md:table-cell">
                   <span className="inline-flex items-center gap-1">

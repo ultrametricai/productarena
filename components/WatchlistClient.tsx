@@ -12,10 +12,16 @@ import type { WatchlistProduct } from '@/lib/watchlist'
 // ships (see app/watchlist/page.tsx). Server-rendered HTML always shows the empty state ('[]'
 // server snapshot) and fills in after hydration — the honest render for device-local data.
 
+// Plain-English definitions for the two score labels — the same wording the ranking tables use.
+const SCORE_LABEL_TITLES: Record<string, string> = {
+  'PA Score': 'PA Score (0–100): the site\'s blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI',
+  'Agent-ready': 'Agent-ready (0–100): how easily an outside AI agent or assistant can connect to and operate this product',
+}
+
 function ScoreCell({ label, value, values }: { label: string; value: number | null; values: number[] }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[10px] uppercase tracking-widest text-zinc-400">{label}</span>
+      <span className="text-[10px] uppercase tracking-widest text-zinc-400" title={SCORE_LABEL_TITLES[label]}>{label}</span>
       <span className="font-mono text-sm tabular-nums text-zinc-200">
         {value === null ? <span className="text-zinc-500">n/a</span> : value.toFixed(0)}
       </span>

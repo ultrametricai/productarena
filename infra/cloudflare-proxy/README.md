@@ -16,6 +16,12 @@ The Cloudflare Worker on the `ultrametric.ai/productarena*` route. Four jobs:
    `lib/mcpEndpoints.ts`, sync-tested in `__tests__/mcp-probe.test.ts`) — clients can never
    supply a URL. 10 requests / 5 min per IP, 6 s timeouts, bounded reads.
 4. **`POST /productarena/mcp`** — a remote MCP endpoint (see below).
+5. **Compare popularity** — every proxied `GET /productarena/compare?p=…` increments a
+   normalized-pair counter in Workers KV (binding `PA_COMPARE_STATS`; pairs only, never IPs or
+   user agents), and the keyless `GET /productarena/api/popular-compares` serves the top ~20
+   pairs (5-minute cache) for the `/compare` page's "Most compared" strip. One-time setup:
+   `wrangler kv namespace create PA_COMPARE_STATS`, paste the id into `wrangler.toml`, deploy.
+   Until then counting no-ops and the endpoint returns 503 (the client renders nothing).
 
 ## Remote MCP endpoint
 

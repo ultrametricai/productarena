@@ -2,9 +2,9 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadCategory } from '@/lib/data'
 import {
-  buildSimSteps, chainTasks, computeCeiling, formatMinutes, gapThemes, loadChains,
-  loadProcesses, processSlug, siteCeiling, taskCeiling, VENDOR_ARENA, vendorChipInfo,
-  vendorProductId, vendorRoles,
+  buildSimSteps, chainTasks, computeCeiling, findProcessBySlug, formatMinutes, gapThemes,
+  loadChains, loadProcesses, processSlug, siteCeiling, slugAliasFor, taskCeiling, VENDOR_ARENA,
+  VENDOR_SIGNUP_URL, vendorChipInfo, vendorProductId, vendorRoles,
   type DagNode,
 } from '@/lib/processes'
 
@@ -25,6 +25,49 @@ describe('corpus', () => {
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+  })
+
+  it('keeps renamed processes reachable via slug aliases, with unique slugs across the namespace', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const canonical = new Set(tasks.map((t) => processSlug(t.title)))
+    const aliases = tasks.flatMap((t) => t.slugAliases ?? [])
+    expect(aliases.length).toBeGreaterThan(0)
+    for (const a of aliases) expect(canonical.has(a.slug), `alias ${a.slug} collides with a canonical slug`).toBe(false)
+
+    // The founder example: "Send Stripe invoice" is now the vendor-neutral "Send an invoice",
+    // but the old indexed slug still resolves to the same task — with the alias identifiable
+    // so the page can render its canonical pointer.
+    const viaAlias = findProcessBySlug('send-stripe-invoice', DATA_DIR)
+    expect(viaAlias?.title).toBe('Send an invoice')
+    expect(slugAliasFor(viaAlias!, 'send-stripe-invoice')?.label).toBe('Send Stripe invoice')
+    expect(slugAliasFor(viaAlias!, 'send-an-invoice')).toBeNull()
+    expect(findProcessBySlug('send-an-invoice', DATA_DIR)?.id).toBe(viaAlias?.id)
+  })
+
+  it('vendor-neutral titles: no tracked vendor is named in a process title', () => {
+    const vendorPhrases = Object.keys(VENDOR_ARENA)
+      .map((v) => v.replace(/_/g, ' '))
+      .filter((p) => p.length > 3)
+    for (const t of loadProcesses(DATA_DIR)) {
+      const words = new Set(t.title.toLowerCase().split(/[^a-z0-9]+/))
+      for (const phrase of vendorPhrases) {
+        const named = phrase.includes(' ') ? t.title.toLowerCase().includes(phrase) : words.has(phrase)
+        expect(named, `"${t.title}" names vendor "${phrase}" — titles are vendor-neutral (use slugAliases for old names)`).toBe(false)
+      }
+    }
+  })
+
+  it('every step actionUrl is https and labeled, and every signup URL is https', () => {
+    for (const t of loadProcesses(DATA_DIR)) {
+      for (const n of t.dag.nodes) {
+        if (!n.actionUrl) continue
+        expect(n.actionUrl.startsWith('https://'), `${t.id}/${n.id} actionUrl must be https`).toBe(true)
+        expect(n.actionLabel, `${t.id}/${n.id} actionUrl needs an actionLabel`).toBeTruthy()
+      }
+    }
+    for (const [vendor, url] of Object.entries(VENDOR_SIGNUP_URL)) {
+      expect(url.startsWith('https://'), `${vendor} signup URL must be https`).toBe(true)
+    }
   })
 
   it('contains no scrubbed vendor names', () => {

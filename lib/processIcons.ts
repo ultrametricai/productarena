@@ -84,7 +84,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   comp_010: '🔒', // Publish privacy policy & DPA (privacy is 🔒 site-wide)
   comp_011: '📜', // Board minutes cadence
   // Finance
-  qs_021: '💳', // Connect Stripe
+  qs_021: '💳', // Connect a payment processor (canonical: Stripe)
   qs_023: '🏦', // Open bank account
   qs_024: '💳', // Set up credit card
   qs_050: '📉', // Track runway
@@ -108,7 +108,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   scale_003: '📖', // Employee handbook
   scale_008: '📥', // Hiring pipeline
   opp_002: '👷', // Add a contractor (1099)
-  opp_007: '🪪', // Provision a Google Workspace user
+  opp_007: '🪪', // Provision a workspace user (canonical: Google Workspace)
   team_001: '💌', // Invite a teammate
   // Operations
   qs_001: '📝', // Summarize my company
@@ -117,41 +117,41 @@ export const PROCESS_ICONS: Record<string, string> = {
   qs_004: '🧰', // List capabilities
   qs_010: '🧠', // Extract Ultrametric context
   qs_015: '🗄️', // Set up doc storage
-  ops_001: '💬', // Set up Slack
-  ops_002: '🎫', // Set up Linear (issues)
-  ops_003: '📚', // Set up Notion wiki
-  ops_004: '🏢', // Set up Google Workspace
-  ops_005: '🔐', // Set up 1Password
+  ops_001: '💬', // Set up team chat (canonical: Slack)
+  ops_002: '🎫', // Set up a project tracker (canonical: Linear)
+  ops_003: '📚', // Set up a team wiki (canonical: Notion)
+  ops_004: '🏢', // Set up company email & docs (canonical: Google Workspace)
+  ops_005: '🔐', // Set up a password manager (canonical: 1Password)
   scale_006: '🏗️', // Multi-team structure
   scale_012: '🎯', // Company OKRs (same concept as qs_003)
-  opp_005: '📋', // Create an Asana project
+  opp_005: '📋', // Create a project in your tracker (canonical: Asana)
   opp_006: '📦', // Import documents from Dropbox
-  opp_008: '✉️', // Draft and send an email via Gmail
+  opp_008: '✉️', // Draft and send an email (canonical: Gmail)
   opp_011: '📨', // Set up email routing on your domain
   vendor_010: '🔌', // Connect a vendor or MCP server
   // Software making
   sw_001: '🚢', // Ship a feature (ship it!)
   sw_002: '🏷️', // Cut a release (tag it)
   prod_002: '🔄', // Set up CI/CD
-  prod_004: '🚨', // Set up Sentry
+  prod_004: '🚨', // Set up error tracking (canonical: Sentry)
   // Product
   qs_081: '🖥️', // Set up website
-  prod_001: '☁️', // Set up AWS infra
+  prod_001: '☁️', // Set up cloud infrastructure (canonical: AWS)
   prod_003: '🔗', // Set up custom domain
-  prod_005: '🦔', // Set up PostHog (the hedgehog)
-  prod_006: '🐙', // Set up GitHub org (the octopus)
-  opp_009: '🎫', // Create a Linear issue from a task (same concept as ops_002)
+  prod_005: '🦔', // Set up product analytics (canonical: PostHog — the hedgehog)
+  prod_006: '🐙', // Set up a code hosting org (canonical: GitHub — the octopus)
+  opp_009: '🎫', // Create an issue from a task (same concept as ops_002)
   scale_009: '📟', // On-call & incidents (the pager)
   scale_010: '🏭', // Data warehouse & BI (the warehouse)
   // Sales
-  sales_001: '📇', // Set up HubSpot (CRM rolodex)
-  sales_002: '🧾', // Send Stripe invoice
+  sales_001: '📇', // Set up a CRM (canonical: HubSpot — rolodex)
+  sales_002: '🧾', // Send an invoice (canonical: Stripe)
   // Growth
-  growth_001: '🔁', // Set up Stripe subscriptions
+  growth_001: '🔁', // Set up subscription billing (canonical: Stripe)
   growth_002: '🛟', // Churn save attempt (save the customer)
-  growth_003: '📣', // Set up Mailchimp
-  growth_004: '🗨️', // Set up Intercom
-  growth_005: '📧', // Set up SendGrid
+  growth_003: '📣', // Set up email marketing (canonical: Mailchimp)
+  growth_004: '🗨️', // Set up customer support (canonical: Intercom)
+  growth_005: '📧', // Set up transactional email (canonical: SendGrid)
   opp_003: '🔁', // Create a subscription product (same concept as growth_001)
   site_001: '🪄', // Generate a website
   growth_010: '🚀', // Launch on Product Hunt & directories

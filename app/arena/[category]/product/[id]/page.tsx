@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import arenaIcons from '@/data/arena-icons.json'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import { AuthGatedChip } from '@/components/AuthGatedMarker'
 import AgenticBadge from '@/components/AgenticBadge'
@@ -151,7 +153,32 @@ export default async function ProductPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(data, product)) }}
       />
       <div>
-        <p className="text-sm uppercase tracking-widest text-emerald-400">Rank #{rank}</p>
+        {/* Arena identity, instantly (Stripe-employee feedback: "hard to tell what category this
+            product was in"). Breadcrumb for orientation, then the eyebrow names the arena — with
+            its emoji — as a prominent link to the leaderboard the rank comes from. This is the
+            page's own category; FamilySection below covers sibling products, not this. */}
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-x-1.5 text-xs text-zinc-500">
+          <Link href="/" className="transition hover:text-emerald-300">Arenas</Link>
+          <span aria-hidden className="text-zinc-700">→</span>
+          <Link href={`/arena/${category}`} className="transition hover:text-emerald-300">
+            {data.category.name}
+          </Link>
+          <span aria-hidden className="text-zinc-700">→</span>
+          <span className="text-zinc-400">{product.name}</span>
+        </nav>
+        <p className="mt-1.5 text-sm uppercase tracking-widest text-emerald-400">
+          Rank #{rank} of {data.rankings.leaderboard.length} in{' '}
+          <Link
+            href={`/arena/${category}`}
+            title={`${data.category.name} — the arena (category) this product competes in. See the full leaderboard.`}
+            className="font-semibold text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
+          >
+            {(arenaIcons as Record<string, string>)[category] && (
+              <span aria-hidden className="mr-1">{(arenaIcons as Record<string, string>)[category]}</span>
+            )}
+            {data.category.name}
+          </Link>
+        </p>
         <div className="mt-1 flex flex-wrap items-center gap-4">
           <ProductLogo product={product} size={56} />
           <div>

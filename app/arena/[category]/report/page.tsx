@@ -133,10 +133,10 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
               <tr className="border-b border-zinc-800 bg-zinc-900/60 text-left text-xs text-zinc-400">
                 <th className="px-3 py-2 font-medium">#</th>
                 <th className="px-3 py-2 font-medium">Product</th>
-                <th className="px-3 py-2 text-right font-medium">PA Score</th>
-                <th className="px-3 py-2 text-right font-medium">Coverage score</th>
-                <th className="px-3 py-2 text-right font-medium">Applicable cells</th>
-                <th className="px-3 py-2 text-right font-medium">Confidence</th>
+                <th className="px-3 py-2 text-right font-medium"><span title="PA Score (0–100): the blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">PA Score</span></th>
+                <th className="px-3 py-2 text-right font-medium"><span title="Story coverage (0–100): how much of the arena's judged story set the product delivers, weighted by importance">Coverage score</span></th>
+                <th className="px-3 py-2 text-right font-medium"><span title="Judged (product, story) cells that apply to this product — n/a stories excluded">Applicable cells</span></th>
+                <th className="px-3 py-2 text-right font-medium"><span title="Mean judge confidence across this product's verdicts">Confidence</span></th>
               </tr>
             </thead>
             <tbody>
@@ -248,9 +248,9 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
               <thead>
                 <tr className="border-b border-zinc-800 bg-zinc-900/60 text-left text-xs text-zinc-400">
                   <th className="px-3 py-2 font-medium">Product</th>
-                  <th className="px-3 py-2 font-medium">Headline price</th>
-                  <th className="px-3 py-2 font-medium">Unit</th>
-                  <th className="px-3 py-2 text-right font-medium">As of</th>
+                  <th className="px-3 py-2 font-medium"><span title="The lead price from the vendor's public pricing page — a signal, not a quote">Headline price</span></th>
+                  <th className="px-3 py-2 font-medium"><span title="What that price buys (per seat/month, per 1k calls…)">Unit</span></th>
+                  <th className="px-3 py-2 text-right font-medium"><span title="When we last read the vendor's pricing page">As of</span></th>
                 </tr>
               </thead>
               <tbody>

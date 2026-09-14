@@ -85,10 +85,10 @@ export default function GlobalIndexPage() {
         <table className="w-full border-collapse text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
-              <th scope="col" className="px-3 py-2 font-normal">Capability</th>
-              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Arenas</th>
-              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Products</th>
-              <th scope="col" className="px-3 py-2 font-normal">Adoption</th>
+              <th scope="col" className="px-3 py-2 font-normal"><span title="An industry-wide capability judged in every arena (MCP server, llms.txt, agent docs…)">Capability</span></th>
+              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="How many product categories (arenas) this capability was judged across">Arenas</span></th>
+              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Products with a full or partial verdict / all judged products">Products</span></th>
+              <th scope="col" className="px-3 py-2 font-normal"><span title="Share of judged products that have this capability today (full or partial)">Adoption</span></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">

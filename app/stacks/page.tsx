@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
@@ -68,10 +69,15 @@ export default function StacksPage() {
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
-                  <th scope="col" className="px-3 py-2 font-normal">Layer</th>
-                  <th scope="col" className="px-3 py-2 font-normal">Pick</th>
-                  <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell">Why this pick</th>
-                  <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Evidence</th>
+                  <th scope="col" className="px-3 py-2 font-normal"><span title="The role this slot fills in the stack">Layer</span></th>
+                  <th scope="col" className="px-3 py-2 font-normal"><span title="The product filling this slot — scored picks resolve live from the arena leaderboard; editorial picks are labeled">Pick</span></th>
+                  <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell"><span title="The curators' one-line reason this slot exists">Why this pick</span></th>
+                  <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span title="The judged score behind the pick and its rank in the arena">Evidence</span>
+                      <ColumnsHelpLink />
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/70">

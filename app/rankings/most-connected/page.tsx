@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import RankingsNav from '@/components/RankingsNav'
@@ -129,7 +130,7 @@ export default function MostConnectedRankingPage() {
               <th className="w-10 px-3 py-2 font-normal">#</th>
               <th className="px-3 py-2 font-normal">Product</th>
               <th className="px-3 py-2 font-normal" title="Distinct tracked products with ≥1 evidence-backed integration edge to this one">
-                Connections
+                <span className="inline-flex items-center gap-1.5">Connections<ColumnsHelpLink /></span>
               </th>
               <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Evidence-backed integration quotes behind those connections (a pair claimed from both sides counts twice)">
                 Mentions

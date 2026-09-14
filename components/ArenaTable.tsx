@@ -199,14 +199,14 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                 <span title="Openness /100 — self-host, full export, read the source">Openness</span>
               </SortableTh>
               <SortableTh col="automation" current={column} direction={direction} onSort={handleSort} className="hidden xl:table-cell">
-                Autom.
+                <span title="Automation depth /100 — how much of the product's work can run hands-off, end to end, without a person clicking through">Autom.</span>
               </SortableTh>
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
-                Popularity
+                <span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of the PA Score">Popularity</span>
               </SortableTh>
               {pricing && (
                 <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden md:table-cell">
-                  $ / unit
+                  <span title="Headline price per unit, read from the vendor's public pricing page — hover a cell for the unit and date">$ / unit</span>
                 </SortableTh>
               )}
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import AiEraBadge from '@/components/AiEraBadge'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
@@ -50,10 +51,15 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
           <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-400">
             <th className="sticky left-0 z-10 w-10 bg-zinc-950 px-3 py-2 font-normal">#</th>
             <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
-            <th className="px-3 py-2 font-normal">Arena</th>
-            <th className="px-3 py-2 font-normal">Access</th>
-            <th className="hidden px-3 py-2 font-normal sm:table-cell">Popularity</th>
-            <th className="px-3 py-2 font-normal">PA Score</th>
+            <th className="px-3 py-2 font-normal"><span title="The product category (arena) it competes in — click through for that arena's full leaderboard">Arena</span></th>
+            <th className="px-3 py-2 font-normal"><span title="Which agent doorways exist: MCP server, official command-line tool (CLI), public API — from judged evidence">Access</span></th>
+            <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of any score">Popularity</span></th>
+            <th className="px-3 py-2 font-normal">
+              <span className="inline-flex items-center gap-1.5">
+                <span title="PA Score (0–100): the site's blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">PA Score</span>
+                <ColumnsHelpLink />
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">
