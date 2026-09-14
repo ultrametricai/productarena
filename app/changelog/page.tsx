@@ -119,6 +119,12 @@ export default function ChangelogPage() {
             with activity (max {CHANGELOG_MAX_EVENTS} events).
           </p>
         )}
+        <p className="mt-2 text-xs text-zinc-500">
+          The same history, summed per product:{' '}
+          <Link href="/rankings/rising" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
+            rising &amp; falling — the biggest 30-day score moves →
+          </Link>
+        </p>
       </div>
 
       {days.length === 0 ? (
