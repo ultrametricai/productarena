@@ -9,14 +9,23 @@ import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import {
-  buildSimSteps, findProcessBySlug, loadProcesses, processSlug, taskCeiling, vendorRoles,
+  buildSimSteps, findProcessBySlug, loadProcesses, processSlug, slugAliasFor, taskCeiling, vendorRoles,
 } from '@/lib/processes'
+import { SITE_URL } from '@/lib/site'
 
 // One founder process: the DAG as it really runs, the market options per vendor role (resolved
 // live from arena leaderboards), the agent-ceiling verdict, and a simulated dry run.
+//
+// Renamed processes (founder rule: vendor-neutral names — "Send an invoice", not "Send Stripe
+// invoice") also prerender their old vendor-flavored slugs (slugAliases): static export has no
+// server redirects, so the alias page is the same full page plus a canonical link and a pointer
+// line — old shared/indexed links keep working and keep being useful.
 
 export function generateStaticParams() {
-  return loadProcesses().map((t) => ({ slug: processSlug(t.title) }))
+  return loadProcesses().flatMap((t) => [
+    { slug: processSlug(t.title) },
+    ...(t.slugAliases ?? []).map((a) => ({ slug: a.slug })),
+  ])
 }
 
 export const dynamicParams = false
@@ -33,6 +42,8 @@ export async function generateMetadata({
   return {
     title: `${task.title} — Processes — ProductArena`,
     description: `${task.description} An agent can run ${ceiling.agentSteps} of ${ceiling.totalSteps} steps today.`,
+    // Alias slugs point search engines at the one canonical page.
+    alternates: { canonical: `${SITE_URL}/processes/${processSlug(task.title)}` },
   }
 }
 
@@ -50,10 +61,24 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   const ceiling = taskCeiling(task)
   const roles = vendorRoles([task])
   const simSteps = buildSimSteps([task])
+  const alias = slugAliasFor(task, slug)
+  const canonicalSlug = processSlug(task.title)
 
   return (
     <div className="space-y-10">
       <section>
+        {alias && (
+          <p className="mb-4 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-400">
+            &ldquo;{alias.label}&rdquo; is the vendor-specific flavor of this process — it&rsquo;s
+            now vendor-neutral, with the vendor as one of the market options.{' '}
+            <Link
+              href={`/processes/${canonicalSlug}`}
+              className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
+            >
+              {task.title} →
+            </Link>
+          </p>
+        )}
         <p className="text-[10px] uppercase tracking-widest text-zinc-400">
           <Link href="/processes" className="hover:text-emerald-300">Processes</Link>
           <span className="mx-1 text-zinc-600">/</span>

@@ -63,11 +63,11 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
-                <th scope="col" className="px-2 py-1.5 font-normal">Line</th>
-                <th scope="col" className="px-2 py-1.5 font-normal">Arena</th>
+                <th scope="col" className="px-2 py-1.5 font-normal"><span title="One of the company's individual products — each is judged separately in its own arena">Line</span></th>
+                <th scope="col" className="px-2 py-1.5 font-normal"><span title="The product category (arena) this line competes in">Arena</span></th>
                 <th scope="col" className="px-2 py-1.5 font-normal"><span title="Rank in its own arena's leaderboard">Rank</span></th>
                 <th scope="col" className="px-2 py-1.5 font-normal"><span title="PA Score /100 — the blended headline score">PA Score</span></th>
-                <th scope="col" className="hidden px-2 py-1.5 font-normal sm:table-cell"><span title="AGENT-READY /100 — can an outside agent access and operate it">Agent-ready</span></th>
+                <th scope="col" className="hidden px-2 py-1.5 font-normal sm:table-cell"><span title="Agent-ready /100 — how easily an outside AI agent can access and operate it">Agent-ready</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/70">

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import AiEraBadge from '@/components/AiEraBadge'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import arenaIcons from '@/data/arena-icons.json'
@@ -354,9 +355,14 @@ export default function StackBattle({
               <table className="w-full border-collapse text-sm">
                 <thead>
                   <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
-                    <th scope="col" className="px-3 py-2 font-normal">Arena</th>
-                    <th scope="col" className="px-3 py-2 font-normal">{aLabel}</th>
-                    <th scope="col" className="px-3 py-2 font-normal">{bLabel}</th>
+                    <th scope="col" className="px-3 py-2 font-normal"><span title="The product category (arena) this slot fills — each side's pick for it is compared on the same judged scores">Arena</span></th>
+                    <th scope="col" className="px-3 py-2 font-normal"><span title={`Stack A's pick for each arena slot`}>{aLabel}</span></th>
+                    <th scope="col" className="px-3 py-2 font-normal">
+                      <span className="inline-flex items-center gap-1.5">
+                        <span title={`Stack B's pick for each arena slot`}>{bLabel}</span>
+                        <ColumnsHelpLink />
+                      </span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-800/70">

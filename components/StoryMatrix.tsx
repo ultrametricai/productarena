@@ -134,8 +134,8 @@ function StoryMatrixGroup({
       <table className="w-full min-w-[560px] border-collapse text-sm">
         <thead className="sticky top-0 z-10 bg-zinc-950">
           <tr className="border-b border-zinc-800 text-left text-xs text-zinc-500">
-            <th className="sticky left-0 z-20 bg-zinc-950 px-4 py-2 font-normal">Story</th>
-            <th className="bg-zinc-950 px-2 py-2 font-normal">Persona</th>
+            <th className="sticky left-0 z-20 bg-zinc-950 px-4 py-2 font-normal"><span title="The real buyer/user scenario every product in this arena is judged on">Story</span></th>
+            <th className="bg-zinc-950 px-2 py-2 font-normal"><span title="Whose perspective the story is told from — the kind of user who needs it">Persona</span></th>
             {data.products.map((p) => (
               <th key={p.id} className="bg-zinc-950 px-3 py-2 text-center font-normal">
                 <div className="flex flex-col items-center gap-1">

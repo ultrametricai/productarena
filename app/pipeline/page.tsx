@@ -132,10 +132,10 @@ export default function PipelinePage() {
             <thead>
               <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
                 <th scope="col" className="px-3 py-2 font-normal">Product</th>
-                <th scope="col" className="px-3 py-2 font-normal">Untested story</th>
-                <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Arena</th>
-                <th scope="col" className="px-3 py-2 font-normal">Weight</th>
-                <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell">GitHub ★</th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="A judged story whose verdict has no hands-on tested evidence yet — the next probe to run">Untested story</span></th>
+                <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="The product category (arena) it competes in">Arena</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="How much the story counts in the arena's scoring — heavier stories are probed first">Weight</span></th>
+                <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell"><span title="GitHub stars — adoption context for prioritizing probes, never part of any score">GitHub ★</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/70">
@@ -183,10 +183,10 @@ export default function PipelinePage() {
             <thead>
               <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
                 <th scope="col" className="px-3 py-2 font-normal">Arena</th>
-                <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Products</th>
-                <th scope="col" className="px-3 py-2 font-normal">Cells</th>
-                <th scope="col" className="px-3 py-2 font-normal">Untested</th>
-                <th scope="col" className="px-3 py-2 font-normal">Probed</th>
+                <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Judged products in this arena">Products</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Judged (product, story) verdict cells in this arena">Cells</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Cells with no hands-on tested evidence yet">Untested</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Share of cells backed by our own hands-on probes">Probed</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/70">
@@ -243,11 +243,11 @@ export default function PipelinePage() {
                 <thead>
                   <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
                     <th scope="col" className="px-3 py-2 font-normal">Product</th>
-                    <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Arena</th>
-                    <th scope="col" className="px-3 py-2 font-normal">Surface</th>
+                    <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="The product category (arena) it competes in">Arena</span></th>
+                    <th scope="col" className="px-3 py-2 font-normal"><span title="The monitored agent surface: llms.txt, MCP endpoint, or openapi.json">Surface</span></th>
                     <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell">URL</th>
-                    <th scope="col" className="px-3 py-2 font-normal">Down since</th>
-                    <th scope="col" className="px-3 py-2 font-normal">Last status</th>
+                    <th scope="col" className="px-3 py-2 font-normal"><span title="When our uptime monitor first saw this surface failing">Down since</span></th>
+                    <th scope="col" className="px-3 py-2 font-normal"><span title="The HTTP status (or error) the monitor last received">Last status</span></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-800/70">

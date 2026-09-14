@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import CompareBuilder from '@/components/CompareBuilder'
+import PopularCompares from '@/components/PopularCompares'
 import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll } from '@/lib/data'
 import { buildCompareProducts } from '@/lib/compareData'
@@ -67,6 +68,10 @@ export default function ComparePage() {
           </p>
         )}
       </section>
+
+      {/* Measured "Most compared" pairs from the worker's KV counter — client-fetched; renders
+          nothing when the endpoint errors or has too few entries (honest empty state). */}
+      <PopularCompares products={products} />
 
       <Suspense fallback={null}>
         <CompareBuilder products={products} />

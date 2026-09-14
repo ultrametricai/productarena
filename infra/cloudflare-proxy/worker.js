@@ -16,6 +16,10 @@
 //
 // Also hosts POST /productarena/mcp — a keyless, rate-limited remote MCP endpoint (see the
 // "Remote MCP endpoint" section below and this directory's README.md).
+//
+// Also counts /productarena/compare?p=… selections into Workers KV (binding PA_COMPARE_STATS)
+// and serves the keyless GET /productarena/api/popular-compares top-20 — see the
+// "Compare popularity counter" section below. Pairs only; no IPs or user agents are stored.
 const ORIGIN = 'https://productarena.vercel.app'
 const ALLOWED_CORS = new Set(['https://ultrametric.ai', 'https://productarena.vercel.app'])
 
@@ -956,6 +960,102 @@ export async function handleJsonRpc(message, fetchJson = fetchArenaJson) {
   }
 }
 
+// ---------------------------------------------------------------------------------------------
+// Compare popularity counter: every proxied GET of /productarena/compare?p=a,b(,c…) increments
+// a normalized-pair counter in Workers KV (binding PA_COMPARE_STATS), and the keyless
+// GET /productarena/api/popular-compares returns the top pairs for the /compare page's
+// "Most compared" strip.
+//
+// Honesty & privacy by construction:
+// - Pairs only: the KV keys are `pair:<idA>|<idB>` (ids sorted, lowercased) with an integer
+//   count. No IPs, user agents, timestamps-per-hit, or any per-visitor state — nothing here
+//   can identify a person.
+// - The worker has no product catalog, so it accepts raw ids but guards the keyspace: ids must
+//   match a strict slug shape and length cap, at most MAX_COMPARE_IDS ids per request are
+//   counted, and the /compare CLIENT filters the endpoint's pairs down to ids it can actually
+//   resolve — junk pairs never render.
+// - KV get→put has no atomic increment, so concurrent hits can drop a count. Fine at current
+//   traffic; this is a popularity signal, not accounting.
+// - Missing binding (namespace not yet created / worker not redeployed with it) degrades
+//   silently for counting and returns an explicit error for the endpoint — the client renders
+//   nothing on error (honest empty state).
+const COMPARE_PAIR_PREFIX = 'pair:'
+const COMPARE_ID_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/
+const MAX_COMPARE_IDS = 6 // C(6,2) = 15 pair writes worst-case per request
+const POPULAR_COMPARES_LIMIT = 20
+const POPULAR_CACHE_TTL_MS = 5 * 60 * 1000
+let popularComparesCache = null // { expiresAt, body } — per-isolate, best-effort
+
+// Normalize a raw ?p= value into unique, sorted, shape-valid product ids (or [] if unusable).
+export function normalizeCompareIds(p) {
+  if (typeof p !== 'string') return []
+  const ids = [...new Set(p.split(',').map((s) => s.trim().toLowerCase()).filter((s) => COMPARE_ID_RE.test(s)))]
+  if (ids.length < 2) return []
+  return ids.slice(0, MAX_COMPARE_IDS).sort()
+}
+
+// Unordered pair keys for one selection: every 2-combination of the normalized ids.
+export function comparePairKeys(p) {
+  const ids = normalizeCompareIds(p)
+  const keys = []
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = i + 1; j < ids.length; j++) keys.push(`${COMPARE_PAIR_PREFIX}${ids[i]}|${ids[j]}`)
+  }
+  return keys
+}
+
+// Increment each pair's counter — fire-and-forget via ctx.waitUntil so the proxy response
+// never waits on KV. Read-modify-write per key (KV has no atomic increment; see above).
+export async function bumpComparePairs(kv, p) {
+  if (!kv) return
+  const keys = comparePairKeys(p)
+  await Promise.all(keys.map(async (key) => {
+    try {
+      const current = parseInt((await kv.get(key)) ?? '0', 10)
+      await kv.put(key, String((Number.isFinite(current) ? current : 0) + 1))
+    } catch { /* best-effort — a lost count is fine */ }
+  }))
+}
+
+// GET /productarena/api/popular-compares — keyless, top ~20 pairs, cached 5 minutes (per-isolate
+// cache + cache-control for downstream caches). Read-only public aggregates: permissive CORS.
+export async function handlePopularCompares(request, kv) {
+  const headers = {
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'GET, OPTIONS',
+    'content-type': 'application/json',
+    'cache-control': 'public, max-age=300',
+  }
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers })
+  if (request.method !== 'GET') {
+    return new Response(JSON.stringify({ error: 'GET only' }), { status: 405, headers })
+  }
+  if (!kv) {
+    return new Response(JSON.stringify({ error: 'compare stats not available' }), { status: 503, headers })
+  }
+  if (popularComparesCache && popularComparesCache.expiresAt > Date.now()) {
+    return new Response(popularComparesCache.body, { status: 200, headers })
+  }
+  let list
+  try {
+    list = await kv.list({ prefix: COMPARE_PAIR_PREFIX, limit: 1000 })
+  } catch {
+    return new Response(JSON.stringify({ error: 'compare stats not available' }), { status: 503, headers })
+  }
+  const entries = await Promise.all((list?.keys ?? []).map(async ({ name }) => {
+    const count = parseInt((await kv.get(name).catch(() => '0')) ?? '0', 10)
+    const [a, b] = name.slice(COMPARE_PAIR_PREFIX.length).split('|')
+    return { a, b, count: Number.isFinite(count) ? count : 0 }
+  }))
+  const pairs = entries
+    .filter((e) => e.a && e.b && e.count > 0)
+    .sort((x, y) => y.count - x.count)
+    .slice(0, POPULAR_COMPARES_LIMIT)
+  const body = JSON.stringify({ ok: true, pairs, updatedAt: new Date().toISOString() })
+  popularComparesCache = { expiresAt: Date.now() + POPULAR_CACHE_TTL_MS, body }
+  return new Response(body, { status: 200, headers })
+}
+
 function mcpCorsHeaders() {
   // Public, read-only data — permissive CORS is deliberate (unlike /api/scan). We don't rely
   // on Origin for auth (there is none) and serve no user-specific state, so DNS-rebinding
@@ -1010,14 +1110,23 @@ async function handleMcp(request) {
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
     if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request)
+    if (url.pathname === '/productarena/api/popular-compares') {
+      return handlePopularCompares(request, env?.PA_COMPARE_STATS)
+    }
     if (url.pathname === '/productarena/mcp') {
       const mcpResponse = await handleMcp(request)
       if (mcpResponse) return mcpResponse
       // plain GET falls through: the proxy below serves the site's /mcp page at this URL
+    }
+
+    // Compare popularity: count pair selections without ever delaying the page (see the
+    // "Compare popularity counter" section). GETs only; the response is the plain proxy below.
+    if (request.method === 'GET' && url.pathname === '/productarena/compare' && url.searchParams.get('p')) {
+      ctx?.waitUntil?.(bumpComparePairs(env?.PA_COMPARE_STATS, url.searchParams.get('p')))
     }
 
     const upstream = new URL(url.pathname + url.search, ORIGIN)

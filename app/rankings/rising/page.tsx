@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import AiEraBadge from '@/components/AiEraBadge'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import RankingsNav from '@/components/RankingsNav'
@@ -86,7 +87,7 @@ function TrendTable({ rows, direction }: { rows: TrendRow[]; direction: 'up' | '
             <th className="w-10 px-3 py-2 font-normal">#</th>
             <th className="px-3 py-2 font-normal">Product</th>
             <th className="px-3 py-2 font-normal" title={`PA Score change over the last ${TREND_WINDOW_DAYS} days: latest recorded value minus the value in effect ${TREND_WINDOW_DAYS} days ago`}>
-              {TREND_WINDOW_DAYS}d Δ
+              <span className="inline-flex items-center gap-1.5">{TREND_WINDOW_DAYS}d Δ<ColumnsHelpLink /></span>
             </th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Every recorded PA Score point for this product — the full tracked window, not just 30 days">
               Trend
