@@ -3,6 +3,7 @@ import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
+import { shortDate } from '@/lib/dates'
 import {
   CLOSE_RACE_THRESHOLD, loadPredictions, PREDICTION_WINDOW_DAYS, type PredictionQuestion,
 } from '@/lib/predictions'
@@ -20,10 +21,6 @@ export const metadata: Metadata = {
   title: 'Predictions — ProductArena',
   description:
     'Yes/no questions auto-generated from live close races — will the #2 overtake the #1 within 30 days? Settled mechanically from the public changelog, never by opinion.',
-}
-
-function dayLabel(day: string): string {
-  return new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 }
 
 function predictUrl(q: PredictionQuestion): string {
@@ -131,7 +128,7 @@ export default function PredictionsPage() {
                 </div>
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                   <span className="text-zinc-500">
-                    settles by <span className="font-mono text-zinc-400">{dayLabel(q.settlesBy.slice(0, 10))}</span>
+                    settles by <span className="font-mono text-zinc-400">{shortDate(q.settlesBy.slice(0, 10))}</span>
                   </span>
                   <a
                     href={predictUrl(q)}
@@ -177,7 +174,7 @@ export default function PredictionsPage() {
                         <span className="font-semibold text-emerald-400">settled YES</span>
                         <span className="text-zinc-400">
                           {' '}— {productName(q.arena, q.productA)} overtook {productName(q.arena, q.productB)}
-                          {flipDay ? ` on ${dayLabel(flipDay)}` : ''}, see the{' '}
+                          {flipDay ? ` on ${shortDate(flipDay)}` : ''}, see the{' '}
                           <Link href="/changelog" className={ARENA_LINK}>changelog</Link>
                         </span>
                       </span>
@@ -185,7 +182,7 @@ export default function PredictionsPage() {
                       <span>
                         <span className="font-semibold text-zinc-300">settled NO</span>
                         <span className="text-zinc-400">
-                          {' '}— the deadline ({dayLabel(q.settlesBy.slice(0, 10))}) passed without the flip
+                          {' '}— the deadline ({shortDate(q.settlesBy.slice(0, 10))}) passed without the flip
                         </span>
                       </span>
                     )}

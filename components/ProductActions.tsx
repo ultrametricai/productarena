@@ -4,10 +4,12 @@ import ProductLinkChips from '@/components/ProductLinkChips'
 import { battleSlug, type CategoryData } from '@/lib/data-helpers'
 import { REPO, withBase } from '@/lib/site'
 
-// "What you can do here" rail for the product page: every actionable thing — open the app/docs,
-// install, compare head-to-head, contest a verdict, agent-readable exports — in one quiet strip
-// right under the header. Server component; each entry renders only when its target actually
-// exists (no dead links for products without curated links/install commands).
+// Actions rail for the product page: every actionable thing — open the app/docs, install,
+// compare head-to-head, contest a verdict, agent-readable exports — in one quiet strip right
+// under the header. No umbrella heading (the old "What you can do here" told people the
+// obvious): each cell's specific label IS the heading. Server component; each entry renders
+// only when its target actually exists (no dead links for products without curated
+// links/install commands).
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <p className="mb-1.5 text-[10px] uppercase tracking-widest text-zinc-500">{children}</p>
@@ -51,8 +53,7 @@ export default function ProductActions({
 
   return (
     <div className="rounded-xl border border-zinc-800 p-4">
-      <p className="text-[10px] uppercase tracking-widest text-emerald-400">What you can do here</p>
-      <div className="mt-3 grid gap-x-6 gap-y-4 text-xs sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-x-6 gap-y-4 text-xs sm:grid-cols-2 lg:grid-cols-3">
         {tryIt && (
           <div>
             <SectionLabel>Try</SectionLabel>
@@ -67,7 +68,7 @@ export default function ProductActions({
 
         {hasLinks && (
           <div>
-            <SectionLabel>Open</SectionLabel>
+            <SectionLabel>Access</SectionLabel>
             <ProductLinkChips product={product} variant="label" />
           </div>
         )}

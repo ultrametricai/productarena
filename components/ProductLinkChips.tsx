@@ -4,7 +4,9 @@ const LINK_KEYS = ['app', 'api', 'cli', 'mcp'] as const
 type LinkKey = (typeof LINK_KEYS)[number]
 
 const LETTER: Record<LinkKey, string> = { app: 'A', api: 'API', cli: 'CLI', mcp: 'MCP' }
-const LABEL: Record<LinkKey, string> = { app: 'App', api: 'API docs', cli: 'CLI', mcp: 'MCP' }
+// Functional labels (founder rule: say what clicking does, not just name the surface — "Open"
+// as a heading over bare nouns read as filler). `app` is the live product; the rest are docs.
+const LABEL: Record<LinkKey, string> = { app: 'Open app ↗', api: 'API docs ↗', cli: 'CLI docs ↗', mcp: 'MCP docs ↗' }
 
 // Product quick links (schema: Product.links). Curation is a separate pass — most products
 // have none yet, so this renders nothing until a links object is present.

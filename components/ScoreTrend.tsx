@@ -1,4 +1,5 @@
 import Sparkline from '@/components/Sparkline'
+import { shortDate } from '@/lib/dates'
 import type { ScoreHistoryEntry } from '@/lib/schemas'
 import { seriesFor, type ScoreMetric, type SeriesPoint } from '@/lib/scoreTrend'
 
@@ -12,10 +13,6 @@ const METRICS: Array<{ metric: ScoreMetric; label: string }> = [
   { metric: 'aiEra', label: 'PA Score' },
   { metric: 'agentReady', label: 'Agent-ready' },
 ]
-
-function shortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })
-}
 
 function TrendRow({ label, series }: { label: string; series: SeriesPoint[] }) {
   if (series.length < 2) {

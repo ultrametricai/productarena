@@ -3,6 +3,7 @@ import Link from 'next/link'
 import GeoMark from '@/components/GeoMark'
 import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll, stripPersonaPrefix } from '@/lib/data'
+import { shortDate } from '@/lib/dates'
 import { hasLogo } from '@/lib/logos'
 import { pricingCoverage } from '@/lib/pricing'
 import {
@@ -56,8 +57,6 @@ export default function PipelinePage() {
   const productNames = new Map(
     categories.flatMap((c) => c.products.map((p) => [`${c.category.id}/${p.id}`, { productName: p.name, arenaName: c.category.name }] as const)),
   )
-  const formatDay = (date: string) =>
-    new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 
   return (
     <div className="space-y-10">
@@ -230,7 +229,7 @@ export default function PipelinePage() {
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([s, n]) => `${n} ${SLO_SURFACE_LABELS[s as keyof typeof SLO_SURFACE_LABELS]}`)
               .join(' · ')}
-            ){sloSince ? `, tracking since ${formatDay(sloSince)}` : ''}
+            ){sloSince ? `, tracking since ${shortDate(sloSince)}` : ''}
             {!sloMature && ' — uptime percentages appear on product pages after a week of history'}.
           </p>
           {sloDown.length === 0 ? (
@@ -276,7 +275,7 @@ export default function PipelinePage() {
                         </td>
                         <td className="px-3 py-2 font-mono text-xs text-red-400">{SLO_SURFACE_LABELS[s.surface]}</td>
                         <td className="hidden max-w-[280px] truncate px-3 py-2 font-mono text-xs text-zinc-400 md:table-cell">{s.url}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-xs text-zinc-300">{s.downSince ? formatDay(s.downSince) : '—'}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-xs text-zinc-300">{s.downSince ? shortDate(s.downSince) : '—'}</td>
                         <td className="px-3 py-2 font-mono tabular-nums text-xs text-zinc-300">{s.lastStatus === 0 ? 'timeout' : s.lastStatus}</td>
                       </tr>
                     )

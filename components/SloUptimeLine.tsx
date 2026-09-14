@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { shortDate } from '@/lib/dates'
 import {
   formatUptimePct,
   hasMatureSloHistory,
@@ -16,13 +17,9 @@ import {
 // couple of checks.
 const SURFACE_ORDER: SloSurface[] = ['mcp', 'llms-txt', 'openapi']
 
-function formatDay(date: string): string {
-  return new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
-}
-
 function surfaceText(s: SurfaceSlo, now: Date): string {
   const label = SLO_SURFACE_LABELS[s.surface]
-  if (!s.currentlyUp) return `${label} down since ${formatDay(s.downSince ?? s.lastDate)}`
+  if (!s.currentlyUp) return `${label} down since ${shortDate(s.downSince ?? s.lastDate)}`
   if (!hasMatureSloHistory(s, now) || s.windowUptimePct === null) return `${label} up`
   return `${label} ${formatUptimePct(s.windowUptimePct)}`
 }
@@ -35,7 +32,7 @@ export default function SloUptimeLine({ arena, productId }: { arena: string; pro
   if (slos.length === 0) return null
 
   const allMature = slos.every((s) => hasMatureSloHistory(s, now))
-  const since = formatDay(slos.reduce((min, s) => (new Date(s.firstDate) < new Date(min) ? s.firstDate : min), slos[0].firstDate))
+  const since = shortDate(slos.reduce((min, s) => (new Date(s.firstDate) < new Date(min) ? s.firstDate : min), slos[0].firstDate))
 
   return (
     <p className="mt-1 text-[11px] text-zinc-500">
