@@ -25,6 +25,7 @@ export const MCP_ENDPOINTS: Record<string, string> = {
   'document-extraction/reducto': 'https://mcp.reducto.ai/mcp',
   'email/agentmail': 'https://mcp.agentmail.to/mcp',
   'email/missive': 'https://mcp.missiveapp.com/',
+  'equity-management/carta': 'https://mcp.app.carta.com/mcp',
   'feature-flags/flagsmith': 'https://mcp.flagsmith.com/',
   'incident-management/incident-io': 'https://mcp.incident.io/mcp',
   'incident-management/pagerduty': 'https://mcp.pagerduty.com/mcp',

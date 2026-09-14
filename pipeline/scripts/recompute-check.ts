@@ -38,6 +38,7 @@ const CATEGORIES = [
   'ecommerce-platforms',
   'email',
   'edge-platforms',
+  'equity-management',
   'feature-flags',
   'frontend-frameworks',
   'gpu-clouds',
