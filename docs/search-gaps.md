@@ -24,22 +24,21 @@ candidates come from there.
 | 6 | static site generators | `docs-platforms` (Docusaurus only) | **Future arena** — its description says Astro Starlight "was left for a future static-site-generator arena" |
 | 7 | website builders | `ecommerce-platforms` excludes them | **Future arena** (Framer, Webflow, Wix) — distinct from vibe-coding's prompt-to-app |
 | 8 | password manager / secrets management | none | **Future arena** — two related arenas: consumer/team password managers (1Password, Bitwarden) and dev secrets (Doppler, Infisical, Vault); the latter is more on-thesis (agents need scoped secrets) |
-| 9 | error tracking / crash reporting | `observability` is metrics/logs/traces | **Future arena** (Sentry, Rollbar) or fold into observability at next refresh with an explicit boundary note |
-| 10 | CI/CD platforms (standalone) | `code-hosting` scores CI only as a hosting feature | **Future arena** (Buildkite, CircleCI, GitHub Actions-as-product) — agents queue builds all day |
-| 11 | feature stores / ML feature platforms | none (`feature-flags` is a false friend people will hit) | **Future arena or ignore** — classic MLOps query (Tecton, Feast); lower AI-era momentum than agent infra |
-| 12 | fine-tuning / model training platforms | `inference-providers` scores fine-tune *serving* only | **Future arena** (Modal training, Together fine-tuning, Axolotl-hosting) |
-| 13 | text-to-speech / speech-to-text APIs | `voice-agents` uses them but doesn't rank them | **Future arena** (ElevenLabs, Deepgram, Cartesia) — agents speak; strong fit |
-| 14 | image / video generation | none | **Future arena** (fal, Replicate media side) or **ignore** if the site stays builder-infra-focused |
-| 15 | business intelligence / dashboards | `data-warehouses` is adjacent | **Future arena** (Metabase, Looker, Evidence) — "BI tools" is a top-tier classic query |
-| 16 | VPN / private networking / zero trust | Tailscale appears only as a stack pick | **Future arena** (Tailscale, ZeroTier) — the mobile-agentic stack already leans on it |
-| 17 | container orchestration / kubernetes platforms | `infra-as-code` provisions it, doesn't rank it | **Future arena or ignore** — huge query, weak agent angle so far |
-| 18 | domain registrar / DNS | none | **Ignore for now** — commodity; revisit if a founder-ops arena wave lands |
-| 19 | spreadsheets / Airtable-style databases | `project-management` is a false neighbor | **Future arena** (Airtable, Rows, Grist) — agents read/write tables constantly |
-| 20 | AI browsers | `browser-agents` is agents-driving-browsers, not browsers-with-AI | **Future arena** (Dia, Comet, Fellou) — watch the category settle first |
-| 21 | data labeling / annotation | none | **Ignore / watch** (Labelbox, Scale) — enterprise-ML skew, off the current builder thesis |
-| 22 | embedding & reranking APIs | `vector-databases` stores them, `inference-providers` serves some | **Future arena or stack slot** (Voyage, Cohere, Jina) — could start as a slot in an agent-builder stack |
-| 23 | video conferencing | `meeting-ai` rides on top of it | **Ignore** — Zoom/Meet duopoly, no evidence angle we score |
-| 24 | marketing automation | `crm` + `customer-data-platforms` cover fragments | **Ignore until email-marketing arena exists**, then evaluate as its sibling |
+| 9 | CI/CD platforms (standalone) | `code-hosting` scores CI only as a hosting feature | **Future arena** (Buildkite, CircleCI, GitHub Actions-as-product) — agents queue builds all day |
+| 10 | feature stores / ML feature platforms | none (`feature-flags` is a false friend people will hit) | **Future arena or ignore** — classic MLOps query (Tecton, Feast); lower AI-era momentum than agent infra |
+| 11 | fine-tuning / model training platforms | `inference-providers` scores fine-tune *serving* only | **Future arena** (Modal training, Together fine-tuning, Axolotl-hosting) |
+| 12 | text-to-speech / speech-to-text APIs | `voice-agents` uses them but doesn't rank them | **Future arena** (ElevenLabs, Deepgram, Cartesia) — agents speak; strong fit |
+| 13 | image / video generation | none | **Future arena** (fal, Replicate media side) or **ignore** if the site stays builder-infra-focused |
+| 14 | business intelligence / dashboards | `data-warehouses` is adjacent | **Future arena** (Metabase, Looker, Evidence) — "BI tools" is a top-tier classic query |
+| 15 | VPN / private networking / zero trust | Tailscale appears only as a stack pick | **Future arena** (Tailscale, ZeroTier) — the mobile-agentic stack already leans on it |
+| 16 | container orchestration / kubernetes platforms | `infra-as-code` provisions it, doesn't rank it | **Future arena or ignore** — huge query, weak agent angle so far |
+| 17 | domain registrar / DNS | none | **Ignore for now** — commodity; revisit if a founder-ops arena wave lands |
+| 18 | spreadsheets / Airtable-style databases | `project-management` is a false neighbor | **Future arena** (Airtable, Rows, Grist) — agents read/write tables constantly |
+| 19 | AI browsers | `browser-agents` is agents-driving-browsers, not browsers-with-AI | **Future arena** (Dia, Comet, Fellou) — watch the category settle first |
+| 20 | data labeling / annotation | none | **Ignore / watch** (Labelbox, Scale) — enterprise-ML skew, off the current builder thesis |
+| 21 | embedding & reranking APIs | `vector-databases` stores them, `inference-providers` serves some | **Future arena or stack slot** (Voyage, Cohere, Jina) — could start as a slot in an agent-builder stack |
+| 22 | video conferencing | `meeting-ai` rides on top of it | **Ignore** — Zoom/Meet duopoly, no evidence angle we score |
+| 23 | marketing automation | `crm` + `customer-data-platforms` cover fragments | **Ignore until email-marketing arena exists**, then evaluate as its sibling |
 
 ## Notes
 
