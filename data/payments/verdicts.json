@@ -2667,71 +2667,67 @@
   {
     "productId": "stripe",
     "storyId": "agent-handles-dispute-end-to-end",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Stripe's Disputes API explicitly supports retrieving disputes, uploading evidence, and submitting responses programmatically, and webhooks can notify agents of new disputes, plus an official MCP server lets agents interact with the Stripe API — together these enable an agent-driven end-to-end dispute workflow. missing for 10: no first-party documentation or example showing an agent autonomously assembling/curating evidence content (vs. just uploading it), no end-to-end walkthrough or hands-on/independent verification of an agent completing a dispute unattended, and no confirmation that MCP tools specifically cover dispute evidence submission.",
+    "rationale": "Stripe docs explicitly state the Disputes API supports retrieving, uploading evidence, responding to disputes, and receiving dispute webhook events, and the hosted MCP server's documented tool surface includes 'disputes (update)' alongside generic read/write API access, restricted-key scoping for agents, and webhook-based event delivery — covering the retrieve→assemble→submit flow programmatically. Missing for 10: a concrete end-to-end worked example (e.g., a sample agent script that assembles and submits evidence), and clarity on whether dispute submission falls under the human-confirmation gate applied to other write actions.",
     "evidenceIds": [
       "stripe-docs-18",
       "stripe-docs-41",
+      "stripe-supp-mcp-tools",
       "stripe-docs-8",
-      "stripe-docs-35",
-      "stripe-docs-13",
-      "stripe-docs-28"
+      "stripe-supp-restricted-keys-agents"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agent-monitors-dunning",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Stripe provides the core building blocks an agent would need: webhooks for real-time failed-payment events, Smart Retries and no-code revenue recovery/dunning features, an API/CLI/MCP server for programmatic and agentic access, and idempotency for safe retry actions. However, there is no documented API-driven workflow specifically for an agent to programmatically trigger or customize dunning outreach (email sequences) or configure retry schedules via API — Smart Retries/recovery are described as dashboard/no-code features rather than agent-drivable endpoints. missing for 10: explicit API endpoints for configuring/triggering dunning outreach and retry schedules, evidence of an agent actually orchestrating this end-to-end, independent/hands-on confirmation of this specific workflow.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe documents the full loop an agent needs: webhooks/event destinations for detecting failed payments and dispute events (stripe-docs-8, stripe-docs-53, stripe-supp-event-destinations), Smart Retries and no-code revenue recovery/dunning automation with recovery analytics (stripe-docs-14, stripe-docs-15, stripe-docs-56), and API/MCP write access (subscriptions, invoices, disputes) with restricted-key scoping and human-confirmation guardrails so an agent can drive retries and outreach programmatically (stripe-supp-mcp-tools, stripe-supp-mcp-write-confirmation, stripe-supp-restricted-keys-agents, stripe-docs-41). Idempotency support further protects automated retry logic (stripe-docs-9). missing for 10: no first-party or hands-on example of an agent specifically orchestrating dunning outreach (e.g., emails/SMS) end-to-end, and no independent/community confirmation of this exact agent workflow in production.",
     "evidenceIds": [
       "stripe-docs-8",
+      "stripe-docs-53",
       "stripe-docs-14",
       "stripe-docs-15",
-      "stripe-docs-31",
       "stripe-docs-56",
       "stripe-docs-9",
-      "stripe-docs-13",
-      "stripe-docs-28",
-      "stripe-docs-16",
-      "stripe-docs-53"
+      "stripe-docs-41",
+      "stripe-supp-mcp-tools",
+      "stripe-supp-mcp-write-confirmation",
+      "stripe-supp-restricted-keys-agents",
+      "stripe-supp-event-destinations"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agent-provisions-payment-link",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Stripe offers strong building blocks for this workflow — a full API/SDKs, an MCP server for AI agents (stripe-docs-13/28/39/55/61), a CLI and sandbox provisioning for agents (stripe-docs-16, stripe-docs-30, stripe-docs-32), and documented Payment Links creation (stripe-docs-4). This makes agent-driven creation of a product, price, and payment link plausible in one session, but there is no explicit end-to-end walkthrough or evidence confirming the MCP server exposes tools for creating Products/Prices/Payment Links specifically or that this full chain has been demonstrated hands-on. missing for 10: an explicit documented example or hands-on report of an agent using MCP/CLI to create a product+price+payment link in a single session, and confirmation that MCP tool coverage includes Payment Links creation.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe's MCP server documents stripe_api_write with create/update support for products, prices, and payment links, plus stripe_implementation_planner to guide multi-step builds, enabling an agent to provision a product, price, and payment link in one session via a single authenticated MCP/API connection; the CLI/sandbox provisioning (stripe sandbox create) also lets agents get working keys without manual account setup. Missing for 10: a hands-on end-to-end transcript/independent report of an agent actually completing this exact three-step chain in one session, and clarity on whether human-confirmation gating (required for refunds/payments) also intercepts routine create-product/price/payment-link calls.",
     "evidenceIds": [
-      "stripe-docs-13",
-      "stripe-docs-28",
-      "stripe-docs-39",
+      "stripe-supp-mcp-tools",
       "stripe-docs-16",
-      "stripe-docs-30",
+      "stripe-supp-mcp-write-confirmation",
       "stripe-docs-4",
-      "stripe-probe-4",
-      "stripe-probe-5"
+      "stripe-supp-cli-agent-setup"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agent-reconciles-payouts",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Stripe documents Payouts (funds sent to bank accounts, dashboard tracking) and provides an MCP server/CLI/API for agents to interact with the Stripe API generally, which supports building an agent-driven reconciliation workflow. However, the evidence pack never mentions the Balance Transactions API specifically or any reconciliation-oriented endpoint/guide tying payouts to underlying charges, so the core mechanic of the story is only inferable, not directly evidenced. Missing for 10: explicit Balance Transactions API documentation, guidance on matching payouts to charges/reconciliation workflow, and any hands-on/independent confirmation an agent can perform this via MCP or API.",
+    "rationale": "Stripe's API and MCP tooling explicitly expose payout and balance-transaction data for programmatic/agent access — the documented stripe_api_read method list includes 'payouts, and balance transactions', and stripe_analytics/stripe_report can run balance and payout financial reports, letting an agent pull the data needed to match deposits to charges (stripe-supp-mcp-tools, stripe-supp-analytics-ai, stripe-docs-34/52/68). However, there is no first-party tutorial or worked example specifically demonstrating automated reconciliation logic (matching a bank deposit to its underlying charges), and no independent/hands-on evidence confirming this reconciliation workflow works end-to-end. Missing for 10: a documented reconciliation workflow/tutorial tying payout amounts to constituent balance-transaction charges, and independent verification of an agent successfully performing this reconciliation.",
     "evidenceIds": [
+      "stripe-supp-mcp-tools",
+      "stripe-supp-analytics-ai",
       "stripe-docs-34",
       "stripe-docs-52",
-      "stripe-docs-39",
-      "stripe-docs-28",
-      "stripe-docs-30",
-      "stripe-docs-58"
+      "stripe-docs-68"
     ]
   },
   {
@@ -2740,44 +2736,45 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms Stripe serves a working llms.txt (HTTP 200) with agent-oriented guidance, and .md documentation pages are directly fetchable (docs.stripe.com/payments.md, checkout.md, etc.), exactly the pattern this story asks for. This is reinforced by dedicated agent-facing docs (agents.md, mcp.md) and a GitHub 'agent skills' repo (stripe/ai) built specifically for coding/AI agents to consult best practices.\nMissing for 10: independent hands-on confirmation from a third party that an agent successfully used llms.txt end-to-end, and no llms-full.txt or sitemap-style index evidenced.",
+    "rationale": "Stripe hosts a live llms.txt (probe confirms HTTP 200 with agent-oriented guidance), a full .md-suffixed docs mirror (docs.stripe.com/*.md), a machine-readable skills index at /.well-known/skills/index.json, and dedicated agent-oriented docs (agents.md, mcp.md, directory.md) explicitly designed for pointing agents at. This is independently verified by probes, not just vendor claims. missing for 10: no independent third-party (non-Stripe) report of an agent successfully consuming llms.txt end-to-end in production.",
     "evidenceIds": [
       "stripe-probe-1",
       "stripe-probe-2",
+      "stripe-supp-skills-catalog",
+      "stripe-probe-7",
       "stripe-docs-29",
-      "stripe-gh-1",
-      "stripe-docs-13",
-      "stripe-probe-4"
+      "stripe-docs-13"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe's Radar feature explicitly uses AI algorithms to score fraud risk on transactions/customers directly in the product, and Recovery analytics surfaces payment failure/recovery insights in the Dashboard, both qualifying as in-product data insights. However, there is no evidence of a broader AI-generated insights/suggestions layer (e.g., a natural-language analytics assistant or dashboard copilot) beyond fraud risk scoring. Missing for 10: evidence of a general-purpose AI insights/copilot feature across broader business data, and independent/hands-on corroboration of Radar's AI insight quality.",
+    "rationale": "Stripe supports AI-generated insights primarily through its MCP `stripe_analytics`/`stripe_report` tools, which let an AI agent query metrics like MRR, churn rate, and run custom SQL against reporting tables, and Radar applies AI algorithms to score fraud risk in real time. However, these insights are largely agent-mediated (via MCP) rather than a native in-Dashboard AI assistant proactively surfacing suggestions to the user.  Missing for 10: evidence of a built-in conversational/insights UI inside the Dashboard itself (not just via external agent+MCP), broader proactive 'suggestions' beyond analytics queries, and independent/hands-on validation of insight quality.",
     "evidenceIds": [
+      "stripe-docs-74",
+      "stripe-supp-analytics-ai",
       "stripe-docs-22",
-      "stripe-docs-15",
-      "stripe-docs-14"
+      "stripe-docs-15"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Stripe documents several automations that run autonomously once configured — Smart Retries and revenue-recovery workflows automatically retry failed payments, Billing automates recurring charges/trials/renewals, webhooks push real-time events for downstream automation, and Radar uses AI to assess fraud risk in real time — all without ongoing manual intervention. However, these are payment-specific automations rather than a general agentic automation framework; there's no evidence of a scheduler/orchestration layer for AI agents to define arbitrary autonomous background tasks beyond Stripe's own billing/fraud pipelines. Missing for 10: evidence of user-configurable agent-driven background workflows beyond billing/fraud/webhooks, and independent/hands-on corroboration that these automations run reliably unattended.",
+    "rationale": "Stripe ships substantial infrastructure for background automation — webhooks that push real-time events for asynchronous processing, Billing's automated recurring payments/renewals, Smart Retries and revenue-recovery automation that requires no code, Radar's automatic fraud scoring, and an MCP server plus agent plugins that let AI agents act on Stripe data continuously. However, Stripe explicitly gates autonomous execution: 'Stripe requires human confirmation before it takes certain stripe_api_write actions, such as refunds and outbound payments,' meaning fully unattended agentic automation is capped for sensitive operations, and there's no independent/hands-on evidence of long-running autonomous background agent workflows in production. Missing for 10: evidence of fully unattended agent automations without human-in-the-loop gating, and independent corroboration of real-world background agent runs.",
     "evidenceIds": [
+      "stripe-docs-8",
       "stripe-docs-14",
       "stripe-docs-15",
-      "stripe-docs-31",
-      "stripe-docs-51",
-      "stripe-docs-8",
       "stripe-docs-22",
-      "stripe-docs-56"
+      "stripe-supp-mcp-write-confirmation",
+      "stripe-supp-agent-plugin",
+      "stripe-supp-machine-payments"
     ]
   },
   {
@@ -2786,29 +2783,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Stripe exposes an MCP server and agent SDKs so that *external* AI agents can call the Stripe API, and agent-first developer tooling (stripe-docs-13, stripe-docs-28, stripe-docs-29, stripe-gh-1/3/4), but there is no evidence of a built-in AI assistant embedded inside the Stripe product/dashboard that an end user can delegate tasks to directly.",
+    "rationale": "The evidence pack shows Stripe exposing an MCP server, CLI, SDKs, and agent plugins so *external* AI agents (Claude, Codex, Cursor, etc.) can act on Stripe's behalf, and it describes AI-driven backend features (Radar fraud scoring, smart retries). But none of the evidence describes a built-in, in-product AI assistant/chat feature embedded in the Stripe Dashboard itself that a user converses with to delegate tasks — the 'analyze with AI' and analytics tooling are also delivered via the external MCP interface rather than a native assistant UI.",
     "evidenceIds": [
-      "stripe-docs-13",
-      "stripe-docs-28",
-      "stripe-docs-29",
-      "stripe-gh-1",
-      "stripe-gh-3"
+      "stripe-docs-74",
+      "stripe-supp-analytics-ai",
+      "stripe-docs-22"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Stripe ships an official CLI (\"Build, test, and manage your Stripe integration from the command line\") and explicitly documents headless, no-login sandbox provisioning for coding agents (\"stripe sandbox create --help\" with working API keys, no account registration required), plus API-key auth and idempotency keys for safe automated/retried calls — all core requirements for CI-style headless automation. Missing for 10: explicit CI/CD pipeline examples (e.g. GitHub Actions integration) and non-interactive auth/login flow documentation beyond sandbox key issuance.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe's CLI and Workbench Shell provide scriptable, non-interactive access (stripe sandbox create, stripe products create, stripe listen, agent setup) usable in CI pipelines, backed by idempotency keys, restricted API keys, and a documented sandbox that requires no account registration — all designed for headless/automated use including by coding agents. missing for 10: no explicit first-party CI example (e.g. GitHub Actions workflow) or independent hands-on report of running the CLI in a CI pipeline.",
     "evidenceIds": [
       "stripe-docs-16",
       "stripe-docs-30",
-      "stripe-docs-32",
-      "stripe-docs-58",
+      "stripe-supp-workbench-shell",
+      "stripe-supp-cli-agent-setup",
       "stripe-docs-9",
-      "stripe-probe-5"
+      "stripe-supp-restricted-keys-agents",
+      "stripe-docs-32"
     ]
   },
   {
@@ -2817,25 +2813,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe is a payments API/platform, not an agentic assistant or IDE-like host into which a user plugs external MCP servers to extend its own tool-use. The evidence shows the reverse: Stripe ships its own MCP server so external AI agents can call Stripe's tools, which is a different axis (Stripe as MCP server, not as MCP client consuming others' servers).",
+    "rationale": "Stripe is a payments platform/API, not an agent host or assistant application that a user configures with pluggable MCP servers for its own use; all evidence instead shows Stripe publishing its own MCP server (server role) and shipping plugins/skills for other agents like Claude Code/Cursor to consume, which is the opposite direction from this story's client-role axis.",
     "evidenceIds": []
   },
   {
     "productId": "stripe",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe publishes an official Model Context Protocol server (docs.stripe.com/mcp) letting AI agents call the Stripe API and search its knowledge base, corroborated by a docs probe and multiple doc citations, plus an agent-skills GitHub repo for MCP-based integration. missing for 10: independent hands-on/community verification of the MCP server working in practice (only first-party docs/probe evidence, no third-party confirmation).",
+    "rationale": "Stripe ships a well-documented, independently probed official hosted MCP server (mcp.stripe.com) exposing API tools, analytics, and knowledge-base search, with OAuth-based auth/governance, human-confirmation for write actions, and connected-account support; a live probe confirms the OAuth-gated endpoint is real and functioning. Missing for 10: no independent third-party hands-on review of actual agent usage beyond Stripe's own docs/probes.",
     "evidenceIds": [
       "stripe-docs-13",
       "stripe-docs-28",
-      "stripe-docs-39",
-      "stripe-docs-55",
-      "stripe-docs-61",
       "stripe-probe-4",
-      "stripe-gh-1",
-      "stripe-gh-3"
+      "stripe-probe-6",
+      "stripe-supp-mcp-tools",
+      "stripe-supp-mcp-write-confirmation",
+      "stripe-supp-mcp-sessions-governance",
+      "stripe-supp-mcp-connected-accounts"
     ]
   },
   {
@@ -2843,34 +2839,35 @@
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
     "quality": 7,
-    "confidence": "medium",
-    "rationale": "Stripe ships an official MCP server plus 'agent skills' and a CLI designed for coding agents, letting AI agents translate natural-language instructions into Stripe API calls (create payments, refunds, sandboxes, etc.), which effectively enables natural-language operation via an AI agent intermediary. However, this is agent/API-mediated rather than a native NL interface inside Stripe's own product, and there's no independent/hands-on evidence confirming real-world reliability of these NL-driven workflows. Missing for 10: independent corroboration of MCP/agent workflows actually working end-to-end, and any first-party conversational/NL interface built directly into Stripe's dashboard or product itself.",
+    "confidence": "high",
+    "rationale": "Stripe exposes an MCP server plus Directory/Analytics tools that let AI agents perform natural-language-driven actions (search products, read/write API resources, query MRR, run implementation planner) confirmed live via probe, and CLI/agent-plugin tooling lets coding agents set up sandboxes and integrations via NL prompts. However, this is agent-mediated (a separate AI agent translates NL into MCP/CLI calls) rather than the product itself having a native NL command interface, and write actions require human confirmation clicks rather than pure NL operation. missing for 10: evidence of a first-party conversational NL interface within Stripe's own Dashboard/product (not via third-party agent), and confirmation that full workflows can complete end-to-end via NL without manual approval steps.",
     "evidenceIds": [
-      "stripe-docs-13",
-      "stripe-docs-28",
-      "stripe-docs-39",
-      "stripe-docs-55",
-      "stripe-docs-61",
-      "stripe-gh-1",
-      "stripe-docs-16",
-      "stripe-docs-29",
-      "stripe-docs-44",
-      "stripe-probe-4"
+      "stripe-probe-6",
+      "stripe-supp-mcp-tools",
+      "stripe-supp-mcp-write-confirmation",
+      "stripe-supp-analytics-ai",
+      "stripe-supp-agent-plugin",
+      "stripe-docs-70",
+      "stripe-supp-directory-search",
+      "stripe-supp-cli-agent-setup"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe documents an official CLI ('Build, test, and manage your Stripe integration from the command line') with an explicit dedicated docs page, and separately documents AI-native usage instructing coding agents to install and use the Stripe CLI (npm i -g @stripe/cli) to provision sandboxes without human account setup, plus an official MCP server and agent skills repo for AI-native workflows. missing for 10: independent/hands-on community corroboration of the CLI's AI-native usage and no evidence of version-pinning or agent-specific CLI subcommand documentation beyond the sandbox example.",
+    "rationale": "Stripe ships a well-documented official CLI (docs.stripe.com/stripe-cli) for building, testing, and managing integrations, explicitly positioned as 'agent-ready tooling' with commands like `stripe agent setup` (auto-configures Claude Code/Codex/Cursor), `stripe sandbox create` for keyless agent provisioning, `stripe directory search`, and `stripe projects init`. This is corroborated by an independent probe confirming the docs page exists and by Workbench's browser-based Shell mirroring CLI commands. Missing for 10: independent hands-on/community review specifically validating CLI usability for AI-native workflows beyond Stripe's own docs.",
     "evidenceIds": [
       "stripe-docs-30",
-      "stripe-docs-16",
+      "stripe-docs-75",
       "stripe-probe-5",
-      "stripe-docs-13",
-      "stripe-gh-1"
+      "stripe-supp-cli-agent-setup",
+      "stripe-supp-agent-plugin",
+      "stripe-docs-16",
+      "stripe-supp-projects-provisioning",
+      "stripe-supp-directory-search"
     ]
   },
   {
@@ -2879,61 +2876,54 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe ships a comprehensive, versioned, idempotent public REST API with API-key auth, official OpenAPI spec for SDK generation, a CLI, an official MCP server, and dedicated agent SDKs/skills for AI-native integration — directly matching the story. missing for 10: the docs.stripe.com openapi.json probe 404'd (spec lives on GitHub instead) and there's no independent hands-on report of an AI agent driving the API end-to-end.",
+    "rationale": "Stripe exposes a comprehensive, well-documented REST API with idempotency, restricted keys, versioning, sandboxes, webhooks, OpenAPI-generated SDKs, and CLI/Workbench tooling, and this is independently corroborated by a probe confirming the API and llms.txt are live and reachable. missing for 10: no independent third-party benchmark of raw API completeness beyond docs/probes, and OpenAPI spec discovery via well-known paths returned 404s per stripe-probe-3.",
     "evidenceIds": [
+      "stripe-docs-9",
+      "stripe-docs-25",
+      "stripe-docs-58",
+      "stripe-docs-67",
       "stripe-docs-45",
       "stripe-docs-59",
-      "stripe-docs-58",
       "stripe-docs-46",
-      "stripe-docs-9",
-      "stripe-docs-42",
-      "stripe-docs-30",
-      "stripe-docs-13",
-      "stripe-docs-28",
-      "stripe-gh-1",
-      "stripe-gh-3",
-      "stripe-gh-4",
+      "stripe-probe-2",
+      "stripe-probe-1",
       "stripe-probe-3",
-      "stripe-probe-4",
-      "stripe-probe-5"
+      "stripe-docs-30",
+      "stripe-supp-workbench-shell"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Stripe documents that API keys determine which resources an integration can access (stripe-docs-58) and that agents can get their own sandbox with working API keys isolated from live data (stripe-docs-16, stripe-docs-49), suggesting some least-privilege mechanism for agent credentials. However, there is no explicit documentation of a granular permission/scoping UI or API for restricted keys tailored to agent use, nor any hands-on confirmation of scoped-credential issuance for an AI agent specifically. Missing for 10: explicit docs on restricted/scoped API key creation with permission granularity, agent-specific credential scoping guidance, and independent verification of least-privilege enforcement in practice.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe explicitly documents restricted API keys (RAKs) as the recommended least-privilege credential for AI agents—developers select per-resource Read/Write/None permissions—and pairs this with MCP OAuth sessions (per-client revocation, connected-account scoping via Stripe-Account header, human confirmation for write actions like refunds, and Workbench tool-call logs), giving concrete scoped-credential issuance and governance for agents. This is corroborated by a live probe confirming the OAuth-gated MCP endpoint. Missing for 10: independent/hands-on developer confirmation of the RAK issuance workflow in practice beyond first-party docs.",
     "evidenceIds": [
-      "stripe-docs-58",
-      "stripe-docs-16",
-      "stripe-docs-49",
-      "stripe-docs-28"
+      "stripe-docs-67",
+      "stripe-supp-restricted-keys-agents",
+      "stripe-supp-mcp-sessions-governance",
+      "stripe-supp-mcp-connected-accounts",
+      "stripe-supp-mcp-write-confirmation",
+      "stripe-probe-6"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe documents official SDKs/OpenAPI spec generation, versioned APIs, a CLI, an official MCP server, and an AI/agent-focused GitHub org with agent skills and Vercel AI SDK integration, strongly supporting AI-native building against official SDKs. missing for 10: independent hands-on developer corroboration specifically of the AI SDKs/agent tooling (only vendor docs/GitHub cited), and the openapi.json probe returned 404s rather than a working spec endpoint.",
+    "rationale": "Stripe publishes official SDKs/client libraries generated from OpenAPI specs, plus AI-native additions like @stripe/agent-toolkit, @stripe/ai-sdk, token-meter, a hosted OAuth-gated MCP server, agent plugins for Claude/Codex/Cursor, and a machine-readable skills catalog — strongly evidencing an AI-native developer can build against official SDKs. missing for 10: independent (non-Stripe) hands-on developer reports specifically validating the newer agent-toolkit/ai-sdk packages in production.",
     "evidenceIds": [
       "stripe-docs-46",
-      "stripe-docs-45",
-      "stripe-docs-59",
-      "stripe-docs-30",
-      "stripe-probe-5",
+      "stripe-supp-ai-sdks",
+      "stripe-supp-agent-plugin",
+      "stripe-supp-skills-catalog",
+      "stripe-probe-6",
+      "stripe-probe-7",
       "stripe-docs-13",
-      "stripe-docs-28",
-      "stripe-docs-39",
-      "stripe-probe-4",
-      "stripe-gh-1",
-      "stripe-gh-2",
-      "stripe-gh-3",
-      "stripe-docs-29",
-      "stripe-probe-3"
+      "stripe-gh-3"
     ]
   },
   {
@@ -2942,37 +2932,40 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe provides robust webhook subscription infrastructure: creating HTTPS webhook endpoints, receiving real-time push events for payments, disputes, and recurring billing, with dispute events also deliverable via webhooks. This works alongside Stripe's MCP server and agent tooling, making it accessible to AI-native/agentic workflows. Missing for 10: explicit documentation of an AI agent subscribing to or consuming webhooks programmatically via the MCP server itself, and independent hands-on confirmation of agentic webhook consumption specifically.",
+    "rationale": "Stripe supports registering HTTPS webhook endpoints that push real-time events (payment success, disputes, subscription renewals, etc.), and this is directly usable by AI agents via the MCP server's stripe_api_write tool (webhook endpoint creation is explicitly listed as a supported MCP method) and via event-destinations delivering to multiple destination types. missing for 10: no hands-on/independent example of an agent actually subscribing to and consuming webhook events end-to-end, and no dedicated agent-specific webhook subscription API distinct from the standard developer webhook flow.",
     "evidenceIds": [
       "stripe-docs-8",
       "stripe-docs-35",
       "stripe-docs-53",
-      "stripe-docs-18",
-      "stripe-docs-41",
-      "stripe-docs-13",
-      "stripe-docs-28",
-      "stripe-probe-4"
+      "stripe-docs-63",
+      "stripe-supp-mcp-tools",
+      "stripe-supp-event-destinations"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack documents Stripe's CLI, sandbox environments, and MCP server for agent integration, but nothing describes an interactive API reference page with embedded, runnable code examples (e.g., a 'try it' console). Missing for 10: any documentation or probe evidence of an interactive/runnable API reference UI, code-sample switching, or live request execution in docs.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Stripe's Workbench includes an in-Dashboard API Explorer/Shell that lets users visually explore API resources and execute real, runnable API calls (including against sandboxes), and Workbench's shell exposes CLI/API autocompletion — this is a genuine interactive, runnable API reference. However, evidence doesn't show a public-facing interactive API reference page (like a standalone docs.stripe.com/api with try-it-now runnable code snippets) accessible without Dashboard login, nor independent/community confirmation of the experience quality. missing for 10: evidence of a public runnable API reference outside the authenticated Dashboard, independent/hands-on user reviews of the API explorer experience, confirmation that all endpoints are runnable (not just Shell CLI-style commands).",
+    "evidenceIds": [
+      "stripe-supp-workbench-shell",
+      "stripe-docs-75",
+      "stripe-probe-2"
+    ]
   },
   {
     "productId": "stripe",
     "storyId": "api-machine-spec",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Stripe publishes an official OpenAPI specification repository (stripe/openapi) explicitly described as containing files 'to generate SDKs or client libraries that support Stripe's API,' confirming a downloadable, machine-readable spec exists, and this is corroborated by the llms.txt/docs.md machine-readable documentation surface. Missing for 10: a stable, discoverable link from the main docs.stripe.com site itself (probe shows openapi.json/swagger.json 404 at expected doc paths) and independent hands-on confirmation of spec completeness/versioning cadence.",
+    "confidence": "high",
+    "rationale": "Stripe publishes machine-readable OpenAPI spec files explicitly for generating SDKs/clients (stripe-docs-46, github.com/stripe/openapi), and docs.stripe.com also serves machine-readable .md versions of every doc page plus an llms.txt index (stripe-probe-1, stripe-probe-2), directly serving AI-native consumption needs. However, a direct openapi.json/swagger.json was not found at the docs.stripe.com domain itself (stripe-probe-3 shows 404s on guessed paths), meaning discovery requires knowing the separate GitHub repo rather than a single canonical documented download link. Missing for 10: a first-party documented URL/endpoint for the OpenAPI spec directly from docs.stripe.com (not just GitHub), and independent hands-on confirmation of spec completeness/versioning.",
     "evidenceIds": [
       "stripe-docs-46",
       "stripe-probe-1",
+      "stripe-probe-2",
       "stripe-probe-3"
     ]
   },
@@ -2982,14 +2975,17 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe provides explicit sandbox environments isolated from live/production data, with docs describing test-value simulated transactions, team-isolated sandboxes, and even a CLI command (`stripe sandbox create`) specifically aimed at coding agents to provision an anonymous sandbox with working API keys and no account registration required. This directly matches the AI-native testing story. Missing for 10: independent/hands-on community verification of the AI-agent sandbox workflow specifically (evidence is entirely first-party docs).",
+    "rationale": "Stripe documents a dedicated sandbox environment isolated from live/production data (stripe-docs-32, stripe-docs-43, stripe-docs-57), test cards/values that simulate transactions without moving real funds (stripe-docs-10, stripe-docs-65), and anonymous sandbox provisioning explicitly for coding agents via CLI (stripe-docs-16), plus MCP/Workbench access scoped per sandbox vs live mode (stripe-supp-mcp-sessions-governance, stripe-supp-workbench-shell). Missing for 10: independent hands-on confirmation from a third party that agent-driven sandbox testing works end-to-end without friction.",
     "evidenceIds": [
-      "stripe-docs-10",
-      "stripe-docs-16",
       "stripe-docs-32",
       "stripe-docs-43",
-      "stripe-docs-49",
-      "stripe-docs-57"
+      "stripe-docs-57",
+      "stripe-docs-10",
+      "stripe-docs-65",
+      "stripe-docs-16",
+      "stripe-supp-mcp-sessions-governance",
+      "stripe-supp-workbench-shell",
+      "stripe-supp-cli-agent-setup"
     ]
   },
   {
@@ -3009,8 +3005,8 @@
     "storyId": "automatic-tax-calculation",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Stripe Tax explicitly automates calculation and collection of sales tax, VAT, and GST across transactions, including no-code collection on Payment Links and Checkout, backed by dedicated first-party docs. Missing for 10: independent/hands-on third-party validation of tax accuracy across jurisdictions and no community corroboration of this specific feature.",
+    "confidence": "medium",
+    "rationale": "Stripe Tax explicitly automates sales tax, VAT, and GST calculation and collection across transactions, including no-code tax collection on Payment Links, backed by first-party docs. Missing for 10: independent/hands-on corroboration of accuracy across jurisdictions and any detail on filing/remittance support beyond calculation and collection.",
     "evidenceIds": [
       "stripe-docs-20",
       "stripe-docs-48"
@@ -3019,36 +3015,50 @@
   {
     "productId": "stripe",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack documents Stripe's API, CLI, MCP server, idempotency, and sandbox features, but none of these are described as supporting bulk/batch operations across many items (e.g., bulk refunds, batch invoice creation, mass data export). The closest related items are single-item flows (refunds, disputes, invoices) and general API/automation tooling, not a documented bulk-operation capability.",
-    "evidenceIds": []
+    "rationale": "Stripe supports some bulk-style operations relevant to AI agents — bulk product catalog import via the v2 Product Catalog Import API (CSV up to 4GB, upsert/replace modes), List CheckoutSessions for bulk fulfillment, and MCP/analytics tools that can query/report across many objects (stripe_analytics, stripe_report) — but there is no documented generic bulk-write or batch-update API (e.g., bulk refunds, bulk subscription updates, bulk customer edits) that an AI agent could invoke across many arbitrary items at once; most single-object write tools (stripe_api_write, Refunds API, etc.) operate one record at a time with idempotency keys rather than true batch semantics. missing for 10: a documented bulk/batch API for core objects (customers, charges, subscriptions, refunds) beyond catalog import, evidence of MCP or CLI tools performing multi-item operations in one call, and independent/hands-on confirmation of bulk operation reliability.",
+    "evidenceIds": [
+      "stripe-supp-acs-catalog-import",
+      "stripe-supp-acs-orders-attribution",
+      "stripe-supp-analytics-ai",
+      "stripe-supp-mcp-tools",
+      "stripe-docs-9"
+    ]
   },
   {
     "productId": "stripe",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe supports event-driven automation via webhooks (reacting to events like disputes, payment successes) and has built-in automated actions like Smart Retries and revenue recovery, but there's no evidence of a general user-facing 'rules engine' where an AI-native user can declaratively define arbitrary trigger-condition-action rules; developers must write custom webhook handlers/code to react to events. missing for 10: a no-code/low-code rules-builder UI for defining custom event-triggered actions, evidence of conditional logic beyond fixed automations like retries/tax, and AI-agent-specific rule definition tooling.",
+    "rationale": "Stripe provides the event backbone needed for rule-based automation — webhooks/event destinations that fire on account events (stripe-docs-8, stripe-docs-53, stripe-supp-event-destinations) — plus some built-in automated actions like Smart Retries and Radar's real-time risk rules (stripe-docs-14, stripe-docs-22). A third-party Dashboard app (Kyber) explicitly offers a no-code rule builder that 'assigns tasks and automates common workflows based on Stripe events' (e.g., Slack alert on dispute), which matches the story closely (stripe-intdir-6). However, this rule-definition UI is a third-party app, not a native first-party Stripe rules engine, and there's no evidence of a built-in general-purpose 'if event X then action Y' configurator inside Stripe itself. Missing for 10: a native first-party no-code/low-code rule engine for arbitrary event-triggered actions, and independent hands-on confirmation of such rule-based automation in practice.",
     "evidenceIds": [
       "stripe-docs-8",
-      "stripe-docs-35",
       "stripe-docs-53",
+      "stripe-docs-63",
+      "stripe-docs-22",
       "stripe-docs-14",
-      "stripe-docs-31",
-      "stripe-docs-18"
+      "stripe-intdir-6",
+      "stripe-supp-event-destinations"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe's automation features (Billing recurring payments, webhooks, revenue recovery) are payment-domain automations, not a general-purpose scheduler for arbitrary recurring jobs/workflows that an AI-native user could configure. No evidence of a cron-like job scheduler, workflow orchestration, or scheduled task API exists in the pack. missing for 10: any documented scheduling primitive, cron/workflow orchestration feature, or API for scheduling arbitrary recurring jobs beyond billing-specific recurrence.",
-    "evidenceIds": []
+    "rationale": "Stripe Billing natively automates recurring payment jobs (subscriptions, invoicing, trials, renewals, smart retries) and this can be driven via API/MCP by an AI agent, plus Stripe Projects/CLI/Workbench let agents script and schedule integration tasks. However there is no evidence of a general-purpose 'schedule any workflow/job' primitive (e.g. cron-like task scheduler for arbitrary agent workflows) beyond payment/billing-specific recurrence. missing for 10: a generic workflow/job scheduler beyond billing recurrence, evidence of agents autonomously scheduling multi-step workflows (not just recurring payments), independent hands-on confirmation of this automation depth.",
+    "evidenceIds": [
+      "stripe-docs-6",
+      "stripe-docs-14",
+      "stripe-docs-51",
+      "stripe-supp-projects-provisioning",
+      "stripe-supp-mcp-tools",
+      "stripe-docs-74"
+    ]
   },
   {
     "productId": "stripe",
@@ -3056,27 +3066,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Stripe documents API versioning (safe backward-compatible monthly releases) and sandboxes for isolated testing, but there is no evidence of a mechanism to version, review, or roll back user-configured automations (e.g., billing rules, webhook logic, Radar rules) themselves — only API-level version pinning and isolated test environments.",
+    "rationale": "Stripe's automation features (Billing recurring rules, Smart Retries, Radar rules, webhooks, Kyber no-code flows) have no documented version-history, review/diff, or rollback mechanism in the evidence. API versioning (stripe-docs-45/59) covers backward-compatible monthly API releases, not versioning of a user's automation configurations, so it doesn't satisfy this story.",
     "evidenceIds": [
       "stripe-docs-45",
       "stripe-docs-59",
-      "stripe-docs-32",
-      "stripe-docs-57"
+      "stripe-docs-14",
+      "stripe-docs-51",
+      "stripe-intdir-6"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "dunning-failed-payment-recovery",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe Billing's revenue recovery docs explicitly describe Smart Retries for automatically retrying failed subscription payments, plus recovery analytics and no-code setup, directly matching the story; this is first-party documented functionality core to Stripe Billing. Missing for 10: no explicit mention of customizable 'dunning' email templates/content or independent third-party validation of recovery email effectiveness.",
+    "rationale": "Stripe Billing's revenue-recovery docs explicitly document Smart Retries for automatically retrying failed subscription payments plus recovery analytics, and this is a no-code feature within Billing. Missing for 10: explicit documentation of automated dunning/recovery email templates and independent hands-on validation of recovery email effectiveness.",
     "evidenceIds": [
       "stripe-docs-14",
       "stripe-docs-15",
       "stripe-docs-31",
       "stripe-docs-56",
-      "stripe-docs-6"
+      "stripe-docs-66",
+      "stripe-docs-6",
+      "stripe-docs-51"
     ]
   },
   {
@@ -3085,12 +3098,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe docs explicitly describe Elements/Checkout embedded on your own site as an alternative to redirecting to a Stripe-hosted page, allowing fully customizable in-app payment UI (stripe-docs-1, stripe-docs-2, stripe-docs-23, stripe-docs-50). This is well-documented first-party capability with clear API references (Checkout Sessions API, Elements). missing for 10: no independent/hands-on developer confirmation specifically of embedded Elements customization (community evidence is generic Stripe sentiment, not about embedding).",
+    "rationale": "Stripe Elements and Checkout Sessions API let developers embed a fully customizable payment page directly in their own site (as opposed to only redirecting to a hosted page), with support for 125+ payment methods, subscriptions, and prebuilt/custom UI options documented extensively. Missing for 10: no independent/hands-on developer report specifically praising the embedded (non-redirect) Elements experience beyond docs.",
     "evidenceIds": [
       "stripe-docs-1",
       "stripe-docs-2",
       "stripe-docs-23",
-      "stripe-docs-50"
+      "stripe-docs-50",
+      "stripe-docs-3"
     ]
   },
   {
@@ -3110,13 +3124,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe Checkout explicitly offers a Stripe-hosted redirect page (stripe-docs-2) with prebuilt UI via Checkout Sessions API (stripe-docs-50), supporting 125+ local payment methods (stripe-docs-3) and no-code Payment Links as an even simpler hosted option (stripe-docs-4, stripe-docs-36). This directly matches the story of redirecting to a vendor-hosted, conversion-optimized page without building custom payment UI. Missing for 10: independent/hands-on evidence specifically validating conversion optimization claims or real-world developer testimonials about the hosted checkout flow itself.",
+    "rationale": "Docs explicitly describe Stripe Checkout as a Stripe-hosted redirect page ('via a redirect to a Stripe-hosted page') with prebuilt UI via Checkout Sessions API, plus Payment Links for a fully no-code hosted checkout URL — directly matching the story. Multiple docs reinforce it supports many payment methods, currencies, tax collection, and no-code refunds on these hosted pages. missing for 10: no independent/hands-on corroboration of the hosted page's conversion-optimization claims beyond Stripe's own docs.",
     "evidenceIds": [
       "stripe-docs-2",
-      "stripe-docs-3",
       "stripe-docs-50",
       "stripe-docs-4",
-      "stripe-docs-36"
+      "stripe-docs-36",
+      "stripe-docs-48",
+      "stripe-docs-3"
     ]
   },
   {
@@ -3125,11 +3140,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe's docs explicitly document idempotency keys allowing safe retries of API requests without creating duplicate objects/charges on connection errors, which directly matches the story. Missing for 10: independent/hands-on developer corroboration specifically testing idempotency behavior (community evidence covers other topics, not this one).",
+    "rationale": "Stripe's API docs explicitly document idempotency keys for safely retrying requests after connection errors without creating duplicate objects/charges, directly matching the story, and this is a well-known, widely used first-party API feature. Missing for 10: independent hands-on developer corroboration specifically testing idempotency behavior (community evidence in the pack is unrelated to this feature).",
     "evidenceIds": [
       "stripe-docs-9",
       "stripe-docs-25",
-      "stripe-docs-42"
+      "stripe-docs-42",
+      "stripe-docs-69"
     ]
   },
   {
@@ -3137,15 +3153,15 @@
     "storyId": "integrate-from-docs-in-a-day",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Stripe's docs cover a complete integration path (Checkout/Elements, webhooks, idempotency, sandbox testing, API keys, versioning) and generate SDKs/client libraries in multiple languages, and independent community feedback corroborates fast integration ('up and running and accepting recurring payments in less than an hour' — stripe-comm-9; docs called 'clear and concise'). Missing for 10: explicit copy-paste code snippets shown per-language in the evidence pack (only SDK-generation docs cited) and more recent independent hands-on confirmation of same-day integration.",
+    "confidence": "high",
+    "rationale": "Stripe's docs offer copy-paste checkout/payment-link/Elements integrations, sandbox testing with test cards, idempotency, webhooks, and API keys, and community testimony confirms fast integration ('up and running and accepting recurring payments in less than an hour', clear documentation) despite some unrelated support gripes. missing for 10: explicit multi-language SDK code-sample evidence in the pack (only generic doc references, not shown per-language snippets) and a broader/more recent independent corroboration beyond one old HN thread.",
     "evidenceIds": [
       "stripe-docs-1",
       "stripe-docs-2",
-      "stripe-docs-8",
-      "stripe-docs-9",
       "stripe-docs-10",
-      "stripe-docs-46",
+      "stripe-docs-65",
+      "stripe-docs-9",
+      "stripe-docs-53",
       "stripe-comm-9"
     ]
   },
@@ -3155,13 +3171,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe Connect is explicitly documented for building platforms/marketplaces that onboard sellers, split payments between multiple parties, and pay out to sellers, backed by payouts, refunds, disputes, and testing infrastructure. Missing for 10: independent/hands-on developer corroboration specifically of a Connect marketplace build (community evidence covers general Stripe experiences, not Connect-specific validation).",
+    "rationale": "Stripe Connect is explicitly documented as the product for building marketplaces/platforms that onboard sellers, split payments, and pay out to multiple parties, backed by supporting payouts, payment collection, refunds, disputes, and tax infrastructure. Missing for 10: independent hands-on evidence specifically of a marketplace/Connect integration (community evidence covers Stripe generally, not Connect specifically).",
     "evidenceIds": [
       "stripe-docs-12",
       "stripe-docs-38",
       "stripe-docs-34",
       "stripe-docs-52",
-      "stripe-docs-33"
+      "stripe-docs-68",
+      "stripe-docs-33",
+      "stripe-docs-41"
     ]
   },
   {
@@ -3170,13 +3188,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe docs explicitly state you can charge customers in over 135 currencies and receive funds in your preferred currency, with payment links letting customers pay in their local language and currency, plus payouts to bank accounts and automated tax compliance (VAT/GST/sales tax) across transactions. This directly covers charging in local currency, settling to founder's own currency, and transparent handling of related financial/tax mechanics. Missing for 10: no explicit documentation of FX conversion rates/fees transparency or independent corroboration of settlement accuracy from hands-on users.",
+    "rationale": "Stripe documents charging in 135+ currencies with payout settlement in a merchant's preferred currency (stripe-docs-19), localized checkout/payment links that let customers pay in their own currency (stripe-docs-36), automated payout tracking to bank accounts (stripe-docs-34, stripe-docs-52, stripe-docs-68), and automated tax compliance across jurisdictions (stripe-docs-20, stripe-docs-48). This directly covers charging locally and settling in the founder's currency. Missing for 10: explicit documentation of FX conversion rate transparency/fee disclosure mechanics and independent/hands-on confirmation of FX rate fairness or settlement accuracy.",
     "evidenceIds": [
       "stripe-docs-19",
       "stripe-docs-36",
       "stripe-docs-34",
+      "stripe-docs-52",
+      "stripe-docs-68",
       "stripe-docs-20",
-      "stripe-docs-52"
+      "stripe-docs-48"
     ]
   },
   {
@@ -3196,33 +3216,33 @@
   {
     "productId": "stripe",
     "storyId": "openness-api-parity",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Stripe's docs show an extensive, well-documented API surface covering nearly every core capability also available in the Dashboard/UI (payments, refunds, disputes, billing, invoicing, webhooks, sandboxes, idempotency, MCP server/CLI for agents), suggesting broad API/UI parity for an AI-native builder. However, several features are explicitly framed as 'no-code'/Dashboard-first (e.g. no-code refunds on Payment Links, no-code revenue recovery, Dashboard-created hosted invoices) without an explicit claim that every one of these has a full programmatic equivalent, so total parity is implied rather than proven. Missing for 10: an explicit statement or audit confirming 1:1 feature parity between Dashboard and API (e.g., Radar rule configuration, Connect onboarding UI flows, analytics dashboards) and independent verification that no UI-only feature exists.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe's core resources (payments, refunds, subscriptions, invoices, disputes, payouts, tax, Connect) are all documented as available via the REST API with idempotency, versioning, and restricted keys, and the MCP server explicitly exposes generic stripe_api_read/stripe_api_write tools plus task-specific tools mirroring Dashboard actions across most objects. Workbench Shell/CLI further lets agents run the same commands as the CLI/API interactively. missing for 10: independent confirmation that every Dashboard-only feature (e.g., third-party Stripe Apps like Kyber no-code automations) has a full API equivalent, and note that sensitive stripe_api_write actions require human confirmation rather than being fully autonomous.",
     "evidenceIds": [
-      "stripe-docs-5",
-      "stripe-docs-31",
-      "stripe-docs-56",
-      "stripe-docs-21",
-      "stripe-docs-33",
+      "stripe-supp-mcp-tools",
+      "stripe-docs-18",
       "stripe-docs-41",
-      "stripe-docs-8",
       "stripe-docs-9",
-      "stripe-docs-13",
-      "stripe-docs-16",
+      "stripe-docs-59",
+      "stripe-docs-67",
+      "stripe-supp-workbench-shell",
       "stripe-docs-30",
-      "stripe-docs-46"
+      "stripe-supp-mcp-write-confirmation"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers payments, billing, webhooks, MCP/agent tooling, and API versioning, but contains no mention of a bulk data-export feature, open-format data portability, or account/data closure process for users wanting to leave Stripe.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows only narrow CSV export of specific financial reports (balance, payouts, activity, tax, Revenue Recognition) via stripe_report/Workbench, not a comprehensive account data export mechanism for a user to leave the platform. Missing for 10: a documented full account/data export tool (customers, charges, subscriptions, full transaction history) in open/portable formats, and any explicit data-portability or account-closure export workflow.",
+    "evidenceIds": [
+      "stripe-supp-analytics-ai",
+      "stripe-docs-46"
+    ]
   },
   {
     "productId": "stripe",
@@ -3230,7 +3250,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe is a closed-source commercial payments platform; no evidence indicates its core product source code is available under an open license (SDKs/CLI wrappers are open but the platform itself is not). This is an applicable axis for any product a buyer might scrutinize for openness, and no evidence supports it, so verdict is none.",
+    "rationale": "Stripe's core payments platform is proprietary SaaS; the evidence pack shows only open-source SDKs/CLI/agent-toolkit wrappers (e.g. stripe/ai, stripe-cli) but no license for the actual product/service source code, so there is no basis to claim the product itself is open-license readable.",
     "evidenceIds": []
   },
   {
@@ -3239,22 +3259,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe is a hosted payments infrastructure/API service, not a piece of software a customer could self-host; the core value is Stripe's regulated, PCI-compliant payment processing which inherently requires Stripe's own hosted systems. Self-hosting is a category error for this kind of product, not a missing feature.",
+    "rationale": "Stripe is a hosted, regulated financial-services platform (payment processing, PCI compliance, banking rails, fraud detection via aggregated network data) — self-hosting the core product is a category error for this kind of service, not a capability gap.",
     "evidenceIds": []
   },
   {
     "productId": "stripe",
     "storyId": "payout-schedule-control",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe's payouts docs confirm automated payouts from available balance and dashboard tracking of payout dates (stripe-docs-34, stripe-docs-52), and refunds/disputes/fees are documented separately (stripe-docs-17, stripe-docs-33, stripe-docs-40, stripe-docs-41), implying the underlying data exists for reconciliation. However, there is no direct evidence of configurable payout schedule controls (e.g., daily/weekly/manual/custom) or of a payout reconciliation report/API that itemizes which specific charges, fees, and refunds compose each payout. missing for 10: explicit payout schedule configuration options, itemized payout reconciliation report/balance transaction breakdown per payout, and any hands-on/community confirmation of this workflow.",
+    "rationale": "Stripe documents payout basics (funds sent from balance to bank account, dashboard tracking of payouts and expected deposit dates, setting up bank accounts) and financial reporting via stripe_report/analytics (balance, payouts, activity reports downloadable as CSV), which supports reconciliation. However, evidence does not show explicit payout schedule controls (e.g., setting manual vs automatic schedule, daily/weekly/monthly cadence) nor a documented per-payout breakdown view showing exact charges/fees/refunds composing each payout. missing for 10: explicit payout schedule configuration docs, a documented itemized payout reconciliation report/API showing constituent charges/fees/refunds per payout, independent/hands-on confirmation of this reconciliation workflow.",
     "evidenceIds": [
       "stripe-docs-34",
       "stripe-docs-52",
-      "stripe-docs-17",
-      "stripe-docs-33",
-      "stripe-docs-41"
+      "stripe-docs-68",
+      "stripe-supp-analytics-ai"
     ]
   },
   {
@@ -3288,7 +3307,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe is a payments platform, not an AI model provider or data-processing tool with user-content AI-training settings; opting out of AI training data usage is a category error for this product type.",
+    "rationale": "Stripe is a payments infrastructure platform, not an AI model provider or chatbot that trains models on user data; the story about opting out of AI-model-training data usage is a category error for this product type — there is no evidence Stripe trains generative AI models on customer data as a core offering, so this privacy-posture axis about AI training opt-out does not apply.",
     "evidenceIds": []
   },
   {
@@ -3296,8 +3315,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Stripe's evidence pack covers payments, billing, sandboxes, and AI agent tooling, but nothing addresses data retention policies, customer data deletion requests, or privacy controls that an AI-native user could invoke to manage their data lifecycle. Missing for 10: any documentation on data retention periods, GDPR/CCPA deletion request mechanisms, API/dashboard controls for purging or exporting customer data, or a stated data retention policy.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers sandbox isolation, restricted API keys, MCP OAuth session revocation, and webhook/event architecture, but none of it addresses data retention policies or a mechanism for users to request deletion/erasure of stored payment or customer data. As a platform processing sensitive financial and personal data, this is a fair and applicable axis, but no documentation shows retention controls or deletion capabilities for AI-native users.",
     "evidenceIds": []
   },
   {
@@ -3313,15 +3332,18 @@
     "productId": "stripe",
     "storyId": "recurring-subscription-billing",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Stripe Billing docs explicitly describe automating recurring payments, custom pricing plans, trial periods, renewals, and a customer portal for subscription/billing management, plus migration support for existing subscriptions — directly matching the story's core ask.  Missing for 10: explicit documentation of proration mechanics on plan upgrades/downgrades, and independent hands-on developer corroboration specifically confirming trial/upgrade/proration behavior (only general positive community sentiment about ease of setup exists).",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe Billing explicitly automates recurring payments, custom pricing plans, trials, renewals, and subscription upgrades, plus a customer portal for self-service management, revenue recovery (smart retries), and subscription migration docs. Documentation confirms core subscription lifecycle features via first-party docs, though proration is only implied via 'upgrades' rather than explicitly named, and no independent/hands-on corroboration of proration mechanics is present. Missing for 10: explicit proration documentation/examples, independent developer corroboration of subscription setup experience.",
     "evidenceIds": [
       "stripe-docs-6",
       "stripe-docs-51",
+      "stripe-docs-62",
       "stripe-docs-7",
       "stripe-docs-24",
-      "stripe-comm-9"
+      "stripe-docs-14",
+      "stripe-docs-15",
+      "stripe-docs-31"
     ]
   },
   {
@@ -3330,47 +3352,48 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe docs explicitly confirm refunds (full or partial) can be issued via both the Refunds API and the Dashboard, and payment links even support no-code refunds — directly matching the finance-ops story. Missing for 10: no independent/hands-on confirmation of the partial-refund UX specifically, only first-party docs.",
+    "rationale": "Docs explicitly state refunds can be issued via both the Refunds API and the Dashboard, including full or partial amounts, and refunded payments are viewable in the Dashboard. No-code refunds are also supported on Payment Links. missing for 10: no independent/hands-on confirmation of partial-refund UX in the dashboard.",
     "evidenceIds": [
       "stripe-docs-17",
       "stripe-docs-33",
-      "stripe-docs-40",
       "stripe-docs-47",
+      "stripe-docs-64",
       "stripe-docs-5"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "respond-to-disputes-evidence",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Stripe's Disputes API explicitly supports uploading structured evidence, responding to disputes, and receiving dispute lifecycle events via webhooks, directly matching the story. However, evidence lacks detail on structured evidence field templates, Dashboard-based dispute workflows, or independent/hands-on confirmation of the full lifecycle tracking experience. missing for 10: Dashboard UI walkthrough for evidence submission, structured evidence field schema/templates, independent/hands-on validation of dispute resolution tracking.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stripe's Disputes API lets finance-ops programmatically manage disputes, upload structured evidence, respond to disputes, and receive dispute lifecycle events via webhooks, plus dispute events surface in the Dashboard/Radar for tracking; MCP tooling also exposes a 'disputes: update' method for agent-assisted workflows. missing for 10: no independent/hands-on account of the full evidence-submission UX or explicit dispute-resolution outcome tracking beyond webhook events.",
     "evidenceIds": [
       "stripe-docs-18",
       "stripe-docs-41",
-      "stripe-docs-8"
+      "stripe-docs-8",
+      "stripe-docs-22",
+      "stripe-supp-mcp-tools"
     ]
   },
   {
     "productId": "stripe",
     "storyId": "sandbox-test-mode-fidelity",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe's docs directly describe sandbox/test mode that mirrors production, isolated per-team sandboxes, the Stripe CLI for local testing, and dedicated docs for testing with test cards and simulated transactions, plus API/webhook support for handling disputes and refunds programmatically. Community feedback corroborates the overall developer experience as strong. Missing for 10: no explicit enumeration of specific test card numbers for every decline/dispute scenario in the evidence pack, and no independent hands-on account of using test mode end-to-end.",
+    "rationale": "Stripe provides a documented sandbox environment mirroring production (isolated per-team sandboxes, no live-data impact) plus an extensive test-card matrix covering successes, declines, fraud, and invalid data, and a full disputes API for simulating/handling chargebacks. CLI and Workbench also support building/testing/debugging integrations end-to-end. Missing for 10: no independent/hands-on developer testimonial specifically validating sandbox fidelity or test-card coverage beyond first-party docs.",
     "evidenceIds": [
       "stripe-docs-10",
       "stripe-docs-32",
       "stripe-docs-43",
       "stripe-docs-49",
       "stripe-docs-57",
-      "stripe-docs-16",
+      "stripe-docs-65",
       "stripe-docs-18",
       "stripe-docs-41",
-      "stripe-docs-33",
-      "stripe-docs-30",
-      "stripe-comm-9"
+      "stripe-docs-75",
+      "stripe-docs-30"
     ]
   },
   {
@@ -3395,14 +3418,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Stripe docs show payouts moving balance to bank accounts with dashboard tracking, plus separate refunds and disputes/chargebacks APIs, giving the raw building blocks for reconciliation, but there's no evidence of a dedicated itemized reconciliation report that ties settlements to bank deposits with fees/refunds/chargebacks broken out in one artifact. missing for 10: explicit itemized settlement/reconciliation report documentation, fee breakdown per payout, and any finance-ops-specific reconciliation workflow or corroborating independent evidence.",
+    "rationale": "Stripe documents payouts to bank accounts with expected deposit dates (stripe-docs-34, stripe-docs-52), refunds and dispute management via API/Dashboard (stripe-docs-17, stripe-docs-33, stripe-docs-41), and AI-assisted analytics/report runs including a documented 'balance summary' report and other financial report types (stripe-supp-analytics-ai). However, there is no evidence of a purpose-built, itemized settlement-to-deposit reconciliation report that breaks out fees, refunds, and chargebacks against a specific bank deposit in one view — the closest evidence (report types: balance, payouts, activity, tax) implies this exists but doesn't confirm itemization matching finance-ops reconciliation workflows, and third-party accounting sync (QuickBooks, Xero) is only listed as partner integrations rather than native itemized reconciliation. missing for 10: a documented native 'payout reconciliation report' itemizing fees/refunds/chargebacks per deposit, confirmation of automatic matching to bank statement lines, and independent/hands-on evidence from finance-ops users that this reconciliation workflow works well in practice.",
     "evidenceIds": [
       "stripe-docs-34",
       "stripe-docs-52",
       "stripe-docs-17",
       "stripe-docs-33",
-      "stripe-docs-18",
-      "stripe-docs-41"
+      "stripe-docs-41",
+      "stripe-supp-analytics-ai",
+      "stripe-intdir-1",
+      "stripe-intdir-5"
     ]
   },
   {
@@ -3422,17 +3447,23 @@
   {
     "productId": "stripe",
     "storyId": "webhook-delivery-reliability",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Evidence confirms Stripe supports webhook endpoints for asynchronous event delivery (stripe-docs-8, stripe-docs-35, stripe-docs-53) and idempotent request handling (stripe-docs-9, stripe-docs-25, stripe-docs-42), which supports consistency guarantees, but the pack contains no documentation of signature verification (Stripe-Signature header), automatic retry behavior for failed webhook deliveries, an event log dashboard, or an event replay feature. missing for 10: explicit webhook signing/verification docs, automatic retry policy details, event log/dashboard evidence, and replay capability documentation.",
+    "rationale": "Docs cover signed/HTTPS webhook endpoints, real-time event pushes, idempotency for safe retries, dispute/event handling via API+webhooks, and the newer event destinations feature with versioned snapshot/thin events; sandbox testing supports simulating webhook flows. However, explicit documentation of automatic retry schedules for failed webhook deliveries and a dedicated 'replay' UI/feature isn't directly cited (event destinations mention versioning but not an explicit replay tool), and there's no independent/hands-on corroboration of retry reliability. missing for 10: explicit docs on automatic webhook retry backoff schedule, a dedicated event replay feature/UI, independent developer corroboration of retry/replay reliability.",
     "evidenceIds": [
       "stripe-docs-8",
       "stripe-docs-35",
       "stripe-docs-53",
+      "stripe-docs-63",
       "stripe-docs-9",
       "stripe-docs-25",
-      "stripe-docs-42"
+      "stripe-docs-42",
+      "stripe-docs-69",
+      "stripe-docs-18",
+      "stripe-docs-41",
+      "stripe-supp-event-destinations",
+      "stripe-docs-75"
     ]
   }
 ]

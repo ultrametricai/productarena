@@ -1,15 +1,17 @@
 {
-  "hash": "547d8c9344841215f841129dd2ae0d45cb52dee7989885f44fb56c663c429727",
+  "hash": "8c0b94b33756abb04ec6362000fd6ee0d55645070c8a2f7ec98b2c6eb51d3c31",
   "verdict": {
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Stripe documents that API keys determine which resources an integration can access (stripe-docs-58) and that agents can get their own sandbox with working API keys isolated from live data (stripe-docs-16, stripe-docs-49), suggesting some least-privilege mechanism for agent credentials. However, there is no explicit documentation of a granular permission/scoping UI or API for restricted keys tailored to agent use, nor any hands-on confirmation of scoped-credential issuance for an AI agent specifically. Missing for 10: explicit docs on restricted/scoped API key creation with permission granularity, agent-specific credential scoping guidance, and independent verification of least-privilege enforcement in practice.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Stripe explicitly documents restricted API keys (RAKs) as the recommended least-privilege credential for AI agents—developers select per-resource Read/Write/None permissions—and pairs this with MCP OAuth sessions (per-client revocation, connected-account scoping via Stripe-Account header, human confirmation for write actions like refunds, and Workbench tool-call logs), giving concrete scoped-credential issuance and governance for agents. This is corroborated by a live probe confirming the OAuth-gated MCP endpoint. Missing for 10: independent/hands-on developer confirmation of the RAK issuance workflow in practice beyond first-party docs.",
     "evidenceIds": [
-      "stripe-docs-58",
-      "stripe-docs-16",
-      "stripe-docs-49",
-      "stripe-docs-28"
+      "stripe-docs-67",
+      "stripe-supp-restricted-keys-agents",
+      "stripe-supp-mcp-sessions-governance",
+      "stripe-supp-mcp-connected-accounts",
+      "stripe-supp-mcp-write-confirmation",
+      "stripe-probe-6"
     ],
     "productId": "stripe",
     "storyId": "agentic-scoped-keys"
