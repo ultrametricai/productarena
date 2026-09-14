@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ConfidenceChip from '@/components/ConfidenceChip'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
@@ -117,7 +118,7 @@ export default function MostTestedRankingPage() {
                 Verified cells
               </th>
               <th className="px-3 py-2 font-normal" title="Confidence grade A–D: how much of the published score rests on tested vs claimed evidence">
-                Grade
+                <span className="inline-flex items-center gap-1.5">Grade<ColumnsHelpLink /></span>
               </th>
             </tr>
           </thead>

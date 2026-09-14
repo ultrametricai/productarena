@@ -126,25 +126,45 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
       )}
     </>
   )
+  // The vendor's own start-here page (lib/processes.ts VENDOR_SIGNUP_URL) — a tiny external ↗
+  // beside the chip, so "sign up for payroll"-style steps are actionable in one click. Distinct
+  // from the chip itself, which links to OUR judged product page (the evidence).
+  const signup = info.signupUrl && (
+    <a
+      href={info.signupUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={`Open ${info.label}'s own start page — ${new URL(info.signupUrl).hostname.replace(/^www\./, '')} (external)`}
+      className="shrink-0 rounded px-0.5 text-[10px] text-zinc-500 transition hover:text-emerald-300"
+    >
+      ↗
+    </a>
+  )
   if (info.productId && info.arenaId) {
     return (
-      <Link
-        href={`/arena/${info.arenaId}/product/${info.productId}`}
-        title={`${info.label} — #${info.rank} by agent-readiness in ${info.arenaName}${
-          info.agentReady !== null ? ` · ${info.agentReady.toFixed(0)}/100 agent-ready` : ''
-        } — see the judged product page`}
-        className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-300"
-      >
-        {body}
-      </Link>
+      <span className="inline-flex min-w-0 items-center gap-0.5">
+        <Link
+          href={`/arena/${info.arenaId}/product/${info.productId}`}
+          title={`${info.label} — #${info.rank} by agent-readiness in ${info.arenaName}${
+            info.agentReady !== null ? ` · ${info.agentReady.toFixed(0)}/100 agent-ready` : ''
+          } — see the judged product page`}
+          className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-300"
+        >
+          {body}
+        </Link>
+        {signup}
+      </span>
     )
   }
   return (
-    <span
-      title={`${info.label} — not yet judged on ProductArena`}
-      className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-400"
-    >
-      {body}
+    <span className="inline-flex min-w-0 items-center gap-0.5">
+      <span
+        title={`${info.label} — not yet judged on ProductArena`}
+        className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-400"
+      >
+        {body}
+      </span>
+      {signup}
     </span>
   )
 }
@@ -193,6 +213,21 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
           <span className={node.riskLevel === 'high' ? 'font-semibold text-red-300/90' : 'text-zinc-500'}>
             {node.riskLevel} risk
           </span>
+        )}
+        {/* The canonical external page a human uses to do this step themselves (data-level
+            actionUrl, verified live before it ships) — e.g. the IRS EIN application or
+            Delaware's filing portal. Deliberately distinct from the vendor chips, which link
+            to our judged product pages. */}
+        {node.actionUrl && (
+          <a
+            href={node.actionUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={`Do this step yourself at ${node.actionLabel ?? new URL(node.actionUrl).hostname.replace(/^www\./, '')} (external site)`}
+            className="inline-flex items-center gap-1 rounded-md border border-zinc-700/80 px-1.5 py-0.5 text-[10px] text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+          >
+            do it yourself: {node.actionLabel ?? new URL(node.actionUrl).hostname.replace(/^www\./, '')} ↗
+          </a>
         )}
       </div>
 

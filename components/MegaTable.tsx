@@ -155,7 +155,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 # / Product
               </SortableTh>
               <SortableTh col="arena" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
-                Arena
+                <span title="The product category (arena) it competes in — click through for that arena's full leaderboard">Arena</span>
               </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden w-12 md:table-cell">
                 <span title="Open source — the code is publicly available">OSS</span>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import AuthGatedMarker from '@/components/AuthGatedMarker'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ContestLink from '@/components/ContestLink'
 import PersonaChip from '@/components/PersonaChip'
 import SurfaceChip from '@/components/SurfaceChip'
@@ -274,6 +275,8 @@ export default function StoryVerdictsTable({
           aria-label="Filter stories by title, persona, or theme"
           className="ml-auto w-full min-w-0 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:w-48"
         />
+        {/* Header tooltips are hover-only — the tappable route to the column definitions. */}
+        <ColumnsHelpLink />
       </div>
 
       <p className="text-xs text-zinc-400" aria-live="polite">
@@ -288,28 +291,28 @@ export default function StoryVerdictsTable({
           <thead>
             <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-400">
               <SortableTh col="title" current={column} direction={direction} onSort={handleSort}>
-                Story
+                <span title="The real buyer/user scenario the product was judged on — expand a row for the rationale and evidence">Story</span>
               </SortableTh>
               <SortableTh col="persona" current={column} direction={direction} onSort={handleSort}>
-                <span title="Whose perspective the story is told from">User type</span>
+                <span title="Whose perspective the story is told from — the kind of user who needs it">User type</span>
               </SortableTh>
               <SortableTh col="theme" current={column} direction={direction} onSort={handleSort}>
-                Theme
+                <span title="The capability grouping this story belongs to (agent access, openness, automation…)">Theme</span>
               </SortableTh>
               <SortableTh col="weight" current={column} direction={direction} onSort={handleSort}>
-                Weight
+                <span title="How much this story counts in the arena's scoring — higher weight = more important capability">Weight</span>
               </SortableTh>
               <SortableTh col="verdict" current={column} direction={direction} onSort={handleSort}>
-                Verdict
+                <span title="Does the product deliver this story? full / partial / none / disputed / n-a — judged from cited evidence">Verdict</span>
               </SortableTh>
               <SortableTh col="quality" current={column} direction={direction} onSort={handleSort}>
-                Quality
+                <span title="How well it delivers when it does (0–100) — a partial verdict can still be high quality">Quality</span>
               </SortableTh>
               <SortableTh col="verification" current={column} direction={direction} onSort={handleSort}>
-                Verification
+                <span title="How the verdict was proven: tested by us, community-backed, or vendor claim only">Verification</span>
               </SortableTh>
               <SortableTh col="evidence" current={column} direction={direction} onSort={handleSort}>
-                Evidence
+                <span title="How many cited sources back this verdict — expand the row to read them">Evidence</span>
               </SortableTh>
             </tr>
           </thead>
@@ -404,6 +407,12 @@ function StoryRowPair({
               )}
             </div>
           </div>
+        </td>
+        {/* User type cell — was missing entirely (8 headers, 7 cells), which shifted every
+            column left by one under the wrong header. PersonaChip was imported for exactly
+            this cell. */}
+        <td className="whitespace-nowrap px-3 py-2 text-xs">
+          <PersonaChip persona={row.personaLabel} />
         </td>
         <td className="whitespace-nowrap px-3 py-2 text-xs text-zinc-400">
           <span className="inline-flex items-center gap-1.5">

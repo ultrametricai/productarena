@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ClaimsChip from '@/components/ClaimsChip'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ProductLogo from '@/components/ProductLogo'
 import { claimsIntegrity, type ClaimsIntegrity } from '@/lib/claimsIntegrity'
 import type { CategoryData } from '@/lib/data'
@@ -53,11 +54,21 @@ export default function ClaimsIntegrityIndexTable({ categories, limit }: { categ
             <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
             {/* Arena yields below md so the integrity score — the ranking's whole point — is
                 visible without a sideways scroll on phones. */}
-            <th className="hidden px-3 py-2 font-normal md:table-cell">Arena</th>
-            <th className="px-3 py-2 font-normal">Integrity</th>
-            <th className="px-3 py-2 font-normal">Verified</th>
-            <th className="px-3 py-2 font-normal">Contradicted</th>
-            <th className="hidden px-3 py-2 font-normal sm:table-cell">Evidence</th>
+            <th className="hidden px-3 py-2 font-normal md:table-cell"><span title="The product category (arena) it competes in — click through for that arena's full leaderboard">Arena</span></th>
+            <th className="px-3 py-2 font-normal"><span title="Claims integrity (0–100): how much of what the vendor publicly claims held up when we tested it">Integrity</span></th>
+            <th className="px-3 py-2 font-normal"><span title="Vendor claims our testing confirmed to be true">Verified</span></th>
+            <th className="px-3 py-2 font-normal">
+              <span className="inline-flex items-center gap-1.5">
+                <span title="Vendor claims the evidence contradicted — the marketing said one thing, the product did another">Contradicted</span>
+                <ColumnsHelpLink className="sm:hidden" />
+              </span>
+            </th>
+            <th className="hidden px-3 py-2 font-normal sm:table-cell">
+              <span className="inline-flex items-center gap-1.5">
+                <span title="How many cited sources sit behind these claim checks">Evidence</span>
+                <ColumnsHelpLink />
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/70">

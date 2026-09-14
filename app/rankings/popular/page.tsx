@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import GeoMark from '@/components/GeoMark'
 import HotChip from '@/components/HotChip'
 import OssPill from '@/components/OssPill'
@@ -238,7 +239,7 @@ export default function PopularRankingPage() {
                 <th className="w-10 px-3 py-2 font-normal">#</th>
                 <th className="px-3 py-2 font-normal">Product</th>
                 <th className="px-3 py-2 font-normal" title="GitHub stars — absolute count from api.github.com at the last pipeline fetch">
-                  Stars
+                  <span className="inline-flex items-center gap-1.5">Stars<ColumnsHelpLink /></span>
                 </th>
                 <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Stars per year since the repo was created (stars ÷ repo age) — velocity, shown for context, never part of the rank">
                   ★/yr
@@ -286,7 +287,7 @@ export default function PopularRankingPage() {
                 <th className="w-10 px-3 py-2 font-normal">#</th>
                 <th className="px-3 py-2 font-normal">Product</th>
                 <th className="px-3 py-2 font-normal" title="npm weekly downloads + PyPI weekly downloads (api.npmjs.org / pypistats.org)">
-                  Installs/wk
+                  <span className="inline-flex items-center gap-1.5">Installs/wk<ColumnsHelpLink /></span>
                 </th>
                 <th className="hidden px-3 py-2 font-normal sm:table-cell" title="npm weekly downloads (api.npmjs.org)">
                   npm

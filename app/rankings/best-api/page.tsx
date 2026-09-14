@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import RankingsNav from '@/components/RankingsNav'
@@ -126,7 +127,7 @@ export default function BestApiRankingPage() {
               <th className="w-10 px-3 py-2 font-normal">#</th>
               <th className="px-3 py-2 font-normal">Product</th>
               <th className="px-3 py-2 font-normal" title="API quality (0–100): machine-readable spec, sandbox, versioning policy, interactive docs — evidence-graded. 'untested' = no evidence either way, unscored rather than zero.">
-                API quality
+                <span className="inline-flex items-center gap-1.5">API quality<ColumnsHelpLink /></span>
               </th>
               <th className="hidden px-3 py-2 font-normal sm:table-cell" title="AGENT-READY (0–100): can an agent reach the product at all — API/CLI/MCP/webhooks/SDKs/docs">
                 Agent-ready

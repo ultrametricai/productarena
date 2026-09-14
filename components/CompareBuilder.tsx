@@ -421,7 +421,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                 <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
                   <span className="inline-flex items-center gap-1.5">
                     <IconChip icon={metricIcon('access')} title={metricTooltip('access')} />
-                    Access
+                    <span title="Which agent doorways exist: MCP server, official command-line tool (CLI), public API — ✓ full, ~ partial, — none found">Access</span>
                   </span>
                 </th>
                 {selected.map((p) => (
@@ -441,7 +441,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                 <th scope="row" className="whitespace-nowrap px-3 py-2 text-left text-xs font-normal text-zinc-400">
                   <span className="inline-flex items-center gap-1.5">
                     <IconChip icon={metricIcon('openness')} title={metricTooltip('openness')} />
-                    Open source
+                    <span title="Whether the product's code is public — free to inspect, and usually to self-host">Open source</span>
                   </span>
                 </th>
                 {/* Row header already says "Open source" — a labeled pill here would repeat it,
@@ -466,7 +466,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                   scope="colgroup"
                   className="bg-zinc-900/40 px-3 py-2 text-left text-[10px] font-normal uppercase tracking-widest text-zinc-400"
                 >
-                  Key stories
+                  <span title="Judged scenarios every selected product's arena shares — the most important (weight-3) first">Key stories</span>
                 </th>
               </tr>
               {anyStoryLoading ? (
@@ -541,7 +541,7 @@ export default function CompareBuilder({ products }: { products: CompareProduct[
                       scope="colgroup"
                       className="bg-zinc-900/40 px-3 py-2 text-left text-[10px] font-normal uppercase tracking-widest text-zinc-400"
                     >
-                      Added stories
+                      <span title="Extra judged scenarios you added from the story picker below">Added stories</span>
                     </th>
                   </tr>
                   {addedStories.map((story) => (

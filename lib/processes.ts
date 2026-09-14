@@ -39,6 +39,14 @@ export const DagNodeSchema = z.object({
   // render as honest unlinked chips. Distinct from `vendor` (the canonical call target).
   vendorOptions: z.string().min(1).array().optional(),
   toolCall: z.string().min(1).optional(),
+  // The canonical external page a HUMAN uses to do this step themselves (the IRS EIN
+  // application, Delaware's filing portal, USPTO search…) — rendered as a small
+  // "do it yourself ↗" link on the step block, distinct from the evidence-y vendor chips
+  // (which link to OUR judged product pages). Only ever populated with a verified-live
+  // canonical URL; steps with no canonical page simply have no link.
+  actionUrl: z.string().url().optional(),
+  // Short human label for actionUrl, e.g. "IRS EIN application". Falls back to the hostname.
+  actionLabel: z.string().min(1).optional(),
   functionCalls: FunctionCallSchema.array().optional(),
   // Forward-compat action links being added to the corpus in a parallel lane: the deep link an
   // executor (or a human) opens to actually perform the step, and the vendor's signup page.
@@ -52,9 +60,22 @@ export const DagNodeSchema = z.object({
   async: z.boolean().optional(),
 })
 
+// An old URL slug that must keep working after a rename (founder rule: processes are named
+// vendor-neutral — "Send an invoice", not "Send Stripe invoice" — but old vendor-flavored
+// slugs are indexed and shared). Static export means no server redirects, so each alias
+// prerenders the full page with a canonical link + a pointer line naming the old flavor
+// (`label` = the old title).
+export const SlugAliasSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'alias slug must be kebab-case'),
+  label: z.string().min(1),
+})
+
+export type SlugAlias = z.infer<typeof SlugAliasSchema>
+
 export const ProcessTaskSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
+  slugAliases: SlugAliasSchema.array().optional(),
   description: z.string().min(1),
   phase: z.string().min(1),
   complexity: z.enum(['simple', 'moderate', 'complex', 'very_complex']),
@@ -119,17 +140,28 @@ export function loadProcesses(dir: string = DEFAULT_DIR()): ProcessTask[] {
   const tasks = ProcessTaskSchema.array().parse(raw)
   const seen = new Map<string, string>()
   for (const t of tasks) {
-    const slug = processSlug(t.title)
-    const clash = seen.get(slug)
-    if (clash) throw new Error(`process slug collision: ${clash} and ${t.id} both slug to "${slug}"`)
-    seen.set(slug, t.id)
+    // Canonical slug and every alias share one namespace — /processes/[slug] routing stays
+    // collision-free by construction across renames.
+    for (const slug of [processSlug(t.title), ...(t.slugAliases ?? []).map((a) => a.slug)]) {
+      const clash = seen.get(slug)
+      if (clash) throw new Error(`process slug collision: ${clash} and ${t.id} both slug to "${slug}"`)
+      seen.set(slug, t.id)
+    }
   }
   processesCache.set(dir, tasks)
   return tasks
 }
 
 export function findProcessBySlug(slug: string, dir: string = DEFAULT_DIR()): ProcessTask | null {
-  return loadProcesses(dir).find((t) => processSlug(t.title) === slug) ?? null
+  return loadProcesses(dir).find(
+    (t) => processSlug(t.title) === slug || (t.slugAliases ?? []).some((a) => a.slug === slug),
+  ) ?? null
+}
+
+// The alias entry a given (task, slug) pair landed on, or null when slug is the canonical one —
+// lets /processes/[slug] render alias pages with a pointer to the canonical page.
+export function slugAliasFor(task: ProcessTask, slug: string): SlugAlias | null {
+  return (task.slugAliases ?? []).find((a) => a.slug === slug) ?? null
 }
 
 const chainsCache = new Map<string, ProcessChain[]>()
@@ -388,6 +420,44 @@ const VENDOR_LABELS: Record<string, string> = {
   coderabbit: 'CodeRabbit',
 }
 
+// The vendor's own start-here page (signup / product start), for steps whose action lives
+// inside a chosen vendor — "run payroll" happens in Gusto, so the Gusto OPTION carries the
+// start URL rather than the step carrying an actionUrl. Rendered as a small ↗ beside the
+// vendor chip; the chip itself keeps linking to OUR judged product page. Every URL verified
+// reachable before listing; vendors without a verified canonical start page aren't listed
+// (no link fabricated). Keyed by corpus vendor key (snake_case), like VENDOR_ARENA.
+export const VENDOR_SIGNUP_URL: Record<string, string> = {
+  clerky: 'https://www.clerky.com/',
+  stripe_atlas: 'https://stripe.com/atlas',
+  firstbase: 'https://firstbase.io/',
+  doola: 'https://www.doola.com/',
+  mercury: 'https://mercury.com/',
+  brex: 'https://www.brex.com/',
+  relay: 'https://relayfi.com/',
+  ramp: 'https://ramp.com/',
+  gusto: 'https://gusto.com/',
+  rippling: 'https://www.rippling.com/',
+  deel: 'https://www.deel.com/',
+  justworks: 'https://www.justworks.com/',
+  quickbooks: 'https://quickbooks.intuit.com/',
+  xero: 'https://www.xero.com/',
+  pilot: 'https://pilot.com/',
+  carta: 'https://carta.com/',
+  pulley: 'https://pulley.com/',
+  stripe: 'https://dashboard.stripe.com/register',
+  docusign: 'https://www.docusign.com/',
+  google_workspace: 'https://workspace.google.com/',
+  name_com: 'https://www.name.com/domain/search',
+  namecheap: 'https://www.namecheap.com/domains/',
+  lovable: 'https://lovable.dev/',
+  v0: 'https://v0.app/',
+  bolt: 'https://bolt.new/',
+  cloudflare: 'https://www.cloudflare.com/',
+  vercel: 'https://vercel.com/',
+  posthog: 'https://posthog.com/',
+  slack: 'https://slack.com/',
+}
+
 export function vendorLabel(vendor: string): string {
   const hit = VENDOR_LABELS[vendor]
   if (hit) return hit
@@ -435,12 +505,15 @@ export interface VendorChipInfo {
   arenaName: string | null
   agentReady: number | null
   rank: number | null
+  // The vendor's own start-here page (VENDOR_SIGNUP_URL) — a small external ↗ beside the chip.
+  signupUrl: string | null
 }
 
 export function vendorChipInfo(vendor: string, dir?: string): VendorChipInfo {
+  const signupUrl = VENDOR_SIGNUP_URL[vendor] ?? null
   const untracked: VendorChipInfo = {
     vendor, label: vendorLabel(vendor),
-    productId: null, arenaId: null, arenaName: null, agentReady: null, rank: null,
+    productId: null, arenaId: null, arenaName: null, agentReady: null, rank: null, signupUrl,
   }
   const arenaId = VENDOR_ARENA[vendor]
   if (!arenaId || !isPopulated(arenaId, dir)) return untracked
@@ -456,6 +529,7 @@ export function vendorChipInfo(vendor: string, dir?: string): VendorChipInfo {
     arenaName: loadCategory(arenaId, dir).category.name,
     agentReady: options[i].agentReady,
     rank: i + 1,
+    signupUrl,
   }
 }
 
