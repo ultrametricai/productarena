@@ -3,15 +3,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import CopyButton from '@/components/CopyButton'
 import {
-  mcpClientConfig, probeResultLines, replayCharCount, type McpProbeResult, type TryItStory,
+  callResultLines, mcpClientConfig, probeResultLines, replayCharCount,
+  type McpCallResult, type McpProbeResult, type TryItStory,
 } from '@/lib/tryitReplay'
 
 // The "Try it" microterminal: a locked-down terminal-styled window on the product page that
-// (1) REPLAYS recorded proof transcripts character-paced — clearly labeled as recordings, and
-// (2) optionally runs ONE real thing: a live MCP handshake against the product's own documented
-// endpoint via the worker's /api/mcp-probe (static allowlist server-side — this component only
-// ever sends {arena, product}, never a URL). A third, visibly disabled tab describes the
-// designed-but-gated full sandbox (docs/TRY-IT.md).
+// (1) REPLAYS recorded proof transcripts character-paced — clearly labeled as recordings — and
+// (2) optionally runs real things against the product's own documented MCP endpoint via the
+// worker's /api/mcp-probe (static allowlist server-side — this component only ever sends
+// {arena, product} plus tier flags, never a URL, never a tool name):
+//   - a live keyless handshake (initialize + tools/list), and, for endpoints with a curated
+//     read-only demo call, ONE real tool call ("▶ run a real call");
+//   - the BYO-key tier for auth-gated servers: a visitor-pasted credential, held in component
+//     state only (this tab's memory), sent per-run to our worker which forwards it once to the
+//     vendor and discards it — never logged, never stored (asserted by worker tests);
+//   - the sandbox tier when the operator has provisioned a DEMO_CRED_* secret
+//     (docs/TRY-IT-DEMO-ACCOUNTS.md).
+// A third, visibly disabled tab describes the designed-but-gated full sandbox (docs/TRY-IT.md).
 //
 // Same hardened-endpoint calling pattern as components/SubmitScan.tsx.
 const PROBE_ENDPOINT = 'https://ultrametric.ai/productarena/api/mcp-probe'
@@ -24,6 +32,13 @@ interface LiveProbe {
   endpoint: string
   /** The vendor's own MCP docs page (lib/tryit.ts mcpDocsUrlFor) — null when none documented. */
   docsUrl: string | null
+}
+
+/** Credential tier for one run — memory-only; `token` never leaves component state except in
+ *  the per-run request body to our worker. */
+interface AuthChoice {
+  token?: string
+  sandbox?: boolean
 }
 
 export default function Microterminal({
@@ -44,9 +59,12 @@ export default function Microterminal({
   const [shown, setShown] = useState(0) // how many chars are visible
   const [liveBusy, setLiveBusy] = useState(false)
   const [liveResult, setLiveResult] = useState<McpProbeResult | null>(null) // last completed probe
+  const [keyDraft, setKeyDraft] = useState('') // BYO key — memory only, never persisted
+  const [showKeyForm, setShowKeyForm] = useState(false)
   const startRef = useRef(0)
   const skippedRef = useRef(false)
   const runRef = useRef(0) // invalidates in-flight probe responses on story switch
+  const authRef = useRef<AuthChoice>({}) // the tier the CURRENT liveResult was produced under
   const preRef = useRef<HTMLPreElement>(null)
 
   const active = stories.find((s) => s.id === activeId) ?? null
@@ -59,35 +77,79 @@ export default function Microterminal({
     setShown(0)
   }, [])
 
-  // Kick off (or re-run) the active story.
-  const runStory = useCallback((id: string) => {
+  const postProbe = useCallback((body: Record<string, unknown>) =>
+    fetch(PROBE_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }), [])
+
+  // One live handshake (initialize + tools/list) under the given tier. Resets the terminal.
+  const runProbe = useCallback((auth: AuthChoice) => {
+    if (!probe) return
     runRef.current += 1
     const run = runRef.current
-    setActiveId(id)
-    if (id === LIVE_ID) {
-      if (!probe) return
-      setLiveBusy(true)
-      setLiveResult(null)
-      beginRun(`$ mcp-probe ${probe.arena}/${probe.product}\n→ POST ${probe.endpoint}\n→ initialize (JSON-RPC 2.0, MCP 2025-06-18) …\n`)
-      fetch(PROBE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ arena: probe.arena, product: probe.product }),
+    setActiveId(LIVE_ID)
+    setLiveBusy(true)
+    setLiveResult(null)
+    authRef.current = auth
+    const authNote = auth.token ? ' (Authorization: your key — sent once, not stored)'
+      : auth.sandbox ? ' (Authorization: our sandbox account)' : ''
+    beginRun(`$ mcp-probe ${probe.arena}/${probe.product}${auth.token ? ' --auth your-key' : auth.sandbox ? ' --auth sandbox' : ''}\n→ POST ${probe.endpoint}${authNote}\n→ initialize (JSON-RPC 2.0, MCP 2025-06-18) …\n`)
+    postProbe({
+      arena: probe.arena,
+      product: probe.product,
+      ...(auth.token ? { token: auth.token } : {}),
+      ...(auth.sandbox ? { useSandbox: true } : {}),
+    })
+      .then(async (resp) => (await resp.json()) as McpProbeResult)
+      .catch(() => ({ error: 'could not reach our edge — try again in a moment' }) as McpProbeResult)
+      .then((result) => {
+        if (runRef.current !== run) return // user switched stories mid-flight
+        setLiveBusy(false)
+        setLiveResult(result)
+        setTarget((prev) => `${prev}${probeResultLines(result).join('\n')}\n`)
       })
-        .then(async (resp) => (await resp.json()) as McpProbeResult)
-        .catch(() => ({ error: 'could not reach our edge — try again in a moment' }) as McpProbeResult)
-        .then((result) => {
-          if (runRef.current !== run) return // user switched stories mid-flight
-          setLiveBusy(false)
-          setLiveResult(result)
-          setTarget((prev) => `${prev}${probeResultLines(result).join('\n')}\n`)
-        })
-    } else {
-      setLiveBusy(false)
-      const story = stories.find((s) => s.id === id)
-      beginRun(story?.transcript ?? '')
+  }, [beginRun, postProbe, probe])
+
+  // ONE real curated tool call (worker action: 'call') under the tier the last successful
+  // handshake used. Appends to the terminal instead of resetting it — it is a continuation.
+  const runDemoCall = useCallback(() => {
+    if (!probe || !liveResult?.demoCall) return
+    runRef.current += 1
+    const run = runRef.current
+    const auth = authRef.current
+    const { tool, label } = liveResult.demoCall
+    setLiveBusy(true)
+    setTarget((prev) => `${prev}→ tools/call ${tool} — ${label} …\n`)
+    postProbe({
+      arena: probe.arena,
+      product: probe.product,
+      action: 'call',
+      ...(auth.token ? { token: auth.token } : {}),
+      ...(auth.sandbox ? { useSandbox: true } : {}),
+    })
+      .then(async (resp) => (await resp.json()) as McpCallResult)
+      .catch(() => ({ error: 'could not reach our edge — try again in a moment' }) as McpCallResult)
+      .then((result) => {
+        if (runRef.current !== run) return
+        setLiveBusy(false)
+        setTarget((prev) => `${prev}${callResultLines(result).join('\n')}\n`)
+      })
+  }, [liveResult, postProbe, probe])
+
+  // Kick off (or re-run) the active story.
+  const runStory = useCallback((id: string) => {
+    if (id === LIVE_ID) {
+      runProbe({}) // the menu button is always the honest keyless tier; key/sandbox have their own buttons
+      return
     }
-  }, [beginRun, probe, stories])
+    runRef.current += 1
+    setActiveId(id)
+    setLiveBusy(false)
+    const story = stories.find((s) => s.id === id)
+    beginRun(story?.transcript ?? '')
+  }, [beginRun, runProbe, stories])
 
   // Character-paced typing (~8ms/char, lib/tryitReplay.ts). Skip renders everything at once.
   useEffect(() => {
@@ -121,6 +183,12 @@ export default function Microterminal({
         ? 'border-emerald-400 bg-emerald-400/10 text-emerald-300'
         : 'border-zinc-800 text-zinc-400 hover:border-emerald-400/60 hover:text-emerald-300'
     }`
+  const actionButton =
+    'rounded border border-emerald-400/60 bg-emerald-400/10 px-2 py-1 text-[11px] font-semibold text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-40'
+
+  const keylessOk = Boolean(liveResult?.handshake && liveResult.auth === 'keyless')
+  const authedOk = Boolean(liveResult?.handshake && liveResult.auth && liveResult.auth !== 'keyless')
+  const authGated = Boolean(liveResult?.authRequired)
 
   return (
     <div className="space-y-3">
@@ -159,7 +227,7 @@ export default function Microterminal({
             type="button"
             onClick={() => activeId && runStory(activeId)}
             disabled={!activeId || liveBusy}
-            title={isLive ? 'Run the live handshake again' : 'Replay this recording from the start'}
+            title={isLive ? 'Run the live handshake again (keyless)' : 'Replay this recording from the start'}
             className="ml-auto shrink-0 rounded border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-40"
           >
             ▶ {liveBusy ? 'running…' : isLive ? 'run' : 'replay'}
@@ -187,7 +255,7 @@ export default function Microterminal({
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-zinc-800 px-3 py-1.5 text-[10px] text-zinc-500">
           {isLive ? (
-            <span>one real JSON-RPC handshake against the vendor&rsquo;s documented MCP endpoint — nothing is signed in, nothing is written</span>
+            <span>real JSON-RPC against the vendor&rsquo;s documented MCP endpoint — read-only, nothing is written</span>
           ) : active ? (
             <span>
               recorded {active.recordedAt?.slice(0, 10)} · exit {active.exitCode} · captured verbatim by our probe harness, secrets redacted
@@ -208,59 +276,154 @@ export default function Microterminal({
         </div>
       </div>
 
-      {/* Live-probe follow-up: never leave the visitor at a dead 401. Once a probe completes
-          against a live server (auth wall or keyless handshake alike), hand them the endpoint as
-          a copy-paste MCP client config — their own client runs the vendor's OAuth sign-in, which
-          is exactly the step our keyless probe honestly cannot take. */}
-      {isLive && probe && liveResult && (liveResult.authRequired || liveResult.handshake) && (
+      {/* Live-probe follow-ups: never leave the visitor at a dead result. */}
+      {isLive && probe && liveResult && (
         <div className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/40 p-3">
+          {/* Honest state badge. */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            {liveResult.authRequired ? (
+            {keylessOk && (
+              <span className="rounded-full border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 font-semibold text-emerald-300">
+                ✓ keyless handshake OK
+                {typeof liveResult.toolCount === 'number' ? ` — ${liveResult.toolCount} tools live` : ''}
+              </span>
+            )}
+            {authedOk && (
+              <span className="rounded-full border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 font-semibold text-emerald-300">
+                ✓ authenticated handshake OK ({liveResult.auth === 'sandbox' ? 'our sandbox account' : 'your key'})
+                {typeof liveResult.toolCount === 'number' ? ` — ${liveResult.toolCount} tools live` : ''}
+              </span>
+            )}
+            {authGated && liveResult.auth === 'keyless' && (
               <span
                 title="Our probe holds no vendor account, so keyless is where our proof stops: the server answered from its documented endpoint and demanded sign-in. That is verified-reachable — not absence of an MCP server."
                 className="rounded-full border border-amber-400/60 bg-amber-400/10 px-2 py-0.5 font-semibold text-amber-300"
               >
                 ⚿ verified reachable, auth-gated — untestable keylessly
               </span>
-            ) : (
-              <span className="rounded-full border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 font-semibold text-emerald-300">
-                ✓ keyless handshake OK
-                {typeof liveResult.toolCount === 'number' ? ` — ${liveResult.toolCount} tools live` : ''}
+            )}
+            {authGated && liveResult.auth !== 'keyless' && (
+              <span className="rounded-full border border-amber-400/60 bg-amber-400/10 px-2 py-0.5 font-semibold text-amber-300">
+                ⚿ credential rejected — the server is live but did not accept it
               </span>
             )}
-            {liveResult.authRequired && liveResult.resourceName && (
+            {authGated && liveResult.resourceName && (
               <span className="text-zinc-400">server identifies as &ldquo;{liveResult.resourceName}&rdquo;</span>
             )}
           </div>
-          <div className="flex items-start gap-2">
-            <pre className="min-w-0 flex-1 overflow-auto rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 font-mono text-[11px] leading-relaxed text-zinc-300">
-              {mcpClientConfig(probe.product, probe.endpoint)}
-            </pre>
-            <CopyButton text={mcpClientConfig(probe.product, probe.endpoint)} label="Copy config" />
+
+          {/* Tier actions. */}
+          <div className="flex flex-wrap items-center gap-2">
+            {liveResult.handshake && liveResult.demoCall && (
+              <button
+                type="button"
+                onClick={runDemoCall}
+                disabled={liveBusy}
+                title="Execute one curated read-only tool call against the vendor's server, live — the tool and arguments are fixed server-side"
+                className={actionButton}
+              >
+                ▶ run a real call — {liveResult.demoCall.label}
+              </button>
+            )}
+            {authGated && liveResult.sandboxAvailable && (
+              <button
+                type="button"
+                onClick={() => runProbe({ sandbox: true })}
+                disabled={liveBusy}
+                title="Re-run the handshake authenticated with ProductArena's own demo/sandbox account for this vendor (test-mode credentials, provisioned by us)"
+                className={actionButton}
+              >
+                ▶ use our sandbox account
+              </button>
+            )}
+            {authGated && (
+              <button
+                type="button"
+                onClick={() => setShowKeyForm((v) => !v)}
+                className="rounded border border-zinc-700 px-2 py-1 text-[11px] text-zinc-400 transition hover:border-emerald-400 hover:text-emerald-300"
+              >
+                {showKeyForm ? 'hide key form' : 'have a key? test it with your own credentials'}
+              </button>
+            )}
           </div>
-          <p className="text-[11px] text-zinc-500">
-            Paste into your MCP client&rsquo;s config (Claude Code, Cursor, VS Code, …)
-            {liveResult.authRequired
-              ? ' — the client walks you through the vendor’s OAuth sign-in on first use'
-              : ' — this server answered keyless from our edge just now'}
-            {liveResult.authRequired && liveResult.scopes?.length
-              ? `; it will request: ${liveResult.scopes.join(', ')}`
-              : ''}
-            .
-            {probe.docsUrl && (
-              <>
-                {' '}
+
+          {/* BYO-key form — the credential lives in this tab's memory only. */}
+          {authGated && showKeyForm && (
+            <form
+              className="space-y-1.5"
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (keyDraft.trim()) runProbe({ token: keyDraft.trim() })
+              }}
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <input
+                  type="password"
+                  autoComplete="off"
+                  value={keyDraft}
+                  onChange={(e) => setKeyDraft(e.target.value)}
+                  placeholder="paste an API key or token"
+                  aria-label={`API key or token for ${productName}`}
+                  className="min-w-0 flex-1 rounded border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-[11px] text-zinc-200 placeholder:text-zinc-600 focus:border-emerald-400 focus:outline-none"
+                />
+                <button type="submit" disabled={liveBusy || !keyDraft.trim()} className={actionButton}>
+                  ▶ run with my key
+                </button>
+              </div>
+              <p className="text-[11px] text-zinc-500">
+                Your key stays in this tab&rsquo;s memory and goes vendor-ward through our proxy once per run —
+                never logged, never stored, scrubbed from every response (that&rsquo;s{' '}
                 <a
-                  href={probe.docsUrl}
+                  href="https://github.com/ultrametricai/productarena/blob/main/infra/cloudflare-proxy/worker.js"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-emerald-300 underline decoration-emerald-300/40 hover:decoration-emerald-300"
                 >
-                  vendor&rsquo;s MCP docs →
+                  auditable worker code
                 </a>
-              </>
-            )}
-          </p>
+                , not a promise). Prefer a scoped, revocable, or test-mode credential anyway.
+                Note: some vendors&rsquo; MCP servers only accept OAuth sign-in, not API keys — if yours is
+                rejected, the copy-paste client config below is the reliable route.
+              </p>
+            </form>
+          )}
+
+          {/* Take-it-with-you config: once a probe completes against a live server (auth wall or
+              keyless handshake alike), hand them the endpoint as a copy-paste MCP client config —
+              their own client runs the vendor's OAuth sign-in, which is exactly the step our
+              keyless probe honestly cannot take. */}
+          {(liveResult.authRequired || liveResult.handshake) && (
+            <>
+              <div className="flex items-start gap-2">
+                <pre className="min-w-0 flex-1 overflow-auto rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 font-mono text-[11px] leading-relaxed text-zinc-300">
+                  {mcpClientConfig(probe.product, probe.endpoint)}
+                </pre>
+                <CopyButton text={mcpClientConfig(probe.product, probe.endpoint)} label="Copy config" />
+              </div>
+              <p className="text-[11px] text-zinc-500">
+                Paste into your MCP client&rsquo;s config (Claude Code, Cursor, VS Code, …)
+                {liveResult.authRequired
+                  ? ' — the client walks you through the vendor’s OAuth sign-in on first use'
+                  : ' — this server answered keyless from our edge just now'}
+                {liveResult.authRequired && liveResult.scopes?.length
+                  ? `; it will request: ${liveResult.scopes.join(', ')}`
+                  : ''}
+                .
+                {probe.docsUrl && (
+                  <>
+                    {' '}
+                    <a
+                      href={probe.docsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-300 underline decoration-emerald-300/40 hover:decoration-emerald-300"
+                    >
+                      vendor&rsquo;s MCP docs →
+                    </a>
+                  </>
+                )}
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>
