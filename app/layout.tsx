@@ -32,6 +32,8 @@ const NAV_LABELS: Record<string, string> = {
   "payroll": "Payroll",
   "mobile-payments": "POS",
   "payments": "Payments",
+  "billing-subscriptions": "Billing",
+  "fraud-prevention": "Fraud",
   "accounting": "Accounting",
   "security-scanners": "Security",
   "infra-as-code": "IaC",
