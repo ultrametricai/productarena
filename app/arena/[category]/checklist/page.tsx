@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import CopyButton from '@/components/CopyButton'
+import CopyPreview from '@/components/CopyPreview'
 import IconChip from '@/components/IconChip'
 import PersonaChip from '@/components/PersonaChip'
 import ThemeIcon from '@/components/ThemeIcon'
@@ -120,6 +121,10 @@ export default async function ChecklistPage({ params }: { params: Promise<{ cate
           >
             Procurement report →
           </Link>
+        </div>
+        {/* The exact markdown the button copies — collapsed preview, never invisible. */}
+        <div className="mt-2 max-w-2xl">
+          <CopyPreview summary="Show the markdown export" text={markdown} />
         </div>
       </div>
 

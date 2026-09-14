@@ -1,4 +1,5 @@
 import Sparkline from '@/components/Sparkline'
+import { shortDate } from '@/lib/dates'
 import { formatCompact } from '@/lib/popularity'
 import type { SeriesPoint } from '@/lib/scoreTrend'
 
@@ -8,10 +9,6 @@ import type { SeriesPoint } from '@/lib/scoreTrend'
 // is adoption data from public registries, never part of the PA Score, so it stays small,
 // mono, and mostly zinc. Series with <2 distinct snapshots render nothing at all — one
 // measurement is a number (the chip already shows it), not a trend.
-
-function shortDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })
-}
 
 function fmtDelta(delta: number): string {
   if (delta === 0) return '±0'

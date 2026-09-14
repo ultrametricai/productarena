@@ -15,6 +15,8 @@ const START_MARKER = '<!-- stats:start -->'
 const END_MARKER = '<!-- stats:end -->'
 const ARENAS_START_MARKER = '<!-- arenas:start -->'
 const ARENAS_END_MARKER = '<!-- arenas:end -->'
+const BADGES_START_MARKER = '<!-- stat-badges:start -->'
+const BADGES_END_MARKER = '<!-- stat-badges:end -->'
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'))
@@ -57,6 +59,20 @@ function renderArenasBlock() {
   return [ARENAS_START_MARKER, '| Arena | Products |', '|---|---|', ...rows, ARENAS_END_MARKER].join('\n')
 }
 
+// The count badges in the README's top badge row — static shields.io badges carrying the same
+// generated numbers as the stats line, so the row can never drift from data/ (the repo has no
+// public dynamic-badge source to hotlink while it's private).
+function renderStatBadgesBlock(stats) {
+  const site = 'https://ultrametric.ai/productarena'
+  return [
+    BADGES_START_MARKER,
+    `[![arenas](https://img.shields.io/badge/arenas-${stats.arenas}-34d399)](${site})`,
+    `[![products](https://img.shields.io/badge/products-${stats.products}-34d399)](${site}/everything)`,
+    `[![judged verdicts](https://img.shields.io/badge/judged_verdicts-${stats.verdicts}-34d399)](${site}/methodology)`,
+    BADGES_END_MARKER,
+  ].join('\n')
+}
+
 function renderBlock(stats) {
   return [
     START_MARKER,
@@ -83,6 +99,7 @@ function updateReadme(stats) {
 
   let next = replaceBetween(readme, START_MARKER, END_MARKER, renderBlock(stats))
   next = replaceBetween(next, ARENAS_START_MARKER, ARENAS_END_MARKER, renderArenasBlock())
+  next = replaceBetween(next, BADGES_START_MARKER, BADGES_END_MARKER, renderStatBadgesBlock(stats))
 
   if (next === readme) {
     console.log('update-readme-stats: README already up to date, no changes written')
