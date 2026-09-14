@@ -367,7 +367,7 @@ function StoryRowPair({
   const surfaces = isOpen && isCoveredVerdict(row.verdict) ? surfacesForEvidence(row.evidence) : []
   return (
     <>
-      <tr id={`story-${row.storyId}`} className="scroll-mt-4 align-top transition hover:bg-zinc-900/50">
+      <tr id={`story-${row.storyId}`} className="scroll-mt-4 align-top transition hover:bg-zinc-800/70">
         <td className="px-3 py-2">
           <div className="flex items-start gap-2">
             <button

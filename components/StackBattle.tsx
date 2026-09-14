@@ -354,7 +354,7 @@ export default function StackBattle({
                 </thead>
                 <tbody className="divide-y divide-zinc-800/70">
                   {slots.map((slot) => (
-                    <tr key={slot.arenaId} className="transition hover:bg-zinc-900/50">
+                    <tr key={slot.arenaId} className="transition hover:bg-zinc-800/70">
                       <td className="px-3 py-2.5 align-top">
                         <Link
                           href={`/arena/${slot.arenaId}`}

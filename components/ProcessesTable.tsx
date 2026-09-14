@@ -130,7 +130,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
             {sorted.map((r) => (
-              <tr key={r.slug} className="transition hover:bg-zinc-900/50">
+              <tr key={r.slug} className="transition hover:bg-zinc-800/70">
                 <td className="max-w-[260px] px-2 py-2">
                   <Link href={`/processes/${r.slug}`} className="font-medium hover:text-emerald-300">
                     {r.title}

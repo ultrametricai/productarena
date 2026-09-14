@@ -57,11 +57,11 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
         </thead>
         <tbody className="divide-y divide-zinc-800/70">
           {rows.map((row, i) => (
-            <tr key={`${row.data.category.id}:${row.product.id}`} className="group transition hover:bg-zinc-900/50">
-              <td className="sticky left-0 z-[5] w-10 bg-zinc-950 px-3 py-2 font-mono tabular-nums text-zinc-400 group-hover:bg-zinc-900/50">
+            <tr key={`${row.data.category.id}:${row.product.id}`} className="group transition hover:bg-zinc-800/70">
+              <td className="sticky left-0 z-[5] w-10 bg-zinc-950 px-3 py-2 font-mono tabular-nums text-zinc-400 group-hover:bg-zinc-800/70">
                 {i + 1}
               </td>
-              <td className="sticky left-10 z-[5] w-[170px] bg-zinc-950 px-3 py-2 group-hover:bg-zinc-900/50">
+              <td className="sticky left-10 z-[5] w-[170px] bg-zinc-950 px-3 py-2 group-hover:bg-zinc-800/70">
                 <Link
                   href={`/arena/${row.data.category.id}/product/${row.product.id}`}
                   className="flex items-center gap-2 hover:text-emerald-300"
