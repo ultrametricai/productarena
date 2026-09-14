@@ -122,10 +122,10 @@ export default async function GlobalStoryPage({
           <thead>
             <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-400">
               <th scope="col" className="px-3 py-2 font-normal">Product</th>
-              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Arena</th>
-              <th scope="col" className="px-3 py-2 font-normal">Verdict</th>
-              <th scope="col" className="px-3 py-2 font-normal">Quality</th>
-              <th scope="col" className="px-3 py-2 font-normal">Evidence</th>
+              <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="The product category (arena) it competes in">Arena</span></th>
+              <th scope="col" className="px-3 py-2 font-normal"><span title="Does the product deliver this capability? full / partial / none — judged from cited evidence">Verdict</span></th>
+              <th scope="col" className="px-3 py-2 font-normal"><span title="How well it delivers when it does (0–100)">Quality</span></th>
+              <th scope="col" className="px-3 py-2 font-normal"><span title="How many cited sources back the verdict">Evidence</span></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">

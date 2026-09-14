@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import GeoMark from '@/components/GeoMark'
 import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
@@ -134,7 +135,7 @@ export default function MostOpenRankingPage() {
               <th className="w-10 px-3 py-2 font-normal">#</th>
               <th className="px-3 py-2 font-normal">Product</th>
               <th className="px-3 py-2 font-normal" title="Openness theme score (0–100): weighted share of full/partial verdicts across the openness stories">
-                Openness
+                <span className="inline-flex items-center gap-1.5">Openness<ColumnsHelpLink /></span>
               </th>
               {VERDICT_COLUMNS.map((col) => (
                 <th key={col.key} className={`px-3 py-2 font-normal ${col.className}`} title={col.title}>

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
+import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ProductLogoView from '@/components/ProductLogoView'
 import type { CompareProduct } from '@/lib/compare'
 import {
@@ -193,10 +194,15 @@ export default function StackBuilder({
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
-                  <th scope="col" className="px-3 py-2 font-normal">Role</th>
-                  <th scope="col" className="px-3 py-2 font-normal">Pick</th>
-                  <th scope="col" className="px-3 py-2 font-normal">Evidence</th>
-                  <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">Runner-up</th>
+                  <th scope="col" className="px-3 py-2 font-normal"><span title="The job this slot does in your stack">Role</span></th>
+                  <th scope="col" className="px-3 py-2 font-normal"><span title="The top product for this role under your constraints — resolved live from the arena leaderboard">Pick</span></th>
+                  <th scope="col" className="px-3 py-2 font-normal"><span title="The judged score the pick rests on — click through for the evidence">Evidence</span></th>
+                  <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span title="The next-best product for this role under the same constraints">Runner-up</span>
+                      <ColumnsHelpLink />
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/70">
