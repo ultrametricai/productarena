@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import AccountMenu from "@/components/AccountMenu";
 import ArenaMenu from "@/components/ArenaMenu";
 import CommandPalette from "@/components/CommandPalette";
 import GeoMark from "@/components/GeoMark";
 import { loadAll, loadCategories } from "@/lib/data";
-import { WATCHLIST_ENABLED } from "@/lib/flags";
 import arenaIcons from "@/data/arena-icons.json";
 import { loadIcpTypes } from "@/lib/icp";
 import { hasLogo } from "@/lib/logos";
@@ -310,18 +310,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   <span className="font-mono">GitHub</span>
                 )}
               </a>
-              {WATCHLIST_ENABLED && (
-                <Link
-                  href="/watchlist"
-                  title="Your watchlist — starred products, stored in this browser"
-                  className="flex shrink-0 items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
-                >
-                  <span aria-hidden className="text-emerald-400">☆</span>
-                  <span className="hidden sm:inline">Watchlist</span>
-                  <span className="sr-only sm:hidden">Watchlist</span>
-                </Link>
-              )}
               <CommandPalette entries={searchEntries} />
+              {/* Account corner (components/AccountMenu.tsx): a quiet "Log in" link for
+                  anonymous readers, an initial chip (menu: Watchlist + Log out) once an Ory
+                  session exists. The Watchlist link lives inside the chip menu, so the header
+                  is unchanged for logged-out readers. */}
+              <AccountMenu />
             </nav>
           </div>
         </header>
