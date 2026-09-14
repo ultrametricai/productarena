@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
+import { shortDate } from '@/lib/dates'
 import { hasLogo } from '@/lib/logos'
 import {
   buildChangelog, capChangelog, groupByDay, SCORE_MOVE_THRESHOLD, type ChangeEvent,
@@ -18,10 +19,6 @@ export const metadata: Metadata = {
   title: 'Changelog — ProductArena',
   description:
     'What changed across every arena — rank flips, PA Score moves, new products, and new arenas, derived from the committed score history. Nothing hand-written.',
-}
-
-function dayLabel(day: string): string {
-  return new Date(`${day}T00:00:00Z`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })
 }
 
 function fmtDelta(delta: number): string {
@@ -114,7 +111,7 @@ export default function ChangelogPage() {
         </p>
         {historyBegins && (
           <p className="mt-2 text-xs text-zinc-500">
-            History begins {dayLabel(historyBegins)}, {historyBegins.slice(0, 4)} — the day score tracking started.
+            History begins {shortDate(historyBegins)} — the day score tracking started.
             Earlier movement isn&rsquo;t recorded, so it isn&rsquo;t shown. Showing the most recent {CHANGELOG_MAX_DAYS} days
             with activity (max {CHANGELOG_MAX_EVENTS} events).
           </p>
@@ -128,7 +125,7 @@ export default function ChangelogPage() {
           {days.map(([day, dayEvents]) => (
             <section key={day}>
               <h2 className="font-display leading-[1.1] text-lg font-semibold">
-                {dayLabel(day)} <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{day}</span>
+                {shortDate(day)} <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{day}</span>
               </h2>
               <ul className="mt-2 space-y-1.5 border-l border-zinc-800 pl-4 text-sm text-zinc-400">
                 {dayEvents.map((event, i) => (

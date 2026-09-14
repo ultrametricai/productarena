@@ -191,7 +191,8 @@ export default function ArenaTable({ data, logoMap, pricing }: { data: CategoryD
                 <span title="API quality /100 — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.">API</span>
               </SortableTh>
               <SortableTh col="openness" current={column} direction={direction} onSort={handleSort} className="hidden xl:table-cell">
-                <span title="Openness /100 — self-host, full export, read the source">Open</span>
+                {/* Full word, not "Open" — abbreviated it reads as an action verb, not the metric. */}
+                <span title="Openness /100 — self-host, full export, read the source">Openness</span>
               </SortableTh>
               <SortableTh col="automation" current={column} direction={direction} onSort={handleSort} className="hidden xl:table-cell">
                 Autom.
