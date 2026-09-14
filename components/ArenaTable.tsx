@@ -46,6 +46,7 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
       productId: entry.productId,
       name: product.name,
       vendor: product.vendor,
+      oss: product.type === 'oss',
       initScore: entry.aiEra,
       agentReady: entry.agentReady,
       agenticApp: entry.agenticApp,
@@ -240,7 +241,19 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                       {hotReasons?.[row.productId] && <HotChip reason={hotReasons[row.productId]} />}
                     </Link>
                     <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                      {product.type === 'oss' && <OssPill variant="compact" />}
+                      {/* The pill doubles as the OSS sort affordance — this table has no OSS
+                          column header, so the indicator itself is the click target. */}
+                      {product.type === 'oss' && (
+                        <button
+                          type="button"
+                          onClick={() => handleSort('oss')}
+                          title="Open source — the product's code is publicly available. Click to sort open-source products first."
+                          aria-label="Sort open-source products first"
+                          className="cursor-pointer"
+                        >
+                          <OssPill variant="compact" />
+                        </button>
+                      )}
                       <BusinessModelChip product={product} skipOpenSource={product.type === 'oss'} />
                     </div>
                     {rival && (

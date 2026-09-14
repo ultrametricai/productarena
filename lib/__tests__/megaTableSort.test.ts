@@ -56,6 +56,16 @@ describe('sortMegaRows', () => {
     expect(sorted.map((r) => r.arenaName)).toEqual(['Alpha Arena', 'Zeta', 'Zeta'])
   })
 
+  it('sorts open-source products first on oss desc, stable within each group', () => {
+    const sorted = sortMegaRows(rows, 'oss', 'desc')
+    expect(sorted.map((r) => r.productId)).toEqual(['a', 'b', 'c'])
+  })
+
+  it('sorts commercial products first on oss asc', () => {
+    const sorted = sortMegaRows(rows, 'oss', 'asc')
+    expect(sorted.map((r) => r.productId)).toEqual(['b', 'c', 'a'])
+  })
+
   it('treats rank as an alias for AGENTREADYNESS ordering', () => {
     expect(sortMegaRows(rows, 'rank', 'desc').map((r) => r.productId)).toEqual(
       sortMegaRows(rows, 'agentReady', 'desc').map((r) => r.productId),
@@ -74,6 +84,10 @@ describe('defaultDirectionFor', () => {
     expect(defaultDirectionFor('agentReady')).toBe('desc')
     expect(defaultDirectionFor('initScore')).toBe('desc')
     expect(defaultDirectionFor('popularity')).toBe('desc')
+  })
+
+  it('defaults oss to descending (open source first)', () => {
+    expect(defaultDirectionFor('oss')).toBe('desc')
   })
 
   it('defaults name and arena to ascending', () => {
