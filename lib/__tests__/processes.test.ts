@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { loadCategory } from '@/lib/data'
 import {
   buildSimSteps, chainTasks, computeCeiling, formatMinutes, gapThemes, loadChains,
-  loadProcesses, processSlug, siteCeiling, taskCeiling, VENDOR_ARENA, vendorRoles,
+  loadProcesses, processSlug, siteCeiling, taskCeiling, VENDOR_ARENA, vendorChipInfo,
+  vendorProductId, vendorRoles,
   type DagNode,
 } from '@/lib/processes'
 
@@ -81,14 +82,60 @@ describe('gap themes', () => {
 })
 
 describe('vendor -> arena mapping', () => {
-  it('every mapped vendor resolves to a real product in its arena', () => {
+  it('every mapped vendor resolves (via vendorProductId) to a real product in its arena', () => {
     for (const [vendor, arenaId] of Object.entries(VENDOR_ARENA)) {
       const data = loadCategory(arenaId, DATA_DIR)
+      const productId = vendorProductId(vendor)
       expect(
-        data.products.some((p) => p.id === vendor),
-        `${vendor} should be a product id in ${arenaId}`,
+        data.products.some((p) => p.id === productId),
+        `${vendor} (product id ${productId}) should be a product id in ${arenaId}`,
       ).toBe(true)
     }
+  })
+
+  it('every corpus vendorOption is either arena-tracked or an intentional unlinked chip', () => {
+    const tracked = new Set(Object.keys(VENDOR_ARENA))
+    // Untracked options we still show honestly (no arena yet) — keep this list deliberate.
+    const allowedUntracked = new Set(['doola'])
+    for (const task of loadProcesses(DATA_DIR)) {
+      for (const n of task.dag.nodes) {
+        for (const v of n.vendorOptions ?? []) {
+          expect(
+            tracked.has(v) || allowedUntracked.has(v),
+            `${task.id}/${n.id}: vendorOption ${v} is neither tracked nor allow-listed`,
+          ).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('vendorChipInfo resolves tracked vendors to a live product with rank, untracked to an unlinked chip', () => {
+    const clerky = vendorChipInfo('clerky', DATA_DIR)
+    expect(clerky.productId).toBe('clerky')
+    expect(clerky.arenaId).toBe('legal-ops')
+    expect(clerky.arenaName).toBeTruthy()
+    expect(clerky.rank).toBeGreaterThanOrEqual(1)
+
+    // snake_case vendor key resolves to the kebab-case judged product id
+    const atlas = vendorChipInfo('stripe_atlas', DATA_DIR)
+    expect(atlas.productId).toBe('stripe-atlas')
+    expect(atlas.arenaId).toBe('legal-ops')
+    expect(atlas.label).toBe('Stripe Atlas')
+
+    // untracked vendor: honest unlinked chip, label still pretty
+    const doola = vendorChipInfo('doola', DATA_DIR)
+    expect(doola.productId).toBeNull()
+    expect(doola.arenaId).toBeNull()
+    expect(doola.label).toBe('Doola')
+  })
+
+  it('the formation-service step lists the real market: clerky, stripe_atlas, firstbase tracked + doola unlinked', () => {
+    const incorporate = loadProcesses(DATA_DIR).find((t) => t.id === 'form_001')!
+    const choose = incorporate.dag.nodes.find((n) => n.label === 'Choose formation service')!
+    expect(choose.vendorOptions).toEqual(['clerky', 'stripe_atlas', 'firstbase', 'doola'])
+    const chips = choose.vendorOptions!.map((v) => vendorChipInfo(v, DATA_DIR))
+    expect(chips.filter((c) => c.productId).length).toBe(3)
+    expect(chips.filter((c) => !c.productId).map((c) => c.label)).toEqual(['Doola'])
   })
 
   it('vendorRoles dedupes per arena, defaults to the canonical vendor, and ranks by agentReady', () => {
