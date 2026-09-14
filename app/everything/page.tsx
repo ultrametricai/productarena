@@ -14,6 +14,9 @@ export const metadata: Metadata = {
   title: 'Everything — ProductArena',
   description:
     'The power view: the whole catalog on one page. Every ranked product with bare scores and access glyphs, every founder process with its agent ceiling, every stack, every ICP lens, and a link index to the rest of the site.',
+  // Unlisted by founder call (see app/layout.tsx's nav comment) — noindex like the other
+  // reachable-by-URL-only pages (/gifts, /experiments/*), which all set this already.
+  robots: { index: false, follow: false },
 }
 
 // The /everything power view — one deliberately long, deliberately dense page: maximum

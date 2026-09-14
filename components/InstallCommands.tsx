@@ -87,7 +87,7 @@ function InstallRow({ entry }: { entry: NonNullable<Product['install']>[number] 
           type="button"
           onClick={onCopy}
           aria-label={`Copy ${entry.label} command`}
-          title={copied ? 'Copied' : 'Copy'}
+          title={copied ? 'Copied' : `Copy ${entry.label} command`}
           className="shrink-0 rounded p-1 text-zinc-500 transition hover:text-emerald-300"
         >
           {copied ? (

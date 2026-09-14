@@ -44,7 +44,19 @@ export function IntegrationChip({ chip }: { chip: IntegrationChipData }) {
 }
 
 export default function IntegrationChips({ chips }: { chips: IntegrationChipData[] }) {
-  if (chips.length === 0) return null
+  // Honest empty state instead of vanishing — "we found none" is information, not absence
+  // (same house rule as the tables' "untested, not zero" cells).
+  if (chips.length === 0) {
+    return (
+      <div>
+        <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Verified integrations</h2>
+        <p className="text-xs text-zinc-500">
+          No integration evidence found in our corpus for this product yet — that means none was
+          found, never that it doesn&rsquo;t integrate.
+        </p>
+      </div>
+    )
+  }
   return (
     <div>
       {/* One line — the "missing ≠ doesn't integrate" caveat rides the heading's tooltip. */}

@@ -4,7 +4,7 @@ import GeoMark from '@/components/GeoMark'
 import ProofBlock from '@/components/ProofBlock'
 import { groupInOrder, loadCategory, stripPersonaPrefix } from '@/lib/data'
 import { collectSiteProofs, readProofTranscript, type ProofIndexEntry } from '@/lib/proofs'
-import { withBase } from '@/lib/site'
+import { REPO, withBase } from '@/lib/site'
 
 // The proof theater: every replayable probe recording site-wide (see lib/proofs.ts), grouped
 // by arena → product, each playable/readable inline. Static by construction — all recordings
@@ -74,7 +74,7 @@ export default function ProofsPage() {
           Every replayable recording from our probe harness, site-wide. Each command ran for real on our machines,
           keyless, with the session captured verbatim (secrets are redacted before publication). See the{' '}
           <a
-            href="https://github.com/ultrametricai/productarena/blob/main/docs/PROVE-IT.md"
+            href={`https://github.com/${REPO}/blob/main/docs/PROVE-IT.md`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-emerald-300 underline decoration-emerald-300/40 hover:decoration-emerald-300"

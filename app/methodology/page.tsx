@@ -177,7 +177,7 @@ export default function MethodologyPage() {
         <Link href="/openapi.json" className="underline decoration-zinc-700 hover:text-emerald-300">
           /openapi.json
         </Link>
-        <a href={`https://github.com/${REPO}/blob/main/CONTRIBUTING.md`} className="underline decoration-zinc-700 hover:text-emerald-300">
+        <a href={`https://github.com/${REPO}/blob/main/CONTRIBUTING.md`} target="_blank" rel="noopener noreferrer" title="Contribution guide on GitHub" className="underline decoration-zinc-700 hover:text-emerald-300">
           CONTRIBUTING.md
         </a>
       </div>

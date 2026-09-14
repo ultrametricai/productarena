@@ -173,14 +173,15 @@ export default function RisingRankingPage() {
         </p>
       </div>
 
-      <section aria-label="rising products">
+      {/* ids so /rankings/rising#rising and #falling are deep-linkable from other pages. */}
+      <section id="rising" aria-label="rising products">
         <h2 className="font-display leading-[1.1] mb-2 text-lg font-semibold text-emerald-300">
           ▲ Rising <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{risers.length} products</span>
         </h2>
         <TrendTable rows={risers} direction="up" />
       </section>
 
-      <section aria-label="falling products">
+      <section id="falling" aria-label="falling products">
         <h2 className="font-display leading-[1.1] mb-2 text-lg font-semibold text-red-400">
           ▼ Falling <span className="ml-1 font-mono text-xs font-normal text-zinc-500">{fallers.length} products</span>
         </h2>

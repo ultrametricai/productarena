@@ -87,7 +87,8 @@ export async function generateMetadata({
   const { category, id } = await params
   const data = loadCategory(category)
   const product = data.products.find((p) => p.id === id)
-  return { title: `${product ? product.name : id} — ${data.category.name} Arena` }
+  // "— ProductArena" suffix like every other page title on the site.
+  return { title: `${product ? product.name : id} — ${data.category.name} Arena — ProductArena` }
 }
 
 export default async function ProductPage({
@@ -275,7 +276,8 @@ export default async function ProductPage({
             title="Evidence-graded story coverage (0–100): how much of this arena's story set the product covers, weighted by story importance. The rank tie-breaker, not the PA Score. Click for the judged story rows below."
             className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
           >
-            story coverage <span className="font-mono tabular-nums">{entry.score.toFixed(1)}/100</span>
+            {/* Integer when whole ("34", not "34.0") — decimals only when they carry signal. */}
+            story coverage <span className="font-mono tabular-nums">{Number.isInteger(entry.score) ? entry.score : entry.score.toFixed(1)}/100</span>
           </a>
         </p>
       </div>

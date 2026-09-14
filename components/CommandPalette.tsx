@@ -114,6 +114,7 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
           <div
             role="dialog"
             aria-modal="true"
+            aria-label="Search arenas, products, and stories"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={onKeyDownInPalette}
             className="w-full max-w-lg overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900 shadow-2xl"
@@ -126,7 +127,11 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
               className="w-full border-b border-zinc-800 bg-transparent px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-400 focus:outline-none"
             />
             <div className="max-h-96 overflow-y-auto py-2">
-              {results.length === 0 && <p className="px-4 py-6 text-center text-sm text-zinc-400">No matches</p>}
+              {results.length === 0 && (
+                <p className="px-4 py-6 text-center text-sm text-zinc-400">
+                  {query.trim() ? <>No matches for &ldquo;{query}&rdquo;</> : 'No matches'}
+                </p>
+              )}
               {results.map((entry, index) => {
                 const showHeader = index === 0 || results[index - 1].type !== entry.type
                 const active = index === activeIndex
