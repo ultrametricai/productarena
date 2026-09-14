@@ -206,11 +206,16 @@ async function handleScan(request) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Live MCP handshake probe: POST /productarena/api/mcp-probe {arena, product}
+// Live MCP probe: POST /productarena/api/mcp-probe {arena, product, action?, token?, useSandbox?}
 //
-// Powers the product pages' "Try it → live MCP handshake": sends one JSON-RPC initialize (and,
-// when the server answers keyless, a tools/list) to the product's OWN documented remote MCP
-// endpoint and returns a sanitized summary. An auth failure is itself the result — a 401 with
+// Powers the product pages' "Try it → live MCP" in three tiers:
+//   1. keyless (default) — one JSON-RPC initialize (+ tools/list when the server answers), and
+//      for curated endpoints one real read-only demo tool call (action: 'call', MCP_DEMO_CALLS);
+//   2. BYO-key — the visitor pastes their own credential (`token`), forwarded once as an
+//      Authorization header to the allowlisted vendor endpoint, never logged or stored;
+//   3. sandbox — server-side DEMO_CRED_<PRODUCTID> wrangler secrets (`useSandbox: true`),
+//      provisioning guide in docs/TRY-IT-DEMO-ACCOUNTS.md.
+// Everything returns a sanitized summary. An auth failure is itself the result — a 401 with
 // OAuth metadata proves the server is live and tells the visitor what it takes to use it.
 //
 // The client NEVER supplies a URL: {arena, product} is looked up in MCP_ENDPOINTS, a static
@@ -281,6 +286,71 @@ const PROBE_RATE_LIMIT = { max: 10, windowMs: 5 * 60 * 1000 }
 const probeRateBuckets = new Map() // separate from /api/scan's and /mcp's buckets
 const PROBE_PROTOCOL_VERSION = '2025-06-18'
 
+// -- Demo tool calls ("Try it → run a real call") ----------------------------------------------
+//
+// For endpoints that answer keyless, the probe can go one step further than a handshake: ONE
+// hand-curated, read-only, no-side-effect tool call with canned safe arguments
+// (action: 'call'). The (endpoint, tool, args) triples ship in this worker — clients can never
+// choose a tool or supply arguments; anything call-shaped in the request body is ignored.
+//
+// GENERATED map — regenerate with `node scripts/generate-mcp-demo-calls.mjs` (source:
+// data/mcp-demo-calls.json, every entry verified live before curation) and paste; do not
+// hand-edit. Mirrored in lib/mcpDemoCalls.ts; a unit test asserts the two never drift.
+export const MCP_DEMO_CALLS = {
+  'auth-platforms/better-auth': { tool: "search_docs", args: {"query":"sign in with google"}, label: "search the Better Auth docs for \"sign in with google\"" },
+  'self/productarena': { tool: "top_products", args: {"metric":"agentReady","limit":5}, label: "rank the top 5 agent-ready products across every arena" },
+  'voice-agents/retell': { tool: "list_api_endpoints", args: {}, label: "list every API endpoint the Retell server exposes" },
+}
+
+// 'self/productarena' is this worker's own /productarena/mcp endpoint — see selfMcpFetch below.
+const SELF_DEMO_KEY = 'self/productarena'
+const SELF_MCP_ENDPOINT = 'https://ultrametric.ai/productarena/mcp'
+
+const CALL_TIMEOUT_MS = 10_000 // tools/call may do real work upstream — longer than the 6s handshake budget
+const CALL_RESULT_MAX_CHARS = 2048 // demo-call results are a taste, not an export
+
+// -- BYO-key / sandbox credentials --------------------------------------------------------------
+//
+// SECURITY INVARIANT (asserted by __tests__/mcp-demo-call.test.ts, relied on by the UI copy
+// "your key goes vendor-ward through our proxy once and is never logged or stored"):
+//   - visitor-supplied tokens live only in this request's scope: forwarded as an Authorization
+//     header to the single allowlisted HTTPS vendor endpoint, then dropped;
+//   - NOTHING in this worker logs — zero console calls anywhere in the file (source-scanned
+//     by a test, so a stray debug log fails CI);
+//   - no storage: tokens never touch KV, caches, or any persisted state;
+//   - responses are scrubbed: any echo of the credential in upstream output is redacted.
+// Keep it that way when editing.
+
+// Normalize a pasted credential into an Authorization header value. Accepts a bare key
+// ("sk_test_…" → "Bearer sk_test_…") or a full header value ("Bearer x", "Basic y", "token z").
+// Control characters are stripped so a pasted value can never smuggle extra headers.
+function authHeaderValue(raw) {
+  const t = String(raw).replace(/[\x00-\x1f\x7f]/g, '').trim()
+  if (!t) return null
+  return /^(bearer|basic|token)\s/i.test(t) ? t : `Bearer ${t}`
+}
+
+// Per-endpoint server-side demo credentials (the "use our sandbox account" tier): a wrangler
+// secret named DEMO_CRED_<PRODUCTID> (id uppercased, dashes → underscores; e.g. payments/stripe
+// → DEMO_CRED_STRIPE holding a Stripe TEST-MODE key). Provisioning list + setup steps:
+// docs/TRY-IT-DEMO-ACCOUNTS.md. No secret provisioned → the tier simply doesn't appear.
+function demoCredName(productId) {
+  return `DEMO_CRED_${productId.toUpperCase().replace(/-/g, '_')}`
+}
+
+// Defense in depth: replace every occurrence of the credential (JSON-escaped, since we scan the
+// serialized body) in an outgoing response payload. Upstream servers shouldn't echo credentials,
+// but "shouldn't" is not an invariant we control.
+function scrubSecrets(payload, secrets) {
+  let text = JSON.stringify(payload)
+  for (const secret of secrets) {
+    if (typeof secret !== 'string' || secret.length < 6) continue // too short to be a real credential; avoid shredding text
+    const needle = JSON.stringify(secret).slice(1, -1)
+    text = text.split(needle).join('[redacted]')
+  }
+  return JSON.parse(text)
+}
+
 // Read a response body as text with the same MAX_BODY_BYTES cap as safeGet.
 async function readBoundedBody(resp) {
   const reader = resp.body?.getReader()
@@ -320,21 +390,24 @@ function parseJsonRpcBody(contentType, text) {
 
 // POST one JSON-RPC message to an allowlisted endpoint. Returns
 // { status, headers, message|null } or { error } (timeout / network failure).
-async function postJsonRpc(endpoint, message, fetchImpl, sessionId) {
+// opts: { sessionId, authorization, timeoutMs } — `authorization` is the ONLY place a
+// credential is ever attached, and only toward the allowlisted HTTPS vendor endpoint.
+async function postJsonRpc(endpoint, message, fetchImpl, opts = {}) {
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+  const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? FETCH_TIMEOUT_MS)
   let resp
   try {
     resp = await fetchImpl(endpoint, {
       method: 'POST',
-      redirect: 'manual', // allowlisted URLs only — never follow a server elsewhere
+      redirect: 'manual', // allowlisted URLs only — never follow a server elsewhere (and never re-send auth elsewhere)
       signal: controller.signal,
       headers: {
         'content-type': 'application/json',
         accept: 'application/json, text/event-stream',
         'mcp-protocol-version': PROBE_PROTOCOL_VERSION,
         'user-agent': 'ProductArena-tryit/1.0 (+https://ultrametric.ai/productarena)',
-        ...(sessionId ? { 'mcp-session-id': sessionId } : {}),
+        ...(opts.sessionId ? { 'mcp-session-id': opts.sessionId } : {}),
+        ...(opts.authorization ? { authorization: opts.authorization } : {}),
       },
       body: JSON.stringify(message),
     })
@@ -427,11 +500,11 @@ async function fetchAuthWallMetadata(endpoint, authHeader, fetchImpl) {
   return out
 }
 
-// The probe itself: initialize, then (only if the server answered keyless) tools/list.
-// Everything returned is reshaped into plain sanitized fields — no upstream body is ever
-// echoed through verbatim. `fetchImpl` is injectable for tests (like handleJsonRpc's
-// fetchJson).
-export async function probeMcpEndpoint(endpoint, fetchImpl = fetch) {
+// The probe itself: initialize, then (if the server answered) tools/list. Everything returned
+// is reshaped into plain sanitized fields — no upstream body is ever echoed through verbatim.
+// `fetchImpl` is injectable for tests (like handleJsonRpc's fetchJson). `authorization`
+// (BYO-key / sandbox tiers) is forwarded to the vendor and appears nowhere in the result.
+export async function probeMcpEndpoint(endpoint, fetchImpl = fetch, authorization = undefined) {
   const init = await postJsonRpc(endpoint, {
     jsonrpc: '2.0',
     id: 1,
@@ -441,14 +514,16 @@ export async function probeMcpEndpoint(endpoint, fetchImpl = fetch) {
       capabilities: {},
       clientInfo: { name: 'productarena-try-it', version: '1.0' },
     },
-  }, fetchImpl)
+  }, fetchImpl, { authorization })
 
   if (init.error) return { reachable: false, authRequired: false }
 
   if (init.status === 401 || init.status === 403) {
     const authHeader = init.headers.get('www-authenticate') ?? ''
     // Enrich the honest 401 with what the wall itself discloses (RFC 9728) — best-effort.
-    const meta = await fetchAuthWallMetadata(endpoint, authHeader, fetchImpl)
+    // Skip it for an authenticated attempt: the visitor's credential was rejected, and the
+    // generic wall metadata adds nothing to that answer.
+    const meta = authorization ? {} : await fetchAuthWallMetadata(endpoint, authHeader, fetchImpl)
     return {
       reachable: true,
       authRequired: true,
@@ -475,7 +550,7 @@ export async function probeMcpEndpoint(endpoint, fetchImpl = fetch) {
   }
 
   const sessionId = init.headers.get('mcp-session-id') ?? undefined
-  const tools = await postJsonRpc(endpoint, { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }, fetchImpl, sessionId)
+  const tools = await postJsonRpc(endpoint, { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }, fetchImpl, { sessionId, authorization })
   const toolList = tools.error ? null : tools.message?.result?.tools
   if (Array.isArray(toolList)) {
     summary.toolCount = toolList.length
@@ -484,7 +559,109 @@ export async function probeMcpEndpoint(endpoint, fetchImpl = fetch) {
   return summary
 }
 
-export async function handleMcpProbe(request, fetchImpl = fetch) {
+// Flatten a tools/call result into displayable text: join text-content parts (the common
+// case), fall back to the serialized result. Clipped to CALL_RESULT_MAX_CHARS — the demo is
+// a taste of the tool working, not a data export.
+function callResultText(result) {
+  const parts = Array.isArray(result?.content)
+    ? result.content.filter((c) => c?.type === 'text' && typeof c.text === 'string').map((c) => c.text)
+    : []
+  const text = parts.length > 0 ? parts.join('\n') : JSON.stringify(result ?? null)
+  return {
+    resultText: text.slice(0, CALL_RESULT_MAX_CHARS),
+    truncated: text.length > CALL_RESULT_MAX_CHARS,
+  }
+}
+
+// Execute ONE curated demo tool call: initialize → notifications/initialized → tools/call with
+// the shipped (tool, args) — never anything a client asked for. Same sanitized-summary
+// discipline as probeMcpEndpoint; the call itself gets the longer CALL_TIMEOUT_MS budget.
+export async function callMcpDemo(endpoint, demo, fetchImpl = fetch, authorization = undefined) {
+  const init = await postJsonRpc(endpoint, {
+    jsonrpc: '2.0',
+    id: 1,
+    method: 'initialize',
+    params: {
+      protocolVersion: PROBE_PROTOCOL_VERSION,
+      capabilities: {},
+      clientInfo: { name: 'productarena-try-it', version: '1.0' },
+    },
+  }, fetchImpl, { authorization })
+
+  if (init.error) return { reachable: false, authRequired: false }
+  if (init.status === 401 || init.status === 403) {
+    return { reachable: true, authRequired: true, httpStatus: init.status }
+  }
+  const serverInfo = init.message?.result?.serverInfo
+  if (init.status < 200 || init.status >= 300 || !serverInfo) {
+    return { reachable: true, authRequired: false, httpStatus: init.status, handshake: false }
+  }
+
+  const sessionId = init.headers.get('mcp-session-id') ?? undefined
+  // Spec-required before requests; best-effort — stateless servers 202/ignore it.
+  await postJsonRpc(endpoint, { jsonrpc: '2.0', method: 'notifications/initialized' }, fetchImpl, { sessionId, authorization })
+
+  const call = await postJsonRpc(
+    endpoint,
+    { jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: demo.tool, arguments: demo.args } },
+    fetchImpl,
+    { sessionId, authorization, timeoutMs: CALL_TIMEOUT_MS },
+  )
+
+  const summary = {
+    reachable: true,
+    authRequired: false,
+    httpStatus: init.status,
+    handshake: true,
+    serverInfo: { name: clip(serverInfo.name ?? ''), version: clip(serverInfo.version ?? '') },
+  }
+  if (call.error) {
+    return { ...summary, call: { tool: demo.tool, label: demo.label, ok: false, error: 'tool call timed out or failed in transit' } }
+  }
+  const rpcErr = call.message?.error
+  const result = call.message?.result
+  if (!result || call.status < 200 || call.status >= 300) {
+    const detail = rpcErr?.message ? clip(rpcErr.message, 200) : `HTTP ${call.status}`
+    return { ...summary, call: { tool: demo.tool, label: demo.label, ok: false, error: `server rejected the call (${detail})` } }
+  }
+  return {
+    ...summary,
+    call: {
+      tool: demo.tool,
+      label: demo.label,
+      ok: true,
+      isError: result.isError === true,
+      ...callResultText(result),
+    },
+  }
+}
+
+// In-process transport for the 'self/productarena' demo: /productarena/mcp IS this worker, and
+// a worker fetch() of its own route would reach the origin (which only serves the site page),
+// not this handler — so dispatch straight into handleJsonRpc. `fetchJson` is injectable for
+// tests (defaults to the same fetchArenaJson the real /mcp endpoint uses).
+function selfMcpFetch(fetchJson) {
+  return async (_url, init) => {
+    let parsed = null
+    try {
+      parsed = JSON.parse(init?.body ?? '')
+    } catch { /* handleJsonRpc answers with a clean -32600 */ }
+    const { status, body } = await handleJsonRpc(parsed, fetchJson)
+    return new Response(body === null ? null : JSON.stringify(body), {
+      status: body === null ? 202 : status,
+      headers: { 'content-type': 'application/json' },
+    })
+  }
+}
+
+// Request body: { arena, product, action?: 'probe'|'call', token?, useSandbox? }.
+//   action 'probe' (default) — initialize (+ tools/list); 'call' — the ONE curated demo tool
+//     call from MCP_DEMO_CALLS (client tool/args are never accepted).
+//   token — BYO-key tier: a visitor-pasted credential, forwarded once as Authorization to the
+//     allowlisted vendor endpoint and then discarded (see the SECURITY INVARIANT above).
+//   useSandbox — sandbox tier: use the server-side DEMO_CRED_<PRODUCTID> wrangler secret.
+// `env` carries the sandbox secrets; `selfFetchJson` is test injection for the self demo.
+export async function handleMcpProbe(request, fetchImpl = fetch, env = undefined, selfFetchJson = undefined) {
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(request) })
   if (request.method !== 'POST') return jsonResponse(request, 405, { error: 'POST only' })
 
@@ -502,21 +679,60 @@ export async function handleMcpProbe(request, fetchImpl = fetch) {
   const arena = typeof body?.arena === 'string' ? body.arena.trim().slice(0, 100) : ''
   const product = typeof body?.product === 'string' ? body.product.trim().slice(0, 100) : ''
   if (!arena || !product) return jsonResponse(request, 400, { error: '"arena" and "product" are required' })
+  const action = body?.action === 'call' ? 'call' : 'probe'
 
-  const endpoint = MCP_ENDPOINTS[`${arena}/${product}`]
+  const key = `${arena}/${product}`
+  const isSelf = key === SELF_DEMO_KEY
+  const endpoint = isSelf ? SELF_MCP_ENDPOINT : MCP_ENDPOINTS[key]
   if (!endpoint) {
     return jsonResponse(request, 404, { error: 'no allowlisted MCP endpoint for this product' })
   }
+  const demo = MCP_DEMO_CALLS[key]
+  const sandboxCred = !isSelf && typeof env?.[demoCredName(product)] === 'string' && env[demoCredName(product)] ? env[demoCredName(product)] : null
 
-  const result = await probeMcpEndpoint(endpoint, fetchImpl)
-  return jsonResponse(request, 200, {
+  // Resolve the auth tier. The raw token exists only in this scope — forwarded via
+  // `authorization` to the one allowlisted HTTPS endpoint, scrubbed from the response,
+  // never logged, never stored (SECURITY INVARIANT above).
+  const rawToken = typeof body?.token === 'string' ? body.token.slice(0, 4096) : ''
+  let authorization
+  let auth = 'keyless'
+  if (rawToken.trim()) {
+    authorization = authHeaderValue(rawToken)
+    auth = 'byo-key'
+  } else if (body?.useSandbox === true) {
+    if (!sandboxCred) return jsonResponse(request, 404, { error: 'no sandbox credential provisioned for this product' })
+    authorization = authHeaderValue(sandboxCred)
+    auth = 'sandbox'
+  }
+  const impl = isSelf ? selfMcpFetch(selfFetchJson) : fetchImpl
+
+  if (action === 'call') {
+    if (!demo) return jsonResponse(request, 404, { error: 'no curated demo call for this product' })
+    // Self demo runs keyless in-process — a visitor credential has nothing to authenticate.
+    const result = await callMcpDemo(endpoint, demo, impl, isSelf ? undefined : authorization)
+    return jsonResponse(request, 200, scrubSecrets({
+      ok: true,
+      arena,
+      product,
+      endpoint,
+      auth,
+      calledAt: new Date().toISOString(),
+      ...result,
+    }, [rawToken.trim(), authorization, sandboxCred]))
+  }
+
+  const result = await probeMcpEndpoint(endpoint, impl, isSelf ? undefined : authorization)
+  return jsonResponse(request, 200, scrubSecrets({
     ok: true,
     arena,
     product,
     endpoint,
+    auth,
     probedAt: new Date().toISOString(),
+    ...(demo ? { demoCall: { tool: demo.tool, label: demo.label } } : {}),
+    ...(sandboxCred ? { sandboxAvailable: true } : {}),
     ...result,
-  })
+  }, [rawToken.trim(), authorization, sandboxCred]))
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -1113,7 +1329,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
-    if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request)
+    if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request, fetch, env)
     if (url.pathname === '/productarena/api/popular-compares') {
       return handlePopularCompares(request, env?.PA_COMPARE_STATS)
     }
