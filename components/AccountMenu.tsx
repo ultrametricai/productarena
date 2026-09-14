@@ -41,18 +41,10 @@ export default function AccountMenu() {
   }, [open])
 
   if (session.state !== 'authenticated') {
-    return (
-      <a
-        href={loginUrl(SITE_URL)}
-        onClick={(e) => {
-          e.preventDefault()
-          window.location.href = loginUrl(currentUrl())
-        }}
-        className="shrink-0 px-1 text-xs text-zinc-500 transition hover:text-emerald-300"
-      >
-        Log in
-      </a>
-    )
+    // Founder call 2026-09-14: no visible "Log in" until the auth work (moving to WorkOS) is
+    // finished and tested. Existing sessions still get the account chip below; anonymous
+    // readers see nothing.
+    return null
   }
 
   const email = session.email
