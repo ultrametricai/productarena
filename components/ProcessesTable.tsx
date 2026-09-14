@@ -129,7 +129,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
               <SortableTh col="title" current={column} direction={direction} onSort={handleSort}>Process</SortableTh>
               <SortableTh col="phase" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">Phase</SortableTh>
-              <SortableTh col="pct" current={column} direction={direction} onSort={handleSort}>Agent ceiling</SortableTh>
+              <SortableTh col="pct" current={column} direction={direction} onSort={handleSort}>Current agent ceiling</SortableTh>
               <SortableTh col="steps" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">Steps</SortableTh>
               <SortableTh col="title" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell">Software</SortableTh>
             </tr>

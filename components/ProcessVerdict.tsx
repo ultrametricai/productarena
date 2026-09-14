@@ -13,7 +13,7 @@ export default function ProcessVerdict({ ceiling, nodes }: { ceiling: ProcessCei
   const unclosed = split.human.filter((g) => !g.irreducible)
   return (
     <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/5 p-4 sm:p-5">
-      <p className="text-[10px] uppercase tracking-widest text-emerald-400/80">Agent ceiling</p>
+      <p className="text-[10px] uppercase tracking-widest text-emerald-400/80">Current agent ceiling</p>
       <p className="mt-1 text-lg font-medium text-zinc-100">
         An agent can run {agentSteps} of {totalSteps} steps
         {approvalGates > 0 && (
