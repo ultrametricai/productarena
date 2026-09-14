@@ -25,6 +25,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write # the PR-fallback `gh issue create` below needs it (daily-snapshot/cert-sweep already grant it)
 
 concurrency:
   group: story-runner
@@ -58,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Pick arena (rotation by run number unless dispatched with one)
+      - name: Pick arena (staleness rank when a report exists, else rotation by run number)
         if: steps.gate.outputs.enabled == 'true'
         id: pick
         env:
@@ -68,10 +69,23 @@ jobs:
           if [ -n "$INPUT_CATEGORY" ]; then
             CAT="$INPUT_CATEGORY"
           else
+            # Accuracy engine (docs/ACCURACY.md): while a data/staleness-report.json stands
+            # (written weekly by accuracy-engine.yml), walk its arenasRanked worst-stale-first —
+            # one arena per 6-hour slot since the report's generatedAt, so every weekly report
+            # gets its worst arenas re-run before the next report supersedes it. Falls back to
+            # the original run-number rotation when the report is missing or malformed.
             CAT=$(node -e '
+              const fs = require("fs");
               const cats = require("./data/categories.json").map((c) => c.id);
+              let pick = null;
+              try {
+                const rep = JSON.parse(fs.readFileSync("./data/staleness-report.json", "utf8"));
+                const ranked = (rep.arenasRanked ?? []).filter((a) => cats.includes(a));
+                const slot = Math.floor((Date.now() - Date.parse(rep.generatedAt)) / (6 * 60 * 60 * 1000));
+                if (ranked.length > 0 && Number.isFinite(slot) && slot >= 0) pick = ranked[slot % ranked.length];
+              } catch { /* no report yet — rotation below */ }
               const n = Number(process.env.RUN_NUMBER) || 0;
-              console.log(cats[n % cats.length]);
+              console.log(pick ?? cats[n % cats.length]);
             ')
           fi
           echo "category=$CAT" >> "$GITHUB_OUTPUT"

@@ -174,3 +174,16 @@ export function isGroupUntested(data: CategoryData, productId: string, group: st
     return (v.verdict === 'none' || v.verdict === 'na') && v.evidenceIds.length === 0
   })
 }
+
+// Theme-scoped twin of isGroupUntested, for the two PA-Score components that are theme scores
+// rather than group scores (openness ← theme 'openness', automation ← theme 'automation-depth'
+// — see lib/scoring.ts). Same honesty rule: a theme score built entirely from zero-evidence
+// none/na cells is "untested", not 0.
+export function isThemeUntested(data: CategoryData, productId: string, theme: string): boolean {
+  const themeStories = data.stories.filter((s) => s.theme === theme)
+  if (themeStories.length === 0) return true
+  return themeStories.every((s) => {
+    const v = verdictFor(data, productId, s.id)
+    return (v.verdict === 'none' || v.verdict === 'na') && v.evidenceIds.length === 0
+  })
+}

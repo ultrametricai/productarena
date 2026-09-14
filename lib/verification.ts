@@ -38,6 +38,38 @@ export function strongestEvidence(verdict: Verdict, evidence: Map<string, Eviden
   return null
 }
 
+// --- Auth-gated probes -------------------------------------------------------------------
+// Some of our strongest probe evidence is an auth WALL, not a session: the runtime probe
+// reached the vendor's live endpoint and got an explicit 401/403 sign-in challenge (OAuth /
+// WWW-Authenticate / API-key demand). That is proof of life — "verified reachable, auth-gated,
+// untestable keylessly" — and must never read like absence. Evidence records are prose
+// (lib/schemas.ts has no httpStatus field), so detection matches the probe excerpts'
+// established wording (e.g. "returned HTTP 401 with an OAuth challenge", "HTTP 401 with a
+// `WWW-Authenticate: Bearer` OAuth challenge", "HTTP 401 with a JSON auth challenge").
+// Display-only, exactly like verificationLevel: never changes a verdict or score — a partial
+// substantiated by auth-gated evidence stays partial.
+const AUTH_WALL_STATUS_RE = /\b40[13]\b/
+const AUTH_WALL_CONTEXT_RE = /oauth|www-authenticate|unauthorized|auth(?:orization|entication)? (?:required|challenge)|auth challenge|api key|bearer|sign[- ]?in/i
+
+export function isAuthGatedEvidence(e: Evidence): boolean {
+  return e.tier === 'probe' && AUTH_WALL_STATUS_RE.test(e.excerpt) && AUTH_WALL_CONTEXT_RE.test(e.excerpt)
+}
+
+// True when this verdict cites at least one auth-wall probe — the story-cell marker.
+export function cellAuthGated(verdict: Verdict, evidence: Map<string, Evidence>): boolean {
+  return verdict.evidenceIds.some((id) => {
+    const e = evidence.get(id)
+    return e !== undefined && isAuthGatedEvidence(e)
+  })
+}
+
+// How many of a product's probe records hit an auth wall, cited or not — the product-page
+// chip. Uncited auth-wall probes matter most: they're exactly the case where a live, agentic
+// endpoint would otherwise read as nothing at all.
+export function authGatedProbeCount(data: CategoryData, productId: string): number {
+  return (data.evidence[productId] ?? []).filter(isAuthGatedEvidence).length
+}
+
 export type VerificationMix = Record<Exclude<VerificationLevel, 'unverified'>, number>
 
 // Counts, across every story in a category, how many of a product's verdicts land at each

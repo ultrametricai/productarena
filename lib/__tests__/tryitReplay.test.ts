@@ -3,8 +3,8 @@
 // the committed data corpus.
 import { describe, expect, it } from 'vitest'
 import { mcpEndpointFor } from '../mcpEndpoints'
-import { buildRecordedStories, hasTryIt, processesFeaturing } from '../tryit'
-import { probeResultLines, replayCharCount, stripSgr } from '../tryitReplay'
+import { buildRecordedStories, hasTryIt, mcpDocsUrlFor, processesFeaturing } from '../tryit'
+import { mcpClientConfig, probeResultLines, replayCharCount, stripSgr } from '../tryitReplay'
 import { loadCategory } from '../data'
 
 describe('replayCharCount', () => {
@@ -39,6 +39,22 @@ describe('probeResultLines', () => {
   it('renders auth-required as proof of life, never as failure', () => {
     const lines = probeResultLines({ reachable: true, authRequired: true, httpStatus: 401, oauth: true })
     expect(lines[0]).toBe('← HTTP 401 unauthorized (OAuth) — server is live, auth required')
+    expect(lines[lines.length - 1]).toMatch(/verified reachable, auth-gated — untestable keylessly/)
+  })
+
+  it('renders everything the auth wall itself disclosed (RFC 9728 metadata)', () => {
+    const lines = probeResultLines({
+      reachable: true,
+      authRequired: true,
+      httpStatus: 401,
+      oauth: true,
+      resourceName: 'Acme MCP Server',
+      scopes: ['mcp.read', 'mcp.write'],
+      authServers: ['auth.acme.example'],
+    })
+    expect(lines).toContain('  the wall names itself: "Acme MCP Server"')
+    expect(lines).toContain('  sign-in handled by: auth.acme.example')
+    expect(lines).toContain('  scopes it grants: mcp.read, mcp.write')
   })
 
   it('renders a keyless handshake with the tool catalog (ellipsis when capped)', () => {
@@ -68,7 +84,23 @@ describe('probeResultLines', () => {
   })
 })
 
+describe('mcpClientConfig', () => {
+  it('emits the shared mcpServers shape keyed by product id', () => {
+    const config = JSON.parse(mcpClientConfig('stripe', 'https://mcp.stripe.com/')) as {
+      mcpServers: Record<string, { url: string }>
+    }
+    expect(config).toEqual({ mcpServers: { stripe: { url: 'https://mcp.stripe.com/' } } })
+  })
+})
+
 describe('tryit assembly (committed corpus)', () => {
+  it('mcpDocsUrlFor prefers a docs-page links.mcp, never the endpoint itself', () => {
+    // stripe's links.mcp is a documentation page — pass it through
+    expect(mcpDocsUrlFor('payments', 'stripe')).toBe('https://docs.stripe.com/mcp')
+    // unknown product → null
+    expect(mcpDocsUrlFor('payments', 'no-such-product')).toBeNull()
+  })
+
   it('stripe is tryable with recorded stories AND a live endpoint; its stories carry transcripts', () => {
     expect(hasTryIt('payments', 'stripe')).toBe(true)
     expect(mcpEndpointFor('payments', 'stripe')).toBe('https://mcp.stripe.com/')

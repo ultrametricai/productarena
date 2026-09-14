@@ -22,6 +22,9 @@ interface ProbeSummary {
   protocolVersion?: string
   toolCount?: number
   toolNames?: string[]
+  resourceName?: string
+  scopes?: string[]
+  authServers?: string[]
 }
 interface SentRpc {
   method: string
@@ -47,10 +50,12 @@ const toolsResult = {
   result: { tools: Array.from({ length: 12 }, (_, i) => ({ name: `tool_${i}`, inputSchema: { type: 'object' } })) },
 }
 
-function fetchScript(responses: Array<Response | Error>): { impl: FetchImpl; calls: Array<{ url: string; body: SentRpc }> } {
-  const calls: Array<{ url: string; body: SentRpc }> = []
+function fetchScript(responses: Array<Response | Error>): { impl: FetchImpl; calls: Array<{ url: string; method: string; body?: SentRpc }> } {
+  const calls: Array<{ url: string; method: string; body?: SentRpc }> = []
   const impl: FetchImpl = async (url, init) => {
-    calls.push({ url: String(url), body: JSON.parse(init?.body as string) as SentRpc })
+    // JSON-RPC POSTs carry a body; the auth-wall metadata enrichment is a bare GET.
+    const body = typeof init?.body === 'string' ? (JSON.parse(init.body) as SentRpc) : undefined
+    calls.push({ url: String(url), method: init?.method ?? 'GET', body })
     const next = responses.shift()
     if (!next) throw new Error('fetchScript exhausted')
     if (next instanceof Error) throw next
@@ -60,18 +65,55 @@ function fetchScript(responses: Array<Response | Error>): { impl: FetchImpl; cal
 }
 
 describe('probeMcpEndpoint', () => {
-  it('reports a 401 with OAuth metadata as live + auth required (the honest common case)', async () => {
+  it('reports a 401 with OAuth metadata as live + auth required, enriched from RFC 9728 metadata', async () => {
     const { impl, calls } = fetchScript([
       json({ error: 'unauthorized' }, 401, {
         'www-authenticate': 'Bearer resource_metadata=https://mcp.example.com/.well-known/oauth-protected-resource',
       }),
+      json({
+        resource: 'https://mcp.example.com/',
+        resource_name: 'Example MCP Server',
+        scopes_supported: ['mcp.read', 'mcp.write'],
+        authorization_servers: ['https://auth.example.com'],
+      }),
+    ])
+    const result = await probe('https://mcp.example.com/', impl)
+    expect(result).toEqual({
+      reachable: true,
+      authRequired: true,
+      httpStatus: 401,
+      oauth: true,
+      resourceName: 'Example MCP Server',
+      scopes: ['mcp.read', 'mcp.write'],
+      authServers: ['auth.example.com'],
+    })
+    // One JSON-RPC request (no tools/list after an auth wall) + one metadata GET.
+    expect(calls).toHaveLength(2)
+    expect(calls[0].body?.method).toBe('initialize')
+    expect(calls[0].body?.params?.clientInfo?.name).toBe('productarena-try-it')
+    expect(calls[1].method).toBe('GET')
+    expect(calls[1].url).toBe('https://mcp.example.com/.well-known/oauth-protected-resource')
+  })
+
+  it('never follows an off-host resource_metadata advertisement — falls back to the well-known path', async () => {
+    const { impl, calls } = fetchScript([
+      json({ error: 'unauthorized' }, 401, {
+        'www-authenticate': 'Bearer resource_metadata=https://evil.example.net/meta',
+      }),
+      json({ resource_name: 'Vendor MCP' }),
+    ])
+    const result = await probe('https://mcp.example.com/mcp', impl)
+    expect(result.resourceName).toBe('Vendor MCP')
+    expect(calls[1].url).toBe('https://mcp.example.com/.well-known/oauth-protected-resource/mcp')
+  })
+
+  it('keeps the plain auth-wall result when the metadata fetch fails', async () => {
+    const { impl } = fetchScript([
+      json({ error: 'unauthorized' }, 401, { 'www-authenticate': 'Bearer' }),
+      new Error('metadata unreachable'),
     ])
     const result = await probe('https://mcp.example.com/', impl)
     expect(result).toEqual({ reachable: true, authRequired: true, httpStatus: 401, oauth: true })
-    // Only one request — no tools/list after an auth wall.
-    expect(calls).toHaveLength(1)
-    expect(calls[0].body.method).toBe('initialize')
-    expect(calls[0].body.params?.clientInfo?.name).toBe('productarena-try-it')
   })
 
   it('completes a keyless handshake: serverInfo + capped tool names', async () => {
@@ -88,7 +130,7 @@ describe('probeMcpEndpoint', () => {
     expect(result.toolCount).toBe(12)
     expect(result.toolNames).toHaveLength(10) // capped at 10
     // Session id from initialize is echoed on the follow-up.
-    expect(calls[1].body.method).toBe('tools/list')
+    expect(calls[1].body?.method).toBe('tools/list')
   })
 
   it('parses an SSE-framed JSON-RPC response (streamable HTTP servers may answer with events)', async () => {

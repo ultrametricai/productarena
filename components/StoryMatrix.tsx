@@ -12,7 +12,8 @@ import {
 } from '@/lib/data-helpers'
 import { humanizeTheme, themeTooltip } from '@/lib/icons'
 import type { Story, Verdict } from '@/lib/schemas'
-import { verificationLevel } from '@/lib/verification'
+import { cellAuthGated, verificationLevel } from '@/lib/verification'
+import AuthGatedMarker from '@/components/AuthGatedMarker'
 
 // Tooltip text for a matrix cell: the verdict plus a truncated excerpt of the first cited
 // evidence item (not necessarily the strongest tier — just the judge's first citation, kept
@@ -164,6 +165,7 @@ function StoryMatrixGroup({
                       <div className="flex items-center gap-1">
                         <VerdictBadge verdict={v.verdict} />
                         <VerificationBadge level={verificationLevel(v, evidence)} compact />
+                        {cellAuthGated(v, evidence) && <AuthGatedMarker compact />}
                       </div>
                       {v.verdict !== 'na' && (
                         <span className="font-mono text-xs tabular-nums text-zinc-400">{v.quality}/10</span>
