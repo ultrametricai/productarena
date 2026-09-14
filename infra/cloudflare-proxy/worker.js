@@ -271,6 +271,7 @@ export const MCP_ENDPOINTS = {
   'observability/sentry': 'https://mcp.sentry.dev/mcp',
   'payments/autumn': 'https://mcp.useautumn.com/mcp',
   'payments/paypal': 'https://mcp.paypal.com/mcp',
+  'payments/square': 'https://mcp.squareup.com/mcp',
   'payments/stripe': 'https://mcp.stripe.com/',
   'scheduling/cal-com': 'https://mcp.cal.com/mcp',
   'scheduling/calendly': 'https://mcp.calendly.com/',

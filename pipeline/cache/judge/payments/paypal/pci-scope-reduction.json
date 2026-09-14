@@ -1,14 +1,15 @@
 {
-  "hash": "5e45577fdfb0de55c91ae93b44fb7d30bcef29cdd17000e9a27ecc500e0916ed",
+  "hash": "dc6bf98b459dc6d8d3307eb0991af7dd8ebefeb7b6a51e75471de22135468a09",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "PayPal's hosted Checkout/button flow (paypal-docs-2, paypal-docs-19) and secure PayPal payment pages for invoicing (paypal-docs-22) mean card/funding data is handled on PayPal's side rather than the merchant's server, supporting reduced PCI scope, but the evidence pack never explicitly states PCI DSS SAQ eligibility, tokenization mechanics, or scope-reduction claims. missing for 10: explicit PCI DSS SAQ-A/scope-reduction documentation, tokenization architecture details, and any card-data-never-touches-servers guarantee language.",
+    "confidence": "low",
+    "rationale": "PayPal's hosted checkout button and 'card field customization' checkout (paypal-docs-2, paypal-docs-27) plus Braintree's GraphQL 'Vault a payment method' (paypal-supp-braintree-graphql) imply that raw card data can be tokenized/hosted rather than touching merchant servers, and server-side endpoints only handle refunds/captures rather than card numbers (paypal-docs-19). However, none of the evidence explicitly states PCI DSS scope reduction, SAQ-A eligibility, or a formal compliance statement. Missing for 10: explicit PCI DSS/SAQ-A documentation, third-party compliance audit or certification evidence, and confirmation that card fields are always iframe-hosted (vs. merchant-collected) across all checkout flows.",
     "evidenceIds": [
       "paypal-docs-2",
+      "paypal-docs-27",
       "paypal-docs-19",
-      "paypal-docs-22"
+      "paypal-supp-braintree-graphql"
     ],
     "productId": "paypal",
     "storyId": "pci-scope-reduction"

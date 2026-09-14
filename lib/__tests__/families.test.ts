@@ -78,6 +78,8 @@ describe('product families', () => {
     const stripe = familyForProduct(families, 'payments', 'stripe')
     expect(stripe?.id).toBe('stripe')
     expect(familyForProduct(families, 'legal-ops', 'stripe-atlas')?.id).toBe('stripe')
-    expect(familyForProduct(families, 'payments', 'paypal')).toBeNull()
+    // paypal gained a family in the payments fairness wave — autumn is the family-less control.
+    expect(familyForProduct(families, 'payments', 'paypal')?.id).toBe('paypal')
+    expect(familyForProduct(families, 'payments', 'autumn')).toBeNull()
   })
 })
