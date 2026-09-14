@@ -8,7 +8,7 @@ import {
 } from './data-helpers'
 import type { Evidence, Story, UncertaintyEntry, VendorResponse, Verdict } from './schemas'
 import { parseStoryPersona } from './storyText'
-import { strongestEvidence, verificationLevel, type VerificationLevel } from './verification'
+import { cellAuthGated, strongestEvidence, verificationLevel, type VerificationLevel } from './verification'
 
 export type StoryVerdictColumn =
   | 'importance'
@@ -54,6 +54,9 @@ export interface StoryVerdictRow {
   confidence: Verdict['confidence']
   rationale: string
   verification: VerificationLevel
+  // cellAuthGated (lib/verification.ts): this verdict cites a probe that hit a live auth wall
+  // — the table renders the ⚿ marker so "we couldn't test past sign-in" never reads as absence.
+  authGated: boolean
   evidence: StoryVerdictEvidenceLink[]
   // strongestEvidence(...)?.url — the single best "proof ↗" link, or null if nothing cited.
   proofUrl: string | null
@@ -100,6 +103,7 @@ export function buildStoryVerdictRows(
       confidence: v.confidence,
       rationale: v.rationale,
       verification: verificationLevel(v, evidence),
+      authGated: cellAuthGated(v, evidence),
       evidence: v.evidenceIds
         .map((eid) => evidence.get(eid))
         .filter((e): e is Evidence => e !== undefined)

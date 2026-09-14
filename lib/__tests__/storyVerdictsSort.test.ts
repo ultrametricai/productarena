@@ -25,6 +25,7 @@ function row(overrides: Partial<StoryVerdictRow> & { storyId: string }): StoryVe
     confidence: 'high',
     rationale: 'because',
     verification: 'vendor-claim',
+    authGated: false,
     evidence: [{ id: 'e1', tier: 'claimed-docs', url: 'https://example.com/doc', excerpt: 'quoted' }],
     proofUrl: null,
     globalHref: null,

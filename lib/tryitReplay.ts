@@ -49,6 +49,20 @@ export interface McpProbeResult {
   protocolVersion?: string
   toolCount?: number
   toolNames?: string[]
+  // Auth-wall enrichment (RFC 9728 protected-resource metadata, fetched by the worker when the
+  // handshake got a 401/403) — what the wall itself discloses, so an auth-gated result still
+  // leaves the visitor with something concrete.
+  resourceName?: string
+  scopes?: string[]
+  authServers?: string[]
+}
+
+// The copy-paste MCP client config for this product's documented endpoint — the "take it with
+// you" follow-up under the microterminal (components/TryIt/Microterminal.tsx). The
+// `mcpServers` shape is the convention Claude Code / Cursor / VS Code-family clients share for
+// remote servers; clients run the vendor's OAuth sign-in themselves when the server demands it.
+export function mcpClientConfig(productId: string, endpoint: string): string {
+  return JSON.stringify({ mcpServers: { [productId]: { url: endpoint } } }, null, 2)
 }
 
 // Render one probe result as the terminal lines the microterminal types out. Honest by
@@ -59,10 +73,16 @@ export function probeResultLines(result: McpProbeResult): string[] {
   if (!result.reachable) return ['← no response — endpoint unreachable from our edge right now']
 
   if (result.authRequired) {
-    return [
+    const lines = [
       `← HTTP ${result.httpStatus ?? 401} unauthorized${result.oauth ? ' (OAuth)' : ''} — server is live, auth required`,
-      '  the server answered our handshake; a real session needs you to sign in with the vendor',
     ]
+    // Everything the auth wall itself disclosed (RFC 9728 metadata) — an auth-gated probe
+    // should still hand the visitor facts, not just a dead 401.
+    if (result.resourceName) lines.push(`  the wall names itself: "${result.resourceName}"`)
+    if (result.authServers?.length) lines.push(`  sign-in handled by: ${result.authServers.join(', ')}`)
+    if (result.scopes?.length) lines.push(`  scopes it grants: ${result.scopes.join(', ')}`)
+    lines.push('  verified reachable, auth-gated — untestable keylessly; add it to your MCP client to sign in')
+    return lines
   }
 
   if (!result.handshake) {

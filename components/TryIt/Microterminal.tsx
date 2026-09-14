@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import CopyButton from '@/components/CopyButton'
 import {
-  probeResultLines, replayCharCount, type McpProbeResult, type TryItStory,
+  mcpClientConfig, probeResultLines, replayCharCount, type McpProbeResult, type TryItStory,
 } from '@/lib/tryitReplay'
 
 // The "Try it" microterminal: a locked-down terminal-styled window on the product page that
@@ -21,6 +22,8 @@ interface LiveProbe {
   arena: string
   product: string
   endpoint: string
+  /** The vendor's own MCP docs page (lib/tryit.ts mcpDocsUrlFor) — null when none documented. */
+  docsUrl: string | null
 }
 
 export default function Microterminal({
@@ -40,6 +43,7 @@ export default function Microterminal({
   const [target, setTarget] = useState(() => stories[0]?.transcript ?? '') // text being typed toward
   const [shown, setShown] = useState(0) // how many chars are visible
   const [liveBusy, setLiveBusy] = useState(false)
+  const [liveResult, setLiveResult] = useState<McpProbeResult | null>(null) // last completed probe
   const startRef = useRef(0)
   const skippedRef = useRef(false)
   const runRef = useRef(0) // invalidates in-flight probe responses on story switch
@@ -63,6 +67,7 @@ export default function Microterminal({
     if (id === LIVE_ID) {
       if (!probe) return
       setLiveBusy(true)
+      setLiveResult(null)
       beginRun(`$ mcp-probe ${probe.arena}/${probe.product}\n→ POST ${probe.endpoint}\n→ initialize (JSON-RPC 2.0, MCP 2025-06-18) …\n`)
       fetch(PROBE_ENDPOINT, {
         method: 'POST',
@@ -74,6 +79,7 @@ export default function Microterminal({
         .then((result) => {
           if (runRef.current !== run) return // user switched stories mid-flight
           setLiveBusy(false)
+          setLiveResult(result)
           setTarget((prev) => `${prev}${probeResultLines(result).join('\n')}\n`)
         })
     } else {
@@ -201,6 +207,62 @@ export default function Microterminal({
           </span>
         </div>
       </div>
+
+      {/* Live-probe follow-up: never leave the visitor at a dead 401. Once a probe completes
+          against a live server (auth wall or keyless handshake alike), hand them the endpoint as
+          a copy-paste MCP client config — their own client runs the vendor's OAuth sign-in, which
+          is exactly the step our keyless probe honestly cannot take. */}
+      {isLive && probe && liveResult && (liveResult.authRequired || liveResult.handshake) && (
+        <div className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/40 p-3">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            {liveResult.authRequired ? (
+              <span
+                title="Our probe holds no vendor account, so keyless is where our proof stops: the server answered from its documented endpoint and demanded sign-in. That is verified-reachable — not absence of an MCP server."
+                className="rounded-full border border-amber-400/60 bg-amber-400/10 px-2 py-0.5 font-semibold text-amber-300"
+              >
+                ⚿ verified reachable, auth-gated — untestable keylessly
+              </span>
+            ) : (
+              <span className="rounded-full border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 font-semibold text-emerald-300">
+                ✓ keyless handshake OK
+                {typeof liveResult.toolCount === 'number' ? ` — ${liveResult.toolCount} tools live` : ''}
+              </span>
+            )}
+            {liveResult.authRequired && liveResult.resourceName && (
+              <span className="text-zinc-400">server identifies as &ldquo;{liveResult.resourceName}&rdquo;</span>
+            )}
+          </div>
+          <div className="flex items-start gap-2">
+            <pre className="min-w-0 flex-1 overflow-auto rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 font-mono text-[11px] leading-relaxed text-zinc-300">
+              {mcpClientConfig(probe.product, probe.endpoint)}
+            </pre>
+            <CopyButton text={mcpClientConfig(probe.product, probe.endpoint)} label="Copy config" />
+          </div>
+          <p className="text-[11px] text-zinc-500">
+            Paste into your MCP client&rsquo;s config (Claude Code, Cursor, VS Code, …)
+            {liveResult.authRequired
+              ? ' — the client walks you through the vendor’s OAuth sign-in on first use'
+              : ' — this server answered keyless from our edge just now'}
+            {liveResult.authRequired && liveResult.scopes?.length
+              ? `; it will request: ${liveResult.scopes.join(', ')}`
+              : ''}
+            .
+            {probe.docsUrl && (
+              <>
+                {' '}
+                <a
+                  href={probe.docsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-emerald-300 underline decoration-emerald-300/40 hover:decoration-emerald-300"
+                >
+                  vendor&rsquo;s MCP docs →
+                </a>
+              </>
+            )}
+          </p>
+        </div>
+      )}
     </div>
   )
 }
