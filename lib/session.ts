@@ -1,18 +1,21 @@
 'use client'
 
-// Ory session, client-side only. The site is a static export — every page ships the same HTML
-// to everyone — so "logged in" is purely a browser-side fact: one GET to Ory's whoami endpoint
-// (auth.ultrametric.ai, same apex as ultrametric.ai so the session cookie flows site-wide)
-// per page load, cached in this module. Anything that goes wrong (401, network down, CORS not
-// allowing this origin yet) degrades to 'anonymous' — the site stays fully open and unchanged
-// for logged-out readers; login only ADDS the watchlist.
+// WorkOS AuthKit session, client-side only. The site is a static export — every page ships the
+// same HTML to everyone — so "logged in" is purely a browser-side fact: one same-origin GET to
+// the Cloudflare worker's /productarena/auth/me (infra/cloudflare-proxy/worker.js — the worker
+// IS the auth backend; it verifies our HMAC-signed pa_session cookie) per page load, cached in
+// this module. Anything that goes wrong (401, worker not configured, or the page being served
+// off productarena.vercel.app where the worker doesn't exist) degrades to 'anonymous' — the
+// site stays fully open and unchanged for logged-out readers; login only ADDS the watchlist.
 //
 // Consumers: useSession() in components/AccountMenu.tsx (header chip / Log in link),
 // components/WatchButton.tsx (☆/★ gate) and components/WatchlistGate.tsx (/watchlist gate).
 
 import { useSyncExternalStore } from 'react'
 
-export const ORY_URL = 'https://auth.ultrametric.ai'
+// Same-origin path — the worker only exists on ultrametric.ai, and relative URLs mean the
+// session cookie flows with no CORS at all (simpler than the old cross-origin Ory setup).
+export const AUTH_BASE = '/productarena/auth'
 
 export type Session =
   | { state: 'loading' }
@@ -24,42 +27,39 @@ export type Session =
 const LOADING: Session = { state: 'loading' }
 const ANONYMOUS: Session = { state: 'anonymous' }
 
-// Ory self-service browser flows. return_to brings the reader back to the exact PA page they
-// were on; auth.ultrametric.ai allows ultrametric.ai URLs as redirect targets.
+// Worker login flow (302 to the WorkOS AuthKit hosted page). return_to brings the reader back
+// to the exact PA page they were on; the worker only honors ultrametric.ai paths.
 export function loginUrl(returnTo: string): string {
-  return `${ORY_URL}/self-service/login/browser?return_to=${encodeURIComponent(returnTo)}`
+  return `${AUTH_BASE}/login?return_to=${encodeURIComponent(returnTo)}`
 }
 
+// Same flow — AuthKit's hosted page handles sign-up too; screen_hint just lands on that tab.
 export function registrationUrl(returnTo: string): string {
-  return `${ORY_URL}/self-service/registration/browser?return_to=${encodeURIComponent(returnTo)}`
+  return `${AUTH_BASE}/login?screen_hint=sign-up&return_to=${encodeURIComponent(returnTo)}`
 }
 
-// Pull the email trait out of a whoami payload without trusting its shape — Ory's session
-// object is deep and versioned, and a missing email is fine (the chip falls back to '?').
-export function emailFromWhoami(payload: unknown): string | undefined {
+// Pull the email out of an /auth/me payload without trusting its shape — a missing email is
+// fine (the chip falls back to '?').
+export function emailFromMe(payload: unknown): string | undefined {
   if (typeof payload !== 'object' || payload === null) return undefined
-  const identity = (payload as { identity?: unknown }).identity
-  if (typeof identity !== 'object' || identity === null) return undefined
-  const traits = (identity as { traits?: unknown }).traits
-  if (typeof traits !== 'object' || traits === null) return undefined
-  const email = (traits as { email?: unknown }).email
+  const email = (payload as { email?: unknown }).email
   return typeof email === 'string' && email !== '' ? email : undefined
 }
 
 async function fetchSession(): Promise<Session> {
   try {
-    const res = await fetch(`${ORY_URL}/sessions/whoami`, { credentials: 'include' })
-    if (!res.ok) return ANONYMOUS // 401 = no session; anything else, treat the same
+    const res = await fetch(`${AUTH_BASE}/me`, { credentials: 'include' })
+    if (!res.ok) return ANONYMOUS // 401 = no session; anything else (404/500), treat the same
     const payload: unknown = await res.json()
-    return { state: 'authenticated', email: emailFromWhoami(payload) }
+    return { state: 'authenticated', email: emailFromMe(payload) }
   } catch {
-    // Network/CORS failure — degrade to anonymous quietly (no rethrow, no logging: the
-    // logged-out site is the fallback experience, not an error).
+    // Network failure — degrade to anonymous quietly (no rethrow, no logging: the logged-out
+    // site is the fallback experience, not an error).
     return ANONYMOUS
   }
 }
 
-// In-memory store, one whoami per page load. First subscriber kicks off the fetch (so the
+// In-memory store, one /auth/me per page load. First subscriber kicks off the fetch (so the
 // request only ever happens in the browser); every star/menu/gate on the page shares the
 // resolved snapshot.
 let current: Session = LOADING
@@ -99,19 +99,9 @@ export function useSession(): Session {
   return useSyncExternalStore(subscribeSession, readSession, getServerSnapshot)
 }
 
-// Ory logout is two-step: ask /self-service/logout/browser for a one-time logout_url, then
-// navigate there. Returns null on any failure (caller just leaves the session alone).
+// Logout is a plain navigation: the worker's /auth/logout clears the pa_session cookie and
+// bounces through WorkOS's logout URL back to return_to. Kept async-with-null (the old Ory
+// contract needed a network round-trip here) so callers don't churn.
 export async function fetchLogoutUrl(returnTo: string): Promise<string | null> {
-  try {
-    const res = await fetch(
-      `${ORY_URL}/self-service/logout/browser?return_to=${encodeURIComponent(returnTo)}`,
-      { credentials: 'include', headers: { Accept: 'application/json' } },
-    )
-    if (!res.ok) return null
-    const payload: unknown = await res.json()
-    const url = (payload as { logout_url?: unknown }).logout_url
-    return typeof url === 'string' && url !== '' ? url : null
-  } catch {
-    return null
-  }
+  return `${AUTH_BASE}/logout?return_to=${encodeURIComponent(returnTo)}`
 }

@@ -20,6 +20,10 @@
 // Also counts /productarena/compare?p=… selections into Workers KV (binding PA_COMPARE_STATS)
 // and serves the keyless GET /productarena/api/popular-compares top-20 — see the
 // "Compare popularity counter" section below. Pairs only; no IPs or user agents are stored.
+//
+// Also hosts the site's auth backend at /productarena/auth/* (WorkOS AuthKit login/callback,
+// our own HMAC-signed pa_session cookie, /auth/me, /auth/logout) — see the "Auth backend"
+// section below and docs/AUTH.md for setup.
 const ORIGIN = 'https://productarena.vercel.app'
 const ALLOWED_CORS = new Set(['https://ultrametric.ai', 'https://productarena.vercel.app'])
 
@@ -1109,9 +1113,309 @@ async function handleMcp(request) {
   return new Response(JSON.stringify(body), { status, headers: { ...headers, 'content-type': 'application/json' } })
 }
 
+// ---------------------------------------------------------------------------------------------
+// Auth backend: /productarena/auth/* (WorkOS AuthKit)
+//
+// The site is a static export — there is no Next server — so this worker IS the auth backend.
+// Login is the standard AuthKit hosted-page flow (docs verified 2026-09-14):
+//   - authorize URL:  GET https://api.workos.com/user_management/authorize
+//       params client_id, redirect_uri, response_type=code, provider=authkit, state
+//       https://workos.com/docs/reference/user-management/authentication/get-authorization-url
+//   - code exchange:  POST https://api.workos.com/user_management/authenticate
+//       JSON body { client_id, client_secret: <WorkOS API key>, grant_type:
+//       "authorization_code", code } → { user: { id, email, … }, access_token, … }
+//       https://workos.com/docs/reference/user-management/authentication/code
+//   - logout URL:     GET https://api.workos.com/user_management/sessions/logout
+//       params session_id (the access_token JWT's `sid` claim), return_to
+//       https://workos.com/docs/reference/authkit/logout/get-logout-url
+//
+// We do NOT keep WorkOS's tokens around. The callback mints OUR session: `pa_session`, an
+// HttpOnly Secure SameSite=Lax cookie scoped to ultrametric.ai (Path=/productarena), holding a
+// compact HMAC-SHA256-signed payload {sub, email, sid, exp} — no PII beyond the email, exp
+// capped at 30 days, key = the PA_SESSION_KEY worker secret, signing via WebCrypto. /auth/me
+// verifies it and answers {email} (or 401) for the client-side session hook (lib/session.ts).
+//
+// CSRF on the callback: /auth/login mints a random nonce, sets it in a short-lived `pa_state`
+// cookie AND embeds it in the OAuth state parameter (alongside return_to); /auth/callback
+// requires the two nonces to match. return_to is only ever honored as an ultrametric.ai path.
+//
+// Configuration (see docs/AUTH.md): WORKOS_CLIENT_ID is a plain var in wrangler.toml;
+// WORKOS_API_KEY and PA_SESSION_KEY are worker secrets (`wrangler secret put …`). Until all
+// three are set the routes fail closed with an explicit "auth not configured" 500 — the site
+// itself is unaffected (the client hook degrades to anonymous).
+
+const WORKOS_API = 'https://api.workos.com'
+const AUTH_SITE = 'https://ultrametric.ai'
+const AUTH_CALLBACK_URL = `${AUTH_SITE}/productarena/auth/callback`
+const SESSION_COOKIE = 'pa_session'
+const STATE_COOKIE = 'pa_state'
+const SESSION_MAX_AGE_S = 30 * 24 * 60 * 60 // hard cap — verifySession also rejects longer exps
+
+const authTextEncoder = new TextEncoder()
+
+function b64urlEncode(bytes) {
+  let bin = ''
+  for (const b of bytes) bin += String.fromCharCode(b)
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+}
+
+function b64urlDecode(str) {
+  const b64 = str.replace(/-/g, '+').replace(/_/g, '/')
+  const bin = atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4))
+  const bytes = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+  return bytes
+}
+
+async function hmacSign(secret, data) {
+  const key = await crypto.subtle.importKey(
+    'raw',
+    authTextEncoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
+  )
+  return b64urlEncode(new Uint8Array(await crypto.subtle.sign('HMAC', key, authTextEncoder.encode(data))))
+}
+
+// Constant-time string compare (both sides are same-alphabet base64url here).
+function timingSafeEqual(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false
+  let diff = 0
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  return diff === 0
+}
+
+// Mint a pa_session value: base64url(JSON{sub,email,sid,exp}) + '.' + base64url(HMAC-SHA256).
+export async function createSessionCookieValue(secret, { sub, email, sid }, nowMs = Date.now()) {
+  const exp = Math.floor(nowMs / 1000) + SESSION_MAX_AGE_S
+  const payload = b64urlEncode(authTextEncoder.encode(JSON.stringify({ sub, email, sid, exp })))
+  return `${payload}.${await hmacSign(secret, payload)}`
+}
+
+// Verify a pa_session value → claims object, or null for anything invalid: bad shape, bad
+// signature (constant-time compare), expired, or an exp further out than we would ever mint.
+export async function verifySessionCookieValue(secret, value, nowMs = Date.now()) {
+  if (typeof value !== 'string' || !value) return null
+  const parts = value.split('.')
+  if (parts.length !== 2 || !parts[0] || !parts[1]) return null
+  if (!timingSafeEqual(parts[1], await hmacSign(secret, parts[0]))) return null
+  let claims
+  try {
+    claims = JSON.parse(new TextDecoder().decode(b64urlDecode(parts[0])))
+  } catch {
+    return null
+  }
+  if (!claims || typeof claims !== 'object') return null
+  if (typeof claims.email !== 'string' || !claims.email) return null
+  if (typeof claims.exp !== 'number') return null
+  if (claims.exp * 1000 <= nowMs) return null
+  if (claims.exp > Math.floor(nowMs / 1000) + SESSION_MAX_AGE_S + 60) return null
+  return claims
+}
+
+// Pull the WorkOS session id out of the access_token JWT's `sid` claim (needed for the logout
+// URL). Decode-only — the token came straight from WorkOS over TLS, we never trust it for auth.
+export function sidFromAccessToken(token) {
+  if (typeof token !== 'string') return undefined
+  const parts = token.split('.')
+  if (parts.length !== 3) return undefined
+  try {
+    const claims = JSON.parse(new TextDecoder().decode(b64urlDecode(parts[1])))
+    return typeof claims?.sid === 'string' && claims.sid !== '' ? claims.sid : undefined
+  } catch {
+    return undefined
+  }
+}
+
+// Only ever send readers back to an ultrametric.ai path — absolute URLs on any other origin,
+// scheme-relative //host tricks, and backslash smuggling all fall back to the PA home page.
+export function sanitizeReturnTo(raw) {
+  const fallback = `${AUTH_SITE}/productarena`
+  if (typeof raw !== 'string' || raw === '') return fallback
+  let path = raw
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) {
+    let url
+    try {
+      url = new URL(raw)
+    } catch {
+      return fallback
+    }
+    if (url.origin !== AUTH_SITE) return fallback
+    path = url.pathname + url.search + url.hash
+  }
+  if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) return fallback
+  return AUTH_SITE + path
+}
+
+function getCookie(request, name) {
+  const header = request.headers.get('cookie') ?? ''
+  for (const part of header.split(';')) {
+    const eq = part.indexOf('=')
+    if (eq !== -1 && part.slice(0, eq).trim() === name) return part.slice(eq + 1).trim()
+  }
+  return null
+}
+
+function sessionSetCookie(value, maxAge) {
+  return `${SESSION_COOKIE}=${value}; Domain=ultrametric.ai; Path=/productarena; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
+}
+
+function stateSetCookie(value, maxAge) {
+  return `${STATE_COOKIE}=${value}; Domain=ultrametric.ai; Path=/productarena/auth; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
+}
+
+function authJson(status, body, extraHeaders) {
+  const headers = new Headers({ 'content-type': 'application/json', 'cache-control': 'no-store' })
+  for (const [k, v] of Object.entries(extraHeaders ?? {})) headers.append(k, v)
+  return new Response(JSON.stringify(body), { status, headers })
+}
+
+// Fail-closed helper for missing configuration — explicit so a half-set-up deploy is obvious.
+function authNotConfigured(missing) {
+  return authJson(500, {
+    error: `auth not configured: ${missing} is not set — see docs/AUTH.md for the two "wrangler secret put" commands and the WORKOS_CLIENT_ID var`,
+  })
+}
+
+// All four /productarena/auth/* routes. `fetchImpl` is injectable for tests (no network), same
+// pattern as probeMcpEndpoint / handleJsonRpc above.
+export async function handleAuth(request, env, fetchImpl = fetch) {
+  const url = new URL(request.url)
+  const route = url.pathname.slice('/productarena/auth'.length)
+  if (request.method !== 'GET') {
+    return authJson(405, { error: 'GET only' }, { allow: 'GET' })
+  }
+
+  // GET /auth/me → {email} from a valid pa_session cookie, else 401. Keyless: verification
+  // only needs PA_SESSION_KEY. Same-origin only (the static site fetches it relatively), so no
+  // CORS headers — cross-origin readers can't see the result.
+  if (route === '/me') {
+    if (!env?.PA_SESSION_KEY) return authNotConfigured('PA_SESSION_KEY secret')
+    const claims = await verifySessionCookieValue(env.PA_SESSION_KEY, getCookie(request, SESSION_COOKIE))
+    if (!claims) return authJson(401, { error: 'no session' })
+    return authJson(200, { email: claims.email })
+  }
+
+  // GET /auth/login?return_to=… → 302 to the WorkOS AuthKit hosted page. State carries
+  // {nonce, return_to}; the nonce is mirrored into the short-lived pa_state cookie (CSRF).
+  if (route === '/login') {
+    if (!env?.WORKOS_CLIENT_ID) return authNotConfigured('WORKOS_CLIENT_ID var')
+    const returnTo = sanitizeReturnTo(url.searchParams.get('return_to'))
+    const nonce = b64urlEncode(crypto.getRandomValues(new Uint8Array(16)))
+    const state = b64urlEncode(authTextEncoder.encode(JSON.stringify({ n: nonce, r: returnTo })))
+    const authorize = new URL(`${WORKOS_API}/user_management/authorize`)
+    authorize.searchParams.set('client_id', env.WORKOS_CLIENT_ID)
+    authorize.searchParams.set('redirect_uri', AUTH_CALLBACK_URL)
+    authorize.searchParams.set('response_type', 'code')
+    authorize.searchParams.set('provider', 'authkit')
+    authorize.searchParams.set('state', state)
+    const hint = url.searchParams.get('screen_hint')
+    if (hint === 'sign-up' || hint === 'sign-in') authorize.searchParams.set('screen_hint', hint)
+    return new Response(null, {
+      status: 302,
+      headers: {
+        location: authorize.toString(),
+        'set-cookie': stateSetCookie(nonce, 600),
+        'cache-control': 'no-store',
+      },
+    })
+  }
+
+  // GET /auth/callback?code=…&state=… → CSRF check, code exchange, mint pa_session, bounce
+  // back to the state's return_to.
+  if (route === '/callback') {
+    if (!env?.WORKOS_CLIENT_ID) return authNotConfigured('WORKOS_CLIENT_ID var')
+    if (!env?.WORKOS_API_KEY) return authNotConfigured('WORKOS_API_KEY secret')
+    if (!env?.PA_SESSION_KEY) return authNotConfigured('PA_SESSION_KEY secret')
+
+    const oauthError = url.searchParams.get('error')
+    if (oauthError) {
+      return authJson(400, { error: `WorkOS returned an error: ${String(oauthError).slice(0, 200)}` })
+    }
+    const code = url.searchParams.get('code')
+    if (!code) return authJson(400, { error: 'missing code' })
+
+    let state
+    try {
+      state = JSON.parse(new TextDecoder().decode(b64urlDecode(url.searchParams.get('state') ?? '')))
+    } catch {
+      return authJson(400, { error: 'malformed state' })
+    }
+    const cookieNonce = getCookie(request, STATE_COOKIE)
+    if (!cookieNonce || typeof state?.n !== 'string' || !timingSafeEqual(state.n, cookieNonce)) {
+      return authJson(400, { error: 'state mismatch (CSRF check failed) — start again from /productarena/auth/login' })
+    }
+
+    // Code → user. https://workos.com/docs/reference/user-management/authentication/code
+    let exchange
+    try {
+      exchange = await fetchImpl(`${WORKOS_API}/user_management/authenticate`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          client_id: env.WORKOS_CLIENT_ID,
+          client_secret: env.WORKOS_API_KEY,
+          grant_type: 'authorization_code',
+          code,
+        }),
+      })
+    } catch {
+      return authJson(502, { error: 'could not reach WorkOS for the code exchange' })
+    }
+    if (!exchange.ok) {
+      return authJson(502, { error: `WorkOS code exchange failed (HTTP ${exchange.status})` })
+    }
+    let data
+    try {
+      data = await exchange.json()
+    } catch {
+      return authJson(502, { error: 'WorkOS code exchange returned a non-JSON body' })
+    }
+    const user = data?.user
+    if (typeof user?.id !== 'string' || typeof user?.email !== 'string' || user.email === '') {
+      return authJson(502, { error: 'WorkOS code exchange response had no user' })
+    }
+
+    const cookieValue = await createSessionCookieValue(env.PA_SESSION_KEY, {
+      sub: user.id,
+      email: user.email,
+      sid: sidFromAccessToken(data.access_token),
+    })
+    const headers = new Headers({ 'cache-control': 'no-store' })
+    headers.set('location', sanitizeReturnTo(typeof state.r === 'string' ? state.r : ''))
+    headers.append('set-cookie', sessionSetCookie(cookieValue, SESSION_MAX_AGE_S))
+    headers.append('set-cookie', stateSetCookie('', 0)) // one-time nonce — burn it
+    return new Response(null, { status: 302, headers })
+  }
+
+  // GET /auth/logout?return_to=… → clear pa_session; if we know the WorkOS session id, bounce
+  // through WorkOS's logout URL (ends the AuthKit session too) with return_to; else go
+  // straight back. https://workos.com/docs/reference/authkit/logout/get-logout-url
+  if (route === '/logout') {
+    const returnTo = sanitizeReturnTo(url.searchParams.get('return_to'))
+    const claims = env?.PA_SESSION_KEY
+      ? await verifySessionCookieValue(env.PA_SESSION_KEY, getCookie(request, SESSION_COOKIE))
+      : null
+    let location = returnTo
+    if (typeof claims?.sid === 'string' && claims.sid !== '') {
+      const logout = new URL(`${WORKOS_API}/user_management/sessions/logout`)
+      logout.searchParams.set('session_id', claims.sid)
+      logout.searchParams.set('return_to', returnTo)
+      location = logout.toString()
+    }
+    const headers = new Headers({ 'cache-control': 'no-store', location })
+    headers.append('set-cookie', sessionSetCookie('', 0))
+    return new Response(null, { status: 302, headers })
+  }
+
+  return authJson(404, { error: 'unknown auth route' })
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
+    if (url.pathname.startsWith('/productarena/auth/')) return handleAuth(request, env)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
     if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request)
     if (url.pathname === '/productarena/api/popular-compares') {

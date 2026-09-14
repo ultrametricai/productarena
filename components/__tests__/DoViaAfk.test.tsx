@@ -3,7 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Session } from '@/lib/session'
 
-// DoViaAfk's session half of the admin gate is the Ory session (lib/session.ts) — swap the hook
+// DoViaAfk's session half of the admin gate is the WorkOS session (lib/session.ts) — swap the hook
 // for a controllable stub so each test picks the session state without a network (same pattern
 // as WatchButton.test.tsx).
 const sessionStub = vi.hoisted(() => ({ current: { state: 'loading' } as Session }))

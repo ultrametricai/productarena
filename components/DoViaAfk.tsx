@@ -10,7 +10,7 @@ import { useSession } from '@/lib/session'
 // button is gated — non-admins get literally nothing rendered, not hidden markup.
 //
 // Admin = either of:
-//   1. an Ory session (lib/session.ts) whose email is listed in NEXT_PUBLIC_ADMIN_EMAILS
+//   1. a WorkOS session (lib/session.ts) whose email is listed in NEXT_PUBLIC_ADMIN_EMAILS
 //      (comma-separated, inlined at build time; unset/empty → the email path never matches), or
 //   2. the founder's local testing switch: in devtools run
 //        localStorage.setItem('pa-admin', '1')
