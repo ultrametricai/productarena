@@ -238,7 +238,6 @@ export default async function ProductPage({
         </div>
         {/* 30-day uptime of the monitored agent surfaces (llms.txt / MCP / openapi.json) —
             renders nothing until slo-check has history for this product (lib/slo.ts). */}
-        <SloUptimeLine arena={category} productId={id} />
         {/* TERTIARY footer line — provenance minutiae, demoted (not deleted): evidence
             freshness (lib/freshness.ts) and the story-coverage score, which used to be a
             full-width bar but mostly restates what PA Score + its confidence band already say. */}
@@ -262,11 +261,11 @@ export default async function ProductPage({
 
       <TryItSection category={category} productId={id} productName={product.name} stories={data.stories} />
 
-      <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
-
       {/* Multi-product vendors: the family breakdown block (lib/families.ts) — renders for any
           product with a data/product-families.json entry, nothing for everyone else. */}
       <FamilySection arenaId={category} productId={id} />
+
+      <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
 
       {product.affiliation && (
         <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">
@@ -345,6 +344,9 @@ export default async function ProductPage({
           stories it covers (lib/storyCoverage.ts) — collapsed by default, pure derivation from
           the citations above. */}
       <CoverageMapSection data={data} productId={id} />
+
+      {/* Low-salience operational data lives at the bottom (founder: educate first, ops last). */}
+      <SloUptimeLine arena={category} productId={id} />
 
       <ProofsSection category={category} productId={id} stories={data.stories} />
 

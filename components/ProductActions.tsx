@@ -99,12 +99,12 @@ export default function ProductActions({
         )}
 
         <div>
-          <SectionLabel>Contest</SectionLabel>
+          <SectionLabel>Flag</SectionLabel>
           <a href={contestUrl} target="_blank" rel="noopener noreferrer" className={linkClass}>
-            ⚑ Contest a verdict
+            ⚑ Flag a verdict
           </a>
           <p className="mt-1 text-zinc-500">
-            Prefilled GitHub issue — or use the ⚑ next to any verdict below.
+            Think a verdict is wrong? Opens a prefilled GitHub issue — or use the ⚑ next to any verdict below.
           </p>
         </div>
 
