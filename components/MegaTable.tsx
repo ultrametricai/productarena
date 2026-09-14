@@ -13,7 +13,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import TrendArrow from '@/components/TrendArrow'
 import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
-import { WATCHLIST_ENABLED } from '@/lib/flags'
+import { useSession } from '@/lib/session'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
   DEFAULT_COLUMN,
@@ -98,6 +98,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   const [query, setQuery] = useState('')
   const [arenaId, setArenaId] = useState('all')
   const [showAll, setShowAll] = useState(false)
+  // Watch column only exists for logged-in readers (see lib/session.ts) — static HTML and the
+  // anonymous view render the same 9-column table as before login existed.
+  const watchlistOn = useSession().state === 'authenticated'
 
   const byArena = useMemo(() => filterMegaRowsByArena(rows, arenaId), [rows, arenaId])
   // Rank is scoped to what's shown: global 1..N across all arenas by default, but 1..X within
@@ -174,7 +177,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 <span title="Agent access surfaces — MCP server / CLI / API, from judged evidence: ✓ full, ~ partial, ! disputed, — none found">Access</span>
               </SortableTh>
-              {WATCHLIST_ENABLED && (
+              {watchlistOn && (
                 <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
                   <span className="sr-only">Watch</span>
                 </SortableTh>
@@ -292,7 +295,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       })}
                     </div>
                   </td>
-                  {WATCHLIST_ENABLED && (
+                  {watchlistOn && (
                     <td className="px-2 py-2 text-center">
                       <WatchButton productId={row.productId} productName={row.name} size="sm" />
                     </td>
@@ -302,7 +305,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={WATCHLIST_ENABLED ? 10 : 9} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={watchlistOn ? 10 : 9} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>

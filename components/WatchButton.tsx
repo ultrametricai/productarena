@@ -1,19 +1,20 @@
 'use client'
 
 import { useMemo, useSyncExternalStore } from 'react'
-import { WATCHLIST_ENABLED } from '@/lib/flags'
+import { useSession } from '@/lib/session'
 import {
   parseWatchlist, readWatchlistRaw, subscribeWatchlist, toggleWatchlistId, writeWatchlist,
 } from '@/lib/watchlist'
 
 // ☆/★ watch toggle — persists product ids to localStorage (key 'pa-watchlist', see
-// lib/watchlist.ts) and nothing else: device-local, no account. Rendered on product page
-// headers, in MegaTable rows, and on /watchlist itself. useSyncExternalStore keeps every star
-// on the page in sync through one snapshot (the raw stored string), with '[]' as the server
-// snapshot so static HTML always hydrates from the unstarred state.
+// lib/watchlist.ts): saved on this device. Rendered on product page headers, in MegaTable
+// rows, and on /watchlist itself. useSyncExternalStore keeps every star on the page in sync
+// through one snapshot (the raw stored string), with '[]' as the server snapshot so static
+// HTML always hydrates from the unstarred state.
 //
-// Renders nothing while WATCHLIST_ENABLED is off (see lib/flags.ts) — every call site can keep
-// its markup and just gets an empty render until the flag flips.
+// Session gate (lib/session.ts): the star only renders for logged-in readers — anonymous
+// readers see the site exactly as before, no watchlist UI anywhere. Every call site keeps its
+// markup and just gets an empty render until whoami answers 'authenticated'.
 
 function getServerSnapshot(): string {
   return '[]'
@@ -36,14 +37,15 @@ export default function WatchButton({
   size?: 'sm' | 'md'
   className?: string
 }) {
-  // Hooks run unconditionally (rules of hooks); the flag gate comes after.
+  // Hooks run unconditionally (rules of hooks); the session gate comes after.
   const ids = useWatchlist()
-  if (!WATCHLIST_ENABLED) return null
+  const session = useSession()
+  if (session.state !== 'authenticated') return null
   const watched = ids.includes(productId)
   const name = productName ?? productId
   const label = watched
-    ? `Unwatch ${name} — remove from your watchlist (stored in this browser)`
-    : `Watch ${name} — add to your watchlist (stored in this browser)`
+    ? `Unwatch ${name} — remove from your watchlist (saved on this device)`
+    : `Watch ${name} — add to your watchlist (saved on this device)`
   return (
     <button
       type="button"
