@@ -13,6 +13,7 @@ import { strongestEvidence, verificationLevel, type VerificationLevel } from './
 export type StoryVerdictColumn =
   | 'importance'
   | 'title'
+  | 'persona'
   | 'theme'
   | 'weight'
   | 'verdict'
@@ -142,6 +143,7 @@ const VERIFICATION_RANK: Record<VerificationLevel, number> = {
 export const COLUMN_LABELS: Record<StoryVerdictColumn, string> = {
   importance: 'importance (agentic first)',
   title: 'story title',
+  persona: 'user type',
   theme: 'theme',
   weight: 'weight',
   verdict: 'verdict strength',
@@ -153,7 +155,7 @@ export const COLUMN_LABELS: Record<StoryVerdictColumn, string> = {
 // Text columns default ascending (A→Z); every ranked/numeric column defaults descending
 // (strongest/highest first) — same convention as arenaTableSort's defaultDirectionFor.
 export function defaultDirectionFor(column: StoryVerdictColumn): SortDirection {
-  return column === 'title' || column === 'theme' ? 'asc' : 'desc'
+  return column === 'title' || column === 'theme' || column === 'persona' ? 'asc' : 'desc'
 }
 
 // The default reading order: what matters most for the AI era first. Agenticness-theme stories
@@ -182,7 +184,7 @@ function compareNullableNumber(a: number | null, b: number | null, direction: So
   return direction === 'desc' ? b - a : a - b
 }
 
-function numericValue(row: StoryVerdictRow, column: Exclude<StoryVerdictColumn, 'title' | 'theme' | 'importance'>): number | null {
+function numericValue(row: StoryVerdictRow, column: Exclude<StoryVerdictColumn, 'title' | 'theme' | 'persona' | 'importance'>): number | null {
   switch (column) {
     case 'weight':
       return row.weight
@@ -207,10 +209,10 @@ export function sortStoryVerdictRows(
       const cmp = compareImportance(a, b)
       return direction === 'desc' ? cmp : -cmp
     }
-    if (column === 'title' || column === 'theme') {
+    if (column === 'title' || column === 'theme' || column === 'persona') {
       // The Story column displays row.action (persona frame stripped) — sort by what the
       // reader sees, not the hidden "As a …" prefix that would bucket rows by persona.
-      const key = column === 'title' ? ('action' as const) : ('theme' as const)
+      const key = column === 'title' ? ('action' as const) : column === 'persona' ? ('personaLabel' as const) : ('theme' as const)
       const cmp = a[key].localeCompare(b[key])
       return direction === 'desc' ? -cmp : cmp
     }
