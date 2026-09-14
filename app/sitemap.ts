@@ -15,9 +15,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // One /alternatives/[product] page per unique product id (see that page's dedupe rule).
   const seenProductIds = new Set<string>()
 
-  // Deliberately absent: /watchlist (feature-flagged off — see lib/flags.ts's
-  // WATCHLIST_ENABLED; add it here when the flag flips) and /rankings/init (the homepage
-  // mega-table's default view already owns that ranking's search intent).
+  // Deliberately absent: /watchlist (session-gated content — the page is reachable but its
+  // list only renders for logged-in readers, see components/WatchlistGate.tsx; nothing there
+  // for a crawler) and /rankings/init (the homepage mega-table's default view already owns
+  // that ranking's search intent).
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now },
     { url: `${SITE_URL}/everything`, lastModified: now },

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import WatchlistClient from '@/components/WatchlistClient'
+import WatchlistGate from '@/components/WatchlistGate'
 import { loadAll } from '@/lib/data'
-import { notFound } from 'next/navigation'
-import { WATCHLIST_ENABLED } from '@/lib/flags'
 import { loadScoreHistory } from '@/lib/scoreHistory'
 import type { WatchlistProduct } from '@/lib/watchlist'
 
@@ -10,11 +9,13 @@ import type { WatchlistProduct } from '@/lib/watchlist'
 // (id/name/arena/scores/history — see lib/watchlist.ts's WatchlistProduct doc), and
 // components/WatchlistClient.tsx filters it against the starred ids in this browser's
 // localStorage. No per-user build output — the whole list ships to everyone, the star selection
-// stays on the device.
+// stays on the device. WatchlistGate (Ory session, lib/session.ts) decides client-side who sees
+// the list: logged-in readers get it, anonymous readers get a log-in prompt — the page itself
+// stays open (no notFound) but is left out of app/sitemap.ts, since the content is session-gated.
 
 export const metadata: Metadata = {
   title: 'Watchlist — ProductArena',
-  description: 'Products you starred across every arena, with current scores and 30-day trends. Stored in your browser.',
+  description: 'Products you starred across every arena, with current scores and 30-day trends. Saved on this device.',
 }
 
 function buildWatchlistProducts(): WatchlistProduct[] {
@@ -40,11 +41,6 @@ function buildWatchlistProducts(): WatchlistProduct[] {
 }
 
 export default function WatchlistPage() {
-  // Flagged off until login lands (see lib/flags.ts) — house rule: unshipped features are
-  // hidden entirely, never shown as "coming soon".
-  if (!WATCHLIST_ENABLED) {
-    notFound()
-  }
   const products = buildWatchlistProducts()
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -52,29 +48,13 @@ export default function WatchlistPage() {
         <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Watchlist</h1>
         <p className="mt-1 text-sm text-zinc-500">
           Products you starred (☆ → ★) anywhere on ProductArena, with their current scores and
-          score trend. Device-local: stored in this browser, never sent to a server.
+          score trend. Saved on this device.
         </p>
       </div>
 
-      <WatchlistClient products={products} />
-
-      <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 p-4">
-        <p className="text-sm font-medium text-emerald-200/90">
-          Want alerts when a verdict flips or a score moves?
-        </p>
-        <p className="mt-1 text-xs text-zinc-400">
-          Watchlist alerts are coming soon — they&rsquo;re not built yet, and today this list lives
-          only on this device. Create an Ultrametric account to be ready when they land.
-        </p>
-        <a
-          href="https://app.ultrametric.ai/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-3 inline-block rounded-lg border border-emerald-400/60 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-400/10"
-        >
-          Create an Ultrametric account ↗
-        </a>
-      </div>
+      <WatchlistGate>
+        <WatchlistClient products={products} />
+      </WatchlistGate>
     </div>
   )
 }

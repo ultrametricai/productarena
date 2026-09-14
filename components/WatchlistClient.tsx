@@ -37,8 +37,8 @@ export default function WatchlistClient({ products }: { products: WatchlistProdu
           table — and it&rsquo;ll be pinned here with its current scores and trend.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
-          Your watchlist is stored in this browser only (localStorage) — it doesn&rsquo;t follow you
-          across devices.
+          Your watchlist is saved on this device (browser localStorage) — it doesn&rsquo;t follow
+          you across devices.
         </p>
       </div>
     )
