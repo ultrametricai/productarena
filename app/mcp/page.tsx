@@ -21,7 +21,7 @@ const TOOLS: Array<{ name: string; args: string; description: string }> = [
   { name: 'get_product', args: 'arena, product', description: 'One product: metadata, leaderboard entry with rank, verdict counts, and a per-story verdict summary.' },
   { name: 'get_verdict', args: 'arena, product, story', description: 'The full judged verdict for one (product, story) cell: tier, quality, confidence, rationale, and cited evidence URLs.' },
   { name: 'search_products', args: 'query', description: 'Find products by id/name/vendor substring across every arena.' },
-  { name: 'compare', args: 'products[]', description: 'Cross-arena score comparison: rank, coverage score, PA Score, agent-readiness, AI-native, API quality per product.' },
+  { name: 'compare', args: 'products[]', description: 'Cross-arena score comparison: rank, coverage score, PA Score, agent-readiness, Built-in AI, API quality per product.' },
   { name: 'get_stacks', args: '—', description: 'Curated cross-arena AI stacks with every scored slot resolved live from current leaderboards.' },
   { name: 'top_products', args: 'metric, limit?', description: 'Cross-arena top-N by one metric: score, paScore, agentReady, agenticApp, or apiQuality.' },
 ]

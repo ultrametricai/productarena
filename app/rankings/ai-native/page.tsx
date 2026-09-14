@@ -8,8 +8,8 @@ export function generateMetadata(): Metadata {
   const categories = loadAll()
   const totalProducts = categories.reduce((sum, data) => sum + data.products.length, 0)
   return {
-    title: `Full AI-native ranking — all ${totalProducts} products — ProductArena`,
-    description: `Every product across every arena ranked by AI-NATIVE — does the product act agentically on its own behalf (built-in assistant, autonomous automation, natural-language commands)? Evidence-graded, no opinion.`,
+    title: `Full Built-in AI ranking — all ${totalProducts} products — ProductArena`,
+    description: `Every product across every arena ranked by BUILT-IN AI — does the product act agentically on its own behalf (built-in assistant, autonomous automation, natural-language commands)? Evidence-graded, no opinion.`,
   }
 }
 
@@ -25,14 +25,14 @@ export default function AiNativeRankingPage() {
     <div className="space-y-4">
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Global ranking</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Most AI-native — best for humans working with AI</h1>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Best built-in AI — best for humans working with AI</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          All {totalProducts} products across every arena, ranked by AI-NATIVE: does the product act agentically on
+          All {totalProducts} products across every arena, ranked by BUILT-IN AI: does the product act agentically on
           its own behalf (built-in assistant, autonomous automation, natural-language commands)? Ties break on
           automation depth, then PA Score.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
-          This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Most AI-native&rdquo; preset —{' '}
+          This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Best built-in AI&rdquo; preset —{' '}
           <Link href="/" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
             sort and filter it live there →
           </Link>

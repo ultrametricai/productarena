@@ -13,7 +13,7 @@
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
 
 **The open evidence layer for the agent economy.** ProductArena measures how ready the
-world's software is for AI agents — and how AI-native it is for humans — with evidence, not
+world's software is for AI agents — and how Built-in AI it is for humans — with evidence, not
 opinion: crawled docs, community sources, hands-on probes, recorded proofs, and an LLM judge
 whose every verdict carries citations, a confidence grade, and a contest button.
 
@@ -36,7 +36,7 @@ product arenas (300+ products and growing) we crawl vendor docs, GitHub, and com
 extract per-product evidence, and
 have an LLM judge every product against a shared set of user stories. The result is a
 leaderboard, a head-to-head battle log, a per-product story matrix, and — across every arena —
-global rankings of how agent-ready and AI-native every product is. Every score traces back to
+global rankings of how agent-ready and Built-in AI every product is. Every score traces back to
 cited evidence, not opinion.
 
 Live site: https://ultrametric.ai/productarena

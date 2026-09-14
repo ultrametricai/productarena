@@ -40,7 +40,7 @@ export default function EverythingPage() {
       links: [
         { href: '/rankings/agentic', label: 'Most agent-ready', note: 'all products' },
         { href: '/rankings/init', label: 'Highest PA Score', note: 'all products' },
-        { href: '/rankings/ai-native', label: 'Most AI-native', note: 'all products' },
+        { href: '/rankings/ai-native', label: 'Best built-in AI', note: 'all products' },
         { href: '/rankings/claims-integrity', label: 'Claims vs reality', note: 'all products' },
       ],
     },

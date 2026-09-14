@@ -15,7 +15,7 @@ interface IndexRow {
 
 // Sibling of AgenticIndexTable, answering the other half of "which products are most
 // AI-friendly": this one sorts by AGENTIC_APP ("does the product act agentically itself" / how
-// AI-native the product's own UX is) instead of AGENT-READY ("can your agent drive it").
+// Built-in AI the product's own UX is) instead of AGENT-READY ("can your agent drive it").
 // Ties break on the automation-depth theme score, then aiEra/PA Score, both desc/nulls-last.
 function buildIndex(categories: CategoryData[]): IndexRow[] {
   const rows: IndexRow[] = []
@@ -68,7 +68,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
             <th className="sticky left-0 z-10 w-10 bg-zinc-950 px-3 py-2 font-normal">#</th>
             <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
             <th className="px-3 py-2 font-normal"><span title="The product category (arena) it competes in — click through for that arena's full leaderboard">Arena</span></th>
-            <th className="px-3 py-2 font-normal"><span title="AI-native (0–100): how much AI the product gives its own users — built-in assistants, agentic features, automation">AI-native</span></th>
+            <th className="px-3 py-2 font-normal"><span title="Built-in AI (0–100): how much AI the product gives its own users — built-in assistants, agentic features, automation">Built-in AI</span></th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Automation depth (0–100): how much of the product's work can run hands-off, end to end">Automation</span></th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of any score">Popularity</span></th>
             <th className="px-3 py-2 font-normal">
@@ -107,7 +107,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                   </Link>
                 </td>
                 <td className="px-3 py-2">
-                  {/* Column header already says AI-NATIVE — the pill carries just the value. */}
+                  {/* Column header already says BUILT-IN AI — the pill carries just the value. */}
                   <AgenticBadge kind="agentic-app" value={row.entry.agenticApp} size="sm" showLabel={false} href="/methodology#ai-era" />
                 </td>
                 <td className="hidden px-3 py-2 font-mono tabular-nums text-zinc-400 sm:table-cell">

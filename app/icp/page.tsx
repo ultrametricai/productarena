@@ -6,7 +6,7 @@ import { buildIcpRanking, icpTopThemes, loadIcpTypes } from '@/lib/icp'
 export const metadata: Metadata = {
   title: 'ICP lenses — rankings through your buyer type’s eyes — ProductArena',
   description:
-    'Ten cross-arena buyer-type lenses — solo technical founder, AI-native startup, privacy-first org, open-source purist and more — each re-weighting the same evidence-judged verdicts into a ranking for that buyer.',
+    'Ten cross-arena buyer-type lenses — solo technical founder, Built-in AI startup, privacy-first org, open-source purist and more — each re-weighting the same evidence-judged verdicts into a ranking for that buyer.',
 }
 
 // Static index of every ICP lens (see lib/icp.ts + data/icp-types.json). Each card links to the
@@ -28,7 +28,7 @@ export default function IcpIndexPage() {
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           The PA Score is one deliberately-contestable blend — but an open-source purist and an
-          AI-native startup don&rsquo;t weigh evidence the same way. Each lens below re-weights the
+          Built-in AI startup don&rsquo;t weigh evidence the same way. Each lens below re-weights the
           same evidence-judged verdicts (never re-judging anything) by the personas and themes that
           buyer type actually cares about, across every arena at once.
         </p>

@@ -89,7 +89,7 @@ export const COLUMN_LABELS: Record<MegaTableColumn, string> = {
   arena: 'arena',
   initScore: 'PA Score',
   agentReady: 'AGENT-READY',
-  agenticApp: 'AI-NATIVE',
+  agenticApp: 'BUILT-IN AI',
   apiQuality: 'API quality',
   popularity: 'Popularity',
 }

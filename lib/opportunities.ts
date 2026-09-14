@@ -14,7 +14,7 @@
 //
 // where quality is the judged 0–10 quality (0 for none) and boost = AGENTIC_BOOST for stories
 // in the three index-feeding agenticness groups (agent-access → agent-ready, agentic-features →
-// AI-native, api-quality → API quality — see lib/scoring.ts), because closing those gaps moves
+// Built-in AI, api-quality → API quality — see lib/scoring.ts), because closing those gaps moves
 // a headline index directly, not just the coverage score. `na` verdicts are excluded entirely:
 // "not applicable" is not an opportunity.
 
@@ -24,7 +24,7 @@ import { parseStoryPersona } from './storyText'
 // Which headline index closing this story would move. Group-scoped agenticness stories feed a
 // named index (see lib/scoring.ts's agentReady/agenticApp/apiQuality filters); everything else
 // feeds the PA Score blend through its theme (openness, automation-depth) or the coverage score.
-export type ScoreLever = 'agent-ready' | 'AI-native' | 'API quality' | 'PA Score'
+export type ScoreLever = 'agent-ready' | 'Built-in AI' | 'API quality' | 'PA Score'
 
 // Extra weight for the three groups that feed a headline index directly. 1.5 is deliberately
 // mild — a weight-3 domain story still outranks a weight-1 agentic nicety.
@@ -69,7 +69,7 @@ export interface OpportunitySource {
 
 const LEVER_BY_GROUP: Record<string, ScoreLever> = {
   'agent-access': 'agent-ready',
-  'agentic-features': 'AI-native',
+  'agentic-features': 'Built-in AI',
   'api-quality': 'API quality',
 }
 

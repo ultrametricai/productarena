@@ -13,7 +13,7 @@
 // lib/scoring.ts's computeAiEra):
 //
 //   opportunity = 0.3·(100 − mean agent-ready)          — fleet can't be driven by agents
-//               + 0.2·(100 − mean AI-native)            — fleet isn't agentic itself
+//               + 0.2·(100 − mean Built-in AI)            — fleet isn't agentic itself
 //               + 0.2·(100 · agentic none-share)        — hard "none" verdicts on agent-access/
 //                                                         agentic-features stories, fleet-wide
 //               + 0.2·(100 − leader PA Score)           — even the leader is weak
@@ -35,7 +35,7 @@ export const MISSING_WEIGHTS = {
 
 // Human-readable formula for the score tooltip on /missing — keep in sync with MISSING_WEIGHTS.
 export const OPPORTUNITY_FORMULA =
-  'OpportunityScore = 0.3·(100 − mean agent-ready) + 0.2·(100 − mean AI-native) + 0.2·(100·none-share on agent-access/agentic-features stories) + 0.2·(100 − leader PA Score) + 0.1·(100·share of stories no product covers). Weights renormalize over measurable components. Measures our judged evidence, not market size.'
+  'OpportunityScore = 0.3·(100 − mean agent-ready) + 0.2·(100 − mean Built-in AI) + 0.2·(100·none-share on agent-access/agentic-features stories) + 0.2·(100 − leader PA Score) + 0.1·(100·share of stories no product covers). Weights renormalize over measurable components. Measures our judged evidence, not market size.'
 
 const round1 = (n: number) => Math.round(n * 10) / 10
 

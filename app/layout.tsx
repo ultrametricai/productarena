@@ -195,7 +195,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       keywords: searchAliases.arenas as Record<string, string[]>,
     }),
     { type: "arena", label: "Most agent-ready (full ranking)", sublabel: "All products, ranked by agent-readiness", href: "/rankings/agentic", keywords: pageAliases["/rankings/agentic"] },
-    { type: "arena", label: "Most AI-native (full ranking)", sublabel: "All products, ranked by AI-native features", href: "/rankings/ai-native", keywords: pageAliases["/rankings/ai-native"] },
+    { type: "arena", label: "Best built-in AI (full ranking)", sublabel: "All products, ranked by Built-in AI features", href: "/rankings/ai-native", keywords: pageAliases["/rankings/ai-native"] },
     { type: "arena", label: "Claims vs reality (full ranking)", sublabel: "All products, ranked by claims integrity", href: "/rankings/claims-integrity", keywords: pageAliases["/rankings/claims-integrity"] },
     { type: "arena", label: "Most connected (full ranking)", sublabel: "Products ranked by verified integrations", href: "/rankings/most-connected", keywords: pageAliases["/rankings/most-connected"] },
     { type: "arena", label: "Most tested (full ranking)", sublabel: "All products, ranked by tested-evidence share", href: "/rankings/most-tested", keywords: pageAliases["/rankings/most-tested"] },
@@ -264,7 +264,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 items={[
                   { id: "agentic", name: "Most agent-ready", label: "ranking", href: "/rankings/agentic" },
                   { id: "init", name: "Highest PA Score", label: "ranking", href: "/rankings/init" },
-                  { id: "ai-native", name: "Most AI-native", label: "ranking", href: "/rankings/ai-native" },
+                  { id: "ai-native", name: "Best built-in AI", label: "ranking", href: "/rankings/ai-native" },
                   { id: "claims-integrity", name: "Claims vs reality", label: "ranking", href: "/rankings/claims-integrity" },
                   { id: "most-connected", name: "Most connected", label: "ranking", href: "/rankings/most-connected" },
                   { id: "most-tested", name: "Most tested", label: "ranking", href: "/rankings/most-tested" },

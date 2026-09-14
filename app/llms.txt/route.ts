@@ -56,7 +56,7 @@ ${leadingBattleLinks}
 ## Global rankings (every product, every arena, one flat list)
 
 - [Most agentic](${SITE}/rankings/agentic): every product ranked by AGENT-READY (can an agent reach and operate it at all).
-- [Most AI-native](${SITE}/rankings/ai-native): every product ranked by AI-NATIVE (does the product act agentically on its own behalf).
+- [Best built-in AI](${SITE}/rankings/ai-native): every product ranked by BUILT-IN AI (does the product act agentically on its own behalf).
 - [Claims vs reality](${SITE}/rankings/claims-integrity): every product ranked by how well its own website claims survive independent verification.
 - [Most connected](${SITE}/rankings/most-connected): products ranked by verified integration edges (every edge carries a verbatim evidence quote).
 - [Most tested](${SITE}/rankings/most-tested): products ranked by the share of verdicts backed by tested evidence (hands-on probe or inspectable source) rather than vendor claims.

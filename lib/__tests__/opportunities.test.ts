@@ -33,7 +33,7 @@ const verdict = (storyId: string, over: Partial<Verdict> = {}): Verdict => ({
 describe('scoreLeverFor', () => {
   it('maps the three index-feeding agenticness groups to their index', () => {
     expect(scoreLeverFor({ theme: 'agenticness', group: 'agent-access' })).toBe('agent-ready')
-    expect(scoreLeverFor({ theme: 'agenticness', group: 'agentic-features' })).toBe('AI-native')
+    expect(scoreLeverFor({ theme: 'agenticness', group: 'agentic-features' })).toBe('Built-in AI')
     expect(scoreLeverFor({ theme: 'agenticness', group: 'api-quality' })).toBe('API quality')
   })
 

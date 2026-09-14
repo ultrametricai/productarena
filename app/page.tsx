@@ -11,7 +11,7 @@ import { buildMegaTableArenaOptions, buildMegaTableRows } from '@/lib/megaTable'
 export const metadata: Metadata = {
   title: 'ProductArena — which software is most AI-friendly?',
   description:
-    "One sortable table across every arena: every product judged on AGENT-READY (can an agent reach and operate it?), AI-NATIVE (does it act agentically for its users?), API quality, and popularity. No opinion, every score traces back to cited evidence.",
+    "One sortable table across every arena: every product judged on AGENT-READY (can an agent reach and operate it?), BUILT-IN AI (does it act agentically for its users?), API quality, and popularity. No opinion, every score traces back to cited evidence.",
 }
 
 export default function Home() {

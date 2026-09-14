@@ -18,7 +18,7 @@ export type AgenticBadgeKind = 'agent-ready' | 'agentic-app'
 
 const LABELS: Record<AgenticBadgeKind, string> = {
   'agent-ready': 'AGENT-READY',
-  'agentic-app': 'AI-NATIVE',
+  'agentic-app': 'BUILT-IN AI',
 }
 
 // Hover text spelling out the distinction the short labels can't carry — the two indexes are
@@ -26,7 +26,7 @@ const LABELS: Record<AgenticBadgeKind, string> = {
 // directions: can YOUR agent drive the product, vs does the product itself act agentically.
 const TITLES: Record<AgenticBadgeKind, string> = {
   'agent-ready': 'AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).',
-  'agentic-app': 'AI-NATIVE = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.',
+  'agentic-app': 'BUILT-IN AI = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.',
 }
 
 const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
@@ -41,7 +41,7 @@ const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
 // Since v2.4 (the PA Score), these badges are secondary to AiEraBadge wherever both appear —
 // `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the PA Score strip).
 // `showLabel={false}` drops the metric name from the pill (kept in the title + sr-only text) —
-// for table columns whose header already says AGENT-READY/AI-NATIVE, where repeating the label
+// for table columns whose header already says AGENT-READY/BUILT-IN AI, where repeating the label
 // on every row says the same word N times.
 export default function AgenticBadge({
   kind,

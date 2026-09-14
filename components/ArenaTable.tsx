@@ -63,7 +63,7 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
 const RANK_PRESETS: Array<{ col: ArenaTableColumn; label: string }> = [
   { col: 'agentReady', label: 'Most agent-ready' },
   { col: 'initScore', label: 'Highest PA Score' },
-  { col: 'agenticApp', label: 'Most AI-native' },
+  { col: 'agenticApp', label: 'Best built-in AI' },
   { col: 'popularity', label: 'Most popular' },
 ]
 
@@ -183,13 +183,13 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                 Product
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, AI-native ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
+                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
                 <span title="AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).">Agent-ready</span>
               </SortableTh>
               <SortableTh col="agenticApp" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell">
-                <span title="AI-NATIVE = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.">AI-native</span>
+                <span title="BUILT-IN AI = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.">Built-in AI</span>
               </SortableTh>
               <SortableTh col="apiQuality" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
                 <span title="API quality /100 — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.">API</span>

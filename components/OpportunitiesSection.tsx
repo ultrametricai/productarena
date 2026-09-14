@@ -16,7 +16,7 @@ import { AGENTIC_BOOST, OPPORTUNITY_CAP, opportunitiesFor, type Opportunity, typ
 // Where closing the gap lands, in plain words — the REQUIRED tooltip for each lever chip.
 const LEVER_TITLES: Record<ScoreLever, string> = {
   'agent-ready': 'Closing this moves the agent-ready index directly (and the PA Score through it)',
-  'AI-native': 'Closing this moves the AI-native index directly (and the PA Score through it)',
+  'Built-in AI': 'Closing this moves the Built-in AI index directly (and the PA Score through it)',
   'API quality': 'Closing this moves the API quality index directly (and the PA Score through it)',
   'PA Score': 'Closing this moves the PA Score blend via its theme, plus the coverage score',
 }
@@ -25,7 +25,7 @@ const LEVER_TITLES: Record<ScoreLever, string> = {
 // about; plain PA Score levers stay zinc.
 const LEVER_STYLES: Record<ScoreLever, string> = {
   'agent-ready': 'border-emerald-400/40 bg-emerald-400/5 text-emerald-300',
-  'AI-native': 'border-emerald-400/40 bg-emerald-400/5 text-emerald-300',
+  'Built-in AI': 'border-emerald-400/40 bg-emerald-400/5 text-emerald-300',
   'API quality': 'border-emerald-400/40 bg-emerald-400/5 text-emerald-300',
   'PA Score': 'border-zinc-700 bg-zinc-900 text-zinc-400',
 }
