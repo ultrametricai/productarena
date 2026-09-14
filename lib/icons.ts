@@ -40,6 +40,12 @@ const THEME_RULES: Array<[RegExp, string]> = [
   [/auth|sso|mfa|passwordless|credential|rbac|permission|tenan|key-management|session-management/, '🔑'],
   [/compliance|governance|audit|policy|licensing|trust|legal|pci/, '⚖️'],
   [/contract|esignature|document-automation|incorporation|registered-agent/, '📜'],
+  // Error tracking & expense management arenas
+  [/error|crash|grouping|regression/, '🚨'],
+  [/sourcemap|symbolicat/, '🗺️'],
+  [/scrubbing/, '🔒'],
+  [/^receipts-|reimburs/, '🧾'],
+  [/travel|trip-/, '✈️'],
   // Agents & AI
   [/agent|autonom|human-in-the-loop|human-oversight|orchestration|nl-task|copilot/, '🤖'],
   [/memory|recall|graph-entity|context/, '🧠'],

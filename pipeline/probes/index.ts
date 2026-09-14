@@ -54,6 +54,8 @@ import { probes as modelGateways } from './model-gateways'
 import { probes as equityManagement } from './equity-management'
 import { probes as aiAssistants } from './ai-assistants'
 import { probes as aiResearchAgents } from './ai-research-agents'
+import { probes as errorTracking } from './error-tracking'
+import { probes as expenseManagement } from './expense-management'
 
 export type { LocalProbe } from './types'
 
@@ -103,4 +105,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'equity-management': equityManagement,
   'ai-assistants': aiAssistants,
   'ai-research-agents': aiResearchAgents,
+  'error-tracking': errorTracking,
+  'expense-management': expenseManagement,
 }

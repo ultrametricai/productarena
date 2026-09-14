@@ -51,6 +51,8 @@ const NAV_LABELS: Record<string, string> = {
   "auth-platforms": "Auth",
   "workflow-automation": "Workflows",
   "observability": "Observability",
+  "error-tracking": "Errors",
+  "expense-management": "Expenses",
   "mcp-infrastructure": "MCP infra",
   "browser-agents": "Browser agents",
   "ai-memory": "Memory",
