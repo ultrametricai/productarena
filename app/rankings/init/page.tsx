@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import InitIndexTable, { buildInitIndex } from '@/components/InitIndexTable'
+import RankingsNav from '@/components/RankingsNav'
 import { loadAll } from '@/lib/data'
 
 export function generateMetadata(): Metadata {
@@ -52,6 +53,7 @@ export default function InitRankingPage() {
         </p>
       </div>
       <InitIndexTable categories={categories} />
+      <RankingsNav current="init" />
     </div>
   )
 }
