@@ -60,7 +60,7 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
         <p className="mt-3 max-w-2xl text-zinc-400">{def.tagline}</p>
         <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
           {tasks.length} processes · {ceiling.totalSteps} steps end to end
-          {/* Admin-only (Ory allowlist or the pa-admin localStorage switch) — renders nothing
+          {/* Admin-only (session allowlist or the pa-admin localStorage switch) — renders nothing
               for everyone else. The manifest it hands off is public regardless. */}
           <DoViaAfk manifestUrl={chainManifestUrl(def.id)} />
         </p>

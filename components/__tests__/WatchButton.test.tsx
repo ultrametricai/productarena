@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Session } from '@/lib/session'
 
-// WatchButton's gate is the Ory session (lib/session.ts) — swap the hook for a controllable
+// WatchButton's gate is the WorkOS session (lib/session.ts) — swap the hook for a controllable
 // stub so each test picks the session state without a network.
 const sessionStub = vi.hoisted(() => ({ current: { state: 'loading' } as Session }))
 vi.mock('@/lib/session', () => ({
