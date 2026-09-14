@@ -274,7 +274,10 @@ export default async function ProductPage({
           <GeoMark seed="themes" title="By theme — the product's score on each story theme" size={18} className="text-zinc-500" />
           By theme
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        {/* grid-cols-1 (not the bare implicit column): Tailwind's template is minmax(0, 1fr),
+            which lets the truncate/nowrap card rows shrink — the implicit auto column sizes to
+            max-content and horizontally scrolled the whole page at 375px. */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {byTheme.map(([t]) => {
             const themeScore = entry.themeScores[t] ?? null
             // The old per-theme anchors died with the vertical list — the sortable table below
