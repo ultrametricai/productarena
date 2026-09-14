@@ -33,6 +33,9 @@ export function stripSgr(s: string): string {
   return s.replace(/\x1b\[[0-9;]*m/g, '')
 }
 
+// Which credential tier a probe/call ran under (worker's handleMcpProbe `auth` field).
+export type McpProbeAuth = 'keyless' | 'byo-key' | 'sandbox'
+
 // Sanitized summary returned by the worker's /api/mcp-probe (infra/cloudflare-proxy/worker.js
 // — probeMcpEndpoint + handleMcpProbe).
 export interface McpProbeResult {
@@ -40,6 +43,7 @@ export interface McpProbeResult {
   error?: string
   endpoint?: string
   probedAt?: string
+  auth?: McpProbeAuth
   reachable?: boolean
   authRequired?: boolean
   oauth?: boolean
@@ -55,6 +59,33 @@ export interface McpProbeResult {
   resourceName?: string
   scopes?: string[]
   authServers?: string[]
+  // Set when this endpoint has a curated read-only demo call (data/mcp-demo-calls.json) — the
+  // "▶ run a real call" affordance. Tool + label only; the args ship server-side.
+  demoCall?: { tool: string; label: string }
+  // Set when the operator has provisioned a DEMO_CRED_<PRODUCTID> wrangler secret — the
+  // "use our sandbox account" affordance (docs/TRY-IT-DEMO-ACCOUNTS.md).
+  sandboxAvailable?: boolean
+}
+
+// Sanitized summary of one curated demo tool call (worker's callMcpDemo via action: 'call').
+export interface McpCallResult {
+  ok?: boolean
+  error?: string
+  auth?: McpProbeAuth
+  reachable?: boolean
+  authRequired?: boolean
+  httpStatus?: number
+  handshake?: boolean
+  serverInfo?: { name: string; version: string }
+  call?: {
+    tool: string
+    label: string
+    ok: boolean
+    error?: string
+    isError?: boolean
+    resultText?: string
+    truncated?: boolean
+  }
 }
 
 // The copy-paste MCP client config for this product's documented endpoint — the "take it with
@@ -73,6 +104,14 @@ export function probeResultLines(result: McpProbeResult): string[] {
   if (!result.reachable) return ['← no response — endpoint unreachable from our edge right now']
 
   if (result.authRequired) {
+    if (result.auth && result.auth !== 'keyless') {
+      // An authenticated attempt that still hit the wall: the credential was rejected — say
+      // exactly that, never that "the server needs auth" (it had auth; it didn't accept it).
+      return [
+        `← HTTP ${result.httpStatus ?? 401} — the server did not accept this ${result.auth === 'sandbox' ? 'sandbox credential' : 'key'}`,
+        '  (some vendors only accept OAuth session tokens here, not API keys — check their MCP docs)',
+      ]
+    }
     const lines = [
       `← HTTP ${result.httpStatus ?? 401} unauthorized${result.oauth ? ' (OAuth)' : ''} — server is live, auth required`,
     ]
@@ -90,7 +129,7 @@ export function probeResultLines(result: McpProbeResult): string[] {
   }
 
   const lines = [
-    `← initialized — ${result.serverInfo?.name ?? 'unknown server'} v${result.serverInfo?.version ?? '?'} (protocol ${result.protocolVersion ?? '?'})`,
+    `← initialized — ${result.serverInfo?.name ?? 'unknown server'} v${result.serverInfo?.version ?? '?'} (protocol ${result.protocolVersion ?? '?'})${authSuffix(result.auth)}`,
     '→ tools/list',
   ]
   if (typeof result.toolCount === 'number') {
@@ -100,5 +139,36 @@ export function probeResultLines(result: McpProbeResult): string[] {
   } else {
     lines.push('← tools/list not answered keyless — tool catalog needs an authenticated session')
   }
+  return lines
+}
+
+function authSuffix(auth?: McpProbeAuth): string {
+  if (auth === 'byo-key') return ' — authenticated with your key'
+  if (auth === 'sandbox') return ' — authenticated with our sandbox account'
+  return ''
+}
+
+// Render one demo-call result (worker action: 'call') as terminal lines. Same honesty rules:
+// a rejected credential, a tool-level error, and a truncated result are all said out loud.
+export function callResultLines(result: McpCallResult): string[] {
+  if (result.error) return [`← call failed: ${result.error}`]
+  if (!result.reachable) return ['← no response — endpoint unreachable from our edge right now']
+  if (result.authRequired) {
+    return result.auth && result.auth !== 'keyless'
+      ? [`← HTTP ${result.httpStatus ?? 401} — the server did not accept this ${result.auth === 'sandbox' ? 'sandbox credential' : 'key'}`]
+      : [`← HTTP ${result.httpStatus ?? 401} — the server wants auth before it will take a tool call`]
+  }
+  if (!result.handshake) {
+    return [`← HTTP ${result.httpStatus ?? '???'} — endpoint responded, but not with an MCP handshake we understand`]
+  }
+  const call = result.call
+  if (!call) return ['← call failed: the server answered the handshake but the tool call never completed']
+  if (!call.ok) return [`← ${call.error ?? 'tool call failed'}`]
+  const lines = [
+    call.isError
+      ? `← the tool ran and returned an error result (that is the server talking, verbatim):`
+      : `← result${call.truncated ? ' (truncated to 2 KB — the demo is a taste, not an export)' : ''}:`,
+  ]
+  for (const line of (call.resultText ?? '').split('\n')) lines.push(`  ${line}`)
   return lines
 }

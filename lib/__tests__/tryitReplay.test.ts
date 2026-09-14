@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest'
 import { mcpEndpointFor } from '../mcpEndpoints'
 import { buildRecordedStories, hasTryIt, mcpDocsUrlFor, processesFeaturing } from '../tryit'
-import { mcpClientConfig, probeResultLines, replayCharCount, stripSgr } from '../tryitReplay'
+import { callResultLines, mcpClientConfig, probeResultLines, replayCharCount, stripSgr } from '../tryitReplay'
 import { loadCategory } from '../data'
 
 describe('replayCharCount', () => {
@@ -81,6 +81,54 @@ describe('probeResultLines', () => {
   it('says so when tools/list needed auth after a keyless initialize', () => {
     const lines = probeResultLines({ reachable: true, authRequired: false, handshake: true, serverInfo: { name: 'x', version: '1' }, protocolVersion: '2025-06-18' })
     expect(lines[2]).toMatch(/authenticated session/)
+  })
+
+  it('reports a rejected BYO key as a rejection, never as "auth required"', () => {
+    const lines = probeResultLines({ reachable: true, authRequired: true, httpStatus: 401, auth: 'byo-key' })
+    expect(lines[0]).toBe('← HTTP 401 — the server did not accept this key')
+    expect(lines.join('\n')).not.toMatch(/server is live, auth required/)
+    // sandbox credentials get named as ours, not the visitor's
+    expect(callResultLines({ reachable: true, authRequired: true, httpStatus: 403, auth: 'sandbox' })[0]).toMatch(/sandbox credential/)
+  })
+
+  it('labels an authenticated handshake with the tier that produced it', () => {
+    const base = { reachable: true, authRequired: false, handshake: true, serverInfo: { name: 'v', version: '1' }, protocolVersion: '2025-06-18' } as const
+    expect(probeResultLines({ ...base, auth: 'byo-key' })[0]).toMatch(/authenticated with your key$/)
+    expect(probeResultLines({ ...base, auth: 'sandbox' })[0]).toMatch(/authenticated with our sandbox account$/)
+    expect(probeResultLines({ ...base, auth: 'keyless' })[0]).not.toMatch(/authenticated/)
+  })
+})
+
+describe('callResultLines', () => {
+  const okCall = {
+    reachable: true,
+    authRequired: false,
+    handshake: true,
+    serverInfo: { name: 'vendor-mcp', version: '1' },
+    call: { tool: 'search_docs', label: 'search docs', ok: true, isError: false, resultText: 'line one\nline two', truncated: false },
+  }
+
+  it('renders a successful call result indented under an honest header', () => {
+    const lines = callResultLines(okCall)
+    expect(lines[0]).toBe('← result:')
+    expect(lines[1]).toBe('  line one')
+    expect(lines[2]).toBe('  line two')
+  })
+
+  it('discloses truncation and renders tool-level errors as the server talking', () => {
+    const truncated = callResultLines({ ...okCall, call: { ...okCall.call, truncated: true } })
+    expect(truncated[0]).toMatch(/truncated to 2 KB/)
+    const toolError = callResultLines({ ...okCall, call: { ...okCall.call, isError: true } })
+    expect(toolError[0]).toMatch(/returned an error result/)
+  })
+
+  it('reports transport failures, auth walls, and missing results honestly', () => {
+    expect(callResultLines({ error: 'rate limited' })[0]).toBe('← call failed: rate limited')
+    expect(callResultLines({ reachable: false })[0]).toMatch(/unreachable/)
+    expect(callResultLines({ reachable: true, authRequired: true, httpStatus: 401, auth: 'keyless' })[0]).toMatch(/wants auth before it will take a tool call/)
+    expect(callResultLines({ reachable: true, authRequired: false, handshake: false, httpStatus: 503 })[0]).toMatch(/HTTP 503/)
+    expect(callResultLines({ reachable: true, authRequired: false, handshake: true, serverInfo: { name: 'v', version: '1' } })[0]).toMatch(/never completed/)
+    expect(callResultLines({ ...okCall, call: { tool: 't', label: 'l', ok: false, error: 'server rejected the call (HTTP 500)' } })[0]).toBe('← server rejected the call (HTTP 500)')
   })
 })
 

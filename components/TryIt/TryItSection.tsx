@@ -33,7 +33,9 @@ export default function TryItSection({
       <p className="mb-3 text-xs text-zinc-400">
         See what an agent can do with {productName} before you ever sign up. Pick a story:
         recorded sessions replay real probe-harness transcripts;
-        {endpoint ? ' the live MCP handshake runs one real request from our edge, right now;' : ''}{' '}
+        {endpoint
+          ? ' the live MCP handshake runs real requests from our edge, right now — including, where the server allows it, one real read-only tool call (bring your own key for auth-gated servers);'
+          : ''}{' '}
         sandboxed self-drive sessions are designed and gated (
         <a
           href="https://github.com/ultrametricai/productarena/blob/main/docs/TRY-IT.md"
