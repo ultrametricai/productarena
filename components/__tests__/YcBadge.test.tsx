@@ -18,4 +18,15 @@ describe('YcBadge', () => {
     const { container } = render(<YcBadge ycBatch={undefined} />)
     expect(container.textContent).toBe('')
   })
+
+  it('links to the batch ranking page (lowercase code)', () => {
+    const { container } = render(<YcBadge ycBatch="X25" />)
+    expect(container.querySelector('a')?.getAttribute('href')).toBe('/yc/x25')
+  })
+
+  it('renders a plain span when clickable is false (for use inside another link)', () => {
+    const { container } = render(<YcBadge ycBatch="S22" clickable={false} />)
+    expect(container.querySelector('a')).toBeNull()
+    expect(screen.getByText('YC S22')).toBeDefined()
+  })
 })

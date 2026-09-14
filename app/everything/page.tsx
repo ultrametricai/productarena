@@ -42,6 +42,7 @@ export default function EverythingPage() {
         { href: '/rankings/init', label: 'Highest PA Score', note: 'all products' },
         { href: '/rankings/ai-native', label: 'Best built-in AI', note: 'all products' },
         { href: '/rankings/claims-integrity', label: 'Claims vs reality', note: 'all products' },
+        { href: '/yc', label: 'YC batches', note: 'tracked YC alumni per batch' },
       ],
     },
     {

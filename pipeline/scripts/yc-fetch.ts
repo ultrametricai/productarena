@@ -28,6 +28,16 @@ async function main() {
   const modern = all.filter((c) => MODERN_BATCHES.includes(c.batch))
   writeJson(path.join(CACHE_DIR, 'companies-modern.json'), modern)
 
+  // Preserve yc-classify's verdicts across refreshes: a re-fetch must never wipe the LLM-assigned
+  // mappedArena/proposedArena for companies we already classified (they'd all reset to null and
+  // force a full re-classification spend).
+  const previous = new Map<string, { mappedArena: string | null; proposedArena: string | null }>()
+  if (fs.existsSync(YC_MAP_PATH)) {
+    for (const c of YcMapSchema.parse(JSON.parse(fs.readFileSync(YC_MAP_PATH, 'utf8')))) {
+      previous.set(c.slug, { mappedArena: c.mappedArena, proposedArena: c.proposedArena })
+    }
+  }
+
   const distilled = modern.map((c) => ({
     name: c.name,
     slug: c.slug,
@@ -37,8 +47,8 @@ async function main() {
     website: c.website || c.url,
     oneLiner: c.one_liner ?? '',
     tags: Array.from(new Set([...(c.tags ?? []), ...(c.industries ?? [])])),
-    mappedArena: null,
-    proposedArena: null,
+    mappedArena: previous.get(c.slug)?.mappedArena ?? null,
+    proposedArena: previous.get(c.slug)?.proposedArena ?? null,
   }))
 
   const parsed = YcMapSchema.parse(distilled)
