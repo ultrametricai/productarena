@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import AiNativeIndexTable from '@/components/AiNativeIndexTable'
+import RankingsNav from '@/components/RankingsNav'
 import { loadAll } from '@/lib/data'
 
 export function generateMetadata(): Metadata {
@@ -38,6 +39,7 @@ export default function AiNativeRankingPage() {
         </p>
       </div>
       <AiNativeIndexTable categories={categories} />
+      <RankingsNav current="ai-native" />
     </div>
   )
 }

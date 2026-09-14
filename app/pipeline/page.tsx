@@ -81,6 +81,13 @@ export default function PipelinePage() {
           page is the standing list of them. {totals.probedPct}% of all cells are backed by a
           hands-on probe.
         </p>
+        <p className="mt-2 text-xs text-zinc-500">
+          The flip side of this page — which products&rsquo; verdicts rest on the MOST tested evidence — is its own
+          global ranking:{' '}
+          <Link href="/rankings/most-tested" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
+            most tested →
+          </Link>
+        </p>
       </div>
 
       <section className="grid gap-4 sm:grid-cols-3">

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import ClaimsIntegrityIndexTable from '@/components/ClaimsIntegrityIndexTable'
+import RankingsNav from '@/components/RankingsNav'
 import { loadAll } from '@/lib/data'
 
 export function generateMetadata(): Metadata {
@@ -40,6 +41,7 @@ export default function ClaimsIntegrityRankingPage() {
         </p>
       </div>
       <ClaimsIntegrityIndexTable categories={categories} />
+      <RankingsNav current="claims-integrity" />
     </div>
   )
 }
