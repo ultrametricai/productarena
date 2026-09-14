@@ -48,10 +48,10 @@ const THEME_RULES: Array<[RegExp, string]> = [
   [/mcp|tools-function|structured-tool|tool-curation|action-primitives|skill/, '🛠️'],
   // Money
   [/payment|checkout|payout|cards|spend|disputes|refund|accept/, '💳'],
-  [/banking|treasury|yield|equity|fundraising/, '🏦'],
+  [/banking|treasury|yield|equity|fundraising|cap-table/, '🏦'],
   [/payroll|benefits|contractor|hiring|onboarding-hiring/, '💰'],
   [/invoic|billing|bills|ledger|accounting|reconciliation|statements|coa|close-collaboration/, '🧾'],
-  [/pricing|cost|economics/, '💲'],
+  [/pricing|cost|economics|valuation|409a/, '💲'],
   [/tax|currency/, '🌐'],
   // Commerce & CRM
   [/catalog|inventory|storefront|commerce|b2b|wholesale|shipping|receipts/, '🛒'],
@@ -82,7 +82,7 @@ const THEME_RULES: Array<[RegExp, string]> = [
   // Platform & ecosystem
   [/api|sdk|webhook|connector|integration|ecosystem|plugin|extensib|marketplace|apps|embed|platform|headless|unified|registry|gateway|routing|protocols|clients|destinations|hosted-servers|serving|endpoints|functions|edge-compute/, '🔌'],
   [/open|oss|portability|ownership|local-first|standards/, '🔓'],
-  [/collab|team|sharing|multiplayer|workspace|multi-tenancy|orgs|multi-entity|community/, '👥'],
+  [/collab|team|sharing|multiplayer|workspace|multi-tenancy|orgs|multi-entity|community|stakeholder/, '👥'],
   // Product surface
   [/design|theming|visual|vector-editing|components|prototyping|ui|ux|ergonomics|customization|config|window|panes|keyboard|filters|controls|output-formats/, '🎨'],
   [/mobile|devices|cross-platform|desktop|fleet|teleoperation/, '📱'],
