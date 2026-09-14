@@ -128,7 +128,17 @@ export default function StacksPage() {
                         </p>
                       )}
                       {slot.kind === 'arena-top' && !slot.coPick && slot.runnerUpName && (
-                        <p className="mt-0.5 text-xs text-zinc-500">runner-up: {slot.runnerUpName}</p>
+                        <p className="mt-0.5 flex items-center gap-1.5 text-xs text-zinc-500">
+                          runner-up:{' '}
+                          {slot.runnerUpId && (
+                            <ProductLogoView
+                              product={{ id: slot.runnerUpId, name: slot.runnerUpName }}
+                              size={16}
+                              hasLogo={hasLogo(slot.runnerUpId)}
+                            />
+                          )}
+                          {slot.runnerUpName}
+                        </p>
                       )}
                     </td>
                     <td className="hidden max-w-[280px] px-3 py-2.5 align-top text-xs text-zinc-400 md:table-cell">

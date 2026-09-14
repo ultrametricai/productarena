@@ -32,10 +32,10 @@ export default function CoverageMapSection({ data, productId }: { data: Category
             {covered.size === 1 ? 'story' : 'stories'}
           </span>
         </h2>
+        {/* One line — where chips/story names link is self-evident on click. */}
         <p className="mt-1 text-xs text-zinc-500">
-          Where the cited evidence behind each covered verdict came from — derived from the same
-          citations the verdicts table shows, no extra judging. Chips link to the evidence URL;
-          story names jump to their verdict row.
+          Where the cited evidence behind each covered verdict came from — the same citations the
+          verdicts table shows, no extra judging.
         </p>
       </summary>
       <div className="mt-3 space-y-3">

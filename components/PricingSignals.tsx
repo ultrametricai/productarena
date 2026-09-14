@@ -81,9 +81,13 @@ export default function PricingSignals({ entry }: { entry?: ProductPricing }) {
             </li>
           ))}
         </ul>
-        <p className="mt-3 text-xs text-zinc-500">
-          Extracted verbatim from the vendor&rsquo;s own pricing page — hover a figure for the exact
-          quote. We never convert, average, or derive a price the page didn&rsquo;t print.
+        {/* One line — the never-derived guarantee rides the tooltip. */}
+        <p
+          className="mt-3 text-xs text-zinc-500"
+          title="We never convert, average, or derive a price the page didn't print."
+        >
+          Extracted verbatim from the vendor&rsquo;s own pricing page — hover a figure for the
+          exact quote.
         </p>
       </div>
     </div>

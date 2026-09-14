@@ -278,9 +278,7 @@ export default function MyStackBuilder({
           )}
           <p className="text-xs text-zinc-500">
             Every number is the arena leaderboard&rsquo;s published score; &ldquo;possible
-            overlap&rdquo; means exactly that, never &ldquo;remove it&rdquo;. Your stack is
-            stored in this browser only (localStorage) — it doesn&rsquo;t follow you across
-            devices; the share link carries it instead.
+            overlap&rdquo; means exactly that, never &ldquo;remove it&rdquo;.
           </p>
         </section>
       )}

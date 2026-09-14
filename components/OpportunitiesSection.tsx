@@ -119,12 +119,11 @@ export default function OpportunitiesSection({
         </p>
       )}
       <p className="mt-3 border-t border-zinc-800/70 pt-3 text-xs text-zinc-500">
-        Think a verdict here is wrong? Every row in the verdicts table has a Flag link, and vendors
-        can publish a verified response next to the verdict — see the{' '}
+        Think a verdict is wrong? Every verdicts-table row has a Flag link — see the{' '}
         <Link href="/methodology" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
           methodology
         </Link>
-        . Scores move when the evidence does.
+        .
       </p>
     </details>
   )

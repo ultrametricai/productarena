@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import ProductLogoView from '@/components/ProductLogoView'
 import { loadAll } from '@/lib/data'
+import { hasLogo } from '@/lib/logos'
 import {
   CLOSE_RACE_THRESHOLD, loadPredictions, PREDICTION_WINDOW_DAYS, type PredictionQuestion,
 } from '@/lib/predictions'
@@ -62,7 +64,12 @@ export default function PredictionsPage() {
     const score = currentScore(q.arena, productId)
     return (
       <span>
-        <Link href={`/arena/${q.arena}/product/${productId}`} className={PRODUCT_LINK}>
+        <Link href={`/arena/${q.arena}/product/${productId}`} className={`inline-flex items-center gap-1.5 ${PRODUCT_LINK}`}>
+          <ProductLogoView
+            product={{ id: productId, name: productName(q.arena, productId) }}
+            size={16}
+            hasLogo={hasLogo(productId)}
+          />
           {productName(q.arena, productId)}
         </Link>{' '}
         <span className="font-mono text-xs text-zinc-500">

@@ -28,6 +28,20 @@ export interface CompareProduct {
 
 export const MAX_COMPARE = 6
 
+// What /compare shows before the user picks anything: a classic head-to-head (Linear vs Asana)
+// instead of an empty shell, so the page demonstrates itself on first load. Only used when the
+// `?p=` param is entirely absent — `?p=` present (even empty) is an explicit selection and is
+// respected as-is, so deep links and "remove everything" both behave.
+export const DEFAULT_COMPARE_IDS = ['linear', 'asana']
+
+// Initial selection for CompareBuilder: absent `?p=` → the default pairing (filtered against
+// the live product set, so a renamed id degrades to a smaller default instead of erroring);
+// present `?p=` → parsed as usual.
+export function initialCompareIds(raw: string | null, validIds: ReadonlySet<string>): string[] {
+  if (raw === null) return DEFAULT_COMPARE_IDS.filter((id) => validIds.has(id))
+  return parseCompareParam(raw, validIds)
+}
+
 // Parses `?p=stripe,mercury,claude-code` into a deduped, validated id list capped at
 // MAX_COMPARE. Unknown ids (stale links, typos) are dropped silently rather than erroring —
 // a share link should degrade to whatever subset still exists.
