@@ -47,13 +47,23 @@ function judgedCard(ref: FamilyProductRef | null) {
     const product = data.products.find((p) => p.id === entry.productId)
     if (!product) return null
     // Head-to-head links against this line's arena rivals, leaderboard order — the canonical
-    // /vs mirror of the arena battle pages (see app/sitemap.ts's comment).
+    // /vs mirror of the arena battle pages (see app/sitemap.ts's comment). /vs/[slug] only
+    // prerenders the slug in the battle record's stored (a, b) order (dynamicParams = false),
+    // so resolve each pair against rankings.battles — forward or reverse — and drop pairs with
+    // no battle page rather than emitting a guessed link that 404s.
+    const liveSlugs = new Set(data.rankings.battles.map((b) => battleSlug(b.a, b.b)))
     const battles = data.rankings.leaderboard
       .filter((e) => e.productId !== entry.productId)
-      .map((rival) => ({
-        rivalName: data.products.find((p) => p.id === rival.productId)?.name ?? rival.productId,
-        href: `/vs/${battleSlug(entry.productId, rival.productId)}`,
-      }))
+      .flatMap((rival) => {
+        const forward = battleSlug(entry.productId, rival.productId)
+        const backward = battleSlug(rival.productId, entry.productId)
+        const slug = liveSlugs.has(forward) ? forward : liveSlugs.has(backward) ? backward : null
+        if (!slug) return []
+        return [{
+          rivalName: data.products.find((p) => p.id === rival.productId)?.name ?? rival.productId,
+          href: `/vs/${slug}`,
+        }]
+      })
     return {
       arenaId: data.category.id,
       arenaName: data.category.name,
