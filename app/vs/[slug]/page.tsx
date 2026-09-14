@@ -102,9 +102,6 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           {a.name} <span className="text-zinc-400">vs</span> {b.name}
         </h1>
-        <p className="mt-1 text-xs text-zinc-500">
-          Evidence-tested comparison — PA Score, agent-readiness, and every judged round.
-        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
