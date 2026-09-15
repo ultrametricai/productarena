@@ -9,6 +9,12 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Ask | Status |
 |---|---|
 | Scrollbar tracks transparent, not white | shipped 2026-09-15 |
+| Footer "Add your product" → actually goes to GitHub (CONTRIBUTING.md), scanner relabeled "Test your product" | shipped 2026-09-15 |
+| Pricing tier (free/paid/enterprise) visible in user story table | shipped 2026-09-15 (tier chips + filter, pricing-tier lane) |
+| Enterprise flag for sales-led vendors | in-lane (enterprise-curation) — badge mechanism shipped 2026-09-15, curation lane verifying vendors live |
+| Remove /notes (Arena Notes) — not useful | shipped 2026-09-15 (route, lib, generator, drafts, feed merge all removed) |
+| ALL YC batches covered for agentic/famous companies | in-lane (yc-coverage-audit) |
+| Bring hardware section (processors, GPUs) into the arenas | in-lane (hardware-arenas) |
 | Remove "Experiment — not part of the evidence-judged arenas…" banner from /experiments pages | shipped 2026-09-15 |
 | Remove "Evidence as of … · story coverage …" footer line on product pages | shipped 2026-09-15 |
 | Move "Try it" section below "Products" (family) section on vendor pages | shipped 2026-09-15 |

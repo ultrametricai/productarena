@@ -1,10 +1,9 @@
 // RSS 2.0 feed over the site's honest change record: derived changelog events (overtakes,
-// score moves, launches — see lib/changelog.ts) plus published Arena Notes. Everything here is
+// score moves, launches — see lib/changelog.ts). Everything here is
 // re-derived from committed history files on each build, so the feed can never claim a change
 // the changelog page wouldn't also show. Pure functions take plain inputs for tests;
 // buildFeedItems() at the bottom is the thin fs-backed assembler the route uses.
 import { buildChangelog, type ChangeEvent } from './changelog'
-import { loadPublishedNotes } from './notes'
 import { provenanceLine } from './provenance'
 import { SITE_URL } from './site'
 
@@ -100,17 +99,10 @@ export function renderRss(items: FeedItem[]): string {
   ].join('\n')
 }
 
-/** Newest-first merge of changelog events and published Arena Notes, capped. */
+/** Newest-first changelog events, capped. (Arena Notes retired 2026-09-15 — founder call.) */
 export function buildFeedItems(max: number = FEED_MAX_ITEMS): FeedItem[] {
-  const events = buildChangelog().events.map(eventToItem)
-  const notes: FeedItem[] = loadPublishedNotes().map((n) => ({
-    title: `Arena Notes: ${n.title}`,
-    link: `${SITE_URL}/notes`,
-    date: n.date,
-    description: 'A short, citation-backed essay on what moved in the arenas and why.',
-    guid: `note:${n.date}`,
-  }))
-  return [...events, ...notes]
+  return buildChangelog()
+    .events.map(eventToItem)
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
     .slice(0, max)
 }

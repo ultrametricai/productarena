@@ -31,6 +31,7 @@ import ThemeIcon from '@/components/ThemeIcon'
 import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
 import WatchButton from '@/components/WatchButton'
+import EnterpriseBadge from '@/components/EnterpriseBadge'
 import YcBadge from '@/components/YcBadge'
 import {
   groupInOrder, loadAll, loadCategory, type CategoryData,
@@ -191,6 +192,7 @@ export default async function ProductPage({
               <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">{product.name}</h1>
               {product.type === 'oss' && <OssPill />}
               <YcBadge ycBatch={product.ycBatch} />
+              <EnterpriseBadge enterprise={product.enterprise} />
               <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
             </div>
             {/* The OssPill beside the name is the one open-source signal — repeating "open
