@@ -36,6 +36,10 @@ const CACHE_DIR = path.join(ROOT, 'pipeline', 'cache', 'yc')
 const FEED_CACHE = path.join(CACHE_DIR, 'companies-all.json')
 const YC_MAP_PATH = path.join(ROOT, 'data', 'yc-map.json')
 const QUEUE_PATH = path.join(ROOT, 'data', 'yc-queue.json')
+// Human bring-up verdicts the crawler must remember: candidates that were verified and REJECTED
+// (dead brand, no agent surface, no honest arena fit) stay out of every future queue instead of
+// resurfacing weekly. Slug -> { date, reason }. Append here when a bring-up excludes a nominee.
+const REJECTIONS_PATH = path.join(ROOT, 'data', 'yc-rejections.json')
 
 // Oldest batch year the founder asked for: "the last 10 years", i.e. Winter 2016 onward.
 const DEFAULT_FROM_YEAR = 2016
@@ -81,6 +85,7 @@ export const YcQueueSchema = z.object({
       active: z.number(),
       alreadyTracked: z.number(),
       noExistingArenaFit: z.number(),
+      rejected: z.number(),
       candidates: z.number(),
     }),
   ),
@@ -270,6 +275,11 @@ async function main() {
     : []
   const classified = new Map(ycMap.map((c) => [c.slug, c]))
 
+  // Bring-up rejections (data/yc-rejections.json): human-verified "never nominate again" verdicts.
+  const rejections: Record<string, { date: string; reason: string }> = fs.existsSync(REJECTIONS_PATH)
+    ? JSON.parse(fs.readFileSync(REJECTIONS_PATH, 'utf8'))
+    : {}
+
   // Window: every real "<Season> <Year>" batch within [fromYear, toYear], newest first.
   const inWindow = all.filter((c) => {
     const m = /^(?:Winter|Spring|Summer|Fall) (\d{4})$/.exec(c.batch)
@@ -296,8 +306,13 @@ async function main() {
 
     let alreadyTracked = 0
     let noFit = 0
+    let rejectedCount = 0
     let count = 0
     for (const c of active) {
+      if (rejections[c.slug]) {
+        rejectedCount++
+        continue
+      }
       const domain = normalizeDomain(c.website)
       if (!domain) {
         noFit++
@@ -357,6 +372,7 @@ async function main() {
       active: active.length,
       alreadyTracked,
       noExistingArenaFit: noFit,
+      rejected: rejectedCount,
       candidates: count,
     })
   }
@@ -388,7 +404,7 @@ async function main() {
   console.log(`\nPer-batch (newest first):`)
   for (const b of batchStats) {
     console.log(
-      `  ${b.code}  active ${String(b.active).padStart(3)}  tracked ${String(b.alreadyTracked).padStart(3)}  no-fit ${String(b.noExistingArenaFit).padStart(4)}  candidates ${b.candidates}`,
+      `  ${b.code}  active ${String(b.active).padStart(3)}  tracked ${String(b.alreadyTracked).padStart(3)}  no-fit ${String(b.noExistingArenaFit).padStart(4)}  rejected ${b.rejected}  candidates ${b.candidates}`,
     )
   }
   console.log(`\nTop 15:`)
