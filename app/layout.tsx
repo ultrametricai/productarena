@@ -86,6 +86,9 @@ const NAV_LABELS: Record<string, string> = {
   "document-extraction": "Doc extraction",
   "equity-management": "Equity",
   "agentic-commerce": "Agent commerce",
+  "security-keys": "Security keys",
+  "authenticator-apps": "2FA apps",
+  "game-engines": "Game engines",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
