@@ -87,6 +87,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Founder processes + curated chains (see lib/processes.ts and app/processes/*).
   entries.push({ url: `${SITE_URL}/processes`, lastModified: now })
+  entries.push({ url: `${SITE_URL}/processes/operating-rhythm`, lastModified: now })
   for (const task of loadProcesses()) {
     entries.push({ url: `${SITE_URL}/processes/${processSlug(task.title)}`, lastModified: now })
   }

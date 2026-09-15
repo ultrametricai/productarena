@@ -94,6 +94,7 @@ const NAV_LABELS: Record<string, string> = {
   "security-keys": "Security keys",
   "authenticator-apps": "2FA apps",
   "game-engines": "Game engines",
+  "email-marketing": "Email Mktg",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
@@ -291,6 +292,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   { id: "best-api", name: "Best API", label: "ranking", href: "/rankings/best-api" },
                   { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
                   { id: "missing", name: "Missing startups", label: "gaps", href: "/missing" },
+                  { id: "operating-rhythm", name: "Operating rhythm", label: "processes", href: "/processes/operating-rhythm" },
                   { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
                   { id: "yc", name: "YC batches", label: "ranking", href: "/yc" },
                   { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },

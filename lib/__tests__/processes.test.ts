@@ -2,8 +2,9 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { loadCategory } from '@/lib/data'
 import {
-  buildSimSteps, chainTasks, computeCeiling, findProcessBySlug, formatMinutes, gapThemes,
-  loadChains, loadProcesses, processSlug, siteCeiling, slugAliasFor, taskCeiling, VENDOR_ARENA,
+  buildSimSteps, CADENCE_META, CADENCE_ORDER, cadenceRank, chainTasks, computeCeiling,
+  findProcessBySlug, formatMinutes, gapThemes, loadChains, loadProcesses, processesByCadence,
+  processSlug, siteCeiling, slugAliasFor, taskCeiling, VENDOR_ARENA,
   VENDOR_SIGNUP_URL, vendorChipInfo, vendorProductId, vendorRoles,
   type DagNode,
 } from '@/lib/processes'
@@ -68,6 +69,41 @@ describe('corpus', () => {
     for (const [vendor, url] of Object.entries(VENDOR_SIGNUP_URL)) {
       expect(url.startsWith('https://'), `${vendor} signup URL must be https`).toBe(true)
     }
+  })
+
+  it('every process declares a cadence, and every cadence bucket is honestly non-trivial', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const valid = new Set<string>(CADENCE_ORDER)
+    for (const t of tasks) {
+      expect(valid.has(t.cadence), `${t.id} (${t.title}) has invalid cadence "${t.cadence}"`).toBe(true)
+    }
+    // The operating rhythm is only an honest x-ray if every recurring bucket has real corpus
+    // members — daily code shipping through annual filings — not just a wall of one-time setup.
+    const groups = processesByCadence(tasks)
+    expect(groups.map((g) => g.cadence)).toEqual([...CADENCE_ORDER])
+    expect(groups.reduce((n, g) => n + g.tasks.length, 0)).toBe(tasks.length)
+    // Anchor the honest curation: the software loop ships daily, payroll runs monthly (the
+    // corpus DAG says "regular monthly payroll run"), franchise tax is annual, incorporation
+    // happens once, and a churn save only fires when a customer cancels.
+    const cadenceOf = (id: string) => tasks.find((t) => t.id === id)!.cadence
+    expect(cadenceOf('sw_001')).toBe('daily')
+    expect(cadenceOf('hr_002')).toBe('monthly')
+    expect(cadenceOf('fin_002')).toBe('monthly')
+    expect(cadenceOf('tax_001')).toBe('annual')
+    expect(cadenceOf('form_001')).toBe('once')
+    expect(cadenceOf('growth_002')).toBe('event-driven')
+    expect(cadenceOf('scale_005')).toBe('quarterly')
+    expect(cadenceOf('sw_002')).toBe('weekly')
+  })
+
+  it('cadence display helpers cover every bucket in board order', () => {
+    for (const c of CADENCE_ORDER) {
+      expect(CADENCE_META[c].label).toBeTruthy()
+      expect(CADENCE_META[c].blurb).toBeTruthy()
+    }
+    expect(CADENCE_ORDER.map(cadenceRank)).toEqual(CADENCE_ORDER.map((_, i) => i))
+    expect(cadenceRank('daily')).toBe(0)
+    expect(cadenceRank('once')).toBe(CADENCE_ORDER.length - 1)
   })
 
   it('contains no scrubbed vendor names', () => {

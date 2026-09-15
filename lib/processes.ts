@@ -3,13 +3,13 @@ import path from 'node:path'
 import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
 import { resolveGapStep } from './gapClosers'
-import type { GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
+import type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
 import { formatMinutes, gapWhy } from './processSim'
 
 // Client-safe prop shapes + display helpers live in lib/processSim.ts (no node:fs) so the
 // simulator client component can import them; re-exported here for server-side callers.
 export { formatMinutes, gapWhy }
-export type { GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
+export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
 // The founder-process corpus (data/processes.json): 106 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
@@ -75,6 +75,12 @@ export const ProcessTaskSchema = z.object({
   slugAliases: SlugAliasSchema.array().optional(),
   description: z.string().min(1),
   phase: z.string().min(1),
+  // How often this process actually recurs in a running company — the operating-rhythm axis
+  // (/processes/operating-rhythm). Curated per process, honestly: setup/formation work is
+  // 'once', trigger-driven work (a hire, a cancellation, a new vendor) is 'event-driven',
+  // and the rest is the real calendar (payroll runs monthly per the corpus DAG, books close
+  // monthly, boards meet quarterly, franchise tax is annual).
+  cadence: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'annual', 'event-driven', 'once']),
   complexity: z.enum(['simple', 'moderate', 'complex', 'very_complex']),
   category: z.string().min(1),
   supportLevel: z.enum(['full', 'partial', 'manual_guide']),
@@ -117,6 +123,35 @@ export const PHASE_ORDER = [
 export function phaseRank(phase: string): number {
   const i = (PHASE_ORDER as readonly string[]).indexOf(phase)
   return i === -1 ? PHASE_ORDER.length : i
+}
+
+// Display order for the operating-rhythm board: tightest loop first, then the trigger-driven
+// work, then the one-time setup tail. This is the "what really happens in a company" axis.
+export const CADENCE_ORDER = ['daily', 'weekly', 'monthly', 'quarterly', 'annual', 'event-driven', 'once'] as const
+
+export const CADENCE_META: Record<Cadence, { label: string; blurb: string }> = {
+  daily: { label: 'Daily', blurb: 'The loop that never stops — code ships, issues move, email goes out.' },
+  weekly: { label: 'Weekly', blurb: 'The week-shaped rituals: releases, content, outbound, goal check-ins.' },
+  monthly: { label: 'Monthly', blurb: 'The money drumbeat: payroll runs, books close, invoices go out, runway gets read.' },
+  quarterly: { label: 'Quarterly', blurb: 'Governance season: board meetings, minutes, OKRs, review cycles.' },
+  annual: { label: 'Annual', blurb: 'The filing calendar: franchise tax, returns, 1099s, insurance, 409A.' },
+  'event-driven': { label: 'When it happens', blurb: 'No calendar — a hire, a cancellation, a new vendor, a round sets these off.' },
+  once: { label: 'Once', blurb: 'Setup and formation — done once, then the company runs on everything above.' },
+}
+
+export function cadenceRank(cadence: Cadence): number {
+  return (CADENCE_ORDER as readonly string[]).indexOf(cadence)
+}
+
+// The rhythm board: every process grouped by cadence, in CADENCE_ORDER, phases preserved
+// within each bucket so the groups read in company-lifecycle order.
+export function processesByCadence(tasks: ProcessTask[]): Array<{ cadence: Cadence; tasks: ProcessTask[] }> {
+  return CADENCE_ORDER.map((cadence) => ({
+    cadence,
+    tasks: tasks
+      .filter((t) => t.cadence === cadence)
+      .sort((a, b) => phaseRank(a.phase) - phaseRank(b.phase) || a.title.localeCompare(b.title)),
+  })).filter((g) => g.tasks.length > 0)
 }
 
 const DEFAULT_DIR = () => path.join(process.cwd(), 'data')

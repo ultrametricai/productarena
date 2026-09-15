@@ -11,7 +11,7 @@ import { hasLogo } from '@/lib/logos'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
-  buildSimSteps, findProcessBySlug, loadProcesses, processSlug, slugAliasFor, taskCeiling, vendorRoles,
+  buildSimSteps, CADENCE_META, findProcessBySlug, loadProcesses, processSlug, slugAliasFor, taskCeiling, vendorRoles,
 } from '@/lib/processes'
 import { SITE_URL } from '@/lib/site'
 
@@ -98,6 +98,14 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">
             {SUPPORT_LABELS[task.supportLevel] ?? task.supportLevel}
           </span>
+          {/* How often this really recurs in a running company — links to the rhythm board. */}
+          <Link
+            href="/processes/operating-rhythm"
+            title={`${CADENCE_META[task.cadence].label} — ${CADENCE_META[task.cadence].blurb} See the full operating rhythm.`}
+            className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+          >
+            🔁 {CADENCE_META[task.cadence].label.toLowerCase()}
+          </Link>
           {task.hasAsyncSteps && (
             <span className="rounded-full border border-zinc-800 px-2 py-0.5 text-zinc-500">⏳ has async waits</span>
           )}

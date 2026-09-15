@@ -102,6 +102,8 @@ export function buildStackEntries(stacks: StackSearchSource[], keywords?: Record
 // The key tool pages worth surfacing in ⌘K. Labels/sublabels live here (they're UI copy, not
 // data); alias phrases come from data/search-aliases.json `pages`, keyed by href.
 const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [
+  { href: '/processes', label: 'Processes', sublabel: 'Every founder process and its agent ceiling' },
+  { href: '/processes/operating-rhythm', label: 'Operating rhythm', sublabel: 'What a startup actually does, daily through annual' },
   { href: '/global', label: 'Capability adoption', sublabel: 'MCP, llms.txt & more across the industry' },
   { href: '/missing', label: 'Missing startups', sublabel: 'Arena gaps where agent startups are missing' },
   { href: '/compare', label: 'Compare', sublabel: 'Any products, side by side' },
