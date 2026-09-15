@@ -16,7 +16,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | YC pill in YC orange | shipped 2026-09-14 |
 | 100 functional improvements | shipped 2026-09-14 (46 done, 54 catalogued in docs/FUNCTIONAL-100.md) |
 | 50 growth ideas doc + execution start | shipped 2026-09-14 (doc) — execution rolling |
-| Pricing-tier dimension on user stories (free/paid/enterprise) fleet-wide | open — queued next wave (big LLM pass) |
+| Pricing-tier dimension on user stories (free/paid/enterprise) fleet-wide | shipped 2026-09-15 — 1,180 cells classified over 70 arenas (803 free/295 paid/82 enterprise), annotation-only, tier chips + filters + "what's free" lines live |
 | Stripe-style exhaustive passes for major startups + hot repos (incl. buzz) | open — queued next wave |
 | Remaining payments arenas: card-issuing, tax-automation, banking-as-a-service, marketplace/payfac | open — after billing+fraud land |
 | Payments roster expansion (Checkout.com, Mollie, Airwallex, Paddle, Lemon Squeezy, Polar) | shipped 2026-09-15 — 5 arena rows (Polar debuts #2 @ 42.9; Lemon Squeezy = Stripe family entry, acquired 2024 → Stripe Managed Payments) |
