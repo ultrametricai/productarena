@@ -1,7 +1,6 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 
 // Shared control strip for the ranking tables (homepage MegaTable + per-arena ArenaTable) —
 // one component so "rank by" presets, the scope <select>, the text filter, and the live
@@ -90,8 +89,8 @@ export default function TableControls<C extends string>({
           className="ml-auto min-w-0 flex-1 basis-16 max-w-[14rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-emerald-400/60 focus:outline-none sm:flex-none sm:w-48"
         />
         {after && <span className="text-xs text-zinc-400">{after}</span>}
-        {/* Column-header tooltips are hover-only — this is the tappable route to definitions. */}
-        <ColumnsHelpLink />
+        {/* Founder 2026-09-15: no "?" beside the filter — the methodology link in the footer and
+            the column tooltips carry the definitions; the chip was visual noise. */}
       </div>
     </>
   )
