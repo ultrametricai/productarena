@@ -8,6 +8,8 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| 24h Stripe-depth backfill over stale top of spike queue | in-flight 2026-09-16 — 8 parallel lanes × ~19 products (149 total; vercel/cloudflare/cursor excluded, owned by pending exhaustive lane); 68 freshly-passed products stamped done in queue |
+| Daily spike-engine cron after backfill | running — local daily 04:23 job (session-scoped, 7-day expiry); DURABLE path = GitHub Actions .github/workflows/spike-engine.yml, needs founder to add ANTHROPIC_API_KEY repo secret |
 | Hardware arenas: n/a on non-applicable sub-scores (agent-ready, API) keeping PA Score | shipped 2026-09-15 — naDimensions on processors+gpus; n/a pills/cells on vendor page + arena + everything tables |
 | YC S09 pill wraps to two lines | shipped 2026-09-15 (whitespace-nowrap) |
 | Product name column truncates too early | shipped 2026-09-15 (min-width raised on homepage + arena tables) |
