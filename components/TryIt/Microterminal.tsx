@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import CopyButton from '@/components/CopyButton'
 import {
-  callResultLines, mcpClientConfig, probeResultLines, replayCharCount,
-  type McpCallResult, type McpProbeResult, type TryItStory,
+  callResultLines, mcpClientConfig, probeResultLines, replayCharCount, tryResultLines,
+  type McpCallResult, type McpProbeResult, type TryItStory, type TryProbeResult,
 } from '@/lib/tryitReplay'
 
 // The "Try it" microterminal: a locked-down terminal-styled window on the product page that
@@ -24,6 +24,11 @@ import {
 // Same hardened-endpoint calling pattern as components/SubmitScan.tsx.
 const PROBE_ENDPOINT = 'https://ultrametric.ai/productarena/api/mcp-probe'
 
+// "Run live" for recorded stories whose exact command is pure HTTP: the worker re-runs it as a
+// fetch of a fixed URL from the committed live-probe manifest and answers with a sanitized
+// summary. This component only ever sends the three path ids — never a URL, never a command.
+const TRY_ENDPOINT = 'https://ultrametric.ai/productarena/api/try'
+
 const LIVE_ID = '__live-mcp__'
 
 interface LiveProbe {
@@ -42,10 +47,15 @@ interface AuthChoice {
 }
 
 export default function Microterminal({
+  arena,
+  product,
   productName,
   stories,
   probe,
 }: {
+  /** Arena + product ids — with a story's probe id these form the /api/try lookup key. */
+  arena: string
+  product: string
   productName: string
   stories: TryItStory[]
   probe: LiveProbe | null
@@ -61,6 +71,7 @@ export default function Microterminal({
   const [liveResult, setLiveResult] = useState<McpProbeResult | null>(null) // last completed probe
   const [keyDraft, setKeyDraft] = useState('') // BYO key — memory only, never persisted
   const [showKeyForm, setShowKeyForm] = useState(false)
+  const [liveRanIds, setLiveRanIds] = useState<Set<string>>(new Set()) // stories whose terminal currently shows a live re-run
   const startRef = useRef(0)
   const skippedRef = useRef(false)
   const runRef = useRef(0) // invalidates in-flight probe responses on story switch
@@ -138,6 +149,27 @@ export default function Microterminal({
       })
   }, [liveResult, postProbe, probe])
 
+  // ONE live re-run of the active recorded story's exact command (worker /api/try — the fixed
+  // fetch from the committed manifest). Appends to the replay instead of resetting it, under an
+  // explicit LIVE divider so recorded and live lines can never be confused.
+  const runLiveTry = useCallback(() => {
+    const story = stories.find((s) => s.id === activeId)
+    if (!story?.live) return
+    runRef.current += 1
+    const run = runRef.current
+    setLiveBusy(true)
+    setTarget((prev) => `${prev.endsWith('\n') || prev === '' ? prev : `${prev}\n`}\n──── LIVE ── re-running this exact probe from our edge, right now ────\n$ ${story.command}\n`)
+    fetch(`${TRY_ENDPOINT}/${encodeURIComponent(arena)}/${encodeURIComponent(product)}/${encodeURIComponent(story.id)}`, { method: 'POST' })
+      .then(async (resp) => (await resp.json()) as TryProbeResult)
+      .catch(() => ({ error: 'could not reach our edge — try again in a moment', reachable: false }) as TryProbeResult)
+      .then((result) => {
+        if (runRef.current !== run) return // user switched stories mid-flight
+        setLiveBusy(false)
+        setLiveRanIds((prev) => new Set(prev).add(story.id))
+        setTarget((prev) => `${prev}${tryResultLines(result).join('\n')}\n`)
+      })
+  }, [activeId, arena, product, stories])
+
   // Kick off (or re-run) the active story.
   const runStory = useCallback((id: string) => {
     if (id === LIVE_ID) {
@@ -147,6 +179,12 @@ export default function Microterminal({
     runRef.current += 1
     setActiveId(id)
     setLiveBusy(false)
+    setLiveRanIds((prev) => {
+      if (!prev.has(id)) return prev
+      const next = new Set(prev)
+      next.delete(id) // a fresh replay wipes any appended live output — the badge must follow
+      return next
+    })
     const story = stories.find((s) => s.id === id)
     beginRun(story?.transcript ?? '')
   }, [beginRun, runProbe, stories])
@@ -195,9 +233,20 @@ export default function Microterminal({
       {/* Story menu: the prefixed user stories each recording proves, plus the one live probe. */}
       <div className="flex flex-wrap items-center gap-2">
         {stories.map((story) => (
-          <button key={story.id} type="button" onClick={() => runStory(story.id)} title={`Play the recorded proof: ${story.title}`} className={menuButton(activeId === story.id)}>
+          <button
+            key={story.id}
+            type="button"
+            onClick={() => runStory(story.id)}
+            title={story.live ? `Play the recorded proof: ${story.title} — this one can also re-run live from our edge` : `Play the recorded proof: ${story.title}`}
+            className={menuButton(activeId === story.id)}
+          >
             <span aria-hidden className="mr-1 text-[10px]">▶</span>
             {story.title}
+            {story.live && (
+              <span className="ml-1.5 rounded border border-emerald-400/40 px-1 text-[9px] font-semibold uppercase tracking-wide text-emerald-300/80">
+                live-capable
+              </span>
+            )}
           </button>
         ))}
         {probe && (
@@ -232,12 +281,27 @@ export default function Microterminal({
           >
             ▶ {liveBusy ? 'running…' : isLive ? 'run' : 'replay'}
           </button>
+          {active?.live && (
+            <button
+              type="button"
+              onClick={runLiveTry}
+              disabled={liveBusy}
+              title="Re-run this exact command from our edge, right now. The worker fetches the fixed URL from our committed manifest — no user input is involved."
+              className="shrink-0 rounded border border-emerald-400/60 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-300 transition hover:bg-emerald-400/20 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              ▶ run live
+            </button>
+          )}
           <span
             className={`shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-              isLive ? 'border-emerald-400/60 text-emerald-300' : 'border-zinc-600 text-zinc-400'
+              isLive || liveRanIds.has(activeId ?? '') ? 'border-emerald-400/60 text-emerald-300' : 'border-zinc-600 text-zinc-400'
             }`}
           >
-            {isLive ? 'live — run just now from our edge' : 'recorded session — replayed, not live'}
+            {isLive
+              ? 'live — run just now from our edge'
+              : liveRanIds.has(activeId ?? '')
+                ? 'recorded replay + live re-run — see the LIVE divider'
+                : 'recorded session — replayed, not live'}
           </span>
         </div>
 
@@ -259,6 +323,7 @@ export default function Microterminal({
           ) : active ? (
             <span>
               recorded {active.recordedAt?.slice(0, 10)} · exit {active.exitCode} · captured verbatim by our probe harness, secrets redacted
+              {active.live ? ' · pure-HTTP probe — ▶ run live re-runs it from our edge' : ''}
             </span>
           ) : null}
           <span className="ml-auto flex shrink-0 gap-2">

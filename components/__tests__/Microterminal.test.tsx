@@ -58,7 +58,7 @@ const authGated: McpProbeResult = {
   oauth: true,
 }
 
-const renderLive = () => render(<Microterminal productName="Stripe" stories={[]} probe={PROBE} />)
+const renderLive = () => render(<Microterminal arena="payments" product="stripe" productName="Stripe" stories={[]} probe={PROBE} />)
 const runHandshake = () => fireEvent.click(screen.getByRole('button', { name: /Live MCP handshake/ }))
 
 afterEach(() => vi.unstubAllGlobals())
@@ -148,6 +148,50 @@ describe('Microterminal live tiers', () => {
     await waitFor(() => expect(sent).toHaveLength(2))
     expect(sent[1]).toEqual({ arena: 'payments', product: 'stripe', useSandbox: true })
     expect(await screen.findByText(/authenticated handshake OK \(our sandbox account\)/)).toBeTruthy()
+  })
+
+  it('a live-capable recorded story exposes "run live", POSTs only the three ids, and re-badges honestly', async () => {
+    const urls: string[] = []
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      urls.push(String(url))
+      expect(init?.method).toBe('POST')
+      expect(init?.body).toBeUndefined() // ids travel in the path; the worker reads no body at all
+      return new Response(
+        JSON.stringify({ ok: true, reachable: true, status: 200, contentType: 'text/plain', elapsedMs: 42, bodyExcerpt: 'live output body', pass: true, expected: { status: 200, pattern: null } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      )
+    }))
+    render(
+      <Microterminal
+        arena="payments"
+        product="stripe"
+        productName="Stripe"
+        stories={[{ id: 'llms-txt', title: 'read the docs', kind: 'recorded', command: 'curl -s https://stripe.com/llms.txt | head -4', transcript: 'recorded output', recordedAt: '2026-09-01T00:00:00Z', exitCode: 0, live: true }]}
+        probe={null}
+      />,
+    )
+    expect(screen.getByText(/recorded session — replayed, not live/)).toBeTruthy()
+    expect(screen.getByText('live-capable')).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: /run live/i }))
+    await waitFor(() => expect(urls).toHaveLength(1))
+    expect(urls[0]).toBe('https://ultrametric.ai/productarena/api/try/payments/stripe/llms-txt')
+    expect(await screen.findByText(/recorded replay \+ live re-run/)).toBeTruthy()
+  })
+
+  it('a replay-only story (CLI/pty probe) offers no run-live affordance', () => {
+    render(
+      <Microterminal
+        arena="ai-coding"
+        product="claude-code"
+        productName="Claude Code"
+        stories={[{ id: 'cli-version', title: 'check the CLI', kind: 'recorded', command: 'claude --version', transcript: '2.1.0', recordedAt: '2026-09-01T00:00:00Z', exitCode: 0, live: false }]}
+        probe={null}
+      />,
+    )
+    expect(screen.queryByRole('button', { name: /run live/i })).toBeNull()
+    expect(screen.queryByText('live-capable')).toBeNull()
+    expect(screen.getByText(/recorded session — replayed, not live/)).toBeTruthy()
   })
 
   it('a rejected credential is badged as a rejection, not as absence of a server', async () => {
