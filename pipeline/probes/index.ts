@@ -58,6 +58,8 @@ import { probes as errorTracking } from './error-tracking'
 import { probes as expenseManagement } from './expense-management'
 import { probes as billingSubscriptions } from './billing-subscriptions'
 import { probes as fraudPrevention } from './fraud-prevention'
+import { probes as llmEvalsObservability } from './llm-evals-observability'
+import { probes as webScraping } from './web-scraping'
 
 export type { LocalProbe } from './types'
 
@@ -111,4 +113,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'expense-management': expenseManagement,
   'billing-subscriptions': billingSubscriptions,
   'fraud-prevention': fraudPrevention,
+  'llm-evals-observability': llmEvalsObservability,
+  'web-scraping': webScraping,
 }

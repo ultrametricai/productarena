@@ -108,4 +108,84 @@ export const probes: LocalProbe[] = [
       expect: /# Getting Started with Antigravity/,
       timeoutMs: 30_000,
     },
+    {
+      // Random Labs' Slate docs (docs.randomlabs.ai, Mintlify) publish an llms.txt index —
+      // first line names the product. The marketing site is an SPA catch-all (every path 200s
+      // with the same shell), so the docs SUBDOMAIN is the real agent-readable surface.
+      // Added at the 2026-09-14 bring-up (YC S24 coverage-queue wave).
+      probeId: 'llms-docs-index',
+      productId: 'random-labs',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.randomlabs.ai/llms.txt | head -4'],
+      displayCommand: 'curl -s https://docs.randomlabs.ai/llms.txt | head -4',
+      expect: /# Slate/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Every Slate docs page is served as raw markdown at <path>.md — keyless agent-readable docs.
+      probeId: 'docs-md-endpoint',
+      productId: 'random-labs',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.randomlabs.ai/en/getting-started/quickstart.md | head -8'],
+      displayCommand: 'curl -s https://docs.randomlabs.ai/en/getting-started/quickstart.md | head -8',
+      expect: /# Quickstart/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The documented install path (npm i -g @randomlabs/slate) resolves to a live public npm
+      // package whose bin registers the `slate` CLI — the official CLI exists, proven keylessly
+      // from the registry without installing anything.
+      probeId: 'npm-cli-package',
+      productId: 'random-labs',
+      storyIds: ['agentic-official-cli'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://registry.npmjs.org/@randomlabs/slate/latest | head -c 400'],
+      displayCommand: 'curl -s https://registry.npmjs.org/@randomlabs/slate/latest | head -c 400',
+      expect: /"bin":\{"slate":"bin\/slate"\}/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Conductor publishes a full llms.txt site index (changelog.md, /markdown/* mirrors, and
+      // the whole docs tree). Added at the 2026-09-14 bring-up (YC S24 coverage-queue wave).
+      probeId: 'llms-site-index',
+      productId: 'conductor',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://www.conductor.build/llms.txt | head -4'],
+      displayCommand: 'curl -s https://www.conductor.build/llms.txt | head -4',
+      expect: /# Conductor[\s\S]*coding agents/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Every Conductor docs page is served as raw markdown at <path>.md (content-type
+      // text/markdown) — here the hosted-MCP reference page.
+      probeId: 'docs-md-endpoint',
+      productId: 'conductor',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://www.conductor.build/docs/api/mcp.md | head -8'],
+      displayCommand: 'curl -s https://www.conductor.build/docs/api/mcp.md | head -8',
+      expect: /Conductor MCP server/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Conductor's hosted MCP server (api.conductor.build/mcp, Streamable HTTP) answers a
+      // keyless initialize with its OAuth challenge — 401 + protected-resource metadata and the
+      // mcp:tools scope in the www-authenticate header.
+      probeId: 'mcp-remote-handshake',
+      productId: 'conductor',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://api.conductor.build/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://api.conductor.build/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]
