@@ -21,11 +21,13 @@ function story(overrides: Partial<CompareStoryMeta> & { id: string }): CompareSt
 function arena(
   stories: CompareStoryMeta[],
   cells: Array<[string, string, { verdict: 'full' | 'partial' | 'none' | 'disputed' | 'na'; quality: number }]> = [],
+  tiers: Array<[string, string, { tier: 'free' | 'paid' | 'enterprise' | 'unknown'; tierNote?: string }]> = [],
 ): ArenaStoryData {
   return {
     stories,
     storyIds: new Set(stories.map((s) => s.id)),
     cells: new Map(cells.map(([pid, sid, cell]) => [`${pid}:${sid}`, cell])),
+    tiers: new Map(tiers.map(([pid, sid, tier]) => [`${pid}:${sid}`, tier])),
   }
 }
 
@@ -82,6 +84,32 @@ describe('toArenaStoryData', () => {
     expect(() => toArenaStoryData([{ id: 's1' }], [])).toThrow() // missing title
     expect(() => toArenaStoryData([], [{ productId: 'p', storyId: 's', verdict: 'yes!', quality: 5 }])).toThrow()
     expect(() => toArenaStoryData([], [{ productId: 'p', storyId: 's', verdict: 'full' }])).toThrow() // no quality
+  })
+
+  it('builds the pricing-tier map from story-tiers.json when provided', () => {
+    const data = toArenaStoryData(
+      [{ id: 's1', title: 'T1' }],
+      [{ productId: 'p1', storyId: 's1', verdict: 'full', quality: 8 }],
+      [{ productId: 'p1', storyId: 's1', tier: 'enterprise', tierNote: 'SSO on Enterprise plan only' }],
+    )
+    expect(data.tiers.get('p1:s1')).toEqual({ tier: 'enterprise', tierNote: 'SSO on Enterprise plan only' })
+  })
+
+  it('skips malformed tier entries and tolerates a missing tiers payload — annotations are never load-bearing', () => {
+    const withoutTiers = toArenaStoryData([{ id: 's1', title: 'T1' }], [])
+    expect(withoutTiers.tiers.size).toBe(0)
+    const withBadTiers = toArenaStoryData(
+      [{ id: 's1', title: 'T1' }],
+      [],
+      [
+        { productId: 'p1', storyId: 's1', tier: 'platinum' }, // unknown tier kind
+        { productId: 'p1', tier: 'free' }, // missing storyId
+        { productId: 'p1', storyId: 's1', tier: 'free' }, // valid, note optional
+        'garbage',
+      ],
+    )
+    expect(withBadTiers.tiers.size).toBe(1)
+    expect(withBadTiers.tiers.get('p1:s1')).toEqual({ tier: 'free', tierNote: undefined })
   })
 })
 
@@ -186,6 +214,22 @@ describe('storyCell', () => {
 
   it('treats a matrix hole (story known, cell missing) as an error, not a verdict', () => {
     expect(storyCell({ status: 'ready', data }, 'p3', 's1')).toEqual({ kind: 'error' })
+  })
+
+  it('carries the pricing-tier annotation on classified cells only', () => {
+    const tiered = arena(
+      [story({ id: 's1' })],
+      [
+        ['p1', 's1', { verdict: 'full', quality: 8 }],
+        ['p2', 's1', { verdict: 'partial', quality: 5 }],
+      ],
+      [['p1', 's1', { tier: 'paid', tierNote: 'Requires the Pro plan' }]],
+    )
+    expect(storyCell({ status: 'ready', data: tiered }, 'p1', 's1')).toEqual({
+      kind: 'verdict', verdict: 'full', quality: 8, tier: 'paid', tierNote: 'Requires the Pro plan',
+    })
+    const unclassified = storyCell({ status: 'ready', data: tiered }, 'p2', 's1')
+    expect(unclassified).toEqual({ kind: 'verdict', verdict: 'partial', quality: 5 })
   })
 })
 

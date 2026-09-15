@@ -7,6 +7,7 @@ import {
   evidenceById, originLabel, uncertaintyFor, vendorResponseFor, verdictFor, type CategoryData,
 } from './data-helpers'
 import type { Evidence, Story, UncertaintyEntry, VendorResponse, Verdict } from './schemas'
+import type { StoryTier, StoryTierKind } from './storyTiers'
 import { parseStoryPersona } from './storyText'
 import { cellAuthGated, strongestEvidence, verificationLevel, type VerificationLevel } from './verification'
 
@@ -72,6 +73,14 @@ export interface StoryVerdictRow {
   // expanded row renders (see components/StoryVerdictsTable.tsx's block and
   // docs/VENDOR-RESPONSES.md). Full VendorResponse shape is already serializable (plain JSON).
   vendorResponse: VendorResponse | null
+  // Pricing-tier annotation for this cell (lib/storyTiers.ts) — which plan tier the cited
+  // evidence says the capability needs. Undefined when the arena/cell was never classified
+  // (only full/partial cells are); 'unknown' when classified but the evidence never states
+  // gating. Display-only, never part of sorting weight or scores.
+  tier?: StoryTierKind
+  // The gating one-liner behind a non-unknown tier ("SSO on Enterprise plan only") — the
+  // TierChip tooltip.
+  tierNote?: string
 }
 
 export function buildStoryVerdictRows(
@@ -80,10 +89,14 @@ export function buildStoryVerdictRows(
   // Ids that have a /global/[story] page (lib/globalStories.ts's globalStoryIds) — optional so
   // callers that never render the chip link (tests, llms.md) can skip the cross-arena load.
   globalStoryIds?: ReadonlySet<string>,
+  // `${productId}:${storyId}` -> pricing-tier annotation (lib/storyTiers.ts's storyTiersByCell)
+  // — optional, same tolerant contract as the file itself: unclassified arenas pass nothing.
+  tiersByCell?: ReadonlyMap<string, StoryTier>,
 ): StoryVerdictRow[] {
   const evidence = evidenceById(data)
   return data.stories.map((s) => {
     const v = verdictFor(data, productId, s.id)
+    const tier = tiersByCell?.get(`${productId}:${s.id}`)
     const proof = strongestEvidence(v, evidence)
     const parsed = parseStoryPersona(s.title)
     return {
@@ -111,6 +124,8 @@ export function buildStoryVerdictRows(
       proofUrl: proof?.url ?? null,
       agreement: uncertaintyFor(data, productId, s.id)?.agreement,
       vendorResponse: vendorResponseFor(data, productId, s.id) ?? null,
+      tier: tier?.tier,
+      tierNote: tier?.tierNote,
     }
   })
 }
@@ -225,18 +240,22 @@ export function sortStoryVerdictRows(
 }
 
 // Case-insensitive substring match over title + persona + theme + group (the text filter),
-// optionally intersected with an exact theme (the theme dropdown) and/or an exact scope (the
-// scope dropdown). Empty theme/scope = no restriction.
+// optionally intersected with an exact theme (the theme dropdown), an exact scope (the scope
+// dropdown), and/or an exact pricing tier (the tier dropdown — 'free'/'paid'/'enterprise'
+// match classified rows only; unclassified/unknown rows never match a tier filter). Empty
+// theme/scope/tier = no restriction.
 export function filterStoryVerdictRows(
   rows: StoryVerdictRow[],
   query: string,
   theme = '',
   scope = '',
+  tier = '',
 ): StoryVerdictRow[] {
   const q = query.trim().toLowerCase()
   return rows.filter((r) => {
     if (theme !== '' && r.theme !== theme) return false
     if (scope !== '' && r.scope !== scope) return false
+    if (tier !== '' && r.tier !== tier) return false
     if (q === '') return true
     return (
       r.title.toLowerCase().includes(q) ||

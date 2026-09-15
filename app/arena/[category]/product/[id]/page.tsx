@@ -48,6 +48,7 @@ import { aiEraBandFor, loadScoreIntervals } from '@/lib/scoreIntervals'
 import type { Product, Story } from '@/lib/schemas'
 import { authGatedProbeCount } from '@/lib/verification'
 import { SITE_URL } from '@/lib/site'
+import { loadStoryTiers, storyTiersByCell, tierCountsFor } from '@/lib/storyTiers'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
 import { hasTryIt } from '@/lib/tryit'
 
@@ -108,7 +109,12 @@ export default async function ProductPage({
   // full CategoryData never crosses the server/client boundary. globalStoryIds(loadAll())
   // lets a global story's [G] chip link to its /global/[story] cross-arena page (loadAll is
   // cached in lib/data.ts, so this costs nothing extra at build time).
-  const verdictRows = buildStoryVerdictRows(data, id, globalStoryIds(loadAll()))
+  // Pricing-tier annotations (lib/storyTiers.ts) — tolerant-optional: an unclassified arena
+  // loads an empty list, rows carry no tier, and the "What's free" line below renders nothing.
+  const storyTiers = loadStoryTiers(category)
+  const verdictRows = buildStoryVerdictRows(data, id, globalStoryIds(loadAll()), storyTiersByCell(storyTiers))
+  const tierCounts = tierCountsFor(storyTiers, id)
+  const gatedCount = tierCounts.free + tierCounts.paid + tierCounts.enterprise
   // Verified official vendor responses for this product (see docs/VENDOR-RESPONSES.md) — the
   // header chip links down to the verdicts table, where each response renders inside its
   // story's expanded row.
@@ -354,6 +360,30 @@ export default async function ProductPage({
           <GeoMark seed="story-verdicts" title="Story verdicts — every judged story with its evidence" size={18} className="text-zinc-500" />
           Story verdicts
         </h2>
+        {/* "What's free" — the pricing-tier dimension in one line: of the stories this product
+            delivers (full/partial), how many the cited evidence says work free / need a paid
+            plan / are enterprise-gated. `unknown` stays visible so silence never reads as
+            free. Renders only when at least one cell was actually classified. */}
+        {gatedCount > 0 && (
+          <p className="mb-3 text-xs text-zinc-400">
+            <Link
+              href="/methodology#story-tiers"
+              title="Pricing-tier annotation, classified from each verdict's cited evidence and the vendor's pricing evidence only — 'unknown' means the evidence never states gating. Never affects verdicts or scores."
+              className="uppercase tracking-widest text-zinc-500 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+            >
+              What&rsquo;s free
+            </Link>
+            {': '}
+            <span className="text-emerald-300">{tierCounts.free} free</span>
+            {' · '}
+            <span className="text-zinc-300">{tierCounts.paid} paid</span>
+            {' · '}
+            <span className="text-violet-300">{tierCounts.enterprise} enterprise</span>
+            {tierCounts.unknown > 0 && (
+              <span className="text-zinc-500"> · {tierCounts.unknown} not stated in evidence</span>
+            )}
+          </p>
+        )}
         {/* Two server-rendered views of the same verdict rows, toggled client-side via `hidden`
             (static-export safe — both are in the HTML). Table = the flat, sortable evidence
             surface every #story-<id> deep link targets; Map = the capability DAG (curated canon

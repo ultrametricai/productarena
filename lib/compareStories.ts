@@ -5,8 +5,16 @@
 // (public/data mirrors of data/, see scripts/copy-data.mjs) at runtime and feeds the parsed
 // results through these helpers, keeping them unit-testable without fetch or React.
 import type { Verdict } from './schemas'
+import type { StoryTierKind } from './storyTiers'
 
 export type VerdictKind = Verdict['verdict']
+
+// The slice of a story-tiers.json entry a compare cell renders (see lib/storyTiers.ts —
+// type-only import above keeps zod/node:fs out of the client bundle).
+export interface CompareCellTier {
+  tier: StoryTierKind
+  tierNote?: string
+}
 
 // The slice of a Story the compare table renders/searches — everything else in stories.json
 // (persona, group, origin) is dropped at parse time to keep in-memory caches small. `theme`
@@ -25,6 +33,8 @@ export interface ArenaStoryData {
   storyIds: ReadonlySet<string>
   /** `${productId}:${storyId}` -> that cell's verdict tier + quality. */
   cells: ReadonlyMap<string, { verdict: VerdictKind; quality: number }>
+  /** `${productId}:${storyId}` -> pricing-tier annotation, where classified (story-tiers.json). */
+  tiers: ReadonlyMap<string, CompareCellTier>
 }
 
 // Per-arena fetch lifecycle as CompareBuilder tracks it. `undefined` (arena not yet requested)
@@ -41,7 +51,7 @@ export type StoryCellState =
   | { kind: 'loading' }
   | { kind: 'error' }
   | { kind: 'other-arena' }
-  | { kind: 'verdict'; verdict: VerdictKind; quality: number }
+  | { kind: 'verdict'; verdict: VerdictKind; quality: number; tier?: StoryTierKind; tierNote?: string }
 
 // Cap on user-added story rows (`?s=`), mirroring MAX_COMPARE's role for `?p=`.
 export const MAX_COMPARE_STORIES = 12
@@ -51,6 +61,7 @@ export const DEFAULT_KEY_STORY_ROWS = 8
 
 const VERDICT_KINDS: ReadonlySet<string> = new Set(['full', 'partial', 'none', 'disputed', 'na'])
 const SCOPES: ReadonlySet<string> = new Set(['global', 'category', 'product'])
+const TIER_KINDS: ReadonlySet<string> = new Set(['free', 'paid', 'enterprise', 'unknown'])
 
 // Parses `?s=story-a,story-b` into a deduped, trimmed id list capped at MAX_COMPARE_STORIES.
 // Unlike parseCompareParam (lib/compare.ts) there is no validity set here: story ids can only
@@ -76,8 +87,10 @@ export function encodeStoriesParam(ids: string[]): string {
 // Narrows freshly-fetched stories.json/verdicts.json into ArenaStoryData. Structural checks by
 // hand (no zod client-side — bundle lean); anything malformed THROWS so the caller records a
 // fetch failure and the UI says "couldn't load story data" — a broken file must never render
-// as fake verdicts.
-export function toArenaStoryData(storiesJson: unknown, verdictsJson: unknown): ArenaStoryData {
+// as fake verdicts. `tiersJson` is the optional story-tiers.json payload (undefined when the
+// arena has no file — most don't); a malformed TIER entry is skipped rather than failing the
+// whole arena, because tiers are a display-only annotation, never load-bearing like verdicts.
+export function toArenaStoryData(storiesJson: unknown, verdictsJson: unknown, tiersJson?: unknown): ArenaStoryData {
   if (!Array.isArray(storiesJson) || !Array.isArray(verdictsJson)) {
     throw new Error('malformed arena story data')
   }
@@ -109,7 +122,25 @@ export function toArenaStoryData(storiesJson: unknown, verdictsJson: unknown): A
     }
     cells.set(`${productId}:${storyId}`, { verdict: verdict as VerdictKind, quality })
   }
-  return { stories, storyIds: new Set(stories.map((s) => s.id)), cells }
+  const tiers = new Map<string, CompareCellTier>()
+  if (Array.isArray(tiersJson)) {
+    for (const t of tiersJson) {
+      if (typeof t !== 'object' || t === null) continue
+      const { productId, storyId, tier, tierNote } = t as Record<string, unknown>
+      if (
+        typeof productId !== 'string' || productId === '' ||
+        typeof storyId !== 'string' || storyId === '' ||
+        typeof tier !== 'string' || !TIER_KINDS.has(tier)
+      ) {
+        continue
+      }
+      tiers.set(`${productId}:${storyId}`, {
+        tier: tier as StoryTierKind,
+        tierNote: typeof tierNote === 'string' && tierNote !== '' ? tierNote : undefined,
+      })
+    }
+  }
+  return { stories, storyIds: new Set(stories.map((s) => s.id)), cells, tiers }
 }
 
 // The KEY stories for a selection: `scope: 'global'` stories present in EVERY loaded arena —
@@ -175,5 +206,6 @@ export function storyCell(
   if (!state.data.storyIds.has(storyId)) return { kind: 'other-arena' }
   const cell = state.data.cells.get(`${productId}:${storyId}`)
   if (!cell) return { kind: 'error' }
-  return { kind: 'verdict', verdict: cell.verdict, quality: cell.quality }
+  const tier = state.data.tiers.get(`${productId}:${storyId}`)
+  return { kind: 'verdict', verdict: cell.verdict, quality: cell.quality, tier: tier?.tier, tierNote: tier?.tierNote }
 }
