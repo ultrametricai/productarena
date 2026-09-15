@@ -1,9 +1,9 @@
 name: CI
 
-# Runs the test suite, static build, and rankings-determinism check on every PR and every push
-# to main. No secrets required: the LLM-driven pipeline stages are never invoked here, only
-# `pnpm test`, `pnpm build`, and a read-only recompute-and-compare check against the data
-# already committed under data/.
+# Runs lint, the test suite, static build, and rankings-determinism check on every PR and every
+# push to main. No secrets required: the LLM-driven pipeline stages are never invoked here, only
+# `pnpm lint`, `pnpm test`, `pnpm build`, and a read-only recompute-and-compare check against the
+# data already committed under data/.
 
 on:
   pull_request:
@@ -42,6 +42,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # Renovate PRs #22 (eslint 10) and #23 (typescript 7) both broke `pnpm lint` while CI
+      # stayed green — lint belongs in the gate so dep bumps can't silently break it again.
+      - name: Lint
+        run: pnpm lint
 
       - name: Test
         run: pnpm test
