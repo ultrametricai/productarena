@@ -51,6 +51,7 @@ import { probes as documentExtraction } from './document-extraction'
 import { probes as legalOps } from './legal-ops'
 import { probes as apiPlatforms } from './api-platforms'
 import { probes as modelGateways } from './model-gateways'
+import { probes as emailMarketing } from './email-marketing'
 import { probes as equityManagement } from './equity-management'
 import { probes as aiAssistants } from './ai-assistants'
 import { probes as aiResearchAgents } from './ai-research-agents'
@@ -102,6 +103,7 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'legal-ops': legalOps,
   'api-platforms': apiPlatforms,
   'model-gateways': modelGateways,
+  'email-marketing': emailMarketing,
   'equity-management': equityManagement,
   'ai-assistants': aiAssistants,
   'ai-research-agents': aiResearchAgents,

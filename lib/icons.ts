@@ -62,8 +62,12 @@ const THEME_RULES: Array<[RegExp, string]> = [
   // Commerce & CRM
   [/catalog|inventory|storefront|commerce|b2b|wholesale|shipping|receipts/, '🛒'],
   [/crm|contacts|pipeline-management|audiences|identity-resolution|cdp/, '📇'],
+  // Email marketing (before the generic email rule: campaign/audience concepts are 📣, the
+  // one-to-one transactional-sending theme stays ✉️ via the email rule below)
+  [/campaign|broadcast|newsletter|deliverability|audience-segmentation|lifecycle-automation/, '📣'],
+  [/template-content/, '📝'],
   // Comms & scheduling
-  [/email|composing|inbox|triage/, '✉️'],
+  [/email|composing|inbox|triage|transactional-sending/, '✉️'],
   [/chat|channel|thread|calls|huddles|bots|telephony|voice|tts|latency-turntaking/, '💬'],
   [/calendar|scheduling|booking|time-pto|capacity|availability|on-call/, '📅'],
   [/meeting|transcription|recording|notes-summaries/, '🎙️'],
