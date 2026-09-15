@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-67-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-372-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-21728-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-375-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-21889-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **67 arenas, 372 products, 21,728 judged verdicts.**
+As of the last full pipeline run: **67 arenas, 375 products, 21,889 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -192,7 +192,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Browser Automation for Agents (`browser-agents`) | browser-use, stagehand, skyvern, hyperbrowser, steel, notte |
 | AI Memory Layers (`ai-memory`) | mem0, zep, letta, supermemory, cognee, airweave |
 | Voice Agent Platforms (`voice-agents`) | vapi, retell, elevenlabs-agents, bland, livekit-agents, pipecat, bolna |
-| Notes & Knowledge Bases (`notes-knowledge`) | obsidian, logseq, anytype, capacities, reflect |
+| Notes & Knowledge Bases (`notes-knowledge`) | obsidian, logseq, anytype, capacities, reflect, poly |
 | Meeting AI & Notetakers (`meeting-ai`) | granola, fireflies, otter, fathom, fellow |
 | GPU Clouds (`gpu-clouds`) | runpod, lambda-labs, coreweave, vast-ai, paperspace |
 | Feature Flags & Experimentation (`feature-flags`) | launchdarkly, statsig, growthbook, flagsmith, unleash |
@@ -201,7 +201,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Data Warehouses & Lakehouses (`data-warehouses`) | snowflake, databricks, bigquery, motherduck |
 | Search Infrastructure (`search-infra`) | algolia, meilisearch, typesense, elastic, orama |
 | Scheduling & Calendar (`scheduling`) | cal-com, calendly, motion, reclaim, savvycal |
-| Design & Prototyping (`design-tools`) | figma, penpot, framer, sketch, canva, claude-design |
+| Design & Prototyping (`design-tools`) | figma, penpot, framer, sketch, canva, claude-design, spline, rive |
 | Email Clients & Email AI (`email`) | superhuman, shortwave, missive, zero, fastmail, agentmail |
 | Incident Management & On-call (`incident-management`) | pagerduty, incident-io, firehydrant, rootly, betterstack |
 | Developer Docs Platforms (`docs-platforms`) | mintlify, gitbook, readme, docusaurus, fern |

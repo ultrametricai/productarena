@@ -9,6 +9,18 @@ function githubReadmeUrl(githubUrl: string): string {
   return `https://raw.githubusercontent.com/${owner}/${repo}/HEAD/README.md`
 }
 
+// Raw text/markdown sources (llms.txt, Mintlify-style .md page mirrors, OpenAPI specs) must
+// NOT go through the HTML→markdown converter: turndown strips iframes and chokes on the JSX
+// component exports Mintlify embeds in its .md mirrors, silently truncating pages to a few
+// hundred chars (caught live on rive.app/docs/*.md at the 2026-09-14 bring-up).
+function isRawTextUrl(url: string): boolean {
+  try {
+    return /\.(md|txt|ya?ml|json)$/i.test(new URL(url).pathname)
+  } catch {
+    return false
+  }
+}
+
 async function crawlProduct(categoryId: string, product: Product): Promise<number> {
   const dir = path.join(CACHE_DIR, 'crawl', categoryId, product.id)
   fs.mkdirSync(dir, { recursive: true })
@@ -21,7 +33,7 @@ async function crawlProduct(categoryId: string, product: Product): Promise<numbe
   for (const [key, url] of sources) {
     try {
       const raw = await fetchWithRetry(key === 'github' ? githubReadmeUrl(url) : url)
-      const markdown = key === 'github' ? raw : htmlToMarkdown(raw)
+      const markdown = key === 'github' || isRawTextUrl(url) ? raw : htmlToMarkdown(raw)
       fs.writeFileSync(path.join(dir, `${key}.md`), `<!-- source: ${url} -->\n\n${markdown}\n`)
       console.log(`crawl: ${categoryId}/${product.id}/${key} (${markdown.length} chars)`)
       saved++

@@ -257,6 +257,7 @@ export const MCP_ENDPOINTS = {
   'meeting-ai/granola': 'https://mcp.granola.ai/mcp',
   'meeting-ai/otter': 'https://mcp.otter.ai/mcp',
   'mobile-payments/sumup': 'https://mcp.sumup.com/mcp',
+  'notes-knowledge/poly': 'https://mcp.poly.app/mcp',
   'observability/honeycomb': 'https://mcp.honeycomb.io/mcp',
   'observability/new-relic': 'https://mcp.newrelic.com/mcp',
   'observability/sentry': 'https://mcp.sentry.dev/mcp',
