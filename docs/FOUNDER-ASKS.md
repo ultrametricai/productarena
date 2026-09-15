@@ -30,8 +30,6 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | User story table: filter by user type | shipped 2026-09-15 |
 | Deep spike on Mercury and Rippling | in-lane (stripe-engine) |
 | Business-model tags in user story table (free vs enterprise-only stories) | shipped 2026-09-15 (tier chips + tier filter — pricing-tier lane; coverage grows as evidence states gating) |
-| Arena for YubiKey-type hardware keys + arena for authenticator apps | in-lane (new-arenas) |
-| Game-engines arena (Unity vs three.js agenticness) | in-lane (new-arenas) |
 | Always-running probe/spike engine over top companies + visible queue | in-lane (stripe-engine — /queue page) |
 | Gifts URL + read rejection notes, fix gifts that will fail again | shipped 2026-09-15 — Homebrew retired (maintainer passed), vLLM disclosure body ready (founder: gh pr edit 56909 --body-file drafts/outreach/vllm/PR-BODY-v2.md), docusaurus on hold (competing PR #11958), gitea fixed (needs founder account+DCO); checklist hardened |
 | Submit PA to directories for traffic; PA-specific Terms + Privacy building on ultrametric.ai TOS | shipped 2026-09-15 — 30-venue plan in drafts/growth/DIRECTORIES.md (2 awesome-list PRs ready for founder review); /terms extended + /privacy added (counsel review recommended) |
@@ -49,6 +47,9 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Remove "?" chip next to table filter on main page | shipped 2026-09-15 |
 | ALL YC batches covered for agentic/famous companies | shipped 2026-09-15 — full W16–F26 audit: 7 bring-ups (Deepgram W16, RevenueCat S18, SigNoz W21, LanceDB W22, Windmill S22, Context.dev S26, Maritime F26) + 14 domain-verified restamps (82 → 103 stamped products); every batch of the last 10 years covered or honestly recorded as no-arena-fit; coverage queue re-swept W16–F26 (784 candidates) |
 | Bring hardware section (processors, GPUs) into the arenas | shipped 2026-09-15 — processors + gpus arenas (16 products, 696 verdicts); Ryzen AI Max+ best agentReady in CPUs, MI355X in GPUs; 9950X3D honest 0 aiEra |
+| Arena for YubiKey-type hardware authenticators | shipped 2026-09-15 — security-keys: 6 products, 324 verdicts, 11 recorded probes; YubiKey #1 (ykman + YubiEnterprise API), Nitrokey #2 on open updatable firmware, Titan last (zero agent surface); Ledger evaluated and excluded (crypto wallet first — FIDO app is a 21-star side capability) |
+| Arena for authenticator-type apps | shipped 2026-09-15 — authenticator-apps: 8 products, 440 verdicts, 14 recorded probes incl. two FULL keyless MCP handshakes (Bitwarden stdio, 1Password remote); Bitwarden #1, 1Password best agent-readiness (70.1); Authy/Google/Microsoft bottom on export lock-in + no programmatic surface |
+| Game engines arena — Unity vs three.js, agenticness measured | shipped 2026-09-15 — game-engines: 8 products, 448 verdicts, 19 recorded probes; MCP landscape verified honestly (PlayCanvas = only official npm-published editor MCP; Unity official MCP in com.unity.ai.assistant, closed distribution; Godot/Unreal community-only); Unity runtime-fee history + Muse→"Unity's AI tools" rename cited from Unity's own pages; Babylon.js edges Phaser for #1 aiEra, Unreal last (source auth-gated, site 403s agents) |
 | Remove "Experiment — not part of the evidence-judged arenas…" banner from /experiments pages | shipped 2026-09-15 |
 | Remove "Evidence as of … · story coverage …" footer line on product pages | shipped 2026-09-15 |
 | Move "Try it" section below "Products" (family) section on vendor pages | shipped 2026-09-15 |

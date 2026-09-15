@@ -112,6 +112,19 @@ const THEME_RULES: Array<[RegExp, string]> = [
 // so it must share that metric's plug, not the testing flask).
 const THEME_EXACT: Record<string, string> = {
   'api-quality': '🔌',
+  // security-keys arena
+  'protocol-coverage': '🔑',
+  'beyond-fido': '🪪',
+  'form-factors': '🔑',
+  'enrollment-recovery': '📥',
+  // authenticator-apps arena
+  'totp-core': '🔢',
+  'passkey-support': '🔑',
+  // game-engines arena
+  'core-engine': '🎮',
+  'editor-tooling': '🛠️',
+  'asset-pipeline': '🧱',
+  'platform-export': '🚀',
 }
 
 // Emoji for a story theme id — every live theme in data/*/stories.json must resolve to a
@@ -194,6 +207,32 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'surfaces': 'where it meets your workflow — IDE, CLI, web, PR comments, CI checks',
   'anti-bot': 'getting past bot defenses — CAPTCHAs, fingerprinting, blocks',
   'agent-building': 'building agents — abstractions, tool wiring, control flow',
+  // security-keys arena
+  'protocol-coverage': 'FIDO2/WebAuthn depth — resident-key passkeys, user verification, credential management',
+  'beyond-fido': 'what the key does beyond FIDO — PIV smart card, OpenPGP, OTP slots, hardware-backed SSH',
+  'form-factors': 'the physical lineup — NFC, USB-C/A, biometrics, certified and hardened models',
+  'enrollment-recovery': 'getting keys enrolled and surviving loss — setup flows, backup keys, lockout recovery',
+  'fleet-management': 'keys at organization scale — bulk provisioning, delivery services, IdP policies',
+  'developer-tooling': 'building with and managing the key — CLIs, SDKs, attestation',
+  'firmware-openness': 'what runs on the device — open-source firmware, update policy, vulnerability response',
+  'ecosystem-compat': 'where the key works — platforms, browsers, service compatibility catalogs',
+  // authenticator-apps arena
+  'totp-core': 'the TOTP fundamentals — QR enrollment, organization, offline codes, non-standard tokens',
+  'passkey-support': 'passkeys in the vault — storage, sign-in, cross-ecosystem sync',
+  'sync-backup': 'not losing your accounts — encrypted backup, multi-device sync, recovery',
+  'portability': 'your secrets stay yours — open export, bulk import, device migration',
+  'self-hosting': 'running it yourself — self-hosted servers, open-source clients',
+  'security-posture': 'how it protects itself — app lock, E2EE design, audits, breach alerting',
+  'team-admin': 'shared and managed use — shared vaults, org policies, programmatic provisioning',
+  // game-engines arena
+  'core-engine': 'the engine core — rendering, 2D, physics, performance at scale',
+  'scripting': 'writing the game — languages, visual scripting, iteration speed',
+  'editor-tooling': 'the editor as a product — scene tools, extensibility, team workflows',
+  'asset-pipeline': 'getting content in — automated import, formats, marketplaces',
+  'platform-export': 'shipping everywhere — desktop, mobile, console, browser payloads',
+  'headless-automation': 'the engine without a human — CLI builds, CI test runs, dedicated servers',
+  'ai-workflows': 'AI in the engine loop — agent-driven editors, copilots, codegen-friendly APIs, runtime inference',
+  'licensing-openness': 'the terms you build on — licenses, royalties, source access, pricing stability',
 }
 
 // Honest fallback for an arena-specific niche theme no bespoke line covers.

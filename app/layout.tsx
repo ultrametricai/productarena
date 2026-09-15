@@ -88,6 +88,9 @@ const NAV_LABELS: Record<string, string> = {
   "agentic-commerce": "Agent commerce",
   "processors": "CPUs",
   "gpus": "GPUs",
+  "security-keys": "Security keys",
+  "authenticator-apps": "2FA apps",
+  "game-engines": "Game engines",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
