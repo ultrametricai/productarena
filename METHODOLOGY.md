@@ -189,6 +189,34 @@ score actually means. Coverage is necessarily partial: only products with a `url
 curated npm/PyPI package (`pipeline/popularity-packages.json`) have any numbers at all, and a
 missing chip means "no public signal available," not "unpopular."
 
+## Pricing tiers — an annotation, not a score
+
+Every (product, story) cell the judge ruled **full/partial** carries a pricing-tier annotation
+(`data/{category}/story-tiers.json`, produced by `pipeline/scripts/classify-story-tiers.ts`):
+**free**, **paid**, **enterprise**, or **unknown** — which plan a buyer needs for that delivered
+capability. It answers the "what can I actually do without paying?" question the verdicts alone
+don't.
+
+The honesty rules mirror judging:
+
+- The classifier sees ONLY the verdict's cited evidence excerpts plus the product's own pricing
+  evidence (extracted `pricing.json` facts and pricing-page evidence items). No outside
+  knowledge, ever.
+- **`unknown` is the default.** A tier is assigned only when the evidence states or directly
+  implies the gating — a commercial vendor's capability is not "paid" by reputation, and
+  silence is never rendered as "free."
+- Every non-unknown tier must cite the specific evidence item that implies it
+  (`tierEvidenceId`) and carry a one-liner quoting that gating evidence (`tierNote`, e.g.
+  "SSO on Enterprise plan only"). Entries failing this are rejected and re-asked, like verdict
+  rule violations.
+- It is **display-only**: story-tiers.json is never read by `lib/scoring.ts`, never part of the
+  judge's cache hash, and can be regenerated or deleted without moving a single verdict,
+  quality point, or ranking.
+
+On the site it renders as an outline chip on classified story rows (product pages and
+`/compare`), a tier filter on the story table, a "What's free" summary line per product, and a
+`Pricing tier` field on classified story lines in each product's `llms.md`.
+
 ## Bias disclosure — the judge is an Anthropic model
 
 The judge model is made by Anthropic, and the `ai-coding` arena includes Anthropic's own

@@ -8,6 +8,7 @@ import IconChip from '@/components/IconChip'
 import PersonaChip from '@/components/PersonaChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import ThemeIcon from '@/components/ThemeIcon'
+import TierChip from '@/components/TierChip'
 import VerdictBadge from '@/components/VerdictBadge'
 import arenaIcons from '@/data/arena-icons.json'
 import {
@@ -62,13 +63,18 @@ function fetchArenaStories(arenaId: string): Promise<ArenaStoryData> {
   const hit = arenaStoryCache.get(arenaId)
   if (hit) return hit
   const promise = (async () => {
-    const [storiesRes, verdictsRes] = await Promise.all([
+    const [storiesRes, verdictsRes, tiersRes] = await Promise.all([
       fetch(withBase(`/data/${arenaId}/stories.json`)),
       fetch(withBase(`/data/${arenaId}/verdicts.json`)),
+      // Pricing-tier annotations are tolerant-optional everywhere (lib/storyTiers.ts): an arena
+      // without story-tiers.json 404s here, and the catch below degrades to "no tiers" — a
+      // missing annotation must never fail the load-bearing verdict fetch.
+      fetch(withBase(`/data/${arenaId}/story-tiers.json`)).catch(() => null),
     ])
     if (!storiesRes.ok || !verdictsRes.ok) throw new Error(`failed to load story data for ${arenaId}`)
     const [storiesJson, verdictsJson] = await Promise.all([storiesRes.json(), verdictsRes.json()])
-    return toArenaStoryData(storiesJson, verdictsJson)
+    const tiersJson = tiersRes?.ok ? await tiersRes.json().catch(() => undefined) : undefined
+    return toArenaStoryData(storiesJson, verdictsJson, tiersJson)
   })()
   arenaStoryCache.set(arenaId, promise)
   promise.catch(() => arenaStoryCache.delete(arenaId))
@@ -125,6 +131,8 @@ function StoryCellView({ cell, product, storyId }: { cell: StoryCellState; produ
           <span className="text-zinc-600">/10</span>
         </span>
       )}
+      {/* link=false: this whole cell is already an anchor — nested anchors are invalid. */}
+      <TierChip tier={cell.tier} tierNote={cell.tierNote} link={false} />
     </Link>
   )
 }
