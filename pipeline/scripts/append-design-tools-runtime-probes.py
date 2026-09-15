@@ -25,6 +25,38 @@ ITEMS = {
             'excerpt': "PROBE runtime (recorded 2026-09-07): keyless JSON-RPC initialize POST to Figma's hosted remote MCP server https://mcp.figma.com/mcp returned HTTP 401 with WWW-Authenticate Bearer resource_metadata=https://mcp.figma.com/.well-known/oauth-protected-resource, scope=mcp:connect, authorization_uri=api.figma.com — the hosted MCP endpoint documented in the remote-server installation guide is live and speaks the MCP OAuth flow.",
             'fetchedAt': NOW,
         },
+        {
+            'id': 'figma-probe-rt-3',
+            'tier': 'probe',
+            'url': 'https://github.com/figma/rest-api-spec',
+            'excerpt': "PROBE runtime (recorded 2026-09-14): Figma's official machine-readable REST API spec fetched keylessly — `curl https://raw.githubusercontent.com/figma/rest-api-spec/main/openapi/openapi.yaml` returned a 400KB OpenAPI 3.1.0 document (info.title 'Figma API', version 0.42.0) published in the vendor's own figma/rest-api-spec repo.",
+            'fetchedAt': NOW,
+        },
+    ],
+    'spline': [
+        {
+            'id': 'spline-probe-rt-1',
+            'tier': 'probe',
+            'url': 'https://docs.spline.design/llms.txt',
+            'excerpt': "PROBE runtime (recorded 2026-09-14): https://docs.spline.design/llms.txt served an agent-oriented docs index ('# Spline Documentation') with every page mirrored as .md — covering the AI Agent ('build and edit 3D scenes by describing what you want'), AI Textures, the Real-time API, Webhooks, the Code tab, and desktop MCP support.",
+            'fetchedAt': NOW,
+        },
+    ],
+    'rive': [
+        {
+            'id': 'rive-probe-rt-1',
+            'tier': 'probe',
+            'url': 'https://rive.app/docs/llms.txt',
+            'excerpt': "PROBE runtime (recorded 2026-09-14): https://rive.app/docs/llms.txt served an agent-oriented docs index ('# Rive') with every docs page mirrored as raw .md, spanning editor, AI Agent, MCP integration, scripting (Luau + WGSL), data binding, and all platform runtimes.",
+            'fetchedAt': NOW,
+        },
+        {
+            'id': 'rive-probe-rt-2',
+            'tier': 'probe',
+            'url': 'https://rive.app/docs/editor/ai/mcp.md',
+            'excerpt': "PROBE runtime (recorded 2026-09-14): Rive's own MCP integration doc fetched keylessly as raw markdown — '# Rive MCP Integration', stating MCP is available in the desktop editor (Windows/macOS) with tools to create/manage Rive files, build shapes/layouts/component instances, edit state machines and keyframes, work with data binding, and edit Luau scripts/WGSL shaders.",
+            'fetchedAt': NOW,
+        },
     ],
     'penpot': [
         {

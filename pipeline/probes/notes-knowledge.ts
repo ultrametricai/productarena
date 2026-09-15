@@ -106,4 +106,36 @@ export const probes: LocalProbe[] = [
       expect: /HTTP\/2 401[\s\S]*Authentication required/,
       timeoutMs: 30_000,
     },
+    {
+      // Poly publishes an agent-oriented llms.txt docs index (plus llms-full.txt and /raw/*.md
+      // mirrors of every page). Added at the 2026-09-14 poly bring-up (design-tools wave
+      // disambiguation: withpoly.com 301s to poly.app; the product is a knowledge/file system,
+      // not a design tool).
+      probeId: 'llms-txt-fetch',
+      productId: 'poly',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.poly.app/llms.txt | head -3'],
+      displayCommand: 'curl -sL https://docs.poly.app/llms.txt | head -3',
+      expect: /# docs\.poly\.app/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Poly's hosted MCP server (documented at docs.poly.app/integrations/using-mcp — search,
+      // fetch, and a virtual `poly` CLI as MCP tools) answers a keyless JSON-RPC initialize
+      // with its OAuth challenge + protected-resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'poly',
+      storyIds: ['agentic-mcp-server', 'agent-reads-writes-notes'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.poly.app/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.poly.app/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
 ]

@@ -70,6 +70,22 @@ ITEMS = {
             'fetchedAt': NOW,
         },
     ],
+    'poly': [
+        {
+            'id': 'poly-probe-rt-1',
+            'tier': 'probe',
+            'url': 'https://docs.poly.app/llms.txt',
+            'excerpt': "PROBE runtime (recorded 2026-09-14): https://docs.poly.app/llms.txt served an agent-oriented docs index ('# docs.poly.app', with a companion llms-full.txt and every page mirrored under /raw/*.md) covering the built-in file agent, Poly Mind, the poly CLI (25+ commands), and MCP integrations for Claude Code, Codex, ChatGPT, Gemini, and MCP-compatible IDEs.",
+            'fetchedAt': NOW,
+        },
+        {
+            'id': 'poly-probe-rt-2',
+            'tier': 'probe',
+            'url': 'https://docs.poly.app/raw/integrations/using-mcp.md',
+            'excerpt': "PROBE runtime (recorded 2026-09-14): keyless JSON-RPC initialize POST to Poly's hosted MCP server https://mcp.poly.app/mcp returned HTTP 401 with WWW-Authenticate Bearer resource_metadata=https://mcp.poly.app/.well-known/oauth-protected-resource/mcp — the hosted MCP server documented at docs.poly.app (search, fetch, and a virtual `poly` CLI as MCP tools; OAuth in-browser, no pasted keys) is live and speaks the MCP OAuth flow.",
+            'fetchedAt': NOW,
+        },
+    ],
 }
 
 for pid, items in ITEMS.items():

@@ -111,6 +111,55 @@ export const probes: LocalProbe[] = [
       timeoutMs: 60_000,
     },
     {
+      // Figma publishes its full REST API as a machine-readable OpenAPI 3.1 spec in the
+      // official figma/rest-api-spec repo — fetched keylessly. Added at the 2026-09-14
+      // design-tools deepening wave.
+      probeId: 'openapi-spec-fetch',
+      productId: 'figma',
+      storyIds: ['api-machine-spec'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 30 https://raw.githubusercontent.com/figma/rest-api-spec/main/openapi/openapi.yaml | head -4'],
+      displayCommand: 'curl -s https://raw.githubusercontent.com/figma/rest-api-spec/main/openapi/openapi.yaml | head -4',
+      expect: /openapi: 3\.\d/,
+      timeoutMs: 60_000,
+    },
+    {
+      // Spline publishes an agent-oriented llms.txt docs index (every page mirrored as .md).
+      // Added at the 2026-09-14 design-tools deepening wave (spline bring-up).
+      probeId: 'llms-txt-fetch',
+      productId: 'spline',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.spline.design/llms.txt | head -3'],
+      displayCommand: 'curl -sL https://docs.spline.design/llms.txt | head -3',
+      expect: /# Spline/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Rive publishes an agent-oriented llms.txt docs index (every page mirrored as .md).
+      // Added at the 2026-09-14 design-tools deepening wave (rive bring-up).
+      probeId: 'llms-txt-fetch',
+      productId: 'rive',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://rive.app/docs/llms.txt | head -3'],
+      displayCommand: 'curl -sL https://rive.app/docs/llms.txt | head -3',
+      expect: /# Rive/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Rive's MCP integration doc (desktop editor MCP: create artboards/shapes/state
+      // machines, edit scripts) is served keylessly as raw markdown from the vendor's docs.
+      probeId: 'mcp-doc-fetch',
+      productId: 'rive',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', "curl -sL --max-time 20 https://rive.app/docs/editor/ai/mcp.md | grep -iE 'MCP|state machine' | head -5"],
+      displayCommand: "curl -sL https://rive.app/docs/editor/ai/mcp.md | grep -iE 'MCP|state machine' | head -5",
+      expect: /MCP/,
+      timeoutMs: 30_000,
+    },
+    {
       // The get-started article documents the prototype-and-handoff loop (including handoff to
       // Claude Code) — fetched keylessly from the vendor's own help center.
       probeId: 'prototype-handoff-doc',
