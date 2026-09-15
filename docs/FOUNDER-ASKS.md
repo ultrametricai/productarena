@@ -8,6 +8,31 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Front-page scope dropdown: "All products" → "All arenas" | open — inline now |
+| Arena icons in the front-page arena dropdown (same as top bar) | open — UI lane |
+| Pulley possibly shut down — verify, mark closed, keep data | open — inline now |
+| "⚿ auth 1 auth-gated probe" not useful above the fold | open — inline now |
+| Vendor pills: "Built-in AI XX/100", "Agent-ready XX/100" + click through to evidence log | in-lane (transparency) |
+| PA Score above fold → per-vendor transparent calculation page (not just generic methodology) | in-lane (transparency) |
+| Flag/Badge/Try demoted from top of vendor page; Try marked "Experimental" | open — inline now |
+| "For agents" above-fold cell → bottom of vendor page | open — inline now (supersedes startup-sim/page-order row) |
+| Compare head-to-head uses vendor logos | open — inline now |
+| Stripe "Not yet judged (13)" products: find/create arenas and judge all | in-lane (stripe-engine) |
+| Deep spikes on Stripe's nearest competitors — build an engine if multi-day | in-lane (stripe-engine) |
+| Microterminal: actually live + sandboxed, not a replay | in-lane (live-terminal) |
+| Score trend → bottom of vendor page | open — inline now |
+| User story table: filter by user type | open — inline now |
+| Deep spike on Mercury and Rippling | in-lane (stripe-engine) |
+| Business-model tags in user story table (free vs enterprise-only stories) | shipped 2026-09-15 (tier chips + tier filter — pricing-tier lane; coverage grows as evidence states gating) |
+| Arena for YubiKey-type hardware keys + arena for authenticator apps | in-lane (new-arenas) |
+| Game-engines arena (Unity vs three.js agenticness) | in-lane (new-arenas) |
+| Always-running probe/spike engine over top companies + visible queue | in-lane (stripe-engine — /queue page) |
+| Gifts URL + read rejection notes, fix gifts that will fail again | in-lane (gift-quality) — URL: /gifts (unlinked) |
+| Submit PA to directories for traffic; PA-specific Terms + Privacy building on ultrametric.ai TOS | in-lane (growth-legal) |
+| WhatsApp preview sometimes shows old image — diagnose | open — inline now |
+| Do we need RSS? | answered 2026-09-15 — keep (see session notes) |
+| Hardware arenas into top bar + menus, drop Experimental status | open — lands with hardware-arenas merge |
+| Start WorkOS login work (account exists) | in-lane (workos-login) — still blocked on founder secrets for go-live |
 | Scrollbar tracks transparent, not white | shipped 2026-09-15 |
 | Footer "Add your product" → actually goes to GitHub (CONTRIBUTING.md), scanner relabeled "Test your product" | shipped 2026-09-15 |
 | Pricing tier (free/paid/enterprise) visible in user story table | shipped 2026-09-15 (tier chips + filter, pricing-tier lane) |
