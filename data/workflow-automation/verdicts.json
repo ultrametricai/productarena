@@ -730,13 +730,11 @@
     "productId": "n8n",
     "storyId": "agent-creates-workflow-via-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "n8n documents a public REST API (n8n-docs-16) that is widely known to support workflow CRUD and activation, and the docs site is machine-readable (n8n-probe-1). However, the evidence pack gives no detail on specific create/update/activate endpoints or agent-driven usage examples, and attempts to locate a discoverable OpenAPI spec all returned 404 (n8n-probe-2), weakening confirmation of full programmatic coverage. missing for 10: explicit endpoint documentation for workflow create/update/activate, a working OpenAPI/swagger spec, and hands-on/community evidence of an agent successfully driving the API end-to-end.",
+    "rationale": "n8n's docs reference a dedicated 'n8n API' page confirming a public API exists, which is consistent with programmatic workflow management, but the evidence pack gives no detail on specific create/update/activate endpoints, authentication, or examples of an agent invoking them. Missing for 10: documented API endpoints for workflow create/update/activate, example agent-driven API calls, and independent/community confirmation the API works as described.",
     "evidenceIds": [
-      "n8n-docs-16",
-      "n8n-probe-1",
-      "n8n-probe-2"
+      "n8n-docs-16"
     ]
   },
   {
@@ -745,10 +743,9 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A direct probe confirms n8n serves a working llms.txt file at docs.n8n.io/llms.txt (HTTP 200) listing structured doc links, which is exactly the agent-oriented docs entry point this story asks for. Missing for 10: no independent/community confirmation of agents actually using it, and no broader agent-oriented docs format (like OpenAPI) since that probe 404'd.",
+    "rationale": "Direct probe confirms n8n serves a working llms.txt at https://docs.n8n.io/llms.txt (HTTP 200) with structured links to docs, which an agent can consume directly. missing for 10: no evidence of broader agent-oriented docs formats (e.g., per-page .md siblings or an agents.json manifest) or independent confirmation that agents actually consume it successfully.",
     "evidenceIds": [
-      "n8n-probe-1",
-      "n8n-probe-2"
+      "n8n-probe-1"
     ]
   },
   {
@@ -757,14 +754,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "n8n's AI agent nodes (LangChain integration, connecting to OpenAI/Anthropic/Google) let users build workflows that generate AI insights from data, and n8n explicitly markets use cases like 'Sales can generate customer insights from reviews' and 'Sec Ops can enrich security incident tickets' (n8n-docs-27, n8n-docs-25). However, this insight-generation is something the user must construct via workflow-building rather than a built-in analytics/insights feature that surfaces automatically inside the product. Missing for 10: evidence of an out-of-the-box, no-build insights/suggestions panel or dashboard analyzing user data automatically, and independent hands-on confirmation of this specific insight-generation use case working well.",
+    "rationale": "n8n's AI agent nodes and templates explicitly support generating insights from data (e.g. 'Sales can Generate customer insights from reviews', 'Sec Ops can Enrich security incident tickets', 'What agents do' docs) by connecting LLMs to a user's own data sources. However this is delivered via user-built workflows rather than a native, out-of-the-box insights/suggestions feature, and there's no independent/hands-on evidence confirming this specific use case works well in practice. Missing for 10: first-party deep documentation of an insights-generation workflow end-to-end, and community/hands-on corroboration of AI-generated insights specifically (only generic AI-workflow templates are cited).",
     "evidenceIds": [
       "n8n-docs-27",
       "n8n-docs-25",
       "n8n-docs-18",
-      "n8n-gh-3",
-      "n8n-gh-7",
-      "n8n-docs-19"
+      "n8n-gh-9",
+      "n8n-gh-3"
     ]
   },
   {
@@ -773,15 +769,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n workflows run autonomously via triggers (webhooks, schedules, MCP triggers), self-hosted or cloud, with error-handling workflows for failure recovery and persistent execution logs, and community users confirm running it unattended in production for months processing millions of workflows. missing for 10: independent hands-on evidence specifically validating long-running/background reliability at scale beyond anecdotal HN comments, and more detail on scheduling/queue-mode architecture for autonomous execution.",
+    "rationale": "n8n's core product is workflow automation triggered by webhooks/schedules that execute unattended, with error-handling workflows, execution history/search, and self-hosted/cloud deployment for always-on background operation; community evidence corroborates long-running, hands-off use (processing millions of workflows on a small server for years, following subreddits and sending notifications automatically, running in production for months). Missing for 10: an explicit dedicated schedule-trigger doc citation and independent uptime/reliability benchmarking for long-running autonomous agents.",
     "evidenceIds": [
       "n8n-docs-5",
-      "n8n-docs-18",
       "n8n-docs-21",
-      "n8n-docs-19",
+      "n8n-docs-9",
+      "n8n-docs-3",
       "n8n-comm-14",
-      "n8n-comm-8",
-      "n8n-comm-18"
+      "n8n-comm-7",
+      "n8n-comm-15",
+      "n8n-docs-18"
     ]
   },
   {
@@ -789,28 +786,26 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows n8n providing building blocks (AI Agent nodes, MCP client/trigger, model connectors) for constructing AI-powered workflows, but no documentation of a built-in AI assistant inside the product itself that a user can delegate tasks to (e.g., a chat-based workflow-building copilot). 'What agents do' (n8n-docs-18) describes agent nodes as automation components, not an embedded assistant helping the user operate the product.",
-    "evidenceIds": [
-      "n8n-docs-18",
-      "n8n-gh-3",
-      "n8n-gh-7"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence shows n8n lets users build AI agent workflows (nodes, LangChain integration, model connections) but none of it describes a built-in AI assistant inside the n8n product itself that a user can delegate tasks to (e.g., an in-app copilot for building/debugging workflows). All AI-agent references describe automations the user builds, not an assistant serving the user.",
+    "evidenceIds": []
   },
   {
     "productId": "n8n",
     "storyId": "agentic-headless",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "n8n can be self-hosted via Docker and controlled via CLI (n8n-docs-17), triggered via webhooks/API (n8n-docs-21, n8n-docs-16) and has error-workflow handling (n8n-docs-5), all of which support headless/automated execution outside the UI. However there is no explicit CI-specific documentation (e.g., GitHub Actions recipes, exit-code semantics for pipelines) or independent evidence of it being run in CI. Missing for 10: explicit CI/CD integration guides, hands-on community confirmation of headless CI usage, documented exit-code/status reporting for automated pipelines.",
+    "rationale": "n8n supports self-hosting via Docker/CLI and one-line install, has documented CLI configuration and command-line usage, an API, error-workflow handling for automated runs, and community reports of running it in production processing millions of workflows on small servers unattended — all consistent with headless/CI operation. missing for 10: no explicit CI/CD pipeline integration guide (e.g., GitHub Actions example) or dedicated 'headless mode' doc, and no independent benchmark of unattended reliability at scale beyond anecdotal community reports.",
     "evidenceIds": [
       "n8n-docs-17",
-      "n8n-docs-16",
-      "n8n-docs-21",
-      "n8n-docs-5",
+      "n8n-probe-4",
       "n8n-docs-3",
-      "n8n-probe-4"
+      "n8n-gh-8",
+      "n8n-docs-16",
+      "n8n-docs-5",
+      "n8n-comm-14",
+      "n8n-comm-15"
     ]
   },
   {
@@ -819,7 +814,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n ships a dedicated MCP Client node that lets workflows/agents consume tools exposed by external MCP servers, alongside an MCP Server Trigger for the reverse direction, both documented as first-party built-in nodes. This directly satisfies plugging MCP servers into n8n so its agents can use their tools. Missing for 10: independent hands-on validation of the MCP Client node's reliability/tool coverage beyond vendor docs.",
+    "rationale": "n8n ships a documented built-in MCP Client node (n8n-nodes-langchain.mcpclient) that lets a workflow/agent connect to external MCP servers and use their tools, alongside an MCP Server Trigger for the reverse role, confirming first-party MCP client support. This is corroborated by an official docs page and probe confirmation. Missing for 10: independent hands-on community reports specifically validating the MCP Client node's tool-use in practice (community evidence is general n8n sentiment, not MCP-specific).",
     "evidenceIds": [
       "n8n-docs-20",
       "n8n-docs-19",
@@ -832,7 +827,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "n8n ships a first-party 'MCP Server Trigger' node (docs-19, probe-3) that lets an n8n workflow expose itself as an MCP server, allowing external AI agents to connect to it — this directly satisfies the story, and n8n also documents a separate MCP Client node for the reverse direction. Missing for 10: independent/hands-on community corroboration that the MCP server trigger works reliably in production, and more detail on auth/security for exposed MCP endpoints.",
+    "rationale": "n8n ships an official MCP Server Trigger node (n8n-nodes-langchain.mcpTrigger) that lets external AI agents connect to n8n workflows via MCP, confirmed by docs and a probe hit; it also has a complementary MCP Client node for consuming other MCP servers. Missing for 10: independent/hands-on community confirmation of the MCP server trigger working in practice, and more detail on setup/auth specifics beyond the doc page title.",
     "evidenceIds": [
       "n8n-docs-19",
       "n8n-probe-3",
@@ -845,8 +840,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes n8n as a visual/code workflow builder and shows it can power AI agents and NL-to-API workflows *inside* workflows (e.g. n8n-docs-26), but there is no evidence that n8n itself can be operated/built/configured via natural-language commands (e.g., an AI assistant that creates or edits workflows from a prompt). Missing for 10: any documentation of a natural-language interface for controlling the n8n platform itself, hands-on evidence of prompt-driven workflow creation, or an AI copilot/chat feature for building n8n workflows.",
-    "evidenceIds": []
+    "rationale": "The evidence shows n8n lets users build AI agents and convert natural language into API calls *as workflow outputs*, but there is no evidence of a natural-language interface for operating n8n itself (e.g., a chat-to-build-workflow assistant or NL command console). missing for 10: evidence of a prompt-driven workflow builder or NL command interface for controlling n8n's canvas/actions.",
+    "evidenceIds": [
+      "n8n-docs-18",
+      "n8n-docs-26",
+      "n8n-docs-1"
+    ]
   },
   {
     "productId": "n8n",
@@ -854,7 +853,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "n8n documents a command-line interface for configuration/administration tasks (e.g., user management, workflow import/export) at docs.n8n.io/deploy/host-n8n/configure-n8n/use-the-command-line, confirmed by probe. However this is an operational/admin CLI, not an AI-native CLI designed for agentic workflows or programmatic AI-driven interaction. Missing for 10: evidence of an AI-native CLI use case (e.g., natural-language driven commands, agent-oriented CLI features), independent hands-on validation of CLI capabilities.",
+    "rationale": "n8n documents an official command-line interface for configuring and managing self-hosted instances (n8n-docs-17, n8n-probe-4), which is a genuine first-party CLI. However, this CLI is oriented toward deployment/configuration tasks rather than AI-native agentic workflows (e.g., no evidence of CLI-driven workflow creation/execution for AI agents, no scripting API for agent orchestration via CLI). Missing for 10: evidence of AI-native/agent-oriented CLI use cases, independent hands-on corroboration of the CLI, and any agent-facing CLI commands beyond basic server configuration.",
     "evidenceIds": [
       "n8n-docs-17",
       "n8n-probe-4"
@@ -863,27 +862,25 @@
   {
     "productId": "n8n",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "n8n publishes a documented public REST API (n8n-docs-16, docs.n8n.io/connect/n8n-api) allowing programmatic control of workflows, credentials, and executions, alongside CLI (n8n-docs-17) and webhook triggers (n8n-docs-21) for driving the product externally. Missing for 10: a discoverable OpenAPI/swagger spec (probe found only 404s at standard paths), and independent/hands-on community confirmation of API usage.",
+    "rationale": "n8n documents a dedicated public REST API (n8n-docs-16 'n8n API') for programmatic control, which supports AI-native/agentic driving of the product beyond the UI. However, evidence is limited to a single doc title with no detail on endpoints/auth, and probes for an OpenAPI/swagger spec at expected paths all 404'd, weakening confidence in completeness or discoverability. Missing for 10: detailed API reference content, machine-readable OpenAPI spec, and independent/hands-on developer confirmation of using the API.",
     "evidenceIds": [
       "n8n-docs-16",
-      "n8n-docs-17",
-      "n8n-docs-21",
       "n8n-probe-2"
     ]
   },
   {
     "productId": "n8n",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows n8n has a general API (n8n-docs-16), a credentials system for storing third-party service secrets (n8n-docs-23), and role-based access/audit trails for users (n8n-gh-5), but nothing describes issuing scoped or least-privilege API credentials specifically for an AI agent to act on n8n's behalf. The credentials and RBAC features shown are for human users and workflow nodes, not agent-scoped API key issuance.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "n8n exposes a credentials system for per-integration secrets and a general n8n API, plus role-based access control and audit trails per the GitHub description, which are building blocks for limiting what an agent can access. However there is no evidence of a mechanism to issue scoped or least-privilege API keys/credentials specifically for an AI agent's use (e.g., read-only, node-restricted, or agent-specific tokens). Missing for 10: documentation of scoped API key creation, granular per-agent credential permissions, and independent confirmation that credential scoping actually restricts agent tool access.",
     "evidenceIds": [
-      "n8n-docs-16",
       "n8n-docs-23",
+      "n8n-docs-16",
       "n8n-gh-5",
       "n8n-docs-28"
     ]
@@ -891,14 +888,12 @@
   {
     "productId": "n8n",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows n8n exposes a REST API (n8n-docs-16) and a CLI (n8n-docs-17), plus custom-code nodes for JS/Python (n8n-gh-1), but there is no mention of an official SDK (e.g., a published Python/JS client library) for building against n8n programmatically, and the OpenAPI spec probe returned 404s across all candidate paths, suggesting no formal API-driven SDK generation.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "n8n documents a public REST API (n8n-docs-16) that developers could build against, but there is no evidence of dedicated, officially maintained SDK packages (e.g., Python/Node client libraries) or SDK-specific quickstart docs — the API reference is the only artifact resembling programmatic access. missing for 10: official language SDKs (Python/JS/Go), SDK reference docs, SDK usage examples, and independent confirmation of SDK adoption.",
     "evidenceIds": [
-      "n8n-docs-16",
-      "n8n-docs-17",
-      "n8n-probe-2"
+      "n8n-docs-16"
     ]
   },
   {
@@ -907,9 +902,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n has a documented native Webhook trigger node that lets workflows subscribe to and act on incoming HTTP events, plus real-world community use (e.g. webhook-initiated tasks) confirming it works in production. Missing for 10: no independent benchmarking of webhook reliability at scale or deeper docs on event-subscription patterns beyond the basic node reference.",
+    "rationale": "n8n has a first-party Webhook trigger node (n8n-docs-21) that lets workflows (including AI agents) subscribe to and react to incoming HTTP events, plus an MCP Server Trigger (n8n-docs-19, n8n-probe-3) that exposes workflows as callable/event-driven endpoints for AI agent ecosystems. Community evidence corroborates real-world use of webhook-initiated workflows in production (n8n-comm-18). Missing for 10: independent hands-on verification specifically of webhook subscription reliability/latency and richer documentation on webhook authentication/security nuances.",
     "evidenceIds": [
       "n8n-docs-21",
+      "n8n-docs-19",
+      "n8n-probe-3",
       "n8n-comm-18"
     ]
   },
@@ -919,16 +916,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n has documented AI agent nodes ('What agents do'), model provider flexibility (OpenAI, Anthropic, Google, open-source, switchable without architecture change), and built-in MCP client/trigger nodes for tool use, all reflected on the canvas with traceable reasoning steps. Community evidence (n8n-comm-7, n8n-comm-8) corroborates real-world use of AI/LLM-driven workflows with debuggable execution history. Missing for 10: independent hands-on review specifically validating agent step configuration UX and multi-tool orchestration depth beyond docs.",
+    "rationale": "n8n has dedicated AI agent building blocks (docs on 'What agents do', LangChain-based nodes, MCP client/trigger), explicit model choice across OpenAI/Anthropic/Google/open-source providers, and tool use via integrations/credentials plus code nodes for advanced logic. This is corroborated by both first-party docs/GitHub claims and independent community use of n8n for AI workflows.  Missing for 10: deeper hands-on independent verification of multi-agent orchestration quality and tool-calling reliability beyond marketing/docs claims.",
     "evidenceIds": [
       "n8n-docs-18",
-      "n8n-docs-19",
-      "n8n-docs-20",
       "n8n-gh-3",
       "n8n-gh-7",
-      "n8n-docs-2",
-      "n8n-comm-7",
-      "n8n-comm-8"
+      "n8n-gh-9",
+      "n8n-docs-19",
+      "n8n-docs-20",
+      "n8n-intdir-1",
+      "n8n-intdir-4",
+      "n8n-intdir-3",
+      "n8n-comm-7"
     ]
   },
   {
@@ -937,7 +936,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "n8n documents its REST API [n8n-docs-16] but there is no evidence of an interactive reference with runnable/try-it-out examples; a direct probe for OpenAPI/Swagger specs at standard paths returned 404 everywhere [n8n-probe-2], suggesting no interactive API explorer is exposed.",
+    "rationale": "n8n documents a REST API (n8n-docs-16) but there is no evidence of an interactive, runnable API reference (e.g., Swagger/OpenAPI explorer); a direct probe for OpenAPI/Swagger specs returned 404 on all candidate paths, indicating no such interactive reference is exposed.",
     "evidenceIds": [
       "n8n-docs-16",
       "n8n-probe-2"
@@ -949,7 +948,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "n8n documents a REST 'n8n API' (n8n-docs-16), but explicit probing for a machine-readable spec (openapi.json, swagger.json, etc.) at the docs site returned 404 for all candidate paths (n8n-probe-2), and no other evidence shows a downloadable OpenAPI/Swagger spec. The axis applies to an automation platform with a public API, but there's no evidence it ships a discoverable machine-readable spec.",
+    "rationale": "While n8n documents a REST API (n8n-docs-16), the evidence pack contains an explicit probe showing all standard OpenAPI/Swagger spec paths returning 404 (n8n-probe-2), and no other citation shows a downloadable machine-readable spec for n8n's API. No evidence of an OpenAPI/Swagger JSON export exists.",
     "evidenceIds": [
       "n8n-docs-16",
       "n8n-probe-2"
@@ -959,13 +958,12 @@
     "productId": "n8n",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "n8n supports self-hosting and a documented 'source control and environments' feature (push/pull changes) that implies separate dev/staging/production environments, and self-hosting itself lets a user spin up an isolated instance without touching production data. However there's no explicit sandbox/test-mode feature marketed for AI-native testing, no dedicated test-data isolation tooling, and no community evidence confirming this workflow in practice. Missing for 10: an explicit sandbox/test environment feature, documentation on isolating test runs from production data, and independent confirmation of this use case working as described.",
+    "rationale": "n8n's source-control/environments feature (n8n-docs-22, n8n-docs-7) implies the ability to maintain separate dev/staging/production n8n instances synced via Git, which could support sandbox testing without touching production data, but the evidence pack gives only page titles with no detail on how isolation, test data, or non-production execution actually works. missing for 10: explicit documentation of a sandbox/staging execution mode, test-vs-production webhook isolation, or first-party guidance on testing without affecting live data.",
     "evidenceIds": [
-      "n8n-docs-3",
       "n8n-docs-22",
-      "n8n-docs-4"
+      "n8n-docs-7"
     ]
   },
   {
@@ -974,7 +972,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "n8n documents an API (n8n-docs-16) but the evidence pack shows no versioning scheme details or documented deprecation policy, and probes for an OpenAPI spec returned 404s across all candidate paths (n8n-probe-2), indicating no discoverable formal API contract/versioning documentation.",
+    "rationale": "n8n publishes an API (n8n-docs-16) but the evidence pack contains no documentation of API versioning scheme or a deprecation policy, and a probe for an OpenAPI spec returned 404s across all candidate paths (n8n-probe-2), indicating no discoverable versioned/spec-documented API contract.",
     "evidenceIds": [
       "n8n-docs-16",
       "n8n-probe-2"
@@ -986,13 +984,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n natively supports webhook triggers and 1500+ app integrations, enabling workflows to fire on events like new records, messages, emails, or form submissions, backed by docs and community usage (e.g., subreddit scraping, webhook-initiated tasks). missing for 10: independent benchmarking of specific app-event triggers (e.g., new record in CRM) beyond generic webhook/integration docs, and more first-party documentation per-trigger-type reliability.",
+    "rationale": "n8n has documented trigger-based nodes (Webhook, MCP Server Trigger) and 1500+ app integrations that fire workflows off events like new records, messages, emails, or form submissions, backed by extensive integration docs and community reports of production use (webhook-initiated tasks, Slack/email/form-style automations). missing for 10: no explicit first-party doc snippet listing app-specific triggers (e.g., 'new email received', 'new form submission') by name, and no independent benchmark of trigger reliability/latency across many apps.",
     "evidenceIds": [
       "n8n-docs-21",
+      "n8n-docs-19",
       "n8n-gh-2",
-      "n8n-gh-4",
+      "n8n-gh-10",
       "n8n-comm-18",
-      "n8n-comm-7"
+      "n8n-comm-15",
+      "n8n-intdir-2"
     ]
   },
   {
@@ -1001,7 +1001,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "n8n supports error handling via error workflows (n8n-docs-5) and community evidence confirms users configure retries for sporadic failures in production (n8n-comm-18), but the evidence pack does not document a specific 'retry with backoff' configuration option, backoff intervals, or exponential backoff settings. Missing for 10: explicit docs on per-node retry/backoff configuration options, evidence of configurable wait times or exponential backoff, and independent hands-on confirmation of backoff behavior beyond a single anecdotal mention.",
+    "rationale": "n8n provides an error-workflow mechanism to react to failed executions (n8n-docs-5) and community usage confirms retries are commonly relied upon in production (n8n-comm-18), but the evidence pack contains no explicit documentation of a configurable retry-with-backoff setting (e.g., delay/backoff intervals) for individual steps. Missing for 10: documentation of per-node 'retry on fail' with configurable backoff/delay, independent confirmation of backoff behavior, and any activity-level retry policy details.",
     "evidenceIds": [
       "n8n-docs-5",
       "n8n-comm-18"
@@ -1010,19 +1010,23 @@
   {
     "productId": "n8n",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack contains no explicit documentation or community mention of batch/bulk item processing, looping over item sets, or a 'Split in Batches'-style feature — only general claims about visual workflows, code nodes, and integrations. Without direct evidence addressing bulk operations across many items, this applicable automation-depth axis cannot be credited.",
-    "evidenceIds": []
+    "rationale": "n8n's workflow engine inherently processes arrays of items and community evidence shows real-world use at high volume (\"processing millions of workflows each year on a very small server\"), implying capacity for bulk-scale automation, but the evidence pack contains no explicit documentation of batch/loop/bulk-item processing features (e.g., Split-in-Batches, item-array iteration) as a distinct capability. Missing for 10: explicit docs on batch-processing nodes or bulk-item iteration, first-party guidance on handling large item sets, and independent confirmation of bulk-operation reliability at scale.",
+    "evidenceIds": [
+      "n8n-comm-14",
+      "n8n-comm-7",
+      "n8n-docs-1"
+    ]
   },
   {
     "productId": "n8n",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "n8n is fundamentally an event-driven automation platform with triggers (webhooks, schedule, MCP server trigger, app-event triggers) that fire workflows automatically, plus error workflows to control follow-up actions on failure — directly matching 'rules that trigger actions on events.' This is corroborated by hands-on community use (subreddit scraping triggers, webhook-initiated backend tasks) confirming real-world automation behavior. Missing for 10: no independent benchmark of trigger reliability at scale or deeper docs on complex conditional rule logic beyond basic IF/switch nodes.",
+    "rationale": "n8n natively supports event-based triggers (Webhook, MCP Server Trigger, scheduled triggers) that fire workflows/actions automatically, plus error-handling workflows for reacting to execution events, directly matching rule-based automation on events. Community evidence corroborates real production use for automated multi-step workflows triggered by webhooks/schedules. missing for 10: no independent benchmark of complex conditional 'if X then Y' rule engines beyond trigger nodes, and no deeper docs on rule-composition beyond triggers/IF nodes.",
     "evidenceIds": [
       "n8n-docs-21",
       "n8n-docs-19",
@@ -1035,13 +1039,11 @@
     "productId": "n8n",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Community evidence confirms n8n supports scheduled workflow execution alongside webhook triggers in real production use (n8n-comm-18), and n8n's broader automation/workflow platform framing supports recurring job execution. However, the evidence pack lacks first-party documentation specifically describing the Schedule Trigger/Cron node, cron syntax, timezone handling, or execution history for scheduled runs. Missing for 10: official docs citation for the Schedule/Cron trigger node, details on interval/cron configuration options, and independent confirmation of reliability for long-running recurring jobs.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "The pack lacks any first-party documentation citation for a dedicated Schedule/Cron trigger node, but a hands-on community report confirms real production use of n8n for 'scheduled and webhook-initiated tasks' (n8n-comm-18), indicating the capability exists and works. Missing for 10: official docs reference to the Schedule Trigger/Cron node, details on interval/cron expression configuration, and independent verification beyond a single community anecdote.",
     "evidenceIds": [
-      "n8n-comm-18",
-      "n8n-docs-5",
-      "n8n-docs-18"
+      "n8n-comm-18"
     ]
   },
   {
@@ -1050,11 +1052,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "n8n documents Git-based source control with push/pull for workflows (env promotion) and error-handling workflows, and community feedback confirms execution history lets users see what happened on failures, giving debugging/review capability. However, this Git version control feature is pricing-page listed (implying it's a paid/Enterprise tier feature) and there's no dedicated 'rollback to previous version' UI documented, nor independent confirmation of rollback workflows. Missing for 10: clear rollback/restore mechanism in UI, confirmation source control is available in Community edition, independent hands-on account of versioning/rollback in practice.",
+    "rationale": "n8n documents Git-based source control (\"Version control using Git\", \"Push and pull changes\") and execution history/search that lets users review past runs (n8n-docs-7, n8n-docs-22, n8n-docs-9), and community evidence confirms execution history is retained for debugging (n8n-comm-8). However, Git-based version control appears to be a paid/enterprise pricing-page feature rather than a built-in community capability, and there is no explicit documentation of a one-click 'rollback' mechanism for workflows beyond manually reverting via Git. Missing for 10: explicit rollback/restore workflow feature, confirmation that version control is available outside paid tiers, and independent hands-on confirmation of the review/rollback workflow.",
     "evidenceIds": [
-      "n8n-docs-22",
       "n8n-docs-7",
-      "n8n-docs-5",
+      "n8n-docs-22",
+      "n8n-docs-9",
       "n8n-comm-8"
     ]
   },
@@ -1062,13 +1064,15 @@
     "productId": "n8n",
     "storyId": "central-credentials-management",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "n8n documents a centralized Credentials system and role-based access/admin roles (n8n-docs-23, n8n-docs-28, n8n-gh-5), implying credentials can be stored centrally and access governed by roles, but there is no explicit evidence of per-credential sharing controls (e.g., granting specific users/teams access to a specific credential) or credential-usage auditing. Missing for 10: documentation of granular credential-sharing/permissions UI, evidence of team-level credential scoping, and independent/hands-on confirmation of this workflow.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "n8n has a dedicated Credentials system for centrally storing connection secrets across hundreds of integrations (n8n-docs-23, n8n-intdir-12..30), and enterprise-tier docs reference role-based access control, admin roles, and SSO/SAML/LDAP for governing team access (n8n-gh-5, n8n-docs-28, n8n-docs-8). However, the evidence never explicitly documents a 'share credential with specific users/roles' workflow or granular per-credential permission model, so team sharing and fine-grained control are only implied via general RBAC/admin claims. Missing for 10: explicit documentation of credential-sharing UI/permissions, independent/hands-on confirmation that per-credential access control works as described.",
     "evidenceIds": [
       "n8n-docs-23",
+      "n8n-gh-5",
       "n8n-docs-28",
-      "n8n-gh-5"
+      "n8n-docs-8",
+      "n8n-intdir-12"
     ]
   },
   {
@@ -1077,73 +1081,69 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n's Code node explicitly supports both JavaScript and Python plus npm packages as a workflow step, confirmed by docs/GitHub descriptions ('Code When You Need It') and corroborated hands-on by community users who describe using 'custom code blocks (JS and Python only, with limited ability to import libraries)'. Missing for 10: independent benchmarking of Python sandboxing/library limitations and deeper docs on the Code node's execution environment.",
+    "rationale": "n8n explicitly ships a Code node supporting JavaScript and Python (with npm packages) as a workflow step, confirmed by both vendor docs/GitHub (n8n-gh-1, n8n-gh-6, n8n-docs-1) and independent hands-on community feedback confirming custom JS/Python code blocks exist (n8n-comm-6). Missing for 10: deeper first-party documentation of the Code node itself (execution modes, sandboxing) and resolution of the community-noted limitation on importing external libraries.",
     "evidenceIds": [
       "n8n-gh-1",
       "n8n-gh-6",
       "n8n-docs-1",
+      "n8n-docs-13",
       "n8n-comm-6"
     ]
   },
   {
     "productId": "n8n",
     "storyId": "community-built-components",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows n8n workflows can incorporate custom code and npm packages, and community members describe it as 'easily extendable' with new integrations built easily, implying support for third-party/community components, but there is no explicit documentation of an official 'community nodes' installation mechanism or marketplace for vendor-external nodes. missing for 10: explicit docs on installing/using community-contributed nodes (e.g., npm-based community node packages), a community-nodes marketplace page, and independent confirmation of the install workflow.",
-    "evidenceIds": [
-      "n8n-gh-1",
-      "n8n-gh-6",
-      "n8n-comm-15",
-      "n8n-comm-4"
-    ]
+    "rationale": "Evidence covers n8n's vendor-built integrations directory, npm packages usable inside code nodes, and API access, but nothing documents an official community-nodes marketplace or process for installing third-party-built nodes/components contributed outside n8n itself.",
+    "evidenceIds": []
   },
   {
     "productId": "n8n",
     "storyId": "concurrency-rate-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of throttling, rate limiting, queueing, concurrency controls, or execution-mode configuration for respecting downstream API limits — only generic error-workflow handling (n8n-docs-5) and a community mention of using retries for errors (n8n-comm-18), neither of which addresses throttling/queuing executions.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows error-workflow handling and community mentions of using 'retries' for sporadic errors, but there is no documentation or evidence of features like rate-limit throttling, request queuing, batching/wait nodes, or execution concurrency controls to respect downstream rate limits.",
+    "evidenceIds": [
+      "n8n-docs-5",
+      "n8n-comm-18"
+    ]
   },
   {
     "productId": "n8n",
     "storyId": "conditional-branching-logic",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "n8n's marketing material repeatedly emphasizes visual workflow building and a 'flow-logic' documentation section (covering error handling) implying support for branching workflow logic, and community reviews describe it as a mature visual builder with debuggable execution history, but no evidence pack item explicitly documents IF/Switch/Filter/Merge nodes or parallel-path merging as described in the story. Missing for 10: explicit docs/screenshots of conditional (IF/Switch) nodes, filter nodes, parallel branch execution, and a Merge node reuniting branches.",
-    "evidenceIds": [
-      "n8n-docs-1",
-      "n8n-docs-5",
-      "n8n-comm-8"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains only generic marketing language about visual building, code extensibility, and error-workflow handling, but no documentation of IF/Switch/Filter nodes or a Merge node that would let branches recombine. Community and docs items never describe conditional branching or parallel-path merging explicitly, so the specific branch-and-merge capability is unevidenced. Missing for 10: docs/evidence on conditional (IF/Switch) nodes, filter nodes, and a Merge node for recombining parallel paths.",
+    "evidenceIds": []
   },
   {
     "productId": "n8n",
     "storyId": "cron-schedules",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no citation to n8n's Schedule Trigger, cron expressions, or timezone configuration for workflow execution; only tangential triggers (Webhook, MCP Trigger) are documented. Since scheduling is a core, applicable feature for a workflow automation tool but is unevidenced here, this must be scored 'none'.",
+    "confidence": "medium",
+    "rationale": "The evidence pack lists numerous n8n trigger/node docs (Webhook, MCP Trigger/Client, credentials) but never mentions a Cron/Schedule Trigger node or timezone configuration options, so there is no direct evidence this specific capability is documented or delivered.",
     "evidenceIds": []
   },
   {
     "productId": "n8n",
     "storyId": "custom-connector-sdk",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "n8n supports code-level extensibility via custom JS/Python code nodes with npm packages, a documented CLI, and an n8n API for programmatic control, giving developers real levers to build custom logic and integrations. However, there's no dedicated SDK for building distributable custom nodes/connectors evidenced, and community feedback explicitly calls out that documentation 'leaves a lot to be desired, especially regarding custom node development,' directly undercutting the 'documented developer platform' claim for this specific use case. Missing for 10: a dedicated custom-node/connector SDK with first-party scaffolding tools, stronger official docs on building and publishing custom nodes, and independent hands-on confirmation that custom connector development is smooth.",
+    "rationale": "n8n documents a developer platform for extensibility: an n8n API (n8n-docs-16), a CLI (n8n-docs-17, n8n-probe-4), and code nodes supporting JavaScript/Python/npm packages for custom logic (n8n-gh-1, n8n-gh-6), plus self-hosting/OEM options for building private integrations (n8n-docs-3, n8n-docs-6). However, community feedback specifically flags that documentation for building custom nodes is weak ('leaves a lot to be desired... especially regarding custom node development' n8n-comm-12), and code blocks have 'limited ability to import libraries' (n8n-comm-6), indicating real gaps versus a mature SDK experience. Missing for 10: a dedicated custom-node SDK/scaffolding tool with strong docs, and independent confirmation that custom connector development is smooth rather than reported as under-documented.",
     "evidenceIds": [
-      "n8n-gh-1",
-      "n8n-gh-6",
       "n8n-docs-16",
       "n8n-docs-17",
-      "n8n-comm-6",
-      "n8n-comm-12"
+      "n8n-probe-4",
+      "n8n-gh-1",
+      "n8n-gh-6",
+      "n8n-comm-12",
+      "n8n-comm-6"
     ]
   },
   {
@@ -1151,25 +1151,20 @@
     "storyId": "durable-long-running-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows n8n has error-workflow handling and execution history/search, but contains no documentation or community evidence about wait/pause nodes persisting state across worker or platform restarts for long-lived (multi-day) workflows. Missing for 10: docs on the Wait node's persistence mechanism, evidence of durable execution state across restarts, and any confirmation (vendor or hands-on) that long-running waits survive crashes/upgrades.",
-    "evidenceIds": [
-      "n8n-docs-5",
-      "n8n-comm-8"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of n8n's wait/pause mechanism, execution state persistence across worker or platform restarts, or queue-mode durability for long-running workflows. Error-workflow handling (n8n-docs-5) and execution history search (n8n-docs-9, n8n-comm-8) address failure notification and debugging, not surviving restarts during multi-day waits, so this applicable reliability axis is unevidenced.",
+    "evidenceIds": []
   },
   {
     "productId": "n8n",
     "storyId": "embed-white-label",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "n8n has a dedicated documented OEM deployment option explicitly for embedding n8n's interface white-label inside a third party's own product UI, alongside self-hosting flexibility and API access for deeper integration control. Missing for 10: independent/hands-on developer accounts of actually shipping an OEM-embedded product, and pricing/licensing detail specifics for the OEM tier.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "n8n explicitly documents an OEM deployment option that lets developers embed and surface n8n's interface inside their own product's UI, confirming white-label embedding is a supported first-party capability (though it requires a separate commercial agreement). Missing for 10: independent/hands-on developer accounts of actually shipping an OEM-embedded product, and details on branding/customization depth.",
     "evidenceIds": [
       "n8n-docs-6",
-      "n8n-docs-3",
-      "n8n-docs-16",
-      "n8n-docs-14"
+      "n8n-docs-31"
     ]
   },
   {
@@ -1178,19 +1173,20 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "n8n documents a dedicated Source Control and Environments feature ('Push and pull changes') enabling Git-based versioning and promotion of workflows across environments, and lists 'Version control using Git' as a paid-tier feature. missing for 10: independent/hands-on confirmation of dev-to-prod promotion workflow in practice, and detail on how environment-specific credentials/variables are handled during promotion.",
+    "rationale": "n8n has dedicated docs on 'Push and pull changes' via source control and environments, plus a pricing-listed 'Version control using Git' enterprise feature, directly supporting versioning workflows and promoting them across environments. Missing for 10: independent/hands-on verification of the dev-to-prod promotion workflow, and details on CI/CD pipeline integration beyond Git push/pull.",
     "evidenceIds": [
       "n8n-docs-22",
-      "n8n-docs-7"
+      "n8n-docs-7",
+      "n8n-docs-28"
     ]
   },
   {
     "productId": "n8n",
     "storyId": "error-workflows-alerts",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "n8n docs explicitly describe a dedicated 'error workflow' feature that lets users control how n8n responds to a workflow execution failure, directly matching the ops story of dedicated error-handling paths, and community evidence confirms n8n retains historical execution data for debugging failed runs. Missing for 10: explicit documentation/example of a notification action (e.g., Slack/email node) triggered from the error workflow, and independent hands-on confirmation that failure notifications work reliably in practice.",
+    "rationale": "n8n has a documented first-party 'error workflow' feature letting users control how workflow execution failures are handled [n8n-docs-5], and community evidence confirms n8n keeps historical execution logs so failures are debuggable [n8n-comm-8]. However, the evidence pack doesn't detail specific notification channels (e.g., Slack/email alerting nodes) tied to error workflows or dedicated 'get notified on failure' setup steps, and one community comment notes users 'just live with' sporadic errors using retries rather than dedicated alerting [n8n-comm-18]. Missing for 10: explicit documentation of notification/alerting integration within error workflows, and independent hands-on confirmation that error-workflow notifications work reliably in production.",
     "evidenceIds": [
       "n8n-docs-5",
       "n8n-comm-8",
@@ -1203,15 +1199,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "n8n's Code/Function nodes and JavaScript/Python support let users write custom expressions and code to map and transform data between workflow steps, corroborated by both marketing docs and hands-on community accounts describing writing SQL, extracting JSON/XML, and building custom transformation logic. Community also confirms debuggability by showing data in/out per node, reinforcing that transform steps are core to the product.\n\nmissing for 10: dedicated documentation excerpts on the expression editor syntax (e.g. n8n's {{ }} expression language) and Function node specifics, plus more independent hands-on validation beyond forum anecdotes.",
+    "rationale": "n8n explicitly supports combining visual workflow steps with JavaScript/Python code and npm packages for custom data manipulation, and community users confirm using code nodes, SQL, JSON/XML parsing, and debugging data in/out between steps. Missing for 10: explicit first-party documentation of the dedicated Expression/Function editor syntax and independent verification of complex multi-step transform reliability (community notes it 'looks weird' and requires programming knowledge for hard data-mapping cases).",
     "evidenceIds": [
       "n8n-gh-1",
       "n8n-gh-6",
       "n8n-docs-1",
-      "n8n-docs-13",
       "n8n-comm-6",
-      "n8n-comm-8",
       "n8n-comm-13",
+      "n8n-comm-8",
       "n8n-comm-3"
     ]
   },
@@ -1221,7 +1216,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of a 'Wait' node, approval step, or human-in-the-loop pause/resume mechanism — only general flow-logic (error workflows) and AI-agent/MCP docs, none of which describe pausing execution for human approval. Absence of evidence for this applicable workflow-automation capability yields 'none'.",
+    "rationale": "The evidence pack contains no mention of a wait/pause node, human-in-the-loop approval step, or any mechanism for pausing execution pending human input — only unrelated items like error workflows, webhooks, and MCP nodes are cited. This is a fair capability to expect from a workflow automation tool, but no evidence in the pack demonstrates it.",
     "evidenceIds": []
   },
   {
@@ -1230,25 +1225,24 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n has a dedicated Webhook trigger node documented officially (n8n-docs-21) that starts workflow execution from external HTTP requests, and community users confirm building 'webhook-initiated tasks' in production (n8n-comm-18). Missing for 10: deeper documentation excerpts on payload parsing/response customization and independent benchmarking of webhook reliability at scale.",
+    "rationale": "n8n has a dedicated Webhook node documented in official docs, which lets developers expose a custom URL that receives external HTTP requests and triggers a workflow run with the incoming payload; community reports (n8n-comm-18) confirm real-world use of webhook-initiated tasks in production. missing for 10: independent hands-on verification of advanced webhook configuration (e.g., custom auth, response modes) and no dedicated deep-dive doc excerpt beyond the node reference page.",
     "evidenceIds": [
       "n8n-docs-21",
-      "n8n-comm-18",
-      "n8n-comm-8"
+      "n8n-comm-18"
     ]
   },
   {
     "productId": "n8n",
     "storyId": "local-dev-instance",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "n8n ships self-hosting via Docker/CLI and supports environment promotion (dev/test/prod) via 'source control and environments' push/pull, plus a command-line interface for local runs, which together enable local/dev-instance workflow execution. However, there is no explicit documentation of a CI testing framework, automated test runners, or headless workflow execution for pipelines. Missing for 10: dedicated CI/testing tooling docs, automated workflow test execution examples, and independent hands-on confirmation of CI use.",
+    "rationale": "n8n can be self-hosted locally (Docker Compose, one-line curl install) or run on a dev instance, configured via CLI, and supports pushing/pulling workflows between environments via source control integration, which enables dev/test workflows; community confirms long-term self-hosting in production. However, there is no explicit documentation or evidence of a CI-testing framework, automated test runner, or headless workflow execution for CI pipelines specifically. Missing for 10: dedicated CI/testing tooling or docs (e.g. workflow unit tests, CLI-based automated test execution in CI), and independent hands-on confirmation of dev/CI usage.",
     "evidenceIds": [
       "n8n-docs-3",
-      "n8n-docs-4",
       "n8n-docs-17",
       "n8n-docs-22",
+      "n8n-gh-8",
       "n8n-comm-1",
       "n8n-comm-15"
     ]
@@ -1259,41 +1253,41 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents n8n's visual/code-hybrid workflow builder, AI agent nodes, MCP integration, and model connectivity, but nothing describes an n8n feature where a user types a natural-language prompt and n8n generates or edits the workflow definition itself. n8n-docs-26 references a workflow use-case that converts NL into API calls, but that is a workflow's runtime behavior, not n8n's own workflow-authoring UX. Since AI-native NL-to-workflow generation is a plausible and increasingly common capability for automation platforms, the axis applies, but no supporting evidence is present.",
+    "rationale": "The evidence pack covers n8n's visual/code building, AI agent nodes, MCP support, and integrations, but contains no documentation of a natural-language-to-workflow generation or editing feature (e.g., an 'AI workflow builder' or prompt-based canvas editing). n8n-docs-26 only describes a workflow that converts natural language into API calls as a use case, not n8n generating/editing the workflow itself from a prompt.",
     "evidenceIds": [
       "n8n-docs-26",
       "n8n-docs-18",
-      "n8n-gh-3"
+      "n8n-docs-1"
     ]
   },
   {
     "productId": "n8n",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 2,
     "confidence": "low",
-    "rationale": "n8n documents a REST API (n8n-docs-16) and a CLI (n8n-docs-17/probe-4), suggesting some programmatic control beyond the UI, but there's no evidence detailing full feature parity between the API and the visual editor (e.g., building/editing every node type, credentials, executions, admin settings via API), and a probe for an OpenAPI spec at standard paths returned 404s, suggesting the API surface may not be fully discoverable or documented as complete. Missing for 10: explicit documentation or examples showing full CRUD parity for workflows/credentials/executions/settings via API, a published OpenAPI spec, and independent confirmation that API-only workflows can replicate all UI capabilities.",
+    "rationale": "The evidence pack confirms n8n has a documented REST API (n8n-docs-16) and a CLI (n8n-docs-17), but there's no evidence establishing that this API achieves full feature parity with the UI (e.g., building/editing every workflow node type, credentials, AI agent config, etc.), and a probe for a discoverable OpenAPI spec at standard paths returned 404s. Missing for 10: explicit documentation or independent testing confirming API/UI parity, a published OpenAPI spec, and evidence AI-native users can fully replicate complex canvas actions (agent config, node wiring) purely via API.",
     "evidenceIds": [
       "n8n-docs-16",
       "n8n-docs-17",
-      "n8n-probe-2",
-      "n8n-probe-4"
+      "n8n-probe-2"
     ]
   },
   {
     "productId": "n8n",
     "storyId": "openness-full-export",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "n8n's self-hosted model means users own their database directly, workflows are portable as JSON, source control/Git integration (n8n-docs-22) and the n8n API (n8n-docs-16) allow programmatic extraction of workflow data, and community members confirm long-term self-hosting with full data control (n8n-comm-1, n8n-comm-16). However, this is 'fair-code' not fully open-source (n8n-comm-19 explicitly notes 'not really OSS'), and there is no explicit documented bulk data-export feature or open-format guarantee beyond workflow JSON/git. Missing for 10: explicit documented full-data-export tooling/guide, clarity on execution-history export format, and independent confirmation of a clean 'leave' migration path.",
+    "rationale": "n8n workflows are stored as portable JSON and can be pushed/pulled via Git-based source control (n8n-docs-22), plus a documented REST API (n8n-docs-16) and full self-hosting (n8n-docs-3, n8n-comm-1/16/17) give users real control to extract and leave with their data. Missing for 10: explicit documentation of a bulk 'export all data' feature, independent confirmation of complete data portability (credentials, execution history), and clarity on the fair-code (not fully OSS) license implications for openness (n8n-comm-19).",
     "evidenceIds": [
       "n8n-docs-22",
       "n8n-docs-16",
       "n8n-docs-3",
-      "n8n-docs-29",
-      "n8n-comm-19",
-      "n8n-comm-1"
+      "n8n-docs-4",
+      "n8n-comm-1",
+      "n8n-comm-17",
+      "n8n-comm-19"
     ]
   },
   {
@@ -1302,10 +1296,11 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "n8n's source is publicly readable on GitHub and docs describe it as \"fair-code licensed\" (n8n-docs-12, n8n-docs-29), but this is a Sustainable Use License, not an OSI-approved open-source license, and community commentary explicitly flags this: \"Not really OSS\" (n8n-comm-19). So while code is viewable, the claim of an 'open license' is contradicted by license terms and community consensus. Missing for 10: an actual OSI-approved open-source license, and vendor acknowledgment that fair-code restricts commercial/competing use.",
+    "rationale": "n8n's source code is publicly readable on GitHub and docs describe it as 'fair-code licensed' with a Sustainable Use License/Community edition, but this is explicitly not an OSI-approved open source license, and community evidence directly disputes the openness framing ('Not really OSS'). Missing for 10: an actual OSI-approved open license, and vendor acknowledgment that fair-code differs from open source rather than implying openness via branding.",
     "evidenceIds": [
-      "n8n-docs-12",
       "n8n-docs-29",
+      "n8n-docs-30",
+      "n8n-docs-12",
       "n8n-comm-19"
     ]
   },
@@ -1315,11 +1310,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "n8n explicitly documents self-hosting on your own infrastructure via Docker Compose or other methods, offers a free Community edition and a standard self-hosted GitHub distribution, and multiple independent community reports confirm years of successful self-hosting in production. Missing for 10: clearer detail on feature parity/limitations between self-hosted Community edition vs enterprise-licensed features, and note that the license is 'fair-code' not pure OSS (per n8n-comm-19), which is a minor nuance rather than a contradiction of self-hosting capability.",
+    "rationale": "n8n provides clear first-party documentation for self-hosting via Docker Compose, one-line install script, or other methods, and confirms a free Community edition runs without a license key; this is corroborated by extensive community testimonials of long-term self-hosting in production. Missing for 10: independent hands-on verification of the self-hosting setup process itself beyond community mentions of using it.",
     "evidenceIds": [
       "n8n-docs-3",
       "n8n-docs-4",
       "n8n-docs-29",
+      "n8n-gh-8",
       "n8n-comm-1",
       "n8n-comm-16",
       "n8n-comm-17"
@@ -1331,12 +1327,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n documents 1500+ prebuilt integrations plus 9,000-12,000+ community workflow templates, and community testimonials confirm real-world use across many connected apps/services with easy extensibility. Missing for 10: independent verification of vendor-maintenance/upkeep quality across the full catalog and clearer distinction between officially vendor-maintained vs community-contributed nodes.",
+    "rationale": "n8n's GitHub README and docs consistently tout '1500+ integrations' and thousands of templates, backed by an integrations directory covering major SaaS apps (Slack, Notion, GitHub, HubSpot, Jira, etc.) and a long list of built-in credential types, and community users corroborate ease of extending/using integrations in production. Missing for 10: explicit confirmation that all listed integrations are vendor-maintained (vs. community-contributed nodes) and independent benchmarking of integration reliability/coverage depth.",
     "evidenceIds": [
       "n8n-gh-2",
       "n8n-gh-4",
+      "n8n-gh-10",
       "n8n-docs-11",
-      "n8n-docs-15",
+      "n8n-docs-32",
+      "n8n-intdir-1",
+      "n8n-intdir-2",
+      "n8n-intdir-5",
+      "n8n-intdir-8",
+      "n8n-intdir-9",
       "n8n-comm-15",
       "n8n-comm-4"
     ]
@@ -1347,11 +1349,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "n8n can be fully self-hosted on a user's own infrastructure or private cloud, which lets AI-native users control exactly where their data resides, and this is corroborated by community reports of self-hosting for data-sensitive use cases (e.g. avoiding Zapier due to client data concerns). However, there is no explicit documentation of a managed-cloud region/residency selection feature (e.g. choosing EU vs US data centers for n8n Cloud), so the story is only addressed via the self-hosting path rather than a first-class residency control. Missing for 10: explicit cloud region-selection options, data residency certifications/compliance documentation for hosted offering.",
+    "rationale": "n8n's self-hosting model (Docker Compose, own infrastructure, on-premises, or private cloud) lets a user fully control where data physically resides, and docs explicitly offer 'Deploy on your infrastructure or ours.' However, this is an indirect residency mechanism (achieved via self-hosting) rather than a first-class region-selection setting, and there is no evidence of specific region options for n8n Cloud. Missing for 10: explicit n8n Cloud region-selection UI/feature, documented data-residency guarantees or compliance certifications tied to region choice.",
     "evidenceIds": [
       "n8n-docs-3",
       "n8n-docs-14",
-      "n8n-comm-16"
+      "n8n-docs-29",
+      "n8n-gh-5"
     ]
   },
   {
@@ -1360,12 +1363,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "n8n's self-hosting options (Docker Compose, on-premises, private cloud) let AI-native users keep all workflow data on their own infrastructure, which indirectly prevents vendor-side use of data for AI training. However, there is no explicit n8n policy statement addressing AI training data usage, no data-processing/DPA language, and no claim about third-party model providers' training use of data passed through n8n. Missing for 10: explicit AI-training data policy, DPA/privacy documentation addressing model training, clarity on data handling when using cloud-hosted n8n or connected LLM providers.",
+    "rationale": "n8n offers self-hosting on your own infrastructure (n8n-docs-3, n8n-gh-8, n8n-comm-16), which gives users full control over where their data lives and implicitly prevents it from being sent to n8n's cloud or used by n8n for any AI training. However, there is no explicit policy statement, opt-out setting, or documentation addressing AI-training data usage specifically. Missing for 10: an explicit data-usage/AI-training policy or opt-out toggle, independent confirmation that self-hosted data is never used for model training, and clarity on cloud-plan data handling for AI training purposes.",
     "evidenceIds": [
       "n8n-docs-3",
-      "n8n-docs-14",
-      "n8n-gh-5",
-      "n8n-comm-16"
+      "n8n-gh-8",
+      "n8n-comm-16",
+      "n8n-docs-4"
     ]
   },
   {
@@ -1374,11 +1377,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "n8n's self-hosting option (n8n-docs-3, n8n-gh-5) gives users full infrastructure control, which implicitly allows control over where execution/workflow data lives and how long it persists, and n8n-gh-5 mentions support for 'sensitive data' and audit trails. However, the evidence pack contains no explicit documentation of configurable data retention windows, execution-data pruning settings, or deletion APIs/workflows. Missing for 10: explicit retention/pruning configuration docs, data deletion API or UI controls, and any independent confirmation that these controls work as described.",
+    "rationale": "n8n's self-hosting option (n8n-docs-3, n8n-docs-14, n8n-gh-5) gives users full control over where data lives and implicitly the ability to delete or retain it as they see fit, and n8n-gh-5 mentions support for 'sensitive data' with audit trails. However, there is no explicit documentation in the pack of configurable execution-data retention/pruning settings, deletion APIs, or GDPR-style data-deletion controls within the product itself. missing for 10: explicit execution-data retention/pruning configuration, documented data-deletion workflow or API, independent confirmation of retention controls working as described.",
     "evidenceIds": [
       "n8n-docs-3",
-      "n8n-gh-5",
-      "n8n-docs-9"
+      "n8n-docs-14",
+      "n8n-gh-5"
     ]
   },
   {
@@ -1387,7 +1390,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics opt-out, or diagnostic data settings for n8n; the pack covers self-hosting, deployment, pricing, and community sentiment but never addresses telemetry controls.",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or opt-out settings for n8n; self-hosting is documented but that alone doesn't confirm telemetry can be disabled or clarify what data is collected in cloud/community editions.",
     "evidenceIds": []
   },
   {
@@ -1396,11 +1399,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "n8n documents execution history/search and error-workflow handling for failures (n8n-docs-5, n8n-docs-9), and community feedback confirms historical executions are kept for debugging failed runs (n8n-comm-8). However, the evidence never explicitly describes a 'resume from failing step' re-run mechanism—only viewing logs and configuring an error workflow. Missing for 10: explicit documentation/demo of re-running a failed execution from the exact failing node, and independent confirmation that this resume behavior works reliably in practice.",
+    "rationale": "n8n clearly supports inspecting past execution logs (execution search feature, and community reports that 'it keeps all the historical executions so you can see what happened when workflows failed and what data was going in/out of each component') plus error-workflow handling for failures. However, there is no concrete documentation or evidence describing a re-run/retry that resumes specifically from the failing step rather than restarting the whole execution; only a vague community mention of 'retries' as a workaround for sporadic errors. missing for 10: explicit docs/feature describing resume-from-failing-node re-execution, and independent confirmation that this resume behavior works as intended.",
     "evidenceIds": [
-      "n8n-docs-5",
       "n8n-docs-9",
-      "n8n-comm-8"
+      "n8n-docs-5",
+      "n8n-comm-8",
+      "n8n-comm-18"
     ]
   },
   {
@@ -1409,35 +1413,35 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains extensive n8n documentation on integrations, AI agents, MCP, code nodes, and deployment, but no citation mentions calling/executing one workflow from another (e.g., an 'Execute Workflow' or sub-workflow node) or any modular workflow-composition capability. Absence of evidence for this applicable axis means it cannot be credited as delivered.",
+    "rationale": "The evidence pack covers n8n's general visual-building, AI/agent, integration, and deployment capabilities but contains no citation referencing sub-workflows, an 'Execute Workflow' node, or any modular workflow-calling-workflow mechanism, which is the specific capability this story asks about.",
     "evidenceIds": []
   },
   {
     "productId": "n8n",
     "storyId": "test-with-sample-data",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Community evidence confirms n8n retains execution history and lets developers see data flowing in/out of each node for debugging (n8n-comm-8), and docs claim traceability of each step on the canvas (n8n-docs-2). However, no evidence explicitly documents the 'pin data' feature or a dedicated test-run/inspect UI workflow, so the specific 'pinned data' half of the story is unevidenced. missing for 10: explicit documentation of pin-data functionality, a walkthrough of test-run mode before going live, and independent hands-on confirmation of that specific feature.",
+    "rationale": "n8n's canvas-based execution tracing is referenced in marketing docs ('Every step of your agents' reasoning, traceable on the canvas') and independently corroborated by a hands-on user noting it keeps historical executions so you can see data going in/out of each node when debugging. However, there is no explicit documentation or mention of the 'pin data' / sample-data testing feature described in the story, and no walkthrough of pre-production testing workflow. Missing for 10: explicit docs on pinning sample data for test runs, and a clear developer workflow showing pre-go-live inspection rather than just post-hoc execution history.",
     "evidenceIds": [
-      "n8n-comm-8",
       "n8n-docs-2",
-      "n8n-docs-13"
+      "n8n-docs-13",
+      "n8n-comm-8"
     ]
   },
   {
     "productId": "n8n",
     "storyId": "visual-workflow-editor",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "n8n's core product is a visual canvas for building multi-step automations, extensively documented (n8n-docs-1/2/13) and corroborated by hands-on users describing building workflows, debugging via execution history, and even non-programmers building complex backends (n8n-comm-8, n8n-comm-18). Some community reports note that complex data transformations still benefit from coding knowledge (n8n-comm-3, n8n-comm-13), which tempers a pure no-code claim. Missing for 10: independent benchmark of pure no-code success rate on complex workflows, and clearer resolution of the 'no-code vs low-code' framing.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "n8n's docs and GitHub materials describe a drag-and-drop visual canvas for multi-step workflows ('Build visually, go deep with code'), with 1500+ integrations and 12000+ templates, and community reports (n8n-comm-18) confirm a non-technical manager built a complex backend visually. However, other hands-on community feedback (n8n-comm-3, n8n-comm-13) says users without programming knowledge hit frequent errors on data transformation/JSON/SQL tasks, meaning pure no-code use has real friction for non-trivial workflows. missing for 10: independent benchmark of non-coder success rate, clearer docs-side guarantee that no-code path avoids expression/code steps for common ops-ops workflows.",
     "evidenceIds": [
       "n8n-docs-1",
-      "n8n-docs-2",
-      "n8n-docs-13",
-      "n8n-comm-8",
+      "n8n-gh-2",
+      "n8n-docs-11",
       "n8n-comm-18",
+      "n8n-comm-6",
       "n8n-comm-3",
       "n8n-comm-13"
     ]
@@ -1448,10 +1452,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "n8n.io hosts a public library of 12,116+ workflow templates that users can browse and start from instead of building from scratch, corroborated by GitHub docs citing 9,000+ templates. Missing for 10: independent hands-on evidence of actually importing/using a template successfully and details on template categorization/search quality.",
+    "rationale": "n8n publishes a public, searchable library of 12,000+ community workflow templates (n8n.io/workflows) that ops users can browse and start from instead of building from scratch, corroborated across multiple docs and GitHub mentions of '9,000+/12,000+ workflow templates.' Missing for 10: independent hands-on account specifically describing starting from a template (vs building from scratch) and details on template customization/import friction.",
     "evidenceIds": [
       "n8n-docs-11",
       "n8n-docs-15",
+      "n8n-docs-32",
       "n8n-gh-4"
     ]
   },
@@ -1460,8 +1465,8 @@
     "storyId": "workflows-as-mcp-tools",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "n8n has a documented MCP Server Trigger node that exposes workflows as MCP tools callable by external agents, plus an MCP Client node for consuming other MCP servers — directly matching the story. missing for 10: independent hands-on corroboration of the MCP Server Trigger specifically (community evidence covers general n8n use, not MCP tool exposure) and details on tool schema/discovery limits.",
+    "confidence": "medium",
+    "rationale": "n8n ships a documented MCP Server Trigger node that exposes a workflow as an MCP server tool callable by external agents, alongside a separate MCP Client node for consuming external MCP servers — directly matching the story of exposing workflows/app actions as MCP tools. This is corroborated by a probe confirming the docs page exists, but there's no independent/hands-on community report validating real-world use of the MCP Server Trigger specifically. Missing for 10: independent/community corroboration of the MCP server trigger in practice, and more detail on auth/security when exposing tools externally.",
     "evidenceIds": [
       "n8n-docs-19",
       "n8n-docs-20",
@@ -2976,6 +2981,745 @@
       "temporal-docs-18",
       "temporal-docs-19",
       "temporal-probe-2"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agent-creates-workflow-via-api",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Windmill exposes multiple programmatic paths (CLI `wmill`, git-sync auto-deploy, version-pinned webhooks, and an MCP server that lets LLM clients trigger scripts/flows) that together suggest an agent could manage workflows without the UI, and AI-generation docs show agents can edit items and reach a deploy step. However, the story specifically requires create/update/activate via the public API, and the evidence never surfaces a documented REST/OpenAPI spec (the openapi.json probe 404'd on all candidate paths) nor confirms MCP or CLI can create/activate flows rather than just trigger existing ones. missing for 10: explicit public API/OpenAPI docs for flow CRUD, confirmation that agent-driven creation/activation (not just triggering) works end-to-end without human deploy step.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-11",
+      "windmill-docs-16",
+      "windmill-docs-17",
+      "windmill-docs-21",
+      "windmill-probe-3",
+      "windmill-probe-4",
+      "windmill-probe-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Direct probe confirms a working llms.txt at https://www.windmill.dev/llms.txt (HTTP 200) and .md-suffixed docs pages (e.g., intro.md) that return clean markdown, both hallmarks of agent-oriented documentation designed for LLM consumption. Missing for 10: no independent/community confirmation that agents actually use these successfully in practice.",
+    "evidenceIds": [
+      "windmill-probe-1",
+      "windmill-probe-2"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Windmill offers AI Agent steps that let users wire LLM calls into flows to process data, and an MCP server/AI-generation feature for building scripts, but these are developer-facing building blocks rather than a built-in 'insights and suggestions from my data' feature (e.g., no dashboard/analytics AI surfaced automatically on stored data). Missing for 10: evidence of an out-of-the-box AI analytics/insights UI, proactive suggestions surfaced to end users without building a flow, and any independent corroboration of this specific use case.",
+    "evidenceIds": [
+      "windmill-docs-20",
+      "windmill-docs-21",
+      "windmill-docs-17"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill natively supports scheduling scripts/flows via CRON with error/recovery handlers, plus a wide range of autonomous triggers (webhooks, queues, events, routes) that run in the background without manual intervention, and flows include retries, branching, and error handling for resilient unattended execution. This directly matches the AI-native automation story, reinforced by AI Agent steps that can be embedded into these autonomous flows. Missing for 10: no independent/hands-on evidence confirming long-running autonomous reliability at scale, and community comments raise open questions about error handling rather than confirming it in practice.",
+    "evidenceIds": [
+      "windmill-docs-18",
+      "windmill-docs-15",
+      "windmill-docs-13",
+      "windmill-docs-12",
+      "windmill-docs-19",
+      "windmill-docs-20",
+      "windmill-comm-8"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill's docs describe an in-product AI generation feature that can edit scripts/flows and then prompts the user to review and deploy those changes, indicating a built-in assistant users can delegate authoring tasks to (windmill-docs-21). However, evidence is thin on the assistant's scope, limitations, or independent hands-on validation, and separate 'AI Agents' flow steps (windmill-docs-20) are for building agentic workflows rather than being the assistant itself. Missing for 10: independent/community corroboration of the AI assistant's real-world reliability, more detail on what tasks it can handle end-to-end, and comparison to failure cases.",
+    "evidenceIds": [
+      "windmill-docs-21",
+      "windmill-docs-20"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill provides a documented CLI (wmill) for deploying and syncing from Git, supports webhooks/schedules/API triggers for headless execution, and can self-host via Docker/Kubernetes for CI pipelines — all strongly supporting headless/CI automation use. Missing for 10: independent hands-on CI-pipeline examples or third-party corroboration of the CLI/webhook flow working seamlessly in a CI system beyond vendor docs.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-11",
+      "windmill-docs-15",
+      "windmill-docs-16",
+      "windmill-docs-10",
+      "windmill-probe-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Windmill's MCP documentation (windmill-docs-17, windmill-probe-4) describes Windmill acting as an MCP *server* so external LLM clients (Claude, Cursor) can call Windmill's scripts/flows — the reverse of the story, which asks whether Windmill can consume/plug into external MCP servers to use their tools. The AI Agent steps (windmill-docs-20) mention connecting to AI providers/models, not MCP tool servers, so no evidence shows Windmill as an MCP client.",
+    "evidenceIds": [
+      "windmill-docs-17",
+      "windmill-probe-4",
+      "windmill-docs-20"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Windmill is a workflow/automation platform (not an agent), so publishing an official MCP server is squarely within its category, and docs confirm it: 'With MCP, you can connect your favorite LLMs (like Claude, Cursor, or any MCP compatible client) to Windmill, allowing you to trigger your scripts and flows from your client chat,' corroborated by a probe confirming the official MCP docs page. missing for 10: independent/hands-on confirmation of the MCP server working in practice beyond first-party docs.",
+    "evidenceIds": [
+      "windmill-docs-17",
+      "windmill-probe-4"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "low",
+    "rationale": "Windmill documents an MCP server that lets LLM clients trigger scripts/flows via natural-language chat (windmill-docs-17, windmill-probe-4) and an AI-generation feature where a user can ask the AI to edit and review flow/script changes (windmill-docs-21), showing real natural-language operability. However, evidence is thin—just two doc snippets—with no independent/hands-on corroboration of reliability or scope of NL commands. Missing for 10: hands-on/community validation of NL-driven operation, fuller documentation of what natural-language commands can accomplish beyond triggering and editing.",
+    "evidenceIds": [
+      "windmill-docs-17",
+      "windmill-docs-21",
+      "windmill-probe-4"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill ships an official CLI (`wmill`) documented for interacting with instances from the terminal, deploying from Git repos, and syncing commits—confirmed by both docs and a dedicated probe. This directly satisfies the 'official CLI' story for AI-native/agentic workflows (e.g., scripting deployments, CI integration). Missing for 10: independent hands-on community reports specifically validating the CLI's AI-native usage patterns (e.g., agent-driven CLI invocation) beyond first-party docs.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-11",
+      "windmill-probe-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-public-api",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Windmill exposes a CLI (wmill), webhooks, and various trigger mechanisms (HTTP routes, schedules, MCP) that let external systems and AI agents drive it (windmill-docs-9, windmill-docs-15, windmill-docs-16, windmill-docs-17, windmill-probe-4, windmill-probe-5), which is real evidence of programmatic/agentic control. However, a direct probe for a documented public REST/OpenAPI spec (the canonical 'documented public API') returned 404 on all candidate paths (windmill-probe-3), so no first-class API reference doc was found in evidence. missing for 10: a discoverable OpenAPI/REST API reference page, independent confirmation that third parties integrate via a general public API beyond webhooks/CLI/MCP.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-15",
+      "windmill-docs-16",
+      "windmill-docs-17",
+      "windmill-probe-3",
+      "windmill-probe-4",
+      "windmill-probe-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill documents scoped tokens following least-privilege principles (windmill-docs-8) and an underlying roles/permissions system (windmill-docs-7), and its MCP server for connecting agents (windmill-docs-17, windmill-probe-4) implies token-based auth for agent connections. However, there's no explicit documentation tying scoped token creation specifically to AI agent use-cases or showing a workflow for issuing/rotating agent-specific credentials. Missing for 10: explicit docs on generating scoped tokens specifically for AI agents/MCP clients, examples of scope granularity, and independent/hands-on confirmation that scoping works as claimed.",
+    "evidenceIds": [
+      "windmill-docs-8",
+      "windmill-docs-7",
+      "windmill-docs-17",
+      "windmill-probe-4"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-sdks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack documents a CLI (wmill), an MCP server, and workflows-as-code in TypeScript/Python, but none of it describes official client SDKs/libraries for programmatically building against Windmill's API. A probe for an OpenAPI spec (often paired with SDK generation) returned 404s, further suggesting no discoverable official SDK artifact.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-17",
+      "windmill-probe-3",
+      "windmill-probe-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "agentic-webhooks",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Windmill documents webhooks extensively as a trigger mechanism—scripts and flows can be invoked via webhook endpoints, including version-pinned endpoints for specific flow versions—which lets external systems call into Windmill (windmill-docs-15, windmill-docs-16). However, this is primarily inbound triggering rather than an outbound event-subscription model where Windmill pushes notifications about internal events (e.g., job completion, failures) to a subscriber's webhook URL. Missing for 10: explicit documentation of outbound webhook subscriptions/event notifications, independent confirmation of an event-driven push webhook system, and any first-party mention of 'subscribe' semantics rather than pure trigger endpoints.",
+    "evidenceIds": [
+      "windmill-docs-15",
+      "windmill-docs-16"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "ai-agent-workflow-steps",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Windmill has documented AI Agent steps that integrate directly into flows, connecting to various AI providers/models and supporting tool use within the workflow orchestration engine (windmill-docs-20). This directly matches the story of adding LLM/agent steps with model choice and tool use inside a workflow. Missing for 10: independent/hands-on corroboration of tool-use behavior and broader detail on model selection UX beyond the single docs page.",
+    "evidenceIds": [
+      "windmill-docs-20"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows an explicit probe for an OpenAPI/Swagger interactive reference that returned 404 on all candidate paths, and no other citation describes an interactive API reference with runnable examples (docs pages are static markdown/CLI/MCP references, not a runnable API explorer).",
+    "evidenceIds": [
+      "windmill-probe-3"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Windmill exposes a CLI and API-driven platform, so a downloadable OpenAPI spec is a fair ask, but the evidence pack explicitly shows a probe attempt failing to find any OpenAPI/swagger file at standard paths (all 404s), and no docs page links to a machine-readable spec.",
+    "evidenceIds": [
+      "windmill-probe-3"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "api-sandbox",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Windmill's languages, orchestration, permissions, CLI, git sync, and MCP integration, but nowhere documents a dedicated sandbox/staging workspace or test-mode that isolates execution from production data; a community comment even raises this exact question (non-destructive branch testing) without an answered example.",
+    "evidenceIds": [
+      "windmill-comm-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Windmill exposes webhooks and version-pinned flow endpoints (windmill-docs-16), and a CLI/API surface exists, but there is no evidence of a documented API versioning scheme or deprecation policy; OpenAPI spec probes returned 404s (windmill-probe-3) and no docs mention deprecation practices.",
+    "evidenceIds": [
+      "windmill-docs-16",
+      "windmill-probe-3"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "app-event-triggers",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill documents generic trigger mechanisms (webhooks, email, HTTP routes, Postgres, Kafka, MQTT, etc.) that can be wired to fire on external events like new records, emails, or form submissions [windmill-docs-15][windmill-docs-16]. However, there's no evidence of pre-built native connectors for specific SaaS apps (e.g., Salesforce, Gmail, Slack) that an ops user could configure without engineering setup — these are generic infra-level hooks requiring technical wiring, not app-specific integrations. missing for 10: native app connector library/marketplace, no-code trigger setup UI for specific third-party apps, evidence of non-technical ops users successfully configuring these triggers.",
+    "evidenceIds": [
+      "windmill-docs-15",
+      "windmill-docs-16",
+      "windmill-docs-18"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "automatic-step-retries",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Windmill's docs explicitly document a retries feature for flow steps with configurable delay and maximum attempts on error, directly matching the story, and error/recovery handlers extend this to scheduled flows. Missing for 10: independent hands-on confirmation of retry/backoff behavior in production use beyond docs.",
+    "evidenceIds": [
+      "windmill-docs-13",
+      "windmill-docs-18"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Windmill's flows support parallelism, branching, and fault-tolerant orchestration (windmill-docs-5, windmill-docs-12), which implies capability to iterate/process many items in a flow, but no evidence explicitly documents a for-loop/bulk-iteration step, batch processing UI, or examples of running an operation across a large item set. missing for 10: explicit for-loop/iterator flow step documentation, evidence of scaling to large item counts, and any hands-on confirmation of bulk operation performance.",
+    "evidenceIds": [
+      "windmill-docs-5",
+      "windmill-docs-12",
+      "windmill-docs-13"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "automation-rules-engine",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill lets users define scripts/flows triggered automatically by schedules (CRON), webhooks, emails, HTTP routes, websockets, Kafka, Postgres, NATS, SQS, MQTT, and other event sources, with retry/error handling and branching logic for rule-based automation. This directly matches the story of defining rules that trigger actions on events, with strong first-party documentation. Missing for 10: independent/hands-on verification of complex event-rule chains and no community corroboration specifically confirming event-trigger reliability in production.",
+    "evidenceIds": [
+      "windmill-docs-15",
+      "windmill-docs-18",
+      "windmill-docs-16",
+      "windmill-docs-13",
+      "windmill-docs-12",
+      "windmill-comm-8"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Windmill has a dedicated Scheduling core concept supporting CRON-based recurring execution of scripts/flows with error/recovery handlers, plus flexible triggers (webhooks, events, etc.) and retries/branching for robust workflows, all documented first-party. missing for 10: no independent/hands-on community confirmation specifically of scheduling reliability in production.",
+    "evidenceIds": [
+      "windmill-docs-18",
+      "windmill-docs-15",
+      "windmill-docs-13",
+      "windmill-docs-12"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill documents versioning via Git sync (each deploy creates a commit, auto-deploy from repo) and version-pinned webhook endpoints for flows, plus a 'Compare & Deploy' review UI when AI edits items. However, there is no explicit rollback feature or UI documented (e.g., one-click revert to a prior version), and no independent/hands-on confirmation of rollback behavior. missing for 10: explicit rollback/revert mechanism, independent verification of version history UI and rollback workflow.",
+    "evidenceIds": [
+      "windmill-docs-11",
+      "windmill-docs-16",
+      "windmill-docs-21",
+      "windmill-docs-9"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "central-credentials-management",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill documents centrally encrypted Variables/Secrets at the workspace level plus a broader roles/permissions system and scoped tokens for least-privilege access, which together support storing and sharing credentials with some access control. However, the evidence doesn't show fine-grained per-credential ACLs (e.g., which specific users/groups can use a specific secret) beyond general workspace/role permissions. Missing for 10: explicit per-resource/credential-level permission granularity, audit logging of credential usage, and independent/hands-on confirmation of this governance in practice.",
+    "evidenceIds": [
+      "windmill-docs-6",
+      "windmill-docs-7",
+      "windmill-docs-8"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "code-steps-in-workflows",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Windmill's core model is scripts written in real code (TypeScript, Python, Go, etc.) composed into flows, with 'workflows as code' letting developers write orchestration logic directly in TypeScript/Python using native functions, conditionals, and loops as flow steps. This is corroborated by GitHub docs describing scripts being composed into flows, and community discussion confirms multi-language script support. Missing for 10: independent hands-on verification beyond community anecdotes and no mention of limitations in language runtime sandboxing raised by a commenter.",
+    "evidenceIds": [
+      "windmill-docs-1",
+      "windmill-docs-5",
+      "windmill-docs-2",
+      "windmill-gh-1",
+      "windmill-comm-3"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "community-built-components",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "There is no evidence of a marketplace, registry, or community-contributed nodes/integrations/components ecosystem outside the vendor for Windmill—docs describe language support, flows, CLI, git sync, and MCP but nothing about installing third-party/community-built connectors or components. The hub/scripts sharing feature, if any, isn't mentioned in the evidence pack.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "windmill",
+    "storyId": "concurrency-rate-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows retries, scheduling, and branching (windmill-docs-13, windmill-docs-18, windmill-docs-12) but contains no mention of concurrency limits, execution throttling, or queuing mechanisms to respect downstream rate limits. Missing for 10: any documentation of concurrency-limit settings, rate-limit-aware queuing, or throttling controls on flows/scripts.",
+    "evidenceIds": [
+      "windmill-docs-13",
+      "windmill-docs-18"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "conditional-branching-logic",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Windmill's docs explicitly describe flow Branches that split execution based on conditions and a 'branch all' mode that runs all branches in parallel, directly matching conditional and parallel-path branching in a low-code flow builder. Merging paths back together is implied by the flow's linear continuation after a branch block but is not explicitly documented, and 'filters' as a distinct branching primitive isn't named. missing for 10: explicit doc/example of branches merging back into a single downstream step, and confirmation of filter-based branching syntax.",
+    "evidenceIds": [
+      "windmill-docs-12",
+      "windmill-docs-2",
+      "windmill-comm-8"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "cron-schedules",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Windmill's docs explicitly describe Schedules as a CRON expression tied to a Script or Flow with error/recovery handlers, and schedules are listed among supported trigger types alongside webhooks, HTTP routes, etc. Timezone control is a standard part of Windmill's schedule UI per its core concept documentation, though the evidence pack doesn't explicitly quote a timezone field or independent hands-on confirmation. Missing for 10: explicit citation confirming timezone selector UI, independent/community verification of scheduling reliability.",
+    "evidenceIds": [
+      "windmill-docs-18",
+      "windmill-docs-15",
+      "windmill-docs-19"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "custom-connector-sdk",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill offers a documented CLI (wmill) for interacting with instances and deploying from Git, multi-language scripting (TypeScript, Python, Go, etc. or custom Docker images), a flows/apps builder, webhooks, triggers, and an MCP server for connecting external clients, all backed by extensive first-party docs. This directly supports building custom integrations/connectors via a developer platform. missing for 10: no public OpenAPI/REST API spec found (probe returned 404s), and no independent third-party SDK usage reports corroborating the CLI/platform beyond vendor docs.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-1",
+      "windmill-docs-4",
+      "windmill-docs-11",
+      "windmill-docs-15",
+      "windmill-docs-17",
+      "windmill-probe-4",
+      "windmill-probe-5",
+      "windmill-probe-3"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "durable-long-running-workflows",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Windmill's docs describe 'workflows as code' with built-in checkpointing, parallelism, and fault tolerance, plus retry/error-handling mechanisms (windmill-docs-5, windmill-docs-13, windmill-docs-19), which imply support for durable, resumable flows. However, there is no explicit documentation or independent confirmation of long-duration (multi-day) sleeps/waits or of state surviving worker/platform restarts specifically. Missing for 10: explicit docs on sleep/suspend semantics for days-long waits, and hands-on/community evidence confirming state survives worker or platform restarts.",
+    "evidenceIds": [
+      "windmill-docs-5",
+      "windmill-docs-13",
+      "windmill-docs-19",
+      "windmill-docs-18"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "embed-white-label",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of white-labeling capability (custom branding, theming, hiding Windmill identity, or embeddable SDK/iframe for reselling under the developer's own brand) — only self-hosting, app builder, and guest-user features are documented, none of which address white-label embedding for customers.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "windmill",
+    "storyId": "environments-source-control",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill documents Git sync where deployments push commits to a repo and can auto-deploy new commits back into workspaces, plus a dedicated CLI (`wmill`) for deploying from a Git repository, enabling version control and promotion across workspaces/environments (dev/staging/prod). This covers source-control-backed versioning and promotion workflows fairly thoroughly, though community feedback questions non-destructive branch validation and local script running pre-merge, indicating some workflow gaps. Missing for 10: independent/hands-on confirmation of a full dev-to-prod promotion pipeline and clearer support for pre-merge branch validation raised by users.",
+    "evidenceIds": [
+      "windmill-docs-11",
+      "windmill-docs-9",
+      "windmill-docs-4",
+      "windmill-comm-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "error-workflows-alerts",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Windmill docs describe dedicated failure-handling mechanisms: retries with configurable delay/attempts (windmill-docs-13), conditional branch execution (windmill-docs-12), custom failure tagging via wm_failure (windmill-docs-19), and explicit 'Error and Recovery Handlers to deal with failed scheduled executions' (windmill-docs-18), which together support building dedicated error paths and being alerted on failure. However, the evidence doesn't detail concrete notification channels (email/Slack/webhook alerts) beyond the handler concept, and error-handler support is documented mainly in the scheduling context rather than as a general flow-level feature; a community question (windmill-comm-8) about error handling/branching is asked but not answered by the evidence pack. missing for 10: explicit documentation of flow-level (not just schedule-level) dedicated error workflows, and concrete notification-channel integration for failure alerts.",
+    "evidenceIds": [
+      "windmill-docs-13",
+      "windmill-docs-12",
+      "windmill-docs-18",
+      "windmill-docs-19",
+      "windmill-comm-8"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "expressions-data-mapping",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill lets ops users write full scripts in TypeScript, Python, Go, SQL, Bash, etc. to transform data, and 'workflows as code' explicitly supports functions, conditionals, and loops between flow steps, plus branch logic for conditional data flow; the low-code flow builder also composes these steps together for mapping/transformation between steps. Missing for 10: no dedicated documentation on a lightweight expression/formula language for simple inline mappings (e.g., JS expression fields) distinct from full scripts, and no independent/hands-on corroboration of transformation ergonomics.",
+    "evidenceIds": [
+      "windmill-docs-1",
+      "windmill-docs-2",
+      "windmill-docs-5",
+      "windmill-docs-12",
+      "windmill-gh-1"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "human-approval-steps",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers flow branching, retries, error handling, and scheduling, but contains no mention of a suspend/approval step, human-in-the-loop gate, or 'wait for input' mechanism in Windmill flows. This is a fair axis for a workflow orchestration product, but no evidence in the pack demonstrates it.",
+    "evidenceIds": [
+      "windmill-docs-12",
+      "windmill-docs-13",
+      "windmill-docs-19"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "inbound-webhook-triggers",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Windmill's docs explicitly list webhooks as a trigger type that starts scripts/flows with the request payload, and even describe version-pinned webhook endpoints for flows, confirming custom webhook URLs can kick off workflow runs. missing for 10: no independent/hands-on confirmation of webhook payload handling or setup walkthrough beyond docs references.",
+    "evidenceIds": [
+      "windmill-docs-15",
+      "windmill-docs-16"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "local-dev-instance",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Windmill supports self-hosting a dev instance via Docker Compose (windmill-docs-10) and provides a CLI (`wmill`) for interacting with instances and deploying from Git repos (windmill-docs-9, windmill-docs-4, windmill-docs-11), which could support CI workflows against a dev instance. However, there is no explicit documentation of a local/offline execution mode for scripts/flows independent of a running instance, and a community question directly asking 'Can I run my scripts locally without a lot of drama?' (windmill-comm-5) goes unanswered in the evidence, suggesting friction. Missing for 10: explicit docs on local script execution without an instance, CI-specific testing guides, and a direct answer to the community's local-run concern.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-10",
+      "windmill-docs-4",
+      "windmill-docs-11",
+      "windmill-comm-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "nl-workflow-generation",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "windmill-docs-21 explicitly documents AI-driven editing of scripts/flows/apps followed by a review-and-deploy step, and windmill-docs-20 shows AI agent steps can be embedded in flows, indicating genuine natural-language generation/editing support. However, evidence is purely first-party docs with no independent/hands-on corroboration of prompt-to-workflow quality or reliability. Missing for 10: independent/community validation of AI-generated flow quality, details on scope/limits of NL-to-workflow generation, and confirmation this works for full flow creation (not just editing existing items).",
+    "evidenceIds": [
+      "windmill-docs-21",
+      "windmill-docs-20"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill exposes a CLI (`wmill`) for deployments, webhooks/triggers for running scripts and flows, git-sync for pushing changes, and an MCP server for AI agents to trigger scripts/flows, showing broad programmatic access to core operations. However, there's no explicit documentation or evidence of a comprehensive REST/OpenAPI spec covering all UI actions (e.g., app-builder UI creation, permissions management, variable/secret management) via API, and the openapi probe returned 404s at standard locations. missing for 10: explicit OpenAPI/API reference confirming full UI-API parity, evidence that app-building, permissions, and admin UI actions are all scriptable via API/CLI, independent confirmation of parity.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-11",
+      "windmill-docs-15",
+      "windmill-docs-16",
+      "windmill-docs-17",
+      "windmill-probe-4",
+      "windmill-probe-5",
+      "windmill-probe-3"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "openness-full-export",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill's CLI (`wmill`) and Git Sync feature let users pull/push all scripts, flows, and apps as plain code (TypeScript/Python/YAML) into a Git repository, giving a genuinely open, portable format for the core workflow logic, and the whole platform is open-source and self-hostable so users are never locked to a vendor. However the evidence pack shows no explicit mechanism for exporting the rest of the instance state — variables, secrets, execution history/logs, users/permissions — as an open-format bundle, only code artifacts.\nmissing for 10: documented full-instance export/backup covering secrets, variables, run history, and permissions, plus independent confirmation that a git-synced workspace can be fully reconstituted elsewhere.",
+    "evidenceIds": [
+      "windmill-docs-9",
+      "windmill-docs-11",
+      "windmill-docs-5",
+      "windmill-probe-5",
+      "windmill-docs-10"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "openness-open-license",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Windmill is explicitly described as 'open-source and self-hostable' in its own docs/llms.txt, and its source is publicly available on GitHub (windmill-labs/windmill), satisfying the story that an AI-native user can read the source under an open license. missing for 10: no explicit license name (e.g., AGPL/MIT) is cited in the evidence, and no independent confirmation of license terms is provided.",
+    "evidenceIds": [
+      "windmill-probe-1",
+      "windmill-probe-2",
+      "windmill-gh-1",
+      "windmill-comm-12"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "openness-self-host",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Windmill provides official self-hosting docs with Docker Compose for small setups and Helm/Kubernetes for production, corroborated by independent community reports of successful self-hosting via Caprover and Podman+Docker Compose. Missing for 10: more recent/large-scale production self-host case studies beyond community hobbyist reports.",
+    "evidenceIds": [
+      "windmill-docs-10",
+      "windmill-comm-1",
+      "windmill-comm-4",
+      "windmill-probe-1"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "prebuilt-connector-breadth",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Windmill offers code-based scripts, flows, and triggers (webhooks, Kafka, Postgres, etc.) but no mention of a prebuilt, vendor-maintained connector/app library comparable to Zapier-style integrations; a community comment even contrasts it with Zapier as a code-first alternative rather than a connector marketplace.",
+    "evidenceIds": [
+      "windmill-docs-15",
+      "windmill-comm-9",
+      "windmill-comm-3"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "privacy-data-residency",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Windmill is self-hostable via Docker/Docker Compose or Kubernetes Helm chart, which implicitly lets a user control where their data resides by deploying in any region/infrastructure of their choosing. However, there is no explicit documentation of a region-selection feature for Windmill's hosted/cloud offering or any formal data-residency guarantee. Missing for 10: explicit cloud region selection options, formal data residency/compliance statements, and independent confirmation of self-hosted deployments meeting residency requirements.",
+    "evidenceIds": [
+      "windmill-docs-10",
+      "windmill-comm-1",
+      "windmill-comm-4"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI-training data usage or opt-out policies for Windmill; the product is a workflow/automation engine and could plausibly publish a data-usage/privacy policy, but none is documented here.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "windmill",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers encryption of variables, roles/permissions, and token scoping, but there is no mention of data retention policies, data deletion controls, or export/purge capabilities for an AI-native user's data. No documentation or community evidence addresses this axis.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "windmill",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or an opt-out mechanism for Windmill; the docs focus on features, self-hosting, and permissions but never address telemetry data collection. Since Windmill is self-hostable software where telemetry opt-out is a plausible and fair question, absence of evidence yields 'none' rather than 'na'. missing for 10: any mention of telemetry collection, opt-out settings/env vars, or privacy documentation addressing usage tracking.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "windmill",
+    "storyId": "run-history-replay",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Windmill's docs describe automatic per-step retries, error handling (wm_failure tagging), and schedule error/recovery handlers, which support reliability around failures, but no evidence explicitly describes an ops user inspecting past execution logs and manually re-running a failed execution resuming from the specific failing step. missing for 10: explicit documentation of log-based re-run/resume-from-step UI or API, and confirmation this is a distinct manual operation rather than automated retry.",
+    "evidenceIds": [
+      "windmill-docs-13",
+      "windmill-docs-18",
+      "windmill-docs-19"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "subworkflow-reuse",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill's docs and README confirm scripts/functions can be composed together into flows (windmill-gh-1, windmill-docs-2) and workflows-as-code lets you call functions/loops within flows (windmill-docs-5), implying reusable modules, but there is no explicit documentation shown for one flow invoking another flow as a sub-workflow/module across multiple parent workflows. missing for 10: explicit doc/example of a flow calling another flow as a reusable subflow, and independent confirmation of this pattern working in practice.",
+    "evidenceIds": [
+      "windmill-gh-1",
+      "windmill-docs-2",
+      "windmill-docs-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "test-with-sample-data",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence describes Windmill's flow builder, branching, retries, and error handling, but nothing in the pack documents a test-run mode with sample/pinned data or step-by-step input/output inspection before deployment. A community question (windmill-comm-5) about non-destructive testing/local runs goes unanswered in the evidence. Missing for 10: documentation of a 'test flow' or step-by-step debug/preview feature, evidence of pinning/sample input data per step, and confirmation that outputs of each step can be inspected pre-deployment.",
+    "evidenceIds": [
+      "windmill-docs-2",
+      "windmill-docs-12",
+      "windmill-docs-13",
+      "windmill-comm-5"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "visual-workflow-editor",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Windmill's docs confirm a visual/low-code flow builder (drag-and-drop orchestration, branches, retries, scheduling) that lets users assemble flows without writing orchestration logic (windmill-docs-2, windmill-docs-12, windmill-docs-13, windmill-docs-18, windmill-comm-8). However, Windmill is fundamentally code-centric — individual flow steps are typically scripts in TypeScript/Python/etc, and the docs repeatedly describe it as 'low-code' rather than no-code, with community feedback confirming it's aimed at developers writing scripts (windmill-docs-1, windmill-comm-3). Missing for 10: evidence of pure no-code step types (e.g. built-in connectors/actions requiring zero code), and hands-on testimony from a non-technical ops user successfully building a flow without touching code.",
+    "evidenceIds": [
+      "windmill-docs-2",
+      "windmill-docs-12",
+      "windmill-docs-13",
+      "windmill-docs-18",
+      "windmill-docs-1",
+      "windmill-comm-3",
+      "windmill-comm-8"
+    ]
+  },
+  {
+    "productId": "windmill",
+    "storyId": "workflow-template-library",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of a public template library or gallery of pre-built workflows for ops users to start from; docs focus on scripting languages, orchestration, CLI, and roles/permissions but never mention a template marketplace or starter workflow gallery.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "windmill",
+    "storyId": "workflows-as-mcp-tools",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Windmill has documented, first-party MCP server support that exposes scripts/flows as tools callable by external MCP-compatible agents (Claude, Cursor, etc.), directly matching the story. missing for 10: independent/hands-on confirmation of the MCP feature working, and more detail on scoping which specific workflows/actions are exposed as tools.",
+    "evidenceIds": [
+      "windmill-docs-17",
+      "windmill-probe-4"
     ]
   },
   {

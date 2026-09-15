@@ -117,4 +117,46 @@ export const probes: LocalProbe[] = [
       expect: /"authorization_servers"/,
       timeoutMs: 30_000,
     },
+    {
+      // SigNoz Cloud's hosted MCP server (mcp.<region>.signoz.cloud/mcp, documented at
+      // signoz.io/docs/ai/signoz-mcp-server) draws a keyless 401 with an OAuth
+      // protected-resource challenge on the us region — live, bearer-gated MCP endpoint.
+      probeId: 'mcp-remote-handshake',
+      productId: 'signoz',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.us.signoz.cloud/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.us.signoz.cloud/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /resource_metadata="https:\/\/mcp\.us\.signoz\.cloud/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Site-wide llms.txt index: .md mirrors of every page plus a dedicated "Agent tooling"
+      // section (Agent Skills, MCP server) and the OpenAPI pointer.
+      probeId: 'llms-site-index',
+      productId: 'signoz',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://signoz.io/llms.txt | head -6'],
+      displayCommand: 'curl -s https://signoz.io/llms.txt | head -6',
+      expect: /# SigNoz/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Machine-readable OpenAPI document for the SigNoz HTTP API (linked from llms.txt),
+      // fetched keyless — the spec an agent needs to drive the API.
+      probeId: 'openapi-machine-spec',
+      productId: 'signoz',
+      storyIds: ['api-machine-spec', 'agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://signoz.io/api/api-reference-openapi/latest/ | head -5'],
+      displayCommand: 'curl -sL https://signoz.io/api/api-reference-openapi/latest/ | head -5',
+      expect: /components:|openapi/,
+      timeoutMs: 30_000,
+    },
 ]
