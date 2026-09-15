@@ -19,7 +19,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Pricing-tier dimension on user stories (free/paid/enterprise) fleet-wide | open — queued next wave (big LLM pass) |
 | Stripe-style exhaustive passes for major startups + hot repos (incl. buzz) | open — queued next wave |
 | Remaining payments arenas: card-issuing, tax-automation, banking-as-a-service, marketplace/payfac | open — after billing+fraud land |
-| Payments roster expansion (Checkout.com, Mollie, Airwallex, Paddle, Lemon Squeezy, Polar) | open — after fairness lane lands |
+| Payments roster expansion (Checkout.com, Mollie, Airwallex, Paddle, Lemon Squeezy, Polar) | shipped 2026-09-15 — 5 arena rows (Polar debuts #2 @ 42.9; Lemon Squeezy = Stripe family entry, acquired 2024 → Stripe Managed Payments) |
 | Docusaurus gift PR | blocked (Meta CLA needs founder signature) |
 | Greptile pre-review of gift PRs | blocked (needs Greptile installed on ultrametricai org — founder to confirm) |
 | npm publishes (mcp/, cli/) + MCP registry submissions | blocked (founder-side npm publish) |
