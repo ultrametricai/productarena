@@ -1,26 +1,38 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import ProcessorTable from './ProcessorTable'
 import raw from '@/data/experiments/processors.json'
 
-// EXPERIMENT PAGE — deliberately unlinked. Not in app/sitemap.ts, not in the header nav,
-// Explore menu, command palette, or search aliases; reachable only by typing the URL.
-// robots noindex below keeps crawlers that stumble on it from indexing it.
+// Formerly an unlinked experiment; graduated 2026-09 into the evidence-judged Processors arena
+// (/arena/processors — same curated roster, judged on user stories with citations). This page
+// stays live as the arena's raw vendor-spec annex: the numbers vendors publish, side by side,
+// with per-cell sourcing. Linked from the arena header ("Raw spec table →"); the arena link
+// below is the way back.
 export const metadata: Metadata = {
-  title: 'Processor comparison (experiment) — ProductArena',
+  title: 'Processor spec table — ProductArena',
   description:
-    'Unlinked experiment: current CPU/SoC specs side by side, curated from vendor spec sheets. Not part of the evidence-judged arenas.',
-  robots: { index: false, follow: false },
+    'Raw vendor-spec annex of the Processors arena: current CPU/SoC specs side by side, curated from vendor spec sheets with per-cell sourcing.',
 }
 
-export default function ProcessorsExperimentPage() {
+export default function ProcessorsSpecsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-widest text-amber-400">Experiment</p>
+        <p className="text-sm uppercase tracking-widest text-emerald-400">
+          <Link href="/arena/processors" title="Back to the evidence-judged Processors arena" className="transition hover:text-emerald-300">
+            Processors arena
+          </Link>
+          {' '}· specs annex
+        </p>
         <h1 className="font-display mt-1 text-3xl font-bold leading-[1.1] tracking-tight">Processor comparison</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Current desktop and laptop silicon side by side — Apple M-series, AMD Zen 5 / Strix Halo, Intel Arrow
-          and Lunar Lake, and Qualcomm&rsquo;s Snapdragon X2 — on the raw numbers vendors actually publish.
+          and Lunar Lake, and Qualcomm&rsquo;s Snapdragon X2 — on the raw numbers vendors actually publish. For the
+          evidence-judged leaderboard over the same roster (user stories, citations, verdicts), see the{' '}
+          <Link href="/arena/processors" className="text-emerald-300 underline decoration-zinc-700 underline-offset-2 hover:text-emerald-200">
+            Processors arena
+          </Link>
+          .
         </p>
         <p className="mt-3 text-xs text-zinc-500">
           Curated {raw.curatedAt} · {raw.chips.length} chips · every source URL checked reachable · hover any header

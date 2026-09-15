@@ -17,6 +17,13 @@ import { hasLogo } from '@/lib/logos'
 import { loadPricing, pricingCellFor, type PricingCell } from '@/lib/pricing'
 import { SITE_URL } from '@/lib/site'
 
+// The two hardware arenas graduated from unlinked /experiments spec tables; those pages stay
+// live as each arena's raw vendor-spec annex (app/experiments/*), linked from the header row.
+const SPEC_ANNEX: Record<string, string> = {
+  processors: '/experiments/processors',
+  gpus: '/experiments/gpus',
+}
+
 // The leaderboard already sorts primarily by aiEra/PA Score (see lib/scoring.ts), so entry 0
 // is the "most agent-friendly" product for both metadata and the FAQ answer below — no
 // fabricated ratings, just the same number rendered on the page.
@@ -189,6 +196,15 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           >
             Procurement report →
           </Link>
+          {SPEC_ANNEX[data.category.id] && (
+            <Link
+              href={SPEC_ANNEX[data.category.id]}
+              className="text-zinc-400 underline decoration-zinc-800 hover:text-emerald-300"
+              title="The raw vendor-spec comparison table this arena graduated from"
+            >
+              Raw spec table →
+            </Link>
+          )}
         </p>
       </div>
       <div>

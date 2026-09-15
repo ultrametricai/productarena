@@ -49,6 +49,8 @@ const CATEGORIES = [
   'fraud-prevention',
   'frontend-frameworks',
   'gpu-clouds',
+  'gpus',
+  'processors',
   'incident-management',
   'inference-providers',
   'infra-as-code',
