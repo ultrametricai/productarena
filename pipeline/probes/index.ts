@@ -61,6 +61,10 @@ import { probes as fraudPrevention } from './fraud-prevention'
 import { probes as llmEvalsObservability } from './llm-evals-observability'
 import { probes as webScraping } from './web-scraping'
 import { probes as agenticCommerce } from './agentic-commerce'
+import { probes as cardIssuing } from './card-issuing'
+import { probes as taxAutomation } from './tax-automation'
+import { probes as bankingAsAService } from './banking-as-a-service'
+import { probes as marketplacePayments } from './marketplace-payments'
 
 export type { LocalProbe } from './types'
 
@@ -117,4 +121,8 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'llm-evals-observability': llmEvalsObservability,
   'web-scraping': webScraping,
   'agentic-commerce': agenticCommerce,
+  'card-issuing': cardIssuing,
+  'tax-automation': taxAutomation,
+  'banking-as-a-service': bankingAsAService,
+  'marketplace-payments': marketplacePayments,
 }
