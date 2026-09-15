@@ -376,9 +376,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/proofs" className="hover:text-emerald-300">
                 Recorded proofs
               </Link>
-              <Link href="/submit" className="hover:text-emerald-300" title="Scan your product and add it to the arenas — via a prefilled GitHub issue or PR">
-                Add your product →
+              <Link href="/submit" className="hover:text-emerald-300" title="Instant agent-readiness quick scan of your product URL (llms.txt, OpenAPI, MCP signals)">
+                Test your product
               </Link>
+              <a
+                href="https://github.com/ultrametricai/productarena/blob/main/CONTRIBUTING.md#3-add-your-product"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-emerald-300"
+                title="Add your product via PR — one entry in data/<arena>/products.json (CONTRIBUTING.md)"
+              >
+                Add your product →
+              </a>
               <Link href="/llms.txt" className="hover:text-emerald-300">
                 For agents: /llms.txt
               </Link>
