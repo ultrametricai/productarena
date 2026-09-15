@@ -5,6 +5,8 @@
 // dependency-free on purpose); a unit test asserts the two never drift.
 export const MCP_ENDPOINTS: Record<string, string> = {
   'accounting/xero': 'https://mcp.xero.com/mcp',
+  'agentic-commerce/paypal-agent-commerce': 'https://mcp.paypal.com/mcp',
+  'agentic-commerce/stripe-agentic-commerce': 'https://mcp.stripe.com/',
   'ai-memory/mem0': 'https://mcp.mem0.ai/mcp',
   'ai-memory/supermemory': 'https://mcp.supermemory.ai/mcp',
   'ai-research-agents/undermind': 'https://mcp.undermind.ai/mcp',

@@ -60,7 +60,7 @@ const THEME_RULES: Array<[RegExp, string]> = [
   [/pricing|cost|economics|valuation|409a/, '💲'],
   [/tax|currency/, '🌐'],
   // Commerce & CRM
-  [/catalog|inventory|storefront|commerce|b2b|wholesale|shipping|receipts/, '🛒'],
+  [/catalog|inventory|storefront|commerce|b2b|wholesale|shipping|receipts|merchant|order|fulfillment/, '🛒'],
   [/crm|contacts|pipeline-management|audiences|identity-resolution|cdp/, '📇'],
   // Comms & scheduling
   [/email|composing|inbox|triage/, '✉️'],
