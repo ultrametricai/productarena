@@ -6,6 +6,11 @@ export const CategorySchema = z.object({
   description: z.string(),
   personas: z.array(z.string().min(1)).min(1),
   themes: z.array(z.string().min(1)).optional(),
+  // Dimensions that are not meaningful for this arena's product class (founder 2026-09-15,
+  // hardware precedent: a physical chip has no agent-drivable surface or API of its own — the
+  // SDK belongs to the vendor, not the part). Display-only: tables and vendor pages render
+  // "n/a" for these instead of a number; the PA Score itself still shows.
+  naDimensions: z.array(z.enum(['agentReady', 'agenticApp', 'apiQuality'])).optional(),
 })
 
 export const ProductSchema = z.object({

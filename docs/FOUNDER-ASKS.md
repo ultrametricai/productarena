@@ -8,6 +8,12 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Hardware arenas: n/a on non-applicable sub-scores (agent-ready, API) keeping PA Score | shipped 2026-09-15 — naDimensions on processors+gpus; n/a pills/cells on vendor page + arena + everything tables |
+| YC S09 pill wraps to two lines | shipped 2026-09-15 (whitespace-nowrap) |
+| Product name column truncates too early | shipped 2026-09-15 (min-width raised on homepage + arena tables) |
+| "Built-in AI assistant" pill breaks row height on /rankings/agentic | shipped 2026-09-15 — AI mode is its own column on agentic + ai-native rankings |
+| Operating rhythm page + email-marketing arena + arenas strip on product pages | shipped 2026-09-15 (startup-rhythm lane merged) |
+| Stripe engine: 3 new arenas (identity-verification, banking-data-apis, stablecoin-payments), 13 lines dispositioned, competitor spikes, /queue | shipped 2026-09-15 |
 | "PA Score" label inside the pill on vendor page | shipped 2026-09-15 |
 | /arena/processors description too long above fold | shipped 2026-09-15 (both hardware arena descriptions tightened to house style) |
 | Stacks page: layer names clickable → their arena page | shipped 2026-09-15 |
@@ -23,14 +29,14 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Flag/Badge/Try demoted from top of vendor page; Try marked "Experimental" | shipped 2026-09-15 |
 | "For agents" above-fold cell → bottom of vendor page | shipped 2026-09-15 |
 | Compare head-to-head uses vendor logos | shipped 2026-09-15 |
-| Stripe "Not yet judged (13)" products: find/create arenas and judge all | in-lane (stripe-engine) |
-| Deep spikes on Stripe's nearest competitors — build an engine if multi-day | in-lane (stripe-engine) |
+| Stripe "Not yet judged (13)" products: find/create arenas and judge all | shipped 2026-09-15 — 3 judged in new arenas (Identity 3rd, Financial Connections 4th, Crypto last with preview gates costed); 4 covered in existing entries; 6 honestly not judgeable (reasons recorded) |
+| Deep spikes on Stripe's nearest competitors — build an engine if multi-day | shipped 2026-09-15 — 8 competitors spiked (Airwallex #6→#2); spike-engine cron daily 04:23 UTC |
 | Microterminal: actually live + sandboxed, not a replay | shipped 2026-09-15 — 316/649 proofs (49%, 48 arenas) re-runnable live via worker allowlist (manifest-keyed, no user input reaches fetch, 20/min/IP); rest honestly labeled recorded; section marked Experimental |
 | Score trend → bottom of vendor page | shipped 2026-09-15 |
 | User story table: filter by user type | shipped 2026-09-15 |
-| Deep spike on Mercury and Rippling | in-lane (stripe-engine) |
+| Deep spike on Mercury and Rippling | queued in spike engine (Mercury already had the startup-banking exhaustive pass; both ranked in data/spike-priorities.json) |
 | Business-model tags in user story table (free vs enterprise-only stories) | shipped 2026-09-15 (tier chips + tier filter — pricing-tier lane; coverage grows as evidence states gating) |
-| Always-running probe/spike engine over top companies + visible queue | in-lane (stripe-engine — /queue page) |
+| Always-running probe/spike engine over top companies + visible queue | shipped 2026-09-15 — spike-engine.ts + daily cron + unlinked /queue page (staleness × popularity × priority) |
 | Gifts URL + read rejection notes, fix gifts that will fail again | shipped 2026-09-15 — Homebrew retired (maintainer passed), vLLM disclosure body ready (founder: gh pr edit 56909 --body-file drafts/outreach/vllm/PR-BODY-v2.md), docusaurus on hold (competing PR #11958), gitea fixed (needs founder account+DCO); checklist hardened |
 | Submit PA to directories for traffic; PA-specific Terms + Privacy building on ultrametric.ai TOS | shipped 2026-09-15 — 30-venue plan in drafts/growth/DIRECTORIES.md (2 awesome-list PRs ready for founder review); /terms extended + /privacy added (counsel review recommended) |
 | WhatsApp preview sometimes shows old image — diagnose | shipped 2026-09-15 — root cause: app/opengraph-image.png overrode og2.png with a double-basePath 404 URL; removed |

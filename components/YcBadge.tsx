@@ -20,7 +20,7 @@ export default function YcBadge({
   clickable?: boolean
 }) {
   if (!ycBatch) return null
-  const pillClass = `inline-flex w-fit items-center rounded-full bg-[#f26522] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white ${className}`
+  const pillClass = `inline-flex w-fit items-center whitespace-nowrap rounded-full bg-[#f26522] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white ${className}`
   if (!clickable) {
     return (
       <span title={`Y Combinator batch ${ycBatch}`} className={pillClass}>
@@ -32,7 +32,7 @@ export default function YcBadge({
     <Link
       href={`/yc/${ycBatch.toLowerCase()}`}
       title={`Y Combinator batch ${ycBatch}`}
-      className={`inline-flex w-fit items-center rounded-full bg-[#f26522] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white transition hover:brightness-110 ${className}`}
+      className={`inline-flex w-fit items-center whitespace-nowrap rounded-full bg-[#f26522] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white transition hover:brightness-110 ${className}`}
     >
       YC {ycBatch}
     </Link>

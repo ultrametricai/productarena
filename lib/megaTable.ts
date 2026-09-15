@@ -53,6 +53,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         hotReason: hotFlags.get(product.id)?.reason ?? null,
         ycBatch: product.ycBatch,
         enterprise: product.enterprise,
+        naDimensions: data.category.naDimensions,
         trendDelta: metricTrendDelta(arenaId, product.id, 'aiEra'),
         agentReadyTrendDelta: metricTrendDelta(arenaId, product.id, 'agentReady'),
         confidence: confidenceFor(data, product.id),
