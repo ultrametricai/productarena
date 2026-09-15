@@ -65,6 +65,8 @@ import { probes as cardIssuing } from './card-issuing'
 import { probes as taxAutomation } from './tax-automation'
 import { probes as bankingAsAService } from './banking-as-a-service'
 import { probes as marketplacePayments } from './marketplace-payments'
+import { probes as processors } from './processors'
+import { probes as gpus } from './gpus'
 
 export type { LocalProbe } from './types'
 
@@ -125,4 +127,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'tax-automation': taxAutomation,
   'banking-as-a-service': bankingAsAService,
   'marketplace-payments': marketplacePayments,
+  processors,
+  gpus,
 }

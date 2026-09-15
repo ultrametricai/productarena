@@ -29,6 +29,10 @@ export const THEME_FALLBACK_ICON = '🏷️'
 // Bucketing by keyword keeps ~400 live theme ids covered by ~60 rules and gives new themes a
 // sensible icon for free whenever they reuse existing vocabulary.
 const THEME_RULES: Array<[RegExp, string]> = [
+  // Hardware arenas (processors, gpus)
+  [/gaming|game\b/, '🎮'],
+  [/power-|cooling|thermal|wattage/, '🔋'],
+  [/spec-transparency|spec-sheet/, '📚'],
   // Code review & extraction arenas
   [/codebase-understanding/, '🧭'],
   [/ocr|multilingual|handwriting/, '🔤'],
