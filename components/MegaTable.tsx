@@ -140,7 +140,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
           value: arenaId,
           onChange: setArenaId,
           ariaLabel: 'Filter by arena',
-          options: [{ value: 'all', label: 'All products' }, ...arenas.map((a) => ({ value: a.id, label: a.name }))],
+          options: [{ value: 'all', label: 'All arenas' }, ...arenas.map((a) => ({ value: a.id, label: a.name }))],
         }}
         query={query}
         onQuery={setQuery}

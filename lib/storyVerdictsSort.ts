@@ -241,21 +241,24 @@ export function sortStoryVerdictRows(
 
 // Case-insensitive substring match over title + persona + theme + group (the text filter),
 // optionally intersected with an exact theme (the theme dropdown), an exact scope (the scope
-// dropdown), and/or an exact pricing tier (the tier dropdown — 'free'/'paid'/'enterprise'
-// match classified rows only; unclassified/unknown rows never match a tier filter). Empty
-// theme/scope/tier = no restriction.
+// dropdown), an exact pricing tier (the tier dropdown — 'free'/'paid'/'enterprise' match
+// classified rows only; unclassified/unknown rows never match a tier filter), and/or an exact
+// user type (the persona dropdown, matching the "User type" column's personaLabel). Empty
+// theme/scope/tier/persona = no restriction.
 export function filterStoryVerdictRows(
   rows: StoryVerdictRow[],
   query: string,
   theme = '',
   scope = '',
   tier = '',
+  persona = '',
 ): StoryVerdictRow[] {
   const q = query.trim().toLowerCase()
   return rows.filter((r) => {
     if (theme !== '' && r.theme !== theme) return false
     if (scope !== '' && r.scope !== scope) return false
     if (tier !== '' && r.tier !== tier) return false
+    if (persona !== '' && r.personaLabel !== persona) return false
     if (q === '') return true
     return (
       r.title.toLowerCase().includes(q) ||
