@@ -142,4 +142,20 @@ describe('filterStoryVerdictRows', () => {
     // Scope intersects the text query and theme like every other filter.
     expect(filterStoryVerdictRows(scoped, 'story g', '', 'category')).toHaveLength(0)
   })
+
+  it('filters by exact pricing tier — unknown and unclassified rows never match a tier selection', () => {
+    const tiered = [
+      row({ storyId: 'f', tier: 'free', tierNote: 'Free tier includes it' }),
+      row({ storyId: 'pd', tier: 'paid', tierNote: 'Pro plan required' }),
+      row({ storyId: 'e', tier: 'enterprise', tierNote: 'SSO on Enterprise plan only' }),
+      row({ storyId: 'u', tier: 'unknown' }),
+      row({ storyId: 'unclassified' }),
+    ]
+    expect(filterStoryVerdictRows(tiered, '', '', '', 'free').map((r) => r.storyId)).toEqual(['f'])
+    expect(filterStoryVerdictRows(tiered, '', '', '', 'enterprise').map((r) => r.storyId)).toEqual(['e'])
+    // Empty tier = no restriction (same contract as theme/scope).
+    expect(filterStoryVerdictRows(tiered, '', '', '', '')).toHaveLength(5)
+    // Tier intersects the other filters.
+    expect(filterStoryVerdictRows(tiered, 'story f', '', '', 'paid')).toHaveLength(0)
+  })
 })

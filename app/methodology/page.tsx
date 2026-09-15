@@ -78,6 +78,21 @@ export default function MethodologyPage() {
             so it&apos;s never part of the PA Score or rankings.
           </p>
         </div>
+        <div id="story-tiers" className={`scroll-mt-16 ${PILL}`}>
+          <p className="font-semibold text-zinc-300">Pricing tiers (not scored)</p>
+          <p className="mt-1">
+            Delivered stories (<span className={CODE}>full</span>/<span className={CODE}>partial</span>) carry a{' '}
+            <span className={CODE}>free</span> / <span className={CODE}>paid</span> /{' '}
+            <span className={CODE}>enterprise</span> chip when the verdict&apos;s cited evidence or the vendor&apos;s
+            own pricing evidence states which plan the capability needs — each chip quotes that gating evidence
+            (e.g. &ldquo;SSO on Enterprise plan only&rdquo;).
+          </p>
+          <p className="mt-1">
+            <span className={CODE}>unknown</span> means the evidence never states gating — we never infer a tier
+            from reputation or vibes, and silence is never rendered as &ldquo;free&rdquo;. An annotation layer only:
+            it never moves a verdict, quality, or any score.
+          </p>
+        </div>
       </div>
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">
