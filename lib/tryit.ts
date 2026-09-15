@@ -1,4 +1,5 @@
 import { loadCategory, stripPersonaPrefix } from './data'
+import { isLiveCapable } from './liveProbes'
 import { mcpEndpointFor } from './mcpEndpoints'
 import { loadProcesses, processSlug, VENDOR_ARENA, vendorProductId, type ProcessTask } from './processes'
 import { proofsForProduct, readProofTranscript } from './proofs'
@@ -40,6 +41,10 @@ export function buildRecordedStories(category: string, productId: string, storie
       recordedAt: proof.recordedAt,
       exitCode: proof.exitCode,
       transcript: stripSgr(transcript),
+      // Pure-HTTP probes in the generated live manifest also get a "run live" button — the
+      // worker re-runs the exact command as a fetch (lib/liveProbes.ts; CLI/pty probes stay
+      // replay-only, labeled as recordings).
+      live: isLiveCapable(category, productId, proof.probeId),
     })
   }
   return entries

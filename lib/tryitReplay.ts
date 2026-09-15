@@ -15,6 +15,9 @@ export interface TryItStory {
   recordedAt?: string
   exitCode?: number
   transcript?: string
+  /** This exact command is in the live-probe manifest (lib/liveProbes.ts) — the worker can
+   *  re-run it as a fetch, so the terminal offers a "run live" button next to the replay. */
+  live?: boolean
 }
 
 export const REPLAY_MS_PER_CHAR = 8
@@ -86,6 +89,61 @@ export interface McpCallResult {
     resultText?: string
     truncated?: boolean
   }
+}
+
+// Sanitized summary returned by the worker's /api/try/:arena/:product/:probeId
+// (infra/cloudflare-proxy/worker.js — executeLiveProbe + handleTryProbe): one recorded proof
+// command re-run live as a worker-native fetch.
+export interface TryProbeResult {
+  ok?: boolean
+  error?: string
+  method?: string
+  url?: string
+  ranAt?: string
+  reachable?: boolean
+  status?: number
+  contentType?: string
+  elapsedMs?: number
+  bodyExcerpt?: string
+  truncated?: boolean
+  /** true/false = live result matches / differs from what the recorded proof asserted;
+   *  null = the recording pinned no status or pattern, so no verdict is claimed. */
+  pass?: boolean | null
+  expected?: { status: number | null; pattern: string | null }
+}
+
+// Render one live re-run result as terminal lines. Honesty rules match probeResultLines: the
+// verdict line only claims a match/mismatch when the recorded proof pinned something to compare
+// against, and a truncated excerpt says so.
+export function tryResultLines(result: TryProbeResult): string[] {
+  if (result.error && !result.reachable) return [`← ${result.error}`]
+  if (!result.ok && result.error) return [`← live run failed: ${result.error}`]
+  const lines = [
+    `← HTTP ${result.status ?? '???'}${result.contentType ? ` · ${result.contentType}` : ''} · ${result.elapsedMs ?? '?'} ms — LIVE, just now from our edge`,
+  ]
+  const excerpt = (result.bodyExcerpt ?? '').trimEnd()
+  if (excerpt) {
+    for (const line of excerpt.split('\n')) lines.push(`  ${line}`)
+    if (result.truncated) lines.push('  … [truncated — live runs show the first 2 KB, unfiltered]')
+  } else {
+    lines.push('  (empty response body)')
+  }
+  if (result.pass === true) {
+    const what = [
+      result.expected?.status !== null && result.expected?.status !== undefined ? `HTTP ${result.expected.status}` : null,
+      result.expected?.pattern ? `matches /${result.expected.pattern}/` : null,
+    ].filter(Boolean).join(', ')
+    lines.push(`✓ matches the recorded proof${what ? ` (${what})` : ''}`)
+  } else if (result.pass === false) {
+    const wanted = [
+      result.expected?.status !== null && result.expected?.status !== undefined ? `HTTP ${result.expected.status}` : null,
+      result.expected?.pattern ? `body matching /${result.expected.pattern}/` : null,
+    ].filter(Boolean).join(' and ')
+    lines.push(`✗ differs from the recorded proof${wanted ? ` (it got ${wanted})` : ''} — the vendor may have changed something`)
+  } else {
+    lines.push('— raw live answer above; the recording pinned no status/pattern, so no match verdict is claimed')
+  }
+  return lines
 }
 
 // The copy-paste MCP client config for this product's documented endpoint — the "take it with

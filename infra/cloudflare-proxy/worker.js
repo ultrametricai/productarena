@@ -14,6 +14,10 @@
 // handshake, which only ever contacts a static allowlist of vendor MCP endpoints (see the
 // "Live MCP handshake probe" section below).
 //
+// Also hosts POST /productarena/api/try/:arena/:product/:probeId — the "Try it" microterminal's
+// "run live" button, which re-runs one recorded keyless proof command as a worker-native fetch
+// of its fixed URL (see the "Live probe re-runs" section below and live-probes.generated.js).
+//
 // Also hosts POST /productarena/mcp — a keyless, rate-limited remote MCP endpoint (see the
 // "Remote MCP endpoint" section below and this directory's README.md).
 //
@@ -24,6 +28,8 @@
 // Also hosts the site's auth backend at /productarena/auth/* (WorkOS AuthKit login/callback,
 // our own HMAC-signed pa_session cookie, /auth/me, /auth/logout) — see the "Auth backend"
 // section below and docs/AUTH.md for setup.
+import { LIVE_PROBES } from './live-probes.generated.js'
+
 const ORIGIN = 'https://productarena.vercel.app'
 const ALLOWED_CORS = new Set(['https://ultrametric.ai', 'https://productarena.vercel.app'])
 
@@ -758,6 +764,155 @@ export async function handleMcpProbe(request, fetchImpl = fetch, env = undefined
     ...(sandboxCred ? { sandboxAvailable: true } : {}),
     ...result,
   }, [rawToken.trim(), authorization, sandboxCred]))
+}
+
+// ---------------------------------------------------------------------------------------------
+// Live probe re-runs: POST /productarena/api/try/:arena/:product/:probeId
+//
+// Powers the "Try it" microterminal's "run live" button: re-run one recorded keyless proof
+// command, RIGHT NOW, as a worker-native fetch — so the terminal can show a live result next
+// to the recording instead of only a replay.
+//
+// Attack-surface analysis (keep true when editing):
+//   - The client supplies exactly three path segments; they are ONLY ever used as a lookup key
+//     into LIVE_PROBES (live-probes.generated.js), a committed static manifest generated at
+//     build time by pipeline/scripts/generate-live-probe-manifest.ts from the recorded proofs.
+//     Unknown key -> 404. No query params, no body fields, are read at all.
+//   - Every manifest entry is a fixed public https URL with static, credential-free headers and
+//     a static body — the generator fails closed on shell interpolation, unknown curl flags,
+//     auth-shaped headers, placeholder bodies, IP-literal/internal hosts, and non-https URLs.
+//   - Execution is a plain fetch of that entry's exact (method, url, headers, body): no shell,
+//     no string assembly from user input anywhere. A malicious caller can therefore reach only
+//     the fixed URLs our own recorded probes already hit, at most 20 times/min/IP.
+//   - The response is reshaped: status + content-type + a <=2 KB body excerpt. Upstream headers
+//     (set-cookie included) are never forwarded; reads are byte-capped; timeout 10 s.
+//   - Rate limit: per-isolate fixed window first, then a KV-backed cross-isolate window
+//     (PA_COMPARE_STATS, `tryrl:` keys). KV keys are SHA-256-hashed IPs in minute buckets with
+//     a 120 s TTL — no raw IPs at rest, nothing persists beyond two minutes. Missing binding
+//     degrades to the per-isolate limiter.
+
+const TRY_RATE_LIMIT = { max: 20, windowMs: 60 * 1000 }
+const tryRateBuckets = new Map() // per-isolate first line; KV window below is the real cap
+const TRY_TIMEOUT_MS = 10_000
+const TRY_EXCERPT_MAX_CHARS = 2048 // the demo is a taste, not a mirror
+const TRY_READ_MAX_BYTES = 32 * 1024 // bounded read; expectPattern is tested against this window
+
+// Cross-isolate 20/min/IP window in KV. Key = tryrl:<sha256(ip) b64url, 22 chars>:<minute>,
+// value = counter, TTL 120 s (KV minimum is 60; two windows covers clock skew). Fail-open on
+// KV errors — the per-isolate limiter still applies.
+async function tryKvRateLimited(kv, ip, nowMs = Date.now()) {
+  if (!kv) return false
+  try {
+    const digest = await crypto.subtle.digest('SHA-256', authTextEncoder.encode(`try:${ip}`))
+    const key = `tryrl:${b64urlEncode(new Uint8Array(digest)).slice(0, 22)}:${Math.floor(nowMs / TRY_RATE_LIMIT.windowMs)}`
+    const current = parseInt((await kv.get(key)) ?? '0', 10)
+    const count = Number.isFinite(current) ? current : 0
+    if (count >= TRY_RATE_LIMIT.max) return true
+    await kv.put(key, String(count + 1), { expirationTtl: 120 })
+  } catch { /* KV hiccup — fall through to the per-isolate limiter's verdict */ }
+  return false
+}
+
+// Execute one manifest entry as its exact argv-equivalent fetch and reshape the response into
+// plain sanitized fields. `pass` compares the live result to what the RECORDED proof asserted
+// (its status line and/or its own grep pattern); null when the recording pinned neither — the
+// live run then reports what it saw without claiming a verdict.
+export async function executeLiveProbe(probe, fetchImpl = fetch) {
+  const started = Date.now()
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), TRY_TIMEOUT_MS)
+  let resp
+  try {
+    resp = await fetchImpl(probe.url, {
+      method: probe.method,
+      redirect: probe.followRedirects ? 'follow' : 'manual',
+      signal: controller.signal,
+      headers: {
+        'user-agent': 'ProductArena-tryit/1.0 (+https://ultrametric.ai/productarena)',
+        ...probe.headers, // static + credential-free by construction (generator fails closed)
+      },
+      ...(probe.body !== null && probe.method !== 'GET' && probe.method !== 'HEAD' ? { body: probe.body } : {}),
+    })
+  } catch {
+    clearTimeout(timer)
+    return { reachable: false, error: 'unreachable from our edge (network error or 10s timeout)', elapsedMs: Date.now() - started, pass: false }
+  }
+  clearTimeout(timer)
+
+  // Bounded read; the reshape below is the ONLY thing that leaves — upstream headers
+  // (set-cookie and all) are dropped here by construction.
+  const reader = resp.body?.getReader()
+  let text = ''
+  let bytes = 0
+  if (reader) {
+    const decoder = new TextDecoder()
+    while (bytes < TRY_READ_MAX_BYTES) {
+      const { done, value } = await reader.read()
+      if (done) break
+      bytes += value.byteLength
+      text += decoder.decode(value, { stream: true })
+    }
+    await reader.cancel().catch(() => {})
+  }
+  const elapsedMs = Date.now() - started
+
+  const statusOk = probe.expectStatus === null || resp.status === probe.expectStatus
+  let patternOk = true
+  if (probe.expectPattern !== null) {
+    try {
+      patternOk = new RegExp(probe.expectPattern, probe.expectFlags ?? '').test(text)
+    } catch {
+      patternOk = true // pattern was vetted at generation time; never fail a run on our regex
+    }
+  }
+  const hasAssertion = probe.expectStatus !== null || probe.expectPattern !== null
+  return {
+    reachable: true,
+    status: resp.status,
+    contentType: clip(resp.headers.get('content-type') ?? '', 100),
+    elapsedMs,
+    bodyExcerpt: text.slice(0, TRY_EXCERPT_MAX_CHARS),
+    truncated: text.length > TRY_EXCERPT_MAX_CHARS || bytes >= TRY_READ_MAX_BYTES,
+    pass: hasAssertion ? statusOk && patternOk : null,
+    expected: {
+      status: probe.expectStatus,
+      pattern: probe.expectPattern,
+    },
+  }
+}
+
+export async function handleTryProbe(request, env, fetchImpl = fetch) {
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders(request) })
+  if (request.method !== 'POST') return jsonResponse(request, 405, { error: 'POST only' })
+
+  const ip = request.headers.get('cf-connecting-ip') ?? 'unknown'
+  if (isRateLimited(tryRateBuckets, ip, TRY_RATE_LIMIT) || (await tryKvRateLimited(env?.PA_COMPARE_STATS, ip))) {
+    return jsonResponse(request, 429, { error: 'rate limited (20 live runs / minute) — try again shortly' })
+  }
+
+  // Path segments are a LOOKUP KEY ONLY — never interpolated into a URL or anything else.
+  const segments = new URL(request.url).pathname
+    .slice('/productarena/api/try/'.length)
+    .split('/')
+    .map((s) => { try { return decodeURIComponent(s) } catch { return s } })
+  if (segments.length !== 3 || segments.some((s) => !s || s.length > 100)) {
+    return jsonResponse(request, 400, { error: 'expected /api/try/:arena/:product/:probeId' })
+  }
+  const [arena, product, probeId] = segments
+  const probe = LIVE_PROBES[`${arena}/${product}/${probeId}`]
+  if (!probe) return jsonResponse(request, 404, { error: 'no live-capable probe with that id (recorded-replay-only probes cannot be run live)' })
+
+  const result = await executeLiveProbe(probe, fetchImpl)
+  return jsonResponse(request, 200, {
+    ok: true,
+    arena,
+    product,
+    probeId,
+    method: probe.method,
+    url: probe.url,
+    ranAt: new Date().toISOString(),
+    ...result,
+  })
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -1655,6 +1810,7 @@ export default {
     if (url.pathname.startsWith('/productarena/auth/')) return handleAuth(request, env)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
     if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request, fetch, env)
+    if (url.pathname.startsWith('/productarena/api/try/')) return handleTryProbe(request, env)
     if (url.pathname === '/productarena/api/popular-compares') {
       return handlePopularCompares(request, env?.PA_COMPARE_STATS)
     }
