@@ -1,0 +1,18 @@
+{
+  "hash": "3941d9974d1a4380e74bf73bfc37175eb91dbe6a32b17e850ff2c09b69257034",
+  "verdict": {
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Shopify's UCP checkout flow documents explicit pre-purchase gates: complete_checkout must only be called once 'Checkout status is ready_for_complete', the 'Buyer has reviewed and confirmed the order', and the 'Payment credential has been collected', and unresolved cases force a hand-off to the buyer via continue_url (requires_escalation/requires_buyer_review). AP2 integration adds 'cryptographically signed payment authorizations that are mathematically tied to the specific state of the cart', which maps to a signed-mandate model, and trust tiers restrict complete_checkout to Token-tier agents with explicit purchase permission. However, the docs also note 'Trusted agents can complete checkouts directly,' implying some agents can skip buyer-facing confirmation, and enforcement of the 'buyer reviewed' precondition appears to rely on agent self-attestation rather than a Shopify-verified user signature captured at time of purchase. Missing for 10: independent/third-party confirmation that buyer consent is cryptographically captured (not just agent-declared) and clarity on exactly which agents qualify as 'trusted' to bypass buyer review.",
+    "evidenceIds": [
+      "shopify-ucp-supp-checkout-mcp",
+      "shopify-ucp-supp-buyer-handoff",
+      "shopify-ucp-supp-trust-tiers",
+      "shopify-ucp-docs-31",
+      "shopify-ucp-supp-ucp-governance"
+    ],
+    "productId": "shopify-ucp",
+    "storyId": "human-approval-gate"
+  }
+}
