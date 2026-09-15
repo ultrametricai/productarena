@@ -8,24 +8,26 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| "PA Score" label inside the pill on vendor page | shipped 2026-09-15 |
+| /arena/processors description too long above fold | shipped 2026-09-15 (both hardware arena descriptions tightened to house style) |
 | Stacks page: layer names clickable → their arena page | shipped 2026-09-15 |
 | Make /rankings/most-connected comprehensive | open — queued (todo per founder) |
 | Story-type icons left of story text on arena pages | shipped 2026-09-15 (theme icon per row) |
 | Front page: "+" card in Arenas grid → suggest an arena via GitHub issue | shipped 2026-09-15 |
-| Front-page scope dropdown: "All products" → "All arenas" | open — inline now |
+| Front-page scope dropdown: "All products" → "All arenas" | shipped 2026-09-15 |
 | Arena icons in the front-page arena dropdown (same as top bar) | open — UI lane |
-| Pulley possibly shut down — verify, mark closed, keep data | open — inline now |
-| "⚿ auth 1 auth-gated probe" not useful above the fold | open — inline now |
+| Pulley possibly shut down — verify, mark closed, keep data | shipped 2026-09-15 — vendor notice: ceasing operations 2026-12-08, Carta migration; CLOSING badge, data kept |
+| "⚿ auth 1 auth-gated probe" not useful above the fold | shipped 2026-09-15 (moved to page bottom) |
 | Vendor pills: "Built-in AI XX/100", "Agent-ready XX/100" + click through to evidence log | shipped 2026-09-15 — /score per-vendor receipt pages (+439 pages), pills show /100 and deep-link |
 | PA Score above fold → per-vendor transparent calculation page (not just generic methodology) | shipped 2026-09-15 — /arena/<a>/product/<p>/score shows the full arithmetic, PA recomputes exactly |
-| Flag/Badge/Try demoted from top of vendor page; Try marked "Experimental" | open — inline now |
-| "For agents" above-fold cell → bottom of vendor page | open — inline now (supersedes startup-sim/page-order row) |
-| Compare head-to-head uses vendor logos | open — inline now |
+| Flag/Badge/Try demoted from top of vendor page; Try marked "Experimental" | shipped 2026-09-15 |
+| "For agents" above-fold cell → bottom of vendor page | shipped 2026-09-15 |
+| Compare head-to-head uses vendor logos | shipped 2026-09-15 |
 | Stripe "Not yet judged (13)" products: find/create arenas and judge all | in-lane (stripe-engine) |
 | Deep spikes on Stripe's nearest competitors — build an engine if multi-day | in-lane (stripe-engine) |
-| Microterminal: actually live + sandboxed, not a replay | in-lane (live-terminal) |
-| Score trend → bottom of vendor page | open — inline now |
-| User story table: filter by user type | open — inline now |
+| Microterminal: actually live + sandboxed, not a replay | shipped 2026-09-15 — 316/649 proofs (49%, 48 arenas) re-runnable live via worker allowlist (manifest-keyed, no user input reaches fetch, 20/min/IP); rest honestly labeled recorded; section marked Experimental |
+| Score trend → bottom of vendor page | shipped 2026-09-15 |
+| User story table: filter by user type | shipped 2026-09-15 |
 | Deep spike on Mercury and Rippling | in-lane (stripe-engine) |
 | Business-model tags in user story table (free vs enterprise-only stories) | shipped 2026-09-15 (tier chips + tier filter — pricing-tier lane; coverage grows as evidence states gating) |
 | Arena for YubiKey-type hardware keys + arena for authenticator apps | in-lane (new-arenas) |
@@ -33,7 +35,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Always-running probe/spike engine over top companies + visible queue | in-lane (stripe-engine — /queue page) |
 | Gifts URL + read rejection notes, fix gifts that will fail again | shipped 2026-09-15 — Homebrew retired (maintainer passed), vLLM disclosure body ready (founder: gh pr edit 56909 --body-file drafts/outreach/vllm/PR-BODY-v2.md), docusaurus on hold (competing PR #11958), gitea fixed (needs founder account+DCO); checklist hardened |
 | Submit PA to directories for traffic; PA-specific Terms + Privacy building on ultrametric.ai TOS | shipped 2026-09-15 — 30-venue plan in drafts/growth/DIRECTORIES.md (2 awesome-list PRs ready for founder review); /terms extended + /privacy added (counsel review recommended) |
-| WhatsApp preview sometimes shows old image — diagnose | open — inline now |
+| WhatsApp preview sometimes shows old image — diagnose | shipped 2026-09-15 — root cause: app/opengraph-image.png overrode og2.png with a double-basePath 404 URL; removed |
 | Do we need RSS? | answered 2026-09-15 — keep (see session notes) |
 | Hardware arenas into top bar + menus, drop Experimental status | shipped 2026-09-15 — Hardware section in arena menu, /experiments pages are now spec annexes linking the arenas |
 | Start WorkOS login work (account exists) | shipped 2026-09-15 (code) — mock-mode harness + account watchlist sync; go-live = 5-min founder checklist in docs/AUTH.md (secrets + redirect URI) |
