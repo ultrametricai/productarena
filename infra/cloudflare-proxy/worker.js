@@ -272,6 +272,7 @@ export const MCP_ENDPOINTS = {
   'incident-management/incident-io': 'https://mcp.incident.io/mcp',
   'incident-management/pagerduty': 'https://mcp.pagerduty.com/mcp',
   'incident-management/rootly': 'https://mcp.rootly.com/mcp',
+  'legal-ops/clerky': 'https://mcp.clerky.com/mcp',
   'marketplace-payments/stripe-connect': 'https://mcp.stripe.com/',
   'mcp-infrastructure/manufact': 'https://mcp.manufact.com/mcp',
   'meeting-ai/granola': 'https://mcp.granola.ai/mcp',
