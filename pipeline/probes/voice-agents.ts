@@ -241,4 +241,46 @@ export const probes: LocalProbe[] = [
       expect: /"title": "telli API"/,
       timeoutMs: 30_000,
     },
+    {
+      // Deepgram's docs MCP server (developers.deepgram.com/_mcp/server, documented in the
+      // llms.txt agent instructions) completes a full KEYLESS initialize handshake — the
+      // Fern-hosted docs server answers with serverInfo openly.
+      probeId: 'docs-mcp-handshake',
+      productId: 'deepgram',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://developers.deepgram.com/_mcp/server',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://developers.deepgram.com/_mcp/server -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /"serverInfo":\{"name":"fern-docs-mcp-server"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Deepgram's production API answers a keyless request with a structured JSON auth
+      // challenge — the documented Token/Bearer gate on api.deepgram.com is live.
+      probeId: 'api-keyless-auth-challenge',
+      productId: 'deepgram',
+      storyIds: ['agentic-public-api', 'agentic-scoped-keys'],
+      bin: 'curl',
+      argv: ['curl', '-s', '-i', '--max-time', '20', 'https://api.deepgram.com/v1/projects'],
+      displayCommand: 'curl -si https://api.deepgram.com/v1/projects',
+      expect: /"category":"UNAUTHORIZED"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Site-wide llms.txt index with explicit AI-agent instructions (append .md for clean
+      // Markdown of any docs page, per-section llms.txt indexes, docs MCP server pointer).
+      probeId: 'llms-site-index',
+      productId: 'deepgram',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://developers.deepgram.com/llms.txt | head -8'],
+      displayCommand: 'curl -s https://developers.deepgram.com/llms.txt | head -8',
+      expect: /Instructions for AI Agents/,
+      timeoutMs: 30_000,
+    },
 ]

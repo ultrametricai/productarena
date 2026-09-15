@@ -152,4 +152,31 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // Real pip install of the OSS embedded database into a throwaway uv venv, then an
+      // import + version print — install AND import roundtrip in one transcript, self-cleaned.
+      // No server, no key: LanceDB's embedded mode runs entirely in-process.
+      probeId: 'pip-install-import-roundtrip',
+      productId: 'lancedb',
+      storyIds: ['agentic-sdks', 'embedded-local-mode'],
+      bin: 'sh',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && uv venv -q && uv pip install -q lancedb && ./.venv/bin/python -c "from importlib.metadata import version; import lancedb; print('PA_PROBE_OK lancedb', version('lancedb'))" ; rc=$?; cd / && rm -rf "$d"; exit $rc`,
+      ],
+      displayCommand: `mktemp -d && uv venv && uv pip install lancedb && python -c "import lancedb; print('PA_PROBE_OK lancedb', version('lancedb'))"`,
+      expect: /PA_PROBE_OK lancedb \d+\.\d+/,
+      timeoutMs: 240_000,
+    },
+    {
+      // Docs-wide llms.txt index — every LanceDB docs page mirrored as .md for agents.
+      probeId: 'llms-docs-index',
+      productId: 'lancedb',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.lancedb.com/llms.txt | head -4'],
+      displayCommand: 'curl -s https://docs.lancedb.com/llms.txt | head -4',
+      expect: /# LanceDB/,
+      timeoutMs: 30_000,
+    },
 ]

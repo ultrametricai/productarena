@@ -80,4 +80,39 @@ export const probes: LocalProbe[] = [
       expect: /Blaxel MCP|oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // Official Maritime CLI straight off npm answers --version keyless (npx one-shot).
+      probeId: 'cli-version',
+      productId: 'maritime',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'maritime-cli', '--version'],
+      displayCommand: 'npx -y maritime-cli --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // The documented REST API (maritime.sh/docs/api) answers a keyless request with a
+      // structured JSON auth challenge — the mk_ API-key gate is live.
+      probeId: 'api-keyless-auth-challenge',
+      productId: 'maritime',
+      storyIds: ['agentic-public-api', 'spinup-via-api'],
+      bin: 'curl',
+      argv: ['curl', '-s', '-i', '--max-time', '20', 'https://maritime.sh/api/agents'],
+      displayCommand: 'curl -si https://maritime.sh/api/agents',
+      expect: /"error":"Not authenticated"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Site-wide llms.txt with the platform contract for AI agents (custom container
+      // contract, CLI JSON contract, SDK map) — fetched keyless.
+      probeId: 'llms-site-index',
+      productId: 'maritime',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://maritime.sh/llms.txt | head -4'],
+      displayCommand: 'curl -s https://maritime.sh/llms.txt | head -4',
+      expect: /# Maritime/,
+      timeoutMs: 30_000,
+    },
 ]

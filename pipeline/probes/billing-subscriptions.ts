@@ -226,4 +226,46 @@ export const probes: LocalProbe[] = [
     expect: /BillingProviderType|components/,
     timeoutMs: 30_000,
   },
+  {
+    // RevenueCat's hosted remote MCP server (mcp.revenuecat.ai/mcp, documented at
+    // revenuecat.com/docs/tools/mcp/setup) draws a keyless 401 with an OAuth
+    // protected-resource challenge — live, bearer-gated MCP endpoint.
+    probeId: 'mcp-remote-handshake',
+    productId: 'revenuecat',
+    storyIds: ['agentic-mcp-server'],
+    bin: 'curl',
+    argv: [
+      'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.revenuecat.ai/mcp',
+      '-H', 'Content-Type: application/json',
+      '-H', 'Accept: application/json, text/event-stream',
+      '-d', CURL_MCP_INIT,
+    ],
+    displayCommand: `curl -si -X POST https://mcp.revenuecat.ai/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+    expect: /resource_metadata="https:\/\/mcp\.revenuecat\.ai/,
+    timeoutMs: 30_000,
+  },
+  {
+    // REST API v2 answers a keyless request with its documented structured error object
+    // (type authentication_error + errors.rev.cat doc pointer) — the Bearer gate is live.
+    probeId: 'api-keyless-auth-challenge',
+    productId: 'revenuecat',
+    storyIds: ['agentic-public-api', 'agent-reads-billing-state'],
+    bin: 'curl',
+    argv: ['curl', '-s', '-i', '--max-time', '20', 'https://api.revenuecat.com/v2/projects'],
+    displayCommand: 'curl -si https://api.revenuecat.com/v2/projects',
+    expect: /"type":"authentication_error"/,
+    timeoutMs: 30_000,
+  },
+  {
+    // Docs ship clean .md mirrors for agents (append .md to any docs URL, per the root
+    // llms.txt) — the MCP-server page itself round-trips as raw Markdown.
+    probeId: 'docs-md-endpoint',
+    productId: 'revenuecat',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://www.revenuecat.com/docs/tools/mcp.md | head -5'],
+    displayCommand: 'curl -s https://www.revenuecat.com/docs/tools/mcp.md | head -5',
+    expect: /RevenueCat MCP [Ss]erver/,
+    timeoutMs: 30_000,
+  },
 ]

@@ -13,7 +13,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Pricing tier (free/paid/enterprise) visible in user story table | shipped 2026-09-15 (tier chips + filter, pricing-tier lane) |
 | Enterprise flag for sales-led vendors | in-lane (enterprise-curation) — badge mechanism shipped 2026-09-15, curation lane verifying vendors live |
 | Remove /notes (Arena Notes) — not useful | shipped 2026-09-15 (route, lib, generator, drafts, feed merge all removed) |
-| ALL YC batches covered for agentic/famous companies | in-lane (yc-coverage-audit) |
+| ALL YC batches covered for agentic/famous companies | shipped 2026-09-15 — full W16–F26 audit: 7 bring-ups (Deepgram W16, RevenueCat S18, SigNoz W21, LanceDB W22, Windmill S22, Context.dev S26, Maritime F26) + 14 domain-verified restamps (82 → 103 stamped products); every batch of the last 10 years covered or honestly recorded as no-arena-fit; coverage queue re-swept W16–F26 (784 candidates) |
 | Bring hardware section (processors, GPUs) into the arenas | in-lane (hardware-arenas) |
 | Remove "Experiment — not part of the evidence-judged arenas…" banner from /experiments pages | shipped 2026-09-15 |
 | Remove "Evidence as of … · story coverage …" footer line on product pages | shipped 2026-09-15 |
