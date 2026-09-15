@@ -65,6 +65,9 @@ import { probes as cardIssuing } from './card-issuing'
 import { probes as taxAutomation } from './tax-automation'
 import { probes as bankingAsAService } from './banking-as-a-service'
 import { probes as marketplacePayments } from './marketplace-payments'
+import { probes as identityVerification } from './identity-verification'
+import { probes as bankingDataApis } from './banking-data-apis'
+import { probes as stablecoinPayments } from './stablecoin-payments'
 
 export type { LocalProbe } from './types'
 
@@ -125,4 +128,7 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'tax-automation': taxAutomation,
   'banking-as-a-service': bankingAsAService,
   'marketplace-payments': marketplacePayments,
+  'identity-verification': identityVerification,
+  'banking-data-apis': bankingDataApis,
+  'stablecoin-payments': stablecoinPayments,
 }
