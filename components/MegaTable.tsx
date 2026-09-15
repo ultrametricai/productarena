@@ -13,6 +13,7 @@ import PopularTag, { isNotablyPopular } from '@/components/PopularTag'
 import ProductLogoView from '@/components/ProductLogoView'
 import TrendArrow from '@/components/TrendArrow'
 import WatchButton from '@/components/WatchButton'
+import EnterpriseBadge from '@/components/EnterpriseBadge'
 import YcBadge from '@/components/YcBadge'
 import { useSession } from '@/lib/session'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
@@ -207,6 +208,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       </Link>
                       {row.hotReason && <HotChip reason={row.hotReason} />}
                       <YcBadge ycBatch={row.ycBatch} />
+                      <EnterpriseBadge enterprise={row.enterprise} />
                     </div>
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">

@@ -56,6 +56,12 @@ export const ProductSchema = z.object({
   // of the judge's cellHash (pipeline/stages/judge.ts hashes story+evidence only), so stamping
   // it on existing products never busts the judge cache.
   familyId: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'familyId must be kebab-case').optional(),
+  // Enterprise-motion flag: true only for vendors whose primary go-to-market is enterprise
+  // sales-led — no self-serve signup, pricing by sales contact — verified against the vendor's
+  // own pricing/signup pages (enterpriseSource cites the page that shows it). Display-only,
+  // like ycBatch: never fed into scoring, never part of the judge cellHash.
+  enterprise: z.boolean().optional(),
+  enterpriseSource: z.string().url().optional(),
 })
 
 // Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by

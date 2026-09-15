@@ -56,6 +56,9 @@ export interface MegaTableRow {
   // (not `| null`, unlike popularity) so existing MegaTableRow fixtures/callers built before this
   // field existed stay valid without every one needing an update.
   ycBatch?: string
+  // Enterprise-motion flag (lib/schemas.ts ProductSchema.enterprise) — optional for the same
+  // fixture-compat reason as ycBatch. Rendered as EnterpriseBadge next to the name.
+  enterprise?: boolean
   // 🔥 "hot right now" reason string (see lib/hotProducts.ts) — null when not hot; optional for
   // the same fixture-compat reason as ycBatch. Rendered as the small HotChip next to the name
   // (tooltip = the reason), never sorted on and never part of any score.
