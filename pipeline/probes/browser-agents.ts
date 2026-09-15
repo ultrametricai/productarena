@@ -182,4 +182,45 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // Smooth's docs publish a full llms.txt index (every page also served as raw .md) — the
+      // agent-consumable docs surface, fetched keyless.
+      probeId: 'llms-docs-index',
+      productId: 'smooth',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.smooth.sh/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.smooth.sh/llms.txt | head -6',
+      expect: /# Smooth/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Smooth publishes its complete OpenAPI 3.1 spec at a stable docs URL, declaring the live
+      // production server (api.smooth.sh/api/v1) — the machine-readable artifact an agent needs
+      // to drive the hosted task API.
+      probeId: 'openapi-machine-spec',
+      productId: 'smooth',
+      storyIds: ['api-machine-spec', 'agentic-public-api', 'hosted-task-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.smooth.sh/api-reference/openapi.json | head -c 200'],
+      displayCommand: 'curl -s https://docs.smooth.sh/api-reference/openapi.json | head -c 200',
+      expect: /"openapi": "3\.1\.0"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Real pip install of the published SDK into a throwaway venv: version print plus the
+      // bundled `smooth` CLI's own help banner ("Browser automation for AI agents") — an
+      // install AND a CLI-exists proof in one keyless transcript, self-cleaned.
+      probeId: 'pip-install-cli-roundtrip',
+      productId: 'smooth',
+      storyIds: ['agentic-sdks', 'agentic-official-cli'],
+      bin: 'uv',
+      argv: [
+        'sh', '-c',
+        `d=$(mktemp -d) && cd "$d" && uv venv -q && uv pip install -q smooth-py && ./.venv/bin/python -c "from importlib.metadata import version; print('PA_PROBE_OK smooth-py', version('smooth-py'))" && ./.venv/bin/smooth --help | head -8 ; cd / && rm -rf "$d"`,
+      ],
+      displayCommand: `mktemp -d && uv venv && uv pip install smooth-py && python -c "print('PA_PROBE_OK smooth-py', version('smooth-py'))" && smooth --help`,
+      expect: /Browser automation for AI agents/,
+      timeoutMs: 300_000,
+    },
 ]

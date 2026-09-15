@@ -1444,6 +1444,669 @@
     ]
   },
   {
+    "productId": "cekura",
+    "storyId": "agent-queries-own-traces",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura has documented API access (OpenAPI spec, send-calls, SDK/CLI for agents/scenarios/runs/call data) and an official MCP server, but the MCP server's documented purpose is to 'design, run, and improve voice-agent evaluations' rather than explicitly querying traces/metrics/eval results for debugging — no direct evidence the MCP tools expose trace/metric/eval query endpoints for agent-driven debugging. missing for 10: explicit MCP tool list showing trace/metric/eval query capabilities, independent hands-on confirmation of an agent using MCP or API to debug via traces/metrics/evals.",
+    "evidenceIds": [
+      "cekura-docs-3",
+      "cekura-docs-4",
+      "cekura-docs-5",
+      "cekura-docs-6",
+      "cekura-probe-3",
+      "cekura-probe-4",
+      "cekura-probe-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agent-session-traces",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Cekura's observability evidence centers on capturing call-level logs (CallLog with transcript, recording, metadata) and LiveKit SDK tracing, plus dashboards and PII redaction, but nothing in the evidence describes a hierarchical trace model with nested spans grouped into sessions or threads for multi-step agent runs. Missing for 10: explicit span/trace data model, parent-child span nesting, and session/thread grouping documentation.",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-15",
+      "cekura-docs-11"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agent-triggers-eval-run",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cekura ships a CLI/SDK explicitly for managing agents, scenarios (datasets), runs, and call data from code, plus an official MCP server letting an AI assistant 'design, run, and improve' evaluations, backed by a documented OpenAPI spec and API-key auth for programmatic access — together covering dataset creation, triggering eval runs, and reading back results. missing for 10: independent/hands-on confirmation that an agent using the MCP/CLI actually completes the full create-dataset-to-trigger-run-to-read-results loop end-to-end.",
+    "evidenceIds": [
+      "cekura-docs-3",
+      "cekura-docs-4",
+      "cekura-docs-5",
+      "cekura-docs-7",
+      "cekura-probe-3",
+      "cekura-probe-4",
+      "cekura-probe-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cekura has a confirmed live llms.txt endpoint (HTTP 200) plus per-page .md documentation format and an index pointing agents to llms.txt, directly enabling agent-oriented doc consumption; this is corroborated by both docs and live probes. Missing for 10: independent third-party confirmation of an agent actually consuming llms.txt successfully in the wild.",
+    "evidenceIds": [
+      "cekura-probe-1",
+      "cekura-probe-2",
+      "cekura-docs-1"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura provides LLM-judge evaluation metrics, live drift detection, and auto-generated fix suggestions ('flags issues → reproduces in simulation → suggests fixes automatically'), showing AI-generated insights derived from call/agent data. However, this is narrowly scoped to voice-agent testing/observability rather than broad, ad-hoc AI-generated insights across arbitrary product data, and there's no independent hands-on evidence of the 'suggests fixes automatically' claim beyond marketing copy. Missing for 10: independent/hands-on verification of the auto-fix-suggestion feature, broader insight/analytics generation beyond voice-agent metrics, and detail on how suggestions are surfaced to users.",
+    "evidenceIds": [
+      "cekura-docs-9",
+      "cekura-docs-20",
+      "cekura-docs-21",
+      "cekura-docs-11"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura supports autonomous background automation via cron jobs for scheduled testing/evaluation runs, GitHub Actions CI/CD integration, and live drift detection across calls, plus automatic flagging/reproduction/fix-suggestion pipelines. However, evidence is entirely first-party docs describing scheduling/triggering mechanisms rather than a broad general-purpose 'automation builder' for arbitrary agentic workflows. missing for 10: independent/hands-on confirmation that cron/CI automations run reliably unattended, evidence of more flexible trigger types beyond cron/CI/webhooks, and detail on monitoring/error-handling for long-running autonomous automations.",
+    "evidenceIds": [
+      "cekura-docs-13",
+      "cekura-docs-14",
+      "cekura-docs-20",
+      "cekura-docs-21",
+      "cekura-docs-6"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Cekura's AI-assistant integrations (Skills, MCP, CLI) are designed so external AI assistants like Claude or Cursor can drive Cekura's testing/evaluation features — this is the reverse relationship of an AI-native user delegating tasks to a built-in assistant inside Cekura itself. The 'flags issues → reproduces → suggests fixes automatically' pipeline is an automated feature, not a delegatable in-product assistant, so there is no evidence of a built-in AI assistant you can converse with or delegate open-ended tasks to.",
+    "evidenceIds": [
+      "cekura-docs-21",
+      "cekura-docs-3",
+      "cekura-docs-2"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cekura documents a CLI/SDK for programmatic and terminal-based agent/scenario/run management, a REST API with OpenAPI spec and API keys, cron job scheduling for automated evaluation workflows, and explicit GitHub Actions CI/CD integration for testing agents on every change—together these clearly support headless/CI automation. Missing for 10: independent hands-on confirmation of the GitHub Actions or cron setup actually working in a real pipeline beyond docs.",
+    "evidenceIds": [
+      "cekura-docs-4",
+      "cekura-docs-5",
+      "cekura-docs-13",
+      "cekura-docs-14",
+      "cekura-docs-7",
+      "cekura-probe-3",
+      "cekura-probe-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "All Cekura MCP evidence describes Cekura exposing its own MCP server so external AI assistants can call Cekura's tools (docs-3, probe-4), not Cekura itself acting as an MCP client that consumes third-party MCP servers' tools. No evidence shows Cekura can plug in and use external MCP servers.",
+    "evidenceIds": [
+      "cekura-docs-3",
+      "cekura-probe-4"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cekura is not itself an agent but a testing/observability platform, so the axis applies; it documents an official MCP server (\"Install Cekura Skills and MCP so your AI assistant can design, run, and improve voice-agent evaluations\") confirmed live via probe. Missing for 10: independent hands-on verification of the MCP server working end-to-end and more detail on supported tool/resource surface.",
+    "evidenceIds": [
+      "cekura-docs-3",
+      "cekura-probe-4"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura ships an MCP server and Skills package so an AI assistant can design, run, and improve voice-agent evaluations via natural-language commands, plus an LLM-judge metric for natural-language evaluation criteria; this supports agentic/NL operation for a subset of workflows. missing for 10: independent hands-on evidence of natural-language command execution beyond vendor docs, and confirmation that the full breadth of platform actions (not just evaluation/testing tasks) can be driven purely by NL commands.",
+    "evidenceIds": [
+      "cekura-docs-2",
+      "cekura-docs-3",
+      "cekura-gh-1",
+      "cekura-docs-9",
+      "cekura-probe-4"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cekura documents an official CLI ('Manage agents, scenarios, runs, and call data from your terminal') alongside an SDK, confirmed by both docs and probe evidence. Missing for 10: independent hands-on review of the CLI's usability/completeness beyond first-party docs.",
+    "evidenceIds": [
+      "cekura-docs-4",
+      "cekura-probe-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cekura publishes a documented public API with OpenAPI spec (probe confirms live openapi.json), API key auth, dedicated API reference endpoints (e.g. send-calls), plus SDKs (sync/async) and a CLI for programmatic/terminal control—clearly enabling an AI-native user to drive the product via documented API access. Missing for 10: independent third-party review/hands-on validation of the API beyond vendor docs and probes.",
+    "evidenceIds": [
+      "cekura-probe-3",
+      "cekura-docs-5",
+      "cekura-docs-6",
+      "cekura-docs-7",
+      "cekura-docs-4",
+      "cekura-probe-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Cekura documents API key creation restricted to project-level scope, showing some credential scoping capability, but there's no evidence of finer-grained least-privilege controls like read/write permission tiers, resource-specific scoping, or per-agent credential issuance. missing for 10: granular permission scopes (read-only vs write), per-agent or per-resource credential issuance, role-based access control documentation.",
+    "evidenceIds": [
+      "cekura-docs-7"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cekura documents official sync/async SDKs and a CLI for programmatic access ('Manage agents, scenarios, runs, and call data from your terminal', 'sync and async clients for application code'), plus an OpenAPI spec, backed by probe confirmation of live docs and endpoints. missing for 10: independent hands-on developer reports specifically about SDK usage (only community praise for the platform generally, not SDK-specific).",
+    "evidenceIds": [
+      "cekura-docs-4",
+      "cekura-docs-5",
+      "cekura-probe-3",
+      "cekura-probe-5",
+      "cekura-docs-7"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "agentic-webhooks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Cekura receiving inbound webhooks (agent's provider posts call data to Cekura) but nothing about Cekura emitting outbound webhooks that a user could subscribe to for events like evaluation completion or drift detection. Missing for 10: documented outbound webhook/event subscription mechanism, webhook configuration UI/API, event types list.",
+    "evidenceIds": [
+      "cekura-docs-6"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Cekura publishes an OpenAPI spec and structured API-reference docs (e.g., send-calls, create-api-key endpoints) confirming a machine-readable interactive reference exists, but no evidence shows runnable 'try it' examples or a sandboxed console in the docs. Missing for 10: explicit runnable/try-it example UI, evidence of live request execution, independent confirmation of interactivity.",
+    "evidenceIds": [
+      "cekura-probe-3",
+      "cekura-docs-6",
+      "cekura-docs-7"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A direct probe confirms an OpenAPI spec is publicly downloadable at https://docs.cekura.ai/openapi.json, returning HTTP 200 with a valid \"openapi\" key, corroborated by API reference docs built from it. Missing for 10: no independent third-party confirmation of spec completeness/versioning beyond the probe.",
+    "evidenceIds": [
+      "cekura-probe-3",
+      "cekura-docs-6",
+      "cekura-docs-7"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Cekura explicitly supports testing voice agents via synthetic/simulated conversations 'before go-live' and running scenarios without external API keys, which implies a sandbox-like testing flow separate from live production calls. However, there is no explicit documentation of a dedicated sandbox environment, data isolation guarantees, or explicit statements that test runs never touch production data/logs. missing for 10: explicit sandbox/staging environment documentation, data isolation guarantees between test and production calls, independent confirmation that simulated runs are fully separated from production data.",
+    "evidenceIds": [
+      "cekura-docs-16",
+      "cekura-docs-19",
+      "cekura-docs-17"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "There is an OpenAPI spec and API-key auth docs, but no evidence of API versioning scheme or a documented deprecation policy anywhere in the pack. missing for 10: versioning scheme documentation, deprecation policy, changelog/migration guides.",
+    "evidenceIds": [
+      "cekura-probe-3",
+      "cekura-docs-7"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura's docs advertise running thousands of synthetic conversations/scenarios at once and provide a CLI/SDK to manage agents, scenarios, runs, and call data programmatically, which supports bulk test execution and automation via cron/CI. However, there's no explicit documentation of bulk edit/delete/update operations across many existing items (e.g., batch API endpoints for updating many scenarios or calls at once). Missing for 10: explicit bulk CRUD API/CLI commands operating on many items simultaneously, and any hands-on evidence of large-scale batch throughput.",
+    "evidenceIds": [
+      "cekura-docs-19",
+      "cekura-docs-4",
+      "cekura-docs-5",
+      "cekura-docs-13",
+      "cekura-docs-14"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura supports automation triggers like scheduled cron jobs for test workflows, GitHub Actions CI/CD hooks that fire tests on code changes, and an automatic flag→reproduce→suggest-fix pipeline triggered by detected issues, which are event-driven automations. However, there's no evidence of a general-purpose user-defined rules engine (e.g., 'if X metric drops, then do Y') beyond these fixed automation patterns. Missing for 10: a documented custom rule/condition builder for arbitrary events, and independent confirmation these automations behave as advertised.",
+    "evidenceIds": [
+      "cekura-docs-13",
+      "cekura-docs-14",
+      "cekura-docs-21",
+      "cekura-docs-20"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Cekura documents dedicated cron job support for scheduling automated testing/evaluation workflows (cekura-docs-13), plus GitHub Actions integration for triggering workflows on changes (cekura-docs-14), giving AI-native users concrete recurring automation options via CLI/SDK/API. Missing for 10: independent/hands-on confirmation that cron scheduling works reliably in production and more detail on scheduling granularity/limits.",
+    "evidenceIds": [
+      "cekura-docs-13",
+      "cekura-docs-14",
+      "cekura-docs-4",
+      "cekura-docs-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Cekura supports comparing two versions of an agent side-by-side (A/B testing) and provides dashboards/metrics for reviewing agent performance, which touches 'version' and 'review' aspects, but there is no evidence of a rollback mechanism to revert an automation/agent to a prior version. Missing for 10: explicit version history/versioning system, rollback/undo capability, and any documented workflow for reverting agent configurations.",
+    "evidenceIds": [
+      "cekura-docs-10",
+      "cekura-docs-11"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "bulk-trace-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Cekura has an API, CLI, SDK, and dashboards for accessing call data, but there is no mention of bulk-export functionality to blob storage (S3/GCS) or data warehouse integrations (Snowflake, BigQuery, etc). Missing for 10: bulk export feature, blob storage integration, data warehouse connectors/sinks, any documentation or API endpoint for exporting datasets in bulk.",
+    "evidenceIds": [
+      "cekura-docs-4",
+      "cekura-docs-5",
+      "cekura-docs-11"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "ci-eval-gating",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura provides a dedicated GitHub Actions CI/CD guide plus CLI/SDK and cron job automation for testing agents on each change, indicating CI integration is a first-class capability. However, the evidence pack only shows the guide's title/description, not concrete details on exit-code/gating behavior for deployments, and there is no independent corroboration of this specific workflow. Missing for 10: explicit documentation of deployment-gating logic (pass/fail thresholds blocking merges/deploys), and independent/hands-on confirmation of the GitHub Actions integration.",
+    "evidenceIds": [
+      "cekura-docs-14",
+      "cekura-docs-13",
+      "cekura-docs-4",
+      "cekura-docs-7"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "cost-attribution-metadata",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Cekura's docs show metadata being sent with calls and custom dashboards for visualizing metrics/metadata, but there is no evidence of cost tracking, cost attribution, or usage-cost breakdown by user/session/feature — the platform is framed purely around voice-agent evaluation and observability, not cost accounting.",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-11"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "custom-code-scorers",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cekura explicitly documents Python metrics that let engineers 'write custom evaluation logic in Python to evaluate your AI agent's performance with complete control', alongside LLM-judge metrics as an alternative, giving ML engineers code-based scorer capability. missing for 10: no independent hands-on example of a custom Python metric in use, and no detail on SDK/CLI invocation of custom scorers beyond the docs page.",
+    "evidenceIds": [
+      "cekura-docs-8",
+      "cekura-docs-9",
+      "cekura-docs-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "custom-dashboards",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura docs explicitly describe building custom dashboards with widgets to visualize call data, metrics, and metadata, which covers eval-score and general metric visualization for an ML engineer's needs. However, the docs don't explicitly enumerate latency, error rate, or cost as first-class dashboard metrics, and there's no independent/hands-on corroboration of dashboard flexibility. Missing for 10: explicit mention of latency/error/cost metric widgets, and third-party evidence of dashboard customization in practice.",
+    "evidenceIds": [
+      "cekura-docs-11",
+      "cekura-docs-6"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "experiment-comparison",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cekura has an explicit A/B testing feature to compare two agent versions side-by-side to measure prompt, model, or configuration changes, plus dashboards for visualizing metrics/call data, which supports regression detection between versions. However, the story specifically frames this as an ML-engineer 'eval run' comparison workflow, and evidence is limited to a single docs page description without detail on run history diffing, metric-level regression flags, or independent hands-on confirmation. Missing for 10: detailed UI/workflow evidence of comparing full eval-run history (not just two agent versions), regression-flagging mechanics, and independent/community corroboration of the comparison feature itself.",
+    "evidenceIds": [
+      "cekura-docs-10",
+      "cekura-docs-11",
+      "cekura-docs-17"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "framework-auto-instrumentation",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Cekura documents a generic observability API/webhook (send-calls) and SDK/CLI that any agent could POST to, plus a named integration for LiveKit voice agents, but there is no documented integration for LangChain, the OpenAI SDK, or the Vercel AI SDK specifically as the story requests. missing for 10: named LangChain integration, named OpenAI SDK integration, named Vercel AI SDK integration.",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-15",
+      "cekura-docs-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "human-annotation-queues",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Cekura's evidence pack covers voice-agent testing, evaluation metrics (LLM-judge, Python), dashboards, PII redaction, and observability, but there is no mention of routing outputs to human annotation queues, labeling workflows, or human-in-the-loop review pipelines. Absence of evidence for this applicable ML-eval capability yields none. Missing for 10: any mention of human annotation queues, labeling UI/workflow, or reviewer assignment features.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "llm-as-judge-scoring",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cekura documents an LLM-judge metric type that evaluates calls using natural language criteria, alongside custom Python metrics for full control, giving configurable LLM-as-a-judge evaluators for scoring agent outputs. This is corroborated by dashboards/A-B testing docs showing these metrics feed into broader evaluation workflows. Missing for 10: no independent hands-on benchmark of judge accuracy/configurability, and no detail on rubric customization depth or multi-model judge support.",
+    "evidenceIds": [
+      "cekura-docs-9",
+      "cekura-docs-8",
+      "cekura-docs-10"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "multimodal-trace-payloads",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cekura's observability pipeline explicitly captures audio (recording URL) and transcript/metadata as part of CallLog traces, and PII redaction applies to both transcripts and audio recordings, showing audio is a first-class multimodal payload. However, there is no evidence of support for images or generic file attachments within traces — the product is voice-agent focused and docs never mention image/file capture. Missing for 10: documented support for image payloads, documented support for arbitrary file attachments in traces.",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-12"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "offline-eval-datasets",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cekura stores production call data as CallLog objects via its observability API and lets teams run metric evaluations (Python/LLM-judge) and scenario-based tests, which supports building and evaluating datasets from real traces, but there is no explicit documentation of a 'dataset curation' workflow (filtering/tagging/versioning production traces into an eval set) or an offline batch-eval mode distinct from live/simulated runs. missing for 10: dedicated dataset-curation/versioning feature for production traces, explicit offline-evaluation-on-curated-dataset workflow, independent evidence of this specific use case.",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-8",
+      "cekura-docs-9",
+      "cekura-docs-13",
+      "cekura-docs-11"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "online-evals-guardrails",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cekura's observability pipeline explicitly ingests live production calls via webhook/API, stores them as CallLogs, and 'schedules metric evaluation' automatically, with marketing copy specifically citing 'Live drift detection across every call' as a continuous production-monitoring feature distinct from offline simulation runs. missing for 10: independent/hands-on confirmation of evaluator behavior on live traffic at scale (only vendor docs/marketing cited).",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-20",
+      "cekura-docs-12",
+      "cekura-docs-7",
+      "cekura-probe-1"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Cekura ships a full OpenAPI spec, CLI, and SDK that cover core workflows—managing agents, scenarios, runs, call data, sending calls, and metrics—giving strong programmatic parity with the UI (cekura-docs-4, cekura-docs-5, cekura-docs-6, cekura-probe-3, cekura-probe-5). However, some UI-specific features like custom dashboard building (cekura-docs-11) and cron/CI setup aren't clearly confirmed as fully API-driven rather than UI-configured. Missing for 10: explicit confirmation that dashboard creation and all UI-configurable settings are exposed via API/CLI, and independent verification of complete feature parity.",
+    "evidenceIds": [
+      "cekura-docs-4",
+      "cekura-docs-5",
+      "cekura-docs-6",
+      "cekura-docs-7",
+      "cekura-probe-3",
+      "cekura-probe-5",
+      "cekura-docs-11"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Cekura offers CLI/SDK/API access to call data and metrics, but there is no evidence of a bulk data export feature in open/portable formats or any account-closure/data-portability guarantee for users wishing to leave the platform.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Cekura is a closed SaaS platform with a GitHub repo only for a skills/plugin package (cekura-skills), not the product's core source code, and no evidence of an open-source license for the platform itself. No license file or open-source repo for the core product is mentioned anywhere in the evidence.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "openness-self-host",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Cekura is presented as a hosted SaaS platform (API keys, cloud dashboards, webhooks) with no mention of a self-hosted or on-premises deployment option anywhere in the docs, CLI, SDK, or website copy. No evidence of Docker images, self-hosting instructions, or open-source core.",
+    "evidenceIds": [
+      "cekura-docs-7",
+      "cekura-docs-1",
+      "cekura-probe-1"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "otel-native-tracing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Cekura's observability ingestion uses a proprietary POST endpoint (transcript, recording URL, metadata) and its own API/CLI/SDK, with no mention of OpenTelemetry or OTLP support anywhere in the evidence pack.",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-5",
+      "cekura-docs-4"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "pii-masking-controls",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cekura has a dedicated PII redaction feature that automatically detects and removes sensitive information from transcripts and audio recordings before/at storage, directly addressing masking/redaction in traces. missing for 10: no independent/hands-on corroboration of redaction accuracy or configurability details beyond the doc summary.",
+    "evidenceIds": [
+      "cekura-docs-12",
+      "cekura-docs-6"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or geographic storage options for Cekura; PII redaction is mentioned but that's a different concern than data location choice.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence shows PII redaction features for transcripts but nothing about opting out of AI model training on customer data, data-use policies, or training-data controls.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Cekura documents PII redaction to remove sensitive info from transcripts, but there is no evidence of user-facing data retention controls or deletion policies/APIs (e.g., data export, retention windows, right-to-delete). missing for 10: documented retention policy, deletion/export mechanism, user control over stored call data lifecycle.",
+    "evidenceIds": [
+      "cekura-docs-12"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of any telemetry opt-out or usage tracking controls; Cekura's docs focus on PII redaction for customer call data, not on the vendor's own product telemetry. Missing for 10: any mention of telemetry/analytics collection, opt-out mechanism, or privacy settings for usage data.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "prompt-playground",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Cekura's docs describe testing/evaluation workflows (scenario runs, A/B testing agent versions, synthetic conversations) but there is no evidence of an interactive playground where a developer iterates on prompt text against real models with variables in real time — the closest items (ab-testing, testing-agents/overview) describe comparing pre-built agent versions, not a live prompt-editing sandbox.",
+    "evidenceIds": [
+      "cekura-docs-10",
+      "cekura-docs-16",
+      "cekura-docs-17"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "prompt-versioning-deploy",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Cekura is a testing/observability platform for voice AI agents (simulated calls, metrics, A/B comparison of agent versions), not a prompt-management or deployment system. Prompt versioning and production deployment without code changes belongs to the underlying agent-building platform, not to a third-party evaluation/observability tool like Cekura, making this axis a category error for this product type.",
+    "evidenceIds": [
+      "cekura-docs-10",
+      "cekura-probe-1"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "python-js-sdk-parity",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Cekura documents a general SDK ('sync and async clients for application code') and a Python-specific custom metric guide, implying Python SDK support, but there is no explicit mention of an officially supported JS/TS SDK anywhere in the evidence pack. missing for 10: explicit JS/TS SDK documentation, parity of features across languages, and confirmation the generic SDK is multi-language rather than Python-only.",
+    "evidenceIds": [
+      "cekura-docs-5",
+      "cekura-docs-8",
+      "cekura-probe-5"
+    ]
+  },
+  {
+    "productId": "cekura",
+    "storyId": "threshold-alerting",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence covers dashboards, metrics, PII redaction, CI/CD, and cron jobs but no mention of alerting/notification integrations for error rates, cost spikes, or eval-score drops, nor any Slack/PagerDuty/email notification channels.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "token-cost-dashboards",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Cekura documents customizable dashboards for call data, metrics, and metadata (cekura-docs-11), but nothing in the evidence pack mentions cost or token usage tracking per request, model, or time period. As an observability platform for voice agents, this axis plausibly applies, but no evidence supports the specific cost/token dashboard capability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "cekura",
+    "storyId": "trace-llm-calls",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Cekura's observability captures call-level data (transcript, recording URL, metadata) via its send-calls API and stores it as a CallLog, and offers 'enhanced observability' for LiveKit agents, but the docs never explicitly mention capturing per-LLM-call inputs/outputs, latency, or token usage — the focus is on transcript/audio-level call logging for voice-agent evaluation rather than granular LLM tracing. Missing for 10: explicit documentation of input/output payload capture per LLM call, latency metrics, and token usage tracking.",
+    "evidenceIds": [
+      "cekura-docs-6",
+      "cekura-docs-15",
+      "cekura-probe-4"
+    ]
+  },
+  {
     "productId": "galileo",
     "storyId": "agent-queries-own-traces",
     "verdict": "partial",
