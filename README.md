@@ -5,9 +5,9 @@
 [![CI](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml/badge.svg)](https://github.com/ultrametricai/productarena/actions/workflows/ci.yml)
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
-[![arenas](https://img.shields.io/badge/arenas-74-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-439-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-25499-34d399)](https://ultrametric.ai/productarena/methodology)
+[![arenas](https://img.shields.io/badge/arenas-76-34d399)](https://ultrametric.ai/productarena)
+[![products](https://img.shields.io/badge/products-448-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-25771-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **74 arenas, 439 products, 25,499 judged verdicts.**
+As of the last full pipeline run: **76 arenas, 448 products, 25,771 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -151,7 +151,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Desktop OS (`desktop-os`) | macos, omarchy, ubuntu, fedora, windows |
 | Startup Banking (`startup-banking`) | mercury, brex, ramp, wise, relay |
 | Project Management (`project-management`) | linear, asana, clickup, notion, monday, jira |
-| Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase, riveter, context-dev |
+| Web Scraping APIs (`web-scraping`) | firecrawl, crawl4ai, jina-reader, apify, scrapingbee, browserbase, riveter |
 | Mobile AI Dev Tools (`mobile-dev`) | termius, tailscale, blink-shell, a-shell, working-copy, github-mobile |
 | Code Hosting (`code-hosting`) | github, gitlab, bitbucket, gitea |
 | AI Coding Agents (`ai-coding`) | codex, claude-code, cursor, github-copilot, gemini-cli, opencode, devin, aider, cline, cubic, antigravity, random-labs, conductor |
@@ -174,7 +174,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | LLM Evals & Observability (`llm-evals-observability`) | langfuse, langsmith, braintrust, arize-phoenix, wandb-weave, helicone, galileo, cekura |
 | AI Search APIs (`ai-search-apis`) | exa, tavily, perplexity-sonar, brave-search-api, serpapi |
 | Agent Frameworks & SDKs (`agent-frameworks`) | langgraph, openai-agents, claude-agent-sdk, crewai, pydantic-ai, mastra, google-adk, autogen, smolagents |
-| Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox, runloop, blaxel, maritime |
+| Agent Sandboxes & Code Execution (`agent-sandboxes`) | e2b, daytona, modal, cloudflare-sandbox, vercel-sandbox, runloop, blaxel |
 | Product Analytics (`product-analytics`) | posthog, amplitude, mixpanel, plausible |
 | CRM (`crm`) | hubspot, attio, salesforce, twenty |
 | Startup Legal & Incorporation (`legal-ops`) | stripe-atlas, clerky, docusign, firstbase, ironclad, beglaubigt, legalzoom |
@@ -183,15 +183,15 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | AI Assistants (`ai-assistants`) | chatgpt, claude, gemini, perplexity, copilot, grok, muse, poke, martin |
 | AI Research Agents (`ai-research-agents`) | elicit, consensus, futurehouse, undermind, sakana-marlin, notebooklm |
 | Package & Toolchain Managers (`package-managers`) | homebrew, nix, pnpm, uv, bun, mise |
-| Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus, helixdb, lancedb |
+| Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus, helixdb |
 | Auth & Identity (`auth-platforms`) | auth0, clerk, workos, keycloak, better-auth |
 | AI Inference Providers (`inference-providers`) | groq, together-ai, fireworks-ai, cerebras, deepinfra, baseten, morph |
-| Workflow Automation (`workflow-automation`) | n8n, zapier, make, temporal, pipedream, windmill |
-| Observability & Monitoring (`observability`) | datadog, grafana, sentry, new-relic, honeycomb, signoz |
+| Workflow Automation (`workflow-automation`) | n8n, zapier, make, temporal, pipedream |
+| Observability & Monitoring (`observability`) | datadog, grafana, sentry, new-relic, honeycomb |
 | MCP Infrastructure & Registries (`mcp-infrastructure`) | composio, smithery, glama, pipedream-mcp, gram, manufact |
 | Browser Automation for Agents (`browser-agents`) | browser-use, stagehand, skyvern, hyperbrowser, steel, notte, smooth |
 | AI Memory Layers (`ai-memory`) | mem0, zep, letta, supermemory, cognee, airweave |
-| Voice Agent Platforms (`voice-agents`) | vapi, retell, elevenlabs-agents, bland, livekit-agents, pipecat, bolna, telli, deepgram |
+| Voice Agent Platforms (`voice-agents`) | vapi, retell, elevenlabs-agents, bland, livekit-agents, pipecat, bolna, telli |
 | Notes & Knowledge Bases (`notes-knowledge`) | obsidian, logseq, anytype, capacities, reflect, poly |
 | Meeting AI & Notetakers (`meeting-ai`) | granola, fireflies, otter, fathom, fellow |
 | GPU Clouds (`gpu-clouds`) | runpod, lambda-labs, coreweave, vast-ai, paperspace |
@@ -215,13 +215,15 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Cap Table & Equity (`equity-management`) | carta, pulley, cake-equity, fidelity-private-shares, ledgy, vestd |
 | Error Tracking (`error-tracking`) | sentry, bugsnag, rollbar, honeybadger, glitchtip, raygun |
 | Expense Management (`expense-management`) | ramp, brex, expensify, navan, bill-spend-expense |
-| Billing & Subscriptions (`billing-subscriptions`) | stripe-billing, chargebee, recurly, lago, orb, metronome, revenuecat |
+| Billing & Subscriptions (`billing-subscriptions`) | stripe-billing, chargebee, recurly, lago, orb, metronome |
 | Payment Fraud Prevention (`fraud-prevention`) | stripe-radar, sift, signifyd, forter, riskified |
 | Agentic Commerce (`agentic-commerce`) | stripe-agentic-commerce, shopify-ucp, paypal-agent-commerce, coinbase-x402, crossmint, visa-intelligent-commerce, skyfire |
 | Card Issuing Platforms (`card-issuing`) | stripe-issuing, lithic, marqeta, highnote, adyen-issuing |
 | Sales Tax Automation (`tax-automation`) | stripe-tax, avalara, anrok, taxjar, numeral, kintsugi |
 | Marketplace & Platform Payments (`marketplace-payments`) | stripe-connect, adyen-for-platforms, finix, mangopay, rainforest, tilled |
 | Banking as a Service (`banking-as-a-service`) | stripe-treasury, unit, increase, column, synctera, treasury-prime |
+| Processors (`processors`) | apple-m5, apple-m4-max, apple-m4-pro, qualcomm-snapdragon-x2-elite-extreme, amd-ryzen-ai-max-plus-395, amd-ryzen-9-9950x3d, intel-core-ultra-9-285k, intel-core-ultra-7-258v |
+| GPUs & AI Accelerators (`gpus`) | nvidia-rtx-5090, nvidia-rtx-5080, nvidia-rtx-5070-ti, amd-rx-9070-xt, nvidia-rtx-pro-6000, nvidia-h200-sxm, nvidia-b200, amd-mi355x |
 <!-- arenas:end -->
 
 Regenerated by `pnpm stats` — never hand-edited. …and growing — see the live site for the current set.
