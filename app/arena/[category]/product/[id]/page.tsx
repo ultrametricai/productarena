@@ -19,6 +19,7 @@ import OpportunitiesSection from '@/components/OpportunitiesSection'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
 import PricingSignals from '@/components/PricingSignals'
+import ProductFinePrint from '@/components/ProductFinePrint'
 import ProductLogo from '@/components/ProductLogo'
 import ProductShowcase from '@/components/ProductShowcase'
 import ProofsSection from '@/components/ProofsSection'
@@ -32,6 +33,7 @@ import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
 import WatchButton from '@/components/WatchButton'
 import YcBadge from '@/components/YcBadge'
+import { arenaMembershipsOf } from '@/lib/alternatives'
 import {
   groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
@@ -145,6 +147,10 @@ export default async function ProductPage({
       }]
     })
     .sort((a, b) => a.name.localeCompare(b.name))
+  // Every arena this product id competes in (sentry: observability AND error-tracking; brex:
+  // startup-banking AND expense-management), each with its live rank there — the header's
+  // arenas strip, so a user can jump straight to any leaderboard the vendor is a member of.
+  const memberships = arenaMembershipsOf(allCategories, id)
 
   return (
     <div className="space-y-8">
@@ -229,8 +235,8 @@ export default async function ProductPage({
         </div>
         {/* PRIMARY metrics row — the "should I care" read: PA Score (+68% band), the two
             agenticness indexes, and the MCP/CLI/API access glyphs. Everything below this row
-            is deliberately quieter (secondary: momentum/vendor responses/uptime; tertiary:
-            freshness + coverage in the muted footer line). */}
+            is deliberately quieter (secondary: momentum/vendor responses; then the arenas
+            strip; freshness + coverage minutiae moved to ProductFinePrint at the bottom). */}
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score</span>
@@ -263,21 +269,35 @@ export default async function ProductPage({
             </a>
           )}
         </div>
-        {/* 30-day uptime of the monitored agent surfaces (llms.txt / MCP / openapi.json) —
-            renders nothing until slo-check has history for this product (lib/slo.ts). */}
-        {/* TERTIARY footer line — provenance minutiae, demoted (not deleted): evidence
-            freshness (lib/freshness.ts) and the story-coverage score, which used to be a
-            full-width bar but mostly restates what PA Score + its confidence band already say. */}
-        <p className="mt-3 text-[10px] text-zinc-500">
-          {freshness && <span>Evidence as of {freshness} · </span>}
-          <a
-            href="#story-verdicts"
-            title="Evidence-graded story coverage (0–100): how much of this arena's story set the product covers, weighted by story importance. The rank tie-breaker, not the PA Score. Click for the judged story rows below."
-            className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
-          >
-            story coverage <span className="font-mono tabular-nums">{entry.score.toFixed(1)}/100</span>
-          </a>
-        </p>
+        {/* Arenas strip — one chip per arena this product id is ranked in, emoji + name +
+            live rank, each linking to that leaderboard (founder: members-of arenas belong at
+            the top; the old tertiary "Evidence as of · story coverage" line that held this
+            slot is now provenance fine print in ProductFinePrint at the page bottom). The
+            current arena is included, highlighted, so multi-arena products (sentry, brex)
+            read as one roster rather than "this arena + others". */}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-[10px] uppercase tracking-widest text-zinc-500">Arenas</span>
+          {memberships.map((m) => (
+            <Link
+              key={m.arenaId}
+              href={`/arena/${m.arenaId}`}
+              title={`${m.arenaName} — ${product.name} is ranked #${m.rank} of ${m.fieldSize} in this arena. See the full leaderboard.`}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs transition ${
+                m.arenaId === category
+                  ? 'border-emerald-400/50 bg-emerald-400/5 text-emerald-300 hover:border-emerald-400/80'
+                  : 'border-zinc-800 text-zinc-300 hover:border-emerald-400/60 hover:text-emerald-300'
+              }`}
+            >
+              {(arenaIcons as Record<string, string>)[m.arenaId] && (
+                <span aria-hidden>{(arenaIcons as Record<string, string>)[m.arenaId]}</span>
+              )}
+              {m.arenaName}
+              <span className="font-mono text-[10px] tabular-nums text-zinc-500">
+                #{m.rank}/{m.fieldSize}
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
 
       <ProductActions data={data} productId={id} tryIt={tryable} />
@@ -293,6 +313,11 @@ export default async function ProductPage({
       <FamilySection arenaId={category} productId={id} />
 
       <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
+
+      {/* Verified integrations, right after the family/trend block (founder: more useful than
+          its old bottom-of-page slot) — each chip's tooltip quotes the evidence excerpt(s) the
+          edge rests on. Renders nothing when the product has no verified edges. */}
+      <IntegrationChips chips={integrationChips} />
 
       {product.affiliation && (
         <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">
@@ -372,14 +397,9 @@ export default async function ProductPage({
           the citations above. */}
       <CoverageMapSection data={data} productId={id} />
 
-      {/* Low-salience operational data lives at the bottom (founder: educate first, ops last). */}
-      <SloUptimeLine arena={category} productId={id} />
-
       <ProofsSection category={category} productId={id} stories={data.stories} />
 
       <ClaimsSection data={data} category={category} productId={id} />
-
-      <IntegrationChips chips={integrationChips} />
 
       {/* Pricing-covered arenas only (lib/pricing.ts): renders nothing when this product has no
           pricing entry, "pricing unclear" when the vendor's page couldn't be read honestly. */}
@@ -388,6 +408,14 @@ export default async function ProductPage({
       <BusinessModelSection product={product} />
       {/* No bottom "Battles" section: ProductActions' "Compare head-to-head" rail above is the
           single authoritative list of this product's battles (same pairings, canonical /vs URLs). */}
+
+      {/* Ops fine print, dead last (founder: educate first, ops last): 30-day agent-surface
+          uptime (renders nothing until slo-check has history — lib/slo.ts) next to the
+          provenance line — evidence freshness + story coverage, demoted from the header
+          (the arenas strip took its slot). */}
+      <SloUptimeLine arena={category} productId={id} />
+
+      <ProductFinePrint freshness={freshness} coverageScore={entry.score} />
     </div>
   )
 }

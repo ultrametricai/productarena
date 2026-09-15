@@ -5,6 +5,11 @@
 
 export type StepRoute = 'agent' | 'form' | 'person'
 
+// How often a process actually recurs in a running company (data/processes.json `cadence`,
+// validated by lib/processes.ts's ProcessTaskSchema — keep this union and that z.enum in
+// lockstep). Lives here so client components can type against it without pulling node:fs.
+export type Cadence = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual' | 'event-driven' | 'once'
+
 export interface SwapOption {
   id: string
   name: string
