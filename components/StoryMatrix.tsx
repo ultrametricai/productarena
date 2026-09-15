@@ -149,7 +149,16 @@ function StoryMatrixGroup({
         <tbody className="divide-y divide-zinc-800/70">
           {stories.map((s) => (
             <tr key={s.id} id={`story-${s.id}`} className="scroll-mt-4">
-              <td className="sticky left-0 z-[5] bg-zinc-950 px-4 py-3 text-zinc-300">{stripPersonaPrefix(s.title)}</td>
+              {/* Founder 2026-09-15: each story leads with its theme icon — a muted glyph that
+                  tells the story's type at a glance without re-reading the group header. */}
+              <td className="sticky left-0 z-[5] bg-zinc-950 px-4 py-3 text-zinc-300">
+                <span className="flex items-start gap-2">
+                  <span title={themeTooltip(s.theme)} className="mt-px shrink-0 text-zinc-600">
+                    <ThemeIcon theme={s.theme} />
+                  </span>
+                  {stripPersonaPrefix(s.title)}
+                </span>
+              </td>
               <td className="px-2 py-3 text-center">
                 <PersonaChip persona={s.persona} />
               </td>
