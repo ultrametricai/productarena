@@ -233,6 +233,8 @@ async function handleScan(request) {
 // hand-edit. Exported for the allowlist-sync unit test.
 export const MCP_ENDPOINTS = {
   'accounting/xero': 'https://mcp.xero.com/mcp',
+  'agentic-commerce/paypal-agent-commerce': 'https://mcp.paypal.com/mcp',
+  'agentic-commerce/stripe-agentic-commerce': 'https://mcp.stripe.com/',
   'ai-memory/mem0': 'https://mcp.mem0.ai/mcp',
   'ai-memory/supermemory': 'https://mcp.supermemory.ai/mcp',
   'ai-research-agents/undermind': 'https://mcp.undermind.ai/mcp',

@@ -81,6 +81,7 @@ const NAV_LABELS: Record<string, string> = {
   "ai-code-review": "Code review",
   "document-extraction": "Doc extraction",
   "equity-management": "Equity",
+  "agentic-commerce": "Agent commerce",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

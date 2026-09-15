@@ -11,6 +11,7 @@ import { buildRankings } from '../../lib/scoring'
 const ROOT = path.resolve(__dirname, '..', '..')
 const CATEGORIES = [
   'accounting',
+  'agentic-commerce',
   'agent-skills',
   'agent-frameworks',
   'agent-sandboxes',
