@@ -16,7 +16,7 @@ describe('YcBadge', () => {
 
   it('wears YC brand orange with white text so it reads as the YC mark', () => {
     const { container } = render(<YcBadge ycBatch="S22" />)
-    const cls = container.querySelector('span')?.className ?? ''
+    const cls = container.querySelector('a, span')?.className ?? ''
     expect(cls).toContain('bg-[#f26522]')
     expect(cls).toContain('text-white')
   })
