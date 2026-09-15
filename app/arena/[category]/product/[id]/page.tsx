@@ -32,6 +32,7 @@ import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
 import WatchButton from '@/components/WatchButton'
 import EnterpriseBadge from '@/components/EnterpriseBadge'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import YcBadge from '@/components/YcBadge'
 import {
   groupInOrder, loadAll, loadCategory, type CategoryData,
@@ -193,6 +194,7 @@ export default async function ProductPage({
               {product.type === 'oss' && <OssPill />}
               <YcBadge ycBatch={product.ycBatch} />
               <EnterpriseBadge enterprise={product.enterprise} />
+              <ShutdownBadge shutdown={product.shutdown} source={product.shutdownSource} />
               <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
             </div>
             {/* The OssPill beside the name is the one open-source signal — repeating "open
@@ -254,9 +256,6 @@ export default async function ProductPage({
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
           <MomentumChip popularity={data.popularity[id]} />
           <MomentumTrend series={momentumSeries} />
-          {/* Auth-gated honesty (lib/verification.ts): probes that hit a live 401/OAuth wall are
-              proof of a live endpoint, not absence — surface them instead of silence. */}
-          <AuthGatedChip count={authGatedProbeCount(data, id)} />
           {vendorResponseCount > 0 && (
             <a
               href="#story-verdicts"
@@ -276,7 +275,9 @@ export default async function ProductPage({
             entirely — freshness lives in the accuracy engine, coverage in the PA Score band. */}
       </div>
 
-      <ProductActions data={data} productId={id} tryIt={tryable} />
+      {/* Founder 2026-09-15: only the human essentials above the fold (Access, Install,
+          Compare). Try/Flag/Badge/For agents/Data live in the bottom rail near the page end. */}
+      <ProductActions data={data} productId={id} variant="top" />
 
       {/* Showcase (screenshots) above the microterminal — founder rule: show what the product
           looks like before the hands-on replay. */}
@@ -288,8 +289,6 @@ export default async function ProductPage({
       <FamilySection arenaId={category} productId={id} />
 
       <TryItSection category={category} productId={id} productName={product.name} stories={data.stories} />
-
-      <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
 
       {product.affiliation && (
         <div className="rounded-xl border border-emerald-400/40 bg-emerald-400/5 px-4 py-3 text-sm text-emerald-200/90">
@@ -407,6 +406,15 @@ export default async function ProductPage({
       <PricingSignals entry={loadPricing(category)[id]} />
 
       <BusinessModelSection product={product} />
+
+      {/* Founder 2026-09-15: score trend + the utility rail (Try/Flag/Badge/For agents/Data)
+          and the auth-gated probe chip live at the page end — provenance and tooling for readers
+          who scrolled the evidence, not prime above-the-fold space. */}
+      <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
+      <ProductActions data={data} productId={id} tryIt={tryable} variant="bottom" />
+      <div>
+        <AuthGatedChip count={authGatedProbeCount(data, id)} />
+      </div>
       {/* No bottom "Battles" section: ProductActions' "Compare head-to-head" rail above is the
           single authoritative list of this product's battles (same pairings, canonical /vs URLs). */}
     </div>

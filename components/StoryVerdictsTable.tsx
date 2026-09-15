@@ -208,7 +208,16 @@ export default function StoryVerdictsTable({
     return order.filter((t) => rows.some((r) => r.tier === t))
   }, [rows])
 
-  const filtered = useMemo(() => filterStoryVerdictRows(rows, query, theme, scope, tier), [rows, query, theme, scope, tier])
+  // User types in first-seen order (matching the "User type" column) — founder ask 2026-09-15:
+  // filter the story table by who the story is for. Hidden when only one type exists.
+  const [persona, setPersona] = useState('')
+  const personas = useMemo(() => {
+    const seen: string[] = []
+    for (const r of rows) if (r.personaLabel && !seen.includes(r.personaLabel)) seen.push(r.personaLabel)
+    return seen
+  }, [rows])
+
+  const filtered = useMemo(() => filterStoryVerdictRows(rows, query, theme, scope, tier, persona), [rows, query, theme, scope, tier, persona])
   const sorted = useMemo(() => sortStoryVerdictRows(filtered, column, direction), [filtered, column, direction])
 
   // Auto-expand the row a #story-<id> deep link targets — on mount for cross-page links
@@ -291,6 +300,21 @@ export default function StoryVerdictsTable({
               <option key={t} value={t}>
                 {/* Humanized like the scope options — "Free stories", never the bare value. */}
                 {t === 'free' ? 'Free stories' : t === 'paid' ? 'Paid stories' : 'Enterprise stories'}
+              </option>
+            ))}
+          </select>
+        )}
+        {personas.length > 1 && (
+          <select
+            value={persona}
+            onChange={(e) => setPersona(e.target.value)}
+            aria-label="Filter stories by user type"
+            className="max-w-[11rem] rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
+          >
+            <option value="">All user types</option>
+            {personas.map((p) => (
+              <option key={p} value={p}>
+                {p}
               </option>
             ))}
           </select>

@@ -62,6 +62,13 @@ export const ProductSchema = z.object({
   // like ycBatch: never fed into scoring, never part of the judge cellHash.
   enterprise: z.boolean().optional(),
   enterpriseSource: z.string().url().optional(),
+  // Shutdown notice for a product that has announced it is closing: a short dated note quoting
+  // the vendor's own announcement, plus the page that shows it. Display-only (an amber "CLOSING"
+  // chip + note) — verdicts and history stay intact so the record is preserved; the roster keeps
+  // the row until the shutdown date passes. Founder rule 2026-09-15 (Pulley precedent): verify
+  // live, mark closed, keep the data.
+  shutdown: z.string().min(1).max(240).optional(),
+  shutdownSource: z.string().url().optional(),
 })
 
 // Provenance of a story in the taxonomy: 'canonical' for the 29 ids injected verbatim by

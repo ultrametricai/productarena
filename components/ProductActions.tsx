@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import InstallCommands from '@/components/InstallCommands'
+import ProductLogo from '@/components/ProductLogo'
 import ProductLinkChips from '@/components/ProductLinkChips'
 import { battleSlug, type CategoryData } from '@/lib/data-helpers'
 import { REPO, withBase } from '@/lib/site'
@@ -19,11 +20,16 @@ export default function ProductActions({
   data,
   productId,
   tryIt = false,
+  variant = 'top',
 }: {
   data: CategoryData
   productId: string
   /** Whether the page renders a "Try it" section (lib/tryit.ts hasTryIt) — adds a rail entry. */
   tryIt?: boolean
+  /** Founder 2026-09-15: the rail is split — 'top' keeps only the human essentials above the
+      fold (Access, Install, Compare); 'bottom' carries Try/Flag/Badge/For agents/Data at the
+      page end, where they don't cost prime space. */
+  variant?: 'top' | 'bottom'
 }) {
   const product = data.products.find((p) => p.id === productId)!
   const category = data.category.id
@@ -51,21 +57,80 @@ export default function ProductActions({
 
   const linkClass = 'text-zinc-400 underline decoration-zinc-800 hover:text-emerald-300'
 
+  if (variant === 'bottom') {
+    return (
+      <div className="rounded-xl border border-zinc-800 p-4">
+        <div className="grid gap-x-6 gap-y-4 text-xs sm:grid-cols-2 lg:grid-cols-3">
+          {tryIt && (
+            <div>
+              <SectionLabel>
+                Try{' '}
+                <span className="rounded border border-amber-400/50 px-1 py-px text-[9px] font-semibold uppercase tracking-wide text-amber-300">
+                  Experimental
+                </span>
+              </SectionLabel>
+              <a href="#try-it" className={linkClass}>
+                Run it in the microterminal →
+              </a>
+              <p className="mt-1 text-zinc-500">
+                Recorded agent sessions — and a live MCP handshake where the vendor ships one.
+              </p>
+            </div>
+          )}
+
+          <div>
+            <SectionLabel>Flag</SectionLabel>
+            <a href={contestUrl} target="_blank" rel="noopener noreferrer" title="Opens a prefilled GitHub issue contesting a verdict" className={linkClass}>
+              ⚑ Flag a verdict
+            </a>
+            <p className="mt-1 text-zinc-500">
+              Think a verdict is wrong? Opens a prefilled GitHub issue — or use the ⚑ next to any verdict above.
+            </p>
+          </div>
+
+          <div>
+            <SectionLabel>Badge</SectionLabel>
+            <Link href={`/badges#${productId}`} className={linkClass}>
+              Embed this product&apos;s score badge →
+            </Link>
+            <p className="mt-1 text-zinc-500">
+              Hotlinked SVG — always shows the live current score.
+            </p>
+          </div>
+
+          <div>
+            <SectionLabel>For agents</SectionLabel>
+            <div className="flex flex-wrap gap-x-3 gap-y-1">
+              <Link href={`/arena/${category}/product/${productId}/llms.md`} className={linkClass}>
+                This page as markdown
+              </Link>
+              <Link href="/llms.txt" className={linkClass}>
+                /llms.txt
+              </Link>
+            </div>
+          </div>
+
+          <div>
+            <SectionLabel>Data</SectionLabel>
+            <div className="flex flex-wrap gap-x-3 gap-y-1">
+              {/* Static /data mirror (see scripts/copy-data.mjs + app/openapi.json) — plain <a>,
+                  so the basePath prefix is applied by hand per lib/site.ts. */}
+              <a href={withBase(`/data/${category}/evidence/${productId}.json`)} className={linkClass}>
+                Evidence (JSON)
+              </a>
+              <a href={withBase(`/data/${category}/verdicts.json`)} className={linkClass}>
+                Verdicts (JSON)
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="rounded-xl border border-zinc-800 p-4">
       <div className="grid gap-x-6 gap-y-4 text-xs sm:grid-cols-2 lg:grid-cols-3">
-        {tryIt && (
-          <div>
-            <SectionLabel>Try</SectionLabel>
-            <a href="#try-it" className={linkClass}>
-              Run it in the microterminal →
-            </a>
-            <p className="mt-1 text-zinc-500">
-              Recorded agent sessions — and a live MCP handshake where the vendor ships one.
-            </p>
-          </div>
-        )}
-
         {hasLinks && (
           <div>
             <SectionLabel>Access</SectionLabel>
@@ -83,9 +148,12 @@ export default function ProductActions({
         {rivals.length > 0 && (
           <div>
             <SectionLabel>Compare head-to-head</SectionLabel>
-            <div className="flex flex-wrap gap-x-3 gap-y-1">
+            <div className="flex flex-wrap gap-x-3 gap-y-1.5">
+              {/* Founder 2026-09-15: rival logos on the vs links — same small-logo treatment as
+                  the arena cards' overlapping-logo strips. */}
               {rivals.map((rival) => (
-                <Link key={rival.id} href={`/vs/${slugFor(rival.id)}`} className={linkClass}>
+                <Link key={rival.id} href={`/vs/${slugFor(rival.id)}`} className={`inline-flex items-center gap-1.5 ${linkClass}`}>
+                  <ProductLogo product={rival} size={16} />
                   vs {rival.name}
                 </Link>
               ))}
@@ -97,52 +165,6 @@ export default function ProductActions({
             </p>
           </div>
         )}
-
-        <div>
-          <SectionLabel>Flag</SectionLabel>
-          <a href={contestUrl} target="_blank" rel="noopener noreferrer" title="Opens a prefilled GitHub issue contesting a verdict" className={linkClass}>
-            ⚑ Flag a verdict
-          </a>
-          <p className="mt-1 text-zinc-500">
-            Think a verdict is wrong? Opens a prefilled GitHub issue — or use the ⚑ next to any verdict below.
-          </p>
-        </div>
-
-        <div>
-          <SectionLabel>Badge</SectionLabel>
-          <Link href={`/badges#${productId}`} className={linkClass}>
-            Embed this product&apos;s score badge →
-          </Link>
-          <p className="mt-1 text-zinc-500">
-            Hotlinked SVG — always shows the live current score.
-          </p>
-        </div>
-
-        <div>
-          <SectionLabel>For agents</SectionLabel>
-          <div className="flex flex-wrap gap-x-3 gap-y-1">
-            <Link href={`/arena/${category}/product/${productId}/llms.md`} className={linkClass}>
-              This page as markdown
-            </Link>
-            <Link href="/llms.txt" className={linkClass}>
-              /llms.txt
-            </Link>
-          </div>
-        </div>
-
-        <div>
-          <SectionLabel>Data</SectionLabel>
-          <div className="flex flex-wrap gap-x-3 gap-y-1">
-            {/* Static /data mirror (see scripts/copy-data.mjs + app/openapi.json) — plain <a>,
-                so the basePath prefix is applied by hand per lib/site.ts. */}
-            <a href={withBase(`/data/${category}/evidence/${productId}.json`)} className={linkClass}>
-              Evidence (JSON)
-            </a>
-            <a href={withBase(`/data/${category}/verdicts.json`)} className={linkClass}>
-              Verdicts (JSON)
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   )
