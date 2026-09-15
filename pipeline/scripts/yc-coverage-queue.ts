@@ -153,18 +153,46 @@ function probeUrl(domain: string, probe: (typeof DOCS_PROBE_PATHS)[number]): str
   return `https://${domain}${probe}`
 }
 
-async function checkUrl(url: string): Promise<boolean> {
+async function fetchStatus(url: string): Promise<{ ok: boolean; finalUrl: string }> {
   const ctrl = new AbortController()
   const timer = setTimeout(() => ctrl.abort(), HTTP_TIMEOUT_MS)
   try {
     const res = await fetch(url, { signal: ctrl.signal, redirect: 'follow' })
     void res.body?.cancel().catch(() => {})
-    return res.status < 400
+    return { ok: res.status < 400, finalUrl: res.url || url }
   } catch {
-    return false
+    return { ok: false, finalUrl: url }
   } finally {
     clearTimeout(timer)
   }
+}
+
+// Soft-404 control: SPA/auth catch-alls answer 200 for EVERY path (wave-1 verification found
+// exactly this on two nominees — /docs redirecting to /signin counted as a "docs surface").
+// If a domain 200s this deliberately-nonexistent path, its path probes (/docs, /developers,
+// /llms.txt) earn no credit, and the docs-subdomain probe only counts when it actually lands
+// on a docs.* host instead of bouncing back to the marketing root.
+const SOFT_404_CONTROL_PATH = '/__pa-yc-queue-404-control__'
+
+async function checkDocsSurface(domain: string): Promise<{ checked: string[]; hits: string[] }> {
+  const checked = DOCS_PROBE_PATHS.map((p) => probeUrl(domain, p))
+  const control = await fetchStatus(`https://${domain}${SOFT_404_CONTROL_PATH}`)
+  const results = await Promise.all(checked.map(fetchStatus))
+  const hits = checked.filter((url, i) => {
+    const r = results[i]
+    if (!r.ok) return false
+    if (url.startsWith('https://docs.')) {
+      // Subdomain probe: must actually land on a docs.* host (redirects back to the apex/root
+      // are marketing bounces, not a docs surface).
+      try {
+        return new URL(r.finalUrl).hostname.startsWith('docs.')
+      } catch {
+        return false
+      }
+    }
+    return !control.ok
+  })
+  return { checked, hits }
 }
 
 async function mapLimit<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
@@ -337,11 +365,7 @@ async function main() {
 
   // Docs-surface checks, bounded. --no-http keeps fit-only ranking (docsScore floor applies).
   const docsResults = args.http
-    ? await mapLimit(candidates, HTTP_CONCURRENCY, async (c) => {
-        const checked = DOCS_PROBE_PATHS.map((p) => probeUrl(c.domain, p))
-        const ok = await Promise.all(checked.map(checkUrl))
-        return { checked, hits: checked.filter((_, i) => ok[i]) }
-      })
+    ? await mapLimit(candidates, HTTP_CONCURRENCY, (c) => checkDocsSurface(c.domain))
     : candidates.map(() => ({ checked: [] as string[], hits: [] as string[] }))
 
   const full: YcQueueCandidate[] = candidates.map((c, i) => {

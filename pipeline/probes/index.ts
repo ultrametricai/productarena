@@ -56,6 +56,8 @@ import { probes as aiAssistants } from './ai-assistants'
 import { probes as aiResearchAgents } from './ai-research-agents'
 import { probes as errorTracking } from './error-tracking'
 import { probes as expenseManagement } from './expense-management'
+import { probes as llmEvalsObservability } from './llm-evals-observability'
+import { probes as webScraping } from './web-scraping'
 
 export type { LocalProbe } from './types'
 
@@ -107,4 +109,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'ai-research-agents': aiResearchAgents,
   'error-tracking': errorTracking,
   'expense-management': expenseManagement,
+  'llm-evals-observability': llmEvalsObservability,
+  'web-scraping': webScraping,
 }

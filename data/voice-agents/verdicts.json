@@ -4790,6 +4790,758 @@
     ]
   },
   {
+    "productId": "telli",
+    "storyId": "agent-consumes-mcp-tools",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "telli documents custom tools connecting to external APIs (telli-docs-20) and even an MCP server (telli-docs-22, telli-probe-3), but that MCP server lets external AI tools like Claude/ChatGPT talk to telli's Charlie assistant — it is telli acting as an MCP server, not the voice agent consuming external MCP servers as a tool source mid-call. There is no evidence the voice agent itself can plug in MCP servers to gain toolsets during a call.",
+    "evidenceIds": [
+      "telli-docs-22",
+      "telli-probe-3",
+      "telli-docs-20"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agent-provisions-voice-agent",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "telli's REST API documents endpoints for scheduling calls and importing/attaching phone numbers (telli-docs-17, telli-docs-19), and the MCP server lets AI tools talk to Charlie, who can 'build and refine agents' (telli-docs-11, telli-docs-22), suggesting agent creation is possible without the dashboard. However, there is no explicit API/CLI 'create agent' endpoint documented, no CLI tool is mentioned at all, and the MCP-driven agent creation is only described as an assistant chat capability rather than a deterministic API call — so a full end-to-end create→attach-number→place-call pipeline via one consistent interface is not clearly evidenced. Missing for 10: a documented create-agent API/CLI endpoint, confirmation MCP/Charlie can fully provision agents without any dashboard step, and an example combining all three steps in one flow.",
+    "evidenceIds": [
+      "telli-docs-11",
+      "telli-docs-12",
+      "telli-docs-17",
+      "telli-docs-19",
+      "telli-docs-22",
+      "telli-probe-2",
+      "telli-probe-3"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "telli hosts a live llms.txt file (confirmed via probe, HTTP 200) plus machine-readable OpenAPI spec explicitly intended for coding agents, and docs also mention agent-oriented context for downloading API specs. missing for 10: no independent/third-party confirmation of an agent successfully consuming llms.txt in practice.",
+    "evidenceIds": [
+      "telli-probe-1",
+      "telli-docs-16",
+      "telli-probe-2"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli ships a built-in AI assistant (Charlie) that can 'analyze your calls' and help build/refine agents, plus dashboards for reach rate, call duration, success rate, and per-call transcript/outcome analysis, which together provide AI-driven insight into product data. However, the docs don't detail proactive, autonomous 'suggestions' surfaced to the user (e.g., recommended actions, anomaly detection) beyond on-demand analysis via Charlie or manual dashboard review. Missing for 10: concrete examples of Charlie proactively surfacing insights/recommendations, independent user corroboration of insight quality.",
+    "evidenceIds": [
+      "telli-docs-11",
+      "telli-docs-7",
+      "telli-docs-8",
+      "telli-docs-10"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "telli supports Scheduled triggers so workflows run automatically without a call event, plus retry/dialing-window configuration, webhooks, and an AI assistant (Charlie) to build/automate workflows — together enabling background autonomous automations. Missing for 10: independent/hands-on verification of scheduled automations running reliably in production, and more detail on monitoring/error-handling for autonomous runs beyond docs claims.",
+    "evidenceIds": [
+      "telli-docs-1",
+      "telli-docs-9",
+      "telli-docs-11",
+      "telli-docs-13",
+      "telli-docs-17"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "telli documents \"Charlie,\" a built-in AI assistant that can build/refine agents, automate workflows, and analyze calls, and this assistant is also exposed via an MCP server for external AI tools to interact with. This directly matches delegating tasks to a built-in assistant within the product. Missing for 10: independent/hands-on verification of Charlie's task delegation in practice and more detail on the scope of tasks it can autonomously execute.",
+    "evidenceIds": [
+      "telli-docs-11",
+      "telli-docs-22",
+      "telli-probe-3"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli exposes a full REST API (with OpenAPI spec) to programmatically schedule calls, manage contacts, and trigger workflows, plus webhooks for event-driven automation and scheduled/recurring workflow triggers — all of which support headless, non-UI automation suitable for CI-like pipelines. However there is no explicit CI/CD example, CLI tool, or documented automated pipeline integration beyond the API/webhook primitives. Missing for 10: dedicated CI/CD documentation or examples, a CLI for scripted invocation, and independent confirmation of headless use in production pipelines.",
+    "evidenceIds": [
+      "telli-docs-12",
+      "telli-docs-17",
+      "telli-docs-1",
+      "telli-docs-21",
+      "telli-probe-2"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Telli's documented MCP support only runs in the opposite direction — it exposes an MCP server so external AI tools (Claude, ChatGPT, Codex) can talk to its Charlie assistant (telli-docs-22, telli-probe-3), not a mechanism for telli's own voice agents to consume external MCP servers' tools. Custom Tools (telli-docs-14, telli-docs-20) let agents call external APIs but are described as custom integrations, not MCP-based tool ingestion.",
+    "evidenceIds": [
+      "telli-docs-22",
+      "telli-probe-3",
+      "telli-docs-14",
+      "telli-docs-20"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "telli documents an official MCP server that lets external AI tools (Claude, ChatGPT, Codex) connect over the Model Context Protocol to interact with Charlie, telli's assistant, confirmed both in docs and via a live probe of the integrations/mcp page. Missing for 10: no independent/hands-on corroboration beyond first-party docs and the probe, and no detail on server setup/auth specifics.",
+    "evidenceIds": [
+      "telli-docs-22",
+      "telli-probe-3"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli offers Charlie, a built-in AI assistant that can build/refine agents, automate workflows, and analyze calls via natural language, plus an MCP server letting external AI tools (Claude, ChatGPT, Codex) converse with Charlie — both point to natural-language operation. However, most of the product surface (workflows, scheduling, dialing windows, phone number setup) is described as configured through UI/API rather than conversational commands, and there's no independent/hands-on evidence of Charlie's NL command scope or reliability. missing for 10: hands-on evidence of Charlie executing complex natural-language commands, documentation detailing the breadth of actions controllable purely via NL, independent corroboration beyond vendor docs.",
+    "evidenceIds": [
+      "telli-docs-11",
+      "telli-docs-22",
+      "telli-probe-3"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-official-cli",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "telli offers a REST API, webhooks, and an MCP server for AI assistants, but there is no mention anywhere in the evidence of an official CLI tool for telli. missing for 10: any documentation or reference to a telli CLI, its commands, or installation instructions.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "telli documents a REST API with endpoints (schedule-call, import-phone-number), API key/bearer auth, webhooks, and a downloadable OpenAPI spec (confirmed live at openapi.json), plus an MCP server for AI tool access — enabling full programmatic/agentic control. missing for 10: independent third-party validation of API robustness beyond vendor docs.",
+    "evidenceIds": [
+      "telli-docs-12",
+      "telli-docs-13",
+      "telli-docs-15",
+      "telli-docs-16",
+      "telli-docs-17",
+      "telli-docs-19",
+      "telli-docs-21",
+      "telli-docs-22",
+      "telli-probe-2",
+      "telli-probe-3"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "telli documents a single API key (bearer token) generated in Settings > Developer, but there's no evidence of scoped permissions, role-based keys, or least-privilege credential issuance for agents specifically.",
+    "evidenceIds": [
+      "telli-docs-15"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-sdks",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "telli provides a REST API with an OpenAPI spec that can be used to generate client libraries, plus webhooks, custom tools, and an MCP server for agent integration, but there is no evidence of telli-maintained official SDKs in specific languages (e.g., Python/JS packages published by telli) — only self-generated clients from the OpenAPI spec. missing for 10: dedicated first-party SDK packages/repos, language-specific SDK documentation, versioning/release notes for such SDKs.",
+    "evidenceIds": [
+      "telli-docs-12",
+      "telli-docs-15",
+      "telli-docs-16",
+      "telli-probe-2"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "telli documents a webhooks system that pushes real-time POST notifications about call events, status changes, and outcomes, explicitly described as event-driven subscription for external systems (telli-docs-13, telli-docs-21). Missing for 10: no evidence of configurable event-type filtering/subscription granularity or independent third-party confirmation of reliability.",
+    "evidenceIds": [
+      "telli-docs-13",
+      "telli-docs-21",
+      "telli-docs-12"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "ai-assisted-agent-authoring",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Charlie, telli's built-in AI assistant, is documented as helping to 'build and refine agents, automate workflows, and analyze your calls,' which supports the core idea of AI-assisted agent authoring, and the MCP server lets external AI tools interact with Charlie too. However there's no concrete evidence of generating test cases from a description, or detailed examples of prompt/flow generation output. missing for 10: documented examples of Charlie generating/improving prompts or flows from a natural-language description, evidence of AI-generated test case creation, and independent/hands-on confirmation of these capabilities in practice.",
+    "evidenceIds": [
+      "telli-docs-11",
+      "telli-docs-22",
+      "telli-probe-3"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "ai-call-qa-scoring",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "telli provides analytics like reach rate, success rate, call outcome fields, transcripts, and manual feedback submission for agent improvement, but there's no evidence of automated AI-driven quality scoring, failure flagging, or resolution analysis performed autonomously by the platform's AI — feedback and analysis appear human-driven rather than AI-automated review. missing for 10: automated AI scoring of call quality, automatic failure/anomaly flagging, AI-generated resolution analysis without human review.",
+    "evidenceIds": [
+      "telli-docs-7",
+      "telli-docs-8",
+      "telli-docs-10"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "api-interactive-docs",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "telli publishes an OpenAPI spec (openapi.json) and API docs with downloadable schemas for generating client libraries or feeding coding agents, but there is no evidence of an interactive reference with runnable/'try it' examples in-browser. missing for 10: an interactive try-it console, live runnable code samples, or sandboxed request execution within the docs site.",
+    "evidenceIds": [
+      "telli-docs-16",
+      "telli-probe-2",
+      "telli-docs-15"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "telli provides a downloadable OpenAPI spec confirmed live at /openapi.json, and docs explicitly state it can be downloaded to generate client libraries, import into tools, or give coding agents machine-readable API context. Missing for 10: no independent third-party confirmation of spec completeness/versioning beyond first-party docs and probe.",
+    "evidenceIds": [
+      "telli-docs-16",
+      "telli-probe-2"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "telli's agent builder includes a 'Test call' feature that lets users dial a draft or saved agent version and review the recording/transcript before going live, which functions as a lightweight test mode (telli-docs-28, telli-docs-29). However, there is no documentation of a dedicated sandbox environment, separate test dataset, or explicit guarantee that test calls don't write to production contacts/analytics. missing for 10: explicit sandbox/staging environment separate from production, confirmation that test calls don't affect production data/metrics, and any mention of test API keys or isolated test accounts.",
+    "evidenceIds": [
+      "telli-docs-28",
+      "telli-docs-29"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows an OpenAPI spec and API key auth exist, but nothing in the pack mentions API versioning (e.g., v1/v2 paths, version headers) or any documented deprecation/sunset policy for endpoints. Missing for 10: explicit API version scheme, changelog of breaking changes, and a stated deprecation/sunset policy.",
+    "evidenceIds": [
+      "telli-docs-12",
+      "telli-docs-15",
+      "telli-probe-2"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Telli's platform is built around calling large contact lists (dialing windows, calling strategies, retry behavior, reach-rate metrics) and its REST API lets users 'programmatically manage contacts, schedule calls' at scale, implying bulk campaign operations. However, there is no explicit documentation of a bulk-upload/bulk-schedule endpoint or UI for acting on many items simultaneously — the schedule-call endpoint documented is single-call oriented. Missing for 10: explicit bulk-contact import/schedule endpoint, documented batch size limits, and independent evidence of large-scale bulk execution.",
+    "evidenceIds": [
+      "telli-docs-9",
+      "telli-docs-7",
+      "telli-docs-12",
+      "telli-docs-17",
+      "telli-probe-1"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "telli's workflows can be triggered by call events (implied default) and now by a recurring schedule, and webhooks notify external systems on call events, showing some event-driven automation. However there's no documented rule-definition interface (conditions, event-type selection, if/then logic) for arbitrary events beyond calls/schedule. Missing for 10: explicit rule/condition builder, broader event-type coverage beyond calls, and evidence of user-defined trigger logic rather than fixed schedule/call triggers.",
+    "evidenceIds": [
+      "telli-docs-1",
+      "telli-docs-13",
+      "telli-docs-21"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "telli documents scheduled triggers that let workflows run recurringly on an interval/start time without a call event, directly matching the recurring-workflow story, and also supports scheduling individual calls via API. missing for 10: independent/hands-on corroboration of recurrence reliability and detail on editing/monitoring scheduled workflow runs.",
+    "evidenceIds": [
+      "telli-docs-1",
+      "telli-docs-17",
+      "telli-docs-18"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only hint of versioning is in agent testing, where you can pick 'your draft with unsaved changes or any saved revision' (telli-docs-28), implying saved agent versions exist. However there is no documented review interface for comparing versions, no explicit rollback/restore action, and no versioning mentioned for broader automations/workflows (only agents). Missing for 10: explicit rollback UI/API, version diff/review tooling, and versioning coverage for workflows beyond agent test calls.",
+    "evidenceIds": [
+      "telli-docs-28"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "barge-in-interruptions",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses barge-in, interruption handling, speech-stopping, or turn recovery mechanics; the docs cover scheduling, workflows, analytics, and integrations but never mention conversational turn-taking behavior.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "batch-outbound-campaigns",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli documents dialing windows, calling strategies, and retry behavior (telli-docs-9) plus a schedule-call API endpoint that respects dialer windows or can bypass them (telli-docs-17, telli-docs-18) and reach-rate/success metrics (telli-docs-7), which together support scheduled, throughput-controlled outbound calling. However there is no explicit mention of a 'campaign' concept, bulk contact upload, or concurrency/rate limits for large batches. Missing for 10: explicit batch/campaign creation UI or endpoint, bulk contact import for calling, and documented concurrency/throughput limits beyond dialing windows.",
+    "evidenceIds": [
+      "telli-docs-9",
+      "telli-docs-17",
+      "telli-docs-18",
+      "telli-docs-7",
+      "telli-docs-1"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "build-phone-agent-fast",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli provides agent builder, test call feature, voice cloning, and phone number setup (forwarding or SIP trunk import) which together support building and testing a voice agent with prompt, voice, and number, but there's no explicit walkthrough or evidence confirming a full end-to-end setup can be completed within an hour or that phone number provisioning is instant/self-serve for new numbers. missing for 10: a documented quick-start/time-to-first-call benchmark, evidence of instant/native number provisioning (vs SIP/forwarding setup), and independent/hands-on confirmation of the full flow's speed.",
+    "evidenceIds": [
+      "telli-docs-28",
+      "telli-docs-29",
+      "telli-docs-27",
+      "telli-docs-23",
+      "telli-docs-24",
+      "telli-docs-19"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "call-analytics-dashboard",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli's docs describe built-in dashboards tracking reach rate, call duration, and success rate, plus per-call analysis of transcripts and outcome fields, and a live monitoring overview—covering most of the story without needing custom tooling. However, there is no explicit mention of sentiment analysis in dashboards. missing for 10: sentiment scoring/analysis in dashboards, independent/hands-on corroboration of dashboard usability.",
+    "evidenceIds": [
+      "telli-docs-7",
+      "telli-docs-8",
+      "telli-docs-32"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "call-transfer-escalation",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm a transfer tool that can move a call to another agent or number, matching the core escalation-to-human idea, but there's no mention of distinct warm vs. blind transfer modes or explicit context-passing to the human recipient. missing for 10: explicit warm/blind transfer distinction, evidence of context/data hand-off during transfer, hands-on confirmation of the feature in practice.",
+    "evidenceIds": [
+      "telli-docs-31"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "concurrency-scaling-limits",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack item documents concurrency limits, per-account call caps, or scaling guarantees for simultaneous calls; docs mention dialing windows/retry strategy but not concurrency ceilings or auto-scaling behavior. This is a fair question for a voice-calling platform (scaling many simultaneous calls is core to the product's value), so 'none' applies rather than 'na'.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "consent-recording-controls",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli documents conditional recording based on caller consent and a configurable data-retention policy that auto-deletes contacts and call data after a defined age, directly addressing the founder's compliance need. However, evidence lacks detail on per-call granular controls (e.g., pause/resume, jurisdiction-specific disclosure scripts), audit logging of consent events, or independent verification that these features work as described. Missing for 10: per-call recording toggle/audit trail details, jurisdiction-specific disclosure templates, retention configuration granularity (e.g., per-data-type settings), and independent/hands-on confirmation of compliance behavior.",
+    "evidenceIds": [
+      "telli-docs-25",
+      "telli-docs-26"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "custom-voice-cloning",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Voice cloning is documented as a real feature (telli-docs-27) letting founders give agents a custom voice, but the pack's only consent-related documentation concerns call recording consent (telli-docs-26), not a consent process specifically for cloning someone's voice. Missing for 10: explicit documented consent/authorization workflow for the voice being cloned (e.g., proof of rights from the voice owner), and any legal/compliance guardrails for cloning third-party voices.",
+    "evidenceIds": [
+      "telli-docs-27",
+      "telli-docs-26"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "documented-latency-numbers",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions latency numbers, turn-taking performance, or tuning guidance for voice response speed; documentation covers workflows, API, webhooks, and agent building but nothing on end-to-end latency benchmarks or tuning.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "dtmf-ivr-voicemail",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence in the pack mentions DTMF keypress sending, IVR menu navigation, or voicemail detection/leaving; telli's docs cover scheduling, transfers, web search tool, and webhooks but nothing about touch-tone or answering machine handling.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "dynamic-call-personalization",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence describes contact properties and collected values being used to select SMS/WhatsApp recipients (telli-docs-5) and APIs to manage contacts and schedule calls (telli-docs-12, telli-docs-17), but nowhere does it document injecting dynamic variables or per-caller context into an agent's voice call script/persona at call time. Missing for 10: explicit documentation of variable placeholders in agent prompts, a mechanism for passing per-call custom data via the schedule-call API, and any example of personalized call content driven by caller-specific fields.",
+    "evidenceIds": [
+      "telli-docs-5",
+      "telli-docs-12",
+      "telli-docs-17"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "hipaa-regulated-workloads",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions HIPAA, BAA, SOC 2, or data-residency options; only data retention and consent-based recording are covered, which don't establish formal compliance certifications.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "knowledge-base-grounding",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of a built-in knowledge base or RAG feature for grounding agents on uploaded documents; the docs describe custom tools for API integration and a web_search tool for public information, but nothing about ingesting documents or content for retrieval-based answers.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "live-call-monitoring",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "telli offers a real-time Live Monitoring call overview (telli-docs-32) and webhooks that push real-time notifications on call events/status/outcomes (telli-docs-13, telli-docs-21), which a platform engineer could wire into an alerting pipeline, plus metric tracking like success/reach rate (telli-docs-7). However there is no documented built-in alerting mechanism, error-rate-spike detection, or agent-misbehavior alerting system. Missing for 10: native alert/notification thresholds, anomaly or error-rate-spike detection, and evidence of alert delivery (email/Slack/PagerDuty) tied to live monitoring.",
+    "evidenceIds": [
+      "telli-docs-32",
+      "telli-docs-13",
+      "telli-docs-21",
+      "telli-docs-7"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "mid-call-tool-calling",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm custom tools let agents call external APIs mid-call (telli-docs-20) and built-in tool calls like web_search operate during live calls (telli-docs-30), plus transfer tools show mid-call action execution (telli-docs-31). However, there is no documentation addressing latency masking or filler-speech to avoid 'dead air' while awaiting API responses. missing for 10: explicit evidence of latency-hiding/filler speech during tool calls, independent hands-on confirmation of smooth voice continuity.",
+    "evidenceIds": [
+      "telli-docs-20",
+      "telli-docs-30",
+      "telli-docs-31"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "multilingual-conversations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions multilingual support, language detection, or mid-call language switching for telli's voice agents; all documented features concern scheduling, webhooks, tools, analytics, and MCP integration.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "noise-robustness",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions noise suppression, audio filtering, or any mechanism for handling noisy call environments; documentation covers scheduling, workflows, analytics, and voice cloning but not audio quality/noise handling.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli exposes a REST API (with OpenAPI spec) covering contacts, scheduling calls, phone number import, custom tools, and webhooks, and also offers an MCP server so external AI tools can interact with Charlie. However, several UI-native features—agent builder/test-call dialog, live monitoring dashboard, side-by-side transcript/recording view, voice cloning setup, workflow trigger/recurring schedule configuration UI, and analytics dashboards—are not documented as API-accessible endpoints, so full UI/API parity is not evidenced. missing for 10: API endpoints for agent building/testing, live monitoring, voice cloning, workflow scheduling configuration, and analytics/reporting equivalent to UI dashboards.",
+    "evidenceIds": [
+      "telli-docs-12",
+      "telli-docs-15",
+      "telli-docs-16",
+      "telli-docs-17",
+      "telli-docs-19",
+      "telli-docs-20",
+      "telli-docs-21",
+      "telli-docs-22",
+      "telli-probe-2",
+      "telli-probe-3"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of a bulk data-export feature or open-format data portability; only API endpoints to manage/read specific records and a data-retention deletion policy are documented, not a full self-service export/leave capability. Missing for 10: documented full-account export tool/endpoint, open-format (CSV/JSON) bulk export, and any explicit data-portability statement.",
+    "evidenceIds": [
+      "telli-docs-12",
+      "telli-docs-25"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "openness-open-license",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "telli is a closed, commercial SaaS voice-agent platform; there is no evidence of any open-source repository or license, and the product category (hosted proprietary product) doesn't imply an expectation of open-sourced code. This is a category mismatch, not a missing feature.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "telli is a hosted AI voice platform (SaaS with API, MCP, webhooks) with no evidence of any self-hostable core; this is a cloud-native voice/telephony product, so self-hosting the core product is not a fair axis for this kind of offering.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "phone-number-provisioning",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "telli's docs show a REST API with a schedule-call endpoint for outbound calls, an import-phone-number endpoint to bring SIP-trunk numbers under API control, webhooks for call events, and an OpenAPI spec confirming the API surface. However, inbound handling is documented mainly as manual forwarding/SIP trunk setup rather than a clear 'provision a new number via API' flow, and there's no explicit doc of purchasing/creating a fresh telli-hosted number through the API. missing for 10: a documented endpoint to provision/purchase brand-new phone numbers (not just import existing SIP trunk numbers), and clearer API-driven inbound call handling beyond forwarding.",
+    "evidenceIds": [
+      "telli-docs-12",
+      "telli-docs-17",
+      "telli-docs-19",
+      "telli-docs-21",
+      "telli-docs-23",
+      "telli-docs-24",
+      "telli-probe-2"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or data storage location controls; data retention (deletion timing) is covered but that is a different capability from choosing storage region.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI training data usage or opt-out policies; data retention docs cover deletion of contacts/call data but not model-training exclusion.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "privacy-retention-controls",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli documents automatic data retention deletion (contacts and call data purged once they reach a defined age) and conditional consent-based recording, giving users some control over data lifecycle and privacy. However, there's no evidence of user-initiated manual deletion, export/right-to-access tools, or granular per-record deletion controls beyond the age-based policy. missing for 10: manual/on-demand deletion controls, data export capability, independent verification of retention enforcement.",
+    "evidenceIds": [
+      "telli-docs-25",
+      "telli-docs-26"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "telli is a voice-agent platform, not a developer tool where telemetry opt-out is typically discussed, but the axis is still fair to ask (does the product track usage, and can a user disable it). The evidence pack (data retention, consent-based recording, etc.) never mentions any telemetry/usage-tracking opt-out mechanism for the product itself. Missing for 10: any documentation of telemetry collection practices or an opt-out setting/toggle.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "realtime-transcription-quality",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "telli documents transcript viewing and side-by-side playback (telli-docs-29) but provides no evidence of developer-facing control over STT provider selection, choice of underlying language models, or custom key-term/vocabulary boosting for transcription accuracy.",
+    "evidenceIds": [
+      "telli-docs-29"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "recordings-transcripts-api",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm transcripts and recordings exist and can be reviewed in-app (side-by-side view, consent-based recording) and telli exposes a general REST API plus webhooks for call events, but no endpoint is documented that explicitly returns full call recordings or transcripts programmatically for every call. missing for 10: a documented GET/recording or GET/transcript API endpoint, confirmation of bulk/enumerable retrieval, and independent verification that recordings are accessible via the API rather than only in the UI.",
+    "evidenceIds": [
+      "telli-docs-8",
+      "telli-docs-29",
+      "telli-docs-26",
+      "telli-docs-12",
+      "telli-docs-13",
+      "telli-docs-21",
+      "telli-probe-2"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "self-host-oss-runtime",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "telli is a hosted SaaS voice-agent platform with API/webhook/MCP access, not an open-source runtime distributed for self-hosting; no evidence pack item mentions open-sourcing the runtime or self-hosting deployment. This is a category error for a closed hosted product, so the axis does not apply.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "semantic-turn-detection",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack discusses turn-taking, end-of-turn detection, VAD, or interruption handling in telli's voice agent; the docs cover scheduling, workflows, tools, and integrations but not conversational latency/turn-taking mechanics.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "simulated-agent-testing",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "telli's agent builder includes a 'Test call' feature to trial a draft or saved agent version and review the recording/transcript side-by-side before going live, which covers pre-production testing, and feedback submission helps iterate on agent quality. However, there is no evidence of simulated/synthetic conversation runs, automated eval suites, or scripted test scenarios independent of an actual phone call. Missing for 10: automated evals framework, non-call simulated conversation testing, batch/regression testing tools.",
+    "evidenceIds": [
+      "telli-docs-28",
+      "telli-docs-29",
+      "telli-docs-10"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "sip-trunk-byoc",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs explicitly support importing numbers from a customer's own SIP trunk provider via a dedicated API endpoint, plus general SIP trunk connection for incoming/outgoing calls and call forwarding from an existing PBX/provider number. This directly matches the platform-engineer's need to bring their own carrier rather than being locked into bundled telephony. Missing for 10: no explicit mention of native Twilio/Telnyx number import (only generic SIP trunk import), and no independent/hands-on confirmation of the SIP trunk setup working in practice.",
+    "evidenceIds": [
+      "telli-docs-19",
+      "telli-docs-23",
+      "telli-docs-24"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "structured-outcome-extraction",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "telli documents webhooks pushing real-time call event/status/outcome data and a REST API for programmatic access, plus conversation views showing appointment/outcome fields and call outcome analysis, supporting structured post-call data delivery. However, there's no explicit documentation of a structured schema for entities/dispositions extraction or example payloads showing the full breadth of structured fields promised. missing for 10: example webhook/API payload showing structured entities and disposition fields, documentation of a dedicated 'call outcomes' data model, independent/hands-on confirmation of data completeness.",
+    "evidenceIds": [
+      "telli-docs-13",
+      "telli-docs-21",
+      "telli-docs-8",
+      "telli-docs-2",
+      "telli-docs-12"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "transparent-per-minute-pricing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions pricing, per-minute rates, usage costs, or any cost calculator/estimator; the docs cover features (workflows, appointments, API, MCP, etc.) but nothing about published pricing.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "telli",
+    "storyId": "visual-flow-builder",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "telli has an 'agent builder' with test-call and versioning, and workflow triggers (scheduled, SMS/WhatsApp) suggesting some no-code workflow configuration, plus tool-calls like transfer to another agent implying handoffs. But there's no evidence of a visual flow builder with branching/state diagrams — evidence only shows agent settings, tools, and triggers, not a drag-and-drop conversation flow canvas. missing for 10: explicit visual builder UI with branching/state nodes, evidence of designing multi-step flows with conditional paths, and documentation of handoff logic beyond simple 'transfer tool'.",
+    "evidenceIds": [
+      "telli-docs-28",
+      "telli-docs-31",
+      "telli-docs-5",
+      "telli-docs-1"
+    ]
+  },
+  {
+    "productId": "telli",
+    "storyId": "voice-library-choice",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Docs mention voice cloning to give an agent a custom voice, but there is no evidence of a curated voice library to choose from or the ability to plug in multiple external TTS providers as the story requires. missing for 10: evidence of a selectable voice library, multi-provider TTS integration, developer API/config for switching TTS engines.",
+    "evidenceIds": [
+      "telli-docs-27"
+    ]
+  },
+  {
     "productId": "vapi",
     "storyId": "agent-consumes-mcp-tools",
     "verdict": "none",
