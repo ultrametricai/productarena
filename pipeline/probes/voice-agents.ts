@@ -199,4 +199,46 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // telli's docs publish a full llms.txt index describing the platform, cookbooks, and
+      // REST API surface — the agent-readable docs entry point.
+      probeId: 'llms-docs-index',
+      productId: 'telli',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.telli.com/llms.txt | head -6'],
+      displayCommand: 'curl -sL https://docs.telli.com/llms.txt | head -6',
+      expect: /# telli Documentation/,
+      timeoutMs: 30_000,
+    },
+    {
+      // telli's hosted MCP server (mcp.telli.com/mcp, fronting Charlie) answers a keyless
+      // initialize with a Bearer challenge + oauth-protected-resource metadata.
+      probeId: 'mcp-remote-handshake',
+      productId: 'telli',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.telli.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.telli.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // telli publishes its V2 OpenAPI spec at a stable keyless docs URL, declaring the live
+      // production server (api.telli.com) — the machine-readable artifact an agent needs to
+      // drive the contacts/agents API.
+      probeId: 'openapi-machine-spec',
+      productId: 'telli',
+      storyIds: ['api-machine-spec', 'agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.telli.com/openapi-v2.json | head -c 300'],
+      displayCommand: 'curl -sL https://docs.telli.com/openapi-v2.json | head -c 300',
+      expect: /"title": "telli API"/,
+      timeoutMs: 30_000,
+    },
 ]

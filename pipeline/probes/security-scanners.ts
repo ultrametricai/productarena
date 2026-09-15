@@ -1,4 +1,4 @@
-import { MCP_INITIALIZE, type LocalProbe } from './types'
+import { CURL_MCP_INIT, MCP_INITIALIZE, type LocalProbe } from './types'
 
 export const probes: LocalProbe[] = [
     {
@@ -75,6 +75,46 @@ export const probes: LocalProbe[] = [
       stdinPayload: MCP_INITIALIZE,
       expect: /"serverInfo"/,
       longRunning: true,
+      timeoutMs: 30_000,
+    },
+    {
+      // Gecko's docs serve an agent-facing llms.txt index of clean per-page .md endpoints.
+      probeId: 'llms-docs-index',
+      productId: 'gecko-security',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://gecko.security/docs/llms.txt | head -6'],
+      displayCommand: 'curl -s https://gecko.security/docs/llms.txt | head -6',
+      expect: /# Gecko Security/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The v1 API serves its OpenAPI 3.1 spec keyless, straight off the app origin.
+      probeId: 'openapi-spec',
+      productId: 'gecko-security',
+      storyIds: ['api-machine-spec'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://app.gecko.security/api/v1/openapi.json | head -c 200'],
+      displayCommand: 'curl -s https://app.gecko.security/api/v1/openapi.json | head -c 200  # OpenAPI 3.1, keyless',
+      expect: /"openapi":"3\.1\.0","info":\{"title":"Gecko Security API"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Gecko's remote MCP (app.gecko.security/api/mcp) answers a keyless initialize with its
+      // OAuth challenge (401, realm "gecko-mcp" + protected-resource metadata) — live and
+      // protocol-speaking without any credential.
+      probeId: 'mcp-remote-handshake',
+      productId: 'gecko-security',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://app.gecko.security/api/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://app.gecko.security/api/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /gecko-mcp|oauth-protected-resource/,
       timeoutMs: 30_000,
     },
 ]

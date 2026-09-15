@@ -5,6 +5,7 @@ import { loadChains, loadProcesses, processSlug } from '@/lib/processes'
 import { loadFamilies } from '@/lib/families'
 import { loadIcpTypes } from '@/lib/icp'
 import { SITE_URL } from '@/lib/site'
+import { buildYcRows } from '@/lib/yc'
 
 // Static export safety: no dynamic segments, all data is bundled at build time.
 export const dynamic = 'force-static'
@@ -100,6 +101,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   entries.push({ url: `${SITE_URL}/icp`, lastModified: now })
   for (const icp of loadIcpTypes()) {
     entries.push({ url: `${SITE_URL}/icp/${icp.id}`, lastModified: now })
+  }
+
+  // YC batch pages — the index plus one ranking per batch with tracked products (see lib/yc.ts
+  // and app/yc/[batch]/page.tsx; lowercase batch code in the URL, e.g. /yc/w23).
+  entries.push({ url: `${SITE_URL}/yc`, lastModified: now })
+  for (const code of new Set(buildYcRows(categories).map((r) => r.ycBatch))) {
+    entries.push({ url: `${SITE_URL}/yc/${code.toLowerCase()}`, lastModified: now })
   }
 
   return entries
