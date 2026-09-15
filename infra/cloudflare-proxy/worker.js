@@ -23,7 +23,8 @@
 //
 // Also hosts the site's auth backend at /productarena/auth/* (WorkOS AuthKit login/callback,
 // our own HMAC-signed pa_session cookie, /auth/me, /auth/logout) — see the "Auth backend"
-// section below and docs/AUTH.md for setup.
+// section below and docs/AUTH.md for setup — and the session-gated GET/PUT
+// /productarena/api/watchlist (per-account starred product ids in KV; "Watchlist API" section).
 const ORIGIN = 'https://productarena.vercel.app'
 const ALLOWED_CORS = new Set(['https://ultrametric.ai', 'https://productarena.vercel.app'])
 
@@ -1387,6 +1388,42 @@ const AUTH_CALLBACK_URL = `${AUTH_SITE}/productarena/auth/callback`
 const SESSION_COOKIE = 'pa_session'
 const STATE_COOKIE = 'pa_state'
 const SESSION_MAX_AGE_S = 30 * 24 * 60 * 60 // hard cap — verifySession also rejects longer exps
+// No sliding refresh by design: the exp minted at login is final, so a stolen cookie can never
+// outlive 30 days, and rotating PA_SESSION_KEY (docs/AUTH.md) stays a true kill switch.
+
+// -- Mock mode (dev-only test harness) ----------------------------------------------------------
+//
+// WORKOS_MOCK=1 short-circuits /auth/login into an immediate pa_session for test@ultrametric.ai
+// with NO WorkOS round-trip and NO secrets, so the whole flow (login → account chip → star →
+// /watchlist → logout) is testable before the founder sets the real config:
+//
+//   cd infra/cloudflare-proxy && wrangler dev --var WORKOS_MOCK:1
+//
+// Two safeguards keep mock mode out of production:
+//   1. WORKOS_MOCK must NEVER be added to wrangler.toml [vars] — pass it per-run via
+//      `wrangler dev --var WORKOS_MOCK:1` only (wrangler.toml carries the same warning).
+//   2. Hard host guard (isMockAuth): mock never activates for requests on ultrametric.ai, even
+//      if the var somehow ships in a deploy — production behavior is unchanged regardless.
+const MOCK_EMAIL = 'test@ultrametric.ai'
+const MOCK_SUB = 'user_mock_test'
+// Dev-only cookie-signing fallback so mock mode needs no PA_SESSION_KEY either. Worthless as a
+// secret by design: the host guard means it can only ever sign cookies off-production.
+const MOCK_SESSION_KEY = 'pa-mock-dev-session-key-not-a-secret'
+
+export function isMockAuth(env, url) {
+  return env?.WORKOS_MOCK === '1' && url.hostname !== 'ultrametric.ai'
+}
+
+// Per-request auth context: the mock flag, the origin return_to is validated against (mock runs
+// on http://localhost:8787, so its own origin), and the cookie-signing key.
+function authContext(env, url) {
+  const mock = isMockAuth(env, url)
+  return {
+    mock,
+    site: mock ? url.origin : AUTH_SITE,
+    sessionKey: env?.PA_SESSION_KEY || (mock ? MOCK_SESSION_KEY : null),
+  }
+}
 
 const authTextEncoder = new TextEncoder()
 
@@ -1465,10 +1502,11 @@ export function sidFromAccessToken(token) {
   }
 }
 
-// Only ever send readers back to an ultrametric.ai path — absolute URLs on any other origin,
+// Only ever send readers back to a path on OUR origin (ultrametric.ai in production; the
+// request's own localhost origin in mock mode) — absolute URLs on any other origin,
 // scheme-relative //host tricks, and backslash smuggling all fall back to the PA home page.
-export function sanitizeReturnTo(raw) {
-  const fallback = `${AUTH_SITE}/productarena`
+export function sanitizeReturnTo(raw, site = AUTH_SITE) {
+  const fallback = `${site}/productarena`
   if (typeof raw !== 'string' || raw === '') return fallback
   let path = raw
   if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) {
@@ -1478,11 +1516,11 @@ export function sanitizeReturnTo(raw) {
     } catch {
       return fallback
     }
-    if (url.origin !== AUTH_SITE) return fallback
+    if (url.origin !== site) return fallback
     path = url.pathname + url.search + url.hash
   }
   if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) return fallback
-  return AUTH_SITE + path
+  return site + path
 }
 
 function getCookie(request, name) {
@@ -1494,8 +1532,12 @@ function getCookie(request, name) {
   return null
 }
 
-function sessionSetCookie(value, maxAge) {
-  return `${SESSION_COOKIE}=${value}; Domain=ultrametric.ai; Path=/productarena; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
+// Session cookie attributes. Mock mode serves off http://localhost, so the cookie must be
+// host-only (no Domain — a Domain=ultrametric.ai cookie is rejected there) and non-Secure.
+function sessionSetCookie(ctx, value, maxAge) {
+  return ctx.mock
+    ? `${SESSION_COOKIE}=${value}; Path=/productarena; Max-Age=${maxAge}; HttpOnly; SameSite=Lax`
+    : `${SESSION_COOKIE}=${value}; Domain=ultrametric.ai; Path=/productarena; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`
 }
 
 function stateSetCookie(value, maxAge) {
@@ -1519,6 +1561,7 @@ function authNotConfigured(missing) {
 // pattern as probeMcpEndpoint / handleJsonRpc above.
 export async function handleAuth(request, env, fetchImpl = fetch) {
   const url = new URL(request.url)
+  const ctx = authContext(env, url)
   const route = url.pathname.slice('/productarena/auth'.length)
   if (request.method !== 'GET') {
     return authJson(405, { error: 'GET only' }, { allow: 'GET' })
@@ -1528,8 +1571,8 @@ export async function handleAuth(request, env, fetchImpl = fetch) {
   // only needs PA_SESSION_KEY. Same-origin only (the static site fetches it relatively), so no
   // CORS headers — cross-origin readers can't see the result.
   if (route === '/me') {
-    if (!env?.PA_SESSION_KEY) return authNotConfigured('PA_SESSION_KEY secret')
-    const claims = await verifySessionCookieValue(env.PA_SESSION_KEY, getCookie(request, SESSION_COOKIE))
+    if (!ctx.sessionKey) return authNotConfigured('PA_SESSION_KEY secret')
+    const claims = await verifySessionCookieValue(ctx.sessionKey, getCookie(request, SESSION_COOKIE))
     if (!claims) return authJson(401, { error: 'no session' })
     return authJson(200, { email: claims.email })
   }
@@ -1537,6 +1580,23 @@ export async function handleAuth(request, env, fetchImpl = fetch) {
   // GET /auth/login?return_to=… → 302 to the WorkOS AuthKit hosted page. State carries
   // {nonce, return_to}; the nonce is mirrored into the short-lived pa_state cookie (CSRF).
   if (route === '/login') {
+    // Mock mode (dev-only, see the section comment above): skip WorkOS entirely — mint the
+    // pa_session for the fixed test identity and bounce straight back to return_to.
+    if (ctx.mock) {
+      const cookieValue = await createSessionCookieValue(ctx.sessionKey, {
+        sub: MOCK_SUB,
+        email: MOCK_EMAIL,
+        sid: undefined, // no WorkOS session exists — logout goes straight back to return_to
+      })
+      return new Response(null, {
+        status: 302,
+        headers: {
+          location: sanitizeReturnTo(url.searchParams.get('return_to'), ctx.site),
+          'set-cookie': sessionSetCookie(ctx, cookieValue, SESSION_MAX_AGE_S),
+          'cache-control': 'no-store',
+        },
+      })
+    }
     if (!env?.WORKOS_CLIENT_ID) return authNotConfigured('WORKOS_CLIENT_ID var')
     const returnTo = sanitizeReturnTo(url.searchParams.get('return_to'))
     const nonce = b64urlEncode(crypto.getRandomValues(new Uint8Array(16)))
@@ -1621,7 +1681,7 @@ export async function handleAuth(request, env, fetchImpl = fetch) {
     })
     const headers = new Headers({ 'cache-control': 'no-store' })
     headers.set('location', sanitizeReturnTo(typeof state.r === 'string' ? state.r : ''))
-    headers.append('set-cookie', sessionSetCookie(cookieValue, SESSION_MAX_AGE_S))
+    headers.append('set-cookie', sessionSetCookie(ctx, cookieValue, SESSION_MAX_AGE_S))
     headers.append('set-cookie', stateSetCookie('', 0)) // one-time nonce — burn it
     return new Response(null, { status: 302, headers })
   }
@@ -1630,29 +1690,116 @@ export async function handleAuth(request, env, fetchImpl = fetch) {
   // through WorkOS's logout URL (ends the AuthKit session too) with return_to; else go
   // straight back. https://workos.com/docs/reference/authkit/logout/get-logout-url
   if (route === '/logout') {
-    const returnTo = sanitizeReturnTo(url.searchParams.get('return_to'))
-    const claims = env?.PA_SESSION_KEY
-      ? await verifySessionCookieValue(env.PA_SESSION_KEY, getCookie(request, SESSION_COOKIE))
+    const returnTo = sanitizeReturnTo(url.searchParams.get('return_to'), ctx.site)
+    const claims = ctx.sessionKey
+      ? await verifySessionCookieValue(ctx.sessionKey, getCookie(request, SESSION_COOKIE))
       : null
     let location = returnTo
-    if (typeof claims?.sid === 'string' && claims.sid !== '') {
+    // Mock sessions have no WorkOS sid, so mock logout is always the direct bounce (the !mock
+    // guard is belt-and-braces — never send a dev browser to WorkOS).
+    if (!ctx.mock && typeof claims?.sid === 'string' && claims.sid !== '') {
       const logout = new URL(`${WORKOS_API}/user_management/sessions/logout`)
       logout.searchParams.set('session_id', claims.sid)
       logout.searchParams.set('return_to', returnTo)
       location = logout.toString()
     }
     const headers = new Headers({ 'cache-control': 'no-store', location })
-    headers.append('set-cookie', sessionSetCookie('', 0))
+    headers.append('set-cookie', sessionSetCookie(ctx, '', 0))
     return new Response(null, { status: 302, headers })
   }
 
   return authJson(404, { error: 'unknown auth route' })
 }
 
+// ---------------------------------------------------------------------------------------------
+// Watchlist API: GET/PUT /productarena/api/watchlist — the logged-in reader's starred product
+// ids (the account feature login unlocks; client: lib/watchlist.ts + components/WatchButton.tsx).
+//
+//   GET                      → { ok, ids: string[] }
+//   PUT  { ids: string[] }   → { ok, ids } (normalized) — replaces the whole list; the client
+//                              always sends its full merged state, so PUT is idempotent.
+//
+// Auth-gated by the same pa_session cookie the /auth/* routes mint — 401 otherwise (anonymous
+// readers stay localStorage-only client-side). Same-origin only: no CORS headers, so a
+// cross-origin page can never read or write a reader's list, and SameSite=Lax means cross-site
+// PUTs never carry the cookie anyway. Storage: one KV value per account under
+// watchlist:<WorkOS user id> — the PA_WATCHLIST namespace when bound, else PA_COMPARE_STATS
+// (the watchlist: prefix can't collide with its pair: keys), so going live needs no new
+// namespace. Ids are product slugs; anything unshaped is dropped and the list is capped —
+// junk could only ever waste bytes, the site resolves ids against its own catalog client-side.
+
+const WATCHLIST_KEY_PREFIX = 'watchlist:'
+const WATCHLIST_ID_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/ // same slug shape as compare ids
+const WATCHLIST_MAX_IDS = 500
+const WATCHLIST_RATE_LIMIT = { max: 120, windowMs: 5 * 60 * 1000 }
+const watchlistRateBuckets = new Map() // separate from the other buckets
+
+// null = not an array at all (a 400); otherwise the deduped, slug-validated, capped list.
+export function normalizeWatchlistIds(raw) {
+  if (!Array.isArray(raw)) return null
+  const ids = []
+  for (const value of raw) {
+    if (typeof value !== 'string') continue
+    const id = value.trim().toLowerCase()
+    if (!WATCHLIST_ID_RE.test(id) || ids.includes(id)) continue
+    ids.push(id)
+    if (ids.length >= WATCHLIST_MAX_IDS) break
+  }
+  return ids
+}
+
+export async function handleWatchlist(request, env) {
+  const url = new URL(request.url)
+  const ctx = authContext(env, url)
+  if (request.method !== 'GET' && request.method !== 'PUT') {
+    return authJson(405, { error: 'GET or PUT only' }, { allow: 'GET, PUT' })
+  }
+  if (!ctx.sessionKey) return authNotConfigured('PA_SESSION_KEY secret')
+  const claims = await verifySessionCookieValue(ctx.sessionKey, getCookie(request, SESSION_COOKIE))
+  if (!claims || typeof claims.sub !== 'string' || claims.sub === '') {
+    return authJson(401, { error: 'log in to keep a watchlist' })
+  }
+  const kv = env?.PA_WATCHLIST ?? env?.PA_COMPARE_STATS
+  if (!kv) return authJson(503, { error: 'watchlist storage not available' })
+  const key = `${WATCHLIST_KEY_PREFIX}${claims.sub}`
+
+  if (request.method === 'GET') {
+    let ids = []
+    try {
+      const stored = await kv.get(key)
+      ids = normalizeWatchlistIds(stored ? JSON.parse(stored) : []) ?? []
+    } catch {
+      ids = [] // unreadable KV / stored junk degrades to empty, same as the client-side parser
+    }
+    return authJson(200, { ok: true, ids })
+  }
+
+  // PUT
+  const ip = request.headers.get('cf-connecting-ip') ?? 'unknown'
+  if (isRateLimited(watchlistRateBuckets, ip, WATCHLIST_RATE_LIMIT)) {
+    return authJson(429, { error: 'rate limited — try again in a few minutes' })
+  }
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return authJson(400, { error: 'JSON body required' })
+  }
+  const ids = normalizeWatchlistIds(body?.ids)
+  if (ids === null) return authJson(400, { error: '"ids" must be an array of product-id strings' })
+  try {
+    await kv.put(key, JSON.stringify(ids))
+  } catch {
+    return authJson(503, { error: 'watchlist storage not available' })
+  }
+  return authJson(200, { ok: true, ids })
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
     if (url.pathname.startsWith('/productarena/auth/')) return handleAuth(request, env)
+    if (url.pathname === '/productarena/api/watchlist') return handleWatchlist(request, env)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
     if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request, fetch, env)
     if (url.pathname === '/productarena/api/popular-compares') {
