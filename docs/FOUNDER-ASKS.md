@@ -65,7 +65,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | GitHub social preview upload (public/og2.png) | blocked (founder — repo Settings) |
 | Google Search Console: add domain property for ultrametric.ai (DNS TXT), submit both sitemaps | blocked (founder Google account) |
 | Cloudflare managed robots.txt blocks GPTBot/meta-externalagent at apex — disable AI-bot blocking | blocked (founder — CF dashboard, Security → Bots) |
-| WorkOS secrets: `wrangler secret put WORKOS_API_KEY` / `PA_SESSION_KEY` + dashboard redirect URI | blocked (founder WorkOS account) — lane building the scaffolding |
+| WorkOS ultrametric login: secrets (`wrangler secret put WORKOS_API_KEY` / `PA_SESSION_KEY`) + dashboard redirect URI `https://ultrametric.ai/productarena/auth/callback` | blocked (founder WorkOS account) — everything else DONE: routes audited vs live docs, per-account /watchlist sync built, WORKOS_MOCK dev harness (testable today, zero secrets); 5-min go-live checklist in docs/AUTH.md |
 | Try-it sandbox demo accounts (Stripe test key first) | blocked (founder provisions accounts) — lane building the mechanism |
 
 ## Shipped (recent — see git log for full history)
