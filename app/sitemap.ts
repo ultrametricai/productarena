@@ -58,6 +58,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     for (const product of data.products) {
       entries.push({ url: `${SITE_URL}/arena/${data.category.id}/product/${product.id}`, lastModified: generatedAt })
       entries.push({ url: `${SITE_URL}/arena/${data.category.id}/product/${product.id}/llms.md`, lastModified: generatedAt })
+      // The per-vendor transparent calculation page ("the receipt" — see
+      // app/arena/[category]/product/[id]/score/page.tsx): one per product, same cadence.
+      entries.push({ url: `${SITE_URL}/arena/${data.category.id}/product/${product.id}/score`, lastModified: generatedAt })
       if (!seenProductIds.has(product.id)) {
         seenProductIds.add(product.id)
         entries.push({ url: `${SITE_URL}/alternatives/${product.id}`, lastModified: generatedAt })

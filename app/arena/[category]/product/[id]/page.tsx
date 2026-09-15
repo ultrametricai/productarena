@@ -234,19 +234,23 @@ export default async function ProductPage({
             )}
           </div>
         </div>
-        {/* PRIMARY metrics row — the "should I care" read: PA Score (+68% band), the two
+        {/* PRIMARY metrics row — the "should I care" read: PA Score (+68% band), the three
             agenticness indexes, and the MCP/CLI/API access glyphs. Everything below this row
             is deliberately quieter (secondary: momentum/vendor responses/uptime; tertiary:
-            freshness + coverage in the muted footer line). */}
+            freshness + coverage in the muted footer line). Every pill clicks through to THIS
+            product's transparent calculation page (/score, per-dimension anchors) — the exact
+            stories, verdicts, evidence, and arithmetic behind its number (founder 2026-09-15:
+            scores must link to their specific evidence, not just the generic methodology). */}
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score</span>
             {/* showBand renders the "±N" (68% interval, lib/scoreIntervals.ts) inline in muted
                 smaller type — only when interval data exists for this product, never fabricated. */}
-            <AiEraBadge value={entry.aiEra} href="/methodology#arena-score" interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
+            <AiEraBadge value={entry.aiEra} href={`/arena/${category}/product/${id}/score`} interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           </div>
-          <AgenticBadge kind="agent-ready" value={entry.agentReady} untested={isGroupUntested(data, id, 'agent-access')} href="/methodology#ai-era" />
-          <AgenticBadge kind="agentic-app" value={entry.agenticApp} untested={isGroupUntested(data, id, 'agentic-features')} href="/methodology#ai-era" />
+          <AgenticBadge kind="agent-ready" value={entry.agentReady} untested={isGroupUntested(data, id, 'agent-access')} href={`/arena/${category}/product/${id}/score#agent-ready`} />
+          <AgenticBadge kind="agentic-app" value={entry.agenticApp} untested={isGroupUntested(data, id, 'agentic-features')} href={`/arena/${category}/product/${id}/score#built-in-ai`} />
+          <AgenticBadge kind="api-quality" value={entry.apiQuality} untested={isGroupUntested(data, id, 'api-quality')} href={`/arena/${category}/product/${id}/score#api-quality`} />
           <AgentAccessGlyphs data={data} productId={id} size="md" />
         </div>
         {/* SECONDARY row — adoption signals (registry data, never part of the PA Score) and the

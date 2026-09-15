@@ -12,13 +12,19 @@ const PALETTES = {
     mid: 'bg-violet-950/70 text-violet-400/90 ring-violet-900',
     low: 'bg-zinc-900 text-violet-700 ring-zinc-800',
   },
+  sky: {
+    high: 'bg-sky-950 text-sky-300 ring-sky-800',
+    mid: 'bg-sky-950/70 text-sky-400/90 ring-sky-900',
+    low: 'bg-zinc-900 text-sky-700 ring-zinc-800',
+  },
 } as const
 
-export type AgenticBadgeKind = 'agent-ready' | 'agentic-app'
+export type AgenticBadgeKind = 'agent-ready' | 'agentic-app' | 'api-quality'
 
 const LABELS: Record<AgenticBadgeKind, string> = {
   'agent-ready': 'AGENT-READY',
   'agentic-app': 'BUILT-IN AI',
+  'api-quality': 'API',
 }
 
 // Hover text spelling out the distinction the short labels can't carry — the two indexes are
@@ -27,17 +33,20 @@ const LABELS: Record<AgenticBadgeKind, string> = {
 const TITLES: Record<AgenticBadgeKind, string> = {
   'agent-ready': 'AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).',
   'agentic-app': 'BUILT-IN AI = inside-out: how agentic the product itself is FOR its users — built-in assistants, autonomous features, AI-first workflows. A walled-garden AI app can score high here while being hard for YOUR agent to drive.',
+  'api-quality': 'API QUALITY = the programmable surface once an agent (or developer) is there — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.',
 }
 
 const COLORS: Record<AgenticBadgeKind, keyof typeof PALETTES> = {
   'agent-ready': 'emerald',
   'agentic-app': 'violet',
+  'api-quality': 'sky',
 }
 
-// Renders one of the two group-scoped agenticness indexes: agent-ready ("can your agent
-// drive it" — group agent-access, emerald) or agentic-app ("does the product act agentically
-// itself" — group agentic-features, violet). null renders a muted n/a badge in the same
-// color family so the pair always reads as a matched set.
+// Renders one of the three group-scoped agenticness indexes: agent-ready ("can your agent
+// drive it" — group agent-access, emerald), agentic-app ("does the product act agentically
+// itself" — group agentic-features, violet), or api-quality ("how good is the API surface" —
+// group api-quality, sky). null renders a muted n/a badge in the same color family so the set
+// always reads as matched.
 // Since v2.4 (the PA Score), these badges are secondary to AiEraBadge wherever both appear —
 // `size="sm"` shrinks padding/type for those contexts (leaderboard rows, the PA Score strip).
 // `showLabel={false}` drops the metric name from the pill (kept in the title + sr-only text) —
@@ -68,11 +77,17 @@ export default function AgenticBadge({
   const label = LABELS[kind]
   const palette = PALETTES[COLORS[kind]]
   const sizeClass = size === 'md' ? 'px-2 py-0.5 text-xs' : 'px-1.5 py-0 text-[10px]'
+  // Two click-through destinations exist: the generic /methodology (how the index is measured)
+  // and a product's own /score page (the transparent per-vendor calculation) — the link title
+  // says which one the reader will land on.
+  const hrefTitle = href?.includes('/score')
+    ? `${TITLES[kind]} — see the exact calculation behind this number, with the evidence`
+    : `${TITLES[kind]} — how it's measured, on /methodology`
   const wrap = (badge: ReactNode) =>
     href ? (
       <Link
         href={href}
-        title={`${TITLES[kind]} — how it's measured, on /methodology`}
+        title={hrefTitle}
         className="inline-flex w-fit rounded-full transition hover:brightness-125 hover:ring-1 hover:ring-emerald-400/60"
       >
         {badge}
@@ -101,7 +116,9 @@ export default function AgenticBadge({
   return wrap(
     <span title={href ? undefined : TITLES[kind]} className={`inline-flex w-fit items-center gap-1 rounded-full font-medium ring-1 ${style} ${sizeClass}`}>
       {showLabel ? label : <span className="sr-only">{label}</span>}
-      <span className="font-mono tabular-nums">{value.toFixed(0)}</span>
+      {/* "/100" spelled out on every numeric render (founder ask 2026-09-15: a bare "72" reads
+          as arbitrary; "72/100" reads as a score) — muted like AiEraBadge's suffix. */}
+      <span className="font-mono tabular-nums">{value.toFixed(0)}<span className="font-medium opacity-60">/100</span></span>
     </span>,
   )
 }
