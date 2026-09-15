@@ -37,6 +37,33 @@ export interface Rival {
   battleSlug: string
 }
 
+export interface ArenaMembership {
+  arenaId: string
+  arenaName: string
+  /** 1-based leaderboard rank within that arena. */
+  rank: number
+  fieldSize: number
+}
+
+// EVERY arena that ranks this product id, in categories order — the product header's arenas
+// strip (sentry competes in observability AND error-tracking; brex/ramp in startup-banking AND
+// expense-management). Complements findProductArena below, which deliberately keeps the
+// first-wins ownership rule for contexts that need exactly one home arena.
+export function arenaMembershipsOf(categories: CategoryData[], productId: string): ArenaMembership[] {
+  const memberships: ArenaMembership[] = []
+  for (const data of categories) {
+    const i = data.rankings.leaderboard.findIndex((e) => e.productId === productId)
+    if (i === -1) continue
+    memberships.push({
+      arenaId: data.category.id,
+      arenaName: data.category.name,
+      rank: i + 1,
+      fieldSize: data.rankings.leaderboard.length,
+    })
+  }
+  return memberships
+}
+
 // A product id can (rarely) be ranked in two arenas — e.g. `square` in both payments and
 // mobile-payments. Same deterministic rule as scripts/generate-badges.mjs: the first category
 // (categories.json / loadAll order) owns the id.

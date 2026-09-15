@@ -44,6 +44,7 @@ const CATEGORIES = [
   'ecommerce-platforms',
   'email',
   'edge-platforms',
+  'email-marketing',
   'equity-management',
   'error-tracking',
   'expense-management',
