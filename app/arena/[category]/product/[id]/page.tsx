@@ -19,7 +19,6 @@ import OpportunitiesSection from '@/components/OpportunitiesSection'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
 import PricingSignals from '@/components/PricingSignals'
-import ProductFinePrint from '@/components/ProductFinePrint'
 import ProductLogo from '@/components/ProductLogo'
 import ProductShowcase from '@/components/ProductShowcase'
 import ProofsSection from '@/components/ProofsSection'
@@ -106,6 +105,7 @@ export default async function ProductPage({
   if (!product) notFound()
   const entry = data.rankings.leaderboard.find((e) => e.productId === id)!
   const rank = data.rankings.leaderboard.indexOf(entry) + 1
+  const naDims = new Set(data.category.naDimensions ?? [])
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
   // Flattened, serializable (story, verdict) rows for the client-side sortable table — the
   // full CategoryData never crosses the server/client boundary. globalStoryIds(loadAll())
@@ -252,9 +252,12 @@ export default async function ProductPage({
           {/* Founder 2026-09-15: "PA Score" lives INSIDE the pill (label prop), consistent with
               the self-labeled Agent-ready / Built-in AI pills beside it. */}
           <AiEraBadge label="PA Score" value={entry.aiEra} href={`/arena/${category}/product/${id}/score`} interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
-          <AgenticBadge kind="agent-ready" value={entry.agentReady} untested={isGroupUntested(data, id, 'agent-access')} href={`/arena/${category}/product/${id}/score#agent-ready`} />
-          <AgenticBadge kind="agentic-app" value={entry.agenticApp} untested={isGroupUntested(data, id, 'agentic-features')} href={`/arena/${category}/product/${id}/score#built-in-ai`} />
-          <AgenticBadge kind="api-quality" value={entry.apiQuality} untested={isGroupUntested(data, id, 'api-quality')} href={`/arena/${category}/product/${id}/score#api-quality`} />
+          {/* naDimensions (hardware arenas): a suppressed dimension renders the muted "n/a"
+              pill (value=null path) — a chip has no agent-drivable surface or API of its own,
+              and a number would overstate; the PA Score above still applies. */}
+          <AgenticBadge kind="agent-ready" value={naDims.has('agentReady') ? null : entry.agentReady} untested={!naDims.has('agentReady') && isGroupUntested(data, id, 'agent-access')} href={naDims.has('agentReady') ? undefined : `/arena/${category}/product/${id}/score#agent-ready`} />
+          <AgenticBadge kind="agentic-app" value={naDims.has('agenticApp') ? null : entry.agenticApp} untested={!naDims.has('agenticApp') && isGroupUntested(data, id, 'agentic-features')} href={naDims.has('agenticApp') ? undefined : `/arena/${category}/product/${id}/score#built-in-ai`} />
+          <AgenticBadge kind="api-quality" value={naDims.has('apiQuality') ? null : entry.apiQuality} untested={!naDims.has('apiQuality') && isGroupUntested(data, id, 'api-quality')} href={naDims.has('apiQuality') ? undefined : `/arena/${category}/product/${id}/score#api-quality`} />
           <AgentAccessGlyphs data={data} productId={id} size="md" />
         </div>
         {/* SECONDARY row — adoption signals (registry data, never part of the PA Score) and the
@@ -450,12 +453,10 @@ export default async function ProductPage({
           single authoritative list of this product's battles (same pairings, canonical /vs URLs). */}
 
       {/* Ops fine print, dead last (founder: educate first, ops last): 30-day agent-surface
-          uptime (renders nothing until slo-check has history — lib/slo.ts) next to the
-          provenance line — evidence freshness + story coverage, demoted from the header
-          (the arenas strip took its slot). */}
+          uptime (renders nothing until slo-check has history — lib/slo.ts). The "Evidence as
+          of · story coverage" provenance line stays removed entirely (founder 2026-09-15 —
+          the later ruling supersedes the earlier "demote to bottom" re-scope). */}
       <SloUptimeLine arena={category} productId={id} />
-
-      <ProductFinePrint freshness={freshness} coverageScore={entry.score} />
     </div>
   )
 }

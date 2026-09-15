@@ -75,6 +75,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
             <th className="px-3 py-2 font-normal"><span title="Agent-ready (0–100): how easily an outside AI agent or assistant can connect to and operate this product — APIs, command-line tools, MCP, docs">Agent-ready</span></th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="API quality (0–100): how good the product's programming interface is — machine-readable spec, interactive docs, sandbox, versioning discipline">API quality</span></th>
             <th className="px-3 py-2 font-normal"><span title="Which agent doorways exist: MCP server, official command-line tool (CLI), public API — from judged evidence">Access</span></th>
+            <th className="hidden px-3 py-2 font-normal md:table-cell"><span title="Built-in AI assistant mode, from the judged builtin-assistant story — its own column so every row keeps one height">AI mode</span></th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of any score">Popularity</span></th>
             <th className="px-3 py-2 font-normal">
               <span className="inline-flex items-center gap-1.5">
@@ -96,14 +97,13 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
                   <ProductLogo product={row.product} size={24} />
                   <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                 </Link>
-                <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                  {row.product.type === 'oss' && <OssPill variant="compact" />}
-                  <AiModeBadge
-                    data={row.data}
-                    productId={row.product.id}
-                    href={`/arena/${row.data.category.id}/product/${row.product.id}#story-agentic-builtin-assistant`}
-                  />
-                </div>
+                {/* Founder 2026-09-15: the AI-mode pill moved to its own column — inside the
+                    name cell it added a second line and broke the constant row height. */}
+                {row.product.type === 'oss' && (
+                  <div className="mt-1 flex items-center gap-1.5">
+                    <OssPill variant="compact" />
+                  </div>
+                )}
               </td>
               <td className="px-3 py-2">
                 <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-emerald-300">
@@ -119,6 +119,13 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
               </td>
               <td className="px-3 py-2">
                 <AgentAccessGlyphs data={row.data} productId={row.product.id} />
+              </td>
+              <td className="hidden px-3 py-2 md:table-cell">
+                <AiModeBadge
+                  data={row.data}
+                  productId={row.product.id}
+                  href={`/arena/${row.data.category.id}/product/${row.product.id}#story-agentic-builtin-assistant`}
+                />
               </td>
               <td className="hidden px-3 py-2 sm:table-cell">
                 <MomentumChip popularity={row.data.popularity[row.product.id]} compact />

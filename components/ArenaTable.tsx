@@ -116,6 +116,14 @@ function SortableTh({
 // lib/hotProducts.ts — the fleet-relative threshold needs every arena's history, so it can't
 // be derived from this arena's `data` alone.
 export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { data: CategoryData; logoMap: Record<string, boolean>; pricing?: Record<string, PricingCell>; hotReasons?: Record<string, string> }) {
+  // Arena-level "this dimension doesn't apply" set (CategorySchema.naDimensions — hardware
+  // arenas): render n/a instead of a number, before any untested check.
+  const naDims = new Set(data.category.naDimensions ?? [])
+  const naCell = (
+    <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface or API of its own. The PA Score still applies; see the arena methodology note.">
+      n/a
+    </span>
+  )
   const [column, setColumn] = useState<ArenaTableColumn>('initScore')
   const [direction, setDirection] = useState<SortDirection>('desc')
   const [query, setQuery] = useState('')
@@ -231,7 +239,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                   <td className="w-8 px-2 py-2 font-mono tabular-nums text-zinc-400">
                     {rank}
                   </td>
-                  <td className="max-w-[200px] px-2 py-2">
+                  <td className="min-w-[220px] max-w-[320px] px-2 py-2">
                     <Link
                       href={`/arena/${data.category.id}/product/${product.id}`}
                       className="flex items-center gap-2 hover:text-emerald-300"
@@ -283,21 +291,21 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                     </div>
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
-                    {isGroupUntested(data, row.productId, 'agent-access') ? (
+                    {naDims.has('agentReady') ? naCell : isGroupUntested(data, row.productId, 'agent-access') ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agent-access evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
                     ) : row.agentReady === null ? <span className="text-zinc-500">n/a</span> : <>{row.agentReady.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
-                    {isGroupUntested(data, row.productId, 'agentic-features') ? (
+                    {naDims.has('agenticApp') ? naCell : isGroupUntested(data, row.productId, 'agentic-features') ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agentic-features evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
                     ) : row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 md:table-cell">
-                    {isGroupUntested(data, row.productId, 'api-quality') ? (
+                    {naDims.has('apiQuality') ? naCell : isGroupUntested(data, row.productId, 'api-quality') ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No API-quality evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>

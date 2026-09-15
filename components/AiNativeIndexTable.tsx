@@ -68,6 +68,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
             <th className="sticky left-0 z-10 w-10 bg-zinc-950 px-3 py-2 font-normal">#</th>
             <th className="sticky left-10 z-10 w-[170px] bg-zinc-950 px-3 py-2 font-normal">Product</th>
             <th className="px-3 py-2 font-normal"><span title="The product category (arena) it competes in — click through for that arena's full leaderboard">Arena</span></th>
+            <th className="hidden px-3 py-2 font-normal md:table-cell"><span title="Built-in AI assistant mode, from the judged builtin-assistant story — its own column so every row keeps one height">AI mode</span></th>
             <th className="px-3 py-2 font-normal"><span title="Built-in AI (0–100): how much AI the product gives its own users — built-in assistants, agentic features, automation">Built-in AI</span></th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Automation depth (0–100): how much of the product's work can run hands-off, end to end">Automation</span></th>
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of any score">Popularity</span></th>
@@ -93,18 +94,20 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                     <ProductLogo product={row.product} size={24} />
                     <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                   </Link>
-                  <div className="mt-1">
-                    <AiModeBadge
-                      data={row.data}
-                      productId={row.product.id}
-                      href={`/arena/${row.data.category.id}/product/${row.product.id}#story-agentic-builtin-assistant`}
-                    />
-                  </div>
                 </td>
                 <td className="px-3 py-2">
                   <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-emerald-300">
                     {row.data.category.name}
                   </Link>
+                </td>
+                {/* Founder 2026-09-15: AI-mode pill in its own column — inside the name cell it
+                    broke the constant row height. */}
+                <td className="hidden px-3 py-2 md:table-cell">
+                  <AiModeBadge
+                    data={row.data}
+                    productId={row.product.id}
+                    href={`/arena/${row.data.category.id}/product/${row.product.id}#story-agentic-builtin-assistant`}
+                  />
                 </td>
                 <td className="px-3 py-2">
                   {/* Column header already says BUILT-IN AI — the pill carries just the value. */}

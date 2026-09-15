@@ -196,7 +196,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
               const rank = rankOf.get(megaRowKey(row)) ?? sorted.length
               return (
                 <tr key={megaRowKey(row)} className="transition hover:bg-zinc-800/70">
-                  <td className="max-w-[220px] px-2 py-2">
+                  <td className="min-w-[240px] max-w-[340px] px-2 py-2">
                     <div className="flex items-center gap-2">
                       <span className="w-6 shrink-0 font-mono tabular-nums text-zinc-400">{rank}</span>
                       <Link
@@ -239,7 +239,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     </span>
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
-                    {row.agentReadyUntested ? (
+                    {row.naDimensions?.includes('agentReady') ? (
+                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface of its own. The PA Score still applies.">n/a</span>
+                    ) : row.agentReadyUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agent-access evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
@@ -253,14 +255,18 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                     )}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
-                    {row.agenticAppUntested ? (
+                    {row.naDimensions?.includes('agenticApp') ? (
+                      <span className="text-zinc-600" title="Not meaningful for this arena's product class. The PA Score still applies.">n/a</span>
+                    ) : row.agenticAppUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agentic-features evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
                     ) : row.agenticApp === null ? <span className="text-zinc-500">n/a</span> : <>{row.agenticApp.toFixed(0)}<span className="text-zinc-600">/100</span></>}
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 lg:table-cell">
-                    {row.apiUntested ? (
+                    {row.naDimensions?.includes('apiQuality') ? (
+                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no API of its own. The PA Score still applies.">n/a</span>
+                    ) : row.apiUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No API-quality evidence found or probed either way — unscored, not zero.">
                         untested
                       </span>
