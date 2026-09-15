@@ -70,6 +70,9 @@ import { probes as gpus } from './gpus'
 import { probes as securityKeys } from './security-keys'
 import { probes as authenticatorApps } from './authenticator-apps'
 import { probes as gameEngines } from './game-engines'
+import { probes as identityVerification } from './identity-verification'
+import { probes as bankingDataApis } from './banking-data-apis'
+import { probes as stablecoinPayments } from './stablecoin-payments'
 
 export type { LocalProbe } from './types'
 
@@ -135,4 +138,7 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'security-keys': securityKeys,
   'authenticator-apps': authenticatorApps,
   'game-engines': gameEngines,
+  'identity-verification': identityVerification,
+  'banking-data-apis': bankingDataApis,
+  'stablecoin-payments': stablecoinPayments,
 }
