@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest'
 import { mcpEndpointFor } from '../mcpEndpoints'
 import { buildRecordedStories, hasTryIt, mcpDocsUrlFor, processesFeaturing } from '../tryit'
-import { callResultLines, mcpClientConfig, probeResultLines, replayCharCount, stripSgr } from '../tryitReplay'
+import { callResultLines, mcpClientConfig, probeResultLines, replayCharCount, stripSgr, tryResultLines } from '../tryitReplay'
 import { loadCategory } from '../data'
 
 describe('replayCharCount', () => {
@@ -129,6 +129,44 @@ describe('callResultLines', () => {
     expect(callResultLines({ reachable: true, authRequired: false, handshake: false, httpStatus: 503 })[0]).toMatch(/HTTP 503/)
     expect(callResultLines({ reachable: true, authRequired: false, handshake: true, serverInfo: { name: 'v', version: '1' } })[0]).toMatch(/never completed/)
     expect(callResultLines({ ...okCall, call: { tool: 't', label: 'l', ok: false, error: 'server rejected the call (HTTP 500)' } })[0]).toBe('← server rejected the call (HTTP 500)')
+  })
+})
+
+describe('tryResultLines', () => {
+  it('labels a matching live run with the LIVE marker, elapsed ms, and the recorded expectation', () => {
+    const lines = tryResultLines({
+      ok: true, reachable: true, status: 200, contentType: 'text/plain', elapsedMs: 312,
+      bodyExcerpt: '# acme\ndocs body', truncated: false, pass: true, expected: { status: 200, pattern: null },
+    })
+    expect(lines[0]).toContain('HTTP 200')
+    expect(lines[0]).toContain('312 ms')
+    expect(lines[0]).toContain('LIVE')
+    expect(lines).toContain('  # acme')
+    expect(lines.at(-1)).toContain('✓ matches the recorded proof (HTTP 200)')
+  })
+
+  it('says a mismatch out loud instead of dressing it up', () => {
+    const lines = tryResultLines({
+      ok: true, reachable: true, status: 404, elapsedMs: 90, bodyExcerpt: 'gone',
+      pass: false, expected: { status: 200, pattern: null },
+    })
+    expect(lines.at(-1)).toContain('✗ differs from the recorded proof')
+  })
+
+  it('claims no verdict when the recording pinned nothing, and flags truncation', () => {
+    const lines = tryResultLines({
+      ok: true, reachable: true, status: 401, elapsedMs: 10, bodyExcerpt: 'x'.repeat(10),
+      truncated: true, pass: null, expected: { status: null, pattern: null },
+    })
+    expect(lines.some((l) => l.includes('truncated'))).toBe(true)
+    expect(lines.at(-1)).toContain('no match verdict is claimed')
+    expect(lines.join('\n')).not.toContain('✓')
+  })
+
+  it('reports an unreachable run as exactly that', () => {
+    expect(tryResultLines({ reachable: false, error: 'unreachable from our edge (network error or 10s timeout)', pass: false })).toEqual([
+      '← unreachable from our edge (network error or 10s timeout)',
+    ])
   })
 })
 
