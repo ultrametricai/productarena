@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- handleJsonRpc lives in dependency-free
+   worker JS; these tests deliberately poke both the result and error branches of untyped
+   JSON-RPC bodies, where `any` beats narrowing ceremony. */
 // Unit tests for the worker's hand-rolled remote MCP endpoint (JSON-RPC layer + tool shaping),
 // exercising handleJsonRpc with an injected fetchJson so no network or Workers runtime is
 // needed. The tool shapes must mirror the stdio package's (mcp/src/tools.ts) — see that

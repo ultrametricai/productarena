@@ -314,12 +314,18 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
 
 function Flow({ nodes, edges }: { nodes: DagNode[]; edges?: DagEdge[] }) {
   const layers = layerNodes(nodes, edges)
-  let stepIndex = 0
+  // Cumulative step offsets, precomputed so nothing is reassigned inside the render map
+  // (react-compiler lint: "Cannot reassign variable after render completes").
+  const offsets: number[] = []
+  let acc = 0
+  for (const layer of layers) {
+    offsets.push(acc)
+    acc += layer.length
+  }
   return (
     <>
       {layers.map((layer, li) => {
-        const start = stepIndex
-        stepIndex += layer.length
+        const start = offsets[li]
         return (
           <Fragment key={layer[0].id}>
             {li > 0 && <Connector />}
