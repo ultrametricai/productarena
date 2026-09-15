@@ -104,4 +104,39 @@ export const probes: LocalProbe[] = [
       expect: /external user id is required/,
       timeoutMs: 30_000,
     },
+    {
+      // Windmill Cloud's public API answers /api/version keyless — the documented OpenAPI
+      // surface (app.windmill.dev/openapi.html) is live and reachable by an agent.
+      probeId: 'api-version-endpoint',
+      productId: 'windmill',
+      storyIds: ['agentic-public-api'],
+      bin: 'curl',
+      argv: ['curl', '-s', '--max-time', '20', 'https://app.windmill.dev/api/version'],
+      displayCommand: 'curl -s https://app.windmill.dev/api/version',
+      expect: /v\d+\.\d+/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Official CLI straight off npm answers --version keyless (npx one-shot install).
+      probeId: 'cli-version',
+      productId: 'windmill',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'windmill-cli', '--version'],
+      displayCommand: 'npx -y windmill-cli --version',
+      expect: /CLI version: \d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Docs ship .md mirrors for agents (per llms.txt) — the MCP guide (generate a
+      // workspace MCP URL, run flows from Claude/Cursor) round-trips as raw Markdown.
+      probeId: 'docs-md-endpoint',
+      productId: 'windmill',
+      storyIds: ['agentic-agent-docs', 'workflows-as-mcp-tools'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://www.windmill.dev/docs/core_concepts/mcp.md | head -6'],
+      displayCommand: 'curl -s https://www.windmill.dev/docs/core_concepts/mcp.md | head -6',
+      expect: /MCP/,
+      timeoutMs: 30_000,
+    },
 ]

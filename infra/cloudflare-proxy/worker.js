@@ -249,6 +249,7 @@ export const MCP_ENDPOINTS = {
   'banking-as-a-service/stripe-treasury': 'https://mcp.stripe.com/',
   'billing-subscriptions/chargebee': 'https://mcp.chargebee.com/mcp',
   'billing-subscriptions/recurly': 'https://mcp.recurly.com/mcp',
+  'billing-subscriptions/revenuecat': 'https://mcp.revenuecat.ai/mcp',
   'billing-subscriptions/stripe-billing': 'https://mcp.stripe.com/',
   'card-issuing/stripe-issuing': 'https://mcp.stripe.com/',
   'customer-data-platforms/rudderstack': 'https://mcp.rudderstack.com/mcp',
@@ -301,6 +302,7 @@ export const MCP_ENDPOINTS = {
   'voice-agents/retell': 'https://mcp.retellai.com/',
   'voice-agents/telli': 'https://mcp.telli.com/mcp',
   'voice-agents/vapi': 'https://mcp.vapi.ai/mcp',
+  'web-scraping/context-dev': 'https://mcp.context.dev/mcp',
   'web-scraping/scrapingbee': 'https://mcp.scrapingbee.com/',
   'workflow-automation/make': 'https://mcp.make.com/',
 }

@@ -1,6 +1,6 @@
 // Keyless local probes for the web-scraping arena (see ./types.ts for the shape and ./index.ts
 // for registration). Every probe is cheap, keyless, and read-only.
-import type { LocalProbe } from './types'
+import { CURL_MCP_INIT, type LocalProbe } from './types'
 
 export const probes: LocalProbe[] = [
   {
@@ -46,5 +46,48 @@ export const probes: LocalProbe[] = [
     displayCommand: `mktemp -d && uv venv && uv pip install riveter-sdk && python -c "import riveter; print('PA_PROBE_OK riveter-sdk', version('riveter-sdk'))"`,
     expect: /PA_PROBE_OK riveter-sdk \d+\.\d+/,
     timeoutMs: 240_000,
+  },
+  {
+    // Context.dev's hosted remote MCP server (mcp.context.dev/mcp, documented at
+    // docs.context.dev/install-mcp) draws a keyless 401 with an OAuth protected-resource
+    // challenge — live, bearer-gated MCP endpoint.
+    probeId: 'mcp-remote-handshake',
+    productId: 'context-dev',
+    storyIds: ['agentic-mcp-server'],
+    bin: 'curl',
+    argv: [
+      'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.context.dev/mcp',
+      '-H', 'Content-Type: application/json',
+      '-H', 'Accept: application/json, text/event-stream',
+      '-d', CURL_MCP_INIT,
+    ],
+    displayCommand: `curl -si -X POST https://mcp.context.dev/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+    expect: /resource_metadata="https:\/\/mcp\.context\.dev/,
+    timeoutMs: 30_000,
+  },
+  {
+    // The documented production API (api.context.dev/v1, per the OpenAPI spec's servers
+    // block) answers a keyless request with a structured Bearer-key challenge (HTTP 401,
+    // "No API key provided" + a pointer to the key dashboard).
+    probeId: 'api-keyless-auth-challenge',
+    productId: 'context-dev',
+    storyIds: ['agentic-public-api'],
+    bin: 'curl',
+    argv: ['curl', '-s', '-i', '--max-time', '20', 'https://api.context.dev/v1/web/scrape/markdown'],
+    displayCommand: 'curl -si https://api.context.dev/v1/web/scrape/markdown',
+    expect: /No API key provided/,
+    timeoutMs: 30_000,
+  },
+  {
+    // Full OpenAPI 3.1 spec served keyless at a stable URL — the machine-readable
+    // contract an agent needs to drive every Context.dev endpoint.
+    probeId: 'openapi-machine-spec',
+    productId: 'context-dev',
+    storyIds: ['api-machine-spec', 'agentic-public-api'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://www.context.dev/openapi.json | head -c 300'],
+    displayCommand: 'curl -s https://www.context.dev/openapi.json | head -c 300',
+    expect: /"openapi":"3\.1/,
+    timeoutMs: 30_000,
   },
 ]
