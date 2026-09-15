@@ -31,3 +31,21 @@ edit, and send (or discard).
   comment. Review checklist before sending: (1) re-run a quick 200-check on the URLs,
   (2) confirm no existing llms.txt issue/PR in go-gitea/gitea or gitea/docs,
   (3) decide issue vs. docs PR — a PR with the file is friendlier if you're up for it.
+
+## Re-audit (2026-09-15, gift-quality-pass lane) — verdict: FIXED, ready pending founder sign-off
+
+- Gap re-verified: `docs.gitea.com/llms.txt` → 404 (still live, checked 2026-09-15).
+- **go-gitea/gitea CONTRIBUTING.md has an explicit AI Contribution Policy** (new since the
+  original draft): AI-assisted contributions are welcome but disclosure is REQUIRED, the human
+  must be able to explain/defend/revise everything, and AI must not be used to reply to review
+  questions; maintainers may close undisclosed or low-quality AI PRs. Our old PR.md and
+  issue-body.md had **no disclosure** — both now carry an explicit AI-disclosure paragraph.
+- **DCO**: go-gitea requires the Developer Certificate of Origin — the docs PR commit must be
+  signed off (`git commit -s`). Added to the pre-send checklist.
+- gitea.com/gitea/docs itself has no PR template or CONTRIBUTING.md (checked via the
+  gitea.com API, 2026-09-15) — the org-level policy governs. Repo root still has `static/`
+  (the placement mechanism holds).
+- Added an "advantage over the index/sitemap" sentence to the body (learned from Homebrew
+  #23967's rejection: "This offers no advantage over the index").
+- Founder action: needs a gitea.com account to open the PR (or open the issue on
+  go-gitea/gitea instead).

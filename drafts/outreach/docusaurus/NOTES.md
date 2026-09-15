@@ -50,3 +50,24 @@ edit, and send (or discard).
 2. Re-run the URL 200-check.
 3. Re-read #10899 for a change in the team's plugin plans; if a first-party generator has
    shipped since, convert this into a config PR wiring it instead.
+
+## Re-audit (2026-09-15, gift-quality-pass lane) — verdict: FIXED but ON HOLD
+
+- **Competing OPEN PR found: facebook/docusaurus#11958** "feat(website): add agent docs
+  plugin" (LucasLomiento, opened 2026-04-24; touches `website/docusaurus.config.ts` +
+  `website/src/plugins/agent-docs/index.ts`). It emits `/llms.txt`, `/llms-full.txt`, section
+  indexes, and markdown routes at build time — a strict superset of our static file. **Do not
+  send while it is open.** If it merges, retire this draft and re-probe/re-judge; if it closes
+  unmerged, send ours (it now references #11958 and pre-concedes to a generated version).
+- **Template compliance fixed**: the old draft body did not contain the repo's mandatory
+  `.github/PULL_REQUEST_TEMPLATE.md` (Pre-flight checklist / Motivation / Test Plan / Test
+  links / Related issues/PRs) — the exact failure mode that got Homebrew #23967 bot-closed.
+  PR.md is rewritten around the template verbatim, with honest checkboxes (conditional boxes
+  left unticked and annotated N/A).
+- **AI disclosure added** to the body (AI-drafted, human-reviewed and accountable) — no Meta
+  AI policy found, but this is now a program-wide rule.
+- **"Advantage over the index" pre-answered** in the Motivation section (learned from
+  Homebrew's rejection: "This offers no advantage over the index").
+- **Needs founder action**: sign the Meta CLA (one-time) before/at PR open; actually read
+  CONTRIBUTING.md#pull-requests before sending (the first checklist box asserts it).
+- Gap re-verified 2026-09-15: `docusaurus.io/llms.txt` → 404 (still live).

@@ -3,8 +3,11 @@
 **Default state: nothing in this directory has been posted anywhere.** Every file is a draft
 awaiting founder review; sending (or discarding) is a human decision. Venue URLs and the live
 product-page URLs were checked read-only (HTTP 200) on the date noted in each draft's
-frontmatter — no issues, discussions, emails, or form submissions were created. The one
-exception so far: **crawl4ai — SENT** (see its `status.json`).
+frontmatter — no issues, discussions, emails, or form submissions were created. Exceptions —
+gifts that HAVE gone out (each vendor's `status.json` is the source of truth, including
+post-send outcome notes): **crawl4ai** (PR open), **vllm** (PR open — body fix pending, see
+`vllm/NOTES.md`), **homebrew** (PR closed/rejected — RETIRED, see `homebrew/CLOSEOUT.md`),
+**linear** (issue closed with thanks by Linear staff).
 
 ## Lifecycle: `status.json` (read by `lib/gifts.ts` → the unlinked `/gifts` review page)
 
@@ -25,11 +28,11 @@ this README's index table to track state.
 | --- | --- | --- | --- | --- |
 | [GIFT-LIST](./GIFT-LIST.md) | (cross-arena) | ranked gift-PR program (18 candidates) | various — see list | draft — requires founder sign-off |
 | [gitea](./gitea/issue-body.md) | code-hosting | gift (llms.txt offer) | github.com/go-gitea/gitea issue or gitea.com/gitea/docs PR | draft — requires founder sign-off |
-| [linear](./linear/issue-body.md) | project-management | gift (passing cert report + invitation) | github.com/linear/linear issue (docs source closed — no PR possible) | draft — requires founder sign-off |
-| [vllm](./vllm/PR.md) | local-llm-runtimes | gift PR (llms.txt, 50 links verified) | vllm-project/vllm → `docs/llms.txt` (DCO sign-off required) | draft — requires founder sign-off |
+| [linear](./linear/issue-body.md) | project-management | gift (passing cert report + invitation) | github.com/linear/linear issue (docs source closed — no PR possible) | **SENT** — closed with thanks by Linear staff (see `status.json`) |
+| [vllm](./vllm/PR.md) | local-llm-runtimes | gift PR (llms.txt, 50 links verified) | vllm-project/vllm → `docs/llms.txt` (DCO sign-off required) | **SENT** — open; body fix pending per AGENTS.md (see `status.json` + `NOTES.md`) |
 | [crawl4ai](./crawl4ai/PR.md) | web-scraping | gift PR (llms.txt, 49 links verified) | unclecode/crawl4ai → `docs/md_v2/llms.txt` | **SENT** — [unclecode/crawl4ai#2267](https://github.com/unclecode/crawl4ai/pull/2267) (see `status.json`) |
-| [homebrew](./homebrew/PR.md) | package-managers | gift PR (llms.txt, 49 links verified) | Homebrew/brew → `docs/llms.txt` (Responsible-AI disclosure included) | draft — requires founder sign-off |
-| [docusaurus](./docusaurus/PR.md) | docs-platforms | gift PR (llms.txt, 54 links verified) | facebook/docusaurus → `website/static/llms.txt` (Meta CLA required) | draft — requires founder sign-off |
+| [homebrew](./homebrew/PR.md) | package-managers | gift PR (llms.txt, 49 links verified) | Homebrew/brew → `docs/llms.txt` (Responsible-AI disclosure included) | **SENT → CLOSED, rejected on merits — RETIRED** (see `status.json` + `CLOSEOUT.md`) |
+| [docusaurus](./docusaurus/PR.md) | docs-platforms | gift PR (llms.txt, 54 links verified) | facebook/docusaurus → `website/static/llms.txt` (Meta CLA required) | draft — **ON HOLD**: competing open PR facebook/docusaurus#11958 (see `NOTES.md`) |
 | [gemini-cli](./gemini-cli/notification.md) | ai-coding | disputed-verdict notification | github.com/google-gemini/gemini-cli/discussions | draft — requires founder sign-off |
 | [cloudflare](./cloudflare/notification.md) | edge-platforms | disputed-verdict notification | github.com/cloudflare/workers-sdk/discussions | draft — requires founder sign-off |
 | [logseq](./logseq/notification.md) | notes-knowledge | disputed-verdict notification | github.com/logseq/logseq/discussions | draft — requires founder sign-off |
@@ -75,13 +78,31 @@ consequential the dispute is (headline score or a close race), (c) having a real
    links to work.
 5. Post from a human account, one vendor at a time; space them out.
 
-## Pre-send checklist (MANDATORY — learned from Homebrew #23967 being bot-closed)
+## Pre-send checklist (MANDATORY — learned from the first four sends)
 
 1. Read the target repo's `.github/PULL_REQUEST_TEMPLATE.md` and CONTRIBUTING.md — the PR BODY
    MUST contain their template, checkboxes verbatim (unticked where honestly not done), our
-   content woven into their sections.
-2. Read any AI-usage policy (e.g. https://docs.brew.sh/Responsible-AI-Usage) — disclose AI
-   assistance honestly in the designated place; never tick "no AI" falsely.
+   content woven into their sections. (Homebrew #23967 was bot-closed for a missing template —
+   their bot reads it as "written by an AI not a human".)
+2. Read any AI-usage policy AND any `AGENTS.md` in the repo root — these bind AI-assisted
+   contributions even when a human opens the PR. **Disclose AI assistance in every gift body
+   by default** ("AI-drafted, human-reviewed and accountable"), not only where a policy
+   exists: vLLM's AGENTS.md and go-gitea's AI Contribution Policy both make undisclosed AI
+   work a closing/banning offense, and both were easy to miss. Where a policy adds
+   description requirements (vLLM: dedupe statement, test commands + results, model-eval
+   N/A note), the body must contain them explicitly.
 3. DCO/CLA: sign-off trailers where required; CLA repos need the founder's signature first.
 4. Re-verify the gap (llms.txt still 404) and every artifact URL (200) on send day.
-5. One AI-assisted PR open at a time per repo policy where stated.
+5. Dedupe against OPEN PRs that produce the same surface a different way (docusaurus #11958
+   generates llms.txt for their own site — our static-file draft went ON HOLD). Search PRs
+   and issues, all states, for `llms` — not just exact-title matches.
+6. Pre-answer the "no advantage over the index" objection in the body (the exact words
+   Homebrew's lead used when rejecting on merits): say what llms.txt adds over the existing
+   human index/sitemap — curated, plain-text, stable, sized for LLM context windows. If the
+   target's maintainers are known scope-hawks, reconsider sending at all.
+7. Never request CI/labels the repo gates behind trust (vLLM: "DO NOT request for the label
+   to be added") — a reviewer applies them when they pick the PR up.
+8. Outcomes are final: a "passing on this" from a lead maintainer permanently retires the
+   gift — thank them briefly (optional), never reopen, relitigate, or resend a variant.
+9. After sending, a human answers every review question personally (go-gitea policy states
+   this outright; treat it as universal).

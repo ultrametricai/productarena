@@ -54,3 +54,43 @@ edit, and send (or discard).
 1. Re-run the URL 200-check (`scripts` used a plain curl loop; any tool works).
 2. Re-check for a competing llms.txt PR/issue in vllm-project/vllm.
 3. Commit with DCO sign-off; disclose AI assistance if vLLM's contributing guide asks.
+
+## Post-send compliance audit (2026-09-15, gift-quality-pass lane)
+
+PR #56909 state: **OPEN**, no maintainer comments yet, DCO check **passing**, template
+sections (Purpose / Test Plan / Test Result) present. Two findings:
+
+1. **AGENTS.md violation — must fix.** vllm-project/vllm's `AGENTS.md` ("Agent Instructions
+   for vLLM", applies to *all* AI-assisted contributions, "Breaching these guidelines can
+   result in automatic banning") requires that PR descriptions for AI-assisted work include:
+   - Why this is not duplicating an existing PR — **missing from our body**.
+   - Test commands run and results — present.
+   - Model evaluation results when output/accuracy/serving is affected — N/A (docs-only),
+     but the body should say so explicitly.
+   - **A clear statement that AI assistance was used — missing from our body.**
+
+   Fix drafted: `PR-BODY-v2.md` in this directory adds an "AI-assistance disclosure (per
+   AGENTS.md)" section (AI-drafted, human-reviewed and accountable, disclosed), an explicit
+   dedupe statement (re-verified 2026-09-15: `gh pr list --state all --search "llms.txt"` →
+   only #56909; `gh issue list --state all --search "llms.txt"` → no llms.txt issue), and an
+   explicit model-eval N/A line. Command for the founder (do not post from this lane):
+
+   ```
+   gh pr edit 56909 --repo vllm-project/vllm \
+     --body-file drafts/outreach/vllm/PR-BODY-v2.md
+   ```
+
+   Optionally follow with a short transparency comment so the edit is visible:
+
+   ```
+   gh pr comment 56909 --repo vllm-project/vllm --body \
+   "Updated the description to comply with AGENTS.md: added the AI-assistance disclosure \
+   (the llms.txt and this description were AI-drafted; I reviewed every line, ran the link \
+   verification, and am accountable for the change), the duplicate-work check, and an \
+   explicit note that model-evaluation results are N/A for a docs-only static file."
+   ```
+
+2. **pre-run-check CI failure is expected, not actionable.** The failing check only gates
+   pre-commit runs: it requires a `ready`/`verified` label or 4+ merged PRs from the author,
+   and says "DO NOT request for the label to be added if you are an AI agent." Do NOT ask for
+   the label; a reviewer adds it when they pick the PR up. Docs-only file needs no CI anyway.

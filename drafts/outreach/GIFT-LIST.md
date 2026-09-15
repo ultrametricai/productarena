@@ -35,22 +35,44 @@ Ranking = acceptance likelihood × visibility × score impact. All facts re-veri
 - **shopify**: `shopify.dev/llms.txt` 301s to `shopify.dev/llms.md`, which 404s — a *broken
   redirect*, more actionable than the plain 404 the audit recorded.
 
+## Program learnings from the first four sends (2026-09-15 quality pass)
+
+Outcomes: crawl4ai #2267 open (no comments); vllm #56909 open (body fix pending — vLLM's
+`AGENTS.md` mandates an AI-disclosure + dedupe statement in the description, drafted in
+`vllm/PR-BODY-v2.md`); Homebrew #23967 **closed — rejected on merits** ("This offers no
+advantage over the index. Passing on this." — retired, see `homebrew/CLOSEOUT.md`); Linear
+#1274 closed with thanks from Linear staff. Rules now folded into the README's mandatory
+pre-send checklist:
+
+1. The PR body must contain the target's PR template verbatim (Homebrew bot-closes without it).
+2. Check for an `AGENTS.md` / AI policy in every target repo and disclose AI assistance in
+   every gift body by default — vLLM and go-gitea both make undisclosed AI work a
+   closing/banning offense. Policy sweep of the remaining ranked targets (2026-09-15):
+   `AGENTS.md` present in langfuse/langfuse-docs, mudler/LocalAI, meltano/meltano,
+   mastra-ai/mastra (read before drafting); PR templates present in mudler/LocalAI,
+   ros2/ros2_documentation, mastra-ai/mastra; no CONTRIBUTING/AI-policy hits found in the
+   other swept repos (re-check at draft time).
+3. Pre-answer "what does this add over the existing index/sitemap" in every llms.txt body.
+4. Dedupe against open PRs that build the same surface differently (docusaurus #11958 put
+   that draft ON HOLD).
+5. A lead maintainer's "passing on this" is final — retire, never resend.
+
 ## The ranked list
 
 | # | Product (arena, rank by Arena Score) | Target repo (activity, license) | The exact gift | Flips (story id: current verdict) | Effort | Risk / policy notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | linear (project-management, 2/6 @ 36.9) | github.com/linear/linear (issues on, pushed 2026-09-09, MIT) | **Issue, not PR** (docs source closed): passing Agent-Ready cert report + invitation to submit; suggest SDL at a stable URL for Agent-Native | certifications.json: eligible `agent-ready` entry; `agentic-agent-docs`: partial (re-judge → full); `api-machine-spec`: none (if SDL ships) | S | None — congratulation + gift; report attached, zero work for them |
-| 2 | vllm (local-llm-runtimes, 2/7 @ 28.9) | vllm-project/vllm (pushed 2026-09-11, Apache-2.0, 91.5k★) | `docs/llms.txt` (MkDocs passthrough; RTD root-serves default-version files — verified via docs.readthedocs.com/llms.txt 200) | `agentic-agent-docs`: none | S | **DCO sign-off enforced** (verified on merged PR #56499); RTD root-serving caveat noted in PR body |
+| 2 | vllm (local-llm-runtimes, 2/7 @ 28.9) | vllm-project/vllm (pushed 2026-09-11, Apache-2.0, 91.5k★) | `docs/llms.txt` (MkDocs passthrough; RTD root-serves default-version files — verified via docs.readthedocs.com/llms.txt 200) | `agentic-agent-docs`: none | S | **DCO sign-off enforced** (verified on merged PR #56499); **AGENTS.md mandates AI-disclosure + dedupe statement in the PR description** (found 2026-09-15 — sent body being fixed); RTD root-serving caveat noted in PR body |
 | 3 | crawl4ai (web-scraping, 4/6 @ 30.7) | unclecode/crawl4ai (pushed 2026-09-09, Apache-2.0, 82.2k★) | `docs/md_v2/llms.txt` (mkdocs `docs_dir`, site_url = docs.crawl4ai.com) | `agentic-agent-docs`: none | S | No CLA/DCO found; single-lead maintainer; they asked for this themselves (#326) and ship an llms.txt generator app |
-| 4 | homebrew (package-managers, 3/6 @ 28.2) | Homebrew/brew (pushed 2026-09-11, BSD-2-Clause, 49.5k★) | `docs/llms.txt` (Jekyll passthrough — `docs/robots.txt` precedent serves at docs.brew.sh/robots.txt, verified 200) | `agentic-agent-docs`: none | S | **Responsible AI Usage policy** — must disclose AI assistance (draft does); scope-conscious maintainers |
-| 5 | docusaurus (docs-platforms, 3/5 @ 31.8) | facebook/docusaurus (pushed 2026-09-11, MIT, 66.2k★) | `website/static/llms.txt` for docusaurus.io (static root-serving verified via `_headers` etc.) | `agentic-agent-docs`: none | S | **Meta CLA required**; core llms-txt plugin was declined (PR #11420 closed) — draft is explicitly content-not-plugin and pre-concedes the "use a community plugin" close |
+| 4 | homebrew (package-managers, 3/6 @ 28.2) | Homebrew/brew (pushed 2026-09-11, BSD-2-Clause, 49.5k★) | `docs/llms.txt` (Jekyll passthrough — `docs/robots.txt` precedent serves at docs.brew.sh/robots.txt, verified 200) | `agentic-agent-docs`: none | S | **Responsible AI Usage policy** — must disclose AI assistance (draft does); scope-conscious maintainers — **confirmed: sent 2026-09-14, rejected on merits 2026-09-15 ("no advantage over the index") — RETIRED** |
+| 5 | docusaurus (docs-platforms, 3/5 @ 31.8) | facebook/docusaurus (pushed 2026-09-11, MIT, 66.2k★) | `website/static/llms.txt` for docusaurus.io (static root-serving verified via `_headers` etc.) | `agentic-agent-docs`: none | S | **Meta CLA required**; core llms-txt plugin was declined (PR #11420 closed) — draft is explicitly content-not-plugin and pre-concedes the "use a community plugin" close; **ON HOLD 2026-09-15: open PR #11958 generates llms.txt for docusaurus.io — do not send while it lives** |
 | 6 | langfuse (llm-evals-observability, 4/7 @ 33.8) | langfuse/langfuse-docs (pushed 2026-09-11, MIT) + langfuse/langfuse | Serve their existing fern-generated spec (cloud.langfuse.com/generated/api/openapi.yml, 200, 495KB) as JSON at langfuse.com/openapi.json (fern JSON output + Next.js rewrite) | `api-machine-spec`: none; **certification: none → agent-ready** (suite passes all but openapi/mcp, verified 2026-09-11) | M | Two-repo change; spec is generated — PR must wire generation, not commit a copy that rots |
 | 7 | trivy (security-scanners, 2/5 @ 29.5) | aquasecurity/trivy (pushed 2026-09-11, Apache-2.0, 37.9k★) | `docs/llms.txt` via MkDocs — **but** trivy.dev serves docs under /docs/latest/ (mike versioning); root placement needs the website repo — confirm before drafting | `agentic-agent-docs`: none (`agentic-mcp-server` already full) | M | Root-vs-versioned placement unverified; Aqua repo conventions to check |
 | 8 | opentofu (infra-as-code, 2/4 @ 30.2) | opentofu/opentofu.org (pushed 2026-09-07, Apache-2.0) | `static/llms.txt` (Docusaurus site repo → opentofu.org/llms.txt) | `agentic-agent-docs`: none | S | LF project — check DCO; low-traffic site repo, may route to core team |
 | 9 | mastra (agent-frameworks, 8/9 @ 26.6) | mastra-ai/mastra (pushed 2026-09-11, 27.9k★, license NOASSERTION) | Publish the mastra dev-server's OpenAPI document at mastra.ai/openapi.json (docs app lives in the monorepo) | `api-machine-spec`: none; **certification: none → agent-ready** (fails only openapi/mcp, verified 2026-09-11) | M | License is non-standard (verify Elastic-style terms + CLA before contributing); spec source needs locating in monorepo |
 | 10 | shopify (ecommerce-platforms, 2/5 @ 36) | Closed docs — **issue/report via shopify.dev feedback or github.com/Shopify/hydrogen-adjacent channels** | Bug report: shopify.dev/llms.txt 301 → /llms.md → 404 (broken redirect, verified 2026-09-11); shopify.com/llms.txt works (200) | `agentic-agent-docs`: full q8 already (shopify.com); fixing shopify.dev strengthens it; cert llms-txt: fail → pass | S | Not a PR (source closed); a concrete broken-redirect report is low-friction and hard to resent |
 | 11 | localai (local-llm-runtimes, 1/7 @ 31.7) | mudler/LocalAI (pushed 2026-09-11, MIT, 49k★) | llms.txt in the Hugo docs tree (docs/content) → localai.io/llms.txt | `agentic-agent-docs`: none (`agentic-mcp-server` already full) | S | Verify Hugo static placement in their netlify build; friendly solo-led project |
-| 12 | gitea (code-hosting, 2/4 @ 28.4) | gitea.com/gitea/docs PR or go-gitea/gitea issue | Already drafted: `drafts/outreach/gitea/llms.txt` (89 URLs verified 200 on 2026-09-08; docs.gitea.com/llms.txt re-verified 404 on 2026-09-11) | `agentic-agent-docs`: none; `api-machine-spec`: none | S | The template draft — ready first |
+| 12 | gitea (code-hosting, 2/4 @ 28.4) | gitea.com/gitea/docs PR or go-gitea/gitea issue | Already drafted: `drafts/outreach/gitea/llms.txt` (89 URLs verified 200 on 2026-09-08; docs.gitea.com/llms.txt re-verified 404 on 2026-09-11) | `agentic-agent-docs`: none; `api-machine-spec`: none | S | The template draft — ready first; **go-gitea AI Contribution Policy requires explicit AI disclosure + DCO sign-off** (found 2026-09-15 — draft updated to comply) |
 | 13 | meltano (data-pipelines, 4/5 @ 28) | meltano/meltano (pushed 2026-09-11, MIT) | llms.txt in the Docusaurus docs tree → docs.meltano.com/llms.txt | `agentic-agent-docs`: none | S | Verify docs dir location in monorepo; small friendly team |
 | 14 | pnpm (package-managers, 5/6 @ 25.7) | pnpm/pnpm.io (pushed 2026-09-10, MIT) | `static/llms.txt` (Docusaurus) → pnpm.io/llms.txt | `agentic-agent-docs`: none | S | None found; small site repo, fast merges |
 | 15 | keycloak (auth-platforms, 5/5 @ 22.2) | keycloak/keycloak-web (pushed 2026-09-11, Apache-2.0) | llms.txt at keycloak.org root (site repo) | `agentic-agent-docs`: none (`api-machine-spec` already partial) | S/M | CNCF project — DCO; docs are split across keycloak.org/documentation, curation is harder |
