@@ -12,6 +12,7 @@
 // components/WatchButton.tsx (☆/★ gate) and components/WatchlistGate.tsx (/watchlist gate).
 
 import { useSyncExternalStore } from 'react'
+import { syncWatchlistFromServer } from './watchlist'
 
 // Same-origin path — the worker only exists on ultrametric.ai, and relative URLs mean the
 // session cookie flows with no CORS at all (simpler than the old cross-origin Ory setup).
@@ -75,6 +76,9 @@ export function subscribeSession(callback: () => void): () => void {
     started = true
     void fetchSession().then((session) => {
       current = session
+      // Logged-in readers get their account watchlist merged in (lib/watchlist.ts) — one GET
+      // per page load, fire-and-forget, silently a no-op wherever the worker route is absent.
+      if (session.state === 'authenticated') void syncWatchlistFromServer()
       for (const listener of listeners) listener()
     })
   }

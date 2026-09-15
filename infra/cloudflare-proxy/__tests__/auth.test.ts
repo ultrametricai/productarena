@@ -300,3 +300,66 @@ describe('unknown auth routes', () => {
     expect((await authGet('/whoami')).status).toBe(404)
   })
 })
+
+describe('mock mode (WORKOS_MOCK=1 — dev-only harness, see docs/AUTH.md)', () => {
+  const MOCK_ENV = { WORKOS_MOCK: '1' } // deliberately NO client id and NO secrets — the point
+  const localGet = (path: string, cookie?: string, env: object = MOCK_ENV) =>
+    handleAuth(
+      new Request(`http://localhost:8787/productarena/auth${path}`, {
+        headers: cookie ? { cookie } : undefined,
+      }),
+      env,
+    ) as Promise<Response>
+
+  it('login mints an immediate session for test@ultrametric.ai with a host-only non-Secure cookie', async () => {
+    const returnTo = encodeURIComponent('http://localhost:8787/productarena/arena/crm')
+    const res = await localGet(`/login?return_to=${returnTo}`)
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toBe('http://localhost:8787/productarena/arena/crm')
+    const cookie = setCookies(res).find((c) => c.startsWith('pa_session='))
+    expect(cookie).toMatch(/HttpOnly/i)
+    expect(cookie).toMatch(/Path=\/productarena/)
+    expect(cookie).not.toMatch(/Domain=/i) // host-only: a Domain cookie would be rejected on localhost
+    expect(cookie).not.toMatch(/Secure/i) // http://localhost
+    // Full round-trip: /auth/me accepts the minted cookie without any secrets configured.
+    const value = /pa_session=([^;]+)/.exec(cookie ?? '')?.[1]
+    const me = await localGet('/me', `pa_session=${value}`)
+    expect(me.status).toBe(200)
+    expect(await me.json()).toEqual({ email: 'test@ultrametric.ai' })
+  })
+
+  it('still sanitizes return_to — off-origin targets fall back to the local PA home', async () => {
+    const res = await localGet(`/login?return_to=${encodeURIComponent('https://evil.example/phish')}`)
+    expect(res.headers.get('location')).toBe('http://localhost:8787/productarena')
+    const prod = await localGet(`/login?return_to=${encodeURIComponent('https://ultrametric.ai/productarena')}`)
+    // Even the production origin is "off-origin" for a localhost dev session.
+    expect(prod.headers.get('location')).toBe('http://localhost:8787/productarena')
+  })
+
+  it('logout clears the cookie locally and never bounces through WorkOS', async () => {
+    const login = await localGet('/login')
+    const value = /pa_session=([^;]+)/.exec(setCookies(login).find((c) => c.startsWith('pa_session=')) ?? '')?.[1]
+    const res = await localGet(`/logout?return_to=${encodeURIComponent('/productarena/watchlist')}`, `pa_session=${value}`)
+    expect(res.status).toBe(302)
+    expect(res.headers.get('location')).toBe('http://localhost:8787/productarena/watchlist')
+    expect(setCookies(res).find((c) => c.startsWith('pa_session='))).toMatch(/Max-Age=0/)
+  })
+
+  it('prefers a real PA_SESSION_KEY over the dev fallback when one is set', async () => {
+    const env = { WORKOS_MOCK: '1', PA_SESSION_KEY: KEY }
+    const login = await localGet('/login', undefined, env)
+    const value = /pa_session=([^;]+)/.exec(setCookies(login).find((c) => c.startsWith('pa_session=')) ?? '')?.[1]
+    expect(await verify(KEY, value)).toMatchObject({ email: 'test@ultrametric.ai', sub: 'user_mock_test' })
+  })
+
+  it('NEVER activates on the production hostname, even with the var set', async () => {
+    // Unconfigured prod worker + stray WORKOS_MOCK: still the fail-closed 500, no fake session.
+    const unconfigured = await authGet('/login', undefined, { WORKOS_MOCK: '1' })
+    expect(unconfigured.status).toBe(500)
+    expect((await unconfigured.json()).error).toMatch(/auth not configured/)
+    // Fully configured prod worker + stray WORKOS_MOCK: the real WorkOS flow, untouched.
+    const configured = await authGet('/login', undefined, { ...ENV, WORKOS_MOCK: '1' })
+    expect(configured.status).toBe(302)
+    expect(new URL(configured.headers.get('location') ?? '').hostname).toBe('api.workos.com')
+  })
+})

@@ -7,7 +7,8 @@ import {
 } from '@/lib/watchlist'
 
 // ☆/★ watch toggle — persists product ids to localStorage (key 'pa-watchlist', see
-// lib/watchlist.ts): saved on this device. Rendered on product page headers, in MegaTable
+// lib/watchlist.ts) and, once the account sync has confirmed the worker's /api/watchlist route,
+// mirrors every change to the account store too. Rendered on product page headers, in MegaTable
 // rows, and on /watchlist itself. useSyncExternalStore keeps every star on the page in sync
 // through one snapshot (the raw stored string), with '[]' as the server snapshot so static
 // HTML always hydrates from the unstarred state.
@@ -44,8 +45,8 @@ export default function WatchButton({
   const watched = ids.includes(productId)
   const name = productName ?? productId
   const label = watched
-    ? `Unwatch ${name} — remove from your watchlist (saved on this device)`
-    : `Watch ${name} — add to your watchlist (saved on this device)`
+    ? `Unwatch ${name} — remove from your watchlist`
+    : `Watch ${name} — add to your watchlist`
   return (
     <button
       type="button"

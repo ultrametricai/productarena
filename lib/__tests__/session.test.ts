@@ -106,7 +106,25 @@ describe('session store state machine', () => {
     unsub()
     subscribeSession(() => {})
     await settledSession()
-    expect(fetchMock).toHaveBeenCalledTimes(1)
+    // (an authenticated resolve also kicks off the one watchlist sync GET — filter to /auth/me)
+    expect(fetchMock.mock.calls.filter(([url]) => url === '/productarena/auth/me')).toHaveLength(1)
+  })
+
+  it('kicks off exactly one watchlist account sync when authenticated, none when anonymous', async () => {
+    const authed = vi.fn().mockResolvedValue(jsonResponse(200, ME_OK))
+    vi.stubGlobal('fetch', authed)
+    subscribeSession(() => {})
+    await settledSession()
+    await vi.waitFor(() => {
+      expect(authed.mock.calls.filter(([url]) => url === '/productarena/api/watchlist')).toHaveLength(1)
+    })
+
+    resetSessionForTests()
+    const anon = vi.fn().mockResolvedValue(jsonResponse(401, { error: 'no session' }))
+    vi.stubGlobal('fetch', anon)
+    subscribeSession(() => {})
+    await settledSession()
+    expect(anon.mock.calls.filter(([url]) => url === '/productarena/api/watchlist')).toHaveLength(0)
   })
 })
 
