@@ -11,8 +11,11 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Scrollbar tracks transparent, not white | shipped 2026-09-15 |
 | Footer "Add your product" → actually goes to GitHub (CONTRIBUTING.md), scanner relabeled "Test your product" | shipped 2026-09-15 |
 | Pricing tier (free/paid/enterprise) visible in user story table | shipped 2026-09-15 (tier chips + filter, pricing-tier lane) |
-| Enterprise flag for sales-led vendors | in-lane (enterprise-curation) — badge mechanism shipped 2026-09-15, curation lane verifying vendors live |
+| Enterprise flag for sales-led vendors | shipped 2026-09-15 — 33 vendors live-verified and stamped (Adyen, Marqeta, Mangopay, Sierra, CoreWeave…); ~30 checked-and-rejected recorded |
 | Remove /notes (Arena Notes) — not useful | shipped 2026-09-15 (route, lib, generator, drafts, feed merge all removed) |
+| Clerky 0/100 — non-agentic or gap? | shipped 2026-09-15 — coverage gap: developers.clerky.com Partner API + llms.txt + mcp.clerky.com MCP were never crawled; PA 13.9→22.1, aiEra 0→14.0, agentReady 0→37.3 |
+| Footer: drop "Test your product" (adding = testing) | shipped 2026-09-15 |
+| Remove "?" chip next to table filter on main page | shipped 2026-09-15 |
 | ALL YC batches covered for agentic/famous companies | in-lane (yc-coverage-audit) |
 | Bring hardware section (processors, GPUs) into the arenas | in-lane (hardware-arenas) |
 | Remove "Experiment — not part of the evidence-judged arenas…" banner from /experiments pages | shipped 2026-09-15 |
