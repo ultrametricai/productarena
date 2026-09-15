@@ -16,7 +16,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Clerky 0/100 — non-agentic or gap? | shipped 2026-09-15 — coverage gap: developers.clerky.com Partner API + llms.txt + mcp.clerky.com MCP were never crawled; PA 13.9→22.1, aiEra 0→14.0, agentReady 0→37.3 |
 | Footer: drop "Test your product" (adding = testing) | shipped 2026-09-15 |
 | Remove "?" chip next to table filter on main page | shipped 2026-09-15 |
-| ALL YC batches covered for agentic/famous companies | in-lane (yc-coverage-audit) |
+| ALL YC batches covered for agentic/famous companies | shipped 2026-09-15 — full W16–F26 audit: 7 bring-ups (Deepgram W16, RevenueCat S18, SigNoz W21, LanceDB W22, Windmill S22, Context.dev S26, Maritime F26) + 14 domain-verified restamps (82 → 103 stamped products); every batch of the last 10 years covered or honestly recorded as no-arena-fit; coverage queue re-swept W16–F26 (784 candidates) |
 | Bring hardware section (processors, GPUs) into the arenas | in-lane (hardware-arenas) |
 | Remove "Experiment — not part of the evidence-judged arenas…" banner from /experiments pages | shipped 2026-09-15 |
 | Remove "Evidence as of … · story coverage …" footer line on product pages | shipped 2026-09-15 |
