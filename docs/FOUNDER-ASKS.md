@@ -18,7 +18,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | 50 growth ideas doc + execution start | shipped 2026-09-14 (doc) — execution rolling |
 | Pricing-tier dimension on user stories (free/paid/enterprise) fleet-wide | shipped 2026-09-15 — 1,180 cells classified over 70 arenas (803 free/295 paid/82 enterprise), annotation-only, tier chips + filters + "what's free" lines live |
 | Stripe-style exhaustive passes for major startups + hot repos (incl. buzz) | open — queued next wave |
-| Remaining payments arenas: card-issuing, tax-automation, banking-as-a-service, marketplace/payfac | open — after billing+fraud land |
+| Remaining payments arenas: card-issuing, tax-automation, banking-as-a-service, marketplace/payfac | shipped 2026-09-15 — 4 arenas, 23 products, 1,219 verdicts; Mangopay beats Stripe Connect in marketplace; Stripe Issuing #1 in issuing; TaxJar (Stripe-owned) last in tax |
 | Payments roster expansion (Checkout.com, Mollie, Airwallex, Paddle, Lemon Squeezy, Polar) | shipped 2026-09-15 — 5 arena rows (Polar debuts #2 @ 42.9; Lemon Squeezy = Stripe family entry, acquired 2024 → Stripe Managed Payments) |
 | Docusaurus gift PR | blocked (Meta CLA needs founder signature) |
 | Greptile pre-review of gift PRs | blocked (needs Greptile installed on ultrametricai org — founder to confirm) |
