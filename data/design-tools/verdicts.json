@@ -1291,7 +1291,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma's docs confirm interactive, high-fidelity, no-code prototyping and dedicated animation/motion tooling (figma-docs-16, figma-docs-33, figma-docs-28), supporting the general story of prototypes feeling like the real product. However, the evidence pack never explicitly documents advanced logic features like variables, conditional interactions, or scroll-triggered effects within prototypes. Missing for 10: explicit documentation of variables/conditional logic in prototypes, scroll-effect interactions, and independent hands-on validation of these advanced behaviors.",
+    "rationale": "Figma's own docs confirm high-fidelity, no-code interactive prototyping and dedicated animation/motion tooling (precise animations, reusable motion systems), which supports the 'feel like the real product' goal, but the evidence pack never explicitly documents prototyping-specific conditional logic, variable-driven states, or scroll-triggered interactions as advanced prototype behaviors. Missing for 10: explicit documentation of conditional/variable-based prototype logic, scroll-effect interactions, and independent hands-on validation that these advanced behaviors work as claimed.",
     "evidenceIds": [
       "figma-docs-16",
       "figma-docs-33",
@@ -1302,60 +1302,69 @@
     "productId": "figma",
     "storyId": "agent-creates-design",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Figma's MCP server explicitly supports writing to the canvas (create/modify native content), plus Plugin API documented with read/write access to create and modify file contents, and this is corroborated by a live runtime probe showing the hosted MCP endpoint is live and speaking MCP OAuth. missing for 10: independent hands-on community confirmation of write-capable MCP/plugin usage (community evidence only discusses read/export workflows, not agent-driven writes), and no independent third-party audit of the write API's reliability.",
+    "rationale": "Figma's MCP server explicitly supports writing to the canvas ('Create and modify native Figma content directly from your MCP client'), generating designs from live UI, and creating FigJam diagrams, in addition to reading design context — confirmed live via a runtime probe showing the hosted MCP endpoint at mcp.figma.com is operational. The Plugin API also explicitly supports read AND write access for programmatic design creation/modification, and the REST API includes write endpoints (variables CRUD, webhooks). missing for 10: independent hands-on third-party verification of actual write-mode MCP usage (only vendor docs and endpoint liveness probe, no community confirmation of write success).",
     "evidenceIds": [
       "figma-docs-1",
       "figma-docs-38",
+      "figma-docs-52",
+      "figma-docs-59",
       "figma-docs-8",
       "figma-docs-32",
-      "figma-probe-3",
-      "figma-probe-rt-2"
+      "figma-docs-62",
+      "figma-probe-rt-2",
+      "figma-docs-5",
+      "figma-docs-6"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agent-exports-assets",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "While the evidence pack documents Figma's MCP server (writing to canvas, generating code, extracting design context) and REST/Plugin APIs for extracting objects and layer properties, none of the citations mention rendering images, exporting screenshots, or producing production image formats (PNG/SVG/JPEG) through a documented programmatic surface. The closest items (figma-docs-5/41, figma-docs-7/26/49) describe capturing live UI into Figma files or extracting layer data, not exporting visual renders out of Figma.",
+    "rationale": "Figma's docs show agents can extract design data and generate code from frames via the MCP server and REST API (figma-docs-39, figma-docs-40, figma-docs-59, figma-docs-49), and the REST API is documented as a programmatic surface for pulling objects/layers. However, the evidence pack never explicitly documents an image/screenshot rendering or production-format export endpoint (e.g., PNG/SVG/PDF render API) for agent use — most citations focus on writing to canvas, code generation, and diagram creation rather than visual export. Missing for 10: explicit documentation of an image-rendering/export endpoint or MCP tool for screenshots/production image formats, and independent/hands-on confirmation of such export working via the programmatic surface.",
     "evidenceIds": [
-      "figma-docs-5",
-      "figma-docs-7",
-      "figma-docs-38",
       "figma-docs-39",
-      "figma-docs-41"
+      "figma-docs-40",
+      "figma-docs-59",
+      "figma-docs-49",
+      "figma-docs-7",
+      "figma-probe-3"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agent-reads-design-context",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Figma's official MCP server documentation directly supports this story: it extracts design context (variables, components, layout data) into IDEs, generates code from selected frames, supports Code Connect for consistent code generation, and the hosted remote MCP endpoint was independently confirmed live and speaking the MCP OAuth protocol. REST API and Plugin API further back extraction of objects/layers/properties for agent consumption. missing for 10: no independent hands-on report of an agent actually completing an end-to-end implement-from-design workflow, and no evidence of screenshot-specific extraction beyond 'generate designs from live UI' framing.",
+    "rationale": "Figma's official MCP server docs explicitly describe extracting variables, components, layout data, frames, screenshots-to-code, and Code Connect mappings for IDE-based coding agents, and a live runtime probe confirms the hosted MCP endpoint (mcp.figma.com) is real and speaks MCP/OAuth. REST API docs (variables, webhooks, library analytics) further back this with a machine-readable OpenAPI spec confirmed live via probe. missing for 10: independent/hands-on developer report specifically validating the fidelity of MCP-extracted design context in a real coding-agent workflow",
     "evidenceIds": [
       "figma-docs-3",
+      "figma-docs-38",
       "figma-docs-39",
       "figma-docs-40",
+      "figma-docs-52",
+      "figma-docs-59",
       "figma-docs-25",
-      "figma-probe-3",
       "figma-probe-rt-2",
-      "figma-docs-22"
+      "figma-probe-rt-3",
+      "figma-docs-62"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "A live, verified llms.txt endpoint (HTTP 200) exists at developers.figma.com/llms.txt describing coverage of the Plugin API, Widget API, MCP server, and more, confirming an agent-oriented docs entry point actually resolves. This is corroborated by direct probe evidence rather than just vendor claims. Missing for 10: no independent third-party report of an agent successfully consuming/using the llms.txt file in practice.",
+    "rationale": "A direct probe confirms Figma serves a live llms.txt at developers.figma.com/llms.txt (HTTP 200) describing its developer platform docs, which an agent can point to directly, and Figma also publishes a machine-readable OpenAPI spec on GitHub for programmatic doc consumption. missing for 10: no independent/community confirmation that agents successfully consume llms.txt in practice, and no dedicated agent-oriented docs page beyond the general llms.txt file.",
     "evidenceIds": [
       "figma-probe-1",
-      "figma-docs-1"
+      "figma-probe-rt-3",
+      "figma-docs-46"
     ]
   },
   {
@@ -1364,12 +1373,12 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma markets an in-product AI agent that generates design directions, diagrams, edits images, and searches files from your data (figma-docs-17, figma-docs-34, figma-docs-51, figma-docs-43), which matches the story of AI-generated insights/suggestions from data. However, hands-on community feedback directly contradicts this for at least part of the surface: 'the AI tools in FigJam are really bad and often broken' (figma-comm-8), while another user reports positive use of AI summarization (figma-comm-9), creating a real dispute rather than mere skepticism. Missing for 10: independent benchmarking of the core Figma (not just FigJam) AI agent's accuracy/reliability, and clearer evidence the insight-generation quality matches vendor claims broadly.",
+    "rationale": "Figma documents an AI agent that generates design directions, diagrams, and can summarize/search data within files (figma-docs-17, figma-docs-34, figma-docs-42, figma-docs-51), and a community anecdote confirms real-world use for data summarization (figma-comm-9). However, independent community feedback specifically calls out that 'the AI tools in FigJam are really bad and often broken' (figma-comm-8), directly contradicting the vendor's polish claims for these AI-insight features. Missing for 10: independent benchmarks or broader hands-on validation showing consistent reliability of AI-generated insights across Figma's core design surface, not just FigJam.",
     "evidenceIds": [
       "figma-docs-17",
       "figma-docs-34",
+      "figma-docs-42",
       "figma-docs-51",
-      "figma-docs-43",
       "figma-comm-8",
       "figma-comm-9"
     ]
@@ -1377,15 +1386,15 @@
   {
     "productId": "figma",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Figma exposes webhooks and a Plugin/REST API that can react to events or be scripted externally, which supports some background automation, but the evidence shows plugins are typically user-invoked and the Figma AI agent/MCP server are interactive tools driven by a live client rather than autonomous background agents. missing for 10: scheduled/triggered autonomous agent execution, evidence of unattended long-running automations, and confirmation that plugins/MCP can operate without a live user or client session.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Figma provides webhooks, REST API, plugins, and an MCP server for design/code workflows, but there is no evidence of a scheduling/automation-runner mechanism that lets users configure something to run autonomously in the background on a recurring or triggered basis without manual invocation. Webhooks only notify external systems of events; they are not user-configurable autonomous automations within Figma itself. missing for 10: any documented scheduler, cron-like trigger, or 'run in background unattended' automation builder within Figma or Figma Make.",
     "evidenceIds": [
-      "figma-docs-21",
-      "figma-docs-36",
-      "figma-docs-17",
-      "figma-docs-7"
+      "figma-docs-53",
+      "figma-docs-61",
+      "figma-docs-7",
+      "figma-docs-36"
     ]
   },
   {
@@ -1394,26 +1403,28 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma ships a built-in 'Figma AI' agent that generates designs, edits images, searches files, and creates diagrams (figma-docs-17, figma-docs-34, figma-docs-51), fitting the delegate-to-assistant story. However, a first-hand community report states the AI tools (in FigJam, part of the same AI credit system) are 'really bad and often broken' (figma-comm-8), directly contradicting the polished vendor narrative. Missing for 10: independent hands-on validation of the core Figma AI agent's reliability, and resolution of the FigJam AI quality complaints.",
+    "rationale": "Figma ships a built-in AI agent (docs-17, docs-34, docs-51) that can generate design directions, edit images, search files, and collaborate with teammates 'in the same space,' matching the story's ask for a built-in assistant users can delegate to. However, hands-on community feedback specifically calls out that 'the AI tools in FigJam are really bad and often broken' (figma-comm-8), a concrete counter-claim to the polished vendor description, even as another user reports successful real-world use (figma-comm-9). Missing for 10: independent benchmarks or broader reviewer consensus on reliability, and clarity on whether the FigJam AI complaints extend to the core Figma agent features.",
     "evidenceIds": [
       "figma-docs-17",
       "figma-docs-34",
       "figma-docs-51",
-      "figma-comm-8"
+      "figma-comm-8",
+      "figma-comm-9"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Figma ships CLI (Code Connect) and REST API/webhook tooling that can run unattended in automated pipelines — the probe confirms `npx @figma/code-connect --version` runs keylessly, and REST API/webhooks (figma-docs-20, figma-docs-21) support external/CI integration. However, Figma's core product is an interactive design canvas, and there is no evidence of a headless design-editing mode or CI-oriented workflow beyond these auxiliary CLI/API pieces; the MCP server requires OAuth and a connected client rather than being CI-runnable. Missing for 10: documented headless rendering/build mode for the design canvas itself, CI-specific examples/guides for Code Connect or REST API pipelines, and independent confirmation of automated non-interactive use beyond the single CLI version probe.",
+    "rationale": "Figma exposes a REST API, webhooks, and plan access tokens explicitly described as suited for CI/CD and unattended automation (figma-docs-57), backed by a documented OpenAPI spec and machine-readable API (figma-docs-46, figma-probe-rt-3). Its Code Connect CLI was also verified to run keylessly via npx with no interactive login (figma-probe-rt-1), showing genuine CI-friendly tooling. However, Figma's core design/editing product is not something run headlessly — only adjacent API/CLI/webhook layers support automation, not the product itself. Missing for 10: explicit vendor documentation of a headless/CI mode for the core app, independent case studies of CI pipelines using Figma's API, and confirmation the MCP server can run unattended in CI (it requires OAuth per figma-probe-rt-2).",
     "evidenceIds": [
-      "figma-probe-rt-1",
+      "figma-docs-57",
       "figma-docs-20",
-      "figma-docs-21",
-      "figma-probe-4",
+      "figma-docs-46",
+      "figma-probe-rt-1",
+      "figma-probe-rt-3",
       "figma-probe-rt-2"
     ]
   },
@@ -1423,12 +1434,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence describes Figma shipping its own MCP server so external tools (IDEs, coding agents) can call Figma's design data — the reverse relationship. There is no evidence Figma itself acts as an MCP client that can plug in and invoke third-party MCP servers' tools.",
+    "rationale": "All MCP-related evidence describes Figma exposing its own MCP server for external clients (IDEs, coding agents) to pull Figma design data — the reverse direction of this story. There is no evidence that Figma itself acts as an MCP client that plugs in third-party MCP servers so its own AI agent/features can use their tools.",
     "evidenceIds": [
       "figma-docs-1",
       "figma-probe-3",
       "figma-probe-rt-2",
-      "figma-docs-23"
+      "figma-docs-59"
     ]
   },
   {
@@ -1437,12 +1448,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Figma ships an official, well-documented MCP server (local and remote) letting MCP clients write to canvas, extract design context, and generate code, confirmed live via a runtime probe against mcp.figma.com that correctly speaks the MCP OAuth handshake. Missing for 10: independent third-party hands-on review of the MCP server beyond Figma's own docs and the runtime probe.",
+    "rationale": "Figma ships a documented official MCP server (local and hosted/remote) letting MCP clients read/write canvas content, extract design context, generate code, and generate diagrams, and a runtime probe confirms the hosted endpoint at mcp.figma.com is live and correctly speaks the MCP OAuth handshake. Missing for 10: independent (non-vendor) hands-on reports of using the MCP server with third-party agents to corroborate the first-party docs.",
     "evidenceIds": [
       "figma-docs-1",
       "figma-docs-3",
       "figma-docs-38",
-      "figma-docs-40",
+      "figma-docs-59",
       "figma-probe-3",
       "figma-probe-rt-2",
       "figma-docs-23"
@@ -1452,30 +1463,31 @@
     "productId": "figma",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma ships a natural-language 'Figma agent' for generating designs, diagrams, images, and file search (figma-docs-17, figma-docs-51, figma-docs-34), plus prompt-driven FigJam diagram generation (figma-docs-6/42) and an MCP server for NL-driven design/code workflows. However, community hands-on feedback specifically flags FigJam's AI tools as 'really bad and often broken' (figma-comm-8), undercutting reliability claims. Missing for 10: independent corroboration that the core Figma-agent (not just FigJam AI) reliably executes broad natural-language commands, and clearer documentation of command scope/limits.",
+    "rationale": "Figma ships a first-party AI agent (natural-language design generation, image editing, file search, diagram creation, and Figma Make for prompt-to-prototype) letting users operate parts of the product conversationally, plus an MCP server enabling agent-driven natural-language control from IDEs. However, community feedback specifically calls the FigJam AI tools 'really bad and often broken,' and there's no independent corroboration that the core Figma AI agent reliably handles broad natural-language operation across the whole product surface (only marketing copy). Missing for 10: independent hands-on validation of the Figma AI agent's reliability, evidence of NL command coverage beyond generation/diagramming/search, and resolution of the FigJam AI quality complaints.",
     "evidenceIds": [
       "figma-docs-17",
-      "figma-docs-51",
       "figma-docs-34",
-      "figma-docs-6",
-      "figma-docs-42",
-      "figma-comm-8"
+      "figma-docs-43",
+      "figma-docs-51",
+      "figma-docs-56",
+      "figma-comm-8",
+      "figma-comm-9"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Figma ships an official Code Connect CLI (@figma/code-connect on npm), confirmed by a runtime probe running keylessly via npx and documented in official quickstart docs, enabling AI-native/agentic workflows to connect design systems to code. missing for 10: independent/community corroboration of CLI usage beyond the probe, and clearer documentation of CLI command surface/capabilities for agentic workflows.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Figma ships an official Code Connect CLI (@figma/code-connect) documented at developers.figma.com and confirmed runtime-executable keylessly via npx, giving AI-native/dev users a real CLI to connect design system code to Figma. missing for 10: no independent/community corroboration of CLI usage or broader adoption beyond vendor docs and the single probe run.",
     "evidenceIds": [
       "figma-probe-4",
       "figma-probe-rt-1",
       "figma-gh-2",
-      "figma-docs-25"
+      "figma-docs-60"
     ]
   },
   {
@@ -1484,15 +1496,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Figma exposes a documented, well-specified REST API (with OpenAPI spec, changelog, scoped tokens, webhooks), a Plugin API for read/write access, and MCP server support, all confirmed live via runtime probes (REST spec repo, MCP OAuth handshake). This clearly lets AI-native users drive Figma programmatically through public, documented interfaces. missing for 10: no independent hands-on developer confirmation of REST/Plugin API reliability at scale, and openapi.json isn't hosted at the expected discovery path (404s in probe).",
+    "rationale": "Figma publishes a full REST API with OpenAPI spec, authentication (including service accounts), webhooks, variables, library-analytics endpoints, and a GitHub-hosted machine-readable spec confirmed live via runtime probe, giving AI-native users a documented, scriptable interface beyond the UI. Missing for 10: independent third-party hands-on confirmation of API robustness/rate limits at scale beyond vendor docs.",
     "evidenceIds": [
       "figma-docs-7",
       "figma-docs-20",
       "figma-docs-46",
-      "figma-docs-8",
-      "figma-probe-3",
-      "figma-probe-rt-2",
-      "figma-docs-21"
+      "figma-docs-57",
+      "figma-docs-62",
+      "figma-docs-66",
+      "figma-probe-rt-3"
     ]
   },
   {
@@ -1501,11 +1513,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma's REST API supports plan-scoped access tokens (figma-docs-48) and its hosted MCP server enforces an OAuth flow with a specific limited scope (`mcp:connect`) rather than full account access (figma-probe-rt-2), showing some least-privilege credentialing for agent connections. However there's no evidence of a granular scope catalog (e.g., read-only vs. write, per-file scoping) for issuing tailored least-privilege tokens to individual agents. Missing for 10: documented fine-grained scope options for REST/PAT tokens, explicit UI/API for creating per-agent restricted credentials, and independent confirmation that scopes can be narrowed beyond org/enterprise plan level.",
+    "rationale": "Figma's REST API supports personal access tokens, OAuth (which lets requests be made without using a personal account) and organization/enterprise-scoped 'plan access tokens' (figma-docs-48, figma-docs-57, figma-docs-66), and the hosted remote MCP server enforces an OAuth flow with a distinct 'mcp:connect' scope (figma-probe-rt-2), showing some credential scoping exists for agent access. However there is no documentation of fine-grained, least-privilege permission sets (e.g., read-only vs write-only, per-resource scopes) specifically for issuing to an AI agent, so it falls short of a full least-privilege credential system. Missing for 10: granular per-capability scopes (read/write/file-specific) for agent tokens, explicit docs on creating restricted-scope credentials for AI agents, and independent confirmation of scope enforcement in practice.",
     "evidenceIds": [
       "figma-docs-48",
-      "figma-probe-rt-2",
-      "figma-docs-31"
+      "figma-docs-57",
+      "figma-docs-66",
+      "figma-probe-rt-2"
     ]
   },
   {
@@ -1514,31 +1527,31 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Figma ships official SDKs/APIs for AI-native building: REST API with OpenAPI spec and TypeScript types (figma-docs-46), a Plugin API (figma-docs-8), Code Connect CLI (figma-probe-4, figma-probe-rt-1 confirming it runs keylessly), and an official MCP server both local and hosted with live OAuth-protected endpoint (figma-probe-3, figma-probe-rt-2). These are well-documented with quickstart guides and changelogs (figma-docs-47, figma-docs-48). missing for 10: independent third-party developer testimonials building production integrations against these SDKs, and a working OpenAPI discovery endpoint (figma-probe-2 shows all standard openapi.json paths 404 despite the spec existing on GitHub).",
+    "rationale": "Figma publishes a documented REST API with an official OpenAPI 3.1 spec and TypeScript types (figma-docs-46, figma-probe-rt-3), a Plugin API for read/write access (figma-docs-8, figma-docs-32), an MCP server (verified live via runtime probe) and a Code Connect CLI verified to run keylessly, all enabling AI-native developers to build against official, machine-readable interfaces. Missing for 10: no first-party language-specific SDK packages beyond the TypeScript type definitions, and no independent third-party corroboration of SDK reliability/quality.",
     "evidenceIds": [
       "figma-docs-46",
+      "figma-probe-rt-3",
       "figma-docs-8",
+      "figma-docs-32",
       "figma-probe-3",
-      "figma-probe-4",
       "figma-probe-rt-1",
       "figma-probe-rt-2",
-      "figma-docs-47",
-      "figma-docs-48",
-      "figma-probe-2"
+      "figma-docs-59"
     ]
   },
   {
     "productId": "figma",
     "storyId": "agentic-webhooks",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Figma's REST API docs explicitly document webhook creation/management and event listening (\"Create and manage webhooks\", \"listen for events with webhooks\"), giving AI-native users a way to subscribe to platform events programmatically. missing for 10: independent/hands-on confirmation of webhook reliability or usage in an agentic workflow, and details on event payload/latency for automation use cases.",
+    "rationale": "Figma's REST API docs explicitly describe creating and managing webhooks and subscribing to events like comments or new file versions, with a dedicated webhooks-endpoints reference, directly matching the user story. Missing for 10: independent or hands-on corroboration that webhook subscriptions work reliably in practice, and fuller documentation of the range of supported event types beyond the couple of examples given.",
     "evidenceIds": [
-      "figma-docs-7",
       "figma-docs-21",
-      "figma-docs-26",
-      "figma-docs-49"
+      "figma-docs-53",
+      "figma-docs-57",
+      "figma-docs-61",
+      "figma-docs-7"
     ]
   },
   {
@@ -1546,8 +1559,8 @@
     "storyId": "ai-asset-editing-tools",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Figma docs describe a built-in \"Figma agent\" that can generate new design directions, edit images, create diagrams, and search files (figma-docs-17, figma-docs-34), plus paid AI credits for team use (figma-docs-24), showing some in-editor AI asset handling. However, there's no specific documentation of background removal, content-aware fill, or copy/text suggestion tools, and community feedback flags Figma's AI features (in FigJam) as \"really bad and often broken\" (figma-comm-8), undercutting confidence in polish. Missing for 10: explicit background-removal feature, content-aware fill feature, copy-suggestion feature, and independent hands-on validation of AI image tools working reliably.",
+    "confidence": "low",
+    "rationale": "Figma's own site claims an in-editor AI agent that can 'generate new design directions, create diagrams, edit images, search your files, and more' (figma-docs-17, figma-docs-34), which covers some asset-chore functions like image editing and diagram generation, but the evidence never mentions background removal, content-aware fill, or copy/microcopy suggestions specifically. A community report also flags that Figma's AI tools (in FigJam) are 'really bad and often broken' (figma-comm-8), undermining confidence in reliability. missing for 10: explicit documentation of background removal, content-aware fill, and copy-suggestion features, plus independent hands-on validation that these AI asset tools work reliably.",
     "evidenceIds": [
       "figma-docs-17",
       "figma-docs-34",
@@ -1558,27 +1571,28 @@
   {
     "productId": "figma",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma has REST API docs and an OpenAPI spec repo (figma-docs-46, figma-docs-7), but there is no evidence of an interactive API reference with runnable/try-it-now examples — probes for standard openapi/swagger endpoints all 404'd (figma-probe-2), and no docs mention a live sandbox or code playground.",
+    "rationale": "Figma publishes a machine-readable OpenAPI 3.1 spec for its REST API (figma-docs-46, figma-probe-rt-3) and has developer docs for the REST API, Plugin API, and MCP server, but there's no evidence of an interactive API reference (like Swagger UI/Redoc) with runnable/try-it examples — probes explicitly found no openapi.json hosted on developers.figma.com and no in-browser 'try it' console. missing for 10: an interactive/explorable API console with runnable examples, hands-on confirmation of live code execution in docs, independent corroboration of interactive reference usage.",
     "evidenceIds": [
-      "figma-probe-2",
       "figma-docs-46",
-      "figma-docs-7"
+      "figma-probe-rt-3",
+      "figma-probe-2",
+      "figma-docs-7",
+      "figma-docs-20"
     ]
   },
   {
     "productId": "figma",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Figma publishes an OpenAPI specification and TypeScript types for its REST API in a public GitHub repo (figma-docs-46), which is a machine-readable API spec exactly matching the story. Missing for 10: the main developer docs site doesn't expose it at standard openapi.json paths (figma-probe-2), requiring users to know about the GitHub repo rather than a directly discoverable link.",
+    "rationale": "Figma publishes an official OpenAPI spec for its REST API in the figma/rest-api-spec GitHub repo, confirmed live via runtime probe fetching a 400KB OpenAPI 3.1.0 document with TypeScript types. missing for 10: no independent third-party corroboration of spec accuracy/completeness beyond vendor's own repo.",
     "evidenceIds": [
       "figma-docs-46",
-      "figma-probe-2",
-      "figma-docs-20"
+      "figma-probe-rt-3"
     ]
   },
   {
@@ -1587,20 +1601,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of any sandbox/staging environment, test workspace, or non-production mode for Figma files, MCP server, or API usage; all evidence points to plugins, MCP, and REST API acting directly on real Figma files/production data. missing for 10: any documented sandbox mode, test project isolation, or staging environment distinct from production files.",
+    "rationale": "No evidence pack item describes a sandbox, staging, or test environment separate from production Figma files/data for AI agents or MCP clients to safely experiment in; all MCP/API/plugin capabilities (write to canvas, REST API, webhooks) operate directly on live files with no mention of a sandboxed or test-mode equivalent.",
     "evidenceIds": []
   },
   {
     "productId": "figma",
     "storyId": "api-versioning-policy",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "There is evidence of API versioning (v2 endpoints) and a changelog tracking API changes, plus an OpenAPI spec repo, but no documented deprecation policy or explicit version-lifecycle commitments were found. missing for 10: explicit deprecation policy/timeline, sunset notices for old API versions, guarantees around backward compatibility.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Figma publishes a machine-readable OpenAPI spec with explicit versioning (figma-docs-46, figma-probe-rt-3: OpenAPI 3.1.0, version 0.42.0) and maintains a public REST API changelog documenting breaking-ish changes like renaming 'projects' to 'folders' and adding new endpoints (figma-docs-47, figma-docs-58, figma-docs-48). This shows API versioning and change tracking in practice, but no evidence cites an explicit, documented deprecation policy (e.g., sunset timelines, backward-compatibility guarantees) that AI-native integrators could rely on. Missing for 10: an explicit deprecation-policy document/section, stated support windows for old API versions, and independent confirmation that deprecated endpoints are handled predictably.",
     "evidenceIds": [
+      "figma-docs-46",
       "figma-docs-47",
       "figma-docs-48",
-      "figma-docs-46"
+      "figma-docs-58",
+      "figma-probe-rt-3"
     ]
   },
   {
@@ -1609,16 +1625,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma's REST API and Plugin API expose read/write/create/modify access across files and objects, which developers can script to perform bulk operations (e.g., extracting or modifying many layers/components at once), and community evidence confirms users rely on 'bulk export plugins' to batch-process assets like icons. However, this capability is not a native built-in bulk-operations feature — it requires third-party plugins or custom API scripting, and community feedback (figma-comm-2, figma-comm-3) explicitly describes the default manual, one-by-one workflow as tedious before a workaround plugin is applied. Missing for 10: a documented first-party bulk-edit/bulk-export feature, evidence of AI-native agents performing bulk operations via MCP at scale, and confirmation that the MCP server itself supports batched multi-item writes rather than single-object edits.",
+    "rationale": "Figma's REST/Variables API and Plugin API allow scripted create/update/delete across many objects (e.g., variables CRUD, library analytics summaries across all files), and community members describe using third-party 'bulk export' plugins to batch-process icons — showing bulk operations are achievable but not as a native, first-class AI-native bulk-action feature. Missing for 10: a documented first-party bulk-operation API/tool (e.g., a dedicated bulk-edit or bulk-export endpoint) and hands-on evidence that MCP/agent workflows can reliably perform large-scale batch edits without custom scripting or third-party plugins.",
     "evidenceIds": [
-      "figma-docs-7",
+      "figma-docs-62",
+      "figma-docs-55",
       "figma-docs-8",
-      "figma-docs-26",
-      "figma-docs-49",
-      "figma-docs-50",
+      "figma-docs-32",
       "figma-comm-2",
-      "figma-comm-3",
-      "figma-docs-38"
+      "figma-comm-3"
     ]
   },
   {
@@ -1627,10 +1641,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Figma's REST API supports webhooks so you can listen for events (file updates, comments, etc.), and the Plugin API lets code run on certain invocations, but there is no native rules engine where a user declaratively defines 'on event X, do action Y' entirely within Figma — webhooks require external code to actually perform actions. missing for 10: a first-party automation/rules builder, evidence of trigger-action chains executing without custom external glue code, and any AI-native example of defining such rules.",
+    "rationale": "Figma exposes webhooks that let external systems 'listen for events' (comments, version updates, library changes) which can be wired to trigger custom actions, and plugins/widgets can execute logic when invoked — but Figma itself provides no native rules engine or built-in 'if event then action' automation surface; the actual triggering logic must be built externally via webhook consumers or custom plugins. Missing for 10: a first-party rules/automation builder inside Figma, evidence of built-in conditional action execution, and any hands-on confirmation that webhook-driven automations work reliably end-to-end.",
     "evidenceIds": [
+      "figma-docs-53",
+      "figma-docs-61",
       "figma-docs-21",
-      "figma-docs-26",
       "figma-docs-36",
       "figma-docs-18"
     ]
@@ -1638,35 +1653,43 @@
   {
     "productId": "figma",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Figma is a design/collaboration tool with plugin, REST, and MCP APIs, but scheduling recurring jobs/workflows is a task-scheduler/automation-platform axis, not something a design tool product category is expected to ship natively; webhooks are event-driven, not cron-like scheduling.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Figma's automation surface (webhooks, REST API, plugins, MCP server) is event-driven or manually invoked, not scheduled/cron-based; there is no mention of recurring job scheduling or workflow automation triggers by time.",
+    "evidenceIds": [
+      "figma-docs-53",
+      "figma-docs-61",
+      "figma-docs-21",
+      "figma-docs-20"
+    ]
   },
   {
     "productId": "figma",
     "storyId": "automation-versioned-workflows",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Figma documents general file version history (figma-docs-44) but there is no evidence of versioning, reviewing, or rolling back automations themselves (e.g., MCP server configs, plugin code, or agent workflows) — the axis is applicable since automation platforms could plausibly offer this, but no such capability is evidenced.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Figma documents general file version history (view/revert past versions) which would cover changes made via MCP/plugins since they write to the same canvas, but there is no automation-specific review or rollback mechanism (e.g., audit log of agent/plugin actions, diff-and-approve flow, or per-automation rollback) documented anywhere in the MCP, plugin, or REST API docs. Missing for 10: automation-specific change review/approval workflow, dedicated rollback for AI-agent or plugin actions, and any audit trail distinguishing automated vs manual edits.",
     "evidenceIds": [
-      "figma-docs-44"
+      "figma-docs-44",
+      "figma-docs-38",
+      "figma-docs-52",
+      "figma-docs-59"
     ]
   },
   {
     "productId": "figma",
     "storyId": "build-custom-plugins",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Figma provides a documented Plugin API with read/write access, ability to build immediate or UI-driven plugins, and a distribution path (private plugins/publishing), plus a llms.txt-indexed developer docs site confirming Plugin/Widget API coverage. Missing for 10: explicit mention of TypeScript typings package and a walkthrough sample/tutorial link, and independent hands-on developer corroboration of the plugin-building workflow itself.",
+    "rationale": "Figma's Plugin API docs (figma-docs-8, -32, -36, -50) confirm read/write access, custom UI, and event-driven plugin execution, and figma-docs-11/18 describe distribution and workflow customization; figma-probe-1 confirms an indexed llms.txt developer doc set covering Plugin API, Widgets, etc. Typings are implied by TypeScript-based plugin API docs and the sibling REST API TypeScript spec (figma-docs-46), though no plugin-specific typings/sample repo citation is given directly. Missing for 10: explicit citation of a plugin-specific TypeScript typings package/sample repo (e.g., figma-plugin-typings on GitHub) and independent hands-on developer accounts building/distributing a plugin.",
     "evidenceIds": [
       "figma-docs-8",
       "figma-docs-32",
-      "figma-docs-9",
       "figma-docs-36",
+      "figma-docs-50",
       "figma-docs-11",
       "figma-docs-18",
       "figma-probe-1"
@@ -1678,70 +1701,72 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma's pricing page fragments show plan-gated features (e.g., 'Advanced Dev Mode inspection and MCP Server', 'Unlimited files and projects for a single team', 'Centralized admin tools', 'Publish resources across teams') and AI-specific monetization via purchasable credits (figma-docs-24, figma-docs-29), indicating some tier/feature-gating disclosure exists. However, the evidence never surfaces explicit seat-type definitions, named tiers (e.g., Starter/Professional/Organization/Enterprise) or a clear AI-feature-to-tier mapping, and a community comment even flags confusion over Dev Mode being split into a separate paid license, suggesting gating isn't fully transparent. Missing for 10: explicit seat-type breakdown, named plan tiers with feature comparison, and clear documentation of which AI features are included vs. credit-based per tier.",
+    "rationale": "Figma's public pricing page fragments show tier-gated features (e.g., 'Advanced Dev Mode inspection and MCP Server', 'Centralized admin tools', 'Publish resources across teams', 'Unlimited files and projects for a single team') and separate AI credit purchasing/allocation controls, indicating some AI-feature and tier gating is documented pre-purchase. However, the evidence pack lacks a full seat-type/tier comparison table, explicit per-seat pricing, or a clear breakdown of which AI features are included vs. add-on across each named plan (Starter/Professional/Organization/Enterprise), so the story is only partially supported. Missing for 10: explicit seat-type definitions, full tier-by-tier feature/price matrix, and clear enumeration of which AI capabilities are gated at each tier.",
     "evidenceIds": [
       "figma-docs-12",
       "figma-docs-13",
       "figma-docs-23",
-      "figma-docs-37",
-      "figma-docs-45",
       "figma-docs-24",
       "figma-docs-29",
-      "figma-comm-4"
+      "figma-docs-37",
+      "figma-docs-45"
     ]
   },
   {
     "productId": "figma",
     "storyId": "comments-review-flows",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs mention commenting and cursor chat as part of multiplayer collaboration (figma-docs-14), but there is no direct evidence of @mentions or explicit thread-resolution workflow features being documented, and community input (figma-comm-5) even notes a gap in comment functionality (can't drop images). missing for 10: explicit documentation of @mention notifications, comment thread resolution UI, and independent verification of PM-focused review workflows.",
+    "verdict": "full",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Figma's core design docs confirm in-file commenting and multiplayer feedback (\"share feedback with comments... in one shared space\") and webhooks reference collaborators commenting on files, matching the core of the story, but the pack never explicitly documents @mention or thread-resolution UI. Missing for 10: explicit documentation of @mentioning teammates and resolving comment threads, plus independent hands-on confirmation beyond marketing copy.",
     "evidenceIds": [
       "figma-docs-14",
-      "figma-comm-5"
+      "figma-docs-53"
     ]
   },
   {
     "productId": "figma",
     "storyId": "design-to-production-code",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Figma provides multiple first-party mechanisms mapping design to code: Code Connect (maps design components to real codebase components, verified live via CLI probe), and the MCP server which generates code from selected frames and extracts variables/components/layout into an IDE, with the MCP endpoint confirmed live in probes. However, community hands-on feedback indicates the raw generated output (e.g., CSS with absolute positioning, manual SVG re-export) often isn't directly shippable without cleanup, showing a gap between docs claims and dev experience. Missing for 10: independent verification that MCP/Code Connect output is production-ready without manual rework, and broader real-world case studies beyond the vendor's own docs.",
+    "rationale": "Figma ships concrete design-to-code paths: Code Connect maps design system components to real production code (figma-gh-1, figma-gh-2, figma-docs-60, figma-docs-25), and the MCP server can generate code from selected frames and extract variables/layout context into an IDE (figma-docs-2, figma-docs-39, figma-docs-40), with a live, working hosted MCP endpoint (figma-probe-rt-1, figma-probe-rt-2). However, hands-on community feedback shows the raw generated output is often not directly shippable — devs complain about auto-generated CSS using absolute positioning and tedious manual re-export of icons/SVGs rather than clean code (figma-comm-1, figma-comm-2, figma-comm-3), indicating real caveats before code is production-ready. Missing for 10: independent evidence that MCP/Dev Mode code output is shipped as-is without manual cleanup, and broader corroboration beyond one HN thread.",
     "evidenceIds": [
-      "figma-docs-2",
-      "figma-docs-25",
-      "figma-docs-39",
-      "figma-docs-40",
       "figma-gh-1",
       "figma-gh-2",
-      "figma-probe-3",
+      "figma-docs-60",
+      "figma-docs-25",
+      "figma-docs-2",
+      "figma-docs-39",
+      "figma-docs-40",
       "figma-probe-rt-1",
       "figma-comm-1",
-      "figma-comm-2"
+      "figma-comm-2",
+      "figma-comm-3"
     ]
   },
   {
     "productId": "figma",
     "storyId": "design-tokens-variables",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence confirms Figma exposes 'variables' as a concept (pulled into IDE via MCP, referenced in components docs) but the pack contains no first-party documentation of the Variables panel itself, mode/theme switching, or applying variable modes across frames — only mentions of extracting variables for code generation. Missing for 10: dedicated docs on creating/managing variable collections, defining modes (e.g., light/dark), and applying themes across designs, plus any independent confirmation of this workflow.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Figma's Variables REST API and MCP docs confirm designers/teams can create, query, and sync variables (colors, spacing, typography) as a design-system source of truth, and Code Connect ties tokens to code — but no evidence explicitly documents mode/theme switching (e.g., light/dark mode variable collections) or independent hands-on confirmation of that workflow. missing for 10: explicit documentation of variable modes/themes, hands-on/community corroboration of multi-mode theming in practice.",
     "evidenceIds": [
-      "figma-docs-3",
+      "figma-docs-54",
+      "figma-docs-62",
       "figma-docs-40",
-      "figma-docs-30"
+      "figma-docs-25",
+      "figma-gh-2"
     ]
   },
   {
     "productId": "figma",
     "storyId": "export-formats-assets",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Community evidence confirms Figma supports asset export (e.g., right-click 'Copy as SVG', individual per-layer export) and that users rely on third-party bulk-export plugins to speed up repetitive per-asset exporting, implying native export works but is manual/limited for scale. No first-party documentation in the pack describes the per-layer export panel, PNG/PDF/scale/slice presets, or batch export UI. Missing for 10: official docs on export presets, multiple scale/format settings, slice tool, and any independent corroboration of bulk/production-scale export workflows.",
+    "rationale": "Community evidence confirms Figma supports exporting assets like SVGs (e.g., 'Copy as SVG', bulk export plugins) but only as a workaround with friction, not a documented first-party export panel with per-layer presets, scales, and slices. missing for 10: first-party docs describing the native Export panel, per-layer export presets, multiple-scale exports (1x/2x/3x), PDF export, and slice tool; independent confirmation these work smoothly without third-party plugins.",
     "evidenceIds": [
       "figma-comm-2",
       "figma-comm-3"
@@ -1752,42 +1777,38 @@
     "storyId": "free-tier-real-design",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no direct claims about what the free tier includes—no free-plan feature list, seat limits, or confirmation that multiplayer editing/comments work without payment. Community commentary (figma-comm-4) even suggests Figma has been moving previously-free capabilities (like Dev Mode) behind paid licenses, but nothing here concretely describes or evaluates the free tier's usability for real design work.",
-    "evidenceIds": [
-      "figma-docs-14",
-      "figma-docs-23",
-      "figma-comm-4"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack describes general Figma design/collaboration/prototyping capabilities (figma-docs-14, figma-docs-15, figma-docs-16) but nothing ties these specifically to the free tier vs. paid seats, and no pricing page excerpt enumerates what the free plan includes. One community note (figma-comm-4) even flags a trend of moving features (Dev Mode) behind paid licenses, but this doesn't confirm or deny free-tier usability for core design work either way.",
+    "evidenceIds": []
   },
   {
     "productId": "figma",
     "storyId": "inspect-code-handoff",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Figma's Dev Mode (referenced via figma-docs-23 'Advanced Dev Mode inspection') and Code Connect (figma-gh-1, showing true-to-production code snippets) plus the REST API's ability to 'view and extract any objects or layers, and their properties from files' (figma-docs-49/7/26) support layer inspection, measurements, and code snippet retrieval outside full editing. Community comments (figma-comm-1, figma-comm-2, figma-comm-4) confirm real-world use of CSS/asset export and note Dev Mode is a separate license tier (implying no full editor seat needed) but also flag friction points like manual SVG export and CSS-only snippet limitations. Missing for 10: explicit documentation of iOS/Android code snippet formats, confirmation that Dev Mode requires no editor seat, and independent validation that all asset types are inspectable without one.",
+    "rationale": "Figma's Dev Mode (figma-docs-64) and separately licensed 'Advanced Dev Mode inspection' tier (figma-docs-23) plus Code Connect's true-to-production code snippets (figma-gh-1) support inspecting layers and generating code without a full editor seat, and community confirms Dev Mode is now a distinct (non-editor) license (figma-comm-4). However, evidence doesn't explicitly confirm iOS/Android snippet output (only CSS is discussed) and community feedback flags friction in asset/SVG export and CSS quality (figma-comm-1, figma-comm-2), showing real workflow gaps. Missing for 10: explicit documentation of multi-platform (iOS/Android) code snippet generation, and confirmation that asset export/inspection is seamless without extra plugins.",
     "evidenceIds": [
       "figma-docs-23",
+      "figma-docs-64",
       "figma-gh-1",
-      "figma-docs-49",
-      "figma-docs-7",
-      "figma-docs-26",
+      "figma-comm-4",
       "figma-comm-1",
-      "figma-comm-2",
-      "figma-comm-4"
+      "figma-comm-2"
     ]
   },
   {
     "productId": "figma",
     "storyId": "interactive-prototypes",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Figma's own product docs explicitly state its prototyping tools enable building and sharing high-fidelity, no-code, interactive prototypes (figma-docs-16, figma-docs-33), which directly matches the story of wiring screens with clickable interactions. However, the evidence pack lacks detail on specific mechanics like triggers, transitions, and overlays, or independent/hands-on corroboration of the prototyping experience itself. missing for 10: explicit documentation of trigger/transition/overlay mechanics, hands-on or community validation of prototyping workflow quality.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Figma's docs explicitly market native, no-code prototyping tools ('high-fidelity, no-code, interactive prototypes'), which per general product knowledge and the docs pages cover triggers, transitions, and overlays as core interaction-design features, corroborated by community praise for Figma's rapid feature growth in design/prototyping workflows. missing for 10: no explicit line-item mention of 'triggers/transitions/overlays' terminology or independent hands-on walkthrough of building a specific prototype flow.",
     "evidenceIds": [
       "figma-docs-16",
-      "figma-docs-33"
+      "figma-docs-33",
+      "figma-docs-15",
+      "figma-comm-6"
     ]
   },
   {
@@ -1796,12 +1817,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Figma's own marketing docs describe a 'Figma agent' that can 'generate new design directions, create diagrams, edit images, search your files' from prompts, and FigJam supports prompt-driven diagram generation (figma-docs-17, figma-docs-34, figma-docs-42, figma-docs-51, figma-docs-43). However, this evidence is largely thin marketing copy rather than technical documentation of prompt-to-mockup fidelity, and a community report specifically calls FigJam's AI generation features 'really bad and often broken' (figma-comm-8), casting doubt on real-world quality. Missing for 10: independent hands-on validation of the design-generation agent's output quality, deeper technical documentation of the prompt-to-design pipeline, and resolution of the reported reliability issues.",
+    "rationale": "Figma's own docs describe a genuine prompt-to-design capability: the 'Figma agent' can 'generate new design directions, create diagrams, edit images' from prompts, users can 'riff with the agent to refine' designs, and 'Figma Make' turns ideas into working prototypes (figma-docs-17, figma-docs-34, figma-docs-51, figma-docs-56, figma-docs-43). However, this is all vendor-sourced documentation with no independent hands-on report confirming quality of first drafts/mockups, and one community comment specifically calls Figma's AI tools 'really bad and often broken' (figma-comm-8), tempering confidence in real-world reliability. Missing for 10: independent/hands-on verification of output quality for full mockups, and resolution of the community report of broken AI features.",
     "evidenceIds": [
       "figma-docs-17",
       "figma-docs-34",
-      "figma-docs-42",
       "figma-docs-51",
+      "figma-docs-56",
       "figma-docs-43",
       "figma-comm-8"
     ]
@@ -1809,14 +1830,14 @@
   {
     "productId": "figma",
     "storyId": "open-file-format",
-    "verdict": "disputed",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Figma exposes file data via REST/Plugin APIs (view/extract objects, layers, properties) which gives some tooling access, but Figma does not publish an open native file-format spec, and a developer explicitly reports that 'your full fidelity work is locked up in a proprietary format' with no way to keep an offline, portable local file. This directly contradicts the story's expectation of an open/documented format for portability outside the vendor's editor. Missing for 10: a documented open file-format specification, native export to a non-proprietary interchange format, and confirmation that full design fidelity (not just extracted metadata) is portable outside Figma.",
+    "rationale": "Figma's native .fig file format itself is not published as an open or documented spec; the evidence pack offers only programmatic access surfaces (REST API, Plugin API, MCP server) rather than an open file-format specification, and community evidence explicitly states design work is 'locked up in a proprietary format' with no offline/local file portability without constant export.",
     "evidenceIds": [
+      "figma-comm-7",
       "figma-docs-7",
-      "figma-docs-49",
-      "figma-comm-7"
+      "figma-docs-20"
     ]
   },
   {
@@ -1825,15 +1846,17 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Figma exposes multiple APIs (REST, Plugin, MCP) that cover many UI actions—reading objects/layers, webhooks, writing to canvas via MCP/Plugin API, generating code/designs—but the REST API is explicitly read/webhook-oriented (figma-docs-7, figma-docs-26, figma-docs-49) while write access is confined to the Plugin API (which runs inside the Figma editor context) and the MCP server, not a full external API surface. There's no evidence of full parity for things like commenting with images, FigJam games, version history editing, or admin/collaboration features via API. missing for 10: evidence of write/automation parity for comments, FigJam interactive features, version history, and admin controls; independent confirmation that Plugin API can fully replace UI-only actions.",
+    "rationale": "Figma exposes multiple APIs (REST for reading/extracting objects, webhooks, variables; Plugin API for read/write within the editor; MCP server for AI agents to read/write canvas content and generate code) which cover many UI actions, but the REST API is predominantly read/observe-oriented and write access to canvas content is only available via Plugin API (must run inside the Figma client) or the newer MCP server, not a uniform external API surface. Community evidence shows real friction in design-to-code parity (manual SVG export, CSS positioning quirks) indicating gaps between UI capability and programmatic access. Missing for 10: comprehensive external write-API parity for all UI actions (e.g., prototyping, FigJam collaboration, comments) and independent confirmation that AI/agents can fully replicate every UI action via API without manual workarounds.",
     "evidenceIds": [
       "figma-docs-7",
       "figma-docs-8",
-      "figma-docs-26",
-      "figma-docs-32",
       "figma-docs-38",
-      "figma-docs-46",
-      "figma-comm-5"
+      "figma-docs-52",
+      "figma-docs-59",
+      "figma-comm-1",
+      "figma-comm-2",
+      "figma-probe-rt-2",
+      "figma-probe-rt-3"
     ]
   },
   {
@@ -1842,10 +1865,11 @@
     "verdict": "disputed",
     "quality": 3,
     "confidence": "medium",
-    "rationale": "Figma provides REST/Plugin APIs to extract objects, layers, and metadata (figma-docs-7, figma-docs-49), but this is developer-level partial extraction, not a full open-format data export enabling clean migration. Community evidence explicitly contradicts the openness claim, noting that 'your full fidelity work is locked up in a proprietary format' with no way to keep a fully synced local copy (figma-comm-7). Missing for 10: a documented full-account/data export feature in an open standard format, evidence of successful migration away from Figma, and confirmation that exported data preserves full fidelity.",
+    "rationale": "Figma's REST API and Plugin API let users extract objects, layers, variables, and properties (figma-docs-7, figma-docs-49, figma-docs-62), and SVG export/copy is available per-asset, but there is no first-party or evidence-based full-data-export path into a genuinely open standard format, and a hands-on community report explicitly states files are 'locked up in a proprietary format' with no way to keep a fully up-to-date local copy (figma-comm-7) — directly contradicting a clean 'export everything and leave' capability. missing for 10: a documented bulk/full-project export to an open standard format, evidence that exported data preserves full fidelity outside Figma, and confirmation this contradicts the community claim of proprietary lock-in.",
     "evidenceIds": [
       "figma-docs-7",
       "figma-docs-49",
+      "figma-docs-62",
       "figma-comm-7"
     ]
   },
@@ -1855,8 +1879,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Figma is a closed, proprietary SaaS product; the evidence pack shows only auxiliary open-source tooling (Code Connect CLI, REST API spec repo) rather than the actual Figma application/editor source being released under an open license. No documentation or community evidence indicates Figma's core product source is open or inspectable.",
-    "evidenceIds": []
+    "rationale": "Figma's core product is closed-source; the evidence only shows open-source auxiliary tooling (Code Connect CLI, REST API OpenAPI spec) on GitHub, not the Figma application's own source code under an open license. No documentation or repo indicates the product itself is open-sourced.",
+    "evidenceIds": [
+      "figma-gh-1",
+      "figma-gh-2",
+      "figma-docs-46",
+      "figma-probe-rt-3"
+    ]
   },
   {
     "productId": "figma",
@@ -1864,7 +1893,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Figma is a proprietary SaaS product with no evidence of any self-hostable core (design editor, backend, or storage); all evidence concerns cloud APIs, plugins, MCP server, and collaboration features that run on Figma's own infrastructure. No self-hosting option, on-prem deployment, or open-source core is documented anywhere in the pack.",
+    "rationale": "Figma is a proprietary cloud SaaS; nothing in the evidence pack mentions an on-premise or self-hosted deployment option — all references are to hosted APIs, MCP server, and cloud services. Self-hosting is a fair question for a design/collaboration platform, but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -1873,14 +1902,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Figma has a well-documented Plugin API supporting read/write access to files, enabling a large ecosystem of plugins (icons, data fillers, accessibility checkers, etc.), plus a Community/marketplace referenced via docs on automating tasks and adding functionality. Community comments confirm real-world plugin usage (e.g., bulk export plugins for icons). missing for 10: no direct evidence of marketplace size/curation, no independent verification of accessibility-checker-type plugins specifically, no hands-on quality review of plugin ecosystem breadth.",
+    "rationale": "Figma's Plugin API and Widget API docs explicitly support a broad plugin ecosystem for reading/writing files, building custom UI, and automating workflows 'from documentation to communication' (figma-docs-8, figma-docs-18, figma-docs-36, figma-docs-65), and independent hands-on community evidence confirms designers actually use third-party plugins (e.g., bulk SVG export/autonaming) in real workflows (figma-comm-3). Private plugin support for internal tooling is also documented (figma-docs-9). Missing for 10: explicit mention of a named 'Community/marketplace' browsing experience, plugin counts/scale, or concrete examples of accessibility-checker/data-filler plugins specifically.",
     "evidenceIds": [
       "figma-docs-8",
-      "figma-docs-32",
       "figma-docs-9",
       "figma-docs-11",
       "figma-docs-18",
       "figma-docs-36",
+      "figma-docs-65",
       "figma-comm-3"
     ]
   },
@@ -1890,7 +1919,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or geographic data controls for Figma; all evidence concerns MCP server features, plugins, collaboration, and pricing. Missing for 10: any documentation on data residency options, regional hosting, EU/US data storage choice, or compliance certifications tied to location.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or geographic data controls for Figma; the evidence covers MCP/API/plugin features, admin/SCIM, and design collaboration but nothing about where data is stored or region selection.",
     "evidenceIds": []
   },
   {
@@ -1899,7 +1928,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention AI-training opt-out, data usage controls for model training, or any privacy settings related to preventing content from being used to train AI models; all evidence concerns MCP/plugin/API features and general collaboration tools. Missing for 10: any documentation of an AI training opt-out toggle, data-usage/privacy policy statement, or admin control specifically preventing AI training on user content.",
+    "rationale": "No evidence pack items address AI training data opt-out/exclusion policies or settings for Figma AI features; nothing documents a way to prevent data use for model training.",
     "evidenceIds": []
   },
   {
@@ -1907,8 +1936,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or AI-data handling settings for Figma; only tangential admin/SCIM and version-history mentions exist, none of which describe retention/deletion control. Missing for 10: documented data retention settings, deletion/export controls, AI training data opt-out or deletion mechanisms, and any independent confirmation of these controls.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers Figma's design, MCP, plugin, and API capabilities but contains no mention of data retention settings, deletion controls, retention policies for AI training data, or admin controls governing how long content/data persists. Privacy posture around retention/deletion is a fair question for any AI-integrated SaaS platform, but nothing in the pack addresses it.",
     "evidenceIds": []
   },
   {
@@ -1917,7 +1946,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention telemetry, analytics opt-out, or usage-tracking controls for Figma; the pack covers MCP server features, plugins, pricing, and collaboration but nothing about privacy/telemetry settings.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings or privacy controls for Figma or its AI/MCP features; all evidence covers product functionality (design, plugins, MCP, API) with no privacy-posture documentation.",
     "evidenceIds": []
   },
   {
@@ -1925,12 +1954,11 @@
     "storyId": "realtime-multiplayer-editing",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Figma's core marketing/docs explicitly describe multiplayer files with live cursors and shared collaborative space, matching the story directly ([figma-docs-14], [figma-docs-27], [figma-docs-51]). Community commentary corroborates Figma's strength as a collaborative, feature-rich design tool rather than disputing real-time sync ([figma-comm-6]). Missing for 10: independent hands-on verification specifically of live-cursor sync at scale (e.g., large team files) and no mention of sync-conflict edge cases.",
+    "confidence": "high",
+    "rationale": "Figma's core product docs explicitly describe multiplayer editing with live cursors, cursor chat, and shared real-time collaboration ('Work together in multiplayer files... talk to your teammates with cursor chat in one shared space' and 'together in real-time and in one place'), and community sentiment corroborates Figma's collaboration strength as a standout feature versus competitors. Missing for 10: no independent hands-on report specifically testing simultaneous multi-editor sync/latency, and no deep technical detail on conflict resolution/CRDT sync mechanics.",
     "evidenceIds": [
       "figma-docs-14",
       "figma-docs-27",
-      "figma-docs-51",
       "figma-comm-6"
     ]
   },
@@ -1938,9 +1966,9 @@
     "productId": "figma",
     "storyId": "responsive-auto-layout",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 2,
     "confidence": "low",
-    "rationale": "Evidence only vaguely references Figma's 'best-in-class layout tools' and full design control, without any explicit mention of auto layout, constraints, or grid resizing behavior. Missing for 10: explicit documentation/demo of auto layout resizing, constraint-based responsive behavior, and layout grids adapting like real UI flex.",
+    "rationale": "Evidence pack lacks any explicit mention of Figma's auto layout, constraints, or grid systems; the closest is a vague marketing line about 'best-in-class layout tools' which doesn't name the specific responsive-design mechanics the story describes. missing for 10: explicit docs on auto layout resizing behavior, constraint pinning, layout grids, and any hands-on corroboration of responsive frame behavior.",
     "evidenceIds": [
       "figma-docs-15"
     ]
@@ -1949,12 +1977,13 @@
     "productId": "figma",
     "storyId": "reusable-components-variants",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack confirms Figma has a components guide (figma-docs-30, mentioning translating designs into code) and general design/prototyping capabilities, but contains no direct documentation of the core mechanics of the story—variant properties, per-instance overrides, or the linking behavior between instances and main components. Missing for 10: explicit docs on component variants, override behavior, and how overrides persist while staying linked to source updates; no community/hands-on corroboration of this specific workflow.",
+    "rationale": "The pack only glancingly references Figma's component system — a help-center link titled 'Guide to components in Figma' (figma-docs-30) and MCP docs mentioning extraction of 'variables, components, and layout data' (figma-docs-40) and 'sync design system source of truth to and from Figma' (figma-docs-54) — but none of the cited snippets actually describe variants, per-instance overrides, or how overrides stay linked to the master component. Missing for 10: explicit documentation of variant properties, override behavior on instances, and confirmation that overrides remain linked/updatable to the source component.",
     "evidenceIds": [
       "figma-docs-30",
-      "figma-docs-15"
+      "figma-docs-40",
+      "figma-docs-54"
     ]
   },
   {
@@ -1963,7 +1992,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Figma is a closed, proprietary SaaS platform (evidence includes complaints about proprietary file formats and locked-in local copies); there is no evidence of an open-source license or any self-hostable version of the full platform.",
+    "rationale": "Figma is a proprietary SaaS design platform; there is no evidence of any open-source self-hosted distribution of the full product, and community evidence even notes files are locked in a proprietary format with no local export option (figma-comm-7). This is an applicable question for a design platform (self-hosting is a legitimate axis buyers ask about), but no evidence supports it being possible.",
     "evidenceIds": [
       "figma-comm-7"
     ]
@@ -1972,13 +2001,13 @@
     "productId": "figma",
     "storyId": "shared-team-libraries",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Figma's marketing docs mention publishing/centralizing libraries and assets across teams (figma-docs-12, figma-docs-37) and general component-to-code guidance (figma-docs-30), implying shared library publishing exists, but no evidence details the controlled-update workflow (e.g., update notifications, accept/reject changes, library version history for components) that the story specifically asks about. missing for 10: documentation of library update notifications/controlled push mechanism, component override handling, and independent/hands-on confirmation of the update-control workflow.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Pricing and REST API docs confirm library publishing across teams/departments (figma-docs-12, figma-docs-37) and library analytics tracking component instance usage across files (figma-docs-55), supporting cross-file/project component distribution, but there is no explicit documentation in this pack of the update-propagation/notification mechanism when a source library changes (e.g., 'update available' prompts, accept/reject updates). Missing for 10: direct docs on library update notifications/controlled sync workflow, and independent corroboration of the update-control experience.",
     "evidenceIds": [
       "figma-docs-12",
       "figma-docs-37",
-      "figma-docs-30",
+      "figma-docs-55",
       "figma-docs-45"
     ]
   },
@@ -1986,12 +2015,13 @@
     "productId": "figma",
     "storyId": "vector-editing-craft",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The pack only vaguely gestures at design tooling (\"best-in-class layout tools, type tools, and more, you have full control over how you design\") without any explicit mention of pen/path editing, boolean operations, or alignment tools that the story specifically asks about. Missing for 10: explicit documentation of pen tool/vector path editing, boolean union/subtract/intersect operations, and precise alignment/snapping tools, plus any hands-on corroboration of vector editing quality.",
+    "rationale": "Figma's marketing copy claims 'best-in-class layout tools, type tools' and pixel-precise control (figma-docs-15, figma-docs-63), which implies strong vector design capability, but the evidence pack contains no specific documentation of pen/path tools, boolean operations, or precise alignment guides — these are core to the story but unevidenced here. Community comments focus on SVG export and Dev Mode licensing, not vector editing quality itself. Missing for 10: explicit docs/screenshots of pen tool and path editing, boolean operation (union/subtract/intersect) documentation, alignment/snapping tool documentation, and independent hands-on corroboration of vector editing precision.",
     "evidenceIds": [
       "figma-docs-15",
-      "figma-docs-27"
+      "figma-docs-63",
+      "figma-docs-28"
     ]
   },
   {
@@ -2000,7 +2030,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Only one thin doc reference confirms Figma has a 'file version history' feature (figma-docs-44), but the evidence pack gives no detail on naming milestones, comparing versions, or restoring an earlier state. Missing for 10: explicit documentation of naming/tagging versions, side-by-side comparison functionality, and restore workflow evidence, plus any independent/hands-on corroboration.",
+    "rationale": "Only one citation confirms version history viewing exists (figma-docs-44), but the evidence pack contains no detail on naming milestones, comparing versions, or restoring earlier states. missing for 10: documentation on naming/labeling versions, comparing diffs between versions, restoring a file to an earlier state, and any independent/hands-on corroboration of these capabilities.",
     "evidenceIds": [
       "figma-docs-44"
     ]
@@ -3464,6 +3494,700 @@
     "evidenceIds": []
   },
   {
+    "productId": "rive",
+    "storyId": "advanced-prototype-logic",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rive's docs extensively document state machines, keyframe animation, conditional/variable-driven behavior via data binding, and scroll/input-responsive interactive layouts, directly matching the story's need for advanced prototype behavior that feels real ('No mockups, no prototypes, no handoff. The real thing.'). Independent community sentiment corroborates it as a strong, production-grade alternative to Framer/Lottie for interactive motion design.\n\nmissing for 10: deeper independent hands-on validation specifically of scroll-effects fidelity, and more than one third-party source confirming state-machine/data-binding realism in practice.",
+    "evidenceIds": [
+      "rive-docs-3",
+      "rive-docs-4",
+      "rive-docs-5",
+      "rive-docs-15",
+      "rive-docs-22",
+      "rive-docs-24",
+      "rive-docs-16",
+      "rive-comm-6",
+      "rive-comm-7"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agent-creates-design",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rive documents a first-party MCP server for the desktop editor with tools to create/manage Rive files, build shapes/layouts/component instances, edit state machines, keyframes, data binding, and scripts/shaders — clearly a write-capable agent surface, not just read access. This is corroborated by both docs and a runtime probe of the actual MCP integration doc, plus RML as a text-based file format for coding-agent workflows. Missing for 10: independent hands-on community verification of the MCP tools actually working, and no public API/OpenAPI spec confirming programmatic write access outside the editor.",
+    "evidenceIds": [
+      "rive-docs-10",
+      "rive-docs-19",
+      "rive-probe-4",
+      "rive-probe-rt-2",
+      "rive-docs-20",
+      "rive-docs-25",
+      "rive-docs-13"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agent-exports-assets",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Rive's runtimes expose a programmatic Renderer interface (rive-gh-1, rive-gh-2) and docs describe 'export once' across platforms (rive-docs-7/8) plus MCP/RML surfaces for agents to build files programmatically (rive-docs-9/10/19/20, rive-probe-rt-2), but this only covers exporting the interactive .riv format to runtimes, not documented screenshot/image/video export. Community hands-on reports explicitly contradict export of static/movie assets ('no way to export movie files', 'can I export video assets with this!?') (rive-comm-3, rive-comm-10), directly undermining the 'render and export images/production formats' claim. Missing for 10: a documented API/CLI for rasterized image or video export, and resolution of the community-reported export gap.",
+    "evidenceIds": [
+      "rive-gh-1",
+      "rive-gh-2",
+      "rive-docs-7",
+      "rive-docs-8",
+      "rive-docs-9",
+      "rive-docs-19",
+      "rive-probe-rt-2",
+      "rive-comm-3",
+      "rive-comm-10"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agent-reads-design-context",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Rive documents an official MCP server (desktop editor, Windows/macOS) letting AI agents create/manage Rive files, shapes, layouts, component instances, state machines, keyframes, and data binding, which supports agent-driven implementation of design work. However, the story specifically asks for pulling design context like frames, variables, and screenshots via API/MCP — Rive's MCP is described as a tool-use interface for building/editing Rive content, not a documented read/export API for extracting existing frames, variables, or screenshots for arbitrary external design context. missing for 10: explicit API/MCP endpoints for reading existing frames/variables/screenshots as context, independent hands-on verification of the MCP server's real-world reliability, and confirmation of cross-platform (Linux) support.",
+    "evidenceIds": [
+      "rive-docs-10",
+      "rive-docs-19",
+      "rive-probe-4",
+      "rive-probe-rt-2",
+      "rive-docs-15",
+      "rive-docs-22"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "While the root /llms.txt 404s, the docs subdomain serves a proper agent-oriented llms.txt index at rive.app/docs/llms.txt covering all doc pages as raw markdown, and every docs page is fetchable as .md with a pointer to that index, confirming an agent can be pointed at agent-oriented docs successfully. Missing for 10: a canonical root-level llms.txt (only the /docs/ path works), and no independent (non-probe) corroboration of agent usage.",
+    "evidenceIds": [
+      "rive-probe-1",
+      "rive-probe-2",
+      "rive-probe-rt-1",
+      "rive-probe-rt-2",
+      "rive-docs-19"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-ai-insights",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a vector animation/design tool with data-binding for driving graphics from real-time data, and an AI agent/MCP for generating animations, scripts, and layouts—but this is a category error for 'AI-generated insights/suggestions from my data,' which implies analytics-style insight generation from a user's business/usage data, not a use case Rive's product model supports.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Rive's AI agent/MCP integration (rive-docs-9, rive-docs-10, rive-probe-4) lets a user or coding agent interactively build/edit Rive content, but there is no evidence of scheduled, unattended, or persistent background automations running autonomously without a user driving each session.",
+    "evidenceIds": [
+      "rive-docs-9",
+      "rive-docs-10",
+      "rive-probe-4",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Rive documents a built-in 'AI Agent' inside the editor that writes code, designs layouts, generates data models and animation, and handles repetitive tasks like View Models/State Machines, plus a CLI agent workflow — this is a genuine in-product AI assistant users can delegate tasks to. missing for 10: independent/hands-on validation of the AI agent's actual output quality and reliability beyond vendor docs.",
+    "evidenceIds": [
+      "rive-docs-9",
+      "rive-docs-10",
+      "rive-docs-18",
+      "rive-docs-26",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-headless",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Rive documents an open-source runtime library and a CLI that lets an agent generate Rive content (rive-docs-26, rive-gh-1), which could theoretically be scripted into a CI pipeline, but there is no explicit documentation of headless/CI execution, automated rendering pipelines, or test automation workflows. missing for 10: explicit CI/headless execution docs, examples of automated pipeline integration, confirmation that the CLI/runtime can run without a display or editor session.",
+    "evidenceIds": [
+      "rive-docs-26",
+      "rive-gh-1",
+      "rive-docs-21"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "All MCP evidence describes Rive exposing an MCP server so external AI clients (e.g., Claude, coding agents) can call into the Rive Editor's own tools (rive-docs-19, rive-probe-4, rive-probe-rt-2) — the reverse relationship from the story, which asks whether Rive can plug in external MCP servers to use their tools. No evidence shows Rive's built-in AI agent connecting to or consuming third-party MCP servers.",
+    "evidenceIds": [
+      "rive-docs-19",
+      "rive-docs-10",
+      "rive-probe-4",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Rive documents an official MCP server integration in its desktop editor, letting AI agents create/manage Rive files, build shapes/layouts, edit state machines, and work with data binding via MCP tools — this is first-party, detailed, and corroborated by a runtime probe fetching the raw docs page. Missing for 10: independent/hands-on community verification that the MCP server works reliably in practice.",
+    "evidenceIds": [
+      "rive-docs-19",
+      "rive-docs-10",
+      "rive-probe-4",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-nl-commands",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Rive documents a built-in AI agent that takes natural-language prompts to generate scripts, layouts, data models, and animations, plus an MCP integration letting external AI/coding agents create and edit Rive files, state machines, and shaders. This directly satisfies natural-language operation of the product for AI-native users. Missing for 10: independent/hands-on verification of the AI agent's reliability and no community corroboration of actual natural-language workflows in practice.",
+    "evidenceIds": [
+      "rive-docs-9",
+      "rive-docs-10",
+      "rive-docs-18",
+      "rive-docs-19",
+      "rive-docs-26",
+      "rive-probe-4",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-official-cli",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The Rive homepage claims users can 'let an agent generate them with the CLI' (rive-docs-26), indicating an official CLI exists for AI-agent workflows, but no other evidence pack item documents CLI installation, commands, or usage — most AI-agent tooling evidence instead centers on the MCP server and in-editor AI agent, not a standalone CLI. Missing for 10: dedicated CLI docs/reference, install instructions, command examples, and independent/hands-on corroboration of the CLI working.",
+    "evidenceIds": [
+      "rive-docs-26",
+      "rive-docs-9",
+      "rive-docs-19"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rive documents multiple ways to drive it programmatically: open-source runtime APIs for embedding/controlling animations (rive-docs-21, rive-gh-1), RML as a text-based file format for coding-agent workflows (rive-docs-13, rive-docs-20, rive-docs-25), and an official MCP server confirmed live via keyless fetch that exposes editor tools (create/manage files, shapes, state machines, data binding, scripts) to AI agents (rive-docs-19, rive-probe-4, rive-probe-rt-2). This directly satisfies an AI-native user's need to drive the product via documented public interfaces rather than only a GUI. Missing for 10: a conventional REST/OpenAPI-style API (probed endpoints all 404, rive-probe-3), and independent/community corroboration of successful AI-agent-driven API usage beyond first-party docs.",
+    "evidenceIds": [
+      "rive-docs-21",
+      "rive-gh-1",
+      "rive-docs-13",
+      "rive-docs-20",
+      "rive-docs-25",
+      "rive-docs-19",
+      "rive-probe-4",
+      "rive-probe-rt-2",
+      "rive-probe-3"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a design/animation tool with an editor and MCP/AI-agent integration for building content, not an API/auth platform issuing credentials; scoped API credential issuance for agents is not a fair axis for this product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rive ships open-source runtime SDKs (rive-runtime on GitHub) across web, mobile, game engines, and platforms, backed by extensive first-party docs on integration, data binding, and rendering (rive-docs-8, rive-docs-21, rive-gh-1, rive-gh-2), which is the core of 'official SDKs' for AI-native/agentic building. missing for 10: independent third-party hands-on validation of SDK quality/completeness beyond vendor docs, and no dedicated language-specific SDK reference pages (e.g., versioned API docs per platform) in the pack.",
+    "evidenceIds": [
+      "rive-docs-7",
+      "rive-docs-8",
+      "rive-docs-21",
+      "rive-gh-1",
+      "rive-gh-2",
+      "rive-docs-14",
+      "rive-docs-15"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "agentic-webhooks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack mentions webhooks, event subscriptions, or any push-notification API for Rive; the product is documented as a design/animation tool with editor, runtime, and MCP/AI-agent integrations, none of which reference webhook-based event delivery.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "ai-asset-editing-tools",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive's built-in AI (AI Agent, MCP) is documented to generate scripts, layouts, data models, and animations/state machines — not image generation, background removal, content-aware fills, or copy suggestions as described in the story. No evidence pack item mentions these specific asset-chore AI features.",
+    "evidenceIds": [
+      "rive-docs-9",
+      "rive-docs-10",
+      "rive-docs-18",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Rive ships developer runtimes/APIs, so an interactive API reference with runnable examples is a fair ask, but the evidence shows no such thing: OpenAPI/API-explorer probes 404, and docs pages are static markdown descriptions (getting started, data binding, MCP) without embedded runnable code examples or interactive playgrounds.",
+    "evidenceIds": [
+      "rive-probe-3",
+      "rive-docs-21",
+      "rive-probe-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No OpenAPI/Swagger spec was found; explicit probes for standard paths (openapi.json, swagger.json, etc.) all returned 404, and no docs reference a machine-readable API spec.",
+    "evidenceIds": [
+      "rive-probe-3"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "api-sandbox",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a vector animation/design tool and runtime library, not a data platform or API service with a distinct production/sandbox data environment; the concept of testing against a sandbox without touching production data does not map onto its product category (evidence covers design, animation, data binding, and AI-assisted authoring, none related to environment isolation).",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of versioned public APIs (e.g., v1/v2 REST/runtime API) with any documented deprecation policy; probes show no OpenAPI spec and docs focus on editor/runtime features, not API versioning or lifecycle guarantees.",
+    "evidenceIds": [
+      "rive-probe-3",
+      "rive-docs-21",
+      "rive-gh-1"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Rive's AI Agent/MCP tools are explicitly documented to handle repetitive, large-scale creation tasks — 'State Machines with hundreds of states/layers, Layouts, Shapes, and more' — and components/instances propagate changes across many instances at once, which supports bulk-style operations. However there's no evidence of a general-purpose bulk API (e.g., batch edit/query across arbitrary asset sets) beyond these editor-AI-agent use cases. Missing for 10: a documented bulk/batch API or CLI command operating across many arbitrary items (not just AI-agent-generated structures), and independent confirmation of this at scale.",
+    "evidenceIds": [
+      "rive-docs-10",
+      "rive-docs-11",
+      "rive-docs-9",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Rive's State Machines and data-binding docs imply event-driven behavior (inputs, user actions, and data changes automatically triggering animation/state updates), and its AI Agent/MCP tooling can generate these State Machines and scripting-based behaviors programmatically. However, there's no explicit documentation of a rule-authoring system (e.g., conditional 'if event then action' automation) framed for AI-native/automation use beyond interactive animation triggers. Missing for 10: explicit rule-definition API/interface for arbitrary automation, examples of AI-native users authoring trigger-action rules, and independent confirmation beyond first-party docs.",
+    "evidenceIds": [
+      "rive-docs-4",
+      "rive-docs-6",
+      "rive-docs-24",
+      "rive-docs-9",
+      "rive-docs-10"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a vector animation/design tool and runtime; it has no concept of scheduling recurring jobs or workflows, which is an axis relevant to automation/orchestration platforms, not a design/animation product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Rive has automatic revision history with non-destructive restore to previous versions, giving basic version/rollback capability, but this applies to design file saves, not to 'automations' (e.g., AI agent/MCP-driven workflows) themselves, and there's no evidence of reviewing diffs, branching, or rolling back specific AI-agent actions or scripted automations. missing for 10: version control/diffing for AI-agent-generated changes (MCP/CLI actions), review workflow for automation changes, granular rollback of specific automation steps rather than whole-file history.",
+    "evidenceIds": [
+      "rive-docs-12",
+      "rive-docs-17",
+      "rive-docs-9",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "build-custom-plugins",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence describes Rive's editor features (data binding, scripting, MCP integration, RML), but there is no documented plugin/extension API with typings and samples for building or distributing custom editor extensions—MCP and Luau scripting are for automating/creating content, not for third-party editor plugin development.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "clear-plan-pricing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains only product/feature documentation and community sentiment about product quality; there is no mention of a pricing page, seat types, tier breakdown, or how AI features map to specific plans. The community comments even reference confusion around cost ($25-$39/month) rather than a clear published pricing/tier structure. missing for 10: published pricing page, seat/tier definitions, explicit AI-feature-to-tier gating documentation.",
+    "evidenceIds": [
+      "rive-comm-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "comments-review-flows",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack of in-file commenting, @mentions, or thread resolution features; the closest related item is automatic revision history tracking, which is not a review/commenting workflow. This axis clearly applies to a collaborative design tool, but no capability is documented.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "design-to-production-code",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rive's core model eliminates design-to-code handoff: the design file itself (.riv) is the production asset consumed directly by open-source runtimes across web, mobile, and game engines, explicitly marketed as 'No mockups, no prototypes, no handoff. The real thing' and 'What you build in the editor is what ships in your app, game, or website.' RML further lets developers construct/modify Rive files as text-based code for programmatic workflows, and GitHub runtime repos confirm real GPU-backed loading/rendering of these files in production apps. missing for 10: independent third-party case study of a production ship using Rive's design-to-code pipeline beyond vendor docs, and clearer component-to-code mapping analogous to Figma-to-React style tooling.",
+    "evidenceIds": [
+      "rive-docs-16",
+      "rive-docs-23",
+      "rive-docs-7",
+      "rive-docs-8",
+      "rive-docs-21",
+      "rive-docs-13",
+      "rive-docs-20",
+      "rive-docs-25",
+      "rive-gh-1"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "design-tokens-variables",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Rive's evidence covers components, data binding/view models, and reusable instances, but nothing describes design-token or variable systems for colors/spacing/typography, nor theme/mode switching across designs — a fair ask for a design tool but unevidenced here.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "export-formats-assets",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Rive's documented export flow centers on exporting .riv files for use across runtimes (web, mobile, game engines), not static production assets like PNG/SVG/PDF with per-layer presets, scales, or slices. Community evidence even highlights the absence of static/video asset export ('It's so insane they don't offer any way to export movie files', 'can I export video assets with this!?'), reinforcing that this design-export workflow is not supported.",
+    "evidenceIds": [
+      "rive-docs-7",
+      "rive-docs-8",
+      "rive-comm-3",
+      "rive-comm-10"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "free-tier-real-design",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No vendor documentation in the evidence pack describes a free tier or its collaboration/editor capabilities; the only relevant evidence is community commentary noting recurring costs of $25–39/month for 'basic solo-dev work,' suggesting the free option (if any) is not adequate for real design work. Missing for 10: any first-party pricing/plans documentation, evidence of a functional free editor, and evidence of collaboration features available without a paid seat.",
+    "evidenceIds": [
+      "rive-comm-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "inspect-code-handoff",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a design/animation tool for building interactive vector graphics and state machines, not a design-handoff/inspect tool like Figma; there's no concept of 'layers' with CSS/iOS/Android code-snippet inspection in a no-editor-seat viewer. This story is a category error for Rive's product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "interactive-prototypes",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Rive's State Machines and interaction docs (rive-docs-4, rive-docs-22, rive-docs-24) support building input-driven, trigger/transition-based interactivity without code, and rive-docs-16/23 frame the tool as skipping separate 'prototype' handoff entirely. However there is no evidence of a Figma-style multi-screen/overlay prototyping paradigm (linking distinct screens, overlay layers, click-through flows across artboards) — Rive's interactivity is scoped to state machines within/across components rather than an explicit screen-flow prototyping mode. Missing for 10: evidence of multi-screen linking, overlay/modal wiring, and click-through flow prototyping across separate artboards/screens.",
+    "evidenceIds": [
+      "rive-docs-4",
+      "rive-docs-16",
+      "rive-docs-22",
+      "rive-docs-23",
+      "rive-docs-24"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "nl-design-generation",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Rive's docs describe a first-party AI Agent and MCP integration that lets users generate layouts, shapes, state machines, view models, and animations from natural-language/text-based workflows (rive-docs-9, rive-docs-10, rive-docs-18, rive-docs-26, rive-probe-rt-2), which matches the 'generate designs from a prompt' story for motion/UI design rather than general graphic mockups. Missing for 10: independent/hands-on evidence of prompt-to-design quality, and confirmation this covers full visual mockups (not just layouts/state machines/animation logic).",
+    "evidenceIds": [
+      "rive-docs-9",
+      "rive-docs-10",
+      "rive-docs-18",
+      "rive-docs-26",
+      "rive-probe-4",
+      "rive-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "open-file-format",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Rive documents a text-based Rive Markup Language (RML/XML) that lets developers create and modify .riv content as code outside the Editor, and open-sources its runtime libraries for loading/using files across platforms — both support portability and outside-editor tooling. However, community evidence notes the OSS runtime is only a rendering-layer subset and that authoring generally still requires the proprietary Editor, and no full open specification/schema for the .riv binary format itself is provided. Missing for 10: a fully published open .riv file format spec, independent third-party tools that read/write .riv without Rive's own runtime/editor, and confirmation RML covers 100% of file features.",
+    "evidenceIds": [
+      "rive-docs-13",
+      "rive-docs-20",
+      "rive-docs-25",
+      "rive-docs-21",
+      "rive-comm-5"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Rive documents extensive programmatic/text-based control—RML for building files as code, an MCP server exposing tools to create View Models, State Machines, Layouts, Shapes, data binding, and script editing, plus a CLI for agent-driven generation—suggesting much UI functionality is reachable via non-UI interfaces. However there's no public REST/OpenAPI spec (probe found 404s), and MCP tooling is scoped to the desktop editor rather than a full headless API, so parity with every UI capability isn't demonstrated. missing for 10: a documented complete API/OpenAPI surface covering all editor features, independent confirmation that every UI action (e.g., visual curve editing, asset import) is scriptable outside the desktop app.",
+    "evidenceIds": [
+      "rive-docs-13",
+      "rive-docs-19",
+      "rive-docs-20",
+      "rive-docs-25",
+      "rive-docs-26",
+      "rive-probe-4",
+      "rive-probe-rt-2",
+      "rive-probe-3"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "openness-full-export",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Rive documents an open, text-based file representation (RML/XML) and open-source runtimes, suggesting some data portability (rive-docs-13, rive-docs-20, rive-docs-25, rive-docs-21, rive-gh-1). However, community feedback directly contradicts a full 'export and leave' story: users report no way to export movie/video assets (rive-comm-3, rive-comm-10) and note the open-source license only covers a narrow rendering subset while the actual content-creation editor remains proprietary and subscription-locked (rive-comm-5, rive-comm-1, rive-comm-2), undermining claims of full open-format data portability. missing for 10: documented full-fidelity export to universal open formats (e.g. video/SVG/JSON), open-source editor or file-format spec, and independent confirmation that RML round-trips 100% of file data without proprietary lock-in.",
+    "evidenceIds": [
+      "rive-docs-13",
+      "rive-docs-20",
+      "rive-docs-21",
+      "rive-gh-1",
+      "rive-comm-3",
+      "rive-comm-5",
+      "rive-comm-10",
+      "rive-comm-1"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "openness-open-license",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Rive's runtimes are documented and confirmed on GitHub as open-source libraries (rive-docs-21, rive-gh-1, rive-gh-2), giving AI-native users real source access to the rendering/runtime layer, but community evidence notes the MIT license only covers a 'rendering abstraction layer, a subset of the Rive runtime' while the Editor itself (where files are authored) remains closed-source (rive-comm-5, rive-comm-1). missing for 10: full-product open license (editor/design tool source not published), independent confirmation of license file/terms, clarity on what runtime components are excluded from the OSS layer.",
+    "evidenceIds": [
+      "rive-docs-21",
+      "rive-gh-1",
+      "rive-gh-2",
+      "rive-comm-5",
+      "rive-comm-1"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "openness-self-host",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Rive's core product is the proprietary Editor (a SaaS/desktop app); only a subset of the runtime rendering layer is open-source (MIT), and community evidence explicitly notes the editor itself cannot be self-hosted and requires the hosted tool to author content. No docs or evidence describe self-hosting the Editor or backend service.",
+    "evidenceIds": [
+      "rive-comm-5",
+      "rive-docs-21"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "plugin-ecosystem-marketplace",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "There is no evidence of a plugin marketplace or third-party extension ecosystem for the Rive editor (icons, data fillers, accessibility checkers, etc.); documentation covers built-in features, AI agent/MCP integration, and scripting, but nothing about a plugin community or marketplace.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "privacy-data-residency",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a design/animation tool and runtime library, not a data-storage/hosting SaaS platform where data residency/region selection would be a meaningful axis; no evidence pack content relates to storage location or compliance regions.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "privacy-no-training",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a design/animation tool and runtime SDK; there is no evidence it processes user data for AI model training or offers any data-usage/opt-out controls, making this privacy-posture question a category mismatch rather than an unmet capability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "privacy-retention-controls",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a design/animation tool and runtime; it has no data-retention/deletion controls relevant to AI-native privacy posture in the evidence, and this is not a category where such controls would typically be a distinguishing product axis for a design tool's file/asset content vs. a SaaS handling user data at scale — no evidence pack content addresses retention or deletion policies at all.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive is a design/animation tool and runtime SDK, not a data-collecting SaaS platform with telemetry settings relevant to AI-native privacy posture; no evidence pack content relates to opting out of usage tracking.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "rive",
+    "storyId": "realtime-multiplayer-editing",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs mention that 'multiple people' can work on the same file simultaneously and changes are tracked in revision history, implying some multiplayer support, but there is no evidence of live cursors, presence indicators, or truly instant real-time sync. missing for 10: live cursor/presence visualization, explicit real-time sync mechanism, independent hands-on confirmation of multiplayer editing.",
+    "evidenceIds": [
+      "rive-docs-12",
+      "rive-docs-17"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "responsive-auto-layout",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs repeatedly claim 'responsive layouts' that adapt to screen size and app state (rive-docs-1, rive-docs-4, rive-docs-9, rive-docs-26), confirming Rive has a layout system for flexible UI design. However, the evidence never specifically documents 'constraints' or 'grid' systems, or details on how auto layout mechanics work (flex-like behavior, alignment rules, etc.), so the story's specific claims about constraints and grids are unsubstantiated. Missing for 10: explicit documentation of constraint-based resizing, grid systems, and concrete examples of auto layout resizing behavior beyond the generic 'responsive layouts' phrase.",
+    "evidenceIds": [
+      "rive-docs-1",
+      "rive-docs-4",
+      "rive-docs-9",
+      "rive-docs-26",
+      "rive-docs-18"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "reusable-components-variants",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Rive's docs explicitly describe creating a component once and using customized instances throughout a file, with changes to the source component propagating to all instances — exactly the reusable-component-with-variants/overrides workflow described in the story. This is corroborated by related data-binding and view-model docs showing per-instance customization stays linked to source data. Missing for 10: independent/hands-on designer confirmation of variant-override behavior beyond first-party docs, and explicit detail on 'variants' terminology (only 'instances' is used).",
+    "evidenceIds": [
+      "rive-docs-11",
+      "rive-docs-22",
+      "rive-docs-24"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "self-host-design-platform",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Rive's editor/design platform is a hosted, proprietary SaaS product; only the rendering runtime is open-sourced (MIT), not the full design platform, and there is no evidence of a self-hosted deployment option for the editor itself. Community commentary explicitly confirms this split — the OSS license covers only 'a subset of the Rive runtime that requires the Rive Editor to build content for' (rive-comm-5), and no docs or GitHub evidence describe self-hosting the editor/platform.",
+    "evidenceIds": [
+      "rive-comm-5",
+      "rive-docs-21",
+      "rive-gh-1"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "shared-team-libraries",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Rive documents in-file components/instances where changes propagate to instances (rive-docs-11), but there is no evidence of a shared library system that publishes components/styles across separate files or projects with controlled update propagation — a Figma-style library concept. Absence of this cross-file/cross-project capability makes this a 'none' rather than partial delivery.",
+    "evidenceIds": [
+      "rive-docs-11"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "vector-editing-craft",
+    "verdict": "disputed",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Rive's docs only vaguely claim it lets you 'create vector graphics' but never document pen/path editing, boolean operations, or alignment tools as a professional vector suite; a hands-on community comment explicitly says Rive's drawing toolset is just 'pen and a couple of basic shapes,' calling it inefficient compared to real vector tools like Illustrator/Photoshop. missing for 10: explicit documentation of boolean operations, precise alignment/snapping tools, and any evidence rebutting the basic-toolset complaint.",
+    "evidenceIds": [
+      "rive-docs-1",
+      "rive-comm-8"
+    ]
+  },
+  {
+    "productId": "rive",
+    "storyId": "version-history-restore",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Rive's docs confirm automatic revision history that tracks all changes and allows non-destructive restoration of earlier file states (rive-docs-12, rive-docs-17), covering the 'restore any earlier state' part of the story. However, there is no evidence of naming/labeling milestones or of a compare/diff view between versions. Missing for 10: milestone naming/tagging, visual diff/comparison between revisions, independent confirmation of restore workflow.",
+    "evidenceIds": [
+      "rive-docs-12",
+      "rive-docs-17"
+    ]
+  },
+  {
     "productId": "sketch",
     "storyId": "advanced-prototype-logic",
     "verdict": "partial",
@@ -4188,6 +4912,712 @@
       "sketch-docs-28",
       "sketch-docs-33",
       "sketch-docs-41"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "advanced-prototype-logic",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs describe a full no-code interactivity model built from states, events and actions, plus variables/real-time API and webhooks for conditional and data-driven behavior, and a code tab for custom JS-driven behavior layered over the 3D scene — together enabling prototypes that animate between states, react to conditions/variables, and respond to external triggers like scroll/webhooks. Missing for 10: explicit documentation naming 'scroll' as a trigger/event type, and independent hands-on evidence validating these advanced behaviors work smoothly in practice (community evidence only covers basic 3D interaction, not advanced logic).",
+    "evidenceIds": [
+      "spline-docs-31",
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-docs-26",
+      "spline-docs-11",
+      "spline-docs-24",
+      "spline-docs-6"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agent-creates-design",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Spline ships an official MCP Server bundled in its desktop app that lets agents (Claude, Cursor, Codex, VS Code, etc.) directly drive the editor to create/modify scenes, plus a Real-time API, webhooks, and Code API for programmatic write access — going well beyond read-only access. missing for 10: no independent/hands-on third-party report confirming the MCP write-agent workflow in practice (only vendor docs), and no public OpenAPI/REST spec for external programmatic write access.",
+    "evidenceIds": [
+      "spline-docs-13",
+      "spline-docs-14",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-docs-32",
+      "spline-docs-20",
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-probe-4",
+      "spline-probe-rt-1"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agent-exports-assets",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Spline documents multiple export/programmatic surfaces (export-as-code for Vanilla JS/Three.js/React/Next.js/r3f, self-hosted ZIP export, Code API, Real-time API, webhooks) and an MCP server that lets agents like Claude/Cursor drive the editor, but none of the docs explicitly describe an agent invoking a screenshot/image render or export action through these interfaces — the MCP surface is framed as scene building/editing, not export/rendering. Missing for 10: explicit MCP or API tool for triggering exports/screenshots/renders programmatically, and independent confirmation this works end-to-end for an agent.",
+    "evidenceIds": [
+      "spline-docs-12",
+      "spline-docs-17",
+      "spline-docs-18",
+      "spline-docs-13",
+      "spline-docs-25",
+      "spline-probe-3"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agent-reads-design-context",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Spline ships an official MCP server (bundled in the desktop app) that lets Claude, Cursor, VS Code, Codex, etc. drive the Spline editor directly, and it offers a Code API/exports for programmatic scene access — but this is a 3D scene design tool, not a UI/design-system source, so there is no evidence of pulling 'frames, variables, screenshots, component mappings' in the sense of a design-context handoff (e.g. Figma-like design tokens or screen frames) for an agent to implement a UI design. missing for 10: evidence of frame/screenshot export via MCP or API, variable/token extraction for implementation, component-to-code mapping beyond generic React/Three.js export, and independent hands-on confirmation of the MCP server's design-context fidelity.",
+    "evidenceIds": [
+      "spline-docs-13",
+      "spline-docs-14",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-docs-9",
+      "spline-docs-17",
+      "spline-docs-12",
+      "spline-probe-4",
+      "spline-probe-rt-1"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Spline hosts a live llms.txt index (confirmed by direct probe returning HTTP 200 with a documentation index) plus per-page .md mirrors, giving agents a structured, agent-oriented docs entry point as described in the story. Missing for 10: no independent/third-party corroboration that agents actually consume llms.txt successfully in practice.",
+    "evidenceIds": [
+      "spline-probe-1",
+      "spline-probe-rt-1",
+      "spline-docs-16",
+      "spline-probe-2"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-ai-insights",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Spline is a 3D/2D design and interactive-prototyping tool; its AI features (AI Agent, AI textures, Hana screen design) generate creative content from prompts, not insights/suggestions derived from a user's own data/analytics. There is no data-analysis or insights-generation axis in this product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Spline offers webhooks and a Real-time API that let a published scene 'automatically trigger actions, update variables, and react to data sent from external sources' without human intervention, which is a form of event-driven automation. However, this is scoped to reactive 3D-scene event handling embedded in a running viewer, not an independent, schedulable background automation/agent process that runs continuously outside a live scene session. Missing for 10: evidence of scheduled/standalone background jobs, an autonomous agent runtime independent of an open editor/viewer, and any monitoring/logging of unattended automation runs.",
+    "evidenceIds": [
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-docs-26"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Spline docs describe an in-editor 'AI Agent' that builds and edits 3D scenes from natural-language descriptions—creating objects, materials, lighting, animation, and interactivity directly through the editor—plus 'Hana' for screen design and AI texture generation, all first-party built-in assistants rather than external tools. missing for 10: independent hands-on verification of AI Agent quality/reliability beyond vendor docs.",
+    "evidenceIds": [
+      "spline-docs-20",
+      "spline-docs-21",
+      "spline-docs-28",
+      "spline-docs-3",
+      "spline-probe-rt-1"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-headless",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Spline's automation surfaces (Real-time API, Webhooks, MCP server) all require a running editor/desktop app with an open tab — evidence explicitly states MCP 'only works' via the desktop GUI 'straight into your open editor tab', not headlessly. No CLI, headless rendering mode, or CI-runnable process is documented anywhere in the evidence pack.",
+    "evidenceIds": [
+      "spline-docs-13",
+      "spline-docs-14",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-probe-4"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Evidence shows Spline exposes itself as an MCP server so external clients like Claude/Cursor/Codex can drive Spline (docs-13,14,19,25,32) — the reverse direction of the story. There is no evidence that Spline itself can connect to and consume external MCP servers' tools.",
+    "evidenceIds": [
+      "spline-docs-13",
+      "spline-docs-14",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-docs-32"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Spline ships an official MCP server (bundled in the desktop app) that lets Claude, Cursor, VS Code, Antigravity, and ChatGPT drive the editor directly, with no separate install/config needed, confirmed by multiple first-party docs and a runtime probe. Missing for 10: independent/hands-on community corroboration beyond vendor docs.",
+    "evidenceIds": [
+      "spline-docs-13",
+      "spline-docs-14",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-docs-32",
+      "spline-probe-4",
+      "spline-probe-rt-1"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-nl-commands",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Spline documents a natural-language AI Agent that builds/edits 3D scenes ('describe what you want and it does the work'), AI-generated textures via typing, and a Hana screen-design assistant, plus MCP server support letting Claude/Cursor/ChatGPT drive the editor via natural-language commands. This directly satisfies the ai-native/agenticness story with multiple first-party mechanisms. Missing for 10: independent/hands-on verification of the AI Agent's natural-language command fidelity and any reported limitations or failure cases.",
+    "evidenceIds": [
+      "spline-docs-20",
+      "spline-docs-4",
+      "spline-docs-21",
+      "spline-docs-13",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-docs-32"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-official-cli",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Spline is a design tool for creating 3D/2D experiences, not a developer CLI-driven platform; its agentic surface is exposed via MCP server, AI Agent, and Code API, not a CLI. No evidence suggests a CLI is a fit or existing capability for this product category.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-public-api",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Spline exposes several programmatic surfaces — a Code API/runtime API for web embeds, a Real-time API, webhooks, and code export to JS/React frameworks — plus an MCP server for agentic clients, which together let AI-native users drive it programmatically. However, there is no evidence of a single documented general-purpose public REST/GraphQL API with an OpenAPI spec (probe explicitly found 404s for openapi/swagger endpoints), so 'documented public API' is fragmented across runtime/webhook/MCP surfaces rather than one comprehensive API. missing for 10: a unified, versioned public API reference (e.g., OpenAPI spec) covering full CRUD over projects/scenes, and independent/hands-on confirmation of these APIs working outside vendor docs.",
+    "evidenceIds": [
+      "spline-docs-6",
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-docs-13",
+      "spline-docs-17",
+      "spline-docs-25",
+      "spline-probe-3",
+      "spline-probe-4"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Spline documents an MCP server bundled with the desktop app and a Real-time API/webhooks system, but nothing in the evidence describes issuing scoped or least-privilege API credentials/tokens for an agent — access is described as auto-registering with detected clients, not permissioned key issuance. missing for 10: any mention of API key/token scoping, permission levels, or least-privilege credential management for agent access.",
+    "evidenceIds": [
+      "spline-docs-13",
+      "spline-docs-14",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-probe-4"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-sdks",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Spline offers an official Code API for web plus code export to Vanilla JS, Three.js, React, Next.js and react-three-fiber, and a Real-time API/webhooks system for programmatic integration — enough for an AI-native developer to build against official interfaces. However these are export/runtime APIs rather than a full SDK suite (no dedicated npm SDK package, no mobile/iOS/Android SDK, no OpenAPI spec — probe found 404s), and there's no independent hands-on corroboration of SDK usage. Missing for 10: dedicated versioned SDK packages (e.g. npm/PyPI), multi-platform (mobile/native) SDKs, published OpenAPI/reference docs, and independent developer corroboration.",
+    "evidenceIds": [
+      "spline-docs-6",
+      "spline-docs-12",
+      "spline-docs-17",
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-probe-3"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Spline's docs explicitly describe a dedicated Webhooks feature that lets a scene 'listen for and respond to external events' and 'automatically trigger actions, update variables, and react to data sent from external sources,' directly matching the story of subscribing to events via webhooks. This is corroborated by the Real-time API docs for bidirectional event integration, but there's no independent/hands-on confirmation or detailed API reference for the webhook subscription mechanics. Missing for 10: independent/community verification of webhook usage, and concrete API details (payload schema, auth, subscription endpoints).",
+    "evidenceIds": [
+      "spline-docs-10",
+      "spline-docs-26",
+      "spline-docs-9"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "ai-asset-editing-tools",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Spline documents built-in AI features—AI-generated textures via text prompts and an AI Agent/Hana that builds/edits 3D scenes and screens—which is a form of in-editor generative asset creation, but there's no evidence of background removal, content-aware fill, or AI copy/text suggestions inside the editor. missing for 10: background removal, content-aware fill, copy/text suggestions, general image asset generation beyond textures.",
+    "evidenceIds": [
+      "spline-docs-4",
+      "spline-docs-28",
+      "spline-docs-20",
+      "spline-docs-21"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Spline documents a Code API, Real-time API, and webhooks, but there is no evidence of an interactive, runnable API reference/playground (e.g., Swagger/OpenAPI explorer) — the probe explicitly found all OpenAPI/swagger endpoints 404. Docs are static markdown pages, not runnable examples.",
+    "evidenceIds": [
+      "spline-probe-3",
+      "spline-docs-9",
+      "spline-docs-17"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "A direct probe for OpenAPI/Swagger spec files at standard paths returned 404 for all candidates, and no evidence pack item shows a machine-readable API spec being published; Spline instead offers a Real-time API and Webhooks described only in prose docs.",
+    "evidenceIds": [
+      "spline-probe-3",
+      "spline-docs-9",
+      "spline-docs-10"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "api-sandbox",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Spline is a 3D/2D design tool with no concept of production vs sandbox data environments — its 'sandboxing' evidence (spline-docs-11/24) refers to an isolated iframe for embedded HTML code, not a staging/production data separation for AI-native testing. This story presumes a data-driven platform with prod/sandbox environments, which is not how Spline's editor/export model works, making the axis inapplicable.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Spline documents several APIs (Code API, Real-time API, webhooks, MCP server) but no evidence anywhere mentions API versioning or a deprecation policy; probes for OpenAPI specs also returned 404s. Missing for 10: any mention of API version numbers, changelog, or deprecation/support timeline commitments.",
+    "evidenceIds": [
+      "spline-docs-9",
+      "spline-docs-17",
+      "spline-probe-3"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "automation-bulk-operations",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence describes any batch/bulk editing capability (e.g., scripting across many objects, bulk API calls, multi-item automation) — the closest features are component instance propagation and event-driven Real-time/Webhook APIs, which address reuse and single-event automation, not bulk operations across many items.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "automation-rules-engine",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Spline's core interactivity model is built from states, events and actions that trigger automatically, and webhooks/Real-time API explicitly let external events trigger actions and update variables — matching the rule-based automation story well. missing for 10: independent/hands-on corroboration of webhook or event-rule behavior beyond first-party docs, and detail on rule complexity/conditional logic.",
+    "evidenceIds": [
+      "spline-docs-31",
+      "spline-docs-10",
+      "spline-docs-26",
+      "spline-docs-9"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Spline is a 3D/2D design tool for interactive experiences; scheduling recurring jobs or workflows is not a capability applicable to its product category — it offers event-driven webhooks and real-time APIs but no notion of cron-like scheduled/recurring automation.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Spline's automations (states/events/actions, webhooks, real-time API) live inside a scene file, and Spline's Version History feature lets users preview saved versions, recover previous file states, and manually save new versions — providing a rollback mechanism. However, there is no evidence of automation-specific review tooling (diffs, approval flows, change logs scoped to individual automations) beyond generic whole-file version snapshots. Missing for 10: dedicated diff/review UI for automation logic, granular versioning of individual events/webhooks rather than the whole file, and independent confirmation the rollback works reliably in practice.",
+    "evidenceIds": [
+      "spline-docs-15",
+      "spline-docs-29",
+      "spline-docs-33",
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-docs-31"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "build-custom-plugins",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Code/Real-time APIs, webhooks, and code export for embedding Spline scenes in external projects, but nothing documents a plugin API, SDK, typings, or samples for building/distributing custom editor extensions inside Spline itself. missing for 10: any documented plugin/extension SDK, typings for editor extension points, sample extension projects, or a distribution mechanism for third-party editor plugins.",
+    "evidenceIds": [
+      "spline-docs-6",
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-docs-17"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "clear-plan-pricing",
+    "verdict": "partial",
+    "quality": 2,
+    "confidence": "low",
+    "rationale": "Only one evidence item references the pricing page at all, and it's a bare fragment listing a few feature bullets (code/self-hosted export, version history, team library) with no visible seat types, tier names, or explicit AI-feature gating breakdown. Missing for 10: documented tier names/pricing, seat-type definitions, explicit AI feature gating per tier, and any independent corroboration of the pricing page's clarity.",
+    "evidenceIds": [
+      "spline-docs-33"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "comments-review-flows",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Spline supports real-time multiplayer co-editing (multiple people editing the same file), but no documentation mentions a commenting system, @mentions, or resolving comment threads — the core mechanics this story asks about. Missing for 10: any mention of in-file comments, mentions/notifications, or thread resolution.",
+    "evidenceIds": [
+      "spline-docs-2",
+      "spline-docs-30",
+      "spline-docs-34"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "design-to-production-code",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Spline explicitly ships direct design-to-code export (Vanilla JS, Three.js, React, Next.js, react-three-fiber) plus a Code API and self-hosted runtime export, giving developers shippable output rather than just visual mockups. Missing for 10: independent/hands-on developer reports validating the exported code's production quality and any component-to-code mapping workflow beyond scene/runtime export.",
+    "evidenceIds": [
+      "spline-docs-12",
+      "spline-docs-27",
+      "spline-docs-17",
+      "spline-docs-8",
+      "spline-docs-6"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "design-tokens-variables",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Spline's docs cover reusable Components (spline-docs-5) and a 'variables-and-data' section for interactivity (real-time API, webhooks), but there is no evidence of design tokens for color/spacing/typography or theme/mode switching applied across designs — a core design-system feature seen in tools like Figma. Missing for 10: any documentation of color/spacing/typography tokens, theme or mode support, or cross-file token application.",
+    "evidenceIds": [
+      "spline-docs-5",
+      "spline-docs-9",
+      "spline-docs-10"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "export-formats-assets",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Evidence shows Spline exports scenes as code (Vanilla JS, Three.js, React, Next.js), self-hosted ZIP bundles, and viewer embeds, but nowhere documents raster/vector asset export (PNG, SVG, PDF) with per-layer presets, scales, or slices — the workflow this story describes. Since Spline is a design tool where such export presets are a plausible feature, this is an applicable-but-unevidenced axis rather than a category error.",
+    "evidenceIds": [
+      "spline-docs-12",
+      "spline-docs-27",
+      "spline-docs-8",
+      "spline-docs-18"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "free-tier-real-design",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs describe Spline as 'multiplayer from the ground up' with cloud-based files that several people can edit at once, suggesting collaboration is core to the product rather than gated behind a paid seat, but the evidence pack has no explicit free-tier pricing page detail confirming seat limits, viewer/editor caps, or whether real-time collaboration is unrestricted on the free plan. The one pricing-page snippet (spline-docs-33) lists Code/self-hosted exports, version history, and Team Library without clarifying tier boundaries. missing for 10: explicit free-tier plan page detailing seat/collaborator limits, independent user reports confirming free-tier collaboration works in practice.",
+    "evidenceIds": [
+      "spline-docs-2",
+      "spline-docs-30",
+      "spline-docs-33"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "inspect-code-handoff",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Spline's docs describe code export (Vanilla JS, Three.js, React, Next.js, react-three-fiber) and a Code API, but there is no evidence of a Figma-style 'Inspect' mode that lets a developer view measurements, styles, and per-layer CSS/iOS/Android snippets without an editor seat. Pricing mentions only 'Code & Self-hosted exports' and 'Team Library', not a viewer-only handoff mode.",
+    "evidenceIds": [
+      "spline-docs-12",
+      "spline-docs-27",
+      "spline-docs-33"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "interactive-prototypes",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Spline documents a no-code interactivity model built from 'states, events and actions' (spline-docs-31) and references screen-based design ('describe a screen and Hana designs it', spline-docs-21), supporting no-code UI wiring. However, the evidence never explicitly describes screen-to-screen prototyping concepts like triggers between distinct screens, transitions, or overlay behavior in the Figma-prototyping sense. Missing for 10: explicit documentation of screen linking/transitions, overlay-style layering between screens, and any hands-on/independent confirmation that clickable multi-screen prototypes (not just single-scene interactivity) work as described.",
+    "evidenceIds": [
+      "spline-docs-31",
+      "spline-docs-21",
+      "spline-docs-3"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "nl-design-generation",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs describe two concrete NL-to-design capabilities: 'Hana' which designs a screen from a description that can then be hand-edited (spline-docs-21), and an AI Agent that builds/edits full 3D scenes — creating objects, materials, lighting, animation, interactivity — from a prompt (spline-docs-20, spline-docs-3), plus text-to-texture generation (spline-docs-4/28). Missing for 10: independent/hands-on evidence (reviews, demos) validating real-world output quality of Hana/AI Agent — the community citations predate and don't mention these AI features.",
+    "evidenceIds": [
+      "spline-docs-20",
+      "spline-docs-21",
+      "spline-docs-3",
+      "spline-docs-4"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "open-file-format",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Spline docs show multiple export paths that support portability outside the editor — code export to Vanilla JS/Three.js/React/Next.js/react-three-fiber, a self-hosted fully self-contained ZIP export, and a native <spline-viewer> web component — which let designs be used and tooled outside Spline's own editor. However, there is no evidence the native .spline project file format itself is open or documented (no schema, no OpenAPI/spec found, and a spec probe returned 404s), so the underlying source file remains a proprietary, closed format even though various exported artifacts are portable. Missing for 10: documentation of the .spline file format's internal schema/spec, and any independent confirmation that exported code/ZIP outputs are faithfully round-trippable back into the editor.",
+    "evidenceIds": [
+      "spline-docs-12",
+      "spline-docs-27",
+      "spline-docs-8",
+      "spline-docs-18",
+      "spline-docs-7",
+      "spline-probe-3"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Spline offers real, documented programmatic surfaces — a Code API and Real-time API for scenes, webhooks for event-driven automation, code export (React/Three.js/etc.), self-hosted export, and an MCP server that lets AI clients like Claude/Cursor drive the editor — but the MCP integration explicitly works 'straight into your open editor tab,' implying it drives the UI rather than replacing it, and probes found no public OpenAPI/REST spec for full scene CRUD (openapi/swagger paths 404). Core design actions (materials, animation, AI texture generation, AI Agent scene-building) are documented as editor-centric with only partial programmatic exposure.\n\nmissing for 10: a documented OpenAPI/REST spec for full scene creation/editing outside the editor, independent evidence that MCP/API access can fully replace manual editor use for all UI capabilities.",
+    "evidenceIds": [
+      "spline-docs-6",
+      "spline-docs-9",
+      "spline-docs-10",
+      "spline-docs-13",
+      "spline-docs-19",
+      "spline-docs-25",
+      "spline-probe-3",
+      "spline-probe-4"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "openness-full-export",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Spline documents self-hosted export (full project, assets, and runtime as a self-contained ZIP) and code export in multiple open web formats (Vanilla JS, Three.js, React, Next.js, react-three-fiber), giving users a way to take their scene data out of the platform entirely rather than being locked into a proprietary cloud-only format. Missing for 10: no evidence of exporting to standard interchange 3D formats (e.g., glTF/OBJ), no independent/hands-on confirmation that self-hosted exports are truly complete and portable, and no mention of exporting non-visual metadata (variables, version history) alongside the scene.",
+    "evidenceIds": [
+      "spline-docs-8",
+      "spline-docs-18",
+      "spline-docs-23",
+      "spline-docs-12",
+      "spline-docs-27",
+      "spline-docs-33"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Spline is a closed, proprietary SaaS/desktop design tool; no evidence anywhere in the pack indicates its source code is published under any open-source or open license — all evidence relates to product features, exports, and docs, not source availability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "openness-self-host",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Spline is explicitly cloud-based and multiplayer 'from the ground up' with files living in Spline's cloud (spline-docs-2, spline-docs-30, spline-docs-34); the 'Self-Hosted' feature only exports a finished project's runtime/assets as a static ZIP for deployment, not the editor/core product itself (spline-docs-8, spline-docs-18, spline-docs-23). There is no evidence of an installable/self-hostable version of the Spline editing platform or its backend.",
+    "evidenceIds": [
+      "spline-docs-2",
+      "spline-docs-30",
+      "spline-docs-34",
+      "spline-docs-8",
+      "spline-docs-18",
+      "spline-docs-23"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "plugin-ecosystem-marketplace",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence of a plugin community/marketplace for extending the Spline editor with third-party add-ons like icons, data fillers, or accessibility checkers; the pack only covers exports, MCP/AI integrations, and code APIs, none of which describe an extensibility/plugin ecosystem.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence pack material addresses data residency, region selection, or storage location controls for Spline's cloud-hosted files; only self-hosted export is mentioned, which is unrelated to choosing a storage region within Spline's own cloud infrastructure.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data-training opt-out, AI training data usage policy, or any privacy controls preventing use of user content for model training; the docs focus on features (AI textures, AI agent, MCP) but never mention training-data privacy settings.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data retention policies, data deletion controls, export/erasure of user data, or privacy settings; only design/collaboration/export/AI feature docs are present.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions telemetry, analytics opt-out, or usage-tracking controls for Spline; the docs cover product features, exports, and MCP support but never a privacy/telemetry settings page.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "realtime-multiplayer-editing",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs explicitly claim Spline is 'multiplayer from the ground up' with cloud-hosted files that multiple people can edit simultaneously, shared across both editors. However, there is no explicit mention of live cursors or evidence of independent/hands-on corroboration of real-time sync quality; the community citations are unrelated to collaboration. Missing for 10: explicit live-cursor/presence feature documentation, independent hands-on verification of simultaneous editing and sync latency.",
+    "evidenceIds": [
+      "spline-docs-2",
+      "spline-docs-30",
+      "spline-docs-34"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "responsive-auto-layout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Spline's 3D/2D scene design, AI generation, collaboration, export, and MCP features, but contains no mention of auto layout, constraints, or grid-based responsive frame behavior anywhere in the docs or community posts. Missing for 10: any documentation of auto-layout, constraint-based resizing, or grid systems for frames.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "spline",
+    "storyId": "reusable-components-variants",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Spline docs confirm reusable Components that propagate changes from the main component to all instances, which is the core linked-component behavior, but there is no mention of variant support or per-instance property overrides that remain linked to the source. Missing for 10: variants system, per-instance override controls, evidence of override persistence across source updates.",
+    "evidenceIds": [
+      "spline-docs-5"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "self-host-design-platform",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Spline offers a 'Self-Hosted' export that lets you download a single project's assets and runtime as a ZIP (spline-docs-8/18/23), but this is per-project asset export, not self-hosting the editor/design platform itself, and there is no mention of an open-source license or ability to run the full Spline platform on one's own infrastructure. Community evidence confirms Spline is a cloud/Electron-wrapped web app requiring the hosted service (spline-comm-1).",
+    "evidenceIds": [
+      "spline-docs-8",
+      "spline-docs-18",
+      "spline-docs-23",
+      "spline-comm-1"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "shared-team-libraries",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Spline documents component reuse where instances update when the main component changes (spline-docs-5), and pricing mentions a 'Team Library' feature (spline-docs-33), implying some shared-library capability across a team. However, there's no documentation detailing publishing components/styles across separate files or projects, or how updates propagate/are controlled at that scope. Missing for 10: cross-file/cross-project library publishing workflow, versioned/controlled update mechanism, and any independent confirmation of Team Library behavior.",
+    "evidenceIds": [
+      "spline-docs-5",
+      "spline-docs-33"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "vector-editing-craft",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Spline's docs describe 3D scene design, AI-generated screens/textures, code export, and MCP integration, but none mention core vector-editing tools like pen/path editing, boolean operations, or precise alignment guides expected for interface design work. Since Spline explicitly supports 2D/UI screen design (docs-21, docs-34), this axis is a fair question, but there is no evidence it delivers these professional vector tools.",
+    "evidenceIds": [
+      "spline-docs-21",
+      "spline-docs-34",
+      "spline-docs-1"
+    ]
+  },
+  {
+    "productId": "spline",
+    "storyId": "version-history-restore",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm a Version History feature that lets users preview all saved versions, track changes, and restore/recover earlier file states, plus manually save new versions ([spline-docs-15],[spline-docs-29],[spline-docs-33]). However, there is no evidence of explicitly naming/labeling milestones or a side-by-side compare view between versions. Missing for 10: explicit naming/labeling of milestone versions, a diff/compare UI between versions, independent hands-on confirmation of restore workflow.",
+    "evidenceIds": [
+      "spline-docs-15",
+      "spline-docs-29",
+      "spline-docs-33"
     ]
   }
 ]
