@@ -40,6 +40,9 @@ const THEME_RULES: Array<[RegExp, string]> = [
   [/auth|sso|mfa|passwordless|credential|rbac|permission|tenan|key-management|session-management/, '🔑'],
   [/compliance|governance|audit|policy|licensing|trust|legal|pci/, '⚖️'],
   [/contract|esignature|document-automation|incorporation|registered-agent/, '📜'],
+  // Identity verification & KYC arena (data-checks falls through to the data bucket;
+  // idv-agent-access falls through to the agent robot — both deliberate)
+  [/verification-flows|document-coverage|biometric-liveness|watchlist-screening|verification-orchestration/, '🛂'],
   // Error tracking & expense management arenas
   [/error|crash|grouping|regression/, '🚨'],
   [/sourcemap|symbolicat/, '🗺️'],
@@ -53,6 +56,10 @@ const THEME_RULES: Array<[RegExp, string]> = [
   [/evals|guardrail/, '🧪'],
   [/mcp|tools-function|structured-tool|tool-curation|action-primitives|skill/, '🛠️'],
   // Money
+  // Stablecoin rails before the generic payment bucket so acceptance/payouts keep the coin
+  [/stablecoin|onramp-conversion|wallets-balances|payouts-offramp|settlement-treasury/, '🪙'],
+  // Banking-data (open banking) themes before the generic buckets that would misfile them
+  [/account-linking|transactions-enrichment|balance-ownership|institution-coverage|data-freshness/, '🔗'],
   [/payment|checkout|payout|cards|spend|disputes|refund|accept/, '💳'],
   [/card-lifecycle|auth-decisioning|wallets-tokenization|program-management|issuing/, '💳'],
   [/seller-onboarding|funds-routing|platform-monetization|payfac-liability|embedded-experience/, '💳'],
@@ -128,6 +135,8 @@ export function themeIcon(theme: string): string {
 // founder rule — and the same text renders VISIBLY as a subtitle under theme group headers.
 // Style: lowercase fragment (it follows "Name — " in tooltips; themeExplanation() capitalizes).
 const THEME_DESCRIPTIONS: Record<string, string> = {
+  // Fintech-data arenas (identity-verification / banking-data-apis / stablecoin-payments)
+  'integration-dx': 'sandboxes, test modes, webhooks, and how fast a developer gets to a working integration',
   // Global themes — scored on every product, comparable across all arenas.
   agenticness: 'how well agents can access and operate the product',
   'agent-access': 'MCP, CLI, and API access for agents',
