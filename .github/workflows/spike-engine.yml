@@ -1,0 +1,129 @@
+# Spike engine (docs/FOUNDER-ASKS.md: "deep running engine that is always probing and spiking
+# through the top companies"): daily, re-rank data/spike-queue.json (keyless — staleness ×
+# popularity × founder priority over every judged product), then, when the ANTHROPIC_API_KEY
+# secret exists, spike the top due product: one budget-capped exhaustive pass through the
+# normal pipeline stages (crawl → extract → probe → judge), the churn policy (keep only flips
+# citing newly-added evidence ids), derive, and intervals. See pipeline/scripts/spike-engine.ts
+# for the full contract; the founder-visible state renders at the unlinked /queue page.
+#
+# The judge's cellHash cache means an unchanged product costs no LLM calls — a spike on a quiet
+# vendor is nearly free, so the daily cadence is safe. Results land as a PR (never a direct
+# push) so ranking changes stay reviewable under the re-judge stability policy.
+#
+# Cron offset from the other loops: story-runner '17 */6 * * *', daily-snapshot '43 5 * * *',
+# cert-sweep '29 7 * * 1' (Mondays), accuracy-engine '41 6 * * 3' (Wednesdays), yc-coverage
+# '53 6 * * 5' (Fridays) — this runs daily 04:23 UTC.
+name: spike-engine
+
+on:
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Arena id to spike (requires product too; default: top of queue)'
+        required: false
+      product:
+        description: 'Product id to spike (requires category too)'
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write # the PR-fallback `gh issue create` below needs it (same as the other engines)
+
+concurrency:
+  group: spike-engine
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      # Same soft gate as story-runner: keyless steps (queue re-rank) always run; the keyed
+      # spike pass is skipped until the secret exists.
+      - name: Check for API key
+        id: gate
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "ANTHROPIC_API_KEY secret not set — rank-only run (add it to enable spike passes)."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22.23.2
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Keyless: recompute the queue ranking + the work-queue issue body. Never mutates any
+      # data/<arena>/ files — rank mode only rewrites data/spike-queue.json.
+      - name: Rank spike queue
+        if: steps.gate.outputs.enabled != 'true'
+        run: pnpm tsx pipeline/scripts/spike-engine.ts --issue-body /tmp/spike-issue.md
+
+      # Keyed: rank, then one exhaustive pass on the top due product (or the dispatch target).
+      - name: Rank + spike top of queue
+        if: steps.gate.outputs.enabled == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          INPUT_CATEGORY: ${{ github.event.inputs.category }}
+          INPUT_PRODUCT: ${{ github.event.inputs.product }}
+        run: |
+          if [ -n "$INPUT_CATEGORY" ] && [ -n "$INPUT_PRODUCT" ]; then
+            pnpm tsx pipeline/scripts/spike-engine.ts --process --category "$INPUT_CATEGORY" --product "$INPUT_PRODUCT" --issue-body /tmp/spike-issue.md
+          else
+            pnpm tsx pipeline/scripts/spike-engine.ts --process --issue-body /tmp/spike-issue.md
+          fi
+
+      - name: Tests
+        run: pnpm test
+
+      - name: Open PR if anything changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          if git diff --quiet -- data pipeline/cache; then
+            echo "No changes — done."
+            exit 0
+          fi
+          pnpm stats   # keep the README's generated counts in sync
+          BRANCH="spike-engine/$RUN_ID"
+          git config user.name "productarena-spike-engine"
+          git config user.email "noreply@ultrametric.ai"
+          git checkout -b "$BRANCH"
+          git add data pipeline/cache README.md
+          git commit -m "chore(spike-engine): queue re-rank + top-of-queue spike pass"
+          git push -u origin "$BRANCH"
+          # Same org-policy fallback as story-runner: if Actions may not open PRs, leave an
+          # issue carrying the compare link so the run is never silently stranded.
+          if ! gh pr create \
+            --title "spike-engine: queue + spike pass" \
+            --body "Automated spike-engine run (pipeline/scripts/spike-engine.ts). Any verdict flips already passed the churn policy (kept only when citing newly-added evidence ids) — review the queue state at /queue and the diff before merging." \
+            --base main --head "$BRANCH"; then
+            gh issue create \
+              --title "spike-engine: run ready on $BRANCH" \
+              --body "The spike-engine run is committed on [\`$BRANCH\`](https://github.com/${GITHUB_REPOSITORY}/compare/main...$BRANCH) but Actions may not open PRs (org policy). Open the PR from the compare link. Enable org Settings → Actions → General → 'Allow GitHub Actions to create and approve pull requests' to remove this manual step." \
+              --label "story-runner" || echo "issue creation also failed — branch $BRANCH is pushed; see run logs"
+          fi
+
+      # The founder-facing work queue: same pattern as accuracy-engine/yc-coverage, reusing
+      # the story-runner label so the fallback never fails on a missing label.
+      - name: Open work-queue issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "spike-engine: queue $(date -u +%F)" \
+            --body-file /tmp/spike-issue.md \
+            --label "story-runner" || echo "work-queue issue creation failed — the same ranking is committed in data/spike-queue.json"
