@@ -36,7 +36,6 @@ import {
   groupInOrder, loadAll, loadCategory, type CategoryData,
 } from '@/lib/data'
 import { isGroupUntested } from '@/lib/data-helpers'
-import { productFreshness } from '@/lib/freshness'
 import { globalStoryIds } from '@/lib/globalStories'
 import { humanizeTheme, themeExplanation } from '@/lib/icons'
 import { loadIntegrationGraph, neighborsOf, productRefIndex } from '@/lib/integrations'
@@ -103,7 +102,6 @@ export default async function ProductPage({
   if (!product) notFound()
   const entry = data.rankings.leaderboard.find((e) => e.productId === id)!
   const rank = data.rankings.leaderboard.indexOf(entry) + 1
-  const freshness = productFreshness(data, id)
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
   // Flattened, serializable (story, verdict) rows for the client-side sortable table — the
   // full CategoryData never crosses the server/client boundary. globalStoryIds(loadAll())
@@ -272,20 +270,8 @@ export default async function ProductPage({
         </div>
         {/* 30-day uptime of the monitored agent surfaces (llms.txt / MCP / openapi.json) —
             renders nothing until slo-check has history for this product (lib/slo.ts). */}
-        {/* TERTIARY footer line — provenance minutiae, demoted (not deleted): evidence
-            freshness (lib/freshness.ts) and the story-coverage score, which used to be a
-            full-width bar but mostly restates what PA Score + its confidence band already say. */}
-        <p className="mt-3 text-[10px] text-zinc-500">
-          {freshness && <span>Evidence as of {freshness} · </span>}
-          <a
-            href="#story-verdicts"
-            title="Evidence-graded story coverage (0–100): how much of this arena's story set the product covers, weighted by story importance. The rank tie-breaker, not the PA Score. Click for the judged story rows below."
-            className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
-          >
-            {/* Integer when whole ("34", not "34.0") — decimals only when they carry signal. */}
-            story coverage <span className="font-mono tabular-nums">{Number.isInteger(entry.score) ? entry.score : entry.score.toFixed(1)}/100</span>
-          </a>
-        </p>
+        {/* Founder 2026-09-15: the "Evidence as of … · story coverage …" footer line is removed
+            entirely — freshness lives in the accuracy engine, coverage in the PA Score band. */}
       </div>
 
       <ProductActions data={data} productId={id} tryIt={tryable} />
@@ -294,11 +280,12 @@ export default async function ProductPage({
           looks like before the hands-on replay. */}
       <ProductShowcase product={product} />
 
-      <TryItSection category={category} productId={id} productName={product.name} stories={data.stories} />
-
       {/* Multi-product vendors: the family breakdown block (lib/families.ts) — renders for any
-          product with a data/product-families.json entry, nothing for everyone else. */}
+          product with a data/product-families.json entry, nothing for everyone else. Founder
+          2026-09-15: Products above Try it — the portfolio orients before the hands-on replay. */}
       <FamilySection arenaId={category} productId={id} />
+
+      <TryItSection category={category} productId={id} productName={product.name} stories={data.stories} />
 
       <ScoreTrend entries={loadScoreHistory(category).get(id) ?? []} />
 

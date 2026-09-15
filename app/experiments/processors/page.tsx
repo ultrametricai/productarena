@@ -22,10 +22,6 @@ export default function ProcessorsExperimentPage() {
           Current desktop and laptop silicon side by side — Apple M-series, AMD Zen 5 / Strix Halo, Intel Arrow
           and Lunar Lake, and Qualcomm&rsquo;s Snapdragon X2 — on the raw numbers vendors actually publish.
         </p>
-        <div className="mt-4 max-w-2xl rounded-xl border border-amber-400/30 bg-amber-400/5 px-4 py-3 text-sm text-amber-200">
-          <strong className="font-semibold">Experiment</strong> — not part of the evidence-judged arenas; specs from
-          vendor sheets, not probed. No user stories, no verdicts, no citations beyond the linked spec pages.
-        </div>
         <p className="mt-3 text-xs text-zinc-500">
           Curated {raw.curatedAt} · {raw.chips.length} chips · every source URL checked reachable · hover any header
           or value for what it means and where it came from
