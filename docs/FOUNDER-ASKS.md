@@ -8,6 +8,10 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Scrollbar tracks transparent, not white | shipped 2026-09-15 |
+| Remove "Experiment — not part of the evidence-judged arenas…" banner from /experiments pages | shipped 2026-09-15 |
+| Remove "Evidence as of … · story coverage …" footer line on product pages | shipped 2026-09-15 |
+| Move "Try it" section below "Products" (family) section on vendor pages | shipped 2026-09-15 |
 | Move "For agents" (page-as-markdown / llms.txt) rail cell to bottom of product page | in-lane (startup-sim/page-order) — re-scoped 2026-09-14 |
 | Move "Badge / embed score badge" rail cell to bottom of product page | in-lane (startup-sim/page-order) — re-scoped 2026-09-14 |
 | Homepage title → "Companies, ranked for the AI era" + refresh share image | shipped 2026-09-14 |
