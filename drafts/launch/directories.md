@@ -4,6 +4,10 @@ Status: draft — each row requires founder sign-off before submitting (these cr
 content under our name). Ordered by expected traffic × fit. Mechanics verified against each
 venue's contribution docs where public; re-verify at submit time.
 
+> Superseded 2026-09-15 by the full ranked plan in `drafts/growth/DIRECTORIES.md` (30 venues,
+> per-venue status + prepared copy, two ready-to-submit awesome-list PRs in
+> `drafts/outreach/directories/`). This file stays for the MCP prereq notes below.
+
 Prereqs before ANY submission: publish `mcp/` and `cli/` to npm (both are documented on the
 site but not yet installable — submitting before that burns credibility), and deploy the
 Cloudflare worker so the remote MCP endpoint is live.
