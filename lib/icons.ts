@@ -54,13 +54,16 @@ const THEME_RULES: Array<[RegExp, string]> = [
   [/mcp|tools-function|structured-tool|tool-curation|action-primitives|skill/, '🛠️'],
   // Money
   [/payment|checkout|payout|cards|spend|disputes|refund|accept/, '💳'],
+  [/card-lifecycle|auth-decisioning|wallets-tokenization|program-management|issuing/, '💳'],
+  [/seller-onboarding|funds-routing|platform-monetization|payfac-liability|embedded-experience/, '💳'],
   [/banking|treasury|yield|equity|fundraising|cap-table/, '🏦'],
+  [/account-provisioning|money-movement|sponsor-model/, '🏦'],
   [/payroll|benefits|contractor|hiring|onboarding-hiring/, '💰'],
   [/invoic|billing|bills|ledger|accounting|reconciliation|statements|coa|close-collaboration|subscription|dunning|metering|revenue-recognition/, '🧾'],
   [/entitlement/, '🎛️'],
   [/fraud|risk-scoring|rules-engine|review-queue/, '🕵️'],
   [/pricing|cost|economics|valuation|409a/, '💲'],
-  [/tax|currency/, '🌐'],
+  [/tax|currency|nexus|filing-remittance|exemption|global-vat/, '🌐'],
   // Commerce & CRM
   [/catalog|inventory|storefront|commerce|b2b|wholesale|shipping|receipts|merchant|order|fulfillment/, '🛒'],
   [/crm|contacts|pipeline-management|audiences|identity-resolution|cdp/, '📇'],
