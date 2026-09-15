@@ -63,6 +63,7 @@ export default function AiEraBadge({
   href,
   interval,
   showBand = false,
+  label,
 }: {
   value: number | null
   size?: 'md' | 'sm' | 'xs'
@@ -77,6 +78,10 @@ export default function AiEraBadge({
   // call sites don't churn.
   interval?: ScoreBand | null
   showBand?: boolean
+  // Optional label INSIDE the pill ("PA Score") — founder 2026-09-15: on the vendor page the
+  // score name belongs in the pill, matching AgenticBadge's self-labeled pills; elsewhere the
+  // column header/heading still carries the name and the pill stays number-only.
+  label?: string
 }) {
   const sizeClass = SIZE_CLASS[size]
   if (value === null) {
@@ -93,8 +98,9 @@ export default function AiEraBadge({
   const badge = (
     <span
       title={tooltip(components, band)}
-      className={`inline-flex w-fit cursor-help items-center rounded-full bg-emerald-400 font-mono font-bold text-zinc-950 ring-1 ring-emerald-300 tabular-nums ${sizeClass}`}
+      className={`inline-flex w-fit cursor-help items-center gap-1.5 rounded-full bg-emerald-400 font-mono font-bold text-zinc-950 ring-1 ring-emerald-300 tabular-nums ${sizeClass}`}
     >
+      {label && <span className="font-sans text-[0.72em] font-semibold uppercase tracking-wide opacity-80">{label}</span>}
       {value.toFixed(0)}
       <span className="font-medium opacity-60">/100</span>
     </span>
