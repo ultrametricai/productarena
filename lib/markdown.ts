@@ -5,6 +5,7 @@ import { evidenceById, groupInOrder, verdictFor } from './data'
 import { opportunitiesFor } from './opportunities'
 import { provenanceLine } from './provenance'
 import type { Product, Story } from './schemas'
+import type { StoryTier } from './storyTiers'
 import { coverageMapFor } from './storyCoverage'
 import { parseStoryPersona } from './storyText'
 import { strongestEvidence } from './verification'
@@ -142,7 +143,15 @@ export function renderArenaMarkdown(data: CategoryData, siteUrl: string): string
 }
 
 // Product deep-dive markdown: every verdict, rationale, and proof URL for one product.
-export function renderProductMarkdown(data: CategoryData, productId: string, siteUrl: string): string {
+// `tiersByCell` (lib/storyTiers.ts's storyTiersByCell over loadStoryTiers) is optional — same
+// tolerant contract as the file itself; when present, classified story lines gain a
+// "Pricing tier" field quoting the gating evidence.
+export function renderProductMarkdown(
+  data: CategoryData,
+  productId: string,
+  siteUrl: string,
+  tiersByCell?: ReadonlyMap<string, StoryTier>,
+): string {
   const product = data.products.find((p) => p.id === productId)
   if (!product) throw new Error(`renderProductMarkdown: unknown product ${productId}`)
   const entry = data.rankings.leaderboard.find((e) => e.productId === productId)!
@@ -231,6 +240,12 @@ export function renderProductMarkdown(data: CategoryData, productId: string, sit
         lines.push(`- Persona: ${parsed.persona ?? s.persona}`)
         const quality = v.verdict === 'na' ? '' : ` — quality ${v.quality}/10`
         lines.push(`- Verdict: ${v.verdict}${quality} (confidence: ${v.confidence})`)
+        // Pricing-tier annotation, only where the classifier found stated gating — 'unknown'
+        // entries and unclassified arenas emit nothing (absence is absence, never "free").
+        const tier = tiersByCell?.get(`${productId}:${s.id}`)
+        if (tier && tier.tier !== 'unknown') {
+          lines.push(`- Pricing tier: ${tier.tier}${tier.tierNote ? ` — ${tier.tierNote}` : ''}`)
+        }
         lines.push(`- Rationale: ${v.rationale}`)
         if (proof) lines.push(`- Proof: [${proof.tier}](${proof.url})`)
         if (v.evidenceIds.length > 0) {

@@ -101,6 +101,42 @@ describe('StoryVerdictsTable', () => {
     expect(screen.queryByText('Official vendor response')).toBeNull()
   })
 
+  it('renders tier chips on classified rows only and offers the tier filter', () => {
+    // Stamp tiers onto copies of real rows — the annotation layer is optional, so the fixture
+    // arena may or may not have been through the classifier; the table must work either way.
+    const covered = rows.filter((r) => r.verdict === 'full' || r.verdict === 'partial')
+    expect(covered.length).toBeGreaterThan(1)
+    const tieredRows = rows.map((r) => {
+      if (r.storyId === covered[0].storyId) return { ...r, tier: 'enterprise' as const, tierNote: 'SSO on Enterprise plan only' }
+      if (r.storyId === covered[1].storyId) return { ...r, tier: 'unknown' as const }
+      return { ...r, tier: undefined, tierNote: undefined }
+    })
+    const { container } = render(
+      <StoryVerdictsTable category="desktop-os" productId={productId} rows={tieredRows} />,
+    )
+    // Exactly one chip: the enterprise cell — unknown and unclassified rows render nothing.
+    const chips = screen.getAllByText('enterprise')
+    // (one chip + one <option> in the tier filter dropdown)
+    const chip = chips.find((el) => el.tagName === 'A')!
+    expect(chip).toBeDefined()
+    expect(chip.getAttribute('href')).toBe('/methodology#story-tiers')
+    expect(chip.getAttribute('title')).toContain('SSO on Enterprise plan only')
+    expect(chip.getAttribute('title')).toContain('never affects scores')
+
+    // The tier filter narrows to classified rows of that tier.
+    const select = screen.getByLabelText('Filter stories by pricing tier')
+    fireEvent.change(select, { target: { value: 'enterprise' } })
+    const visible = container.querySelectorAll('tr[id^="story-"]:not([id^="story-details-"])')
+    expect(visible.length).toBe(1)
+    expect(container.querySelector(`[id="story-${covered[0].storyId}"]`)).not.toBeNull()
+  })
+
+  it('renders no tier filter at all when no row is classified', () => {
+    renderTable()
+    expect(rows.every((r) => r.tier === undefined || r.tier === 'unknown')).toBe(true)
+    expect(screen.queryByLabelText('Filter stories by pricing tier')).toBeNull()
+  })
+
   it('re-sorts when a column header is clicked, with aria-sort on the current column', () => {
     renderTable()
     // importance is the default composite sort — no column header carries aria-sort until a

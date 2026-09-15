@@ -9,6 +9,7 @@ import ContestLink from '@/components/ContestLink'
 import PersonaChip from '@/components/PersonaChip'
 import SurfaceChip from '@/components/SurfaceChip'
 import ThemeIcon from '@/components/ThemeIcon'
+import TierChip from '@/components/TierChip'
 import UncertaintyMarker from '@/components/UncertaintyMarker'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
@@ -181,6 +182,7 @@ export default function StoryVerdictsTable({
   const [query, setQuery] = useState('')
   const [theme, setTheme] = useState('')
   const [scope, setScope] = useState('')
+  const [tier, setTier] = useState('')
   const [expanded, setExpanded] = useState<ReadonlySet<string>>(new Set())
 
   // Themes in first-seen story order (the taxonomy's own order), not alphabetical — matches
@@ -198,7 +200,15 @@ export default function StoryVerdictsTable({
     return order.filter((s) => rows.some((r) => r.scope === s))
   }, [rows])
 
-  const filtered = useMemo(() => filterStoryVerdictRows(rows, query, theme, scope), [rows, query, theme, scope])
+  // Only the classified tiers actually present, in the canonical order — an arena that was
+  // never through the tier classifier renders no tier dropdown at all (same posture as the
+  // scope filter above: never a filter that can only show everything).
+  const tiers = useMemo(() => {
+    const order = ['free', 'paid', 'enterprise'] as const
+    return order.filter((t) => rows.some((r) => r.tier === t))
+  }, [rows])
+
+  const filtered = useMemo(() => filterStoryVerdictRows(rows, query, theme, scope, tier), [rows, query, theme, scope, tier])
   const sorted = useMemo(() => sortStoryVerdictRows(filtered, column, direction), [filtered, column, direction])
 
   // Auto-expand the row a #story-<id> deep link targets — on mount for cross-page links
@@ -265,6 +275,22 @@ export default function StoryVerdictsTable({
               <option key={s} value={s}>
                 {/* Humanized, not the raw value — "Global stories", not "global". */}
                 {s === 'global' ? 'Global stories' : s === 'category' ? 'Category stories' : 'Product stories'}
+              </option>
+            ))}
+          </select>
+        )}
+        {tiers.length > 0 && (
+          <select
+            value={tier}
+            onChange={(e) => setTier(e.target.value)}
+            aria-label="Filter stories by pricing tier"
+            className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 focus:border-emerald-400/60 focus:outline-none"
+          >
+            <option value="">All tiers</option>
+            {tiers.map((t) => (
+              <option key={t} value={t}>
+                {/* Humanized like the scope options — "Free stories", never the bare value. */}
+                {t === 'free' ? 'Free stories' : t === 'paid' ? 'Paid stories' : 'Enterprise stories'}
               </option>
             ))}
           </select>
@@ -427,6 +453,9 @@ function StoryRowPair({
           <span className="inline-flex items-center gap-1.5">
             <VerdictBadge verdict={row.verdict} />
             <UncertaintyMarker agreement={row.agreement} />
+            {/* Pricing-tier annotation (lib/storyTiers.ts) — renders only when the cited
+                evidence stated the gating; unknown/unclassified rows show nothing. */}
+            <TierChip tier={row.tier} tierNote={row.tierNote} />
           </span>
         </td>
         <td className="px-3 py-2 font-mono tabular-nums text-zinc-400">
