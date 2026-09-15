@@ -70,6 +70,18 @@ export default function Home() {
               </Link>
             )
           })}
+          {/* Founder 2026-09-15: the grid ends with a quiet "+" card — anyone can suggest the
+              arena we're missing via a prefilled GitHub issue. */}
+          <a
+            href="https://github.com/ultrametricai/productarena/issues/new?title=%5Barena%5D%20Suggest%20a%20new%20arena%3A%20%3Cname%3E&labels=arena-suggestion&body=%23%23%20Arena%20name%0A%0A%23%23%20Products%20that%20compete%20in%20it%20(4%2B)%0A%0A-%20%0A-%20%0A-%20%0A-%20%0A%0A%23%23%20Why%20it%20matters%20in%20the%20AI%20era%0A"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Suggest a new arena — opens a prefilled GitHub issue"
+            className="group flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-800 p-4 text-zinc-500 transition hover:border-emerald-400/60 hover:text-emerald-300"
+          >
+            <span aria-hidden className="text-3xl font-light leading-none">+</span>
+            <span className="text-sm font-medium">Suggest an arena</span>
+          </a>
         </div>
       </section>
 

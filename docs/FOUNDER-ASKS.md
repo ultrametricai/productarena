@@ -8,12 +8,16 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Stacks page: layer names clickable → their arena page | shipped 2026-09-15 |
+| Make /rankings/most-connected comprehensive | open — queued (todo per founder) |
+| Story-type icons left of story text on arena pages | shipped 2026-09-15 (theme icon per row) |
+| Front page: "+" card in Arenas grid → suggest an arena via GitHub issue | shipped 2026-09-15 |
 | Front-page scope dropdown: "All products" → "All arenas" | open — inline now |
 | Arena icons in the front-page arena dropdown (same as top bar) | open — UI lane |
 | Pulley possibly shut down — verify, mark closed, keep data | open — inline now |
 | "⚿ auth 1 auth-gated probe" not useful above the fold | open — inline now |
-| Vendor pills: "Built-in AI XX/100", "Agent-ready XX/100" + click through to evidence log | in-lane (transparency) |
-| PA Score above fold → per-vendor transparent calculation page (not just generic methodology) | in-lane (transparency) |
+| Vendor pills: "Built-in AI XX/100", "Agent-ready XX/100" + click through to evidence log | shipped 2026-09-15 — /score per-vendor receipt pages (+439 pages), pills show /100 and deep-link |
+| PA Score above fold → per-vendor transparent calculation page (not just generic methodology) | shipped 2026-09-15 — /arena/<a>/product/<p>/score shows the full arithmetic, PA recomputes exactly |
 | Flag/Badge/Try demoted from top of vendor page; Try marked "Experimental" | open — inline now |
 | "For agents" above-fold cell → bottom of vendor page | open — inline now (supersedes startup-sim/page-order row) |
 | Compare head-to-head uses vendor logos | open — inline now |
@@ -27,12 +31,12 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Arena for YubiKey-type hardware keys + arena for authenticator apps | in-lane (new-arenas) |
 | Game-engines arena (Unity vs three.js agenticness) | in-lane (new-arenas) |
 | Always-running probe/spike engine over top companies + visible queue | in-lane (stripe-engine — /queue page) |
-| Gifts URL + read rejection notes, fix gifts that will fail again | in-lane (gift-quality) — URL: /gifts (unlinked) |
-| Submit PA to directories for traffic; PA-specific Terms + Privacy building on ultrametric.ai TOS | in-lane (growth-legal) |
+| Gifts URL + read rejection notes, fix gifts that will fail again | shipped 2026-09-15 — Homebrew retired (maintainer passed), vLLM disclosure body ready (founder: gh pr edit 56909 --body-file drafts/outreach/vllm/PR-BODY-v2.md), docusaurus on hold (competing PR #11958), gitea fixed (needs founder account+DCO); checklist hardened |
+| Submit PA to directories for traffic; PA-specific Terms + Privacy building on ultrametric.ai TOS | shipped 2026-09-15 — 30-venue plan in drafts/growth/DIRECTORIES.md (2 awesome-list PRs ready for founder review); /terms extended + /privacy added (counsel review recommended) |
 | WhatsApp preview sometimes shows old image — diagnose | open — inline now |
 | Do we need RSS? | answered 2026-09-15 — keep (see session notes) |
-| Hardware arenas into top bar + menus, drop Experimental status | open — lands with hardware-arenas merge |
-| Start WorkOS login work (account exists) | in-lane (workos-login) — still blocked on founder secrets for go-live |
+| Hardware arenas into top bar + menus, drop Experimental status | shipped 2026-09-15 — Hardware section in arena menu, /experiments pages are now spec annexes linking the arenas |
+| Start WorkOS login work (account exists) | shipped 2026-09-15 (code) — mock-mode harness + account watchlist sync; go-live = 5-min founder checklist in docs/AUTH.md (secrets + redirect URI) |
 | Scrollbar tracks transparent, not white | shipped 2026-09-15 |
 | Footer "Add your product" → actually goes to GitHub (CONTRIBUTING.md), scanner relabeled "Test your product" | shipped 2026-09-15 |
 | Pricing tier (free/paid/enterprise) visible in user story table | shipped 2026-09-15 (tier chips + filter, pricing-tier lane) |
@@ -42,7 +46,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Footer: drop "Test your product" (adding = testing) | shipped 2026-09-15 |
 | Remove "?" chip next to table filter on main page | shipped 2026-09-15 |
 | ALL YC batches covered for agentic/famous companies | shipped 2026-09-15 — full W16–F26 audit: 7 bring-ups (Deepgram W16, RevenueCat S18, SigNoz W21, LanceDB W22, Windmill S22, Context.dev S26, Maritime F26) + 14 domain-verified restamps (82 → 103 stamped products); every batch of the last 10 years covered or honestly recorded as no-arena-fit; coverage queue re-swept W16–F26 (784 candidates) |
-| Bring hardware section (processors, GPUs) into the arenas | in-lane (hardware-arenas) |
+| Bring hardware section (processors, GPUs) into the arenas | shipped 2026-09-15 — processors + gpus arenas (16 products, 696 verdicts); Ryzen AI Max+ best agentReady in CPUs, MI355X in GPUs; 9950X3D honest 0 aiEra |
 | Remove "Experiment — not part of the evidence-judged arenas…" banner from /experiments pages | shipped 2026-09-15 |
 | Remove "Evidence as of … · story coverage …" footer line on product pages | shipped 2026-09-15 |
 | Move "Try it" section below "Products" (family) section on vendor pages | shipped 2026-09-15 |

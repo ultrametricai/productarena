@@ -84,7 +84,19 @@ export default function StacksPage() {
                 {stack.slots.map((slot) => (
                   <tr key={slot.role} className="transition hover:bg-zinc-900/50">
                     <td className="px-3 py-2.5 align-top">
-                      <span className="font-medium">{slot.role}</span>
+                      {/* Founder 2026-09-15: the layer name is the way into its arena — clickable
+                          whenever the slot resolves to one; editorial slots stay plain text. */}
+                      {slot.arenaId ? (
+                        <Link
+                          href={`/arena/${slot.arenaId}`}
+                          title={`See the full ${slot.role} arena leaderboard`}
+                          className="font-medium underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+                        >
+                          {slot.role}
+                        </Link>
+                      ) : (
+                        <span className="font-medium">{slot.role}</span>
+                      )}
                       <p className="mt-0.5 max-w-[220px] text-xs text-zinc-500">{slot.why}</p>
                     </td>
                     <td className="px-3 py-2.5 align-top">
