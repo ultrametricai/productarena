@@ -375,9 +375,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/proofs" className="hover:text-emerald-300">
                 Recorded proofs
               </Link>
-              <Link href="/submit" className="hover:text-emerald-300" title="Instant agent-readiness quick scan of your product URL (llms.txt, OpenAPI, MCP signals)">
-                Test your product
-              </Link>
+              {/* Founder 2026-09-15: no separate "Test your product" footer link — adding a
+                  product IS the test. /submit (the quick scanner) stays reachable from the
+                  CONTRIBUTING flow, just not from the footer. */}
               <a
                 href="https://github.com/ultrametricai/productarena/blob/main/CONTRIBUTING.md#3-add-your-product"
                 target="_blank"

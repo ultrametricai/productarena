@@ -61,4 +61,30 @@ export const probes: LocalProbe[] = [
       expect: /401[\s\S]*Unauthorized: Invalid API token/,
       timeoutMs: 30_000,
     },
+    {
+      // Clerky's developer portal publishes llms.txt with .md doc mirrors — the agent-docs
+      // surface in one keyless fetch (found in the 2026-09-15 crawl-gap fix: the founder flagged
+      // Clerky's 0/100 AI-era score; the pack had only marketing pages).
+      probeId: 'llms-docs-index',
+      productId: 'clerky',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://developers.clerky.com/llms.txt | head -6'],
+      displayCommand: 'curl -sL https://developers.clerky.com/llms.txt | head -6',
+      expect: /developers\.clerky\.com.*index\.md/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The remote MCP server at the documented URL (developers.clerky.com/mcp-server) answers a
+      // keyless initialize with a clean OAuth challenge — live and gated exactly as documented
+      // (read-only tools, team-scoped access after auth).
+      probeId: 'mcp-auth-challenge',
+      productId: 'clerky',
+      storyIds: ['agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 -X POST https://mcp.clerky.com/mcp -H "Content-Type: application/json" -H "Accept: application/json, text/event-stream" -d \'{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"pa-probe","version":"1.0"}}}\' -w "\\nHTTP %{http_code}"'],
+      displayCommand: 'curl -s -X POST https://mcp.clerky.com/mcp -d <initialize> (no token)',
+      expect: /Authentication required[\s\S]*HTTP 401/,
+      timeoutMs: 30_000,
+    },
 ]
