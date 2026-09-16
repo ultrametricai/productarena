@@ -334,10 +334,12 @@ describe('derived step options (optionsArenaId)', () => {
     const sheets = chips.find((c) => c.label === 'Google Sheets')
     expect(sheets).toBeDefined()
     expect(sheets!.productId).toBeNull()
-    // …and it sorts after every tracked accounting chip.
-    expect(chips.indexOf(sheets!)).toBeGreaterThanOrEqual(
-      loadCategory('accounting', DATA_DIR).rankings.leaderboard.length,
-    )
+    // …and it sorts after every tracked accounting chip. Compare against the tracked chips
+    // actually rendered, not the raw leaderboard length — the derived roster caps at
+    // STEP_OPTIONS_CAP, so an arena larger than the cap (accounting grew to 11 products the
+    // day this test landed) renders fewer tracked chips than it has ranked products.
+    const trackedCount = chips.filter((c) => c.productId !== null).length
+    expect(chips.indexOf(sheets!)).toBeGreaterThanOrEqual(trackedCount)
   })
 
   it('curated extras tracked in ANOTHER arena keep their own arena chip (release notes: Notion after code hosts)', () => {
