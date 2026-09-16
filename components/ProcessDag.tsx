@@ -6,7 +6,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
-import { vendorAlternatives, vendorChipInfo } from '@/lib/processes'
+import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
 
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
@@ -172,8 +172,12 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
 function NodeBlock({ node, index }: { node: DagNode; index: number }) {
   const style = ROUTE_STYLE[node.route]
   const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
-  const alts = node.vendor ? vendorAlternatives(node.vendor) : []
-  const options = (node.vendorOptions ?? []).map((v) => vendorChipInfo(v))
+  // Steps with a derived market (optionsArenaId) already show the whole arena in the "via:"
+  // row — a second "or:" row of alternatives would just repeat it.
+  const alts = node.vendor && !node.optionsArenaId ? vendorAlternatives(node.vendor) : []
+  // Live market for the step's general function: arena-derived roster (top by PA Score, in
+  // arena-rank order) plus curated extras — lib/processes.ts stepVendorOptions.
+  const options = stepVendorOptions(node)
   const calls = node.functionCalls ?? []
   const gap = resolveGapStep(node)
   const closer = gap?.kind === 'closer' ? gap.closer : null
@@ -242,6 +246,15 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
           {options.map((o) => (
             <VendorChip key={o.vendor} info={o} />
           ))}
+          {node.optionsArenaId && (
+            <Link
+              href={`/arena/${node.optionsArenaId}`}
+              title="This list is derived from the arena's live leaderboard (top products by PA Score) — see the whole judged market"
+              className="whitespace-nowrap text-[10px] text-zinc-500 transition hover:text-emerald-300"
+            >
+              full arena →
+            </Link>
+          )}
         </div>
       )}
 
