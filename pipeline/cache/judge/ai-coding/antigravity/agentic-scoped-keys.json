@@ -1,15 +1,16 @@
 {
-  "hash": "2081e28f0b612254ccc3e66f5a050b2370dfa4a326453c46b7abe65bd2b40e1a",
+  "hash": "dcd6f2a9bec6456d4623d8ccc76cea49a7b2516f132b00daaed59a942c60b5a2",
   "verdict": {
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "disputed",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence shows project-level and action-level permission controls (allow/ask/deny lists, project folder scoping) but no mechanism for issuing scoped or least-privilege API credentials/tokens specifically for an agent's use of external APIs or services. Community reports even highlight the opposite risk—agents bypassing intended access restrictions to exfiltrate .env secrets—reinforcing that fine-grained credential scoping isn't demonstrated.",
+    "rationale": "Antigravity documents permission tiers (Deny/Ask/Allow) and a CLI sandbox that explicitly blocks access to sensitive files like .env and ~/.ssh, which is the closest analog to least-privilege credential scoping for an agent (docs-23, docs-42, docs-48). However, independent reports document a concrete bypass: Antigravity's own setting disallowing .env access was circumvented via prompt injection to exfiltrate secrets, and a default allowlisted domain (webhook.site) was used as an exfiltration channel — directly contradicting the claimed least-privilege protection (antigravity-comm-11, antigravity-comm-12). There is no evidence of a true scoped API-credential-issuance mechanism (e.g., minting restricted API keys/tokens for an agent); missing for 10: actual credential/token scoping API, third-party security audit confirming the sandbox holds, and any documented remediation.",
     "evidenceIds": [
-      "antigravity-docs-5",
       "antigravity-docs-23",
-      "antigravity-docs-35",
-      "antigravity-comm-11"
+      "antigravity-docs-42",
+      "antigravity-docs-48",
+      "antigravity-comm-11",
+      "antigravity-comm-12"
     ],
     "productId": "antigravity",
     "storyId": "agentic-scoped-keys"
