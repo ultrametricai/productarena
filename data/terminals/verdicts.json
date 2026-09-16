@@ -1246,13 +1246,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "iTerm2 ships a documented Python API (iterm2 package) that lets scripts create windows/tabs/panes, send text, run commands, and read session content programmatically, plus AppleScript support for launching sessions/profiles — this is exactly a documented control protocol for driving the terminal. Community corroboration confirms real-world use of the Python API for automation beyond AppleScript. Missing for 10: no first-party example specifically framed around AI agents driving the API, and no independent hands-on report of an agent using it end-to-end.",
+    "rationale": "iTerm2 ships a documented Python API explicitly for programmatic control — creating/manipulating sessions, panes, tabs, windows, reading and sending text, and building custom automation — plus AppleScript scripting, both well documented and corroborated by independent community praise calling the Python API 'basically AppleScript... but lets you touch pretty much everything.' This directly satisfies an agent programmatically driving panes/commands/output. missing for 10: no explicit example of an AI agent using the API end-to-end, and no independent hands-on report of agent-driven automation specifically (only general scripting use).",
     "evidenceIds": [
       "iterm2-docs-13",
       "iterm2-docs-14",
       "iterm2-docs-33",
       "iterm2-gh-15",
-      "iterm2-gh-12",
       "iterm2-comm-5"
     ]
   },
@@ -1262,7 +1261,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probes explicitly show no llms.txt or machine-readable docs endpoint exists (404s), and no evidence describes agent-oriented documentation for iTerm2.",
+    "rationale": "Probes explicitly show no llms.txt or machine-readable/agent-oriented docs endpoint exists (404s), and no other evidence indicates agent-oriented documentation formats are offered.",
     "evidenceIds": [
       "iterm2-probe-1",
       "iterm2-probe-2",
@@ -1275,11 +1274,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "iTerm2 ships an optional AI plugin providing a built-in LLM chat window that can link to terminal sessions for context-aware help, command suggestions, and annotated explanations of output, which matches 'AI-generated insights/suggestions from my data.' However it's an opt-in, separate plugin with limited scope (chat-based, not deep automated analytics), and community evidence raises concerns about the toggle not being cleanly disabled and backlash over privacy/data-sending behavior. Missing for 10: proactive/automated insight generation beyond chat, independent hands-on validation of quality of suggestions, and confirmation the opt-in toggle reliably prevents data transmission.",
+    "rationale": "iTerm2 ships an optional AI plugin providing a built-in LLM chat window that can be linked to sessions for context-aware help, command suggestions, and annotated explanations of terminal output (iterm2-docs-15, iterm2-gh-6), directly matching the 'AI-generated insights from data inside the product' story. However, the feature is opt-in, requires a user-supplied OpenAI key, and community reports noted the enable/disable toggle behaved unexpectedly (any text, even a stray space, activated data-sending), raising real caveats about robustness/trust rather than core functionality. Missing for 10: deeper first-party documentation of the AI feature's capabilities/limits, independent hands-on validation of insight quality, and confirmation the toggle bug was fully resolved.",
     "evidenceIds": [
       "iterm2-docs-15",
       "iterm2-gh-6",
-      "iterm2-comm-1",
       "iterm2-comm-2",
       "iterm2-comm-3"
     ]
@@ -1290,13 +1288,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "iTerm2 supports background automation primitives — regex-based triggers that fire actions (run commands, scripts, notifications) automatically when text appears, plus a full Python scripting API and AppleScript support for writing standalone automation scripts — which could be used to build autonomous background behaviors. However, this is general terminal scripting/automation, not an AI-native agent framework; there's no evidence of scheduled/persistent agentic tasks, AI-driven autonomous triggers, or first-class 'run this AI task unattended' tooling beyond the optional AI chat plugin. Missing for 10: evidence of AI-specific autonomous background tasks, scheduling/orchestration features, and independent confirmation that Python API scripts can run persistently unattended as agents.",
+    "rationale": "iTerm2 supports regex-based Triggers that autonomously fire actions (highlighting, running commands, notifications, invoking Python scripts) when patterns appear, and offers a full Python scripting API for background automation and custom features [iterm2-docs-16, iterm2-gh-2, iterm2-docs-13, iterm2-gh-15]. This provides generic background automation but isn't framed around AI-agent workflows specifically. missing for 10: evidence of AI-driven or agentic automations running unattended, scheduling/cron-like persistent background tasks tied to AI features, and independent confirmation that these automations run reliably without user oversight.",
     "evidenceIds": [
       "iterm2-docs-16",
       "iterm2-gh-2",
       "iterm2-docs-13",
       "iterm2-gh-15",
-      "iterm2-docs-14",
       "iterm2-comm-5"
     ]
   },
@@ -1306,7 +1303,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "iTerm2 ships an optional AI plugin providing a built-in LLM chat window that can link to sessions for context-aware help, running commands, and explaining output (docs-15, gh-6). However, it's an opt-in add-on rather than a deeply integrated agent, and community evidence raises concerns about how cleanly it can be disabled/controlled (comm-2), and some users react negatively to its presence at all (comm-1). Missing for 10: independent hands-on validation of the assistant's task-delegation capabilities, deeper documentation of its scope/limits, and confirmation the opt-in toggle behaves as expected.",
+    "rationale": "iTerm2 ships an optional AI plugin providing a built-in LLM chat window that can read terminal context, run commands on the user's behalf, and explain output (iterm2-docs-15, iterm2-gh-6), which matches the story of delegating tasks to an in-app assistant. However, it's an opt-in add-on requiring the user's own API key rather than a fully integrated default assistant, and community reports flagged a bug where the 'disabled' toggle didn't actually stop data being sent (iterm2-comm-2), raising real trust/reliability caveats. Missing for 10: first-party documentation of task-delegation scope/limits, independent hands-on validation that the assistant reliably executes delegated actions, and confirmation the toggle issue was resolved.",
     "evidenceIds": [
       "iterm2-docs-15",
       "iterm2-gh-6",
@@ -1330,11 +1327,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "iTerm2 has an AI chat plugin and Python scripting API, but there is no evidence of MCP server support or ability to plug in MCP tools; the AI plugin is a closed OpenAI-based chat feature, not an MCP client. missing for 10: any mention of MCP protocol, MCP server configuration, or tool-use integration via MCP.",
-    "evidenceIds": [
-      "iterm2-docs-15",
-      "iterm2-gh-6"
-    ]
+    "rationale": "iTerm2 has an AI chat plugin and Python scripting API, but no evidence anywhere in the pack of MCP server integration or ability to plug in MCP tools. This is a plausible axis for a terminal with AI features, but absent evidence it defaults to none.",
+    "evidenceIds": []
   },
   {
     "productId": "iterm2",
@@ -1386,10 +1380,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "iTerm2 ships a well-documented Python API for scripting/automation, corroborated by hands-on community praise ('basically AppleScript for iTerm except it lets you touch pretty much everything'), plus AppleScript support as an alternative programmatic interface. Missing for 10: no OpenAPI/REST spec or llms.txt (probes 404), and no evidence of a modern machine-readable API spec beyond the Python/AppleScript docs.",
+    "rationale": "iTerm2 documents a full Python API (iterm2 package) for scripting/controlling the app, plus AppleScript support, both with dedicated documentation pages and community corroboration of hands-on use (imgcat, it2dl, Python scripting praised as far superior to AppleScript). This constitutes a documented public API for programmatic/agentic control, though it's not a modern REST/OpenAPI-style API and no llms.txt/OpenAPI spec exists. Missing for 10: a formal OpenAPI/REST-style spec or llms.txt discoverability layer, and no evidence of AI-agent-specific SDK usage beyond scripting.",
     "evidenceIds": [
       "iterm2-docs-13",
       "iterm2-docs-14",
+      "iterm2-docs-33",
       "iterm2-gh-15",
       "iterm2-comm-5",
       "iterm2-probe-1",
@@ -1431,12 +1426,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook subscription mechanism; iTerm2 offers triggers, a Python scripting API, and AppleScript for automation, but nothing in the evidence pack describes outbound event webhooks. missing for 10: any webhook endpoint/subscription feature, documentation of event push notifications, or third-party confirmation of webhook support.",
-    "evidenceIds": [
-      "iterm2-docs-16",
-      "iterm2-docs-13",
-      "iterm2-gh-15"
-    ]
+    "rationale": "No evidence of any webhook subscription mechanism; iTerm2 offers triggers and a Python scripting API for local automation but nothing about outbound webhook events or subscriptions is documented.",
+    "evidenceIds": []
   },
   {
     "productId": "iterm2",
@@ -1444,12 +1435,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "iTerm2 ships an optional AI plugin/LLM chat window that can be linked to a session for \"context-aware help\" and to \"explain output with annotations,\" which could be used to explain a failed command, but there's no documented feature specifically triggered by command failures or dedicated 'suggested fix' workflow. Community evidence also shows friction/skepticism around the AI feature's opt-in behavior. Missing for 10: explicit failure-detection trigger, automatic fix suggestions, and independent confirmation of this exact workflow working well.",
+    "rationale": "iTerm2 ships an optional AI plugin with a built-in LLM chat window that can link to a session, view terminal contents, and 'explain output with annotations' or run commands on your behalf, which is generic AI assistance but not documented as a specific 'command failed → suggested fix' workflow. missing for 10: explicit documentation of automatic failure detection, error-specific explanations, and suggested command fixes; independent hands-on evidence of this exact use case working.",
     "evidenceIds": [
       "iterm2-docs-15",
-      "iterm2-gh-6",
-      "iterm2-comm-1",
-      "iterm2-comm-2"
+      "iterm2-gh-6"
     ]
   },
   {
@@ -1472,8 +1461,8 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "iTerm2 documents a Python scripting API, but there is no evidence of an interactive API reference with runnable/executable examples; probes for llms.txt, docs-md, and OpenAPI endpoints all returned 404, indicating no such interactive reference exists.",
+    "confidence": "high",
+    "rationale": "iTerm2 does have a Python scripting API (iterm2-docs-13) so this axis is plausible, but there's no evidence of an interactive API reference with runnable examples—probes confirm no OpenAPI/swagger docs, no llms.txt, and no docs-as-markdown endpoint, and no community or docs evidence describes an interactive/executable API playground.",
     "evidenceIds": [
       "iterm2-docs-13",
       "iterm2-probe-1",
@@ -1487,12 +1476,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "iTerm2 exposes a Python scripting API and AppleScript support, but there is no evidence of a machine-readable OpenAPI/Swagger spec; explicit probes for openapi.json, swagger.json, and related endpoints all returned 404.",
+    "rationale": "iTerm2 offers a Python scripting API but no evidence of a downloadable OpenAPI/machine-readable API spec; explicit probes for llms.txt, docs-md, and openapi.json all returned 404.",
     "evidenceIds": [
-      "iterm2-probe-3",
-      "iterm2-docs-13",
       "iterm2-probe-1",
-      "iterm2-probe-2"
+      "iterm2-probe-2",
+      "iterm2-probe-3",
+      "iterm2-docs-13"
     ]
   },
   {
@@ -1501,7 +1490,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "iTerm2 is a terminal emulator, not a testing/sandbox platform or data environment; there is no concept of 'production data' or sandbox environments to test against within its feature set. This story targets a category (sandboxed test environments for data/apps) that doesn't apply to a terminal application.",
+    "rationale": "iTerm2 is a terminal emulator, not a testing/sandbox environment product; the concept of a sandbox vs. production data separation is not an axis this product category addresses.",
     "evidenceIds": []
   },
   {
@@ -1509,13 +1498,13 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "There is a Python scripting API documented, but no evidence of any versioning scheme or documented deprecation policy for it; probes for OpenAPI/machine-readable API specs all return 404. No mention of API version numbers, changelogs, or deprecation guarantees anywhere in the pack.",
+    "confidence": "high",
+    "rationale": "There is no evidence of a versioned API contract or documented deprecation policy; the Python API docs exist but no version/deprecation policy is mentioned, and probes for API discovery artifacts (llms.txt, openapi.json) all 404.",
     "evidenceIds": [
       "iterm2-docs-13",
-      "iterm2-probe-3",
       "iterm2-probe-1",
-      "iterm2-probe-2"
+      "iterm2-probe-2",
+      "iterm2-probe-3"
     ]
   },
   {
@@ -1538,10 +1527,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "iTerm2's Triggers feature explicitly matches the story: user-defined regex-based rules that fire automatically on matched terminal output, triggering highlights, commands, notifications, password-manager invocation, marks, or Python scripts — well documented and corroborated across docs and GitHub. Missing for 10: independent hands-on validation of complex multi-action trigger chains and no first-party tutorial on advanced rule authoring beyond the feature list.",
+    "rationale": "iTerm2 supports user-defined Triggers that fire on regex matches from terminal output, enabling automatic actions like highlighting, running commands, sending notifications, invoking Python scripts, or opening a password manager — a documented rules-on-event automation system, further extensible via the Python API for custom triggers/behaviors. missing for 10: no independent hands-on validation of complex trigger chains, and no evidence of AI-specific event-triggering beyond generic regex triggers.",
     "evidenceIds": [
       "iterm2-docs-16",
-      "iterm2-gh-2"
+      "iterm2-gh-2",
+      "iterm2-gh-15",
+      "iterm2-docs-13"
     ]
   },
   {
@@ -1549,8 +1540,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "iTerm2 offers scripting (Python API, AppleScript, triggers) that could enable one-off automation, but there is no evidence of any built-in scheduler or recurring-job/cron-like mechanism for workflows. Nothing in the docs or community evidence describes recurring/scheduled execution.",
+    "confidence": "low",
+    "rationale": "iTerm2 offers triggers, Python scripting API, and AppleScript automation, but there is no evidence of a scheduler or mechanism for recurring/cron-like jobs or workflows; automation is event-triggered or manually scripted, not scheduled.",
     "evidenceIds": []
   },
   {
@@ -1559,7 +1550,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to terminal emulators as a kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/terminals-na-harmonize.ts.)",
+    "rationale": "No evidence of any version control, review, or rollback mechanism for automations (triggers, Python scripts, profiles). iTerm2 supports scripting and triggers, but nothing in the evidence pack shows versioning, diffing, review workflows, or rollback of these automations.",
     "evidenceIds": []
   },
   {
@@ -1582,7 +1573,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "iTerm2 provides a documented Python API for controlling the app (open windows/sessions, send text, query state) and a full AppleScript scripting interface, corroborated by hands-on community praise calling it 'basically AppleScript for iTerm except it lets you touch pretty much everything.' missing for 10: no evidence of a formal socket/JSON-RPC IPC spec doc beyond the Python API wrapper, and no independent report of scripting reliability at scale.",
+    "rationale": "iTerm2 documents a robust Python API for scripting/controlling the terminal (open sessions, send text, query state) and AppleScript support for launching/controlling sessions, with independent community corroboration praising the Python API's power over AppleScript. missing for 10: no evidence of a CLI-only (non-Python/AppleScript) IPC socket documentation, and no hands-on demonstration of specific 'query state' calls beyond general docs.",
     "evidenceIds": [
       "iterm2-docs-13",
       "iterm2-docs-14",
@@ -1594,16 +1585,16 @@
   {
     "productId": "iterm2",
     "storyId": "command-aware-features",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Shell integration is well documented (tracks command history, cwd, hostname, prompts, marks) and triggers can send notifications on regex matches, but the evidence never explicitly confirms exit-status tracking or command-duration reporting as shell-integration features. missing for 10: explicit documentation of exit status capture and command duration display, independent hands-on confirmation of 'notify when long command finishes' behavior.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "iTerm2's shell integration docs confirm tracking of command history, prompts, directories, and hostnames, plus notifications for job completion/bells/activity and prompt navigation shortcuts. missing for 10: explicit documentation citing per-command exit status/duration display and independent hands-on confirmation of the notification-on-completion behavior.",
     "evidenceIds": [
       "iterm2-docs-8",
-      "iterm2-docs-24",
       "iterm2-docs-31",
-      "iterm2-gh-2",
-      "iterm2-gh-10"
+      "iterm2-docs-37",
+      "iterm2-docs-9",
+      "iterm2-docs-24"
     ]
   },
   {
@@ -1625,12 +1616,9 @@
     "storyId": "config-as-code",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents iTerm2's extensive configurability (docs-21) and profile system, but never mentions storing settings as plain-text files, exporting preferences to a custom folder, or any dotfiles-style sync workflow. missing for 10: evidence of preferences-folder export/import, plain-text config format, or documented dotfiles sync workflow.",
-    "evidenceIds": [
-      "iterm2-docs-21",
-      "iterm2-docs-30"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of iTerm2's preferences file format, exporting/importing settings as plain-text/plist files, or any dotfiles-style sync workflow across machines. Without evidence for this specific capability, it cannot be credited even though it is a plausible axis for a terminal emulator.",
+    "evidenceIds": []
   },
   {
     "productId": "iterm2",
@@ -1638,9 +1626,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "iTerm2 is a macOS-only terminal emulator; there is no evidence of Linux or Windows builds, and a community comment explicitly states no like-for-like replacement exists for Windows or Linux, confirming cross-platform parity is not offered.",
+    "rationale": "iTerm2 is a macOS-only application; no evidence pack item claims Linux or Windows support, and a community source explicitly notes the lack of a comparable replacement on Windows or Linux, confirming it does not run cross-platform.",
     "evidenceIds": [
-      "iterm2-comm-8"
+      "iterm2-comm-8",
+      "iterm2-docs-20"
     ]
   },
   {
@@ -1649,10 +1638,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "iTerm2 ships a genuine Python scripting API for deep automation (custom triggers, status bar components, menu items) plus AppleScript support, and triggers can directly invoke Python scripts — this is corroborated by both first-party docs and independent hands-on praise calling it 'basically AppleScript... but not soul-crushing to write.' Missing for 10: no Lua support and no kitty-style 'kittens' plugin system, so the specific named languages aren't all covered, though the core capability (extend via a real scripting language) is clearly delivered.",
+    "rationale": "iTerm2 offers a documented Python API for full automation/customization (custom status bar components, triggers, menu items, new features), plus AppleScript scripting and trigger-invoked Python scripts, with community hands-on praise calling it 'basically AppleScript... but not soul-crushing to write' and noting real-world tools like imgcat/it2dl built on it. This covers 'real language' scripting well beyond built-in options, though there's no mention of Lua or 'kittens' (a kitty-terminal concept) support specifically. Missing for 10: Lua scripting support, kitten-style plugin format, independent third-party plugin ecosystem showcase.",
     "evidenceIds": [
       "iterm2-docs-13",
       "iterm2-docs-14",
+      "iterm2-docs-33",
       "iterm2-gh-15",
       "iterm2-gh-2",
       "iterm2-comm-5"
@@ -1664,7 +1654,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions font rendering, ligature support, fallback font configuration, or font tuning options in iTerm2 despite extensive coverage of other features. This is a fair axis for a terminal emulator (font rendering is core UX), but nothing in the pack documents it, so verdict is none rather than na.",
+    "rationale": "The evidence pack contains no mention of font rendering, ligature support, fallback fonts, or font-tuning settings anywhere in iTerm2's docs, GitHub feature list, or community discussion; only general 'mind-boggling number of options' and color-mode claims are present, which don't address fonts specifically. Missing for 10: any mention of font selection, ligature support, fallback font configuration, or font-size/spacing tuning options.",
     "evidenceIds": []
   },
   {
@@ -1673,7 +1663,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions GPU acceleration, rendering architecture, or performance under heavy output for iTerm2; the docs and community items cover features like panes, triggers, scripting, and an AI plugin controversy, but nothing about rendering performance or GPU usage.",
+    "rationale": "No evidence in the pack mentions GPU acceleration, rendering architecture, or performance under heavy output/scrollback; the docs and community items cover features like panes, triggers, search, and scripting but nothing about rendering performance or GPU usage.",
     "evidenceIds": []
   },
   {
@@ -1682,7 +1672,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "iTerm2 documents a custom escape sequence for displaying inline images including animated GIFs, and community hands-on use of imgcat confirms this works in practice, even over SSH. missing for 10: no mention of broader standardized protocol compatibility (e.g., Sixel/Kitty graphics protocol support) or detailed protocol spec documentation beyond the feature blurb.",
+    "rationale": "iTerm2 documents a custom escape sequence for inline image display (including animated GIFs), and community hands-on evidence corroborates real-world use via imgcat working over SSH. missing for 10: a formal protocol specification page/name (e.g. explicit 'inline images protocol' spec doc) and broader third-party adoption/compatibility discussion beyond one HN thread.",
     "evidenceIds": [
       "iterm2-docs-11",
       "iterm2-comm-5"
@@ -1694,7 +1684,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions benchmarks, latency numbers, throughput figures, or any measured performance data for iTerm2; the evidence covers features, scripting, and community discussion of AI/security issues only. Missing for 10: any published benchmark suite, latency/throughput measurements, or third-party performance comparison.",
+    "rationale": "No evidence pack item presents published benchmarks, latency/throughput numbers, or any measured performance data for iTerm2; the material covers features (panes, tmux integration, scripting) and unrelated community discussion (AI feature controversy, a security disclosure) with no performance metrics whatsoever.",
     "evidenceIds": []
   },
   {
@@ -1702,14 +1692,13 @@
     "storyId": "nl-command-generation",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "iTerm2 ships an optional AI plugin providing a built-in LLM chat window that can be linked to a session for 'context-aware help' and to 'run commands on your behalf,' which partially matches the story, but documentation is a single sentence with no detail on inline NL-to-command generation workflow, and community reaction focused on privacy/opt-in controversy rather than confirming the generation quality. missing for 10: detailed first-party docs on the inline command-generation UX, independent hands-on validation that the right shell command is reliably produced, and resolution of the reported opt-in/toggle bug's effect on trust.",
+    "confidence": "medium",
+    "rationale": "iTerm2 ships an optional AI plugin and a built-in LLM chat window that can be linked to a session to 'run commands on your behalf' or explain output (iterm2-docs-15, iterm2-gh-6), which supports natural-language-to-command generation, but this is a separate opt-in chat pane requiring an API key rather than inline generation directly at the shell prompt. Community commentary focuses on privacy/toggle concerns (iterm2-comm-1, iterm2-comm-2) rather than confirming accuracy or in-place command insertion. Missing for 10: evidence of commands being generated and inserted directly into the terminal prompt (not just a chat window), and independent verification of command-generation quality/reliability.",
     "evidenceIds": [
       "iterm2-docs-15",
       "iterm2-gh-6",
       "iterm2-comm-1",
-      "iterm2-comm-2",
-      "iterm2-comm-3"
+      "iterm2-comm-2"
     ]
   },
   {
@@ -1767,11 +1756,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "iTerm2 is a local terminal emulator that runs on the user's own machine; there is no cloud service or hosted data storage involved, so data residency/region selection is not an applicable axis. The optional AI plugin sends data to OpenAI but offers no region/residency choice, which is a separate privacy-control question, not a storage-location feature this category of product would ship.",
-    "evidenceIds": [
-      "iterm2-docs-15",
-      "iterm2-comm-2"
-    ]
+    "rationale": "iTerm2 is a local desktop terminal emulator that runs on the user's own machine; data residency/region selection is a cloud-service concept and doesn't apply to a local application (the optional AI plugin sends data to OpenAI's API but offers no region choice, which is a separate privacy-toggle concern, not residency).",
+    "evidenceIds": []
   },
   {
     "productId": "iterm2",
@@ -1779,9 +1765,10 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "iTerm2's AI features are documented as optional/opt-in (docs-15), implying user control over whether terminal data is sent to third-party AI providers like OpenAI, but hands-on community reports show this control was not reliable in practice — the OpenAI key field activated data-sending even with garbage/empty input, contradicting the expectation of a true opt-out (comm-2), and this fueled real backlash (comm-1, comm-3). There is no vendor documentation addressing model-training opt-out specifically, only the toggle to enable/disable the feature itself. Missing for 10: explicit privacy/training-opt-out policy documentation, confirmation the bug was fixed, and independent verification that no data reaches OpenAI when disabled.",
+    "rationale": "iTerm2's AI features are documented as optional/opt-in (an installable plugin and an LLM chat window that 'optionally' interacts with terminal contents), implying a way to keep AI features off, but hands-on community reports show the opt-in control was broken: entering any value (even a space) in the API-key field activated data-sending to OpenAI regardless of intent, meaning users could not reliably prevent their terminal data from being sent to a third-party AI provider. There is no vendor documentation addressing training-data usage or an explicit training opt-out policy at all. missing for 10: explicit training-data opt-out/privacy statement, evidence the opt-in toggle was fixed and verified reliable, independent corroboration beyond the single HN thread.",
     "evidenceIds": [
       "iterm2-docs-15",
+      "iterm2-gh-6",
       "iterm2-comm-1",
       "iterm2-comm-2",
       "iterm2-comm-3"
@@ -1821,7 +1808,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Shell integration explicitly tracks prompts and sets marks at each prompt, with documented navigation via ⇧⌘↑/⇧⌘↓ to jump between shell prompts, plus GitHub docs confirming marks at each prompt and Copy Mode working with marks to jump between command prompts. Missing for 10: independent hands-on confirmation specifically of the jump-between-marks workflow (community evidence covers related features like imgcat/semantic history but not this exact navigation).",
+    "rationale": "iTerm2's shell integration explicitly tracks prompts and sets marks at each command, and docs describe navigating between previous shell prompts with ⇧⌘↑/⇧⌘↓, corroborated by GitHub feature list mentioning marks at each prompt and copy mode working with marks to jump between prompts. Missing for 10: no independent hands-on account specifically confirming the prompt-jump keybinding in practice beyond docs/GitHub summaries.",
     "evidenceIds": [
       "iterm2-docs-8",
       "iterm2-docs-9",
@@ -1835,12 +1822,13 @@
     "productId": "iterm2",
     "storyId": "quake-dropdown-mode",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "iTerm2 documents a global hotkey feature that brings the terminal to the foreground from any application, matching the quake-style dropdown/summon behavior described in the story. Missing for 10: explicit mention of dropdown animation style and independent hands-on confirmation of this specific hotkey window feature.",
+    "rationale": "Docs explicitly describe a global hotkey to bring iTerm2 to the foreground from any app, and GitHub evidence confirms a quake-style dropdown that slides down from a screen edge, even over fullscreen apps. Missing for 10: independent hands-on user testimonial specifically praising the hotkey/dropdown window feature.",
     "evidenceIds": [
       "iterm2-docs-2",
-      "iterm2-docs-26"
+      "iterm2-docs-26",
+      "iterm2-gh-17"
     ]
   },
   {
@@ -1849,7 +1837,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "iTerm2 supports AppleScript scripting to launch the application and open multiple sessions with profiles into new tabs/windows, plus a Python API for automation and profiles that trigger based on context (hostname, directory), which together enable scripted project workspace startup. Community evidence corroborates the Python API as a practical automation tool ('basically AppleScript for iTerm except... it lets you touch pretty much everything'). Missing for 10: a single documented one-command 'open layout X' example or independent hands-on confirmation of full workspace/layout restoration via script.",
+    "rationale": "iTerm2's AppleScript scripting explicitly supports launching the app and opening multiple sessions with profiles into new tabs/windows (a scripted workspace startup), and the Python API/triggers offer additional automation of session/window setup; profiles themselves can also be tied to directories/hosts for one-command workspace opening. missing for 10: no first-party example of a saved 'window arrangement' config file format or direct hands-on community confirmation of a single-command full-layout launch.",
     "evidenceIds": [
       "iterm2-docs-14",
       "iterm2-docs-33",
@@ -1877,13 +1865,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "iTerm2 documents Session Restoration where shells run in long-lived server processes and reconnect exactly where left off after a crash or restart, plus tmux -CC integration that keeps sessions alive independent of the app and shell integration that tracks working directory across sessions. This directly covers windows/tabs/panes and working directory restoration after crash/restart. Missing for 10: independent hands-on verification of restoration fidelity across all edge cases (e.g., complex window arrangements) and any community corroboration specifically of restart/crash recovery reliability.",
+    "rationale": "Session restoration via long-lived server processes reconnects shells (including working directories via shell integration) after crash/restart, and tmux -CC integration persists windows/tabs/panes even when iTerm2 or the SSH session drops. Missing for 10: no independent/hands-on confirmation of restoring exact tab/pane layout after a full app crash, only vendor/docs claims.",
     "evidenceIds": [
       "iterm2-gh-4",
       "iterm2-gh-9",
       "iterm2-gh-11",
+      "iterm2-docs-12",
       "iterm2-docs-19",
-      "iterm2-docs-23",
       "iterm2-docs-8",
       "iterm2-docs-31"
     ]
@@ -1894,13 +1882,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "iTerm2 natively supports splitting tabs into multiple panes (vertical/horizontal), tabs, windows, session restoration, and even tmux integration for persistence—covering pane/tab organization without needing an external multiplexer like tmux. Missing for 10: independent hands-on verification specifically of pane-splitting UX (community evidence focuses on other features like imgcat/scripting rather than pane workflows).",
+    "rationale": "iTerm2 natively supports splitting tabs into multiple panes (vertical/horizontal) and organizing sessions across tabs and windows, directly replacing the need for tmux/screen for basic pane-and-tab workflows, with session restoration and profile-based organization further supporting this. missing for 10: independent hands-on verification specifically of pane-splitting workflow (community evidence focuses on other features like imgcat/scripting rather than confirming multiplexing usability directly).",
     "evidenceIds": [
       "iterm2-docs-1",
       "iterm2-docs-25",
       "iterm2-gh-4",
-      "iterm2-docs-23",
-      "iterm2-docs-12"
+      "iterm2-docs-30",
+      "iterm2-docs-32"
     ]
   },
   {
@@ -1928,7 +1916,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack lacks any mention of color schemes, theme customization, or automatic light/dark mode switching in iTerm2's profiles/appearance settings. Missing for 10: no docs or community mentions of color presets/themes, no mention of dark mode detection or automatic switching based on system appearance.",
+    "rationale": "The evidence pack contains no mention of color schemes, themes, or automatic light/dark mode switching for iTerm2 despite this being a plausible and well-known capability for a terminal emulator; no docs, GitHub, or community citations address theming at all. missing for 10: any documentation or mention of color scheme/theme support, dark mode toggling, or automatic OS appearance syncing.",
     "evidenceIds": []
   },
   {
@@ -1937,11 +1925,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "iTerm2 has documented native tmux integration/control mode (tmux -CC) that creates native iTerm2 windows/tabs/panes from a tmux session, persists across disconnects/ssh loss, and supports reattaching with full state restoration, all clearly documented on the official docs site. Missing for 10: independent hands-on corroboration specifically of tmux -CC usage (community evidence covers other iTerm2 features but not tmux control mode directly).",
+    "rationale": "iTerm2 has a well-documented native tmux control mode (tmux -CC) that integrates tmux sessions natively into iTerm2's window/pane UI while preserving persistence across SSH disconnects and app restarts, plus standard tmux-in-terminal usage is naturally supported. Missing for 10: independent hands-on corroboration specifically of tmux -CC mode (community evidence covers other features, not tmux integration directly).",
     "evidenceIds": [
       "iterm2-docs-12",
       "iterm2-docs-19",
-      "iterm2-docs-23"
+      "iterm2-docs-23",
+      "iterm2-docs-40"
     ]
   },
   {
@@ -1950,13 +1939,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "iTerm2's Smart Selection lets users Cmd-click to open URLs/paths and quad-click to select semantic objects like URLs and file paths, with Semantic History confirmed by community hands-on use for Cmd+Click opening paths in an editor, plus keyboard-based Copy Mode for selecting text without a mouse. Missing for 10: a first-party doc citation specifically confirming keyboard-driven selection of clickable links (only GitHub feature list and community anecdote cover this combination).",
+    "rationale": "Smart Selection with quad-click and Cmd-click to open URLs/paths, plus keyboard-based selection (Copy Mode/vim-like navigation), are documented and corroborated by community hands-on reports (Semantic History opening files in editor via Cmd+Click). missing for 10: no independent verification of full keyboard-only 'select and open' flow beyond selection, only Cmd-click for opening.",
     "evidenceIds": [
       "iterm2-gh-3",
-      "iterm2-comm-7",
+      "iterm2-docs-17",
+      "iterm2-docs-38",
       "iterm2-gh-8",
       "iterm2-gh-13",
-      "iterm2-docs-17",
+      "iterm2-comm-7",
       "iterm2-docs-5"
     ]
   },
@@ -2603,32 +2593,35 @@
     "productId": "warp",
     "storyId": "agent-drives-terminal",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Warp exposes some programmatic surfaces — an Oz CLI for running/managing agents from scripts or CI (warp-docs-22/37/52), a documented settings file for 'programmatic control' (warp-docs-40), and a live openapi.json endpoint plus 'API, CLI, SDK, MCP' platform claim (warp-docs-42, warp-probe-2) — and the agent itself can run/control terminal apps (warp-docs-16/32). However, there is no explicit documentation of a control protocol for creating/managing panes or reading raw terminal output programmatically from an external driver. Missing for 10: a documented pane/window control API, explicit read/write terminal I/O protocol spec, and independent hands-on confirmation of external programmatic terminal control.",
+    "rationale": "Warp exposes a genuine programmatic surface — an OpenAPI spec (confirmed live at docs.warp.dev/openapi.json), an Oz CLI with API keys for headless/CI control, MCP as a plugin interface, and a documented Warp Agent CLI that spins up its own PTY so an agent can run commands, provide input, and control full-screen apps (warp-docs-69, warp-docs-24, warp-docs-32). This supports agent-driven terminal automation, but the evidence never documents a protocol/API specifically for creating or managing Warp's terminal panes/windows or reading raw pane output — the API/CLI focus is on running and orchestrating agents rather than exposing the terminal UI itself as a controllable surface. Missing for 10: documented pane-creation/window-management API, explicit read-output API distinct from agent conversation transcripts, and independent/hands-on confirmation of external programmatic terminal control.",
     "evidenceIds": [
-      "warp-docs-22",
-      "warp-docs-37",
-      "warp-docs-40",
       "warp-docs-42",
+      "warp-docs-63",
+      "warp-docs-52",
+      "warp-docs-69",
+      "warp-docs-24",
       "warp-probe-2",
-      "warp-docs-16",
-      "warp-docs-32",
-      "warp-docs-52"
+      "warp-docs-37"
     ]
   },
   {
     "productId": "warp",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "A live probe confirms docs.warp.dev serves a proper llms.txt file (HTTP 200) describing Warp as an 'agentic development environment,' which is exactly the agent-oriented documentation format the story asks for; Warp also documents an OpenAPI spec and CLI reference for machine consumption, reinforcing agent-friendly docs infrastructure. Missing for 10: explicit documentation of a user workflow instructing the Warp agent to fetch/read an external llms.txt file, and independent confirmation that agents actually consume it in practice.",
+    "rationale": "Warp publishes a dedicated llms.txt (confirmed live via HTTP 200 probe at docs.warp.dev/llms.txt) describing its agentic docs, plus a whole family of agent-oriented doc pages under the _llms-txt/ path (code, warp-agent-cli, automation-platform, api-reference, knowledge-and-collaboration, factories), giving AI agents a structured, machine-readable entry point into Warp's documentation. Missing for 10: no independent/community confirmation that an external agent has actually consumed this llms.txt successfully.",
     "evidenceIds": [
       "warp-probe-1",
-      "warp-probe-2",
-      "warp-probe-3",
-      "warp-docs-3"
+      "warp-docs-57",
+      "warp-docs-59",
+      "warp-docs-60",
+      "warp-docs-61",
+      "warp-docs-63",
+      "warp-docs-66",
+      "warp-docs-68"
     ]
   },
   {
@@ -2637,15 +2630,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Warp provides AI-generated command suggestions, error explanations, natural-language-to-command generation, and an agent that writes code, runs commands, and interprets results — all surfaced directly inside the terminal product (e.g., '#' AI Command Suggestions, 'Ask Warp AI' error explain, Agent Mode conversations, MCP-based context pulling). This is well documented across multiple first-party docs pages. Missing for 10: independent/hands-on validation specifically of insight quality (community evidence focuses on reliability/privacy complaints rather than confirming suggestion usefulness), and no concrete example of a generated insight/output shown.",
+    "rationale": "Warp provides extensive AI-generated insights and suggestions inline: AI command suggestions via '#', error explanation via 'Ask Warp AI', agent-driven code writing/debugging/multi-step task execution, and context-aware suggestions pulled via MCP integrations from databases/APIs/docs. This is well documented across multiple first-party sources. missing for 10: independent/hands-on corroboration specifically validating the quality or accuracy of the AI insights/suggestions (community evidence focuses on terminal stability/privacy issues, not on insight quality).",
     "evidenceIds": [
+      "warp-docs-6",
+      "warp-docs-7",
       "warp-docs-8",
       "warp-docs-9",
-      "warp-docs-29",
-      "warp-docs-6",
       "warp-docs-44",
-      "warp-docs-7",
-      "warp-docs-54"
+      "warp-docs-54",
+      "warp-docs-29"
     ]
   },
   {
@@ -2653,15 +2646,18 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Warp explicitly documents Triggers (event-based, from Slack/Linear/GitHub/webhooks) and Schedules (recurring tasks) that run autonomously, plus a cloud-based Oz CLI for running/managing agents from scripts or CI pipelines without the desktop app, and observability for tracking runs. This directly matches background/autonomous automation setup. Missing for 10: independent/hands-on verification of these specific automation features (community evidence covers other aspects of Warp, not Triggers/Schedules/Oz reliability).",
+    "confidence": "high",
+    "rationale": "Warp's Automation Platform explicitly supports cloud agents that run autonomously in the background, triggered by schedules, webhooks, or integrations like Slack/GitHub/Linear (warp-docs-4, warp-docs-5, warp-docs-60), with observability/audit trails (warp-docs-53, warp-docs-61) and CLI/API control via Oz CLI for headless/CI use (warp-docs-22, warp-docs-37, warp-docs-63). missing for 10: independent/hands-on verification of autonomous background runs actually completing unattended, and more detail on failure handling/reliability at scale.",
     "evidenceIds": [
       "warp-docs-4",
       "warp-docs-5",
+      "warp-docs-60",
+      "warp-docs-61",
+      "warp-docs-53",
       "warp-docs-22",
       "warp-docs-37",
-      "warp-docs-52",
-      "warp-docs-53"
+      "warp-docs-63",
+      "warp-docs-52"
     ]
   },
   {
@@ -2670,16 +2666,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Warp ships a built-in AI agent (Warp Agent/Warp AI) that writes code, runs commands, explains errors, handles multi-step tasks, and supports multiple LLMs, all natively inside the terminal UI, with extensive first-party documentation and hands-on community confirmation (e.g. warp-comm-8, warp-comm-9 praising AI command generation as a daily-use feature). missing for 10: deeper independent verification of agent quality/reliability beyond mixed community reports on recent regressions.",
+    "rationale": "Warp ships a built-in AI agent that writes code, runs commands, iterates on tasks, handles multi-turn conversations, supports model switching, and integrates with natural-language command generation—well documented across first-party docs (warp-docs-6, warp-docs-8, warp-docs-44, warp-docs-13, warp-docs-14). This is corroborated by community mentions of AI-generated commands being a standout feature (warp-comm-8). Missing for 10: independent hands-on validation specifically of the built-in agent's task completion quality (most community commentary focuses on terminal UX/telemetry rather than the assistant's task delegation itself).",
     "evidenceIds": [
       "warp-docs-6",
       "warp-docs-8",
-      "warp-docs-9",
-      "warp-docs-10",
       "warp-docs-44",
-      "warp-docs-26",
-      "warp-comm-8",
-      "warp-comm-9"
+      "warp-docs-13",
+      "warp-docs-14",
+      "warp-docs-10",
+      "warp-comm-8"
     ]
   },
   {
@@ -2687,16 +2682,18 @@
     "storyId": "agentic-headless",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Warp documents the Oz CLI explicitly for 'running and managing Warp's cloud agents from any terminal, script, or CI pipeline,' supporting local/remote agent runs, MCP connections, triggers (Slack/Linear/GitHub/webhooks), and schedules for recurring automated tasks — all clear headless/CI automation primitives. There's also a standalone Warp Agent CLI usable outside the GUI app across various terminals. missing for 10: independent/hands-on confirmation of the Oz CLI or Agent CLI actually running successfully inside a real CI pipeline (only vendor docs describe this).",
+    "confidence": "high",
+    "rationale": "Warp ships the Oz CLI explicitly documented for running/managing cloud agents 'from any terminal, script, or CI pipeline,' with API keys for headless/non-interactive auth 'ideal for CI pipelines, headless servers, and containers,' plus the standalone Warp Agent CLI that works over SSH/any terminal without the desktop app. Schedules and webhook/event triggers further support automation use cases outside interactive sessions. Missing for 10: independent/hands-on verification of actual CI pipeline runs and more detail on exit codes/output parsing for scripting.",
     "evidenceIds": [
       "warp-docs-22",
       "warp-docs-37",
       "warp-docs-52",
+      "warp-docs-63",
+      "warp-docs-59",
+      "warp-docs-23",
       "warp-docs-4",
       "warp-docs-5",
-      "warp-docs-23",
-      "warp-docs-41"
+      "warp-docs-60"
     ]
   },
   {
@@ -2705,7 +2702,22 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Warp explicitly documents MCP support: 'Connect Warp AI to any tool via the Model Context Protocol' and MCP servers 'extend Warp's local agents in a modular, flexible way by exposing custom tools or data sources through a standardized interface — essentially acting as plugins for Warp,' plus the Oz CLI lets you 'Connect agents to MCP servers like GitHub and Linear.' This directly matches the story of plugging in MCP servers so the product's agent can use their tools. Missing for 10: independent/hands-on community verification of MCP tool usage in practice.",
+    "rationale": "Warp has documented, first-party support for connecting MCP servers to extend its agents ('MCP servers extend Warp's local agents... acting as plugins for Warp'), plus explicit CLI support (Oz CLI) to 'connect MCP servers like GitHub and Linear' and agent profiles to control MCP server usage. This is corroborated across multiple doc pages describing MCP as a first-class integration point for tool use. Missing for 10: independent/hands-on community confirmation of MCP server usage specifically (community evidence covers other topics, not MCP directly).",
+    "evidenceIds": [
+      "warp-docs-7",
+      "warp-docs-18",
+      "warp-docs-37",
+      "warp-docs-52",
+      "warp-docs-64"
+    ]
+  },
+  {
+    "productId": "warp",
+    "storyId": "agentic-mcp-server",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Warp is itself an agentic coding/terminal product (agent role); all MCP-related evidence (warp-docs-7, warp-docs-18, warp-docs-37, warp-docs-52) describes Warp's agents *connecting to* external MCP servers as a client, not Warp exposing an official MCP server for other agents to connect to. Per the client-vs-server distinction, this makes the 'connect an agent via an official MCP server' (server role) axis inapplicable to Warp.",
     "evidenceIds": [
       "warp-docs-7",
       "warp-docs-18",
@@ -2715,74 +2727,68 @@
   },
   {
     "productId": "warp",
-    "storyId": "agentic-mcp-server",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Warp is itself an agentic coding assistant/agent product; the evidence (warp-docs-18, warp-docs-52) shows Warp connecting to external MCP servers (client-side) rather than exposing its own agent as an official MCP server that other agents can plug into. Per the agent-role exception, this axis does not apply unless there's explicit evidence of an MCP-serve mode, which is absent (the vague 'API, CLI, SDK and MCP' platform tagline in warp-docs-42 is not concrete server evidence).",
-    "evidenceIds": [
-      "warp-docs-18",
-      "warp-docs-52",
-      "warp-docs-42"
-    ]
-  },
-  {
-    "productId": "warp",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Warp offers explicit natural-language command generation ('#' to describe commands, AI Command Suggestions), a built-in conversational agent mode for multi-step tasks, natural-language error explanation, and NL-driven workflow creation/naming, all well documented across first-party docs. Missing for 10: independent hands-on verification of NL command accuracy and some community reports of feature breakage (e.g., 'clear' command issues) introduce minor real-world caveats.",
+    "rationale": "Warp offers extensive natural-language interfaces: typing '#' for AI command suggestions, Agent Mode conversations for multi-step tasks, right-click 'Ask Warp AI' to explain errors, and a built-in agent that writes code, runs commands, and iterates based on natural-language descriptions. This spans terminal, CLI, and cloud agent surfaces (warp-docs-6,8,9,44,54). missing for 10: independent hands-on validation specifically of NL command accuracy/reliability (community evidence focuses on general product issues rather than NL-command quality).",
     "evidenceIds": [
+      "warp-docs-6",
       "warp-docs-8",
       "warp-docs-9",
-      "warp-docs-6",
-      "warp-docs-30",
+      "warp-docs-44",
       "warp-docs-54",
-      "warp-comm-2",
-      "warp-comm-8"
+      "warp-docs-26",
+      "warp-docs-13"
     ]
   },
   {
     "productId": "warp",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Warp ships multiple official CLIs for AI-native workflows: the Warp Agent CLI (standalone, works in any terminal/IDE, supports remote sessions and interactive apps) and the Oz CLI for running/managing cloud agents from any terminal, script, or CI pipeline, with MCP integration. This is documented in first-party docs and confirmed by a live probe of the CLI reference page. Missing for 10: independent/community hands-on validation specifically of the CLI tools (community evidence in the pack focuses on the desktop app, not the CLI).",
+    "rationale": "Warp ships multiple official CLIs — the standalone Warp Agent CLI usable in any terminal/SSH (warp-docs-23, warp-docs-41, warp-docs-59, warp-docs-69) and the Oz CLI for managing cloud agents in scripts/CI (warp-docs-22, warp-docs-37, warp-docs-52) — both extensively documented as first-party, agent-native tooling with API key auth for headless use (warp-docs-63). Missing for 10: independent/hands-on community corroboration specifically validating the CLI's real-world reliability (community evidence covers the desktop app, not the CLI).",
     "evidenceIds": [
       "warp-docs-22",
       "warp-docs-23",
       "warp-docs-37",
       "warp-docs-41",
       "warp-docs-52",
-      "warp-probe-3"
+      "warp-docs-59",
+      "warp-docs-63",
+      "warp-docs-69"
     ]
   },
   {
     "productId": "warp",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Warp explicitly markets itself as 'API, CLI, SDK and MCP built as a platform' (warp-docs-42) and a probe confirms a live OpenAPI spec at docs.warp.dev/openapi.json (warp-probe-2), plus a documented Oz CLI for scripting/CI automation of cloud agents (warp-docs-22, warp-docs-37, warp-docs-52). This is real evidence of a public, documented API surface for driving Warp programmatically. Missing for 10: a dedicated human-readable API reference page enumerating endpoints/auth (beyond the raw OpenAPI JSON), and independent/hands-on confirmation that developers have successfully used the API outside Warp's own docs.",
+    "rationale": "Warp explicitly advertises an 'API, CLI, SDK and MCP' platform (warp-docs-42), and a live probe confirms a real OpenAPI spec is served at docs.warp.dev/openapi.json (warp-probe-2), backed by a documented CLI reference (warp-probe-3) and API-key based headless auth for the Oz CLI (warp-docs-63) plus scriptable agent control (warp-docs-22, warp-docs-37, warp-docs-52). Missing for 10: independent/third-party corroboration of API usage and more detailed public API reference content beyond the openapi.json existence check.",
     "evidenceIds": [
       "warp-docs-42",
       "warp-probe-2",
+      "warp-probe-3",
+      "warp-docs-63",
       "warp-docs-22",
       "warp-docs-37",
-      "warp-docs-52",
-      "warp-docs-43"
+      "warp-docs-52"
     ]
   },
   {
     "productId": "warp",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "No evidence of Warp issuing scoped or least-privilege API credentials/tokens for agents — docs discuss MCP connections, telemetry opt-out, and secret redaction, but nothing about credential scoping or permissioned API keys for agents.",
-    "evidenceIds": []
+    "rationale": "Warp's docs describe API Keys for authenticating the Oz CLI headlessly (warp-docs-63) and Agent Profiles that constrain what an agent can access (file access, command execution, MCP server usage) plus admin-level controls over agent autonomy (warp-docs-64, warp-docs-66), which together approximate least-privilege scoping for agent credentials/access. However, there's no explicit documentation of per-credential scopes/permissions tied to individual API keys (e.g., read-only vs write, resource-level restrictions) or independent confirmation this works as a formal least-privilege credential system. Missing for 10: explicit scoped-permission API key documentation, examples of granular credential scoping, and independent/hands-on verification.",
+    "evidenceIds": [
+      "warp-docs-63",
+      "warp-docs-64",
+      "warp-docs-66"
+    ]
   },
   {
     "productId": "warp",
@@ -2790,23 +2796,23 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Warp claims to offer an 'API, CLI, SDK and MCP' as a platform (warp-docs-42) and an OpenAPI spec is confirmed live (warp-probe-2), suggesting some programmatic surface exists, but there is no documentation, language bindings, code samples, or reference material specifically for an 'SDK' beyond this one-line marketing mention. Missing for 10: dedicated SDK docs/reference, language-specific client libraries, usage examples, and any independent/hands-on confirmation that a real SDK (not just API/CLI) exists.",
+    "rationale": "Warp markets itself as 'API, CLI, SDK and MCP built as a platform' (warp-docs-42) and a live OpenAPI spec is confirmed (warp-probe-2), showing some real API surface, but there is no dedicated SDK documentation, language-specific client libraries, install instructions, or code samples anywhere in the evidence. missing for 10: dedicated SDK docs/reference, language bindings (e.g. Python/JS packages), code samples, versioning/changelog for an SDK.",
     "evidenceIds": [
       "warp-docs-42",
       "warp-probe-2",
-      "warp-docs-22",
-      "warp-docs-37"
+      "warp-probe-1"
     ]
   },
   {
     "productId": "warp",
     "storyId": "agentic-webhooks",
-    "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Warp's docs explicitly describe 'Triggers' that let agents react to events from Slack, Linear, GitHub, or custom webhooks, directly matching the ability to subscribe to events via webhooks for agentic workflows. Missing for 10: deeper documentation on webhook configuration/payload format, and independent/hands-on corroboration of this feature in practice.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Warp's automation platform docs mention 'Triggers: React to events from Slack, Linear, GitHub, or custom webhooks' and cloud agents 'triggered by... integrations like Slack and GitHub,' indicating webhook-based triggering exists, but this describes Warp consuming/reacting to inbound webhooks to kick off agents rather than a documented outbound webhook subscription mechanism for external systems to receive Warp's own events. Missing for 10: explicit documentation of an outbound webhook/event-subscription API, payload schema, or delivery guarantees, and independent confirmation of this feature working.",
     "evidenceIds": [
-      "warp-docs-4"
+      "warp-docs-4",
+      "warp-docs-60"
     ]
   },
   {
@@ -2815,10 +2821,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Warp explicitly documents right-clicking to 'Ask Warp AI' to explain any error in command output, including demystifying opaque errors and identifying missing dependencies, plus '#' AI command suggestions that can help form corrected commands. This directly matches the story of getting AI explanations and fixes for failed commands. Missing for 10: independent hands-on verification of this specific error-explanation flow (community evidence covers other AI features but not this specific one), and no detail on how 'suggested fixes' are surfaced beyond explanation.",
+    "rationale": "Warp explicitly documents right-clicking to 'Ask Warp AI' to explain error output and identify missing dependencies, plus '#' natural-language command suggestions and AI-driven debugging as core Agent capabilities. Missing for 10: independent/hands-on verification that error explanations are accurate or reliably surfaced (community evidence focuses on other issues, not this feature specifically).",
     "evidenceIds": [
       "warp-docs-9",
       "warp-docs-29",
+      "warp-docs-44",
       "warp-docs-8"
     ]
   },
@@ -2848,22 +2855,26 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "While a probe found an openapi.json file exists at docs.warp.dev, there is no evidence of an actual interactive API reference UI with runnable/try-it examples — no docs describe such a reference experience. Missing for 10: documented interactive API explorer, runnable code examples, any first-party or community mention of using it.",
+    "confidence": "medium",
+    "rationale": "Warp does expose an OpenAPI spec (warp-probe-2) and API/CLI reference docs (warp-docs-63, warp-probe-3), so the axis of an API reference applies given Warp's platform ambitions (warp-docs-42). However, there is no evidence of an interactive reference UI with runnable/'try it out' examples — the pack only shows a raw openapi.json file and static CLI reference pages, not an interactive explorer.",
     "evidenceIds": [
-      "warp-probe-2"
+      "warp-probe-2",
+      "warp-probe-3",
+      "warp-docs-63",
+      "warp-docs-42"
     ]
   },
   {
     "productId": "warp",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "A direct probe confirms Warp exposes a machine-readable OpenAPI spec at docs.warp.dev/openapi.json returning HTTP 200 with an actual 'openapi' key, and Warp also documents an API/CLI/SDK/MCP platform surface. Missing for 10: independent third-party confirmation of the spec's completeness/versioning beyond the single probe.",
+    "rationale": "A probe directly confirms an OpenAPI JSON spec is served at docs.warp.dev/openapi.json returning a valid 'openapi' key, and docs reference an API/CLI/SDK/MCP platform with API key management, corroborating a machine-readable spec exists. Missing for 10: no independent/third-party confirmation of spec completeness or versioning, and no docs page walking through consuming the spec.",
     "evidenceIds": [
       "warp-probe-2",
-      "warp-docs-42"
+      "warp-docs-42",
+      "warp-docs-63"
     ]
   },
   {
@@ -2871,8 +2882,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack describes a sandbox environment, test/staging mode, or any mechanism to isolate agent actions from production data; Warp's docs focus on agent workflows, MCP, telemetry, and privacy but never mention sandboxing against production systems.",
+    "confidence": "medium",
+    "rationale": "While Warp's agent platform includes cloud agents, agent profiles restricting file/command access, and CI-oriented API keys, none of the evidence describes a dedicated sandbox environment or test-data isolation mechanism that lets a user validate agent runs without touching production data.",
     "evidenceIds": []
   },
   {
@@ -2880,24 +2891,28 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "While Warp exposes an OpenAPI spec (warp-probe-2) and touts an API/CLI/SDK/MCP platform (warp-docs-42), there is no evidence of API versioning scheme or a documented deprecation policy anywhere in the evidence pack.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Warp exposes an API, CLI, SDK, and MCP platform (warp-docs-42, warp-probe-2 openapi.json), so API versioning is a fair axis, but no evidence pack item documents API version numbers, a changelog, or any formal deprecation policy for these interfaces.",
+    "evidenceIds": [
+      "warp-docs-42",
+      "warp-probe-2",
+      "warp-probe-3"
+    ]
   },
   {
     "productId": "warp",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Warp explicitly advertises running many agents concurrently across repos or tasks (parallelism), plus schedules for recurring tasks and triggers reacting to events across many items via Oz CLI/cloud agents, which directly supports bulk automation-depth. However, this is documented only in vendor docs with no independent hands-on evidence of scale, limits, or reliability at bulk volume. missing for 10: independent verification of parallel/bulk operation limits, concrete examples of bulk tasks executed across many items, hands-on community reports validating this at scale.",
+    "rationale": "Warp supports running many agents concurrently across repos/tasks (warp-docs-28), cloud agents triggered by schedules/webhooks at scale (warp-docs-4, warp-docs-5, warp-docs-60), and a 'software factory' pattern coordinating a fleet of agents into mergeable PRs (warp-docs-68), which together support bulk/parallel operations across many items. However, there is no explicit documentation of a UI or command for batch-selecting many items (files, repos, tasks) and applying one operation across all of them in a single bulk action, nor independent/hands-on evidence confirming this scales well in practice. missing for 10: concrete bulk-selection/batch-apply UI or command, first-party docs quantifying scale limits, independent verification that parallel/bulk agent runs work reliably at scale.",
     "evidenceIds": [
       "warp-docs-28",
-      "warp-docs-5",
+      "warp-docs-60",
+      "warp-docs-68",
       "warp-docs-4",
-      "warp-docs-22",
-      "warp-docs-37",
-      "warp-docs-52"
+      "warp-docs-5",
+      "warp-docs-22"
     ]
   },
   {
@@ -2906,26 +2921,27 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Warp explicitly documents 'Triggers' that react to events from Slack, Linear, GitHub, or custom webhooks, and 'Schedules' for recurring automated tasks — directly matching the rule-based, event-triggered automation story. This is corroborated by Oz CLI docs enabling agents to be run/managed from scripts and CI pipelines. Missing for 10: no independent/hands-on validation of trigger reliability or a detailed rules-authoring UI walkthrough beyond the brief doc mention.",
+    "rationale": "Warp's Automation Platform explicitly supports Triggers reacting to events from Slack, Linear, GitHub, or custom webhooks, plus Schedules for recurring tasks, and cloud agents described as 'triggered by system events, schedules, or integrations like Slack and GitHub' with full observability/audit trails. This directly matches the story of defining rules that trigger automatic actions on events. Missing for 10: independent/hands-on verification of the trigger system in practice (community evidence focuses on core terminal/agent issues, not the automation/trigger feature specifically).",
     "evidenceIds": [
       "warp-docs-4",
       "warp-docs-5",
-      "warp-docs-37",
-      "warp-docs-52"
+      "warp-docs-60",
+      "warp-docs-61",
+      "warp-docs-53"
     ]
   },
   {
     "productId": "warp",
     "storyId": "automation-scheduled-jobs",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Warp's docs explicitly describe a 'Schedules' feature to 'Run recurring tasks like dependency updates or dead code removal' alongside 'Triggers' that react to events from Slack/Linear/GitHub/webhooks, directly matching the recurring-jobs/workflows story as part of its agent automation platform (Oz CLI/Automate). Missing for 10: independent/hands-on confirmation of scheduling reliability, cron-like configuration details, or community verification that scheduled jobs work as advertised.",
+    "rationale": "Warp documents explicit 'Schedules' functionality for cloud agents ('Run recurring tasks like dependency updates or dead code removal') alongside 'Triggers' for event-based automation, plus cloud agents described as 'triggered by system events, schedules, or integrations' and managed via the Oz CLI for scripting/CI. This directly matches the story of scheduling recurring jobs/workflows. Missing for 10: independent/hands-on confirmation of the scheduling feature working reliably, and more detail on scheduling configuration (cron-like syntax, frequency options).",
     "evidenceIds": [
       "warp-docs-4",
       "warp-docs-5",
+      "warp-docs-60",
       "warp-docs-22",
-      "warp-docs-37",
       "warp-docs-52"
     ]
   },
@@ -2933,14 +2949,15 @@
     "productId": "warp",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Warp's automation platform (Triggers, Schedules, Warp Drive workflows) includes some observability — 'every run is tracked, auditable, and shareable' — which covers a review aspect, but there is no documented versioning system or rollback mechanism for automations. Missing for 10: version history/diffing of automation definitions, explicit rollback/revert capability, and any workflow approval process beyond basic run tracking.",
+    "rationale": "Warp provides strong review/observability for automations (run transcripts showing prompt, plan, commands, logs, shareable for team review) and lets you save/share workflows via Warp Drive, but there is no documented versioning or rollback mechanism for automations (e.g., no version history, diffing, or revert capability for schedules/triggers/workflows). missing for 10: explicit version history for saved automations, ability to roll back to a prior automation version, changelog/diff view for automation edits.",
     "evidenceIds": [
+      "warp-docs-11",
       "warp-docs-53",
-      "warp-docs-4",
-      "warp-docs-5",
-      "warp-docs-11"
+      "warp-docs-61",
+      "warp-docs-30",
+      "warp-docs-60"
     ]
   },
   {
@@ -2949,32 +2966,34 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Warp's built-in Agent Mode plans and executes tasks (writing code, running commands, debugging, multi-step task execution) with approval-based interaction and follow-up/queueing controls, well documented across docs-6, docs-44, docs-13/15/45. Community evidence corroborates real usage of AI-generated commands and agent workflows (warp-comm-8, warp-comm-9), though some report occasional agent reliability issues (warp-comm-11) which is a minor caveat rather than a contradiction of the core capability. Missing for 10: independent, rigorous verification of the approval/confirmation UX specifically (evidence shows queueing/follow-up but not an explicit 'approve before execution' step), and reports of agent reliability issues add slight quality deduction.",
+    "rationale": "Warp's built-in Agent Mode is extensively documented to plan and execute multi-step terminal tasks (writing code, running commands, controlling interactive/full-screen apps, iterating) while keeping the user in the loop via conversation view, follow-ups, and approval/steering ('watch, steer, and hand off runs'). This is corroborated across many first-party docs and independent community mentions of using it as a daily driver for AI-assisted terminal work, though some hands-on complaints exist about unrelated reliability/telemetry issues rather than the core delegate-and-approve workflow itself. Missing for 10: independent hands-on verification specifically of the approval/plan-then-execute step (vs. general agent usage), and confirmation the community complaints don't touch this exact workflow.",
     "evidenceIds": [
       "warp-docs-6",
       "warp-docs-44",
-      "warp-docs-13",
-      "warp-docs-15",
-      "warp-docs-45",
       "warp-docs-16",
+      "warp-docs-13",
+      "warp-docs-14",
+      "warp-docs-43",
       "warp-comm-8",
-      "warp-comm-9",
-      "warp-comm-11"
+      "warp-comm-9"
     ]
   },
   {
     "productId": "warp",
     "storyId": "cli-remote-control",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Warp documents CLIs for agent orchestration (Oz CLI, Warp Agent CLI) and MCP integration, but none of these let a developer open terminal windows, send text into panes, or query terminal state via a documented API/IPC — the actual terminal-control surface (like tmux control mode or iTerm2's scripting API) is not documented anywhere in the evidence pack.",
+    "rationale": "Warp ships documented CLI/IPC surfaces — the standalone Warp Agent CLI (works in any terminal, over SSH, creates its own PTY, can run/control full-screen apps) and the Oz CLI for running/managing cloud agents from scripts or CI with API-key auth — giving real command-line scriptability of agent sessions. However, the evidence is agent-centric (starting conversations, running commands, controlling processes) rather than direct terminal-window primitives like opening/arranging windows or querying pane/window state as the story literally describes (tmux/iTerm2-style control). Missing for 10: explicit documented commands to open/manage Warp windows or panes, send raw text to a specific pane, or query terminal UI state independent of an agent session; independent hands-on confirmation of such scripting.",
     "evidenceIds": [
       "warp-docs-22",
-      "warp-docs-23",
       "warp-docs-37",
-      "warp-docs-41",
-      "warp-docs-52"
+      "warp-docs-52",
+      "warp-docs-63",
+      "warp-docs-59",
+      "warp-docs-69",
+      "warp-docs-23",
+      "warp-docs-41"
     ]
   },
   {
@@ -3020,12 +3039,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence implies cross-platform reach (Windows/Linux keyboard shortcuts in warp-docs-49, Warp Agent CLI usable on 'built-in Windows and Mac Terminals' and Ghostty in warp-docs-41, and a new settings file for 'portability between devices' in warp-docs-40), but there is no explicit, first-party statement that the full Warp terminal ships with identical features/config on macOS, Linux, and Windows, nor any hands-on report confirming parity across all three. Missing for 10: an explicit cross-platform release/config-sync doc, and independent user confirmation that the same config behaves identically on all three OSes.",
+    "rationale": "Evidence shows Warp exposes platform-specific keybindings for macOS, Windows, and Linux (docs-49), a settings file enabling config portability across devices (docs-40), and CLI/agent components that work over SSH in any terminal (docs-59), implying cross-platform availability. However, there is no explicit doc confirming identical native app experience on all three OSes, and community reports describe Warp being broken specifically under WSL/Windows-via-SSH scenarios (warp-comm-10), undercutting a seamless 'same terminal, same config' experience. missing for 10: explicit first-party confirmation of feature parity across macOS/Linux/Windows, documented config-sync mechanism beyond a settings file, and independent corroboration that the same setup truly works identically on all three platforms.",
     "evidenceIds": [
       "warp-docs-49",
-      "warp-docs-41",
       "warp-docs-40",
-      "warp-docs-20"
+      "warp-docs-59",
+      "warp-comm-10"
     ]
   },
   {
@@ -3034,8 +3053,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Warp's extensibility model centers on MCP servers acting as plugins for AI agents (warp-docs-18) and saved 'workflows' (warp-docs-11), not on general-purpose scripting languages like Lua, Python, or kitty-style 'kittens' for customizing terminal behavior. No evidence describes a scripting API, plugin SDK, or embedded language runtime for extending the terminal itself.",
-    "evidenceIds": []
+    "rationale": "Warp's extensibility is centered on MCP servers (for extending AI agent tool access) and a settings file, not a general-purpose scripting/plugin language like Lua or Python for customizing terminal behavior (e.g., kitty-style 'kittens'). No evidence pack item documents a scripting API, plugin SDK, or embedded language runtime for extending the terminal itself.",
+    "evidenceIds": [
+      "warp-docs-18",
+      "warp-docs-40"
+    ]
   },
   {
     "productId": "warp",
@@ -3043,11 +3065,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions font ligatures, fallback fonts, or font tuning settings; the appearance-related docs only cover themes and OS light/dark sync (warp-docs-19, warp-docs-20). Missing for 10: any mention of font rendering, ligature support, fallback font configuration, or font size/weight tuning options.",
-    "evidenceIds": [
-      "warp-docs-19",
-      "warp-docs-20"
-    ]
+    "rationale": "No evidence in the pack mentions font configuration, ligatures, fallback fonts, or font tuning of any kind; documentation focuses on themes, appearance sync, and agent features, not typography settings.",
+    "evidenceIds": []
   },
   {
     "productId": "warp",
@@ -3055,8 +3074,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no vendor documentation or claims about GPU-accelerated rendering or rendering performance under heavy output; all docs focus on AI/agent features, privacy, and CLI tooling. Community reports even suggest UI glitches and 'horribly broken' behavior under load (warp-comm-10) and that the underlying terminal is just Alacritty (warp-comm-15), but nothing establishes or documents a GPU-rendering pipeline that stays fast under heavy output.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains no first-party documentation claiming GPU-accelerated rendering or describing rendering performance under heavy output; instead, community reports describe UI glitches, broken behavior, and instability during heavy use (e.g., 'horribly broken... UI glitches', 'random failures, stopping of agents'), and one commenter notes the terminal is 'just Alacritty' with no Warp-specific performance claims. Since no vendor documentation asserts this capability, there's nothing concrete to substantiate 'full' or 'partial', and the negative community signals reinforce a 'none' verdict rather than a dispute of an explicit claim.",
+    "evidenceIds": [
+      "warp-comm-10",
+      "warp-comm-11",
+      "warp-comm-12",
+      "warp-comm-15"
+    ]
   },
   {
     "productId": "warp",
@@ -3064,7 +3088,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions a documented terminal graphics protocol (e.g., Sixel, Kitty graphics protocol, iTerm2 inline images) or inline image/rich graphics rendering support in Warp; the evidence focuses on AI/agent features, theming, and telemetry, not graphics protocols.",
+    "rationale": "No evidence in the pack mentions a terminal graphics protocol (e.g., Sixel, Kitty graphics protocol, iTerm2 inline images) or inline image/rich graphics rendering in Warp's terminal. Evidence only covers AI agents, MCP, telemetry, themes, and session restoration.",
     "evidenceIds": []
   },
   {
@@ -3073,7 +3097,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No published benchmarks, latency numbers, or throughput measurements appear anywhere in the evidence; docs focus on features (AI agents, MCP, session restoration) and community comments discuss bugs/UX but never cite performance metrics.",
+    "rationale": "No published benchmarks, latency, or throughput figures appear anywhere in the evidence pack; documentation focuses on features and privacy, while community posts mention performance complaints but no measured numbers. missing for 10: published benchmark data, latency/throughput measurements, any comparative performance testing.",
     "evidenceIds": []
   },
   {
@@ -3082,13 +3106,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Warp directly documents typing natural language (e.g., '#' trigger) to get AI Command Suggestions generated in place in the terminal, with real-time command generation and error explanation via right-click 'Ask Warp AI'. This is corroborated by multiple docs pages (Generate feature) and positive community mentions of 'AI generated commands at your fingertips'. Missing for 10: independent hands-on verification of accuracy/reliability of generated commands beyond user testimony.",
+    "rationale": "Warp explicitly documents typing '#' plus natural language to get AI Command Suggestions generated in place in the command line (warp-docs-8, warp-docs-54), with real-time suggestion loading and even contextual suggestions inside interactive CLI tools. This is corroborated by multiple docs pages describing the same 'Generate' feature. Missing for 10: no independent/hands-on community confirmation specifically of this in-place suggestion feature (community evidence focuses on other AI/terminal issues, not this specific flow).",
     "evidenceIds": [
       "warp-docs-8",
       "warp-docs-54",
-      "warp-docs-9",
-      "warp-docs-29",
-      "warp-comm-8"
+      "warp-docs-29"
     ]
   },
   {
@@ -3097,13 +3119,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Warp positions itself as 'API, CLI, SDK and MCP built as a platform, not a vertical product' (warp-docs-42) and exposes an OpenAPI spec plus the Oz CLI for running/managing cloud agents, connecting MCP servers, and configuring integrations without the desktop app (warp-docs-37, warp-docs-52, warp-probe-2). The Warp Agent CLI and 'same agent, three surfaces' framing (warp-docs-48, warp-docs-23, warp-docs-41) show strong parity for agent workflows specifically. However, evidence never shows API/CLI equivalents for UI-only surfaces like theming, session restoration, Warp Drive workflow sharing, or block-level UI interactions — missing for 10: documented API/CLI parity for non-agent UI features (themes, session restore, Drive), explicit statement of full UI-API feature parity, and independent verification that nothing is UI-exclusive.",
+    "rationale": "Warp explicitly positions itself as 'API, CLI, SDK and MCP built as a platform,' with the Oz CLI enabling agent creation, monitoring, MCP connections, and authentication without the desktop app, and a live OpenAPI spec — showing substantial API/CLI parity for agent workflows. But the story demands full UI-equivalent capability, and evidence doesn't confirm parity for many UI-only features (theming, session restoration, conversation UI, code editor) nor is there independent verification that the API surface is fully complete. missing for 10: independent confirmation of full feature parity, evidence that UI-specific features (themes, editor, session restore) are also API-accessible",
     "evidenceIds": [
       "warp-docs-42",
+      "warp-docs-43",
+      "warp-docs-22",
       "warp-docs-37",
       "warp-docs-52",
-      "warp-docs-23",
-      "warp-docs-48",
+      "warp-docs-63",
+      "warp-docs-64",
       "warp-probe-2",
       "warp-probe-3"
     ]
@@ -3114,7 +3138,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Warp mentions a settings file giving 'programmatic control over settings and easy portability between devices' and open-sources its client code, which are thin, tangential signals toward data portability, but there is no documented feature for exporting full user data (history, Warp Drive workflows, conversations) in an open format for migration/exit. Missing for 10: a documented full data-export tool/format, evidence of exporting conversation/workflow history, and any account-deletion/data-portability guarantee.",
+    "rationale": "Warp documents a settings file for 'programmatic control over settings and easy portability between devices' and open-sources its client code, but there's no documented feature for exporting conversation history, Warp Drive workflows, or agent run data in open formats for full user data portability. missing for 10: explicit full data export tooling, open-format export of conversation/session history, Warp Drive workflow export, independent confirmation users can fully migrate away with their data.",
     "evidenceIds": [
       "warp-docs-40",
       "warp-docs-25",
@@ -3127,7 +3151,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Warp explicitly publishes its client source code on GitHub (warpdotdev/warp) under the AGPL v3 open-source license, confirmed by multiple first-party docs and a dedicated blog post announcing the open-sourcing. Missing for 10: independent/community confirmation that the released source matches the shipped binaries and clarity on how much of the AI/agent backend (vs. just the terminal client) is covered by the license.",
+    "rationale": "Warp explicitly published its client source code on GitHub under the AGPL v3 open-source license, documented in both its privacy docs and a dedicated blog post announcing the move to open source. missing for 10: independent/third-party confirmation of the full scope of open-sourced code (e.g., whether cloud/server-side agent components are also included) and any hands-on community audit of the repository beyond the vendor's own announcement.",
     "evidenceIds": [
       "warp-docs-25",
       "warp-docs-38",
@@ -3137,16 +3161,15 @@
   {
     "productId": "warp",
     "storyId": "openness-self-host",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Warp open-sources its client code (AGPL) for audit purposes, but there is no evidence of a self-hostable backend/core service — AI, agent, and cloud-agent (Oz) functionality all depend on Warp's own servers, and docs describe telemetry, ZDR agreements, and cloud CLI tools rather than any self-hosting option.",
+    "rationale": "Warp's client is open-sourced under AGPL v3 (warpdotdev/warp) so the terminal client itself can be inspected and self-hosted/built from source, and cloud agents are described as able to run 'on Warp's cloud infrastructure or your own,' suggesting some self-hosting of agent execution. However, there's no documented path to self-host the full core product—AI model routing, backend services, and account/login (required per warp-comm-6/7) remain tied to Warp's proprietary cloud, and no deployment/on-prem guide is evidenced. Missing for 10: a documented self-hosted backend/server deployment, evidence that AI/model-routing works without Warp's cloud, and independent confirmation of a working self-hosted setup.",
     "evidenceIds": [
       "warp-docs-25",
       "warp-docs-38",
-      "warp-docs-22",
-      "warp-docs-33",
-      "warp-docs-34"
+      "warp-docs-60",
+      "warp-comm-7"
     ]
   },
   {
@@ -3155,7 +3178,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence mentions data residency, region selection, or geographic storage controls; only privacy/retention policies (ZDR, telemetry opt-out, no training) are documented, none of which address choosing storage location. Missing for 10: any mention of region/residency selection, data center location options, or geo-based storage controls.",
+    "rationale": "Evidence covers data retention (no training, ZDR for Business/Enterprise), telemetry opt-out, and secret redaction, but nowhere mentions data residency or region selection for storage of user/agent data. Missing for 10: any mention of regional data storage options, EU/US data residency choices, or infrastructure location controls.",
     "evidenceIds": []
   },
   {
@@ -3180,14 +3203,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Warp docs describe multiple retention/deletion controls: terminal I/O is not stored on Warp servers and is never used for training (warp-docs-12), Business/Enterprise plans get a Zero Data Retention agreement (warp-docs-34), users can clear/delete sensitive Blocks from a machine (warp-docs-36), and telemetry can be opted out except on the Free plan where it's required for AI (warp-docs-33, warp-docs-51). This covers meaningful retention/deletion levers but ZDR is enterprise-only and there's no documented self-service 'delete my account data' flow for individual/free users, and independent corroboration is thin (one community post raises consent concerns about session data being sent to LLMs, though this is about consent rather than retention/deletion itself). Missing for 10: consumer-tier data deletion/export mechanism, independent audit confirming retention claims, and clarity on how long AI conversation data persists for non-enterprise tiers.",
+    "rationale": "Warp documents concrete retention/deletion controls: no OpenAI/Anthropic model training on user data, ZDR agreements for Business/Enterprise (no AI or console data collected), ability to clear/delete sensitive Blocks from a machine, secret redaction on all AI interactions, and telemetry opt-out for paid plans, plus open-source client code for audit (warp-docs-12, warp-docs-34, warp-docs-36, warp-docs-56, warp-docs-17/46/51, warp-docs-25/47). However, ZDR is limited to Business/Enterprise tiers, Free-plan users must keep telemetry on to use AI features (warp-docs-33), and community reports allege terminal/session data being sent to LLMs without explicit consent on lower tiers (warp-comm-1, warp-comm-16), undercutting full user control for non-enterprise users. missing for 10: universal (non-enterprise) ZDR/opt-out guarantees, independent verification that free/pro-tier data isn't retained, and resolution of the community consent complaints.",
     "evidenceIds": [
       "warp-docs-12",
       "warp-docs-34",
       "warp-docs-36",
+      "warp-docs-56",
+      "warp-docs-17",
       "warp-docs-33",
-      "warp-docs-51",
-      "warp-comm-1"
+      "warp-docs-25",
+      "warp-comm-1",
+      "warp-comm-16"
     ]
   },
   {
@@ -3212,16 +3238,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Warp's evidence pack covers blocks, session restoration, and agent features, but nowhere describes shell-integration keybindings or scrollback navigation to jump between prompts/command marks. This is a plausible capability for a terminal product, but no citation demonstrates it exists.",
-    "evidenceIds": []
+    "rationale": "The evidence pack references Warp's 'Blocks' concept (grouping commands and output) and session restoration of blocks, but never documents a shell-integration feature for jumping/navigating between prompt marks or command blocks in scrollback via keyboard shortcuts. Missing for 10: explicit documentation of prompt/command mark navigation shortcuts, scrollback jump-to-previous/next-prompt functionality, and any shell-integration-specific navigation UI.",
+    "evidenceIds": [
+      "warp-docs-21",
+      "warp-docs-35",
+      "warp-docs-36"
+    ]
   },
   {
     "productId": "warp",
     "storyId": "quake-dropdown-mode",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions a global hotkey or quake-style dropdown/hide-show terminal window; documentation covers session restoration, agent modes, and CLI tools but not this specific window-summoning behavior.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions a global hotkey or quake-style dropdown/instant-summon window feature; Warp's docs focus on session restoration, panes/tabs, and AI agent features, not a system-wide invocation shortcut.",
     "evidenceIds": []
   },
   {
@@ -3241,8 +3271,8 @@
     "storyId": "scrollback-search",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions scrollback search, find-in-terminal, or jump-to-match functionality; documentation focuses on AI agent features, session restoration, themes, and telemetry rather than terminal search/navigation ergonomics.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Warp's AI/agent features, session restoration, theming, and telemetry, but contains no mention of scrollback search or match navigation functionality, despite this being a reasonable and expected axis for any terminal emulator.",
     "evidenceIds": []
   },
   {
@@ -3261,14 +3291,14 @@
   {
     "productId": "warp",
     "storyId": "splits-tabs-panes",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm Warp natively supports multiple panes, tabs, and windows within a single session (e.g., running agent conversations 'in different windows, tabs, or panes' and restoring 'windows, tabs, panes' on relaunch), indicating built-in multiplexing without needing tmux/screen. Missing for 10: detailed documentation of pane-splitting UI/keyboard shortcuts, and independent/community confirmation that pane management specifically works well in practice.",
+    "rationale": "Docs confirm panes exist alongside tabs and windows as first-class session units (agent conversations run in \"windows, tabs, or panes\" and session restoration recreates \"windows, tabs, and panes\"), showing built-in multiplexing without needing tmux. However the pack lacks any detail on pane-splitting mechanics, keyboard shortcuts, or layout management, and no independent/hands-on account discusses pane usage specifically. Missing for 10: dedicated documentation on split/pane creation and navigation, independent user confirmation of pane workflow.",
     "evidenceIds": [
       "warp-docs-14",
       "warp-docs-21",
-      "warp-docs-35"
+      "warp-docs-58"
     ]
   },
   {
@@ -3276,11 +3306,10 @@
     "storyId": "ssh-integration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Warp can launch AI-agent conversations over SSH (warp-docs-3) and run agents on remote machines without installing binaries (warp-docs-23), but nowhere does it describe the terminal itself propagating terminfo, shell integration scripts, or user config when SSHing into a remote host. In fact, community reports note friction with SSH sessions (e.g., code indexing/diff explorer breaking over SSH, warp-comm-10) rather than confirming seamless config/terminfo carry-over.",
+    "confidence": "medium",
+    "rationale": "Warp's docs mention running the `warp` agent CLI over SSH (warp-docs-3) but that's about launching an agent conversation, not the terminal itself carrying terminfo, shell integration, and config when SSHing into remote hosts. No evidence describes Warp's terminal propagating its shell integration/terminfo to remote hosts, and community reports (warp-comm-10, warp-comm-14) note broken functionality (file/diff explorer, code indexing) specifically over SSH connections, further indicating the core integration doesn't extend cleanly to remote sessions.",
     "evidenceIds": [
       "warp-docs-3",
-      "warp-docs-23",
       "warp-comm-10",
       "warp-comm-14"
     ]
@@ -3290,8 +3319,8 @@
     "storyId": "theming-color-schemes",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Warp's docs explicitly cover theming, custom themes generated from a background image, and OS light/dark theme synchronization, directly matching the story. Missing for 10: independent/hands-on corroboration of theme switching in practice and more detail on full theme customization scope (e.g., custom color palettes beyond background-derived themes).",
+    "confidence": "medium",
+    "rationale": "Warp's docs explicitly support custom themes, auto-generating themes from a background image, and syncing theme with OS light/dark mode (warp-docs-19, warp-docs-20), directly matching the story. Missing for 10: independent/community corroboration of theming reliability and more detail on breadth of built-in theme palette.",
     "evidenceIds": [
       "warp-docs-19",
       "warp-docs-20"
@@ -3303,7 +3332,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of tmux support inside Warp or a native tmux-like control mode; Warp's docs focus on session restoration, panes/tabs, and agent features but never mention tmux integration. Community comments even note SSH-related issues rather than tmux support, so this applicable axis (remote-ssh workflows commonly rely on tmux) is unaddressed.",
+    "rationale": "The evidence pack contains no mention of tmux support, tmux control mode, or any documented native tmux integration in Warp's docs or community discussion — Warp's session/pane features (blocks, session restoration) are its own proprietary system, not tmux. Since terminal emulators are a fair category for this axis, absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -3312,7 +3341,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation or community mention of clickable URLs, file paths, or keyboard-based link navigation within terminal output — all citations focus on AI/agent features, session restoration, theming, and privacy/telemetry topics instead.",
+    "rationale": "The evidence pack contains no documentation or community mention of clickable URLs/file paths, keyboard-selectable links, or similar output-navigation features in Warp's terminal Blocks. This is a fair ergonomics question for a terminal product but nothing in the pack confirms it ships.",
     "evidenceIds": []
   },
   {
