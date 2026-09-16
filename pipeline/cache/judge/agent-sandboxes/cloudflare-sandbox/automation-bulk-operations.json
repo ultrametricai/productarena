@@ -1,16 +1,19 @@
 {
-  "hash": "1c841790ca8b425a7aec4fec709af7ab7e8d4925a1170590c7dfe7568c8b74f2",
+  "hash": "5af3d91daff95e7778dbe1eb9120ab20d8b7a61ccc13557aa88ed50c307c66fc",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "The SDK's multiplexed transport is explicitly designed to 'avoid subrequest limits when making many concurrent operations,' and sessions/contexts allow multiple parallel workflows within one sandbox, which supports scripted bulk processing (e.g., loops over files via exec/writeFile). However, there is no documented batch/bulk API, no examples of processing large item sets, and no performance or throughput data validating bulk-scale use. missing for 10: explicit bulk/batch operation API or example, evidence of throughput/scale limits, independent confirmation of concurrent-operation performance.",
+    "confidence": "medium",
+    "rationale": "Cloudflare Sandboxes supports concurrent/parallel operations via a multiplexed connection that 'avoids subrequest limits when making many concurrent operations' (docs-17) and allows multiple isolated sessions per sandbox for parallel workflows (docs-9, docs-18, docs-39), plus getSandbox() to manage many sandbox instances by ID. However there's no documented batch/bulk API primitive for iterating over large item sets, and community feedback flags unclear resource limits and high per-vCPU pricing that would constrain large-scale bulk workloads (comm-3, comm-6, comm-11). Missing for 10: an explicit bulk/batch operation API or example, documented concurrency/resource ceilings, and independent evidence of successful large-scale parallel execution.",
     "evidenceIds": [
       "cloudflare-sandbox-docs-17",
       "cloudflare-sandbox-docs-9",
       "cloudflare-sandbox-docs-18",
       "cloudflare-sandbox-docs-39",
-      "cloudflare-sandbox-docs-1"
+      "cloudflare-sandbox-docs-37",
+      "cloudflare-sandbox-comm-3",
+      "cloudflare-sandbox-comm-6",
+      "cloudflare-sandbox-comm-11"
     ],
     "productId": "cloudflare-sandbox",
     "storyId": "automation-bulk-operations"
