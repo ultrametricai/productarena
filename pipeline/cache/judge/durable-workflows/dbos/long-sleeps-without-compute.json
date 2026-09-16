@@ -1,17 +1,18 @@
 {
-  "hash": "4e8666c966c146dfc14adfaacb858e6a45eadd584ca4df32da6ef5d1fe014efc",
+  "hash": "c757feffce461c1c9af03f848402de454f9eee6b39e82873d34af794e4368cd2",
   "verdict": {
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "DBOS's architecture stores workflow state as checkpoints in Postgres with no separate orchestration server, and docs explicitly describe workflows/agents that must 'reliably wait for a long time' (hours to days) while surviving restarts, upgrades, and crashes without holding a live process. Scheduled/cron workflows and crash-recovery from checkpoints further support long-duration waits with no dedicated compute held. Missing for 10: an explicit doc reference to a dedicated `DBOS.sleep()`/durable-sleep API guaranteeing month-long waits, and independent benchmarking confirming zero billable compute during long sleeps (one community comment flags that long-running steps can keep a DB transaction open, a tangential risk not clearly resolved for the sleep primitive specifically).",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "DBOS docs explicitly describe workflows waiting hours-to-days for human input via DBOS.recv(timeout_seconds=...) surviving process restarts and server upgrades, backed by Postgres checkpointing rather than any held server/connection (dbos-docs-12, dbos-docs-28, dbos-docs-39, dbos-docs-2, dbos-docs-4). The architecture is confirmed as a library with no dedicated orchestration server, only Postgres, so a sleeping workflow consumes no compute (dbos-docs-2, dbos-docs-20, dbos-docs-35). missing for 10: explicit mention of multi-month sleep durations (only 'hours or days' is documented), and independent/third-party confirmation of zero billable compute during long sleeps.",
     "evidenceIds": [
+      "dbos-docs-12",
+      "dbos-docs-28",
+      "dbos-docs-39",
       "dbos-docs-2",
       "dbos-docs-4",
-      "dbos-docs-7",
-      "dbos-docs-12",
-      "dbos-comm-13",
-      "dbos-comm-7"
+      "dbos-docs-23",
+      "dbos-docs-20"
     ],
     "productId": "dbos",
     "storyId": "long-sleeps-without-compute"

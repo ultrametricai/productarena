@@ -1,16 +1,18 @@
 {
-  "hash": "6d5fe1a63cc75f4776443ed9cb526c7b072ca64759de006930fadc42c0963d7c",
+  "hash": "0e3e93f4b627cc5e8c890c4e29bd0a7a8e042128437586455493e47e9aded4be",
   "verdict": {
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Temporal supports Signals (external events into running workflows) and Schedules (time-based triggers), and a single Workflow's Activities can fan out to many downstream calls, but there is no evidence of declarative webhook/queue-trigger bindings that start workflows purely from configuration — starting a Workflow from an external event still requires writing client-SDK code to call StartWorkflowExecution or Signal. Missing for 10: documented declarative webhook/event-source-to-workflow trigger mappings, native queue-consumer trigger bindings, and evidence of one-event-to-many-workflows fan-out as a first-class declarative feature.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Temporal's Client API lets application code start or signal Workflow Executions in response to app events (temporal-docs-50, temporal-docs-6/38), and Activities/child workflows let a single Workflow fan out to many functions (temporal-docs-3, temporal-docs-35); Schedules cover time-based triggers (temporal-docs-5, temporal-docs-23). However this is done via imperative SDK calls in your own event/webhook/queue handler, not a native declarative trigger binding, and no first-party webhook/queue-connector or explicit fan-out pattern documentation is present. Missing for 10: documented native webhook/queue ingestion connectors, a declarative event-trigger config (vs code-driven client calls), and explicit fan-out-to-many-activities examples/docs.",
     "evidenceIds": [
+      "temporal-docs-50",
       "temporal-docs-6",
-      "temporal-docs-5",
-      "temporal-docs-23",
+      "temporal-docs-38",
       "temporal-docs-3",
-      "temporal-docs-4"
+      "temporal-docs-35",
+      "temporal-docs-5",
+      "temporal-docs-23"
     ],
     "productId": "temporal",
     "storyId": "event-driven-triggers"

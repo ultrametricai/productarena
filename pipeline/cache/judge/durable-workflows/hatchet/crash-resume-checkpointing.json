@@ -1,15 +1,17 @@
 {
-  "hash": "b0b287b6f67e4316dc19b3442e0255a056417a39cbce137226d06bf17254412c",
+  "hash": "907ac09878dfc5085cac1fee7c98b5fbec172c0ad73f5241007494a85d90ab87",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Hatchet is marketed as a durable workflow/task queue with 'automatic retries, durability' as core features, and its architecture (separate control-plane service, Postgres-backed queue, ahead-of-declared execution path) plausibly supports resuming interrupted workflows rather than restarting from scratch. However, there is no first-party doc or hands-on evidence specifically describing step-level state checkpointing or a documented crash/deploy recovery test confirming resumption from the last completed step. Missing for 10: explicit documentation of step-level state persistence/checkpointing mechanics, and independent verification that a worker crash or deploy actually resumes a workflow mid-flight rather than re-running it.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Hatchet is explicitly marketed as a 'durable workflow' engine with automatic retries and durability built into the queuing layer (gh-1, gh-2, gh-3), and has a dedicated Retry Policies doc (hatchet-docs-25) plus separate control-plane architecture (hatchet-docs-8/17) that decouples worker crashes from task state. However, there is no first-party or community evidence detailing exact step-level checkpointing/resume semantics after a crash, deploy, or infra failure, and no hands-on confirmation from users that a workflow actually resumes mid-execution rather than restarting. Missing for 10: explicit documentation of step-level state persistence/checkpointing, and independent/hands-on evidence confirming resume-from-last-step behavior after real crashes or deploys.",
     "evidenceIds": [
       "hatchet-gh-1",
       "hatchet-gh-2",
-      "hatchet-comm-5",
-      "hatchet-comm-6"
+      "hatchet-gh-3",
+      "hatchet-docs-25",
+      "hatchet-docs-8",
+      "hatchet-docs-17"
     ],
     "productId": "hatchet",
     "storyId": "crash-resume-checkpointing"
