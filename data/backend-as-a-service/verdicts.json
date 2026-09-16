@@ -1363,14 +1363,15 @@
     "productId": "firebase",
     "storyId": "agent-branch-migrations",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Firebase's Local Emulator Suite lets developers (or an agent via the CLI) run Firestore/Realtime Database/Rules locally for integration testing without touching production, which functions as an isolated environment, and the MCP server lets an agent interact with Firestore/Auth data programmatically. However there is no dedicated 'branch' or 'preview environment' concept for schema changes, and no evidence of an agent-driven workflow that creates/tests schema changes in a project-level preview before merging to production. Missing for 10: explicit branch/preview environment feature for schema changes, agent-driven schema-change workflow, and hands-on evidence of an agent using the emulator or MCP server specifically for schema testing.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Firebase's Local Emulator Suite lets developers (or an agent driving the CLI) test Firestore/Security Rules changes locally without touching production data, and the MCP server exposes Firestore project/data management to AI agents — together giving a rough isolated-testing story. However, Firestore is schemaless (no formal schema-migration concept) and there is no documented branch/preview-environment feature (e.g., a project 'branch' with automatic promotion) analogous to database branching tools. Missing for 10: explicit schema/migration versioning, a true branch/preview-environment workflow, and evidence of an agent autonomously provisioning/testing such a branch before production.",
     "evidenceIds": [
       "firebase-docs-9",
       "firebase-docs-24",
       "firebase-docs-20",
-      "firebase-probe-6"
+      "firebase-docs-34",
+      "firebase-probe-3"
     ]
   },
   {
@@ -1379,15 +1380,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Firebase's CLI is documented to run headlessly (firebase-probe-5 shows `npx firebase-tools --version` working without login) and can deploy functions, security rules, and manage Auth users via CLI commands (firebase-gh-1, firebase-docs-8, firebase-docs-10/18). The MCP server also exposes agent-usable tools to create/manage Firebase projects, Auth users, and Firestore/SQL data (firebase-docs-20, firebase-probe-6), supporting an agent-driven, scriptable backend setup. However, there is no single documented script or hands-on example showing an agent standing up schema+auth+policies together in one headless flow — missing for 10: an end-to-end scripted example combining Firestore schema/rules deployment, Auth configuration, and policy enforcement in a single non-interactive CLI/script run, and independent verification of non-interactive `firebase init` for new projects.",
+    "rationale": "Firebase CLI (firebase-tools) supports scripted, headless deployment of Firestore/Realtime Database security rules, Cloud Functions, and Auth user import/export, and the MCP server also exposes project/auth/data management to agents, covering schema+auth+policies largely from the command line. However, there's no single documented 'init a full backend' one-shot command evidenced, and evidence doesn't show a non-interactive schema-creation flow (Firestore is schemaless, so 'schema' setup maps to rules/indexes only). missing for 10: a documented fully non-interactive scripted bootstrap command chaining project creation, schema/indexes, auth, and rules; independent hands-on confirmation of headless end-to-end setup.",
     "evidenceIds": [
       "firebase-gh-1",
-      "firebase-docs-8",
+      "firebase-gh-3",
       "firebase-docs-10",
       "firebase-docs-18",
       "firebase-docs-20",
-      "firebase-probe-5",
-      "firebase-probe-6"
+      "firebase-probe-4",
+      "firebase-probe-3"
     ]
   },
   {
@@ -1396,7 +1397,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe found llms.txt returns HTTP 404, and no evidence pack item references an agent-oriented docs endpoint or llms.txt file for Firebase; the only AI-facing surfaces are the MCP server and Gemini chat assistant, not a machine-readable docs manifest.",
+    "rationale": "A direct probe shows firebase.google.com/llms.txt returns 404, and no evidence pack item shows any agent-oriented docs bundle or llms.txt equivalent; the MCP server (firebase-docs-12) is a separate tool-integration axis, not an agent-readable docs file.",
     "evidenceIds": [
       "firebase-probe-1"
     ]
@@ -1418,14 +1419,14 @@
   {
     "productId": "firebase",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Firebase provides Cloud Functions triggered by background events and Cloud Scheduler jobs, which enables autonomous background automations (e.g., data changes, scheduled jobs) without a server, and this is well documented. However, this is general backend automation infrastructure rather than an AI-native/agentic automation framework — there's no evidence of AI-agent-specific autonomous workflows, agent orchestration, or persistent AI agents running in the background. missing for 10: evidence of AI-agent-oriented autonomous background workflows (not just generic serverless triggers), independent/hands-on confirmation of scheduled/event automations working reliably, and any agentic orchestration layer built on Functions.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Firebase Cloud Functions explicitly support autonomous, event-driven background execution, including triggers from Firebase/Cloud events, HTTPS requests, and Cloud Scheduler jobs, letting users run scheduled or event-triggered automations without manual intervention. Docs also show one-command deployment and auto-scaling for these functions. Missing for 10: independent/hands-on corroboration of scheduler reliability and any dispute resolution for the older community complaint about lacking scheduled tasks (which predates Cloud Scheduler support).",
     "evidenceIds": [
       "firebase-docs-7",
       "firebase-docs-8",
-      "firebase-comm-19"
+      "firebase-docs-29"
     ]
   },
   {
@@ -1446,17 +1447,19 @@
   {
     "productId": "firebase",
     "storyId": "agentic-headless",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Firebase CLI (firebase-tools) installs via npm and runs headlessly with commands for deploy, emulator suite, and auth import/export, confirmed hands-on (npx firebase-tools --version works keylessly), and Cloud Functions docs explicitly describe one-command CLI deploy for CI-style automation. This directly supports headless/CI usage. missing for 10: no explicit CI pipeline example (e.g., GitHub Actions) or documented service-account/non-interactive auth flow for CI in the evidence pack.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Firebase ships a scriptable CLI (firebase-tools) that can deploy code, manage hosting, import/export auth data, and run a Local Emulator Suite for offline integration testing/QA and mocha-based unit tests — all of which are usable in a headless/CI context (firebase-docs-8, firebase-docs-9, firebase-docs-24, firebase-docs-31, firebase-gh-1/2/3). However, there is no explicit CI/CD pipeline documentation (e.g., GitHub Actions integration, service-account auth for non-interactive CLI use) or independent confirmation of CI usage. Missing for 10: explicit CI/CD integration docs (e.g., GitHub Actions workflow), non-interactive auth guidance for automated environments, and independent/hands-on evidence of running the emulator suite or CLI in a CI pipeline.",
     "evidenceIds": [
-      "firebase-probe-4",
-      "firebase-probe-5",
-      "firebase-gh-1",
       "firebase-docs-8",
       "firebase-docs-9",
-      "firebase-docs-24"
+      "firebase-docs-24",
+      "firebase-docs-31",
+      "firebase-gh-1",
+      "firebase-gh-2",
+      "firebase-gh-3",
+      "firebase-probe-4"
     ]
   },
   {
@@ -1465,12 +1468,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only documents Firebase exposing its own MCP server for external AI editors (Claude, Cursor, etc.) to consume — the reverse direction of this story, which asks whether Firebase itself can act as an MCP client and plug in third-party MCP servers to use their tools. No documentation or hands-on evidence shows Gemini in Firebase or any Firebase surface consuming external MCP servers.",
+    "rationale": "Evidence only shows Firebase publishing its own MCP server for external AI tools (Claude, Cursor, VS Code Copilot, etc.) to consume — the opposite direction from this story, which asks whether Firebase itself (e.g., via Gemini in Firebase) can act as an MCP client and consume external MCP servers' tools. No evidence indicates Firebase's Gemini assistant or console supports plugging in external MCP servers. Missing for 10: any documentation of Firebase acting as an MCP client, any way to register external MCP servers within Firebase's own AI features.",
     "evidenceIds": [
       "firebase-docs-12",
       "firebase-docs-20",
-      "firebase-probe-3",
-      "firebase-probe-6",
+      "firebase-docs-34",
       "firebase-docs-13"
     ]
   },
@@ -1480,43 +1482,42 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Firebase documents an official MCP server compatible with major MCP clients (Claude, Cursor, VS Code Copilot, etc.), and a hands-on probe confirms it starts locally and responds to the JSON-RPC initialize handshake. missing for 10: independent/community usage reports beyond vendor docs and the single hands-on probe.",
+    "rationale": "Firebase ships an official documented MCP server that works with any MCP client tool (Antigravity, Claude Code/Desktop, Cline, Cursor, VS Code Copilot, Windsurf, etc.), enabling agents to manage Firebase projects, Auth, Firestore, and more. This is corroborated by both docs and a dedicated probe confirming the official page. Missing for 10: independent hands-on community report validating the MCP server's real-world reliability.",
     "evidenceIds": [
       "firebase-docs-12",
       "firebase-docs-20",
-      "firebase-probe-3",
-      "firebase-probe-6"
+      "firebase-docs-34",
+      "firebase-probe-3"
     ]
   },
   {
     "productId": "firebase",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Firebase offers Gemini in Firebase's natural-language chat interface for product Q&A/code generation/troubleshooting, plus an official MCP server enabling AI agents to manage Firebase resources via natural-language-driven tool calls (verified hands-on handshake). However, these are auxiliary AI assistants layered on top of the console/CLI rather than the product itself being natively operable end-to-end via NL commands for all core operations (Firestore queries, security rules, deployments still require code/CLI). missing for 10: evidence of comprehensive NL control over all core Firebase operations (not just chat Q&A and MCP-mediated agent actions), independent hands-on validation of Gemini in Firebase's command execution accuracy, and confirmation MCP server covers full CRUD/deploy surface rather than a subset of features.",
+    "rationale": "Firebase documents both a natural-language chat interface (Gemini in Firebase) for getting answers, generating code, and troubleshooting, and an official MCP server that lets AI editors/agents create and manage Firebase projects, Auth users, and Firestore data via natural-language commands routed through MCP clients like Claude Code, Cursor, VS Code Copilot, etc. Missing for 10: independent/hands-on validation that MCP-driven natural-language operations reliably perform complex actions, and confirmation Gemini in Firebase supports action-taking beyond Q&A/insights.",
     "evidenceIds": [
-      "firebase-docs-13",
-      "firebase-docs-14",
-      "firebase-docs-21",
       "firebase-docs-12",
+      "firebase-docs-13",
       "firebase-docs-20",
-      "firebase-probe-3",
-      "firebase-probe-6"
+      "firebase-docs-34",
+      "firebase-probe-3"
     ]
   },
   {
     "productId": "firebase",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Firebase ships an official CLI (firebase-tools) documented at firebase.google.com/docs/cli and verified hands-on to install via npm and run headlessly/keylessly (npx firebase-tools --version), which supports scripted/agentic use. This is complemented by an official MCP server for AI tool integration, reinforcing agenticness support. Missing for 10: no explicit vendor documentation of AI-agent-specific CLI usage patterns or independent third-party corroboration beyond the probe.",
+    "rationale": "Firebase ships an official CLI (firebase-tools) documented both in GitHub and Firebase docs, covering deploy, hosting, auth, and Firestore data management, and is corroborated by a dedicated CLI docs page (firebase-probe-4). This CLI is the standard tool for automating Firebase workflows, which AI-native/agentic users would drive programmatically or via the complementary MCP server for AI agents.\nmissing for 10: explicit documentation of AI-native features built into the CLI itself (e.g., natural-language command generation) beyond its use as an MCP-server backend.",
     "evidenceIds": [
-      "firebase-probe-4",
-      "firebase-probe-5",
       "firebase-gh-1",
-      "firebase-docs-8"
+      "firebase-gh-2",
+      "firebase-gh-3",
+      "firebase-probe-4",
+      "firebase-docs-12"
     ]
   },
   {
@@ -1525,18 +1526,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firebase exposes rich documented public APIs (Firestore, Auth, Functions, Realtime DB, Security Rules) plus SDKs, a CLI (firebase-tools, confirmed working headlessly via probe), and an official MCP server with a verified hands-on JSON-RPC handshake, all enabling AI-native/agentic driving of the product. missing for 10: no public OpenAPI/REST spec (openapi probes 404) and no llms.txt discovery file, so machine-readable API discovery is incomplete despite strong SDK/CLI/MCP coverage.",
+    "rationale": "Firebase exposes a well-documented public surface for programmatic/agentic use: the official CLI (firebase-tools) for deploying, managing data, and auth; Admin/REST SDKs for Firestore, Auth, and Functions; and a dedicated first-party MCP server that lets AI agents (Claude, Cursor, VS Code Copilot, etc.) manage Firebase projects, auth, and Firestore data directly. missing for 10: a discoverable machine-readable spec (openapi.json/llms.txt both 404), and independent hands-on confirmation of the MCP server working reliably in production agent workflows",
     "evidenceIds": [
-      "firebase-docs-7",
-      "firebase-docs-8",
       "firebase-gh-1",
-      "firebase-probe-4",
-      "firebase-probe-5",
-      "firebase-probe-3",
-      "firebase-probe-6",
+      "firebase-docs-12",
       "firebase-docs-20",
-      "firebase-probe-1",
-      "firebase-probe-2"
+      "firebase-probe-3",
+      "firebase-probe-4",
+      "firebase-docs-8"
     ]
   },
   {
@@ -1545,12 +1542,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Firebase Security Rules for end-user data access control and an MCP server for connecting AI tools, but nothing about issuing scoped or least-privilege API credentials/tokens specifically for an AI agent's use. Missing for 10: any documentation of scoped service-account keys, restricted API key generation, or agent-specific credential scoping mechanism.",
+    "rationale": "Firebase has Security Rules and Identity Platform for general access control, but no evidence describes issuing scoped or least-privilege API credentials specifically for an AI agent (e.g., a restricted service-account/API-key flow tied to MCP or agent use). The MCP server docs only describe what an agent-connected editor can do, not how to scope its permissions. missing for 10: documentation of agent-specific scoped credentials/service accounts, least-privilege API key issuance workflow, any first-party or community confirmation of this capability.",
     "evidenceIds": [
       "firebase-docs-10",
       "firebase-docs-18",
-      "firebase-docs-12",
-      "firebase-docs-20"
+      "firebase-docs-20",
+      "firebase-docs-34"
     ]
   },
   {
@@ -1559,18 +1556,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firebase ships official client/Admin SDKs (Auth, Firestore, Functions) and an official CLI/MCP server that AI agents can use to build and manage Firebase resources programmatically, with hands-on probes confirming the CLI and MCP server actually run and respond (firebase-probe-5, firebase-probe-6). Community reports also corroborate developers building real apps quickly on top of these SDKs (firebase-comm-14, firebase-comm-18). Missing for 10: explicit enumeration of platform-specific SDKs (iOS/Android/Unity/C++), independent third-party benchmarking of SDK completeness/documentation quality.",
+    "rationale": "Firebase provides official SDKs across Firestore, Auth, Functions, Storage, and Rules, well documented with first-party docs and CLI (firebase-tools), plus emulator suite for local dev and testing. Community evidence corroborates real-world usage of these SDKs for building apps. missing for 10: independent hands-on validation specifically of SDK quality/versioning for AI-native workflows, and no explicit llms.txt/openapi spec found (probe results show 404s) which would strengthen AI-native discoverability.",
     "evidenceIds": [
-      "firebase-docs-6",
       "firebase-docs-7",
       "firebase-docs-8",
-      "firebase-docs-12",
-      "firebase-docs-20",
-      "firebase-probe-3",
-      "firebase-probe-5",
-      "firebase-probe-6",
-      "firebase-comm-14",
-      "firebase-comm-18"
+      "firebase-docs-5",
+      "firebase-docs-6",
+      "firebase-docs-10",
+      "firebase-gh-1",
+      "firebase-docs-24",
+      "firebase-probe-4",
+      "firebase-comm-8"
     ]
   },
   {
@@ -1579,11 +1575,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Firebase Cloud Functions can be triggered by background events, HTTPS requests, or Admin SDK actions, but there is no documentation of a webhook subscription mechanism where external systems (including AI agents) can register a URL to receive event notifications. Real-time listeners (Firestore/Realtime DB) require SDK connections, not webhook callbacks.",
-    "evidenceIds": [
-      "firebase-docs-7",
-      "firebase-docs-8"
-    ]
+    "rationale": "Firebase evidence shows event-driven Cloud Functions triggers and real-time listeners (Firestore/RTDB), but no documented webhook subscription mechanism for external endpoints to receive events; no first-party or community evidence of a webhooks feature.",
+    "evidenceIds": []
   },
   {
     "productId": "firebase",
@@ -1604,13 +1597,11 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an interactive API reference with runnable/executable code examples; probes explicitly show missing OpenAPI spec and llms.txt (404s), and docs citations are static text descriptions rather than runnable playgrounds.",
+    "confidence": "medium",
+    "rationale": "No evidence of an interactive API reference with runnable examples; probes confirm llms.txt and openapi endpoints return 404, and docs pack contains no mention of a live/interactive reference or embedded runnable code samples.",
     "evidenceIds": [
       "firebase-probe-1",
-      "firebase-probe-2",
-      "firebase-docs-1",
-      "firebase-docs-2"
+      "firebase-probe-2"
     ]
   },
   {
@@ -1618,8 +1609,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Direct probes for llms.txt and OpenAPI/swagger spec files at Firebase's domain all returned 404s, and no evidence pack item shows a downloadable OpenAPI or equivalent machine-readable API spec being offered.",
+    "confidence": "medium",
+    "rationale": "Probes for llms.txt and common OpenAPI/swagger spec paths all returned 404, and no documentation in the evidence pack references a downloadable OpenAPI/Swagger spec for Firebase APIs.",
     "evidenceIds": [
       "firebase-probe-1",
       "firebase-probe-2"
@@ -1629,14 +1620,13 @@
     "productId": "firebase",
     "storyId": "api-sandbox",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Firebase's Local Emulator Suite explicitly enables integration testing/QA \"without touching production data\" by emulating Firestore, Realtime Database, Auth, Storage, Functions, etc. locally, and the CLI is verified hands-on to run this suite. missing for 10: independent/community hands-on confirmation of the emulator sandbox workflow specifically (community evidence covers other Firebase aspects, not emulator testing).",
+    "rationale": "Firebase's Local Emulator Suite explicitly lets developers connect apps to emulators for integration testing or QA 'without touching production data,' covering Firestore, Auth, Functions, Storage, Hosting, and more, with unit test support via mocha. missing for 10: independent/hands-on corroboration of emulator fidelity and AI-native/agent-specific usage examples beyond generic dev testing.",
     "evidenceIds": [
       "firebase-docs-9",
       "firebase-docs-24",
-      "firebase-probe-4",
-      "firebase-probe-5"
+      "firebase-docs-31"
     ]
   },
   {
@@ -1645,7 +1635,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item documents API versioning or a deprecation policy for Firebase's APIs; probes even show missing openapi/llms.txt discovery files, and none of the docs entries mention versioning or deprecation commitments.",
+    "rationale": "No evidence pack item documents API versioning schemes or a deprecation policy for Firebase's APIs/SDKs; probes for openapi.json/llms.txt both 404, and no docs reference version support windows or deprecation timelines.",
     "evidenceIds": [
       "firebase-probe-1",
       "firebase-probe-2"
@@ -1657,26 +1647,24 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firebase Authentication SDK and FirebaseUI provide drop-in email/password and federated OAuth sign-in (Google, Facebook, Twitter, GitHub) explicitly documented as a quick, minutes-level integration. Community sentiment corroborates ease of bootstrapping auth alongside other Firebase tools. Missing for 10: independent hands-on timing/quality benchmark of the auth SDK setup and no evidence addressing edge cases like custom OAuth providers or recent SDK changes.",
+    "rationale": "Firebase Authentication SDK explicitly supports email/password plus Google, Facebook, Twitter, and GitHub OAuth sign-in, and FirebaseUI offers a drop-in solution handling these sign-in flows out of the box, matching the 'minutes' setup claim; community feedback also corroborates Firebase's ease of bootstrapping auth alongside other services. missing for 10: independent hands-on account of specifically timing/adding OAuth sign-in setup, and no mention of other providers like Apple/Microsoft.",
     "evidenceIds": [
       "firebase-docs-5",
       "firebase-docs-6",
       "firebase-docs-23",
       "firebase-comm-8",
-      "firebase-comm-14"
+      "firebase-comm-2"
     ]
   },
   {
     "productId": "firebase",
     "storyId": "auth-mfa-sso",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence only shows Firebase Auth supporting email/password, phone, and social federated logins (Google, Facebook, Twitter, GitHub) via FirebaseUI; there is no mention of multi-factor authentication or enterprise SSO via SAML/OIDC anywhere in the pack. The axis clearly applies to an auth platform, but no supporting evidence exists.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Firebase's own docs state that native Firebase Authentication does not include MFA or enterprise SSO by default — these require upgrading to 'Firebase Authentication with Identity Platform,' which unlocks multi-factor authentication, SAML and generic OpenID Connect support, and enterprise-level support (firebase-docs-28). This confirms the capability exists but only via a paid upgrade path, not as a standard included feature — a significant caveat for a platform engineer evaluating baseline auth. Missing for 10: first-party documentation detailing MFA/SSO configuration steps, enforcement policies, and independent/hands-on validation of enterprise SSO setup.",
     "evidenceIds": [
-      "firebase-docs-5",
-      "firebase-docs-6",
-      "firebase-docs-23"
+      "firebase-docs-28"
     ]
   },
   {
@@ -1685,7 +1673,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of automated backups, scheduled exports, or point-in-time recovery for Firestore/Realtime Database — only security rules, querying, auth, functions, and emulator features are documented. This is a fair capability to expect from a managed data platform, so absence of evidence yields 'none'. Missing for 10: any documentation of backup scheduling, PITR, or recovery tooling.",
+    "rationale": "No evidence in the pack mentions automated backups or point-in-time recovery for Firestore/Realtime Database; only security rules, querying, offline caching, and emulator suite are documented. This is a plausible axis for a database/backend platform, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -1707,25 +1695,27 @@
     "productId": "firebase",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Cloud Functions for Firebase let developers define serverless functions that automatically fire in response to Firestore/Auth/Storage background events, HTTPS requests, or Cloud Scheduler jobs — directly matching the 'rules that trigger actions on events' story, and this is corroborated by multiple first-party doc excerpts (firebase-docs-7, firebase-docs-8, firebase-docs-17).  Missing for 10: independent/hands-on verification that triggers fire reliably in production, and no evidence of an AI-native natural-language rule-authoring interface for these triggers (only generic MCP/CLI access is documented).",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Firebase's Cloud Functions is explicitly a serverless event-trigger system: it runs backend code automatically in response to background events, HTTPS requests, Admin SDK, Auth triggers, Storage triggers, or Cloud Scheduler jobs, directly matching the 'rules that trigger actions on events' story. This is well documented across multiple first-party pages with concrete trigger types listed. Missing for 10: independent/hands-on corroboration of trigger reliability at scale, and clarification of any AI-native-specific tooling for defining these rules beyond standard docs.",
     "evidenceIds": [
       "firebase-docs-7",
       "firebase-docs-8",
+      "firebase-docs-29",
       "firebase-docs-17",
-      "firebase-docs-24"
+      "firebase-docs-30"
     ]
   },
   {
     "productId": "firebase",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Firebase Cloud Functions can be triggered by Cloud Scheduler jobs, enabling recurring/scheduled workflows, per official docs. However this relies on an external GCP service (Cloud Scheduler) rather than a native Firebase scheduling primitive, and a community report specifically calls out the historical absence of built-in scheduled tasks on Firebase, forcing users toward alternatives like AWS Lambda scheduled events. Missing for 10: dedicated first-party tutorial/example for setting up scheduled Cloud Functions, independent hands-on confirmation of ease-of-use, and evidence the gap noted by long-time users has been fully resolved beyond a single doc line.",
+    "rationale": "Firebase docs confirm Cloud Functions can be triggered by Cloud Scheduler jobs, enabling recurring/scheduled workflows (firebase-docs-7, firebase-docs-29), but this relies on the external Cloud Scheduler service rather than a native, first-class 'scheduled job' primitive within Firebase itself, and there is only one high-level doc mention with no setup detail or independent validation of current experience. An older community comment even flagged the historical absence of scheduled-task support as a pain point, suggesting this capability was a later addition rather than a mature core feature.\nmissing for 10: dedicated documentation/tutorial on defining a scheduled function end-to-end, independent/hands-on confirmation that scheduling works reliably today, and any AI-native/agent-specific workflow scheduling support.",
     "evidenceIds": [
       "firebase-docs-7",
+      "firebase-docs-29",
       "firebase-comm-19"
     ]
   },
@@ -1735,21 +1725,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack indicates Firebase provides versioning, review workflows, or rollback capabilities for automations (e.g., Cloud Functions deployments or triggers); docs cover deployment and event triggers but not version history or rollback tooling.",
-    "evidenceIds": []
+    "rationale": "Firebase's evidence describes Cloud Functions, Security Rules, and CLI deployment, but nothing documents version history, review workflows, or rollback specifically for these 'automations' (functions/rules/triggers). Missing for 10: documented versioning/rollback of Cloud Functions or Security Rules, review/approval workflow, and any audit trail for automation changes.",
+    "evidenceIds": [
+      "firebase-docs-7",
+      "firebase-docs-8",
+      "firebase-docs-10",
+      "firebase-gh-1"
+    ]
   },
   {
     "productId": "firebase",
     "storyId": "db-event-triggers",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Cloud Functions for Firebase explicitly runs backend code in response to background events (which includes Firestore/Realtime Database writes and Auth user creation/deletion) as documented, and is corroborated by community mentions of using 'cloud functions' successfully within Firebase projects. missing for 10: explicit doc citation naming Firestore/RTDB/Auth trigger types individually, and independent hands-on verification of a specific onCreate/onWrite trigger firing.",
+    "rationale": "Cloud Functions for Firebase is explicitly documented as a serverless framework that runs backend code automatically in response to background events, HTTPS requests, Admin SDK actions, or scheduler jobs, including Firebase Authentication triggers and Cloud Storage/Firestore triggers. This directly matches the story of running functions in response to database/auth events. missing for 10: independent hands-on report specifically confirming database/auth trigger reliability (community evidence focuses on other pain points, not this specific capability).",
     "evidenceIds": [
       "firebase-docs-7",
       "firebase-docs-8",
-      "firebase-comm-10",
-      "firebase-comm-20"
+      "firebase-docs-29"
     ]
   },
   {
@@ -1771,11 +1765,13 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Cloud Storage for Firebase is referenced only as one of the products covered by Firebase Security Rules and the Local Emulator Suite, confirming access-rule support, but there is no dedicated documentation on file upload/download APIs or CDN-backed delivery. missing for 10: dedicated Cloud Storage upload/download SDK docs, explicit CDN/edge delivery description, and hands-on or community confirmation of serving files at scale.",
+    "rationale": "Evidence only mentions 'Cloud Storage' in passing as one of the products covered by Firebase Security Rules and the Emulator Suite (firebase-docs-10, firebase-docs-18, firebase-docs-24), with community mentions of 'storage rules' as a pain point (firebase-comm-5, firebase-comm-8). There is no documentation in the pack describing file upload/download APIs, access-rule granularity for files, or CDN-backed delivery specifics. missing for 10: docs on Cloud Storage upload/download SDK, CDN delivery details, access-rule examples for file objects, independent corroboration of CDN performance.",
     "evidenceIds": [
       "firebase-docs-10",
       "firebase-docs-18",
-      "firebase-docs-24"
+      "firebase-docs-24",
+      "firebase-comm-5",
+      "firebase-comm-8"
     ]
   },
   {
@@ -1784,11 +1780,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Firestore queries (filtering/sorting) and vector/KNN search, but no full-text search capability is documented; community commentary even flags Firebase's weak query capabilities. No evidence of a built-in full-text search feature that avoids external services.",
+    "rationale": "The evidence shows Cloud Firestore supports filtering/sorting queries and vector (KNN) similarity search for embeddings, but nothing indicates native full-text search over string fields; Firestore is well known for requiring an external service (e.g., Algolia/Elasticsearch) for text search, and community comments even complain about limited query capabilities. No documentation or hands-on evidence shows a built-in full-text search feature.",
     "evidenceIds": [
       "firebase-docs-2",
       "firebase-docs-11",
       "firebase-docs-19",
+      "firebase-docs-33",
       "firebase-comm-4"
     ]
   },
@@ -1798,7 +1795,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of image resizing/transformation extensions (e.g., Resize Images extension) or any built-in image pipeline for Cloud Storage; only unrelated storage security rules and general storage mentions appear. Missing for 10: any documentation of an image-resize/transform extension, CDN-based transformation API, or third-party integration for on-the-fly image processing.",
+    "rationale": "No evidence pack items mention Firebase Extensions for image resizing, Cloud Storage image transformation, or any built-in image pipeline capability; the pack covers Firestore, Auth, Functions, Rules, and MCP but nothing about serving resized/transformed images.",
     "evidenceIds": []
   },
   {
@@ -1807,13 +1804,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firebase Local Emulator Suite documented (firebase-docs-24, firebase-docs-9) covers Firestore, Realtime Database, Storage, Auth, Hosting, Functions, Pub/Sub, and Extensions locally, and firebase-tools CLI is confirmed runnable via hands-on probe (firebase-probe-5) with local hosting server and Auth import/export (firebase-gh-1/2/3). missing for 10: independent hands-on report of running the full multi-service emulator suite together (only CLI version check and doc claims verified), and no community confirmation of emulator reliability/completeness.",
+    "rationale": "Firebase's Local Emulator Suite explicitly supports running Firestore, Realtime Database, Storage, Auth, Hosting, Functions, Pub/Sub, and Extensions locally for integration testing without touching production, and the firebase-tools CLI supports running a local hosting server and interacting with data/deploying. This directly matches the story of running the whole backend stack locally before deploying, with unit-test support via mocha also documented. Missing for 10: independent/hands-on verification of full-suite parity beyond docs, and no community corroboration specifically praising the emulator suite's completeness.",
     "evidenceIds": [
       "firebase-docs-24",
       "firebase-docs-9",
+      "firebase-docs-31",
       "firebase-gh-1",
-      "firebase-probe-4",
-      "firebase-probe-5"
+      "firebase-gh-2",
+      "firebase-probe-4"
     ]
   },
   {
@@ -1844,32 +1842,30 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Firestore docs explicitly state that Firestore caches data locally so apps can write, read, listen to, and query even while offline, implying automatic sync when connectivity returns — the core offline-first developer story. Missing for 10: independent/hands-on verification of sync-on-reconnect behavior, details on conflict resolution guarantees, and confirmation for Realtime Database (older community complaint firebase-comm-17 about lacking offline persistence is from 2016 and predates Firestore's offline support, so it's not a direct contradiction of current claims).",
+    "rationale": "Firestore docs explicitly describe local caching and offline write/read/sync capability that reconciles when connectivity returns, directly matching the story (firebase-docs-3). Confidence is tempered by an older community report claiming lack of JS offline persistence and by the absence of independent, recent hands-on corroboration of sync behavior. missing for 10: independent/hands-on confirmation of reconnect-sync behavior, and clarification on which SDKs currently support offline persistence.",
     "evidenceIds": [
-      "firebase-docs-3"
+      "firebase-docs-3",
+      "firebase-comm-17"
     ]
   },
   {
     "productId": "firebase",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Firebase ships extensive CLI (firebase-tools), Admin SDKs, and REST-style APIs covering deploy, Firestore, Auth, Functions, Hosting, Rules, and even an MCP server for AI agents (firebase-docs-7/8/10/20, firebase-gh-1/2/3, firebase-probe-5/6), so most core backend operations doable in the console are also scriptable headlessly. However, probes show no discoverable OpenAPI spec or llms.txt (firebase-probe-1/2), and community reports cite real console-only gaps like poor server-side query support and Security Rules being hard to manage/replicate outside the UI (firebase-comm-4, firebase-comm-5), plus AI-assistance features like Gemini insights and Crashlytics analysis are console-chat bound rather than API-callable (firebase-docs-13/14/15/25). Missing for 10: a documented/discoverable OpenAPI spec, confirmation that all console-only features (analytics insights, Gemini chat assistance) have API equivalents, and independent verification that CLI/API truly mirrors 100% of console capability.",
+    "rationale": "Firebase ships extensive first-party APIs/SDKs (Firestore, Auth, Functions, Rules) plus a CLI (firebase-tools) that can deploy, manage hosting, interact with database data, and import/export Auth users, and an official MCP server that lets AI tools create/manage projects, manage Auth users, and work with Firestore data — strong evidence of broad API/CLI parity with console actions. However, there is no explicit documentation or independent confirmation that *every* console capability (e.g., analytics/Gemini insights, billing, project-level admin settings) is exposed via API/CLI, and probes show no OpenAPI spec or llms.txt is published, weakening claims of full programmatic parity. Missing for 10: explicit full-parity documentation, independent hands-on confirmation that all UI actions map to API/CLI, and a published OpenAPI/machine-readable spec.",
     "evidenceIds": [
-      "firebase-docs-7",
-      "firebase-docs-8",
-      "firebase-docs-10",
-      "firebase-docs-20",
       "firebase-gh-1",
-      "firebase-probe-5",
-      "firebase-probe-6",
+      "firebase-gh-2",
+      "firebase-gh-3",
+      "firebase-docs-20",
+      "firebase-docs-34",
+      "firebase-docs-8",
+      "firebase-probe-3",
+      "firebase-probe-4",
       "firebase-probe-1",
-      "firebase-probe-2",
-      "firebase-comm-4",
-      "firebase-comm-5",
-      "firebase-docs-13",
-      "firebase-docs-25"
+      "firebase-probe-2"
     ]
   },
   {
@@ -1907,11 +1903,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Firebase is presented entirely as a managed, serverless cloud platform ('Store and sync app data at global scale without managing servers'); the only local-running capability is the Emulator Suite for testing/QA, not a production self-host of the core backend. No evidence of open-source server code or a self-hosting deployment path exists in the pack.",
+    "rationale": "Firebase is a fully-managed, closed Google Cloud service with no self-hosted/on-premise deployment option documented anywhere in the evidence; the emulator suite is explicitly for local testing/QA, not production self-hosting, and community comments highlight lock-in concerns rather than any self-hosting path.",
     "evidenceIds": [
-      "firebase-docs-1",
       "firebase-docs-9",
-      "firebase-docs-24"
+      "firebase-docs-24",
+      "firebase-comm-3",
+      "firebase-comm-6"
     ]
   },
   {
@@ -1920,7 +1917,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions region selection, data residency, or location settings for Firestore/Realtime Database/Storage projects; the evidence covers unrelated features (querying, auth, functions, AI assistance, pricing) but no data-location controls are documented or discussed.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or location settings for Firebase services (Firestore, Storage, Functions, etc.), even though Firebase/GCP products do typically allow region selection in reality. Absence of evidence for this applicable capability yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -1929,7 +1926,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI-training data usage opt-outs or any privacy controls specifically preventing user data from being used to train AI/ML models; only unrelated Firebase features, pricing, and general community feedback are present.",
+    "rationale": "No evidence pack item addresses AI-training data usage or opt-out policies for Firebase data; the docs cover storage, auth, functions, and AI-assistance features, but nothing about preventing data from being used to train AI models.",
     "evidenceIds": []
   },
   {
@@ -1937,8 +1934,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no documentation of data retention policies, TTL/expiration controls, or user data deletion tools (e.g., GDPR-style account/data deletion APIs) for Firestore, Realtime Database, or Auth. While the axis clearly applies to a backend data platform like Firebase, nothing in the provided docs, GitHub, or community items addresses retention or deletion controls specifically.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Firestore querying, security rules, auth, functions, and emulators, but contains no documentation of data retention policies, TTL/expiration settings, or deletion/export APIs for privacy compliance (e.g., GDPR-style user data deletion). No citations address controlling how long data is kept or how it can be purged.",
     "evidenceIds": []
   },
   {
@@ -1947,7 +1944,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for Firebase's tooling (CLI, SDKs, or MCP server); the pack covers product features, pricing, and community sentiment but nothing about disabling analytics/telemetry collection.",
+    "rationale": "No evidence pack items mention telemetry, usage tracking, or an opt-out mechanism for Firebase's own tooling/services; only unrelated docs on Firestore, Auth, Functions, and pricing are present.",
     "evidenceIds": []
   },
   {
@@ -1969,11 +1966,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Firestore/Realtime Database are built around live listeners; docs note data can be written, read, listened to, and queried even offline (firebase-docs-3), and community anecdotes confirm real-time sync (whiteboard app with synced client positions, real-time notifications added in hours) (firebase-comm-1, firebase-comm-14). Missing for 10: explicit first-party documentation of the onSnapshot/.on() listener API and any independent benchmark of update latency.",
+    "rationale": "Firebase's core value proposition includes real-time data sync — docs confirm apps can 'write, read, listen to, and query data' even offline, and multiple independent developers describe building live-updating apps (real-time whiteboard, real-time notifications, live sync across clients) confirming push-based updates rather than polling. missing for 10: explicit documentation of the onSnapshot/listener API surface and any first-party performance benchmarks for real-time delivery.",
     "evidenceIds": [
       "firebase-docs-3",
       "firebase-comm-1",
-      "firebase-comm-14"
+      "firebase-comm-14",
+      "firebase-comm-18"
     ]
   },
   {
@@ -1982,11 +1980,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Firebase's Firestore/Realtime Database are NoSQL stores; the evidence only shows chained filter/sort queries and an enterprise MongoDB-compatible API, with no mention of relational joins, declarative constraints, or multi-document transaction APIs. Community feedback explicitly flags Firebase's 'lack of server-side query options,' further undermining the idea that relational-style joins are supported.",
+    "rationale": "Firebase's Firestore/Realtime Database are NoSQL document stores; evidence shows only chained filter/sort queries (firebase-docs-2) and a MongoDB-compatible API option (firebase-docs-4), with no mention of relational joins or multi-document transactions, and community evidence explicitly calls out the lack of server-side query capability (firebase-comm-4) and missing features like count queries (firebase-comm-16). No documentation of join support or transaction semantics appears in the pack.",
     "evidenceIds": [
       "firebase-docs-2",
       "firebase-docs-4",
-      "firebase-comm-4"
+      "firebase-comm-4",
+      "firebase-comm-16"
     ]
   },
   {
@@ -1995,15 +1994,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firebase Security Rules are a first-party, well-documented mechanism to restrict data access per user across Firestore, Realtime Database, and Cloud Storage, and community discussion confirms real-world usage (including separating auth logic from data logic and testing rules via the emulator suite). Missing for 10: independent quantitative benchmark of rule complexity/limitations and explicit per-row (document-level) example syntax in the evidence, and community notes some friction (rule preprocessors, difficulty porting rules) rather than flawless praise.",
+    "rationale": "Firebase Security Rules are extensively documented as the mechanism to restrict data access per user across Firestore, Realtime Database, and Cloud Storage, with granular, expression-based rule languages, and community evidence corroborates real-world use (e.g., failed attempts blocked by rules, separation of auth logic from data access). missing for 10: no independent hands-on audit of rule robustness/edge cases, and community notes rules can be painful to maintain/reimplement, slightly denting polish.",
     "evidenceIds": [
       "firebase-docs-10",
       "firebase-docs-18",
-      "firebase-docs-24",
+      "firebase-docs-32",
       "firebase-comm-2",
-      "firebase-comm-5",
       "firebase-comm-12",
-      "firebase-comm-20"
+      "firebase-comm-5"
     ]
   },
   {
@@ -2012,10 +2010,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Cloud Functions for Firebase is explicitly documented as a serverless framework running backend code triggered by HTTPS requests, Admin SDK calls, or background events, with one-command deployment and automatic scaling, meaning no server management is required. Missing for 10: independent/hands-on verification of an actual HTTP/SDK-invoked function deployment beyond vendor docs.",
+    "rationale": "Cloud Functions for Firebase is explicitly documented as a serverless framework to run backend code triggered by HTTPS requests, Admin SDK/client SDK calls, or background events, with one-command CLI deployment and automatic scaling. Missing for 10: independent hands-on corroboration of production-scale reliability of Functions specifically (community evidence mostly discusses Firestore/Auth/pricing rather than Functions usage).",
     "evidenceIds": [
       "firebase-docs-7",
       "firebase-docs-8",
+      "firebase-docs-29",
       "firebase-gh-1"
     ]
   },
@@ -2025,7 +2024,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of automatic generation of typed client code (e.g., TypeScript types) from a Firebase/Firestore schema; Firestore is presented as a schemaless NoSQL store with no schema-to-code tooling described.",
+    "rationale": "No evidence of Firebase generating typed client code/TypeScript types from a schema; docs cover Firestore, Auth, Functions, emulators, security rules, and MCP/Gemini AI features but nothing about automatic type generation from schema.",
     "evidenceIds": []
   },
   {
@@ -2034,10 +2033,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Firestore has documented vector search support for KNN similarity queries, directly enabling embedding storage and vector similarity search for AI features. Missing for 10: independent/hands-on corroboration of vector search performance and details on embedding storage limits or indexing at scale.",
+    "rationale": "Firebase documents dedicated Cloud Firestore vector search functionality with KNN vector search, including storing vector values and creating/managing KNN vector indexes, directly matching the story. Missing for 10: independent/hands-on developer corroboration of vector search in production and details on scale/performance limits.",
     "evidenceIds": [
       "firebase-docs-11",
-      "firebase-docs-19"
+      "firebase-docs-19",
+      "firebase-docs-33"
     ]
   },
   {
@@ -2046,11 +2046,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Firebase's Firestore/Realtime Database are schemaless NoSQL stores with no documented migration tooling; the evidence pack shows CLI deployment of rules, indexes, and functions but nothing resembling version-controlled schema migrations. Community commentary explicitly flags this as a pain point, noting Firebase's lack of a business-logic layer 'makes schema changes extremely challenging for deployed mobile clients' (firebase-comm-15), confirming the gap rather than filling it.",
+    "rationale": "Firebase's CLI can deploy static config like Firestore security rules and indexes, but there is no evidence of a schema-migration framework (versioned, incremental migrations with up/down scripts) applied via CLI/CI; in fact a community report explicitly notes the lack of a business-logic layer makes schema changes 'extremely challenging' for deployed clients, underscoring the absence of this capability.",
     "evidenceIds": [
-      "firebase-comm-15",
       "firebase-docs-10",
-      "firebase-gh-1"
+      "firebase-gh-1",
+      "firebase-comm-15"
     ]
   },
   {

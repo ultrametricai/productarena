@@ -19,13 +19,16 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-static'
 
+// Fields other than `note` are optional: the backfill orchestrator stamps minimal
+// `{ note }` runs onto entries it marks done, and the page must render those too
+// (caught live 2026-09-15: `urlsAdded.length` on a stamped entry failed the /queue prerender).
 interface SpikeRun {
-  at: string
-  urlsAdded: string[]
-  evidenceAdded: number
-  cellsRejudged: number
-  flipsKept: number
-  flipsReverted: number
+  at?: string
+  urlsAdded?: string[]
+  evidenceAdded?: number
+  cellsRejudged?: number
+  flipsKept?: number
+  flipsReverted?: number
   note: string
 }
 
@@ -35,7 +38,8 @@ interface SpikeEntry {
   name: string
   priority: number
   components: { staleness: number; stalenessSource: string; popularityBoost: number; founderBoost: number }
-  status: 'due' | 'queued' | 'spiked' | 'error'
+  // Engine statuses plus whatever the orchestrator stamps (e.g. 'done') — render, don't crash.
+  status: 'due' | 'queued' | 'spiked' | 'error' | (string & {})
   lastSpiked: string | null
   nextDue: string | null
   lastRun: SpikeRun | null
@@ -64,17 +68,19 @@ function shortDate(iso: string | null): string {
   return `${months[d.getUTCMonth()]} ${d.getUTCDate()} '${String(d.getUTCFullYear()).slice(2)}`
 }
 
-const STATUS_STYLES: Record<SpikeEntry['status'], string> = {
+const STATUS_STYLES: Record<string, string> = {
   due: 'bg-amber-950 text-amber-300 ring-amber-800',
   queued: 'bg-zinc-900 text-zinc-400 ring-zinc-700',
   spiked: 'bg-emerald-950 text-emerald-300 ring-emerald-800',
   error: 'bg-red-950 text-red-300 ring-red-800',
+  done: 'bg-emerald-950 text-emerald-300 ring-emerald-800',
 }
+const STATUS_STYLE_FALLBACK = 'bg-zinc-900 text-zinc-400 ring-zinc-700'
 
 function StatusPill({ status }: { status: SpikeEntry['status'] }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${STATUS_STYLES[status]}`}
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${STATUS_STYLES[status] ?? STATUS_STYLE_FALLBACK}`}
     >
       {status}
     </span>
@@ -84,9 +90,9 @@ function StatusPill({ status }: { status: SpikeEntry['status'] }) {
 function changeSummary(run: SpikeRun | null): string {
   if (!run) return '—'
   const parts = [
-    run.urlsAdded.length > 0 ? `+${run.urlsAdded.length} urls` : null,
-    run.evidenceAdded > 0 ? `+${run.evidenceAdded} evidence` : null,
-    run.cellsRejudged > 0 ? `${run.flipsKept} flips kept · ${run.flipsReverted} reverted` : null,
+    (run.urlsAdded?.length ?? 0) > 0 ? `+${run.urlsAdded!.length} urls` : null,
+    (run.evidenceAdded ?? 0) > 0 ? `+${run.evidenceAdded} evidence` : null,
+    (run.cellsRejudged ?? 0) > 0 ? `${run.flipsKept ?? 0} flips kept · ${run.flipsReverted ?? 0} reverted` : null,
   ].filter(Boolean)
   return parts.length > 0 ? parts.join(' · ') : run.note || 'no changes'
 }

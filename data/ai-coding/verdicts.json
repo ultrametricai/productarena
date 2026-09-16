@@ -7671,62 +7671,60 @@
     "productId": "devin",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Devin's own docs site publishes an llms.txt (confirmed via probe HTTP 200) with a structured index of agent-oriented markdown docs, and individual pages are also available in .md form, meaning an AI-native user/agent can point at these directly for machine-readable documentation. missing for 10: no independent/community confirmation of agents actually consuming llms.txt in practice, and no explicit vendor guidance encouraging users to point their own agents at it.",
+    "rationale": "Devin's own docs site serves llms.txt (HTTP 200, confirmed by probe) and per-page .md variants, and also supports AGENTS.md as an agent-oriented instructions standard, directly matching the story. Missing for 10: no independent/community confirmation that external agents have actually consumed llms.txt successfully.",
     "evidenceIds": [
       "devin-probe-1",
-      "devin-probe-2"
+      "devin-probe-2",
+      "devin-docs-30"
     ]
   },
   {
     "productId": "devin",
     "storyId": "agentic-ai-insights",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin can analyze codebase 'data' and generate insights/suggestions — Ask Devin answers questions about code structure/dependencies and helps scope tasks, Devin Review gives automated PR feedback, and the CLI can 'suggest a feasible, helpful feature' from a repo — but this is codebase-scoped, not general data/analytics insight generation, and there's no independent evidence validating suggestion quality (community feedback focuses on task execution issues, not insight quality). Missing for 10: evidence of insight generation over broader business/user data (not just code), independent corroboration of suggestion usefulness, and a dedicated analytics/insights feature beyond code review and Q&A.",
+    "rationale": "Devin generates insights/suggestions from a user's own codebase data via 'Ask Devin' (code structure/dependency Q&A), auto-generated DeepWiki documentation, and Devin Review's automated PR feedback, all built on repository indexing. Missing for 10: independent/hands-on validation of the quality of these AI-generated insights (community evidence covers general task execution issues, not this specific feature) and no benchmark of insight accuracy.",
     "evidenceIds": [
       "devin-docs-16",
       "devin-docs-17",
-      "devin-docs-5",
       "devin-docs-15",
-      "devin-docs-18"
+      "devin-docs-27"
     ]
   },
   {
     "productId": "devin",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Devin supports background autonomy via API-triggered sessions, MCP 'scheduling' capability, cloud sessions that persist after the user disconnects, and CI/CD-triggered Auto-Fix loops that iterate without a human in the loop — all consistent with setting up autonomous background automations. However, community reports raise concrete reliability caveats about unsupervised long-running autonomy (working for days when stuck, reluctance to ask for help, need to manually cap work time), suggesting the autonomous background mode requires active babysitting rather than being fully hands-off. Missing for 10: a dedicated scheduling/cron UI or docs page, independent verification that scheduled/background automations run reliably unattended, and clearer first-party detail on the 'scheduling' feature mentioned only briefly in MCP docs.",
+    "rationale": "Devin explicitly supports background/autonomous execution: cloud sessions run in their own VM and 'keep going after you close your laptop' (devin-docs-13), MCP access includes 'scheduling' (devin-docs-6/23), the API lets you 'automate workflows' and create sessions programmatically (devin-docs-7/8), CI/CD integration triggers Devin on findings (devin-docs-19), and Auto-Fix creates a closed loop that iterates PRs 'without you in the loop' (devin-docs-18). This spans scheduled triggers, API-driven automation, and hands-off background operation.  Missing for 10: independent/community verification that scheduled automations run reliably unattended, and more detail on a dedicated 'automation/schedule' UI beyond scattered doc mentions.",
     "evidenceIds": [
-      "devin-docs-6",
       "devin-docs-13",
-      "devin-docs-18",
-      "devin-docs-19",
+      "devin-docs-6",
+      "devin-docs-23",
       "devin-docs-7",
       "devin-docs-8",
-      "devin-comm-2",
-      "devin-comm-3",
-      "devin-comm-4"
+      "devin-docs-18",
+      "devin-docs-19",
+      "devin-docs-25"
     ]
   },
   {
     "productId": "devin",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Devin's entire product model is delegating coding tasks to a built-in AI agent — via chat, Slack/Teams tagging, CLI, or API — and this is extensively documented and corroborated by real-world usage reports (including critical ones describing actual delegated sessions). Community evidence shows the delegation model works in practice, though with caveats around needing supervision and occasional inefficiency. Missing for 10: independent benchmark of task success rate, and more balanced/positive third-party validation beyond one critical HN thread.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Devin's core product is designed for task delegation — via Ask Devin, ticket assignment, Slack/Teams tagging, and a conversational IDE (devin-docs-1, devin-docs-3, devin-docs-24) — so the axis clearly applies and is well documented. However, hands-on community reports show real caveats: Devin can add extraneous unrequested changes it can't undo, gets stuck for long periods without asking for help, and requires active babysitting/session termination to get value (devin-comm-1, devin-comm-2, devin-comm-5), undercutting a fully seamless delegation experience. Missing for 10: independent verification that delegated tasks reliably complete without extraneous side-effects or getting stuck, and stronger corroboration beyond one HN thread.",
     "evidenceIds": [
       "devin-docs-1",
-      "devin-docs-2",
       "devin-docs-3",
-      "devin-docs-4",
+      "devin-docs-24",
       "devin-comm-1",
-      "devin-comm-4",
+      "devin-comm-2",
       "devin-comm-5"
     ]
   },
@@ -7736,14 +7734,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin has a documented API for programmatic session creation/automation (devin-docs-7, devin-docs-8), a CLI for local/headless agent use with sandboxing (devin-docs-4, devin-docs-12), and explicit CI/CD integration guidance for responding to static analysis findings and iterating on CI failures (devin-docs-18, devin-docs-19), all supporting headless/automated operation. Missing for 10: independent/hands-on verification of CI usage specifically, and no third-party confirmation of headless reliability at scale.",
+    "rationale": "Devin offers a full API for creating/managing sessions programmatically (including create_as_user_id for automation on behalf of users), a CLI with a --sandbox flag for OS-level isolated headless runs, and explicit CI/CD pipeline integration for responding to static analysis findings and PR checks, all supporting headless/automated usage without a human in the loop. Missing for 10: no independent/hands-on report specifically validating CI automation workflows end-to-end, and no explicit CI example (e.g., GitHub Actions snippet) beyond doc references.",
     "evidenceIds": [
-      "devin-docs-4",
       "devin-docs-7",
       "devin-docs-8",
-      "devin-docs-12",
+      "devin-docs-19",
       "devin-docs-18",
-      "devin-docs-19"
+      "devin-docs-12",
+      "devin-docs-22"
     ]
   },
   {
@@ -7752,9 +7750,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All MCP-related evidence describes Devin exposing itself as an MCP server so other agents/IDEs can call Devin's tools (session management, playbooks, scheduling), not Devin acting as an MCP client that consumes external MCP servers' tools. No documentation shows a way to configure/plug external MCP servers into Devin for it to use their tools.",
+    "rationale": "The evidence only documents Devin exposing its own MCP server so other agents/IDEs can call Devin's tools (session management, playbooks, knowledge, scheduling) — the reverse direction of this story. There is no evidence that a user can configure Devin itself to consume/plug in external MCP servers so Devin can use their tools.",
     "evidenceIds": [
       "devin-docs-6",
+      "devin-docs-23",
       "devin-probe-4"
     ]
   },
@@ -7764,9 +7763,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin ships an official MCP server giving any MCP-compatible agent or IDE full access to session management, playbooks, knowledge, and scheduling, confirmed by both docs and a probe. missing for 10: independent/hands-on community verification of the MCP server in practice and more detail on auth/setup steps.",
+    "rationale": "Devin ships an official documented MCP server (devin-mcp) that gives any MCP-compatible agent or IDE full access to session management, playbooks, knowledge, and scheduling, confirmed both in docs and via probe. Missing for 10: independent/hands-on third-party corroboration of the MCP server working in practice, and detail on setup/auth specifics.",
     "evidenceIds": [
       "devin-docs-6",
+      "devin-docs-23",
       "devin-probe-4"
     ]
   },
@@ -7776,13 +7776,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin's core interface is conversational/natural-language: docs describe tasking Devin via chat, Slack/Teams tagging, CLI natural-language prompts, and Ask Devin queries — all in plain language rather than rigid commands. Community evidence corroborates hands-on use of natural-language task assignment, though it flags reliability issues with scope creep, not with the natural-language interface itself. Missing for 10: independent verification of complex multi-step NL command handling and clearer resolution of the 'ask for help' escape hatch inconsistency noted in community reports.",
+    "rationale": "Devin is explicitly designed as a conversational agent: users assign tasks via natural language (Slack/Teams tagging, chat interface, CLI prompts like 'devin -- check out this code...'), and it interprets these into autonomous coding/dev actions across IDE, CLI, and cloud sessions. Community evidence corroborates it operates on natural-language task descriptions in practice, though with noted friction around scope creep and knowing when to stop. Missing for 10: independent benchmarking of NL command accuracy/robustness and richer detail on how ambiguous instructions are resolved.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-2",
       "devin-docs-3",
       "devin-docs-5",
-      "devin-docs-16",
+      "devin-docs-24",
       "devin-comm-1",
       "devin-comm-5"
     ]
@@ -7793,11 +7793,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin ships an official CLI (\"Devin CLI, a local command-line coding agent with deep Devin Cloud integration\") with documented usage examples and even a sandboxing flag, confirming a first-party CLI for agentic workflows. missing for 10: independent/hands-on community verification of CLI usage (community evidence only covers the web/session product, not CLI specifically).",
+    "rationale": "Devin has an official CLI ('Devin CLI, a local command-line coding agent with deep Devin Cloud integration') with documented usage examples and a sandbox flag for OS-level isolation, confirmed by both docs and probe. Missing for 10: independent/hands-on community verification of the CLI specifically (community evidence covers the web/session product, not CLI usage).",
     "evidenceIds": [
       "devin-docs-4",
       "devin-docs-5",
       "devin-docs-12",
+      "devin-docs-22",
       "devin-probe-5"
     ]
   },
@@ -7807,12 +7808,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin documents a full public API (devin-docs-7) with capabilities like creating sessions on behalf of users (devin-docs-8), enabling integration into external applications/workflows, plus a CLI and MCP server for programmatic control (devin-docs-4, devin-docs-6). Missing for 10: a discoverable OpenAPI/swagger spec (probe found only 404s at standard paths) and independent third-party corroboration of API usage.",
+    "rationale": "Devin ships a documented public API (docs-7) with session creation, org-level features like create_as_user_id (docs-8), plus a CLI and MCP server for programmatic/agentic control (docs-4, docs-6, probe-4, probe-5), directly enabling AI-native users to drive it programmatically. Missing for 10: a discoverable OpenAPI/swagger spec (probe-3 found 404s on all candidate paths) and independent hands-on corroboration of API usage.",
     "evidenceIds": [
       "devin-docs-7",
       "devin-docs-8",
       "devin-docs-4",
       "devin-docs-6",
+      "devin-probe-4",
+      "devin-probe-5",
       "devin-probe-3"
     ]
   },
@@ -7822,11 +7825,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence documents Devin's API (session creation, create_as_user_id for acting on behalf of users) and CLI sandbox flags for OS-level isolation, but nothing describes scoped or least-privilege API keys/tokens, role-based permission scopes, or credential-level access control for the API itself. missing for 10: evidence of API key scopes/permissions, role-based access control, or documented least-privilege credential issuance for agents.",
+    "rationale": "Devin exposes a general API (devin-docs-7) and can act on behalf of a specified user via create_as_user_id (devin-docs-8), but there is no evidence of scoped/least-privilege API key or token issuance, role-based permission scopes, or credential-level restriction mechanisms for agent access.",
     "evidenceIds": [
       "devin-docs-7",
-      "devin-docs-8",
-      "devin-docs-12"
+      "devin-docs-8"
     ]
   },
   {
@@ -7848,12 +7850,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Devin has an API for triggering sessions and an MCP server for tool access, but no evidence of an event-driven webhook subscription mechanism (e.g., session status change notifications pushed to a user-defined endpoint) is documented anywhere in the pack.",
-    "evidenceIds": [
-      "devin-docs-7",
-      "devin-docs-8",
-      "devin-probe-3"
-    ]
+    "rationale": "No evidence in the pack mentions webhooks or event subscription mechanisms; Devin's API/MCP docs describe session creation and management but nothing about outbound webhook notifications for events.",
+    "evidenceIds": []
   },
   {
     "productId": "devin",
@@ -7861,14 +7859,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's MCP integration explicitly exposes 'scheduling' alongside session management (devin-docs-6), and CI/CD/SDLC integration lets Devin auto-respond to code review comments, CI failures, and static-analysis findings without a human in the loop (devin-docs-17, devin-docs-18, devin-docs-19), which matches trigger-driven autonomous maintenance. However, there's no dedicated first-party doc detailing how to configure a persistent 'always-on' scheduled agent (cron-like setup, monitoring dashboard) and community reports raise concerns about runaway/unsupervised sessions needing manual termination (devin-comm-2, devin-comm-5), suggesting real-world autonomy is imperfect. Missing for 10: dedicated scheduling/trigger configuration docs, independent evidence of long-running always-on agents working reliably without supervision.",
+    "rationale": "Devin supports trigger-based autonomous work (Slack/Teams tags, PR review comments, CI/CD/static-analysis findings) and Auto-Fix creates a closed loop that iterates on CI failures without a human in the loop, and MCP exposes 'scheduling' as a session capability, all suggesting some always-on/triggered agent operation. However there's no dedicated docs for cron-like recurring schedules, and community reports describe sessions needing frequent human monitoring/termination rather than fully unattended long-running maintenance. Missing for 10: explicit scheduling/cron configuration docs, independent evidence of reliable unattended multi-day maintenance loops, and confirmation that Auto-Fix/CI triggers work without human oversight in practice.",
     "evidenceIds": [
       "devin-docs-6",
-      "devin-docs-17",
       "devin-docs-18",
       "devin-docs-19",
+      "devin-docs-24",
       "devin-comm-2",
-      "devin-comm-5"
+      "devin-comm-4"
     ]
   },
   {
@@ -7877,7 +7875,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Devin has an API reference overview (devin-docs-7) but the probe explicitly found no OpenAPI spec at any expected path (devin-probe-3), and there's no evidence of an interactive reference with runnable/try-it examples.",
+    "rationale": "Devin has an API reference overview but the openapi.json probe returned 404 on all candidate paths, and there's no mention of an interactive reference with runnable examples (e.g., 'try it' console) in the docs pack.",
     "evidenceIds": [
       "devin-docs-7",
       "devin-probe-3"
@@ -7902,11 +7900,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Devin documents a REST API (devin-docs-7, devin-docs-8) but a direct probe for a machine-readable spec found all standard OpenAPI/swagger paths returning 404 (devin-probe-3), indicating no downloadable OpenAPI spec is published.",
+    "rationale": "Devin has a documented API (devin-docs-7) but a direct probe for a machine-readable OpenAPI/swagger spec returned 404 on all candidate paths, and no documentation item references a downloadable spec file.",
     "evidenceIds": [
-      "devin-docs-7",
-      "devin-docs-8",
-      "devin-probe-3"
+      "devin-probe-3",
+      "devin-docs-7"
     ]
   },
   {
@@ -7915,10 +7912,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's cloud sessions run in isolated per-session VMs with their own shell/browser/repo access (devin-docs-13), and the CLI supports an explicit --sandbox flag enforcing OS-level isolation of writable paths and network access (devin-docs-12), which supports safely testing changes without touching a real production system. However, there's no explicit documentation of database/production-data isolation, staging environment provisioning, or data seeding for testing purposes specifically. Missing for 10: explicit production-data isolation/mocking guidance, staging-environment or test-data provisioning features, and independent verification that sandboxed runs never touch real prod resources.",
+    "rationale": "Devin sessions run in isolated cloud VMs with their own shell/browser/full repo access, configurable environment blueprints for a 'known-good state,' and a CLI --sandbox flag enforcing OS-level write/network isolation, all of which support testing in isolated environments away from live infrastructure. However, there is no explicit documentation addressing production-data isolation or masking, or confirmation that these sandboxes are guaranteed free of production data. missing for 10: explicit statement on production-data separation/masking, independent hands-on confirmation that sandbox testing never touches production data.",
     "evidenceIds": [
       "devin-docs-13",
-      "devin-docs-12"
+      "devin-docs-31",
+      "devin-docs-12",
+      "devin-docs-37",
+      "devin-docs-36",
+      "devin-docs-32"
     ]
   },
   {
@@ -7927,7 +7928,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is an API reference and CLI docs, but no evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probes even 404'd, suggesting limited formal API contract documentation.",
+    "rationale": "There's an API reference (devin-docs-7) and even an OpenAPI probe, but that probe found no OpenAPI spec (devin-probe-3), and no evidence anywhere mentions API versioning scheme or a documented deprecation policy for the API.",
     "evidenceIds": [
       "devin-docs-7",
       "devin-probe-3"
@@ -7936,28 +7937,29 @@
   {
     "productId": "devin",
     "storyId": "architecture-navigation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin's docs explicitly support codebase understanding via DeepWiki for navigating architecture with auto-generated docs, and 'Ask Devin' can answer questions about code structure/dependencies and help scope tasks before implementation. However, this is documented only briefly without deep examples, and community evidence raises concerns about Devin making extraneous changes suggesting imperfect understanding of codebase boundaries/impacts. Missing for 10: independent hands-on validation of comprehension quality, richer documentation/examples of architecture-mapping output, and confirmation this scales to large/complex codebases.",
+    "rationale": "Devin explicitly indexes repositories to power 'Ask Devin' and 'DeepWiki', which answer questions about code structure and dependencies and help developers scope/plan where to start making changes, directly matching the story. missing for 10: independent/hands-on evidence validating DeepWiki/Ask Devin's accuracy on real codebases (community evidence only covers task execution, not codebase-understanding features).",
     "evidenceIds": [
       "devin-docs-15",
       "devin-docs-16",
-      "devin-comm-1"
+      "devin-docs-27"
     ]
   },
   {
     "productId": "devin",
     "storyId": "automated-commit-and-pr-creation",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin autonomously implements features and bug fixes and integrates with PR workflows: 'Devin Review provides automated first-pass reviews on pull requests' and 'Auto-Fix... iterates on CI failures — creating a closed loop where PRs iterate toward merge-ready quality' implies it creates and manages PRs as part of its normal workflow, and docs-1 confirms it implements features/fixes bugs end-to-end. Missing for 10: explicit documentation of the granular steps (staging changes, writing commit messages, branch creation) and independent hands-on confirmation of PR-opening mechanics.",
+    "rationale": "Devin's docs describe it implementing features/fixing bugs and producing pull requests that get automated review and iteration (devin-docs-17, devin-docs-18), implying it handles the full git workflow (branch, commit, PR) autonomously, but no doc explicitly details staging, commit-message generation, or branch creation as discrete steps. Community feedback (devin-comm-1) also notes it can add extraneous changes it can't cleanly undo, a real caveat on commit hygiene. Missing for 10: explicit documentation of commit/staging/branch mechanics and independent confirmation that generated commits/PRs are clean and reviewable.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-17",
       "devin-docs-18",
-      "devin-docs-19"
+      "devin-docs-25",
+      "devin-comm-1"
     ]
   },
   {
@@ -7965,12 +7967,13 @@
     "storyId": "automated-pr-review",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin Review is explicitly documented to provide automated first-pass reviews on PRs checking correctness and org best practices, with Auto-Fix responding to review comments and CI failures to iterate toward merge-ready quality, plus CI/CD integration for static analysis findings. Missing for 10: independent/hands-on validation of Devin Review's contextual feedback quality specifically (community evidence covers general Devin agentic work, not this review feature).",
+    "confidence": "high",
+    "rationale": "Devin Review is explicitly documented as an automated first-pass PR reviewer checking correctness and org best-practice conformance, with Auto-Fix closing the loop by responding to review comments and CI failures. This directly matches the story of automatic contextual code review on PRs, though evidence is vendor-documentation only with no independent hands-on validation of review quality/contextual accuracy. Missing for 10: independent/community corroboration of review quality, and detail on how 'contextual feedback' is surfaced per-PR beyond docs description.",
     "evidenceIds": [
       "devin-docs-17",
       "devin-docs-18",
-      "devin-docs-19"
+      "devin-docs-19",
+      "devin-docs-26"
     ]
   },
   {
@@ -7979,13 +7982,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show Devin can implement features, fix bugs, and via Auto-Fix respond to CI failures and review comments iteratively (devin-docs-18, devin-docs-19), which covers lint/test-fixing workflows, and general task-taking (devin-docs-1) implies test-writing capability. However, merge-conflict resolution and dependency-update tasks are never explicitly mentioned, and community reports describe Devin adding extraneous, unremovable changes and questionable time savings, tempering reliability (devin-comm-1, devin-comm-6). Missing for 10: explicit evidence of merge-conflict resolution, dependency updates, and independent success stories confirming reliable execution of these specific tasks.",
+    "rationale": "Docs show Devin is a general-purpose coding agent that can fix bugs, implement features, iterate on CI failures, respond to review comments (Auto-Fix), and handle code migrations/refactors/modernization, which plausibly covers lint fixes and CI-related work, but none of the docs explicitly mention writing tests, resolving merge conflicts, or updating dependencies as named capabilities. Community reports (devin-comm-1) also note Devin can introduce extraneous changes and struggles to cleanly undo them, tempering confidence in reliably delivering these specific maintenance tasks. Missing for 10: explicit documentation/evidence of test-writing, lint-fixing, merge-conflict resolution, and dependency-update workflows, plus independent hands-on confirmation of these specific tasks succeeding.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-18",
       "devin-docs-19",
-      "devin-comm-1",
-      "devin-comm-6"
+      "devin-docs-21",
+      "devin-comm-1"
     ]
   },
   {
@@ -7994,10 +7997,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence that Devin offers automatic model selection per task; documentation covers plans, credits, and usage quotas but never mentions choosing between multiple underlying models. Missing for 10: any mention of multi-model support, model selection logic, or automatic routing to different models per task.",
-    "evidenceIds": [
-      "devin-docs-20"
-    ]
+    "rationale": "No evidence that Devin offers automatic model selection or model-routing based on task complexity; docs discuss quotas, tiers (Pro/Max), and features but never mention choosing among multiple underlying models per task.",
+    "evidenceIds": []
   },
   {
     "productId": "devin",
@@ -8005,41 +8006,40 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "The Devin API supports programmatic session creation (including on behalf of other users), which could be scripted to process many items in bulk, and the CLI/Ask-Devin flow can be pointed at multiple tickets, but there is no first-party documentation of a dedicated bulk/batch operation feature (e.g., processing a list of tickets or files in one command) nor any community evidence of it working at scale. Missing for 10: explicit bulk/batch API endpoints or CLI flags, first-party examples of multi-item processing, and independent confirmation of successful large-scale parallel runs.",
+    "rationale": "Devin's API supports programmatic session creation (including on behalf of other users) and docs explicitly encourage carving out independent tasks to run simultaneously, which together enable bulk-style automation across many tickets/items, but there is no dedicated 'bulk operations' or batch-processing feature documented, and community feedback raises concerns about reliability/oversight needed per session that would complicate true bulk workflows. Missing for 10: an explicit batch/bulk API endpoint or UI for processing many items in one request, and independent evidence of successful large-scale bulk runs.",
     "evidenceIds": [
       "devin-docs-7",
       "devin-docs-8",
-      "devin-docs-4",
-      "devin-docs-1"
+      "devin-docs-25",
+      "devin-docs-1",
+      "devin-comm-1"
     ]
   },
   {
     "productId": "devin",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin supports several built-in automatic triggers—Auto-Fix responding to PR review comments/CI failures, Devin Review firing on pull requests, CI/CD pipeline integration reacting to static-analysis findings, and MCP-based scheduling/session management—which amounts to event-driven automation, but these are fixed product features rather than a general user-defined rule/condition-action system. missing for 10: an explicit rules/condition builder or webhook-based custom trigger configuration, documentation of arbitrary event types beyond PR/CI/chat mentions, and independent evidence confirming these automations run reliably unattended.",
+    "rationale": "Devin supports several built-in event-triggered automations — Auto-Fix responds automatically to PR review comments and CI failures, CI/CD integration triggers Devin off static-analysis findings (SonarQube/Fortify/Veracode), and MCP exposes 'scheduling' as a capability — but there's no evidence of a general-purpose, user-defined rules/webhook engine for arbitrary custom triggers. Missing for 10: documentation of a configurable custom-rule/webhook trigger system, details on the scheduling feature's flexibility, and independent confirmation that these automations work reliably as event triggers.",
     "evidenceIds": [
-      "devin-docs-17",
       "devin-docs-18",
       "devin-docs-19",
+      "devin-docs-26",
       "devin-docs-6",
-      "devin-docs-2"
+      "devin-docs-23"
     ]
   },
   {
     "productId": "devin",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Devin's MCP server explicitly exposes 'scheduling' capability alongside session management and playbooks, indicating support for scheduling recurring work, and the API/CLI enable programmatic triggering of sessions that could be automated externally. However, there is no first-party documentation of a native recurring-job/cron-like scheduler UI or dedicated 'scheduled workflows' feature, so this relies on inference from the MCP scheduling mention and external automation via API. Missing for 10: dedicated docs on a native recurring/cron scheduling feature, UI for managing scheduled jobs, and independent confirmation of scheduling reliability.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Devin's MCP docs mention 'scheduling' as one of the capabilities exposed to MCP-compatible agents, implying some scheduling functionality exists, but there is no dedicated documentation, UI, or examples describing recurring jobs, cron-like triggers, or workflow automation configuration. missing for 10: dedicated scheduling feature docs, examples of recurring/cron jobs, independent confirmation of scheduled workflows in practice.",
     "evidenceIds": [
       "devin-docs-6",
-      "devin-docs-7",
-      "devin-docs-8",
-      "devin-probe-4"
+      "devin-docs-23"
     ]
   },
   {
@@ -8047,13 +8047,9 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Devin's docs describe playbooks, sessions, and scheduling as automation building blocks, but there is no evidence of version history, review workflow, or rollback specifically for these automations (e.g., playbook versioning, revert of scheduled tasks). Code changes go through PRs (devin-docs-17/18), but that's a different axis (code review) not automation versioning/rollback.",
-    "evidenceIds": [
-      "devin-docs-6",
-      "devin-docs-17",
-      "devin-docs-18"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence shows Devin has knowledge, playbooks, and scheduling features but nothing about versioning, reviewing, or rolling back those automation configurations themselves; Devin Review/Auto-Fix pertains to PR code review, not to the automation definitions. Missing for 10: version history for playbooks/knowledge, a review workflow for automation changes, and a rollback mechanism for automations.",
+    "evidenceIds": []
   },
   {
     "productId": "devin",
@@ -8075,16 +8071,16 @@
   {
     "productId": "devin",
     "storyId": "background-cloud-tasks",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs confirm Devin runs coding tasks in dedicated cloud VMs that persist after the user disconnects (devin-docs-13, devin-docs-1), and community reports corroborate it can work autonomously for extended periods, even days (devin-comm-2). However, hands-on feedback shows significant caveats: it often makes extraneous changes it can't cleanly undo, users must actively monitor and terminate sessions, and there's no reliable 'ask for help' escape hatch, undermining the 'set it and forget it' background delegation ideal (devin-comm-1, devin-comm-2, devin-comm-5). Missing for 10: independent verification of clean isolation/rollback behavior, and evidence that long background runs reliably stay on-task without supervision.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Devin runs tasks in isolated cloud VMs with full shell/browser/repo access that persist after the user disconnects, explicitly supporting long-running background work and parallel independent tasks, corroborated by community reports of multi-day autonomous runs. Missing for 10: independent third-party benchmarking of long-running task reliability/quality beyond anecdotal HN reports.",
     "evidenceIds": [
       "devin-docs-13",
-      "devin-docs-1",
+      "devin-docs-25",
+      "devin-docs-31",
+      "devin-docs-38",
       "devin-comm-2",
-      "devin-comm-1",
-      "devin-comm-5",
       "devin-comm-4"
     ]
   },
@@ -8092,68 +8088,73 @@
     "productId": "devin",
     "storyId": "configurable-tool-permissions",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin exposes some org-level access controls — e.g. an 'Enable desktop mode' toggle for Computer Use and a CLI --sandbox flag that enforces OS-level deny rules and can restrict network traffic — showing admins can gate specific capabilities. However there is no documented centralized admin console for granularly allow/deny-listing which external integrations (Slack, Jira, Linear, MCP servers, CI/CD tools) an agent session may use. Missing for 10: a unified integration/tool permissions dashboard, per-integration enable/disable controls, and audit evidence of an engineering-lead restricting specific external tool access in practice.",
+    "rationale": "Devin exposes some admin-level controls over its access—an org-wide 'Enable desktop mode' toggle for Computer Use, a CLI --sandbox flag enforcing OS-level writable-path/deny rules and network restriction, and Outposts for running sessions in infra you control—giving leads levers to constrain what Devin can reach or do. However there's no documented centralized policy/allowlist for specific external integrations (e.g., disabling Slack, Jira, GitHub, VPN access per-tool) or granular permission/audit management for engineering leads. missing for 10: a unified integration-permission/allowlist admin panel, per-tool enable/disable controls beyond desktop mode, and independent verification of these controls in practice.",
     "evidenceIds": [
       "devin-docs-11",
       "devin-docs-12",
-      "devin-docs-19",
-      "devin-docs-6"
+      "devin-docs-37",
+      "devin-docs-36",
+      "devin-docs-28"
     ]
   },
   {
     "productId": "devin",
     "storyId": "cross-device-task-continuity",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin runs tasks as cloud-based sessions with their own VM, accessible via browser, IDE, Slack/Teams, CLI, or API, and 'Devin Handoff' explicitly supports continuing work across sessions/agents/devices even after closing your laptop. This directly supports starting a task on one device and resuming from another via the persistent cloud session. Missing for 10: independent hands-on confirmation of seamless cross-device session continuity and any UI-level session sync details beyond docs claims.",
+    "rationale": "Devin's cloud sessions run in a dedicated VM that persists independent of the local device (docs-13), can be started from Slack/Teams, IDE, CLI, or API and continued/taken over in the embedded IDE or web UI (docs-3, docs-4, docs-7, docs-24), and Devin Handoff explicitly lets you start work locally and continue in a cloud session accessible from a browser (docs-38). missing for 10: no explicit first-party walkthrough of resuming the same session from a different browser/device login, and no independent/community confirmation of cross-device continuity.",
     "evidenceIds": [
       "devin-docs-3",
       "devin-docs-4",
-      "devin-docs-13",
-      "devin-docs-14",
       "devin-docs-7",
-      "devin-docs-8"
+      "devin-docs-13",
+      "devin-docs-24",
+      "devin-docs-38"
     ]
   },
   {
     "productId": "devin",
     "storyId": "cross-session-memory",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Devin's MCP integration explicitly exposes a persistent 'knowledge' store alongside session management and playbooks, implying some cross-session memory capability, but the evidence never describes how memory is built, stored, or automatically recalled between sessions. missing for 10: documentation on automatic knowledge capture/updates, explicit recall mechanism at session start, and independent confirmation that memory persists reliably without manual curation.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Devin supports persistent cross-session context via \"Knowledge\" (instructions referenced in all sessions), AGENTS.md, and environment blueprints that let every session boot into a known-good state, which enables some recall across sessions. However, these mechanisms are largely user-configured/onboarded rather than autonomously built by the agent from its own experience, and there's no evidence of automatic memory creation or recall behavior demonstrated in practice. Missing for 10: evidence the agent automatically extracts/updates memory from its own task experience without manual setup, and independent confirmation that recalled memory improves subsequent session performance.",
     "evidenceIds": [
-      "devin-docs-6",
-      "devin-probe-4"
+      "devin-docs-29",
+      "devin-docs-30",
+      "devin-docs-31",
+      "devin-docs-27"
     ]
   },
   {
     "productId": "devin",
     "storyId": "custom-agent-skills",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin exposes extensibility hooks—MCP access to \"playbooks, knowledge, and scheduling\" (devin-docs-6) and an open-source \"plugin and skill\" for handoff workflows (devin-docs-14)—suggesting some capacity for custom, reusable task logic, but there's no dedicated docs page on authoring/sharing custom skills as a first-class concept. Missing for 10: a documented skills/playbooks authoring guide, examples of building specialized custom skills, and independent verification that custom skills work reliably in practice.",
+    "rationale": "Devin supports several skill-like extension mechanisms — 'Knowledge' (persistent instructions/advice for all sessions), AGENTS.md for structured agent instructions, and 'Playbooks' exposed via MCP — plus an open-source 'Devin Handoff' explicitly described as a 'plugin and skill'. This gives developers real levers to encode specialized, reusable task behavior, but the docs don't show a dedicated skill-authoring UI/marketplace or detailed examples of building a complex custom skill, and there is no independent/community evidence confirming this works well in practice. Missing for 10: concrete examples/tutorials of authoring a non-trivial custom skill, a discoverable skills registry, and independent hands-on corroboration.",
     "evidenceIds": [
+      "devin-docs-29",
+      "devin-docs-30",
       "devin-docs-6",
-      "devin-docs-14",
-      "devin-docs-4"
+      "devin-docs-23",
+      "devin-docs-14"
     ]
   },
   {
     "productId": "devin",
     "storyId": "desktop-visual-diff-review",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Devin has a Desktop app (docs.devin.ai/desktop) that imports VS Code/Cursor settings and an embedded IDE where users can 'follow and take over' Devin's process, implying some code/diff visibility, but the evidence never explicitly describes a visual diff viewer or the ability to run multiple sessions side by side within the desktop app. Missing for 10: explicit diff-view UI documentation, explicit multi-session side-by-side window/tab support in the desktop app, and any hands-on confirmation of this workflow.",
+    "rationale": "Devin has a documented Desktop app (docs-9) and supports running multiple independent sessions in parallel (docs-25), but there is no evidence of a visual diff review feature or explicit side-by-side session UI within the desktop app itself. Missing for 10: explicit documentation of an in-app diff viewer, UI showing multiple sessions simultaneously in one window, and any hands-on/community confirmation of this desktop workflow.",
     "evidenceIds": [
       "devin-docs-9",
       "devin-docs-3",
-      "devin-probe-1"
+      "devin-docs-25"
     ]
   },
   {
@@ -8162,7 +8163,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of SSO/SAML/OIDC, SCIM provisioning, or cloud IAM integration for enterprise authentication; evidence only covers billing tiers and per-user session creation via API, not enterprise identity federation.",
+    "rationale": "No evidence of SSO/SAML, OIDC, or enterprise identity provider integration (e.g., Okta, Azure AD, Google Workspace) for authentication; the only related item is API session creation on behalf of a user, which is not enterprise identity/SSO authentication.",
     "evidenceIds": []
   },
   {
@@ -8170,24 +8171,26 @@
     "storyId": "existing-subscription-auth",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence only shows Devin's own subscription tiers (Pro, Max) via self-serve billing, with no mention of signing in using an existing external subscription (e.g., another AI product's plan) to access Devin's coding agent — missing for 10: any docs on cross-product/BYO-subscription sign-in, SSO with another vendor's plan, or account linking.",
+    "confidence": "low",
+    "rationale": "The evidence describes Devin's own subscription tiers (Pro, Max, Core/Team/Enterprise) but nothing about letting a developer sign in using an existing external subscription (e.g., an existing LLM provider or IDE subscription) to access the agent. No mention of SSO-linked billing or bring-your-own-subscription support.",
     "evidenceIds": [
-      "devin-docs-20"
+      "devin-docs-20",
+      "devin-docs-39"
     ]
   },
   {
     "productId": "devin",
     "storyId": "external-workflow-tool-integration",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's docs confirm integration with Jira/Linear tickets and Slack/Teams threads for tasking, and an API/MCP layer for building custom integrations, but there is no explicit mention of Google Drive connectivity or a documented native connector for it. missing for 10: explicit Google Drive integration, first-party connector docs beyond Jira/Slack, independent/hands-on confirmation of these integrations working in practice.",
+    "rationale": "Devin can be tagged in Slack/Teams threads and work Jira/Linear tickets, giving it direct workflow-tool integration, and its MCP server plus API enable further extension to other tools. However there is no explicit documented Google Drive integration, and no independent/hands-on corroboration of these integrations actually working in practice. missing for 10: Google Drive connector evidence, independent verification of Jira/Slack integration reliability.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-2",
-      "devin-docs-7",
-      "devin-docs-6"
+      "devin-docs-24",
+      "devin-docs-6",
+      "devin-docs-7"
     ]
   },
   {
@@ -8195,11 +8198,12 @@
     "storyId": "free-tier-account-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only describes paid Pro/Max billing tiers and enterprise session creation on behalf of users; there is no mention of a free tier, personal-account sign-in, or API-key-free access model for individual developers.",
+    "confidence": "medium",
+    "rationale": "Evidence only describes paid tiers (Pro, Max, 'power users who need more quota') and API key based integration; there's no mention of a free tier accessible via personal account sign-in without API key management.",
     "evidenceIds": [
       "devin-docs-20",
-      "devin-docs-8"
+      "devin-docs-39",
+      "devin-docs-7"
     ]
   },
   {
@@ -8208,11 +8212,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin's 'Ask Devin' mode explicitly answers questions about code structure/dependencies and helps scope tasks, and DeepWiki auto-generates architecture documentation for navigating unfamiliar codebases — both operate on full repo access without manual file selection. Missing for 10: independent/hands-on evidence validating accuracy and depth of these explanations on large unfamiliar codebases.",
+    "rationale": "Docs describe repo indexing that lets Devin understand the codebase and power 'Ask Devin' and DeepWiki auto-generated architecture docs, directly enabling exploration/explanation of an unfamiliar codebase without manual file selection (devin-docs-27, devin-docs-15, devin-docs-16). No community evidence contradicts this specific capability. Missing for 10: independent/hands-on verification of codebase-mapping accuracy and no concrete example of DeepWiki output quality.",
     "evidenceIds": [
-      "devin-docs-16",
+      "devin-docs-27",
       "devin-docs-15",
-      "devin-docs-13"
+      "devin-docs-16"
     ]
   },
   {
@@ -8221,22 +8225,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Devin is an autonomous agentic engineer that works via conversational tasking, IDE takeover, CLI, and cloud sessions rather than an inline IDE completion/next-edit tool like Copilot; no evidence describes ghost-text style inline suggestions as you type. This is a category mismatch for Devin's product type, not a missing feature.",
+    "rationale": "Devin is an autonomous agentic coding product that works via task delegation (sessions, tickets, Slack), IDE handoff, and CLI/API integration rather than an inline editor completion tool; there is no evidence of an inline-completion or next-edit-suggestion feature as you type, and this axis is a different product category (IDE autocomplete tooling) than Devin's agent model.",
     "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "issue-to-pr-automation",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's docs explicitly describe turning Linear/Jira tickets into implemented features and closing the loop with Devin Review/Auto-Fix until PRs are merge-ready, covering the full ticket-to-PR workflow. However, hands-on community testing reports concrete failures — extraneous changes that break other things, inability to undo them, and the tool not actually saving time despite being expensive — directly contradicting the polished end-to-end claim. Missing for 10: independent third-party benchmarks showing consistent successful PR completion, and resolution of the reported reliability issues.",
+    "rationale": "Devin's docs explicitly describe taking Linear/Jira tickets and implementing full features, with Devin Review/Auto-Fix looping PRs toward merge-ready status without human involvement, covering the issue-to-PR pipeline end-to-end. However, hands-on community reports describe practical friction — extraneous unrelated changes that can break things, inability to easily undo them, and agents getting stuck for days rather than asking for help — casting doubt on how cleanly the 'complete' PR is delivered without oversight. Missing for 10: independent verification of a clean ticket→merged-PR flow without manual intervention, and resolution of the reported reliability/quality issues.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-17",
       "devin-docs-18",
+      "devin-docs-21",
       "devin-comm-1",
-      "devin-comm-6"
+      "devin-comm-2",
+      "devin-comm-3",
+      "devin-comm-5"
     ]
   },
   {
@@ -8245,8 +8252,11 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Devin has a Desktop app and embedded IDE-like conversational UI, plus a CLI, MCP server, and API, but nothing about a JetBrains IDE plugin/integration for viewing diffs or sharing code as context; this is a category mismatch rather than a documented gap in JetBrains-specific tooling.",
-    "evidenceIds": []
+    "rationale": "There is no evidence Devin ships a JetBrains IDE plugin; Devin's IDE integration is its own embedded/desktop IDE (imports VS Code/Cursor settings) rather than a JetBrains plugin, making this a category mismatch for how Devin operates.",
+    "evidenceIds": [
+      "devin-docs-3",
+      "devin-docs-9"
+    ]
   },
   {
     "productId": "devin",
@@ -8254,7 +8264,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of license detection, public-code matching, or provenance references for AI-suggested code; Devin Review focuses on correctness and org best-practice conformance, not license/plagiarism attribution.",
+    "rationale": "No evidence of license or public-code matching/attribution references for AI-suggested code anywhere in the docs; Devin Review covers correctness and best-practice conformance but nothing about license/provenance matching.",
     "evidenceIds": []
   },
   {
@@ -8263,11 +8273,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's Computer Use gives it a full desktop with browser, mouse/keyboard control, and screenshots, and docs mention reproducing and fixing bugs, which together support live debugging of a running web app. However, there's no explicit documentation of dev-tools/console/breakpoint integration or independent evidence of successfully debugging a live app end-to-end. Missing for 10: explicit browser devtools/console integration for live inspection, hands-on/independent verification of live-app debugging workflows.",
+    "rationale": "Devin's computer-use/desktop mode gives it a full browser and desktop environment (mouse, keyboard, screenshots) plus VPN access to internal services, and docs explicitly mention reproducing and fixing bugs, which together support interacting with and debugging a live running app. However, there's no explicit documentation of dev-tools-style debugging features (breakpoints, console/log inspection, network tracing) or a dedicated 'live app debugging' workflow, and community evidence doesn't corroborate this specific use case. Missing for 10: explicit live-debugging tooling (breakpoints/console/log inspection), independent hands-on confirmation of debugging a running app.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-10",
-      "devin-docs-11"
+      "devin-docs-28",
+      "devin-docs-13"
     ]
   },
   {
@@ -8276,11 +8287,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Devin ships an official local CLI ('a local command-line coding agent with deep Devin Cloud integration') runnable from the terminal, with example usage and sandboxing flags for local execution. Missing for 10: independent hands-on validation of the CLI specifically (community evidence is about the cloud/web Devin experience, not the CLI).",
+    "rationale": "Devin CLI is explicitly documented as a local command-line coding agent that can be invoked from terminal (e.g. `devin -- check out this code...`), with local sandboxing (--sandbox flag) and deep integration with Devin Cloud for handoff. Missing for 10: independent/hands-on community verification specifically of the CLI experience (community evidence only covers the cloud/browser Devin product, not the local CLI).",
     "evidenceIds": [
       "devin-docs-4",
       "devin-docs-5",
+      "devin-docs-22",
       "devin-docs-12",
+      "devin-docs-37",
       "devin-probe-5"
     ]
   },
@@ -8290,19 +8303,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes attaching or including multiple project/repo directories within a single Devin session for broader cross-repo context; docs mention full repo access and desktop/CLI environments but not multi-directory context aggregation.",
+    "rationale": "No evidence describes attaching or indexing multiple project directories/repositories within a single Devin session; docs discuss single-repo indexing, knowledge, and environment setup but not multi-directory context in one session.",
     "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "multi-ide-chat-assistant",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Devin provides its own embedded IDE where you can watch and take over its work (devin-docs-3), and Devin Desktop can import VS Code/Cursor settings (devin-docs-9), but this is Devin's own environment rather than a plugin/chat panel living inside the developer's existing IDE (VS Code, JetBrains, etc.). No evidence of a native VS Code/JetBrains extension enabling in-IDE chat. Missing for 10: dedicated IDE extension/plugin for chatting inside the developer's own IDE, independent confirmation of in-IDE chat UX quality.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Devin exposes a conversational interface via its own embedded IDE within cloud sessions (devin-docs-3) and its Desktop app that imports VS Code/Cursor settings (devin-docs-9), plus an MCP server letting 'any MCP-compatible AI agent or IDE' access sessions (devin-docs-6/23). However there's no evidence of a native extension that lets a developer chat with Devin directly inside their own existing IDE (e.g., a VS Code/JetBrains plugin) — Devin's model is its own IDE/Desktop environment or MCP bridging rather than embedding in the user's IDE. Missing for 10: a first-party IDE extension for VS Code/JetBrains enabling in-IDE chat, and independent confirmation of this workflow working well in practice.",
     "evidenceIds": [
       "devin-docs-3",
-      "devin-docs-9"
+      "devin-docs-9",
+      "devin-docs-6",
+      "devin-docs-23"
     ]
   },
   {
@@ -8311,7 +8326,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack indicates Devin lets users select from multiple underlying AI model providers for a session; Devin is presented as a single proprietary agent product with no model-choice settings documented.",
+    "rationale": "No evidence in the pack mentions selecting or switching between multiple underlying AI model providers (e.g., choosing between different LLMs) for a Devin session; documentation covers agent capabilities, environments, and billing tiers but not model selection.",
     "evidenceIds": []
   },
   {
@@ -8320,12 +8335,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm Devin can be triggered from Linear/Jira tickets and Slack/Teams threads, and Devin Review integrates with PRs on GitHub/GitLab-style workflows, but there is no explicit documentation of directly kicking off a task from a GitHub or GitLab issue/PR comment (only PR review automation is described), and no independent/hands-on confirmation of these trigger flows. missing for 10: explicit GitHub/GitLab issue-triggered task creation, independent confirmation of Slack/Linear triggering working in practice.",
+    "rationale": "Docs confirm Devin can be invoked from Linear/Jira tickets and Slack/Teams threads, plus API integration for building custom workflow triggers, but there's no explicit mention of GitHub or GitLab issue/PR-based task kickoff in the evidence pack. Community evidence doesn't directly contradict the integration claims, only general effectiveness concerns. Missing for 10: explicit GitHub/GitLab-triggered task creation documentation, independent hands-on confirmation of these specific integrations working.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-2",
-      "devin-docs-17",
-      "devin-docs-18"
+      "devin-docs-24",
+      "devin-docs-7",
+      "devin-docs-8"
     ]
   },
   {
@@ -8334,20 +8350,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence Devin accepts a sketch/image/PDF design input and generates an app from it; its capabilities center on tickets, chat, code review, CLI, and computer-use, none of which mention image/design-to-code generation.",
+    "rationale": "No evidence anywhere in the pack that Devin accepts a sketch/image/PDF design as input and generates a working app from it; documentation focuses on text-based tasks, tickets, Slack threads, code review, and CLI/desktop environment features with no multimodal design-to-app capability mentioned.",
     "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "natural-language-debugging",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin supports conversational debugging via chat (Ask Devin can repro/fix bugs, answer questions about code structure) and can be tagged in Slack/Teams threads about bugs, matching the natural-language debugging story. However, community evidence shows real friction: it can add extraneous changes it can't undo, and gets stuck running in circles rather than admitting failure, undermining reliability for troubleshooting. Missing for 10: independent hands-on validation of debugging accuracy/success rate, and clearer evidence of interactive back-and-forth troubleshooting depth beyond bug-fix requests.",
+    "rationale": "Docs clearly support NL-driven debugging: 'repro and fix bugs', 'Ask Devin can answer questions about code structure...help you scope and plan tasks', and tagging Devin in Slack/Teams about a bug thread. However, hands-on community reports describe practical caveats—Devin adding extraneous changes it can't undo, getting stuck without escalating, requiring manual babysitting—that temper reliability for troubleshooting workflows. Missing for 10: independent benchmark/case study specifically on debugging accuracy, and resolution of the 'getting stuck on bugs' community complaint.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-2",
       "devin-docs-16",
+      "devin-docs-24",
       "devin-comm-1",
       "devin-comm-2",
       "devin-comm-3"
@@ -8359,13 +8376,14 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Devin's docs and CLI clearly position it to take plain-language tasks (tickets, bug fixes, new features) and implement changes autonomously across a repo (devin-docs-1, devin-docs-3, devin-docs-4, devin-docs-5), but hands-on community reports directly contradict smooth multi-file autonomous delivery: reviewers found it 'always adds extraneous changes beyond the task that can break other things, and can't undo those changes if asked,' concluding it wasn't actually saving time despite cost (devin-comm-1), while other users only got value by constantly supervising and terminating bad sessions (devin-comm-5). missing for 10: independent benchmark or case study confirming reliable multi-file correctness, resolution of the 'extraneous changes' failure mode, and evidence the described capability works without heavy human babysitting.",
+    "rationale": "Devin's docs strongly claim end-to-end feature/bug implementation across a full repo (Linear/Jira tickets, multi-file fixes, code migrations) with full workspace/VM access [devin-docs-1, devin-docs-13, devin-docs-21, devin-docs-27], but hands-on community reports concretely contradict smooth delivery: it 'always adds extraneous changes beyond the task that can break other things, and can't undo those changes if asked' and required constant supervision/termination to get real work done [devin-comm-1, devin-comm-5], with another user noting it can run for days without an escape hatch when stuck [devin-comm-2]. Missing for 10: independent benchmark data on multi-file correctness, and resolution of the extraneous-change/undo failure mode reported by users.",
     "evidenceIds": [
       "devin-docs-1",
-      "devin-docs-3",
-      "devin-docs-4",
-      "devin-docs-5",
+      "devin-docs-13",
+      "devin-docs-21",
+      "devin-docs-27",
       "devin-comm-1",
+      "devin-comm-2",
       "devin-comm-5"
     ]
   },
@@ -8374,16 +8392,14 @@
     "storyId": "openness-api-parity",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Devin exposes a documented API (session creation, create_as_user_id) and an MCP server giving full access to session management, playbooks, knowledge, and scheduling, suggesting broad but not confirmed full parity with the UI. There's no evidence of an OpenAPI spec (probe found only 404s) or explicit documentation stating that UI-only features like Computer Use, Desktop app configuration, or Devin Review/Auto-Fix workflows can be triggered via the API. missing for 10: explicit API/MCP coverage of Computer Use, Devin Review, Auto-Fix and Desktop-specific settings, and a published OpenAPI spec confirming full endpoint parity.",
+    "confidence": "medium",
+    "rationale": "Devin exposes a documented API (session creation, create_as_user_id) and an MCP server giving 'full access to session management, playbooks, knowledge, and scheduling', suggesting broad programmatic parity, but there's no explicit claim of full UI/API feature parity, and probes for an OpenAPI spec all 404'd, indicating the full API surface isn't transparently documented. Missing for 10: explicit parity statement covering UI-only features like Devin Review/Auto-Fix/Computer Use/desktop app settings, a discoverable OpenAPI schema, and independent confirmation that all UI actions are API-reachable.",
     "evidenceIds": [
-      "devin-docs-6",
       "devin-docs-7",
       "devin-docs-8",
-      "devin-probe-3",
-      "devin-docs-10",
-      "devin-docs-17",
-      "devin-docs-18"
+      "devin-docs-6",
+      "devin-docs-23",
+      "devin-probe-3"
     ]
   },
   {
@@ -8391,8 +8407,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a data export feature or open-format data portability for user data/sessions/knowledge; the API supports building integrations but nothing documents bulk export of user data for leaving the platform.",
+    "confidence": "medium",
+    "rationale": "No evidence of a data export feature or open-format export/portability mechanism for Devin sessions, knowledge, or artifacts; the docs cover API, CLI, MCP, and infrastructure but nothing about exporting all user data in open formats to leave the platform.",
     "evidenceIds": []
   },
   {
@@ -8401,8 +8417,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Devin is a closed, proprietary commercial product; no evidence of an open-license source release exists in the pack (only Devin Handoff plugin is mentioned as open-source, which is a separate integration tool, not Devin's core source). This axis applies since AI-native users could reasonably ask about openness of any AI product, but no evidence supports it.",
-    "evidenceIds": []
+    "rationale": "Devin is a closed, proprietary commercial product; no evidence indicates its source code is available under an open license. The only mention of 'open-source' is for the separate Devin Handoff plugin/skill, not Devin itself.",
+    "evidenceIds": [
+      "devin-docs-14"
+    ]
   },
   {
     "productId": "devin",
@@ -8410,25 +8428,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Devin is a cloud SaaS product with a CLI and desktop client that integrate with Devin Cloud; nothing in the evidence indicates the core Devin agent/cloud service can be self-hosted on user infrastructure. All docs point to cloud sessions, VMs, and hosted billing tiers rather than a self-hostable core.",
+    "rationale": "Devin is a cloud-based SaaS agent; Outposts lets you run sessions on your own infrastructure but the core Devin model/orchestration itself remains Cognition-hosted, and there's no evidence of a self-hostable core product/model package. No mention of on-prem/self-hosted deployment of the core Devin engine.",
     "evidenceIds": [
-      "devin-docs-13",
-      "devin-docs-4",
-      "devin-docs-20"
+      "devin-docs-36"
     ]
   },
   {
     "productId": "devin",
     "storyId": "parallel-agent-fleets",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's API lets you programmatically create sessions (including on behalf of other users), and cloud sessions run in their own VM 'so it can keep going after you close your laptop,' with community reports confirming it can run for days on a single task. This supports launching multiple long-running autonomous sessions, but there's no explicit 'fleet' dashboard or multi-agent orchestration UI evidenced, and community reports note friction (no escape hatch, running in circles, needing manual termination) that complicates truly hands-off parallel operation. Missing for 10: dedicated fleet/multi-session management UI, evidence of simultaneously launching many parallel agents in one action, and independent confirmation that long unattended runs reliably produce useful results.",
+    "rationale": "Docs confirm parallel task execution ('Carve out independent tasks and run them simultaneously'), cloud sessions that persist after closing the laptop, and an API to spin up multiple sessions programmatically (including on behalf of other users), which together support a 'fleet of parallel long-running agents' story. However, community hands-on reports show real friction with the 'hours/days autonomous' claim: sessions can get stuck without an escape hatch, users must babysit and manually terminate sessions every 10-15 minutes, and there's a default max-work-time cap limiting unsupervised runtime. Missing for 10: independent verification of successful multi-day/multi-task fleets running unattended, and evidence addressing the reported lack of a reliable 'ask for help' escalation during long runs.",
     "evidenceIds": [
+      "devin-docs-25",
+      "devin-docs-13",
       "devin-docs-7",
       "devin-docs-8",
-      "devin-docs-13",
       "devin-comm-2",
+      "devin-comm-3",
       "devin-comm-4",
       "devin-comm-5"
     ]
@@ -8438,9 +8456,11 @@
     "storyId": "parallel-task-attempt-comparison",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes running multiple parallel task attempts on the same task and comparing results before choosing one; docs cover single sessions, CLI, handoff, and API integration but nothing about parallel attempt comparison.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Devin's docs mention running multiple independent tasks simultaneously (devin-docs-25) but this describes parallelizing different tasks, not running several parallel attempts of the SAME task to compare and choose the best result. No evidence describes a compare/choose-best-attempt workflow.",
+    "evidenceIds": [
+      "devin-docs-25"
+    ]
   },
   {
     "productId": "devin",
@@ -8448,23 +8468,24 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Devin exposes an API, MCP server, and Devin Handoff (open-source plugin usable across other coding agents) which allow integration with the broader ecosystem, but there is no evidence of a marketplace, app-store, or documented mechanism for plugging in third-party partner-built agent apps into Devin's own workflows. missing for 10: evidence of a partner/app marketplace, documented third-party agent-app integrations, or case studies of external vendor agents being incorporated into Devin workflows.",
+    "rationale": "Devin exposes an MCP server so external MCP-compatible agents/IDEs can access its session management and tools, and its open-source 'Devin Handoff' plugin interoperates with other coding agents (Claude Code, Codex, Cursor), showing some cross-agent workflow integration. However there is no evidence of a partner/marketplace ecosystem of third-party agent apps being integrated into Devin's own workflows. Missing for 10: a documented partner-app marketplace or catalog, evidence of installing/configuring third-party agent apps within Devin, and any case study of an engineering-lead orchestrating partner-built agents through Devin.",
     "evidenceIds": [
       "devin-docs-6",
-      "devin-docs-7",
       "devin-docs-14",
+      "devin-docs-23",
       "devin-probe-4"
     ]
   },
   {
     "productId": "devin",
     "storyId": "persistent-project-instructions",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The MCP docs mention Devin exposes 'knowledge' alongside playbooks and sessions, hinting at a mechanism for persisting project-specific guidance, but the evidence pack never describes a dedicated instructions/config file, its format, or how coding standards are enforced from it. missing for 10: dedicated instructions-file docs (e.g. a CONVENTIONS.md/AGENTS.md equivalent), examples of setting coding standards via it, and confirmation the agent actually follows such a file in practice.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Devin explicitly supports AGENTS.md, an open standard for providing context and instructions to AI agents, plus a separate 'Knowledge' feature for instructions/advice referenced across all sessions, directly covering project-level coding standards/conventions. Missing for 10: independent/hands-on confirmation that these instructions are reliably followed in practice.",
     "evidenceIds": [
-      "devin-docs-6"
+      "devin-docs-30",
+      "devin-docs-29"
     ]
   },
   {
@@ -8472,13 +8493,13 @@
     "storyId": "pre-merge-diff-inspection",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin Review provides automated PR diff review checking correctness and org conformance, and it integrates with CI/CD to respond to static analysis findings (SonarQube, Fortify, Veracode) and iterate on CI failures via Auto-Fix, directly enabling developers to inspect diffs and run checks before merging. Community evidence doesn't contradict this specific review/CI feature, though it raises general concerns about extraneous changes and reliability elsewhere. missing for 10: independent hands-on validation of Devin Review's accuracy/false-positive rate, and detail on how diff inspection UI works for the developer.",
+    "confidence": "high",
+    "rationale": "Devin's docs describe Devin Review, which performs automated first-pass PR reviews checking correctness and org conformance, plus CI/CD integration to respond to static-analysis findings (SonarQube, Fortify, Veracode) and Auto-Fix iterating on CI failures — directly enabling developers to inspect diffs and run checks before merge. This is corroborated by explicit SDLC integration workflow docs, not just a single mention.\nmissing for 10: independent/hands-on evidence confirming Devin Review's diff-inspection quality in practice, and detail on how diffs are surfaced/inspected by the developer (UI specifics) beyond docs claims.",
     "evidenceIds": [
       "devin-docs-17",
       "devin-docs-18",
       "devin-docs-19",
-      "devin-docs-16"
+      "devin-docs-26"
     ]
   },
   {
@@ -8487,7 +8508,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic data controls for Devin; the docs cover billing, CLI, sandboxing, and integrations but not where data is stored. missing for 10: any mention of data residency/region selection, storage location options, or compliance certifications tied to geography.",
+    "rationale": "No evidence of data residency/region selection controls for where Devin stores data; the pack covers deployment options (Outposts, VPN, sandbox isolation) but nothing about choosing storage region/jurisdiction.",
     "evidenceIds": []
   },
   {
@@ -8496,7 +8517,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage for AI training, opt-out settings, or any privacy policy regarding model training on user data/code.",
+    "rationale": "The evidence pack contains no mention of data-training opt-out, data usage policy, or privacy controls for AI model training; nothing in the docs or community sources addresses this axis.",
     "evidenceIds": []
   },
   {
@@ -8505,7 +8526,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data governance settings for Devin sessions, code, or user data; the pack focuses on features, sandboxing, and CLI/MCP capabilities instead.",
+    "rationale": "No evidence pack items address data retention policies, data deletion controls, or privacy/data-handling settings for user data or session data; the closest items concern sandboxing/isolation of execution environments, not retention/deletion of stored data.",
     "evidenceIds": []
   },
   {
@@ -8513,34 +8534,40 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings, privacy controls, or data collection disclosures for Devin; the closest items are about sandboxing and desktop mode toggles which are unrelated to telemetry. missing for 10: any documentation of telemetry collection, a privacy policy reference, or an opt-out/disable-analytics setting.",
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions telemetry opt-out, usage tracking settings, or privacy controls of that kind; the docs cover features, sandboxing, and infrastructure but not data-collection opt-out mechanisms.",
     "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "reproducible-cloud-environment-config",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes Devin's cloud sessions running in a VM with shell, browser, and repo access (devin-docs-13), but nothing in the pack documents a mechanism for developers to explicitly configure or persist reproducible setup steps, dependencies, or environment snapshots for their repo. Missing for 10: documentation of environment configuration files/snapshots, dependency setup scripts, or a persistent 'playbook'/environment settings feature tied to a repo.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Devin explicitly supports configuring environment 'blueprints' that specify tools, runtimes, and dependencies so 'every session boots into that known-good state,' with auto-detection of requirements from the repo (docs-31, docs-32), plus indexing (docs-27), knowledge/AGENTS.md context files (docs-29, docs-30), and VPN access for internal dependencies (docs-28), all running in isolated cloud VMs (docs-13). Missing for 10: independent/hands-on confirmation that blueprint-based environments reliably reproduce across sessions in practice.",
     "evidenceIds": [
+      "devin-docs-31",
+      "devin-docs-32",
+      "devin-docs-27",
+      "devin-docs-29",
+      "devin-docs-30",
+      "devin-docs-28",
       "devin-docs-13"
     ]
   },
   {
     "productId": "devin",
     "storyId": "root-cause-analysis",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's docs explicitly claim it can 'repro and fix bugs' (devin-docs-1), understand code structure/dependencies (devin-docs-16), and verify fixes via Devin Review/Auto-Fix loops (devin-docs-17, devin-docs-18), backed by full desktop/shell access for reproduction (devin-docs-10, devin-docs-13). However, hands-on community reports contradict reliability: users report Devin adds extraneous changes that break other things and can't undo them, and isn't actually saving time despite cost (devin-comm-1), and gets stuck running in circles for days without admitting failure on a task (devin-comm-2, devin-comm-3), directly undermining the claimed root-cause/fix/verify workflow. missing for 10: independent benchmark data on bug-repro accuracy, resolution of the extraneous-change/rollback complaints, and evidence the verify-fix loop is trustworthy without close supervision.",
+    "rationale": "Docs explicitly claim Devin can 'repro and fix bugs' (devin-docs-1), use Ask Devin/DeepWiki to narrow root causes via codebase understanding (devin-docs-15, devin-docs-16, devin-docs-27), and verify fixes through CI iteration/Auto-Fix loops (devin-docs-18). However, hands-on community testimony reports Devin often adds extraneous changes beyond the task scope and cannot reliably undo them when asked, undermining clean verification of fixes (devin-comm-1), and lacks an escape hatch when stuck on root-cause diagnosis (devin-comm-2, devin-comm-3). Missing for 10: independent verification of successful bug reproduction/root-cause narrowing at scale, and resolution of the reported inability to cleanly revert unwanted changes during fix verification.",
     "evidenceIds": [
       "devin-docs-1",
+      "devin-docs-15",
       "devin-docs-16",
-      "devin-docs-17",
       "devin-docs-18",
-      "devin-docs-10",
+      "devin-docs-27",
       "devin-comm-1",
       "devin-comm-2",
       "devin-comm-3"
@@ -8550,43 +8577,45 @@
     "productId": "devin",
     "storyId": "sandboxed-agent-execution",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Devin's cloud sessions run in dedicated VMs with isolated shell/browser/repo access, and the Devin CLI's --sandbox flag enforces OS-level isolation with writable-path/deny rules and optional network restriction, directly matching the sandboxed-execution story. Missing for 10: independent/hands-on verification of sandbox robustness and no detail on default sandbox settings for cloud (vs CLI) sessions.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Devin runs cloud sessions in isolated VMs (devin-docs-13) and provides an explicit CLI --sandbox flag enforcing OS-level isolation, writable path restrictions, deny rules, and optional network restriction (devin-docs-12, devin-docs-37), directly matching the sandboxed code/tool/network isolation story. Missing for 10: independent/hands-on verification of sandbox robustness and more detail on network isolation guarantees beyond docs claims.",
     "evidenceIds": [
       "devin-docs-12",
+      "devin-docs-37",
       "devin-docs-13",
-      "devin-docs-10",
-      "devin-docs-11"
+      "devin-docs-28"
     ]
   },
   {
     "productId": "devin",
     "storyId": "shared-knowledge-workspace",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Devin exposes 'knowledge' and 'playbooks' via its API/MCP layer and integrates DeepWiki for auto-generated architecture docs, which could serve as a shared source of truth, but there is no explicit documentation of a dedicated 'workspace' feature for aggregating team docs and repos into one place. missing for 10: explicit workspace/knowledge-base creation UI, team-wide document ingestion features, and independent evidence of teams using it as a shared source of truth.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Devin offers building blocks for a team-wide source of truth — repo indexing that powers 'Ask Devin' and DeepWiki architecture docs, org-wide 'Knowledge' referenced in all sessions, and AGENTS.md support for shared context — which collectively let a lead centralize docs/repo knowledge for the team. However, there's no explicit product feature framed as a 'shared workspace' UI for team-wide docs/repo browsing outside of Devin's own agent sessions. Missing for 10: a dedicated shared workspace/knowledge-base product surface for humans to browse, independent evidence of teams using it as a collaborative source of truth, and clarity on cross-repo doc aggregation beyond per-session knowledge.",
     "evidenceIds": [
-      "devin-docs-6",
+      "devin-docs-27",
+      "devin-docs-29",
+      "devin-docs-30",
       "devin-docs-15",
-      "devin-docs-16"
+      "devin-docs-32"
     ]
   },
   {
     "productId": "devin",
     "storyId": "terminal-scripting-automation",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin ships a local CLI (devin) that can be invoked non-interactively with a task string, plus a full REST API for creating and managing sessions programmatically (including on behalf of users), enabling scripted/CI-driven workflows, and docs explicitly mention CI/CD integration for responding to static analysis findings. Missing for 10: no independent hands-on evidence of scripting/automation reliability, and no explicit example of a CLI flag for fully non-interactive/headless mode in scripts.",
+    "rationale": "Devin exposes a documented API for creating sessions programmatically (including on behalf of users) and explicit CI/CD pipeline integration to auto-respond to static-analysis findings, plus a CLI (`devin -- <prompt>`) that can be invoked headlessly, all pointing to non-interactive, scriptable automation. Missing for 10: independent/hands-on confirmation of headless CLI scripting in real CI pipelines and more detail on CLI exit codes/output for scripting.",
     "evidenceIds": [
+      "devin-docs-7",
+      "devin-docs-19",
       "devin-docs-4",
       "devin-docs-5",
-      "devin-docs-7",
-      "devin-docs-8",
-      "devin-docs-19",
-      "devin-probe-5"
+      "devin-docs-18",
+      "devin-docs-22"
     ]
   },
   {
@@ -8595,7 +8624,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention data training opt-out, privacy policy controls, or enterprise data usage settings for model training; this is an applicable axis for an AI coding agent but no documentation addresses it.",
+    "rationale": "No evidence in the pack addresses data usage, training opt-out, or privacy/data-handling policies for Devin; nothing documents an opt-out mechanism for code/prompt use in model training.",
     "evidenceIds": []
   },
   {
@@ -8604,13 +8633,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's architecture is inherently session-based, and docs show API/CLI support for creating and managing sessions programmatically, including creating sessions on behalf of other users (create_as_user_id) and MCP-based session management/scheduling—useful for a lead overseeing multiple agents. However, there's no explicit documentation of a unified dashboard view for tracking/comparing multiple concurrent sessions across a team in one screen. Missing for 10: dedicated multi-session dashboard UI evidence, team-wide session oversight features, and independent confirmation of managing multiple sessions at scale.",
+    "rationale": "Devin supports running multiple parallel sessions ('carve out independent tasks and run them simultaneously'), an API to create sessions on behalf of users, and an embedded IDE/CLI/desktop app to interact with sessions, which together enable a lead-like workspace for managing several agent sessions. However, there's no dedicated 'unified workspace' dashboard evidence for an engineering-lead specifically monitoring/managing a team's multiple concurrent sessions, and community feedback highlights session reliability issues that would complicate multi-session oversight. missing for 10: explicit multi-session dashboard/UI for a lead role, team-level session oversight features, independent corroboration of smooth multi-session management at scale.",
     "evidenceIds": [
-      "devin-docs-6",
-      "devin-docs-7",
+      "devin-docs-25",
       "devin-docs-8",
-      "devin-docs-13",
-      "devin-docs-3"
+      "devin-docs-3",
+      "devin-docs-4",
+      "devin-comm-1",
+      "devin-comm-5"
     ]
   },
   {
@@ -9647,13 +9677,15 @@
   {
     "productId": "github-copilot",
     "storyId": "agentic-agent-docs",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Probes confirm docs.github.com serves a working llms.txt (HTTP 200) and provides markdown-formatted docs (copilot.md) that an AI agent could be pointed at directly for agent-oriented consumption. This is concrete technical evidence beyond marketing claims that the docs are structured for agent ingestion. Missing for 10: independent/community confirmation of an agent actually being pointed at llms.txt and successfully using it, and evidence that this coverage extends comprehensively across all Copilot doc pages rather than just the root/index.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Probes confirm docs.github.com serves an llms.txt file and a .md-formatted docs page, meaning an agent pointed at docs.github.com could consume agent-oriented docs directly; GitHub also documents MCP server usage for structured context. However, there's no evidence Copilot itself is documented to consume llms.txt as part of its own context-gathering workflow, nor first-party guidance recommending llms.txt for agent use. missing for 10: explicit product documentation instructing users/agents to point Copilot at llms.txt, and independent confirmation this integration is actually used in practice.",
     "evidenceIds": [
       "github-copilot-probe-1",
-      "github-copilot-probe-2"
+      "github-copilot-probe-2",
+      "github-copilot-docs-20",
+      "github-copilot-docs-25"
     ]
   },
   {
@@ -9662,13 +9694,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Copilot generates code suggestions, completions, chat answers, and Autofix vulnerability suggestions directly from the user's own codebase/context (docs-1,2,9,13,22), and community feedback corroborates it delivering genuinely useful, context-aware suggestions in practice (comm-1,6,7). missing for 10: independent benchmarking of suggestion quality/accuracy and more consistent positive real-world validation given mixed community sentiment on correctness (comm-2,8,10).",
+    "rationale": "Copilot generates AI insights/suggestions from the user's own code and repository data via code completion, chat with repo/doc context, code review with severity-labeled comments, and Autofix vulnerability suggestions, and can pull context from GitHub issues/PRs/docs via MCP. Community anecdotes (comm-1, comm-6, comm-7) corroborate real productivity gains from these suggestions, though some criticize suggestion quality on edge cases (comm-2, comm-10). Missing for 10: independent benchmark data quantifying insight accuracy/usefulness and no first-party analytics-style 'insights dashboard' beyond code review/Autofix.",
     "evidenceIds": [
-      "github-copilot-docs-1",
-      "github-copilot-docs-2",
       "github-copilot-docs-9",
       "github-copilot-docs-13",
-      "github-copilot-docs-22",
+      "github-copilot-docs-20",
+      "github-copilot-docs-25",
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
       "github-copilot-comm-1",
       "github-copilot-comm-6",
       "github-copilot-comm-7"
@@ -9678,13 +9711,14 @@
     "productId": "github-copilot",
     "storyId": "agentic-autonomous-automation",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "GitHub Copilot docs explicitly describe scheduling cloud agents to run automatically on triggers/events, autonomous background task execution, sandboxed environments, and a control plane to track multiple agent sessions. Missing for 10: independent/hands-on verification of the scheduling automation feature specifically (community evidence covers agent mode and code suggestions broadly but not this scheduled-automation capability), and details on reliability/limits of unattended runs.",
+    "rationale": "GitHub Copilot's cloud agent explicitly supports background automation: docs describe running Copilot 'automatically, on a schedule or in response to events in a repository' and working 'independently in the background to complete tasks, just like a human developer,' with a control plane to track multiple agent sessions. This directly matches the story of autonomous background automations for an AI-native user. Missing for 10: independent/community hands-on validation specifically of the scheduled/event-triggered automation feature (most community evidence is about code completion quality, not the cloud-agent automation flow).",
     "evidenceIds": [
       "github-copilot-docs-15",
+      "github-copilot-docs-31",
+      "github-copilot-docs-33",
       "github-copilot-docs-3",
-      "github-copilot-docs-16",
       "github-copilot-docs-14",
       "github-copilot-docs-8"
     ]
@@ -9695,28 +9729,31 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "GitHub Copilot ships built-in agent mode and cloud agents that let users assign tasks (e.g., 'fix this bug', 'implement this feature') for autonomous planning, exploration, and execution, with a control plane to track multiple agent sessions and merge completed work (github-copilot-docs-2,3,6,8,14,15,16). Community evidence largely reflects on completion quality/licensing debates rather than disputing the agent-delegation capability itself. Missing for 10: independent hands-on validation specifically of the autonomous 'assign and let it work in background' workflow (most community evidence predates or doesn't test agent mode).",
+    "rationale": "GitHub Copilot ships extensive built-in agentic capabilities: agent mode in editors, cloud/background agents that plan-explore-execute autonomously, @copilot mentions on PRs, automations, custom agents, and a CLI, all documented first-party. Community evidence corroborates hands-on usage of the assistant delivering real productivity gains, supporting the delegation story. Missing for 10: independent hands-on validation specifically of the newer autonomous cloud-agent/background task delegation (most community evidence predates these agentic features).",
     "evidenceIds": [
       "github-copilot-docs-2",
       "github-copilot-docs-3",
-      "github-copilot-docs-6",
       "github-copilot-docs-8",
-      "github-copilot-docs-14",
-      "github-copilot-docs-15",
-      "github-copilot-docs-16"
+      "github-copilot-docs-31",
+      "github-copilot-docs-32",
+      "github-copilot-docs-33",
+      "github-copilot-comm-6",
+      "github-copilot-comm-7"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Copilot supports headless-style automation via cloud agents that run on a schedule or in response to repository events (Automations), and Copilot coding agent can be launched and tracked from a control plane without an IDE, plus a documented CLI exists. However, there's no explicit CI-pipeline integration (e.g., GitHub Actions step) or scriptable non-interactive invocation documented, and no independent/community evidence corroborates headless CI usage. Missing for 10: explicit CI/CD pipeline integration docs, non-interactive CLI invocation examples, and independent hands-on confirmation of headless automation.",
+    "rationale": "GitHub Copilot ships a CLI for terminal/headless use and a 'cloud agent' with 'automations' that can run on a schedule or in response to repo events (e.g., issue opened), plus isolated cloud/local sandboxes for execution — all of which enable non-interactive, CI-like automation. However, evidence doesn't show explicit CI pipeline (e.g., GitHub Actions) integration steps or a documented non-interactive/scriptable flag set for true headless scripting. Missing for 10: documented CI/Actions integration examples, explicit non-interactive/headless CLI flags, and independent hands-on confirmation of automation running unattended in CI.",
     "evidenceIds": [
+      "github-copilot-docs-26",
       "github-copilot-docs-15",
-      "github-copilot-docs-14",
+      "github-copilot-docs-33",
       "github-copilot-docs-16",
+      "github-copilot-docs-31",
       "github-copilot-probe-4"
     ]
   },
@@ -9724,26 +9761,28 @@
     "productId": "github-copilot",
     "storyId": "agentic-mcp-client",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "GitHub Copilot docs explicitly describe connecting MCP servers to Copilot Chat to extend it with external tools/context, plus admin controls for allow-listing MCP servers, showing this is a documented, supported capability. missing for 10: independent hands-on confirmation of MCP tool usage and more detail on cross-IDE parity/limits.",
+    "rationale": "GitHub Copilot documents direct MCP server integration: connecting MCP servers to Copilot Chat to extend context/tools, creating custom MCP servers, using the official GitHub MCP server, and admin controls (allow lists) for which MCP servers developers can access. This is well-documented first-party capability across IDE and chat surfaces. missing for 10: independent hands-on community verification of MCP tool usage in practice (community evidence pack is mostly about code suggestion quality/licensing, not MCP specifically).",
     "evidenceIds": [
       "github-copilot-docs-20",
       "github-copilot-docs-21",
-      "github-copilot-docs-10"
+      "github-copilot-docs-25",
+      "github-copilot-docs-10",
+      "github-copilot-docs-35"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "agentic-mcp-server",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "GitHub Copilot is itself an AI coding agent; the evidence only shows it acting as an MCP client (connecting to external MCP servers for context, docs-10/20/21), not as an official MCP server that other agents connect to. Per the agent-role exception, this makes the story not applicable to Copilot.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "GitHub documents an official GitHub MCP server (docs-25) that exposes repositories, issues, PRs, and other GitHub features via MCP, which other agents (not just Copilot itself) can connect to — this is a first-party server, not just Copilot's client-side MCP consumption. Missing for 10: independent/hands-on confirmation of third-party agents successfully connecting to this server, and details on server versioning/maturity.",
     "evidenceIds": [
-      "github-copilot-docs-10",
-      "github-copilot-docs-20",
-      "github-copilot-docs-21"
+      "github-copilot-docs-25",
+      "github-copilot-docs-35",
+      "github-copilot-docs-10"
     ]
   },
   {
@@ -9752,14 +9791,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Copilot supports natural-language chat/agent-mode across IDEs, terminal (CLI), and cloud agents, letting users direct tasks like 'fix the bug' or 'edit files' via NL commands (github-copilot-docs-2,3,4,5,22, probe-4). Community evidence corroborates real-world use of chat-driven coding assistance, though some hands-on critiques note NL commands can be vague/unreliable in practice. Missing for 10: independent benchmarking of NL command reliability/accuracy and broader cross-editor parity confirmation.",
+    "rationale": "GitHub Copilot offers natural-language interaction across chat, agent mode, CLI, and even voice input, letting users direct edits, reviews, and autonomous tasks conversationally (docs-2, docs-22, docs-26, docs-27). Community evidence corroborates real usage of chat/agent workflows, though some report chat availability limited to specific IDEs and mixed quality of autonomous 'fix the bug' style commands. Missing for 10: independent hands-on validation of natural-language command robustness across all surfaces (mobile, terminal) and no rigorous benchmark of command success rate.",
     "evidenceIds": [
       "github-copilot-docs-2",
-      "github-copilot-docs-3",
       "github-copilot-docs-4",
-      "github-copilot-docs-5",
       "github-copilot-docs-22",
-      "github-copilot-probe-4",
+      "github-copilot-docs-26",
+      "github-copilot-docs-27",
       "github-copilot-comm-10"
     ]
   },
@@ -9767,10 +9805,12 @@
     "productId": "github-copilot",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "GitHub explicitly documents an official 'Copilot CLI' with a dedicated install guide, and the product page notes Copilot is supported in terminals via GitHub CLI, confirming a first-party CLI exists for AI-native/agentic workflows. Missing for 10: independent hands-on validation of the CLI's agentic capabilities and more detail on its command surface beyond the install doc.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "GitHub Copilot ships an official CLI documented at docs.github.com, letting users invoke Copilot directly from the terminal with prompt/voice input, corroborated by a dedicated install guide probe. missing for 10: independent hands-on community review of the CLI itself (community evidence only covers older chat/agent features, not the CLI), and no detail on CLI feature parity with IDE agent mode.",
     "evidenceIds": [
+      "github-copilot-docs-26",
+      "github-copilot-docs-27",
       "github-copilot-probe-4",
       "github-copilot-docs-5"
     ]
@@ -9780,13 +9820,14 @@
     "storyId": "agentic-public-api",
     "verdict": "partial",
     "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence shows a documented Copilot CLI (github-copilot-probe-4) that lets users script/drive Copilot from the terminal, and MCP support lets Copilot consume external servers, but there is no evidence of a documented public REST/GraphQL API specifically for driving Copilot programmatically — probes for openapi/swagger specs at docs.github.com all 404 (github-copilot-probe-3). Missing for 10: an official Copilot-specific API reference (REST/GraphQL/SDK), authentication docs for that API, and independent confirmation of programmatic use beyond the CLI.",
+    "confidence": "medium",
+    "rationale": "GitHub Copilot ships a documented CLI (docs-26, probe-4) that lets scripts/agents invoke Copilot from a terminal, and Copilot Chat can be extended via MCP servers (docs-20/21/25), giving some programmatic hooks. However, an explicit probe for a standard OpenAPI/public API spec returned 404s (probe-3), and no REST/GraphQL API for driving Copilot itself is documented in the evidence. Missing for 10: a dedicated, versioned public API (REST/GraphQL/OpenAPI) for programmatically controlling Copilot beyond CLI/MCP, and independent confirmation of its stability/coverage.",
     "evidenceIds": [
+      "github-copilot-docs-26",
       "github-copilot-probe-4",
-      "github-copilot-probe-3",
       "github-copilot-docs-20",
-      "github-copilot-docs-21"
+      "github-copilot-docs-21",
+      "github-copilot-probe-3"
     ]
   },
   {
@@ -9805,35 +9846,43 @@
   {
     "productId": "github-copilot",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Copilot's MCP integration, agent apps, and skills, but contains no mention of an official SDK for developers to build against (no SDK docs, API reference, or client library assets). This is a fair capability to expect from a platform with an extension ecosystem, but nothing in the evidence confirms it.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows extensibility surfaces (MCP server integration, custom agents, partner 'agent apps') that let developers build on top of Copilot, but there is no dedicated official SDK (e.g., language client libraries or API SDK docs) described in the pack. missing for 10: explicit official SDK/client-library docs, code samples for building third-party apps against a Copilot API, independent developer confirmation of SDK usage.",
+    "evidenceIds": [
+      "github-copilot-docs-18",
+      "github-copilot-docs-20",
+      "github-copilot-docs-21",
+      "github-copilot-docs-34"
+    ]
   },
   {
     "productId": "github-copilot",
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes Copilot exposing webhook subscriptions for external event consumption; the closest mention (docs-15) is about Copilot's cloud agent being triggered by repository events, not about a webhook API for AI-native subscribers to receive Copilot event notifications.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows Copilot 'automations' can be triggered by repository events (e.g., issue opened) [docs-33, docs-15], but this is Copilot reacting to GitHub events, not an API/webhook mechanism for an external AI-native user to subscribe to Copilot's own events. No documentation describes a webhook subscription endpoint or event payload schema for consuming Copilot activity.",
+    "evidenceIds": [
+      "github-copilot-docs-15",
+      "github-copilot-docs-33"
+    ]
   },
   {
     "productId": "github-copilot",
     "storyId": "always-on-scheduled-agents",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "GitHub Copilot documents 'Automations' that run the cloud agent on a schedule or in response to repository events (github-copilot-docs-15), backed by isolated cloud/local sandboxes (docs-16), a control plane to track/manage multiple agent sessions (docs-14, docs-8, docs-23), and background autonomous task execution (docs-3). Missing for 10: independent/hands-on verification of scheduled autonomous runs actually maintaining/fixing software over time, and more detail on trigger configuration options beyond first-party docs.",
+    "confidence": "high",
+    "rationale": "GitHub Copilot explicitly documents scheduled/event-triggered cloud agents ('Automations let you run Copilot cloud agent automatically, on a schedule or in response to events in a repository') that work independently in the background, plus a control plane to track/manage multiple agent sessions and sandboxed execution environments. This directly matches the always-on, autonomous, schedule/trigger-driven maintenance story. Missing for 10: independent/hands-on verification of scheduled agent runs actually fixing software autonomously in production, and more detail on trigger types beyond issue-opened examples.",
     "evidenceIds": [
       "github-copilot-docs-15",
-      "github-copilot-docs-16",
+      "github-copilot-docs-31",
+      "github-copilot-docs-33",
       "github-copilot-docs-14",
-      "github-copilot-docs-8",
-      "github-copilot-docs-23",
-      "github-copilot-docs-3"
+      "github-copilot-docs-16",
+      "github-copilot-docs-23"
     ]
   },
   {
@@ -9841,10 +9890,12 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an interactive API reference with runnable examples; the probe explicitly found no OpenAPI/swagger docs (all candidate paths 404), and none of the docs or community evidence mention an API playground or runnable examples.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows no interactive API reference or runnable-example explorer for GitHub Copilot; a direct probe for OpenAPI/Swagger specs returned 404s on all candidate paths, and docs are plain markdown/text pages rather than an interactive API console.",
     "evidenceIds": [
-      "github-copilot-probe-3"
+      "github-copilot-probe-3",
+      "github-copilot-probe-1",
+      "github-copilot-probe-2"
     ]
   },
   {
@@ -9853,18 +9904,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "GitHub Copilot is a login-tied product subscription (GitHub account/GitHub Enterprise identity); no evidence in the pack shows an API key authentication mode as an alternative to account login. The openapi probe explicitly returned 404s, and no docs mention API-key auth.",
-    "evidenceIds": [
-      "github-copilot-probe-3"
-    ]
+    "rationale": "No evidence in the pack describes API-key authentication as an alternative to account login; Copilot's auth model is tied to GitHub account/subscription (IDE sign-in, CLI, etc.) with no mention of API keys for developer access.",
+    "evidenceIds": []
   },
   {
     "productId": "github-copilot",
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The probe explicitly checked for OpenAPI/Swagger spec files on GitHub Copilot's docs domain and all candidate paths returned 404, and no other evidence item references a machine-readable API spec for Copilot.",
+    "confidence": "high",
+    "rationale": "The evidence pack shows explicit probe attempts to find an OpenAPI/machine-readable spec for GitHub Copilot's docs (openapi.json, swagger.json, etc.) all returning 404, and no other citation mentions a downloadable API spec for Copilot. No documentation or community evidence confirms a machine-readable spec exists.",
     "evidenceIds": [
       "github-copilot-probe-3"
     ]
@@ -9872,14 +9921,14 @@
   {
     "productId": "github-copilot",
     "storyId": "api-sandbox",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "GitHub Copilot documents isolated cloud and local sandbox environments for its agent to safely execute code/tools/filesystem/network operations separate from production (github-copilot-docs-16), which supports agentic testing without touching production data. However, there's no explicit mention of sandbox environments mirroring production data or test-data provisioning workflows, and no independent/hands-on corroboration of this specific sandbox-vs-production separation in the community evidence. Missing for 10: independent verification of sandbox isolation in practice, documentation on how production data is excluded/masked in sandbox runs, and details on data provisioning for realistic testing.",
+    "rationale": "GitHub Copilot explicitly documents that its cloud and local agent execution occurs in isolated sandboxes ('Cloud and local sandboxes provide isolated execution environments that let Copilot safely interact with code, tools, filesystem, and network resources securely on your local machine or in fully isolated cloud environments'), directly matching the story of testing/agentic work without touching production systems. Missing for 10: independent/hands-on verification of sandbox isolation guarantees, and explicit mention of protecting 'production data' specifically rather than just execution environment isolation.",
     "evidenceIds": [
       "github-copilot-docs-16",
-      "github-copilot-docs-15",
-      "github-copilot-docs-23"
+      "github-copilot-docs-31",
+      "github-copilot-docs-15"
     ]
   },
   {
@@ -9888,7 +9937,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack references any versioned API for Copilot itself, an API changelog, or a documented deprecation policy — the OpenAPI probe returned 404s and no docs mention API versioning/deprecation guarantees. This is a fair axis for an AI-native developer product (buyers may want to build on stable Copilot APIs), but there's simply no evidence it exists.",
+    "rationale": "The evidence pack contains no documentation of a versioned API or deprecation policy for GitHub Copilot; the OpenAPI probe explicitly found all candidate spec paths returning 404, and no other citation addresses API versioning/deprecation commitments.",
     "evidenceIds": [
       "github-copilot-probe-3"
     ]
@@ -9898,65 +9947,72 @@
     "storyId": "architecture-navigation",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Copilot Chat can explain code concepts in the editor and Enterprise's knowledge bases pull context from docs/repos, which can help orient a developer in a codebase, and agent mode can 'explore' code as part of task execution. However there's no direct evidence of a dedicated codebase-mapping/architecture-overview feature (e.g., repo-wide summarization or dependency visualization) or hands-on accounts confirming it helps developers find where to start making changes. missing for 10: explicit codebase-wide understanding/onboarding feature, independent/hands-on evidence of using Copilot to orient in a large unfamiliar codebase.",
+    "confidence": "medium",
+    "rationale": "Copilot Chat in the editor is documented to explain concepts and provide context-aware help (docs-22), and enterprise features let teams build a 'shared source of truth' from docs and repos (docs-9) plus MCP integrations that pull in repo/issue/PR context (docs-20, docs-21, docs-25), all of which support exploring an unfamiliar codebase. However, there is no explicit feature description of codebase-wide indexing, dependency/architecture mapping, or a dedicated 'explain this repo' capability, and no hands-on community evidence confirming it helps developers orient in large codebases. Missing for 10: dedicated codebase-mapping/semantic search feature docs, explicit onboarding/architecture-understanding use case, and independent corroboration of effectiveness.",
     "evidenceIds": [
       "github-copilot-docs-22",
       "github-copilot-docs-9",
-      "github-copilot-docs-3",
-      "github-copilot-comm-8"
+      "github-copilot-docs-20",
+      "github-copilot-docs-21",
+      "github-copilot-docs-25"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "automated-commit-and-pr-creation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs describe Copilot's autonomous coding agent that edits files, executes tasks in a sandbox, and lets users 'review changes, and merge completed work' via pull requests (docs-6, docs-8, docs-16), implying it stages changes and opens PRs, but there is no explicit mention of it writing commit messages or creating branches, nor hands-on confirmation of this exact workflow. missing for 10: explicit documentation of commit message generation, branch creation, and independent/community verification of the PR workflow.",
+    "rationale": "GitHub Copilot's cloud/background agent is documented to work independently on tasks, make changes on existing PRs via @copilot mentions, and complete work 'just like a human developer,' which in GitHub's workflow model entails committing changes and opening/updating pull requests (docs-31, docs-32, docs-8, docs-14). However, explicit documentation of branch creation and commit-message authorship mechanics is not directly cited, and there is no independent/hands-on verification of the PR-opening workflow. Missing for 10: explicit branch-creation documentation, independent hands-on confirmation of commit/PR flow, and detail on staging-changes granularity.",
     "evidenceIds": [
-      "github-copilot-docs-3",
-      "github-copilot-docs-6",
+      "github-copilot-docs-31",
+      "github-copilot-docs-32",
       "github-copilot-docs-8",
-      "github-copilot-docs-16"
+      "github-copilot-docs-14",
+      "github-copilot-docs-33"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "automated-pr-review",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm a code review feature (\"Access to Cloud agent and code review\") and Autofix providing contextual vulnerability explanations, indicating Copilot can review PRs and offer contextual feedback, but there's no evidence of it being automatic on every PR by default, nor independent/hands-on confirmation of its quality or coverage. missing for 10: details on automatic triggering per PR, breadth/depth of review feedback, and independent validation of review quality.",
+    "rationale": "GitHub Copilot's docs explicitly describe automated PR code review with contextual feedback, suggested fixes, and severity labeling (High/Medium/Low) for prioritization, plus 'Access to Cloud agent and code review' as a plan feature. This directly matches the story's request for automatic, contextual PR review feedback. Missing for 10: independent/hands-on community evidence specifically validating the PR-review feature's accuracy or usefulness (community citations mostly discuss code completion, not the review feature) and detail on review-triggering automation reliability.",
     "evidenceIds": [
-      "github-copilot-docs-6",
-      "github-copilot-docs-13"
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
+      "github-copilot-docs-6"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "automated-test-and-lint-fixes",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Copilot's agent mode lets it edit files, plan, explore, and execute coding work autonomously (github-copilot-docs-2, github-copilot-docs-3, github-copilot-docs-22), and Autofix can suggest fixes for security issues (github-copilot-docs-13), implying some capacity for code-quality tasks like tests/fixes. However, the evidence never explicitly mentions writing tests, fixing lint errors, resolving merge conflicts, or updating dependencies as concrete supported workflows. Missing for 10: explicit documentation or hands-on proof of test generation, lint-error fixing, merge-conflict resolution, and dependency-update automation.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Copilot's agent mode edits files, validates changes, and can autonomously plan/execute tasks (docs-2,3,22,31), code review with severity-labeled feedback and suggested fixes covers lint/quality issues (docs-28,29), and @copilot on PRs plus cloud agent covers merge conflict resolution and general code changes (docs-32). Dependency updates and explicit test-writing aren't separately documented as named features, so this is inferred from general-purpose agent code editing rather than a dedicated capability. missing for 10: explicit documented examples of writing tests, resolving merge conflicts, and updating dependencies as named use cases, and independent hands-on confirmation of these specific tasks.",
     "evidenceIds": [
       "github-copilot-docs-2",
       "github-copilot-docs-3",
-      "github-copilot-docs-13",
-      "github-copilot-docs-22"
+      "github-copilot-docs-22",
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
+      "github-copilot-docs-31",
+      "github-copilot-docs-32"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "automatic-model-routing",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Official docs explicitly state 'Automatically select the best model for each task' alongside model choice options optimized for speed, accuracy, or cost, directly matching the story. Missing for 10: independent/hands-on corroboration of auto-model-selection behavior and details on how/when it triggers versus manual selection.",
+    "rationale": "GitHub's own docs explicitly state Copilot can 'Automatically select the best model for each task' (docs-17), alongside supporting claims about multiple models optimized for speed/accuracy/cost (docs-7, docs-30). Missing for 10: independent/hands-on verification that auto-selection actually works well in practice, and details on how/when it triggers vs manual model choice.",
     "evidenceIds": [
       "github-copilot-docs-17",
-      "github-copilot-docs-7"
+      "github-copilot-docs-7",
+      "github-copilot-docs-30"
     ]
   },
   {
@@ -9965,23 +10021,27 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Copilot's coding agent and automations let users launch and track multiple agent sessions in parallel (docs-8, docs-14, docs-15), which gives some multi-item automation capability, but there's no explicit documentation of a true bulk operation (e.g., batch-processing many files/issues/PRs in one action) as a first-class feature. missing for 10: explicit bulk/batch action across many repos, files, or issues in a single invocation, and independent hands-on evidence confirming this at scale.",
+    "rationale": "Docs show Copilot can run multiple background cloud-agent sessions in parallel, track them from one control page, and trigger automations on repo events/schedules (docs-8, docs-14, docs-15, docs-33), which supports scaling to many tasks, but there's no explicit evidence of a single bulk command/batch operation (e.g., 'review 50 PRs at once' or 'fix all issues matching X') as a discrete feature. Missing for 10: an explicit bulk-action UI/API (e.g., batch PR review, batch issue triage) and independent confirmation that many items can be processed in one invocation rather than via separate parallel agent sessions.",
     "evidenceIds": [
       "github-copilot-docs-8",
       "github-copilot-docs-14",
       "github-copilot-docs-15",
-      "github-copilot-docs-3"
+      "github-copilot-docs-33",
+      "github-copilot-docs-23"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "GitHub Copilot's docs explicitly describe 'Automations' that run the cloud agent automatically on a schedule or in response to repository events, directly matching the story of rule-based, event-triggered actions. However, this is a single first-party doc mention with no independent/hands-on corroboration or detail on how rules are authored. Missing for 10: independent verification of the automation feature, richer documentation on rule syntax/configuration, and community usage evidence.",
+    "rationale": "GitHub Copilot documents event/schedule-triggered automations for its cloud agent ('run Copilot cloud agent automatically, on a schedule or in response to events in a repository', 'in response to events such as an issue being opened'), plus @mention-triggered PR actions, matching the story's rule-based automatic action pattern. Missing for 10: no independent/hands-on validation of the automation reliability or examples of complex rule chains beyond schedule/issue triggers.",
     "evidenceIds": [
-      "github-copilot-docs-15"
+      "github-copilot-docs-15",
+      "github-copilot-docs-33",
+      "github-copilot-docs-32",
+      "github-copilot-docs-31"
     ]
   },
   {
@@ -9990,12 +10050,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe 'Automations' that run Copilot's cloud agent 'automatically, on a schedule or in response to events in a repository,' directly matching the recurring-jobs story, alongside supporting infrastructure like cloud sandboxes and a control page to track agent sessions. Missing for 10: independent/hands-on verification of scheduling reliability, details on scheduling syntax/limits, and community corroboration of this specific feature.",
+    "rationale": "GitHub Copilot docs explicitly describe 'Automations' that run the cloud agent on a schedule or in response to repository events, allowing recurring/scheduled agent workflows, plus a control page to track multiple scheduled agent sessions. This directly matches the story of scheduling recurring jobs/workflows. Missing for 10: independent/hands-on corroboration of scheduling reliability, and more detail on cron-like configuration options or failure handling.",
     "evidenceIds": [
       "github-copilot-docs-15",
-      "github-copilot-docs-16",
+      "github-copilot-docs-33",
       "github-copilot-docs-14",
-      "github-copilot-docs-6"
+      "github-copilot-docs-31"
     ]
   },
   {
@@ -10003,22 +10063,23 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Copilot's cloud agent automations produce PRs that go through GitHub's native review and merge flow (docs-8), and enterprises can track agent activity via audit logs and a governance control plane (docs-23, docs-14), which implicitly supports versioning/review of automated changes. However, there is no explicit documentation of rolling back or reverting a scheduled/event-driven automation itself (as opposed to reverting a code change via git), nor version history for automation configs. Missing for 10: explicit rollback mechanism for automations, versioning of automation definitions/configs, independent hands-on confirmation of these workflows.",
+    "confidence": "low",
+    "rationale": "Copilot's cloud-agent automations produce PRs that can be reviewed (code review feature, docs-28/29) and tracked via audit logs and a central control plane (docs-23), and since output flows through Git, changes are inherently versioned and revertible via standard PR/commit mechanics. However, there is no direct evidence of a dedicated versioning or rollback mechanism for the automation definitions/schedules themselves (e.g., automation history, revert-to-previous-config). missing for 10: explicit versioning/rollback UI for automation configs, evidence of rolling back an automation run itself (not just its code output), independent confirmation of this workflow in practice.",
     "evidenceIds": [
-      "github-copilot-docs-8",
       "github-copilot-docs-15",
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
       "github-copilot-docs-23",
-      "github-copilot-docs-14"
+      "github-copilot-docs-33"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "autonomous-end-to-end-feature-delivery",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "GitHub Copilot's cloud agent (Copilot coding agent) is documented to plan, explore, and execute work autonomously in isolated cloud sandboxes, launch from GitHub, run tests/tools, and let users track progress and review/merge completed work from a control plane—covering build, test, and review end-to-end. Demo-specific tooling isn't explicitly documented beyond PR review, and there's no independent hands-on account of a full build-test-demo cycle. Missing for 10: independent/hands-on verification of the full cloud agent workflow, explicit demo-generation capability (e.g., live previews) beyond code+PR review.",
+    "rationale": "Docs describe a genuine cloud agent that works independently in the background (assign tasks, plan/explore/execute), runs in isolated cloud sandboxes to interact with code/tools/filesystem, and produces PRs for review with automated code review and severity-labeled feedback — covering build, execute, and review end-to-end. However, 'testing' and 'demo' are only implied (sandbox execution, PR review) rather than explicitly documented as a testing/demo step, and there is no independent/hands-on corroboration of the cloud agent specifically completing a full feature end-to-end (community evidence predates/doesn't cover the cloud agent feature). Missing for 10: explicit test-running/verification evidence, a documented demo/preview mechanism, and independent hands-on validation of cloud agent outcomes.",
     "evidenceIds": [
       "github-copilot-docs-3",
       "github-copilot-docs-6",
@@ -10026,7 +10087,11 @@
       "github-copilot-docs-14",
       "github-copilot-docs-15",
       "github-copilot-docs-16",
-      "github-copilot-docs-23"
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
+      "github-copilot-docs-31",
+      "github-copilot-docs-32",
+      "github-copilot-docs-33"
     ]
   },
   {
@@ -10034,15 +10099,18 @@
     "storyId": "background-cloud-tasks",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "GitHub Copilot's Cloud agent (coding agent) lets developers assign tasks that plan, explore, and execute autonomously in isolated cloud sandboxes, with scheduling/automation, a control plane to track multiple agent sessions, and review/merge workflow, well documented in first-party docs. Missing for 10: independent hands-on evidence/community corroboration of the cloud agent specifically (community citations predate this feature and cover other aspects), and no third-party benchmarking of isolation/security guarantees.",
+    "confidence": "high",
+    "rationale": "Copilot cloud agent is well documented as delegating tasks to run autonomously in an isolated cloud sandbox, working independently in the background like a human developer, with scheduling/automations, a control page to track multiple sessions, and audit logs for governance. missing for 10: independent hands-on community verification of cloud agent reliability/performance (community evidence pack predates cloud agent feature and doesn't corroborate this specific capability).",
     "evidenceIds": [
       "github-copilot-docs-3",
       "github-copilot-docs-6",
       "github-copilot-docs-8",
       "github-copilot-docs-14",
       "github-copilot-docs-15",
-      "github-copilot-docs-16"
+      "github-copilot-docs-16",
+      "github-copilot-docs-31",
+      "github-copilot-docs-33",
+      "github-copilot-docs-23"
     ]
   },
   {
@@ -10051,25 +10119,26 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly state admins can control which MCP servers developers can access via allow lists, and enterprise governance features let leads track/audit agent activity and manage agents from a single control plane, directly matching the engineering-lead's need to gate external tool/integration access. Missing for 10: independent/hands-on verification of the allow-list enforcement and finer-grained per-tool (non-MCP) access controls.",
+    "rationale": "GitHub Copilot provides explicit admin controls to allow-list MCP servers developers can access ('Control which MCP servers developers can access from their IDEs, and use allow lists to prevent unauthorized access'), plus a centralized control plane with audit logs for governance over agents. This directly matches the engineering-lead's need to restrict external tool/integration access. Missing for 10: independent/hands-on verification of the allow-list enforcement in practice, and more granular detail on per-tool (vs per-MCP-server) restriction scope.",
     "evidenceIds": [
       "github-copilot-docs-10",
       "github-copilot-docs-23",
-      "github-copilot-docs-16"
+      "github-copilot-docs-20"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "cross-device-task-continuity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Copilot's cloud/background agents and coding agent sessions are tracked via a centralized control page and can be launched/reviewed from GitHub.com, implying you could start a task from one machine and check/continue it from a browser on another device (github-copilot-docs-6, docs-8, docs-14, docs-15). However, there's no explicit first-party statement describing seamless cross-device handoff, no mention of mobile/browser parity for the interactive IDE experience, and no independent/hands-on confirmation of this specific workflow. Missing for 10: explicit cross-device continuity documentation, mobile/web parity details, and independent verification of resuming a task from a different device.",
+    "rationale": "Copilot's cloud agent and control-plane features (docs-8, docs-14, docs-31-33) let a developer assign a task to an agent from GitHub or an IDE and later check progress or continue via GitHub.com's centralized control page or desktop workspace, which is inherently accessible cross-device/browser. However, this is inferred from the cloud-agent architecture rather than an explicit 'continue from another device' claim, and there's no independent/hands-on confirmation of seamless handoff. Missing for 10: explicit documentation of cross-device session continuation and independent verification that state/context truly persists and is resumable identically on a different machine or browser.",
     "evidenceIds": [
-      "github-copilot-docs-6",
       "github-copilot-docs-8",
       "github-copilot-docs-14",
-      "github-copilot-docs-15"
+      "github-copilot-docs-31",
+      "github-copilot-docs-32",
+      "github-copilot-docs-33"
     ]
   },
   {
@@ -10077,34 +10146,37 @@
     "storyId": "cross-session-memory",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers agent mode, cloud agents, MCP integration, and shared team knowledge sources, but no documentation mentions persistent memory that automatically builds and recalls context across sessions. Custom instructions/shared knowledge bases (docs-9) are static, curated context files rather than autonomous memory formation and recall.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "The evidence pack describes agent mode, cloud agents, MCP context, and code review, but nothing about persistent memory that is automatically built and recalled across sessions—closest is a static 'shared source of truth' repository doc feature, not agent-built memory.",
+    "evidenceIds": [
+      "github-copilot-docs-9"
+    ]
   },
   {
     "productId": "github-copilot",
     "storyId": "custom-agent-skills",
     "verdict": "full",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly state 'Skills allow Copilot to perform specialized tasks' and describe custom MCP server creation/integration to extend Copilot Chat with new tools, directly matching the story of equipping the agent with custom capabilities. Missing for 10: deeper first-party documentation on the Skills feature itself (only a one-line mention) and independent/hands-on community corroboration of custom skill creation.",
+    "rationale": "Docs explicitly describe a 'Skills' feature ('Skills allow Copilot to perform specialized tasks') and 'Custom agents' that let developers tailor Copilot's expertise, plus MCP server extensibility to add custom tools/context. This directly matches the story of equipping the agent with custom skills, though details are thin. Missing for 10: concrete developer walkthrough of creating a skill, independent/hands-on confirmation of using custom skills, and richer documentation depth beyond a single-line description.",
     "evidenceIds": [
       "github-copilot-docs-19",
+      "github-copilot-docs-34",
       "github-copilot-docs-20",
-      "github-copilot-docs-21",
-      "github-copilot-docs-10"
+      "github-copilot-docs-21"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "desktop-visual-diff-review",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "GitHub Copilot docs describe a 'desktop workspace' where users can launch work, track progress across multiple agents, and review changes/merge from one place, plus a centralized control page to jump between agent sessions — supporting side-by-side multi-session management. However, there's no explicit description of a visual diff viewer UI, and no independent/hands-on corroboration of the desktop app's diff-review experience. Missing for 10: explicit visual diff-viewing UI details, hands-on/independent confirmation of desktop app usability for diff review and session switching.",
+    "rationale": "Docs mention a 'desktop workspace' for launching work, tracking multiple agent sessions, and reviewing changes (docs-8, docs-14), and a code-review feature with inline suggested changes (docs-28), suggesting some diff-review and multi-session tracking capability. However, it's unclear whether this 'desktop workspace' is a native desktop app or a web-based GitHub UI, and there's no explicit description of a visual side-by-side diff viewer or dedicated multi-pane session UI as in competing IDE tools. Missing for 10: confirmation of a true native desktop application (not browser-based), explicit visual diff-viewer description, and independent/hands-on evidence of side-by-side session usage.",
     "evidenceIds": [
       "github-copilot-docs-8",
-      "github-copilot-docs-14"
+      "github-copilot-docs-14",
+      "github-copilot-docs-28"
     ]
   },
   {
@@ -10112,8 +10184,8 @@
     "storyId": "enterprise-grade-auth",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack includes enterprise governance features like audit logs and a control plane (github-copilot-docs-23) but contains no mention of SSO, SAML, SCIM, or enterprise identity provider authentication for Copilot. missing for 10: SSO/SAML integration docs, enterprise IdP support, compliance certifications tied to authentication.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses SSO/SAML, enterprise identity providers (e.g., Okta, Azure AD), or cloud platform authentication for Copilot; docs cover agents, MCP, models, and governance features but not identity/authentication for enterprise compliance. Missing for 10: SSO/SAML integration docs, enterprise IdP support (Azure AD/Okta), any mention of authentication/compliance certifications tied to identity federation.",
     "evidenceIds": []
   },
   {
@@ -10122,25 +10194,26 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state that Copilot's agent capabilities (cloud agent, agent apps, automations) are accessed through the existing Copilot subscription rather than a separate sign-in or purchase ('Agent apps let you use partner-built agents directly in your workflows on GitHub, powered by your Copilot subscription'; 'Access to Cloud agent and code review'), confirming a single subscription unlocks agent mode across editor and cloud. Missing for 10: independent/hands-on confirmation of the sign-in/subscription-gating flow and clarity on which specific paid tiers unlock agent access.",
+    "rationale": "Docs show that Copilot's cloud/coding agent features (agent mode, cloud agent, agent apps) are powered by and included in a user's existing Copilot subscription, e.g. 'Agent apps let you use partner-built agents directly in your workflows on GitHub, powered by your Copilot subscription' and 'Access to Cloud agent and code review' listed as plan features, meaning no separate sign-up is needed beyond the existing subscription/login. Missing for 10: explicit tier-by-tier sign-in flow documentation and independent user confirmation that no extra account creation is required beyond the existing GitHub/Copilot login.",
     "evidenceIds": [
       "github-copilot-docs-18",
       "github-copilot-docs-6",
-      "github-copilot-docs-15",
-      "github-copilot-docs-3"
+      "github-copilot-docs-31",
+      "github-copilot-docs-8"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "external-workflow-tool-integration",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Copilot Chat supports connecting MCP servers to pull in context from other applications and even lets developers build custom MCP servers, which is the generic mechanism that could integrate tools like Jira, Slack, or Google Drive, plus governance controls (allow lists) for which MCP servers are permitted. However, the evidence never names Jira, Slack, or Google Drive specifically, nor shows a first-party or verified integration for these tools. Missing for 10: named/official connectors for Jira, Slack, Google Drive, and independent confirmation these specific integrations work in practice.",
+    "rationale": "Copilot supports connecting to external tools via MCP servers (docs-10, docs-20, docs-21, docs-25, docs-35), and states it can create custom MCP servers for specific needs, which theoretically enables Jira/Slack/Google Drive integration. However, no evidence names first-party or documented connectors for Jira, Slack, or Google Drive specifically. missing for 10: named official integrations or docs referencing Jira/Slack/Google Drive, independent confirmation these connectors work in practice.",
     "evidenceIds": [
-      "github-copilot-docs-10",
       "github-copilot-docs-20",
-      "github-copilot-docs-21"
+      "github-copilot-docs-21",
+      "github-copilot-docs-10",
+      "github-copilot-docs-35"
     ]
   },
   {
@@ -10148,8 +10221,8 @@
     "storyId": "free-tier-account-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack describes Copilot's features, pricing controls, and enterprise governance, but contains no mention of a free tier, sign-up flow via personal GitHub account, or absence of API-key management. Missing for 10: explicit documentation of a free/individual tier, sign-in flow with a personal account, and confirmation that no API key is required.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of a free tier, personal GitHub account sign-in flow, or API-key-free authentication for Copilot; all docs items describe features (agent mode, MCP, code review) but never address account-based free-tier access or pricing/sign-in mechanics.",
     "evidenceIds": []
   },
   {
@@ -10158,11 +10231,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Copilot's agent mode is documented to 'plan, explore, and execute work autonomously' and chat can 'explain concepts' in the editor, suggesting some autonomous exploration without manual file picking, but there is no explicit documentation of a whole-codebase mapping/explanation feature or automatic codebase-wide indexing for this purpose. missing for 10: explicit docs on full-repo semantic indexing/mapping, hands-on evidence of explaining an entire unfamiliar codebase, and confirmation that no manual context selection is needed.",
+    "rationale": "Copilot's agent mode and cloud agent are documented to 'plan, explore, and execute work autonomously' across a repo, and 'skills' let it perform specialized tasks, implying some autonomous codebase exploration without hand-picked files, but there's no explicit doc describing a whole-codebase 'map and explain' capability. missing for 10: dedicated codebase-mapping/explanation feature docs, evidence of automatic whole-repo context gathering without manual file selection, and independent hands-on confirmation of this specific workflow.",
     "evidenceIds": [
       "github-copilot-docs-3",
+      "github-copilot-docs-9",
       "github-copilot-docs-22",
-      "github-copilot-docs-9"
+      "github-copilot-docs-31"
     ]
   },
   {
@@ -10185,13 +10259,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "GitHub documents a cloud coding agent that can be assigned tasks from GitHub, autonomously plan/explore/execute in the background, and produce reviewable, mergeable pull requests from a centralized workspace, plus automations that trigger the agent from repository events (e.g., issues) — this directly maps to turning a tracked issue into an end-to-end PR. Missing for 10: independent/hands-on evidence specifically validating the issue-to-PR workflow's success rate or quality, and explicit documentation of an 'assign issue to Copilot' UI step (only inferred from 'launch work from GitHub' and automations).",
+    "rationale": "GitHub Copilot's cloud agent can be assigned directly from an issue or via @copilot mentions, working autonomously to plan, explore, execute changes, and open a pull request, with automations to trigger this on issue events; the desktop workspace lets developers track, review, and merge the resulting PR end-to-end. missing for 10: independent hands-on verification of the full issue-to-merged-PR flow (community evidence covers earlier code-completion/chat era, not cloud agent specifically) and concrete success-rate data on autonomous PR quality.",
     "evidenceIds": [
       "github-copilot-docs-3",
-      "github-copilot-docs-6",
       "github-copilot-docs-8",
+      "github-copilot-docs-14",
       "github-copilot-docs-15",
-      "github-copilot-docs-14"
+      "github-copilot-docs-31",
+      "github-copilot-docs-32",
+      "github-copilot-docs-33"
     ]
   },
   {
@@ -10213,12 +10289,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "GitHub docs confirm a 'public code matching' feature that flags Copilot suggestions matching public GitHub code (docs-11), which is the core capability an engineering lead would need for review-safety, but there is no evidence of a dedicated license-reference report/dashboard an engineering lead can inspect, and community threads show ongoing concern about verbatim/GPL code leakage and licensing risk that the feature only partially mitigates. Missing for 10: detailed documentation of how license info is surfaced/reported to engineering leads, admin-facing audit views for public-code matches, and independent confirmation the matching filter reliably catches licensed code beyond GitHub's own 0.1% verbatim-rate claim.",
+    "rationale": "GitHub Copilot documents a public-code matching feature that searches public GitHub repos for matches to a suggestion (docs-11), which is the closest evidence to the story's ask. However, the evidence pack gives no detail on how license attribution is actually surfaced to an engineering lead, and community discussion raises real concerns about verbatim/near-verbatim reproduction and licensing risk (comm-12, comm-13, comm-14, comm-16), with only partial rebuttal (comm-17) — indicating the feature's coverage and reliability for license-safety review is limited. Missing for 10: detailed docs on license display/attribution UI, audit/reporting workflow for engineering leads, and independent verification that the matching feature reliably flags copyleft/licensed snippets.",
     "evidenceIds": [
       "github-copilot-docs-11",
       "github-copilot-comm-12",
       "github-copilot-comm-13",
-      "github-copilot-comm-14"
+      "github-copilot-comm-14",
+      "github-copilot-comm-16",
+      "github-copilot-comm-17"
     ]
   },
   {
@@ -10227,20 +10305,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence describes any capability to attach to, inspect, or debug a live running web application (e.g. breakpoints, runtime state inspection, live server connection) from Copilot; documented features cover code completion, agent-based file editing, cloud sandboxes, and MCP context integration but not live/runtime debugging.",
+    "rationale": "Evidence covers code completion, chat, agent mode file edits, cloud agents, code review, and MCP integrations, but nothing about attaching to or debugging a live running web application (e.g., runtime inspection, breakpoints, log/trace analysis of a running process). No evidence supports this capability.",
     "evidenceIds": []
   },
   {
     "productId": "github-copilot",
     "storyId": "local-terminal-agent",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "GitHub confirms an official Copilot CLI (probe-4) and terminal integration via GitHub CLI and Windows Terminal Canary (docs-5), plus local sandbox execution for agent mode (docs-16), showing a real local terminal agent path. However, the terminal chat integration is explicitly called out as still in 'Canary' (experimental) status and there's no independent/community evidence validating the CLI agent experience in practice. Missing for 10: hands-on community verification of the terminal/CLI agent workflow, and confirmation the CLI is fully GA rather than experimental in all channels.",
+    "rationale": "GitHub Copilot CLI is officially documented as letting developers use Copilot directly from the terminal, including voice-to-text prompting, and is confirmed installable per docs and probe evidence. missing for 10: independent hands-on validation of the CLI agent's local execution/quality, and more detail on its autonomous/agentic capabilities (vs. just chat) within the terminal.",
     "evidenceIds": [
-      "github-copilot-docs-5",
-      "github-copilot-docs-16",
-      "github-copilot-probe-4"
+      "github-copilot-docs-26",
+      "github-copilot-docs-27",
+      "github-copilot-probe-4",
+      "github-copilot-docs-5"
     ]
   },
   {
@@ -10249,7 +10328,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses including multiple project directories/workspaces in a single Copilot session for broader context; docs mention workspace editing, MCP context sharing, and agent mode, but not multi-directory/multi-repo session context.",
+    "rationale": "The evidence pack describes agent mode, chat, MCP integrations, and cloud agents, but contains no mention of including multiple project directories/folders in a single Copilot session for broader context. Missing for 10: any documentation of multi-root workspace support, cross-directory indexing, or explicit multi-project context sharing in one session.",
     "evidenceIds": []
   },
   {
@@ -10258,13 +10337,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "GitHub Copilot Chat is documented as available directly inside VS Code, JetBrains, and Visual Studio, with full contextual chat, code explanation, and edit proposals within the editor (github-copilot-docs-4, docs-22, docs-24). Community feedback confirms hands-on daily use of Copilot within IDEs, corroborating real-world contextual assistance. Missing for 10: independent hands-on validation specifically of the chat UX (vs. completions) and no mention of JetBrains chat parity issues raised in older community threads.",
+    "rationale": "Docs confirm Copilot Chat is built into VS Code, JetBrains, and Visual Studio for contextual in-IDE chat (explaining concepts, proposing edits, agent mode), and community feedback corroborates real usage inside the editor. Missing for 10: independent hands-on report specifically about the chat UX (most community evidence focuses on completions, not chat).",
     "evidenceIds": [
       "github-copilot-docs-4",
       "github-copilot-docs-22",
       "github-copilot-docs-24",
-      "github-copilot-comm-1",
-      "github-copilot-comm-6"
+      "github-copilot-comm-1"
     ]
   },
   {
@@ -10273,9 +10351,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly state users can 'Choose from leading LLMs optimized for speed, accuracy, or cost' and assign tasks to different provider agents (Copilot, Claude by Anthropic, OpenAI Codex), confirming multi-model choice; there's also an 'automatically select the best model' option for those who don't want to choose manually. Missing for 10: independent hands-on confirmation of the model picker UI/UX and any limitations tied to plan tier.",
+    "rationale": "GitHub's own docs explicitly state Copilot supports multiple AI models from different providers (e.g., Claude, OpenAI Codex) and lets users 'choose from leading LLMs optimized for speed, accuracy, or cost,' with a dedicated supported-models reference page and an auto-select option. This directly matches the story of choosing the underlying model per session. Missing for 10: independent/hands-on community confirmation of the model-picker UI in practice and details on per-session persistence of the choice.",
     "evidenceIds": [
       "github-copilot-docs-7",
+      "github-copilot-docs-30",
       "github-copilot-docs-3",
       "github-copilot-docs-17"
     ]
@@ -10285,11 +10364,13 @@
     "storyId": "multi-platform-task-kickoff",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence confirms launching Copilot cloud agent tasks from GitHub itself (docs-8, docs-15, docs-18: 'Launch work from GitHub', automations triggered by repository events, partner agent apps in GitHub workflows), but there is no evidence of triggering agents from GitLab, Linear, or Slack. Missing for 10: documented GitLab integration, Linear integration, Slack integration for kicking off agent tasks, and any independent confirmation of these cross-platform triggers.",
+    "confidence": "medium",
+    "rationale": "Docs clearly show agent tasks can be kicked off from GitHub itself (mentioning @copilot on a PR, automations triggered by repo events, cloud agent background execution), and Copilot is described as working across 'chat apps' generically, but no evidence specifically documents launching agent tasks from GitLab, Linear, or Slack. Missing for 10: explicit GitLab integration, explicit Linear integration, explicit Slack integration for triggering agent tasks.",
     "evidenceIds": [
-      "github-copilot-docs-8",
-      "github-copilot-docs-15",
+      "github-copilot-docs-31",
+      "github-copilot-docs-32",
+      "github-copilot-docs-33",
+      "github-copilot-docs-35",
       "github-copilot-docs-18"
     ]
   },
@@ -10298,13 +10379,9 @@
     "storyId": "multimodal-app-generation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack shows GitHub Copilot accepting a sketch, image, or PDF design as input to generate a working app; all documented features center on text/code-based completion, chat, and agent workflows within IDEs and GitHub. Missing for 10: any image/sketch/PDF upload or design-to-code feature, multimodal input support, or vision-based app scaffolding evidence.",
-    "evidenceIds": [
-      "github-copilot-docs-1",
-      "github-copilot-docs-2",
-      "github-copilot-docs-22"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence that Copilot can take a sketch, image, or PDF design and generate a working app from it; documentation focuses on code completion, chat, agent mode, cloud agents, and MCP integration, with no mention of image/PDF-to-code or multimodal design-to-app generation.",
+    "evidenceIds": []
   },
   {
     "productId": "github-copilot",
@@ -10312,12 +10389,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Copilot Chat lets developers ask natural-language questions to explain code, propose fixes, and use agent mode to edit/validate files, and Copilot Autofix gives contextual explanations for fixing vulnerabilities—core debugging/troubleshooting via NL queries. missing for 10: no independent hands-on evidence specifically validating debugging workflows (evidence is vendor docs plus unrelated community commentary on code quality/copyright).",
+    "rationale": "Copilot Chat explicitly supports natural-language interaction for explaining concepts, code review with prioritized issue severity, and agent mode for autonomous exploration and fixing—core debugging/troubleshooting workflows (docs-4, docs-22, docs-28, docs-29). Autofix also provides contextual explanations for vulnerabilities (docs-13), reinforcing NL-driven troubleshooting.\n\nmissing for 10: a dedicated 'debug' feature description, independent hands-on evidence specifically validating debugging accuracy/success (community evidence focuses on completion quality and licensing concerns, not debugging).",
     "evidenceIds": [
-      "github-copilot-docs-22",
       "github-copilot-docs-4",
-      "github-copilot-docs-13",
-      "github-copilot-docs-2"
+      "github-copilot-docs-22",
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
+      "github-copilot-docs-13"
     ]
   },
   {
@@ -10326,26 +10404,28 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs show Copilot's agent mode can edit files across a workspace, plan/explore/execute autonomously, and handle background tasks assigned in plain language, with community reports confirming real-world multi-file productivity gains (SymPy/NumPy usage, velocity increases). Missing for 10: independent hands-on evidence of large-scale, cross-repo multi-file bug fixes rather than single-file completions, and some community skepticism about vague 'fix the bug' prompts leading to unreliable results.",
+    "rationale": "Docs describe Copilot agent mode editing files across the workspace, cloud agents that plan/explore/execute tasks autonomously (including from plain-language issue/PR descriptions via @copilot mentions), and code review/autofix capabilities, directly matching the story of describing a feature/bug and having it implemented across multiple files. Community evidence corroborates real usage of the agent for multi-file/complex code tasks, though some hands-on reports note quality limitations on nuanced 'fix the bug' requests. Missing for 10: rigorous independent benchmarking of multi-file correctness and more first-hand accounts specifically of cross-file feature implementation success/failure rates.",
     "evidenceIds": [
       "github-copilot-docs-2",
       "github-copilot-docs-3",
-      "github-copilot-docs-8",
-      "github-copilot-comm-7",
+      "github-copilot-docs-31",
+      "github-copilot-docs-32",
+      "github-copilot-docs-22",
       "github-copilot-comm-10"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "Evidence shows Copilot chat is restricted to specific IDEs (VS Code, JetBrains, Visual Studio) rather than exposed via a general API, and probes for an OpenAPI/swagger spec all returned 404, indicating no documented API surface mirroring UI capabilities. While a CLI exists, there is no evidence that all UI functionality (chat, agent mode, code review, MCP management) is programmatically accessible via an API.",
+    "rationale": "Copilot offers a CLI (docs-26, probe-4) and MCP server integration (docs-25) that give some programmatic access to Copilot/GitHub features, but there is no evidence of a comprehensive public API/OpenAPI spec covering the full range of UI capabilities (chat, agent mode, cloud agent, code review) — the openapi probe returned 404 for all candidate endpoints (probe-3). Missing for 10: a documented REST/GraphQL API exposing chat, agent-mode edits, cloud-agent orchestration, and code review equivalently to the UI, and any independent confirmation that CLI/MCP covers full feature parity.",
     "evidenceIds": [
-      "github-copilot-docs-4",
-      "github-copilot-probe-3",
-      "github-copilot-probe-4"
+      "github-copilot-docs-26",
+      "github-copilot-probe-4",
+      "github-copilot-docs-25",
+      "github-copilot-probe-3"
     ]
   },
   {
@@ -10354,7 +10434,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of any data export feature, open-format export, or account portability mechanism for GitHub Copilot; evidence covers features, MCP integration, and community sentiment but nothing about exporting user data or leaving the platform with it.",
+    "rationale": "No evidence in the pack describes any data export feature, open-format export, or account data portability mechanism for GitHub Copilot; documentation covers coding, agents, MCP, and models but nothing about exporting user data or leaving the platform with your data intact.",
     "evidenceIds": []
   },
   {
@@ -10363,7 +10443,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "GitHub Copilot is closed-source proprietary software; no evidence in the pack indicates its source code is published under any open license, and community discussion focuses on training data/output licensing, not the product's own source availability.",
+    "rationale": "GitHub Copilot is closed-source proprietary software; no evidence in the pack shows any open-license source availability, and community discussion instead focuses on training-data/licensing concerns, not the product's own source code being open.",
     "evidenceIds": []
   },
   {
@@ -10372,7 +10452,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "GitHub Copilot is a proprietary cloud SaaS product with no evidence of any self-hosted/on-prem deployment option for its core AI models or service; all evidence describes cloud-hosted agents, IDE integrations, and enterprise controls rather than self-hosting the core product.",
+    "rationale": "GitHub Copilot is a proprietary cloud/IDE-integrated service with no evidence of any self-hostable core model, backend, or deployment option; all documented capabilities rely on GitHub's hosted infrastructure and models. Self-hosting is a legitimate axis for AI-native openness comparisons, but nothing in the evidence pack indicates it is possible.",
     "evidenceIds": []
   },
   {
@@ -10381,13 +10461,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe launching multiple background cloud agents, tracking progress across sessions from a control plane, and scheduling automations to run agents on events/cron, which supports fleets working in parallel; however there's no explicit evidence of agents running autonomously for 'hours or days' or independent hands-on confirmation of long-running multi-day parallel fleets. missing for 10: independent/hands-on verification of long-duration (hours/days) autonomous runs, explicit scale limits on parallel agent count, and third-party confirmation of the fleet-management workflow.",
+    "rationale": "GitHub Copilot's cloud agent supports background autonomous work, scheduled/event-triggered automations, and a control page to track and manage multiple agent sessions in parallel (docs-8, docs-14, docs-15, docs-31, docs-33), which covers the 'fleets working in parallel' concept. However, evidence doesn't confirm true multi-hour/multi-day persistent autonomous runs at scale or independent hands-on validation of large fleets; most evidence is vendor docs rather than field reports. missing for 10: independent/hands-on confirmation of long-running (hours/days) parallel agent fleets, concrete scale limits or examples of many simultaneous agents, and community verification of duration/reliability at scale.",
     "evidenceIds": [
-      "github-copilot-docs-3",
       "github-copilot-docs-8",
       "github-copilot-docs-14",
       "github-copilot-docs-15",
-      "github-copilot-docs-16",
+      "github-copilot-docs-31",
+      "github-copilot-docs-33",
       "github-copilot-docs-23"
     ]
   },
@@ -10396,13 +10476,13 @@
     "storyId": "parallel-task-attempt-comparison",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "GitHub Copilot's coding-agent docs describe tracking multiple concurrent agent sessions from one workspace and reviewing/merging changes (github-copilot-docs-8, github-copilot-docs-14, github-copilot-docs-3), which implies some parallel-task-and-review capability, but this describes managing multiple distinct assigned tasks rather than explicitly running several attempts at the *same* task and comparing outcomes before choosing one. Missing for 10: explicit documentation of spawning multiple parallel attempts on one task, a UI for side-by-side diff/result comparison of attempts, and any independent/hands-on evidence confirming this workflow actually works as described.",
+    "confidence": "medium",
+    "rationale": "Copilot's cloud/background agents support launching and tracking multiple agent sessions in parallel from a single control page and desktop workspace (docs-8, docs-14, docs-31), which enables running concurrent tasks. However, there's no explicit documentation of running multiple attempts of the *same* task and comparing outputs before selecting one—the evidence describes managing distinct tasks/agents, not competing solutions to a single task. Missing for 10: explicit multi-attempt-per-task workflow, UI for side-by-side comparison of alternative solutions, and any hands-on/community confirmation of this specific parallel-attempt-and-choose pattern.",
     "evidenceIds": [
-      "github-copilot-docs-3",
       "github-copilot-docs-8",
       "github-copilot-docs-14",
-      "github-copilot-docs-15"
+      "github-copilot-docs-31",
+      "github-copilot-docs-23"
     ]
   },
   {
@@ -10434,15 +10514,16 @@
   {
     "productId": "github-copilot",
     "storyId": "pre-merge-diff-inspection",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "GitHub Copilot ships a Code Review agent, an Autofix feature for vulnerabilities, and a workspace that lets developers 'review changes, and merge completed work' after agent-driven edits, directly supporting diff inspection and pre-merge checks. However, this is all first-party docs with no independent/hands-on validation of review accuracy, and there's no explicit mention of running test suites/CI checks as part of this flow. Missing for 10: independent evidence of review quality/false-positive rates, explicit CI/test execution integration, and hands-on developer accounts of catching real bugs before merge.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Copilot provides code review with inline suggested changes and severity-labeled comments (docs-28, docs-29), integrated with PR diffs, plus Autofix for vulnerability detection (docs-13) and agent mode validation of files (docs-22). This directly supports inspecting diffs and catching problems pre-merge. Missing for 10: independent/hands-on evidence of the code-review feature's real-world accuracy and no explicit mention of running CI/test checks as part of the flow.",
     "evidenceIds": [
-      "github-copilot-docs-6",
-      "github-copilot-docs-8",
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
       "github-copilot-docs-13",
-      "github-copilot-docs-22"
+      "github-copilot-docs-22",
+      "github-copilot-docs-6"
     ]
   },
   {
@@ -10451,7 +10532,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic controls for Copilot data; only general privacy items like opt-out of training data are present, which do not address residency choice.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or geographic storage controls for GitHub Copilot; only data-training opt-out is mentioned, which is a different concern.",
     "evidenceIds": []
   },
   {
@@ -10460,7 +10541,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "GitHub explicitly documents an opt-out for individual subscribers ('Individual subscribers can opt out of having their data used for AI model training at any time'), directly satisfying the story's core ask. However, community commentary raises unresolved skepticism about enterprise-level guarantees ('Can these enterprises really make sure that their code won't be used to train Copilot? I am skeptical'), and there's no detail on default settings, organization-level controls, or verification mechanisms. Missing for 10: independent verification that opt-out is honored, clarity on business/enterprise tier defaults and controls, and technical detail on how opt-out is enforced.",
+    "rationale": "GitHub's docs explicitly state individual subscribers can opt out of having their data used for AI model training at any time (github-copilot-docs-12), directly satisfying the story's core ask. However, the evidence pack lacks detail on how opt-out is enforced, whether it covers all Copilot data flows (e.g., telemetry, code review, agents), and community commentary voices skepticism (not concrete contradiction) about whether enterprise code can truly be excluded. Missing for 10: independent verification that opt-out is honored in practice, clarity on enterprise/org-level data-use guarantees, and details on scope of what 'training' opt-out actually excludes.",
     "evidenceIds": [
       "github-copilot-docs-12",
       "github-copilot-comm-18"
@@ -10483,8 +10564,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm individual subscribers can opt out of having their data used for AI model training (github-copilot-docs-12), but this is narrower than full telemetry/usage-tracking opt-out; a community report from an early preview noted mandatory 'additional telemetry terms' with no opt-out (github-copilot-comm-5), suggesting telemetry itself isn't fully controllable. Missing for 10: explicit first-party documentation of a general telemetry/usage-tracking opt-out setting (beyond training-data opt-out), and independent confirmation that telemetry can be disabled in current production versions.",
+    "confidence": "medium",
+    "rationale": "Docs confirm individual subscribers can opt out of having their code data used for AI model training, but this is narrower than opting out of telemetry/usage tracking broadly, and no evidence describes a general telemetry opt-out toggle. Community commentary (comm-5) even notes agreeing to 'additional telemetry terms' during a preview with no opt-out mentioned. Missing for 10: explicit telemetry/usage-tracking opt-out setting, documentation distinguishing telemetry from training-data opt-out, and independent confirmation that opting out actually stops telemetry collection.",
     "evidenceIds": [
       "github-copilot-docs-12",
       "github-copilot-comm-5"
@@ -10496,11 +10577,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs mention Copilot's cloud agent runs in isolated cloud/local sandboxes and can be automated via scheduled runs, implying some environment execution capability, but there is no explicit mention of configuring dependencies, install steps, or a reproducible setup file (e.g., devcontainer/setup-steps) for the cloud agent's environment. missing for 10: explicit documentation of a configuration mechanism (like a setup-steps or devcontainer file) for specifying dependencies/build steps, and any hands-on confirmation that the environment is reproducible across runs.",
+    "rationale": "Docs mention 'Cloud and local sandboxes provide isolated execution environments' for Copilot cloud agent and background task automation, implying some environment abstraction, but there is no explicit evidence of a mechanism (e.g., a setup-steps config, devcontainer, or dependency manifest) for developers to define reproducible cloud environment setup steps. Missing for 10: explicit documentation of a configuration file/workflow for specifying dependencies/setup steps, independent confirmation of reproducibility across runs.",
     "evidenceIds": [
-      "github-copilot-docs-6",
-      "github-copilot-docs-15",
-      "github-copilot-docs-16"
+      "github-copilot-docs-16",
+      "github-copilot-docs-31",
+      "github-copilot-docs-33"
     ]
   },
   {
@@ -10508,12 +10589,14 @@
     "storyId": "root-cause-analysis",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Copilot's chat/agent mode, code explanation, and edit capabilities can help explore code and propose fixes, which supports reproducing issues and narrowing root causes, but there is no direct evidence of features specifically for issue reproduction, debugging/root-cause workflows, or fix verification (e.g., test generation/execution tied to a bug). missing for 10: dedicated debugging/root-cause-analysis workflow evidence, test-driven fix verification evidence, and hands-on community validation of this specific use case.",
+    "confidence": "medium",
+    "rationale": "Copilot's agent mode and chat can propose edits and 'validate files' (docs-22), Autofix explains and suggests fixes for vulnerabilities (docs-13), and code review flags issues with severity (docs-28/29), which together support parts of root-cause analysis and fix verification, but there is no explicit documentation of reproducing bugs, running/debugging tests, or a dedicated root-cause investigation workflow. missing for 10: explicit reproduction-of-issue workflow, test-execution/debugging tooling, and independent hands-on evidence of root-cause narrowing.",
     "evidenceIds": [
-      "github-copilot-docs-2",
+      "github-copilot-docs-13",
       "github-copilot-docs-22",
-      "github-copilot-docs-3"
+      "github-copilot-docs-28",
+      "github-copilot-docs-29",
+      "github-copilot-docs-16"
     ]
   },
   {
@@ -10522,11 +10605,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly state 'Cloud and local sandboxes provide isolated execution environments that let Copilot safely interact with code, tools, filesystem, and network resources securely on your local machine or in fully isolated cloud environments,' directly matching the story, plus governance controls like audit logs and MCP server allow lists reinforce review-safety. Missing for 10: independent/hands-on verification of sandbox isolation behavior and more detail on configuration/limits of the sandbox.",
+    "rationale": "Docs explicitly state that Cloud and local sandboxes provide isolated execution environments letting Copilot safely interact with code, tools, filesystem, and network resources, either locally or in fully isolated cloud environments, with additional governance controls like MCP server allow lists and audit logs. Missing for 10: independent/hands-on verification of sandbox isolation guarantees and no detail on sandbox escape/limits.",
     "evidenceIds": [
       "github-copilot-docs-16",
-      "github-copilot-docs-23",
-      "github-copilot-docs-10"
+      "github-copilot-docs-10",
+      "github-copilot-docs-23"
     ]
   },
   {
@@ -10535,22 +10618,25 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Docs explicitly claim a feature to 'create a shared source of truth that includes context from your docs and repositories' for team knowledge consistency, matching the story directly. However, this is a single vague marketing line with no elaboration on how the workspace is created/structured, no independent or hands-on corroboration of this specific capability. Missing for 10: technical detail on setup/config of shared knowledge workspace, independent verification, community usage evidence.",
+    "rationale": "Docs explicitly claim the ability to 'scale knowledge and keep teams consistent by creating a shared source of truth that includes context from your docs and repositories,' directly matching the story, and related enterprise-governance features (control planes, audit logs, MCP allow-lists) support team-wide consistency. However, this is a single vendor-claimed line item with no elaboration on setup, structure, or how it functions as a 'workspace,' and no independent/hands-on evidence corroborates it. Missing for 10: independent verification, concrete workflow/UI details, and community confirmation that teams actually use this as a shared source of truth.",
     "evidenceIds": [
-      "github-copilot-docs-9"
+      "github-copilot-docs-9",
+      "github-copilot-docs-23",
+      "github-copilot-docs-10"
     ]
   },
   {
     "productId": "github-copilot",
     "storyId": "terminal-scripting-automation",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "GitHub docs confirm a dedicated Copilot CLI exists and that cloud agents can be run automatically on a schedule or via repo events (Automations), supporting non-interactive automation use cases, and cloud/local sandboxes provide isolated execution for such runs. However, there is no explicit documentation of a headless/non-interactive scripting mode with CLI flags, exit codes, or CI pipeline examples, nor independent hands-on confirmation of scripted automation. Missing for 10: documented non-interactive CLI flags/exit-code behavior, CI/CD pipeline examples, and independent verification of scripted usage.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Copilot CLI (docs-26) lets you invoke Copilot from a terminal, and Copilot cloud agent 'Automations' (docs-15, docs-33) can be triggered on a schedule or repository events, which supports some non-interactive workflow automation. However, there is no direct evidence of a documented headless/non-interactive CLI flag (e.g., a scripted prompt-and-exit mode with exit codes) for running Copilot CLI itself inside arbitrary scripts. missing for 10: explicit CLI non-interactive/scripting mode docs, evidence of exit-code/output-parsing support for pipelines, independent hands-on confirmation of script usage.",
     "evidenceIds": [
-      "github-copilot-probe-4",
+      "github-copilot-docs-26",
       "github-copilot-docs-15",
-      "github-copilot-docs-16"
+      "github-copilot-docs-33",
+      "github-copilot-docs-31"
     ]
   },
   {
@@ -10559,7 +10645,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly state individual subscribers can opt out of having their code/prompts used for AI model training at any time, which directly satisfies the story. However, the evidence only covers individual-level opt-out, not an org/enterprise-wide policy control an engineering-lead would need to enforce across a team, and community commentary expresses skepticism about whether enterprises can truly guarantee their code isn't used for training. Missing for 10: enterprise/org-wide opt-out documentation, independent verification of enforcement, and enterprise admin controls for training-data policy.",
+    "rationale": "Docs explicitly state individual subscribers can opt out of AI model training at any time (github-copilot-docs-12), which covers a developer-level version of this story. However, evidence does not show an org-wide/enterprise admin policy control that an engineering-lead could set organization-wide, and one community comment expresses skepticism about enterprise assurance (not a concrete contradiction). Missing for 10: enterprise/org-level policy documentation, admin-console controls, and independent verification of enforcement.",
     "evidenceIds": [
       "github-copilot-docs-12",
       "github-copilot-comm-18"
@@ -10582,13 +10668,14 @@
   {
     "productId": "github-copilot",
     "storyId": "vulnerability-autofix",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "GitHub Copilot Autofix is explicitly documented as providing contextual explanations and code suggestions to fix vulnerabilities, directly matching the story, and this sits within a broader security/governance feature set (audit logs, MCP access controls) that supports code review safety. Missing for 10: independent hands-on validation of Autofix's accuracy/effectiveness and detail on scope of vulnerability coverage beyond the single doc claim.",
+    "rationale": "GitHub Copilot Autofix is explicitly documented to provide 'contextual explanations and code suggestions to help developers fix vulnerabilities in code' and Copilot code review adds severity-labeled feedback with suggested fixes, directly matching the story. However, this is first-party documentation only with no independent/hands-on validation of Autofix's real-world effectiveness, and no detail on scope/limitations (e.g., which languages, integration with Advanced Security). missing for 10: independent corroboration of Autofix accuracy, hands-on developer reports validating the fix quality, details on prerequisites/limitations of the feature.",
     "evidenceIds": [
       "github-copilot-docs-13",
-      "github-copilot-docs-6"
+      "github-copilot-docs-28",
+      "github-copilot-docs-29"
     ]
   },
   {
