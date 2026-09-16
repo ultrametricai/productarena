@@ -2310,16 +2310,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "The Snowflake CLI runs headlessly (verified via runtime probe with snow sql supporting inline queries, file/stdin piping, and variable substitution) and the SQL API/REST API let an agent authenticate, submit SQL, and retrieve results entirely without Snowsight; RBAC governs access and Access History/Query History provide governance visibility over that programmatic activity. Combined with the documented Cortex MCP server for agent-native access, this covers authenticate to query to read-results end-to-end via CLI/API. missing for 10: explicit first-party example of schema discovery (e.g., SHOW/DESCRIBE) via CLI/API in an agent workflow, and independent non-Snowflake confirmation of full headless governed round-trips",
+    "rationale": "Snowflake provides multiple governed, non-dashboard paths for an agent to run SQL end-to-end: the SQL API (REST) for authenticating and executing queries/managing objects, the Snowflake CLI for programmatic access, RBAC/access history for governance, and a Snowflake-managed MCP server that lets agents securely retrieve data and execute SQL as tools without deploying infrastructure. missing for 10: independent/hands-on third-party validation of the full agent workflow (auth→discover→query→read-results) via CLI/API/MCP, and explicit documentation of schema-discovery APIs (e.g., information_schema access) tied directly to the MCP/SQL API flow.",
     "evidenceIds": [
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
       "snowflake-docs-65",
       "snowflake-docs-66",
+      "snowflake-docs-73",
+      "snowflake-docs-72",
+      "snowflake-docs-14",
+      "snowflake-docs-57",
       "snowflake-docs-8",
       "snowflake-docs-52",
-      "snowflake-docs-63",
-      "snowflake-probe-3"
+      "snowflake-probe-3",
+      "snowflake-probe-4"
     ]
   },
   {
@@ -2328,10 +2330,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A live probe confirms Snowflake serves an llms.txt file at docs.snowflake.com/llms.txt returning HTTP 200 with structured agent-oriented content describing the platform, directly satisfying the story. This is corroborated by extensive agent-oriented documentation (Cortex MCP server, CLI docs) that an agent pointed at these docs could consume. missing for 10: no independent/community confirmation that agents actually use llms.txt successfully in practice.",
+    "rationale": "Snowflake publishes a root llms.txt (confirmed via live probe, HTTP 200) summarizing the platform, plus dedicated llms.txt files for individual products like Snowpark, Streamlit, and Snowflake Postgres, giving agents a structured, agent-oriented entry point into the docs. missing for 10: independent/third-party confirmation that agents successfully consume these llms.txt files in practice.",
     "evidenceIds": [
       "snowflake-probe-1",
-      "snowflake-docs-27"
+      "snowflake-docs-75",
+      "snowflake-docs-77",
+      "snowflake-docs-80"
     ]
   },
   {
@@ -2356,17 +2360,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake documents core primitives for background automation — Snowpipe continuous ingestion, Streams for change capture, GA Dynamic Tables that auto-refresh, and resource/anomaly monitors that autonomously suspend warehouses or alert on cost — plus a headless CLI (`snow sql`) that can be scripted/cron'd for autonomous execution. However there is no evidence of an AI-agent-specific scheduler or orchestration layer that lets an AI-native user set up an agent to run continuously/autonomously in the background; the Cortex Agents MCP server is described as an on-demand retrieval interface, not a background automation trigger. Missing for 10: explicit AI-agent scheduling/orchestration framework, autonomous multi-step agent workflows, and independent/hands-on confirmation that these primitives are actually used to run unattended AI automations.",
+    "rationale": "Snowflake documents several building blocks for background automation — Snowpipe auto-ingests files without manual scheduling, Dynamic Tables (GA) auto-refresh on a target lag, Streams capture DML changes to trigger downstream actions, and dbt Projects on Snowflake supports full orchestration of pipelines inside the platform. Cortex Agents plus the managed MCP server let AI agents query Snowflake data, but the evidence shows MCP as a request/response tool-serving interface rather than a documented mechanism for an AI-native user to schedule agents that run continuously and autonomously in the background. Missing for 10: explicit documentation of a Tasks/scheduler feature for autonomous job execution, evidence of agent-triggered/looping automations (not just query-based interactions), and independent/hands-on confirmation that these pieces compose into unattended AI-driven automation.",
     "evidenceIds": [
       "snowflake-docs-6",
-      "snowflake-docs-7",
       "snowflake-docs-15",
-      "snowflake-docs-53",
-      "snowflake-docs-60",
-      "snowflake-docs-17",
-      "snowflake-docs-33",
+      "snowflake-docs-7",
+      "snowflake-docs-55",
+      "snowflake-docs-61",
       "snowflake-docs-14",
-      "snowflake-probe-rt-2"
+      "snowflake-docs-57"
     ]
   },
   {
@@ -2389,12 +2391,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake CLI runs keylessly and headlessly (verified via probe: `uvx snow --version`), and `snow sql` supports inline queries, file execution, and stdin piping for fully scripted, credential-driven automation — exactly the CI/agent workflow described. This is backed by REST APIs (SQL API, resource management API) for programmatic access without any UI. Missing for 10: independent third-party CI pipeline case studies or GitHub Actions examples showing this in production use, and no mention of official CI/CD templates (e.g., GitHub Actions marketplace action).",
+    "rationale": "Snowflake ships an official CLI for managing apps/workloads and REST APIs (SQL API and Resource Management API) explicitly designed for programmatic, non-interactive integration and automation, which are the standard mechanisms for running Snowflake operations headlessly in CI pipelines. missing for 10: explicit CI/CD pipeline examples (e.g., GitHub Actions integration) and documentation of non-interactive auth flows (key-pair/OAuth) tailored for headless automation.",
     "evidenceIds": [
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
+      "snowflake-docs-1",
       "snowflake-docs-65",
       "snowflake-docs-66",
+      "snowflake-docs-72",
+      "snowflake-docs-73",
       "snowflake-probe-4"
     ]
   },
@@ -2404,10 +2407,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Snowflake exposing its own capabilities via a Snowflake-managed MCP server (Cortex Agents MCP) for external AI agents to consume Snowflake as a tool — the reverse direction of this story. There is no evidence that Snowflake's Cortex Agents or any other component can act as an MCP client and plug in external MCP servers to use their tools.",
+    "rationale": "Evidence documents Snowflake's own MCP server that exposes Snowflake's Cortex tools to external AI agents (server-side), but there is no evidence Snowflake can act as an MCP client consuming external MCP servers' tools to extend Cortex Agents or CoWork/CoCo's capabilities.",
     "evidenceIds": [
       "snowflake-docs-14",
       "snowflake-docs-57",
+      "snowflake-docs-74",
       "snowflake-probe-3"
     ]
   },
@@ -2415,12 +2419,13 @@
     "productId": "snowflake",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Snowflake documents a first-party, Snowflake-managed MCP server (Cortex Agents MCP) that lets AI agents securely retrieve data without deploying separate infrastructure, and it can be configured to serve Cortex Analyst, Cortex Search, Cortex Agents, custom tools, and SQL execution as MCP tools. This is explicit official documentation of a managed MCP server endpoint, not just a client integration. Missing for 10: independent/community hands-on validation of the MCP server in production use, and more detail on setup/auth specifics beyond docs.",
+    "rationale": "Snowflake documents an official, Snowflake-managed MCP server (Cortex Agents MCP) that lets AI agents securely retrieve data without deploying separate infrastructure, and it can be configured to serve Cortex Analyst, Cortex Search, Cortex Agents, custom tools, and SQL execution as MCP tools. This is a first-party, GA-documented feature confirmed by a direct probe of the docs URL. Missing for 10: independent/hands-on third-party corroboration of real-world agent connections beyond vendor docs.",
     "evidenceIds": [
       "snowflake-docs-14",
       "snowflake-docs-57",
+      "snowflake-docs-74",
       "snowflake-probe-3"
     ]
   },
@@ -2446,14 +2451,14 @@
     "productId": "snowflake",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake CLI is a well-documented official CLI, confirmed by hands-on probe showing it installs keylessly via pypi/uvx and supports headless scripted SQL execution (stdin piping, inline queries) suitable for agentic/automated workflows, plus docs on managing apps across workloads. missing for 10: no independent third-party review specifically praising AI-agent usage of the CLI beyond the runtime probe.",
+    "rationale": "Snowflake ships an official Snowflake CLI documented for creating, managing, updating, and viewing apps across Streamlit, Native Apps, Snowpark Container Services, and Snowpark, confirmed by a dedicated docs probe. It's a general developer CLI rather than one purpose-built for AI-native/agentic workflows specifically. Missing for 10: independent/hands-on corroboration of CLI usage, and explicit agentic-workflow-specific CLI features (vs. general app management).",
     "evidenceIds": [
       "snowflake-docs-1",
-      "snowflake-probe-4",
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2"
+      "snowflake-docs-26",
+      "snowflake-docs-28",
+      "snowflake-probe-4"
     ]
   },
   {
@@ -2462,16 +2467,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake publishes multiple documented public APIs — the SQL REST API, general Resource Management REST API, and an official OpenAPI-spec repo with importable Postman collections — plus a headless CLI (verified runtime to work keylessly and support scripted SQL execution) and an official Snowflake-managed MCP server for AI agents, giving AI-native users several concrete, documented programmatic surfaces to drive the product. Missing for 10: a single unified OpenAPI/Swagger endpoint at the docs root (probe found 404s) and independent third-party corroboration of large-scale agentic API usage beyond vendor docs.",
+    "rationale": "Snowflake documents a public REST API for resource management and a SQL API (both OpenAPI-compliant with an official spec repo and Postman collections) allowing programmatic querying, deployment management, and integration building, plus Snowpark APIs for Python/Java/Scala. This is well-documented first-party evidence of a documented public API surface usable by AI-native/automated clients. Missing for 10: independent hands-on developer corroboration of API robustness/limits, and a discoverable machine-readable openapi.json at the probed standard paths (probe returned 404s despite claims of OpenAPI compliance).",
     "evidenceIds": [
       "snowflake-docs-65",
       "snowflake-docs-66",
+      "snowflake-docs-72",
+      "snowflake-docs-73",
       "snowflake-supp-openapi-specs",
-      "snowflake-docs-14",
-      "snowflake-docs-57",
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
-      "snowflake-probe-4"
+      "snowflake-probe-2"
     ]
   },
   {
@@ -2480,32 +2483,35 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake's RBAC model lets admins create custom roles with narrowly scoped privileges and assign them to service/programmatic users, and the REST/SQL APIs plus MCP server support key-pair or token-based programmatic access that could be scoped to a limited role for an agent. But there is no dedicated agent-credential issuance flow, OAuth-scope UI, or documentation explicitly describing minting a scoped API key/token specifically for an AI agent; it relies on general-purpose RBAC repurposed for this use case. Missing for 10: dedicated agent-credential scoping/issuance workflow, explicit least-privilege API key generation docs for AI agents, hands-on confirmation of scoped-token issuance for an agent.",
+    "rationale": "Snowflake's RBAC system lets admins scope privileges to specific roles that can then be attached to service/API credentials, and its REST APIs plus the Cortex Agents MCP server explicitly support secure, credential-based programmatic access for AI agents. However, no evidence directly documents an agent-specific credential-issuance workflow (e.g., short-lived scoped tokens purpose-built for agent identities) — the story is inferred from general RBAC/API docs rather than an agent-specific credentialing feature. Missing for 10: explicit documentation of issuing least-privilege, agent-scoped API keys/tokens (vs. general RBAC/roles), and any hands-on/independent confirmation of this workflow.",
     "evidenceIds": [
       "snowflake-docs-8",
       "snowflake-docs-32",
       "snowflake-docs-45",
       "snowflake-docs-65",
-      "snowflake-docs-66",
+      "snowflake-docs-72",
       "snowflake-docs-14",
-      "snowflake-docs-57"
+      "snowflake-docs-57",
+      "snowflake-docs-74"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Snowflake documents official SDKs/connectors surfaces for developers: REST APIs for resource management and SQL API, official OpenAPI specs repo with Postman collections, official CLI (verified running keylessly via pypi), and Snowpark for Python/Java/Scala. These are all first-party, documented, and even runtime-verified for the CLI. missing for 10: explicit mention of language-specific SDK docs (e.g. Python/Java connector reference pages) and independent developer corroboration beyond docs/probes.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Snowflake documents multiple official SDKs/APIs for developers—Snowpark API for Python, Java, and Scala, the Snowflake SQL API, and REST APIs for resource management with OpenAPI specifications hosted in an official GitHub repo—plus a managed MCP server letting AI agents interact with Snowflake without custom infrastructure, directly supporting AI-native build patterns. Missing for 10: independent/hands-on developer corroboration of SDK quality/ergonomics and more explicit agent-framework integration examples beyond MCP.",
     "evidenceIds": [
+      "snowflake-docs-75",
       "snowflake-docs-65",
       "snowflake-docs-66",
+      "snowflake-docs-72",
+      "snowflake-docs-73",
       "snowflake-supp-openapi-specs",
-      "snowflake-probe-4",
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
-      "snowflake-docs-26"
+      "snowflake-docs-14",
+      "snowflake-docs-57",
+      "snowflake-probe-3"
     ]
   },
   {
@@ -2514,8 +2520,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows streams (change-data-capture) and notification integrations for cost anomalies, but nowhere documents a webhook subscription mechanism for AI agents or users to receive event notifications. No mention of 'webhook' or push-based external endpoint delivery appears anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Snowflake supports streams for CDC (polled) and notification integrations for cost alerts, but there is no documentation of a general-purpose webhook subscription mechanism that lets an AI-native user subscribe to events pushed via webhooks. Absence of evidence for this applicable capability yields 'none'.",
+    "evidenceIds": [
+      "snowflake-docs-7",
+      "snowflake-docs-33",
+      "snowflake-docs-54"
+    ]
   },
   {
     "productId": "snowflake",
@@ -2537,13 +2547,15 @@
     "productId": "snowflake",
     "storyId": "api-interactive-docs",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Snowflake publishes REST/SQL API docs and a separate GitHub repo with OpenAPI specs plus importable Postman collections that developers can run, giving some 'runnable examples' capability, but there is no interactive in-browser API reference (Swagger/OpenAPI explorer) on docs.snowflake.com — the probe explicitly found openapi.json/swagger.json paths returning 404. missing for 10: a hosted interactive/try-it-now API console on the docs site, embedded runnable code samples in the reference pages themselves, and confirmation the Postman collections are officially maintained/kept in sync with docs.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Snowflake publishes OpenAPI-compliant spec files and importable Postman collections for its REST/SQL APIs, which gives developers a way to run example requests, but there is no evidence of an embedded, interactive 'try-it' API reference on the docs site itself — a direct probe for openapi.json/swagger endpoints returned 404s. Missing for 10: an in-browser interactive API explorer (e.g., Swagger/Redoc UI) hosted by Snowflake, and any independent confirmation that the Postman-based workflow is commonly used as a live API reference.",
     "evidenceIds": [
+      "snowflake-supp-openapi-specs",
       "snowflake-docs-65",
       "snowflake-docs-66",
-      "snowflake-supp-openapi-specs",
+      "snowflake-docs-72",
+      "snowflake-docs-73",
       "snowflake-probe-2"
     ]
   },
@@ -2551,13 +2563,13 @@
     "productId": "snowflake",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Snowflake maintains an official GitHub repo (snowflakedb/snowflake-rest-api-specs) containing OpenAPI-compliant specification files plus importable Postman collections for its REST APIs, which is exactly a downloadable machine-readable API spec; this is corroborated by docs describing the Snowflake REST APIs for resource management and the SQL API. The probe check on docs.snowflake.com/openapi.json 404s, but that doesn't negate the separately hosted official spec repo. Missing for 10: independent/hands-on confirmation of successfully downloading and using the spec, and no single canonical hosted spec URL on the docs site itself.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Snowflake publishes an official, first-party GitHub repository (snowflakedb/snowflake-rest-api-specs) containing downloadable OpenAPI-compliant spec files plus Postman collections for its REST APIs, and its own docs explicitly state the REST APIs are 'compliant with the OpenAPI specification' and enable building integrations 'using the openAPI specifications.' Missing for 10: a directly hosted /openapi.json or /swagger.json endpoint on the docs site itself (probe found 404s there), so the machine-readable spec must be fetched from the separate GitHub repo rather than a single canonical URL.",
     "evidenceIds": [
       "snowflake-supp-openapi-specs",
+      "snowflake-docs-72",
       "snowflake-docs-65",
-      "snowflake-docs-66",
       "snowflake-probe-2"
     ]
   },
@@ -2566,64 +2578,63 @@
     "storyId": "api-sandbox",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Snowflake's zero-copy cloning (clone inherits privileges, no data duplication) and RBAC/role isolation provide the underlying mechanisms to spin up an isolated copy of data for testing without touching production, and warehouses can be independently sized/scaled for a test workload. However, there is no first-party documentation framing this as an 'AI-native sandbox' or describing a dedicated test/dev environment workflow tied to AI agent development. Missing for 10: explicit sandbox/dev-environment documentation, AI-agent-specific sandbox guidance, and any hands-on/independent confirmation that cloning is used this way in practice.",
+    "confidence": "medium",
+    "rationale": "Snowflake's zero-copy cloning (object-clone) lets users create full database/schema clones inheriting privileges without duplicating or altering production data, which supports building an isolated sandbox for testing, and RBAC plus resource monitors help isolate/limit that environment. However, the evidence never frames this explicitly as an 'AI-native sandbox' workflow or ties cloning to agentic/AI testing use cases. missing for 10: explicit sandbox/dev-test documentation framed for AI-native or agent workflows, guidance on isolating agent test runs from prod data, and independent corroboration of clone-based sandboxing in practice.",
     "evidenceIds": [
       "snowflake-docs-67",
       "snowflake-docs-71",
       "snowflake-docs-8",
       "snowflake-docs-32",
-      "snowflake-docs-45",
-      "snowflake-docs-14"
+      "snowflake-docs-45"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "api-versioning-policy",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Snowflake documents a formal change-management process via 'Behavior change announcements' organized into dated bundles to help users manage disruption, and publishes REST/SQL APIs with OpenAPI specs, which together imply some governance around API evolution. However there is no explicit documentation of API version numbers (e.g., v1/v2 semantics) or a stated deprecation/sunset timeline specifically for its REST/SQL APIs. missing for 10: explicit API versioning scheme, formal deprecation/sunset timeline for REST/SQL APIs, independent confirmation of policy adherence.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Snowflake documents official REST APIs (SQL API, resource-management API) built on OpenAPI specs, and maintains a dedicated 'Behavior change announcements' page describing dated bundles of changes meant to minimize disruption — functioning as a de facto deprecation/change policy. However, there's no explicit documentation of API version numbers (v1/v2) or formal deprecation timelines/sunset dates for the APIs themselves. Missing for 10: explicit API versioning scheme documentation, formal deprecation timeline/sunset policy tied to specific API versions, independent corroboration of API stability guarantees.",
     "evidenceIds": [
-      "snowflake-supp-behavior-changes",
       "snowflake-docs-65",
       "snowflake-docs-66",
-      "snowflake-supp-openapi-specs"
+      "snowflake-supp-openapi-specs",
+      "snowflake-supp-behavior-changes",
+      "snowflake-docs-72",
+      "snowflake-docs-73"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "audit-lineage",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Snowflake provides strong audit-log evidence via Query History (who ran what queries) and the ACCESS_HISTORY view, which explicitly tracks read/write operations for compliance auditing and highlights popular/frequently accessed tables and columns. However, the evidence pack does not document a full column-level lineage graph feature (e.g., a lineage/dependency explorer showing upstream-to-downstream column provenance), only column-level access tracking. Missing for 10: explicit documentation of a dedicated data lineage/graph feature, independent corroboration of lineage accuracy in practice.",
+    "rationale": "Snowflake provides strong audit-log coverage via Query History (who ran what queries) and Access History (ACCESS_HISTORY view tracking reads/writes for compliance auditing, including per-column access insights), which addresses the 'who ran what' half of the story well. However, the evidence pack does not document an explicit column-level lineage graph/feature (e.g., Snowflake's Horizon/lineage explorer) showing upstream data provenance — only that Access History surfaces 'popular and frequently accessed tables and columns,' which is usage insight, not full lineage tracing. Missing for 10: explicit column-level lineage/graph documentation, independent validation of lineage accuracy across transformations.",
     "evidenceIds": [
       "snowflake-docs-51",
-      "snowflake-docs-52",
       "snowflake-docs-59",
-      "snowflake-docs-62",
+      "snowflake-docs-52",
       "snowflake-docs-63",
-      "snowflake-docs-70",
-      "snowflake-docs-32"
+      "snowflake-docs-78",
+      "snowflake-docs-70"
     ]
   },
   {
     "productId": "snowflake",
     "storyId": "automation-bulk-operations",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Snowflake supports bulk operations at scale via SQL (bulk UPDATE/DELETE/COPY INTO), Snowpipe micro-batch loading, streams for change capture, CLI and REST/SQL APIs for programmatic/scripted execution, and resizable warehouses to scale compute for large batch jobs — all usable by an AI-native/scripted user (e.g., headless `snow sql` piping shown in probe evidence). missing for 10: no explicit documentation or hands-on evidence of an AI agent issuing bulk operations across many items in one call (e.g., batch APIs for bulk row-level agent actions) or benchmarks/community validation of bulk-op performance/reliability at scale.",
+    "rationale": "Snowflake supports bulk/batch operations via SQL (COPY INTO, Snowpipe micro-batches), Snowpark for programmatic bulk data processing, REST/SQL APIs for scripted batch operations, and CLI/dbt for orchestrating multi-object workflows, but these are general data-platform bulk operations rather than an AI-native agent-oriented bulk-action capability explicitly designed for AI agents to invoke across many items at once. The MCP server (Cortex Agents MCP) exposes tools for agents but evidence doesn't show explicit bulk/batch operation support through that interface. missing for 10: explicit documentation of AI-agent-initiated bulk operations (e.g., MCP server batch tool calls across many items), hands-on/independent evidence of AI-native bulk workflows succeeding at scale, and any agent-specific bulk-action API beyond generic SQL/REST batch capabilities.",
     "evidenceIds": [
       "snowflake-docs-6",
       "snowflake-docs-7",
-      "snowflake-docs-4",
       "snowflake-docs-65",
       "snowflake-docs-66",
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
-      "snowflake-docs-26"
+      "snowflake-docs-75",
+      "snowflake-docs-14",
+      "snowflake-docs-57"
     ]
   },
   {
@@ -2650,13 +2661,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows dbt Projects on Snowflake explicitly supports 'orchestrate' as part of the dbt lifecycle (implying scheduled/recurring transformation jobs) and Snowpipe/Streams enable event-driven or incremental data loads, but there is no direct documentation of Snowflake's native Task/cron scheduling object or CLI-driven recurring job scheduling in the evidence pack. missing for 10: explicit docs on native scheduled TASK objects, cron-based recurring execution, and CLI/agent-driven schedule management.",
+    "rationale": "Evidence shows dbt Projects on Snowflake can 'orchestrate' transformations with a managed runtime, implying some recurring-job scheduling capability, but the pack contains no direct documentation of Snowflake's native TASK/scheduler object or agent-triggered recurring workflows for AI-native users. Missing for 10: explicit docs on Snowflake Tasks or a scheduler API, evidence of AI agents creating/managing recurring jobs via MCP or CLI, and independent/hands-on confirmation of scheduling reliability.",
     "evidenceIds": [
       "snowflake-docs-2",
       "snowflake-docs-55",
-      "snowflake-docs-61",
-      "snowflake-docs-6",
-      "snowflake-docs-7"
+      "snowflake-docs-61"
     ]
   },
   {
@@ -2682,7 +2691,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of JDBC/ODBC drivers or specific BI-tool integrations (e.g., Tableau, Power BI, Looker) — only a generic pointer ('Learn about the applications and tools that you can use to access Snowflake') and unrelated REST/SQL API and CLI docs. Since this axis clearly applies to a data platform serving analyst dashboards, but no concrete driver/BI-integration evidence is present, it must be judged 'none' rather than inferred from outside knowledge.",
+    "rationale": "The evidence pack contains no specific mention of JDBC/ODBC drivers or documented BI-tool integrations (e.g., Tableau, Power BI, Looker) for Snowflake; only a generic reference to 'applications and tools you can use to access Snowflake' (snowflake-docs-27) without detail on standard drivers or BI connectors. This is an axis that clearly applies to a data warehouse product, but no concrete evidence demonstrates the capability.",
     "evidenceIds": []
   },
   {
@@ -2705,7 +2714,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake's docs explicitly list per-certification compliance pages including SOC 2 Type II and PCI DSS, plus other industry standards (ISO, FedRAMP, SOC 1), directly matching the platform-engineer's need to point security reviewers to documented attestations. Missing for 10: explicit HIPAA-specific attestation page (only inferred via general regulatory-compliance framing) and no independent/third-party audit evidence confirming these certifications beyond vendor docs.",
+    "rationale": "Snowflake's dedicated Regulatory Compliance documentation explicitly lists per-certification pages for SOC 1 Type II, SOC 2 Type II, PCI DSS, and FedRAMP (a HIPAA-relevant standard), directly addressing the security-review documentation need. This is supported by first-party docs with named certifications, giving platform-engineers concrete attestation references. Missing for 10: an explicit named HIPAA compliance page/BAA reference and independent third-party corroboration of audit currency.",
     "evidenceIds": [
       "snowflake-supp-compliance"
     ]
@@ -2728,16 +2737,17 @@
     "productId": "snowflake",
     "storyId": "continuous-transformations",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake provides native streaming/incremental transformation primitives — Streams for CDC (snowflake-docs-7), Snowpipe for continuous micro-batch ingestion (snowflake-docs-6), Dynamic Tables (declarative pipelines, GA per snowflake-docs-15), and Tasks orchestration referenced via dbt Projects on Snowflake pipeline orchestration (snowflake-docs-2/55/61). These map directly to streams, tasks, and declarative pipelines as described in the story. Missing for 10: no first-party benchmark or independent hands-on validation of continuous query latency/throughput at scale, and no explicit doc citation for the 'Tasks' object itself beyond dynamic tables/dbt orchestration.",
+    "rationale": "Snowflake documents Streams for CDC-based incremental change capture (doc-7/21/38/54), Dynamic Tables (GA, doc-15) for declarative continuous transformation pipelines, and Snowpipe for continuous/micro-batch ingestion (doc-6/20/29/34/44/76) — directly matching the story's streams/declarative-pipeline/continuous-processing capabilities inside the platform. Missing for 10: explicit documentation of the Tasks object (scheduling/orchestration companion to Streams), Snowpipe Streaming (true low-latency continuous ingestion) specifics, and independent/hands-on validation of these pipelines at production scale.",
     "evidenceIds": [
       "snowflake-docs-7",
-      "snowflake-docs-6",
       "snowflake-docs-15",
-      "snowflake-docs-2",
-      "snowflake-docs-55",
-      "snowflake-docs-61"
+      "snowflake-docs-6",
+      "snowflake-docs-21",
+      "snowflake-docs-38",
+      "snowflake-docs-54",
+      "snowflake-docs-76"
     ]
   },
   {
@@ -2746,16 +2756,14 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake documents a credit-based consumption pricing model (warehouses consume credits, user-managed control, resizing, resource monitors, cost-anomaly alerts) and lists pricing-tier names on its pricing page, giving a platform engineer some levers to reason about cost. However, hands-on community reports concretely contradict clean bill estimation: one user found costs 'balloon pretty fast' with credits doubling per warehouse size, another explicitly says Snowflake 'lacks query-level attribution of costs and no in-built features for monitoring or recommendations,' and a comparison notes companies can reach $100k/year bills without massive data — all indicating the documented model doesn't translate into reliable upfront estimation. missing for 10: an explicit per-credit/per-tier price table or cost calculator in the evidence, and any documentation walking through a concrete monthly-bill estimation example.",
+    "rationale": "Snowflake docs explain the underlying cost model (credit-consuming virtual warehouses, resizing, resource monitors, cost-anomaly alerts, and a general pricing-tier page) which gives a platform engineer the mechanics needed to model cost, but there is no concrete rate card or calculator evidenced. Community reports concretely contradict the 'estimate before committing' claim: users note costs 'balloon pretty fast', warehouse credit consumption 'doubles each size up', there is 'no query level attribution of costs and no in-built features for monitoring', and it's 'easy... to get to $100k/year bills without massive data' — indicating the documented model is hard to translate into an accurate upfront estimate in practice. missing for 10: a transparent unit-price/rate table, a first-party cost calculator, and independent confirmation that engineers can reliably forecast bills from the docs alone.",
     "evidenceIds": [
       "snowflake-docs-36",
       "snowflake-docs-40",
-      "snowflake-docs-42",
-      "snowflake-docs-49",
       "snowflake-docs-53",
       "snowflake-docs-60",
-      "snowflake-docs-17",
-      "snowflake-docs-33",
+      "snowflake-docs-42",
+      "snowflake-docs-49",
       "snowflake-comm-1",
       "snowflake-comm-7",
       "snowflake-comm-13"
@@ -2779,7 +2787,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake ships native 'dbt Projects on Snowflake' with vendor docs covering the full dbt lifecycle (develop/deploy/orchestrate/observe), a managed dbt Core/Fusion runtime, and an explicit migration guide from existing dbt Core projects — going beyond just a third-party adapter to first-class native support. Community evidence (comm-9) shows some real-world friction around auto-clustering interacting with dbt incremental full-refreshes, indicating a caveat rather than a dispute of the core capability. missing for 10: independent/hands-on adoption reports validating the native dbt Projects experience at scale, and detail on the classic dbt-snowflake adapter's parity/versioning docs.",
+    "rationale": "Snowflake has a dedicated first-party feature, 'dbt Projects on Snowflake,' with vendor docs describing native support for the full dbt lifecycle (develop, deploy, orchestrate, observe), managed dbt Core/Fusion runtimes, and a documented migration path from dbt Core. This goes beyond a community adapter — it's native, vendor-documented dbt support. missing for 10: independent/hands-on validation of dbt Projects on Snowflake in production, and more detail on parity/limitations vs dbt Core for advanced use cases.",
     "evidenceIds": [
       "snowflake-docs-2",
       "snowflake-docs-3",
@@ -2807,10 +2815,13 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly confirm native window functions and first-class semi-structured/array SQL types (VARIANT/OBJECT/ARRAY), which is strong evidence for the analytic SQL surface without extensions. However, the evidence pack contains no explicit documentation reference for CTEs or Snowflake's rich date/time type system, so the full breadth of the story isn't directly evidenced. Missing for 10: explicit CTE support docs, explicit date/time type reference, independent hands-on corroboration of the full SQL surface.",
+    "rationale": "Docs confirm window functions, semi-structured VARIANT/OBJECT/ARRAY types, and Time Travel/date handling are native SQL features, and community evidence corroborates JSON handling via COPY/JSON Lines. However, one community report notes a gap versus generate_series-style sequence generation, and CTE support and rich date/time type breadth aren't directly evidenced in the pack. missing for 10: explicit CTE documentation, comprehensive date/time type reference, independent corroboration beyond the noted generate_series gap.",
     "evidenceIds": [
       "snowflake-supp-sql-window",
-      "snowflake-supp-sql-semistructured"
+      "snowflake-supp-sql-semistructured",
+      "snowflake-comm-2",
+      "snowflake-comm-4",
+      "snowflake-docs-5"
     ]
   },
   {
@@ -2819,13 +2830,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snowflake's docs clearly establish role-based access control (privileges assigned to roles, roles to users) enabling one warehouse/account to serve many teams with governed access, and Secure Data Sharing shows granular object-level sharing. However, the evidence pack contains no documentation of column-level masking policies or row-access policies, which are the specific mechanisms the story calls out for column/row-level enforcement. Missing for 10: dynamic data masking / masking policy docs, row access policy docs, and any hands-on or independent verification that these policies compose correctly with RBAC across teams.",
+    "rationale": "Docs confirm Snowflake's core RBAC model (privileges assigned to roles, roles to users) and Access History views tracking table/column-level query and write activity, which supports auditing at the object level. However, the evidence pack contains no mention of dynamic data masking policies or row access policies (row-level security), which are the specific mechanisms the story calls out for column- and row-level control — missing for 10: masking policy documentation, row access policy documentation, and any independent/hands-on confirmation these work as described.",
     "evidenceIds": [
       "snowflake-docs-8",
       "snowflake-docs-32",
       "snowflake-docs-45",
-      "snowflake-docs-9",
-      "snowflake-docs-46"
+      "snowflake-docs-52",
+      "snowflake-docs-63",
+      "snowflake-docs-70",
+      "snowflake-docs-78"
     ]
   },
   {
@@ -2834,11 +2847,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Snowflake's Secure Data Sharing explicitly lets accounts share selected database objects with other Snowflake accounts (or via Data Marketplace/organizations) without copying or transferring data, and without building an export pipeline, backed by RBAC governance for controlling shared access. This directly matches the story's core requirement of live, no-copy sharing across accounts/orgs. Missing for 10: no independent/hands-on community corroboration of cross-account sharing specifically (community evidence is about cost/perf, not sharing), and no explicit cross-organization example beyond docs claims.",
+    "rationale": "Snowflake's Secure Data Sharing directly delivers this story: it lets accounts share selected database objects with other Snowflake accounts, with docs explicitly stating no actual data is copied or transferred between accounts, eliminating the need for export pipelines. This is a first-party, well-documented core Snowflake feature (also referenced as part of Standard plan capabilities). Missing for 10: independent/hands-on third-party confirmation of cross-organization sharing experience beyond vendor docs.",
     "evidenceIds": [
       "snowflake-docs-9",
       "snowflake-docs-46",
-      "snowflake-docs-8",
       "snowflake-docs-49"
     ]
   },
@@ -2847,13 +2859,13 @@
     "storyId": "local-dev-loop",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Snowflake's dev tooling (Snowflake CLI, Notebooks, dbt Projects on Snowflake) all execute against live Snowflake warehouses/compute in the cloud — there is no documented local engine, emulator, or free/offline sandbox for developing transformations before touching production compute. Pricing docs only describe cloud tiers (Standard, etc.), not a local dev loop.",
+    "confidence": "medium",
+    "rationale": "Snowflake's evidence pack covers cloud compute (warehouses, Snowpipe, notebooks, dbt-in-Snowflake, Snowpark) but nothing about a local engine, emulator, or free sandbox for developing transformations before touching production compute — everything described runs against live Snowflake compute/credits. Community evidence even notes trial credits get consumed quickly (~$19.60 in credits within days), reinforcing that there's no cost-free local dev loop. Missing for 10: any local engine/emulator, offline dev mode, or a genuinely free (non-credit-consuming) sandbox tier.",
     "evidenceIds": [
-      "snowflake-docs-10",
-      "snowflake-docs-39",
-      "snowflake-docs-2",
-      "snowflake-docs-42"
+      "snowflake-comm-1",
+      "snowflake-docs-42",
+      "snowflake-docs-49",
+      "snowflake-docs-36"
     ]
   },
   {
@@ -2862,14 +2874,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowpipe (and Snowpipe Streaming) is a first-party managed service that continuously ingests files as soon as they arrive in a stage without requiring the customer to run pipeline infrastructure, complemented by Streams for change capture and Dynamic Tables for incremental transformation orchestration. Missing for 10: independent/hands-on validation of Snowpipe's continuous-ingestion latency/reliability at scale, and no direct evidence of event-based (e.g., cloud storage event) auto-ingest configuration details beyond the docs summary.",
+    "rationale": "Snowpipe is a first-party managed service that automatically loads files from a stage as soon as they arrive, in micro-batches within minutes, without manual COPY scheduling or customer-run pipeline infrastructure (snowflake-docs-6/20/29/34/44/76). Community evidence corroborates continuous file-based loading behavior (COPY skipping already-loaded files) consistent with this pattern (snowflake-comm-4). Missing for 10: explicit documentation of event-driven/streaming ingestion (e.g., Snowpipe Streaming API or Kafka connector) and independent hands-on validation of the 'no pipeline infra' claim beyond vendor docs.",
     "evidenceIds": [
       "snowflake-docs-6",
       "snowflake-docs-20",
       "snowflake-docs-29",
+      "snowflake-docs-34",
       "snowflake-docs-44",
-      "snowflake-docs-7",
-      "snowflake-docs-15"
+      "snowflake-docs-76",
+      "snowflake-comm-4"
     ]
   },
   {
@@ -2878,10 +2891,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snowflake Notebooks (Snowsight) is documented as a first-party, cell-based environment supporting SQL, Python, and Markdown, with inline cell-by-cell execution and result comparison, and support for data science/ML workflows directly against warehouse data. Missing for 10: explicit documentation of inline chart/visualization rendering within notebooks (charting is only demonstrated for the broader Snowsight UI, not confirmed inline in notebooks) and independent hands-on user corroboration.",
+    "rationale": "Snowflake Notebooks is a first-party, cell-based Snowsight interface supporting Python, SQL, and Markdown in the same notebook with cell-by-cell execution and result comparison, directly matching the story. Missing for 10: explicit documentation/screenshots of inline chart rendering within notebooks and independent/hands-on user corroboration beyond vendor docs.",
     "evidenceIds": [
-      "snowflake-docs-39",
       "snowflake-docs-10",
+      "snowflake-docs-39",
       "snowflake-docs-31",
       "snowflake-comm-3"
     ]
@@ -2890,16 +2903,19 @@
     "productId": "snowflake",
     "storyId": "nl-governed-answers",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Cortex Analyst explicitly enables business users to ask natural-language questions and get direct answers without writing SQL, grounded on Snowflake's Semantic Views which model business metrics/entities to prevent hallucinated joins, all governed under Snowflake's RBAC and access-history/auditing layers. This directly matches the story's requirement for governed, semantically-grounded NL answers. Missing for 10: independent/hands-on evidence (e.g., third-party benchmark or user report) validating accuracy/quality of Cortex Analyst's answers in practice, and more detail on how governance controls specifically apply within Cortex Analyst queries.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Snowflake's Cortex Analyst is documented to let business users ask natural-language questions and get direct answers without writing SQL, and Snowflake Semantic Views let teams define business metrics/entities as governed semantic layer objects that Cortex Analyst can ground against, with RBAC controlling access to underlying data. This directly matches the story's ask for governed, semantically-grounded NL answers rather than raw hallucinated joins. missing for 10: independent/hands-on evidence validating accuracy or hallucination-reduction claims, and no detail on how Cortex Analyst explicitly enforces the semantic model to prevent bad joins (only first-party docs, no third-party corroboration).",
     "evidenceIds": [
       "snowflake-docs-13",
       "snowflake-docs-25",
       "snowflake-docs-11",
+      "snowflake-docs-23",
       "snowflake-docs-47",
+      "snowflake-docs-79",
       "snowflake-docs-8",
-      "snowflake-docs-52"
+      "snowflake-docs-32",
+      "snowflake-docs-45"
     ]
   },
   {
@@ -2920,16 +2936,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Snowflake exposes strong programmatic surfaces — a SQL REST API, a general resource-management REST API, an official CLI (verified runtime-executable), OpenAPI specs, and even an MCP server for agents — which together cover most administrative and query workloads an AI-native user would need. However, there's no explicit documentation claiming full UI/API parity, and several UI-centric experiences (Snowsight Notebooks, Cortex Analyst's natural-language UI, cost-anomaly dashboards) aren't shown to have equivalent API-driven paths in this evidence pack. Missing for 10: explicit parity documentation, API equivalents for Notebooks/Cortex Analyst UI flows, and independent confirmation that all Snowsight actions are API-accessible.",
+    "rationale": "Snowflake exposes broad programmatic surfaces — the SQL API and REST APIs for resource management (queries, provisioning users/roles, tables), Snowpark APIs, Snowflake CLI for managing apps/workloads, and OpenAPI-compliant specs published on GitHub — indicating strong API/UI parity ambitions for developers and AI agents (docs-65, docs-66, docs-72, docs-73, snowflake-supp-openapi-specs, docs-1). However there is no explicit vendor claim or independent verification of full 1:1 parity between every Snowsight UI feature (e.g., notebooks cell UI, query profile visualizations, Cortex Analyst chat UI) and API equivalents, and a live probe found no discoverable openapi.json at conventional doc paths. Missing for 10: an explicit parity statement or audit confirming every UI action has an API/CLI equivalent, and independent/hands-on confirmation that AI-native workflows can fully replace UI usage.",
     "evidenceIds": [
       "snowflake-docs-65",
       "snowflake-docs-66",
-      "snowflake-docs-68",
-      "snowflake-probe-4",
-      "snowflake-probe-rt-1",
-      "snowflake-probe-rt-2",
+      "snowflake-docs-72",
+      "snowflake-docs-73",
       "snowflake-supp-openapi-specs",
-      "snowflake-docs-14"
+      "snowflake-docs-1",
+      "snowflake-probe-2"
     ]
   },
   {
@@ -2970,19 +2985,17 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack includes compliance certifications (SOC, ISO, FedRAMP) but contains no mention of Snowflake's account/region selection, data residency controls, or cross-region replication options that would let a user choose where their data is stored. Missing for 10: explicit documentation of region/cloud selection at account creation, data residency guarantees, or replication controls for geo-restriction.",
-    "evidenceIds": [
-      "snowflake-supp-compliance"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack includes compliance certifications (SOC 2, ISO, FedRAMP, PCI DSS) but contains no mention of region selection, data residency controls, or ability to choose a storage location/cloud region for an account or database. No documentation cited addresses this specific capability.",
+    "evidenceIds": []
   },
   {
     "productId": "snowflake",
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation about Snowflake's policy on using customer data to train AI/LLM models, opt-out controls, or data-use guarantees for Cortex AI features — only general RBAC, compliance certifications, and access-history auditing are mentioned, none of which address AI training data usage.",
+    "confidence": "medium",
+    "rationale": "The axis applies since Snowflake offers AI/Cortex features built on third-party LLMs, making data-use-for-training a fair privacy concern, but no evidence pack item documents an opt-out control, data-processing agreement, or explicit statement that customer data is excluded from model training. Compliance certifications and RBAC/access-history items are about general security/governance, not AI-training data use.",
     "evidenceIds": []
   },
   {
@@ -3007,7 +3020,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out settings for Snowflake products (CLI, notebooks, MCP server, etc.); documentation focuses on RBAC, compliance certifications, and cost monitoring but not opt-out of usage/telemetry collection. missing for 10: any docs on telemetry collection practices, an opt-out flag/setting (e.g., CLI --disable-telemetry), or privacy documentation addressing usage tracking.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, or an opt-out mechanism for Snowflake's own product telemetry; only compliance certifications and access-history/audit features are documented, which don't address user-facing telemetry opt-out. This axis is applicable to any AI-native SaaS product, so absence of evidence yields 'none'. Missing for 10: any documentation of a telemetry/usage-data collection policy or an opt-out/opt-in control for such tracking.",
     "evidenceIds": []
   },
   {
@@ -3051,13 +3064,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Snowflake Semantic Views are a first-class, schema-level object letting analysts define business metrics, entities, and relationships once inside the database (snowflake-docs-11/23/47), and Cortex Analyst lets business users and AI query against that same semantic layer in natural language without writing SQL (snowflake-docs-13/25), giving one governed model consistently answered by both SQL and AI tools. Missing for 10: independent/hands-on validation of consistency across multiple consuming tools, and detail on join/versioning governance controls beyond the docs snippets.",
+    "rationale": "Snowflake's Semantic Views let analysts declare business metrics, entities, and relationships once as schema-level objects, and Cortex Analyst answers natural-language questions against this same semantic layer without writing SQL, while Cortex Agents/MCP expose it to AI tools — directly matching the story of a governed semantic model queried consistently by both SQL and AI. missing for 10: no independent/community corroboration of Semantic Views in practice, and no detail on how BI/SQL query tools (beyond Cortex Analyst) consistently reuse the same semantic definitions.",
     "evidenceIds": [
       "snowflake-docs-11",
       "snowflake-docs-23",
       "snowflake-docs-47",
+      "snowflake-docs-79",
       "snowflake-docs-13",
-      "snowflake-docs-25"
+      "snowflake-docs-25",
+      "snowflake-docs-14",
+      "snowflake-docs-57"
     ]
   },
   {
@@ -3066,15 +3082,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Snowflake docs describe Snowpipe as enabling near-real-time loading from staged files, but explicitly frame the latency as 'within minutes' rather than seconds, and the evidence pack contains no mention of the low-latency Snowpipe Streaming API (which targets sub-minute/seconds latency) or its documented client SDK. Streams capture change data but are for CDC consumption, not ingestion. Missing for 10: documentation of Snowpipe Streaming API with seconds-level latency claims, client SDK/API reference for streaming ingestion, and any hands-on/independent confirmation of seconds-level queryability.",
+    "rationale": "Snowflake documents Snowpipe as a streaming/micro-batch ingestion API, but the documentation explicitly states data becomes available 'within minutes,' not seconds, directly at odds with the story's 'queryable within seconds' requirement. There is no evidence pack mention of the lower-latency Snowpipe Streaming API or REST-based streaming ingestion that could close this gap. Missing for 10: documented sub-second/seconds-level ingestion latency, evidence of a dedicated low-latency streaming ingestion API (e.g., Snowpipe Streaming), and independent/hands-on confirmation of near-real-time query availability.",
     "evidenceIds": [
       "snowflake-docs-6",
       "snowflake-docs-20",
       "snowflake-docs-29",
       "snowflake-docs-34",
       "snowflake-docs-44",
-      "snowflake-docs-7",
-      "snowflake-docs-21"
+      "snowflake-docs-76"
     ]
   },
   {

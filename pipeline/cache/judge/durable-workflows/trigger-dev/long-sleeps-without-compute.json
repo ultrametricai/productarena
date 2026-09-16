@@ -1,16 +1,17 @@
 {
-  "hash": "4bc5af0499997813cead19677678eba2866132fab63fc72f71c55604b6c49ce4",
+  "hash": "ceadff7d748101d59836ca5d5d41ceb0c312f78d2724c9d33b495620fbe8ba9a",
   "verdict": {
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly support long-duration, serverless-cost pauses: 'No timeouts, elastic scaling' for long-running tasks, waitpoint tokens that 'pause task runs until you complete the token' for external confirmation, and needsApproval tool config that 'pauses for human approval; the run stays alive' without holding compute, plus cron-based scheduled tasks and a documented 'Delayed' run state. Missing for 10: explicit documentation of a maximum sleep/wait duration (e.g. confirming months-long waits are supported, not just arbitrary long pauses) and independent/hands-on confirmation of a multi-month wait actually surviving without cost, since community comments (wishlist for 'wait/resume for long running jobs') predate the waitpoint-token feature and aren't a direct test of current behavior.",
+    "rationale": "Trigger.dev's checkpoint-resume execution model explicitly decouples a paused run from server/connection compute ('no determinism constraints, processing millions of tasks... with checkpoint-resume'), tasks have no timeouts, and waitpoint tokens let a run pause indefinitely for external confirmation/approval without holding compute. This directly matches sleeping/waiting workflows without billable compute held.\nmissing for 10: explicit documentation of maximum sleep/wait duration (days-to-months) and independent/hands-on confirmation that long waits don't accrue compute billing.",
     "evidenceIds": [
-      "trigger-dev-docs-2",
       "trigger-dev-docs-6",
-      "trigger-dev-docs-22",
+      "trigger-dev-docs-31",
+      "trigger-dev-docs-38",
+      "trigger-dev-docs-23",
       "trigger-dev-docs-10",
-      "trigger-dev-docs-5"
+      "trigger-dev-docs-22"
     ],
     "productId": "trigger-dev",
     "storyId": "long-sleeps-without-compute"

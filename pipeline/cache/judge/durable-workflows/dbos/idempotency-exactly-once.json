@@ -1,16 +1,17 @@
 {
-  "hash": "3df2aea3fddbeb4f302249703f86ccc18fc215fb2158a93bd71cd607effd26d2",
+  "hash": "8135cecdf882a995959aa8cafbaad297af207108cfece7decbb4cb65d68e11b6",
   "verdict": {
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "DBOS documents checkpointed workflow/step state and a @DBOS.Transaction decorator that runs steps inside a Postgres transaction for exactly-once execution, with real-world reports of exactly-once Kafka message processing (avoiding duplicate side effects), which directly supports the reliability story. However, the evidence never explicitly discusses 'idempotency keys' as a named feature, and a community exchange shows DBOS's exactly-once guarantee is only as strong as Postgres's own durability (steps can be re-run if sync replication is off), an acknowledged edge case rather than an airtight guarantee. missing for 10: explicit idempotency-key API/documentation, and stronger evidence that exactly-once holds even under Postgres replication failure scenarios.",
+    "rationale": "DBOS's checkpointing and @DBOS.Transaction step semantics deliver exactly-once step execution and automatic recovery, and a co-founder explicitly states transactions provide exactly-once execution (dbos-comm-2, dbos-docs-4/23/25). However, the evidence never explicitly documents an 'idempotency key' API for deduplicating external triggers (e.g., webhook/payment retries), and community discussion notes durability is bounded by Postgres's own replication guarantees (dbos-comm-3), a real caveat for exactly-once claims under failure. missing for 10: explicit idempotency-key API/documentation for deduping external triggers, and stronger evidence addressing the sync-replication durability caveat.",
     "evidenceIds": [
       "dbos-docs-4",
+      "dbos-docs-23",
+      "dbos-docs-25",
       "dbos-comm-2",
-      "dbos-comm-13",
-      "dbos-comm-15",
-      "dbos-comm-3"
+      "dbos-comm-3",
+      "dbos-comm-13"
     ],
     "productId": "dbos",
     "storyId": "idempotency-exactly-once"

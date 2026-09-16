@@ -1,12 +1,14 @@
 {
-  "hash": "6848bb0ed47e51812db4cb377bbd4bcde7de174e3f38dd74d80c0edef074f721",
+  "hash": "6b05d12bdb3a264c9be4c89991c5d4958b9564565c35ebf65b7707d3c91e88eb",
   "verdict": {
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Temporal's worker-performance docs mention tuning Workers and Task Queue processing to 'manage resources effectively,' which implies some concurrency control at the task-queue/worker level, but there is no evidence of explicit per-key or per-tenant rate limiting/concurrency caps as described in the story. Missing for 10: documented per-workflow concurrency limits, per-key/tenant rate limiting primitives, and any hands-on confirmation of tenant isolation under load.",
+    "rationale": "Temporal exposes Worker/Task Queue tuning to control concurrent Activity/Workflow task execution (docs-29, docs-49) and Temporal Cloud enforces its own rate limits (docs-45), which platform engineers could leverage (e.g., separate task queues per tenant) to approximate concurrency capping. However, there is no documented first-class primitive for per-workflow, per-key, or per-tenant rate limiting/quota configuration exposed to application teams. Missing for 10: explicit per-tenant/per-key rate-limiting API or policy, tenant isolation guarantees, and any hands-on evidence of using it to stop a 'hot customer' from starving others.",
     "evidenceIds": [
-      "temporal-docs-29"
+      "temporal-docs-29",
+      "temporal-docs-49",
+      "temporal-docs-45"
     ],
     "productId": "temporal",
     "storyId": "concurrency-rate-controls"
