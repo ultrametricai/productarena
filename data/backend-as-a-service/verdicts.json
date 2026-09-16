@@ -4,22 +4,25 @@
     "storyId": "agent-branch-migrations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence describes Appwrite supporting isolated branches or preview environments for testing schema changes before production — the docs cover databases, CLI, and MCP tooling but nothing about environment branching or preview deployments for schema changes. This axis is fair for a backend/database platform, so absence of evidence yields 'none'.",
+    "confidence": "medium",
+    "rationale": "No evidence of branch/preview environments for schema changes—Appwrite offers CLI, MCP server, and self-hosting, but nothing about isolated branches or preview environments for testing schema migrations before production. missing for 10: branching/preview environment feature, schema diff/staging workflow, agent-driven isolated testing capability.",
     "evidenceIds": []
   },
   {
     "productId": "appwrite",
     "storyId": "agent-provisions-backend",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Appwrite's CLI (appwrite-cli) runs headlessly and can create/manage projects, resources, users, and functions via scriptable commands, and the docs mention JSON-based resource definitions (includes field) suitable for schema/config-as-code, which supports scripted backend provisioning. However, there is no direct evidence of a single documented workflow/example that stands up auth, database schema, and policies together in one script, and the hands-on probe shows the CLI works but doesn't demonstrate an end-to-end 'new backend' scaffold. missing for 10: an explicit documented or hands-on example of a full script provisioning schema+auth+policies end-to-end, evidence of policy/permission configuration via CLI, and confirmation the CLI supports idempotent bootstrapping of a brand-new project from scratch.",
+    "rationale": "Appwrite's CLI explicitly supports non-interactive/headless scripted usage (appwrite-docs-42), can create/manage projects, resources, users, functions, deployments (appwrite-docs-12/18/32), and databases/auth/policies are all provisionable via the CLI/API per the docs; this is exactly the kind of scriptable backend-standup an agent could drive headlessly. missing for 10: no end-to-end hands-on example/transcript of an agent actually scripting full schema+auth+policy setup in one script, and no independent/community verification of headless CLI workflows.",
     "evidenceIds": [
+      "appwrite-docs-42",
       "appwrite-docs-12",
-      "appwrite-docs-13",
       "appwrite-docs-18",
-      "appwrite-probe-4",
+      "appwrite-docs-32",
+      "appwrite-docs-6",
+      "appwrite-docs-11",
+      "appwrite-docs-38",
       "appwrite-probe-5"
     ]
   },
@@ -29,13 +32,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Direct probes confirm Appwrite serves a working llms.txt (HTTP 200) and docs.md endpoint tailored for LLM/agent consumption, plus dedicated docs framing ('Teach agents your backend so they make SDK-accurate calls') and an MCP server for agent integration. missing for 10: independent third-party confirmation that agents actually use these endpoints effectively in practice.",
+    "rationale": "Appwrite explicitly hosts an llms.txt (confirmed via live probe returning HTTP 200) and docs.md, plus supports appending .md to any doc page for raw Markdown, and provides Skills files for agent context — directly matching the story. missing for 10: no independent/community corroboration of agents actually consuming these files.",
     "evidenceIds": [
       "appwrite-probe-1",
       "appwrite-probe-2",
-      "appwrite-docs-31",
-      "appwrite-docs-11",
-      "appwrite-probe-3"
+      "appwrite-docs-40",
+      "appwrite-docs-39"
     ]
   },
   {
@@ -44,13 +46,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Appwrite's AI-related docs describe building blocks for developers (embeddings storage/similarity search, image labeling APIs, an MCP server for LLMs to call the API) rather than the product itself surfacing AI-generated insights or suggestions about the user's data inside its console/UI. No evidence shows Appwrite analyzing a user's own data and proactively presenting insights or recommendations.",
+    "rationale": "Appwrite's AI-related docs describe building blocks for developers to add AI features to their own apps (embeddings storage, image labeling, functions) and tooling for external AI agents (MCP server, CLI, skills) — not Appwrite itself surfacing AI-generated insights or suggestions about the user's own data inside the product (e.g., an analytics/insights dashboard). No evidence of such a first-party insights feature was found.",
     "evidenceIds": [
       "appwrite-docs-7",
       "appwrite-docs-16",
       "appwrite-docs-17",
-      "appwrite-docs-11",
-      "appwrite-docs-31"
+      "appwrite-docs-37"
     ]
   },
   {
@@ -59,10 +60,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Appwrite Functions can be triggered by webhooks, server events, and scheduled executions, enabling background automations that run without user intervention (appwrite-docs-9). However, evidence is limited to first-party docs with no independent verification of reliability, monitoring, or how 'autonomous' these functions are in practice, and no explicit AI-agent-oriented automation framework is documented beyond generic serverless triggers.  missing for 10: independent/hands-on verification of scheduled function execution, details on monitoring/error-handling for autonomous runs, and AI-agent-specific automation tooling.",
+    "rationale": "Appwrite Functions can be triggered by scheduled executions, server events, and webhooks (appwrite-docs-9), which enables autonomous background automations, and the CLI supports non-interactive/headless automation for CI use (appwrite-docs-42). However, there's no dedicated 'agent automation' or workflow-orchestration framework documented specifically for AI-native autonomous agents beyond scheduled Functions — missing for 10: no evidence of long-running agent orchestration, multi-step autonomous agent workflows, or independent hands-on validation of scheduled/background automation reliability.",
     "evidenceIds": [
       "appwrite-docs-9",
-      "appwrite-docs-28"
+      "appwrite-docs-42",
+      "appwrite-docs-11",
+      "appwrite-docs-38"
     ]
   },
   {
@@ -71,13 +74,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Appwrite's evidence covers an MCP server that lets external LLMs call Appwrite's API, a CLI, and some AI-product features (image labeling, embeddings) — but nothing describes a built-in AI assistant inside the Appwrite console/product that a user can delegate tasks to directly.",
+    "rationale": "Appwrite's evidence shows it exposes AI-related APIs (image labeling, embeddings), an MCP server for external AI agents/tools to control Appwrite, and CLI/skills for agentic tooling — but nothing describes a built-in assistant inside the Appwrite product/console that a user can delegate tasks to. The MCP and CLI integrations are about external AI agents driving Appwrite, not Appwrite hosting its own assistant.",
     "evidenceIds": [
       "appwrite-docs-11",
+      "appwrite-docs-37",
       "appwrite-docs-16",
-      "appwrite-docs-17",
-      "appwrite-probe-3",
-      "appwrite-probe-6"
+      "appwrite-docs-17"
     ]
   },
   {
@@ -86,26 +88,27 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Appwrite provides an official CLI (hands-on verified to install via npm and run headlessly with appwrite-cli --version) that can manage projects, resources, and deploy Functions, plus self-hosting via Docker for full CI/automation control and a documented --endpoint flag for scripting against self-hosted instances. missing for 10: no explicit CI pipeline example/recipe (e.g., GitHub Actions) in evidence, and no independent third-party report of CI usage beyond the hands-on CLI probe.",
+    "rationale": "Appwrite explicitly documents a non-interactive/headless CLI mode designed for CI automation (appwrite-docs-42), backed by a full CLI for managing projects, resources, and Functions (appwrite-docs-12, appwrite-docs-18), self-hosting via Docker for full infra control (appwrite-docs-14/19/33), and API-driven triggers for functions via HTTP/SDK/webhooks/schedules (appwrite-docs-9). missing for 10: independent/hands-on CI pipeline examples or third-party confirmation of headless CLI use in production.",
     "evidenceIds": [
-      "appwrite-probe-5",
+      "appwrite-docs-42",
       "appwrite-docs-12",
-      "appwrite-docs-22",
       "appwrite-docs-14",
-      "appwrite-docs-19"
+      "appwrite-docs-9",
+      "appwrite-docs-22",
+      "appwrite-probe-5"
     ]
   },
   {
     "productId": "appwrite",
     "storyId": "agentic-mcp-client",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Appwrite is a backend-as-a-service platform, not an AI agent/orchestrator; the evidence shows Appwrite exposes its own MCP *server* so LLMs can call Appwrite's APIs (appwrite-docs-11, appwrite-probe-3, appwrite-probe-6) — the opposite direction from the story, which asks whether Appwrite itself can consume external MCP servers' tools. Being an MCP tool consumer is not a plausible capability for a backend platform of this kind, so this axis does not apply.",
+    "confidence": "medium",
+    "rationale": "The evidence only shows Appwrite exposing its own MCP server so external AI agents (Claude Code, Cursor, etc.) can call Appwrite's API — the opposite direction from the story, which asks whether Appwrite itself can plug in and consume other MCP servers' tools. No documentation or CLI feature describes Appwrite acting as an MCP client or importing external MCP tool servers.",
     "evidenceIds": [
       "appwrite-docs-11",
-      "appwrite-probe-3",
-      "appwrite-probe-6"
+      "appwrite-docs-38",
+      "appwrite-probe-4"
     ]
   },
   {
@@ -114,41 +117,42 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Appwrite documents an official MCP server that lets LLMs interact with its API/docs, and a hands-on probe confirms the official package installs from PyPI and runs, only requiring standard project/API-key credentials to serve — consistent with normal MCP server behavior. Missing for 10: independent third-party corroboration of the MCP server in real agent workflows and more detail on supported tool/resource surface.",
+    "rationale": "Appwrite documents an official MCP server that lets LLMs/agents (Claude Code, Cursor, Claude Desktop, etc.) directly interact with Appwrite's API and docs, covering project/resource management and function deployment. This is first-party documented and probe-confirmed, though there's no independent hands-on verification of the MCP server's reliability. Missing for 10: independent/community corroboration of the MCP server working in practice, and more detail on setup/auth flow.",
     "evidenceIds": [
       "appwrite-docs-11",
-      "appwrite-probe-3",
-      "appwrite-probe-6"
+      "appwrite-docs-38",
+      "appwrite-probe-4"
     ]
   },
   {
     "productId": "appwrite",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Appwrite ships an official MCP server explicitly meant to let LLMs interact with Appwrite's API/docs via natural language, and hands-on probes confirm it installs and runs (though it requires API credentials before serving). This supports AI-native natural-language operation but is credential-gated and there's no end-to-end demonstration of a natural-language command actually driving Appwrite via MCP or CLI in practice. Missing for 10: hands-on proof of successful NL-driven command execution, evidence of broader NL interfaces beyond MCP (e.g. chat-based admin), and independent corroboration of real-world use.",
+    "rationale": "Appwrite ships an official MCP server plus open-source \"Skills\" markdown files that let AI agents/LLMs (via Claude Desktop, Cursor, Codex, etc.) directly operate on an Appwrite project—creating/managing projects, resources, and functions—using natural-language driven tool calls rather than manual API/CLI work, and docs are also served as raw markdown for agent consumption. Missing for 10: independent/hands-on user reports confirming the MCP server works reliably in practice, and no evidence of a broader natural-language chat/command interface beyond the MCP/agent-tooling layer.",
     "evidenceIds": [
       "appwrite-docs-11",
+      "appwrite-docs-38",
+      "appwrite-docs-39",
       "appwrite-docs-31",
-      "appwrite-probe-3",
-      "appwrite-probe-6"
+      "appwrite-docs-40",
+      "appwrite-probe-4"
     ]
   },
   {
     "productId": "appwrite",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Appwrite ships and documents an official CLI (npm package) covering project/resource management, functions deployment, and self-hosted endpoint config; a hands-on probe confirms it installs via npx and runs headlessly, verifying the claim beyond just docs. missing for 10: independent third-party review or community discussion specifically about the CLI's usability (only vendor docs + probe verification available).",
+    "rationale": "Appwrite documents an official CLI covering project/resource management, function deployment, non-interactive/headless CI use, SDK generation, and self-hosted endpoint targeting, which is well suited to AI-native/agentic automation workflows. missing for 10: independent hands-on community corroboration of the CLI itself (evidence is entirely first-party docs) and no explicit example of an AI agent scripting the CLI end-to-end.",
     "evidenceIds": [
       "appwrite-docs-12",
       "appwrite-docs-13",
-      "appwrite-docs-18",
       "appwrite-docs-22",
-      "appwrite-docs-32",
-      "appwrite-probe-4",
+      "appwrite-docs-41",
+      "appwrite-docs-42",
       "appwrite-probe-5"
     ]
   },
@@ -156,15 +160,19 @@
     "productId": "appwrite",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Appwrite exposes a documented public API covering auth, databases, storage, functions, and realtime, with an official CLI (hands-on verified running headlessly) and llms.txt/docs.md machine-readable API references confirming programmatic drivability. Missing for 10: independent third-party corroboration of full API coverage beyond Appwrite's own docs and probes.",
+    "rationale": "Appwrite exposes a full public API surface (auth, databases, storage, functions) with SDKs, a documented CLI for automation/CI, docs-as-markdown and llms.txt for machine consumption, and an official MCP server letting agents call the API accurately. This is strong first-party documentation of programmatic/agentic access, though an OpenAPI spec probe returned 404s. Missing for 10: a publicly discoverable OpenAPI/swagger spec and independent (non-vendor) hands-on confirmation of agentic API usage.",
     "evidenceIds": [
-      "appwrite-docs-9",
-      "appwrite-docs-10",
+      "appwrite-docs-11",
       "appwrite-docs-12",
+      "appwrite-docs-38",
+      "appwrite-docs-39",
+      "appwrite-docs-40",
+      "appwrite-docs-42",
       "appwrite-probe-1",
       "appwrite-probe-2",
+      "appwrite-probe-3",
       "appwrite-probe-4",
       "appwrite-probe-5"
     ]
@@ -172,30 +180,33 @@
   {
     "productId": "appwrite",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows Appwrite requires an APPWRITE_API_KEY to run its MCP server (credential-gated), but there is no documentation or hands-on evidence describing scoped or least-privilege API key creation, granular permission scopes, or any mechanism for issuing an agent-specific restricted credential. Missing for 10: docs on API key scopes/permissions, evidence of scoping granularity, and any agent-specific credential issuance workflow.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Appwrite documents JWT-based delegated access for users (appwrite-docs-35) and a permissions-based database/resource model (appwrite-docs-6, appwrite-docs-23), which could underpin least-privilege credentialing, but there is no explicit documentation of issuing scoped API keys/tokens specifically for AI agents. missing for 10: explicit docs on creating agent-specific scoped API keys, examples of least-privilege key scoping for MCP/agent use, and independent confirmation this works in practice for agent credentials.",
     "evidenceIds": [
-      "appwrite-probe-6",
-      "appwrite-docs-12"
+      "appwrite-docs-35",
+      "appwrite-docs-6",
+      "appwrite-docs-23",
+      "appwrite-docs-11"
     ]
   },
   {
     "productId": "appwrite",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Appwrite documents official SDKs implicitly through its API-driven products (auth, databases, storage, functions) and provides an official CLI and MCP server for programmatic/agentic access, with hands-on probes confirming both run. However, the evidence pack never explicitly enumerates or links official client SDKs (e.g., language-specific SDK docs/repos) as distinct artifacts, relying instead on CLI/MCP tooling as proxies. missing for 10: direct evidence of official multi-language SDK documentation/repos, SDK versioning/maintenance signals, and independent developer corroboration of SDK usage quality.",
+    "rationale": "Appwrite explicitly supports SDK-based development with 'SDK methods' triggering Functions, a CLI 'generate' command that creates type-safe SDKs from project schema, and dedicated AI-native tooling (MCP server for 'SDK-accurate calls', Skills markdown files, docs-as-markdown, llms.txt) that teaches agents to use its SDKs correctly. This shows first-party investment in making SDKs agent-buildable, though the pack lacks an explicit enumerated list of supported SDK languages or independent hands-on validation of SDK quality. Missing for 10: explicit list/count of official SDK languages, independent developer corroboration of SDK reliability.",
     "evidenceIds": [
-      "appwrite-docs-11",
-      "appwrite-docs-12",
+      "appwrite-docs-9",
+      "appwrite-docs-41",
       "appwrite-docs-31",
-      "appwrite-probe-3",
-      "appwrite-probe-4",
-      "appwrite-probe-5",
-      "appwrite-probe-6"
+      "appwrite-docs-38",
+      "appwrite-docs-39",
+      "appwrite-docs-40",
+      "appwrite-probe-1",
+      "appwrite-probe-2"
     ]
   },
   {
@@ -216,12 +227,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Appwrite ships an MCP server and CLI so external AI agents/tools can interact with its API and docs (appwrite-docs-11, appwrite-docs-31, appwrite-probe-3, appwrite-probe-6), but this is for third-party AI clients connecting to Appwrite, not an AI assistant embedded within the Appwrite dashboard itself that can write queries, debug errors, or explain the backend inline. No documentation or probe evidence describes such an in-dashboard chat/assistant feature.",
+    "rationale": "Evidence shows Appwrite ships an MCP server and CLI/skills so external AI coding agents (Claude Code, Cursor, etc.) can operate on an Appwrite project, but there is no evidence of an in-dashboard/console AI chat assistant that users can converse with to write queries, debug errors, or get explanations directly inside the Appwrite UI.",
     "evidenceIds": [
       "appwrite-docs-11",
-      "appwrite-docs-31",
-      "appwrite-probe-3",
-      "appwrite-probe-6"
+      "appwrite-docs-38",
+      "appwrite-docs-39",
+      "appwrite-docs-37"
     ]
   },
   {
@@ -230,29 +241,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows extensive product documentation, CLI, and MCP server tooling, but nothing describes an interactive API reference (e.g., a Swagger/OpenAPI-style playground) with runnable code examples embedded in the docs.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows Appwrite documentation, CLI, and MCP tooling for AI agents, but nothing describes an interactive API reference or console where users can run live code examples. A probe for OpenAPI/Swagger endpoints returned 404s, further suggesting no exposed interactive reference is confirmed.",
+    "evidenceIds": [
+      "appwrite-probe-3"
+    ]
   },
   {
     "productId": "appwrite",
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Appwrite has API docs, a CLI, MCP server, and llms.txt/docs.md machine-readable doc feeds, but none of the evidence mentions a downloadable OpenAPI/Swagger spec or equivalent machine-readable API schema file.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Appwrite is an API-driven backend platform, so publishing a machine-readable API spec (OpenAPI/Swagger) is a fair and applicable ask. A direct probe for standard OpenAPI/Swagger endpoints (openapi.json, swagger.json, etc.) returned 404 on all candidates, and no docs evidence points to a downloadable spec file, only CLI/MCP/markdown docs tooling.",
+    "evidenceIds": [
+      "appwrite-probe-3",
+      "appwrite-probe-1",
+      "appwrite-probe-2"
+    ]
   },
   {
     "productId": "appwrite",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes self-hosting, CLI, MCP server, and various product features but never mentions a sandbox/staging environment, separate test projects, or any mechanism to isolate test data from production. Appwrite's self-hosting docs (appwrite-docs-14, appwrite-docs-19) imply you could stand up a separate instance, but this is not framed or documented as a sandbox testing capability distinct from production.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Appwrite's self-hosting capability (docs-14/19/33/34) lets a user spin up an isolated instance separate from production, and CLI non-interactive mode (docs-42) supports automated CI testing, which together imply a way to test without touching production data. However, there is no explicit 'sandbox' or staging-environment feature, no seed/reset-data tooling, and no documentation calling out this exact workflow.\nmissing for 10: explicit sandbox/staging environment feature, data-seeding/reset tooling, first-party guidance on isolating test vs prod data.",
     "evidenceIds": [
       "appwrite-docs-14",
       "appwrite-docs-19",
-      "appwrite-docs-22"
+      "appwrite-docs-34",
+      "appwrite-docs-42"
     ]
   },
   {
@@ -260,9 +278,11 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of API versioning scheme or a documented deprecation policy anywhere in Appwrite's docs, CLI, MCP server, or community discussion. This axis clearly applies to a backend platform with public APIs, but no supporting evidence exists. Missing for 10: any documentation of API version numbers, versioning strategy, or a deprecation/sunset policy for endpoints or SDKs.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "No evidence pack item references API versioning scheme or a documented deprecation policy; the openapi.json probe even returned 404s, suggesting no discoverable versioned API spec. No mention of version numbers, deprecation timelines, or migration guides for breaking changes.",
+    "evidenceIds": [
+      "appwrite-probe-3"
+    ]
   },
   {
     "productId": "appwrite",
@@ -270,11 +290,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Appwrite's docs explicitly document email/password login secured with Argon2 hashing 'with just a few lines of code' and OAuth sign-in with 30+ providers including GitHub, Google, and Facebook, both delivered via the platform SDK. This directly matches the story's core ask of quick email/password and social OAuth integration. Missing for 10: independent hands-on developer confirmation of the actual time-to-integrate/setup experience beyond vendor docs.",
+    "rationale": "Docs explicitly cover email/password login with Argon2 hashing in a few lines of code, plus OAuth sign-in with GitHub, Google, Facebook and 30+ providers via SDK, matching the story closely. Missing for 10: independent/hands-on developer confirmation of the 'minutes' setup time, as evidence is entirely vendor docs.",
     "evidenceIds": [
-      "appwrite-docs-29",
       "appwrite-docs-1",
-      "appwrite-docs-26"
+      "appwrite-docs-26",
+      "appwrite-docs-29"
     ]
   },
   {
@@ -283,7 +303,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Appwrite docs explicitly document MFA implementation (appwrite-docs-4) and OAuth-based social logins (appwrite-docs-1, appwrite-docs-26), but no evidence of dedicated enterprise SSO protocols like SAML or OIDC identity-provider federation is present in the pack. Missing for 10: explicit SAML/OIDC enterprise SSO documentation, admin-enforced MFA policy controls, and independent confirmation of enterprise SSO working in production.",
+    "rationale": "Appwrite's docs explicitly cover implementing MFA (appwrite-docs-4) and OAuth-based logins with 30+ providers (appwrite-docs-1, appwrite-docs-26), satisfying the MFA half of the story. However, there is no evidence of enterprise SSO protocols like SAML or OIDC being supported — only generic OAuth (Google, GitHub, Facebook, etc.) is documented, which is not the same as enterprise-grade SAML/OIDC federation. Missing for 10: explicit SAML/OIDC enterprise SSO support, admin-enforced MFA/SSO policy controls, and any enterprise identity-provider integration docs.",
     "evidenceIds": [
       "appwrite-docs-4",
       "appwrite-docs-1",
@@ -295,11 +315,9 @@
     "storyId": "automated-backups-pitr",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions automated backups, backup scheduling, or point-in-time recovery features for Appwrite databases/storage; only compliance certifications (SOC-2, HIPAA) are mentioned without backup/PITR specifics. missing for 10: documentation of automated backup scheduling, restore/point-in-time recovery mechanism, retention policies, or any hands-on/community confirmation of backup capability.",
-    "evidenceIds": [
-      "appwrite-docs-20"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions automated backups, snapshotting, or point-in-time recovery features for Appwrite databases; the closest related material covers self-hosting, migrations between platforms, and general database product features, none of which address backup/PITR. Missing for 10: any mention of backup scheduling, retention policies, restore/point-in-time recovery tooling, or disaster-recovery documentation.",
+    "evidenceIds": []
   },
   {
     "productId": "appwrite",
@@ -307,12 +325,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers auth, databases, storage, functions, CLI, and MCP server capabilities but contains no mention of batch/bulk create, update, or delete operations across many items (e.g., no batch API endpoints or bulk CLI commands beyond basic single-resource CRUD and file split via 'includes'). Missing for 10: any documentation of bulk/batch endpoints, CLI batch commands, or evidence of processing many items in a single call.",
+    "rationale": "Evidence shows Appwrite's CLI can push/pull configuration and manage resources, and its MCP server lets LLMs call SDK methods, but there is no documentation of a bulk/batch API (e.g., batch create, update, or delete across many rows/files/users) that would let an AI-native user perform true bulk operations. Missing for 10: explicit bulk create/update/delete endpoints or CLI commands operating on many items in one call, and any hands-on confirmation of such batch semantics.",
     "evidenceIds": [
-      "appwrite-docs-10",
       "appwrite-docs-12",
       "appwrite-docs-13",
-      "appwrite-probe-4"
+      "appwrite-docs-42",
+      "appwrite-docs-11"
     ]
   },
   {
@@ -321,7 +339,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Appwrite Functions can be triggered by server events, webhooks, and scheduled executions, and the platform explicitly documents 'respond to server events in realtime,' which supports automatic action-triggering on events. However, this is function/webhook-based automation rather than a dedicated declarative rules engine, and there's no independent or hands-on evidence confirming event-trigger reliability. Missing for 10: evidence of a dedicated rules/condition-definition interface, independent verification of event-trigger behavior, and AI-native specific tooling for defining trigger conditions.",
+    "rationale": "Appwrite Functions can be triggered automatically by server events, webhooks, HTTP requests, SDK calls, and scheduled executions, and the docs mention responding to server events in realtime — this supports rule-like automation on events. However, there's no evidence of a dedicated declarative 'rules engine' (e.g., conditional trigger definitions, if-this-then-that style automation) beyond function triggers. Missing for 10: a first-class rules/automation builder distinct from writing custom Function code, and independent/hands-on validation of event-triggered automation reliability.",
     "evidenceIds": [
       "appwrite-docs-9",
       "appwrite-docs-28"
@@ -330,13 +348,14 @@
   {
     "productId": "appwrite",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Appwrite Functions support scheduled executions (appwrite-docs-9) and notifications can be scheduled (appwrite-docs-27), giving basic recurring-job capability, but there's no evidence of a broader workflow/orchestration engine, retries, chaining, or dependency management for multi-step workflows. missing for 10: documentation on workflow orchestration (multi-step/chained jobs), cron syntax specifics, monitoring/retry logic for scheduled functions, and independent/hands-on confirmation that scheduled executions work reliably.",
+    "rationale": "Appwrite Functions explicitly support 'scheduled executions' as a trigger type alongside HTTP, SDK, and webhook triggers, enabling recurring job/workflow automation directly in the platform (appwrite-docs-9). This is corroborated by the general functions/automation docs and CLI's ability to deploy functions programmatically (appwrite-docs-12, appwrite-docs-42), fitting an AI-native automation workflow.\n\nmissing for 10: no docs detailing cron syntax or scheduling UI specifics, no mention of multi-step workflow orchestration beyond single-function triggers, and no independent/hands-on confirmation that scheduled executions work reliably in practice.",
     "evidenceIds": [
       "appwrite-docs-9",
-      "appwrite-docs-27"
+      "appwrite-docs-12",
+      "appwrite-docs-42"
     ]
   },
   {
@@ -344,12 +363,9 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Appwrite's evidence covers Functions triggers, CLI, and MCP tooling but contains no mention of version history, diffing, review workflows, or rollback for Functions/automations. Missing for 10: any documentation of deployment versioning, rollback UI/CLI commands, or review/approval workflow for automations.",
-    "evidenceIds": [
-      "appwrite-docs-9",
-      "appwrite-docs-12"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence of any version history, review workflow, or rollback mechanism for automations/functions in Appwrite. The CLI supports deploying/managing functions and configs, but there's no documented versioning, diffing, review process, or rollback capability for automations. missing for 10: version history for functions/automations, review/approval workflow, rollback/revert mechanism, audit trail of automation changes.",
+    "evidenceIds": []
   },
   {
     "productId": "appwrite",
@@ -367,12 +383,13 @@
     "productId": "appwrite",
     "storyId": "direct-db-connection",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Appwrite's primary database is accessed via SDK/API, not raw connection strings, but docs mention a 'dedicated, native PostgreSQL database you connect to directly,' implying some standard-client access is possible for that specific engine option. Missing for 10: explicit connection string examples, ORM compatibility documentation (e.g. Prisma/Drizzle support), and any hands-on confirmation that this direct-connect Postgres option actually works with standard clients.",
+    "rationale": "Appwrite documents a 'dedicated, native PostgreSQL database you connect to directly' as an option distinct from its managed API-based database, implying some direct-connection capability, but there is no explicit documentation of a connection string, standard driver, or ORM (e.g., Prisma, TypeORM) compatibility — the primary interface described elsewhere is via SDKs/REST APIs. Missing for 10: explicit connection-string format, confirmation of standard Postgres client/ORM compatibility, and independent corroboration of this direct-connect feature.",
     "evidenceIds": [
       "appwrite-docs-8",
-      "appwrite-docs-23"
+      "appwrite-docs-23",
+      "appwrite-docs-36"
     ]
   },
   {
@@ -381,7 +398,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Appwrite's Storage docs confirm core file upload/download/delete/list APIs, and permission-based access control is a well-documented pattern elsewhere in Appwrite's platform (e.g., databases), suggesting similar bucket/file-level permissions exist, but the evidence pack contains no explicit mention of storage access rules or CDN-backed delivery for files. Missing for 10: explicit docs on file/bucket permission rules, CDN or edge-caching delivery claims, and independent confirmation of these storage capabilities.",
+    "rationale": "Docs confirm core file storage APIs (upload, download, delete, list, plus unspecified utilities) but the evidence pack never explicitly documents per-file access/permission rules or CDN-backed delivery for storage. Missing for 10: explicit documentation of file-level permission/access rules, CDN or edge-caching delivery mechanism, and any hands-on/independent confirmation of these behaviors.",
     "evidenceIds": [
       "appwrite-docs-10"
     ]
@@ -392,9 +409,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Appwrite's database as supporting typed columns, relationships, and indexes, and even vector/embedding search, but never mentions full-text search capability or a fulltext index type. Missing for 10: any documentation of full-text/keyword search over collections, query operators for text search, or ranking/relevance features.",
+    "rationale": "The evidence pack describes Appwrite's database as supporting typed columns, relationships, and generic 'indexes' (appwrite-docs-6, appwrite-docs-23) and vector similarity search for embeddings (appwrite-docs-7), but nowhere documents a full-text search capability (e.g., fulltext index type or search query operators). Since no evidence confirms this specific capability, the axis applies but is unmet.",
     "evidenceIds": [
       "appwrite-docs-6",
+      "appwrite-docs-7",
       "appwrite-docs-23"
     ]
   },
@@ -403,8 +421,8 @@
     "storyId": "image-transformations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The storage docs only mention basic upload/download/delete/list operations plus vague 'added utilities' (appwrite-docs-10), with no explicit mention of image resizing, transformation, or preview generation. Missing for 10: any documentation of an image transformation/preview API, parameters (width/height/crop/quality), or hands-on/community confirmation of on-the-fly image serving.",
+    "confidence": "medium",
+    "rationale": "The evidence pack only says Storage provides upload/download/delete/list APIs with vague 'added utilities' (appwrite-docs-10), but nowhere documents an image resize/transform/preview endpoint that would let a developer serve transformed images without a custom pipeline.",
     "evidenceIds": [
       "appwrite-docs-10"
     ]
@@ -415,13 +433,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Appwrite is explicitly designed for self-hosting via Docker (any OS with Docker CLI, one-click marketplace installs), and the official CLI can manage projects/functions against a self-hosted instance, which together let a developer run the whole backend locally before deploying to cloud. However, there's no dedicated 'emulator' concept (unlike Firebase-style local emulation) and no hands-on evidence of the full docker-compose local stack actually working end-to-end. missing for 10: dedicated local emulator/offline-testing tooling, hands-on verification of the full self-hosted docker stack running locally, and clear pre-deploy parity guarantees between local and cloud.",
+    "rationale": "Appwrite is designed for self-hosting via Docker CLI and one-click marketplace installs, and the Appwrite CLI can manage projects, resources, and functions, including non-interactively — supporting local backend development before deploying to cloud. However, there is no explicit emulator/local-stack CLI command (like 'appwrite emulators start') mirroring the full backend for offline testing, and no direct evidence of a documented local dev workflow tying CLI + self-hosted Docker together as a single 'local emulator' story. missing for 10: dedicated local-emulator tooling or docs explicitly describing running the full stack locally via CLI for pre-deploy testing, independent hands-on confirmation of this workflow.",
     "evidenceIds": [
       "appwrite-docs-14",
       "appwrite-docs-19",
       "appwrite-docs-25",
       "appwrite-docs-33",
-      "appwrite-probe-4",
+      "appwrite-docs-12",
+      "appwrite-docs-42",
       "appwrite-probe-5"
     ]
   },
@@ -430,14 +449,14 @@
     "storyId": "managed-database-queries",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Appwrite documents a managed Databases product with structured/relational data, typed columns, relationships, and indexes, plus an alternative dedicated Postgres engine, and provides client and server SDKs (implied via CLI/API and cross-product docs like Functions triggered by 'SDK methods') to read/write data. Docs explicitly frame database choice as 'managed APIs with permissions and realtime' vs dedicated engines, matching the story's provisioning and client/server access needs. missing for 10: no direct hands-on demonstration of client SDK vs server SDK read/write calls against a provisioned database, no independent third-party corroboration of SDK behavior.",
+    "confidence": "medium",
+    "rationale": "Appwrite's Databases docs describe managed (shared-pool or dedicated) databases with permissions and realtime access (appwrite-docs-23, appwrite-docs-36), structured relational data with typed columns and indexes (appwrite-docs-6), and even a dedicated native Postgres option (appwrite-docs-8). The CLI can generate type-safe SDKs tied to your database schema for both client and server use (appwrite-docs-41), and Appwrite's core SDK model (client/server) is implied throughout its docs ecosystem. Missing for 10: an explicit code sample showing client vs server SDK read/write calls, and independent hands-on verification of database read/write reliability beyond vendor docs.",
     "evidenceIds": [
       "appwrite-docs-6",
-      "appwrite-docs-7",
       "appwrite-docs-8",
       "appwrite-docs-23",
-      "appwrite-docs-9"
+      "appwrite-docs-36",
+      "appwrite-docs-41"
     ]
   },
   {
@@ -445,9 +464,10 @@
     "storyId": "offline-first-sync",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions offline support, local caching, or automatic sync-on-reconnect for Appwrite's SDKs; only realtime server-event subscriptions (requires live connection) are documented, which is a different capability from offline-first local writes.",
+    "confidence": "low",
+    "rationale": "No evidence pack items mention offline support, local write queuing, conflict resolution, or sync-on-reconnect capabilities; documentation only covers realtime server events broadcast, not client-side offline persistence. Appwrite's realtime features (appwrite-docs-5, appwrite-docs-28) address live sync while connected, but nothing indicates an offline-first SDK or local cache with automatic reconciliation.",
     "evidenceIds": [
+      "appwrite-docs-5",
       "appwrite-docs-28",
       "appwrite-docs-23"
     ]
@@ -458,31 +478,31 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Appwrite's CLI and API docs show broad programmatic coverage of core resources — projects, databases/rows, storage/files, users, and Functions — and this is corroborated hands-on by a working CLI (appwrite-probe-5) and MCP server (appwrite-probe-6) that let LLMs and scripts drive the platform. However, there is no explicit documentation or independent confirmation asserting full 1:1 parity between every UI-only setting (e.g., billing, team/org management, advanced console configs) and the API/CLI. Missing for 10: explicit 100% UI-API parity statement, evidence covering console-only administrative features, and independent verification of edge-case parity gaps.",
+    "rationale": "Appwrite's docs confirm the CLI/API can create and manage projects, resources (rows, files, users), and deploy Functions—core operations that mirror UI actions—and the platform is explicitly API/SDK-first with MCP and CLI tooling for automation (appwrite-docs-12, appwrite-docs-18, appwrite-docs-32, appwrite-probe-4, appwrite-probe-5). However, there's no explicit vendor statement or independent verification of full UI-API parity, and the OpenAPI spec probe returned 404s, leaving some doubt about complete coverage of every UI action. Missing for 10: an explicit API-completeness statement, a working public OpenAPI/spec reference, and independent confirmation that all UI-only settings (e.g., billing, org management) are also API-accessible.",
     "evidenceIds": [
       "appwrite-docs-12",
       "appwrite-docs-18",
       "appwrite-docs-32",
       "appwrite-probe-4",
       "appwrite-probe-5",
-      "appwrite-probe-3",
-      "appwrite-probe-6"
+      "appwrite-probe-3"
     ]
   },
   {
     "productId": "appwrite",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Appwrite is self-hostable (full data control, Docker-based) and has a CLI that can list/export resources (users, files, rows) via JSON, plus is open-source, which together enable a path to export data and migrate away in open formats. However, there's no explicit documented 'export all data' feature or bulk-export/backup tool, nor open-format guarantees for all data types (e.g., storage files, function code, DB schema) in one operation. missing for 10: a dedicated bulk data-export/backup command or documented full-project export in open formats, explicit data-portability guarantees, and independent confirmation of a clean full account/data export.",
+    "rationale": "Appwrite documents self-hosting with 'full control over data location' and one-click migrations between Appwrite Cloud and self-hosted (and from Firebase/Supabase/NHost), plus a CLI that manages/exports resources (rows, files, users) into JSON files, all supporting data portability and open formats. However, there is no single documented 'export all my data' feature or explicit open-format export guarantee spanning all resource types. Missing for 10: an explicit full-data export/backup command or documented complete data-portability workflow, and independent verification that migrations/export are lossless and comprehensive.",
     "evidenceIds": [
+      "appwrite-docs-43",
       "appwrite-docs-14",
       "appwrite-docs-19",
       "appwrite-docs-24",
       "appwrite-docs-12",
       "appwrite-docs-13",
-      "appwrite-probe-5"
+      "appwrite-docs-18"
     ]
   },
   {
@@ -491,10 +511,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Appwrite's own llms.txt describes it as an 'open-source backend platform' and the GitHub repository (github.com/appwrite/appwrite) is publicly listed as the product's source, confirming source-readability under an open model. Missing for 10: explicit citation of the specific license name/file in the evidence pack and independent third-party confirmation of license terms.",
+    "rationale": "Appwrite's own docs and llms.txt describe it as an 'open-source backend platform' and the project is hosted publicly on GitHub (appwrite-gh-1), with extensive self-hosting documentation confirming the source is available for anyone to run and inspect (appwrite-docs-14, appwrite-docs-19, appwrite-probe-1). This satisfies the core story that an AI-native user can read the source under an open license. Missing for 10: explicit citation of the specific license name (e.g. BSD-3-Clause) or a link to a LICENSE file, and independent confirmation of license terms beyond self-hosting claims.",
     "evidenceIds": [
-      "appwrite-probe-1",
-      "appwrite-gh-1"
+      "appwrite-gh-1",
+      "appwrite-docs-14",
+      "appwrite-docs-19",
+      "appwrite-probe-1"
     ]
   },
   {
@@ -503,17 +525,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Appwrite is explicitly designed for self-hosting via Docker, offers one-click marketplace deployments, and documents full control over data location; community testimonials independently corroborate a good self-hosting experience. Missing for 10: no independent hands-on verification of a full self-hosted deployment (only CLI/MCP probes were run, not a full server install).",
+    "rationale": "Appwrite documents itself as designed from the ground up for self-hosting via Docker, with one-click marketplace deployments, full control over data location, and explicit self-hosted CLI/endpoint support; community evidence corroborates a strong self-hosting experience. missing for 10: independent hands-on verification of feature parity between cloud and self-hosted beyond docs/community anecdotes.",
     "evidenceIds": [
       "appwrite-docs-14",
       "appwrite-docs-15",
       "appwrite-docs-19",
       "appwrite-docs-24",
       "appwrite-docs-25",
-      "appwrite-docs-33",
       "appwrite-docs-34",
-      "appwrite-comm-1",
-      "appwrite-comm-5"
+      "appwrite-docs-22",
+      "appwrite-comm-1"
     ]
   },
   {
@@ -536,8 +557,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item addresses AI-training data usage or an opt-out policy; self-hosting docs discuss general data control (appwrite-docs-14, appwrite-docs-24) but never mention AI model training use of customer data.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI-training data usage policies, opt-out mechanisms, or any explicit privacy commitment regarding model training; self-hosting gives data control but that's not the same as an explicit no-AI-training policy. As a backend platform, this axis is plausible (buyers could ask whether their hosted data is used for AI training), so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -546,11 +567,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Appwrite exposes delete APIs for files/storage and database rows, and self-hosting gives 'full control over data location', which lets an AI-native user implement their own retention/deletion logic. However there's no documented retention-policy engine, TTL/auto-expiry settings, account/data-deletion workflow, or GDPR/right-to-be-forgotten tooling in the evidence. Missing for 10: explicit data retention policy controls, automated expiry/TTL settings, documented user/account deletion workflow, compliance-oriented deletion guarantees.",
+    "rationale": "Appwrite exposes basic delete APIs for files (appwrite-docs-10) and CLI-driven resource management (users, rows, files) (appwrite-docs-12/18/32), and self-hosting gives 'full control over data location' (appwrite-docs-24), which together let an operator remove or relocate data. However there is no documented retention-policy tooling (TTL/expiry rules), no explicit GDPR-style 'delete all user data' workflow, and no data-export/erasure certification beyond generic SOC-2/HIPAA/BAA mentions (appwrite-docs-20). Missing for 10: explicit retention/expiry configuration, documented right-to-erasure workflow, and independent verification of deletion completeness.",
     "evidenceIds": [
       "appwrite-docs-10",
+      "appwrite-docs-12",
+      "appwrite-docs-18",
       "appwrite-docs-24",
-      "appwrite-docs-14"
+      "appwrite-docs-20"
     ]
   },
   {
@@ -559,7 +582,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Appwrite; self-hosting docs discuss data location control but not telemetry collection specifically.",
+    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for Appwrite; while self-hosting (full data control) is documented, there's no explicit statement about disabling telemetry/analytics collection.",
     "evidenceIds": []
   },
   {
@@ -607,7 +630,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The docs mention databases with 'managed APIs with permissions and realtime' but the evidence pack contains no detail on row/document-level permission rules, role-based access control, or security policy syntax. missing for 10: explicit documentation of row/document-level permission model, examples of user/role-based access rules, and independent confirmation of enforcement.",
+    "rationale": "Appwrite docs mention databases with 'permissions' as part of managed APIs, implying per-resource access control, but the evidence pack lacks detail on document/row-level permission rules, role-based read/write scoping, or policy syntax. Missing for 10: explicit documentation of row/document-level permission model, examples of user/team/role-based access rules, and any hands-on confirmation of enforcement.",
     "evidenceIds": [
       "appwrite-docs-23"
     ]
@@ -617,50 +640,52 @@
     "storyId": "serverless-functions",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Appwrite Functions are explicitly documented as serverless functions triggerable by HTTP requests, SDK methods, server events, webhooks, and scheduled executions, with deployment managed via the CLI (deploying functions) and self-hosted/cloud infrastructure abstracted away from the developer. missing for 10: independent hands-on verification of an actual function deployment/execution and details on runtime scaling behavior.",
+    "confidence": "medium",
+    "rationale": "Appwrite Functions are explicitly documented as serverless compute triggered by HTTP requests, SDK methods, server events, webhooks, and scheduled executions, and the CLI supports creating/deploying these functions, matching the story directly. Missing for 10: independent hands-on verification of function deployment/runtime behavior, and more detail on scaling/cold-start characteristics.",
     "evidenceIds": [
       "appwrite-docs-9",
       "appwrite-docs-12",
-      "appwrite-docs-18",
-      "appwrite-docs-32",
-      "appwrite-probe-5"
+      "appwrite-docs-32"
     ]
   },
   {
     "productId": "appwrite",
     "storyId": "type-generation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Appwrite's auth, databases, functions, CLI, and MCP server, but contains no mention of generating typed client code (e.g., TypeScript types) from a schema automatically — a capability comparable BaaS platforms document explicitly. Missing for 10: any docs or CLI/SDK feature for schema-to-types codegen, examples of generated type definitions, or community confirmation of such a workflow.",
-    "evidenceIds": []
+    "rationale": "Appwrite's CLI has a documented `generate` command that detects the project's language and generates a type-safe SDK with typed helpers based on the database schema, directly matching the story of generating typed client code from schema. Missing for 10: no independent/hands-on corroboration of the generate command's output quality, and no detail on which languages/types are supported beyond TypeScript.",
+    "evidenceIds": [
+      "appwrite-docs-41"
+    ]
   },
   {
     "productId": "appwrite",
     "storyId": "vector-similarity-search",
-    "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Appwrite's docs explicitly state its Databases product supports storing embeddings and running similarity search to power AI features, directly matching the story. However, this is a single first-party doc claim without independent hands-on corroboration or detail on implementation specifics (e.g., indexing algorithms, supported vector dimensions). Missing for 10: independent/hands-on verification of vector search, technical details on vector indexing and performance.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Appwrite's docs explicitly claim to \"Store embeddings and run similarity search to power AI features\" as part of its database product, but there is no detail on implementation (index types, distance metrics, API specifics) or any independent/hands-on corroboration that this works in practice. missing for 10: technical details on vector search API/config, independent or hands-on validation, performance/scale characteristics.",
     "evidenceIds": [
       "appwrite-docs-7",
-      "appwrite-docs-6",
-      "appwrite-docs-23"
+      "appwrite-docs-23",
+      "appwrite-docs-37"
     ]
   },
   {
     "productId": "appwrite",
     "storyId": "versioned-migrations",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Appwrite's CLI can manage resources and push/pull config (appwrite.json split via `includes`) which developers could version-control and run in CI, but the evidence never describes an explicit migrations feature, migration history/versioning, or documented CI workflow for applying schema changes. missing for 10: dedicated migration command/tooling, schema version tracking, documented CI pipeline usage for migrations.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Appwrite's CLI can manage and push project resources (collections/attributes) defined in JSON config files, and supports a documented non-interactive/headless mode explicitly for CI automation, which covers schema-as-code applied via CLI/CI. However, there's no evidence of a dedicated migrations framework with versioned history, diffing, or rollback semantics — only generic 'push resources' and 'one-click migrate from other platforms' (data migration, not schema versioning). Missing for 10: explicit migration/version-history commands, rollback support, and independent confirmation of CI-based schema migration workflows in practice.",
     "evidenceIds": [
       "appwrite-docs-12",
       "appwrite-docs-13",
       "appwrite-docs-18",
-      "appwrite-probe-5"
+      "appwrite-docs-42",
+      "appwrite-docs-43",
+      "appwrite-docs-22"
     ]
   },
   {
@@ -669,33 +694,32 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Convex's CLI-driven dev deployments (schema changes pushed live to a separate dev deployment, not production) and the MCP server's default restriction from production deployments provide a safety mechanism for agents to create/test schema changes outside production. However, there is no explicit documentation of a 'preview environment' or branch-based workflow (e.g., ephemeral per-branch deployments) that Convex is known for in other contexts, and no evidence of an agent actually testing a schema change end-to-end.  missing for 10: explicit preview/branch deployment docs, agent-driven schema test walkthrough, promotion-to-production flow.",
+    "rationale": "Convex's CLI/dev deployment model (docs-6/17) automatically syncs schema changes to a separate dev deployment when developing, and the official MCP server explicitly blocks access to production deployments by default as a safety measure (docs-28), which together let an agent iterate on schema changes in an isolated, non-production environment. However, there is no explicit mention of a distinct 'branch' or 'preview environment' feature, nor documentation of testing/promotion workflow from that isolated environment into production. missing for 10: explicit preview/branch deployment feature, agent-driven promotion workflow from dev to production, independent corroboration of this workflow.",
     "evidenceIds": [
       "convex-docs-6",
       "convex-docs-17",
       "convex-docs-28",
-      "convex-docs-18",
-      "convex-docs-10",
-      "convex-probe-7"
+      "convex-docs-10"
     ]
   },
   {
     "productId": "convex",
     "storyId": "agent-provisions-backend",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Convex's CLI is documented to run headlessly (probe confirms `npx convex --version` and MCP handshake work keylessly) and supports pushing schema/function code (`convex dev`, `convex deploy`, `convex run`, `convex import`) which an agent could invoke from a script, and Convex explicitly markets itself as agent-friendly (docs-20, docs-23) with schema-as-code (docs-3) and pluggable auth providers (docs-4, docs-5, docs-15, docs-16). However there is no first-party example of a single non-interactive script that scaffolds schema, auth, and authorization policies together — auth setup (Clerk/Convex Auth) and policy code appear to require manual file authoring rather than a scripted CLI flow, and no explicit 'convex init --headless' or similar all-in-one command is documented. Missing for 10: a documented end-to-end headless script combining schema+auth+policy provisioning, explicit non-interactive flags for auth/policy setup, and independent hands-on confirmation of a full automated bootstrap.",
+    "rationale": "Convex's CLI (`npx convex dev/run/import/deploy`) and code-first schema/auth model mean an agent could script much of a backend setup, and the MCP server lets agents interact with a deployment programmatically. However, there is no documented example of a fully headless script that provisions auth (Clerk/WorkOS typically require external dashboard setup) and authorization policies end-to-end without manual/interactive steps. Missing for 10: a documented headless script or MCP flow that configures auth providers and authorization policies (not just schema/functions) without human interaction, and evidence this is done end-to-end in practice.",
     "evidenceIds": [
-      "convex-docs-3",
       "convex-docs-4",
       "convex-docs-5",
-      "convex-docs-6",
+      "convex-docs-15",
+      "convex-docs-25",
+      "convex-docs-32",
+      "convex-docs-17",
       "convex-docs-18",
-      "convex-docs-20",
-      "convex-docs-23",
-      "convex-probe-6",
-      "convex-probe-7"
+      "convex-docs-38",
+      "convex-docs-10",
+      "convex-probe-4"
     ]
   },
   {
@@ -704,13 +728,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Convex serves a live llms.txt at docs.convex.dev/llms.txt (confirmed via direct probe returning HTTP 200 with structured content) and also links agent-oriented onboarding docs (convex.dev/agent-setup.md) explicitly for making 'your agent a Convex expert', plus documents an official MCP server for agent interaction with the deployment. missing for 10: independent/community confirmation of agents actually using llms.txt, and markdown doc mirrors (e.g. /home.md) return 404 rather than 200, showing partial coverage of agent-friendly doc formats.",
+    "rationale": "Convex confirmed hosts a live llms.txt (HTTP 200) plus a dedicated agent-setup.md file explicitly aimed at making 'your agent a Convex expert,' directly satisfying the story. missing for 10: no independent/third-party confirmation of agents actually consuming these files successfully, and per-page .md docs return 404 so coverage is limited to the root llms.txt/agent-setup files rather than full doc-tree markdown mirrors.",
     "evidenceIds": [
       "convex-probe-1",
       "convex-docs-20",
-      "convex-docs-10",
-      "convex-probe-4",
-      "convex-probe-7",
       "convex-probe-2"
     ]
   },
@@ -720,7 +741,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Convex offers vector search and an MCP server that let external LLMs query data, and a CLI 'insights' command for deployment health, but there is no evidence of a built-in feature that generates AI insights or suggestions from the user's own data inside the product itself.",
+    "rationale": "Convex provides infrastructure (vector search, MCP server) that lets developers build AI features on top of their data, and a CLI 'insights' command that surfaces deployment health metrics — but there is no evidence Convex itself surfaces AI-generated insights or suggestions about the user's actual application data inside the product.",
     "evidenceIds": [
       "convex-docs-27",
       "convex-docs-7",
@@ -733,7 +754,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Convex's reactive database, auth, CLI, MCP server, and self-hosting, but contains no mention of scheduled functions, cron jobs, or any autonomous background automation capability. While Convex is a backend platform where such a feature would plausibly apply, nothing in the evidence documents it running tasks autonomously in the background.",
+    "rationale": "The evidence pack has no mention of Convex scheduled functions, cron jobs, or any mechanism for autonomous background automation; it only covers reactive queries, HTTP endpoints, and an MCP server for interactive agent access to a deployment. Missing for 10: any citation of cron/scheduled functions, background job triggers, or autonomous workflow execution.",
     "evidenceIds": []
   },
   {
@@ -742,13 +763,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Convex offers an MCP server so external AI agents/coding assistants can interact with a Convex deployment, and docs on making agents 'Convex experts', but there is no evidence of a built-in AI assistant embedded inside the Convex product itself that a user delegates tasks to. missing for 10: any first-party in-product chat/assistant UI, evidence of task delegation to an internal AI feature.",
+    "rationale": "Convex ships an MCP server and CLI that let external AI agents interact with a Convex deployment, and docs mention it 'works great with coding agents,' but this is agent-to-Convex tooling, not a built-in assistant embedded inside Convex itself that a user can delegate tasks to. No evidence of an in-product chat/assistant feature exists in the pack.",
     "evidenceIds": [
       "convex-docs-10",
-      "convex-docs-20",
       "convex-docs-23",
-      "convex-probe-4",
-      "convex-probe-7"
+      "convex-docs-28"
     ]
   },
   {
@@ -757,77 +776,75 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Convex ships a real CLI (`npx convex run/import/insights/deploy`) that installs via npm and runs headlessly, confirmed by a hands-on probe (`npx -y convex --version` succeeding without a UI), and its HTTP API lets you invoke functions programmatically for scripted automation. However, the evidence pack has no explicit CI/CD documentation (e.g., GitHub Actions examples, deploy-key auth for non-interactive deploys) tying these primitives together into an official CI workflow. Missing for 10: explicit CI/automation docs or examples, deploy-key/service-account auth flow for non-interactive pipelines, independent report of Convex used in a CI pipeline.",
+    "rationale": "Convex ships a documented CLI (`npx convex run`, `npx convex import`, `npx convex deploy` implied, `npx convex logs`) and HTTP API for calling functions, both of which are automatable/scriptable in CI, plus self-hosting options for full non-interactive control. However, there is no explicit documentation of a headless/non-interactive CI mode, no CI recipe or GitHub Actions example, and the dev CLI is described as a filesystem-watching interactive workflow rather than an explicit CI-first mode. missing for 10: explicit CI/automation docs or examples (e.g., GitHub Actions integration, non-interactive deploy flags), confirmation that `npx convex deploy` runs fully headlessly without auth prompts.",
     "evidenceIds": [
       "convex-docs-18",
       "convex-docs-26",
-      "convex-docs-27",
+      "convex-docs-34",
       "convex-docs-9",
       "convex-docs-31",
-      "convex-probe-6",
+      "convex-docs-19",
+      "convex-gh-1",
       "convex-probe-5"
     ]
   },
   {
     "productId": "convex",
     "storyId": "agentic-mcp-client",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Convex is a backend/database platform, not an agent, IDE, or assistant with its own tool-use runtime that could consume external MCP servers. All evidence (convex-docs-10, convex-probe-4, convex-probe-7) shows the reverse relationship: Convex ships an MCP *server* so external AI agents can call Convex's tools, not a client capability for Convex to plug in and use other MCP servers' tools.",
+    "confidence": "medium",
+    "rationale": "All MCP-related evidence describes Convex shipping its OWN MCP server so external AI agents can call Convex's tools (convex-docs-10, convex-probe-4, convex-docs-28) — this is the opposite direction from the story, which asks whether Convex itself can plug in and consume external MCP servers' tools. No evidence shows Convex acting as an MCP client or invoking third-party MCP tool servers from its backend/actions.",
     "evidenceIds": [
       "convex-docs-10",
       "convex-probe-4",
-      "convex-probe-7"
+      "convex-docs-28"
     ]
   },
   {
     "productId": "convex",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Convex ships a documented official MCP server exposing tools for AI agents to interact with a Convex deployment, with safety guardrails (no prod access by default), and hands-on probes confirm the server responds to a JSON-RPC initialize handshake via `npx convex mcp start`. This is a service/platform (not itself an agent), so the MCP-server axis applies and is met with concrete first-party plus hands-on evidence. Missing for 10: independent third-party (non-Convex) reports of using the MCP server in production workflows.",
+    "rationale": "Convex ships an official documented MCP server (docs.convex.dev/ai/convex-mcp-server) that exposes tools for AI agents to interact with a Convex deployment, with a safety note that it restricts production access by default, and this is corroborated by a direct probe confirming the doc page exists. Convex is a backend/database product (not itself an agent), so serving an MCP server is squarely within its category. Missing for 10: independent/hands-on community confirmation of the MCP server working in practice, and more detail on the specific tool set exposed.",
     "evidenceIds": [
       "convex-docs-10",
       "convex-docs-28",
-      "convex-probe-4",
-      "convex-probe-7"
+      "convex-probe-4"
     ]
   },
   {
     "productId": "convex",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Convex ships an official MCP server exposing deployment-management tools to AI agents, documents 'agent-setup' guidance, and explicitly says it 'works great with coding agents' for creating apps from natural-language prompts; a hands-on probe confirms the MCP server's stdio handshake actually works keylessly. However, this NL operability is mediated entirely through third-party coding agents/IDEs via MCP rather than a built-in NL command interface, and there's no evidence of the breadth of commands agents can reliably issue in practice. Missing for 10: end-to-end example of an NL command executing a real deployment action, independent user reports of NL-driven operation, and any built-in first-party chat/NL layer beyond MCP.",
+    "rationale": "Convex offers an official MCP server so AI agents can inspect/query deployments in natural language, plus agent-setup guidance and messaging that it 'works great with coding agents' for scaffolding projects via natural-language requests. However, this relies entirely on external coding agents/MCP clients rather than a built-in NL interface, and production access is restricted by default. Missing for 10: a first-party conversational/NL interface within Convex itself, and independent hands-on evidence of natural-language operation succeeding end-to-end.",
     "evidenceIds": [
       "convex-docs-10",
       "convex-docs-20",
       "convex-docs-23",
-      "convex-probe-4",
-      "convex-probe-7",
-      "convex-docs-28"
+      "convex-docs-28",
+      "convex-probe-4"
     ]
   },
   {
     "productId": "convex",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Convex ships an official CLI (npx convex) documented in depth with commands like run, import, insights, and dev-mode file watching, and hands-on probe evidence confirms it installs and runs headlessly (version 1.45.0). It's also explicitly positioned for agentic/AI-native workflows via the paired MCP server and agent-setup docs. Missing for 10: independent third-party review of CLI robustness beyond first-party docs and a single probe run.",
+    "rationale": "Convex ships an official CLI (npx convex ...) with documented commands for dev workflow, running functions, importing data, logs, and insights, and it explicitly integrates with AI-native workflows via agent setup docs and MCP tooling. missing for 10: independent/hands-on third-party corroboration of the CLI's AI-native ergonomics beyond first-party docs, and no explicit versioning/stability notes for CLI commands.",
     "evidenceIds": [
       "convex-docs-6",
       "convex-docs-17",
       "convex-docs-18",
       "convex-docs-26",
       "convex-docs-27",
-      "convex-probe-5",
-      "convex-probe-6",
-      "convex-docs-23",
-      "convex-docs-20"
+      "convex-docs-34",
+      "convex-docs-20",
+      "convex-probe-5"
     ]
   },
   {
@@ -836,15 +853,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Convex exposes public HTTP endpoints for calling functions (convex-docs-9, convex-docs-31), a documented CLI (convex-probe-5, convex-probe-6), and an official MCP server that AI agents can use to interact with a deployment, verified hands-on via JSON-RPC handshake (convex-docs-10, convex-probe-7). This gives AI-native users multiple documented, programmatic ways to drive the product. Missing for 10: no formal OpenAPI/Swagger spec was found (convex-probe-3 shows 404s) and no independent third-party corroboration of the HTTP API's completeness beyond first-party docs.",
+    "rationale": "Convex documents a public HTTP API that exposes deployment functions as callable endpoints, a full-featured CLI for scripting deployments, and an official MCP server specifically for AI agents to interact with the deployment — together giving an AI-native user multiple documented, programmatic ways to drive the product. Missing for 10: a formal OpenAPI/swagger spec (probes found only 404s) and independent hands-on corroboration of third-party API usage.",
     "evidenceIds": [
       "convex-docs-9",
       "convex-docs-31",
+      "convex-docs-18",
       "convex-docs-10",
-      "convex-probe-4",
-      "convex-probe-7",
+      "convex-docs-28",
       "convex-probe-5",
-      "convex-probe-6",
+      "convex-probe-4",
       "convex-probe-3"
     ]
   },
@@ -854,12 +871,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Convex documents that its MCP server is restricted from accessing production deployments by default as a safety measure, which is a limited form of least-privilege scoping for AI agents, but there is no broader mechanism for issuing configurable, scoped API credentials/tokens for agents beyond this single hardcoded restriction. missing for 10: documented API key/token scoping system, granular permission grants, ability to customize or extend the restriction beyond the binary prod/dev split.",
+    "rationale": "The only relevant evidence is that Convex's MCP server is restricted from production deployments by default as a safety measure, which is a coarse, binary dev/prod restriction rather than true scoped/least-privilege credential issuance for agents (e.g., granular API keys, role-based tokens, or fine-grained permission scopes). Missing for 10: documented ability to mint scoped API keys/tokens per agent, granular permission models, or per-function/table credential scoping.",
     "evidenceIds": [
-      "convex-docs-10",
       "convex-docs-28",
-      "convex-probe-4",
-      "convex-probe-7"
+      "convex-docs-10"
     ]
   },
   {
@@ -868,16 +883,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Convex provides official client SDKs (TypeScript/JavaScript, React, React Native) documented across its core docs, plus HTTP API for other languages, CLI tooling, and an official MCP server verified hands-on via probe. This directly supports AI-native developers building against first-party SDKs. Missing for 10: independent/third-party corroboration of SDK quality beyond first-party docs, and explicit documentation of SDKs for languages beyond JS/TS (e.g., Python) if they exist.",
+    "rationale": "Convex ships official SDKs/framework integrations for React, Next.js, Remix, TanStack Start, React Native, Vue, Nuxt, and Svelte, backed by typed client libraries, CLI tooling, and generated types, plus explicit AI-native tooling (MCP server, agent-setup guide) that lets AI-native developers build against these SDKs directly. Missing for 10: independent/hands-on third-party verification of SDK quality/completeness beyond vendor docs, and no OpenAPI/REST spec for non-JS ecosystems.",
     "evidenceIds": [
-      "convex-docs-1",
-      "convex-docs-9",
-      "convex-docs-31",
+      "convex-docs-39",
+      "convex-docs-38",
+      "convex-docs-17",
+      "convex-docs-18",
       "convex-docs-10",
+      "convex-docs-20",
       "convex-probe-4",
-      "convex-probe-6",
-      "convex-probe-7",
-      "convex-docs-23"
+      "convex-probe-5"
     ]
   },
   {
@@ -886,12 +901,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Convex exposes HTTP endpoints so external services can call into Convex functions (useful for *receiving* webhooks like Stripe), and its real-time reactivity is achieved via in-app query subscriptions over websockets, not via outbound webhook callbacks. No evidence shows Convex letting a client register a webhook URL to be notified of database/event changes.",
+    "rationale": "Convex exposes HTTP endpoints so external clients can call Convex functions (docs-9, docs-31), but there is no evidence of an outbound webhook mechanism where Convex notifies subscribers of database/event changes. This is a fair capability for a reactive backend to offer, but no such feature is documented.",
     "evidenceIds": [
       "convex-docs-9",
-      "convex-docs-31",
-      "convex-docs-21",
-      "convex-docs-22"
+      "convex-docs-31"
     ]
   },
   {
@@ -900,8 +913,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Convex has an MCP server for AI agents to interact with deployments and coding-agent integration, but there is no evidence of an AI assistant embedded IN the dashboard UI itself that lets users ask questions, get queries written, debug errors, or get backend explanations conversationally. The MCP server is a developer/agent tool accessed externally (via CLI/agent), not an in-dashboard chat assistant. missing for 10: in-dashboard AI chat/assistant UI, evidence of natural-language query generation or error debugging inside the dashboard, evidence of backend explanation features surfaced in-product.",
-    "evidenceIds": []
+    "rationale": "Evidence shows an official MCP server that lets external AI agents (e.g., coding assistants in an IDE) query/mutate/debug a Convex deployment, but nothing describes an AI assistant embedded within the Convex dashboard UI itself for writing queries, debugging errors, or explaining the backend. The story specifically asks about an in-dashboard assistant, which is not evidenced.",
+    "evidenceIds": [
+      "convex-docs-10",
+      "convex-docs-28",
+      "convex-docs-20"
+    ]
   },
   {
     "productId": "convex",
@@ -909,12 +926,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only standard prose documentation (CLI reference, HTTP API docs) with no interactive API explorer or runnable code examples; probes for OpenAPI/Swagger interactive specs returned 404s, indicating no such interactive reference exists.",
+    "rationale": "No evidence of an interactive API reference or runnable-example playground; probes explicitly show no OpenAPI/Swagger spec (404s) and only static docs pages plus an llms.txt for AI consumption. Convex offers CLI, MCP server, and HTTP API docs, but nothing indicating a browsable, runnable API explorer.",
     "evidenceIds": [
+      "convex-probe-2",
       "convex-probe-3",
       "convex-docs-9",
-      "convex-docs-31",
-      "convex-probe-2"
+      "convex-docs-31"
     ]
   },
   {
@@ -923,7 +940,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Convex exposes an HTTP API for calling functions, but a direct probe for OpenAPI/Swagger specs at all standard locations returned 404s, and no docs mention an OpenAPI or machine-readable API spec.",
+    "rationale": "A direct probe for OpenAPI/swagger spec files at all standard candidate paths returned 404, and no documentation mentions a downloadable API spec despite Convex exposing HTTP endpoints for functions.",
     "evidenceIds": [
       "convex-probe-3",
       "convex-docs-9",
@@ -935,14 +952,13 @@
     "storyId": "api-sandbox",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Convex CLI commands (e.g. `npx convex run`) operate against a dev deployment by default, separate from production, and the official MCP server explicitly blocks access to production deployments by default as 'a safety measure to prevent accidental modifications to production data,' directly enabling sandbox testing without touching prod. Hands-on probes confirm the CLI and MCP server function as documented.  missing for 10: independent/community corroboration of the dev/prod separation in practice, and explicit mention of a dedicated 'test' or staging environment beyond dev deployment.",
+    "confidence": "high",
+    "rationale": "Convex has separate dev/production deployments (npx convex dev pushes to dev deployment, not prod) and the official MCP server explicitly blocks access to production deployments by default as a safety measure to prevent accidental modifications to production data, directly enabling sandboxed testing for AI agents. missing for 10: independent/hands-on corroboration of this safety boundary actually holding in practice, and no explicit mention of a dedicated 'staging' environment distinct from dev/prod.",
     "evidenceIds": [
-      "convex-docs-18",
       "convex-docs-28",
+      "convex-docs-10",
       "convex-docs-6",
-      "convex-probe-6",
-      "convex-probe-7"
+      "convex-docs-18"
     ]
   },
   {
@@ -950,8 +966,8 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a documented API versioning scheme or deprecation policy for Convex's functions, CLI, or MCP server; probes for OpenAPI specs returned 404s and docs don't mention versioning/deprecation practices. missing for 10: any versioning scheme documentation, deprecation policy, changelog/migration guide commitments.",
+    "confidence": "high",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probe returned 404s and no changelog/versioning docs are cited.",
     "evidenceIds": [
       "convex-probe-3"
     ]
@@ -975,37 +991,38 @@
     "storyId": "auth-mfa-sso",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Convex documents third-party auth integrations (Clerk, WorkOS AuthKit, Auth0, Convex Auth) but provides no evidence of enforcing MFA or built-in enterprise SSO (SAML/OIDC) itself as a platform-level control; it defers entirely to external providers. missing for 10: any documentation of Convex enforcing MFA policy, native SAML/OIDC SSO support, or admin controls to require these for application users.",
+    "confidence": "high",
+    "rationale": "Convex docs describe auth via third-party providers (Clerk, WorkOS AuthKit, Auth0) or its own Convex Auth library for social/email/password sign-in, but there is no evidence of built-in enterprise SSO (SAML/OIDC) or MFA enforcement controls for a platform engineer to configure directly; these would depend entirely on the chosen third-party provider's capabilities, which aren't documented here.",
     "evidenceIds": [
       "convex-docs-4",
+      "convex-docs-5",
       "convex-docs-15",
-      "convex-docs-16",
-      "convex-docs-5"
+      "convex-docs-16"
     ]
   },
   {
     "productId": "convex",
     "storyId": "automated-backups-pitr",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions automated backups, snapshot scheduling, or point-in-time recovery for Convex deployments; the closest related feature is manual `npx convex import` for data import, not a backup/PITR system. Backups/PITR is a fair and applicable axis for a database platform, but the pack provides no documentation or claim of it.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The pricing page lists 'Daily backups' as an included feature on paid plans, confirming some automated backup capability, but there is no mention of point-in-time recovery, backup retention windows, restore process, or how backups work for self-hosted deployments. Missing for 10: point-in-time recovery details, backup restore/testing docs, retention policy specifics, and independent verification of backup reliability.",
+    "evidenceIds": [
+      "convex-docs-37"
+    ]
   },
   {
     "productId": "convex",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Convex supports bulk-ish operations via `npx convex import` for bulk data loading and functions can perform arbitrary batch reads/writes in TypeScript/mutations, plus MCP/CLI access lets an AI agent script these. However, there's no documented bulk update/delete API, no batch mutation primitive, and no evidence of a UI or CLI command for bulk editing many existing rows at once beyond import. missing for 10: dedicated bulk update/delete operations, batch mutation API documentation, hands-on evidence of bulk operations at scale, independent confirmation of performance/limits for large batch writes.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Convex supports bulk data import via `npx convex import` and lets mutations/queries run arbitrary JS over many documents, and the MCP server lets AI agents call these functions on a deployment. However, there's no documented explicit bulk-write/update/delete API, batch size limits, or a concrete example of an AI agent performing a bulk operation end-to-end. missing for 10: explicit bulk mutation/update/delete API docs, batch operation guarantees/limits, hands-on evidence of an AI agent executing bulk operations via MCP or CLI.",
     "evidenceIds": [
       "convex-docs-26",
-      "convex-docs-18",
       "convex-docs-10",
-      "convex-probe-6",
-      "convex-probe-7"
+      "convex-docs-18",
+      "convex-docs-9"
     ]
   },
   {
@@ -1029,7 +1046,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of Convex's cron jobs, scheduled functions, or recurring workflow capabilities — only queries, mutations, actions, HTTP endpoints, CLI, and MCP server tooling are documented. Missing for 10: any docs or examples of cron/scheduled function APIs, recurring job configuration, or workflow orchestration for automation.",
+    "rationale": "The evidence pack covers Convex's reactive database, auth, CLI, MCP server, and self-hosting, but contains no mention of cron jobs, scheduled functions, or recurring workflow scheduling capabilities, which is a plausible and often-touted Convex feature but is absent from this evidence set.",
     "evidenceIds": []
   },
   {
@@ -1038,12 +1055,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Convex's docs describe pushing new function/schema versions to a dev deployment and running functions via CLI, but there is no evidence of a version-history UI, review/approval workflow, or a rollback mechanism for deployed functions or 'automations'. missing for 10: versioning/history tracking of deployed functions, a review/approval step before promoting changes, and any documented rollback capability.",
+    "rationale": "Convex's docs describe deployments, CLI commands (deploy, logs, insights), and self-hosting, but there is no evidence of any built-in versioning, review, or rollback mechanism for functions/automations — deployments appear to be driven by git-based code pushes with no rollback tooling mentioned. missing for 10: deployment version history, rollback command, and any review/approval workflow for changes.",
     "evidenceIds": [
       "convex-docs-6",
       "convex-docs-17",
       "convex-docs-18",
-      "convex-probe-5"
+      "convex-docs-27",
+      "convex-docs-34"
     ]
   },
   {
@@ -1051,8 +1069,8 @@
     "storyId": "db-event-triggers",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Convex functions (queries/mutations/actions) run reactively when explicitly called or scheduled (cron, scheduled functions), and HTTP endpoints expose functions to external calls, but there is no evidence of native database triggers (e.g., on-insert/on-update hooks) or auth-event triggers (e.g., on sign-up webhooks) that automatically invoke functions in response to those events. missing for 10: documented database change triggers, auth event webhooks/triggers, any first-party example of event-driven automatic function execution.",
+    "confidence": "low",
+    "rationale": "The evidence describes Convex's reactive query model (queries re-run when underlying data changes) and HTTP endpoints for calling functions, but there is no documentation of database/auth event triggers (e.g., 'on insert', 'on user created') that automatically invoke backend functions. Reactivity for client queries is a different mechanism than server-side function triggers implied by the story.",
     "evidenceIds": []
   },
   {
@@ -1061,13 +1079,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Convex is explicitly a non-SQL, function-based reactive database ('no need to write any SQL... use JavaScript') accessed via its own client libraries, CLI, and HTTP API, not via a standard connection string usable by generic ORMs like Prisma or Drizzle. Self-hosting docs mention pairing with Postgres/Neon only as underlying infra, not as an ORM-compatible interface to Convex data itself.",
+    "rationale": "Convex is a TypeScript-native document database with its own query functions and explicitly states 'no need to write any SQL' (convex-docs-2), and self-hosting docs only mention using external stores like Postgres/Neon as backing infra, not exposing Convex data via standard connection strings or ORMs. No evidence of ODBC/JDBC/SQL client or ORM connection-string support is present anywhere in the pack.",
     "evidenceIds": [
       "convex-docs-2",
-      "convex-docs-9",
-      "convex-docs-31",
-      "convex-gh-1",
-      "convex-docs-19"
+      "convex-docs-8",
+      "convex-gh-1"
     ]
   },
   {
@@ -1076,7 +1092,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of file storage, upload APIs, access-controlled file serving, or CDN delivery for user files — only database, auth, CLI, MCP, and self-hosting details are covered. This is a fair axis for a backend/storage platform, but nothing in the provided evidence demonstrates the capability.",
+    "rationale": "The evidence pack contains no mention of file upload, file storage APIs, access-controlled file serving, or CDN-backed delivery anywhere in the Convex docs, CLI, or community citations provided. While file storage is a plausible axis for a backend platform, nothing in this evidence pack substantiates it.",
     "evidenceIds": []
   },
   {
@@ -1085,8 +1101,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only documents Convex's vector search feature for embeddings-based similarity search (convex-docs-7, convex-docs-14, convex-docs-29), not a full-text/keyword search index feature. No citation describes built-in full-text search capability, so this specific story is unsupported by the evidence provided. Missing for 10: any documentation of a full-text search index or API, independent confirmation it works without external search services.",
-    "evidenceIds": []
+    "rationale": "The evidence pack repeatedly documents Convex's vector search for embeddings-based similarity, but contains no mention of a full-text/keyword search index feature or API for text search without external tooling. Missing for 10: any docs reference to a full-text search index, search() query API, or tokenization/ranking behavior.",
+    "evidenceIds": [
+      "convex-docs-7",
+      "convex-docs-14",
+      "convex-docs-29",
+      "convex-docs-35"
+    ]
   },
   {
     "productId": "convex",
@@ -1094,7 +1115,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any built-in image resizing/transformation capability for Convex file storage; evidence only covers database, auth, CLI, MCP, and self-hosting features, with no mention of image transforms or a media pipeline.",
+    "rationale": "No evidence in the pack mentions Convex file storage supporting image resizing/transformation or any built-in image pipeline; storage-related evidence is entirely absent. This is a fair axis for a backend/storage platform, so lack of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -1103,13 +1124,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Convex's default CLI workflow (`npx convex dev`) watches your local filesystem but pushes functions to a cloud-hosted 'dev deployment,' not a fully local backend. However, Convex documents a self-hosting option that lets you run the open-source backend on your own servers/Docker, which could satisfy running the whole stack locally, and this works alongside various local infra tools (Postgres, SQLite, etc.). This is a workaround rather than a purpose-built local emulator experience like Firebase's emulator suite. Missing for 10: an explicit, first-party 'local emulator' or fully offline dev-mode equivalent, and independent verification that self-hosted setup replicates the full dev-loop (hot reload, dashboard) locally.",
+    "rationale": "Convex's standard CLI workflow (`npx convex dev`) watches your filesystem and pushes changes, but pushes to a cloud-hosted 'dev deployment' rather than a fully local emulator (convex-docs-6, convex-docs-17). Separately, Convex offers self-hosting where you 'run the Convex backend on your own servers' with 'the same fully up-to-date code the cloud service uses,' which could be used to run the whole stack locally before deploying to production (convex-docs-8, convex-docs-19, convex-gh-1), but the docs frame this as an alternative deployment target rather than an explicit local pre-deploy emulator/test loop. Missing for 10: explicit documentation of a local emulator mode built into the standard dev CLI workflow, and hands-on/community confirmation that self-hosted mode is commonly used as a local pre-deploy sandbox.",
     "evidenceIds": [
       "convex-docs-6",
       "convex-docs-17",
       "convex-docs-8",
       "convex-docs-19",
-      "convex-docs-30",
       "convex-gh-1"
     ]
   },
@@ -1117,18 +1137,20 @@
     "productId": "convex",
     "storyId": "managed-database-queries",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Convex is a managed reactive database (cloud deployments, no setup, tables auto-created) with client SDKs for React/React Native and server-side functions (queries/mutations/actions) plus HTTP API for external read/write access, and CLI/dev workflow support. missing for 10: explicit named list of all client SDKs (e.g. mobile/other languages) and independent hands-on confirmation of read/write from a client app beyond docs.",
+    "rationale": "Convex is a managed reactive database with no-setup provisioning (npm create convex@latest), automatic table creation, and client/server SDKs across React, Next.js, Remix, Vue, Svelte, React Native etc., plus HTTP endpoints for server-side access; ACID transactions and real-time sync are documented, and community/HN commentary corroborates the reactivity model internals. missing for 10: no independent hands-on benchmark of read/write latency or large-scale production usage report beyond docs and one HN thread.",
     "evidenceIds": [
       "convex-docs-1",
       "convex-docs-2",
       "convex-docs-13",
-      "convex-docs-9",
-      "convex-docs-31",
-      "convex-docs-16",
+      "convex-docs-21",
       "convex-docs-12",
-      "convex-docs-21"
+      "convex-docs-31",
+      "convex-docs-39",
+      "convex-docs-38",
+      "convex-comm-2",
+      "convex-comm-3"
     ]
   },
   {
@@ -1136,32 +1158,32 @@
     "storyId": "offline-first-sync",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers real-time reactivity, sync, schemas, auth, self-hosting, CLI, and MCP tooling, but nowhere mentions offline support, local write queuing, or reconnect-sync behavior for clients. Missing for 10: any documentation of offline-first client SDKs, local persistence/queueing of writes while disconnected, or conflict resolution on reconnect.",
+    "confidence": "medium",
+    "rationale": "Convex's evidence pack focuses on real-time reactive sync, ACID transactions, and cloud/self-hosted deployment, but nothing describes offline support, local persistence, or conflict-resolution/sync-on-reconnect for offline writes. Convex's model is explicitly server-driven reactivity (queries re-run on server-side data changes), which is a different capability than offline-first local writes.",
     "evidenceIds": [
-      "convex-docs-21",
-      "convex-docs-22",
       "convex-comm-2",
       "convex-comm-3",
-      "convex-comm-4"
+      "convex-docs-21",
+      "convex-docs-22"
     ]
   },
   {
     "productId": "convex",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Convex functions (queries/mutations/actions) are exposed via public HTTP endpoints and a CLI, and an MCP server lets AI agents run functions, import data, and inspect deployments programmatically, covering most core dev workflows without the dashboard UI. However, there's no documented OpenAPI spec (probe found 404s) and no evidence that dashboard-only features (e.g., insights, logs, some admin/config actions) are fully exposed via HTTP/API rather than CLI/MCP alone. Missing for 10: OpenAPI/machine-readable API spec, explicit confirmation that all UI-only admin/dashboard actions have API/CLI parity, and independent hands-on verification beyond docs.",
+    "rationale": "Convex exposes deployment functions via HTTP API and offers a CLI (run, import, logs, insights) plus an MCP server for AI agents to interact with deployments, showing broad but not total API/CLI parity with the dashboard UI. There's no explicit documentation claiming full UI/API parity, and probes found no OpenAPI spec, suggesting some dashboard-only features (e.g., visual data browsing, deployment settings) may lack a documented API equivalent. missing for 10: explicit parity statement, full OpenAPI/reference coverage, evidence that all dashboard actions (schema editing, table browsing, settings) are scriptable via API/CLI.",
     "evidenceIds": [
       "convex-docs-9",
       "convex-docs-31",
-      "convex-docs-10",
       "convex-docs-18",
+      "convex-docs-26",
+      "convex-docs-27",
+      "convex-docs-34",
+      "convex-docs-10",
       "convex-probe-3",
-      "convex-probe-6",
-      "convex-probe-7",
-      "convex-docs-28"
+      "convex-probe-5"
     ]
   },
   {
@@ -1199,11 +1221,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Convex explicitly ships an open-source, self-hostable backend that runs the same code as the cloud service, with documented compatibility with common infra (Neon, Fly.io, Vercel, Postgres, etc.), giving AI-native/open-source users a genuine self-host path. Missing for 10: independent hands-on verification of a full self-hosted deployment working end-to-end and details on parity/limitations versus the managed cloud service.",
+    "rationale": "Convex explicitly supports self-hosting the open-source backend on your own servers, with documentation confirming it runs the same code as the cloud service and integrates with common infra (Neon, Fly.io, Postgres, RDS, Sqlite, etc.). Missing for 10: independent hands-on reports of self-hosting at scale in production and more detail on feature parity/limitations versus the cloud offering.",
     "evidenceIds": [
       "convex-docs-8",
       "convex-docs-19",
       "convex-docs-30",
+      "convex-docs-36",
       "convex-gh-1"
     ]
   },
@@ -1212,9 +1235,16 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Convex offers region/data-residency selection for stored data; self-hosting is mentioned but that's a deployment-location choice by the operator, not a residency control for end users choosing where their data lives. missing for 10: any documentation of region selection, data residency guarantees, or geographic storage controls.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "No evidence of region/data-residency selection controls in Convex's cloud offering; self-hosting is mentioned but that requires managing your own infrastructure rather than choosing a region within Convex's service, and no docs describe region pinning or residency options. missing for 10: any documentation of region/residency selection, data locality controls, or compliance-driven region choice in the managed cloud product.",
+    "evidenceIds": [
+      "convex-docs-8",
+      "convex-docs-19",
+      "convex-docs-30",
+      "convex-docs-36",
+      "convex-gh-1",
+      "convex-docs-37"
+    ]
   },
   {
     "productId": "convex",
@@ -1228,11 +1258,16 @@
   {
     "productId": "convex",
     "storyId": "privacy-retention-controls",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Convex's database model, auth, self-hosting, MCP server, and CLI, but contains no documentation of data retention policies, deletion APIs/TTL, or explicit user controls for purging stored data. Self-hosting (convex-docs-8/19/30) implies infrastructure control but is not evidence of an actual retention/deletion feature.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Convex offers self-hosting (full control over your own data infrastructure) and lists HIPAA/SOC 2 reports plus daily backups as enterprise features, which implies some data governance controls, but there is no explicit documentation of user-facing data retention policies, deletion APIs, or right-to-erasure workflows. missing for 10: explicit data deletion/retention API or policy docs, GDPR/right-to-erasure support, retention configuration options.",
+    "evidenceIds": [
+      "convex-docs-8",
+      "convex-docs-19",
+      "convex-docs-30",
+      "convex-docs-37"
+    ]
   },
   {
     "productId": "convex",
@@ -1240,7 +1275,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism for Convex's CLI, backend, or MCP server; the docs focus on database features, auth, self-hosting, and AI integration without mentioning data collection practices. Missing for 10: any documentation of telemetry collection, privacy policy details, or an explicit opt-out flag/setting.",
+    "rationale": "No evidence pack item discusses telemetry, usage analytics, or an opt-out mechanism in Convex CLI/backend/docs; self-hosting is offered but that's a deployment choice, not a documented telemetry toggle.",
     "evidenceIds": []
   },
   {
@@ -1265,13 +1300,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Convex's docs and community evidence confirm true reactive subscriptions: queries automatically re-run server-side when data dependencies change (via readset/writeset tracking), pushing updates to clients without polling, enabling real-time UI updates. This is corroborated by first-party docs and detailed technical explanation from Convex engineers on HN. missing for 10: independent hands-on benchmark or third-party reproduction of live-update latency/behavior beyond vendor and self-reported engineering explanation.",
+    "rationale": "Convex is built around reactive queries that automatically re-run and push updates to clients when underlying data changes, with first-party docs and detailed engineering explanations of the readset/writeset invalidation mechanism confirming no polling is used. Independent community corroboration from Convex engineers and outside commenters backs the reactivity model as real and functioning. Missing for 10: independent third-party benchmark or large-scale production case study explicitly measuring real-time update latency/reliability at scale.",
     "evidenceIds": [
       "convex-docs-21",
       "convex-docs-22",
       "convex-comm-2",
       "convex-comm-3",
-      "convex-comm-4"
+      "convex-comm-4",
+      "convex-comm-5"
     ]
   },
   {
@@ -1280,13 +1316,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Convex clearly delivers ACID transactions (convex-docs-12) and optional schema validation (convex-docs-3, convex-docs-13), but the evidence shows no SQL-like relational query language — queries are plain TypeScript/JS with no documented join operator, foreign-key constraints, or referential-integrity enforcement; docs explicitly say 'no need to write any SQL' (convex-docs-2), implying joins must be hand-coded via multiple fetches rather than expressed declaratively. missing for 10: documented native join syntax/operator, declarative relational constraints (foreign keys, uniqueness across tables), and independent examples showing multi-table joins with constraints in a single transaction.",
+    "rationale": "Convex explicitly forgoes SQL and relational joins ('no need to write any SQL'), instead letting developers express multi-read/compute logic in TypeScript query functions (convex-comm-2) and enforcing ACID transactions (convex-docs-12) and optional schema shape validation (convex-docs-3). There is no documented declarative join operator or relational constraint system (foreign keys, uniqueness enforcement) — joins/constraints must be hand-coded in application logic rather than expressed as first-class relational queries.\nmissing for 10: native join syntax/operator, declarative relational constraints (foreign keys/uniqueness), independent verification of complex multi-table query patterns.",
     "evidenceIds": [
       "convex-docs-2",
       "convex-docs-3",
       "convex-docs-12",
-      "convex-docs-13",
-      "convex-docs-25"
+      "convex-comm-2",
+      "convex-comm-3"
     ]
   },
   {
@@ -1320,15 +1356,13 @@
     "productId": "convex",
     "storyId": "type-generation",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Convex CLI watches schema/function changes and auto-updates generated TypeScript types in convex/_generated, giving end-to-end type safety directly from schema definitions; this is corroborated by CLI docs and hands-on probe confirming the CLI runs and functions as documented. Missing for 10: independent third-party confirmation specifically of the generated type-safety workflow (beyond vendor docs and CLI probe).",
+    "rationale": "Convex's CLI dev process watches schema/function changes and automatically updates generated TypeScript types in convex/_generated, giving end-to-end type safety from schema to client code without manual codegen commands. This is well documented in official docs and reinforced by the 'end-to-end type safety' marketing claim. Missing for 10: independent/hands-on developer confirmation of the generated types workflow beyond first-party docs.",
     "evidenceIds": [
       "convex-docs-17",
       "convex-docs-6",
-      "convex-docs-33",
-      "convex-probe-5",
-      "convex-probe-6"
+      "convex-docs-33"
     ]
   },
   {
@@ -1337,26 +1371,26 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Convex docs explicitly document vector search over stored embeddings, letting developers find similar documents and feed context to LLMs for AI-powered features like recommendations. This is a first-party, well-documented feature directly matching the story. Missing for 10: independent hands-on benchmarks or community corroboration of vector search performance/scale, and details on embedding storage limits or indexing configuration nuances.",
+    "rationale": "Convex documents native vector search over stored documents specifically framed for embeddings and LLM context/recommendations use cases (convex-docs-7, convex-docs-14, convex-docs-29, convex-docs-35), integrated directly into its database without extra infrastructure. Missing for 10: independent hands-on benchmarks or community validation of vector search at scale, and details on index configuration/limits.",
     "evidenceIds": [
       "convex-docs-7",
       "convex-docs-14",
-      "convex-docs-29"
+      "convex-docs-29",
+      "convex-docs-35"
     ]
   },
   {
     "productId": "convex",
     "storyId": "versioned-migrations",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Convex schemas are defined as code (schema.ts) and the CLI automatically pushes new schema/function versions to a deployment when files change, and `npx convex deploy`-style CLI usage implies these changes can be scripted for CI (convex-docs-6, convex-docs-17, convex-docs-18, convex-probe-5, convex-probe-6). However, Convex has no distinct 'migration' abstraction (no migration files, versioning, or rollback tooling) and there is no explicit documentation of running schema pushes inside a CI pipeline. Missing for 10: explicit migration-file/versioning system, documented CI integration example, and rollback/history tooling for schema changes.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Convex schemas are defined in code (schema.ts) and the CLI automatically pushes schema changes to a deployment when files change (convex-docs-6/17), which gives an implicit, version-controllable schema workflow, but the evidence never describes a dedicated migrations system (versioned migration files, up/down scripts) or explicit CI/CD deployment pipeline usage. missing for 10: explicit migration versioning/history tooling, documented CI integration for applying schema changes, rollback support.",
     "evidenceIds": [
+      "convex-docs-3",
       "convex-docs-6",
       "convex-docs-17",
-      "convex-docs-18",
-      "convex-probe-5",
-      "convex-probe-6"
+      "convex-docs-18"
     ]
   },
   {
