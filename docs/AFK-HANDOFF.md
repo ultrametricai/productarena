@@ -41,9 +41,13 @@ Process manifest:
       "calls": [                     // recorded API/tool calls, verbatim from the corpus
         { "method": "GET /api/name-availability?state=DE&name={name}", "type": "rest", "description": "…" }
       ],
-      "vendorOptions": [             // every vendor that can perform the step, canonical first
+      "vendorOptions": [             // every vendor that can perform the step, canonical first.
+                                     // Steps mapped to an arena (corpus optionsArenaId) list the
+                                     // arena's CURRENT roster — top products by PA Score, resolved
+                                     // at build time — then any curated extras; the list grows or
+                                     // reorders as the live leaderboard moves (additive, non-breaking).
         {
-          "vendor": "mercury",           // corpus vendor key
+          "vendor": "mercury",           // corpus vendor key (arena-derived entries use the product id)
           "name": "Mercury",
           "productId": "mercury",        // judged PA product id; null = untracked (honest chip)
           "arena": "startup-banking",    // null when untracked

@@ -38,6 +38,15 @@ export const DagNodeSchema = z.object({
   // vendors render as chips linking to their judged product page; untracked ones (e.g. doola)
   // render as honest unlinked chips. Distinct from `vendor` (the canonical call target).
   vendorOptions: z.string().min(1).array().optional(),
+  // The arena (categories.json id) covering this step's GENERAL FUNCTION — "run payroll" →
+  // payroll, "choose a bank" → startup-banking. Display-only: stepVendorOptions() DERIVES the
+  // step's supplier list from this arena's live leaderboard at build time (top products by
+  // PA Score, capped), so roster changes flow through automatically instead of freezing
+  // product lists here. vendorOptions stays the hand-curated set; entries not in the arena
+  // are appended after the derived roster. Steps whose function is narrower than any arena
+  // (formation services inside legal-ops) or has no arena yet (SEO tools, cloud file storage,
+  // launch platforms) omit this and keep their curated options frozen.
+  optionsArenaId: z.string().min(1).optional(),
   toolCall: z.string().min(1).optional(),
   // The canonical external page a HUMAN uses to do this step themselves (the IRS EIN
   // application, Delaware's filing portal, USPTO search…) — rendered as a small
@@ -384,7 +393,10 @@ export const VENDOR_ARENA: Record<string, string> = {
   clerky: 'legal-ops',
   stripe_atlas: 'legal-ops',
   firstbase: 'legal-ops',
+  legalzoom: 'legal-ops',
   docusign: 'legal-ops',
+  // Lifecycle email to users — judged in email-marketing.
+  mailchimp: 'email-marketing',
   // Cap table & option grants.
   carta: 'equity-management',
   pulley: 'equity-management',
@@ -565,23 +577,74 @@ export function vendorChipInfo(vendor: string, dir?: string): VendorChipInfo {
   }
 }
 
+// Cap on arena-derived supplier chips per step — the roster's top-N by PA Score. Keeps a
+// "via:" row readable even for deep arenas (ai-coding judges 13 products); curated extras
+// appended by stepVendorOptions can push a step slightly past this, which is fine.
+export const STEP_OPTIONS_CAP = 8
+
+// Every product of one arena as a VendorChipInfo, in LEADERBOARD ORDER (the arena's PA-Score
+// rank — rankings.json is already sorted). Chip rank/agentReady keep vendorChipInfo semantics
+// (position on the agent-readiness ladder) so derived and curated chips read identically.
+function arenaOptionChips(arenaId: string, dir?: string): VendorChipInfo[] {
+  const data = loadCategory(arenaId, dir)
+  const ladder = arenaSwapOptions(arenaId, dir)
+  const rankOf = new Map(ladder.map((o, i) => [o.id, i + 1]))
+  return data.rankings.leaderboard.map((e) => ({
+    vendor: e.productId,
+    label: data.products.find((p) => p.id === e.productId)?.name ?? e.productId,
+    productId: e.productId,
+    arenaId,
+    arenaName: data.category.name,
+    agentReady: e.agentReady ?? null,
+    rank: rankOf.get(e.productId) ?? null,
+    // Product ids are the kebab-case of the snake_case vendor keys VENDOR_SIGNUP_URL uses.
+    signupUrl: VENDOR_SIGNUP_URL[e.productId.replace(/-/g, '_')] ?? VENDOR_SIGNUP_URL[e.productId] ?? null,
+  }))
+}
+
+// The full supplier list for one step, resolved against the live market — every key supplier a
+// founder could genuinely pick for the step's general function. When the step declares
+// optionsArenaId, the list is DERIVED from that arena's current leaderboard (top
+// STEP_OPTIONS_CAP by PA Score, in arena-rank order) so roster changes flow through on the
+// next build; hand-curated vendorOptions not already in the derived roster are appended after
+// it — tracked-elsewhere vendors keep their own arena chip, untracked ones render as honest
+// unlinked "not yet judged" chips. Steps without an optionsArenaId keep their curated options.
+export function stepVendorOptions(
+  node: Pick<DagNode, 'vendorOptions' | 'optionsArenaId'>,
+  dir?: string,
+): VendorChipInfo[] {
+  const curated = (node.vendorOptions ?? []).map((v) => vendorChipInfo(v, dir))
+  const arenaId = node.optionsArenaId
+  if (!arenaId || !isPopulated(arenaId, dir)) return curated
+  const derived = arenaOptionChips(arenaId, dir).slice(0, STEP_OPTIONS_CAP)
+  const derivedIds = new Set(derived.map((c) => c.productId))
+  return [...derived, ...curated.filter((c) => !c.productId || !derivedIds.has(c.productId))]
+}
+
 // The swappable market roles of one or more tasks: every mapped vendor (from DAG nodes first —
 // the canonical call targets — then the task's own vendors list) collapsed per arena. The
 // default pick is the DAG's canonical vendor; alternatives are the arena's live leaderboard.
 // An unmapped vendor (irs, clerky, docusign…) is not a role — there's no arena to swap within.
 export function vendorRoles(tasks: ProcessTask[], dir?: string): VendorRole[] {
-  const byArena = new Map<string, { canonical: string; stepCount: number }>()
-  const claim = (vendor: string, steps: number) => {
-    const arenaId = VENDOR_ARENA[vendor]
-    if (!arenaId || !isPopulated(arenaId, dir)) return
+  const byArena = new Map<string, { canonical: string | null; stepCount: number }>()
+  const claimArena = (arenaId: string, canonical: string | null, steps: number) => {
+    if (!isPopulated(arenaId, dir)) return
     const existing = byArena.get(arenaId)
     if (existing) existing.stepCount += steps
-    else byArena.set(arenaId, { canonical: vendor, stepCount: steps })
+    else byArena.set(arenaId, { canonical, stepCount: steps })
+  }
+  const claim = (vendor: string, steps: number) => {
+    const arenaId = VENDOR_ARENA[vendor]
+    if (arenaId) claimArena(arenaId, vendor, steps)
   }
   for (const task of tasks) {
     for (const n of task.dag.nodes) {
       if (n.vendor) claim(n.vendor, 1)
       for (const v of n.vendorOptions ?? []) claim(v, 1)
+      // Derived-market steps make their covering arena a role even when no curated vendor maps
+      // there (corporate cards → expense-management). No canonical vendor: the role defaults to
+      // the arena's agent-readiness leader below.
+      if (n.optionsArenaId) claimArena(n.optionsArenaId, null, 1)
     }
   }
   for (const task of tasks) {
@@ -592,13 +655,15 @@ export function vendorRoles(tasks: ProcessTask[], dir?: string): VendorRole[] {
   for (const [arenaId, { canonical, stepCount }] of byArena) {
     const data = loadCategory(arenaId, dir)
     const alternatives = arenaSwapOptions(arenaId, dir)
-    const canonicalId = vendorProductId(canonical)
-    const def = alternatives.find((o) => o.id === canonicalId) ?? alternatives[0]
+    const canonicalId = canonical ? vendorProductId(canonical) : null
+    const def = (canonicalId && alternatives.find((o) => o.id === canonicalId)) || alternatives[0]
     if (!def) continue
     roles.push({
       arenaId,
       arenaName: data.category.name,
-      canonicalVendor: canonicalId,
+      // Arena-only claims (optionsArenaId with no mapped curated vendor) treat the default —
+      // the agent-readiness leader — as canonical.
+      canonicalVendor: canonicalId ?? def.id,
       defaultProductId: def.id,
       defaultProductName: def.name,
       stepCount,
