@@ -8,6 +8,9 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Homepage table: companies only + "Include all products of companies" toggle | shipped 2026-09-16 — 55 family sub-product rows hidden by default, checkbox reveals every line |
+| Broaden processes: every step lists all key suppliers for the general function | in-lane (process-suppliers) |
+| Finish the depth run: exhaustive scoring for ALL covered companies | in-flight — wave 2 launched over the full remaining queue |
 | Map Mercury's products incl. mercury.com/books | shipped 2026-09-16 — Books line added to the Mercury family (live-verified: "AI-powered accounting software built into your bank account"); arena row decision delegated to the accounting spike lane |
 | Accounting arena big spike | in-lane (accounting-spike) — roster expansion (FreshBooks/Zoho/Wave/Digits/Kick/Mercury Books candidates) + exhaustive passes on quickbooks/xero/pilot/puzzle |
 | 24h Stripe-depth backfill over stale top of spike queue | in-flight 2026-09-16 — 8 parallel lanes × ~19 products (149 total; vercel/cloudflare/cursor excluded, owned by pending exhaustive lane); 68 freshly-passed products stamped done in queue |
@@ -46,7 +49,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | WhatsApp preview sometimes shows old image — diagnose | shipped 2026-09-15 — root cause: app/opengraph-image.png overrode og2.png with a double-basePath 404 URL; removed |
 | Do we need RSS? | answered 2026-09-15 — keep (see session notes) |
 | Hardware arenas into top bar + menus, drop Experimental status | shipped 2026-09-15 — Hardware section in arena menu, /experiments pages are now spec annexes linking the arenas |
-| Start WorkOS login work (account exists) | shipped 2026-09-15 (code) — mock-mode harness + account watchlist sync; go-live = 5-min founder checklist in docs/AUTH.md (secrets + redirect URI) |
+| Start WorkOS login work (account exists) | LIVE (test-gated) 2026-09-16 — client id committed, both secrets set, worker deployed; /auth/login 302s to AuthKit, /auth/me fails closed. Founder: verify dashboard redirect URIs, test via pa-auth-test flag, then say "go live" |
 | Scrollbar tracks transparent, not white | shipped 2026-09-15 |
 | Footer "Add your product" → actually goes to GitHub (CONTRIBUTING.md), scanner relabeled "Test your product" | shipped 2026-09-15 |
 | Pricing tier (free/paid/enterprise) visible in user story table | shipped 2026-09-15 (tier chips + filter, pricing-tier lane) |
@@ -85,7 +88,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | GitHub social preview upload (public/og2.png) | blocked (founder — repo Settings) |
 | Google Search Console: add domain property for ultrametric.ai (DNS TXT), submit both sitemaps | blocked (founder Google account) |
 | Cloudflare managed robots.txt blocks GPTBot/meta-externalagent at apex — disable AI-bot blocking | blocked (founder — CF dashboard, Security → Bots) |
-| WorkOS ultrametric login: secrets (`wrangler secret put WORKOS_API_KEY` / `PA_SESSION_KEY`) + dashboard redirect URI `https://ultrametric.ai/productarena/auth/callback` | blocked (founder WorkOS account) — everything else DONE: routes audited vs live docs, per-account /watchlist sync built, WORKOS_MOCK dev harness (testable today, zero secrets); 5-min go-live checklist in docs/AUTH.md |
+| Homepage main table: companies only — collapse multi-product families to the parent (one Stripe row) | open — inline now |
 | Try-it sandbox demo accounts (Stripe test key first) | blocked (founder provisions accounts) — lane building the mechanism |
 
 ## Shipped (recent — see git log for full history)

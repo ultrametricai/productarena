@@ -100,15 +100,22 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   const [query, setQuery] = useState('')
   const [arenaId, setArenaId] = useState('all')
   const [showAll, setShowAll] = useState(false)
+  // Founder 2026-09-16: companies by default — judged family sub-products (stripe-issuing,
+  // adyen-for-platforms, …) hide so a company appears once; this toggle reveals every line.
+  const [includeSubProducts, setIncludeSubProducts] = useState(false)
   // Watch column only exists for logged-in readers (see lib/session.ts) — static HTML and the
   // anonymous view render the same 9-column table as before login existed.
   const watchlistOn = useSession().state === 'authenticated'
 
-  const byArena = useMemo(() => filterMegaRowsByArena(rows, arenaId), [rows, arenaId])
+  const companyRows = useMemo(
+    () => (includeSubProducts ? rows : rows.filter((r) => !r.isFamilySubProduct)),
+    [rows, includeSubProducts],
+  )
+  const byArena = useMemo(() => filterMegaRowsByArena(companyRows, arenaId), [companyRows, arenaId])
   // Rank is scoped to what's shown: global 1..N across all arenas by default, but 1..X within
   // the selected arena when one is chosen — a reader picking an arena wants that arena's
   // standings, not each product's position in the site-wide list.
-  const rankOf = useMemo(() => rankMegaRows(arenaId === 'all' ? rows : byArena), [rows, byArena, arenaId])
+  const rankOf = useMemo(() => rankMegaRows(arenaId === 'all' ? companyRows : byArena), [companyRows, byArena, arenaId])
   const filtered = useMemo(() => filterMegaRowsByQuery(byArena, query), [byArena, query])
   const sorted = useMemo(() => sortMegaRows(filtered, column, direction), [filtered, column, direction])
   // The homepage table caps at 50 rows — past that it's a wall, and every row is one click from
@@ -145,6 +152,22 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
         query={query}
         onQuery={setQuery}
       />
+
+      <label className="flex w-fit cursor-pointer items-center gap-2 text-xs text-zinc-500 transition hover:text-zinc-300">
+        <input
+          type="checkbox"
+          checked={includeSubProducts}
+          onChange={(e) => setIncludeSubProducts(e.target.checked)}
+          className="h-3.5 w-3.5 accent-emerald-400"
+        />
+        Include all products of companies
+        <span
+          title="Off: one row per company — a multi-product family (Stripe, Adyen…) shows only its parent. On: every judged product line ranks separately, as it does inside its own arena."
+          className="text-zinc-600"
+        >
+          ⓘ
+        </span>
+      </label>
 
       {/* lg (not md): with every sm/md column visible the table needs ~810px, so a 768–1023px
           viewport still gets the horizontal scroll container instead of page-level overflow. */}

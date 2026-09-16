@@ -62,6 +62,11 @@ export interface MegaTableRow {
   // Arena-level not-applicable dimensions (CategorySchema.naDimensions, hardware arenas) —
   // optional for fixture compat; the table renders n/a for these instead of a number.
   naDimensions?: string[]
+  // True for a judged product-family line whose parent is a different product (e.g.
+  // stripe-issuing under Stripe) — the homepage hides these by default so a company appears
+  // once; the "Include all products of companies" toggle reveals them. Optional for
+  // fixture compat.
+  isFamilySubProduct?: boolean
   // 🔥 "hot right now" reason string (see lib/hotProducts.ts) — null when not hot; optional for
   // the same fixture-compat reason as ycBatch. Rendered as the small HotChip next to the name
   // (tooltip = the reason), never sorted on and never part of any score.
