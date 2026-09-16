@@ -1,18 +1,15 @@
 {
-  "hash": "3c5500f1b23b7d44323ba118e8e21340fe9a6f76fb437b3867bb10bfbaa2f62f",
+  "hash": "16aa7f3ba1f51ba5e2dba5c8affe6229619e1f9694a4c59b290d3d5f1311d7e9",
   "verdict": {
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Terraform's native `terraform test` framework explicitly runs against test-specific, short-lived resources with provider-mocking support, preventing risk to existing infrastructure/state (terraform-docs-7/21/27/28), and hands-on probes confirm a full plan→apply→drift-check→destroy loop can run headlessly with no account/production contact (terraform-probe-6/7/8). Combined with plan/preview machine-readable output for CI gating, this gives an AI agent a safe way to validate changes without touching prod. missing for 10: dedicated cloud 'sandbox environment/workspace' concept distinct from local ephemeral resources, independent third-party validation of test-mocking reliability in production-scale use, explicit documentation of isolating from real cloud accounts beyond local CLI probes",
+    "rationale": "Terraform's built-in `terraform test` framework explicitly runs against test-specific, short-lived resources to avoid touching real infrastructure/state, and v1.7.0 added provider-response mocking so tests can run without any real cloud calls at all — a genuine sandbox mechanism. However, this is a general IaC testing feature, not something built or documented specifically for 'AI-native' agentic use, and there's no independent/hands-on evidence validating it in an AI-agent context. Missing for 10: explicit AI-agent-oriented sandbox tooling or workflow guidance, and independent corroboration that the test/mock framework reliably isolates AI-driven runs from production.",
     "evidenceIds": [
-      "terraform-docs-7",
-      "terraform-docs-21",
       "terraform-docs-27",
       "terraform-docs-28",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8"
+      "terraform-docs-7",
+      "terraform-docs-21"
     ],
     "productId": "terraform",
     "storyId": "api-sandbox"

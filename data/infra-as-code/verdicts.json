@@ -2078,47 +2078,51 @@
   {
     "productId": "terraform",
     "storyId": "agent-authors-change",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Terraform's CLI natively supports headless plan generation with machine-readable JSON output (terraform plan -out, terraform show -json) and auto-approve apply, which an agent can orchestrate to author changes, run a plan non-interactively, and present the diff for human approval before applying; this was hands-on verified in probes. missing for 10: no first-party end-to-end agent-orchestration example (e.g., a documented agent workflow chaining plan-json diff presentation to a human approval gate) or independent third-party report of an agent doing this specific plan-review-apply loop.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Terraform's CLI supports the core mechanics: headless plan generation with -out, machine-readable JSON output via show -json and -json streaming, and apply requiring approval unless -auto-approve is passed, plus an official MCP server for AI integration with provider docs/modules/policies. However, there is no first-party documented workflow or tooling that specifically wires an agent to author config, run plan headlessly, and present a diff for human approval as an integrated feature — this is assembled by the user from separate primitives rather than a turnkey agent-approval pipeline. missing for 10: an end-to-end documented agent-authoring-to-approval workflow, evidence of the MCP server itself invoking plan/apply or diff presentation, and independent/hands-on confirmation of this exact human-in-the-loop pattern.",
     "evidenceIds": [
-      "terraform-docs-2",
-      "terraform-docs-4",
-      "terraform-docs-17",
+      "terraform-docs-15",
       "terraform-docs-30",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8"
+      "terraform-docs-25",
+      "terraform-docs-39",
+      "terraform-docs-22",
+      "terraform-docs-31",
+      "terraform-docs-23",
+      "terraform-docs-40"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "agent-least-privilege-gates",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Terraform's plan/apply workflow with saved plan artifacts, JSON output, and Terraform Cloud policy-as-code (Sentinel/OPA) gates provide the building blocks for an agent to propose changes that are reviewed before apply (terraform-docs-9, terraform-docs-30, terraform-probe-6, terraform-probe-7). However, least-privilege credential scoping per-run and enforced human/policy approval gates are primarily a Terraform Cloud/Enterprise feature, not core CLI, and the evidence doesn't show an integrated agent-specific approval workflow or credential-scoping mechanism tied to MCP/agent use; auto-approve exists and could bypass gates if misconfigured (terraform-docs-3/17). missing for 10: documented least-privilege credential scoping per agent run, an explicit agent-in-the-loop approval/gate mechanism (beyond generic TFC policy checks), and independent evidence of this being used safely with autonomous agents.",
+    "rationale": "Terraform's plan/apply workflow provides a clear review gate (plan preview before apply, manual approval unless -auto-approve is used) and policy-as-code enforcement (Sentinel/OPA-style policies) that can block noncompliant changes, plus a dedicated MCP server giving AI agents structured access to docs, modules, and policies — together these support an agent proposing plans that are policy-checked and gated before apply. However, there's no explicit documentation of least-privilege credential scoping specifically for agent-driven runs (e.g., ephemeral/scoped run credentials tied to an agent identity) or of an agent-specific approval workflow beyond the standard CLI/CLOUD run gates. missing for 10: explicit least-privilege credential/service-account guidance for AI agents, documented agent-specific approval/RBAC workflow, independent hands-on evidence of an agent being blocked by policy gates.",
     "evidenceIds": [
+      "terraform-docs-15",
+      "terraform-docs-16",
+      "terraform-docs-17",
       "terraform-docs-9",
-      "terraform-docs-30",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
-      "terraform-docs-3",
-      "terraform-probe-9"
+      "terraform-docs-35",
+      "terraform-docs-10",
+      "terraform-docs-23",
+      "terraform-docs-40"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "agentic-agent-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Direct probes show no llms.txt or agent-oriented docs.md file exists on HashiCorp's developer site (both 404), and no other evidence in the pack shows an agent-oriented docs format; the MCP server is a separate tool-access mechanism, not an agent-readable docs manifest.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Terraform has no llms.txt or docs.md agent-readable file (confirmed 404 by probes), so the specific artifact requested by the story is absent. However, HashiCorp does provide an official MCP server that gives AI models real-time access to Terraform provider documentation, modules, and policies, which is an agent-oriented documentation access mechanism, giving partial credit. Missing for 10: an actual llms.txt/docs.md file, and any evidence the MCP server is a drop-in substitute for llms.txt-style doc consumption.",
     "evidenceIds": [
       "terraform-probe-1",
-      "terraform-probe-2"
+      "terraform-probe-2",
+      "terraform-docs-10",
+      "terraform-docs-40"
     ]
   },
   {
@@ -2127,28 +2131,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Terraform's MCP server exposes provider docs/modules/policies to external AI models and CLI outputs machine-readable JSON, but nothing shows Terraform itself analyzing a user's infrastructure data to generate AI insights or suggestions inside the product. Policy enforcement is rule-based, not AI-generated.",
+    "rationale": "Evidence only shows an MCP server that lets external AI models query Terraform docs/modules/policies for building configurations — this is agentic tool access, not Terraform itself generating insights or suggestions from a user's own infrastructure data. No documentation shows in-product AI analysis (e.g., cost/security recommendations, drift insights) surfaced to users.",
     "evidenceIds": [
       "terraform-docs-10",
       "terraform-docs-23",
-      "terraform-probe-9",
-      "terraform-docs-9"
+      "terraform-docs-36",
+      "terraform-docs-40"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Terraform's CLI supports fully non-interactive, scriptable operation (-auto-approve, -input=false, JSON output) and hands-on probes confirm a complete headless plan→apply→drift-check→destroy loop with no human interaction, which is the core building block for background automation; the MCP server also lets an AI agent drive these operations directly. However, the evidence pack shows no built-in scheduler/trigger system (e.g., Terraform Cloud run triggers, webhooks, cron-based execution) that would let automations run autonomously on their own schedule/trigger rather than being invoked by an external orchestrator each time. Missing for 10: evidence of native scheduling/trigger mechanisms for autonomous runs, and evidence of persistent background agent orchestration rather than one-off CLI invocations.",
+    "rationale": "Terraform's CLI supports scripted, non-interactive runs (-auto-approve, machine-readable -json output for plan/apply/show) that can be wired into external schedulers or CI/CD pipelines, and the MCP server exposes provider/module/policy context to AI agents for generating configs (terraform-docs-3, terraform-docs-17, terraform-docs-18, terraform-docs-22, terraform-docs-23/40). However, there is no evidence of a native scheduler, trigger, or always-on autonomous run loop within Terraform itself — automation depends on external orchestration (CI, HCP Terraform runs) not documented here. Missing for 10: native scheduling/trigger mechanism, evidence of unattended background execution loop, and independent confirmation of AI agents autonomously running plan/apply cycles.",
     "evidenceIds": [
+      "terraform-docs-3",
       "terraform-docs-17",
+      "terraform-docs-18",
       "terraform-docs-22",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
-      "terraform-probe-9",
+      "terraform-docs-23",
+      "terraform-docs-40",
       "terraform-docs-9"
     ]
   },
@@ -2167,15 +2171,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Terraform CLI is designed for non-interactive/CI use: -auto-approve skips prompts, -input=false disables interactive input, -json flags on plan/apply/show/validate produce machine-readable output, and detailed-exitcode enables CI gating. A hands-on probe confirms a full headless plan→apply→drift-check→destroy loop with proper exit codes and JSON parsing, exactly matching CI automation needs. Missing for 10: no independent (non-vendor) CI pipeline case study or third-party report of large-scale automated use.",
+    "rationale": "Terraform CLI is fully scriptable/headless: non-interactive apply via -auto-approve, machine-readable JSON output (-json flag on show, plan, apply), plan files for two-step CI pipelines, and Terraform tests for CI validation — all well documented and widely used in CI/CD pipelines. missing for 10: independent hands-on report of a specific CI pipeline configuration (e.g., GitHub Actions) rather than just docs.",
     "evidenceIds": [
       "terraform-docs-3",
       "terraform-docs-17",
       "terraform-docs-8",
       "terraform-docs-22",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8"
+      "terraform-docs-30",
+      "terraform-docs-7",
+      "terraform-docs-28",
+      "terraform-probe-5"
     ]
   },
   {
@@ -2184,52 +2189,58 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Terraform is an infrastructure-as-code CLI/tool, not an AI agent or assistant with a tool-calling loop that would consume external MCP servers; the evidence pack instead shows Terraform publishing its OWN MCP server (terraform-docs-10, terraform-probe-4, terraform-probe-9) so that external AI agents can call Terraform's tools — the opposite direction from this client-side story. This axis is a category mismatch for a declarative infra tool, not an applicable-but-unmet capability.",
-    "evidenceIds": []
+    "rationale": "Terraform is an infrastructure-as-code CLI/engine, not an AI agent with a tool-use loop, so 'plugging MCP servers into it so it can use their tools' is a category error — the evidence instead shows Terraform ships an official MCP *server* (terraform-docs-10/23/36/40) that exposes its own docs/modules/policies to external AI models, which is the reverse (server) role, not client consumption of other servers' tools.",
+    "evidenceIds": [
+      "terraform-docs-10",
+      "terraform-docs-23",
+      "terraform-docs-36",
+      "terraform-docs-40",
+      "terraform-probe-4"
+    ]
   },
   {
     "productId": "terraform",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "HashiCorp documents and ships an official Terraform MCP server that gives AI models real-time access to provider docs, modules, and policies, and a hands-on probe confirms the official server binary actually performs a JSON-RPC initialize handshake successfully. Missing for 10: independent third-party corroboration beyond the single probe/docs source.",
+    "rationale": "Terraform is not itself an agent but an IaC platform, and HashiCorp documents an official Terraform MCP server that gives AI models real-time access to provider docs, modules, and policies, confirmed by both docs and a probe hit. missing for 10: independent/hands-on third-party verification of the MCP server in production use and details on its transport/auth setup.",
     "evidenceIds": [
       "terraform-docs-10",
       "terraform-docs-23",
-      "terraform-probe-4",
-      "terraform-probe-9"
+      "terraform-docs-36",
+      "terraform-docs-40",
+      "terraform-probe-4"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "agentic-nl-commands",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Terraform's actual interface is declarative HCL config plus a structured CLI (plan/apply/import/state) and JSON machine-readable output; the MCP server (terraform-docs-10/23, terraform-probe-9) only gives AI models read access to provider docs, modules, and policies — it does not let a user issue natural-language commands that Terraform executes to change infrastructure. No evidence shows an NL-to-action interface for actually operating Terraform.",
+    "rationale": "Terraform's core interface remains HCL config files and explicit CLI commands (plan/apply/import), not natural language. The official MCP server gives AI models real-time access to provider docs, modules, and policies to help generate more accurate configurations, which is a step toward AI-native operation, but there is no evidence of a natural-language command interface for running Terraform actions directly. Missing for 10: a documented NL-to-command translation layer, evidence of AI agents actually driving terraform plan/apply via natural language, and independent corroboration of the MCP server enabling full operational control rather than just documentation lookup.",
     "evidenceIds": [
       "terraform-docs-10",
       "terraform-docs-23",
-      "terraform-probe-9",
-      "terraform-docs-3",
-      "terraform-docs-15"
+      "terraform-docs-40",
+      "terraform-probe-4"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Terraform has a well-documented official CLI with headless, scriptable, JSON-structured operation (plan/apply/validate/show -json) verified hands-on via probes running plan→apply→drift-check→destroy with exit codes and machine-readable output — ideal for agentic/AI-native automation. missing for 10: no independent third-party review specifically praising CLI's AI-native/agentic ergonomics beyond first-party docs and probes.",
+    "rationale": "Terraform ships an official CLI with extensive documented commands (plan, apply, show, import, state, test) plus machine-readable JSON output modes (-json flags) that make it scriptable/consumable by AI agents, and HashiCorp also documents an official MCP server for AI integration. missing for 10: independent hands-on confirmation of AI-native agentic CLI usage patterns beyond docs, and no evidence of AI-specific CLI enhancements (e.g., natural-language CLI mode) beyond the JSON output and MCP server.",
     "evidenceIds": [
       "terraform-probe-5",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
       "terraform-docs-18",
-      "terraform-docs-22"
+      "terraform-docs-22",
+      "terraform-docs-34",
+      "terraform-docs-10",
+      "terraform-probe-4"
     ]
   },
   {
@@ -2238,17 +2249,21 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Terraform doesn't expose a formal REST/OpenAPI public API (probes show 404s for openapi.json/swagger.json and llms.txt), but it does offer a well-documented, machine-readable CLI surface (-json flags, terraform show -json, machine-readable UI docs) that hands-on probes confirm can drive a full headless plan→apply→drift-check→destroy loop, plus an official MCP server for AI models to query docs/modules/policies. This functions as a de facto programmatic interface for AI agents even though it's not a conventional API. Missing for 10: a documented REST/OpenAPI-style public API, and MCP server coverage extends only to documentation/policy lookup rather than actual resource execution.",
+    "rationale": "Terraform exposes machine-readable interfaces AI agents could drive: JSON output from plan/apply/show, a documented CLI, and an official MCP server built specifically to give AI models access to Terraform docs/modules/policies (terraform-docs-10/23/36/40, terraform-probe-4). However, probes confirm there is no discoverable OpenAPI/REST API spec or llms.txt (terraform-probe-1/2/3), so the 'documented public API' is really CLI+JSON+MCP rather than a conventional API surface. Missing for 10: a formal OpenAPI/REST API specification, an llms.txt or machine-readable docs index, and independent confirmation that AI agents successfully drive Terraform end-to-end via these interfaces.",
     "evidenceIds": [
+      "terraform-docs-8",
       "terraform-docs-18",
       "terraform-docs-22",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
-      "terraform-probe-9",
+      "terraform-docs-34",
+      "terraform-docs-10",
       "terraform-docs-23",
+      "terraform-docs-36",
+      "terraform-docs-40",
+      "terraform-probe-1",
+      "terraform-probe-2",
       "terraform-probe-3",
-      "terraform-probe-1"
+      "terraform-probe-4",
+      "terraform-probe-5"
     ]
   },
   {
@@ -2256,22 +2271,28 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of scoped or least-privilege API credential issuance for agents (e.g., Terraform Cloud team/API tokens, dynamic provider credentials, or workload identity scoping) — only unrelated CLI/plan/apply/state/MCP features are documented. Missing for 10: any documentation of credential scoping, token minting, or least-privilege access control mechanisms for AI agents.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "No evidence that Terraform (or its MCP server) supports issuing scoped/least-privilege API credentials for an agent; credential/auth scoping is typically delegated to cloud provider IAM, and nothing in the docs describes Terraform generating or managing agent-specific least-privilege credentials.",
+    "evidenceIds": [
+      "terraform-docs-10",
+      "terraform-docs-23",
+      "terraform-docs-36"
+    ]
   },
   {
     "productId": "terraform",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack lacks any mention of official Terraform SDKs (e.g., CDKTF language SDKs, Terraform Plugin SDK, or Cloud API client libraries) that an AI-native developer could build against; probes for OpenAPI specs and machine-readable docs (llms.txt, docs.md, openapi.json) all returned 404, and no citation documents a first-party SDK offering.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows Terraform exposes a plugin SDK for writing custom providers (terraform-docs-29) and machine-readable JSON output for programmatic consumption (terraform-docs-4/8/18/22/34), plus an official MCP server for AI models (terraform-docs-10/23/36/40), but there is no documented official SDK (e.g., CDK for Terraform or a language-native SDK) that AI-native builders could target directly. missing for 10: explicit official SDK documentation (e.g., CDKTF), examples of programmatic/AI-driven SDK usage, independent hands-on confirmation of SDK reliability.",
     "evidenceIds": [
-      "terraform-probe-1",
-      "terraform-probe-2",
-      "terraform-probe-3",
-      "terraform-docs-29"
+      "terraform-docs-29",
+      "terraform-docs-4",
+      "terraform-docs-8",
+      "terraform-docs-10",
+      "terraform-docs-23",
+      "terraform-docs-40"
     ]
   },
   {
@@ -2280,21 +2301,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of webhooks or event subscriptions (e.g., Terraform Cloud run notifications); it only covers CLI, docs, MCP server, and policy features. Webhook-based event subscription is a plausible feature for an infra-as-code platform with a cloud/orchestration layer, so absence of evidence here is 'none' rather than 'na'.",
+    "rationale": "No evidence of webhook subscription capability for events in Terraform's core product; while Terraform Cloud has run notifications/webhooks in some contexts, nothing in this evidence pack documents a webhook subscription mechanism for AI-native event consumption. Terraform is fundamentally an IaC provisioning tool, so this axis could apply but is unevidenced.",
     "evidenceIds": []
   },
   {
     "productId": "terraform",
     "storyId": "ai-generate-iac",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Terraform ships an official MCP server giving AI models real-time access to provider docs, modules, and policies (terraform-docs-10/23, terraform-probe-4/9), which supports AI-assisted workflows, but this is a context/protocol server rather than a built-in natural-language-to-HCL code generator in the toolchain itself. Missing for 10: no evidence of a native Terraform CLI/IDE feature that generates infrastructure code directly from natural language prompts, no hands-on demonstration of NL-to-code generation, and no documentation describing an AI code-authoring assistant shipped with Terraform.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Terraform ships an official MCP server that gives AI models real-time access to provider docs, modules, and policies specifically to enable 'more accurate and actionable Terraform configuration generation,' which supports natural-language-to-IaC workflows — but this is an integration layer for external AI assistants/agents rather than a natural-language generation feature built directly into the Terraform CLI/toolchain itself. missing for 10: no evidence of a native in-CLI NL-to-HCL generation feature, no independent/hands-on validation of the MCP server's generation quality, and no confirmation that generation is embedded rather than delegated to third-party AI tools.",
     "evidenceIds": [
       "terraform-docs-10",
       "terraform-docs-23",
-      "terraform-probe-4",
-      "terraform-probe-9"
+      "terraform-docs-36",
+      "terraform-docs-40",
+      "terraform-probe-4"
     ]
   },
   {
@@ -2302,13 +2324,12 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows only static documentation (registry pages, CLI reference) with no interactive API reference or runnable examples; probes for machine-readable/interactive doc formats (llms.txt, docs.md, OpenAPI) all returned 404, and no sandbox/playground for trying API calls is documented.",
+    "confidence": "high",
+    "rationale": "The evidence pack shows standard static documentation pages and CLI references, but no interactive API reference or runnable code examples; probes explicitly confirm absence of machine-readable docs formats (llms.txt, docs.md, OpenAPI spec all 404).",
     "evidenceIds": [
       "terraform-probe-1",
       "terraform-probe-2",
-      "terraform-probe-3",
-      "terraform-docs-11"
+      "terraform-probe-3"
     ]
   },
   {
@@ -2317,26 +2338,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for an OpenAPI/swagger spec on Terraform's docs site returned 404 for all candidate paths, and no other evidence shows a downloadable machine-readable API spec; Terraform exposes machine-readable CLI/plan output (-json) but not an API spec of the OpenAPI kind.",
+    "rationale": "Explicit probes for llms.txt, docs.md, and multiple OpenAPI/swagger endpoints all returned 404, and no evidence pack item references a downloadable OpenAPI or equivalent machine-readable API spec for Terraform.",
     "evidenceIds": [
+      "terraform-probe-1",
+      "terraform-probe-2",
       "terraform-probe-3"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "api-sandbox",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Terraform's native `terraform test` framework explicitly runs against test-specific, short-lived resources with provider-mocking support, preventing risk to existing infrastructure/state (terraform-docs-7/21/27/28), and hands-on probes confirm a full plan→apply→drift-check→destroy loop can run headlessly with no account/production contact (terraform-probe-6/7/8). Combined with plan/preview machine-readable output for CI gating, this gives an AI agent a safe way to validate changes without touching prod. missing for 10: dedicated cloud 'sandbox environment/workspace' concept distinct from local ephemeral resources, independent third-party validation of test-mocking reliability in production-scale use, explicit documentation of isolating from real cloud accounts beyond local CLI probes",
+    "rationale": "Terraform's built-in `terraform test` framework explicitly runs against test-specific, short-lived resources to avoid touching real infrastructure/state, and v1.7.0 added provider-response mocking so tests can run without any real cloud calls at all — a genuine sandbox mechanism. However, this is a general IaC testing feature, not something built or documented specifically for 'AI-native' agentic use, and there's no independent/hands-on evidence validating it in an AI-agent context. Missing for 10: explicit AI-agent-oriented sandbox tooling or workflow guidance, and independent corroboration that the test/mock framework reliably isolates AI-driven runs from production.",
     "evidenceIds": [
-      "terraform-docs-7",
-      "terraform-docs-21",
       "terraform-docs-27",
       "terraform-docs-28",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8"
+      "terraform-docs-7",
+      "terraform-docs-21"
     ]
   },
   {
@@ -2345,28 +2365,29 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Terraform has versioned releases (e.g., v1.16.0, v1.7.0) and versioned providers/modules via the Registry, but there is no documentation of a formal, publicly stated API/versioning deprecation policy that an AI-native integrator could rely on. Probes for API specs (openapi.json, llms.txt) all 404, and no docs item addresses deprecation guarantees or lifecycle policy. Missing for 10: explicit deprecation policy documentation, versioned API/OpenAPI spec, and any evidence of backward-compatibility guarantees for agentic consumers.",
+    "rationale": "While Terraform configurations support versioning (terraform-docs-1, terraform-docs-14) and providers/modules use semantic versioning via the registry (terraform-docs-11, terraform-docs-41), the evidence pack shows no documented API versioning scheme or deprecation policy for Terraform's APIs (e.g., Terraform Cloud API, provider protocol) — probes for openapi specs and machine-readable docs all 404 (terraform-probe-1, terraform-probe-2, terraform-probe-3). This axis applies to an infrastructure automation tool with APIs, but no evidence demonstrates a documented deprecation policy.",
     "evidenceIds": [
-      "terraform-probe-3",
       "terraform-probe-1",
       "terraform-probe-2",
-      "terraform-docs-28"
+      "terraform-probe-3",
+      "terraform-docs-11",
+      "terraform-docs-41"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "automation-bulk-operations",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Terraform builds a dependency graph and parallelizes creation/modification of non-dependent resources, and can plan/apply/destroy across many resources in one declarative run, headlessly and machine-readably (JSON output, exit codes) as verified in hands-on probes. This directly enables bulk operations across many items at once, including CI-gateable, agent-parseable workflows. Missing for 10: independent large-scale (thousands-of-resources) benchmark evidence and explicit documentation of bulk state manipulation (e.g., bulk moved/import) beyond single-resource examples.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Terraform's graph-based execution parallelizes non-dependent resource changes, and -auto-approve plus -json machine-readable output enable scripted, bulk plan/apply workflows across many resources, with an official MCP server for AI agent integration. However, evidence doesn't show a native 'bulk operation' primitive (e.g., bulk import/move across many items) beyond per-resource state/import commands. missing for 10: documented bulk import/bulk state-move across many resources in one command, independent hands-on evidence of AI agents driving large-scale bulk operations, and any explicit bulk-editing API beyond graph parallelization.",
     "evidenceIds": [
       "terraform-gh-1",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
-      "terraform-docs-6",
-      "terraform-docs-5"
+      "terraform-docs-17",
+      "terraform-docs-22",
+      "terraform-docs-30",
+      "terraform-docs-23",
+      "terraform-probe-4"
     ]
   },
   {
@@ -2375,11 +2396,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Terraform's evidence covers declarative plan/apply workflows, policy checks before applies, and machine-readable output for CI integration, but nothing describes a rules engine that automatically triggers actions in response to arbitrary events — Terraform runs are invoked (by CLI, CI, or Cloud triggers), not event-reactive. Missing for 10: any documentation of event listeners, webhooks-as-triggers, or a rule/condition-action automation engine within Terraform itself.",
+    "rationale": "The evidence shows Terraform's policy enforcement (Sentinel/OPA) validates plans against rules and its plan/apply workflow can be scripted, but there is no evidence of a built-in mechanism to define rules that automatically trigger actions in response to arbitrary events (e.g., event-driven automation, webhooks-to-action rules). Terraform relies on external CI/CD or HCP Terraform triggers, which aren't documented here.",
     "evidenceIds": [
       "terraform-docs-9",
-      "terraform-docs-2",
-      "terraform-docs-3"
+      "terraform-docs-35"
     ]
   },
   {
@@ -2388,7 +2408,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Terraform's plan/apply/test/state workflow and its MCP server for AI agents, but nothing about built-in scheduling of recurring jobs or workflows (e.g., cron-like triggers, scheduled runs). This is a plausible feature for an infrastructure automation platform (e.g., Terraform Cloud scheduled runs), so the axis applies, but no evidence supports it. Missing for 10: any documentation or probe showing recurring/scheduled execution capability, cron-style triggers, or workflow scheduling features.",
+    "rationale": "The evidence pack covers Terraform's plan/apply/test/state workflow and MCP server for AI documentation lookup, but contains no mention of a scheduler, cron-like trigger, or recurring workflow execution feature (native or via HCP Terraform). Since infrastructure-automation platforms could plausibly offer scheduled/recurring runs, the axis applies, but no evidence supports it.",
     "evidenceIds": []
   },
   {
@@ -2397,44 +2417,40 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Terraform configs are versionable text files, `terraform plan`/`show -json` give reviewable, machine-readable previews, and state/apply/destroy give rollback-like control, all confirmed via hands-on CLI probes. However, there's no native 'rollback' command (rollback is really re-apply of prior config/state), no built-in review/approval workflow (that lives in Terraform Cloud, not evidenced here), and version control itself relies on external tools like git rather than a first-party mechanism. missing for 10: native rollback/undo capability, first-party review/approval workflow evidence, and independent corroboration of version-control integration beyond docs claims.",
+    "rationale": "Terraform configs are text files that can be versioned in git (terraform-docs-1/14/37), and `terraform plan`/`show -json` give strong review capabilities before apply (terraform-docs-2/15/26/39). However, there is no first-class 'rollback' command — reverting infrastructure requires reapplying an older config version or manual state manipulation via `terraform state` (terraform-docs-6/20), and HCP remote state storage is only recommended, not a rollback mechanism. Missing for 10: a documented native rollback/undo feature, and hands-on evidence of rollback workflows succeeding in practice.",
     "evidenceIds": [
       "terraform-docs-1",
       "terraform-docs-2",
-      "terraform-docs-4",
       "terraform-docs-6",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
+      "terraform-docs-20",
+      "terraform-docs-26",
+      "terraform-docs-33",
       "terraform-comm-15"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "destroy-teardown",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Hands-on probe confirms `terraform destroy -auto-approve` cleanly tears down infrastructure as part of a full plan→apply→destroy loop exiting 0, corroborated by docs on state tracking resources for accurate teardown. Missing for 10: no independent (non-vendor, non-probe) community account specifically praising/validating destroy behavior at scale or with complex dependency graphs.",
-    "evidenceIds": [
-      "terraform-probe-8",
-      "terraform-docs-20",
-      "terraform-gh-1"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack documents plan, apply, state, import, and test workflows in detail but never mentions a `terraform destroy` command or any teardown/cleanup operation. Without direct evidence of a destroy capability, this story cannot be credited even though it is a core plan-apply workflow axis for an IaC tool.",
+    "evidenceIds": []
   },
   {
     "productId": "terraform",
     "storyId": "drift-detection",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Terraform's plan command compares declared config against real state/actual resources and reports drift, confirmed by hands-on probes showing detailed-exitcode drift detection (exit 2 for changes, exit 0 for clean) plus JSON output for automation. missing for 10: independent third-party corroboration specifically validating drift-detection accuracy at scale beyond HashiCorp docs and the single hands-on probe.",
+    "rationale": "Terraform's plan command (and underlying refresh) explicitly compares declared configuration against real infrastructure state to preview differences, which is the core drift-detection mechanism, and terraform show -json / state commands expose that comparison programmatically; community commentary corroborates execution plans as a trusted way to see what will change before applying. Missing for 10: explicit vendor documentation using the term 'drift detection' or a dedicated drift-detection guide, and independent hands-on verification of drift-detection accuracy at scale.",
     "evidenceIds": [
       "terraform-docs-2",
       "terraform-docs-15",
-      "terraform-probe-6",
-      "terraform-probe-8",
-      "terraform-docs-20"
+      "terraform-docs-20",
+      "terraform-docs-4",
+      "terraform-docs-39",
+      "terraform-comm-15"
     ]
   },
   {
@@ -2443,13 +2459,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Terraform's state model and reusable modules (terraform-docs-13, terraform-docs-20, terraform-docs-6) imply that environment isolation is achievable via separate workspaces/state, and the CLI probes confirm plan/apply/destroy work cleanly per state file (terraform-probe-6, terraform-probe-8). However, the pack lacks any explicit documentation of the `terraform workspace` command, workspace-scoped variables, or a directory-per-environment pattern that developers commonly use for dev/staging/prod separation.\nmissing for 10: explicit docs on `terraform workspace new/select`, guidance on separate state files per environment, and community validation that this pattern works well in practice.",
+    "rationale": "Terraform's state and module system (terraform-docs-20, terraform-docs-33, terraform-docs-13) supports separating configuration into reusable modules and remote state per environment, which is the underlying mechanism for dev/staging/prod separation, but the evidence pack never explicitly documents the `terraform workspace` command or a documented pattern for separate environment stacks. Missing for 10: explicit docs on `terraform workspace new/select`, guidance on directory-per-environment or workspace-per-environment patterns, and independent confirmation of how teams structure environments.",
     "evidenceIds": [
       "terraform-docs-20",
-      "terraform-docs-6",
+      "terraform-docs-33",
       "terraform-docs-13",
-      "terraform-probe-6",
-      "terraform-probe-8"
+      "terraform-docs-6"
     ]
   },
   {
@@ -2457,12 +2472,13 @@
     "storyId": "gp-language-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "All evidence describes Terraform's native HCL configuration language, not a general-purpose programming language with types/loops/IDE tooling; community comments even criticize HCL's language limitations (\"awful half-baked language\", \"piles of copypasta\"). No mention of CDK for Terraform or any general-purpose-language SDK appears anywhere in the evidence pack.",
+    "confidence": "high",
+    "rationale": "All evidence describes Terraform's native configuration language (HCL) as a 'human-readable configuration file' language, not a general-purpose programming language with types/loops in the sense of Python/TypeScript; there is no CDKTF or similar general-purpose-language authoring mentioned anywhere in the pack. Community feedback even criticizes it as 'the awful half-baked language,' reinforcing that Terraform's core authoring experience is a declarative DSL rather than a GPL with IDE-native type/loop support.",
     "evidenceIds": [
+      "terraform-docs-1",
+      "terraform-docs-14",
       "terraform-comm-1",
-      "terraform-comm-3",
-      "terraform-docs-13"
+      "terraform-comm-3"
     ]
   },
   {
@@ -2471,16 +2487,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs and hands-on probes confirm the full non-interactive CI workflow: `terraform plan -out=FILE` saves a plan artifact (terraform-docs-30, terraform-probe-6), `terraform apply` executes that saved plan with `-auto-approve` skipping interactive confirmation (terraform-docs-3/17, terraform-probe-8), and machine-readable JSON output supports CI gating (terraform-docs-4/18, terraform-probe-7). A hands-on probe validated the entire plan→apply→drift-check→destroy loop running headlessly with proper exit codes. Missing for 10: no independent third-party CI pipeline case study explicitly combining these flags in a real pipeline beyond the local probe.",
+    "rationale": "Terraform's docs directly support the CI workflow: `terraform plan -out=FILE` saves a plan artifact, `terraform apply FILE` executes that exact saved plan, and `-auto-approve` skips interactive approval for non-interactive automation. Machine-readable JSON output (`-json` on show/plan/apply) further supports CI pipelines that need to parse results. missing for 10: no independent/hands-on CI pipeline example or third-party corroboration of this exact workflow.",
     "evidenceIds": [
       "terraform-docs-30",
       "terraform-docs-3",
-      "terraform-docs-17",
-      "terraform-docs-4",
+      "terraform-docs-31",
+      "terraform-docs-38",
+      "terraform-docs-16",
       "terraform-docs-18",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8"
+      "terraform-docs-34"
     ]
   },
   {
@@ -2489,12 +2504,11 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Terraform docs confirm CLI-based import of existing resources into state (terraform-docs-5, terraform-docs-19, terraform-docs-6/20) and a hands-on probe shows CLI plan/apply working, but none of the evidence documents an equivalent 'generate matching configuration' feature — import only maps resources into state, requiring manual config authorship. A community report (terraform-comm-10) explicitly contradicts the story, saying there's 'no good way to handle resources created outside TF' and that they don't exist in config even after import attempts (citing third-party tools like terraformer as unreliable workarounds). Missing for 10: first-party evidence of automatic config-code generation (e.g. -generate-config-out), and independent confirmation that generated config matches real resources reliably.",
+    "rationale": "Docs confirm `terraform import` can bring existing resources into state (terraform-docs-5/19/32), but the evidence pack has no mention of the newer -generate-config-out feature that produces matching HCL, and a first-hand community report explicitly says there's no good built-in way to import resources created outside Terraform, having to resort to a third-party tool of uncertain maintenance status (terraform-comm-10). This directly contradicts the 'generate matching configuration code' part of the story. Missing for 10: first-party documentation of automatic config-code generation during import, and corroboration that it works reliably in practice.",
     "evidenceIds": [
       "terraform-docs-5",
       "terraform-docs-19",
-      "terraform-docs-6",
-      "terraform-docs-20",
+      "terraform-docs-32",
       "terraform-comm-10"
     ]
   },
@@ -2510,30 +2524,31 @@
   {
     "productId": "terraform",
     "storyId": "open-license-governance",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "disputed",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no vendor documentation asserting an open license or independent, foundation-based governance model for Terraform (e.g., no mention of license terms, governance board, or contributor protections). The only relevant signals are single-tier community remarks about a CLA requirement and a past removal of a feature from the OSS build, which raise concern but are not corroborated by any docs/GitHub-tier claim to actually dispute — so this falls short of the 'disputed' bar (needs two tiers) and there is no positive evidence supporting 'full' or 'partial'. missing for 10: any first-party statement on license type/terms, evidence of open governance structure (foundation, RFC process, contributor rights), and independent confirmation that license cannot be unilaterally changed.",
+    "rationale": "Terraform is marketed as open (public registry, GitHub repo) but the evidence shows concrete counter-signals to the 'open governance that can't be relicensed' promise: HashiCorp requires a CLA that community members explicitly object to, and users report HashiCorp 'yanked the okta/mfa feature from OSS' calling it 'pretty hostile' — both indicating the vendor retains unilateral control over licensing/features rather than a neutral, foundation-governed open project. missing for 10: any first-party statement on license terms (e.g. MPL/BSL) or a governance body/foundation guaranteeing the license can't change, and independent confirmation that community contributions are protected from relicensing.",
     "evidenceIds": [
       "terraform-comm-4",
-      "terraform-comm-13"
+      "terraform-comm-13",
+      "terraform-comm-11",
+      "terraform-docs-41"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Terraform's CLI exposes machine-readable JSON flags for plan/apply/show/validate and was hands-on verified to run a full plan→apply→drift-check→destroy loop headlessly, giving strong programmatic parity with interactive use, and an official MCP server also works. However there is no documented REST/OpenAPI API for the Terraform Cloud/HCP UI (openapi and llms.txt probes 404), so the story's 'everything I can do in the UI' claim for the cloud UI is unconfirmed. Missing for 10: documented HTTP/REST API with UI feature parity for Terraform Cloud, independent confirmation that all UI-only actions (e.g. team/policy management) are API-reachable.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Terraform's CLI/JSON tooling (terraform plan/apply/show -json, machine-readable UI output, state and import commands) lets automation and AI agents drive nearly every core workflow without the UI, and Terraform Cloud exposes policy results in its workspace UI, implying an underlying API layer. However, there is no direct evidence of a documented, comprehensive REST/OpenAPI spec proving true UI/API parity, and probes for an OpenAPI schema and machine-readable docs all 404, suggesting the API surface for Terraform Cloud's UI-specific features (e.g., policy override, workspace management) isn't clearly documented for AI consumption. missing for 10: explicit Terraform Cloud/Enterprise API docs proving 1:1 parity with UI actions, a discoverable OpenAPI/schema for AI tooling, and confirmation that UI-only actions (like policy overrides) are also API-accessible.",
     "evidenceIds": [
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
+      "terraform-docs-4",
       "terraform-docs-8",
       "terraform-docs-22",
+      "terraform-docs-35",
       "terraform-probe-3",
-      "terraform-probe-9"
+      "terraform-probe-1"
     ]
   },
   {
@@ -2542,15 +2557,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Terraform configs are plain-text HCL files (versionable/shareable) and state/plan data can be exported as machine-readable JSON via `terraform show -json` and manipulated via `terraform state`, giving an AI-native user genuine open-format access to their infrastructure definitions and current state. However there's no documented one-step 'export everything and leave' workflow, and community evidence notes friction with state portability and vendor lock-in in practice (e.g., no dynamic providers, resources outside TF state being ignored, provider/module ecosystem tied to HashiCorp's registry). Missing for 10: an explicit data-export/migration guide, independent confirmation of clean full-fidelity export to another IaC tool, and evidence addressing state-file portability limits raised by users.",
+    "rationale": "Terraform's core artifacts are open by design: configurations are plain human-readable HCL files that users own, version, and share (terraform-docs-1/14/37), and state/plan data can be exported to machine-readable JSON via `terraform show -json` or manipulated via `terraform state` commands (terraform-docs-4/6/18/26/39), enabling a user to walk away with all their data in open formats. However there's no explicit 'export everything and migrate away' workflow or tooling documented, and community evidence notes friction around state portability (e.g., resources outside TF state being ignored, terraform-comm-10) and remote/Cloud-hosted state recommendations (terraform-docs-33) that could complicate a clean exit if using HCP Terraform. Missing for 10: an explicit data-export/migration guide, independent confirmation of a smooth 'leave the platform' path, and clarity on exporting HCP Terraform-hosted state without vendor dependency.",
     "evidenceIds": [
       "terraform-docs-1",
+      "terraform-docs-14",
       "terraform-docs-4",
       "terraform-docs-6",
       "terraform-docs-18",
-      "terraform-probe-7",
-      "terraform-comm-10",
-      "terraform-comm-3"
+      "terraform-docs-26",
+      "terraform-docs-33",
+      "terraform-comm-10"
     ]
   },
   {
@@ -2570,14 +2586,15 @@
     "productId": "terraform",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Terraform CLI itself is fully open-source and self-hostable (no SaaS dependency required) — the evidence pack shows a complete headless local run (init/plan/apply/destroy) with no account or cloud service involved, confirming the core product runs entirely self-hosted. missing for 10: no explicit vendor statement about self-hosting Terraform Enterprise/state backends or independent third-party corroboration of long-term self-hosted operation at scale.",
+    "rationale": "Terraform CLI itself is open-source, self-hostable software that runs locally without requiring HashiCorp's cloud, and evidence confirms open registry, self-authored providers, and CLI-only workflows (state, plan, apply) that don't require any hosted backend; community comments corroborate long-term self-hosted/open-source usage. missing for 10: no explicit evidence pack statement enumerating self-hosting deployment instructions or license details, and no independent audit confirming full feature parity without HCP/Cloud services.",
     "evidenceIds": [
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8",
       "terraform-docs-12",
+      "terraform-docs-14",
+      "terraform-docs-29",
+      "terraform-docs-41",
+      "terraform-comm-7",
       "terraform-gh-1"
     ]
   },
@@ -2598,14 +2615,14 @@
     "verdict": "full",
     "quality": 10,
     "confidence": "high",
-    "rationale": "Terraform plan is the core feature previewing creates/updates/destroys before apply, backed by extensive first-party docs and a hands-on probe confirming plan/show-json output with resource-level detail and exit codes for CI gating, plus community corroboration that execution plans build confidence before changes are applied.",
+    "rationale": "terraform plan generates a detailed execution plan previewing creates/updates/destroys before any changes are made, with human-readable and JSON output options, and apply prompts for confirmation unless auto-approved; this core workflow is corroborated by both official docs and independent community testimony praising execution plans as a key safety feature.",
     "evidenceIds": [
       "terraform-docs-2",
       "terraform-docs-15",
-      "terraform-docs-24",
+      "terraform-docs-16",
+      "terraform-docs-25",
       "terraform-docs-30",
-      "terraform-probe-6",
-      "terraform-probe-7",
+      "terraform-docs-39",
       "terraform-comm-15"
     ]
   },
@@ -2615,8 +2632,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains nothing about Terraform Cloud/Enterprise offering region or data-residency selection for where state, run data, or telemetry is stored; all evidence is about CLI plan/apply/state mechanics and provider ecosystem, not the product's own data storage location choices. Missing for 10: any documentation of Terraform Cloud regional deployment options, self-hosted/on-prem data residency controls, or explicit region-selection settings for stored state/data.",
-    "evidenceIds": []
+    "rationale": "While Terraform lets users choose remote backends (e.g., HCP Terraform or self-hosted state stores) per terraform-docs-33, the evidence pack contains no documentation of region/residency selection controls for where Terraform Cloud/HCP or its data is stored. This axis is fair for a product with a hosted SaaS offering (HCP Terraform) that stores state data, so absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": [
+      "terraform-docs-33"
+    ]
   },
   {
     "productId": "terraform",
@@ -2624,7 +2643,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Terraform is an infrastructure-as-code CLI/platform, not a service that trains AI models on user data or offers an AI-training opt-out; this privacy-posture axis about preventing data use for AI training does not apply to this product category.",
+    "rationale": "Terraform is an infrastructure-as-code provisioning tool; it does not collect or process user data for AI model training, so an AI-training opt-out privacy control is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2633,7 +2652,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes controls for retaining or deleting data (e.g., telemetry, Terraform Cloud run data, or data passed through the MCP server) — the pack only covers infrastructure resource lifecycle (plan/apply/destroy) and state management, not privacy-oriented data retention/deletion controls. missing for 10: any documentation of data retention policy, user-facing deletion/export controls, or MCP server data handling/retention settings.",
+    "rationale": "The evidence pack contains no mention of data-retention policies, deletion controls, GDPR/CCPA compliance, or privacy settings for Terraform or HCP Terraform's stored state/logs. State-management docs (terraform state rm, import) address infrastructure resource tracking, not user data privacy controls, so they cannot substitute. missing for 10: any documentation of retention windows, deletion APIs/commands for user or telemetry data, or privacy/compliance policy pages.",
     "evidenceIds": []
   },
   {
@@ -2642,40 +2661,39 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of telemetry, usage tracking, or an opt-out mechanism (e.g., CHECKPOINT_DISABLE) for Terraform; no docs or probes address this. missing for 10: any documentation of telemetry collection, an opt-out flag/env var, or independent confirmation that tracking can be disabled.",
+    "rationale": "No evidence pack items mention telemetry, usage tracking, or an opt-out mechanism for Terraform CLI; this is a plausible axis for a CLI tool but no documentation addresses it.",
     "evidenceIds": []
   },
   {
     "productId": "terraform",
     "storyId": "programmatic-deployments",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Terraform's automation story is built around scripting the CLI: machine-readable JSON output, exit codes, and saved plan artifacts (terraform-docs-4/8/18/22, terraform-probe-6/7/8) let an application shell out to `terraform plan/apply -json` and parse structured results headlessly. However, this is still driving Terraform *through* its CLI binary via subprocess calls, not a genuine SDK/API for invoking runs directly from application code — no evidence of an official Go/Python SDK, embeddable library, or REST API for local runs is present in the evidence pack (Terraform Cloud's run API isn't detailed either). Missing for 10: an official application-embeddable SDK or library (e.g., a documented Go library for programmatic plan/apply) or a REST/gRPC API for triggering local runs, and any independent corroboration that developers embed Terraform this way outside CI scripts.",
+    "rationale": "Evidence only shows CLI-based workflows (plan/apply/show -json, machine-readable UI output) that can be scripted or wrapped, but nothing indicates an official SDK, REST/HTTP API, or library for driving terraform plan/apply from application code without shelling out to the CLI. No mention of Terraform Cloud API, CDK for Terraform, or any programmatic library in the pack.",
     "evidenceIds": [
-      "terraform-docs-4",
-      "terraform-docs-8",
+      "terraform-docs-15",
+      "terraform-docs-16",
       "terraform-docs-18",
       "terraform-docs-22",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8"
+      "terraform-docs-30",
+      "terraform-probe-3"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "provider-breadth",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly state Terraform automates infrastructure 'on any cloud' via a public registry where 'anyone can publish and consume providers, modules, and policies,' and community evidence corroborates real multi-provider use (AWS cross-account work, a maintained Kubernetes provider) confirming the broad ecosystem in practice. Missing for 10: an explicit enumerated list/count of major cloud/SaaS providers and independent third-party verification of registry breadth beyond community anecdotes.",
+    "rationale": "Terraform's core value proposition is a broad provider ecosystem via the public Terraform Registry, letting anyone publish/consume providers and modules across clouds, on-prem, and SaaS, with community evidence corroborating real-world multi-cloud/cross-account use cases. missing for 10: independent quantitative data on registry breadth (e.g., number of providers) and no direct evidence contradicting ecosystem breadth.",
     "evidenceIds": [
-      "terraform-docs-11",
       "terraform-docs-12",
-      "terraform-docs-13",
+      "terraform-docs-11",
+      "terraform-docs-41",
+      "terraform-docs-29",
       "terraform-comm-2",
-      "terraform-comm-9",
-      "terraform-docs-29"
+      "terraform-docs-14"
     ]
   },
   {
@@ -2696,15 +2714,14 @@
     "productId": "terraform",
     "storyId": "reusable-modules",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Terraform's public Registry explicitly supports both publishing and consuming providers, modules, and policies, and docs promote modules as reusable/shareable configurations; this is corroborated by the MCP server pulling live registry module docs. Missing for 10: independent hands-on evidence of actually publishing a module to the registry, and detail on versioning/semver workflow for consumers.",
+    "rationale": "Terraform's public Registry explicitly supports publishing and consuming providers, modules, and policies, and modules are a core reusable/versioned configuration primitive documented extensively. missing for 10: independent hands-on evidence of publishing workflow specifics or community friction reports about registry publishing itself.",
     "evidenceIds": [
       "terraform-docs-11",
+      "terraform-docs-41",
       "terraform-docs-13",
-      "terraform-docs-1",
-      "terraform-docs-23",
-      "terraform-probe-9"
+      "terraform-docs-14"
     ]
   },
   {
@@ -2737,30 +2754,29 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Terraform's docs explicitly describe the `terraform state` command for 'basic modifications of the state using the CLI' (state mv/rm/list are part of this family) plus import for adding resources to state, directly supporting safe state refactoring [terraform-docs-6, terraform-docs-5, terraform-docs-19, terraform-docs-20]. Community commentary acknowledges the real-world stakes of state manipulation ('when you mess up your state occasionally, yea that's super annoying') reinforcing that this is a recognized, high-stakes capability [terraform-comm-8]. Missing for 10: explicit mention/testing of `terraform state mv` and `terraform state rm` subcommands by name, and no hands-on probe exercising a full move/rename/remove workflow (probes only cover plan/apply/destroy, not state surgery).",
+    "rationale": "Terraform explicitly documents `terraform state` subcommands for basic state modifications (mv/rm/import equivalents) plus `terraform import` for bringing existing resources under management, directly supporting safe state refactoring. missing for 10: no explicit mention of `moved`/`removed` config blocks or `terraform state mv/rm` command details, and no independent/hands-on evidence confirming safe refactoring workflows in practice.",
     "evidenceIds": [
       "terraform-docs-6",
+      "terraform-docs-20",
       "terraform-docs-5",
       "terraform-docs-19",
-      "terraform-docs-20",
-      "terraform-comm-8"
+      "terraform-docs-33"
     ]
   },
   {
     "productId": "terraform",
     "storyId": "structured-plan-output",
     "verdict": "full",
-    "quality": 10,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Terraform documents and hands-on probes confirm `terraform show -json` and `-json` flags produce structured, machine-readable plan output (format_version, planned_values, resource addresses) that an agent can parse, with a verified plan→apply→drift-check loop running headlessly.",
+    "rationale": "Terraform provides `terraform show -json` to output plan/state/config as JSON, and `-json` on plan/apply/refresh/test streams machine-readable JSON UI messages line-by-line for programmatic processing — both well-documented first-party capabilities directly matching the story. missing for 10: no independent/hands-on third-party corroboration of an agent actually parsing this JSON in practice.",
     "evidenceIds": [
       "terraform-docs-4",
-      "terraform-docs-8",
       "terraform-docs-18",
+      "terraform-docs-8",
       "terraform-docs-22",
-      "terraform-probe-6",
-      "terraform-probe-7",
-      "terraform-probe-8"
+      "terraform-docs-34",
+      "terraform-docs-39"
     ]
   },
   {
@@ -2768,8 +2784,8 @@
     "storyId": "targeted-partial-apply",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers plan/apply/show/state/import/test workflows but never mentions the `-target` or `-exclude` flags (or any resource-address targeting mechanism) that would let a platform engineer scope a plan/apply to specific resources. Missing for 10: any documentation or hands-on probe demonstrating `-target`/`-exclude` usage, resource-address syntax, or excluding resources from a plan/apply.",
+    "confidence": "medium",
+    "rationale": "The evidence pack documents `terraform plan`/`apply`, `-auto-approve`, `-out`, and JSON output flags, but nowhere mentions the `-target` or `-exclude` flags that let a platform engineer scope plan/apply to specific resources. Without citable evidence for this specific capability, it cannot be credited even though it is plausible for this type of tool.",
     "evidenceIds": []
   },
   {
@@ -2789,16 +2805,11 @@
   {
     "productId": "terraform",
     "storyId": "validate-fmt",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Evidence confirms `terraform validate -json` runs successfully with structured diagnostics (terraform-probe-7), directly supporting configuration validation before planning, and the plan workflow itself is well documented (terraform-docs-2/15/24, terraform-probe-6). However, the evidence pack never mentions `terraform fmt` or any auto-formatting capability, so the 'auto-format' half of the story is unevidenced. missing for 10: explicit documentation or hands-on proof of `terraform fmt` (auto-formatting) integrated into the pre-plan workflow, and independent/community corroboration of the validate+format combo being used together in practice.",
-    "evidenceIds": [
-      "terraform-probe-7",
-      "terraform-docs-2",
-      "terraform-docs-24",
-      "terraform-probe-6"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack never mentions `terraform validate` or `terraform fmt`, the actual commands for config validation and auto-formatting. Closest evidence (terraform tests, policy enforcement) address post-write module testing and plan compliance, not pre-plan syntax validation/formatting, so the specific story is unevidenced.",
+    "evidenceIds": []
   },
   {
     "productId": "terraform",
@@ -2806,7 +2817,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation or hands-on evidence about version compatibility promises, semantic versioning policy, or release-to-release upgrade guides — only general docs, CLI examples, and licensing/community sentiment unrelated to upgrade paths. Missing for 10: any citation of a documented upgrade guide, deprecation policy, or compatibility promise between Terraform versions.",
+    "rationale": "The evidence pack contains no documentation about version compatibility guarantees, semantic versioning policy, or upgrade guides between Terraform releases; it only covers CLI commands, state management, testing, and the MCP server. This axis clearly applies to a widely-used infra-as-code tool, but no supporting citations exist here.",
     "evidenceIds": []
   }
 ]

@@ -4,8 +4,8 @@
     "storyId": "accounting-software-sync",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Deel's general API, MCP server, webhooks, and payroll processing claims, but nothing mentions syncing payroll journal entries to QuickBooks, Xero, or any accounting software specifically. This axis is plausible for a payroll platform, but no evidence of such integration exists in the pack.",
+    "confidence": "medium",
+    "rationale": "Evidence covers Deel's global payroll processing, API/webhooks, sandbox, and MCP server, but there is no mention of a QuickBooks/Xero accounting sync or automated GL journal-entry export capability anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -14,13 +14,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Deel exposes a REST API and MCP server that can create contractor contracts and expose people/payroll data to agents, suggesting programmatic hiring is plausible, but the evidence never shows an explicit 'create employee' (vs contractor) endpoint or any tax-setup/compensation-configuration API call, so full end-to-end onboarding is not demonstrated. missing for 10: explicit employee-creation endpoint, compensation-setup API call, tax-setup API call/tool, and an end-to-end example chaining these steps.",
+    "rationale": "Deel's API/MCP docs show contract creation, listing contracts, time-off requests, and payroll/EOR cost comparisons, and the API supports creating contracts via POST /rest/contracts, suggesting an agent could programmatically onboard a contractor. However, there is no explicit documented endpoint or MCP tool for full employee onboarding covering compensation setup and tax setup as a single end-to-end workflow — the evidence only shows contract creation and cost comparison tools, not a unified 'create employee + compensation + tax' flow. missing for 10: explicit API/MCP endpoints for employee creation with compensation configuration, dedicated tax-setup endpoint/tool, and a documented end-to-end onboarding workflow example or independent confirmation it works as described.",
     "evidenceIds": [
       "deel-docs-1",
       "deel-docs-14",
-      "deel-docs-2",
-      "deel-docs-18",
-      "deel-docs-23"
+      "deel-docs-21",
+      "deel-docs-10",
+      "deel-docs-23",
+      "deel-docs-30",
+      "deel-docs-8"
     ]
   },
   {
@@ -29,14 +31,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Deel's docs show API/MCP tools for contracts, time-off, and EOR cost comparisons, but there is no evidence of a payroll-run preview endpoint, anomaly detection, or an approval workflow that an agent could invoke before approving a payroll run.",
+    "rationale": "Evidence shows Deel's API/MCP exposes contracts, time-off, and EOR cost-comparison tools, and general marketing about running global payroll, but there is no documented payroll-run preview endpoint, no anomaly-detection capability, and no approval workflow surfaced via API/MCP.",
     "evidenceIds": [
-      "deel-docs-8",
-      "deel-docs-18",
-      "deel-docs-9",
       "deel-docs-10",
       "deel-docs-23",
-      "deel-docs-2"
+      "deel-docs-20",
+      "deel-docs-19"
     ]
   },
   {
@@ -45,14 +45,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Deel exposes payroll, contracts, and people data via REST API and an official MCP server that AI agents (Claude, ChatGPT, custom agents) can call, plus webhooks for real-time events — giving an agent a path to pull payroll data programmatically. However, there is no evidence of a dedicated 'payroll journal' export/report or built-in reconciliation-to-ledger functionality (e.g., mapping to GL codes or accounting-system sync); it only shows generic payroll/contract/time data endpoints and MCP tools like listOfContracts and createTimeOffRequest. missing for 10: explicit payroll journal/GL export format, evidence of ledger reconciliation logic or accounting-system integration (QuickBooks/Xero/etc.), and independent confirmation of an agent successfully performing this reconciliation workflow.",
+    "rationale": "Deel's API and MCP server expose payroll data (and contracts, people, time data) that an agent could pull via API calls or MCP tools like listOfContracts, and sandbox/webhook infrastructure supports building such integrations. However, there is no explicit evidence of a 'payroll journal' entry format, GL-code export, or reconciliation-into-ledger capability (e.g., no mention of accounting export formats or ledger-sync tools). missing for 10: dedicated payroll journal/GL export endpoint, explicit reconciliation or ledger-sync tooling, evidence of accounting-system integration.",
     "evidenceIds": [
       "deel-docs-2",
-      "deel-docs-8",
+      "deel-docs-11",
       "deel-docs-18",
       "deel-docs-23",
-      "deel-docs-6",
-      "deel-docs-11"
+      "deel-docs-30",
+      "deel-docs-6"
     ]
   },
   {
@@ -61,10 +61,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Probes confirm a live llms.txt at developer.deel.com/llms.txt (HTTP 200) and .md variants of docs pages for clean Markdown consumption, exactly matching the agent-oriented docs pattern; docs also explicitly promote MCP server usage for agents. Missing for 10: independent third-party confirmation of agent usage beyond Deel's own probes/docs.",
+    "rationale": "Probe confirms llms.txt exists at developer.deel.com/llms.txt (HTTP 200) and per-page markdown (.md) versions are available, plus dedicated MCP/agent-oriented docs exist. Missing for 10: independent third-party confirmation that agents actually consume llms.txt effectively in practice.",
     "evidenceIds": [
       "deel-probe-1",
       "deel-probe-2",
+      "deel-probe-3",
       "deel-docs-8"
     ]
   },
@@ -74,13 +75,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Deel exposes contracts, payroll, and time data via an MCP server with tools like calculateEorVersusEntityHiringCosts and listOfContracts that AI agents (Claude, ChatGPT) can invoke to generate insights, but this relies on external AI clients rather than a native in-product AI insights/suggestions feature. Missing for 10: evidence of built-in AI-generated dashboards, proactive recommendations, or analytics surfaced natively inside the Deel product UI itself, and independent corroboration of real-world use of these insights.",
+    "rationale": "Deel doesn't advertise a native in-app AI insights/analytics dashboard, but its MCP server explicitly exposes structured tools (e.g., calculateEorVersusEntityHiringCosts, listOfContracts) that let connected AI agents like Claude or ChatGPT pull and reason over contracts, payroll, and time data to generate insights/suggestions such as EOR-vs-entity cost comparisons. This satisfies the spirit of 'AI-generated insights from my data' but only via external agent connection, not a built-in AI feature surfaced directly in Deel's UI. missing for 10: a native in-product AI insights/recommendation feature (e.g., dashboard-level AI suggestions), independent evidence of the MCP-driven insight tools being used in practice.",
     "evidenceIds": [
-      "deel-docs-2",
       "deel-docs-8",
       "deel-docs-10",
-      "deel-docs-18",
-      "deel-docs-23",
+      "deel-docs-15",
+      "deel-docs-30",
       "deel-probe-3"
     ]
   },
@@ -88,16 +88,17 @@
     "productId": "deel",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Deel provides webhooks for real-time event notifications (avoiding polling) and an MCP server exposing tools (time-off requests, contracts, EOR calculations) that agents can invoke, which are building blocks for automation. However, there's no evidence of a native scheduling/automation engine that runs tasks autonomously in the background without an external trigger or agent invocation. Missing for 10: evidence of autonomous scheduled workflows, background job execution, or an automation/rules engine independent of webhook triggers or agent-initiated MCP calls.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Deel provides the building blocks for autonomous automation—real-time webhooks that avoid polling, a public API, and an MCP server exposing tools (listOfContracts, createTimeOffRequest, etc.) that AI agents can invoke—so agents could be wired to act on Deel data without human intervention. However, there's no evidence of a native scheduling/orchestration engine or documented example of an agent running unattended background workflows end-to-end. Missing for 10: evidence of built-in automation/workflow engine, documented autonomous/scheduled agent runs, and independent confirmation of agents operating without human-in-the-loop.",
     "evidenceIds": [
       "deel-docs-6",
       "deel-docs-7",
       "deel-docs-8",
       "deel-docs-9",
-      "deel-docs-18",
-      "deel-docs-20"
+      "deel-docs-30",
+      "deel-docs-29",
+      "deel-docs-17"
     ]
   },
   {
@@ -105,29 +106,28 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Deel's evidence shows an MCP server that exposes its data/tools to external AI assistants (Claude, ChatGPT, custom agents) — the opposite of a built-in assistant embedded inside the product itself. There is no documentation of a native, in-app AI assistant that a user can delegate tasks to within Deel's own interface.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Deel exposes an MCP server so external AI agents (Claude, ChatGPT, custom agents) can query contracts/payroll/time-off data, but this is the opposite direction: it lets outside assistants pull from Deel, not a built-in assistant delegated tasks inside Deel's own product UI. No evidence of a native in-app AI assistant feature.",
     "evidenceIds": [
       "deel-docs-2",
       "deel-docs-8",
-      "deel-docs-17",
-      "deel-probe-3"
+      "deel-docs-18",
+      "deel-docs-30"
     ]
   },
   {
     "productId": "deel",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Deel exposes a full REST API (e.g. POST /rest/contracts) plus a dedicated API sandbox for testing without touching production data and webhooks for event-driven automation, all of which can be scripted headlessly outside any UI. However, there is no explicit CLI, CI/CD pipeline guide, or documented automated auth flow (e.g. service-account tokens) tailored to headless/CI use — the MCP server docs even note that most clients handle OAuth2 interactively.  missing for 10: dedicated CI/CD guidance, non-interactive auth/service-account setup, CLI tooling, and independent confirmation of automation use in CI.",
+    "rationale": "Deel exposes a REST API with API-token authentication (a non-interactive credential suitable for headless/CI use), plus a sandbox environment for safe automated testing and webhooks for event-driven automation without polling, all of which support running Deel operations headlessly. However, there is no explicit CI/CD example, official SDK, or CLI tool documented for automation pipelines, and MCP usage is framed around interactive AI clients (Claude, ChatGPT) rather than CI contexts. missing for 10: official CI/CD integration guide or example, dedicated SDK/CLI for scripted automation, evidence of MCP server running unattended in a pipeline.",
     "evidenceIds": [
-      "deel-docs-1",
       "deel-docs-3",
+      "deel-docs-4",
       "deel-docs-6",
-      "deel-docs-7",
-      "deel-docs-17",
-      "deel-docs-22"
+      "deel-docs-27",
+      "deel-docs-31"
     ]
   },
   {
@@ -136,11 +136,11 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deel is a workforce/payroll SaaS platform, not an AI agent or assistant; the evidence shows Deel ships an MCP *server* exposing its own data/tools to external AI agents (Claude, ChatGPT), which is the opposite direction from this story's ask of plugging external MCP servers into Deel so it can consume their tools. There is no agent/client role for Deel to plug servers into, so this axis is a category error for this product type.",
+    "rationale": "Deel is a workforce/payroll SaaS platform, not an AI agent or assistant host; all evidence describes Deel exposing its own MCP server so external agents (Claude, ChatGPT, etc.) can call Deel's tools, which is the opposite direction from this story of plugging external MCP servers into Deel itself. There is no evidence of any Deel-side agent or assistant that could act as an MCP client consuming other servers' tools, making this axis a category mismatch for this product.",
     "evidenceIds": [
       "deel-docs-2",
       "deel-docs-8",
-      "deel-docs-17"
+      "deel-docs-29"
     ]
   },
   {
@@ -149,32 +149,34 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Deel documents an official MCP server exposing contracts/people/payroll/time tools that can be invoked by Claude, ChatGPT, or custom agents, with OAuth2 auto-handled by MCP clients like Cursor/VS Code/Claude Desktop, and a probe confirms the live docs page. Missing for 10: independent/hands-on third-party confirmation that the MCP server works in practice beyond first-party docs.",
+    "rationale": "Deel documents an official MCP server exposing tools (listOfContracts, createTimeOffRequest, etc.) that map to Deel API operations, with OAuth2 auto-handled by clients like Claude Desktop, Cursor, VS Code, and ChatGPT, and compatibility with any MCP-over-HTTP client. This is well-documented first-party evidence with no independent hands-on corroboration found. missing for 10: independent/hands-on confirmation of the MCP server working in practice, broader community validation.",
     "evidenceIds": [
       "deel-docs-2",
       "deel-docs-8",
       "deel-docs-9",
       "deel-docs-17",
       "deel-docs-18",
+      "deel-docs-29",
+      "deel-docs-30",
       "deel-probe-3"
     ]
   },
   {
     "productId": "deel",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Deel's MCP server exposes tools (createTimeOffRequest, listOfContracts, calculateEorVersusEntityHiringCosts) that let AI agents like Claude/ChatGPT invoke Deel operations, which enables a natural-language-driven interface to the product via an agent intermediary. However, this is agent-mediated tool invocation rather than the product itself natively parsing/executing free-form NL commands, and there's no independent/hands-on evidence of real-world NL command usage. Missing for 10: first-party or independent evidence of the product's own UI accepting natural-language commands directly, hands-on validation of MCP tool usage in practice, and broader coverage beyond the listed tool examples.",
+    "rationale": "Deel ships an official MCP server exposing contracts, payroll, and time-off tools that can be invoked by AI agents/assistants (Claude, ChatGPT, Cursor) using natural language, with structured tool definitions like createTimeOffRequest and listOfContracts documented in detail. This directly enables AI-native users to operate Deel via natural-language commands routed through MCP clients rather than a native chat UI. Missing for 10: independent/hands-on validation that these NL-driven MCP interactions work reliably in practice, and no evidence of a native in-product NL command interface outside the MCP integration.",
     "evidenceIds": [
       "deel-docs-2",
       "deel-docs-8",
       "deel-docs-9",
-      "deel-docs-10",
       "deel-docs-17",
       "deel-docs-18",
       "deel-docs-20",
       "deel-docs-23",
+      "deel-docs-30",
       "deel-probe-3"
     ]
   },
@@ -184,7 +186,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack of an official Deel CLI; the documented tooling is limited to REST API, MCP server, webhooks, and API sandbox. Absence of evidence for this applicable capability yields none. missing for 10: any mention of a CLI tool, CLI docs, install instructions, or command reference.",
+    "rationale": "Evidence shows Deel offers a REST API, an MCP server, and sandbox/webhooks, but nowhere is a dedicated CLI tool mentioned or documented; all developer interactions are via HTTP API or MCP, not a command-line interface.",
     "evidenceIds": []
   },
   {
@@ -193,13 +195,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Deel provides a well-documented public REST API with sandbox environment, webhooks, and llms.txt/markdown docs for AI-native consumption, plus an official MCP server exposing structured tools mapping to API operations. This directly satisfies the story of driving the product programmatically as an AI-native user. Missing for 10: independent hands-on developer corroboration of actual API usage/reliability beyond vendor docs.",
+    "rationale": "Deel provides a well-documented public REST API with authentication (API tokens, OAuth2), versioning, sandbox environment, webhooks, and even an official MCP server exposing tools mapped to API operations—giving AI-native users multiple documented ways to drive the product programmatically. Missing for 10: independent third-party developer corroboration of real-world API usage beyond vendor docs.",
     "evidenceIds": [
       "deel-docs-1",
       "deel-docs-3",
-      "deel-docs-6",
       "deel-docs-8",
       "deel-docs-18",
+      "deel-docs-27",
+      "deel-docs-28",
+      "deel-docs-31",
       "deel-probe-1",
       "deel-probe-2",
       "deel-probe-3"
@@ -208,27 +212,32 @@
   {
     "productId": "deel",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence confirms Deel has an MCP server and OAuth2 authorization flow for connecting agents, but there is no mention of scoped or least-privilege credential issuance (e.g., granular permission scopes, role-restricted API keys, or per-agent access controls) for AI agents. Missing for 10: explicit scoped/least-privilege credential mechanism, documentation on limiting agent API access, and evidence of permission granularity beyond generic OAuth2 flow.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Deel documents two auth methods—static API tokens and OAuth2 (deel-docs-27, deel-docs-28)—and OAuth2 is described as granting access to 'specific data... with explicit user consent,' implying some scoping, and MCP clients handle this OAuth2 flow automatically (deel-docs-17, deel-docs-29). However, there is no explicit documentation of configurable least-privilege scopes/permission sets for API tokens or a scope list for OAuth grants tailored to agent use. Missing for 10: explicit scope/permission catalog for API tokens, documented ability to restrict an agent's OAuth grant to specific resources/actions, and any hands-on confirmation that agents can be issued narrowly scoped credentials.",
     "evidenceIds": [
+      "deel-docs-27",
+      "deel-docs-28",
       "deel-docs-17",
-      "deel-docs-8",
-      "deel-docs-18"
+      "deel-docs-29",
+      "deel-docs-8"
     ]
   },
   {
     "productId": "deel",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows a REST API, an MCP server exposing tools, and a sandbox environment, but there is no mention of official client SDKs (e.g., language-specific libraries/packages) that developers could build against; only raw HTTP endpoints and MCP tool schemas are documented.",
+    "rationale": "Deel provides a rich developer platform — a documented REST API, sandbox environment, webhooks, OAuth2/API-token auth, versioning, and an official MCP server exposing typed tools (createTimeOffRequest, listOfContracts, etc.) that AI agents can call directly — which supports agentic, AI-native integration. However, the evidence never explicitly documents official client SDKs (e.g., language-specific libraries like Python/Node/Go SDKs); all examples are raw REST calls or MCP tool calls, not SDK wrappers. missing for 10: explicit official SDK libraries/language bindings, SDK-specific docs or code samples, independent confirmation of SDK usage.",
     "evidenceIds": [
       "deel-docs-1",
       "deel-docs-8",
       "deel-docs-18",
+      "deel-docs-27",
+      "deel-docs-3",
+      "deel-docs-6",
       "deel-probe-3"
     ]
   },
@@ -238,7 +247,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Deel documents a dedicated webhooks system delivering real-time notifications for platform events, secured via HMAC-SHA256 signatures, explicitly positioned as an alternative to polling for building integrations. Missing for 10: independent/hands-on verification of webhook reliability and no evidence of granular event-type subscription management or agent-specific webhook consumption patterns.",
+    "rationale": "Deel provides documented webhooks delivering real-time event notifications with HMAC-SHA256 signature security, explicitly framed as an alternative to polling for building integrations—directly matching the AI-native subscribe-to-events story. Missing for 10: no explicit list of supported event types/topics, and no independent/hands-on corroboration of webhook reliability.",
     "evidenceIds": [
       "deel-docs-6",
       "deel-docs-7"
@@ -248,16 +257,15 @@
     "productId": "deel",
     "storyId": "api-interactive-docs",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Deel provides API reference docs listing endpoints (POST /rest/contracts) plus a dedicated Sandbox environment with pre-populated data for safely testing API calls, which supports exploratory/runnable use, and an MCP tools reference listing callable tools with structured I/O. However, there is no explicit evidence of an interactive in-docs console (e.g., 'Try it' buttons, live runnable code snippets) typical of API reference tools like Swagger/Postman embeds. Missing for 10: evidence of an embedded interactive try-it console or live runnable examples in the docs UI, and independent/hands-on confirmation of this specific experience.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Deel provides a sandbox environment with pre-populated data for safely testing API calls (deel-docs-3, deel-docs-4, deel-docs-22, deel-docs-26) and detailed API/MCP tool references, which supports experimentation, but there is no explicit evidence of an interactive in-browser API reference UI with 'try it now' runnable code examples (e.g., Swagger/OpenAPI explorer). Missing for 10: an explicit interactive API reference page with embedded runnable requests, and independent/hands-on confirmation that such a console exists.",
     "evidenceIds": [
       "deel-docs-3",
       "deel-docs-4",
-      "deel-docs-5",
-      "deel-docs-14",
-      "deel-docs-18",
-      "deel-docs-23"
+      "deel-docs-22",
+      "deel-docs-26",
+      "deel-docs-31"
     ]
   },
   {
@@ -266,41 +274,39 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows extensive REST API and MCP documentation but no mention of a downloadable OpenAPI/Swagger spec file or equivalent machine-readable schema; docs pages are described as Markdown-convertible (.md), not as an API spec format. Missing for 10: any reference to an OpenAPI/Swagger JSON or YAML file, a spec download link, or API schema export capability.",
+    "rationale": "The evidence pack documents Deel's REST API endpoints, versioning headers, sandbox, and MCP server, but nowhere mentions an OpenAPI/Swagger spec file or download link for the API. Missing for 10: any reference to an OpenAPI/Swagger JSON/YAML spec, a spec download endpoint, or explicit machine-readable API schema.",
     "evidenceIds": [
+      "deel-docs-1",
+      "deel-docs-31",
       "deel-probe-1",
-      "deel-probe-2",
-      "deel-docs-1"
+      "deel-probe-2"
     ]
   },
   {
     "productId": "deel",
     "storyId": "api-sandbox",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Deel provides a documented API Sandbox that is explicitly a separate environment from production, pre-populated with sample contracts/workers/organizations, and resettable to restore clean test data — directly matching the story's need to test without touching production data. missing for 10: independent/hands-on corroboration of sandbox behavior, and explicit confirmation that MCP/agent tools can be pointed at the sandbox rather than production APIs",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Deel documents a dedicated API Sandbox described as a 'completely isolated testing environment' that mirrors production without affecting real data, triggering payments, or creating legal contracts, and comes pre-populated with sample contracts/workers/orgs plus a reset function to restore clean data. This directly satisfies the ai-native story of testing without touching production. Missing for 10: independent/hands-on confirmation that the sandbox behaves as documented (only first-party docs available).",
     "evidenceIds": [
       "deel-docs-3",
       "deel-docs-4",
       "deel-docs-5",
-      "deel-docs-16",
-      "deel-docs-22"
+      "deel-docs-22",
+      "deel-docs-26"
     ]
   },
   {
     "productId": "deel",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "The evidence shows Deel has REST APIs, a sandbox, webhooks, and an MCP server, and even references a '/api/stable/' path implying some versioning convention, but there is no documentation of a versioning scheme or a deprecation policy anywhere in the pack.",
+    "rationale": "Deel documents header-based date versioning (X-Version) for managing API changes, giving clear evidence of a versioned API scheme, but no evidence pack item describes a documented deprecation policy (e.g., sunset timelines, notice periods, or a changelog of deprecated versions). Missing for 10: explicit deprecation/sunset policy documentation, changelog of version retirements, migration guidance for deprecated versions.",
     "evidenceIds": [
-      "deel-docs-1",
-      "deel-docs-3",
-      "deel-docs-6",
-      "deel-probe-1",
-      "deel-probe-2"
+      "deel-docs-31",
+      "deel-docs-27"
     ]
   },
   {
@@ -309,7 +315,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows generic marketing claims about 'automated compliance' and global payroll across 150+ countries, with no specific mention of US federal, state, or local payroll tax calculation, filing, or remittance automation. Missing for 10: any documentation of federal/state/local tax engine, filing workflows, remittance handling, or W-2/941 style compliance specifics.",
+    "rationale": "Evidence only offers generic claims of 'automated compliance' and global payroll processing across 150+ countries, with no specific mention of federal/state/local tax calculation, filing, or remittance automation for US payroll. Missing for 10: any documentation of US tax jurisdiction handling, filing cadence, remittance to tax authorities, or compliance guarantees specific to federal/state/local payroll taxes.",
     "evidenceIds": [
       "deel-docs-11",
       "deel-docs-19",
@@ -322,11 +328,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only single-item API/MCP operations (create one contract, list contracts, create one time-off request) with no documented bulk/batch endpoints or MCP tools for operating on many items at once.",
+    "rationale": "The evidence shows individual REST/MCP operations (single contract creation, single time-off request, single contract listing) but no documented bulk/batch endpoints or batch MCP tools for operating on many items at once. Payroll 'consolidation' and webhook mentions do not describe bulk create/update operations across large item sets.",
     "evidenceIds": [
       "deel-docs-14",
-      "deel-docs-23",
       "deel-docs-20",
+      "deel-docs-23",
       "deel-docs-18"
     ]
   },
@@ -334,15 +340,15 @@
     "productId": "deel",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Deel offers webhooks that deliver real-time event notifications (contract, payroll, time events) which can be wired to external systems to trigger actions, and MCP tools that agents can invoke, but there is no evidence of a native rules/automation engine where a user defines 'if event X then action Y' logic inside Deel itself — webhooks only push events, requiring the user to build the triggering logic elsewhere. Missing for 10: native in-product rule/automation builder, documented examples of webhook-triggered automatic actions, evidence of condition-based rule definitions.",
+    "rationale": "Deel offers webhooks for event notifications (deel-docs-6, deel-docs-7) which could feed automated actions, and its MCP server/API expose tools like createTimeOffRequest that agents could invoke, but there's no evidence of a built-in rules engine or automation/workflow builder where a user defines 'if event X then action Y' logic natively within Deel. missing for 10: a native rules/automation engine or workflow builder, documented trigger-condition-action configuration UI or API, and evidence of end-to-end automated event-to-action chaining without external glue code.",
     "evidenceIds": [
       "deel-docs-6",
       "deel-docs-7",
       "deel-docs-8",
       "deel-docs-9",
-      "deel-docs-18"
+      "deel-docs-30"
     ]
   },
   {
@@ -351,12 +357,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Deel's evidence shows webhooks (event-triggered, not scheduled), an MCP server with discrete callable tools, and a REST API, but nothing describing a scheduler, cron-like trigger, or recurring workflow/job capability that an AI-native user could set up. Recurring payroll runs are a backend business process, not a user-schedulable automation feature exposed via API/MCP.",
+    "rationale": "Evidence shows Deel's API/MCP server exposes discrete tools (create contract, time-off request, list contracts) and webhooks for event-driven notifications, but there is no mention of scheduling, cron-like recurring job triggers, or workflow automation orchestration that an AI-native user could invoke. Webhooks only react to events rather than being scheduled or recurring on a timer.",
     "evidenceIds": [
       "deel-docs-6",
       "deel-docs-8",
       "deel-docs-18",
-      "deel-docs-20"
+      "deel-docs-30"
     ]
   },
   {
@@ -378,35 +384,38 @@
     "storyId": "cancel-or-correct-payroll",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers payroll processing generally, contracts API, MCP tools, and sandbox/webhooks features, but contains no mention of canceling or correcting a submitted payroll run before employees are paid — no API endpoint, MCP tool, or documentation addresses this workflow.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Deel's payroll processing, API/MCP tooling, and general platform capabilities, but nothing documents an ability to cancel or correct a submitted payroll run before employees are paid; no API endpoint, MCP tool, or docs reference this workflow. Community comments discuss unrelated complaints (data privacy, wallet terms) and don't address payroll correction/cancellation.",
+    "evidenceIds": [
+      "deel-docs-11",
+      "deel-docs-12",
+      "deel-docs-19"
+    ]
   },
   {
     "productId": "deel",
     "storyId": "compliance-alerts",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows generic 'automated compliance' marketing copy and generic webhooks for platform events, but nothing documents proactive alerts specifically tied to compliance obligations triggered by new hires, new locations, or law changes. Missing for 10: any documented compliance-alert feature, law-change monitoring, or notification workflow aimed at founders.",
-    "evidenceIds": [
-      "deel-docs-11",
-      "deel-docs-19",
-      "deel-docs-6"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence covers Deel's API, MCP server, sandbox, and general payroll/compliance marketing claims, but nothing describes proactive alerts or notifications tied to compliance obligations triggered by new hires, location changes, or law changes; webhooks exist for platform events generally, not compliance-specific alerting. Community evidence is unrelated to this axis. No evidence of a compliance-alerting feature.",
+    "evidenceIds": []
   },
   {
     "productId": "deel",
     "storyId": "embedded-payroll-for-platforms",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows Deel offers a general REST API and MCP server for contracts, people, payroll, and time data, but nothing describes a white-label or partner-branded embedding program that would let a developer resell payroll under their own brand. Absence of any 'white-label'/'partner API' branding, reseller terms, or co-branding capability means this specific capability is unevidenced.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Deel exposes a documented REST API and MCP tools for contracts, payroll, and time-off data (e.g., deel-docs-1, deel-docs-11, deel-docs-19, deel-docs-27) that a developer could integrate into their own product, with OAuth2/API tokens and a sandbox for testing (deel-docs-3, deel-docs-26, deel-docs-28). However, none of the evidence mentions a formal 'white-label' or partner-branding program, reseller terms, or embedded-finance partnership model — the API is presented as direct integration, not white-label embedding. Missing for 10: explicit white-label/partner API program docs, branding customization options, and partner agreement terms.",
     "evidenceIds": [
       "deel-docs-1",
       "deel-docs-11",
-      "deel-docs-13",
-      "deel-docs-19"
+      "deel-docs-19",
+      "deel-docs-27",
+      "deel-docs-28",
+      "deel-docs-3",
+      "deel-docs-26"
     ]
   },
   {
@@ -414,14 +423,9 @@
     "storyId": "fast-direct-deposit",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Deel's evidence covers general global payroll capability (paying employees/contractors across 150+ countries) but contains no documentation of fast next-day or 2-day direct deposit specifics, payment speed guarantees, or ACH/wire timing details. Community evidence even highlights disputes over Deel forcing payments through Deel Wallet rather than confirming standard fast direct deposit options.",
-    "evidenceIds": [
-      "deel-docs-11",
-      "deel-docs-19",
-      "deel-docs-24",
-      "deel-comm-2"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack contains general claims about running global payroll (150+ countries, unified data) but no specific mention of direct deposit speed (next-day or 2-day) or check-replacement wire/ACH capability for employees. Community evidence even suggests Deel pushed a proprietary 'Deel Wallet' card rather than standard bank deposit, but this isn't framed against a documented claim. Missing for 10: any documentation of direct deposit timing, ACH/bank transfer speed, or comparison to check payments.",
+    "evidenceIds": []
   },
   {
     "productId": "deel",
@@ -429,7 +433,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence shows Deel handles global payroll processing and contract/API capabilities, but nothing describes configuring multiple pay schedules (weekly, biweekly, semimonthly, monthly) across different teams; only high-level marketing claims about 'running payroll across 150+ countries' are present. Missing for 10: any documentation of pay schedule/frequency configuration, per-team schedule assignment, or admin UI/API support for this feature.",
+    "rationale": "Evidence pack covers Deel's global payroll marketing claims, API/MCP docs, and community complaints, but nothing specifically documents configuring multiple pay schedules (weekly, biweekly, semimonthly, monthly) across different teams. Missing for 10: any docs, UI screenshots, or API reference showing pay schedule/frequency configuration per team.",
     "evidenceIds": [
       "deel-docs-11",
       "deel-docs-19",
@@ -458,7 +462,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers contracts, payroll, MCP/API tooling, and time-off requests, but contains no mention of health insurance offerings, benefits enrollment, or deduction syncing to payroll. Missing for 10: any documentation of health insurance plans, enrollment workflows, or deduction-to-payroll integration.",
+    "rationale": "The evidence pack covers payroll, contracts, EOR, API/MCP integration, and sandbox testing, but contains no mention of health insurance offerings, enrollment workflows, or benefits deductions syncing to payroll. While benefits administration is a plausible axis for an HR/payroll platform like Deel, there is no documentation or feature evidence supporting this specific capability.",
     "evidenceIds": []
   },
   {
@@ -496,16 +500,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Deel's docs describe general global payroll processing and API/MCP tools for contracts, time-off, and cost comparisons, but nothing in the evidence pack mentions off-cycle payroll runs, bonus payments, correction runs, or termination-triggered payroll outside the regular schedule. Missing for 10: any documentation of off-cycle/ad-hoc payroll run capability, bonus/correction workflow, or termination payroll process.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows general global payroll processing capability (docs-11, docs-19, docs-24) but contains no mention of off-cycle payroll runs, bonus payments, correction runs, or termination-related payroll outside the regular schedule. A community report even notes that 'any exceptions to the rigid workflow breaks the entire process' (deel-comm-3), suggesting non-standard payroll actions may not be well supported, but this is not concrete enough to call it disputed—there's simply no direct evidence the feature exists.",
+    "evidenceIds": [
+      "deel-docs-11",
+      "deel-docs-19",
+      "deel-docs-24",
+      "deel-comm-3"
+    ]
   },
   {
     "productId": "deel",
     "storyId": "offer-letters-and-documents",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers contract creation via API, payroll, and MCP tooling, but contains no mention of e-signature functionality for offer letters/HR documents or per-employee document storage. This is a plausible and expected capability for an HR/onboarding platform like Deel, so the axis applies, but nothing in the evidence confirms it.",
+    "confidence": "low",
+    "rationale": "The evidence pack covers contracts API, payroll, MCP tools, and sandbox testing, but contains no mention of offer-letter e-signature workflows or per-employee document storage. Missing for 10: e-signature capability documentation, offer letter templates, per-employee document repository evidence.",
     "evidenceIds": []
   },
   {
@@ -514,16 +523,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Deel exposes a broad REST API (contracts, payroll, time-off) and an MCP server with tools mapping to API operations (contracts, time-off, EOR cost calculations), suggesting substantial UI-to-API parity, but no evidence explicitly claims or demonstrates full feature parity with the UI. Missing for 10: explicit parity documentation covering all UI workflows (e.g., invoicing, compliance docs, benefits admin), independent verification that all UI actions are API-accessible.",
+    "rationale": "Deel exposes a broad REST API and MCP server covering contracts, payroll, time-off, people data, and more, with sandbox/testing and webhook support, indicating substantial parity between API and UI capabilities. However, no evidence explicitly confirms full 1:1 parity between every UI feature and API/MCP tool coverage; documentation shows selected core objects (contracts, time-off, EOR cost calc) rather than an exhaustive UI-equivalence map. Missing for 10: explicit statement or audit confirming all UI actions have API equivalents, and coverage of less common UI workflows (e.g., compliance docs, benefits admin) via API.",
     "evidenceIds": [
       "deel-docs-1",
-      "deel-docs-14",
       "deel-docs-8",
       "deel-docs-9",
-      "deel-docs-10",
       "deel-docs-18",
       "deel-docs-23",
-      "deel-docs-20"
+      "deel-docs-30",
+      "deel-docs-6",
+      "deel-docs-3"
     ]
   },
   {
@@ -532,12 +541,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Deel's REST API and MCP tools expose contracts, people, payroll, and time data as structured JSON (e.g., listOfContracts, contracts endpoint), which could technically be used to pull data out in an open format, but there is no documented 'export all my data' feature, account-closure data-portability process, or bulk export tool aimed at users leaving the platform. Missing for 10: explicit full-account data export capability, documented offboarding/data-portability process, evidence of open-format (CSV/JSON) bulk export for all record types, and any confirmation this covers all user data rather than a subset accessible via API.",
+    "rationale": "Deel's REST API lets you programmatically retrieve contracts, workers, and payroll data in JSON (an open format) via endpoints like listOfContracts, which could support partial self-service extraction, but there is no documented bulk 'export all my data' feature, account-closure/offboarding data-export workflow, or explicit data-portability guarantee. missing for 10: dedicated full-account data export tool, documented account termination/data takeout process, independent confirmation that all data types (payroll, docs, history) are exportable.",
     "evidenceIds": [
-      "deel-docs-14",
+      "deel-docs-1",
       "deel-docs-23",
-      "deel-docs-8",
-      "deel-docs-18"
+      "deel-docs-14",
+      "deel-docs-27"
     ]
   },
   {
@@ -546,7 +555,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deel is a closed-source SaaS HR/payroll platform, not open-source software; source availability under an open license is not a relevant axis for this product category.",
+    "rationale": "Deel is a closed-source, proprietary SaaS HR/payroll platform, not an open-source project; publishing source code under an open license is not a plausible axis for this kind of commercial service product.",
     "evidenceIds": []
   },
   {
@@ -555,7 +564,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Deel is a SaaS-based global payroll/EOR compliance platform whose core value depends on Deel's own regulatory, banking, and compliance infrastructure — it is not a deployable software artifact that could be self-hosted, so this axis is a category error for this product.",
+    "rationale": "Deel is a SaaS HR/payroll platform, not open-source infrastructure meant to be self-hosted; self-hosting the core product is a category error for this kind of service.",
     "evidenceIds": []
   },
   {
@@ -579,7 +588,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Deel documents a webhooks system delivering real-time notifications for platform events with HMAC-SHA256 signature security, supporting event-driven downstream automations instead of polling. However, the evidence pack never enumerates specific payroll lifecycle event types (e.g., payroll processed, employee onboarded, payment failed) or shows a subscription/management API for choosing event categories. Missing for 10: documented list of specific payroll/employee lifecycle event types, webhook subscription management docs, and independent/hands-on confirmation of reliability.",
+    "rationale": "Deel's docs confirm a webhooks system delivering real-time notifications for 'key platform events' with HMAC-SHA256 signed payloads, avoiding polling — directly supporting event-driven downstream automation. However, the evidence never enumerates specific payroll lifecycle events like 'payroll processed', 'employee onboarded', or 'payment failed', so it's unclear the exact event catalog matches the story's examples. Missing for 10: an explicit list of supported webhook event types/payloads, and any hands-on/community confirmation of reliability in production use.",
     "evidenceIds": [
       "deel-docs-6",
       "deel-docs-7"
@@ -591,7 +600,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows general payroll processing marketing claims (150+ countries, compliance, cost visibility) but nothing documenting payroll register generation, gross-to-net breakdowns, or report export functionality for ops analysis. Missing for 10: any mention of payroll register reports, gross-to-net calculations, or export/download capability for analysis.",
+    "rationale": "Evidence confirms Deel runs global payroll and exposes payroll data via API/MCP, but there is no mention of payroll register reports, gross-to-net breakdowns, or export/analysis features for ops users. Missing for 10: payroll register report generation, gross-to-net report format, export functionality (CSV/Excel) for analysis.",
     "evidenceIds": [
       "deel-docs-11",
       "deel-docs-19",
@@ -604,7 +613,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency or region selection for stored data; all evidence covers API/MCP functionality, payroll features, and community complaints unrelated to data storage location. Missing for 10: any documentation of regional data storage options, data residency controls, or compliance certifications (e.g., GDPR data localization) that would let a user choose where their data resides.",
+    "rationale": "No evidence pack items mention data residency, region selection, or where data is stored; the API/MCP/sandbox docs cover functionality but not storage location or residency controls. Community items are unrelated to data residency and are ignored. missing for 10: any documentation of region/residency options, data center locations, or configurable data storage location.",
     "evidenceIds": []
   },
   {
@@ -613,10 +622,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack addresses AI-training data opt-out or model-training data controls; Deel's docs focus on API/MCP integrations and payroll features, not AI training-data privacy settings. Community evidence even highlights data-sharing complaints (marketing use of employee data), which is unrelated to AI training but reinforces lack of demonstrated privacy controls for this specific axis.",
-    "evidenceIds": [
-      "deel-comm-1"
-    ]
+    "rationale": "The evidence pack contains no documentation, settings, or policy statements about opting out of AI model training on user data—only API/MCP integration docs and unrelated community complaints about data sharing for marketing. Since Deel exposes workforce data via MCP to AI agents, this is a fair privacy question, but nothing in the pack addresses training-data controls.",
+    "evidenceIds": []
   },
   {
     "productId": "deel",
@@ -624,36 +631,29 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes any user-facing data retention or deletion controls (e.g., data export/erasure APIs, retention policy settings) despite Deel's MCP server and APIs exposing extensive workforce data to AI agents. Community reports (deel-comm-1) even suggest Deel retains and reuses data beyond user expectations, but this is not a documented retention/deletion control feature, just absence of one.",
-    "evidenceIds": [
-      "deel-docs-2",
-      "deel-docs-8",
-      "deel-comm-1"
-    ]
+    "rationale": "No evidence pack item describes any Deel feature letting an AI-native user configure data retention periods or delete data used by AI agents/MCP integrations; sandbox reset only pertains to test data, not production or AI-agent data. Community reports (deel-comm-1) even suggest Deel retains and reuses data (e.g., marketing outreach) beyond user control, but this doesn't confirm a specific retention/deletion control feature exists to be disputed.",
+    "evidenceIds": []
   },
   {
     "productId": "deel",
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of any telemetry/usage-tracking opt-out mechanism; in fact, community reports describe Deel actively using customer/employee data for marketing without apparent opt-out, which is the opposite of a documented telemetry control. missing for 10: any documentation of a telemetry setting, privacy control, or opt-out mechanism for usage tracking.",
-    "evidenceIds": [
-      "deel-comm-1"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out controls for Deel's platform, API, or MCP server; community evidence even raises concerns about Deel using customer/worker data for its own marketing purposes, but nothing documents an opt-out mechanism one way or the other.",
+    "evidenceIds": []
   },
   {
     "productId": "deel",
     "storyId": "pto-policies-and-accruals",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence only shows a generic `createTimeOffRequest` MCP tool for submitting time-off requests and broad payroll capability claims, but nothing about defining PTO policies, accrual rules, or approval workflows, nor documentation that such policies automatically feed into payroll runs. missing for 10: PTO policy/accrual configuration, approval workflow setup, explicit link showing accrued/approved time-off auto-syncing to payroll, independent corroboration.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence only shows a generic 'createTimeOffRequest' MCP/API tool for submitting a time-off request; there is no documentation of defining PTO accrual policies, approval workflows, or automatic application of those policies to payroll runs. missing for 10: PTO policy configuration, accrual rule definitions, approval workflow documentation, and evidence linking time-off data to payroll processing.",
     "evidenceIds": [
       "deel-docs-9",
       "deel-docs-20",
-      "deel-docs-11",
-      "deel-docs-24"
+      "deel-docs-30"
     ]
   },
   {
@@ -662,7 +662,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions 401(k), retirement plans, or benefits administration syncing with payroll; evidence covers payroll, contracts, MCP/API, and general HR platform features only. This axis applies to a global payroll/HR platform but no supporting evidence exists.",
+    "rationale": "No evidence in the pack mentions 401(k), retirement plans, or benefits administration syncing with payroll; the pack only covers global payroll, contracts, MCP/API tooling, and unrelated community complaints.",
     "evidenceIds": []
   },
   {
@@ -686,7 +686,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Deel's API/MCP tooling, contract creation, payroll, and sandbox docs, but contains no mention of a self-serve onboarding flow that collects W-4, I-9, or bank details for new hires. Missing for 10: any documentation of onboarding workflow, tax form collection (W-4/I-9), bank/direct-deposit setup, or day-one readiness features.",
+    "rationale": "The evidence pack covers Deel's API/MCP developer tools, payroll/contract endpoints, and community complaints, but contains no mention of a self-serve onboarding flow, W-4/I-9 collection, or bank detail setup for new hires. Onboarding is plausibly a core Deel HR feature, but no evidence documents this specific capability, so it cannot be credited as delivered.",
     "evidenceIds": []
   },
   {
@@ -695,13 +695,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Deel exposes 'time data' broadly and a createTimeOffRequest tool for time-off, plus general payroll processing claims, but nothing documents hourly time entry capture or overtime calculation flowing into a payroll run. Missing for 10: hourly timesheet entry documentation, overtime calculation rules, explicit payroll-run integration of time/overtime data.",
+    "rationale": "Evidence shows Deel's payroll platform and MCP tools cover contracts, people, payroll, and time-off requests, but nothing documents hourly time entry tracking or overtime calculations flowing into a payroll run. Missing for 10: hourly time entry logging, overtime calculation rules, and explicit integration of time-tracking data into payroll processing.",
     "evidenceIds": [
-      "deel-docs-2",
-      "deel-docs-9",
-      "deel-docs-20",
       "deel-docs-11",
-      "deel-docs-24"
+      "deel-docs-19",
+      "deel-docs-20",
+      "deel-docs-30"
     ]
   },
   {
@@ -709,8 +708,8 @@
     "storyId": "year-end-forms",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Deel's payroll, EOR, contractor management, API/MCP tooling, but contains no mention of W-2 or 1099 tax form generation or distribution at year-end. This is a fair capability to expect from a payroll/compliance platform, but none of the docs, APIs, or MCP tool references reference tax form issuance.",
+    "confidence": "low",
+    "rationale": "Evidence pack covers Deel's API, MCP server, sandbox, and general global payroll/EOR marketing claims, but contains no mention of W-2/1099 tax form generation or year-end distribution to workers.",
     "evidenceIds": []
   },
   {
@@ -730,14 +729,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto's Embedded Payroll API and docs cover company setup, employee tax configuration, compensation-adjacent flows (off-cycle pay, benefits), and even an official MCP server letting AI agents like Claude/Cursor call the API directly, which supports the 'agent-driven onboarding' idea. However, there is no single documented end-to-end 'create employee + compensation + tax' onboarding flow or explicit employee-creation endpoint citation — the pieces (company creation, tax info, benefits) are scattered across separate guides rather than shown as one orchestrated agent workflow. Missing for 10: an explicit employee-creation API endpoint doc, a compensation-setup endpoint doc, and a worked example of an agent completing the full onboarding sequence via the MCP server.",
+    "rationale": "Gusto's Embedded Payroll API docs cover company onboarding, employee tax setup (federal/state), and a paginated /employees endpoint, and the Dev Assistant MCP server lets AI coding tools query the API and docs directly — supporting agent-driven integration work. However, there is no explicit documentation of a compensation-creation endpoint or an end-to-end 'create employee + compensation + tax' flow demonstrated together, and the MCP server is aimed at developers building integrations rather than an agent performing hiring actions itself. Missing for 10: explicit compensation-setup API reference, a documented end-to-end new-hire onboarding sequence, and evidence of an agent actually executing this workflow (not just API capability existing).",
     "evidenceIds": [
-      "gusto-docs-2",
+      "gusto-docs-60",
+      "gusto-docs-63",
       "gusto-docs-37",
+      "gusto-docs-43",
+      "gusto-docs-70",
       "gusto-docs-6",
       "gusto-docs-34",
-      "gusto-probe-3",
-      "gusto-docs-45"
+      "gusto-probe-3"
     ]
   },
   {
@@ -746,14 +747,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto's API exposes a payroll preview mechanism (contractor_payment_groups/preview) that validates inputs and returns submission_blockers, and Gusto ships an official MCP dev-assistant server letting AI agents interact directly with the Embedded Payroll API — together these support an agent running a preview and surfacing blockers before submission. However, the 'preview + anomaly' pattern is only clearly documented for contractor payments, not for full regular/off-cycle employee payroll runs, and there's no explicit 'approve the run' API step or richer anomaly-detection logic beyond basic blockers. Missing for 10: a documented preview/anomaly endpoint for regular employee payroll runs, an explicit approval-gate API, and any hands-on/independent evidence of an agent actually doing this end-to-end.",
+    "rationale": "Gusto's Embedded Payroll API supports agent-driven interaction: the official MCP server lets AI tools call the API directly, and endpoints exist to retrieve unprocessed/upcoming payrolls (GET /v1/companies/{id}/payrolls) and a contractor payment preview endpoint that surfaces submission_blockers for review before funding. However, there is no documented 'preview' or anomaly-detection endpoint specifically for regular employee payroll runs (only for contractor payment groups), and no explicit anomaly-flagging mechanism (e.g., variance/error detection) is described for the standard payroll approval flow. Missing for 10: a dedicated regular-payroll preview/calculate endpoint, explicit anomaly-detection logic for employee payroll (vs only contractor submission_blockers), and independent evidence of an agent actually performing this workflow end-to-end.",
     "evidenceIds": [
-      "gusto-docs-27",
-      "gusto-docs-10",
+      "gusto-docs-6",
+      "gusto-docs-34",
+      "gusto-docs-66",
       "gusto-docs-40",
       "gusto-docs-46",
-      "gusto-docs-34",
-      "gusto-probe-3"
+      "gusto-docs-27",
+      "gusto-docs-10"
     ]
   },
   {
@@ -778,13 +780,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Gusto hosts a working llms.txt (HTTP 200, structured guide index) plus per-page .md documentation endpoints, and even ships an official Dev Assistant MCP server for AI coding tools to query docs and API directly. missing for 10: independent third-party confirmation of agent usage beyond Gusto's own probes.",
+    "rationale": "Gusto hosts a verified llms.txt (HTTP 200) and .md-formatted docs (docs-md probe), plus an official MCP server for AI code editors/assistants to interact with docs and API, directly matching the story. Missing for 10: independent third-party confirmation of agents successfully using llms.txt in practice.",
     "evidenceIds": [
       "gusto-probe-1",
       "gusto-probe-2",
+      "gusto-probe-3",
       "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-probe-3"
+      "gusto-docs-34"
     ]
   },
   {
@@ -792,12 +794,12 @@
     "storyId": "agentic-ai-insights",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Gusto's evidence pack shows an MCP dev-assistant server for developers building on the API and standard payroll/HR features, but there is no evidence of AI-generated insights or suggestions surfaced to end users from their own payroll/HR data (e.g., analytics, recommendations, anomaly detection). Missing for 10: any in-product AI insight/suggestion feature, evidence of AI analyzing user data and returning recommendations, or documentation of such a capability.",
+    "confidence": "high",
+    "rationale": "The evidence only covers Gusto's Embedded Payroll developer platform (APIs, webhooks, SDKs) and a developer-facing MCP server for AI coding assistants to interact with the API/docs — none of this is an in-product feature that surfaces AI-generated insights or suggestions to end users based on their own payroll/HR data. No dashboard analytics, anomaly detection, or AI recommendations for users are documented.",
     "evidenceIds": [
       "gusto-docs-6",
       "gusto-docs-34",
-      "gusto-docs-44"
+      "gusto-docs-66"
     ]
   },
   {
@@ -806,13 +808,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Gusto's evidence shows webhooks for event notifications and an MCP server aimed at AI coding assistants (Cursor, Windsurf, Claude Desktop) for building integrations, but neither constitutes a way for an AI-native end user to configure autonomous background automations within the product itself — webhooks require custom downstream logic to be built by a developer, not a self-service automation setup. Missing for 10: no evidence of a built-in automation/workflow builder, no user-configurable triggers-and-actions system, no documentation of autonomous agent execution running independently in Gusto.",
+    "rationale": "Gusto's evidence shows webhooks for event notification and pre-generated scheduled payrolls, plus an MCP server aimed at AI coding assistants for development-time API/doc lookup — none of these constitute a user-configurable system for autonomous background agent automations. Missing for 10: any workflow/automation builder, agentic scheduling of tasks beyond fixed payroll cadence, or evidence of AI agents autonomously executing multi-step Gusto actions unsupervised.",
     "evidenceIds": [
       "gusto-docs-5",
       "gusto-docs-16",
-      "gusto-docs-22",
-      "gusto-docs-6",
-      "gusto-docs-34"
+      "gusto-docs-62",
+      "gusto-docs-6"
     ]
   },
   {
@@ -821,10 +822,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows an Embedded Dev Assistant MCP server that lets external AI coding tools (Cursor, Windsurf, Claude Desktop) interact with Gusto's API for developers building integrations — this is a developer-facing tool, not a built-in AI assistant inside the Gusto product for end-users to delegate payroll/HR tasks. No evidence of an in-app AI assistant for running payroll, answering HR questions, or automating tasks for end users.",
+    "rationale": "The evidence only shows a developer-facing MCP server that lets external AI coding tools (Cursor, Windsurf, Claude Desktop) interact with the Embedded Payroll API for building integrations — this is a dev-tooling integration, not a built-in AI assistant inside the Gusto product for end users to delegate payroll/HR tasks. No evidence of an in-app AI assistant, chat interface, or agentic feature for end users.",
     "evidenceIds": [
       "gusto-docs-6",
       "gusto-docs-34",
+      "gusto-docs-66",
       "gusto-probe-3"
     ]
   },
@@ -849,13 +851,9 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Gusto is a payroll/HR platform, not an AI agent or assistant interface; there's no evidence of a Gusto-side agent that could act as an MCP client and plug in external MCP servers. The only MCP-related evidence is the reverse direction — Gusto's own Embedded Dev Assistant MCP server for external AI tools (Cursor, Windsurf, Claude Desktop) to consume, which is a different axis than 'plugging MCP servers into Gusto'.",
-    "evidenceIds": [
-      "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-probe-3"
-    ]
+    "confidence": "medium",
+    "rationale": "Gusto is a payroll/HR SaaS platform, not an AI agent or assistant that itself consumes external tools; the evidence only shows Gusto exposing its own MCP server for other AI coding tools to call into (the reverse direction), which doesn't establish Gusto as consuming/plugging in external MCP servers.",
+    "evidenceIds": []
   },
   {
     "productId": "gusto",
@@ -863,10 +861,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Gusto documents an official 'Embedded Dev Assistant' MCP server that lets AI tools like Cursor, Windsurf, and Claude Desktop interact directly with the Embedded Payroll API and docs, confirmed by both docs and probe evidence. missing for 10: independent/hands-on third-party confirmation that the MCP server works as described, and details on setup/authentication scope.",
+    "rationale": "Gusto documents an official Embedded Dev Assistant MCP server that lets AI code editors (Cursor, Windsurf) and general tools (Claude Desktop) interact directly with the Embedded Payroll API and docs, confirmed by both docs and a probe hit. Missing for 10: independent/hands-on community corroboration of the MCP server working in practice, and details on setup/auth specifics beyond the docs page.",
     "evidenceIds": [
       "gusto-docs-6",
       "gusto-docs-34",
+      "gusto-docs-66",
       "gusto-probe-3"
     ]
   },
@@ -874,12 +873,13 @@
     "productId": "gusto",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Gusto ships an official 'Embedded Dev Assistant' MCP server letting AI coding tools (Cursor, Windsurf, Claude Desktop) interact with the Embedded Payroll API and docs, which enables some natural-language-driven interaction, but this is framed as a developer/integration aid rather than an end-user natural-language interface for running payroll or HR tasks. Missing for 10: evidence of an end-user-facing chat/NL command interface for operating payroll itself, and independent hands-on confirmation of the MCP server's usability.",
+    "rationale": "Gusto ships an official Embedded Dev Assistant MCP server letting AI coding tools (Cursor, Windsurf, Claude Desktop) interact with its API and docs, which enables some natural-language-driven operation during integration/development [gusto-docs-6][gusto-docs-34][gusto-docs-66][gusto-probe-3]. However this is a developer-integration tool, not evidence that end-users can operate core Gusto payroll/HR workflows (running payroll, approving time off, etc.) via natural-language commands in the product itself. Missing for 10: an end-user-facing conversational/NL interface for actual payroll operations, and independent hands-on validation of the MCP server's capabilities.",
     "evidenceIds": [
       "gusto-docs-6",
       "gusto-docs-34",
+      "gusto-docs-66",
       "gusto-probe-3"
     ]
   },
@@ -888,8 +888,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence documents an MCP server for AI code editors but no official CLI tool for Gusto is mentioned anywhere in the pack; this is an applicable axis for an API/embedded platform product, so absence of evidence means 'none'.",
+    "confidence": "medium",
+    "rationale": "Gusto provides an MCP server, React SDK, and API client libraries, but there is no evidence of an official CLI tool for AI-native workflows anywhere in the docs pack; missing for 10: any mention of a Gusto CLI, its installation, or command set.",
     "evidenceIds": []
   },
   {
@@ -898,17 +898,20 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Gusto Embedded Payroll offers a comprehensive, well-documented public REST API (payroll, contractors, time off, webhooks, pagination, idempotency, versioning) plus an official MCP server enabling AI tools/agents to interact directly with the API and docs, evidencing deliberate AI-native support. missing for 10: independent third-party developer corroboration of API robustness at scale beyond vendor docs.",
+    "rationale": "Gusto Embedded Payroll provides a comprehensive, well-documented public REST API covering payroll, contractors, time off, webhooks, versioning, authentication, idempotency, pagination, error handling, official client libraries/SDKs, and even an official MCP server enabling AI agents to interact directly with the API and docs. This is extensive first-party documentation with a probe confirming the docs endpoints resolve live; missing for 10: independent third-party developer accounts of building against the API to corroborate the docs.",
     "evidenceIds": [
       "gusto-docs-6",
       "gusto-docs-34",
+      "gusto-docs-66",
+      "gusto-docs-54",
+      "gusto-docs-53",
+      "gusto-docs-67",
+      "gusto-docs-70",
       "gusto-docs-8",
-      "gusto-docs-17",
       "gusto-docs-25",
-      "gusto-docs-35",
-      "gusto-docs-40",
-      "gusto-docs-38",
-      "gusto-probe-3"
+      "gusto-docs-43",
+      "gusto-probe-3",
+      "gusto-probe-2"
     ]
   },
   {
@@ -916,23 +919,26 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents; the API fundamentals docs cover pagination, idempotency, and versioning but not credential scoping or granular permissions, and the MCP server doc doesn't mention least-privilege auth. Missing for 10: any documentation of scoped API keys, granular permission grants, or agent-specific credential controls.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Gusto's API has authentication constructs like 'System access tokens' for application-level actions and an MCP server for AI tools to call the API, but nothing describes issuing scoped or least-privilege credentials specifically for an AI agent (e.g., granular permission scopes, agent-specific token types, or restricted access grants). Missing for 10: any documentation of scoped/limited-permission API keys or tokens tailored to AI-agent use, OAuth scope definitions, or least-privilege credential issuance workflow.",
     "evidenceIds": [
-      "gusto-docs-8",
-      "gusto-docs-17",
-      "gusto-docs-25",
+      "gusto-docs-70",
+      "gusto-docs-66",
       "gusto-docs-34"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence describes a REST API (with idempotency keys, versioning, pagination, webhooks) and an MCP server for AI code editors, but nowhere mentions official client SDKs/libraries (e.g., Node, Python, Ruby) that AI-native developers could build against directly. missing for 10: any documentation of official SDK packages/libraries in specific languages, SDK installation guides, or SDK code examples.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Gusto documents official client libraries/SDKs for multiple languages plus a dedicated React SDK, providing developers with official building blocks. Missing for 10: independent hands-on developer corroboration of SDK quality/coverage across all languages and no explicit list of supported languages beyond React.",
+    "evidenceIds": [
+      "gusto-docs-53",
+      "gusto-docs-54",
+      "gusto-docs-65"
+    ]
   },
   {
     "productId": "gusto",
@@ -940,12 +946,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Gusto documents a full webhooks system: event delivery ('payroll.paid'), HMAC signature verification via verification_token, and recommended integration patterns for reacting to events, which directly satisfies webhook subscription for event-driven/agentic workflows. Missing for 10: no evidence of a webhook management API/UI for programmatic subscription setup, and no independent/hands-on corroboration of webhook reliability.",
+    "rationale": "Gusto's docs describe a full webhook subscription system: creating subscriptions with subscription_types (gusto-docs-56), verifying via a token before events are sent (gusto-docs-71), HMAC signature verification (gusto-docs-23), specific events like payroll.paid (gusto-docs-16/22/49/59), and a health-check endpoint (gusto-docs-57). This is well-documented first-party API capability suitable for AI-native/event-driven integration. Missing for 10: independent/hands-on developer confirmation of webhook reliability and a broader catalog of subscription event types beyond payroll.paid.",
     "evidenceIds": [
       "gusto-docs-5",
       "gusto-docs-16",
       "gusto-docs-22",
-      "gusto-docs-23"
+      "gusto-docs-23",
+      "gusto-docs-49",
+      "gusto-docs-56",
+      "gusto-docs-57",
+      "gusto-docs-71"
     ]
   },
   {
@@ -954,24 +964,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows extensive API documentation, an MCP server for AI code editors, and llms.txt/markdown docs, but there is no mention of an interactive API reference with runnable examples (e.g., a Swagger/OpenAPI explorer or embedded code sandbox). Missing for 10: any interactive API reference tool, runnable/executable code examples in docs, or a sandbox console for testing calls directly from the docs.",
-    "evidenceIds": [
-      "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-docs-7",
-      "gusto-docs-35",
-      "gusto-probe-1",
-      "gusto-probe-2"
-    ]
+    "rationale": "Evidence shows extensive reference documentation, endpoint docs, Postman collections, and client SDKs, but nothing describes an interactive in-browser API reference with runnable/try-it examples (e.g., a live console or embedded code execution). Demo companies (gusto-docs-13) and Postman collections (gusto-docs-68) support testing workflows but are not the same as an interactive runnable reference UI.",
+    "evidenceIds": []
   },
   {
     "productId": "gusto",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack details Gusto's REST API extensively but never mentions an OpenAPI/Swagger spec or any downloadable machine-readable schema; only llms.txt and an MCP server are documented, neither of which is an OpenAPI spec.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Gusto publishes versioned Postman collections for its API (gusto-docs-68) and has structured, versioned reference docs (gusto-docs-67, gusto-docs-69), which are machine-readable-adjacent artifacts, but there is no explicit mention of a downloadable OpenAPI/Swagger spec file or equivalent standard schema. missing for 10: explicit OpenAPI/Swagger spec, a documented download link or endpoint for the raw spec, and confirmation of spec format/versioning compatibility with standard tooling.",
+    "evidenceIds": [
+      "gusto-docs-68",
+      "gusto-docs-67",
+      "gusto-docs-69"
+    ]
   },
   {
     "productId": "gusto",
@@ -979,7 +986,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto's docs mention that demo companies are auto-generated with company info, employees, and payroll history so developers 'can begin testing right away' without needing production data, which supports a sandbox-testing story for embedded payroll partners. However, there is no detailed documentation of sandbox API keys/test-mode toggles, data isolation guarantees, or reset capabilities, and no independent/hands-on corroboration of the sandbox experience. Missing for 10: explicit sandbox environment setup docs, isolation/reset guarantees, and third-party confirmation of sandbox behavior.",
+    "rationale": "Gusto's docs mention that 'Demo companies are automatically generated with company info, employees, and previous payrolls so you can begin testing right away' (gusto-docs-13), which supports sandbox-style testing without touching production data. However, this is a single, brief mention with no further detail on sandbox API endpoints, environment separation, or independent confirmation of its reliability. missing for 10: explicit sandbox API/environment documentation beyond demo companies, details on how sandbox vs production keys/environments are isolated, and independent/hands-on verification of the sandbox experience.",
     "evidenceIds": [
       "gusto-docs-13"
     ]
@@ -987,27 +994,31 @@
   {
     "productId": "gusto",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "While Gusto's API endpoints show a 'v1' prefix (e.g., docs-40, docs-43) implying some versioning, there is no evidence of a documented deprecation policy, versioning strategy, or migration guidance for API consumers. This axis clearly applies to an API-first embedded payroll platform, but no supporting documentation appears in the evidence pack.",
+    "rationale": "Gusto documents explicit API versioning (X-Gusto-API-Version header, per-version Postman collections, version-gated error formats since 2023-02-01), showing a real versioning scheme. However, the evidence pack contains no explicit deprecation policy (e.g., sunset timelines, notice periods, migration guides between versions). Missing for 10: documented deprecation/sunset policy, migration guidance between API versions, and independent confirmation of how version transitions are handled in practice.",
     "evidenceIds": [
-      "gusto-docs-40",
-      "gusto-docs-43"
+      "gusto-docs-67",
+      "gusto-docs-68",
+      "gusto-docs-69"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "automatic-tax-filing",
     "verdict": "disputed",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's docs explicitly claim automatic tax calculation, filing, and multi-state/local tax compliance handling (gusto-docs-44, gusto-docs-45, gusto-docs-37), which is exactly what the story asks for. However, a specific hands-on report describes Gusto issuing erroneous W-2c corrections that combined payments from two different tax IDs, resulting in payroll being double-reported to the IRS, with support unable to resolve it (gusto-comm-11) — a concrete documented failure of the automated tax-filing pipeline. Missing for 10: independent verification that tax filing/remittance works reliably at scale, and no vendor response/resolution to the cited filing error is evidenced.",
+    "rationale": "Gusto's docs explicitly claim automatic federal/state/local tax calculation, filing, and remittance as a core Embedded Payroll feature (gusto-docs-44, gusto-docs-52, gusto-docs-58, gusto-docs-45, gusto-docs-63), which is a strong first-party claim covering the full story. However, independent community reports describe a concrete tax-filing failure — W-2c corrections causing 2021 Q1 payroll to be double-reported to the IRS with support unable to resolve it — directly contradicting the 'automatically calculated and filed correctly' claim. missing for 10: independent third-party audit or hands-on verification showing reliable accuracy at scale, and no rebuttal/fix documentation for the cited filing error.",
     "evidenceIds": [
       "gusto-docs-44",
+      "gusto-docs-52",
+      "gusto-docs-58",
+      "gusto-docs-63",
       "gusto-docs-45",
-      "gusto-docs-37",
-      "gusto-comm-11"
+      "gusto-comm-11",
+      "gusto-comm-12"
     ]
   },
   {
@@ -1015,8 +1026,8 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers Gusto's Embedded Payroll API (single-company/employee operations, pagination, idempotency) but nowhere documents a bulk/batch operation capability (e.g., bulk employee updates, batch payroll processing across many items in one call). Pagination and idempotency are unrelated to bulk operations. missing for 10: no bulk/batch API endpoints, no batch job or multi-record operation documentation, no evidence of processing many items in a single request.",
+    "confidence": "low",
+    "rationale": "Gusto's API supports pagination and individual payroll/contractor payment operations, but there is no evidence of true bulk/batch endpoints (e.g., bulk employee creation, bulk payroll processing, batch contractor payments in a single call) that an AI-native user could invoke to operate across many items at once. missing for 10: bulk/batch API endpoints, batch job or async bulk-processing documentation, evidence of multi-item operations beyond single-resource calls and pagination.",
     "evidenceIds": []
   },
   {
@@ -1025,11 +1036,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Gusto exposes webhooks (e.g., payroll.paid) that notify external systems when events occur, which could be used as the trigger half of an automation, but there is no evidence of a native rules engine where a user can define conditional logic/actions within Gusto itself — automation logic must be built entirely on the partner's side. Missing for 10: no in-product rule builder, no conditional action configuration UI, no evidence of if-this-then-that style automation within Gusto.",
+    "rationale": "Gusto Embedded exposes webhooks for events like payroll.paid, contractor payment states, and time-off requests, letting a developer's application 'perform subsequent business logic' after an event fires — this is event notification infrastructure rather than a native rules engine where an end user defines conditional automation logic inside Gusto itself. Missing for 10: no in-product rule/condition builder, no support for chaining multiple actions or conditional branching declaratively, and no evidence of AI-native or no-code rule definition beyond raw webhook subscriptions that require the partner to write their own business logic.",
     "evidenceIds": [
       "gusto-docs-5",
       "gusto-docs-16",
       "gusto-docs-22",
+      "gusto-docs-49",
+      "gusto-docs-56",
+      "gusto-docs-71",
       "gusto-docs-23"
     ]
   },
@@ -1038,9 +1052,14 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Gusto's payroll processing has built-in recurring pay schedules (regular payrolls, off-cycle), but there is no evidence of a general-purpose scheduling/automation mechanism for AI-native users to define arbitrary recurring jobs or workflows — the API and webhooks are event-driven/on-demand, not a workflow scheduler.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Gusto's docs describe automatic recurring payroll generation based on a company's pay schedule (docs-62) and webhooks for event-driven integration, but there is no evidence of an AI-native user or agent being able to define, schedule, or manage recurring automated jobs/workflows themselves via API, MCP server, or any workflow engine — the recurring behavior is a fixed internal payroll process, not a configurable automation primitive.",
+    "evidenceIds": [
+      "gusto-docs-62",
+      "gusto-docs-40",
+      "gusto-docs-46",
+      "gusto-docs-6"
+    ]
   },
   {
     "productId": "gusto",
@@ -1071,45 +1090,40 @@
     "storyId": "compliance-alerts",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Gusto Embedded Payroll's API surface (payroll processing, webhooks, contractor payments, time off, MCP dev tools) and general platform features like 'tax configuration and compliance,' but nothing describes proactive alerts triggered by new hires, new locations, or law changes creating compliance obligations. Webhooks documented (e.g., payroll.paid) are transactional, not compliance-alerting.",
-    "evidenceIds": [
-      "gusto-docs-45",
-      "gusto-docs-44",
-      "gusto-docs-5",
-      "gusto-docs-16"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack covers Gusto Embedded Payroll's API/webhook infrastructure for developers building on Gusto, plus community sentiment on support quality — none of it describes a founder-facing proactive compliance alert system for new hires, new locations, or law changes. Webhooks (e.g., payroll.paid) are developer integration events, not compliance-obligation notifications to founders.",
+    "evidenceIds": []
   },
   {
     "productId": "gusto",
     "storyId": "embedded-payroll-for-platforms",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Gusto Embedded Payroll is explicitly a partner API/white-label platform for embedding payroll, tax filing, contractor payments, time off, and benefits into third-party products, with extensive docs on onboarding, webhooks, idempotency, and pre-built UI flows. missing for 10: independent hands-on developer reports of building with the embedded API (only vendor docs and unrelated general Gusto community sentiment are present).",
+    "rationale": "Gusto Embedded Payroll is an extensive, well-documented partner API/platform explicitly designed for developers to white-label payroll (onboarding, payroll runs, contractors, time off, webhooks, tax, benefits add-ons, SDKs, versioning, idempotency) into their own product. Evidence includes first-party docs, SDKs (React, API clients), and a dedicated MCP dev-assistant server. missing for 10: independent hands-on developer reviews of the embedded API itself (community evidence is about core Gusto payroll/support, not the embedded/partner API), and no case studies of live partner integrations.",
     "evidenceIds": [
       "gusto-docs-1",
       "gusto-docs-14",
-      "gusto-docs-20",
       "gusto-docs-38",
       "gusto-docs-44",
-      "gusto-docs-45",
-      "gusto-docs-2",
-      "gusto-docs-5",
-      "gusto-docs-8"
+      "gusto-docs-52",
+      "gusto-docs-53",
+      "gusto-docs-54",
+      "gusto-docs-70",
+      "gusto-probe-3"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "fast-direct-deposit",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs explicitly confirm next-day and 2-day expedited direct deposit payroll alongside standard 4-day processing, plus regular/off-cycle payroll runs via APIs, satisfying the core story. Missing for 10: independent/hands-on confirmation of fast direct deposit specifically for standard (non-embedded) Gusto SMB customers, and community evidence notes a $60k cap and eligibility exceptions needed for 2-day payroll, indicating real-world limits.",
+    "rationale": "Gusto's docs clearly describe next-day, 2-day, and standard 4-day direct deposit payroll options as a core capability (gusto-docs-3, gusto-docs-15, gusto-docs-58), fully replacing check-writing with automated bank transfers. However, a hands-on customer account (gusto-comm-5) reports that 2-day payroll was capped at ~$60k regardless of bank balance, requiring manual exception requests every pay cycle, ultimately driving them to switch providers — a concrete contradiction of the frictionless fast-deposit claim. missing for 10: independent confirmation that the cap issue is resolved or was an isolated case, and no evidence of uncapped fast-deposit reliability at scale.",
     "evidenceIds": [
       "gusto-docs-3",
       "gusto-docs-15",
-      "gusto-docs-44",
+      "gusto-docs-58",
       "gusto-comm-5"
     ]
   },
@@ -1117,13 +1131,14 @@
     "productId": "gusto",
     "storyId": "flexible-pay-schedules",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm companies can have multiple work locations with different pay schedules (gusto-docs-31) and multi-location management is a platform capability (gusto-docs-45), implying support for varied schedules across teams/locations, but there's no explicit documentation of configuring named schedules like weekly/biweekly/semimonthly/monthly or assigning distinct schedules per team via the API. missing for 10: explicit API/endpoint documentation for creating or selecting pay frequency types (weekly, biweekly, semimonthly, monthly), evidence of per-team (vs per-location) schedule assignment, and any hands-on/independent confirmation of multi-schedule setup working in practice.",
+    "rationale": "Gusto's docs confirm multi-location companies can have different pay schedules ('might want everyone paid at the same time, or prefer different pay schedules based on location or job type') and that payrolls are auto-generated per company's pay schedule and pay periods, supporting the general capability. However, the pack never explicitly enumerates the specific frequency types (weekly, biweekly, semimonthly, monthly) or shows an API/UI flow for configuring multiple schedules per team. missing for 10: explicit list of supported pay frequencies, documented API/UI steps for creating/assigning schedules to specific teams.",
     "evidenceIds": [
       "gusto-docs-31",
-      "gusto-docs-45",
-      "gusto-docs-44"
+      "gusto-docs-48",
+      "gusto-docs-62",
+      "gusto-docs-60"
     ]
   },
   {
@@ -1132,11 +1147,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gusto's documentation is entirely US-centric (company EIN, US bank accounts, US tax filing) with no mention of employer-of-record or international entity payroll services, and community evidence explicitly states Gusto does not support employees outside the US.",
+    "rationale": "All Gusto documentation describes US-based payroll (EIN, federal/state/local tax filings) with no mention of employer-of-record services or international entity payroll, and community evidence explicitly states Gusto lacks support for employees outside the US and cannot handle staff spread across multiple countries.",
     "evidenceIds": [
       "gusto-comm-5",
-      "gusto-docs-2",
-      "gusto-docs-37"
+      "gusto-comm-7",
+      "gusto-docs-37",
+      "gusto-docs-63"
     ]
   },
   {
@@ -1144,15 +1160,13 @@
     "storyId": "health-benefits-administration",
     "verdict": "disputed",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Gusto's docs confirm health insurance is offered as an integrated benefit (e.g., via SimplyInsured) alongside payroll, implying enrollment/deduction sync, but there is no detailed documentation of the actual deduction-to-payroll sync mechanics. A concrete hands-on account describes Gusto failing to properly terminate a health plan, causing months of billing issues, and another describes being unable to customize multi-state health plans, directly undercutting the claim that benefits administration works smoothly end-to-end. missing for 10: detailed docs on deduction/enrollment sync mechanics, resolution of the plan-termination/billing failure, and independent corroboration that sync works reliably.",
+    "confidence": "low",
+    "rationale": "Docs confirm Gusto offers health insurance administration via its SimplyInsured partner integration as part of the platform ecosystem [gusto-docs-39], implying enrollment/deduction handling analogous to its 401(k) Guideline flow, but there is no first-party documentation detailing how health-insurance deductions specifically sync to payroll. Independent, hands-on reports directly contradict smooth benefits administration: one describes Gusto failing to correctly terminate an employee's health plan causing prolonged billing problems [gusto-comm-14], and another describes being unable to customize plans for a multi-state/country workforce, leading them to switch providers [gusto-comm-7]; platform lock-in around benefits features is also noted [gusto-comm-4]. Missing for 10: explicit docs on health-insurance enrollment-to-payroll-deduction sync mechanics, resolution/rebuttal of the termination-failure report, and independent corroboration of successful multi-state benefits administration.",
     "evidenceIds": [
       "gusto-docs-39",
-      "gusto-docs-36",
-      "gusto-docs-42",
-      "gusto-docs-38",
       "gusto-comm-14",
-      "gusto-comm-7"
+      "gusto-comm-7",
+      "gusto-comm-4"
     ]
   },
   {
@@ -1161,11 +1175,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs only describe US-based contractor payment methods (direct deposit, check, historical payment) with no mention of local-currency payouts or international compliance contracts, and a community report explicitly states 'Gusto doesn't support outside of US folks' (gusto-comm-5), reinforcing the absence of this capability.",
+    "rationale": "Gusto's embedded payroll docs describe US-based contractor payments (direct deposit, check) but no international/local-currency payment support or compliant international contractor agreements are documented; community feedback explicitly states 'Gusto doesn't support outside of US folks,' reinforcing the absence of this capability.",
     "evidenceIds": [
       "gusto-docs-9",
       "gusto-docs-18",
       "gusto-docs-26",
+      "gusto-docs-61",
       "gusto-comm-5"
     ]
   },
@@ -1173,14 +1188,15 @@
     "productId": "gusto",
     "storyId": "multi-state-payroll",
     "verdict": "full",
-    "quality": 6,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Gusto's docs explicitly claim to 'Handle multi-state tax requirements' and support multiple work locations across states with configurable pay schedules and tax configuration/compliance features, plus federal/state employee tax information setup, which directly maps to the story. However, the pack lacks detail on how per-state registration is executed (e.g., automated state tax ID registration vs. manual) and there's no independent hands-on confirmation of correct multi-state withholding; one community report (a tax-ID mixup causing double-reported payroll) hints at tax-reporting friction though not specifically multi-state registration failure. Missing for 10: technical detail on state registration automation, independent verification of correct per-state withholding accuracy.",
+    "rationale": "Gusto's platform docs explicitly state it handles multi-state tax requirements, multi-location payroll with different schedules, and 'federal, state, and local filings and payments,' plus employee onboarding requires both federal and state tax configuration (docs-44, docs-48, docs-52, docs-63). This directly matches the story of running payroll across states with correct withholdings/registrations. missing for 10: explicit documentation on the mechanics of new-state tax registration/EIN setup, and independent hands-on confirmation that multi-state tax filings are error-free (community evidence only covers support/benefits complaints, not multi-state tax accuracy).",
     "evidenceIds": [
-      "gusto-docs-31",
       "gusto-docs-44",
-      "gusto-docs-45",
-      "gusto-docs-37"
+      "gusto-docs-48",
+      "gusto-docs-52",
+      "gusto-docs-63",
+      "gusto-docs-31"
     ]
   },
   {
@@ -1188,15 +1204,15 @@
     "storyId": "off-cycle-payroll-run",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Gusto's docs explicitly define off-cycle payrolls for corrections/bonuses (gusto-docs-4, gusto-docs-21, gusto-docs-32) with a dedicated guide on creating an off-cycle payroll and specific handling like default withholding/blocked benefits for Bonus reason (gusto-docs-47), plus flexible processing speeds (gusto-docs-3, gusto-docs-15). This is a first-party documented capability with clear API support. Missing for 10: no explicit mention of termination-specific off-cycle payroll flow (e.g., final paycheck handling) and no independent/hands-on confirmation of the off-cycle flow working in practice.",
+    "confidence": "medium",
+    "rationale": "Gusto's docs explicitly cover off-cycle payroll creation for bonuses/corrections (gusto-docs-4, gusto-docs-21, gusto-docs-32) with a dedicated 'create-an-off-cycle-payroll' guide, specific handling of bonus withholding rules (gusto-docs-47), and platform-level messaging that termination processing and off-cycle payments are supported (gusto-docs-52, gusto-docs-44). Missing for 10: no independent/hands-on community verification specifically of the off-cycle run flow (community evidence is about general payroll/support, not off-cycle runs), and no detail on termination-specific off-cycle nuances beyond bonus example.",
     "evidenceIds": [
       "gusto-docs-4",
       "gusto-docs-21",
       "gusto-docs-32",
       "gusto-docs-47",
-      "gusto-docs-3",
-      "gusto-docs-15"
+      "gusto-docs-52",
+      "gusto-docs-44"
     ]
   },
   {
@@ -1204,8 +1220,8 @@
     "storyId": "offer-letters-and-documents",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Gusto's Embedded Payroll API extensively (payroll, contractors, time off, benefits) but contains no mention of e-signature for offer letters or HR documents, nor per-employee document storage/e-sign workflows.",
+    "confidence": "medium",
+    "rationale": "Evidence pack covers payroll, contractor payments, time off, benefits, and API/webhook infrastructure extensively, but nowhere mentions offer letters, e-signature, or per-employee HR document storage — this is a distinct HR document management feature not evidenced here.",
     "evidenceIds": []
   },
   {
@@ -1214,14 +1230,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show Gusto Embedded Payroll is largely API-first, with explicit API endpoints for core actions (payroll, contractor payments, time off approvals) and note that partners can 'call the approve/decline endpoints directly from your own UI' instead of using the pre-built flow, indicating real API/UI parity for several workflows. However, some features (e.g., 401(k) Guideline enrollment) are only described as accessible via 'pre-built flows' with no documented raw-API equivalent, so parity isn't confirmed universally. Missing for 10: explicit confirmation that every pre-built UI Flow (benefits enrollment, 401k, onboarding flows) has a fully equivalent raw API path, and independent/hands-on verification of full parity.",
+    "rationale": "Gusto's Embedded Payroll API surface is extensive—covering onboarding, payroll runs (regular/off-cycle/contractor), tax configuration, time-off requests/approvals, benefits links, and webhooks—and docs explicitly say partners can 'build custom experiences using APIs' or use pre-built UI Flows interchangeably (gusto-docs-38, gusto-docs-44, gusto-docs-52). This implies broad but not confirmed 1:1 parity between UI actions and API actions. missing for 10: an explicit statement or audit confirming every UI action (e.g., admin dashboard settings, reporting/export UI, benefits marketplace configuration) has a corresponding API endpoint, and independent/hands-on verification that no UI-only features exist.",
     "evidenceIds": [
-      "gusto-docs-19",
       "gusto-docs-38",
-      "gusto-docs-27",
+      "gusto-docs-44",
+      "gusto-docs-52",
+      "gusto-docs-19",
       "gusto-docs-40",
-      "gusto-docs-36",
-      "gusto-docs-42"
+      "gusto-docs-53",
+      "gusto-docs-54"
     ]
   },
   {
@@ -1230,10 +1247,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a data export/portability feature that lets users take all their data in open formats and leave; documentation focuses on payroll processing, APIs, and reporting, not export/exit tooling. Community feedback even describes platform lock-in for certain features, undermining any implicit openness claim.",
-    "evidenceIds": [
-      "gusto-comm-4"
-    ]
+    "rationale": "The evidence pack covers Gusto's Embedded Payroll API, webhooks, SDKs, and docs, but contains no mention of a bulk data-export feature, open-format export (CSV/JSON dumps), or an account-closure/data-portability workflow. Community threads mention users switching away to competitors but never describe exporting their data in an open format when leaving.",
+    "evidenceIds": []
   },
   {
     "productId": "gusto",
@@ -1241,7 +1256,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gusto is a closed commercial payroll/HR SaaS platform, not open-source software; there is no source code to read under any license, and this axis is a category error for this kind of product.",
+    "rationale": "Gusto is a closed commercial SaaS payroll/HR platform, not open-source software; source code availability under an open license is not a relevant axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -1250,7 +1265,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gusto is a SaaS payroll/HR platform (and embedded payroll API) with no self-hosted deployment option in evidence; self-hosting is a category error for a cloud compliance/payroll service handling tax filing and banking, not an applicable axis for this product type.",
+    "rationale": "Gusto is a payroll/HR SaaS platform, not infrastructure software; self-hosting the core product is a category error for this kind of service since payroll processing inherently requires the vendor's regulated, hosted infrastructure (tax filings, bank transfers, compliance).",
     "evidenceIds": []
   },
   {
@@ -1258,17 +1273,16 @@
     "storyId": "pay-employees-and-contractors",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Gusto's Embedded Payroll docs detail full W-2 payroll processing (regular/off-cycle, multi-location, tax filing) and a distinct contractor payment API supporting direct deposit, check, and historical payments, all within the same platform/API surface, indicating both worker types can be paid from one system. Missing for 10: independent/hands-on confirmation of running a single combined payroll run covering both W-2 and 1099 workers simultaneously, and clearer documentation on contractor-only account limitations noted in community feedback.",
+    "confidence": "high",
+    "rationale": "Gusto's Embedded Payroll docs detail full W-2 employee payroll processing (regular/off-cycle, tax filing, multi-location, benefits) alongside dedicated contractor payment APIs (direct deposit, check, historical payment, submission blockers) all within the same platform/API, confirming ops users can manage both worker types from one system. Missing for 10: independent hands-on report explicitly confirming a single payroll run mixing W-2 and 1099 payments, and broader community corroboration beyond docs.",
     "evidenceIds": [
       "gusto-docs-44",
+      "gusto-docs-52",
       "gusto-docs-9",
-      "gusto-docs-18",
       "gusto-docs-27",
-      "gusto-docs-4",
-      "gusto-docs-32",
-      "gusto-docs-31",
-      "gusto-comm-3"
+      "gusto-docs-28",
+      "gusto-docs-60",
+      "gusto-docs-2"
     ]
   },
   {
@@ -1277,12 +1291,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's docs confirm a webhooks system with HMAC-signed event payloads and give a concrete example (payroll.paid), demonstrating the lifecycle-event subscription model exists for driving downstream automations. However, the evidence pack does not show a full event catalog (e.g., explicit 'employee onboarded' or 'payment failed' events) or delivery/retry guarantees, and there's no independent/hands-on corroboration of webhook reliability. Missing for 10: full list of supported event types beyond payroll.paid, documentation of failure/retry semantics, and third-party validation of webhook behavior.",
+    "rationale": "Gusto's docs clearly describe a webhooks infrastructure with subscription creation, verification (HMAC), a payroll.paid event, and a health-check endpoint, directly supporting the 'payroll processed' automation use case. However, the evidence pack does not name or document specific 'employee onboarded' or 'payment failed' webhook event types, only the payroll.paid event is explicitly cited. Missing for 10: documented onboarding-event and payment-failure-event webhook types, and independent/hands-on confirmation of webhook reliability in production.",
     "evidenceIds": [
       "gusto-docs-5",
       "gusto-docs-16",
       "gusto-docs-22",
-      "gusto-docs-23"
+      "gusto-docs-23",
+      "gusto-docs-49",
+      "gusto-docs-56",
+      "gusto-docs-57",
+      "gusto-docs-71"
     ]
   },
   {
@@ -1291,7 +1309,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The only direct evidence is a bullet point listing 'Generate payroll reports' among Embedded Payroll platform capabilities, with no detail on payroll register/gross-to-net report formats or export mechanisms (CSV/PDF, API endpoints) for ops analysis. Missing for 10: documentation of specific report types (payroll register, gross-to-net breakdown), export formats/endpoints, and any hands-on or independent confirmation that these reports work as described.",
+    "rationale": "The only direct evidence is a single bullet listing \"Generate payroll reports\" among platform capabilities, with no detail on payroll register format, gross-to-net breakdowns, or export/download options for offline analysis. Missing for 10: documentation of report content/format, gross-to-net specificity, export file types (CSV/PDF), and any independent confirmation that ops users can actually pull and export these reports.",
     "evidenceIds": [
       "gusto-docs-44"
     ]
@@ -1302,8 +1320,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls; Gusto's US-focused payroll evidence (gusto-comm-5) even suggests it doesn't support non-US employees, but nothing addresses data residency choice. Missing for 10: any documentation of regional data storage options, residency guarantees, or configurable data location for AI-native integrations.",
-    "evidenceIds": []
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic data controls for Gusto; Gusto's US-focused payroll model is even called out in community evidence as not supporting non-US operations, but that doesn't address configurable data residency choices for the buyer. This is an applicable axis for a data-handling B2B/embedded platform, so absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": [
+      "gusto-comm-5"
+    ]
   },
   {
     "productId": "gusto",
@@ -1311,7 +1331,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data opt-out, data usage policies for AI/ML training, or privacy controls specific to AI model training on customer data. This is a fair question for a payroll/HR SaaS handling sensitive personal data, but Gusto's docs and community evidence are silent on it.",
+    "rationale": "No evidence in the pack addresses AI training data usage or opt-out controls; Gusto is a payroll/HR platform and the evidence covers payroll APIs, webhooks, MCP dev tools, etc., with nothing about AI model training data policies.",
     "evidenceIds": []
   },
   {
@@ -1319,8 +1339,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user-initiated data purging for AI-native usage; the docs focus on payroll APIs, webhooks, and MCP integration without any privacy/retention controls mentioned.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation of data retention policies, deletion controls, or privacy/GDPR-style data management APIs for AI-native users; all evidence covers payroll processing, webhooks, contractor payments, and MCP dev tooling, none of which address retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -1329,7 +1349,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack discusses telemetry, usage tracking, or an opt-out mechanism for AI-native users; Gusto's documentation focuses on payroll/HR API functionality and integrations with no privacy-posture controls mentioned.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for AI-native users; Gusto's docs cover payroll APIs, webhooks, MCP server, and SDKs but nothing about privacy controls or telemetry opt-out. Missing for 10: any documentation of telemetry collection, usage tracking, or an opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -1338,64 +1358,73 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's Embedded Payroll docs show a full time-off request lifecycle—balance checking, submission, admin approval, and payroll integration—plus a way for partners to record approved time off without rebuilding the approval workflow (gusto-docs-11, gusto-docs-12, gusto-docs-19, gusto-docs-29, gusto-docs-33). However, there's no explicit documentation of an ops user defining/configuring accrual *policies* (accrual rates, tiers, carryover rules) — the docs mention checking balances but not policy authoring UI/API. Missing for 10: accrual policy configuration details, evidence of automatic accrual-rate setup, and independent/hands-on confirmation that PTO approvals flow automatically into payroll runs without manual reconciliation.",
+    "rationale": "Gusto Embedded's docs show a full time-off request lifecycle API — balance checking, submission, employer approval/decline, and payroll integration (gusto-docs-11, gusto-docs-19, gusto-docs-29, gusto-docs-51, gusto-docs-55) — which supports approvals flowing into payroll automatically. However, there's no evidence of ops-configurable PTO *policy* definition (accrual rates, carryover rules, policy types) being exposed via API/UI, only that balances can be checked and requests approved. Missing for 10: documentation of accrual policy creation/configuration, accrual rate rules, and independent/hands-on confirmation that approvals auto-apply to payroll runs.",
     "evidenceIds": [
       "gusto-docs-11",
-      "gusto-docs-12",
       "gusto-docs-19",
       "gusto-docs-29",
-      "gusto-docs-33"
+      "gusto-docs-51",
+      "gusto-docs-55",
+      "gusto-docs-12"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "retirement-plan-sync",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto documents a 401(k) offering via its Guideline partnership, with pre-built flows for employer admins to set up access, and lists 401(k) as one of its integrated benefit offerings alongside payroll [gusto-docs-36, gusto-docs-39, gusto-docs-42]. However, the evidence does not explicitly describe the automatic contribution-sync mechanism with each payroll run, nor employee enrollment/deduction details, and there is no independent/hands-on confirmation of this specific behavior. Missing for 10: explicit documentation of automatic per-payroll contribution syncing, employee-side setup flow, and third-party/hands-on validation.",
+    "rationale": "Gusto's embedded platform lists 401(k) via Guideline as a supported benefit and documents a flow for generating admin access links to Guideline through Gusto Embedded's pre-built flows, implying integration between payroll and the retirement plan provider. However, the docs never explicitly describe automatic contribution syncing with each payroll run — only account-access link generation is documented. missing for 10: explicit documentation of per-payroll automatic contribution deduction/sync mechanics, and independent/hands-on confirmation that 401(k) contributions actually flow through automatically each pay cycle.",
     "evidenceIds": [
       "gusto-docs-36",
       "gusto-docs-39",
-      "gusto-docs-42"
+      "gusto-docs-42",
+      "gusto-docs-50",
+      "gusto-docs-64"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "run-payroll-end-to-end",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's Embedded Payroll docs describe a payroll lifecycle (retrieve upcoming payrolls, process regular/off-cycle payrolls, contractor payment preview/submit endpoints, pre-built UI flows) that could support an end-to-end run, and community feedback broadly rates Gusto's payroll processing as strong. However, the pack lacks a documented single-flow 'review hours & earnings → preview totals → submit' sequence specifically for regular employee payroll (only contractor payments explicitly show a preview endpoint), and this is framed as an embeddable API/platform rather than a ready ops-user UI. Missing for 10: explicit hours/earnings review step in docs, a payroll preview/totals endpoint for regular payroll, and independent hands-on confirmation of a single unified submit flow.",
+    "rationale": "Gusto's Embedded Payroll docs describe the components of a payroll run — retrieving upcoming/unprocessed payrolls (gusto-docs-40, gusto-docs-46), a guide titled 'complete-a-regular-payroll' implying a full review-to-submit flow, off-cycle payroll creation (gusto-docs-32), and platform-overview claims that Gusto 'handles everything from tax calculations to bank transfers' (gusto-docs-58, gusto-docs-44). However, unlike the contractor-payment flow which explicitly documents a preview endpoint (gusto-docs-27), no evidence explicitly shows a 'preview totals' step for regular employee payroll before submission, and all evidence is API/developer-facing rather than showing the actual end-to-end ops-user UI experience. Missing for 10: an explicit preview-totals endpoint/step for regular payroll runs, and direct evidence (docs or hands-on) of the single consolidated UI flow an ops user would use rather than API building blocks.",
     "evidenceIds": [
       "gusto-docs-40",
       "gusto-docs-46",
-      "gusto-docs-27",
       "gusto-docs-44",
-      "gusto-docs-38",
-      "gusto-comm-8"
+      "gusto-docs-58",
+      "gusto-docs-32",
+      "gusto-docs-27"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "self-serve-employee-onboarding",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack focuses on Gusto Embedded Payroll's API for partners (payroll processing, contractor payments, time off, webhooks) rather than on Gusto's own new-hire self-serve onboarding flow. No citation describes a self-serve flow that collects W-4, I-9, and bank details for a new hire before day one; the closest mention (gusto-docs-37) only refers to federal tax information configuration in the embedded API context, not I-9 or a self-serve onboarding checklist.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs show pieces of new-hire onboarding data collection — employees configuring federal/state tax info (W-4 equivalent) and companies/employees needing bank account information — but there is no mention of I-9 collection or an explicit self-serve 'before day one' onboarding flow sent to a new hire; most evidence is API/company-onboarding oriented (Embedded Payroll platform) rather than a described ops-facing new-hire onboarding UX. Missing for 10: I-9 collection, explicit self-serve pre-day-one flow/UI for new hires, confirmation this exists in core Gusto product (not just the Embedded API).",
+    "evidenceIds": [
+      "gusto-docs-60",
+      "gusto-docs-63",
+      "gusto-docs-37",
+      "gusto-docs-2"
+    ]
   },
   {
     "productId": "gusto",
     "storyId": "time-tracking-into-payroll",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers time-off request APIs and payroll fundamentals but never describes hourly time entry or overtime data flowing into a payroll run; the only related item is a generic mention that Gusto integrates with 'time tracking' apps (gusto-docs-41), with no detail on overtime calculation or automatic payroll inclusion.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Gusto's docs cover time-off (PTO) request/approval APIs and payroll processing/off-cycle runs, and mention generic integrations with 'time tracking software' apps, but there is no documentation of native hourly time-entry capture or overtime calculation logic that flows directly into a payroll run. The evidence only implies this happens via unspecified third-party time-tracking integrations rather than a built-in Gusto feature. missing for 10: dedicated hourly timesheet/time-entry API, overtime rule/calculation documentation, explicit description of how hourly+overtime data is ingested into a payroll run.",
     "evidenceIds": [
       "gusto-docs-41",
       "gusto-docs-11",
-      "gusto-docs-29"
+      "gusto-docs-44",
+      "gusto-docs-62"
     ]
   },
   {
@@ -1416,17 +1445,19 @@
   {
     "productId": "justworks",
     "storyId": "accounting-software-sync",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Justworks documents a native Xero integration where users connect their Xero account, map pay types to Chart of Accounts, and override mappings by department/office/employee — indicating an automated payroll-to-accounting sync. However, evidence only covers Xero, not QuickBooks, and lacks detail on sync frequency, journal entry format, or reliability confirmation. Missing for 10: QuickBooks integration evidence, confirmation of automatic (vs. manual-trigger) sync cadence, and independent/hands-on validation of the sync working correctly.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs describe a documented Xero integration where pay types map to Chart of Accounts, with department/office/employee-level overrides, and invoices can auto-sync the day after payroll processing (justworks-docs-12, -5, -19, -6, -13, -20, -25). This directly matches the story of syncing payroll journal entries to accounting software automatically. Missing for 10: explicit QuickBooks integration details (only Xero is documented) and independent/hands-on corroboration beyond vendor help docs.",
     "evidenceIds": [
-      "justworks-docs-5",
-      "justworks-docs-6",
       "justworks-docs-12",
-      "justworks-docs-13",
+      "justworks-docs-5",
       "justworks-docs-19",
-      "justworks-docs-20"
+      "justworks-docs-6",
+      "justworks-docs-13",
+      "justworks-docs-20",
+      "justworks-docs-25",
+      "justworks-docs-26"
     ]
   },
   {
@@ -1435,11 +1466,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API for creating employees, compensation, or tax setup; probes for llms.txt and OpenAPI specs both 404, and all docs describe manual UI/help-center workflows (e.g., navigating menus, connecting Xero via UI) rather than API-driven onboarding.",
+    "rationale": "No evidence of any public API for creating employees, compensation, or tax setup — probes for llms.txt and OpenAPI specs both returned 404, and all documentation describes manual UI workflows (Time Off tab, Pay menu, Xero integration setup) rather than programmatic onboarding endpoints.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2",
       "justworks-docs-4",
+      "justworks-docs-8",
       "justworks-docs-17"
     ]
   },
@@ -1449,7 +1481,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public API for payroll preview or anomaly detection; probes for llms.txt and OpenAPI both returned 404, and all docs describe manual UI workflows for checking payroll accuracy, not programmatic/agent-driven access.",
+    "rationale": "No evidence of any API for payroll preview, run automation, or anomaly detection; probes for llms.txt and OpenAPI specs both return 404, and docs describe only manual UI workflows for payroll review.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2",
@@ -1461,14 +1493,17 @@
     "productId": "justworks",
     "storyId": "agent-reconciles-payroll-journal",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Justworks docs show a Custom Payroll Report export and a Xero integration that maps pay types to ledger accounts, which supports manual reconciliation into a ledger, but there is no evidence of a public payroll API for an agent to pull data programmatically — probes for llms.txt and OpenAPI specs both returned 404. missing for 10: documented payroll API/export endpoint an agent could call, evidence of automated/agent-driven reconciliation workflow, any developer API docs.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Justworks provides a Custom Payroll Report in Analytics and native Xero GL-mapping/sync (with department/office/employee-level overrides and manual or automatic invoice sync) that could serve as an export/reconciliation path, but there is no evidence of a public API, and probes explicitly show no OpenAPI spec or llms.txt endpoint, so an agent could not pull data programmatically as described. missing for 10: documented payroll/journal API for agent access, evidence of agent-friendly export automation, confirmation that Custom Payroll Report can be pulled without manual UI steps.",
     "evidenceIds": [
       "justworks-docs-1",
       "justworks-docs-5",
+      "justworks-docs-6",
       "justworks-docs-12",
-      "justworks-docs-19",
+      "justworks-docs-13",
+      "justworks-docs-25",
+      "justworks-docs-26",
       "justworks-probe-1",
       "justworks-probe-2"
     ]
@@ -1479,7 +1514,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for llms.txt returned 404, and there is no evidence of any agent-oriented documentation format; only standard human-facing help center articles exist.",
+    "rationale": "The probe explicitly shows llms.txt returns 404 and no agent-oriented docs (openapi/well-known) exist; no evidence of any AI-agent-facing documentation format.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1491,8 +1526,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack shows Justworks offering AI-generated insights, suggestions, or analytics recommendations within the product—only static help articles about payroll, benefits, time off, and integrations. Missing for 10: any mention of AI features, generated insights, or suggestion engines within the platform.",
-    "evidenceIds": []
+    "rationale": "No evidence in the pack mentions AI-generated insights, suggestions, analytics recommendations, or any AI/ML feature surfaced to users; the docs cover only manual payroll, benefits, time-off, and Xero integration workflows. Missing for 10: any mention of AI-driven insights, automated suggestions, or predictive analytics within Justworks.",
+    "evidenceIds": [
+      "justworks-docs-1",
+      "justworks-docs-9",
+      "justworks-docs-21"
+    ]
   },
   {
     "productId": "justworks",
@@ -1500,11 +1539,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any automation, workflow, or agentic scheduling capability in Justworks; documentation covers manual HR/payroll workflows only, and API/openapi probes returned 404s.",
-    "evidenceIds": [
-      "justworks-probe-1",
-      "justworks-probe-2"
-    ]
+    "rationale": "Justworks is an HR/payroll PEO platform; the evidence pack shows no mention of automations, workflows, agents, or AI-driven background processes—only manual payroll, benefits, time-off, and integration setup steps. No documented capability for autonomous or agentic automation exists, so this applicable axis is unmet.",
+    "evidenceIds": []
   },
   {
     "productId": "justworks",
@@ -1512,7 +1548,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any built-in AI assistant feature in Justworks; documentation covers payroll, benefits, time off, onboarding, and integrations only, with no mention of AI delegation capabilities.",
+    "rationale": "No evidence of any built-in AI assistant or agentic delegation feature within Justworks; all evidence pertains to HR/payroll workflows (payroll, benefits, time off, integrations) with no mention of AI capabilities.",
     "evidenceIds": []
   },
   {
@@ -1539,7 +1575,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Justworks is an HR/payroll SaaS platform; publishing an official MCP server is a plausible axis, but no evidence shows one exists, and probes for llms.txt and OpenAPI endpoints returned 404s, indicating no such AI/agent integration is documented.",
+    "rationale": "Justworks is a PEO/HR SaaS platform, so an official MCP server is a plausible axis, but there is no evidence of any MCP server offering; probes for llms.txt and OpenAPI specs both returned 404, and all docs relate to payroll/benefits/integrations with Xero, not agent connectivity.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1551,7 +1587,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any natural-language command interface, chatbot, or AI assistant for operating Justworks; all evidence is standard UI-based help documentation, and probes for llms.txt/openapi endpoints returned 404s.",
+    "rationale": "No evidence of any natural-language command interface, chatbot, or AI assistant within Justworks; all documentation describes manual UI navigation (clicking menus, tabs, buttons). Probes for llms.txt and OpenAPI also failed, indicating no AI-native interface infrastructure.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1563,7 +1599,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official CLI for Justworks; probes for API/spec artifacts returned 404s and no CLI is mentioned anywhere in the docs pack.",
+    "rationale": "No evidence of an official CLI for Justworks; the evidence pack only covers HR/payroll web UI features and shows failed probes for llms.txt and OpenAPI specs, with no mention of any command-line tool.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1575,7 +1611,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API, SDK, or developer documentation for Justworks; all evidence pack items are help-center articles about UI workflows (payroll, benefits, time off, integrations) and probes explicitly show no llms.txt or OpenAPI spec exists.",
+    "rationale": "No evidence of a documented public API for Justworks; probes for llms.txt and OpenAPI/swagger specs all returned 404, and the help docs only cover UI-based workflows (payroll, benefits, time off, integrations), not API access.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1587,7 +1623,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any API, credential system, or scoped/least-privilege access controls for agents; probes for API/openapi specs returned 404s and docs only cover HR/payroll workflows.",
+    "rationale": "No evidence of any API, API credentials, or scoped/least-privilege access token system; probes for llms.txt and OpenAPI specs both returned 404. This is an applicable axis for an HR platform (many SaaS HR tools expose scoped API tokens), but Justworks shows no such capability in the evidence pack.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1599,7 +1635,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any official SDK, API, or developer documentation for Justworks; the probes for llms.txt and OpenAPI specs both returned 404, and all docs evidence concerns HR/payroll workflows, not APIs/SDKs.",
+    "rationale": "No evidence of any official SDKs, API client libraries, or developer-facing API documentation; probes for llms.txt and OpenAPI specs both returned 404s, and all docs relate to HR/payroll product usage, not developer integration.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1611,7 +1647,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook or event-subscription capability; the evidence pack only covers payroll, benefits, time off, onboarding, and Xero integration docs, plus failed probes for API/openapi specs. This axis applies to an HR/payroll platform (webhooks for events like payroll runs or employee changes are plausible), but nothing in the evidence indicates such a feature exists.",
+    "rationale": "No evidence in the pack mentions webhooks or event subscription APIs; documentation only covers payroll, benefits, time-off, and Xero integration workflows. Probes for API/OpenAPI specs also returned 404s, indicating no discoverable webhook or event API.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1623,7 +1659,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows no public API reference, no OpenAPI/Swagger spec, and probes for llms.txt and openapi.json both returned 404s; all other evidence is generic HR help-center content unrelated to a developer API. Missing for 10: any API documentation, interactive reference, runnable examples, or SDK.",
+    "rationale": "No evidence of any API reference, interactive docs, or runnable examples; probes for llms.txt and OpenAPI specs both returned 404, and all other evidence is unrelated help-center content about payroll/benefits/time-off features.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1635,7 +1671,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probes for llms.txt and OpenAPI/swagger endpoints all returned 404, and no documentation mentions a machine-readable API spec; the evidence pack contains no API developer docs at all.",
+    "rationale": "Probes explicitly show no OpenAPI/swagger spec or llms.txt is available at any expected location, and no documentation references a machine-readable API spec.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1647,7 +1683,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any sandbox/test environment offering for Justworks; evidence is limited to payroll, benefits, time off, and integration docs with no mention of testing or non-production environments, and API/OpenAPI probes returned 404s.",
+    "rationale": "No evidence of any sandbox or test environment for Justworks; the evidence pack only covers payroll, benefits, time-off, and Xero integration docs, plus failed probes for API/OpenAPI specs. Missing for 10: any mention of a sandbox/test mode, staging environment, or non-production API access.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1659,7 +1695,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API, versioning scheme, or deprecation policy; probes for OpenAPI/llms.txt both returned 404s and no documentation mentions an API at all.",
+    "rationale": "No evidence of any public API, versioning scheme, or deprecation policy; probes for llms.txt and OpenAPI specs both returned 404, and all documentation is about HR/payroll product usage, not developer APIs.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1669,11 +1705,12 @@
     "productId": "justworks",
     "storyId": "automatic-tax-filing",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence only touches tangentially on tax collection (W-4 withholding info collected automatically) and payroll accuracy checks, but never explicitly documents automatic calculation, filing, and remittance of federal/state/local payroll taxes. Missing for 10: explicit documentation of automated tax filing/remittance process, coverage of multi-jurisdiction (federal/state/local) compliance, and any independent confirmation of accuracy/reliability.",
+    "rationale": "Evidence shows Justworks collects employee withholding/filing status info and provides payroll accuracy checks, implying tax handling is embedded in payroll runs, but no documentation explicitly confirms automatic calculation, filing, and remittance of federal/state/local payroll taxes. Missing for 10: explicit docs on tax filing cadence, remittance to agencies, and multi-jurisdiction tax compliance guarantees.",
     "evidenceIds": [
       "justworks-docs-7",
+      "justworks-docs-22",
       "justworks-docs-9"
     ]
   },
@@ -1683,24 +1720,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any bulk operation capability (bulk import, batch edits, mass updates via API/UI) in Justworks' documentation; the pack only shows single-record workflows (e.g., record one payment, one policy, one mapping) and probes confirm no public API/OpenAPI spec exists to enable programmatic bulk actions.",
-    "evidenceIds": [
-      "justworks-probe-1",
-      "justworks-probe-2",
-      "justworks-docs-2",
-      "justworks-docs-3"
-    ]
+    "rationale": "The evidence pack shows only individual, single-item workflows (setting up one PTO policy, mapping one pay type, recording one fringe benefit) with no mention of bulk/batch operations, CSV import, multi-select actions, or APIs for programmatic bulk processing. There is no evidence of any bulk-operation capability for AI-native or automated workflows.",
+    "evidenceIds": []
   },
   {
     "productId": "justworks",
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any rules engine, workflow automation, or event-trigger system in Justworks; documentation only covers manual payroll, benefits, time-off, and integration setup steps, with API/openapi probes returning 404s.",
+    "confidence": "medium",
+    "rationale": "Evidence shows only fixed, built-in automations (holiday date rollover, automatic invoice sync) rather than any user-definable rule/trigger-action system; there is no documented workflow builder, conditional rule engine, or custom event-trigger capability in Justworks' help docs or API surface (llms.txt/openapi probes both 404).",
     "evidenceIds": [
-      "justworks-docs-3",
-      "justworks-docs-16",
+      "justworks-docs-24",
+      "justworks-docs-25",
       "justworks-probe-1",
       "justworks-probe-2"
     ]
@@ -1711,10 +1743,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Justworks is a PEO/HR/payroll platform; the evidence pack shows only manual UI workflows (running payroll, PTO policy setup, integrations) with no mention of an API, scheduling engine, or automation/workflow tooling for recurring jobs. No evidence supports scheduling recurring jobs or workflows programmatically.",
+    "rationale": "No evidence of any automation/workflow scheduling capability (e.g., API, webhooks, recurring job triggers) for AI-native or programmatic use; evidence only covers HR/payroll UI features and confirms absence of API/llms.txt endpoints. Missing for 10: any API or automation framework, scheduling/trigger mechanism, or documentation of recurring workflow support.",
     "evidenceIds": [
-      "justworks-docs-3",
-      "justworks-docs-16",
       "justworks-probe-1",
       "justworks-probe-2"
     ]
@@ -1725,7 +1755,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Justworks is an HR/payroll platform with no evidence of an automation-building system, and no mention of versioning, review workflows, or rollback for any automations or configurations. The evidence only covers payroll, benefits, time-off setup, and Xero integration mapping, none of which involve automation version control.",
+    "rationale": "No evidence anywhere in the pack discusses versioning, reviewing, or rolling back automations; Justworks is an HR/payroll PEO platform with no documented automation-versioning or audit/rollback tooling. missing for 10: any version history feature, review/approval workflow for automations, rollback mechanism, or audit trail of automation changes.",
     "evidenceIds": []
   },
   {
@@ -1734,8 +1764,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "None of the evidence addresses canceling or correcting a payroll run after submission but before payment; docs only mention checking/fixing data before running payroll, recording fringe benefits, or unrelated integration/onboarding topics.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers payroll data verification, fringe benefits recording, PTO policies, integrations, and onboarding, but contains no mention of canceling, voiding, or correcting a payroll run once submitted before pay date. Missing for 10: any documentation on payroll cancellation/correction workflow, deadlines for edits after submission, or off-cycle correction process.",
+    "evidenceIds": [
+      "justworks-docs-1",
+      "justworks-docs-9",
+      "justworks-docs-14",
+      "justworks-docs-21"
+    ]
   },
   {
     "productId": "justworks",
@@ -1743,7 +1778,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any proactive alerting system for new hires, new work locations, or law changes creating compliance obligations; all evidence relates to payroll reports, benefits recording, PTO setup, Xero integration, and onboarding steps that require manual checking rather than proactive notifications. Missing for 10: any mention of automated alerts/notifications for compliance triggers, location-based tax nexus warnings, or law-change updates.",
+    "rationale": "No evidence pack items mention proactive compliance alerts for new hires, new locations, or law changes; the docs cover payroll accuracy checks, benefits recording, PTO setup, and Xero integration but nothing about automated compliance notifications. Missing for 10: any mention of proactive alerting, multi-state/location compliance triggers, or law-change notifications.",
     "evidenceIds": []
   },
   {
@@ -1752,7 +1787,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a partner/embeddable API for white-labeling payroll; all docs describe end-user PEO/payroll workflows and Xero integration, and probes for API/OpenAPI specs return 404s.",
+    "rationale": "No evidence of any partner/embeddable API, white-label payroll offering, or developer platform; probes for OpenAPI/llms.txt returned 404s and all docs are end-user help articles about running payroll within Justworks' own UI, not embedding it into third-party products.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1764,7 +1799,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "None of the evidence items mention direct deposit speed, next-day/2-day payment timing, or check-writing alternatives; the pack covers payroll reporting, benefits recording, time off policies, onboarding, and Xero integration instead.",
+    "rationale": "No evidence in the pack mentions direct deposit speed, next-day/2-day pay, or check-writing alternatives; the payroll docs cover custom reports, W-4 collection, and fringe benefits but not deposit timing or methods. Missing for 10: any mention of direct deposit, payment speed options, or replacing paper checks.",
     "evidenceIds": []
   },
   {
@@ -1773,7 +1808,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address configuring multiple pay schedules (weekly, biweekly, semimonthly, monthly) or setting them per team; evidence only covers benefits recording, time-off policies, Xero integration mapping, and onboarding timelines. missing for 10: any documentation of pay schedule configuration, frequency options, or per-team/department schedule assignment.",
+    "rationale": "None of the evidence discusses configuring multiple pay schedules (weekly, biweekly, semimonthly, monthly) or assigning different schedules to different teams; the pack covers payroll accuracy checks, fringe benefits recording, PTO policies, Xero integration mapping, and onboarding — none address pay frequency setup. Missing for 10: any documentation of pay schedule configuration, frequency options, or per-team/department schedule assignment.",
     "evidenceIds": []
   },
   {
@@ -1782,7 +1817,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence pack covers only US-based PEO payroll, benefits, time off, and Xero integration workflows; there is no mention of international employment, employer-of-record (EOR) services, or owned-entity global payroll capabilities.",
+    "rationale": "Justworks is a US-focused PEO; the evidence pack covers only domestic payroll, PTO, onboarding, and Xero integration — nothing about employer-of-record services or owned-entity payroll for international employees.",
     "evidenceIds": []
   },
   {
@@ -1790,12 +1825,9 @@
     "storyId": "health-benefits-administration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack only mentions health insurance in passing (e.g., telling a prior health insurance provider you are terminating them when switching to Justworks PEO), with no documentation of offering/administering health insurance plans, enrollment workflows, or deduction sync to payroll. missing for 10: benefits enrollment UI/workflow docs, deduction-to-payroll sync mechanics, plan administration features.",
-    "evidenceIds": [
-      "justworks-docs-4",
-      "justworks-docs-18"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack covers payroll reports, fringe benefits payments, PTO policies, and Xero integration, but contains no documentation about offering or administering health insurance plans, employee enrollment in benefits, or syncing insurance deductions to payroll. Justworks PEO quoting is mentioned only regarding onboarding pricing, not benefits administration or deduction sync mechanics.",
+    "evidenceIds": []
   },
   {
     "productId": "justworks",
@@ -1803,7 +1835,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "None of the evidence mentions international contractor payments, local currency payouts, or compliant global contracts; all docs relate to domestic payroll, PTO, Xero integration, and onboarding. missing for 10: any mention of international contractor payments, multi-currency payouts, or compliant contract generation for global contractors.",
+    "rationale": "None of the evidence mentions international contractor payments, multi-currency payouts, or compliant international contractor agreements — Justworks documentation here covers only US domestic payroll, PEO onboarding, PTO, and Xero integration. Missing for 10: any mention of international contractor support, local currency payout, or compliant global contractor contracts.",
     "evidenceIds": []
   },
   {
@@ -1812,12 +1844,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers general payroll accuracy checks, W-4 withholding data collection, benefits recording, PTO setup, and Xero integration, but nothing addresses multi-state tax registration or state-specific withholding management, which is the core of this story. Missing for 10: documentation on state tax registration handling, multi-state withholding calculation, and any state-specific compliance workflow.",
-    "evidenceIds": [
-      "justworks-docs-7",
-      "justworks-docs-1",
-      "justworks-docs-9"
-    ]
+    "rationale": "Evidence covers general payroll setup, W-4-equivalent withholding collection, benefits recording, and PTO/Xero integration, but nothing addresses multi-state employer tax registrations or per-state withholding/compliance handling that the story specifically asks about.",
+    "evidenceIds": []
   },
   {
     "productId": "justworks",
@@ -1825,7 +1853,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers payroll accuracy checks, fringe benefit recording, time-off policies, Xero integration mapping, and onboarding—but contains no mention of off-cycle payroll runs, bonus runs, correction runs, or termination-triggered payroll outside the regular schedule. Missing for 10: any documentation of off-cycle/on-demand payroll run capability, UI steps for initiating one, or examples of bonus/termination payroll processing outside the normal schedule.",
+    "rationale": "No evidence pack items mention off-cycle payroll runs, bonus payments, correction runs, or termination pay processing—only recurring payroll, fringe benefits recording, time-off policies, and integrations are documented. Missing for 10: any documentation of off-cycle/supplemental payroll run capability, bonus/termination payment workflows, or scheduling outside the regular cycle.",
     "evidenceIds": []
   },
   {
@@ -1834,7 +1862,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack references e-signature functionality for offer letters or HR documents, or per-employee document storage; the pack covers payroll, benefits, time off, and integrations only.",
+    "rationale": "None of the evidence mentions offer letters, e-signature, or document storage per employee; all cited docs relate to payroll, benefits, time off, and accounting integrations. This is an applicable axis for an HR/PEO platform, but there is no evidence Justworks delivers it.",
     "evidenceIds": []
   },
   {
@@ -1843,13 +1871,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API for Justworks at all — probes for llms.txt and OpenAPI/Swagger endpoints returned 404s, and all documentation describes UI-only workflows (navigating Pay, Time Off, Analytics tabs). There is no indication that any UI functionality is exposed via API for programmatic access.",
+    "rationale": "No evidence of a public API at all — probes for llms.txt and OpenAPI specs both returned 404, and all docs describe UI-only workflows (payroll, time off, benefits, integrations) with no mention of programmatic access matching UI capabilities.",
     "evidenceIds": [
       "justworks-probe-1",
-      "justworks-probe-2",
-      "justworks-docs-1",
-      "justworks-docs-3",
-      "justworks-docs-11"
+      "justworks-probe-2"
     ]
   },
   {
@@ -1857,8 +1882,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of any data export/portability feature or open-format export capability; probes for llms.txt and OpenAPI both returned 404s, and docs only describe payroll/benefits/integration workflows with no mention of data export or account closure/data portability options.",
+    "confidence": "high",
+    "rationale": "No evidence of any data export or data portability feature in open formats, nor any documented account-closure/export workflow; evidence only covers payroll, benefits, time off, and Xero integration setup. Probes for llms.txt and OpenAPI both returned 404, suggesting no discoverable API/export tooling.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1870,7 +1895,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Justworks is a closed-source HR/payroll SaaS platform, not open-source software; source code availability under an open license is a category error for this type of product.",
+    "rationale": "Justworks is a closed-source commercial HR/PEO SaaS platform, not an open-source project; source code availability is not a fair axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -1879,7 +1904,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Justworks is a SaaS PEO/HR payroll platform, not self-hostable software; self-hosting is a category error for this kind of cloud service.",
+    "rationale": "Justworks is a SaaS PEO/HR platform delivered as a hosted service; self-hosting the core product is not a coherent concept for this category, similar to expecting source-available deployment of a payroll/benefits SaaS.",
     "evidenceIds": []
   },
   {
@@ -1887,8 +1912,8 @@
     "storyId": "pay-employees-and-contractors",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "None of the evidence mentions 1099 contractor payments or paying contractors alongside W-2 employees; the docs pack covers W-2 payroll, benefits, time off, PEO onboarding, and Xero integration only. Missing for 10: any mention of contractor payments, 1099 filing, or combined W-2/1099 payroll runs.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Justworks payroll, benefits, time off, and Xero integration features but contains no mention of 1099 contractors or contractor payments anywhere, so there's no evidence the platform supports paying both W-2 employees and 1099 contractors together.",
     "evidenceIds": []
   },
   {
@@ -1897,7 +1922,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook or event-subscription capability for payroll lifecycle events; documentation only covers Xero integration mapping, PTO setup, and onboarding steps, and API/OpenAPI probes returned 404s. Missing for 10: any webhook API, event catalog, or developer documentation enabling subscription to payroll events.",
+    "rationale": "No evidence of any webhook or event subscription capability; probes for API/OpenAPI specs returned 404s and no documentation mentions payroll lifecycle event notifications. Missing for 10: webhook subscription mechanism, documented event types (payroll processed, onboarding, payment failed), any developer API reference.",
     "evidenceIds": [
       "justworks-probe-1",
       "justworks-probe-2"
@@ -1907,12 +1932,13 @@
     "productId": "justworks",
     "storyId": "payroll-reports-exports",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Justworks docs reference an Analytics > Custom Payroll Report used to verify payroll data before running payroll, implying some payroll reporting capability, but there is no explicit mention of gross-to-net reports or an export function for offline analysis. missing for 10: explicit gross-to-net report generation, export/download functionality (CSV/Excel), and any independent confirmation of report analysis workflows.",
+    "rationale": "Evidence confirms an Analytics > Custom Payroll Report exists for checking payroll data, implying report generation, but there's no explicit mention of gross-to-net reports or export/download functionality for analysis. Missing for 10: explicit gross-to-net report detail, export/download format confirmation (CSV/Excel), and independent corroboration of reporting depth.",
     "evidenceIds": [
       "justworks-docs-1",
       "justworks-docs-14",
+      "justworks-docs-21",
       "justworks-docs-9"
     ]
   },
@@ -1922,7 +1948,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or any data-sovereignty controls for Justworks; the evidence covers payroll, benefits, time off, and Xero integration topics only. Missing for 10: any documentation of region/residency selection, data center location choices, or compliance statements about data storage location.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or any data locality controls for Justworks; all cited docs concern payroll, benefits, time off, and Xero integration. Missing for 10: any mention of data center regions, residency options, or storage location controls.",
     "evidenceIds": []
   },
   {
@@ -1931,7 +1957,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack about AI training data usage, opt-out controls, or AI privacy policy; all evidence concerns payroll, benefits, time off, onboarding, and Xero integration. This axis applies to any modern SaaS product handling customer data, but no supporting evidence exists.",
+    "rationale": "Justworks is a PEO/HR payroll platform; the evidence pack contains only payroll, benefits, time-off, and Xero integration docs with no mention of AI model training, data usage policies, or opt-out controls for AI training. No evidence exists that this capability is addressed at all.",
     "evidenceIds": []
   },
   {
@@ -1940,7 +1966,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "None of the evidence addresses AI-native data retention/deletion controls; the docs cover payroll, benefits, time off, onboarding, and Xero integration, with no mention of data governance, retention policies, or deletion mechanisms for AI or otherwise.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or any AI-specific privacy/data governance features for Justworks; all evidence concerns payroll, benefits, time off, and Xero integration workflows.",
     "evidenceIds": []
   },
   {
@@ -1949,7 +1975,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Justworks is an HR/payroll SaaS platform, not an AI agent or AI-native tool where telemetry/usage-tracking opt-out for AI interactions would be a relevant axis; evidence pack contains no AI feature context at all, only payroll/HR/PEO documentation.",
+    "rationale": "Justworks is a PEO/HR payroll platform, not an AI tool or agent product with telemetry/usage-tracking settings relevant to AI-native workflows; the evidence pack covers payroll, benefits, time off, and Xero integration with no AI or telemetry features at all, so this axis is a category error for this product.",
     "evidenceIds": []
   },
   {
@@ -1958,11 +1984,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm PTO policy setup with policy name, start/end dates, policy type, and timecard sync, plus a clear setup flow (Time Off > Policies > Add policy), which supports payroll sync via timecard integration. However, there is no explicit evidence of accrual rule configuration or an approval workflow for PTO requests tied to policies. Missing for 10: accrual rate/rules configuration details, explicit approval workflow mechanics, and confirmation that approvals automatically flow into payroll processing.",
+    "rationale": "Docs confirm PTO policy setup (name, dates, policy type, timecard sync) and integration with payroll/timecards via docs-3, docs-11, docs-16, plus automated holiday handling (docs-24). However, evidence does not detail accrual rules/rates or an explicit approval workflow for time-off requests feeding into payroll. missing for 10: explicit accrual rate configuration details, documented approval workflow for PTO requests, and independent confirmation that approved PTO flows automatically into payroll processing.",
     "evidenceIds": [
       "justworks-docs-3",
       "justworks-docs-11",
-      "justworks-docs-16"
+      "justworks-docs-16",
+      "justworks-docs-24"
     ]
   },
   {
@@ -1971,7 +1998,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers payroll reporting, fringe benefits recording, PTO policy setup, onboarding, and Xero integration, but contains no mention of 401(k)/retirement plan offerings or automatic contribution syncing with payroll.",
+    "rationale": "None of the evidence mentions 401(k)/retirement plan offerings or automatic contribution syncing with payroll; the pack only covers PTO, Xero integration, fringe benefits recording, and onboarding topics.",
     "evidenceIds": []
   },
   {
@@ -1980,24 +2007,25 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs mention checking payroll accuracy via Analytics/Custom Payroll Report and recommend verifying employee payroll info before running payroll, implying a payroll run flow exists, but there's no direct documentation of a unified review-preview-submit flow within one screen. Missing for 10: explicit description of the preview/totals step, submission confirmation, and end-to-end walkthrough of a single payroll run.",
+    "rationale": "Docs confirm ops can review payroll accuracy (via Custom Payroll Report and employee profiles) before running payroll and can record fringe benefits during the pay flow, implying a review-then-run sequence, but there is no explicit description of a 'preview totals' screen or a single continuous submit action tying review, preview, and submission together. missing for 10: explicit preview-totals step, description of final submit/confirmation action, evidence of a single unified flow rather than separate menu actions.",
     "evidenceIds": [
       "justworks-docs-1",
       "justworks-docs-9",
-      "justworks-docs-14"
+      "justworks-docs-23"
     ]
   },
   {
     "productId": "justworks",
     "storyId": "self-serve-employee-onboarding",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence confirms Justworks collects W-4 equivalent info (filing status/withholding) during employee enrollment, and general onboarding timeline exists, but there's no direct evidence of an I-9 collection step or bank/direct-deposit detail collection within a self-serve pre-day-one flow. Missing for 10: explicit documentation of I-9 verification collection, bank account/direct deposit setup during onboarding, and confirmation that the full flow is completed before day one.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm employees self-enroll and Justworks collects W-4 filing/withholding info directly so they don't need to file a W-4 themselves, and general onboarding timelines (2-3 weeks) are documented. However, no evidence explicitly confirms I-9 collection or bank/direct-deposit detail collection as part of a unified self-serve pre-day-one flow. Missing for 10: explicit I-9 collection/verification workflow, explicit bank account/direct deposit setup step, and confirmation these are bundled into one onboarding flow before day one.",
     "evidenceIds": [
       "justworks-docs-7",
-      "justworks-docs-4",
-      "justworks-docs-17"
+      "justworks-docs-22",
+      "justworks-docs-17",
+      "justworks-docs-4"
     ]
   },
   {
@@ -2005,8 +2033,8 @@
     "storyId": "time-tracking-into-payroll",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers PTO policy setup, payroll accuracy checks, fringe benefits, and integrations, but contains no mention of hourly time tracking, timecards, or overtime calculations flowing into payroll runs. The only 'timecard sync' reference is about PTO policy sync, not hourly/overtime entries.",
+    "confidence": "low",
+    "rationale": "Evidence covers PTO policy setup, payroll accuracy checks, integrations, and fringe benefits, but there is no mention of hourly time entry tracking or overtime calculation flowing into payroll runs.",
     "evidenceIds": []
   },
   {
@@ -2015,7 +2043,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses W-2 or 1099 generation/distribution at year-end; all cited docs cover payroll data checks, fringe benefits recording, time off policies, onboarding, and Xero integration. Missing for 10: any mention of W-2/1099 generation, distribution timelines, or year-end tax form automation.",
+    "rationale": "None of the evidence items mention W-2/1099 generation or year-end tax form distribution; the pack only covers payroll reporting, benefits recording, PTO setup, onboarding, and Xero integration. Absence of evidence for this applicable payroll-compliance capability yields 'none'. missing for 10: any documentation of W-2/1099 generation, e-filing, or worker distribution at year-end.",
     "evidenceIds": []
   },
   {
