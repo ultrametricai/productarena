@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-83-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-502-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-28762-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-509-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-29133-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **83 arenas, 502 products, 28,762 judged verdicts.**
+As of the last full pipeline run: **83 arenas, 509 products, 29,133 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -166,7 +166,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Team Chat (`team-chat`) | slack, discord, ms-teams, zulip, buzz |
 | Backend as a Service (`backend-as-a-service`) | supabase, firebase, convex, appwrite |
 | Online Payments (`payments`) | stripe, adyen, paypal, square, autumn, checkout-com, mollie, airwallex, paddle, polar |
-| Accounting & Bookkeeping (`accounting`) | quickbooks, xero, puzzle, pilot |
+| Accounting & Bookkeeping (`accounting`) | quickbooks, xero, puzzle, pilot, freshbooks, zoho-books, wave, digits, kick, mercury-books, bench |
 | Security Scanners (`security-scanners`) | trufflehog, semgrep, snyk, gitleaks, trivy, gecko-security |
 | Infrastructure as Code (`infra-as-code`) | terraform, pulumi, opentofu, crossplane |
 | Vibe-Coding App Builders (`vibe-coding`) | lovable, bolt, v0, replit, base44, floot |
