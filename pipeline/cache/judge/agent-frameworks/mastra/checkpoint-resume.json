@@ -1,13 +1,16 @@
 {
-  "hash": "59c6977106e2edbfb68356c8a52db14801d177225ca1550f899f2bbb4a1b43d6",
+  "hash": "a2c708830a1278f51e88171115f3689d009dc218fb7bbda9c08899502381bfae",
   "verdict": {
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Mastra documents storage-backed suspend/resume for workflows and agents, explicitly stating it 'remembers execution state' so you can 'pause indefinitely and resume where you left off' — this is a real persistence/checkpoint mechanism, not just fluff (mastra-gh-4, mastra-docs-12). However the evidence frames this as an explicit suspend-for-human-input feature rather than automatic crash/restart recovery of an in-flight run; there's no documentation or independent confirmation of resuming exactly from an unexpected crash mid-execution. Missing for 10: explicit crash-recovery documentation/testing, independent hands-on confirmation that a crashed process resumes exactly where it left off (not just deliberate suspend points).",
+    "rationale": "Mastra's workflow engine explicitly persists execution state via storage and snapshots that \"capture all the information needed to resume a workflow from exactly where it left off,\" supporting indefinite pause/resume and even step-level time travel from stored snapshots. This directly matches checkpoint/resume semantics needed after a crash or restart, backed by first-party docs across suspend/resume, snapshots, and time-travel features.\n\nmissing for 10: no independent/hands-on evidence specifically demonstrating recovery after a process crash (vs. planned suspend), and no detail on storage backend guarantees (e.g., durability across restarts of the host process itself).",
     "evidenceIds": [
       "mastra-gh-4",
-      "mastra-docs-12"
+      "mastra-docs-12",
+      "mastra-docs-39",
+      "mastra-docs-41",
+      "mastra-docs-40"
     ],
     "productId": "mastra",
     "storyId": "checkpoint-resume"
