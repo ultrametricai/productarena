@@ -8,7 +8,8 @@
 #   3. Copy the Client ID (client_…) and an API key (sk_…) from the same environment.
 #
 # Then run from the repo root:
-#   ./scripts/workos-go-live.sh client_XXXX sk_XXXX
+#   ./scripts/workos-go-live.sh sk_XXXX          # client id already committed in wrangler.toml
+#   ./scripts/workos-go-live.sh client_XXXX sk_XXXX   # or override the client id too
 #
 # What it does: patches wrangler.toml's WORKOS_CLIENT_ID, sets WORKOS_API_KEY and a
 # freshly generated PA_SESSION_KEY as worker secrets, deploys the worker, and smoke-tests
@@ -16,8 +17,13 @@
 # diff and commit yourself (the client id is publishable, the secrets never touch git).
 set -euo pipefail
 
-CLIENT_ID="${1:?usage: workos-go-live.sh <client_id> <api_key>}"
-API_KEY="${2:?usage: workos-go-live.sh <client_id> <api_key>}"
+if [ $# -eq 1 ]; then
+  CLIENT_ID="client_01M2NPR7ESG9M87Q3G81387YNH"  # committed 2026-09-16 (publishable)
+  API_KEY="${1:?usage: workos-go-live.sh [client_id] <api_key>}"
+else
+  CLIENT_ID="${1:?usage: workos-go-live.sh [client_id] <api_key>}"
+  API_KEY="${2:?usage: workos-go-live.sh [client_id] <api_key>}"
+fi
 cd "$(dirname "$0")/../infra/cloudflare-proxy"
 
 case "$CLIENT_ID" in client_*) ;; *) echo "client id should start with client_" >&2; exit 1;; esac
