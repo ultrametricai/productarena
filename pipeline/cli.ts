@@ -53,7 +53,16 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
+main()
+  .then(() => {
+    // Force-exit on success: kept-alive HTTP sessions from `fetch` (seen live on docs.mem0.ai,
+    // 2026-09-15 spike lane) hold the event loop open indefinitely after all stage work is
+    // done, so the child never exits and upstream drivers (spike-engine's spawnSync) hang
+    // until an external watchdog kills them. Every stage writes synchronously, so exiting
+    // here loses nothing; setImmediate gives pending stdout writes one turn to flush.
+    setImmediate(() => process.exit(0))
+  })
+  .catch((err) => {
+    console.error(err)
+    process.exit(1)
+  })
