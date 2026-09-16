@@ -624,27 +624,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a one-click accounting integration with Puzzle and general expense-sync claims, but no documentation of QuickBooks, NetSuite, or Xero sync, nor of GL account/class/department mapping controls. missing for 10: QuickBooks/NetSuite/Xero connector docs, GL account mapping controls, class/department mapping controls.",
+    "rationale": "The evidence pack shows Brex has a one-click accounting sync feature, but it is documented only as syncing to Puzzle (brex-docs-17, 18, 40), with no mention of QuickBooks, NetSuite, or Xero, nor any documentation of finance-lead-controlled GL account, class, or department mapping for such syncs. Cost-center/department fields exist in the user API filters (brex-docs-19, 33) but these aren't tied to any accounting-sync mapping capability.",
     "evidenceIds": [
       "brex-docs-17",
-      "brex-docs-18"
+      "brex-docs-18",
+      "brex-docs-40",
+      "brex-docs-19",
+      "brex-docs-33"
     ]
   },
   {
     "productId": "brex",
     "storyId": "agent-closes-the-books",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Brex offers a documented MCP server and Transactions/Expenses APIs that let an agent read transactions and expense data (brex-docs-3, brex-docs-4, brex-docs-7), and Brex's own AI features (audit/review agents, policy flags on bookings) show categorization and policy-flagging happening natively (brex-docs-6, brex-docs-15, brex-docs-16, brex-docs-23). However there is no explicit documentation of an end-to-end 'pull uncoded transaction → propose category/policy flag → push clean coding back for human review' workflow exposed via API/MCP for third-party agents — the categorization/policy logic described is Brex's own internal AI agents, not a clearly documented external write-back API for coding proposals. Missing for 10: explicit API/MCP endpoints for writing back proposed transaction categorizations, a documented human-review/approval step for agent-proposed codings, and independent/hands-on confirmation of this specific workflow.",
+    "rationale": "Brex offers a Transactions API to pull transaction data, an official MCP server that lets AI assistants 'manage expenses' and 'review banking transactions,' and AI features (audit/review agents) that categorize spend and flag policy violations (policy field on bookings, out-of-policy detection). However, the evidence never shows a specific 'uncoded transactions' filter/endpoint or an explicit write-back/update-category API call that pushes AI-proposed coding for human review — it only shows general expense/transaction read access and rule-based auto-approval. Missing for 10: explicit uncoded-transaction query capability, explicit category/coding update endpoint, and documented human-review workflow tying AI-proposed codes back to approval.",
     "evidenceIds": [
       "brex-docs-3",
       "brex-docs-4",
-      "brex-docs-7",
       "brex-docs-6",
       "brex-docs-15",
       "brex-docs-16",
-      "brex-docs-23"
+      "brex-docs-41",
+      "brex-probe-3"
     ]
   },
   {
@@ -666,14 +669,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex documents AI-driven insights inside the product: audit agents flagging risk levels, review agents auto-approving/escalating, Brex AI drafting payments and matching POs, and policy compliance suggestions, plus an official MCP server for natural-language queries over expense/card/banking data. Missing for 10: independent/hands-on validation of these AI features' accuracy and no detailed docs on the underlying insight-generation mechanics beyond marketing copy.",
+    "rationale": "Brex AI features (audit agent, review agent, policy-based auto-approval, PO/payment matching suggestions) are documented as generating insights and suggestions directly from account/expense data. Evidence is first-party marketing/docs only, with no independent hands-on corroboration of these AI insight features in practice. missing for 10: independent/hands-on verification of AI insight quality, UI examples showing generated suggestions in context.",
     "evidenceIds": [
       "brex-docs-15",
       "brex-docs-16",
       "brex-docs-13",
       "brex-docs-23",
-      "brex-docs-3",
-      "brex-probe-3"
+      "brex-docs-41",
+      "brex-docs-8"
     ]
   },
   {
@@ -682,13 +685,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex documents autonomous background agents (audit agent monitoring expenses, review agent auto-approving/escalating, AI agents filing reimbursements and drafting payments) plus webhook/API infrastructure to trigger workflows, matching the ask of autonomous background automations. Missing for 10: independent/hands-on verification that these agents run unattended without human review, and explicit documentation of user-configurable scheduling/triggers beyond webhooks.",
+    "rationale": "Brex documents autonomous background agents (audit agent monitoring expenses, review agent auto-approving low-risk items and escalating exceptions) plus webhook events and third-party automation platforms (Zapier, Workato, Pipedream) that can run unattended once configured, and an MCP server for AI assistant integration. This covers the core 'runs autonomously in background' story via policy-driven agents and event-driven webhooks/automations. missing for 10: independent/hands-on verification that these agents truly run unattended without human triggers, and technical detail on scheduling/trigger architecture beyond marketing copy",
     "evidenceIds": [
       "brex-docs-15",
       "brex-docs-16",
-      "brex-docs-23",
+      "brex-docs-41",
       "brex-docs-1",
-      "brex-docs-13"
+      "brex-docs-35",
+      "brex-docs-24",
+      "brex-docs-32",
+      "brex-docs-30"
     ]
   },
   {
@@ -697,28 +703,32 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex documents built-in AI agents (audit agent, review agent, Brex AI) that autonomously handle expense memos, receipt fetching, policy checks, and reimbursement filing, plus AI-driven payment drafting in Bill Pay — direct evidence of delegating tasks to an in-product AI assistant. Missing for 10: independent/hands-on user reports validating these agent capabilities in practice, and more detail on user-initiated delegation workflows beyond marketing copy.",
+    "rationale": "Brex documents built-in AI agents (audit agent, review agent, Brex AI) that autonomously categorize expenses, auto-approve low-risk spend, write memos, fetch receipts, and file reimbursements, allowing users to delegate financial tasks directly within the product. This is distinct from the MCP server (which is for external AI clients) and represents genuine in-product agentic delegation. Missing for 10: independent/hands-on verification of these AI agent features actually working, and more detail on how users configure/invoke the assistant.",
     "evidenceIds": [
       "brex-docs-15",
       "brex-docs-16",
       "brex-docs-23",
-      "brex-docs-13",
-      "brex-docs-8"
+      "brex-docs-41",
+      "brex-docs-8",
+      "brex-docs-13"
     ]
   },
   {
     "productId": "brex",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Brex offers a documented REST API with token-based authentication (not requiring interactive login) plus webhooks and OpenAPI-described endpoints (transactions, budgets, expenses), which supports scripted/headless automation and CI use. However, there is no explicit CI/CD guide, SDK, or headless-runner documentation, and the openapi.json endpoints probed 404, suggesting incomplete machine-readable spec availability. Missing for 10: explicit CI/headless usage guide, official SDKs/CLI for automation, working OpenAPI spec endpoint.",
+    "rationale": "Brex exposes a full REST API with token-based auth (no interactive login required), webhook subscriptions, and Postman/Zapier/Workato/Pipedream automation examples (bulk card creation, scheduled exports), all of which support headless, non-interactive use suitable for scripted/CI-style automation. However there is no explicit mention of CI/CD pipelines, SDKs, or headless test/deploy tooling — missing for 10: explicit CI/CD integration docs, official SDKs for scripting, and confirmation of non-interactive token refresh/rotation suitable for unattended pipelines.",
     "evidenceIds": [
       "brex-docs-2",
+      "brex-docs-26",
       "brex-docs-1",
-      "brex-docs-4",
-      "brex-docs-5",
-      "brex-probe-2"
+      "brex-docs-35",
+      "brex-docs-29",
+      "brex-docs-30",
+      "brex-docs-31",
+      "brex-docs-32"
     ]
   },
   {
@@ -727,9 +737,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows Brex publishing its own MCP server so external AI assistants can call Brex's tools (server-side), not Brex acting as an MCP client that lets users plug in third-party MCP servers for Brex's AI/agents to consume. No documentation of Brex ingesting external MCP servers' tools is present.",
+    "rationale": "Evidence only shows Brex publishing its own MCP server so external AI assistants can call Brex's tools (docs-3, docs-24, probe-3) — the reverse of this story, which asks whether Brex can consume/plug in external MCP servers to use their tools. No evidence indicates Brex itself acts as an MCP client or lets users register third-party MCP servers for its AI agents to use.",
     "evidenceIds": [
       "brex-docs-3",
+      "brex-docs-24",
       "brex-probe-3"
     ]
   },
@@ -737,27 +748,27 @@
     "productId": "brex",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Brex documents an official MCP server that lets AI assistants interact with Brex account data (expenses, cards, transactions, bills) via natural language, and this is corroborated by a direct probe confirming the docs page exists. Missing for 10: independent/hands-on third-party verification of the MCP server working, and details on setup/auth flow specific to MCP connections rather than general API auth.",
+    "rationale": "Brex is not itself an AI agent but a financial platform, so publishing an official MCP server is a fair ecosystem capability, and Brex documents a first-party MCP server letting AI assistants manage expenses, users, cards, transactions, and bills. Missing for 10: independent/hands-on confirmation of setup and reliability beyond vendor docs.",
     "evidenceIds": [
       "brex-docs-3",
-      "brex-probe-3",
-      "brex-docs-2"
+      "brex-docs-24",
+      "brex-probe-3"
     ]
   },
   {
     "productId": "brex",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex documents an MCP server and AI agents (audit/review agents, Brex AI writing memos and filing reimbursements) that let users interact via natural language for expense/finance tasks, indicating some natural-language operability. However, evidence doesn't show broad natural-language command coverage across the whole platform (e.g., cards, budgets, bill pay setup) beyond expense-related AI agents. missing for 10: independent/hands-on validation of natural-language commands working end-to-end, broader coverage beyond expense management/MCP.",
+    "rationale": "Brex documents a first-party MCP server explicitly built so 'AI assistants interact directly with your Brex account... through natural language' for expenses, cards, banking, and bills, plus AI agents (audit/review) that act on policies automatically. This directly supports natural-language operation for AI-native users, though it's vendor-documented only. Missing for 10: independent/hands-on evidence of the MCP server's natural-language commands working reliably, and detail on command coverage limits.",
     "evidenceIds": [
       "brex-docs-3",
-      "brex-docs-15",
-      "brex-docs-16",
+      "brex-docs-24",
       "brex-docs-23",
+      "brex-docs-41",
       "brex-probe-3"
     ]
   },
@@ -766,9 +777,15 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an official Brex CLI tool anywhere in the pack; docs mention APIs, MCP server, and webhooks but no CLI is referenced or documented.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Evidence pack shows Brex's developer platform (APIs, Postman collection, MCP server, Zapier/Pipedream/Workato integrations) but no mention of an official CLI tool anywhere in docs or changelog.",
+    "evidenceIds": [
+      "brex-docs-29",
+      "brex-docs-30",
+      "brex-docs-31",
+      "brex-docs-32",
+      "brex-probe-1"
+    ]
   },
   {
     "productId": "brex",
@@ -776,12 +793,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Brex has a documented public developer API with authentication via API tokens/scopes, multiple OpenAPI-documented resources (transactions, budgets, expenses, users), webhooks for event-driven integration, and an llms.txt discovery file confirming the API's presence for programmatic/AI-native use. Missing for 10: a live discoverable OpenAPI spec (candidate paths 404'd) and independent third-party corroboration of API usage beyond vendor docs.",
+    "rationale": "Brex has extensive documented public REST APIs (transactions, budgets, expenses, payments, onboarding, webhooks) with authentication via dashboard-generated tokens, Postman collections, and a llms.txt developer index, giving AI-native users a clear path to programmatically drive the product. Missing for 10: a live discoverable OpenAPI spec (probe found 404s on standard OpenAPI paths) and independent/hands-on third-party corroboration of API robustness beyond vendor docs.",
     "evidenceIds": [
       "brex-docs-2",
       "brex-docs-4",
       "brex-docs-5",
-      "brex-docs-1",
+      "brex-docs-7",
+      "brex-docs-26",
+      "brex-docs-29",
       "brex-probe-1",
       "brex-probe-2"
     ]
@@ -792,9 +811,10 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex's developer docs explicitly describe creating API tokens with selectable scopes for data access levels, which is the mechanism for issuing least-privilege credentials, and Brex also documents an MCP server that agents can use to interact with the account via such tokens. Missing for 10: independent/hands-on verification of scope granularity, a full list of available scopes, and agent-specific credential lifecycle/rotation details.",
+    "rationale": "Brex's developer docs show admins can create named API tokens and choose specific data-access scopes at creation time (brex-docs-2, brex-docs-26), which is a direct least-privilege credentialing mechanism that would apply to any API consumer, including an AI agent calling the API or via the documented MCP server (brex-docs-3, brex-probe-3). Missing for 10: an explicit enumerated list of available scopes, agent-specific credential guidance, per-agent revocation/audit trail details, and independent corroboration of scope enforcement in practice.",
     "evidenceIds": [
       "brex-docs-2",
+      "brex-docs-26",
       "brex-docs-3",
       "brex-probe-3"
     ]
@@ -805,68 +825,64 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Brex publishes REST APIs (OpenAPI specs for transactions, budgets, expenses), authentication and webhook docs, and even an MCP server, but there is no mention of official client SDKs (e.g., Python, Node, Java libraries) for developers to build against.",
-    "evidenceIds": [
-      "brex-docs-4",
-      "brex-docs-5",
-      "brex-docs-7",
-      "brex-docs-2",
-      "brex-probe-2"
-    ]
+    "rationale": "Brex documents REST APIs (OpenAPI specs), authentication, webhooks, a Postman workspace, and third-party integrations (Pipedream, Zapier, Workato), but nowhere in the evidence pack is there mention of official client-library SDKs (e.g., Node.js, Python, Java packages) that AI-native developers could build against.",
+    "evidenceIds": []
   },
   {
     "productId": "brex",
     "storyId": "agentic-webhooks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Brex's developer docs explicitly document a webhook registration endpoint for subscribing to events, plus authentication via API tokens/scopes to secure access. Missing for 10: no detailed list of available event types/payloads, no independent/hands-on corroboration of webhook reliability or delivery guarantees.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Brex documents a dedicated webhooks API and guide for registering endpoints and receiving selected events, including examples like referral activation, indicating genuine subscribe-to-event support. missing for 10: no independent/hands-on corroboration of webhook delivery reliability, and no explicit AI-native/agent-triggered subscription workflow shown.",
     "evidenceIds": [
       "brex-docs-1",
-      "brex-docs-2"
+      "brex-docs-25",
+      "brex-docs-35"
     ]
   },
   {
     "productId": "brex",
     "storyId": "ai-expense-coding",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Brex documents dedicated AI features covering the story directly: an audit agent that monitors expenses and categorizes violations by risk (fraud/duplicate-style detection), a review agent that auto-approves/escalates, and AI assistants that write memos, fetch receipts, and file reimbursements automatically, plus receipt-matching in the expenses API. missing for 10: independent/hands-on corroboration of these AI agents' real-world accuracy (e.g., explicit duplicate/fraud catch examples) and no third-party review confirming performance.",
+    "rationale": "Brex AI explicitly offers audit and review agents that read receipts, categorize/flag violations by risk level, auto-approve low-risk expenses, and write memos/fetch receipts/file reimbursements automatically, matching the story closely. missing for 10: independent/hands-on verification of accuracy (duplicate/fraud catching specifically) and no third-party corroboration beyond vendor marketing copy.",
     "evidenceIds": [
       "brex-docs-15",
       "brex-docs-16",
       "brex-docs-23",
-      "brex-docs-7",
-      "brex-docs-8"
+      "brex-docs-41",
+      "brex-docs-7"
     ]
   },
   {
     "productId": "brex",
     "storyId": "ai-policy-copilot",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex AI docs describe agents that auto-enforce policy, escalate exceptions, follow up with non-compliant employees, and even file reimbursements, plus an MCP server enabling conversational natural-language interaction with expenses/policy — directly matching the story's intent. However, evidence doesn't show a live, pre-spend 'can I expense this?' conversational check or explicit receipt-chasing dialogue, and there is no independent/hands-on corroboration of these AI claims. missing for 10: hands-on evidence of proactive pre-spend policy Q&A, explicit receipt-chasing conversation examples, and independent verification of the AI agent's conversational enforcement in practice.",
+    "rationale": "Brex explicitly markets AI agents that follow up on out-of-compliance spend, fetch receipts, and offer policy help ('AI assistants do employees' expenses... fetching receipts, offering policy help' and 'review agent... follows up with anyone out of compliance'), plus an MCP server letting assistants query expenses/policy conversationally. However, there's no concrete evidence of the assistant proactively answering 'can I expense this?' before spend occurs or explaining specific decline reasons conversationally. Missing for 10: documented pre-spend conversational policy checks, explicit decline-explanation flows, and independent/hands-on confirmation of these AI behaviors in practice.",
     "evidenceIds": [
-      "brex-docs-8",
       "brex-docs-15",
       "brex-docs-16",
       "brex-docs-23",
-      "brex-docs-3"
+      "brex-docs-41",
+      "brex-docs-3",
+      "brex-docs-8"
     ]
   },
   {
     "productId": "brex",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Brex has developer documentation pages for various APIs (transactions, budgets, webhooks) and an llms.txt file, but there's no mention of an interactive API reference with runnable/try-it examples, and a probe for a standard OpenAPI spec (openapi.json/swagger.json) returned 404s, suggesting no interactive spec-driven console exists.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Brex provides detailed API reference docs (openapi/*.md pages) and a Postman workspace with collections for all APIs, which allows some hands-on exploration, but there's no evidence of an interactive in-browser API reference with embedded runnable examples (e.g., a Swagger/OpenAPI explorer); a probe for standard openapi.json/swagger endpoints returned 404s. Missing for 10: an embedded interactive console/try-it feature, confirmation of runnable code snippets directly in docs, and independent corroboration of hands-on use.",
     "evidenceIds": [
+      "brex-docs-29",
       "brex-docs-4",
       "brex-docs-5",
-      "brex-probe-1",
       "brex-probe-2"
     ]
   },
@@ -876,12 +892,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Brex's developer docs use an /openapi/ path structure (transactions_api.md, budgets_api.md, expenses_api.md) suggesting the docs are generated from OpenAPI specs, and an llms.txt exists for AI consumption, but a direct probe for a downloadable machine-readable spec file (openapi.json/swagger.json/.well-known) returned 404 at all standard locations. Missing for 10: a confirmed, directly downloadable OpenAPI/Swagger JSON or YAML file, and any documentation pointing to where such a raw spec can be fetched.",
+    "rationale": "Brex publishes API reference docs under an /openapi/ path pattern (transactions_api.md, budgets_api.md, expenses_api.md, etc.) and offers a Postman collection covering all Brex APIs, both of which imply structured, machine-readable spec data. However, a direct probe for standard OpenAPI/Swagger JSON files (openapi.json, swagger.json, etc.) returned 404s, meaning there is no confirmed single downloadable OpenAPI spec file. Missing for 10: a discoverable raw OpenAPI/Swagger JSON or YAML file, and confirmation that the Postman collection is exported in OpenAPI format.",
     "evidenceIds": [
       "brex-docs-4",
       "brex-docs-5",
       "brex-docs-7",
-      "brex-probe-1",
+      "brex-docs-29",
       "brex-probe-2"
     ]
   },
@@ -891,7 +907,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions a sandbox environment, test mode, or non-production credentials/data for Brex's API or MCP server; docs only cover live API scopes, webhooks, and production financial operations. Missing for 10: any mention of sandbox/test environment, test API keys, or non-production data isolation.",
+    "rationale": "No evidence of a sandbox/test environment separate from production data; the docs pack covers authentication, webhooks, MCP server, and API endpoints but never mentions a sandbox mode or test credentials. Missing for 10: any mention of a sandbox environment, test API keys, or documentation distinguishing test vs. production data.",
     "evidenceIds": []
   },
   {
@@ -900,24 +916,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a public changelog tracking feature additions (e.g., brex-docs-6, brex-docs-19) but no mention of API version numbers, versioning scheme, or any documented deprecation/sunset policy for endpoints. Missing for 10: explicit API versioning strategy, deprecation notice process, and sunset timelines.",
+    "rationale": "The evidence shows a changelog tracking feature additions (e.g., new filter params, policy fields) but nothing documenting API versioning scheme or a deprecation policy for breaking changes. No mention of version numbers, sunset timelines, or backward-compatibility guarantees appears anywhere in the pack.",
     "evidenceIds": [
       "brex-docs-6",
-      "brex-docs-19"
+      "brex-docs-19",
+      "brex-docs-33"
     ]
   },
   {
     "productId": "brex",
     "storyId": "approval-workflows",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Brex docs confirm tailored multi-level approval flows based on amount, vendor, and role with automatic routing (brex-docs-11), plus policy rule engine (brex-docs-8) and an AI review agent that auto-approves low-risk items and escalates exceptions (brex-docs-16). However, no evidence describes explicit delegation of approver authority when someone is unavailable, or configurable escalation timers/backup approvers. Missing for 10: documented delegation-to-backup-approver mechanism, explicit escalation timeout/reassignment settings, and confirmation of a distinct 'budget owner' approval step in the chain.",
+    "rationale": "Brex documents multi-level, rule-based approval routing (by amount, vendor, employee role) and an AI review agent that auto-approves low-risk items and escalates exceptions, which covers the core approval-chain and escalation concept. However there is no explicit documentation of delegation (e.g., proxy approver when someone is OOO) or a named manager→budget-owner→finance sequential chain structure. Missing for 10: explicit delegation/out-of-office reassignment mechanism, documented sequential role hierarchy (manager, budget owner, finance) rather than generic 'role-based routing', and independent/hands-on confirmation of escalation behavior.",
     "evidenceIds": [
-      "brex-docs-11",
       "brex-docs-8",
+      "brex-docs-11",
       "brex-docs-16",
-      "brex-docs-9",
+      "brex-docs-41",
       "brex-docs-10"
     ]
   },
@@ -925,55 +942,65 @@
     "productId": "brex",
     "storyId": "auto-receipt-matching",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm receipt-to-expense auto-matching via API (brex-docs-7) and AI agents that 'fetch receipts' and audit/review expenses automatically (brex-docs-15, brex-docs-16, brex-docs-23), suggesting some automated capture and nudging logic. However there is no explicit documentation of e-receipt pulls from third-party integrations (e.g., email/vendor integrations) or of a nudge system that specifically limits alerts to only genuinely missing receipts. Missing for 10: documentation of integration-based e-receipt ingestion, and specifics on smart/selective missing-receipt nudging logic.",
+    "rationale": "Brex's API/docs confirm automatic receipt-to-transaction matching (\"Upload receipt and match automatically\" and pre-signed S3 upload that tries to match existing expenses), and its AI feature page claims agents can 'fetch receipts' and file expenses automatically, plus a review agent that 'follows up with anyone out of compliance.' However, there's no explicit evidence of e-receipts being pulled automatically from third-party integrations (e.g., travel/vendor e-receipt feeds) nor documentation describing smart nudging logic that only triggers when a receipt is genuinely missing rather than generic compliance follow-ups. missing for 10: explicit e-receipt integration sourcing, documented logic for suppressing false-positive missing-receipt nudges, independent user confirmation of matching accuracy.",
     "evidenceIds": [
+      "brex-docs-27",
       "brex-docs-7",
       "brex-docs-23",
-      "brex-docs-15",
       "brex-docs-16"
     ]
   },
   {
     "productId": "brex",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Brex's APIs (transactions, budgets, expenses, users) support list/filter operations and the MCP server exposes account data to AI assistants, implying some batch querying capability, but there is no documented bulk-write endpoint (e.g., bulk expense approval, bulk card issuance, bulk transaction categorization) or explicit batch operation support in the API/MCP docs. missing for 10: explicit bulk/batch write API endpoints, documented bulk operation support in MCP server, hands-on evidence of performing multi-item operations in one call.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Brex documents explicit bulk operations via automation platforms (bulk create virtual cards via Pipedream, bulk create users/set limits via Workato) and supports filtering/listing at scale via API query params, plus bulk-friendly endpoints for users, cards, vendors, and expenses. This is corroborated by first-party developer docs across multiple integration guides, not just a single mention. Missing for 10: no native in-product bulk-action UI evidence or independent hands-on confirmation of bulk API throughput/limits.",
     "evidenceIds": [
-      "brex-docs-3",
-      "brex-docs-4",
-      "brex-docs-5",
+      "brex-docs-30",
+      "brex-docs-32",
       "brex-docs-19",
-      "brex-probe-3"
+      "brex-docs-33",
+      "brex-docs-29"
     ]
   },
   {
     "productId": "brex",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex exposes webhooks for event notifications and lets admins define spend/approval policy rules (auto-enforced limits, multi-level approval routing, AI review agent that auto-approves or escalates based on rule violations), which together enable event-triggered automated actions. However there's no documented end-to-end workflow builder linking arbitrary webhook events to custom actions—automation is limited to built-in policy/approval triggers rather than a general rules engine. Missing for 10: a user-configurable rule engine that maps arbitrary webhook events to arbitrary actions, and independent confirmation the webhook+policy combo works as a full automation pipeline.",
+    "rationale": "Brex offers webhooks that fire on events (brex-docs-1, brex-docs-25, brex-docs-35) plus built-in policy rules that auto-trigger actions like blocking out-of-policy spend, auto-approving low-risk expenses, and escalating exceptions (brex-docs-8, brex-docs-9, brex-docs-16, brex-docs-36, brex-docs-41). Third-party integrations (Zapier, Workato, Pipedream) extend this into custom event-triggered automations (brex-docs-30, brex-docs-31, brex-docs-32). Missing for 10: a native no-code rule-builder UI for arbitrary custom triggers/actions beyond preset expense/travel/approval policies, and independent hands-on confirmation that webhook-to-action automations work reliably in practice.",
     "evidenceIds": [
       "brex-docs-1",
       "brex-docs-8",
       "brex-docs-9",
-      "brex-docs-11",
-      "brex-docs-15",
-      "brex-docs-16"
+      "brex-docs-16",
+      "brex-docs-36",
+      "brex-docs-41",
+      "brex-docs-30",
+      "brex-docs-31",
+      "brex-docs-32",
+      "brex-docs-35"
     ]
   },
   {
     "productId": "brex",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of scheduled/recurring job or workflow automation capability; Brex offers webhooks, APIs, and an MCP server for on-demand interactions, but nothing about cron-like scheduling or recurring automated workflows.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Brex offers webhooks for event-driven automation and third-party integration examples (Zapier, Workato, Pipedream) that can implement recurring workflows like a 'Monthly Export of Brex Card Transactions to CSV', but there is no native Brex scheduling/cron API for recurring jobs — the scheduling logic lives entirely in external tools. Missing for 10: a first-party recurring-job/schedule API or documented native cron-like trigger, and any hands-on evidence that AI-native users actually configure recurring automations directly through Brex rather than third-party platforms.",
+    "evidenceIds": [
+      "brex-docs-31",
+      "brex-docs-32",
+      "brex-docs-30",
+      "brex-docs-1",
+      "brex-docs-35"
+    ]
   },
   {
     "productId": "brex",
@@ -981,7 +1008,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any version control, review, or rollback mechanism for automations (rules, budgets, approval flows, or AI agents) in Brex's docs; changelog entries describe API feature additions, not user-facing automation versioning/rollback.",
+    "rationale": "No evidence of any versioning, review workflow, or rollback mechanism for automations/policies/agents — the docs describe automation features (approvals, expense policies, AI agents, MCP) but nothing about version history, change review, or reverting configurations.",
     "evidenceIds": []
   },
   {
@@ -989,13 +1016,15 @@
     "storyId": "bill-pay-ap",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Brex Bill Pay documentation covers invoice capture (AI reads itemized details, drafts payment), configurable multi-level approval routing, and payment via virtual card, ACH, checks, and wires from a bank or Brex account — matching the full story. missing for 10: independent/hands-on corroboration of the AP workflow and detail on invoice-capture accuracy beyond vendor claims.",
+    "confidence": "high",
+    "rationale": "Brex Bill Pay covers invoice capture (AI extracts itemized detail and matches PO), configurable multi-level approval routing by amount/vendor/role, vendor onboarding via secure payment-detail links, and payment via virtual card, ACH, checks, or wires from a Brex or external bank account — all in one platform, backed by both marketing docs and API endpoints (vendor creation, payments API). missing for 10: independent/hands-on verification of AP workflow reliability (only vendor docs, no third-party case study or user report specific to bill pay), and detail on check-payment mechanics/timing.",
     "evidenceIds": [
       "brex-docs-11",
       "brex-docs-12",
       "brex-docs-13",
-      "brex-docs-14"
+      "brex-docs-14",
+      "brex-docs-34",
+      "brex-docs-38"
     ]
   },
   {
@@ -1004,28 +1033,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Brex's docs explicitly describe assigning top-line budgets to teams/projects, auto-enforced spend limits (stipends, travel, procurement), multi-level approval flows routed automatically by amount/vendor/role, and a Budgets/Spend Limits API for programmatic control, directly matching the finance-lead's need for enforced budget-to-card-limit-to-approval flows. Missing for 10: independent/hands-on verification that enforcement works reliably in practice (community evidence is unrelated to this axis, only covering account closures).",
+    "rationale": "Brex documents budgets/spend limits API and dashboard features for assigning top-line budgets, auto-enforced spend limits, policy-based blocking of out-of-policy purchases, and multi-level approval routing, directly matching the finance-lead's need to allocate budgets and have limits/approvals enforce them. missing for 10: independent/hands-on evidence confirming enforcement works reliably in practice (community evidence only covers account closures, not budget/approval enforcement), and no case study showing team/project-level allocation granularity in real use.",
     "evidenceIds": [
+      "brex-docs-5",
       "brex-docs-8",
       "brex-docs-9",
       "brex-docs-10",
       "brex-docs-11",
-      "brex-docs-5"
+      "brex-docs-36"
     ]
   },
   {
     "productId": "brex",
     "storyId": "card-policy-controls",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex documents category/merchant/amount-based spend controls via Budgets/Spend Limits API and policy rules that are auto-enforced on every transaction, plus configurable card limits — matching the core of the story. However, no direct evidence of point-of-sale real-time decline/lock behavior or explicit merchant-category-code restriction language, and no independent/hands-on corroboration of the enforcement working as described. Missing for 10: explicit point-of-sale auto-decline/lock documentation, merchant-category-specific control detail, third-party validation of enforcement.",
+    "rationale": "Brex's product docs explicitly describe auto-blocking out-of-policy purchases with preset rules and limits, auto-enforced spend controls, and a Budgets/Spend Limits API for programmatic control, matching the finance-lead story of restricting and declining spend by policy. Missing for 10: explicit documentation of category/merchant-level rule granularity and independent/hands-on confirmation that point-of-sale declines work as described in practice.",
     "evidenceIds": [
-      "brex-docs-5",
-      "brex-docs-8",
+      "brex-docs-36",
       "brex-docs-9",
-      "brex-docs-22",
-      "brex-docs-6"
+      "brex-docs-8",
+      "brex-docs-5",
+      "brex-docs-41"
     ]
   },
   {
@@ -1033,30 +1063,36 @@
     "storyId": "continuous-close-coding",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Brex documents real-time transaction categorization, AI-driven memo writing, receipt fetching/matching, policy enforcement, and one-click accounting sync (Puzzle) that eliminate manual month-end reconciliation work, directly supporting continuous coding of spend as it happens. missing for 10: independent/hands-on verification that AI-drafted memos and receipt-matching are accurate enough in practice to avoid finance-team review, and no customer testimonial confirming close time reduction.",
+    "confidence": "high",
+    "rationale": "Brex documents real-time spend coding at point of transaction: receipt auto-matching to expenses (brex-docs-7, brex-docs-27), AI agents auto-categorizing/approving and writing memos (brex-docs-23, brex-docs-16, brex-docs-41), policy/budget enforcement applied per transaction (brex-docs-8, brex-docs-15, brex-docs-36), and explicit close-in-real-time messaging (brex-docs-37) plus one-click accounting sync (brex-docs-17, brex-docs-40). This directly maps to merchant/category/memo/receipt capture happening automatically rather than at month-end. Missing for 10: independent/hands-on verification that AI-drafted memos and auto-categorization are accurate in practice, and no third-party case study confirming reduced close time.",
     "evidenceIds": [
       "brex-docs-7",
+      "brex-docs-27",
+      "brex-docs-23",
+      "brex-docs-16",
+      "brex-docs-41",
       "brex-docs-8",
       "brex-docs-15",
-      "brex-docs-16",
+      "brex-docs-36",
+      "brex-docs-37",
       "brex-docs-17",
-      "brex-docs-23"
+      "brex-docs-40"
     ]
   },
   {
     "productId": "brex",
     "storyId": "expense-audit-trail",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Brex evidences policy enforcement (policy field on bookings, out-of-policy flags), configurable approval flows, and an 'audit agent' that monitors and categorizes violations, but there is no documented immutable/exportable audit log of edits and approvals suitable for external audit review. Missing for 10: explicit audit-log/export feature, evidence of edit history retention, and independent confirmation the trail survives external audits.",
+    "rationale": "Brex documents policy-violation flags on bookings, multi-level approval routing, budget/spend limits, and a dedicated 'audit agent' that monitors and categorizes policy violations — all elements that would feed an audit trail. However, there is no explicit documentation of an immutable, exportable audit log capturing edit history, approval timestamps, and policy-check results in a form built for external audit review.\n\nmissing for 10: explicit immutable/exportable audit-log documentation, evidence of edit-history tracking per expense, independent confirmation the trail survives external audit scrutiny.",
     "evidenceIds": [
       "brex-docs-6",
       "brex-docs-8",
       "brex-docs-11",
       "brex-docs-15",
-      "brex-docs-16"
+      "brex-docs-16",
+      "brex-docs-36"
     ]
   },
   {
@@ -1065,29 +1101,32 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Brex documents policy configuration (limits by category/role/context via budgets, spend limits, multi-level approval flows by amount/vendor/role) and AI-driven auto-approval of in-policy transactions with escalation of exceptions to humans (review agent auto-approves low-risk, escalates exceptions; audit agent flags violations by risk). Missing for 10: independent/hands-on validation of the auto-approve behavior and finer detail on category-specific policy configuration UI beyond marketing copy.",
+    "rationale": "Brex documents policy codification by category, role, vendor, and context (limits, spend rules, multi-level approval routing by amount/vendor/role) and explicit auto-approval of in-policy items with exceptions escalated to humans via its review/audit AI agents. Budgets API and policy-violation flags further support programmatic enforcement. Missing for 10: independent/hands-on verification of auto-approval accuracy and no detailed docs on granular category-level rule configuration UI.",
     "evidenceIds": [
       "brex-docs-8",
       "brex-docs-9",
       "brex-docs-11",
-      "brex-docs-15",
       "brex-docs-16",
-      "brex-docs-5"
+      "brex-docs-36",
+      "brex-docs-41",
+      "brex-docs-5",
+      "brex-docs-6"
     ]
   },
   {
     "productId": "brex",
     "storyId": "expenses-api-read",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Brex provides documented REST APIs for transactions, expenses (with receipt upload/matching), budgets, and users, with token-based scoped OAuth authentication managed via dashboard-created tokens with configurable scopes. Missing for 10: a discoverable public OpenAPI spec (probe found 404s) and independent third-party corroboration of API reliability/usage.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Brex has a documented REST API covering transactions, expenses, receipts (upload/match), budgets, and webhooks, with token-based authentication using scopes (brex-docs-2, brex-docs-4, brex-docs-7, brex-docs-27, brex-docs-19). However, the auth mechanism is described as dashboard-generated 'user tokens' with scopes rather than a full OAuth flow, and an OpenAPI spec could not be located via standard endpoints (brex-probe-2). missing for 10: explicit OAuth 2.0 flow documentation (vs. static token generation), publicly discoverable OpenAPI/swagger spec, and independent developer corroboration of the API working as documented.",
     "evidenceIds": [
       "brex-docs-2",
       "brex-docs-4",
       "brex-docs-7",
+      "brex-docs-27",
       "brex-docs-19",
-      "brex-probe-1",
+      "brex-docs-26",
       "brex-probe-2"
     ]
   },
@@ -1095,12 +1134,13 @@
     "productId": "brex",
     "storyId": "fast-reimbursements",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Brex's expense management docs mention reimbursements being filed automatically and receipt upload/matching via the Expenses API, implying some reimbursement workflow exists, but there is no evidence detailing direct deposit reimbursement, payout timing, or end-to-end status tracking from submission to payout. Missing for 10: explicit direct-deposit reimbursement mechanism, payout SLA/timeline, and submission-to-payout tracking UI/API.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Brex's docs confirm out-of-pocket expense submission (receipt upload/matching in brex-docs-7/27) and AI-driven automatic reimbursement filing (brex-docs-23), implying an end-to-end expense workflow, but there is no explicit documentation of direct-deposit payout mechanics, reimbursement timing ('days'), or a submission-to-payout tracking status view. missing for 10: explicit direct-deposit reimbursement flow, payout SLA/timing details, and a visible tracking/status dashboard for reimbursement progress.",
     "evidenceIds": [
-      "brex-docs-23",
       "brex-docs-7",
+      "brex-docs-23",
+      "brex-docs-27",
       "brex-docs-8"
     ]
   },
@@ -1109,28 +1149,26 @@
     "storyId": "global-reimbursements",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence covers expense management, bill pay, cards, and AI features, but no documentation addresses reimbursing employees abroad in local currency without a separate international payments process; bill-pay mentions wires 'in more currencies' but this refers to vendor payments, not employee reimbursements. Missing for 10: any mention of multi-currency employee reimbursement, FX handling for expense payouts, or international reimbursement workflow.",
-    "evidenceIds": [
-      "brex-docs-14",
-      "brex-docs-7",
-      "brex-docs-23"
-    ]
+    "confidence": "medium",
+    "rationale": "Evidence covers global card acceptance (210+ countries), bill pay wires 'in more currencies' for vendor payments, and general 'global spend' messaging, but nothing specifically addresses reimbursing employees abroad in their local currency or eliminating a separate international payments process for reimbursements.",
+    "evidenceIds": []
   },
   {
     "productId": "brex",
     "storyId": "issue-cards-limits",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Docs confirm physical and virtual card issuance on Mastercard network, instant virtual card creation, and per-card/per-team spend limits and budgets enforced automatically (brex-docs-20, brex-docs-14, brex-docs-9, brex-docs-10, brex-docs-5). No independent/hands-on evidence contradicts this. Missing for 10: explicit first-party statement that issuance takes 'minutes', and independent/hands-on corroboration of the workflow speed.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Brex documents physical and virtual card issuance on Mastercard with instant/one-click virtual card creation, per-card/employee spend limits and budgets, mobile app management, and bulk issuance via Workato/Pipedream integrations for teams. This directly matches the founder story of quickly issuing cards with individual limits. Missing for 10: independent hands-on timing verification (\"minutes\") and no first-party case study explicitly confirming founder-level self-service issuance speed.",
     "evidenceIds": [
       "brex-docs-20",
-      "brex-docs-14",
-      "brex-docs-9",
-      "brex-docs-10",
+      "brex-docs-22",
+      "brex-docs-21",
       "brex-docs-5",
-      "brex-docs-21"
+      "brex-docs-9",
+      "brex-docs-30",
+      "brex-docs-32",
+      "brex-docs-38"
     ]
   },
   {
@@ -1138,9 +1176,14 @@
     "storyId": "mileage-per-diem",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of mileage tracking with map-based distance calculation or per-diem rate claim automation anywhere in the evidence pack; expense features mentioned are receipt matching, policy enforcement, and AI-drafted expenses, none of which address mileage or per-diem specifically.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions mileage tracking, GPS/map-based distance calculation, or per-diem rate claims; Brex's expense documentation focuses on card transactions, receipt upload/matching, and policy enforcement but never describes mileage or per-diem automation. This is a fair capability to expect from an expense management product, so absence of evidence means none rather than na.",
+    "evidenceIds": [
+      "brex-docs-7",
+      "brex-docs-8",
+      "brex-docs-27",
+      "brex-docs-37"
+    ]
   },
   {
     "productId": "brex",
@@ -1148,10 +1191,13 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence shows Brex's API has a legal_entity_id field for filtering users, implying some multi-entity account structure, and bill pay supports payments 'in more currencies,' but there is no documentation of consolidated financial reporting across entities or per-entity books/accounting closes. missing for 10: consolidated multi-entity reporting, per-entity books/general ledger separation, multi-currency account/treasury handling, entity-level financial statements.",
+    "rationale": "Evidence shows Brex's API supports a `legal_entity_id` field for filtering users, implying some multi-entity data modeling exists, and general mentions of 'global spend'/'more currencies' support, but there is no documentation of consolidated cross-entity reporting or dedicated per-entity books for finance close workflows. missing for 10: consolidated reporting across entities, per-entity books/ledgers, multi-currency accounting close workflow, any first-party or independent confirmation of multi-entity account structure.",
     "evidenceIds": [
       "brex-docs-19",
-      "brex-docs-14"
+      "brex-docs-33",
+      "brex-docs-37",
+      "brex-docs-14",
+      "brex-docs-18"
     ]
   },
   {
@@ -1176,14 +1222,15 @@
   {
     "productId": "brex",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Brex's API surface (transactions, expenses, budgets) allows programmatic read access to some data, but there is no documented bulk/full data export tool, open-format data dump, or account-portability feature to 'take your data and leave'. missing for 10: a documented full-account export/download feature, open-format (CSV/JSON) bulk export tool, or explicit data-portability/account-closure export policy.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Brex exposes APIs for transactions, expenses, users, budgets, etc. and a documented Zapier example for CSV export of card transactions, which lets a user pull data out in open formats; but there is no first-party documentation of a comprehensive 'export all your data' feature, bulk archive export, or account-closure data-portability process. missing for 10: a dedicated full-account data export tool, documentation of exporting all data types (not just transactions) in one open format, and any offboarding/portability guidance for leaving the platform.",
     "evidenceIds": [
       "brex-docs-4",
-      "brex-docs-7",
-      "brex-probe-1"
+      "brex-docs-31",
+      "brex-docs-19",
+      "brex-docs-29"
     ]
   },
   {
@@ -1192,7 +1239,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Brex is a proprietary fintech/SaaS platform, not open-source software; source-code openness is not an applicable axis for this kind of product.",
+    "rationale": "Brex is a closed financial SaaS platform, not open-source software; the question of reading its source code under an open license is a category error for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -1201,7 +1248,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Brex is a hosted financial/fintech SaaS platform (cards, expenses, bill pay); self-hosting a regulated financial services product is a category error, not an applicable openness axis.",
+    "rationale": "Brex is a fintech SaaS (corporate cards/expense management) fundamentally tied to regulated banking infrastructure and a hosted service; self-hosting the core product is a category error for this kind of financial platform, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1210,7 +1257,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or any control over where data is stored; Brex's documentation focuses on APIs, expense management, and AI agents without addressing data locality choices.",
+    "rationale": "No evidence pack items mention data residency, regional storage options, or any control over where data is stored; Brex evidence covers financial product features, APIs, and MCP integration only.",
     "evidenceIds": []
   },
   {
@@ -1219,7 +1266,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses AI-training data opt-out, data usage policies for model training, or any privacy controls specific to preventing training use; Brex's AI features are described functionally but no data-use/privacy policy is documented. missing for 10: explicit opt-out or data-training exclusion policy, privacy documentation regarding AI model training, terms of service excerpts on data usage.",
+    "rationale": "No evidence pack item addresses AI training data usage, opt-out settings, or a data-privacy policy regarding model training; the evidence only covers API/product features and unrelated community complaints about account closures.",
     "evidenceIds": []
   },
   {
@@ -1227,8 +1274,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack items discuss data retention policies, deletion controls, or privacy settings for AI features (e.g., MCP server, AI agents) — only unrelated API/product feature docs and community complaints about account closures. Missing for 10: any documentation on data retention periods, deletion requests, or privacy controls for AI-processed data.",
+    "confidence": "low",
+    "rationale": "No evidence pack item discusses data retention, deletion policies, or AI data usage/training controls specific to AI-native workflows; the API, MCP, and product docs focus on functionality (expenses, cards, bill pay) rather than privacy/data lifecycle controls. Missing for 10: any documentation on data retention periods, deletion requests, opt-out of AI training, or data residency/handling policies.",
     "evidenceIds": []
   },
   {
@@ -1236,23 +1283,23 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for AI-native users; all evidence covers unrelated financial product features and MCP server capabilities.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions telemetry, usage tracking, or an opt-out/privacy control mechanism for AI-native users; the docs focus on APIs, webhooks, MCP server, and financial products with no privacy-posture disclosures.",
     "evidenceIds": []
   },
   {
     "productId": "brex",
     "storyId": "programmatic-card-issuance",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Brex has APIs for budgets, transactions, expenses, and webhooks, but nowhere documents a Cards API for creating, locking, or updating card controls programmatically. Card-related mentions (brex-docs-20/21/22) are marketing copy about the physical/virtual card product, not developer API endpoints.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows Brex exposes a broad API surface with a Postman workspace for 'all Brex APIs' and third-party integration recipes (Pipedream, Workato) that issue virtual cards and set spend limits/monthly limits, plus a budgets/spend-limits API. However, there is no first-party documentation of a dedicated Cards API (create/lock/update card controls) in the evidence pack — no cards_api.md or explicit lock/update-controls endpoints are cited, only inferred usage via third-party automation platforms. Missing for 10: a documented Cards API reference showing create-with-limit, lock/freeze, and update-controls endpoints, and any independent hands-on confirmation of programmatic card lifecycle management.",
     "evidenceIds": [
-      "brex-docs-20",
-      "brex-docs-21",
-      "brex-docs-22",
+      "brex-docs-30",
+      "brex-docs-32",
       "brex-docs-5",
-      "brex-probe-2"
+      "brex-docs-9",
+      "brex-docs-29"
     ]
   },
   {
@@ -1261,36 +1308,39 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex's docs show budgets/spend-limit tracking ('track spend instantly'), a transactions API for live account/transaction data, and a mobile app to 'view your spend' in real time, plus category/merchant-level expense data via expense management and audit agents. Missing for 10: explicit documentation of merchant-level real-time feed granularity, independent/hands-on confirmation that transactions post same-day rather than batched, and cross-team breakdowns beyond department/cost-center filters.",
+    "rationale": "Brex provides real-time spend tracking via the mobile app (\"view your spend all in one app\"), budgets API tracked instantly by team/cost-center, transactions API for granular transaction-level data, and webhooks for live event notifications, plus marketing claims of managing spend and closing books in real time. Category/department/merchant segmentation is supported via cost_center_id/department_id filters and the transactions API, though merchant-level breakdown isn't explicitly documented as a dashboard feature. Missing for 10: explicit merchant-level dashboard breakdown documentation, independent/hands-on verification that spend updates instantly rather than with delay, and no clear evidence of a dedicated real-time analytics dashboard beyond mobile app spend view.",
     "evidenceIds": [
+      "brex-docs-4",
+      "brex-docs-5",
       "brex-docs-10",
       "brex-docs-21",
-      "brex-docs-4",
-      "brex-docs-8",
-      "brex-docs-15",
-      "brex-docs-19"
+      "brex-docs-37",
+      "brex-docs-19",
+      "brex-docs-35"
     ]
   },
   {
     "productId": "brex",
     "storyId": "receipt-capture-ocr",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm receipt upload via API with automatic matching to expenses (brex-docs-7) and AI capabilities that 'fetch receipts' (brex-docs-23), implying some automated receipt-to-transaction matching, but there is no explicit mention of OCR technology, mobile photo capture, or email-forwarding ingestion of receipts. Missing for 10: explicit OCR extraction description, mobile app photo-capture flow, email-forward-to-file receipt capture, and independent/hands-on confirmation of accuracy.",
+    "rationale": "Brex supports receipt upload with automatic matching to expenses via API (\"Upload receipt and match automatically\", pre-signed S3 URL matching to existing expenses) and AI agents that 'fetch receipts' automatically, but there's no explicit evidence of OCR technology, photo-snap mobile capture flow, or email-forwarding-to-receipt-filing as described in the story. missing for 10: explicit OCR mention, mobile photo-capture UX details, email-forwarding ingestion mechanism, independent/hands-on confirmation of accuracy.",
     "evidenceIds": [
       "brex-docs-7",
+      "brex-docs-27",
       "brex-docs-23"
     ]
   },
   {
     "productId": "brex",
     "storyId": "travel-booking-policy",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Brex has a Travel product referenced by community praise ('Brex Travel was luxurious') and API evidence shows bookings carry a policy object flagging out-of-policy violations at booking time, indicating in-platform policy enforcement rather than post-hoc expensing. However, there is no first-party documentation describing the actual booking flow, flight/hotel inventory, or how policy is applied at the point of booking beyond the changelog note. missing for 10: dedicated travel booking product docs, details on flight/hotel search and booking UX, and independent confirmation of policy enforcement blocking non-compliant bookings.",
+    "rationale": "Brex Travel is a first-party product explicitly combining booking with 'global inventory and auto-enforced expense policies on one platform' (brex-docs-39), and the API changelog shows booking objects carry a `policy` field flagging out-of-policy violations at booking time (brex-docs-6), confirming policy is applied during booking rather than after. Community evidence corroborates actual usage of Brex Travel for booking ('Brex Travel was luxurious') (brex-comm-1). Missing for 10: independent review of the booking flow's policy enforcement UX and more detail on flight/hotel inventory breadth.",
     "evidenceIds": [
+      "brex-docs-39",
       "brex-docs-6",
       "brex-comm-1"
     ]
@@ -1300,27 +1350,29 @@
     "storyId": "trip-expenses-autocollect",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Brex has building blocks — travel bookings carry policy metadata (brex-docs-6), receipts auto-match to expenses (brex-docs-7), and AI agents fetch receipts and file expenses automatically (brex-docs-23) — but there is no direct evidence of a unified itinerary-linked report that consolidates bookings, cards, and receipts into a single trip report. Missing for 10: explicit itinerary/trip report object, documentation of automatic consolidation of card charges+receipts+bookings under one trip record, and independent confirmation this works end-to-end.",
+    "confidence": "medium",
+    "rationale": "Brex Travel and expense docs show pieces of this workflow — bookings carry policy metadata (brex-docs-6), corporate cards integrate with the platform (brex-docs-20/21), and receipts auto-match to expenses (brex-docs-7/brex-docs-27) — and the Travel product page claims to \"simplify travel with global inventory and auto-enforced expense policies on one platform\" (brex-docs-39). However, no evidence explicitly describes a trip/itinerary object that automatically aggregates bookings, card transactions, and receipts into a single itinerary-linked expense report for the employee. Missing for 10: explicit itinerary/trip-report generation feature, documentation of automatic booking-to-card-to-receipt linkage within one report, and any hands-on/independent confirmation of this consolidated view.",
     "evidenceIds": [
+      "brex-docs-39",
       "brex-docs-6",
       "brex-docs-7",
-      "brex-docs-23",
-      "brex-docs-8"
+      "brex-docs-27",
+      "brex-docs-20"
     ]
   },
   {
     "productId": "brex",
     "storyId": "vendor-virtual-cards",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Brex docs confirm virtual card creation (bill-pay, corporate-cards) and spend controls/limits including procurement-specific limits (budgets API, expense-management limits), which together support single-vendor virtual cards for SaaS/procurement spend. However, no evidence explicitly documents a 'lock card to one vendor' feature or merchant-lock enforcement mechanism, only general limit/budget controls. Missing for 10: explicit vendor-lock/merchant-restriction documentation, and independent confirmation of this specific control working as described.",
+    "rationale": "Brex documents virtual card creation (docs-14, docs-38), bulk virtual-card issuance for employees/vendors (docs-30, docs-32), and procurement-specific spend limits (docs-9), which together support finance leads creating vendor-specific virtual cards to isolate compromise risk. Missing for 10: explicit documentation of a 'lock card to single vendor' control or vendor-merchant-locking mechanism, and independent/hands-on evidence confirming this containment behavior in practice.",
     "evidenceIds": [
       "brex-docs-14",
+      "brex-docs-38",
+      "brex-docs-30",
+      "brex-docs-32",
       "brex-docs-9",
-      "brex-docs-5",
-      "brex-docs-8",
       "brex-docs-20"
     ]
   },
