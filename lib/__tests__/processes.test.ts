@@ -1,11 +1,11 @@
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { loadCategory } from '@/lib/data'
+import { isPopulated, loadCategories, loadCategory } from '@/lib/data'
 import {
   buildSimSteps, CADENCE_META, CADENCE_ORDER, cadenceRank, chainTasks, computeCeiling,
   findProcessBySlug, formatMinutes, gapThemes, loadChains, loadProcesses, processesByCadence,
-  processSlug, siteCeiling, slugAliasFor, taskCeiling, VENDOR_ARENA,
-  VENDOR_SIGNUP_URL, vendorChipInfo, vendorProductId, vendorRoles,
+  processSlug, siteCeiling, slugAliasFor, STEP_OPTIONS_CAP, stepVendorOptions, taskCeiling,
+  VENDOR_ARENA, VENDOR_SIGNUP_URL, vendorChipInfo, vendorProductId, vendorRoles,
   type DagNode,
 } from '@/lib/processes'
 
@@ -175,10 +175,11 @@ describe('vendor -> arena mapping', () => {
   it('every corpus vendorOption is either arena-tracked or an intentional unlinked chip', () => {
     const tracked = new Set(Object.keys(VENDOR_ARENA))
     // Untracked options we still show honestly (no arena yet) — keep this list deliberate.
+    // (legalzoom and mailchimp graduated to tracked when legal-ops/email-marketing shipped.)
     const allowedUntracked = new Set([
-      'doola', 'google_sheets', 'google_drive', 'dropbox', 'legalzoom', 'northwest',
+      'doola', 'google_sheets', 'google_drive', 'dropbox', 'northwest',
       'vanta', 'termly', 'iubenda', 'producthunt', 'betalist', 'hackernews',
-      'ahrefs', 'semrush', 'google_search_console', 'apollo', 'mailchimp', 'sendgrid',
+      'ahrefs', 'semrush', 'google_search_console', 'apollo', 'sendgrid',
     ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {
@@ -212,13 +213,20 @@ describe('vendor -> arena mapping', () => {
     expect(doola.label).toBe('Doola')
   })
 
-  it('the formation-service step lists the real market: clerky, stripe_atlas, firstbase tracked + doola unlinked', () => {
+  it('the formation-service step lists the real market: 4 tracked formation services + honest unlinked chips', () => {
     const incorporate = loadProcesses(DATA_DIR).find((t) => t.id === 'form_001')!
     const choose = incorporate.dag.nodes.find((n) => n.label === 'Choose formation service')!
-    expect(choose.vendorOptions).toEqual(['clerky', 'stripe_atlas', 'firstbase', 'doola'])
-    const chips = choose.vendorOptions!.map((v) => vendorChipInfo(v, DATA_DIR))
-    expect(chips.filter((c) => c.productId).length).toBe(3)
-    expect(chips.filter((c) => !c.productId).map((c) => c.label)).toEqual(['Doola'])
+    // Deliberately CURATED, not arena-derived: the function (formation services) is narrower
+    // than legal-ops, whose roster also holds e-signature and contract tools.
+    expect(choose.optionsArenaId).toBeUndefined()
+    expect(choose.vendorOptions).toEqual([
+      'clerky', 'stripe_atlas', 'firstbase', 'legalzoom', 'northwest', 'doola',
+    ])
+    const chips = stepVendorOptions(choose, DATA_DIR)
+    expect(chips.filter((c) => c.productId).length).toBe(4)
+    expect(chips.filter((c) => !c.productId).map((c) => c.label)).toEqual(
+      ['Northwest Registered Agent', 'Doola'],
+    )
   })
 
   it('track-runway lists the real market: banking AND accounting options, not just Mercury', () => {
@@ -248,6 +256,17 @@ describe('vendor -> arena mapping', () => {
     expect(roles.filter((r) => r.arenaId === 'payroll').length).toBe(1)
   })
 
+  it('vendorRoles includes arenas claimed only via a step optionsArenaId (corporate cards → expense-management)', () => {
+    const cards = loadProcesses(DATA_DIR).find((t) => t.id === 'qs_024')!
+    const roles = vendorRoles([cards], DATA_DIR)
+    const expense = roles.find((r) => r.arenaId === 'expense-management')
+    expect(expense).toBeDefined()
+    // No curated qs_024 vendor maps to expense-management, so the role's canonical/default is
+    // the arena's agent-readiness leader.
+    expect(expense!.canonicalVendor).toBe(expense!.defaultProductId)
+    expect(expense!.alternatives.map((o) => o.id)).toContain(expense!.defaultProductId)
+  })
+
   it('node vendors take precedence over the task vendor list as canonical', () => {
     const tasks = loadProcesses(DATA_DIR)
     const hire = tasks.find((t) => t.id === 'hr_001')!
@@ -255,6 +274,89 @@ describe('vendor -> arena mapping', () => {
     const payroll = roles.find((r) => r.arenaId === 'payroll')
     expect(payroll?.canonicalVendor).toBe('gusto')
     expect(payroll!.stepCount).toBeGreaterThan(0)
+  })
+})
+
+describe('derived step options (optionsArenaId)', () => {
+  it('every optionsArenaId in the corpus is a real, populated arena', () => {
+    const arenaIds = new Set(loadCategories(DATA_DIR).map((c) => c.id))
+    for (const t of loadProcesses(DATA_DIR)) {
+      for (const n of t.dag.nodes) {
+        if (!n.optionsArenaId) continue
+        expect(arenaIds.has(n.optionsArenaId), `${t.id}/${n.id}: unknown arena ${n.optionsArenaId}`).toBe(true)
+        expect(isPopulated(n.optionsArenaId, DATA_DIR), `${t.id}/${n.id}: arena ${n.optionsArenaId} not populated`).toBe(true)
+        // Derived steps keep a curated default set too — the frozen fallback and role seeds.
+        expect(n.vendorOptions?.length, `${t.id}/${n.id}: derived step should keep curated vendorOptions`).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('a derived step lists the arena\'s CURRENT roster in PA-Score (leaderboard) order, every chip tracked', () => {
+    const payrollStep = loadProcesses(DATA_DIR)
+      .find((t) => t.id === 'qs_063')!.dag.nodes.find((n) => n.id === 'n3')!
+    expect(payrollStep.optionsArenaId).toBe('payroll')
+    const chips = stepVendorOptions(payrollStep, DATA_DIR)
+    const leaderboard = loadCategory('payroll', DATA_DIR).rankings.leaderboard.map((e) => e.productId)
+    // Every curated payroll option is already in the roster, so the list IS the leaderboard.
+    expect(chips.map((c) => c.productId)).toEqual(leaderboard.slice(0, STEP_OPTIONS_CAP))
+    for (const c of chips) {
+      expect(c.arenaId).toBe('payroll')
+      expect(c.rank).toBeGreaterThanOrEqual(1)
+    }
+  })
+
+  it('caps the derived roster at STEP_OPTIONS_CAP and appends curated extras after it', () => {
+    // ai-coding judges >8 products; the derived list is the top 8 by PA Score, and the curated
+    // option that falls outside the top 8 (cursor) is appended rather than dropped.
+    const codeStep = loadProcesses(DATA_DIR)
+      .find((t) => t.id === 'sw_001')!.dag.nodes.find((n) => n.id === 'n3')!
+    expect(codeStep.optionsArenaId).toBe('ai-coding')
+    const leaderboard = loadCategory('ai-coding', DATA_DIR).rankings.leaderboard
+    expect(leaderboard.length).toBeGreaterThan(STEP_OPTIONS_CAP)
+    const chips = stepVendorOptions(codeStep, DATA_DIR)
+    expect(chips.slice(0, STEP_OPTIONS_CAP).map((c) => c.productId)).toEqual(
+      leaderboard.slice(0, STEP_OPTIONS_CAP).map((e) => e.productId),
+    )
+    const extras = chips.slice(STEP_OPTIONS_CAP)
+    for (const extra of extras) {
+      expect(codeStep.vendorOptions!.map(vendorProductId)).toContain(extra.productId ?? extra.vendor)
+    }
+    // No duplicates: curated options already in the derived roster are subsumed, not repeated.
+    const ids = chips.map((c) => c.productId ?? c.vendor)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('keeps curated untracked extras as honest unlinked chips after the derived roster', () => {
+    const runwayStep = loadProcesses(DATA_DIR)
+      .find((t) => t.id === 'qs_050')!.dag.nodes.find((n) => n.id === 'n3')!
+    expect(runwayStep.optionsArenaId).toBe('accounting')
+    const chips = stepVendorOptions(runwayStep, DATA_DIR)
+    const sheets = chips.find((c) => c.label === 'Google Sheets')
+    expect(sheets).toBeDefined()
+    expect(sheets!.productId).toBeNull()
+    // …and it sorts after every tracked accounting chip.
+    expect(chips.indexOf(sheets!)).toBeGreaterThanOrEqual(
+      loadCategory('accounting', DATA_DIR).rankings.leaderboard.length,
+    )
+  })
+
+  it('curated extras tracked in ANOTHER arena keep their own arena chip (release notes: Notion after code hosts)', () => {
+    const notesStep = loadProcesses(DATA_DIR)
+      .find((t) => t.id === 'sw_002')!.dag.nodes.find((n) => n.id === 'n3')!
+    expect(notesStep.optionsArenaId).toBe('code-hosting')
+    const chips = stepVendorOptions(notesStep, DATA_DIR)
+    const notion = chips.find((c) => c.vendor === 'notion')
+    expect(notion?.arenaId).toBe('project-management')
+    expect(chips.filter((c) => c.arenaId === 'code-hosting').length).toBe(
+      loadCategory('code-hosting', DATA_DIR).rankings.leaderboard.length,
+    )
+  })
+
+  it('steps without an optionsArenaId keep their curated options exactly (coverage gaps stay frozen)', () => {
+    const storage = loadProcesses(DATA_DIR)
+      .find((t) => t.id === 'qs_015')!.dag.nodes.find((n) => n.id === 'n1')!
+    expect(storage.optionsArenaId).toBeUndefined()
+    expect(stepVendorOptions(storage, DATA_DIR).map((c) => c.vendor)).toEqual(storage.vendorOptions)
   })
 })
 
