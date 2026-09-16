@@ -3,18 +3,19 @@
     "productId": "clickhouse",
     "storyId": "agent-provisions-database",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "ClickHouse's CLI (clickhousectl) explicitly supports creating cloud-managed clusters, managing resources, and running queries, and the official MCP server (validated via a keyless JSON-RPC handshake) lets an agent query ClickHouse and access official 'agent skills' — all without needing the dashboard. However, no evidence explicitly shows an API/CLI/MCP call that fetches a connection string, nor does the MCP server itself perform cluster provisioning (it's oriented to querying); schema/query execution is demonstrated via clickhouse-local rather than a full cloud provisioning flow. Missing for 10: explicit connection-string retrieval endpoint/command, and an end-to-end MCP-driven provision+schema+query example on ClickHouse Cloud rather than just clickhouse-local.",
+    "rationale": "ClickHouse's CLI (clickhousectl) documentation shows it can create/manage ClickHouse Cloud clusters, manage cloud resources, and execute queries against ClickHouse servers entirely from the command line (clickhouse-docs-17,20,31,32), and an official MCP server (mcp-clickhouse) lets AI assistants connect and query ClickHouse (clickhouse-docs-5,6, clickhouse-probe-4), plus an OpenAPI spec exists for API-based automation (clickhouse-probe-3). However, no evidence explicitly documents fetching a connection string as a discrete step, and the MCP server is framed for connecting to/querying existing databases rather than full provisioning, so the end-to-end 'create→connect→schema→query' agent workflow is only partially evidenced rather than demonstrated as a single seamless path. Missing for 10: explicit connection-string retrieval step, an end-to-end walkthrough or hands-on example of an agent provisioning a fresh cluster via CLI/MCP without dashboard, and independent corroboration of this workflow succeeding in practice.",
     "evidenceIds": [
-      "clickhouse-docs-3",
-      "clickhouse-docs-16",
+      "clickhouse-docs-17",
       "clickhouse-docs-20",
       "clickhouse-docs-31",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2",
-      "clickhouse-probe-rt-3",
-      "clickhouse-docs-6"
+      "clickhouse-docs-32",
+      "clickhouse-docs-5",
+      "clickhouse-docs-6",
+      "clickhouse-probe-3",
+      "clickhouse-probe-4",
+      "clickhouse-probe-5"
     ]
   },
   {
@@ -23,79 +24,85 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "ClickHouse ships an official MCP server (mcp-clickhouse) that lets an AI agent run SQL against ClickHouse via a keyless JSON-RPC handshake, and points to an official Agent Skills repo for coding-agent integration, showing real agent-delegated SQL execution. However, the evidence never documents that the MCP tools are scoped to distinguish read-only queries from destructive/DDL operations (no mention of a read-only mode, permission tiers, or tool-level safety separation). Missing for 10: explicit documentation of read-only vs destructive tool scoping, evidence of permission/role enforcement at the tool level, and independent confirmation that destructive actions are gated or blocked.",
+    "rationale": "ClickHouse ships an official MCP server (mcp-clickhouse) letting AI assistants connect and run queries against ClickHouse, and docs mention agent skills/CLI integration, so agents can execute SQL through a sanctioned tool interface. However, none of the evidence describes scoped tool definitions that explicitly separate read-only queries from destructive/schema-changing operations, nor any permissioning model for safe delegation. missing for 10: documentation of read-only vs write/destructive tool scoping, permission controls or guardrails within the MCP server, independent confirmation that agents can't run destructive ops unintentionally.",
     "evidenceIds": [
       "clickhouse-docs-5",
       "clickhouse-docs-6",
       "clickhouse-probe-4",
-      "clickhouse-probe-rt-3"
+      "clickhouse-docs-4"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms https://clickhouse.com/llms.txt returns HTTP 200 with structured content describing ClickHouse, directly satisfying the llms.txt story, and this is reinforced by agent-oriented docs/tooling (official MCP server, agent skills repo, CLI) that an agent could also be pointed at. Missing for 10: independent/community confirmation that agents actually consume llms.txt successfully, and no mention of llms.txt in the official docs pages themselves (only the raw endpoint).",
+    "rationale": "A live probe confirms llms.txt is served at clickhouse.com/llms.txt returning HTTP 200 with structured content describing ClickHouse, directly satisfying the story; ClickHouse also documents agent skills and MCP integration as complementary agent-oriented resources. Missing for 10: independent/community confirmation that agents actually consume this llms.txt successfully in practice.",
     "evidenceIds": [
       "clickhouse-probe-1",
       "clickhouse-docs-4",
-      "clickhouse-probe-rt-3",
       "clickhouse-docs-5"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "ClickHouse's evidence pack shows infrastructure for AI assistants to connect to and query ClickHouse (MCP server, agent skills, vector search for embeddings) but no evidence of ClickHouse itself generating insights or suggestions natively inside the product — no built-in natural-language analytics, anomaly-detection dashboard, or automated insight feature is documented. The capability described (AI-generated insights surfaced inside the product) is a fair ask for a data platform but remains unevidenced here.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "ClickHouse shows early in-product AI features — an AI agent that queries logs/traces/metrics and surfaces summaries in ClickStack notebooks, plus private-preview AI Functions/Inference Service in ClickHouse Cloud — but both are waitlist/private-preview only, not generally available, and no hands-on or community evidence confirms them working in production. Missing for 10: GA availability, independent/community validation of insight quality, and broader in-product suggestion features beyond observability notebooks.",
+    "evidenceIds": [
+      "clickhouse-docs-33",
+      "clickhouse-docs-38"
+    ]
   },
   {
     "productId": "clickhouse",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "ClickHouse offers background-running automations in the data-layer sense — Incremental Materialized Views execute automatically on every insert, shifting computation off query time, and asynchronous/bulk insert strategies run without blocking the caller — but there is no evidence of an AI-agent-specific automation/scheduling layer (e.g., a scheduled agent job runner, cron-like agentic workflow trigger) that ties this to autonomous AI behavior beyond MCP query access. missing for 10: a documented mechanism for scheduling/running AI-agent-driven automations autonomously (not just data pipeline triggers), independent hands-on confirmation of any such agentic scheduler.",
+    "rationale": "ClickHouse offers building blocks that could let an AI-native user configure background automation — Incremental Materialized Views that run computation automatically at insert time, ClickPipes for continuous automated data ingestion, and an official MCP server/agent skills so an AI assistant can issue the SQL to set these up — but there is no first-party or independent evidence of a named 'autonomous agent automation' feature that an AI agent sets up and monitors end-to-end in the background; the closest agentic feature (AI notebooks in ClickStack) is an interactive waitlist preview, not an autonomous background automation. Missing for 10: a documented autonomous scheduling/orchestration feature explicitly designed for AI agents, and evidence of it being used hands-on to run unattended background jobs.",
     "evidenceIds": [
       "clickhouse-docs-9",
       "clickhouse-docs-18",
-      "clickhouse-docs-10",
+      "clickhouse-docs-28",
       "clickhouse-docs-5",
-      "clickhouse-docs-6"
+      "clickhouse-docs-6",
+      "clickhouse-docs-4",
+      "clickhouse-docs-33"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows ClickHouse offers an MCP server so external AI assistants/agents can connect to and query ClickHouse, and CLI tools for humans, but there is no evidence of a built-in AI assistant embedded inside ClickHouse itself that a user can delegate tasks to. missing for 10: any built-in/native AI assistant UI or feature within ClickHouse (e.g., natural-language-to-SQL copilot), evidence of task delegation to an internal assistant.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "ClickHouse Cloud is previewing an in-product AI agent (ClickStack AI notebooks) that can query logs/traces/metrics on the user's behalf, and a separate AI Functions/Inference Service is also in private preview — but both are waitlist-only, not generally available built-in assistants. Missing for 10: GA availability of the assistant, first-party documentation beyond waitlist pages, and independent/hands-on evidence of it actually delegating tasks.",
     "evidenceIds": [
-      "clickhouse-docs-5",
-      "clickhouse-docs-6",
-      "clickhouse-probe-4"
+      "clickhouse-docs-33",
+      "clickhouse-docs-38",
+      "clickhouse-docs-39"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "ClickHouse ships a single-binary CLI/server and clickhouse-local that install and run headlessly via `curl | sh` with no account/keys, verified in a runtime probe executing a full SQL roundtrip non-interactively; it also has HTTP interface with scriptable format headers, making it straightforward to script in CI. missing for 10: no explicit CI pipeline example (e.g., GitHub Actions workflow) or dedicated 'headless/automation' doc section beyond install + local usage.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "ClickHouse ships a single-binary CLI, clickhouse-local for scripting without a full install, and an HTTP interface with explicit format control (X-ClickHouse-Format), all of which support headless/automated use, plus a simple curl-based install script suited for CI environments. Missing for 10: no explicit CI/pipeline example or GitHub Actions integration doc, and no independent hands-on report specifically confirming CI usage.",
     "evidenceIds": [
-      "clickhouse-gh-1",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2",
+      "clickhouse-docs-1",
       "clickhouse-docs-15",
       "clickhouse-docs-23",
-      "clickhouse-docs-19"
+      "clickhouse-docs-27",
+      "clickhouse-docs-14",
+      "clickhouse-docs-19",
+      "clickhouse-gh-1",
+      "clickhouse-probe-5"
     ]
   },
   {
@@ -104,41 +111,35 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "ClickHouse is a database engine, not an agentic host that itself consumes external MCP servers' tools; its MCP-related evidence is entirely about ClickHouse publishing its own MCP server (mcp-clickhouse) so external AI assistants can call ClickHouse's tools, which is the opposite direction of this story.",
-    "evidenceIds": [
-      "clickhouse-docs-5",
-      "clickhouse-docs-6",
-      "clickhouse-probe-4",
-      "clickhouse-probe-rt-3"
-    ]
+    "rationale": "ClickHouse is a database/analytics platform, not an agent or assistant that consumes external tools; the evidence shows ClickHouse *provides* an MCP server so AI assistants can query ClickHouse (the reverse direction), not that ClickHouse itself plugs in and uses external MCP servers as tools. This axis is a category mismatch for a database product.",
+    "evidenceIds": []
   },
   {
     "productId": "clickhouse",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "ClickHouse ships an official MCP server (github.com/ClickHouse/mcp-clickhouse) with documentation on connecting AI assistants, and a runtime probe confirms a real keyless stdio JSON-RPC initialize handshake succeeded, returning serverInfo and pointing to official agent skills. Missing for 10: independent third-party review of the MCP server beyond the vendor probe.",
+    "rationale": "ClickHouse ships an official MCP server (mcp-clickhouse on GitHub) plus docs guiding users to choose an MCP client/framework to connect an AI assistant to ClickHouse, directly matching the story. Missing for 10: independent hands-on verification of the MCP server's reliability/feature completeness beyond first-party docs.",
     "evidenceIds": [
       "clickhouse-docs-5",
       "clickhouse-docs-6",
-      "clickhouse-probe-4",
-      "clickhouse-probe-rt-3"
+      "clickhouse-probe-4"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "ClickHouse itself is a SQL-driven database, but it ships an official MCP server (mcp-clickhouse) and 'agent skills' that let AI assistants translate natural-language requests into ClickHouse operations, and a runtime probe confirms the MCP server completes a real keyless JSON-RPC handshake exposing tools for AI clients. This is not native NL parsing inside ClickHouse itself—it depends on an external AI assistant/agent framework to interpret language, so the story is only partially satisfied. missing for 10: built-in NL interface without external MCP client, independent hands-on evidence of a full NL-to-query session, documentation of NL command coverage/limits.",
+    "rationale": "ClickHouse supports natural-language operation indirectly via its official MCP server and agent skills, which let external AI assistants translate NL into SQL/actions against ClickHouse, and a waitlisted AI-notebooks feature lets users 'describe an issue in plain language' to get results. However, this relies on third-party AI clients/MCP frameworks rather than a built-in NL interface, and the most direct plain-language feature is still in private preview/waitlist, not GA. Missing for 10: a generally-available first-party NL command interface (not waitlist-only), and independent hands-on evidence of NL command reliability.",
     "evidenceIds": [
+      "clickhouse-docs-4",
       "clickhouse-docs-5",
       "clickhouse-docs-6",
-      "clickhouse-docs-4",
-      "clickhouse-probe-4",
-      "clickhouse-probe-rt-3"
+      "clickhouse-docs-33",
+      "clickhouse-probe-4"
     ]
   },
   {
@@ -147,16 +148,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "ClickHouse ships an official CLI (clickhousectl) that manages local server versions, cloud clusters, ClickPipes, and can install official agent skills into coding agents — directly relevant to AI-native agentic workflows — corroborated by a keyless install/run runtime probe. missing for 10: independent/community hands-on validation specifically of clickhousectl (community evidence covers the DB generally, not this CLI tool).",
+    "rationale": "ClickHouse ships an official CLI (clickhousectl, installed via curl https://clickhouse.com/cli | sh) that manages local/cloud ClickHouse instances, and it explicitly supports installing official agent skills into coding agents, directly targeting AI-native/agentic workflows. missing for 10: independent hands-on community corroboration of the CLI's agentic features specifically (community evidence pack covers general ClickHouse use, not this CLI).",
     "evidenceIds": [
       "clickhouse-docs-2",
       "clickhouse-docs-4",
       "clickhouse-docs-16",
-      "clickhouse-docs-20",
-      "clickhouse-docs-28",
       "clickhouse-docs-29",
-      "clickhouse-probe-5",
-      "clickhouse-probe-rt-1"
+      "clickhouse-docs-42",
+      "clickhouse-probe-5"
     ]
   },
   {
@@ -165,16 +164,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "ClickHouse exposes a documented HTTP interface with a published OpenAPI spec (clickhouse-probe-3), an official MCP server enabling AI assistants to call it via JSON-RPC (clickhouse-docs-5, clickhouse-docs-6, clickhouse-probe-4, clickhouse-probe-rt-3), and a CLI/clickhouse-local for scriptable SQL access (clickhouse-probe-rt-1, clickhouse-probe-rt-2), all confirmed working keylessly in hands-on runtime probes. missing for 10: no independent third-party corroboration of the OpenAPI/HTTP API's completeness or stability, and no evidence of rate-limits/versioning guarantees for programmatic/agentic use at scale.",
+    "rationale": "ClickHouse exposes a documented public HTTP/SQL API, an OpenAPI spec (clickhouse-probe-3), and an llms.txt for AI-native discovery (clickhouse-probe-1), plus a CLI and official MCP server for programmatic/agentic access. This gives AI-native users multiple documented, machine-consumable interfaces to drive the product. missing for 10: independent hands-on validation of the OpenAPI/HTTP API from third parties, and more detail on API versioning/stability guarantees.",
     "evidenceIds": [
+      "clickhouse-probe-1",
       "clickhouse-probe-3",
-      "clickhouse-docs-5",
-      "clickhouse-docs-6",
       "clickhouse-probe-4",
-      "clickhouse-probe-rt-3",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2",
-      "clickhouse-probe-1"
+      "clickhouse-probe-5",
+      "clickhouse-docs-5",
+      "clickhouse-docs-6"
     ]
   },
   {
@@ -182,12 +179,9 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows ClickHouse Cloud/MCP integration requires database credentials at tool-call time, but nothing documents issuing scoped or least-privilege API credentials/tokens specifically for an agent (e.g., restricted roles, read-only keys, revocable scoped tokens). Missing for 10: any documentation of role-based access control, scoped API tokens, or least-privilege credential provisioning for agent use.",
-    "evidenceIds": [
-      "clickhouse-docs-31",
-      "clickhouse-probe-rt-3"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence describes issuing scoped or least-privilege API credentials/tokens specifically for AI agents; ClickHouse Cloud has general access controls but nothing in this pack documents credential scoping tailored to agentic use.",
+    "evidenceIds": []
   },
   {
     "productId": "clickhouse",
@@ -195,7 +189,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers CLI tooling, MCP server, HTTP interface details, and OpenAPI spec, but never mentions official client SDKs (e.g., Python/Go/Java driver libraries) for building AI-native applications against ClickHouse. This axis is fair for a database product, but no citations demonstrate an official SDK ecosystem.",
+    "rationale": "The evidence pack documents ClickHouse's CLI, MCP server, and OpenAPI spec but contains no mention of official client SDKs (e.g., Python, Go, Java client libraries) for building applications, which is what this story specifically asks about.",
     "evidenceIds": []
   },
   {
@@ -204,7 +198,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "No evidence of any webhook subscription or event-notification mechanism in ClickHouse; the evidence covers CLI, MCP, cloud pricing, vector search, and materialized views but nothing about webhooks for event-driven notifications.",
     "evidenceIds": []
   },
   {
@@ -213,15 +207,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "ClickHouse's core design (columnar MergeTree, materialized views to precompute aggregations, parallelized inserts/queries) is built for fast analytical aggregation directly on the OLTP-adjacent store, and community reports corroborate real-time aggregation over hundreds of millions to billions of rows with sub-minute/second latency suitable for dashboards, avoiding a separate warehouse. missing for 10: no first-party published dashboard-benchmark numbers in the pack, and some community notes mention JOIN/scale caveats requiring tuning at very large multi-node scale.",
+    "rationale": "ClickHouse's core design (columnar, MergeTree, incremental materialized views to precompute aggregations) is documented for fast analytical queries, and this is strongly corroborated by independent community reports of real-time aggregation over hundreds of millions/billions of rows at low cost, replacing Elasticsearch/Druid at scale, and use as a single-node BI backend without a separate warehouse (clickhouse-comm-18, -20, -12, -13, -15, -11, clickhouse-docs-9/18/12). Missing for 10: a documented head-to-head dashboard-latency benchmark, and mention of caveats like limited JOIN performance (clickhouse-comm-19) that could affect some aggregation workloads.",
     "evidenceIds": [
       "clickhouse-docs-9",
       "clickhouse-docs-18",
-      "clickhouse-docs-13",
+      "clickhouse-docs-12",
       "clickhouse-comm-18",
       "clickhouse-comm-20",
       "clickhouse-comm-12",
-      "clickhouse-comm-13"
+      "clickhouse-comm-13",
+      "clickhouse-comm-15",
+      "clickhouse-comm-11",
+      "clickhouse-comm-19"
     ]
   },
   {
@@ -230,7 +227,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an OpenAPI spec exists (clickhouse-probe-3) and CLI/SQL tools for local exploration, but there is no evidence of an actual interactive API reference page with runnable/try-it examples in docs. Missing for 10: an interactive docs site with embedded runnable API examples, evidence of a 'try it' console tied to the OpenAPI spec.",
+    "rationale": "The only relevant evidence is that an OpenAPI spec file exists at clickhouse.com/openapi.json (clickhouse-probe-3), but there is no evidence of an actual interactive API reference UI (e.g., Swagger/Redoc-style browser) or runnable code examples tied to it. Missing for 10: an interactive docs page, 'try it out' functionality, and runnable example snippets tied to the API reference.",
     "evidenceIds": [
       "clickhouse-probe-3"
     ]
@@ -241,24 +238,27 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms https://clickhouse.com/openapi.json returns HTTP 200 and contains a valid \"openapi\" key, i.e., ClickHouse publishes a machine-readable OpenAPI spec. Missing for 10: no first-party docs page explicitly linking/describing the OpenAPI spec's scope or versioning, and no independent community confirmation of its use.",
+    "rationale": "A probe confirms a live, machine-readable OpenAPI spec at https://clickhouse.com/openapi.json returning HTTP 200 with an 'openapi' key, and ClickHouse also publishes an llms.txt for AI-native discovery. Missing for 10: no independent/community corroboration of the OpenAPI spec's completeness or usage.",
     "evidenceIds": [
-      "clickhouse-probe-3"
+      "clickhouse-probe-3",
+      "clickhouse-probe-1"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "api-sandbox",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "ClickHouse ships clickhouse-local, a keyless, install-free single-binary version of ClickHouse for local SQL experimentation on local/remote files, confirmed by a runtime probe running a full CREATE/INSERT/SELECT roundtrip with no server, account, or production connection required — an ideal disposable sandbox for AI-native testing. clickhousectl also lets developers spin up local ClickHouse servers/versions independent of any cloud/production instance. missing for 10: explicit vendor-documented 'sandbox/staging cloud environment' distinct from production, and independent community confirmation specifically framed around avoiding production data.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "ClickHouse offers clickhouse-local and clickhousectl for spinning up local/ephemeral ClickHouse instances for testing without touching a production cluster, and chdb for in-process experimentation, which functionally serve as sandbox environments. However, there's no explicit 'sandbox mode' or dedicated test-data isolation feature marketed for AI agents specifically, and no evidence of built-in safeguards preventing accidental production writes. Missing for 10: explicit sandbox/test-environment product feature, documentation tying local instances to safe AI-agent testing workflows, and independent verification that local/dev setups are isolated from production by design.",
     "evidenceIds": [
+      "clickhouse-docs-1",
       "clickhouse-docs-15",
-      "clickhouse-docs-23",
+      "clickhouse-docs-16",
       "clickhouse-docs-29",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2"
+      "clickhouse-docs-35",
+      "clickhouse-docs-27",
+      "clickhouse-probe-5"
     ]
   },
   {
@@ -267,8 +267,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows changelogs documenting behavior changes across versions (e.g., default setting changes, HTTP header semantics) but nowhere states a formal versioned-API contract or documented deprecation policy for ClickHouse's SQL/HTTP/client APIs. A database product could reasonably be expected to publish such a policy, so the axis applies, but no evidence pack item confirms one exists.",
-    "evidenceIds": []
+    "rationale": "The evidence shows changelog entries documenting breaking behavior changes (e.g., default value and HTTP header changes) and an OpenAPI spec exists, but there is no documented API versioning scheme or formal deprecation policy anywhere in the pack.",
+    "evidenceIds": [
+      "clickhouse-docs-13",
+      "clickhouse-docs-14",
+      "clickhouse-docs-19",
+      "clickhouse-probe-3"
+    ]
   },
   {
     "productId": "clickhouse",
@@ -285,18 +290,17 @@
     "productId": "clickhouse",
     "storyId": "automation-bulk-operations",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "ClickHouse's SQL engine supports bulk operations natively — bulk/async inserts, INSERT SELECT with parallelized threads, materialized views for pre-aggregation, and clickhouse-local for bulk file processing, all confirmed by hands-on probes running real multi-row SQL roundtrips keylessly. Community evidence corroborates billions of rows processed daily and bulk analytical workloads at scale. missing for 10: no explicit evidence of bulk UPDATE/DELETE across many rows (community notes limited DELETE support), and no dedicated AI-native bulk-operation API beyond standard SQL/MCP tool-call semantics.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "ClickHouse's SQL engine natively supports bulk operations across massive row counts — documented bulk/async insert strategies, parallelized INSERT SELECT by default, and materialized views that batch-process computation at insert time — and this is corroborated by independent users ingesting billions of rows/day with fast bulk queries. AI-native access to this bulk capability is enabled via the official CLI and MCP server, letting an AI agent issue such bulk SQL operations directly. Missing for 10: no evidence of an AI-agent-specific batch/bulk API (e.g., a dedicated bulk-operation endpoint for the MCP tool) beyond general SQL bulk insert/query support.",
     "evidenceIds": [
       "clickhouse-docs-10",
       "clickhouse-docs-13",
-      "clickhouse-docs-15",
       "clickhouse-docs-18",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2",
       "clickhouse-comm-18",
-      "clickhouse-comm-19"
+      "clickhouse-comm-19",
+      "clickhouse-probe-4",
+      "clickhouse-probe-5"
     ]
   },
   {
@@ -317,7 +321,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "ClickHouse is a database with CLI, cloud, MCP, and materialized view features, but there is no evidence of a job scheduler or workflow orchestration capability for recurring tasks; this is an applicable axis (databases can offer scheduled queries/cron jobs) but no such feature is documented.",
     "evidenceIds": []
   },
   {
@@ -332,17 +336,19 @@
   {
     "productId": "clickhouse",
     "storyId": "autoscaling-under-load",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "ClickHouse Cloud docs explicitly claim automatic scale-to-zero when idle, separate scaling of compute/storage, and the ability to 'set compute autoscaling limits' and 'start building instantly without having to size and scale your cluster,' which directly supports auto up/down scaling without manual resizing. However this applies only to the Cloud offering (not self-hosted OSS, where community reports note scaling and ops burden are manual/harder), and there is no independent or hands-on evidence confirming seamless scale-up under load or a no-downtime guarantee during scale events. Missing for 10: independent/hands-on verification of scale-up behavior under load, explicit no-downtime guarantee documentation, and clarity that this applies beyond the managed Cloud product.",
+    "rationale": "ClickHouse Cloud docs explicitly state automatic compute autoscaling up and down, including scale-to-zero when idle, and usage-based pricing tied to actual usage rather than manual resizing (clickhouse-docs-40, clickhouse-docs-11, clickhouse-docs-25/41, clickhouse-docs-26). Autoscaling limits can also be configured to control cost (clickhouse-docs-21), directly matching the platform-engineer's need for automatic, downtime-free scaling.  missing for 10: independent/hands-on confirmation that Cloud autoscaling avoids downtime in practice, and clarification of applicability to self-managed ClickHouse (community feedback in clickhouse-comm-8/9 notes self-hosted clusters historically lack storage/compute separation and require manual ops).",
     "evidenceIds": [
+      "clickhouse-docs-40",
       "clickhouse-docs-11",
-      "clickhouse-docs-21",
       "clickhouse-docs-25",
+      "clickhouse-docs-41",
       "clickhouse-docs-26",
+      "clickhouse-docs-21",
       "clickhouse-comm-8",
-      "clickhouse-comm-17"
+      "clickhouse-comm-9"
     ]
   },
   {
@@ -351,7 +357,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack shows ClickHouse (or ClickHouse Cloud) supports a database branching model with reset-to-parent or point-in-time restore of a branch. The pack covers local dev tooling, cloud setup, MCP/agent integrations, and pricing/scaling, but nothing about branch-based schema/data workflows or restoring a branch without rebuilding from a dump.",
+    "rationale": "The evidence pack contains no mention of database branching, parent/child branch resets, or restoring branch state without rebuilding from a dump — this is a database branching feature (as seen in products like PlanetScale/Neon) that ClickHouse's docs never reference. Nothing in the docs, changelogs, or community discussion addresses branch lifecycle management.",
     "evidenceIds": []
   },
   {
@@ -359,8 +365,8 @@
     "storyId": "builtin-connection-pooling",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item describes a built-in connection pooler for ClickHouse handling thousands of concurrent connections; the pack covers CLI tools, MCP, materialized views, pricing, and community sentiment but nothing about connection pooling/proxy replacement. The axis is fair for a database platform (connection scaling is a common ask), so absence of evidence yields 'none' rather than 'na'.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions a built-in connection pooler, pgbouncer replacement, or handling of concurrent connection scaling within ClickHouse itself; evidence covers CLI, MCP, pricing autoscaling of compute, and general performance but not connection pooling.",
     "evidenceIds": []
   },
   {
@@ -369,7 +375,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a branching feature (e.g., copy-on-write database branches tied to PRs) or CI/CD integration for spinning up/tearing down ephemeral ClickHouse instances per pull request. The pack covers CLI tooling, cloud setup, pricing, and MCP/AI integrations but nothing about PR-based branching workflows.",
+    "rationale": "No evidence of any database-branching feature (e.g., copy-on-write branches per PR) or CI/deploy-platform integration for creating/tearing down ephemeral database branches; ClickHouse's evidence covers local/cloud CLI setup, scaling, and pricing but nothing about branch-per-PR workflows.",
     "evidenceIds": []
   },
   {
@@ -378,17 +384,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "ClickHouse ships an official CLI (clickhousectl) that installs/manages local versions, launches/manages local servers, executes queries, sets up cloud clusters, and pushes local dev to cloud, plus clickhouse-local for keyless SQL inspection, confirmed by hands-on runtime probes showing a real keyless install and SQL roundtrip. This covers create, connect, shell, and inspect without a dashboard. missing for 10: independent (non-vendor) hands-on review of clickhousectl itself (only clickhouse-local/install were runtime-verified) and more detail on 'inspect databases' UX (e.g. schema browsing) beyond query execution.",
+    "rationale": "ClickHouse ships an official clickhousectl CLI documented to install/manage local versions, launch/manage local servers, execute queries against servers, connect to Postgres, and push local dev to cloud, covering the create/connect/shell/inspect loop without a dashboard; clickhouse-local and single-binary install further support local dev workflows. Missing for 10: independent hands-on developer accounts specifically praising/critiquing the clickhousectl CLI daily loop (community evidence covers ClickHouse server usage generally, not the CLI tool itself), and detail on 'inspect' commands like schema browsing beyond query execution.",
     "evidenceIds": [
-      "clickhouse-docs-2",
       "clickhouse-docs-16",
-      "clickhouse-docs-17",
-      "clickhouse-docs-20",
       "clickhouse-docs-29",
       "clickhouse-docs-31",
+      "clickhouse-docs-32",
+      "clickhouse-docs-17",
+      "clickhouse-docs-42",
       "clickhouse-probe-5",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2"
+      "clickhouse-docs-15",
+      "clickhouse-docs-23"
     ]
   },
   {
@@ -397,7 +403,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of copy-on-write database branching, schema/data cloning, or any dev/test branch workflow for ClickHouse Cloud or self-hosted ClickHouse; it covers CLI tooling, MCP, pricing, and community sentiment but nothing about branching.",
+    "rationale": "No evidence of a copy-on-write branching feature for schema+data in ClickHouse; the docs describe local dev servers, cloud clusters, CLI tooling, materialized views, and pricing, but nothing about instant branch/fork of a database for testing against production-shaped data.",
     "evidenceIds": []
   },
   {
@@ -406,21 +412,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "ClickHouse is its own columnar SQL engine with its own dialect; the evidence pack shows no claim of wire-level or dialect compatibility with Postgres, MySQL, or SQLite — only data-ingestion ClickPipes and Cloud 'Postgres services' tooling, which is data movement, not engine compatibility. Community evidence directly contradicts any such expectation, noting ClickHouse has 'not-quite-standard SQL syntax' and limited JOIN/DELETE support compared to standard engines.",
+    "rationale": "ClickHouse uses its own SQL dialect; there is no evidence of genuine Postgres/MySQL/SQLite wire- or dialect-level compatibility for existing application code. Evidence instead points to the CLI managing separate Postgres instances/services (unrelated to ClickHouse's own SQL engine) and community feedback explicitly notes 'not-quite-standard SQL syntax' compared to standard dialects.",
     "evidenceIds": [
-      "clickhouse-docs-28",
       "clickhouse-docs-20",
+      "clickhouse-docs-31",
       "clickhouse-comm-19"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "fleet-per-agent-databases",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows ClickHouse Cloud CLI/API for creating clusters, ClickPipes, and autoscale-to-zero pricing, but there is no documentation of a pattern for programmatically provisioning thousands of cheap, isolated per-tenant/per-agent databases or managing such a fleet at scale.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "ClickHouse Cloud offers a CLI/API to programmatically create and manage cloud-managed clusters and resources, plus usage-based pricing that scales compute to zero when idle, which supports cost-efficient fleet-style provisioning. However, there is no direct evidence describing a pattern for spinning up thousands of isolated per-agent/tenant databases, no documented multi-tenant isolation guidance, and no explicit 'fleet management' API for bulk database lifecycle at that scale. missing for 10: explicit multi-tenant/isolated-database-per-agent provisioning docs, bulk/fleet management API examples, and evidence of cost/performance at thousands-of-databases scale.",
+    "evidenceIds": [
+      "clickhouse-docs-3",
+      "clickhouse-docs-20",
+      "clickhouse-docs-25",
+      "clickhouse-docs-41",
+      "clickhouse-probe-5"
+    ]
   },
   {
     "productId": "clickhouse",
@@ -428,14 +440,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "ClickHouse OSS is fully free and open-source (single-binary install, clickhouse-local runs real SQL workloads keylessly per probe evidence), so a founder can prototype without any paywall using the self-hosted/local path. However, ClickHouse Cloud (the managed offering most founders would actually want to prototype against before committing to ops) is not documented as having a perpetual free tier — pricing docs mention scale-to-zero and pay-per-use but no explicit free-tier/trial credit details are in evidence. missing for 10: explicit ClickHouse Cloud free-tier terms/limits, evidence of a no-cost trial credit or always-free managed tier, and independent/community confirmation that the free tier is 'genuinely usable' for real prototypes rather than just OSS self-hosting.",
+    "rationale": "ClickHouse ships as fully free, open-source software that can be installed with a single binary or run via clickhouse-local/chDB for local prototyping without any paid tier (clickhouse-docs-23, clickhouse-docs-27, clickhouse-docs-35), and ClickHouse Cloud's usage-based pricing scales resources down to zero when idle so light prototyping incurs minimal cost (clickhouse-docs-25, clickhouse-docs-41, clickhouse-docs-11). However, there is no explicit documentation of a dedicated 'free tier' with trial credits for Cloud, and no community evidence describing hands-on prototyping experience on a genuinely free plan. Missing for 10: documented free-tier/trial credit details for ClickHouse Cloud, independent user accounts of prototyping for free before paying.",
     "evidenceIds": [
       "clickhouse-docs-23",
       "clickhouse-docs-27",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2",
-      "clickhouse-docs-11",
+      "clickhouse-docs-35",
       "clickhouse-docs-25",
+      "clickhouse-docs-41",
+      "clickhouse-docs-11",
       "clickhouse-docs-26"
     ]
   },
@@ -453,28 +465,30 @@
     "storyId": "import-existing-database",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "ClickHouse Cloud docs reference 'Migration guides from various platforms' and ClickPipes support ingestion from Postgres/MySQL/MongoDB/etc., suggesting a documented path to move data in from an existing production database. However, the evidence never details a minimal-downtime cutover strategy (e.g., CDC replication, dual-write, or sync-then-switch process) or downtime guarantees. Missing for 10: explicit minimal-downtime migration walkthrough, CDC/replication tooling details, hands-on validation of a production cutover with low downtime.",
+    "confidence": "medium",
+    "rationale": "ClickHouse documents migration guides from various platforms and ClickPipes connectors for ingesting from Postgres, MySQL, MongoDB, BigQuery, Kafka, etc., which supports moving existing production data in with documented paths (clickhouse-docs-7, clickhouse-docs-28, clickhouse-docs-43). However, none of the evidence explicitly addresses minimal-downtime cutover strategies (e.g., dual-write, CDC replication, rollback plan) for a live production database migration. Missing for 10: explicit minimal-downtime/CDC migration guidance, a documented rollback/verification step, and independent hands-on confirmation that the migration path works with near-zero downtime.",
     "evidenceIds": [
       "clickhouse-docs-7",
-      "clickhouse-docs-28"
+      "clickhouse-docs-28",
+      "clickhouse-docs-43",
+      "clickhouse-docs-31"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "instant-provisioning",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "ClickHouse Cloud explicitly markets serverless creation—'Start building instantly without having to size and scale your cluster' (docs-26)—with autoscaling to zero (docs-11, docs-25) and CLI commands to 'Set up ClickHouse Cloud and create cloud-managed ClickHouse clusters' (docs-3, docs-20, docs-31), matching the no-capacity-planning CLI story closely. Missing for 10: explicit API-based (non-CLI) creation walkthrough, independent/hands-on confirmation of 'seconds'-level provisioning time, and third-party verification of the no-capacity-planning claim.",
+    "rationale": "ClickHouse Cloud can be provisioned via the CLI (clickhousectl) without manual capacity planning — docs explicitly state you can 'Set up ClickHouse Cloud and create cloud-managed ClickHouse clusters' from the CLI and 'Start building instantly without having to size and scale your cluster,' backed by usage-based, scale-to-zero autoscaling pricing so no upfront sizing is needed. Missing for 10: independent/hands-on corroboration of actual provisioning speed ('seconds'), and clearer standalone API (non-CLI) creation flow documentation.",
     "evidenceIds": [
-      "clickhouse-docs-26",
-      "clickhouse-docs-11",
-      "clickhouse-docs-25",
       "clickhouse-docs-3",
+      "clickhouse-docs-17",
       "clickhouse-docs-20",
-      "clickhouse-docs-31",
-      "clickhouse-probe-3"
+      "clickhouse-docs-26",
+      "clickhouse-docs-40",
+      "clickhouse-docs-41",
+      "clickhouse-docs-11"
     ]
   },
   {
@@ -483,14 +497,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "ClickHouse ships a single-binary local install and clickhouse-local that runs full SQL analytics without any account, cloud dependency, or server process, confirmed by hands-on runtime probes (curl install, version check, real CREATE/INSERT/SELECT roundtrip) — ideal for offline dev and CI. missing for 10: no explicit CI-pipeline example/doc showing clickhouse-local used inside a CI test suite, only implied by the keyless local-file processing capability.",
+    "rationale": "ClickHouse ships an open-source single binary and clickhouse-local that run entirely locally without any account or cloud dependency, explicitly marketed for building/testing/experimenting and fast local/CI file processing via SQL (clickhouse-docs-23, clickhouse-docs-27, clickhouse-docs-15, clickhouse-docs-1). Community corroboration confirms clickhouse-local's local, keyless utility for ad-hoc SQL processing (clickhouse-comm-4). Missing for 10: no explicit CI-pipeline example/tutorial demonstrating offline test usage in evidence.",
     "evidenceIds": [
       "clickhouse-docs-23",
       "clickhouse-docs-27",
       "clickhouse-docs-15",
+      "clickhouse-docs-1",
       "clickhouse-gh-1",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2"
+      "clickhouse-comm-4"
     ]
   },
   {
@@ -499,30 +513,35 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "ClickHouse exposes a documented OpenAPI/HTTP interface for queries and a CLI (clickhousectl) that can create/manage Cloud clusters, ClickPipes, Postgres services, and other Cloud-console-level resources, suggesting broad API/CLI parity with the UI. However there is no explicit statement or independent test confirming every UI capability (e.g., billing dashboards, monitoring views, backup export config) is fully mirrored via API. Missing for 10: explicit vendor claim of 1:1 API/UI feature parity, independent verification that all Cloud console actions are scriptable, and coverage of non-data-plane UI features (billing, org admin) via API.",
+    "rationale": "ClickHouse's CLI/API (clickhousectl, HTTP interface, SQL) documents broad coverage of Cloud console functions—creating and managing clusters, ClickPipes, Postgres services, and cloud resources—suggesting most UI actions have API/CLI equivalents (clickhouse-docs-16/17/20/28/31/32). However, there is no explicit vendor statement guaranteeing full UI/API parity, and some Cloud-only waitlist features (AI Functions, ClickStack Cloud, PromQL support) appear to be UI/console-first with no confirmed API equivalent yet. Missing for 10: an explicit parity statement, independent verification that all console actions have API equivalents, and clarity on whether newer preview features are API-accessible.",
     "evidenceIds": [
-      "clickhouse-docs-3",
+      "clickhouse-docs-16",
+      "clickhouse-docs-17",
       "clickhouse-docs-20",
       "clickhouse-docs-28",
       "clickhouse-docs-31",
+      "clickhouse-docs-32",
+      "clickhouse-docs-14",
+      "clickhouse-docs-19",
       "clickhouse-probe-3",
-      "clickhouse-probe-5"
+      "clickhouse-docs-38",
+      "clickhouse-docs-39"
     ]
   },
   {
     "productId": "clickhouse",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "ClickHouse is open-source, self-hostable via a single binary (curl install, clickhouse-local) and its Cloud offering explicitly supports exporting backups to your own cloud account and provides migration guides, all consistent with a no-lock-in exit path. However, the evidence never explicitly enumerates open export formats (CSV/Parquet/native) or a dedicated 'full data export' workflow beyond backups and migration guides.\n\nmissing for 10: explicit documentation of supported export formats (e.g. Parquet/CSV/Arrow) for full dataset export, and a hands-on/independent report confirming a full migration-out was actually completed without data loss.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "ClickHouse supports flexible output formats (e.g., the X-ClickHouse-Format header overriding query FORMAT) and offers 'Export backups to your own cloud account' plus migration guides and clickhouse-local for processing/exporting local and remote files via SQL, all pointing to open-format data portability. However, there is no explicit documentation enumerating full data export tooling (e.g., bulk export to CSV/Parquet/JSON at scale) or a stated commitment to avoiding lock-in, so the story is only partially evidenced. Missing for 10: explicit full-dataset export documentation/tutorial, an open-format export guarantee statement, and independent confirmation that a full migration-out is smooth.",
     "evidenceIds": [
+      "clickhouse-docs-14",
+      "clickhouse-docs-19",
       "clickhouse-docs-22",
       "clickhouse-docs-7",
       "clickhouse-docs-15",
-      "clickhouse-gh-1",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2"
+      "clickhouse-docs-27"
     ]
   },
   {
@@ -530,8 +549,8 @@
     "storyId": "openness-open-license",
     "verdict": "full",
     "quality": 7,
-    "confidence": "medium",
-    "rationale": "ClickHouse's own site describes it as 'a fast open-source column-oriented database management system,' and its source is published on GitHub (clickhouse-gh-1), confirming public, licensed source access typical of an OSS project. Missing for 10: explicit citation of the license name/text (e.g., Apache-2.0) and independent confirmation of license terms beyond the 'open-source' label.",
+    "confidence": "high",
+    "rationale": "ClickHouse's own site describes it as a 'fast open-source column-oriented database' and its source is hosted publicly on GitHub, confirming the codebase is openly readable/licensed. Missing for 10: an explicit citation of the license file/terms (e.g., Apache-2.0) rather than just the word 'open-source'.",
     "evidenceIds": [
       "clickhouse-probe-1",
       "clickhouse-gh-1"
@@ -541,17 +560,17 @@
     "productId": "clickhouse",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "ClickHouse is genuinely open-source and self-hostable: docs and a live probe confirm a single-binary install via curl script with no account/key required, and clickhouse-local/full server runs locally performing real SQL workloads. Community evidence corroborates real-world self-hosted deployments at scale (single desktops to hundreds of nodes), confirming this isn't just marketing. missing for 10: independent third-party audit of self-hosting ease at enterprise scale, and more detail on operational/maintenance burden (some community reports note ops overhead)",
+    "rationale": "ClickHouse is a genuinely open-source, self-hostable database with a public GitHub repo, one-line install script, and docs explicitly instructing users to 'Run ClickHouse on your own machine to build, test, and experiment,' with community accounts confirming real self-hosted production deployments (Docker-based clusters, single-server setups, etc.). Some community reports note self-hosting has operational overhead (resource contention with Keeper, container privilege issues, ops burden vs managed cloud), but these are caveats about ease, not evidence the core product can't be self-hosted. Missing for 10: a first-party self-hosted deployment/ops guide (e.g., Kubernetes operator docs) cited directly and more independent large-scale self-host case studies.",
     "evidenceIds": [
       "clickhouse-docs-23",
       "clickhouse-docs-27",
       "clickhouse-gh-1",
-      "clickhouse-probe-rt-1",
-      "clickhouse-probe-rt-2",
-      "clickhouse-comm-18",
-      "clickhouse-comm-9"
+      "clickhouse-probe-1",
+      "clickhouse-comm-9",
+      "clickhouse-comm-10",
+      "clickhouse-comm-19"
     ]
   },
   {
@@ -559,8 +578,8 @@
     "storyId": "orm-framework-compat",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of Prisma, Drizzle, Django, or Rails ORM integrations or guides; ClickHouse's documented interfaces focus on CLI, clickhouse-local, Cloud, and MCP/agent tooling, not ORM/framework-specific setup guides.",
+    "confidence": "medium",
+    "rationale": "No evidence pack items mention Prisma, Drizzle, Django, Rails, or any ORM/framework integration guides for ClickHouse; documentation focuses on CLI tools, cloud setup, MCP, and vector search instead.",
     "evidenceIds": []
   },
   {
@@ -568,11 +587,9 @@
     "storyId": "point-in-time-recovery",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack mentions backups can be exported to your own cloud account (clickhouse-docs-22) but contains no documentation of point-in-time restore, time-travel queries, or database/table 'branching' functionality that would let a platform engineer roll back or fork state to an arbitrary timestamp within a retention window. This is a fair and applicable axis for any production database, but no evidence supports it being delivered.",
-    "evidenceIds": [
-      "clickhouse-docs-22"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions point-in-time restore, backup/restore mechanisms tied to a retention window, or database branching/cloning; the only tangential reference is 'Export backups to your own cloud account' which does not describe PITR or branching functionality.",
+    "evidenceIds": []
   },
   {
     "productId": "clickhouse",
@@ -588,8 +605,8 @@
     "storyId": "privacy-no-training",
     "verdict": "na",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "ClickHouse is a database engine, not an AI model vendor or SaaS with data-training policies; a 'prevent my data being used to train AI models' privacy-posture story is a category error for a self-hosted/cloud database product rather than an applicable feature axis.",
+    "confidence": "high",
+    "rationale": "ClickHouse is a database/analytics engine, not an AI model provider or a service that trains models on user data; there is no evidence of any AI-training opt-out setting or policy in the pack, and this axis is a category mismatch for a database product rather than a gap it fails to fill.",
     "evidenceIds": []
   },
   {
@@ -597,10 +614,11 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation of ClickHouse's data-retention or deletion controls (e.g., TTL policies, ALTER TABLE DELETE, GDPR-style purge tooling); the only on-topic signal is a community comment noting 'limited DELETE support,' which is a negative indicator rather than proof of a working retention/deletion control mechanism.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no vendor documentation on TTL policies, row-level deletion, or data retention controls; the only related community evidence (clickhouse-comm-19) notes 'limited DELETE support,' which does not establish that users can reliably control retention/deletion. Backup export (clickhouse-docs-22) is tangential and does not address retention/deletion policy.",
     "evidenceIds": [
-      "clickhouse-comm-19"
+      "clickhouse-comm-19",
+      "clickhouse-docs-22"
     ]
   },
   {
@@ -615,23 +633,26 @@
   {
     "productId": "clickhouse",
     "storyId": "query-insights",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains nothing about a built-in insights UI showing slow queries, index recommendations, or performance dashboards — coverage is limited to CLI tools, MCP/AI integrations, materialized views, and pricing/autoscaling. No mention of ClickHouse Cloud's query insights UI or any recommendation engine.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 2,
+    "confidence": "low",
+    "rationale": "The only tangentially relevant evidence is a private-preview waitlist feature (AI notebooks in ClickStack) where an AI agent can surface logs/traces/metrics as charts and summaries, which loosely touches 'performance metrics' but is not a shipped, built-in insights view and never mentions slow-query identification or index recommendations. Everything else in the pack is about CLI tooling, pricing, MCP/AI integrations, and general architecture, none of which address a query-performance insights dashboard. Missing for 10: a GA built-in query-performance/insights view, explicit slow-query surfacing, and any index-recommendation capability with documentation or hands-on evidence.",
+    "evidenceIds": [
+      "clickhouse-docs-33",
+      "clickhouse-docs-39"
+    ]
   },
   {
     "productId": "clickhouse",
     "storyId": "replicas-failover",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no ClickHouse documentation on replication configuration, read replicas, or failover behavior — only vague community mentions of 'robust cluster support' and a 'fully replicated ClickHouse system' example, which don't constitute documented HA/failover guidance. This is clearly an applicable axis for a distributed OLAP database, but no concrete evidence shows it delivering the story.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence only gestures at ClickHouse's replication/coordination layer (Keeper) and community anecdotes about running replicated clusters, but the pack contains no first-party documentation of adding read replicas, replica configuration, or documented failover behavior. missing for 10: dedicated HA/replication setup docs, explicit failover behavior documentation, read-replica configuration guide, quorum/consistency guarantees during failover.",
     "evidenceIds": [
+      "clickhouse-docs-44",
       "clickhouse-comm-2",
-      "clickhouse-comm-13",
-      "clickhouse-comm-17"
+      "clickhouse-comm-13"
     ]
   },
   {
@@ -640,9 +661,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of ClickHouse's DDL locking behavior, deploy-request workflows, or branch-and-merge schema tooling; 'migration guides' (clickhouse-docs-7) refer only to migrating data from other platforms into ClickHouse Cloud, not schema-change safety. Community notes even describe ClickHouse as 'rigid-schema + append-only' with 'limited DELETE support' (clickhouse-comm-16, clickhouse-comm-19), reinforcing the absence of evidence for safe online schema evolution.",
+    "rationale": "The evidence pack contains no documentation of online/non-locking DDL, deploy-request workflows, or branch-and-merge schema change tooling for ClickHouse; the only tangentially related community notes describe ClickHouse as 'rigid-schema + append-only' and having 'limited DELETE support' rather than confirming safe schema-change tooling. Since schema-migration safety is a legitimate axis for any database product, absence of supporting evidence yields 'none' rather than 'na'.",
     "evidenceIds": [
-      "clickhouse-docs-7",
       "clickhouse-comm-16",
       "clickhouse-comm-19"
     ]
@@ -650,15 +670,16 @@
   {
     "productId": "clickhouse",
     "storyId": "scale-to-zero-idle",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "ClickHouse Cloud documentation explicitly states compute and storage scale down to zero when idle so users don't pay for idle services, directly matching the zero-cost-when-idle founder story, and separate storage/compute architecture implies durable storage persists independent of compute scaling.  \nmissing for 10: independent/hands-on confirmation that a ClickHouse Cloud service actually resumes from zero with data intact, and explicit documentation of the resume latency/behavior for a paused service.",
+    "rationale": "ClickHouse Cloud explicitly advertises usage-based pricing that scales compute and storage down to zero when idle, so idle prototypes incur no compute cost while data remains stored durably in the cloud service, and users can start instantly without provisioning a cluster. Missing for 10: independent/hands-on confirmation of zero-cost idle behavior and durability guarantees specifically for long-dormant side projects (evidence is vendor-pricing-page only, no community corroboration of this exact scale-to-zero behavior).",
     "evidenceIds": [
       "clickhouse-docs-11",
       "clickhouse-docs-25",
-      "clickhouse-docs-26",
-      "clickhouse-docs-21"
+      "clickhouse-docs-40",
+      "clickhouse-docs-41",
+      "clickhouse-docs-26"
     ]
   },
   {
@@ -667,11 +688,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows ClickHouse has a general HTTP interface (e.g., X-ClickHouse-Format header) but no mention of an official driver purpose-built for serverless/edge runtimes, WebSocket support, or short-lived-connection optimization. missing for 10: an official edge/serverless HTTP or WebSocket client library, documentation of connection pooling/short-lived connection handling, and any mention of WebSocket protocol support.",
-    "evidenceIds": [
-      "clickhouse-docs-14",
-      "clickhouse-docs-19"
-    ]
+    "rationale": "Evidence shows ClickHouse has a generic HTTP interface (format headers) but no mention of an official driver purpose-built for serverless/edge functions, no WebSocket support, and no discussion of short-lived-connection optimizations for edge runtimes.",
+    "evidenceIds": []
   },
   {
     "productId": "clickhouse",
@@ -679,11 +697,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "ClickHouse Cloud pricing docs explicitly state you can 'set compute autoscaling limits to prevent runaway queries from unexpected bills' and that idle resources scale to zero, directly addressing the founder's fear of a surprise bill. However this is a single vendor pricing-page claim with no detail on configuring numeric spend caps, budget alerts/notifications, or independent/hands-on confirmation that the feature works as described. Missing for 10: documented step-by-step alerting/notification setup, granular dollar-cap configuration, and third-party or hands-on verification of the autoscaling-limit behavior.",
+    "rationale": "ClickHouse Cloud's pricing docs explicitly state you can 'Set compute autoscaling limits to prevent runaway queries from unexpected bills' and that compute scales down to zero when idle, directly addressing the founder's concern about surprise bills. However, this is a single vendor pricing-page mention with no detail on configurable spend caps, budget alerts/notifications, or independent/hands-on corroboration of how this works in practice. Missing for 10: documented alerting/notification mechanism for usage thresholds, more detailed spend-cap configuration docs, and independent user confirmation that this prevents runaway bills in practice.",
     "evidenceIds": [
       "clickhouse-docs-21",
       "clickhouse-docs-11",
-      "clickhouse-docs-25"
+      "clickhouse-docs-40",
+      "clickhouse-docs-41"
     ]
   },
   {
@@ -692,12 +711,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "ClickHouse's pricing page (clickhouse.com/pricing) is referenced with statements that compute and storage are billed separately and scale to zero when idle, and that autoscaling limits exist to cap bills — indicating a usage-based, unit-driven billing model. However, the evidence pack contains no explicit per-unit rate figures (e.g. $/compute-unit-hour, $/GB-storage, $/GB-egress) that a founder could use to actually compute a bill in advance, and traffic/network pricing specifics are not mentioned at all. missing for 10: explicit published $ rates for compute, storage, and data-transfer/traffic, and a documented example bill calculation.",
+    "rationale": "ClickHouse's pricing page confirms a usage-based model—pay only for compute and storage used, scaled separately and down to zero when idle—plus autoscaling limits to cap bills, giving founders a general cost structure to reason about. However, the evidence never shows explicit published per-unit rates (e.g., $/vCPU-hour, $/GB-month storage, $/GB traffic) that would let someone precompute a bill precisely. Missing for 10: explicit per-unit dollar rates for compute, storage, and network egress, and any calculator/estimator evidence.",
     "evidenceIds": [
-      "clickhouse-docs-25",
       "clickhouse-docs-11",
       "clickhouse-docs-21",
-      "clickhouse-docs-22"
+      "clickhouse-docs-25",
+      "clickhouse-docs-40",
+      "clickhouse-docs-41"
     ]
   },
   {
@@ -706,11 +726,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "ClickHouse docs explicitly describe native SQL-based vector similarity search (exact or approximate) using ANN indexes, with tunable accuracy/speed tradeoffs, meaning no separate vector DB is required. Missing for 10: independent/hands-on community validation of vector search performance or embedding workflows, and explicit guidance on embedding storage/ingestion patterns.",
+    "rationale": "ClickHouse's docs explicitly document native exact and approximate vector similarity search written directly in SQL via ANN indexes, with tunable accuracy/speed trade-offs, meaning embeddings can be stored and searched without a separate vector DB. Missing for 10: independent/hands-on community validation of vector search performance and concrete embedding-storage usage examples beyond first-party docs.",
     "evidenceIds": [
       "clickhouse-docs-8",
       "clickhouse-docs-24",
-      "clickhouse-docs-30"
+      "clickhouse-docs-30",
+      "clickhouse-docs-34"
     ]
   },
   {
