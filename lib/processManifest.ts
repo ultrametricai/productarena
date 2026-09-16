@@ -1,8 +1,8 @@
 import { classifyGapStep } from './gapClosers'
 import { mcpEndpointFor } from './mcpEndpoints'
 import {
-  chainTasks, findProcessBySlug, loadChains, processSlug, vendorChipInfo,
-  type DagNode, type ProcessChain, type ProcessTask,
+  chainTasks, findProcessBySlug, loadChains, processSlug, stepVendorOptions, vendorChipInfo,
+  type DagNode, type ProcessChain, type ProcessTask, type VendorChipInfo,
 } from './processes'
 import { SITE_URL } from './site'
 
@@ -158,10 +158,9 @@ export function stepApprovalRequired(node: DagNode): boolean {
   return calls.some((m) => !isReadOnlyCall(m))
 }
 
-export function manifestVendorOption(vendor: string, dir?: string): ManifestVendorOption {
-  const info = vendorChipInfo(vendor, dir)
+function optionFromChip(info: VendorChipInfo): ManifestVendorOption {
   return {
-    vendor,
+    vendor: info.vendor,
     name: info.label,
     productId: info.productId,
     arena: info.arenaId,
@@ -173,14 +172,24 @@ export function manifestVendorOption(vendor: string, dir?: string): ManifestVend
   }
 }
 
-// Every vendor that can perform the step: the canonical call target first, then the market
-// options, deduped in corpus order.
-function stepVendors(node: DagNode): string[] {
-  const out: string[] = []
-  for (const v of [node.vendor, ...(node.vendorOptions ?? [])]) {
-    if (v && !out.includes(v)) out.push(v)
-  }
-  return out
+export function manifestVendorOption(vendor: string, dir?: string): ManifestVendorOption {
+  return optionFromChip(vendorChipInfo(vendor, dir))
+}
+
+// Every vendor that can perform the step, resolved against the live market: the canonical call
+// target first, then lib/processes.ts stepVendorOptions — the arena-derived roster for steps
+// with an optionsArenaId (so the executor sees the CURRENT market, not a frozen list) plus the
+// curated options — deduped by vendor key and judged product id.
+function stepVendorChips(node: DagNode, dir?: string): VendorChipInfo[] {
+  const options = stepVendorOptions(node, dir)
+  if (!node.vendor) return options
+  const canonical = vendorChipInfo(node.vendor, dir)
+  return [
+    canonical,
+    ...options.filter(
+      (o) => o.vendor !== canonical.vendor && !(o.productId && o.productId === canonical.productId),
+    ),
+  ]
 }
 
 export function buildManifestStep(node: DagNode, dir?: string): ManifestStep {
@@ -192,7 +201,7 @@ export function buildManifestStep(node: DagNode, dir?: string): ManifestStep {
     route: node.route,
     toolCall: node.toolCall ?? null,
     calls: node.functionCalls ?? [],
-    vendorOptions: stepVendors(node).map((v) => manifestVendorOption(v, dir)),
+    vendorOptions: stepVendorChips(node, dir).map(optionFromChip),
     approvalRequired: stepApprovalRequired(node),
     riskLevel: node.riskLevel ?? null,
     estimatedMinutes: node.estimatedMinutes,

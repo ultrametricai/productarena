@@ -157,8 +157,18 @@ describe('process manifests over the real corpus', () => {
     expect(byId.get('n4')!.kind).toBe('computer-use')
     expect(byId.get('n4')!.approvalRequired).toBe(true)
     expect(byId.get('n1')!.vendorOptions.map((o) => o.vendor)).toEqual(
-      ['clerky', 'stripe_atlas', 'firstbase', 'doola'],
+      ['clerky', 'stripe_atlas', 'firstbase', 'legalzoom', 'northwest', 'doola'],
     )
+  })
+
+  it('derived-market steps (optionsArenaId) expose the arena\'s current roster to the executor', () => {
+    const task = loadProcesses(DATA_DIR).find((t) => t.id === 'qs_063')!
+    const m = buildProcessManifest(task, DATA_DIR)
+    const signup = m.steps.find((s) => s.id === 'n3')!
+    const vendors = signup.vendorOptions.map((o) => o.productId)
+    // All four judged payroll providers are offered, not just the curated defaults.
+    for (const pid of ['deel', 'gusto', 'rippling', 'justworks']) expect(vendors).toContain(pid)
+    for (const o of signup.vendorOptions) expect(o.arena).toBe('payroll')
   })
 
   it('returns null for an unknown slug', () => {
