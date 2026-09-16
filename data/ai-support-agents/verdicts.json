@@ -4,13 +4,11 @@
     "storyId": "agentic-agent-docs",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "high",
-    "rationale": "A live llms.txt is confirmed at the root domain (HTTP 200, structured content) making the marketing surface agent-legible, and the sitemap lists product pages an agent could navigate. However, the deeper technical documentation at docs.decagon.ai is login-gated with no llms.txt or markdown mirror, so an agent cannot fully explore Decagon's technical docs autonomously. Missing for 10: public agent-readable technical/API docs, an llms.txt covering docs.decagon.ai, and no login gate blocking crawler/agent access.",
+    "confidence": "medium",
+    "rationale": "The probe confirms Decagon serves a working llms.txt file at decagon.ai/llms.txt (HTTP 200) with structured product description, showing the product is discoverable by AI agents pointed at agent-oriented docs. However, there's no evidence of broader agent-oriented documentation (e.g., structured API docs, OpenAPI spec which 404'd) or first-party guidance encouraging users to point agents at this file. missing for 10: OpenAPI/API-level machine-readable docs (404s confirmed), first-party documentation explicitly promoting llms.txt usage for AI agents, and independent corroboration of an agent successfully consuming the file.",
     "evidenceIds": [
       "decagon-probe-1",
-      "decagon-probe-rt-1",
-      "decagon-probe-rt-2",
-      "decagon-probe-rt-3"
+      "decagon-probe-2"
     ]
   },
   {
@@ -19,14 +17,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Decagon's Insights & Reporting lets users ask open-ended natural-language questions like 'Why are customers requesting refunds?' to instantly analyze conversation data, and Suggestions automatically detects knowledge gaps and generates content drafts based on resolutions — both are clear AI-generated insight/suggestion features surfaced inside the product. Watchtower further applies natural-language-defined flagging criteria contextually across interactions, reinforcing the insight-generation theme. Missing for 10: independent/hands-on verification of these insight features' accuracy beyond vendor docs.",
+    "rationale": "Decagon's Insights & Reporting and Suggestions features let users ask open-ended natural-language questions (e.g. 'Why are customers requesting refunds?') and get AI-driven analysis, heatmaps, and auto-generated content drafts based on detected knowledge gaps, directly surfacing AI-generated insights from customer data. Duet further auto-generates Agent Operating Procedures from past interactions and iterates based on conversation patterns. Missing for 10: independent/hands-on validation of insight quality and no detail on underlying analytics accuracy or limitations.",
     "evidenceIds": [
       "decagon-docs-9",
       "decagon-docs-10",
-      "decagon-docs-18",
       "decagon-docs-17",
-      "decagon-docs-8",
-      "decagon-docs-20"
+      "decagon-docs-18",
+      "decagon-docs-30",
+      "decagon-docs-6",
+      "decagon-docs-24"
     ]
   },
   {
@@ -35,14 +34,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon's 'Proactive Agents' can carry conversation history across sessions and initiate calls/outreach based on customer signals without a human triggering each instance, and AOPs let teams define autonomous agent behavior that runs continuously handling chat/voice/email interactions (decagon-docs-22, decagon-docs-23, decagon-docs-16, decagon-docs-13/14/15). This is autonomous background operation in the customer-support sense, but there's no evidence of a general-purpose 'automation builder' with schedules/triggers/conditions typical of the 'automations' framing, nor independent confirmation of reliability. Missing for 10: explicit trigger/schedule configuration UI, evidence of autonomous multi-step task chains beyond conversation handling, and third-party corroboration of background execution reliability.",
+    "rationale": "Decagon's Proactive Agents can carry context across sessions and autonomously initiate calls/recommendations based on customer signals, and Watchtower continuously monitors every interaction against custom criteria without manual triggering — both indicate background/autonomous operation. However, there's no explicit documentation of a general-purpose automation/scheduling framework (e.g., triggers, cron-like workflows, or arbitrary background tasks) beyond these two specific features. Missing for 10: a dedicated automation/scheduler product surface, independent/hands-on verification of autonomous behavior, and broader configurability beyond proactive outreach and monitoring.",
     "evidenceIds": [
       "decagon-docs-22",
       "decagon-docs-23",
-      "decagon-docs-16",
-      "decagon-docs-13",
-      "decagon-docs-14",
-      "decagon-docs-15"
+      "decagon-docs-28",
+      "decagon-docs-31"
     ]
   },
   {
@@ -64,11 +61,12 @@
     "storyId": "agentic-headless",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Decagon is a customer-support AI agent platform (chat/voice/email) with no evidence of a CLI, SDK, or headless API mode suitable for CI automation; OpenAPI probes 404 and technical docs are login-gated, so there's no way to verify or run it headlessly in an automation pipeline.",
+    "confidence": "medium",
+    "rationale": "Decagon is a SaaS conversational-AI platform for customer support with no-code configuration (AOPs, Duet, integrations 'no custom code required'); there is no documented CLI, headless mode, or CI-automation interface, and the openapi probe returned 404s, indicating no public API spec for automated/headless invocation. missing for 10: any CLI/SDK for headless execution, CI-pipeline integration docs, or public API reference enabling automation.",
     "evidenceIds": [
-      "decagon-probe-2",
-      "decagon-probe-rt-3"
+      "decagon-docs-19",
+      "decagon-docs-26",
+      "decagon-probe-2"
     ]
   },
   {
@@ -88,24 +86,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Decagon's blog discusses MCP conceptually (curating/scoping how tools are used) but this describes Decagon's own agents consuming external tools via MCP, not Decagon exposing an official MCP server that external agents can connect to. No evidence of a published MCP server endpoint, spec, or documentation for third-party agent connection exists in the pack.",
+    "rationale": "Decagon's MCP blog post (decagon-docs-3) discusses using MCP to curate/scope tool access for its own agents (i.e., Decagon as an MCP client consuming external tools), not exposing an official MCP server that lets an external AI agent connect into Decagon. No documentation, endpoint, or announcement of a first-party Decagon MCP server was found, and the OpenAPI/spec probes returned 404s with no MCP-specific server mentioned.",
     "evidenceIds": [
-      "decagon-docs-3"
+      "decagon-docs-3",
+      "decagon-probe-2"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon lets operators configure and interact with the platform via natural language across multiple surfaces: defining agent behavior in AOPs 'the same way you train human agents with SOPs' (docs-16), Watchtower flagging criteria defined in plain language (docs-8, docs-20), and ad-hoc natural-language analytics queries like 'Why are customers requesting refunds?' (docs-9). This spans configuration, monitoring, and insights, indicating natural-language operation is a core design principle rather than a single feature. missing for 10: independent/hands-on corroboration that these natural-language interfaces work reliably in practice, and no evidence of a general-purpose natural-language command interface for non-agent-config platform operations (e.g. admin settings, billing)",
+    "rationale": "Decagon lets operators define agent behavior, flagging criteria, and analytics queries via natural language (AOPs, Watchtower, Ask AI), which supports natural-language operation of the product for configuration/analysis purposes. However, this is primarily aimed at business/support-ops users configuring an agent, not a general 'AI-native user' issuing arbitrary natural-language commands to control the whole product end-to-end. missing for 10: evidence of natural-language command interface for broader product operations (e.g., admin tasks, integrations setup, deployment) beyond AOPs/Watchtower/Insights, and independent/hands-on verification of this capability.",
     "evidenceIds": [
-      "decagon-docs-16",
       "decagon-docs-8",
+      "decagon-docs-16",
       "decagon-docs-20",
-      "decagon-docs-9",
-      "decagon-docs-6"
+      "decagon-docs-30",
+      "decagon-docs-9"
     ]
   },
   {
@@ -114,7 +113,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Decagon is a customer-support AI agent platform (chat/voice/email agents), not a developer tool or CLI-oriented product; an official CLI is not a fair expectation for this product category.",
+    "rationale": "Decagon is a customer-support AI agent platform (chat, voice, email, AOPs), not a developer tool or coding-agent product where an official CLI for AI-native workflows would be a relevant axis; no evidence pack content even gestures at a CLI.",
     "evidenceIds": []
   },
   {
@@ -123,10 +122,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No public API reference or OpenAPI spec is available (probe found only 404s), and the technical docs site is login-gated, meaning there is no documented public API a buyer or AI-native user could inspect or drive without an account. Evidence only shows internal agent-facing concepts (JWT tokens for agent access, MCP tooling) rather than a documented public API for driving Decagon itself.",
+    "rationale": "No evidence of a documented public API; the openapi probe returned 404s across all candidate paths and no docs reference an API reference, SDK, or programmatic endpoint. Integrations are described as 'no custom code required' (docs-19, docs-26), suggesting no-code/UI-driven configuration rather than a documented API for AI-native control.",
     "evidenceIds": [
       "decagon-probe-2",
-      "decagon-probe-rt-3"
+      "decagon-docs-19",
+      "decagon-docs-26"
     ]
   },
   {
@@ -147,11 +147,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a public SDK — openapi/swagger probes all 404, and technical docs are login-gated behind docs.decagon.ai, meaning no public API/SDK reference is available to evaluate or build against. Evidence only covers integrations (no-code), MCP blog commentary, and product features, none of which constitute an official SDK. Missing for 10: any published SDK (language libraries, package registry entries), public API reference docs, or code samples.",
+    "rationale": "No evidence of official SDKs for developers; the pack shows only no-code integrations, MCP blog commentary, and a failed openapi probe (404s), with no SDK documentation or API libraries surfaced.",
     "evidenceIds": [
-      "decagon-probe-2",
-      "decagon-probe-rt-3",
-      "decagon-docs-19"
+      "decagon-docs-3",
+      "decagon-docs-19",
+      "decagon-docs-26",
+      "decagon-probe-2"
     ]
   },
   {
@@ -159,11 +160,10 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a webhook subscription mechanism anywhere in the pack; docs.decagon.ai is login-gated and no public technical docs (including API/openapi) are found, and the probes show 404s for API spec discovery. Nothing describes event-driven webhooks for AI-native integration.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions webhooks, event subscriptions, or any push-notification mechanism; the OpenAPI probe returned 404s and no API reference documenting webhook endpoints was found. This axis applies (Decagon integrates with external systems and could plausibly offer webhooks) but there is no supporting evidence.",
     "evidenceIds": [
-      "decagon-probe-2",
-      "decagon-probe-rt-3"
+      "decagon-probe-2"
     ]
   },
   {
@@ -172,10 +172,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence of a public interactive API reference or runnable examples; OpenAPI probes all 404 and the technical docs site is login-gated, meaning no public API reference exists at all.",
+    "rationale": "No evidence of an interactive API reference or runnable examples; the openapi probe returned 404 across all candidate paths and no docs mention API documentation with runnable examples. Missing for 10: any API reference page, SDK/runnable code samples, interactive docs like Swagger/Redoc, or developer sandbox.",
     "evidenceIds": [
-      "decagon-probe-2",
-      "decagon-probe-rt-3"
+      "decagon-probe-2"
     ]
   },
   {
@@ -184,20 +183,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes for OpenAPI/Swagger specs all returned 404, and technical docs are login-gated with no public API spec found; no evidence of a downloadable machine-readable API spec exists.",
+    "rationale": "Probe explicitly checked common OpenAPI/swagger endpoints and all returned 404, and no documentation references a downloadable machine-readable API spec; only an llms.txt file was found, which is not an API spec.",
     "evidenceIds": [
       "decagon-probe-2",
-      "decagon-probe-rt-3"
+      "decagon-probe-1"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Decagon's testing-qa docs describe generating test cases (decagon-docs-11) but never mention a sandboxed environment separate from production; its Experiments feature explicitly states results are measured 'directly in production' (decagon-docs-7), suggesting no isolated sandbox flow for testing changes without touching live data. No pack item describes a staging/sandbox environment, test/production data separation, or a way to validate agents before production traffic.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Decagon's Testing & QA product describes 'Simulations' that validate agent behavior 'before deploying to production and with every subsequent update' (decagon-docs-29) and Duet-generated test suites (decagon-docs-11), implying a pre-production testing environment. However, there is no explicit documentation of a dedicated sandbox with isolated/non-production data, and the Experiments feature explicitly runs live in production (decagon-docs-7), which cuts against a clear sandbox-vs-production separation. Missing for 10: explicit description of sandbox data isolation, confirmation that test/simulation environments don't touch live customer data, and independent verification of this claim.",
     "evidenceIds": [
+      "decagon-docs-29",
       "decagon-docs-11",
       "decagon-docs-7"
     ]
@@ -207,11 +207,10 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a versioned public API or a documented deprecation policy; the openapi probe returned 404 on all candidate paths and technical docs are login-gated, so there's nothing to confirm API versioning practices exist or are documented. Evidence pack only covers product features (chat, voice, AOPs, etc.), not API contracts or lifecycle policy.",
+    "confidence": "high",
+    "rationale": "No evidence of a public/versioned API, API changelog, or deprecation policy; the openapi probe returned 404s across all candidate paths and no docs mention API versioning or deprecation practices.",
     "evidenceIds": [
-      "decagon-probe-2",
-      "decagon-probe-rt-3"
+      "decagon-probe-2"
     ]
   },
   {
@@ -219,8 +218,8 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Decagon's evidence covers per-agent configuration, testing, analytics, and proactive messaging, but nothing describes a bulk-operations capability (e.g., mass-editing AOPs, bulk-tagging conversations, or batch actions across many items at once). Missing for 10: any documentation of batch/bulk update tooling, evidence of multi-item selection or mass-action UI, or API support for bulk operations.",
+    "confidence": "low",
+    "rationale": "No evidence describes a bulk-operations feature (e.g., batch editing, bulk tagging, bulk export/import of tickets or conversations) for AI-native users; the closest items describe aggregate analysis (Watchtower reviewing every interaction, Insights analyzing many conversations) rather than user-driven bulk actions across items.",
     "evidenceIds": []
   },
   {
@@ -229,13 +228,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Decagon offers pieces of event-driven automation — Watchtower flags conversations based on natural-language-defined criteria, proactive agents trigger recommendations/calls based on customer signals, and AOPs let teams define agent behavior in natural language similar to SOPs — but there's no documented general-purpose rule engine where a user explicitly defines 'on event X, do action Y' outside these narrow product surfaces. Missing for 10: an explicit rules/trigger builder spanning arbitrary events and actions, technical documentation on trigger conditions/logic, and independent verification that these features work as a flexible automation framework rather than fixed product modules.",
+    "rationale": "Decagon offers Watchtower, which monitors conversations against natural-language criteria and can flag/surface events (compliance risks, sentiment, etc.), and Proactive Agents that act on customer signals (e.g., initiating calls, recommendations) — both function as event-triggered automation. However, there is no explicit documentation of a general-purpose rule-builder (if-event-then-action) framework that an AI-native user could configure directly; the evidence describes narrower, product-specific triggering mechanisms rather than a flexible automation-rules engine. Missing for 10: explicit rule/condition builder UI or API, documentation of arbitrary event types and action bindings, and independent verification of how these triggers are configured.",
     "evidenceIds": [
       "decagon-docs-8",
       "decagon-docs-20",
+      "decagon-docs-31",
       "decagon-docs-22",
-      "decagon-docs-16",
-      "decagon-docs-23"
+      "decagon-docs-23",
+      "decagon-docs-16"
     ]
   },
   {
@@ -244,7 +244,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Decagon is a customer-support AI platform (chat, voice, email, insights) with no evidence of scheduling recurring jobs/workflows or cron-like automation triggers; features described are proactive outreach and conversation continuity, not scheduled/recurring workflow execution.",
+    "rationale": "Decagon's evidence covers customer-support agent features (chat, voice, email, analytics, testing, proactive outreach) but nothing addresses scheduling recurring jobs or workflows in the AI-native/automation-depth sense; proactive agents mention initiating calls at 'right moments' but no scheduling/cron-like mechanism is documented. missing for 10: any scheduler, cron/recurring trigger config, or workflow automation timing controls.",
     "evidenceIds": []
   },
   {
@@ -253,39 +253,44 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Decagon's docs mention that technical teams get \"full visibility and control over guardrails, integrations, and versioning\" and offer AOPs/testing/experiments for iterating on agent logic, implying some version-control-like workflow, but there is no concrete evidence of a review workflow, diff/version history UI, or an explicit rollback mechanism for automations. missing for 10: explicit rollback feature, version history/diff UI, review/approval workflow evidence.",
+    "rationale": "Decagon offers some adjacent controls—technical teams retain 'visibility and control over guardrails, integrations, and versioning' and Simulations/testing validate agent behavior 'before deploying to production and with every subsequent update'—suggesting some change-management workflow exists, but there's no explicit documentation of version history browsing, diffing, review/approval workflows, or a rollback mechanism to a prior automation state. missing for 10: explicit versioning UI/history, review/approval workflow for changes, documented rollback mechanism, independent confirmation of these capabilities in use.",
     "evidenceIds": [
       "decagon-docs-1",
-      "decagon-docs-5",
-      "decagon-docs-7",
-      "decagon-docs-11"
+      "decagon-docs-25",
+      "decagon-docs-29"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "brand-voice-tone",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Decagon documents brand-consistent channels (chat, voice, email all described as 'on-brand'), AOP-driven natural-language behavior definitions that function like brand/tone SOPs, and Duet-generated tests that explicitly verify agents 'reflect your brand.' Multilingual voice support is mentioned, but there's no concrete evidence of cross-topic/cross-language tone consistency validation or independent corroboration beyond vendor marketing copy. Missing for 10: independent/hands-on evidence of tone consistency across topics and languages, detail on how brand voice guardrails are enforced across all channels simultaneously, and any third-party validation.",
+    "rationale": "Decagon's docs show brand-voice consistency built into multiple surfaces: chat, voice (multilingual), and email are all described as 'on-brand', and AOPs let support leaders define agent behavior/tone in natural language like SOPs (docs-13,14,15,16). Testing/QA and Experiments explicitly validate tone/brand across pathways and let leaders 'refine tone' safely before and after deployment (docs-11,29,32). Missing for 10: independent/hands-on evidence that tone actually stays consistent across many topics and languages in production, and no explicit mention of cross-language consistency for chat/email (only voice is called multilingual).",
     "evidenceIds": [
       "decagon-docs-13",
       "decagon-docs-14",
       "decagon-docs-15",
       "decagon-docs-16",
-      "decagon-docs-11"
+      "decagon-docs-11",
+      "decagon-docs-29",
+      "decagon-docs-32"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "configurable-escalation-rules",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows general customizable agent behavior via AOPs and natural-language flagging criteria in Watchtower, but nothing in the pack specifically documents configurable handoff/escalation rules by topic, sentiment, customer tier, or explicit request, nor any claim of reliable adherence to such rules.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Decagon's AOPs let teams define agent behavior in natural language (like SOPs), which could include escalation logic, and Watchtower can flag sentiment/compliance signals, but no evidence explicitly describes configuring handoff triggers by topic, sentiment, customer tier, or explicit request, nor confirms reliable adherence to such rules. Simulations/testing-QA claims validating 'policies' are generic and don't specifically address handoff reliability. Missing for 10: explicit documentation of handoff/escalation configuration options, tier-based routing, and evidence of reliable handoff obedience (e.g., test results or case studies on escalation accuracy).",
     "evidenceIds": [
       "decagon-docs-16",
-      "decagon-docs-20"
+      "decagon-docs-8",
+      "decagon-docs-20",
+      "decagon-docs-31",
+      "decagon-docs-25",
+      "decagon-docs-29"
     ]
   },
   {
@@ -309,19 +314,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes escalation handoff to a human agent — none of the docs mention passing a full conversation transcript, an AI-generated summary, or collected details when a case is escalated. decagon-docs-22 only covers cross-session context carryover for the AI agent itself, not human handoff. missing for 10: explicit escalation-to-human workflow, transcript/summary transfer to agents, structured detail capture at handoff.",
-    "evidenceIds": [
-      "decagon-docs-22"
-    ]
+    "rationale": "The evidence pack contains no mention of escalation-to-human handoff, conversation summaries handed to agents, or collected-details transfer preventing repetition. Related items about cross-session context (decagon-docs-22, decagon-docs-28) address agent-to-customer continuity, not human-agent handoff, so the specific story is unevidenced despite being a plausible capability for a support AI platform.",
+    "evidenceIds": []
   },
   {
     "productId": "decagon",
     "storyId": "end-to-end-resolution",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no data on resolution rates, containment metrics, or end-to-end conversation completion — only feature descriptions (AOPs, Duet, Watchtower, chat/voice/email channels) and a generic productivity quote from Duolingo about maintenance time, not resolution outcomes. Nothing quantifies resolutions vs deflections/bounces.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Decagon's docs emphasize automation infrastructure (AOPs, Duet, Browser Actions, integrations) and analytics (Watchtower, Insights) but provide no quantified resolution-rate metrics, no third-party benchmark, and the one customer quote (Duolingo) speaks to maintenance effort, not resolution outcomes. Missing for 10: independent or customer-reported resolution-rate figures, a clear definition/measurement of 'resolution' vs deflection, and case studies quantifying end-to-end conversation completion rather than agent capability lists.",
+    "evidenceIds": [
+      "decagon-docs-4",
+      "decagon-docs-27",
+      "decagon-docs-12",
+      "decagon-docs-8",
+      "decagon-docs-31"
+    ]
   },
   {
     "productId": "decagon",
@@ -329,8 +338,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Decagon's evidence covers agent building, testing, analytics, and integrations, but nothing describes the AI agent citing or displaying the specific article/source it drew an answer from when responding to end users. Missing for 10: any documentation of inline citations, source links, or 'grounded in article X' UI behavior in chat/voice/email responses.",
-    "evidenceIds": []
+    "rationale": "Decagon's evidence describes knowledge-gap detection, AOP generation, and content suggestions (docs-10, docs-18) but nothing shows that end-user-facing answers actually cite or display the specific article/source they were grounded in. Missing for 10: any documentation of inline citations, source attribution UI, or 'view source' feature in chat/voice/email responses.",
+    "evidenceIds": [
+      "decagon-docs-10",
+      "decagon-docs-18",
+      "decagon-docs-13"
+    ]
   },
   {
     "productId": "decagon",
@@ -338,26 +351,30 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Decagon documents mechanisms that constrain agent behavior — Agent Operating Procedures let teams define behavior in natural language 'the same way you train human agents with SOPs' (decagon-docs-16), and Duet-generated tests verify agents 'respond accurately, follow policies' (decagon-docs-11), plus Watchtower flags policy violations (decagon-docs-8/20). However, there is no explicit evidence describing a 'safe decline' behavior for off-knowledge questions or anti-hallucination grounding controls that stop invented prices/promises specifically. Missing for 10: explicit documentation of decline/refusal behavior on out-of-scope queries, evidence of hallucination-prevention/grounding mechanisms, and independent verification that guardrails actually prevent invented policy/price claims in practice.",
+    "rationale": "Decagon provides AOPs to define agent behavior/policies in natural language and a testing suite (Simulations/Duet) that verifies agents 'respond accurately, follow policies' plus Watchtower monitoring for compliance violations, which are the building blocks for guardrails — but no evidence explicitly describes a safe-decline behavior for off-knowledge questions versus fabricating answers. missing for 10: explicit documentation or examples of the agent refusing/declining out-of-scope questions rather than hallucinating, and independent verification that guardrails actually prevent invented prices/policies in practice.",
     "evidenceIds": [
       "decagon-docs-16",
       "decagon-docs-11",
-      "decagon-docs-8",
-      "decagon-docs-20"
+      "decagon-docs-29",
+      "decagon-docs-20",
+      "decagon-docs-31"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "helpdesk-platform-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Decagon's integrations page claims no-code integration and identity-provider (Okta/Entra) syncing, and general product docs mention 'integrations' as a pillar, but the evidence pack lacks any specifics on Zendesk/Salesforce/Intercom two-way ticket sync or standalone deployment mechanics — the actual technical docs are login-gated and unavailable. missing for 10: named connector list (Zendesk/Salesforce/Intercom), details on bidirectional ticket/context sync, standalone mode specifics, and independent/hands-on confirmation since docs.decagon.ai is gated.",
+    "rationale": "Decagon's integrations page claims no-code integrations and system-of-record data portability, and Browser Actions/MCP posts describe connecting to arbitrary systems including ones without native integrations, implying support for helpdesk platforms like Zendesk/Salesforce/Intercom, but no evidence explicitly names these tools or describes ticket-level two-way sync. Missing for 10: named connectors/case studies for Zendesk, Salesforce, or Intercom, explicit description of bidirectional ticket-context syncing, and confirmation of standalone deployment mode.",
     "evidenceIds": [
       "decagon-docs-19",
+      "decagon-docs-26",
       "decagon-docs-21",
-      "decagon-probe-rt-3",
-      "decagon-probe-rt-2"
+      "decagon-docs-28",
+      "decagon-docs-4",
+      "decagon-docs-27",
+      "decagon-docs-3"
     ]
   },
   {
@@ -366,11 +383,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Decagon's docs describe knowledge-gap detection and content-draft suggestions (decagon-docs-10/18) and no-code integrations (decagon-docs-19), but there is no evidence describing scheduled or change-triggered re-syncing of knowledge sources versus manual re-upload. Missing for 10: any mention of sync scheduling, webhook/change-detection triggers, or freshness guarantees for ingested knowledge sources.",
+    "rationale": "The evidence pack covers knowledge gap detection and content suggestions (docs-10/18), integrations without custom code, and agent iteration via Duet, but nowhere mentions automatic re-syncing of knowledge sources on a schedule or on change — the closest analog (Suggestions) generates draft content for humans to review/publish, not an automated re-sync pipeline. Missing for 10: any mention of scheduled/triggered re-ingestion of source documents, sync frequency, or change-detection on connected knowledge bases.",
     "evidenceIds": [
       "decagon-docs-10",
-      "decagon-docs-18",
-      "decagon-docs-19"
+      "decagon-docs-18"
     ]
   },
   {
@@ -379,12 +395,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Decagon's docs hint at knowledge ingestion (auto-detecting knowledge gaps and drafting content from past agent resolutions, integrations with no custom code) but there is no explicit documentation describing ingestion of help center content, past tickets, and internal wikis as unified knowledge sources without manual re-authoring. Missing for 10: explicit connector list for docs/tickets/wikis, description of automatic knowledge-base sync, and independent confirmation of no manual re-authoring being required.",
+    "rationale": "Decagon's integrations page claims 'no custom code required' connections (docs-19/26) and its Suggestions product analyzes help-center content and past agent resolutions to fill knowledge gaps (docs-10/18), implying some ingestion of existing content, but there is no explicit documentation naming help center, internal wikis, docs, and past tickets as ingestible knowledge sources without re-authoring. missing for 10: explicit list/documentation of supported knowledge source connectors (help center, wikis, ticket systems), evidence of automatic re-indexing without manual content rewriting, and independent confirmation of successful multi-source ingestion.",
     "evidenceIds": [
       "decagon-docs-10",
       "decagon-docs-18",
       "decagon-docs-19",
-      "decagon-docs-6"
+      "decagon-docs-26"
     ]
   },
   {
@@ -393,12 +409,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon documents mechanisms for scoped, minimal-privilege agent access (short-lived JWTs discarded per session, IdP-based access via Okta/Entra) and shows agents can act inside connected systems via Browser Actions/integrations, which supports the general claim of taking real actions with scoped auth. However, no concrete evidence names specific business actions like refunds, order changes, or subscription updates, nor shows per-action (vs per-session) authorization granularity. Missing for 10: explicit examples of refund/order/subscription action execution, per-action (not just per-session) scoping detail, and independent/hands-on verification of these action flows.",
+    "rationale": "Decagon documents scoped, short-lived JWT access for agent actions across customer systems and integrations 'with no custom code required,' plus explicit mention of agents adjusting 'refund logic,' supporting real action-taking with scoped auth. However there's no detailed documentation of per-action granularity (e.g., separate refund vs subscription-update scopes), no audit trail examples, and no independent/hands-on verification of actual API action execution — missing for 10: per-action scope definitions, action audit logging, and third-party verification of real transactional actions.",
     "evidenceIds": [
       "decagon-docs-2",
-      "decagon-docs-4",
-      "decagon-docs-21",
-      "decagon-docs-3"
+      "decagon-docs-19",
+      "decagon-docs-26",
+      "decagon-docs-32",
+      "decagon-docs-27"
     ]
   },
   {
@@ -407,12 +424,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Decagon's AOP/Duet framework lets agents follow multi-step SOP-like logic and its chat/voice/email products are built for 'complex customer threads,' implying multi-turn handling rather than single canned replies, but no evidence explicitly shows the agent asking clarifying questions or performing structured multi-step troubleshooting dialogues. missing for 10: explicit documentation or transcripts showing the agent asking clarifying questions, independent/hands-on evidence of multi-step troubleshooting flows, and confirmation this behavior is default rather than configured via AOPs.",
+    "rationale": "Decagon docs describe AOPs that define multi-step agent behavior like human SOPs and mention agents carrying context across sessions and taking multi-step actions (browser actions, integrations), which implies some troubleshooting flow, but there is no direct documentation or example showing the agent asking clarifying questions or walking through iterative multi-step troubleshooting dialogues. missing for 10: concrete example/transcript of clarifying-question behavior, documentation explicitly describing multi-turn troubleshooting logic, independent/hands-on evidence confirming this behavior in practice.",
     "evidenceIds": [
       "decagon-docs-16",
-      "decagon-docs-15",
-      "decagon-docs-6",
-      "decagon-docs-22"
+      "decagon-docs-22",
+      "decagon-docs-27"
     ]
   },
   {
@@ -434,12 +450,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Decagon clearly unifies chat, email, and voice under one agent (docs-13, docs-14, docs-15), and chat is described as working 'across web, mobile, and messaging platforms' (docs-13), implying broader channel reach, but no evidence names Slack, WhatsApp, or social channels specifically as supported surfaces. Missing for 10: explicit confirmation of Slack integration, WhatsApp support, and social media channel coverage.",
+    "rationale": "Decagon clearly offers a unified agent across chat (web, mobile, messaging platforms), email, and voice, suggesting broad channel reach [decagon-docs-13][decagon-docs-14][decagon-docs-15], with proactive/session-continuity features tying channels together [decagon-docs-22][decagon-docs-28]. However, the evidence never names specific channels like Slack, WhatsApp, or social media explicitly — only generic 'messaging platforms' is mentioned. Missing for 10: explicit documentation naming Slack, WhatsApp, and social media integrations as supported channels, plus any customer proof of omnichannel handoff across these specific channels.",
     "evidenceIds": [
       "decagon-docs-13",
       "decagon-docs-14",
       "decagon-docs-15",
-      "decagon-docs-22"
+      "decagon-docs-22",
+      "decagon-docs-28"
     ]
   },
   {
@@ -448,15 +465,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Decagon has a dedicated Testing & QA product plus Watchtower for flagging (natural-language criteria like frustration/policy violations) and Duet for generating tests/AOPs from real conversations, forming a scored-sample, flagged-failure, review-loop pipeline that feeds back into agent behavior. Insights/reporting and knowledge-gap suggestions further close the loop into fixes. Missing for 10: independent/hands-on evidence of scoring methodology and quantified QA outcomes beyond vendor docs and a single customer quote.",
+    "rationale": "Decagon documents a dedicated Testing & QA suite (Simulations) that validates agent behavior pre-deploy and on updates, plus Watchtower which reviews every live interaction against custom flagging criteria (compliance, sentiment, frustration) and surfaces failures, and Duet which auto-generates tests/AOPs and iterates on the agent based on conversation gaps — together covering scored/flagged QA and a feedback loop into agent fixes. missing for 10: no independent/hands-on corroboration of scoring accuracy or the closed-loop fix cycle, and no explicit description of 'sampling' methodology for QA review.",
     "evidenceIds": [
-      "decagon-docs-11",
       "decagon-docs-8",
+      "decagon-docs-11",
       "decagon-docs-20",
-      "decagon-docs-6",
-      "decagon-docs-9",
-      "decagon-docs-10",
-      "decagon-docs-12"
+      "decagon-docs-29",
+      "decagon-docs-24",
+      "decagon-docs-31"
     ]
   },
   {
@@ -464,12 +480,10 @@
     "storyId": "openness-api-parity",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "There is no evidence of a public API at all—OpenAPI/swagger probes all 404, and the technical docs (which would presumably document any API) are login-gated behind docs.decagon.ai. All evidence describes UI-configurable product surfaces (AOP, Duet, Watchtower, Insights, etc.) with no mention of equivalent API endpoints for these operations.",
+    "confidence": "high",
+    "rationale": "No evidence of a public API at all — the openapi probe returned 404 across all candidate paths, and none of the docs describe an API that mirrors UI capabilities like AOP configuration, Duet, Watchtower, or experiments. Absence of evidence for this applicable capability yields none.",
     "evidenceIds": [
-      "decagon-probe-2",
-      "decagon-probe-rt-3",
-      "decagon-probe-rt-2"
+      "decagon-probe-2"
     ]
   },
   {
@@ -478,10 +492,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Decagon is an enterprise customer-support AI platform (chat/voice/email agents) with no evidence of any end-user data export feature, open-format export, or account portability mechanism; the evidence pack shows only product capability docs, security/SSO details, and gated technical docs, none addressing data export or exit rights for individual users.",
+    "rationale": "Decagon's evidence pack contains no documented data-export feature, open-format export tooling, or account-deletion/portability workflow; the only tangential mention (\"data portability and control\" in decagon-docs-28) is vague marketing language about maintaining conversation context, not a concrete export/exit mechanism, and the probe shows no public API/OpenAPI spec that could support programmatic data extraction.",
     "evidenceIds": [
-      "decagon-docs-21",
-      "decagon-probe-rt-3",
+      "decagon-docs-28",
       "decagon-probe-2"
     ]
   },
@@ -509,13 +522,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon's docs describe real-time, scoped access to customer systems via short-lived JWT tokens and MCP-based integrations, plus identity-provider integrations and Browser Actions to reach any system a support agent could — implying live data (plan, order status, account history) can inform answers. However, there is no concrete example or case study showing a specific customer query answered with live order/account data, and technical documentation is gated (docs.decagon.ai requires login), limiting independent verification. Missing for 10: a concrete example/case study of live-data-grounded answers (e.g., order status lookup in a real transcript) and independent/third-party corroboration beyond vendor marketing pages.",
+    "rationale": "Decagon's docs describe real-time, scoped access to customer systems via short-lived JWTs, MCP-based tool integrations, and Browser Actions that let agents log into and pull data from any system (including those without native integrations), which supports live-data-driven answers rather than static help content. However, there is no concrete example or case study showing an actual answer surfacing a customer's plan, order status, or account history — the evidence is architectural/capability-level rather than demonstrated output. Missing for 10: a documented example or case study showing live plan/order/account data appearing in an actual customer-facing answer, and independent verification that this works in production.",
     "evidenceIds": [
       "decagon-docs-2",
       "decagon-docs-3",
       "decagon-docs-4",
-      "decagon-docs-21",
-      "decagon-probe-rt-3"
+      "decagon-docs-27",
+      "decagon-docs-19",
+      "decagon-docs-21"
     ]
   },
   {
@@ -524,12 +538,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Decagon has a dedicated Testing & QA product page describing Duet-generated tests covering diverse pathways to verify agent accuracy, policy adherence, and brand voice, plus Experiments for controlled production rollouts and Duet's ability to generate AOPs from past customer interactions — directly supporting pre-launch simulation/testing against historical patterns. Missing for 10: independent/hands-on validation of the testing workflow (e.g., a case study showing historical-ticket replay results) and detail on how 'historical tickets' specifically are ingested into test suites.",
+    "rationale": "Decagon's Simulations product is explicitly described as an integrated testing suite that validates agent behavior across channels before production deployment and on every update, and Duet can generate diverse test pathways to check accuracy, policy adherence, and brand voice. Missing for 10: no explicit mention of testing against historical ticket logs specifically, and no independent/hands-on evidence corroborating the testing suite's effectiveness beyond vendor docs.",
     "evidenceIds": [
+      "decagon-docs-29",
       "decagon-docs-11",
-      "decagon-docs-6",
-      "decagon-docs-7",
-      "decagon-docs-16"
+      "decagon-docs-6"
     ]
   },
   {
@@ -538,7 +551,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions data residency, region selection, or data storage location controls; security page content covers JWT tokens and SSO but not residency choice. Missing for 10: any mention of regional data hosting options, residency compliance certifications, or user-facing controls to select storage location.",
+    "rationale": "No evidence pack item mentions data residency, region selection, or storage location controls; security page content covers JWTs and SSO but not data residency options. Missing for 10: any mention of regional data storage, residency compliance (e.g., EU/US hosting options), or customer-facing controls to choose storage location.",
     "evidenceIds": []
   },
   {
@@ -547,20 +560,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses AI model training opt-out or data-use-for-training policy; security docs mention JWT tokens and SSO but nothing about preventing customer/user data from being used to train models.",
+    "rationale": "No evidence in the pack addresses data usage for AI model training or an opt-out/no-training policy; the security page covers JWT tokens and SSO but not training data practices.",
     "evidenceIds": []
   },
   {
     "productId": "decagon",
     "storyId": "privacy-retention-controls",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of data retention policies, deletion controls, or user-facing mechanisms to control how long data is stored or when it's deleted. Security-related docs discuss JWT tokens and identity provider integration, but nothing about retention/deletion controls, and technical docs are login-gated per decagon-probe-rt-3.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Decagon only vaguely references 'data portability and control' alongside customer context retention, and short-lived JWT tokens discarded after each session, but there is no explicit documentation of configurable data retention periods, deletion APIs, or user-facing controls to purge stored customer data. missing for 10: explicit retention policy/settings, a documented deletion mechanism or API, and independent verification that deletion requests are honored.",
     "evidenceIds": [
-      "decagon-docs-2",
-      "decagon-docs-21",
-      "decagon-probe-rt-3"
+      "decagon-docs-28",
+      "decagon-docs-2"
     ]
   },
   {
@@ -569,25 +581,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions telemetry opt-out, usage tracking controls, or privacy settings for end users; the security page discusses JWTs and SSO but not tracking opt-out, and technical docs are login-gated so no further detail is available.",
-    "evidenceIds": [
-      "decagon-docs-2",
-      "decagon-probe-rt-3"
-    ]
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out controls; the security and product pages cover access control, JWT tokens, and SSO but never mention analytics/telemetry opt-out settings for end users. Missing for 10: any documentation of a telemetry toggle, data-collection opt-out mechanism, or privacy settings page.",
+    "evidenceIds": []
   },
   {
     "productId": "decagon",
     "storyId": "procedure-sop-builder",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Decagon's Agent Operating Procedures (AOPs) let support-ops teams define agent behavior in natural language 'the same way you train human agents with SOPs,' with non-technical teams architecting and iterating on branching agent logic, auto-generated from past interactions, and testable via Duet. This directly matches encoding SOPs with deterministic branching for known issue types, though missing for 10: independent/hands-on verification of the branching logic's determinism and no public technical docs detailing the exact conditional/branching syntax (docs.decagon.ai is login-gated).",
+    "rationale": "Decagon explicitly ships 'Agent Operating Procedures (AOPs)' described as letting teams 'define agent behavior in natural language, the same way you train human agents with SOPs,' with Duet auto-generating and iterating these procedures from real interactions. This directly matches encoding step-by-step SOPs for known issue types. Missing for 10: concrete technical detail on how branching logic/decision trees are structured and enforced deterministically, and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
-      "decagon-docs-5",
-      "decagon-docs-6",
       "decagon-docs-16",
-      "decagon-docs-11",
-      "decagon-probe-rt-3"
+      "decagon-docs-6",
+      "decagon-docs-5",
+      "decagon-docs-25",
+      "decagon-docs-24"
     ]
   },
   {
@@ -595,25 +604,28 @@
     "storyId": "resolution-analytics",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Decagon's Insights & Reporting product page confirms a dashboard with visual heatmaps and natural-language querying of conversations to spot trends, which supports general leader-facing analytics, but no evidence names or confirms specific metrics like CSAT, resolution rate, handoff rate, or cost per resolution being tracked or displayed. Missing for 10: explicit documentation of CSAT tracking, resolution rate, handoff rate, and cost-per-resolution metrics, plus any exec-report templates or independent corroboration of these specific KPIs.",
+    "confidence": "low",
+    "rationale": "Decagon's Insights & Reporting product includes customizable dashboards, visual heatmaps for key metrics, and 'Ask AI' conversational analytics for querying conversation trends, which supports general exec-reporting use cases. However, the evidence never explicitly names resolution rate, CSAT, handoff rate, or cost-per-resolution as tracked/reported metrics. missing for 10: explicit confirmation that CSAT, resolution rate, handoff rate, and cost-per-resolution are specific dashboard metrics; independent/customer corroboration of these exact KPIs being reported to execs.",
     "evidenceIds": [
       "decagon-docs-9",
       "decagon-docs-17",
-      "decagon-probe-rt-2"
+      "decagon-docs-30"
     ]
   },
   {
     "productId": "decagon",
     "storyId": "restricted-topic-controls",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Decagon's Agent Operating Procedures let ops teams define agent behavior in natural language 'the same way you train human agents with SOPs' (decagon-docs-16), and Duet/testing-qa let teams verify agents 'follow policies' (decagon-docs-11), which could be used to encode human-only topic rules, plus generic claims of 'full visibility and control over guardrails' (decagon-docs-1). But there is no explicit feature or documentation describing a dedicated human-only topic flag/escalation guarantee, nor any evidence (audit logs, enforcement tests) that the agent is prevented from ever engaging on flagged topics like legal threats or cancellations. Missing for 10: an explicit human-only/escalation-list feature, enforcement guarantees, and independent verification that flagged topics are never handled by the agent.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Decagon's AOPs let teams define agent behavior/escalation rules in natural language, and 'guardrails' are described as retained under technical team control, which could support marking certain topics as human-only; Watchtower can flag legal/compliance/sentiment topics for review. However, there's no explicit documentation of a dedicated 'human-only topic' or hard-escalation feature, nor any evidence (hands-on or audit) confirming the agent never engages on flagged categories. Missing for 10: explicit human-only/topic-exclusion configuration feature, proof/testing that the agent reliably refuses or escalates on those topics, and independent verification of enforcement.",
     "evidenceIds": [
+      "decagon-docs-1",
       "decagon-docs-16",
-      "decagon-docs-11",
-      "decagon-docs-1"
+      "decagon-docs-25",
+      "decagon-docs-8",
+      "decagon-docs-20",
+      "decagon-docs-31"
     ]
   },
   {
@@ -621,22 +633,24 @@
     "storyId": "supervised-draft-mode",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers guardrails like AOPs, testing/QA, Watchtower monitoring, and full-visibility claims, but none of it describes a supervised launch mode where the agent drafts replies that a human must approve before they reach a customer. This is a plausible and important axis for a support automation platform, but no citation shows a draft-for-approval or human-in-the-loop send-gate workflow.",
+    "confidence": "low",
+    "rationale": "Decagon's evidence covers testing/simulation (Simulations, Duet), experiments, guardrails, and monitoring (Watchtower), but nothing describes a supervised/human-in-the-loop 'draft-for-approval' mode where a human must approve each reply before it reaches a customer. Testing/QA and experiments happen pre-production or on traffic splits, not as a live approval queue for individual replies.",
     "evidenceIds": []
   },
   {
     "productId": "decagon",
     "storyId": "topic-trend-insights",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Decagon's Insights product supports open-ended analysis of customer conversations, heatmaps to spot spikes/dips in metrics, and Watchtower flags natural-language-defined issues in real time, which together approximate topic clustering and emerging-issue detection. However, there's no explicit documentation of automatic topic clustering or proactive alerting before ticket volume spikes specifically — the emphasis is on ad-hoc querying and dashboards rather than autonomous surfacing of emerging trends. Missing for 10: explicit topic-clustering mechanism, evidence of predictive/early-warning alerting tied to ticket volume trends, and independent validation of this analytics capability.",
+    "rationale": "Decagon's Insights & Reporting and Watchtower products support natural-language querying of conversations (e.g., 'Why are customers requesting refunds?'), heatmaps to spot spikes/dips in key metrics, and custom flagging criteria across every interaction, which together enable topic-level pattern detection and early issue surfacing. However, the evidence never explicitly describes automated topic clustering or a proactive 'before ticket volume spikes' alerting mechanism—these are inferred from adjacent features. Missing for 10: explicit description of automatic conversation clustering by topic, independent/hands-on evidence of early trend detection preventing ticket spikes, and case-study proof of this specific insight workflow in production.",
     "evidenceIds": [
       "decagon-docs-9",
       "decagon-docs-17",
-      "decagon-docs-8",
-      "decagon-docs-20"
+      "decagon-docs-30",
+      "decagon-docs-31",
+      "decagon-docs-20",
+      "decagon-docs-10"
     ]
   },
   {
@@ -645,7 +659,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions pricing model, per-resolution billing, published rates, caps, or contrasts with opaque enterprise quotes; all evidence is about product features, security, and QA capabilities. Absence of any pricing documentation for an applicable axis yields 'none'.",
+    "rationale": "No evidence pack item mentions pricing, resolution-based billing, caps, controls, or published pricing pages — all evidence concerns product features (AOPs, Duet, Watchtower, integrations, security) rather than pricing model. Absence of evidence for this applicable axis yields 'none'. Missing for 10: published pricing page, resolution-based billing structure, caps/controls documentation, any pricing transparency claims.",
     "evidenceIds": []
   },
   {
@@ -654,50 +668,58 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Decagon explicitly offers a Voice product built for natural, multilingual conversations, and its platform architecture (shared AOPs, integrations, knowledge base) implies the same underlying logic/actions power chat and voice. However, the evidence never explicitly confirms voice shares identical knowledge/actions/AOPs as chat, nor gives hands-on proof of call quality or feature parity. Missing for 10: explicit documentation or independent evidence that voice and chat share the same knowledge base and action set, real-world call transcripts/case studies validating voice parity, and detail on latency/interruption handling for phone use.",
+    "rationale": "Decagon explicitly offers a Voice product for 'natural, multilingual conversations' and can 'initiate intelligent, on-brand calls,' and its platform architecture (AOPs, integrations, guardrails) is shared across channels including chat, implying shared knowledge/actions. However, there's no explicit vendor statement confirming full parity of knowledge/actions between voice and chat, no technical detail on speech-to-speech quality, and no independent/hands-on corroboration of call handling. Missing for 10: explicit parity confirmation between voice and chat agent logic, technical/latency details of the voice pipeline, independent or customer testimonial evidence of voice call handling in production.",
     "evidenceIds": [
       "decagon-docs-14",
+      "decagon-docs-23",
       "decagon-docs-13",
       "decagon-docs-16",
-      "decagon-probe-rt-2"
+      "decagon-docs-25"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Fin publishes a live llms.txt at fin.ai/llms.txt and a developer-docs llms.txt with a per-page .md table of contents, directly satisfying the agent-oriented docs pattern; confirmed by direct probes, not just claims. Missing for 10: independent third-party confirmation that AI agents actually consume/navigate these files successfully in practice.",
+    "rationale": "A live probe confirms Fin publishes an llms.txt file at https://fin.ai/llms.txt (HTTP 200) explicitly framed to help LLMs understand its content structure, and Fin also offers an MCP server and a CLI agents can be pointed at for setup. Missing for 10: markdown-doc mirrors (docs-md probe 404) and a discoverable OpenAPI spec (all candidates 404), which would round out agent-friendly documentation.",
     "evidenceIds": [
       "intercom-fin-probe-1",
-      "intercom-fin-probe-rt-1"
+      "intercom-fin-docs-38",
+      "intercom-fin-probe-4",
+      "intercom-fin-probe-2",
+      "intercom-fin-probe-3"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Fin's pricing page lists analytics-style features (\"AI Topics, Trends, AI Recommendations, CX Score, Custom AI Scorecards, Incident Detection\") implying it surfaces AI-generated insights from support data, but there is no dedicated documentation, screenshots, or independent corroboration describing how these insights are generated or used. Missing for 10: detailed docs/help articles on the insights/recommendations features, hands-on or community validation that these insights are useful/accurate, and examples of suggestions being acted upon.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Fin's 'Insights', 'AI Recommendations', 'AI Topics', 'Trends', and CX Score features (docs-16, docs-47, docs-61) show it surfaces AI-generated analysis of conversation data, and 'Monitors'/'Custom AI Scorecards' extend this to proactive alerting. However this is framed around support-conversation analytics rather than a general 'insights from your data' experience, and there's no independent/hands-on validation of accuracy or usefulness of these AI-generated insights. missing for 10: independent corroboration of insight quality, broader data-source coverage beyond support conversations, concrete UI examples of AI-generated suggestions.",
     "evidenceIds": [
-      "intercom-fin-docs-16"
+      "intercom-fin-docs-16",
+      "intercom-fin-docs-47",
+      "intercom-fin-docs-61",
+      "intercom-fin-docs-66"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Fin ships documented autonomy-oriented features—Fin Tasks, Procedures, Workflows, Proactive Outbound Suite, and webhook-driven triggers—that let it act on tickets/emails/chat without human intervention in the background (intercom-fin-docs-24, -26, -23, -15, -6). However, evidence is entirely first-party/docs-based with no independent hands-on confirmation that these automations reliably run unattended, and one HN commenter argues autonomous agent behavior is often unnecessary/overkill versus deterministic workflows, casting some doubt on real-world autonomy claims. Missing for 10: independent verification of background automation actually executing without oversight, and resolution of community skepticism about true autonomy vs scripted workflows.",
+    "rationale": "Fin's Procedures, Tasks, Workflows, and Proactive Outbound Suite are documented as letting Fin autonomously handle multi-step customer queries, business logic, and third-party system actions end-to-end without human intervention, and Fin resolves a majority of queries (76%) without agent involvement. However, evidence is entirely vendor marketing/help docs with no independent or hands-on confirmation of scheduling/background execution mechanics, and one community comment questions whether open-ended autonomous agent behavior is even desirable versus deterministic workflows. Missing for 10: independent verification of autonomous background execution, technical detail on triggers/scheduling for Procedures/Tasks, and hands-on confirmation that these run without ongoing human oversight.",
     "evidenceIds": [
+      "intercom-fin-docs-23",
       "intercom-fin-docs-24",
       "intercom-fin-docs-26",
-      "intercom-fin-docs-23",
+      "intercom-fin-docs-44",
       "intercom-fin-docs-15",
-      "intercom-fin-docs-6",
+      "intercom-fin-docs-56",
       "intercom-fin-comm-3"
     ]
   },
@@ -706,74 +728,76 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Fin's own docs describe a built-in AI agent that users can delegate work to: 'Introduction to Fin Tasks', 'Building Fin Procedures', 'Giving Fin Guidance', and pricing docs stating it 'takes action to update external systems' and 'handles tickets, cases, emails, live chat, WhatsApp, SMS.' This is core, first-party documented functionality, not a bolt-on tool.  Missing for 10: independent hands-on evidence confirming delegated tasks are reliably completed in production (community commentary is skeptical/mixed rather than a concrete failure report).",
+    "confidence": "high",
+    "rationale": "Fin is itself a built-in AI agent that customers and support teams delegate tasks to — it resolves ~76% of queries end-to-end, handles multi-step 'Procedures' with business logic, takes actions on external systems, and works across channels (chat, email, voice, Slack, WhatsApp). This is documented extensively in first-party docs/help articles covering delegation-style use (Fin Tasks, Fin Procedures, escalation rules, API/Agent API for programmatic delegation).\n\nmissing for 10: independent hands-on validation of delegation quality (one HN commenter says they've never seen Fin in the wild, and another questions whether autonomous agent reasoning is even the right approach vs deterministic workflows), and no live product screenshots/demo confirming smooth end-user delegation experience.",
     "evidenceIds": [
-      "intercom-fin-docs-22",
+      "intercom-fin-docs-9",
+      "intercom-fin-docs-11",
       "intercom-fin-docs-23",
       "intercom-fin-docs-26",
-      "intercom-fin-docs-11",
-      "intercom-fin-docs-9",
+      "intercom-fin-docs-44",
+      "intercom-fin-docs-56",
+      "intercom-fin-docs-3",
+      "intercom-fin-comm-1",
       "intercom-fin-comm-3"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-headless",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Fin exposes a documented Agent API (Discover capabilities, Ask Fin, Run a procedure, Escalate) plus a published, actively maintained Node SDK and webhooks for event-driven automation, and the REST API is confirmed live/auth-gated at runtime — all enabling headless, programmatic/CI-driven invocation without the UI. Missing for 10: explicit CI pipeline examples/docs, and some orchestration endpoints are still gated behind a 'Preview API' version rather than fully GA.",
+    "rationale": "Fin exposes a programmatic Agent API and Node/TypeScript SDK (intercom-fin-docs-3, intercom-fin-gh-3) that allows calling Fin from external code/services, which supports headless/CI-style automation, and webhooks (intercom-fin-docs-6) enable event-driven automation without a UI. However, there is no documented CI-specific tooling (e.g., a CLI test runner, GitHub Action, or exit-code-based automation harness) and the orchestration endpoints needed for autonomous agent-style headless runs are only in a Preview API (intercom-fin-docs-4). missing for 10: dedicated CI/CD integration or GitHub Action, documented headless test/run mode with exit codes, independent confirmation of automation reliability outside preview APIs.",
     "evidenceIds": [
       "intercom-fin-docs-3",
       "intercom-fin-docs-4",
       "intercom-fin-docs-6",
-      "intercom-fin-gh-1",
-      "intercom-fin-gh-2",
-      "intercom-fin-probe-rt-2",
-      "intercom-fin-probe-rt-4"
+      "intercom-fin-gh-3"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-mcp-client",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "All MCP evidence shows Intercom exposing an MCP *server* (mcp.intercom.com) so other AI agents can pull Intercom data — the reverse of this story, which asks whether Fin itself can connect to and use tools from external MCP servers. No evidence shows Fin acting as an MCP client or consuming third-party MCP tool servers.",
+    "rationale": "Fin's own docs state it 'works through MCP or API Data Connectors for your business tools' (docs-40/54) and explicitly describe connecting the 'Zapier MCP connector to Fin' (intdir-3), confirming Fin can consume external MCP servers as tools. Missing for 10: independent/hands-on verification of MCP tool usage in production and a broader list of supported MCP servers beyond the Zapier example.",
     "evidenceIds": [
+      "intercom-fin-docs-40",
+      "intercom-fin-docs-54",
+      "intercom-fin-intdir-3",
       "intercom-fin-docs-5",
-      "intercom-fin-probe-4",
-      "intercom-fin-probe-rt-3"
+      "intercom-fin-docs-32"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Intercom publishes official MCP server documentation, and runtime probing confirms a live, OAuth-gated hosted MCP endpoint at mcp.intercom.com/mcp, letting AI agents connect to Intercom/Fin data via MCP as documented. Missing for 10: independent third-party hands-on report of a client successfully completing the OAuth flow and using tools end-to-end.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Intercom publishes official docs for an MCP server that lets AI agents securely access and interact with Intercom data, and this is corroborated by a dedicated probe confirming the documented endpoint plus Fin's own integrations page referencing MCP connectivity. missing for 10: independent/hands-on confirmation of the MCP server working in practice beyond vendor docs, and clearer detail on scope/auth setup.",
     "evidenceIds": [
       "intercom-fin-docs-5",
-      "intercom-fin-probe-4",
-      "intercom-fin-probe-rt-3"
+      "intercom-fin-docs-32",
+      "intercom-fin-docs-40",
+      "intercom-fin-docs-54",
+      "intercom-fin-probe-4"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Fin's core product is a conversational AI agent that end-users and other systems interact with entirely via natural language across chat, email, WhatsApp, SMS, and voice, and the Fin Agent API adds an 'Ask Fin' natural-language query endpoint for programmatic/agentic use. This is well documented first-party across pricing/docs pages and the developer API guide.\nMissing for 10: independent/hands-on evidence of NL command quality or reliability, and confirmation the Preview 'Ask Fin' orchestration endpoints are generally available rather than preview-only.",
+    "rationale": "Fin's core function is responding to customer queries in natural language across channels, and admins can 'give Fin guidance' and train Procedures using natural-language instructions (docs-22, docs-44, docs-60); the Fin CLI also lets an AI coding agent configure Fin setup based on natural-language prompts (docs-38). However there's no clear evidence of a full natural-language command interface for operating/administering the product itself (e.g., configuring settings, running reports) beyond training/guidance content. Missing for 10: documented NL-driven admin console commands, evidence of broad NL task execution beyond content/guidance training, and independent verification of this capability in practice.",
     "evidenceIds": [
-      "intercom-fin-docs-9",
-      "intercom-fin-docs-3",
-      "intercom-fin-docs-4",
-      "intercom-fin-docs-17",
-      "intercom-fin-docs-18",
-      "intercom-fin-docs-19"
+      "intercom-fin-docs-22",
+      "intercom-fin-docs-44",
+      "intercom-fin-docs-38",
+      "intercom-fin-docs-60"
     ]
   },
   {
@@ -788,18 +812,19 @@
   {
     "productId": "intercom-fin",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Fin has a documented public Fin Agent API for programmatic invocation, plus a broader Intercom REST API and official Node SDK confirmed live via runtime probes (auth-gated endpoints returning proper error responses), and MCP server access is also documented and verified live. missing for 10: a public OpenAPI/swagger spec (probe found 404s) and no independent third-party integration report beyond first-party docs/probes.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Fin ships a documented Fin Agent API and an official TypeScript SDK (intercom-node) with concrete usage examples, plus a separate API platform for answer generation/knowledge retrieval, giving AI-native users a real programmatic path to drive Fin. However, key orchestration endpoints (Discover capabilities, Ask Fin, Run a procedure, Escalate) are only in Preview API version, and automated probes found no discoverable OpenAPI/swagger spec, suggesting the public API surface is not fully standardized/discoverable yet. Missing for 10: stable (non-preview) orchestration endpoints, a machine-readable OpenAPI spec, and independent hands-on developer corroboration beyond vendor docs/SDK repo.",
     "evidenceIds": [
       "intercom-fin-docs-3",
       "intercom-fin-docs-4",
-      "intercom-fin-probe-rt-2",
-      "intercom-fin-probe-rt-4",
-      "intercom-fin-probe-3",
-      "intercom-fin-probe-4",
-      "intercom-fin-probe-rt-3"
+      "intercom-fin-docs-39",
+      "intercom-fin-docs-53",
+      "intercom-fin-gh-1",
+      "intercom-fin-gh-2",
+      "intercom-fin-gh-3",
+      "intercom-fin-probe-3"
     ]
   },
   {
@@ -808,27 +833,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence shows Fin's API and MCP server are auth-gated (OAuth bearer tokens), but there is no documentation of scoped or least-privilege credential issuance (e.g., granular permission scopes, role-based API keys) for agents specifically. Missing for 10: any docs on scoped API keys, permission granularity, or least-privilege credential management for agent access.",
+    "rationale": "Evidence covers API access, MCP, webhooks, and integrations, but there is no mention of scoped or least-privilege API credential/token issuance for agents (e.g., granular permission scopes, per-agent API keys). Absence of evidence for an applicable capability yields 'none'. missing for 10: scoped/least-privilege credential issuance, API key/token permission granularity, agent-specific credential management docs.",
     "evidenceIds": [
-      "intercom-fin-probe-rt-2",
-      "intercom-fin-probe-rt-3",
-      "intercom-fin-docs-5"
+      "intercom-fin-docs-3",
+      "intercom-fin-docs-5",
+      "intercom-fin-docs-32"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Intercom publishes an official Node SDK (intercom-client) on npm/GitHub with usage examples and pagination helpers, backed by a live, auth-gated REST API and Fin Agent API docs, plus an official MCP server for programmatic access — all first-party and independently verified via runtime probes. Missing for 10: multi-language SDK coverage beyond Node, and independent developer testimonials on SDK quality/reliability.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Intercom publishes an official TypeScript/Node SDK (intercom-node) with convenient API access and iterator support, plus a documented Fin Agent API and API platform for programmatic use. However, only one official SDK language is evidenced, there's no public OpenAPI spec (probe returned 404s across all candidate paths), and no independent corroboration of SDK quality/adoption exists. Missing for 10: multi-language SDK coverage, publicly discoverable OpenAPI/schema, and third-party validation of SDK reliability.",
     "evidenceIds": [
       "intercom-fin-gh-1",
       "intercom-fin-gh-2",
+      "intercom-fin-gh-3",
       "intercom-fin-docs-3",
-      "intercom-fin-probe-rt-2",
-      "intercom-fin-probe-rt-4",
-      "intercom-fin-probe-rt-3"
+      "intercom-fin-docs-39",
+      "intercom-fin-probe-3"
     ]
   },
   {
@@ -837,9 +862,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Intercom's developer docs explicitly document webhooks for subscribing to real-time events (Contact created, Conversation received, Outbound Message receipt), directly matching the story. Missing for 10: independent/hands-on corroboration of webhook reliability and no mention of event filtering/retry semantics.",
+    "rationale": "Intercom's developer docs explicitly document webhooks for subscribing to real-time event notifications (Contact created, Conversation received, Outbound Message receipt), directly matching the story. Missing for 10: independent/hands-on corroboration of webhook reliability and broader event coverage beyond the three examples cited.",
     "evidenceIds": [
-      "intercom-fin-docs-6"
+      "intercom-fin-docs-6",
+      "intercom-fin-docs-33"
     ]
   },
   {
@@ -848,11 +874,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a documented REST API, Node SDK, and MCP server, but no interactive API reference with runnable/try-it examples — the probe explicitly checked for an OpenAPI/Swagger spec and got 404s on all candidate paths, and no docs snippet mentions an interactive console or code sandbox.",
+    "rationale": "While Fin has API docs (developers.intercom.com) and an SDK on GitHub, there is no evidence of an interactive API reference with runnable/try-it examples; a probe explicitly found no OpenAPI/Swagger spec published at any candidate path, and no docs mention a live API console.",
     "evidenceIds": [
-      "intercom-fin-probe-3",
       "intercom-fin-docs-3",
-      "intercom-fin-probe-rt-2"
+      "intercom-fin-probe-3",
+      "intercom-fin-gh-3"
     ]
   },
   {
@@ -860,23 +886,25 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Explicit probes for OpenAPI/Swagger specs at all standard paths (openapi.json, swagger.json, api/openapi.json, .well-known/openapi.json) returned 404, and no documentation link to a downloadable machine-readable spec is present anywhere in the evidence pack despite Fin having a public REST API and Node SDK.",
+    "confidence": "medium",
+    "rationale": "Fin has documented REST APIs (Fin Agent API, Node/TS SDK) but no evidence of a downloadable machine-readable spec; a direct probe for OpenAPI/swagger files at common paths returned 404 for all candidates, and no docs page links such a spec.",
     "evidenceIds": [
       "intercom-fin-probe-3",
       "intercom-fin-docs-3",
-      "intercom-fin-probe-rt-2"
+      "intercom-fin-docs-4"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "There's a docs article titled 'How to preview and test Fin' suggesting some preview/test capability, but no evidence describes an actual sandbox environment isolated from production data, test data sets, or explicit non-production mode. Missing for 10: explicit sandbox/staging environment docs, confirmation that test interactions don't touch production data or customer records, and any hands-on corroboration of this isolation.",
+    "rationale": "Fin documents a testing/preview workflow ('How to preview and test Fin', testing across thousands of scenarios before going live) that implies an isolated test/preview mode, but no evidence explicitly describes a sandbox environment separate from production data or confirms production data isolation during testing. Missing for 10: explicit sandbox/staging environment documentation, confirmation that test scenarios don't touch live customer data, and any independent/hands-on corroboration of this isolation.",
     "evidenceIds": [
-      "intercom-fin-docs-29"
+      "intercom-fin-docs-29",
+      "intercom-fin-docs-45",
+      "intercom-fin-docs-59"
     ]
   },
   {
@@ -896,14 +924,13 @@
     "productId": "intercom-fin",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Fin's SDK exposes paginated list iterators and an API/MCP surface that could be scripted to loop over items, but there is no documented bulk-operation endpoint (e.g., bulk update conversations, bulk import tickets) or first-party guidance framed around bulk actions. missing for 10: explicit bulk-operation API/endpoint documentation, examples of batch processing many items in one call, and independent confirmation of bulk-scale usage.",
+    "rationale": "Fin exposes a programmatic API and TypeScript SDK with a pagination iterator for looping over items, plus a content-import endpoint, implying some capacity for scripted bulk actions, but there is no documented bulk-edit, bulk-resolve, or batch-action feature for AI-native users. missing for 10: explicit bulk operation/batch endpoint documentation, hands-on evidence of processing many items in one call, and any UI/CLI bulk-action support.",
     "evidenceIds": [
-      "intercom-fin-gh-2",
       "intercom-fin-docs-3",
-      "intercom-fin-probe-rt-2",
-      "intercom-fin-probe-rt-3"
+      "intercom-fin-gh-1",
+      "intercom-fin-gh-2"
     ]
   },
   {
@@ -927,11 +954,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Fin has workflow/task management features (Fin Tasks, Fin workflows, Proactive Outbound Suite) but no evidence describes scheduling recurring jobs or workflows on a cadence; this is a fair automation-depth question for an AI agent platform, so absence of evidence yields 'none'.",
+    "rationale": "Fin's evidence covers webhooks (event-driven, not scheduled), procedures, and a Proactive Outbound Suite, but nothing describes cron-like scheduling of recurring jobs or workflows on a time-based schedule. missing for 10: any documentation of scheduled/recurring workflow triggers, cron-style job scheduling, or recurring automation configuration.",
     "evidenceIds": [
-      "intercom-fin-docs-24",
-      "intercom-fin-docs-26",
-      "intercom-fin-docs-15"
+      "intercom-fin-docs-6",
+      "intercom-fin-docs-15",
+      "intercom-fin-docs-44"
     ]
   },
   {
@@ -939,24 +966,28 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers building/managing Fin procedures and workflows, but nothing documents version history, review/diff workflows, or rollback of automations. missing for 10: version history UI, change review/diff, rollback/restore mechanism, audit trail of automation edits.",
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Fin Procedures/workflow management and testing before go-live ('test it across thousands of scenarios before anything goes live, roll out changes with control'), but there is no concrete documentation of version history, diffing/review of automation changes, or an explicit rollback mechanism for Procedures/Workflows/Guidance. Nothing describes a changelog, version comparison, or a 'revert to previous version' feature for automations.",
     "evidenceIds": [
       "intercom-fin-docs-23",
-      "intercom-fin-docs-24"
+      "intercom-fin-docs-24",
+      "intercom-fin-docs-45"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "brand-voice-tone",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm 'customizable tone and answer length' and multi-language support, plus guidance/persona-setting articles, but there's no evidence of dedicated brand-voice consistency controls that persist across topics or explicit multi-language tone consistency testing. Missing for 10: documented brand-voice/persona configuration depth, evidence of tone consistency validation across topics/languages, and independent/hands-on confirmation that tone stays consistent in practice.",
+    "rationale": "Docs support tone/brand control (\"Customizable tone and answer length\", \"Train Fin on your knowledge, data, policies, and tone of voice\") and multi-language support is documented (\"Use Fin AI Agent in multiple languages\"), plus multi-channel consistency claims (email, Slack, live chat, voice) suggest tone carries across surfaces. However, there is no independent evidence or hands-on validation that tone/brand voice actually stays consistent across topics and languages in practice — only vendor marketing claims. Missing for 10: independent/third-party validation of tone consistency, concrete examples of cross-language tone fidelity, and evidence of consistency across many topics rather than just a training feature description.",
     "evidenceIds": [
       "intercom-fin-docs-10",
+      "intercom-fin-docs-46",
+      "intercom-fin-docs-60",
       "intercom-fin-docs-19",
-      "intercom-fin-docs-22"
+      "intercom-fin-docs-65",
+      "intercom-fin-docs-48"
     ]
   },
   {
@@ -965,25 +996,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Fin has dedicated docs for configuring escalation ('Manage Fin AI Agent's escalation guidance and rules', 'Giving Fin Guidance', hand-off via JS, and an API-level 'Escalate to a human' orchestration endpoint), plus explicit hand-off-to-inbox and helpdesk transfer features, indicating configurable handoff rules exist. However, there is no independent or hands-on evidence confirming reliability of obeying these rules by specific triggers like sentiment or customer tier, and one community comment questions whether autonomous agent behavior is trustworthy for deterministic tasks. Missing for 10: granular evidence of topic/sentiment/tier-based routing configuration, and independent verification that Fin reliably obeys these escalation rules in practice.",
+    "rationale": "Docs explicitly cover configuring escalation/handoff behavior — 'Manage Fin AI Agent's escalation guidance and rules', 'Giving Fin Guidance', 'Hand-off with JavaScript', an orchestration 'Escalate to a human' API endpoint, and 'Transfers to agents directly in preferred Inbox' — showing topic/guidance-based and explicit-request handoff configuration exists. However, none of the evidence specifically documents sentiment- or customer-tier-based handoff triggers, nor is there independent/hands-on verification that the agent reliably obeys these rules in practice. Missing for 10: explicit sentiment/tier-based escalation config docs, and third-party evidence confirming reliable adherence to configured handoff rules.",
     "evidenceIds": [
       "intercom-fin-docs-25",
       "intercom-fin-docs-22",
       "intercom-fin-docs-31",
       "intercom-fin-docs-4",
-      "intercom-fin-docs-12",
-      "intercom-fin-comm-3"
+      "intercom-fin-docs-12"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "content-gap-detection",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Pricing-page bullets mention 'AI Recommendations,' 'Monitors,' 'Trends,' and 'Incident Detection' (intercom-fin-docs-16), which could plausibly surface knowledge gaps or content issues, but no docs, screenshots, or hands-on evidence explicitly describe a feature that flags conflicting content or missed-question root causes. Missing for 10: explicit documentation of a knowledge-gap/conflict-detection report, description of how 'AI Recommendations' or 'Monitors' work, and any independent or hands-on confirmation this surfaces content gaps causing fumbled answers.",
+    "rationale": "Fin's analytics stack (Insights, Monitors, AI Topics/Trends, AI Recommendations, Incident Detection) implies some ability to flag where Fin underperforms or topics trend poorly, and 'Giving Fin Guidance'/'Adding content to Fin' suggest content curation workflows, but no evidence explicitly describes detecting knowledge gaps or conflicting source content as a distinct surfaced capability. Missing for 10: explicit documentation of a 'knowledge gap' or 'content conflict' detection feature, and any hands-on/independent confirmation that such gaps are surfaced to support-ops leads.",
     "evidenceIds": [
-      "intercom-fin-docs-16"
+      "intercom-fin-docs-16",
+      "intercom-fin-docs-47",
+      "intercom-fin-docs-61",
+      "intercom-fin-docs-22",
+      "intercom-fin-docs-28"
     ]
   },
   {
@@ -1003,60 +1037,73 @@
   {
     "productId": "intercom-fin",
     "storyId": "end-to-end-resolution",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence contains only generic feature/pricing claims (e.g., 'handles tickets', 'takes action to update external systems', pay-per-resolution pricing model) but no concrete resolution-rate data, case studies, or independent benchmarks showing what share of conversations Fin fully resolves end-to-end versus deflects or escalates. Community commentary raises skepticism about whether an autonomous agent model is even the right approach for deterministic support tasks, but this doesn't confirm or deny a resolution metric either way — evidence simply doesn't establish the capability.",
+    "rationale": "Fin explicitly claims a resolution metric (\"Fin resolves 76% of customer queries on average, and handles multi-step queries end to end\") across multiple integration pages, plus dedicated testing/evaluation tooling (\"evaluate every live conversation\") and analytics (Insights, Monitors) framed around resolution outcomes rather than deflection. Community commentary raises philosophical skepticism about autonomous agents vs. deterministic workflows, but does not concretely contradict the stated resolution rate. Missing for 10: independent/third-party audit of the 76% figure, and clear definition distinguishing 'resolution' from deflection/bounce in the metric methodology.",
     "evidenceIds": [
-      "intercom-fin-docs-11",
-      "intercom-fin-comm-2",
-      "intercom-fin-comm-3",
-      "intercom-fin-docs-25"
+      "intercom-fin-docs-56",
+      "intercom-fin-docs-57",
+      "intercom-fin-docs-58",
+      "intercom-fin-docs-59",
+      "intercom-fin-docs-45",
+      "intercom-fin-docs-61",
+      "intercom-fin-comm-3"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "grounded-cited-answers",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs show Fin ingests and syncs a company's own content (help center, websites, uploaded articles) as its knowledge base, supporting grounded answers, but no evidence in the pack explicitly confirms that Fin's answers display or cite the specific source article it drew from. missing for 10: explicit citation/source-attribution UI or API field, independent confirmation that shown answers link back to the originating article.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Fin's docs confirm it is trained/grounded on the customer's own content (help center, websites, docs, knowledge sources) via content import and knowledge retrieval APIs (e.g., docs-46/60 'train Fin on your knowledge', docs-28 'Adding content to Fin', docs-27 'Sync and manage websites', gh-1 content import API, docs-39 knowledge retrieval API), but no evidence explicitly shows that end-user answers surface or cite the specific source article they were drawn from. missing for 10: explicit documentation or UI evidence of in-answer source citation/attribution, independent/hands-on confirmation of citation behavior.",
     "evidenceIds": [
+      "intercom-fin-docs-46",
+      "intercom-fin-docs-60",
       "intercom-fin-docs-28",
       "intercom-fin-docs-27",
-      "intercom-fin-docs-14",
-      "intercom-fin-docs-22"
+      "intercom-fin-gh-1",
+      "intercom-fin-docs-39",
+      "intercom-fin-docs-49"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "hallucination-guardrails",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs on 'Giving Fin Guidance' and 'Manage Fin AI Agent's escalation guidance and rules' show Fin has configurable guardrail/escalation mechanisms that could support declining out-of-scope questions, but the evidence pack never explicitly documents an anti-hallucination or 'safe decline vs. guess' behavior, nor any test/benchmark showing it refuses invented answers. Missing for 10: explicit documentation of hallucination-prevention/decline behavior, and independent/hands-on verification that Fin actually declines rather than guesses on off-knowledge queries.",
+    "rationale": "Docs show Fin is 'trained on your knowledge, data, policies, and tone' and grounded in the knowledge base (docs-46/60/49), with configurable 'escalation guidance and rules' (docs-25) and pre-launch testing across scenarios (docs-45/59), which together imply guardrails against off-knowledge answers and hand-off rather than free invention. However there is no explicit documentation of a 'safe decline' behavior or hallucination-refusal mechanism, and no independent/hands-on evidence confirming Fin actually declines rather than guesses on off-knowledge questions. Missing for 10: explicit safe-decline/refusal documentation, third-party or hands-on verification that Fin avoids inventing policies/prices, and quantified guardrail testing results.",
     "evidenceIds": [
-      "intercom-fin-docs-22",
-      "intercom-fin-docs-23",
-      "intercom-fin-docs-25"
+      "intercom-fin-docs-46",
+      "intercom-fin-docs-60",
+      "intercom-fin-docs-25",
+      "intercom-fin-docs-45",
+      "intercom-fin-docs-59",
+      "intercom-fin-docs-49",
+      "intercom-fin-docs-52",
+      "intercom-fin-docs-67"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "helpdesk-platform-integrations",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Docs explicitly claim Fin 'works seamlessly with any helpdesk, including Salesforce, HubSpot, and more' and provide dedicated integration guides for Zendesk and Salesforce, plus can run standalone via Intercom's own inbox/ticketing; API, webhooks, and MCP endpoints support bidirectional ticket/context sync and are confirmed live via runtime probes. Missing for 10: independent hands-on verification of two-way ticket sync fidelity with Zendesk/Salesforce specifically, and no evidence of deeper native integrations beyond marketing copy and help articles.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Fin explicitly documents standalone deployment plus deep integrations with Zendesk, Salesforce, HubSpot, Freshdesk and 'any helpdesk', with two-way data sync (bring content/history over, surface data in inbox) and APIs/MCP/webhooks for programmatic ticket/context sync. Multiple dedicated integration pages (Zendesk, Salesforce, HubSpot, Freshdesk) and platform docs (Agent API, MCP, webhooks, data connectors) corroborate bidirectional context flow. missing for 10: independent/hands-on verification of the bidirectional sync working in production, and no direct evidence of Intercom-native standalone ticketing depth compared to third-party helpdesks.",
     "evidenceIds": [
       "intercom-fin-docs-7",
       "intercom-fin-docs-20",
       "intercom-fin-docs-21",
+      "intercom-fin-docs-36",
+      "intercom-fin-docs-37",
       "intercom-fin-docs-3",
       "intercom-fin-docs-5",
       "intercom-fin-docs-6",
-      "intercom-fin-probe-rt-2",
-      "intercom-fin-probe-rt-3"
+      "intercom-fin-docs-40",
+      "intercom-fin-intdir-8"
     ]
   },
   {
@@ -1077,43 +1124,45 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs show Fin ingests external content via URL import (createContentImportSource), syncing websites, 'Adding content to Fin', and works alongside helpdesks like Zendesk/Salesforce without manual re-authoring, plus multi-content-source support (help center, docs, wikis via sync). Missing for 10: no direct evidence of ticket-history ingestion or internal wiki-specific connectors, and no independent/hands-on validation of ingestion quality or completeness.",
+    "rationale": "Fin explicitly supports ingesting websites/help center content (createContentImportSource, 'Sync and manage websites', 'Adding content to Fin'), integrates with helpdesks (Zendesk, Salesforce, HubSpot, Freshdesk) preserving existing content/history, and pulls in Confluence, Notion, Zendesk content into a unified knowledge source alongside data connectors for third-party tools. This covers help center, docs, past ticket/helpdesk content, and wiki tools (Confluence/Notion) without manual re-authoring. Missing for 10: no explicit mention of ingesting 'internal wikis' broadly beyond Confluence/Notion, and no independent/hands-on verification of ingestion fidelity or effort required.",
     "evidenceIds": [
       "intercom-fin-gh-1",
       "intercom-fin-docs-27",
       "intercom-fin-docs-28",
-      "intercom-fin-docs-14",
+      "intercom-fin-intdir-6",
+      "intercom-fin-docs-36",
       "intercom-fin-docs-20",
-      "intercom-fin-docs-21"
+      "intercom-fin-docs-21",
+      "intercom-fin-docs-43"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "live-api-actions",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Fin explicitly supports taking real actions ('Takes action to update external systems', Fin Procedures/Tasks docs) and exposes an Agent API, webhooks, and OAuth-gated MCP server confirmed live at runtime, but there is no concrete documentation of per-action scoped authorization (e.g., separate auth scopes for refunds vs. order changes vs. subscription updates) or a worked example of such actions. Missing for 10: explicit per-action auth-scoping documentation, and a concrete example/case study of Fin executing refund/order/subscription actions through scoped credentials.",
+    "rationale": "Fin's Procedures feature explicitly supports multi-step business logic with third-party systems (refunds, order changes, etc. are common examples in docs like 'Takes action to update external systems' and Procedures training), and data connectors (Stripe, Shopify) plus MCP/API access enable real API calls. However, evidence does not detail per-action scoped authentication/authorization — no documentation on granular auth scoping per action, permission boundaries, or audit trails for individual API calls. missing for 10: explicit scoped-auth-per-action documentation, permission/authorization model for individual actions, and independent verification that real refunds/subscription updates are executed successfully in production.",
     "evidenceIds": [
       "intercom-fin-docs-11",
       "intercom-fin-docs-23",
-      "intercom-fin-docs-26",
-      "intercom-fin-docs-3",
-      "intercom-fin-docs-5",
-      "intercom-fin-probe-rt-3",
-      "intercom-fin-probe-rt-2"
+      "intercom-fin-docs-44",
+      "intercom-fin-docs-34",
+      "intercom-fin-docs-39",
+      "intercom-fin-docs-52"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "multi-turn-troubleshooting",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs describe 'Building Fin Procedures' and 'Giving Fin Guidance' which imply multi-step, guided troubleshooting flows rather than single canned answers, but no evidence explicitly shows Fin asking clarifying questions mid-conversation or an example transcript of multi-step troubleshooting. A community comment argues deterministic workflows are better than open-ended agent reasoning, but this is a design opinion, not a concrete failure report, so it doesn't rise to 'disputed'. Missing for 10: explicit documentation or demo of clarifying-question behavior, hands-on transcript showing multi-turn troubleshooting, independent corroboration of this specific behavior.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Fin's docs describe 'Procedures' that train it to handle multi-step queries with business logic across systems, and marketing claims it 'handles multi-step queries end to end,' supporting structured troubleshooting rather than single canned replies. However, no evidence explicitly documents Fin asking clarifying questions mid-conversation, and one HN commenter argues open-ended agentic reasoning is unnecessary versus deterministic workflows, adding some uncertainty. missing for 10: explicit documentation/example of clarifying-question behavior, independent hands-on proof of multi-step troubleshooting quality.",
     "evidenceIds": [
+      "intercom-fin-docs-44",
+      "intercom-fin-docs-56",
       "intercom-fin-docs-22",
-      "intercom-fin-docs-23",
       "intercom-fin-comm-3"
     ]
   },
@@ -1132,58 +1181,60 @@
     "productId": "intercom-fin",
     "storyId": "omnichannel-coverage",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim Fin handles chat, email, tickets, cases, live chat, WhatsApp, SMS ([intercom-fin-docs-9]), plus dedicated email and voice deployment guides ([intercom-fin-docs-17],[intercom-fin-docs-18]), covering the multi-channel unification the story asks for. Missing for 10: explicit first-party mention of Slack and social-channel deployment (only WhatsApp/SMS/email/voice are named), and independent/hands-on confirmation of true omnichannel parity across all listed channels.",
+    "rationale": "Fin explicitly documents multi-channel support spanning live chat/messenger (in-app), email, Slack, WhatsApp, SMS, and voice, with dedicated channel pages for each (docs-9, docs-50, docs-51, docs-65, docs-48). Missing for 10: explicit named coverage of broader 'social' channels like Instagram/Facebook/X/Twitter — only 'and more' is implied, not documented by name, so the specific 'social' claim in the story is only partially evidenced.",
     "evidenceIds": [
       "intercom-fin-docs-9",
-      "intercom-fin-docs-17",
-      "intercom-fin-docs-18",
-      "intercom-fin-docs-19"
+      "intercom-fin-docs-48",
+      "intercom-fin-docs-50",
+      "intercom-fin-docs-51",
+      "intercom-fin-docs-65"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "ongoing-qa-review",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Fin has 'CX Score', 'Custom AI Scorecards', 'AI Topics/Trends', and preview/test tooling that suggest some QA-adjacent scoring and monitoring capability, plus conversation-level error/status visibility for debugging. But there is no evidence of a structured sampling/scoring workflow, flagged-failure review queue, or a documented loop that feeds review outcomes back into agent behavior/training. missing for 10: documented sample-based QA scoring methodology, a review/flagging workflow for failed conversations, evidence of a closed feedback loop that updates the agent from QA findings, and independent corroboration of these QA features in practice.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Fin ships explicit QA tooling: fin.ai/testing describes testing across thousands of scenarios before launch and evaluating every live conversation, fin.ai/analyze describes Insights, Monitors, and Recommendations continuously analyzing every conversation, and pricing docs list Custom AI Scorecards and Incident Detection alongside guidance and procedure-editing docs that let fixes feed back into the agent behavior. missing for 10: independent or hands-on verification of the scoring and review loop, and detail on how flagged failures are routed to specific fixes.",
     "evidenceIds": [
+      "intercom-fin-docs-45",
+      "intercom-fin-docs-59",
+      "intercom-fin-docs-47",
+      "intercom-fin-docs-61",
       "intercom-fin-docs-16",
-      "intercom-fin-docs-29",
-      "intercom-fin-docs-1"
+      "intercom-fin-docs-22",
+      "intercom-fin-docs-23"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Fin exposes a real, documented Agent API and broader Intercom REST API (auth-gated, live per probes) plus an official MCP server, letting AI-native users call Fin and its data programmatically, but key orchestration endpoints (Discover capabilities, Ask Fin, Run a procedure, Escalate) are explicitly 'Preview API version only,' and no public OpenAPI spec was found, so full UI-API parity isn't demonstrated. missing for 10: GA (non-preview) parity for orchestration/config actions, a discoverable OpenAPI/swagger spec, evidence that UI-only features (e.g., View exports, guidance/procedure building) are fully API-controllable.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Fin exposes an Agent API, Node SDK, MCP, webhooks, and data-connector APIs for programmatic interaction, but there is no evidence of full UI/API parity — no OpenAPI spec was discoverable (404s on all candidate paths) and no documentation claims that every configuration (e.g., inbox setup, workflows, Procedures, escalation rules) manageable in the UI is also manageable via API. Missing for 10: comprehensive API reference/OpenAPI spec, explicit parity claims, evidence that admin/config UI actions (not just conversational/data actions) are API-accessible.",
     "evidenceIds": [
       "intercom-fin-docs-3",
       "intercom-fin-docs-4",
-      "intercom-fin-docs-5",
-      "intercom-fin-probe-rt-2",
-      "intercom-fin-probe-rt-3",
+      "intercom-fin-gh-3",
       "intercom-fin-probe-3",
-      "intercom-fin-probe-rt-4"
+      "intercom-fin-docs-39"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 2,
     "confidence": "low",
-    "rationale": "Fin/Intercom offers some data-access mechanisms — exporting a saved View (docs-2) and a public REST API/webhooks that let a customer pull their own data programmatically (docs-3, probe-rt-2, docs-6) — but there is no documented bulk 'export all your data' feature, no stated open-format (CSV/JSON) full-account export, and no migration/exit tooling. Missing for 10: an explicit full-account data export feature, documented open export formats, and any GDPR/data-portability or account-closure export tool.",
+    "rationale": "The only export-related evidence is a narrow feature to 'Export a saved View exactly as you see it,' not a comprehensive data export mechanism; migration language found in the evidence is framed only around bringing data INTO Intercom from other helpdesks, not exporting all data out in open formats. Missing for 10: bulk/full account data export, documented open file formats (CSV/JSON), a migration-out or offboarding process, and any independent confirmation of successful full data extraction.",
     "evidenceIds": [
       "intercom-fin-docs-2",
-      "intercom-fin-docs-3",
-      "intercom-fin-docs-6",
-      "intercom-fin-probe-rt-2"
+      "intercom-fin-docs-36",
+      "intercom-fin-docs-55"
     ]
   },
   {
@@ -1192,7 +1243,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Fin is a closed, commercial SaaS AI agent product; there is no evidence of any open-license source availability, and the product category (proprietary hosted service) does not fit an 'open-source' axis. This is a category mismatch rather than an unmet applicable capability.",
+    "rationale": "Fin is a closed, commercial SaaS AI agent product; there is no indication it is or ever was open-source, and 'read the source under an open license' is not a fair axis for this kind of proprietary hosted service.",
     "evidenceIds": []
   },
   {
@@ -1201,25 +1252,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Fin is a fully-hosted SaaS AI agent product with no evidence (or plausibility) of a self-hostable core; self-hosting is a category error for this kind of cloud-delivered support product.",
+    "rationale": "Fin is a proprietary SaaS AI agent platform (Intercom); there is no evidence of, nor plausibility for, self-hosting the core product—self-hosting is a category mismatch for this hosted-service type of product.",
     "evidenceIds": []
   },
   {
     "productId": "intercom-fin",
     "storyId": "personalized-account-answers",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show Fin can connect to external systems via the Fin Agent API, MCP server, webhooks, and helpdesk/CRM integrations (Salesforce, Zendesk, HubSpot) and can 'take action to update external systems,' which implies live-data lookups beyond static help articles, and this is corroborated by a live, auth-gated MCP endpoint and REST API. However, there is no first-party or independent evidence of a concrete example (e.g., pulling an order status or account history mid-conversation) proving this in practice, and one community voice argues deterministic tasks like order status are better handled by workflows than by an autonomous agent, raising doubt about how consistently live data is surfaced. Missing for 10: a documented case study or transcript showing Fin retrieving a customer's specific plan/order/account data in an answer, and independent confirmation this works reliably in production.",
+    "rationale": "Docs show Fin connects to live business data via data connector templates (Stripe, Shopify, Statuspage), MCP/API data connectors, webhooks, and CRM integrations (Salesforce, HubSpot, Zendesk) that surface data like plan/order status directly in the inbox, plus Procedures that let Fin execute multi-step logic against third-party systems to update/retrieve real account data rather than just canned articles. Missing for 10: independent/hands-on verification that live data grounding actually improves accuracy in practice, and no case study quantifying resolution based specifically on live account/order data vs. help-article content.",
     "evidenceIds": [
-      "intercom-fin-docs-3",
-      "intercom-fin-docs-5",
+      "intercom-fin-docs-34",
+      "intercom-fin-docs-35",
       "intercom-fin-docs-11",
-      "intercom-fin-docs-6",
-      "intercom-fin-docs-20",
-      "intercom-fin-docs-21",
-      "intercom-fin-probe-rt-3",
-      "intercom-fin-comm-3"
+      "intercom-fin-intdir-4",
+      "intercom-fin-docs-37",
+      "intercom-fin-docs-44",
+      "intercom-fin-docs-32",
+      "intercom-fin-probe-4"
     ]
   },
   {
@@ -1228,11 +1279,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Fin has a dedicated help article 'How to preview and test Fin' explicitly covering pre-launch testing before customer exposure, plus related guidance on giving Fin guidance and building procedures that support iterative validation. missing for 10: no evidence of importing/replaying historical ticket transcripts specifically, no detail on simulated conversation tooling or metrics from test runs, and no independent/hands-on corroboration of the testing workflow's effectiveness.",
+    "rationale": "Fin has a dedicated testing capability documented at fin.ai/testing (\"test it across thousands of scenarios before anything goes live\") and a specific help article \"How to preview and test Fin,\" directly matching the support-ops need to validate the agent before it faces customers. Missing for 10: independent/hands-on corroboration of the testing workflow and explicit mention of importing historical ticket transcripts as test scenarios rather than only generic 'scenarios'.",
     "evidenceIds": [
       "intercom-fin-docs-29",
-      "intercom-fin-docs-22",
-      "intercom-fin-docs-23"
+      "intercom-fin-docs-45",
+      "intercom-fin-docs-59",
+      "intercom-fin-docs-66"
     ]
   },
   {
@@ -1241,7 +1293,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, region selection, or storage location controls for Fin; all documentation covers integrations, API, MCP, and pricing features instead.",
+    "rationale": "The evidence pack contains extensive documentation on Fin's features, integrations, and compliance messaging (e.g., 'meet the world's leading compliance standards') but no mention of data residency, region selection, or storage location controls anywhere in the docs or community evidence.",
     "evidenceIds": []
   },
   {
@@ -1250,7 +1302,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage for AI training, opt-out controls, or privacy settings related to model training; all citations concern API/SDK/MCP features and product functionality, not privacy posture around training data.",
+    "rationale": "No evidence in the pack addresses data being used for AI model training or an opt-out/data-use control; general trust/compliance mentions (e.g., trust-reliability page) do not specify training data usage or opt-out mechanisms.",
     "evidenceIds": []
   },
   {
@@ -1258,8 +1310,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user-facing settings for managing how long Fin/Intercom retains conversation or training data; the pack focuses on API/MCP/SDK capabilities and pricing features. Missing for 10: retention policy documentation, deletion/opt-out mechanisms, data residency or purge controls, any privacy/compliance page.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user-facing controls over how long data is kept or when it is deleted; the docs cover integrations, channels, MCP access, and training but never retention/deletion settings.",
     "evidenceIds": []
   },
   {
@@ -1268,7 +1320,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Fin; nothing about privacy controls or data collection toggles is documented. Missing for 10: any mention of telemetry collection, opt-out settings, or privacy controls for usage tracking.",
+    "rationale": "No evidence pack items mention telemetry opt-out, usage tracking controls, or privacy settings for Fin; only trust/compliance marketing language and unrelated docs are present.",
     "evidenceIds": []
   },
   {
@@ -1277,23 +1329,28 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Fin has dedicated documentation for 'Building Fin Procedures' and 'Giving Fin Guidance', which describe encoding step-by-step SOPs with branching logic for known issue types, plus a Fin Agent API 'Run a procedure' orchestration endpoint that lets ops trigger these procedures deterministically. This directly matches the support-ops story of encoding SOPs with deterministic branching, though the docs are titles/summaries only without deep detail on branching semantics or independent hands-on validation. Missing for 10: detailed first-party walkthrough of branching logic mechanics, and independent/hands-on confirmation that procedures behave deterministically in practice.",
+    "rationale": "Fin has a dedicated \"Building Fin Procedures\" feature explicitly for encoding multi-step SOPs with business logic and branching, plus \"Giving Fin Guidance\" and escalation-rule configuration to control deterministic branching to humans or other steps, and a testing suite to validate procedures before launch. This directly matches the story of encoding SOPs with deterministic branching for known issue types. Missing for 10: independent hands-on verification of branching logic depth/determinism and more detail on how conditional branches are authored (docs are descriptive marketing/help-article summaries rather than technical specs).",
     "evidenceIds": [
       "intercom-fin-docs-23",
+      "intercom-fin-docs-44",
       "intercom-fin-docs-22",
-      "intercom-fin-docs-4",
-      "intercom-fin-docs-3"
+      "intercom-fin-docs-25",
+      "intercom-fin-docs-45",
+      "intercom-fin-docs-66"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "resolution-analytics",
     "verdict": "partial",
-    "quality": 2,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The pricing page lists analytics-related features like 'CX Score, AI Topics, Trends, AI Recommendations, Monitors, Custom AI Scorecards, Incident Detection' (intercom-fin-docs-16), hinting at some reporting/dashboard capability, but there is no evidence describing a dashboard that surfaces resolution rate, CSAT, handoff rate, or cost per resolution specifically for exec reporting. Missing for 10: explicit dashboard showing resolution rate, CSAT score tracking, handoff rate metric, cost-per-resolution calculation, and any exec-reporting export/view of these combined metrics.",
+    "rationale": "Fin's Insights/Monitors/AI Recommendations pages reference analyzing conversations and measuring CX, and CX Score/Trends are listed as features, implying some dashboard capability, but no evidence explicitly confirms a unified dashboard reporting resolution rate, CSAT, handoff rate, and cost per resolution together. missing for 10: explicit documentation or screenshots of a dashboard showing resolution rate, CSAT, handoff rate, and cost per resolution metrics; independent confirmation these specific KPIs are surfaced for exec reporting.",
     "evidenceIds": [
-      "intercom-fin-docs-16"
+      "intercom-fin-docs-47",
+      "intercom-fin-docs-61",
+      "intercom-fin-docs-16",
+      "intercom-fin-docs-56"
     ]
   },
   {
@@ -1315,23 +1372,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows escalation/hand-off features (transfer to human agents, escalation guidance, JavaScript hand-off) but nothing describing a supervised 'draft-for-approval' mode where Fin proposes replies that a human must approve before they reach the customer — these are distinct capabilities (routing vs. pre-send review).",
+    "rationale": "Evidence shows Fin's guardrails center on escalation rules, hand-off to human agents, and pre-launch testing/preview (docs-25, docs-29, docs-31, docs-45), but nothing describes a supervised/draft-for-approval mode where Fin composes replies that a human must approve before they reach the customer on every interaction. Community commentary (comm-3) even argues for more deterministic, human-controlled workflows, but that's not evidence Fin ships this specific approval-gate mode.",
     "evidenceIds": [
-      "intercom-fin-docs-12",
       "intercom-fin-docs-25",
+      "intercom-fin-docs-29",
       "intercom-fin-docs-31",
-      "intercom-fin-docs-4"
+      "intercom-fin-docs-45",
+      "intercom-fin-comm-3"
     ]
   },
   {
     "productId": "intercom-fin",
     "storyId": "topic-trend-insights",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs mention \"AI Topics, Trends, AI Recommendations, Monitors... Incident Detection\" as part of the Fin/Intercom suite, suggesting topic clustering and emerging-issue surfacing exist, but there's no detail on how clustering works, no screenshots, no independent validation of accuracy or timeliness in surfacing emerging issues before ticket spikes. missing for 10: detailed documentation of the AI Topics/Trends/Incident Detection feature mechanics, evidence of proactive alerting before volume spikes, and independent/hands-on corroboration of effectiveness.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Fin's pricing page lists analytics features like 'AI Topics, Trends... Monitors... Incident Detection' and 'Insights continuously analyzes every Fin and human conversation,' indicating topic clustering and emerging-issue detection capability, but there is no deeper documentation, screenshots, or independent corroboration of how this works in practice. Missing for 10: detailed product docs on topic clustering methodology, evidence of proactive alerting before ticket-volume spikes, and independent/hands-on validation of the insights/analytics feature.",
     "evidenceIds": [
-      "intercom-fin-docs-16"
+      "intercom-fin-docs-16",
+      "intercom-fin-docs-47",
+      "intercom-fin-docs-61"
     ]
   },
   {
@@ -1349,13 +1409,15 @@
   {
     "productId": "intercom-fin",
     "storyId": "voice-phone-support",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "low",
-    "rationale": "Fin.ai documents a dedicated 'Deploy Fin Voice' article, indicating voice/phone channel support alongside chat/email, but the evidence pack gives no detail on speech-in/speech-out mechanics, whether voice sessions share the same knowledge base/actions as chat, or any hands-on validation of call quality or parity with chat capabilities. missing for 10: technical detail on speech recognition/synthesis, confirmation that actions/knowledge are identical across chat and voice, and independent/hands-on evidence of voice call handling.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Fin Voice is a documented dedicated product ('Deploy Fin Voice', 'Fin Voice 2 runs on Apex Flash... latency-sensitive tasks', 'grounded in your knowledge base, and trained to apply your specific policies on every call'), indicating speech-in/speech-out phone support using the same knowledge base as chat. Missing for 10: independent/hands-on validation of voice call quality or action-taking parity specifically for phone, and no detail on how actions (e.g., updating systems) work identically on voice vs chat.",
     "evidenceIds": [
       "intercom-fin-docs-18",
-      "intercom-fin-docs-9"
+      "intercom-fin-docs-49",
+      "intercom-fin-docs-64",
+      "intercom-fin-docs-48"
     ]
   },
   {
@@ -1364,11 +1426,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Lorikeet publishes an llms.txt file at docs.lorikeetcx.ai/llms.txt (verified HTTP 200 with reference links), and per-page .md mirrors of docs work as confirmed by a live probe, giving agents machine-readable access to agent-oriented documentation. This is corroborated by both first-party docs and independent runtime probes confirming the file and its mirrors are live and functional. missing for 10: no evidence of broader llms-full.txt or explicit agent-consumption guidance beyond the index file.",
+    "rationale": "Direct probe evidence confirms Lorikeet serves an llms.txt file at docs.lorikeetcx.ai/llms.txt returning HTTP 200 with structured agent-oriented reference links, and documentation is further organized around MCP/agent access. Missing for 10: no independent third-party report of an agent successfully consuming this llms.txt in practice.",
     "evidenceIds": [
       "lorikeet-probe-1",
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-2"
+      "lorikeet-probe-2",
+      "lorikeet-docs-46"
     ]
   },
   {
@@ -1376,32 +1438,31 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Lorikeet provides AI-generated insights and suggestions across the product: ticket diagnosis with root-cause tracing, knowledge base gap/quality auditing, simulation-based workflow impact analysis, and Coach's automated quality scoring of 100% of conversations, all surfaced natively in-app and via MCP/Claude/ChatGPT. missing for 10: independent/hands-on validation of insight accuracy beyond vendor docs, and more detail on how suggestions are surfaced proactively to end users versus on-demand queries.",
+    "confidence": "medium",
+    "rationale": "Lorikeet's Coach and MCP-server capabilities generate AI-driven insights directly from customer data: ticket quality scoring across 100% of conversations, knowledge-base gap/quality audits, root-cause diagnosis of tickets, and analytics on resolution quality, satisfaction, and revenue impact, with Coach able to 'implement improvements... or make suggestions for you to action yourself.' This is all first-party documentation without independent hands-on corroboration. Missing for 10: independent/third-party validation of insight quality and real-world usage examples beyond vendor docs.",
     "evidenceIds": [
-      "lorikeet-docs-2",
-      "lorikeet-docs-3",
       "lorikeet-docs-9",
-      "lorikeet-docs-15",
       "lorikeet-docs-16",
-      "lorikeet-docs-21",
+      "lorikeet-docs-15",
       "lorikeet-docs-23",
-      "lorikeet-probe-rt-1"
+      "lorikeet-docs-48",
+      "lorikeet-docs-33",
+      "lorikeet-docs-30"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Lorikeet's core product model is autonomous AI agents that build and run workflows to resolve tickets in the background, escalating to humans only when needed, and outbound automations that run on recorded consent without manual intervention — this is the essence of autonomous background automation. missing for 10: explicit scheduling/trigger configuration details, independent/hands-on verification of unattended runtime behavior, and monitoring/alerting for failures.",
+    "rationale": "Lorikeet's core product is an autonomous agent that resolves tickets end-to-end across channels and coordinates specialist agents for multi-step workflows, and Outbound campaigns run on scheduled cadences without human intervention, while Coach can autonomously implement improvements. However, the evidence centers on the vendor's own agent running in background rather than a user-configurable 'automation' builder with triggers/schedules exposed as a general-purpose feature. Missing for 10: explicit user-facing scheduling/trigger configuration UI or API for arbitrary automations, and independent/hands-on confirmation that these automations run unattended reliably.",
     "evidenceIds": [
-      "lorikeet-docs-14",
-      "lorikeet-docs-17",
-      "lorikeet-docs-12",
-      "lorikeet-docs-21",
-      "lorikeet-docs-13"
+      "lorikeet-docs-31",
+      "lorikeet-docs-32",
+      "lorikeet-docs-40",
+      "lorikeet-docs-48",
+      "lorikeet-docs-28"
     ]
   },
   {
@@ -1410,57 +1471,54 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Lorikeet ships an in-product AI assistant (\"Coach\") that users can talk to directly inside Lorikeet, Slack, Claude, ChatGPT, or via MCP, and its MCP server exposes delegate-able tasks (diagnose tickets, audit knowledge bases, build workflows via natural language, test tools, run simulations) confirmed live via runtime probes of the hosted MCP endpoint. This directly matches the story of delegating tasks to a built-in assistant.\nMissing for 10: independent/hands-on user reports of delegating tasks (all evidence is vendor docs/probes), and clearer distinction of Coach as a standalone in-app assistant versus MCP-mediated external LLM use.",
+    "rationale": "Lorikeet's 'Coach' is a built-in AI assistant accessible directly inside the Lorikeet platform (as well as via Slack/Claude/ChatGPT/MCP) that users can delegate tasks to — diagnosing tickets, auditing knowledge bases, building workflows via natural language, running simulations, and even implementing improvements automatically on the user's behalf. This is well documented across multiple first-party pages describing concrete delegated actions (e.g. doc-48 'Coach can implement improvements on your behalf').  missing for 10: independent/hands-on verification of Coach's assistant behavior, and clearer distinction between autonomous action vs. suggestion-only mode.",
     "evidenceIds": [
+      "lorikeet-docs-9",
       "lorikeet-docs-10",
-      "lorikeet-docs-4",
-      "lorikeet-docs-2",
-      "lorikeet-docs-3",
-      "lorikeet-docs-5",
-      "lorikeet-docs-24",
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-3"
+      "lorikeet-docs-15",
+      "lorikeet-docs-16",
+      "lorikeet-docs-17",
+      "lorikeet-docs-33",
+      "lorikeet-docs-48"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Lorikeet exposes a public API (api.lorikeetcx.ai, key-based auth) and a hosted MCP server (mcp.lorikeetcx.ai, streamable-HTTP/POST) that could in principle be scripted from CI to run simulations or workflow tests programmatically, and simulations are described as running 'in bulk batches' which suggests automatable testing. However, there is no explicit documentation of a CLI, headless mode, or CI/CD integration recipe (e.g., GitHub Actions) for automation. Missing for 10: explicit CI/CD documentation or examples, a dedicated CLI/headless run mode, and independent confirmation of automated pipeline usage.",
-    "evidenceIds": [
-      "lorikeet-probe-rt-2",
-      "lorikeet-probe-rt-3",
-      "lorikeet-docs-6",
-      "lorikeet-docs-18"
-    ]
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Lorikeet is a customer-support AI concierge platform, not a dev-tool/CLI-type product meant to be run headlessly in CI pipelines; its MCP server is for interactive assistant use (Claude, ChatGPT), not CI automation. This axis is a category error for this product type.",
+    "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "agentic-mcp-client",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "All evidence describes Lorikeet exposing itself AS an MCP server that other AI clients (Claude, ChatGPT, Codex) connect to — the reverse of this story, which asks whether a user can plug external MCP servers INTO Lorikeet so it can consume their tools. As an agentic product, acting as an MCP client is a natural and applicable capability, but no evidence shows Lorikeet importing or calling external MCP servers.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Lorikeet's docs state the agent 'takes action through your APIs and MCP servers inside natural-language and deterministic workflows' (lorikeet-docs-28), indicating it can consume external MCP servers as tool sources, but the bulk of the MCP evidence pack actually describes the reverse direction — Lorikeet exposing its own MCP server for external clients like Claude/ChatGPT to connect to (lorikeet-docs-1, lorikeet-docs-46, lorikeet-probe-1/2). Missing for 10: dedicated documentation on how a user configures/adds third-party MCP servers into Lorikeet, a list of supported MCP integrations, and independent confirmation of this client-side tool-use capability.",
+    "evidenceIds": [
+      "lorikeet-docs-28",
+      "lorikeet-docs-13"
+    ]
   },
   {
     "productId": "lorikeet",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Lorikeet ships an official hosted MCP server (mcp.lorikeetcx.ai) documented in first-party docs and confirmed live via runtime probes (OAuth remote server, HTTP 405 on keyless GET consistent with streamable-HTTP MCP), enabling agents like Claude Code/Claude.ai/ChatGPT/Codex to connect and diagnose tickets, audit knowledge bases, build workflows, and test tools. missing for 10: independent/third-party corroboration beyond the vendor's own docs and probes, and no evidence of broader MCP client ecosystem adoption reports.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Lorikeet publishes an official MCP server (docs.lorikeetcx.ai/mcp/mcp-server) that lets Claude, ChatGPT, Claude Code, Codex, and MintMCP connect directly to a Lorikeet account, with documented capabilities like diagnosing tickets, auditing knowledge bases, building workflows, testing tools, and running simulations via MCP. This is confirmed live (HTTP 200) via probe evidence, not just marketing copy. Missing for 10: independent/hands-on third-party verification of the MCP server working end-to-end, and no community reports corroborating reliability.",
     "evidenceIds": [
       "lorikeet-docs-1",
       "lorikeet-docs-2",
       "lorikeet-docs-3",
       "lorikeet-docs-4",
       "lorikeet-docs-5",
+      "lorikeet-docs-46",
       "lorikeet-probe-1",
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-3"
+      "lorikeet-probe-2"
     ]
   },
   {
@@ -1468,16 +1526,16 @@
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Lorikeet ships an official MCP server (verified live at mcp.lorikeetcx.ai) plus documented natural-language skills like building workflows, testing tools, diagnosing tickets, and creating simulations via commands such as '/lorikeet:create-simulations build simulations for the refund workflow' and 'Test the get-order-status tool with order ID 98765'. This lets AI-native users operate the product conversationally from Claude, ChatGPT, and Codex. Missing for 10: independent third-party corroboration of real-world natural-language command usage beyond vendor docs and probes.",
+    "confidence": "medium",
+    "rationale": "Lorikeet ships an MCP server plus Claude/ChatGPT/Codex integrations that let users build workflows, diagnose tickets, audit knowledge bases, and run simulations using natural-language commands (e.g. 'Build workflows - create and iterate on workflows using natural language', example prompts like 'Test the get-order-status tool...'), and even exposes slash-command skills like /lorikeet:create-simulations. This is first-party documentation only, with no independent/hands-on corroboration of the NL command experience. Missing for 10: independent user reports or demos validating the natural-language MCP workflow in practice.",
     "evidenceIds": [
       "lorikeet-docs-1",
       "lorikeet-docs-4",
-      "lorikeet-docs-5",
+      "lorikeet-docs-17",
       "lorikeet-docs-19",
       "lorikeet-docs-24",
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-3"
+      "lorikeet-docs-46",
+      "lorikeet-probe-2"
     ]
   },
   {
@@ -1486,8 +1544,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence pack documents an MCP server, Claude/ChatGPT integrations, and Slack/Claude 'skills' commands, but nowhere mentions an official standalone CLI tool for Lorikeet.",
-    "evidenceIds": []
+    "rationale": "Lorikeet is a customer-support AI platform; the story asks for an official CLI for AI-native workflows. Evidence shows an MCP server and Claude-code skills/slash commands but no standalone CLI tool is documented anywhere in the pack. missing for 10: any mention of a CLI binary/tool, installation instructions, or CLI command reference.",
+    "evidenceIds": [
+      "lorikeet-docs-1",
+      "lorikeet-docs-24",
+      "lorikeet-probe-2"
+    ]
   },
   {
     "productId": "lorikeet",
@@ -1495,26 +1557,30 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Lorikeet documents a public API (api.lorikeetcx.ai) with structured auth-error responses and its own API reference page, plus a hosted OAuth-secured MCP server (mcp.lorikeetcx.ai) confirmed live via runtime probes, giving AI-native users a documented programmatic surface to drive workflows, diagnostics, and simulations. Missing for 10: independent/third-party developer confirmation of API usage beyond Lorikeet's own docs and probes.",
+    "rationale": "Lorikeet publishes a documented MCP server (docs.lorikeetcx.ai/mcp/mcp-server) that lets AI-native users drive the product directly from Claude, ChatGPT, Codex, and Claude Code — diagnosing tickets, auditing knowledge bases, building workflows, testing tools, and running simulations, all documented with concrete examples and even slash-command skills. This is a genuine documented programmatic interface built for AI agents, not just human UI docs. Missing for 10: no separate traditional REST/GraphQL API reference beyond MCP, and no independent third-party corroboration of the API's reliability.",
     "evidenceIds": [
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-2",
-      "lorikeet-probe-rt-3",
+      "lorikeet-docs-1",
       "lorikeet-docs-2",
-      "lorikeet-docs-20"
+      "lorikeet-docs-3",
+      "lorikeet-docs-4",
+      "lorikeet-docs-5",
+      "lorikeet-docs-19",
+      "lorikeet-docs-20",
+      "lorikeet-docs-46",
+      "lorikeet-docs-47",
+      "lorikeet-probe-1",
+      "lorikeet-probe-2"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Lorikeet has an OAuth-based MCP server and an API requiring a client ID, but there is no documentation of issuing scoped or least-privilege credentials for agents (e.g., role/permission-limited API keys or tokens). Missing for 10: any docs on credential scoping, permission levels, or least-privilege API key issuance for agent use.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Lorikeet's guardrails page mentions 'workflow-scoped tool access' and 'server-side identity validation' enforced in code, suggesting some access scoping, but there is no explicit documentation of issuing or managing scoped/least-privilege API credentials or tokens for agents. Missing for 10: explicit credential/token issuance mechanism, documentation of API key scoping or permission granularity, and any user-facing controls for creating least-privilege credentials.",
     "evidenceIds": [
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-2",
-      "lorikeet-probe-rt-3"
+      "lorikeet-docs-34"
     ]
   },
   {
@@ -1523,7 +1589,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an MCP server and a REST API with client-ID auth, but there is no mention of official client SDKs (e.g., Python/Node/Go libraries) for developers to build against. Missing for 10: any documented SDK package, language bindings, or SDK reference docs.",
+    "rationale": "Evidence only documents an MCP server and integrations/APIs for connecting tools, but there is no mention of an official SDK (e.g., Python/JS client library) for developers to build against. Missing for 10: any documented official SDK, its language support, or developer-facing library docs.",
     "evidenceIds": []
   },
   {
@@ -1531,44 +1597,42 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents Lorikeet's MCP server, simulations, quality assurance, and API, but contains no mention of webhooks or event subscription mechanisms for outbound notifications. This axis applies since a SaaS platform like Lorikeet could plausibly offer webhooks, but no evidence supports it.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers Lorikeet's MCP server, simulations, coach, and guardrails features, but contains no mention of webhooks or event subscription mechanisms for AI-native users to receive push notifications on events.",
     "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Lorikeet has an api-reference page and MCP server for agent interaction, but nothing describes an interactive, runnable-example API reference (e.g., a try-it-live console) — only a bare error response was probed at api.lorikeetcx.ai. missing for 10: documentation or demonstration of an interactive API explorer, runnable code examples, or a try-it console.",
-    "evidenceIds": [
-      "lorikeet-probe-rt-2"
-    ]
+    "confidence": "high",
+    "rationale": "Lorikeet is a customer-support AI agent platform, not a developer API/SDK product; there is no evidence of an interactive API reference or runnable-example explorer, and this axis doesn't fit its product category (its docs cover MCP server usage and skills, not an API playground).",
+    "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Lorikeet has a public API (api.lorikeetcx.ai) and an API reference page, but nothing indicates a downloadable OpenAPI/Swagger spec or other machine-readable API definition file is offered.",
-    "evidenceIds": [
-      "lorikeet-probe-rt-2"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence of a downloadable OpenAPI spec or machine-readable API documentation; evidence only covers MCP server integration, workflows, and product features, not a formal API spec artifact.",
+    "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Lorikeet's Simulations feature lets users replay historical tickets and synthetic scenarios in bulk batches and see projected outcomes before deploying changes, which functions as a sandbox-like testing loop separate from live production interactions (lorikeet-docs-6, lorikeet-docs-21, lorikeet-docs-18). However, there is no explicit documentation of a dedicated 'sandbox environment' or guarantee that test runs are isolated from production data/systems. Missing for 10: explicit sandbox/staging environment concept, data isolation guarantees, and confirmation that simulation runs never touch or mutate production records.",
+    "rationale": "Evidence shows robust simulation/testing tooling (replay historical tickets, synthetic scenarios, guardrail adversarial tests) that approximates sandbox-style testing, but no explicit claim of an isolated sandbox environment distinct from production. missing for 10: explicit documentation of a dedicated sandbox/staging environment, confirmation that simulations do not touch or affect live production data/systems, and independent verification of this isolation.",
     "evidenceIds": [
       "lorikeet-docs-6",
-      "lorikeet-docs-21",
       "lorikeet-docs-18",
-      "lorikeet-docs-7"
+      "lorikeet-docs-21",
+      "lorikeet-docs-26",
+      "lorikeet-docs-37",
+      "lorikeet-docs-47"
     ]
   },
   {
@@ -1576,49 +1640,56 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of API versioning scheme or a documented deprecation policy appears anywhere in the evidence pack; only MCP server, simulation, and QA feature docs are present. missing for 10: versioned API scheme documentation, explicit deprecation/sunset policy, changelog or migration guidance for breaking changes.",
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions API versioning, version numbers, or a deprecation policy for Lorikeet's APIs or MCP server; the docs discuss features and integrations but not API lifecycle/versioning commitments. Missing for 10: any documented API version scheme, changelog of breaking changes, or stated deprecation/support timeline.",
     "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Lorikeet provides several bulk-oriented capabilities relevant to an AI-native user: running simulation batches across hundreds of scenarios with side-by-side comparisons, auditing entire knowledge bases at scale, and replaying historical tickets in bulk. These are accessible via natural language/MCP tooling. However, the evidence focuses on simulation/QA/knowledge-audit bulk operations rather than general-purpose bulk actions across arbitrary item types (e.g., bulk-editing many tickets, workflows, or records directly), and no independent hands-on confirmation of bulk throughput/scale exists. Missing for 10: evidence of bulk CRUD/action operations beyond simulations and audits, and independent verification of bulk operation reliability at scale.",
+    "rationale": "Lorikeet documents multiple bulk operations available to AI-native users via its MCP server and product surfaces: running simulations in bulk batches across hundreds of scenarios, auditing entire knowledge bases at scale, and reviewing 100% of conversations for quality (not manual spot checks). These are explicitly framed as batch/bulk actions accessible through natural-language or MCP-driven workflows. Missing for 10: independent/hands-on verification of bulk operation scale and performance, and no explicit example of bulk edits/updates to many tickets or records simultaneously (only bulk testing/auditing/review are documented).",
     "evidenceIds": [
-      "lorikeet-docs-3",
       "lorikeet-docs-6",
       "lorikeet-docs-7",
+      "lorikeet-docs-3",
       "lorikeet-docs-16",
+      "lorikeet-docs-9",
+      "lorikeet-docs-38",
       "lorikeet-docs-21",
-      "lorikeet-docs-22",
-      "lorikeet-docs-24"
+      "lorikeet-docs-26",
+      "lorikeet-docs-22"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Lorikeet's workflows and escalation logic imply event-driven automation (e.g., automatic human handoff when AI can't resolve, escalation paths for sensitive situations, natural-language workflow building), but there's no explicit documentation of a user-defined rules/trigger engine for arbitrary events. missing for 10: explicit rule-definition UI/API, list of triggerable event types, and confirmation that non-support events (not just tickets) can trigger workflows.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Lorikeet's workflows and guardrails encode conditional, event-triggered actions (e.g., prompt-injection detection triggers block/rewrite/escalate, bad QA scores trigger refunds, campaign cadences control scheduled outreach, escalation triggers hand off to humans), and workflows can be built/edited via natural language including deterministic steps. However this is more built-in platform logic than a general-purpose rule-definition interface for arbitrary custom events an AI-native user could freely wire up. Missing for 10: a documented general rules/automation engine or API letting users define arbitrary trigger-condition-action rules beyond the platform's fixed guardrail/workflow/outbound features, and independent confirmation of this working in practice.",
     "evidenceIds": [
-      "lorikeet-docs-14",
-      "lorikeet-docs-12",
-      "lorikeet-docs-4",
-      "lorikeet-docs-17"
+      "lorikeet-docs-34",
+      "lorikeet-docs-35",
+      "lorikeet-docs-39",
+      "lorikeet-docs-40",
+      "lorikeet-docs-44",
+      "lorikeet-docs-32",
+      "lorikeet-docs-28"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers building workflows, running simulations, auditing knowledge bases, and MCP-driven ad hoc actions, but nothing describes scheduling recurring jobs or workflows to run automatically on a cadence. Outbound messaging and batch simulations are triggered/run manually or in bulk, not on a recurring schedule.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only relevant evidence is outbound campaign cadences with 'scheduling windows' controlling when outreach happens, which implies some recurring/scheduled automation but is narrowly scoped to outbound messaging rather than general recurring jobs or workflow runs. Missing for 10: explicit cron-like or recurring workflow scheduling for MCP-driven tasks (simulations, audits, diagnostics), documentation of scheduling frequency/config options, and any independent confirmation of recurring job execution.",
+    "evidenceIds": [
+      "lorikeet-docs-40"
+    ]
   },
   {
     "productId": "lorikeet",
@@ -1638,21 +1709,29 @@
   {
     "productId": "lorikeet",
     "storyId": "brand-voice-tone",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers Lorikeet's MCP server, simulations, quality scoring, and workflow tooling, but contains no documentation of persona/tone configuration, brand-voice controls, or multilingual consistency enforcement. missing for 10: tone/persona configuration settings, brand voice style guides, cross-language consistency mechanisms, any customer or docs evidence of tone control.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Lorikeet docs show the agent can be trained on 'business context, brand guidelines, help docs and standard operating procedures' (lorikeet-docs-25), and Coach's Ticket Quality Score reviews 100% of conversations against quality standards to catch drift (lorikeet-docs-9, lorikeet-docs-38), supporting brand-voice control and consistency monitoring. However, there is no explicit evidence of multi-language tone consistency or dedicated brand-voice/style configuration tooling beyond general training inputs. Missing for 10: explicit multilingual consistency support, dedicated tone/voice configuration UI, and independent evidence of voice consistency across topics/languages.",
+    "evidenceIds": [
+      "lorikeet-docs-25",
+      "lorikeet-docs-9",
+      "lorikeet-docs-38",
+      "lorikeet-docs-27"
+    ]
   },
   {
     "productId": "lorikeet",
     "storyId": "configurable-escalation-rules",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Lorikeet documents that a human agent takes over when the AI can't resolve a conversation and that outbound flows have escalation paths for sensitive situations, showing some handoff capability, but there's no documented configuration for handoff by topic, sentiment, customer tier, or explicit request, nor evidence of reliability testing specifically for escalation triggers. missing for 10: granular handoff-condition configuration (topic/sentiment/tier/explicit request), evidence of reliable enforcement/testing of those specific triggers.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs show human handoff when the AI can't resolve a ticket, escalation for regulatory/specialist cases with full context, guardrails that can 'escalate' on policy violations, and deployment scoped to trained topics — supporting topic-based and inability/explicit-need escalation. However there is no explicit mention of configuring handoff by sentiment or customer tier, nor independent verification that these rules are 'reliably obeyed'. Missing for 10: explicit sentiment-based trigger config, explicit customer-tier-based trigger config, and independent/hands-on evidence of reliability.",
     "evidenceIds": [
       "lorikeet-docs-14",
+      "lorikeet-docs-27",
+      "lorikeet-docs-35",
+      "lorikeet-docs-44",
       "lorikeet-docs-12"
     ]
   },
@@ -1660,41 +1739,47 @@
     "productId": "lorikeet",
     "storyId": "content-gap-detection",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Lorikeet explicitly documents auditing knowledge bases at scale to find gaps and quality issues, plus replaying historical/synthetic tickets to surface knowledge gaps before deploying agents on trained topics, directly addressing the story's core ask. Diagnose-ticket tracing further helps identify where the agent fumbled due to content issues. Missing for 10: no evidence of explicit 'conflicting content' detection (vs. gaps/outdated content) and no independent/customer corroboration of these audit features working in practice.",
+    "rationale": "Lorikeet explicitly documents auditing knowledge bases at scale to find gaps and quality issues, and its simulation/replay tooling surfaces knowledge gaps by replaying historical tickets and synthetic scenarios to project resolution quality before deployment. Coach's Ticket Quality Score also reviews 100% of conversations to catch fumbled answers and feed fixes back. Missing for 10: independent/hands-on validation of the gap-detection accuracy and no explicit mention of detecting 'conflicting' content specifically (only gaps/outdated/quality issues).",
     "evidenceIds": [
       "lorikeet-docs-3",
       "lorikeet-docs-16",
       "lorikeet-docs-21",
-      "lorikeet-docs-2",
-      "lorikeet-docs-15"
+      "lorikeet-docs-26",
+      "lorikeet-docs-9",
+      "lorikeet-docs-38",
+      "lorikeet-docs-33"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "context-rich-handoff",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Docs confirm a human agent can step in inside the same platform when the AI concierge can't resolve a conversation, implying access to the conversation, but there is no explicit evidence of an automatic summary or structured 'collected details' handoff artifact accompanying escalation. missing for 10: explicit documentation of an auto-generated conversation summary at escalation, evidence of structured collected-details/field handoff, and independent/hands-on confirmation that customers never have to repeat themselves.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Lorikeet documents human handoff happening 'inside the same platform' when AI can't resolve, and specifically claims escalations carry 'full interaction history so your team picks up mid-conversation' (financial-services vertical) — directly supporting no-repeat handoff. However, evidence doesn't explicitly confirm a generated summary or structured 'collected details' package accompanying every escalation across all verticals, only interaction history. Missing for 10: explicit documentation of an auto-generated conversation summary at escalation, structured collected-details extraction, and independent/customer verification that customers never repeat themselves in practice.",
     "evidenceIds": [
       "lorikeet-docs-14",
-      "lorikeet-docs-11"
+      "lorikeet-docs-44",
+      "lorikeet-docs-45"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "end-to-end-resolution",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "low",
-    "rationale": "Docs describe resolution-quality tracking, simulation-based validation of workflows, and human handoff when the AI can't resolve a ticket — implying genuine end-to-end resolution rather than deflection — but there are no concrete resolution-rate figures, case studies, or independent benchmarks showing what share of conversations are actually fully resolved. missing for 10: quantified resolution-rate metrics, customer case studies or third-party validation of real-world resolution percentages.",
+    "rationale": "Lorikeet's docs repeatedly claim end-to-end resolution (chat, email, voice, SMS), with escalation to humans when it can't resolve, plus QA scoring (Ticket Quality Score) and analytics tracking 'resolution quality' as an outcome metric, and even a refund-on-bad-score mechanism tied to quality. However, all evidence is vendor-authored marketing/docs; there are no independent benchmarks, customer case studies, or hard resolution-rate numbers (e.g., % of conversations fully resolved) to substantiate the claims. Missing for 10: independent/third-party resolution-rate data, customer-reported metrics, and clear definition/measurement methodology distinguishing true resolution from deflection.",
     "evidenceIds": [
-      "lorikeet-docs-9",
+      "lorikeet-docs-31",
+      "lorikeet-docs-49",
       "lorikeet-docs-14",
-      "lorikeet-docs-21",
-      "lorikeet-docs-23"
+      "lorikeet-docs-23",
+      "lorikeet-docs-38",
+      "lorikeet-docs-39",
+      "lorikeet-docs-9"
     ]
   },
   {
@@ -1703,24 +1788,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Lorikeet ingests and audits knowledge-base content and builds workflows, but nothing in the pack describes end-user answers displaying which article or source they were grounded in — no citation or source-attribution feature is documented.",
+    "rationale": "Lorikeet documents training its agent on 'business context, brand guidelines, help docs and standard operating procedures' (docs-25) and mentions 'grounding' as a guardrail check (docs-35), but there is no evidence that end-user-facing answers cite or display the specific article/source used to generate a response. Missing for 10: any documented citation/source-attribution UI or API in agent responses, and independent confirmation that answers reference specific knowledge-base articles.",
     "evidenceIds": [
-      "lorikeet-docs-13",
-      "lorikeet-docs-16",
-      "lorikeet-docs-21"
+      "lorikeet-docs-25",
+      "lorikeet-docs-35",
+      "lorikeet-docs-16"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "hallucination-guardrails",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Lorikeet's Simulations product lets teams author adversarial scenarios (false authority claims, prompt injection) and run them as 'guardrail test scenarios,' and knowledge-base auditing flags gaps that could cause invented answers — implying some guardrail infrastructure exists. However, there is no explicit documentation describing the agent's actual decline/refusal behavior when a question falls outside its knowledge base, nor any first-party or independent evidence confirming it reliably declines rather than fabricates. Missing for 10: explicit description of the safe-decline mechanism itself, examples of it refusing off-knowledge questions, and independent verification that guardrails prevent hallucinated policies/prices.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Lorikeet documents explicit guardrails that enforce grounding and policy compliance in code rather than prompts, including response screening for grounding/policy with block/rewrite/escalate actions, and adversarial simulation testing for false authority claims and prompt injection to validate safe-decline behavior before deployment. This directly targets stopping invented policies/prices/promises via server-side enforcement rather than relying on model honesty. Missing for 10: independent/third-party verification or a concrete hands-on example showing an off-knowledge question actually triggering a safe decline rather than a hallucinated answer.",
     "evidenceIds": [
-      "lorikeet-docs-8",
-      "lorikeet-docs-16",
-      "lorikeet-docs-21"
+      "lorikeet-docs-34",
+      "lorikeet-docs-35",
+      "lorikeet-docs-36",
+      "lorikeet-docs-37",
+      "lorikeet-docs-45"
     ]
   },
   {
@@ -1728,12 +1815,13 @@
     "storyId": "helpdesk-platform-integrations",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs confirm Lorikeet can run alongside existing tools without migration and 'connect in seconds' to ticketing systems, knowledge bases, and internal tools to ingest/act on data, plus human handoff within the same platform — supporting the standalone/integrated model in general terms. However, no evidence specifically names Zendesk, Salesforce, or Intercom integrations, and there's no detail on bidirectional ticket/context sync mechanics. Missing for 10: named integrations with specific helpdesk platforms (Zendesk/Salesforce/Intercom), explicit two-way sync documentation, and independent corroboration of these integrations working in practice.",
+    "confidence": "low",
+    "rationale": "Docs claim Lorikeet works 'alongside your existing tools' and connects 'in seconds to your ticketing system' via integrations, implying helpdesk co-existence, but there is no specific evidence of named Zendesk/Salesforce/Intercom connectors or two-way ticket/context sync — the pack focuses on MCP client integrations (Claude, ChatGPT) rather than helpdesk platforms. missing for 10: named Zendesk/Salesforce/Intercom integration docs, evidence of bidirectional ticket sync, standalone-mode confirmation, independent corroboration of integration reliability.",
     "evidenceIds": [
       "lorikeet-docs-11",
       "lorikeet-docs-13",
-      "lorikeet-docs-14"
+      "lorikeet-docs-14",
+      "lorikeet-docs-28"
     ]
   },
   {
@@ -1742,11 +1830,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Lorikeet connects to knowledge bases/ticketing systems and can 'audit' knowledge bases for gaps, but there is no mention of automatic scheduled re-syncing or event-driven re-ingestion when source content changes — ingestion appears to be a one-time 'connect... to ingest data' action. missing for 10: evidence of scheduled sync jobs, webhook/change-triggered re-ingestion, or any freshness/staleness detection mechanism.",
+    "rationale": "Evidence shows Lorikeet ingests knowledge bases and can audit them for gaps/outdated articles, and connects to ticketing/knowledge sources 'in seconds', but there is no mention of scheduled or change-triggered re-syncing of sources without manual re-upload. missing for 10: explicit scheduled/webhook-based re-sync mechanism, evidence of automatic detection of source updates, any documentation of sync cadence or on-change triggers.",
     "evidenceIds": [
+      "lorikeet-docs-3",
       "lorikeet-docs-13",
       "lorikeet-docs-16",
-      "lorikeet-docs-3"
+      "lorikeet-docs-25"
     ]
   },
   {
@@ -1755,36 +1844,46 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Lorikeet advertises seamless ingestion of ticketing systems, knowledge bases, and internal tools without migration (\"Connect Lorikeet in seconds to your ticketing system, knowledge base, and internal tools to seamlessly ingest data\", \"No migration required: Lorikeet works alongside your existing tools\"), and its Coach/Audit features operate directly on the existing knowledge base to find gaps rather than requiring re-authoring. Missing for 10: explicit mention of internal wikis as a supported source, detail on ingesting historical ticket transcripts as training/knowledge data, and independent verification of ingestion breadth beyond vendor docs.",
+    "rationale": "Lorikeet explicitly claims to 'seamlessly ingest data' from ticketing systems and knowledge bases (docs-13), to train the agent on 'business context, brand guidelines, help docs and standard operating procedures' (docs-25), to audit the entire knowledge base for gaps/outdated content (docs-3, docs-16), and to replay historical tickets to surface knowledge gaps (docs-21, docs-26) — covering help center, docs, and past tickets without manual re-authoring. Internal wikis are not explicitly named as a source type, and all evidence is first-party vendor documentation with no independent/hands-on corroboration of ingestion working end-to-end. Missing for 10: explicit mention of internal wiki ingestion, and independent verification of the ingestion pipeline's fidelity/accuracy.",
     "evidenceIds": [
       "lorikeet-docs-13",
-      "lorikeet-docs-11",
+      "lorikeet-docs-25",
+      "lorikeet-docs-3",
       "lorikeet-docs-16",
-      "lorikeet-docs-3"
+      "lorikeet-docs-21",
+      "lorikeet-docs-26"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "live-api-actions",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Lorikeet's docs confirm it connects to ticketing/knowledge/internal-tool APIs and can 'take action for your customers' and test tools like get-order-status, with the MCP server using OAuth/client-ID based auth (probe-rt-1, probe-rt-2). However, there is no explicit evidence of refund/subscription-update actions or of scoped, per-action authorization policies rather than general account-level API auth. Missing for 10: concrete examples of refund/order-change/subscription-update actions being executed, and documentation of granular per-action auth scoping rather than a single client credential.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state the agent 'takes action through your APIs and MCP servers' (docs-28), give concrete examples like refund workflows and order-status tool tests (docs-19, docs-24, docs-43), and describe workflow-scoped tool access, server-side identity validation, and hard execution caps enforced in code rather than prompts (docs-34). This directly matches the story of scoped, real-world API actions like refunds/order changes/subscriptions. Missing for 10: independent/hands-on verification of the auth-scoping mechanism, and more granular detail on how 'per action' scopes are configured/enforced beyond high-level guardrails language.",
     "evidenceIds": [
-      "lorikeet-docs-13",
+      "lorikeet-docs-28",
+      "lorikeet-docs-34",
       "lorikeet-docs-19",
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-2"
+      "lorikeet-docs-24",
+      "lorikeet-docs-43",
+      "lorikeet-docs-13"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "multi-turn-troubleshooting",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence describes Lorikeet's workflow-building, simulation, diagnostics, and MCP tooling for internal teams, but nothing describes the customer-facing agent's actual conversational behavior—asking clarifying questions or performing multi-step troubleshooting during a support interaction. Missing for 10: any transcript, docs, or claim showing the agent asking follow-up questions or working through multi-step diagnostic dialogue with customers rather than just workflow/tool execution.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Lorikeet's docs describe workflows that coordinate multi-step, multi-system troubleshooting (e.g. 'coordinates a team of specialist agents... to handle multi-party, multi-system workflows end-to-end' and 'diagnose tickets by tracing workflow execution') rather than single canned replies, and its agent resolves issues 'end-to-end' across channels. However, there is no explicit documentation showing the agent proactively asking clarifying questions mid-conversation or examples of dialogue-based troubleshooting turns. Missing for 10: explicit examples/transcripts of clarifying-question behavior, documentation describing conversational back-and-forth troubleshooting logic rather than just workflow/tool orchestration.",
+    "evidenceIds": [
+      "lorikeet-docs-32",
+      "lorikeet-docs-31",
+      "lorikeet-docs-15",
+      "lorikeet-docs-17",
+      "lorikeet-docs-28"
+    ]
   },
   {
     "productId": "lorikeet",
@@ -1792,19 +1891,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses multilingual customer support or translation from an English-only knowledge base; all citations concern MCP server tooling, simulations, workflow building, and QA features, none of which mention language support.",
+    "rationale": "No evidence in the pack addresses multilingual support or the ability to serve customers in languages other than English despite an English-only knowledge base; nothing about translation, language detection, or multilingual training is mentioned.",
     "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "omnichannel-coverage",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Lorikeet's MCP server, simulations, coaching, and quality-assurance tooling, but contains no mention of customer-facing channel coverage such as chat, email, in-app, Slack, WhatsApp, or social messaging for end customers — the one Slack reference is about internal Coach access, not a customer channel. Missing for 10: evidence of multichannel deployment (chat widget, email inbox, in-app SDK, WhatsApp, Slack-as-customer-channel, social/DM integrations).",
+    "rationale": "Lorikeet documents one agent resolving issues across chat, email, voice, SMS and WhatsApp (docs-31, docs-49), and mentions Slack as a place to interact with Coach (docs-10), but this is Coach access, not evidence that the customer-facing agent itself operates in Slack or social channels. missing for 10: explicit confirmation that the customer-facing support agent (not just Coach) handles Slack and social media channels, and independent/hands-on validation of omnichannel deployment.",
     "evidenceIds": [
+      "lorikeet-docs-31",
+      "lorikeet-docs-49",
       "lorikeet-docs-10",
-      "lorikeet-docs-13"
+      "lorikeet-docs-14"
     ]
   },
   {
@@ -1813,35 +1914,35 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Lorikeet's Coach product scores 100% of conversations against quality standards (exceeding a sampled-QA claim) and diagnose/root-cause tooling flags failures, while Simulations lets teams replay flagged/real tickets in bulk, compare outcomes, and push workflow fixes back via natural-language editing — closing the review loop. missing for 10: independent/hands-on evidence of the QA scoring in practice and clearer detail on how flagged-failure alerts automatically trigger workflow fix deployment.",
+    "rationale": "Lorikeet's Coach product directly addresses this story: it reviews 100% of conversations against quality standards (not just samples), scores them via a Ticket Quality Score, flags failures (bad scores trigger refunds), and turns findings into fixes that feed back into the agent so it 'improves every week instead of drifting.' Simulations complement this with batch testing and adversarial scenario scoring tied to guardrails and analytics tracking. Missing for 10: independent/hands-on verification of the review loop in practice and more detail on how flagged failures are triaged/assigned to human reviewers.",
     "evidenceIds": [
       "lorikeet-docs-9",
-      "lorikeet-docs-2",
-      "lorikeet-docs-15",
+      "lorikeet-docs-33",
+      "lorikeet-docs-38",
+      "lorikeet-docs-39",
+      "lorikeet-docs-48",
+      "lorikeet-docs-36",
       "lorikeet-docs-6",
-      "lorikeet-docs-18",
-      "lorikeet-docs-21",
-      "lorikeet-docs-4",
-      "lorikeet-docs-23"
+      "lorikeet-docs-37"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Lorikeet ships both a public REST-style API (api.lorikeetcx.ai) and an official MCP server that let AI clients diagnose tickets, audit knowledge bases, build/edit workflows, test tools, explore setup, and even create simulations — covering a broad swath of the UI's core workflows. However, the evidence doesn't confirm full parity for every UI feature (e.g., outbound consent/escalation configuration, Coach's Ticket Quality Score administration, or analytics dashboards) is programmatically accessible. Missing for 10: explicit confirmation that ALL UI-only features (outbound campaign setup, quality scoring config, analytics/reporting) are also API/MCP accessible, and independent third-party verification of full parity.",
+    "rationale": "Lorikeet's MCP server exposes a broad set of actions also available in the UI—diagnosing tickets, auditing knowledge bases, building/testing workflows, running simulations—letting AI-native users act via Claude/ChatGPT/Codex instead of the dashboard. However, there's no evidence of a general-purpose REST/GraphQL API or explicit claim of full UI/API parity (e.g., outbound campaign management, guardrail configuration, analytics dashboards aren't shown as MCP-accessible). Missing for 10: explicit full API parity statement, broader API coverage beyond MCP-listed actions, independent confirmation of completeness.",
     "evidenceIds": [
+      "lorikeet-docs-1",
       "lorikeet-docs-2",
       "lorikeet-docs-3",
       "lorikeet-docs-4",
       "lorikeet-docs-5",
       "lorikeet-docs-20",
-      "lorikeet-docs-24",
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-2",
-      "lorikeet-probe-rt-3"
+      "lorikeet-docs-47",
+      "lorikeet-docs-28",
+      "lorikeet-probe-2"
     ]
   },
   {
@@ -1850,7 +1951,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes a data export feature, open-format export (CSV/JSON dumps), or account-portability/deletion mechanism; only MCP/API access for interacting with the product is documented. Missing for 10: explicit data export/download feature, supported open formats, and any account-closure data portability guarantee.",
+    "rationale": "No evidence pack items mention data export, open data formats, or account/data portability for leaving the platform; the docs cover MCP integrations, workflows, simulations, and guardrails but nothing about exporting or migrating data out. Missing for 10: any documentation of export functionality, supported open formats (CSV/JSON), or data portability/exit process.",
     "evidenceIds": []
   },
   {
@@ -1859,22 +1960,17 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Lorikeet is a commercial customer-support AI platform with no evidence of open-source licensing or public source code repository; all evidence points to closed, hosted SaaS with MCP/API access, not source availability.",
+    "rationale": "Lorikeet is a closed commercial SaaS customer-support platform; no evidence of any open-source license or public source code repository is provided anywhere in the evidence pack.",
     "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "openness-self-host",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "All evidence points to Lorikeet as a hosted SaaS platform with a cloud-hosted API (api.lorikeetcx.ai) and hosted MCP endpoint (mcp.lorikeetcx.ai); there is no mention of a self-hosted deployment option, on-prem package, or open-source core anywhere in the docs or release notes.",
-    "evidenceIds": [
-      "lorikeet-probe-rt-1",
-      "lorikeet-probe-rt-2",
-      "lorikeet-probe-rt-3",
-      "lorikeet-docs-13"
-    ]
+    "rationale": "Lorikeet is a hosted SaaS customer-support AI platform with no evidence of any self-hosted/on-prem deployment option; self-hosting is not a fair axis for this category of cloud service, so this is a category mismatch rather than a missing capability.",
+    "evidenceIds": []
   },
   {
     "productId": "lorikeet",
@@ -1882,12 +1978,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Lorikeet explicitly supports connecting to ticketing systems, knowledge bases and internal tools to 'ingest data and take action for your customers' (lorikeet-docs-13), and the MCP docs show a live 'get-order-status' tool test with a specific order ID (lorikeet-docs-19), indicating workflows pull real account/order data rather than just static articles. Missing for 10: an explicit case study or independent report showing a live customer conversation resolved using real plan/account history data, and clearer documentation on how account-history-specific integrations work beyond order status.",
+    "rationale": "Lorikeet's docs describe connecting to ticketing systems, knowledge bases, and internal tools/APIs to 'ingest data and take action for your customers' (lorikeet-docs-13, lorikeet-docs-28, lorikeet-docs-29), with concrete examples like testing a 'get-order-status' tool with a real order ID (lorikeet-docs-19) and financial-services use cases like disputes/loan inquiries requiring account-specific data (lorikeet-docs-43, lorikeet-docs-44). This shows the agent is designed to pull and act on live customer data rather than just static help content.  missing for 10: independent/hands-on verification that responses actually reflect real-time account state in production, and more detail on latency/freshness guarantees for live data lookups.",
     "evidenceIds": [
       "lorikeet-docs-13",
       "lorikeet-docs-19",
-      "lorikeet-docs-20",
-      "lorikeet-probe-rt-1"
+      "lorikeet-docs-28",
+      "lorikeet-docs-29",
+      "lorikeet-docs-43",
+      "lorikeet-docs-44"
     ]
   },
   {
@@ -1896,14 +1994,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Lorikeet's Simulations product explicitly supports generating simulations from actual historical tickets and running bulk batches, replaying historical/synthetic scenarios to project resolution quality before deployment, plus adversarial guardrail scenarios and side-by-side batch comparisons for workflow changes — directly matching the story of pre-production testing against historical/simulated conversations. Missing for 10: independent/hands-on customer corroboration beyond vendor docs.",
+    "rationale": "Lorikeet's Simulations product directly supports this story: it generates simulations from actual historical tickets and runs them in bulk batches before workflow changes go live, with side-by-side batch comparisons and per-conversation drill-downs, plus authored adversarial/guardrail scenarios to pre-test against tricky real-world behavior. Docs also describe replaying historical tickets and synthetic scenarios in bulk to project resolution quality before deploying on trained topics. Missing for 10: independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "lorikeet-docs-6",
       "lorikeet-docs-7",
       "lorikeet-docs-8",
       "lorikeet-docs-21",
-      "lorikeet-docs-18",
-      "lorikeet-docs-24"
+      "lorikeet-docs-26",
+      "lorikeet-docs-47"
     ]
   },
   {
@@ -1912,75 +2010,87 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence anywhere in the pack discusses data residency, region selection, or storage location options for Lorikeet; the evidence covers MCP server features, simulations, QA, and integrations only. missing for 10: any mention of data region/residency options, storage location controls, or compliance certifications tied to geography.",
+    "rationale": "The evidence covers compliance/trust items (Vanta certifications, zero-data-retention with model vendors) but no mention of data residency or region-selection options for storage. Missing for 10: any documentation of regional data storage choices, residency guarantees, or data localization controls.",
     "evidenceIds": []
   },
   {
     "productId": "lorikeet",
     "storyId": "privacy-no-training",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage policies, opt-outs, or data retention commitments for model training; Lorikeet's evidence is focused on MCP server functionality, workflows, and simulations, not privacy/data-training controls.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Lorikeet explicitly states zero-data-retention agreements with all model vendors and no fine-tuning on customer data, directly addressing the story's request to prevent data from being used for AI training. This is backed by independently verified trust/compliance reports on their Vanta Trust Center. Missing for 10: independent hands-on verification or third-party audit confirmation of this specific claim, and no detail on user-level opt-out controls or granularity of enforcement.",
+    "evidenceIds": [
+      "lorikeet-docs-42",
+      "lorikeet-docs-41"
+    ]
   },
   {
     "productId": "lorikeet",
     "storyId": "privacy-retention-controls",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy settings for AI-native users; all documented features focus on MCP tooling, workflows, simulations, and quality assurance. Missing for 10: any mention of data retention periods, deletion APIs/controls, or privacy/compliance documentation.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Lorikeet mentions zero-data-retention agreements with model vendors and no fine-tuning on customer data, plus SOC2-style independently verified reports on a trust center, which touches data retention posture at the vendor-model level. However, there is no evidence of user-facing controls letting an AI-native user configure or request deletion/retention of their own conversation or account data within Lorikeet itself. Missing for 10: explicit customer-data deletion/export controls, retention period configuration, and user-initiated deletion workflows.",
+    "evidenceIds": [
+      "lorikeet-docs-41",
+      "lorikeet-docs-42"
+    ]
   },
   {
     "productId": "lorikeet",
     "storyId": "privacy-telemetry-optout",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Lorikeet is a customer-support AI platform; the evidence pack contains nothing about telemetry/usage-tracking opt-out settings for developers or AI-native users interacting with the product itself. This axis concerns end-user privacy controls over analytics collection in developer tools, which is not applicable to this kind of product's evidenced feature set.",
-    "evidenceIds": []
+    "rationale": "Lorikeet is a customer-support AI platform, and telemetry opt-out for the product itself is a fair privacy-posture question, but none of the evidence mentions any telemetry/usage-tracking opt-out mechanism for users of the product; it only discusses data retention with model vendors and consent handling for outbound customer messaging, which is unrelated to product telemetry opt-out.",
+    "evidenceIds": [
+      "lorikeet-docs-41",
+      "lorikeet-docs-42"
+    ]
   },
   {
     "productId": "lorikeet",
     "storyId": "procedure-sop-builder",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Lorikeet's workflow builder lets ops teams 'build, edit, and deploy workflows using natural language' and trace workflow execution to diagnose tickets, which maps to encoding step-by-step procedures for known issue types; simulations replaying tickets suggest workflows can be validated against scenarios. However, there is no explicit documentation of deterministic branching logic, conditional paths, or SOP-specific structuring within workflows. missing for 10: explicit deterministic branching/conditional logic docs, examples of SOP-to-workflow mapping, independent verification of branching behavior.",
+    "rationale": "Lorikeet explicitly supports training agents on SOPs (docs-25) and building workflows with 'natural-language and deterministic workflows' plus 'pockets of determinism for regulated steps' (docs-28, docs-32), with workflow-scoped tool access and hard execution caps enforced in code (docs-34), directly matching the deterministic-branching SOP story. Missing for 10: independent/hands-on validation of branching logic in practice and more detail on how branching conditions are authored beyond natural-language workflow builder claims.",
     "evidenceIds": [
+      "lorikeet-docs-25",
+      "lorikeet-docs-28",
+      "lorikeet-docs-32",
+      "lorikeet-docs-34",
       "lorikeet-docs-4",
-      "lorikeet-docs-17",
-      "lorikeet-docs-15",
-      "lorikeet-docs-2",
-      "lorikeet-docs-21"
+      "lorikeet-docs-17"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "resolution-analytics",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Lorikeet's marketing claims 'industry-leading analytics' tracking resolution quality, CSAT, revenue impact, and operational efficiency (lorikeet-docs-23), and Coach's Ticket Quality Score reviews 100% of conversations for quality (lorikeet-docs-9), suggesting some reporting capability exists. However there is no concrete evidence of an actual dashboard UI, no explicit mention of handoff rate or cost-per-resolution metrics, and no description of exec-reporting features or screenshots. missing for 10: dedicated dashboard UI evidence, explicit handoff rate metric, explicit cost-per-resolution metric, exec-reporting workflow detail",
+    "rationale": "Lorikeet claims analytics tracking 'resolution quality, customer satisfaction, revenue impact, and operational efficiency' and that 'every event lands in your analytics as a tracked outcome,' which loosely maps to resolution rate, CSAT, and cost metrics, but there is no explicit mention of a handoff-rate metric or a dedicated exec-facing dashboard view combining these four numbers. missing for 10: explicit handoff-rate metric, dedicated dashboard UI/screenshot evidence, cost-per-resolution specifics, and independent corroboration of dashboard usability.",
     "evidenceIds": [
       "lorikeet-docs-23",
-      "lorikeet-docs-9",
-      "lorikeet-docs-14"
+      "lorikeet-docs-30",
+      "lorikeet-docs-36"
     ]
   },
   {
     "productId": "lorikeet",
     "storyId": "restricted-topic-controls",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Docs mention deploying the agent only 'on the topics the agent is trained for' and having a human step in when the AI can't resolve a conversation, plus escalation paths for 'sensitive situations' in outbound — suggestive of topic-scoped deployment and handoff, but there is no explicit feature for an ops lead to designate specific topics (legal threats, cancellations, security) as strictly human-only with guaranteed non-engagement by the agent. missing for 10: explicit topic-exclusion/human-only tagging mechanism, enforcement guarantees against agent freelancing, and any hands-on/independent confirmation of this control.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Lorikeet documents topic-scoped deployment (\"deploy on the topics the agent is trained for and leave the rest with your team\"), workflow-scoped tool access with hard execution caps enforced in code, and escalation paths for regulated/specialist cases with full history handoff — all consistent with restricting the agent from acting on sensitive topics. However, there's no explicit documentation of a UI/config for support-ops to designate specific topics (e.g., legal threats, cancellations, security) as strictly human-only with enforced non-freelancing. Missing for 10: explicit topic-tagging/human-only designation feature, confirmation that agent cannot even attempt those topics (vs. escalating mid-conversation), and independent verification of this behavior in production.",
     "evidenceIds": [
-      "lorikeet-docs-14",
-      "lorikeet-docs-21",
-      "lorikeet-docs-12"
+      "lorikeet-docs-27",
+      "lorikeet-docs-32",
+      "lorikeet-docs-34",
+      "lorikeet-docs-44",
+      "lorikeet-docs-45"
     ]
   },
   {
@@ -1989,10 +2099,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes simulations, testing, human hand-off when AI fails, and consent enforcement for outbound, but nothing documents a supervised/draft-for-approval mode where every AI reply is held for human sign-off before reaching a customer.",
+    "rationale": "Lorikeet's documented model is autonomous resolution with post-hoc QA (Coach reviews 100% of tickets after the fact) and escalation to humans only when the AI can't resolve a case, not a pre-send draft-for-approval workflow. No evidence describes a mode where every agent reply is queued for human sign-off before reaching a customer. Missing for 10: any mention of a draft/approve workflow, human-in-the-loop send gating, or a configurable 'supervised' launch mode.",
     "evidenceIds": [
       "lorikeet-docs-14",
-      "lorikeet-docs-12"
+      "lorikeet-docs-35",
+      "lorikeet-docs-38",
+      "lorikeet-docs-44"
     ]
   },
   {
@@ -2001,26 +2113,35 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers ticket diagnosis, knowledge-base auditing, workflow simulations, and general quality/satisfaction analytics, but nothing describes clustering conversations by topic or proactively surfacing emerging product issues before ticket volume spikes.",
-    "evidenceIds": []
+    "rationale": "Evidence shows general analytics and quality-review features (e.g., 'Track resolution quality, customer satisfaction... with industry-leading analytics', Coach reviewing 100% of conversations) but no mention of topic clustering of conversations or proactive surfacing of emerging product issues before ticket-volume spikes. missing for 10: topic clustering of conversations, trend/anomaly detection for emerging issues, ticket-volume spike prediction or alerting.",
+    "evidenceIds": [
+      "lorikeet-docs-23",
+      "lorikeet-docs-30",
+      "lorikeet-docs-9"
+    ]
   },
   {
     "productId": "lorikeet",
     "storyId": "transparent-per-resolution-pricing",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions pricing model, per-resolution billing, caps, controls, or published pricing at all; all evidence concerns MCP tooling, simulations, QA, and integrations. This is a fair question for a support-automation vendor, but nothing in the evidence shows outcome-based or published pricing.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only evidence touching pricing-economics is the refund policy tying billing to Coach's quality score ('When Coach gives a conversation a bad score, we refund the AI portion of that interaction'), which shows some outcome-linkage in billing, but there is no published price list, per-resolution rate, cap structure, or self-serve pricing page. Missing for 10: a published price sheet or rate card, explicit per-resolution cost, spend/volume caps, and any evidence pricing is transparent versus custom enterprise quoting.",
+    "evidenceIds": [
+      "lorikeet-docs-39"
+    ]
   },
   {
     "productId": "lorikeet",
     "storyId": "voice-phone-support",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions voice, phone, speech-to-text, or text-to-speech capabilities; all documented channels are chat, ticketing, Slack, and MCP-based text integrations, plus an 'outbound' messaging feature that appears text/consent-based rather than voice calls. This is a fair question for a support automation product, but nothing shows phone/voice support, so it is 'none' rather than 'na'.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Lorikeet's marketing claims 'one agent that resolves issues end-to-end across chat, email, voice and SMS' and lists phone/voice among supported channels, implying the same agent handles calls. However, there is no detail on speech-in/speech-out mechanics, telephony integration, or evidence that voice interactions carry the same knowledge/actions/guardrails as chat beyond a generic channel list. missing for 10: specifics on speech recognition/TTS, call-handling architecture, latency/quality benchmarks, and confirmation that voice shares the same knowledge base and action set as chat.",
+    "evidenceIds": [
+      "lorikeet-docs-31",
+      "lorikeet-docs-49"
+    ]
   },
   {
     "productId": "parahelp",
