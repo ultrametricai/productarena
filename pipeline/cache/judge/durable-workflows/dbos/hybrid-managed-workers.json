@@ -1,18 +1,23 @@
 {
-  "hash": "5a19d5751c7eddf55726efc9c95a61a0c4d41cd8b7aa2ec22ed469e5fa343045",
+  "hash": "afe6a7df6aad9c819ea590bcf896cd8d113998b7d05292953d59d45723c5cc8f",
   "verdict": {
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "DBOS's architecture is explicitly designed this way: the DBOS library runs embedded in the customer's own application/workers with only Postgres as required infra (dbos-docs-2, dbos-comm-1, dbos-comm-14), while the vendor-hosted Conductor service supplies the orchestration control plane (pause/restart/fork workflows, dashboards, CLI/API) without requiring a separate execution server (dbos-docs-16, dbos-docs-17, dbos-docs-18, dbos-probe-rt-4). Conductor can even be self-hosted if desired (dbos-docs-19), reinforcing that code and data remain in the customer's network by design. Missing for 10: explicit confirmation of exactly what metadata is transmitted to the hosted Conductor control plane, and independent hands-on confirmation that no application data ever leaves the customer's network when using managed Conductor.",
+    "confidence": "medium",
+    "rationale": "DBOS's architecture is exactly this split: the DBOS library runs as workers inside the customer's own application/infrastructure, checkpointing all workflow state to the customer's own Postgres (code and data stay in-network) [dbos-docs-2, dbos-docs-4, dbos-docs-23], while DBOS Conductor is a separate control-plane service (vendor-hosted by default, but also self-hostable) that provides orchestration/observability, workflow management, and recovery routing via a dashboard, HTTP API, and dbosctl CLI [dbos-docs-16, dbos-docs-17, dbos-docs-18, dbos-docs-19, dbos-docs-31, dbos-docs-33, dbos-docs-34]. Community corroboration confirms the no-central-orchestrator, Postgres-in-your-infra execution model [dbos-comm-1, dbos-comm-14], though one user noted observability/self-hosting was initially incomplete before being added [dbos-comm-8]. Missing for 10: independent/hands-on verification that Conductor never touches actual business payload data (only orchestration metadata), and more detail on network/security boundaries between self-hosted workers and the vendor control plane.",
     "evidenceIds": [
       "dbos-docs-2",
+      "dbos-docs-4",
       "dbos-docs-16",
       "dbos-docs-17",
+      "dbos-docs-18",
       "dbos-docs-19",
+      "dbos-docs-31",
+      "dbos-docs-33",
+      "dbos-docs-34",
       "dbos-comm-1",
       "dbos-comm-14",
-      "dbos-probe-rt-4"
+      "dbos-comm-8"
     ],
     "productId": "dbos",
     "storyId": "hybrid-managed-workers"

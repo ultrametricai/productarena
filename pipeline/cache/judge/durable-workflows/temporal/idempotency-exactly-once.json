@@ -1,16 +1,16 @@
 {
-  "hash": "3834fb34e97fdf698e3641c9f4a494582d709a7fe4f9fed242493b8876bb1f3e",
+  "hash": "6fa5585267e35335a8be466c9a0284bb816d038c99effb7a99514888e98ffaaa",
   "verdict": {
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Temporal's durable execution, automatic Activity retries, and crash-proof resume ('exactly where they left off') provide the building blocks to avoid duplicate side effects like double-charging (docs-1, docs-3, docs-4), and community reports confirm retry logic works well in practice (temporal-comm-7). However, the evidence pack never documents Workflow ID-based deduplication as an idempotency-key mechanism, nor does it state that Activities require idempotent implementation because retries are at-least-once (a well-known Temporal caveat) — so the 'exactly-once' framing in the story is only partially substantiated by the given evidence. Missing for 10: explicit documentation of Workflow ID/idempotency-key deduplication for duplicate triggers, and explicit guidance that Activities must be written idempotently since Temporal's retry model is at-least-once, not exactly-once.",
+    "rationale": "Temporal's docs show relevant building blocks — automatic Activity retries (temporal-docs-4/36), deterministic replay that avoids re-executing side-effecting calls (temporal-docs-25: 'model calls are executed as Activities, so they retry durably and are not repeated during Workflow replay'), and crash-proof resume semantics (temporal-docs-1, temporal-docs-41) — which together reduce duplicate-trigger risk. However, the pack never explicitly documents Workflow ID uniqueness/reuse policies or an 'idempotency key' concept for external side effects like payments, and community feedback (temporal-comm-5) notes real-world difficulty handling anomalous workflow states, suggesting exactly-once guarantees for external actions still require developer diligence. Missing for 10: explicit documentation of Workflow ID-based deduplication/idempotency keys, guidance on making Activities idempotent for financial-grade exactly-once side effects, and independent verification that double-charging/double-sending is prevented in practice.",
     "evidenceIds": [
-      "temporal-docs-1",
-      "temporal-docs-3",
       "temporal-docs-4",
-      "temporal-docs-2",
-      "temporal-comm-7"
+      "temporal-docs-25",
+      "temporal-docs-1",
+      "temporal-docs-41",
+      "temporal-comm-5"
     ],
     "productId": "temporal",
     "storyId": "idempotency-exactly-once"
