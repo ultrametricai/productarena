@@ -915,8 +915,9 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "A direct probe confirms Devin's documentation site serves a structured llms.txt file (HTTP 200) with organized sections (Desktop, API, etc.), meaning an AI-native user can point any agent at docs.devin.ai/llms.txt to get machine-readable, agent-oriented documentation. missing for 10: no first-party announcement or explicit documentation describing llms.txt support, and no independent/community corroboration of agents successfully using it.",
+    "rationale": "Devin explicitly supports AGENTS.md, an agent-oriented documentation file that Devin reads before starting a coding session to gain project context — directly matching the story's intent of pointing an agent at agent-oriented docs. Devin's own docs site also serves an llms.txt endpoint (verified via probe), showing familiarity with the convention, though this is Devin's own site rather than evidence Devin ingests arbitrary llms.txt files from user projects. Missing for 10: explicit documentation that Devin consumes/parses llms.txt files themselves (as opposed to AGENTS.md) and independent hands-on confirmation of this workflow.",
     "evidenceIds": [
+      "devin-docs-24",
       "devin-probe-1"
     ]
   },
@@ -924,13 +925,14 @@
     "productId": "devin",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Devin can analyze a codebase or repo and surface suggestions (bug fixes, feature implementations, ticket triage) which is a narrow form of data-driven insight generation from the code/repo 'data', per devin-docs-1 and devin-docs-16. However, there's no evidence of general-purpose analytics or proactive insight generation beyond code/task suggestions. missing for 10: dedicated insights/analytics surface, evidence of proactive data-driven recommendations outside code tasks, independent validation of insight quality.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Devin's repo indexing enables 'Ask Devin' and DeepWiki features that generate AI insights and explanations from your codebase data, and Devin can proactively suggest fixes/improvements via code review auto-fix and bug triage. However, evidence is scoped only to codebase/ticket data, not broader business or analytics data, and there's no dedicated insights dashboard or proactive summarization feature documented. Missing for 10: evidence of insights beyond code (e.g., analytics/dashboards), independent corroboration of Ask Devin/DeepWiki quality, and any UI showcasing generated insights.",
     "evidenceIds": [
+      "devin-docs-22",
       "devin-docs-1",
-      "devin-docs-16",
-      "devin-docs-6"
+      "devin-docs-20",
+      "devin-docs-31"
     ]
   },
   {
@@ -938,14 +940,15 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin supports scheduling via cron expressions and one-time schedules with agent selection through its MCP tools, plus API-driven session creation for automated workflows, enabling autonomous background automations. missing for 10: independent hands-on verification of scheduled/autonomous runs actually completing tasks unattended, and more detail on reliability of long-running background sessions.",
+    "confidence": "high",
+    "rationale": "Devin supports scheduling via cron expressions (recurring/one-time) and agent selection through its MCP tooling, plus API session creation and Slack/Teams triggering, enabling autonomous background automations beyond interactive chat sessions. missing for 10: independent/hands-on verification of scheduled runs actually executing unattended, and more detail on failure/retry handling for scheduled tasks.",
     "evidenceIds": [
       "devin-docs-17",
       "devin-docs-15",
       "devin-docs-8",
       "devin-docs-9",
-      "devin-probe-3"
+      "devin-docs-19",
+      "devin-docs-20"
     ]
   },
   {
@@ -953,29 +956,32 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin's core product surface is exactly this: users delegate coding tasks via web app, Slack/Teams, terminal, or IDE, and Devin executes autonomously (devin-docs-1, devin-docs-4, devin-docs-5, devin-docs-3, devin-docs-2). First-party docs are extensive and detailed, covering multiple delegation channels and interactive handoff. Missing for 10: independent hands-on verification of consistent task delegation success (community evidence like devin-comm-2 flags a low ~13.8% resolution rate on benchmark tasks, tempering confidence in reliability though not disputing the delegation feature itself).",
+    "confidence": "high",
+    "rationale": "Devin itself functions as the built-in AI assistant to which tasks are delegated across web app, terminal, Slack/Teams, and API, with rich first-party documentation of the delegation workflow (docs-1,3,4,5,8,19).  Community feedback raises reliability/skepticism concerns but does not concretely contradict that delegation itself works, so it's not disputed. Missing for 10: independent hands-on validation of delegation reliability/success rate beyond old demo critiques.",
     "evidenceIds": [
       "devin-docs-1",
-      "devin-docs-2",
       "devin-docs-3",
       "devin-docs-4",
       "devin-docs-5",
+      "devin-docs-8",
+      "devin-docs-19",
       "devin-comm-2"
     ]
   },
   {
     "productId": "devin",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Devin exposes a public API (create sessions, act on behalf of users) that can be scripted into CI/automation pipelines, and supports scheduling (cron-based recurring sessions) which enables headless automated runs. However there is no explicit documentation of a CI-specific integration (e.g., GitHub Actions), no evidence of exit-code/status reporting suited for pipelines, and community feedback focuses on interactive/IDE use rather than headless CI usage. Missing for 10: dedicated CI/CD integration docs (e.g., GitHub Actions, GitLab CI), explicit headless/non-interactive mode documentation, and independent confirmation of CI usage.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Devin exposes a full REST API for session creation and automation (devin-docs-8, devin-docs-9), supports scheduling recurring/one-time headless runs via MCP (devin-docs-17), auto-triggers on CI failures and code review comments via Devin Review/Auto-Fix (devin-docs-20), and supports parallel/headless session orchestration (devin-docs-18). This covers CI/automation use cases well beyond interactive use. Missing for 10: no independent/hands-on CI-integration case study, and no dedicated 'CI runner' or GitHub Actions-style first-class integration doc beyond the review/auto-fix hook.",
     "evidenceIds": [
       "devin-docs-8",
       "devin-docs-9",
       "devin-docs-17",
-      "devin-probe-3"
+      "devin-docs-20",
+      "devin-docs-18",
+      "devin-docs-21"
     ]
   },
   {
@@ -984,11 +990,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Devin's docs explicitly describe connecting external MCP servers to the Devin CLI, giving the agent access to APIs, databases, issue trackers, and other services via slash commands, with permission controls matching built-in tools. This directly matches the story of plugging MCP servers in as a client to gain tool access. Missing for 10: independent/hands-on community verification of MCP server plug-in usage beyond vendor docs.",
+    "rationale": "Devin CLI explicitly supports connecting external MCP servers, exposing their tools as slash commands with permission controls, and docs list example integrations (Datadog, Sentry, databases, Figma, Notion, Stripe, etc.). Missing for 10: independent/hands-on community verification of MCP tool usage in practice.",
     "evidenceIds": [
       "devin-docs-12",
       "devin-docs-13",
       "devin-docs-14",
+      "devin-docs-21",
       "devin-probe-3"
     ]
   },
@@ -996,14 +1003,14 @@
     "productId": "devin",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Devin ships a first-party hosted 'Devin MCP' server (docs-15/16/17, probe-3) that lets external clients/agents create sessions, manage playbooks/knowledge, and schedule tasks, satisfying the axis of connecting an agent via an official MCP server (in addition to Devin's own CLI supporting MCP client connections). Missing for 10: independent/hands-on verification that third-party agents successfully connect and operate through this MCP server, and more detail on authentication/setup robustness.",
+    "rationale": "Devin ships an official MCP server (documented at docs.devin.ai/work-with-devin/devin-mcp) that exposes session management, playbooks, knowledge, and scheduling to any MCP-compatible agent or IDE — this is distinct from Devin's own MCP-client capability and directly satisfies the 'connect an agent via an official MCP server' story. Missing for 10: independent/hands-on confirmation that external agents successfully connect and operate through this server, and more detail on setup/auth flow beyond first-party docs.",
     "evidenceIds": [
       "devin-docs-15",
       "devin-docs-16",
       "devin-docs-17",
-      "devin-probe-3"
+      "devin-docs-29"
     ]
   },
   {
@@ -1011,14 +1018,16 @@
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin's docs describe multiple natural-language interaction modes—delegating tasks via Slack/Teams, web app, IDE, CLI, and API—all driven by plain-language task descriptions (devin-docs-1,3,4,5,8). This is core to the product's design as an agentic AI engineer operated conversationally. Missing for 10: independent hands-on confirmation that natural-language commands reliably produce correct results (community threads raise general reliability skepticism, devin-comm-2,4,6,9, but don't concretely dispute the NL interface itself).",
+    "confidence": "high",
+    "rationale": "Devin is fundamentally driven by natural-language task requests across web app, Slack/Teams tagging, CLI, and API (create_as_user_id sessions), letting users describe tasks like bug fixes, features, and migrations in plain language rather than issuing structured commands. Community evidence corroborates that Devin operates via conversational/task-based prompts even amid skepticism about output quality. missing for 10: independent hands-on confirmation of NL command fidelity across all surfaces (CLI/Slack/API), and no evidence addressing ambiguous or multi-step NL instruction handling limits.",
     "evidenceIds": [
       "devin-docs-1",
-      "devin-docs-3",
       "devin-docs-4",
       "devin-docs-5",
-      "devin-docs-8"
+      "devin-docs-19",
+      "devin-docs-8",
+      "devin-docs-9",
+      "devin-comm-6"
     ]
   },
   {
@@ -1027,7 +1036,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin ships an official CLI documented extensively (adaptive model routing, /model, MCP extensibility with slash commands, terminal usage) confirmed by docs and probe evidence of a dedicated /cli docs section. Missing for 10: independent hands-on review of the CLI specifically and more detail on installation/distribution channels.",
+    "rationale": "Devin ships an official CLI documented extensively (adaptive model routing, slash commands, MCP extensibility) confirmed by both docs and a probe hit, plus a separate Terminal/local CLI mode for quick fixes. Missing for 10: independent hands-on review of the CLI itself and more detail on installation/versioning.",
     "evidenceIds": [
       "devin-docs-2",
       "devin-docs-10",
@@ -1043,10 +1052,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin publishes a documented public API (devin-docs-8) with dedicated API reference docs, including advanced features like creating sessions on behalf of other users (devin-docs-9), and the docs site itself hosts a large API documentation section (devin-probe-1). Missing for 10: a publicly discoverable OpenAPI/swagger spec (probe found 404s) and independent third-party corroboration of API usage.",
+    "rationale": "Devin publishes a documented public API for integrating into applications, automating workflows, and creating sessions programmatically (including on behalf of other users), plus an MCP server exposing session/playbook/knowledge/scheduling management to external agents. Missing for 10: a discoverable machine-readable OpenAPI/swagger spec (probe found 404s) and independent third-party corroboration of API usage beyond vendor docs.",
     "evidenceIds": [
       "devin-docs-8",
       "devin-docs-9",
+      "devin-docs-15",
+      "devin-docs-29",
       "devin-probe-1",
       "devin-probe-2"
     ]
@@ -1057,11 +1068,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Devin's API and MCP documentation mention a permission system ('MCP tools are subject to the same permission system as built-in tools... control access at multiple levels') and organization-level session creation via create_as_user_id, suggesting some access control exists, but there is no explicit documentation of issuing scoped or least-privilege API keys/credentials for agents. Missing for 10: explicit API key scoping/permission levels, documented least-privilege credential issuance workflow, independent verification of granular access control.",
+    "rationale": "Devin documents a permission system that restricts MCP tool access at multiple levels and an API parameter (create_as_user_id) for acting on behalf of specific users, but there is no direct documentation of issuing scoped/least-privilege API keys or credentials for the agent itself. Missing for 10: explicit API key/token scoping mechanism, documented permission tiers or roles for API credentials, and any least-privilege credential issuance workflow.",
     "evidenceIds": [
-      "devin-docs-8",
+      "devin-docs-13",
       "devin-docs-9",
-      "devin-docs-13"
+      "devin-docs-8"
     ]
   },
   {
@@ -1085,22 +1096,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Devin has an API and MCP integration but no mention of webhooks or event subscription mechanisms anywhere in docs or probes. Missing for 10: any webhook subscription endpoint, event types documentation, or push-notification mechanism.",
-    "evidenceIds": [
-      "devin-docs-8",
-      "devin-probe-2"
-    ]
+    "rationale": "No evidence in the pack mentions webhooks or event subscription mechanisms for Devin; only API session creation, MCP integrations, and CLI features are documented. As an API-driven agentic product, webhook support would be a plausible and expected capability, so its absence counts as 'none' rather than 'na'.",
+    "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "ai-automated-test-generation-on-change",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Devin's general task delegation, terminal, browser, API, and MCP capabilities, but nowhere documents an explicit workflow where Devin autonomously writes and executes tests to validate its own code changes prior to proposing them. Community comments even suggest imperfect fixes (e.g., wrapping errors in try-catch) rather than validated, test-driven changes. missing for 10: explicit documentation of automated test generation/execution as a validation step, evidence of a test-and-verify loop before PR/proposal submission.",
+    "rationale": "Devin's docs describe autonomous CI-failure iteration and auto-fix behavior (devin-docs-20) and a terminal for executing/observing command output (devin-docs-6), implying it runs and reacts to test/build results before finalizing changes, but there is no explicit documentation of Devin proactively writing new tests and running them pre-emptively to self-validate before proposing a PR. missing for 10: explicit test-generation workflow documentation, evidence of Devin authoring test cases for new code, independent hands-on confirmation of this specific validation loop.",
     "evidenceIds": [
-      "devin-docs-1",
-      "devin-comm-6"
+      "devin-docs-20",
+      "devin-docs-6",
+      "devin-docs-31"
     ]
   },
   {
@@ -1109,10 +1118,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Devin's CLI \"Adaptive\" feature explicitly analyzes each prompt and routes it to the model expected to deliver the best result, with an option to override via /model, directly matching the automatic model-routing story. missing for 10: independent/hands-on verification of routing quality and no detail on which models are selectable or how routing decisions are made.",
+    "rationale": "Devin's CLI has an explicit \"Adaptive\" model router that analyzes each prompt and automatically routes it to the best-performing model, with an override via /model if manual control is desired. This directly matches the story of automatic per-task model routing, though it's documented only for the CLI product surface and lacks independent/hands-on validation of routing quality. Missing for 10: independent corroboration of routing accuracy, and confirmation this applies across all Devin surfaces (web/IDE) not just CLI.",
     "evidenceIds": [
       "devin-docs-10",
       "devin-docs-11",
+      "devin-docs-26",
       "devin-probe-4"
     ]
   },
@@ -1122,11 +1132,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Devin's docs show it can be tasked with Linear/Jira tickets, scheduled runs, and API-triggered sessions, but there is no evidence of automatic triage logic that assesses severity or routes issues to the correct owner — these are manual invocation flows, not autonomous triage-and-route pipelines.",
+    "rationale": "Devin can be pointed at Linear/Jira tickets or tagged in Slack to work a bug, but nothing in the evidence describes automatic triage logic that assesses severity or routes issues to the correct owner — these are core, specific parts of the story. Missing for 10: severity classification/scoring, ownership/routing logic, any 'triage' feature or automated inbox-sorting workflow.",
     "evidenceIds": [
       "devin-docs-1",
-      "devin-docs-15",
-      "devin-docs-17"
+      "devin-docs-4",
+      "devin-docs-19"
     ]
   },
   {
@@ -1135,7 +1145,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms a Devin API reference exists (devin-docs-8, devin-docs-9) but there is no mention of an interactive explorer or runnable/try-it examples, and a probe found no discoverable OpenAPI spec that would typically power such interactivity (devin-probe-2 shows 404s for all openapi.json candidates).",
+    "rationale": "Devin documents an API reference overview and parameters (e.g. create_as_user_id) but nothing describes an interactive, in-browser 'try it' experience with runnable code examples; a probe for standard OpenAPI/Swagger interactive-doc endpoints returned 404s, suggesting no such interactive explorer exists.",
     "evidenceIds": [
       "devin-docs-8",
       "devin-docs-9",
@@ -1148,7 +1158,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Devin has a documented API (devin-docs-8) but an explicit probe for machine-readable spec endpoints (openapi.json, swagger.json, etc.) returned 404 on all attempted paths, and no evidence pack item shows a downloadable OpenAPI/Swagger spec.",
+    "rationale": "Devin has a documented API (devin-docs-8, devin-docs-9) but a direct probe for OpenAPI/swagger spec files at common paths returned 404s (devin-probe-2), and no docs page offers a downloadable machine-readable spec.",
     "evidenceIds": [
       "devin-docs-8",
       "devin-probe-2"
@@ -1157,11 +1167,14 @@
   {
     "productId": "devin",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of sandbox environments, staging environments, or any mechanism to isolate Devin's testing from production data; docs focus on task delegation, terminal/IDE features, MCP, and API integration but never address data/environment isolation. missing for 10: any documentation of sandboxed/staging environments, isolation from production data, or environment configuration guarantees.",
-    "evidenceIds": []
+    "rationale": "Devin's docs describe each session running in its own configurable workspace/environment (devin-docs-25) and connecting via VPN to reach internal services rather than being embedded in production (devin-docs-23), which implies some environment isolation, but there is no explicit claim of a dedicated 'sandbox vs production' testing mode or safeguards against touching production data. missing for 10: explicit documentation of a production-safe/sandboxed test environment, evidence of data isolation guarantees, and independent confirmation that production systems are never touched.",
+    "evidenceIds": [
+      "devin-docs-25",
+      "devin-docs-23"
+    ]
   },
   {
     "productId": "devin",
@@ -1169,7 +1182,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Devin has an API with docs but no mention of API versioning scheme or a documented deprecation policy; the OpenAPI probe returned 404s, suggesting even machine-readable spec discovery is unavailable. No citations address version numbers, changelogs, or deprecation timelines.",
+    "rationale": "There is an API reference (devin-docs-8) but no evidence of API versioning scheme or a documented deprecation policy; the openapi.json probe returned 404s, suggesting no formal machine-readable spec either. Missing for 10: versioning scheme documentation, deprecation policy/notice, changelog for breaking changes.",
     "evidenceIds": [
       "devin-docs-8",
       "devin-probe-2"
@@ -1181,17 +1194,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack describes a plan-review/approval step prior to Devin making code changes; docs mention delegating tasks and taking over after a 'first draft' is produced, which is after changes have begun, not a pre-implementation plan gate.",
-    "evidenceIds": []
+    "rationale": "The evidence pack describes Devin's task delegation, IDE handoff, terminal visibility, and MCP integrations, but nowhere documents a plan-review/approval gate before Devin begins making code changes. Missing for 10: any doc mentioning an upfront plan proposal, explicit approval step, or 'plan mode' prior to execution.",
+    "evidenceIds": [
+      "devin-docs-5",
+      "devin-docs-1"
+    ]
   },
   {
     "productId": "devin",
     "storyId": "approve-task-contract",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of any explicit scope/contract approval gate that blocks Devin from modifying the repo until an engineering lead signs off; docs describe delegation, handoff, and MCP session creation but nothing about a pre-execution approval workflow or plan/contract review step.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows delegation, review-after-the-fact, and IDE takeover workflows, but no documented mechanism where an engineering-lead must approve a task's scope/contract before Devin is allowed to start modifying the repository. Missing for 10: explicit pre-execution approval/gating workflow, scope/contract sign-off UI or API, evidence of blocking repo writes until lead approval.",
+    "evidenceIds": [
+      "devin-docs-5",
+      "devin-docs-3"
+    ]
   },
   {
     "productId": "devin",
@@ -1199,9 +1218,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Devin explicitly documents tackling Linear/Jira tickets directly, plus integrations like Slack/Teams tagging and API-based session creation that map issue/ticket-driven tasks to agent sessions. missing for 10: hands-on independent verification of the ticket-to-agent flow working reliably in practice, and native GitHub/GitLab issue-to-Devin assignment specifics.",
+    "rationale": "Docs explicitly state Devin can be asked to tackle Linear/Jira tickets, tagged on Slack/Teams threads about bugs to start sessions, and integrated via API/MCP to create sessions from external triggers, directly supporting assigning tasks from existing issues/tickets. Missing for 10: independent hands-on verification of ticket-to-task handoff and no direct product screenshot of ticket-linking UI in evidence.",
     "evidenceIds": [
       "devin-docs-1",
+      "devin-docs-19",
       "devin-docs-4",
       "devin-docs-8",
       "devin-docs-9"
@@ -1213,90 +1233,102 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence only mentions a permission system for MCP tools that can be controlled 'at multiple levels' (devin-docs-13), but there is no documentation of a setting to auto-approve all of Devin's actions instead of requiring per-action confirmation. Missing for 10: explicit auto-approve/trust-all-actions toggle, description of default confirmation behavior, and any community or docs confirmation that this control exists.",
+    "rationale": "The evidence pack describes permission systems for MCP tools (devin-docs-13) and autonomous features like Auto-Fix (devin-docs-20), but there is no documentation of a setting that lets a developer toggle between 'confirm each action' and 'auto-approve all actions' for Devin's own task execution. missing for 10: explicit auto-approve/confirmation toggle documentation, evidence of a per-action approval workflow that can be disabled, any community confirmation of this specific control.",
     "evidenceIds": [
-      "devin-docs-13"
+      "devin-docs-13",
+      "devin-docs-20"
     ]
   },
   {
     "productId": "devin",
     "storyId": "auto-fix-readiness-gaps",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence shows Devin can implement features, fix bugs, and handle tickets generally, but there is no mention of any 'agent-readiness' scorecard, quality-gate criteria, or automated remediation of such criteria in a repository. No docs or community evidence tie Devin to this specific review-quality-gates capability.",
-    "evidenceIds": []
+    "rationale": "Devin Review with Auto-Fix explicitly auto-fixes CI failures and review comments, which could cover agent-readiness gate checks if they're wired into CI/PR review, and AGENTS.md support shows Devin can consume agent-readiness config files. However there's no evidence of a dedicated 'agent-readiness criteria' scorecard or targeted remediation workflow distinct from generic CI/review auto-fix. Missing for 10: explicit agent-readiness scoring/criteria detection, evidence of automatically remediating specific agent-readiness failures (vs generic CI/review comments), and independent validation of this auto-fix loop working reliably.",
+    "evidenceIds": [
+      "devin-docs-20",
+      "devin-docs-24",
+      "devin-docs-25"
+    ]
   },
   {
     "productId": "devin",
     "storyId": "auto-open-pr-on-completion",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Devin's task delegation, CLI, MCP, API and scheduling capabilities, but nowhere mentions automatic pull-request creation on task completion — no docs, API reference, or community evidence addresses PR automation at all.",
-    "evidenceIds": []
-  },
-  {
-    "productId": "devin",
-    "storyId": "automated-pr-review",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Devin as a general-purpose coding agent (tickets, terminal, Slack, API, MCP) but contains no documentation or mention of an automated PR-review feature with inline AI-generated comments on every pull request. missing for 10: evidence of automated PR review workflow, inline comment generation, integration as a review-quality gate in CI/PR pipelines.",
-    "evidenceIds": []
-  },
-  {
-    "productId": "devin",
-    "storyId": "automatic-environment-setup",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Docs describe Devin autonomously tackling tickets, implementing features, and building tools end-to-end, which implies it must set up its own working environment, but no evidence pack item explicitly describes repo cloning, dependency installation, or environment configuration steps. Missing for 10: explicit documentation of repo cloning, dependency install/setup workflow, and independent/hands-on confirmation that this environment bootstrapping works reliably.",
+    "rationale": "Devin is known to work within GitHub workflows and create PRs as part of its task completion (implied by its coding-agent nature and features like Auto-Fix responding to review comments/CI), but the evidence pack has no explicit documentation describing a configurable setting to auto-open a pull request upon task completion. missing for 10: explicit docs describing PR-creation-on-completion configuration, settings/toggle for auto-PR behavior, and independent confirmation of this specific workflow.",
     "evidenceIds": [
+      "devin-docs-20",
       "devin-docs-1",
       "devin-docs-5"
     ]
   },
   {
     "productId": "devin",
-    "storyId": "automation-bulk-operations",
+    "storyId": "automated-pr-review",
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Devin's API lets users create sessions programmatically (including on behalf of other users) and set up scheduled recurring tasks, which could be scripted to process many tickets/items in sequence, and docs mention tackling Linear/Jira tickets. However there is no documented native 'bulk operation' or batch-processing endpoint/UI for acting on many items simultaneously, and community discussion raises concerns about reliability at scale (e.g., low issue-resolution rate). Missing for 10: an explicit batch/bulk API endpoint or UI, first-party documentation of multi-item throughput, and independent evidence of successful bulk usage at scale.",
+    "rationale": "Devin documents a 'Devin Review with Auto-Fix' feature that responds to code review comments, fixes flagged bugs, and iterates on CI failures, implying an automated review capability tied to PRs, but the evidence pack gives no detail on how review comments are generated, whether they are inline, or how coverage/setup works for 'every PR'. missing for 10: explicit documentation of inline AI-generated PR comments, configuration for gating every PR, and independent/hands-on confirmation of the review quality.",
     "evidenceIds": [
+      "devin-docs-20"
+    ]
+  },
+  {
+    "productId": "devin",
+    "storyId": "automatic-environment-setup",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Devin's docs describe indexing repos, configuring a persistent environment/workspace that boots into a known-good state every session, VPN access to internal registries/git hosts, and AGENTS.md-based setup instructions it follows before coding — together these show it autonomously clones, configures, and prepares its own working environment. missing for 10: independent/hands-on verification of the clone+dependency-install flow end-to-end, and explicit documentation of automatic dependency installation step-by-step.",
+    "evidenceIds": [
+      "devin-docs-22",
+      "devin-docs-23",
+      "devin-docs-24",
+      "devin-docs-25"
+    ]
+  },
+  {
+    "productId": "devin",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Devin's docs describe running multiple Devins in parallel for independent tasks, an API for creating sessions programmatically (including on behalf of other users), and scheduling capabilities—together supporting bulk/automated task dispatch across many items. However, there's no concrete example or independent evidence of actually orchestrating large-scale bulk operations (e.g., processing hundreds of tickets at once), and community evidence focuses on single-task demos rather than bulk workflows. Missing for 10: hands-on/independent evidence of large-scale bulk runs, explicit parallelism limits, and a documented case study of bulk item processing.",
+    "evidenceIds": [
+      "devin-docs-18",
       "devin-docs-8",
       "devin-docs-9",
-      "devin-docs-17",
-      "devin-docs-1",
-      "devin-comm-2"
+      "devin-docs-17"
     ]
   },
   {
     "productId": "devin",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin's MCP integration supports cron-based and one-time scheduling with notification preferences (devin-docs-17), and its API allows external systems to trigger sessions programmatically (devin-docs-8, devin-docs-9), giving some automation-on-event capability. However, there's no documented general event-trigger/rule engine (e.g., 'on PR opened, on ticket created, on webhook received') beyond scheduling and manual tagging in Slack/Teams (devin-docs-4). Missing for 10: a documented rules/trigger system tied to arbitrary external events, independent confirmation of automation reliability, and broader event types beyond cron schedules.",
+    "rationale": "Devin supports event-driven automation via scheduled/cron triggers (create schedules with cron expressions, notification preferences) and via Devin Review's Auto-Fix which automatically responds to code review comments and CI failures, plus API-based workflow automation. However, these are fixed built-in trigger types (schedule, CI/review events) rather than a general user-defined rules engine for arbitrary events. Missing for 10: evidence of a flexible custom rule/trigger builder covering arbitrary event sources (e.g., webhooks, ticket status changes) beyond scheduling and code-review auto-fix, and independent confirmation these triggers work reliably in practice.",
     "evidenceIds": [
       "devin-docs-17",
+      "devin-docs-20",
       "devin-docs-8",
-      "devin-docs-9",
-      "devin-docs-4"
+      "devin-docs-15"
     ]
   },
   {
     "productId": "devin",
     "storyId": "automation-scheduled-jobs",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Devin's MCP integration explicitly documents scheduling support: 'set up schedules' and 'Supports cron expressions for recurring schedules, one-time scheduling, notification preferences, and agent selection,' confirming recurring job scheduling is a first-party capability. However, this is documented only via the MCP tool interface rather than a dedicated first-class scheduling UI, and there's no independent/hands-on corroboration of this specific feature working in practice. Missing for 10: independent verification of scheduling reliability, deeper documentation on the native (non-MCP) scheduling UX.",
+    "rationale": "Devin's MCP documentation explicitly states scheduling support with 'cron expressions for recurring schedules, one-time scheduling, notification preferences, and agent selection,' and this scheduling capability is exposed via MCP for session/playbook management. Missing for 10: independent/hands-on corroboration of recurring job execution in practice and more detail on scheduling UI/reliability beyond the docs mention.",
     "evidenceIds": [
       "devin-docs-15",
       "devin-docs-17",
-      "devin-probe-3"
+      "devin-docs-29"
     ]
   },
   {
@@ -1305,21 +1337,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence that Devin provides versioning, review, or rollback capabilities for its automations/playbooks/schedules; the docs describe creating sessions, playbooks, knowledge, and schedules (devin-docs-15, devin-docs-17) but never mention version history, diffs, or reverting configurations. This is a fair question for an automation platform, so absence of evidence means 'none' rather than 'na'.",
-    "evidenceIds": []
+    "rationale": "No evidence of version history, review/diff UI, or rollback of Devin's automations (playbooks, schedules, sessions); docs mention creating/scheduling sessions and playbooks but never versioning, auditing changes, or reverting them. missing for 10: version history for playbooks/sessions, review/approval workflow for automation changes, rollback/undo mechanism.",
+    "evidenceIds": [
+      "devin-docs-15",
+      "devin-docs-17",
+      "devin-docs-30"
+    ]
   },
   {
     "productId": "devin",
     "storyId": "autonomous-bug-fixing",
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Devin's docs explicitly promise autonomous bug repro-and-fix as a core use case (devin-docs-1), but concrete hands-on evidence undercuts this: an early demo review found it resolved only 13.8% of issues and used questionable fixes like wrapping a KeyError in a try-catch rather than truly diagnosing the root cause, and commenters directly challenge whether an 'AI software engineer' capable of autonomous fixes actually exists as claimed. missing for 10: independent benchmark data confirming high success rate on real-world bug reports, and rebuttal evidence addressing the low resolution-rate criticism.",
+    "rationale": "Devin's docs explicitly describe autonomous bug repro/fix workflows, Slack-triggered bug sessions, and auto-fix on CI/review failures (devin-docs-1, devin-docs-4, devin-docs-19, devin-docs-20), supporting the core story. However, independent commentary cites a low real-world resolution rate (13.8% of issues resolved) and hands-on accounts describing shallow fixes (e.g., wrapping errors in try/catch rather than真正 diagnosing root cause), directly contradicting the strength of the autonomous-fix claim (devin-comm-2, devin-comm-6, devin-comm-4). Missing for 10: independent benchmark showing high success rate, more recent hands-on verification of bug-fix quality, and resolution of the discrepancy between vendor claims and community-reported performance.",
     "evidenceIds": [
       "devin-docs-1",
+      "devin-docs-4",
+      "devin-docs-19",
+      "devin-docs-20",
       "devin-comm-2",
       "devin-comm-6",
-      "devin-comm-9"
+      "devin-comm-4"
     ]
   },
   {
@@ -1328,10 +1367,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Devin's docs show model selection between its own supported models via /model and 'Adaptive' routing, but there is no evidence of an engineering-lead being able to supply their own API key or a custom/self-hosted LLM to run agents on infrastructure or a model of their own choosing.",
+    "rationale": "Docs describe an internal 'Adaptive' model router and a /model command to pick among Devin's supported models, but there is no evidence of bringing a custom LLM or your own API key to run agents on a model of the engineering lead's choice.",
     "evidenceIds": [
       "devin-docs-10",
-      "devin-docs-11"
+      "devin-docs-11",
+      "devin-docs-26"
     ]
   },
   {
@@ -1339,59 +1379,64 @@
     "storyId": "chat-with-agent-in-slack",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin docs explicitly describe tagging Devin in Slack/Teams threads to discuss a bug with coworkers and delegating it, plus a /handoff flow for sending tasks from a lighter interaction to full cloud Devin sessions. This directly matches the story of tagging an agent in a chat thread to discuss/delegate a task. Missing for 10: independent hands-on confirmation of the chat-tagging workflow and more detail on multi-turn discussion before delegation.",
+    "confidence": "high",
+    "rationale": "Docs explicitly describe tagging Devin in Slack/Teams threads to discuss and delegate bugs/tasks, starting sessions directly from conversations. Missing for 10: independent/hands-on corroboration of this specific chat-tagging workflow beyond vendor docs.",
     "evidenceIds": [
       "devin-docs-4",
-      "devin-docs-3",
+      "devin-docs-19",
       "devin-docs-1"
     ]
   },
   {
     "productId": "devin",
     "storyId": "ci-failure-auto-fix",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin's docs describe general bug-fixing, ticket handling, and an API for building 'workflows,' but nothing in the evidence describes automatic detection/diagnosis of a failed CI run or an auto-generated PR fixing that specific failure. No CI integration (e.g., GitHub Actions failure trigger) is documented or demonstrated.",
-    "evidenceIds": []
+    "rationale": "Devin explicitly documents 'Devin Review with Auto-Fix' that responds to code review comments, fixes flagged bugs, and iterates on CI failures, directly matching the story of auto-diagnosing and fixing failed CI with a proposed PR. However, this is vendor-only documentation with no independent/hands-on corroboration of the CI-fix workflow specifically. Missing for 10: independent verification of CI-fix accuracy/success rate, details on PR proposal format, and evidence of real-world reliability beyond the single docs line.",
+    "evidenceIds": [
+      "devin-docs-20"
+    ]
   },
   {
     "productId": "devin",
     "storyId": "codebase-context-file",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Devin's MCP docs mention the ability to 'manage playbooks and knowledge' which suggests a mechanism for storing codebase-specific context, but there is no dedicated documentation describing a context file (e.g., conventions file) format, how it's ingested, or evidence that it demonstrably improves plan/code relevance. missing for 10: dedicated docs on a context/conventions file feature, examples of it being read before generating plans, independent confirmation of its effect on output quality.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Devin explicitly supports AGENTS.md files placed in the project root that Devin reads before coding, plus a separate 'Knowledge' feature for sharing codebase-level conventions/context to improve plans and code generation. Missing for 10: independent/hands-on confirmation that this measurably improves plan/code relevance beyond vendor docs.",
     "evidenceIds": [
-      "devin-docs-15"
+      "devin-docs-24",
+      "devin-docs-30",
+      "devin-docs-22"
     ]
   },
   {
     "productId": "devin",
     "storyId": "concurrent-task-execution",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin's API supports creating sessions on behalf of any user and building automated workflows, plus scheduling/recurring session creation, which enables launching many concurrent agent tasks for a team lead — this is a real, documented capability (devin-docs-8, devin-docs-9, devin-docs-15, devin-docs-17). However, there is no first-party or independent evidence of large-scale concurrent usage in practice, dashboards for managing many simultaneous sessions, or success-rate data at scale; community discussion instead flags low task-resolution rates (13.8%) which raises doubts about throughput quality once scaled. missing for 10: independent/hands-on evidence of running many concurrent sessions successfully, documentation of concurrency limits or a fleet-management UI, and data on success rates at scale.",
+    "rationale": "Devin docs explicitly document running multiple Devins in parallel on independent tasks and provide an API with create_as_user_id for programmatically spawning sessions on behalf of org members, directly supporting concurrent scaling of throughput. However, there's no first-party data on concurrency limits, cost/resource management at scale, or independent case studies validating throughput gains at team scale; missing for 10: quantified concurrency limits/scaling guidance, independent evidence of large-scale parallel usage, and cost/governance controls for many simultaneous sessions.",
     "evidenceIds": [
+      "devin-docs-18",
       "devin-docs-8",
       "devin-docs-9",
-      "devin-docs-15",
-      "devin-docs-17",
-      "devin-comm-2"
+      "devin-docs-15"
     ]
   },
   {
     "productId": "devin",
     "storyId": "connect-github-repo",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The docs mention MCP tools that can explore/query any GitHub repository (public or private with authentication), implying repo access, but there is no explicit evidence of connecting a repo for coding tasks or of Devin opening pull requests against it. missing for 10: explicit onboarding/connect-GitHub-repo flow, evidence of automated PR creation, and independent confirmation of PR workflows.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm repository indexing (public/private) and GitHub-repo access for context, plus 'Devin Review with Auto-Fix' responding to code review/CI, implying PR interaction, but there's no explicit documentation of a GitHub connection/auth flow or of Devin opening pull requests directly. missing for 10: explicit GitHub app/OAuth connection setup steps, explicit 'opens pull requests' documentation, independent/hands-on confirmation of PR creation.",
     "evidenceIds": [
+      "devin-docs-22",
       "devin-docs-16",
-      "devin-docs-12"
+      "devin-docs-20",
+      "devin-docs-23"
     ]
   },
   {
@@ -1399,9 +1444,12 @@
     "storyId": "daily-task-quota-limits",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence describes plan-based daily task limits, concurrency caps, or any admin controls/dashboard for managing such limits across an organization; the docs cover task delegation, CLI, MCP, and API session creation but nothing about visibility or management of usage/concurrency quotas tied to pricing plans.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions plan tiers, daily task quotas, concurrency limits, or an admin console/dashboard for managing such limits; docs cover running parallel Devins and API session creation but not visibility or management of plan-based limits. Missing for 10: pricing/plan documentation, admin UI for concurrency/task caps, usage dashboards or alerts for limit management.",
+    "evidenceIds": [
+      "devin-docs-18",
+      "devin-docs-9"
+    ]
   },
   {
     "productId": "devin",
@@ -1409,7 +1457,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Devin's API docs explicitly document a create_as_user_id parameter allowing creation of sessions on behalf of any user in the organization, directly matching the story. Missing for 10: independent/hands-on corroboration of this feature in practice and details on admin/permission controls governing who can impersonate whom.",
+    "rationale": "Devin's API explicitly supports creating sessions on behalf of any user in the organization via the create_as_user_id parameter, directly matching the engineering-lead use case for org-wide session delegation. Missing for 10: independent/hands-on corroboration of this specific feature and details on permission scoping/audit controls for delegated sessions.",
     "evidenceIds": [
       "devin-docs-9",
       "devin-docs-8"
@@ -1421,12 +1469,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin's docs explicitly describe taking plain-language descriptions (tickets, Slack threads, delegated tasks) and turning them into scoped implementation sessions with a plan/first draft, across web, Slack, and CLI handoff flows. However, community evidence raises real concerns about reliability/scope accuracy of the resulting implementations (low resolve rates, imperfect fixes), so the 'scoped' quality is imperfect in practice. Missing for 10: independent benchmarking of task-scoping accuracy, and clearer documentation of an explicit intermediate 'spec' artifact separate from execution.",
+    "rationale": "Devin's docs describe accepting natural-language asks (tickets, Slack/Teams messages, delegated tasks) and turning them into sessions/implementation tasks, which is the core intent-to-spec workflow (devin-docs-1, devin-docs-4, devin-docs-5, devin-docs-19). Community commentary raises concerns about actual task success rates and correctness (devin-comm-2, devin-comm-4), tempering confidence in scoping quality. Missing for 10: independent hands-on evidence that the auto-generated task scope/plan is accurate or reviewable before execution, and no dedicated 'plan/spec preview' feature described.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-4",
       "devin-docs-5",
-      "devin-docs-3",
+      "devin-docs-19",
       "devin-comm-2",
       "devin-comm-4"
     ]
@@ -1434,38 +1482,40 @@
   {
     "productId": "devin",
     "storyId": "design-to-code-handoff",
-    "verdict": "disputed",
-    "quality": 4,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Devin's docs claim it can take Jira/Linear tickets or Slack threads and autonomously implement full features, which a PM could theoretically use to hand off a design task without engineering — but there is no evidence of any mockup/design-file ingestion (e.g., Figma) and independent benchmarking data ('13.8% of issues resolved') plus hands-on accounts of it produing shortcut/incorrect fixes ('wrapping code in a try-catch') and needing correction contradict the claim of full autonomous, handoff-free delivery. missing for 10: direct mockup/design-to-code ingestion capability, PM-specific workflow evidence, and independent success-rate data showing reliable end-to-end delivery without engineer review.",
+    "rationale": "Devin's docs show it can autonomously implement features from tickets (Jira/Linear) and be tagged by non-engineers on Slack/Teams, supporting the general 'PM delegates, Devin implements' workflow, and it can connect to Figma via MCP integrations. However, there is no documented mockup-to-code pipeline, no PM-specific onboarding flow, and no evidence of turning a design file into a working UI end-to-end. missing for 10: direct design/mockup ingestion workflow, PM-focused case study or walkthrough, independent evidence of successful design-to-implementation outcomes.",
     "evidenceIds": [
       "devin-docs-1",
-      "devin-docs-4",
-      "devin-docs-5",
-      "devin-comm-2",
-      "devin-comm-4",
-      "devin-comm-6"
+      "devin-docs-19",
+      "devin-docs-21",
+      "devin-docs-5"
     ]
   },
   {
     "productId": "devin",
     "storyId": "diff-review-before-pr",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack describes Devin's task delegation, IDE handoff, terminal, and MCP integrations, but nothing documents a diff-review/approval gate before a PR is created — no mention of PR previews, diff approval UI, or gating workflow. Missing for 10: any documentation of a diff-view/approval step prior to PR creation, or user confirmation of such a workflow.",
-    "evidenceIds": []
+    "rationale": "Docs mention delegating a task and 'taking over in Devin's IDE once it gives you a good first draft' (devin-docs-5), implying some human checkpoint before final output, and Devin's terminal/log viewing lets you watch work in progress (devin-docs-6). However there is no explicit documentation of a diff-review/approve-before-PR gate — 'Devin Review with Auto-Fix' (devin-docs-20) is about post-PR review comment handling, not a pre-PR approval step. Missing for 10: explicit diff viewer with approve/reject before PR creation, documentation of a formal approval gate, and independent/hands-on confirmation of this workflow.",
+    "evidenceIds": [
+      "devin-docs-5",
+      "devin-docs-6",
+      "devin-docs-20"
+    ]
   },
   {
     "productId": "devin",
     "storyId": "end-to-end-feature-implementation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Devin's docs explicitly claim it can implement entirely new features end-to-end from tickets, with its own terminal/IDE/browser tooling, but the pack lacks explicit documentation of writing tests as part of that workflow, and community evidence (HN threads) shows skepticism and real-world limitations (e.g., only 13.8% issue resolution rate, demos not fully meeting requirements, imperfect fixes like wrapping errors in try-catch). missing for 10: explicit first-party or independent evidence of Devin writing tests alongside feature implementation, and stronger hands-on success-rate data.",
+    "rationale": "Devin's docs explicitly claim end-to-end feature implementation (docs-1, docs-31) and even test-writing is implied as part of full feature delivery, but independent hands-on reporting from the original demo showed only 13.8% of issues resolved and reviewers noted the work was often only ~90% correct or used hacky fixes (e.g. wrapping in try-catch) rather than proper fixes (devin-comm-2, devin-comm-4, devin-comm-6), directly contradicting the 'implements features end-to-end reliably' claim. missing for 10: verified success-rate data on test-writing specifically, more recent independent benchmarks showing improved reliability, and evidence tests are written/passed as part of the workflow rather than just code changes.",
     "evidenceIds": [
       "devin-docs-1",
-      "devin-docs-5",
+      "devin-docs-31",
       "devin-comm-2",
       "devin-comm-4",
       "devin-comm-6"
@@ -1477,19 +1527,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention SSO, enterprise licensing, commercial support tiers, or org-wide rollout terms; only API's create_as_user_id hints at multi-user org support but nothing about SSO/support contracts. Missing for 10: SSO/SAML documentation, enterprise plan/tier details, commercial support SLAs, procurement/licensing terms.",
+    "rationale": "No evidence pack items mention enterprise licensing, SSO, or commercial support offerings for Devin; only product feature docs and community sentiment are present. Missing for 10: SSO/SAML documentation, enterprise plan/pricing page, commercial support SLA details.",
     "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "feedback-to-task-conversion",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Devin can be tagged on Slack/Teams threads or Jira/Linear tickets and turn a described problem into an actionable coding session, which loosely supports turning feedback into a task, but there is no evidence of a feature that ingests raw feedback submissions and outputs a structured task with a proposed scope document (e.g., PRD-style scope, acceptance criteria). Missing for 10: dedicated feedback-intake workflow, structured task/spec templates, explicit 'proposed scope' output artifact, and any hands-on evidence this scoping behavior works reliably.",
+    "rationale": "Devin can ingest raw inputs like Linear/Jira tickets and Slack/Teams threads about bugs or feature requests and turn them into an actionable session (devin-docs-1, devin-docs-4, devin-docs-19), which covers the 'feedback-to-task' intake path, but there is no evidence of a distinct structured-task output with an explicit proposed scope/plan artifact for PM review before execution. Missing for 10: evidence of a scoping/planning deliverable (e.g., a spec doc or task breakdown with effort/scope estimate) generated prior to coding, and any PM-specific workflow or UI for reviewing/approving that scope.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-4",
+      "devin-docs-19",
       "devin-docs-5"
     ]
   },
@@ -1497,24 +1548,31 @@
     "productId": "devin",
     "storyId": "headless-ci-execution",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Devin exposes a public API (devin-docs-8, devin-docs-9) that lets you programmatically create sessions on behalf of users, and an official CLI (devin-probe-4) that could in principle be scripted, but there is no explicit documentation or example showing Devin running headlessly inside a CI/CD pipeline or shell script (e.g., no GitHub Actions integration, no non-interactive/headless flag mentioned). missing for 10: explicit CI/CD pipeline examples, headless/non-interactive CLI mode documentation, evidence of exit codes/scripting patterns for automated pipelines.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Devin's API is explicitly designed to 'integrate Devin into your applications, automate workflows, and build powerful tools' and supports creating sessions on behalf of users, which enables scripted/headless invocation, and a CLI is also documented. However, there is no explicit CI/CD pipeline example, exit-code/status handling, or GitHub Actions/shell-script integration guide in the evidence — the closest CI-related capability shown is 'Auto-Fix' reacting to CI failures rather than Devin running as a CI step itself.  missing for 10: explicit CI/CD pipeline integration docs (e.g., GitHub Actions/shell script examples), documented headless/non-interactive CLI invocation with exit codes.",
     "evidenceIds": [
       "devin-docs-8",
       "devin-docs-9",
-      "devin-probe-4",
-      "devin-docs-2"
+      "devin-docs-20",
+      "devin-probe-4"
     ]
   },
   {
     "productId": "devin",
     "storyId": "isolated-sandbox-execution",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Devin's terminal, IDE, browser, API, CLI, and MCP integrations, but nowhere does it mention an isolated sandbox environment for safe code execution or dependency installation. No docs or probes reference sandboxing, containerization, or VM isolation of the execution environment. missing for 10: any mention of sandbox/isolation architecture, dependency installation safety guarantees, or containerized execution environment documentation.",
-    "evidenceIds": []
+    "rationale": "Docs describe Devin operating in its own workspace/VM with terminal execution, environment configuration ('known-good state'), VPN access to internal services, and multi-platform (Android/macOS/Windows) build environments, implying isolated sandboxed execution, but there is no explicit documentation of sandbox security guarantees, dependency isolation, or safety controls around code execution, and no independent/hands-on verification of sandbox isolation. missing for 10: explicit sandbox/isolation security documentation, independent verification of safe execution, details on dependency install safety and containment.",
+    "evidenceIds": [
+      "devin-docs-6",
+      "devin-docs-23",
+      "devin-docs-25",
+      "devin-docs-27",
+      "devin-docs-28",
+      "devin-docs-32"
+    ]
   },
   {
     "productId": "devin",
@@ -1522,12 +1580,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Devin's docs explicitly support tackling Jira and Linear tickets, and its MCP framework generically allows connecting 'issue trackers' as external tool servers, which could extend to ClickUp/Monday.com via custom MCP servers. However, there is no documented native/first-party connector for ClickUp or Monday.com, and no evidence of built-in ticket-management workflows (create/update/assign) beyond referencing tickets as tasks.  missing for 10: native ClickUp/Monday.com integrations, evidence of two-way ticket management (creating/updating tickets, not just referencing them), independent confirmation of MCP-based issue-tracker setups in practice.",
+    "rationale": "Devin explicitly supports Linear and Jira tickets natively (devin-docs-1) and its MCP extensibility (devin-docs-12, devin-docs-21) lets it connect to arbitrary tool servers including issue trackers, which could cover ClickUp/Monday.com. However, there's no first-party documentation of native ClickUp or Monday.com connectors, and no independent/hands-on evidence confirming ticket-management workflows actually work end-to-end via these integrations. missing for 10: explicit native ClickUp/Monday.com support docs, independent verification of issue-tracker workflows succeeding in practice.",
     "evidenceIds": [
       "devin-docs-1",
       "devin-docs-12",
-      "devin-docs-13",
-      "devin-docs-14"
+      "devin-docs-21",
+      "devin-docs-13"
     ]
   },
   {
@@ -1549,13 +1607,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Devin is fundamentally a cloud-hosted agent platform: users delegate tasks via web app, Slack/Teams, or API, and cloud Devin sessions run without the developer managing backend infra, with API/session creation supporting org-wide multi-user scale. missing for 10: independent/hands-on confirmation of infrastructure-free scaling at volume, and clearer documentation of underlying resource limits or SLAs for the managed cloud service.",
+    "rationale": "Devin is delivered as a cloud-hosted agent (web app, API, session creation on behalf of users) so developers don't need to run their own backend/agent infrastructure — sessions run on Devin's managed cloud with its own configured environment, VPN access, and parallel execution. missing for 10: independent/hands-on confirmation of the managed infrastructure model, and explicit documentation of uptime/scaling/ops guarantees for the hosted service.",
     "evidenceIds": [
       "devin-docs-3",
       "devin-docs-5",
       "devin-docs-8",
       "devin-docs-9",
-      "devin-docs-15"
+      "devin-docs-18",
+      "devin-docs-23",
+      "devin-docs-25"
     ]
   },
   {
@@ -1564,10 +1624,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Devin's docs explicitly state Adaptive auto-routes prompts to a model, and users can switch away from Adaptive to a specific model at any time via the /model command in the CLI. This directly matches the story of overriding automatic model selection. Missing for 10: no independent/hands-on corroboration of /model behavior, and no equivalent documented control in the web/IDE surfaces beyond CLI.",
+    "rationale": "Devin's docs explicitly state that Adaptive automatically routes prompts to the best model, but users can switch away from Adaptive to a specific model at any time using /model, directly matching the story. Missing for 10: independent/hands-on corroboration of the /model switch in practice and more detail on which specific models are selectable.",
     "evidenceIds": [
       "devin-docs-10",
       "devin-docs-11",
+      "devin-docs-26",
       "devin-probe-4"
     ]
   },
@@ -1576,14 +1637,15 @@
     "storyId": "mid-task-takeover",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin's docs explicitly support handing off tasks between terminal (/handoff to cloud), web app, and IDE, delegating a task via web and taking over in Devin's IDE, jumping into the Interactive Browser to redirect browsing tasks, and watching/interacting with terminal output — covering editor, terminal, and browser takeover/redirect scenarios. Community evidence doesn't specifically contradict this handoff/takeover mechanic. Missing for 10: independent hands-on verification of seamless mid-task handoff across all three surfaces, and more detail on redirecting (vs just observing) an in-progress task.",
+    "confidence": "high",
+    "rationale": "Docs explicitly describe multi-surface handoff: delegate via web app then take over in Devin's IDE, use /handoff to send terminal tasks to cloud Devin, jump into the Interactive Browser to help Devin navigate, and tag Devin in Slack/Teams threads to redirect work — covering editor, terminal, and browser takeover. Missing for 10: independent/hands-on confirmation of a smooth mid-task handoff experience (community evidence is generic skepticism, not a concrete handoff failure).",
     "evidenceIds": [
-      "devin-docs-2",
       "devin-docs-3",
       "devin-docs-5",
       "devin-docs-6",
-      "devin-docs-7"
+      "devin-docs-7",
+      "devin-docs-19",
+      "devin-docs-2"
     ]
   },
   {
@@ -1592,39 +1654,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Slack/Teams tagging, web app, IDE, and CLI interfaces, but nothing describes a mobile-optimized approval workflow or push-notification-based decision approval while agents continue working. Missing for 10: any mobile app or phone-specific approval UI, evidence of asynchronous approval gating agent progress, and confirmation that Slack/Teams access from a phone constitutes a decision-approval mechanism.",
-    "evidenceIds": [
-      "devin-docs-4",
-      "devin-docs-5"
-    ]
+    "rationale": "No evidence describes a mobile app or phone-based approval interface for agent decisions; docs mention Slack/Teams tagging, web app, IDE, and scheduling notifications but nothing about approving decisions from a phone while sessions continue. The axis is plausible for an agentic dev tool with human-in-the-loop needs, but no supporting evidence exists.",
+    "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "one-click-repo-access",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack lacks any documentation of a one-click GitHub/repo installation flow or simplified onboarding process; it only mentions that Devin can query GitHub repo documentation (devin-docs-16) but not how repo access is granted or set up. Missing for 10: any mention of a GitHub App/OAuth one-click install, setup screenshots, or onboarding steps describing repo permission granting.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Devin does support connecting to repos (indexing, GitHub-based session creation, VPN access to internal git hosts) and this is described as straightforward onboarding, but there's no evidence of a literal 'one-click install' flow like a GitHub App marketplace install — setup instead involves indexing, environment configuration, AGENTS.md, and knowledge onboarding steps. Missing for 10: explicit one-click/marketplace-style install flow, independent evidence of setup simplicity, and confirmation that repo access requires no additional configuration.",
     "evidenceIds": [
-      "devin-docs-16"
+      "devin-docs-22",
+      "devin-docs-23",
+      "devin-docs-25",
+      "devin-docs-24"
     ]
   },
   {
     "productId": "devin",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Devin exposes a documented API for creating sessions, acting on behalf of users, and (via its MCP server) managing playbooks, knowledge, and schedules, showing substantial parity with core UI workflows, but there's no evidence the full UI feature set (e.g., Interactive Browser takeover, IDE handoff, Terminal session interactivity, Slack/Teams tagging) is API-addressable, and no discoverable OpenAPI spec confirming full endpoint coverage. missing for 10: OpenAPI/spec proving full endpoint parity, API equivalents for Interactive Browser/IDE/terminal UI actions, independent confirmation of complete UI-API parity.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Devin exposes a documented API (session creation, create_as_user_id) and an MCP server that surfaces session management, playbooks, knowledge, and scheduling (devin-docs-8,9,15,29), suggesting broad but not full parity with the web/IDE UI. There's no explicit claim or evidence that UI-only features like the Interactive Browser takeover, terminal handoff, VPN setup, or environment/emulation configuration are fully API-accessible, and no OpenAPI spec was found (devin-probe-2) to confirm completeness. Missing for 10: explicit vendor statement of API/UI parity, evidence that interactive/browser/VPN/environment features are API-controllable, and independent confirmation of parity.",
     "evidenceIds": [
       "devin-docs-8",
       "devin-docs-9",
       "devin-docs-15",
-      "devin-docs-16",
-      "devin-docs-17",
-      "devin-probe-2",
-      "devin-docs-7",
-      "devin-docs-5"
+      "devin-docs-29",
+      "devin-probe-2"
     ]
   },
   {
@@ -1632,8 +1691,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any data export feature or open-format export/portability capability for user data, sessions, knowledge, or playbooks—only API access for automating tasks, not exporting stored data in open formats. missing for 10: any documented data export mechanism, open format specification (JSON/CSV/etc.), or account deletion/data-portability policy.",
+    "confidence": "low",
+    "rationale": "No evidence of any data export feature, open-format export, or account/data portability tooling in Devin's docs; evidence covers task delegation, MCP, CLI, and platform support but nothing about exporting session data, knowledge, or playbooks in open formats for migration away from the product.",
     "evidenceIds": []
   },
   {
@@ -1642,7 +1701,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Devin is a closed, proprietary commercial product; no evidence indicates its source code is available under any open license, and none of the docs or community evidence mention open-sourcing or licensing terms for the codebase.",
+    "rationale": "Devin is a closed-source commercial SaaS product; no evidence of any open-source license or public source repository is present in the evidence pack, and the axis is applicable since AI tooling could conceivably publish open-source components. missing for 10: any open-license source release, public repo link, or licensing statement.",
     "evidenceIds": []
   },
   {
@@ -1651,12 +1710,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Devin is a cloud-hosted SaaS agent; no evidence of any self-hosted/on-prem deployment option for the core product is provided anywhere in the docs, community, or probes. All evidence points to a cloud web app, API, CLI, and MCP integrations, none of which describe self-hosting the core agent infrastructure.",
+    "rationale": "Devin is exclusively delivered as a cloud SaaS product (with local CLI/terminal front-ends that hand off to cloud sessions); no evidence anywhere in the docs or community discussion describes a self-hostable core engine or on-prem deployment option. Missing for 10: any documentation of self-hosted/on-prem deployment, container/binary distribution of the core agent, or licensing for self-hosting.",
     "evidenceIds": [
-      "devin-docs-1",
-      "devin-docs-8",
-      "devin-probe-1",
-      "devin-probe-2"
+      "devin-docs-2",
+      "devin-docs-3",
+      "devin-docs-25"
     ]
   },
   {
@@ -1665,7 +1723,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for Devin; documentation covers usage workflows, API, MCP, and CLI but nothing about choosing where data is stored.",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or compliance controls for where session/data is stored; docs cover VPN connectivity, environments, and MCP but nothing about choosing a storage region. Missing for 10: any mention of data residency/region selection, compliance certifications (e.g., SOC2/GDPR data locality), or enterprise data storage controls.",
     "evidenceIds": []
   },
   {
@@ -1674,7 +1732,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage for AI model training, opt-out settings, or any privacy policy statement about training data; all documentation excerpts cover product features (terminal, MCP, API) unrelated to this privacy axis.",
+    "rationale": "No evidence in the pack addresses data-training opt-out, privacy controls, or any policy about excluding user data from model training; all docs cover feature capabilities, MCP, CLI, and environment support instead.",
     "evidenceIds": []
   },
   {
@@ -1683,7 +1741,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy/data-handling settings for Devin; all docs focus on feature capabilities (terminal, API, MCP, scheduling) and community commentary on product hype/performance, none of which touch data retention or deletion.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy configuration options for Devin; the docs cover features, MCP, CLI, and environments but not data governance/retention settings.",
     "evidenceIds": []
   },
   {
@@ -1692,21 +1750,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism; the docs cover features, API, CLI, and MCP but never privacy/telemetry settings. missing for 10: any mention of telemetry collection, privacy policy, or opt-out controls.",
+    "rationale": "No evidence pack item mentions telemetry opt-out, analytics settings, or usage-tracking controls for Devin; nothing addresses this privacy axis at all.",
     "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "query-repo-documentation",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Devin's MCP tooling explicitly provides tools to 'explore and query documentation for any GitHub repository (public or private with authentication)', directly matching the story, and is corroborated by probe evidence confirming the official MCP server exists. Missing for 10: independent/hands-on validation of documentation query quality and no mention of non-GitHub repo hosts.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Devin explicitly documents 'DeepWiki'-style repo indexing and MCP tools that 'explore and query documentation for any GitHub repository (public or private with authentication)', directly matching the story, backed by repo indexing docs enabling Ask Devin/DeepWiki features. Missing for 10: independent hands-on verification of documentation query quality/accuracy beyond vendor docs.",
     "evidenceIds": [
       "devin-docs-16",
-      "devin-docs-15",
-      "devin-docs-12",
-      "devin-probe-3"
+      "devin-docs-22",
+      "devin-docs-29",
+      "devin-docs-15"
     ]
   },
   {
@@ -1715,20 +1773,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any repository readiness assessment, scoring, or report feature for evaluating autonomous-agent suitability; docs cover task delegation, CLI, MCP, API, and scheduling but nothing about a readiness/audit report for engineering leads.",
+    "rationale": "No evidence of any 'readiness report' or scoring feature that evaluates a repository's suitability for autonomous agents; docs cover onboarding features like AGENTS.md, environment setup, indexing, and knowledge, but nothing that generates a readiness assessment/report artifact for engineering leads.",
     "evidenceIds": []
   },
   {
     "productId": "devin",
     "storyId": "security-alert-remediation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack ties Devin to security-alert ingestion (e.g., from SAST/DAST/dependency scanners), automated validation of such alerts, or auto-generated remediation PRs tied to those alerts; docs only describe general task delegation (tickets, bugs, features) and generic PR/session capabilities, not a security-alert-specific workflow. missing for 10: integration with security scanners/alert sources, evidence of alert triage/validation logic, and documented auto-PR remediation flow for vulnerabilities.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Devin's 'Review with Auto-Fix' auto-responds to code review comments, fixes flagged bugs and iterates on CI failures, and MCP integrations extend it to security-adjacent tools like Sentry and Datadog, implying it could react to alerts and open a PR fix. However, there is no explicit documentation of a security-scanner (SAST/dependency-alert) validation-and-remediation pipeline or evidence of an actual security-alert-to-PR workflow. Missing for 10: explicit security-scanner (e.g., CodeQL/Dependabot/Snyk) integration, evidence of validating true-positive vs false-positive alerts, and a documented end-to-end 'alert triggers PR' example.",
     "evidenceIds": [
-      "devin-docs-1",
-      "devin-docs-5",
-      "devin-docs-8"
+      "devin-docs-20",
+      "devin-docs-21"
     ]
   },
   {
@@ -1737,11 +1794,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Devin is offered as a cloud-hosted SaaS agent (with a local CLI/terminal front-end that hands off to 'cloud Devin'); there is no evidence of a self-hostable agent runtime deployable in your own containers/VMs, and docs explicitly describe delegating heavier work to Cognition's cloud infrastructure. Missing for 10: any documentation of self-hosted/on-prem deployment, container images, or VM installation instructions for the core agent infrastructure.",
+    "rationale": "Devin is delivered as a cloud-hosted SaaS agent platform; all evidence points to cloud sessions, API access, VPN connectivity into customer networks, and a CLI/terminal client for local interaction, but nothing indicates the core agent infrastructure itself can be self-hosted on-prem, in customer-managed containers, or on customer VMs. Missing for 10: any documentation of a self-hosted/on-prem deployment option, container images for the agent runtime, or VM-based installation of Devin's backend.",
     "evidenceIds": [
-      "devin-docs-2",
-      "devin-docs-3",
-      "devin-docs-5"
+      "devin-docs-23",
+      "devin-docs-8",
+      "devin-docs-2"
     ]
   },
   {
@@ -1749,26 +1806,26 @@
     "storyId": "steer-active-session",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs show several forms of mid-task interaction—jumping into the Interactive Browser (devin-docs-7), taking over in Devin's IDE after a first draft (devin-docs-5), watching/copying terminal output (devin-docs-6), and tagging Devin in ongoing Slack/Teams threads (devin-docs-4)—implying a developer can intervene in an active session, but there is no explicit documentation of sending a follow-up chat message to steer an already-running agent session without restarting it, nor any independent hands-on confirmation of this exact workflow. Missing for 10: explicit docs on message-based mid-session steering, confirmation that follow-ups don't reset/restart the task, and independent verification of the feature working in practice.",
+    "confidence": "low",
+    "rationale": "Devin's docs describe delegating tasks and then 'taking over in Devin's IDE' or 'jumping in' to help with browsing tasks, implying some interactivity with an active session, but there is no explicit documentation of sending follow-up chat instructions to steer an in-progress session without restarting it. missing for 10: explicit docs on mid-session chat/steering, confirmation that follow-up messages are incorporated live, independent hands-on evidence of this workflow.",
     "evidenceIds": [
       "devin-docs-5",
       "devin-docs-7",
-      "devin-docs-6",
-      "devin-docs-4"
+      "devin-docs-4",
+      "devin-docs-19"
     ]
   },
   {
     "productId": "devin",
     "storyId": "task-completion-notifications",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Devin supports Slack/Teams tagging and interactive takeover (IDE, browser, terminal) which implies some in-context notification/interaction touchpoints, and scheduling with 'notification preferences' is mentioned for MCP-driven schedules, but there is no explicit documentation of a dedicated notification system (email/push/Slack alerts) for task completion or need-for-input across the main product. missing for 10: explicit completion/needs-input notification documentation outside scheduling context, independent confirmation of notification reliability, coverage across all interfaces (API, web app, CLI) rather than just Slack/Teams and MCP scheduling.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Devin supports Slack/Teams tagging where sessions and results appear in-thread (devin-docs-4, devin-docs-19), and scheduled sessions explicitly support 'notification preferences' (devin-docs-17), implying some completion/status alerts. However there's no dedicated first-party documentation of a generic notify-on-completion or needs-input alert system (e.g., email/push) outside Slack/Teams and scheduling contexts. Missing for 10: explicit documentation of a unified notification mechanism across all session types, and independent/hands-on confirmation that notifications reliably fire when input is needed.",
     "evidenceIds": [
       "devin-docs-4",
+      "devin-docs-19",
       "devin-docs-17",
-      "devin-docs-5",
       "devin-docs-7"
     ]
   },
@@ -1778,22 +1835,23 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Devin's docs mention permission systems for MCP tools with control 'at multiple levels' (devin-docs-13) and various handoff/takeover workflows (web draft to IDE, interactive browser jump-in, terminal watch), which imply some graduated human-in-the-loop control, but there is no documented concept of engineering-lead-configurable 'tiered autonomy levels' as an organizational policy setting. missing for 10: explicit tiered autonomy/permission-level configuration for leads, org-wide policy controls on agent action scope, independent verification that these controls work as described.",
+    "rationale": "Devin documents a permission system for MCP/tool access that can be controlled 'at multiple levels' and features like Auto-Fix, human takeover in the IDE, and interactive browser intervention imply some control over autonomous action, but there is no documented feature specifically framed as configurable 'tiered autonomy levels' for an engineering lead to set organization-wide policies on unattended agent actions. missing for 10: explicit autonomy-tier configuration UI/API, organization-wide policy controls, and confirmation-threshold settings distinct from ad-hoc MCP tool permissions.",
     "evidenceIds": [
       "devin-docs-13",
-      "devin-docs-5",
+      "devin-docs-20",
       "devin-docs-7",
-      "devin-docs-6"
+      "devin-docs-5"
     ]
   },
   {
     "productId": "devin",
     "storyId": "trigger-agent-on-build-failure",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Devin's API is documented as enabling integration into applications and automated workflows, and sessions can be created programmatically on behalf of users, which could technically be wired into a CI/CD pipeline, but there is no explicit documentation or example of triggering Devin from CI/CD to fix a broken build or failing test.  missing for 10: explicit CI/CD (e.g. GitHub Actions/Jenkins) integration guide, documented failing-build/test trigger workflow, and evidence of it working in practice on build failures.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state Devin Review with Auto-Fix can iterate on CI failures and fix flagged bugs, and the Devin API lets you integrate Devin into applications/workflows and create sessions programmatically (including on behalf of users), which supports triggering it from automated pipelines. However, there's no explicit documented example of a CI/CD pipeline (e.g., GitHub Actions/Jenkins) directly invoking Devin on a failing build/test, and no independent/hands-on confirmation of this exact workflow. Missing for 10: explicit CI/CD trigger integration example, independent verification that pipeline-triggered fixes work reliably.",
     "evidenceIds": [
+      "devin-docs-20",
       "devin-docs-8",
       "devin-docs-9"
     ]
@@ -1803,13 +1861,9 @@
     "storyId": "visual-context-for-tasks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions attaching screenshots, mockups, or annotated images to a Devin task, nor any image-based intent-to-spec workflow; the documented intake channels (Slack, Terminal, API, tickets) reference only text tasks. Missing for 10: any mention of image/screenshot attachment, visual annotation parsing, or mockup-to-code implementation capability.",
-    "evidenceIds": [
-      "devin-docs-1",
-      "devin-docs-4",
-      "devin-docs-5"
-    ]
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions attaching screenshots, mockups, or marked-up images to a Devin task, nor any visual-diff/design-to-code workflow; documentation covers ticket delegation, terminal, Slack, MCP, and environment setup but nothing about image/mockup-based task intake.",
+    "evidenceIds": []
   },
   {
     "productId": "factory",
