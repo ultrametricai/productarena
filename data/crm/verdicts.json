@@ -1423,12 +1423,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Salesforce exposes general-purpose APIs (salesforce-docs-7) and has an official MCP server (salesforce-probe-3) plus CLI tooling (salesforce-gh-1..8) that could theoretically support lead creation/enrichment, and Sales Cloud has lead management and lead scoring features (salesforce-docs-22, salesforce-docs-17). However, there is no evidence of an end-to-end documented workflow where an agent creates a lead, fills company data, and assigns an owner via API or MCP — no lead-specific API docs, MCP tool list, or hands-on example. Missing for 10: documented MCP/API tool for lead CRUD, evidence of company-data enrichment step, evidence of owner-assignment logic, and any hands-on or independent confirmation of this exact workflow.",
+    "rationale": "Salesforce exposes a documented Data API/CLI (sf data query, sf agent create) and an official MCP server (salesforce-probe-3), and the CRM data model explicitly includes Lead/Account/Contact/Opportunity objects (salesforce-docs-22), which together make an end-to-end lead-enrichment workflow plausible. However, there is no concrete documentation or example showing an agent actually creating a lead, filling company data, and assigning an owner via the API or MCP server in one flow. Missing for 10: a worked example or docs of the specific lead-create+enrich+assign-owner workflow via API/MCP, and any hands-on/independent confirmation it works end-to-end.",
     "evidenceIds": [
-      "salesforce-docs-7",
       "salesforce-probe-3",
+      "salesforce-probe-4",
       "salesforce-docs-22",
-      "salesforce-docs-17",
+      "salesforce-gh-3",
       "salesforce-gh-8"
     ]
   },
@@ -1438,30 +1438,30 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Salesforce ships an official MCP server (salesforce-probe-3) and CLI with data-query capability (salesforce-gh-3, salesforce-gh-8 'sf agent create'), plus API access (salesforce-docs-7) and automatic email/event syncing (salesforce-docs-8) and lead/account/opportunity data (salesforce-docs-22), which together could enable an agent to assemble an account brief from CRM data. However, there's no direct documentation or example of an agent actually compiling a pre-meeting account brief combining open deals, emails, and history end-to-end. Missing for 10: a concrete first-party workflow/example of an agent generating a consolidated account brief via API/MCP, and independent hands-on corroboration that this works as described.",
+    "rationale": "Salesforce exposes CRM data (accounts, opportunities, emails, activity history) via APIs and has an official MCP server (salesforcecli/mcp) plus a general-purpose CLI capable of data queries, giving an agent plumbing to assemble an account brief. However, there's no documented example, template, or first-party workflow specifically compiling 'open deals + recent emails + history' into a pre-meeting brief — this is inferred capability rather than demonstrated. Missing for 10: a concrete first-party or independent example of an agent generating a pre-meeting account brief combining deals/emails/history, and documentation of the specific API/MCP calls needed to pull email history alongside opportunity and activity data.",
     "evidenceIds": [
       "salesforce-probe-3",
+      "salesforce-probe-4",
       "salesforce-gh-3",
-      "salesforce-gh-8",
-      "salesforce-docs-7",
       "salesforce-docs-8",
-      "salesforce-docs-22"
+      "salesforce-docs-22",
+      "salesforce-docs-7"
     ]
   },
   {
     "productId": "salesforce",
     "storyId": "agent-updates-deal-stages",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Salesforce offers the building blocks—an official MCP server and CLI (salesforce-probe-3, salesforce-probe-4), API access (salesforce-docs-7), Agentforce agents spanning the deal cycle (salesforce-docs-21), and automatic email/event syncing (salesforce-docs-8)—but there is no concrete documentation or example showing an agent actually reading email/meeting signals and updating Opportunity stage/next-steps fields via the API or MCP server. missing for 10: a documented workflow or example (first-party or hands-on) of an agent parsing email/meeting content and writing stage/next-step updates to Opportunity records, and independent corroboration that this works in practice.",
+    "rationale": "Salesforce documents an official API/CLI (salesforce-probe-4, salesforce-docs-7) and an official MCP server (salesforce-probe-3, salesforce-docs-28) that can plug into Agentforce, plus Agentforce agents explicitly listed as 'Updating opportunity' (salesforce-docs-31) and automatic email/event syncing (salesforce-docs-8). However, no concrete documentation ties these together into the specific workflow of an agent parsing email/meeting signals to update deal stage and next-step fields end-to-end. Missing for 10: explicit docs/demo of email-or-meeting-signal-driven stage/next-step updates via API or MCP, and independent/hands-on confirmation this works as described.",
     "evidenceIds": [
       "salesforce-probe-3",
-      "salesforce-probe-4",
-      "salesforce-docs-7",
-      "salesforce-docs-21",
+      "salesforce-docs-28",
+      "salesforce-docs-31",
       "salesforce-docs-8",
-      "salesforce-docs-18"
+      "salesforce-docs-7",
+      "salesforce-probe-4"
     ]
   },
   {
@@ -1470,9 +1470,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms Salesforce hosts a live llms.txt file at salesforce.com/llms.txt returning HTTP 200 with agent-oriented navigation content, directly satisfying the story. Missing for 10: no evidence of broader agent-oriented documentation conventions (e.g., structured docs.txt per product area) or independent confirmation that agents successfully consume it in practice.",
+    "rationale": "Direct probe evidence confirms an llms.txt file exists at https://www.salesforce.com/llms.txt returning HTTP 200 with structured agent-oriented content links, and this is corroborated by an official MCP server and CLI ecosystem that agents can also use. Missing for 10: independent third-party confirmation that agents actively consume this llms.txt successfully, and more comprehensive agent-oriented documentation beyond the single probed file.",
     "evidenceIds": [
-      "salesforce-probe-1"
+      "salesforce-probe-1",
+      "salesforce-probe-3",
+      "salesforce-probe-4"
     ]
   },
   {
@@ -1481,15 +1483,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Salesforce Sales Cloud documents multiple AI-generated insight features embedded in the product—lead scoring, predictive forecasting, pipeline insights, and AI-surfaced deal intelligence—directly within the CRM workflow, backed by customer case studies (e.g., Crexi, 1916 Company) showing real usage impact. Missing for 10: independent/hands-on verification of insight quality and no detailed technical documentation of the underlying AI models or accuracy benchmarks.",
+    "rationale": "Sales Cloud ships built-in AI features like lead scoring, predictive forecasting, and AI-powered pipeline insights directly in the CRM UI, backed by named customer results (e.g., Crexi saving 5 hours/day with Sales AI). Missing for 10: independent hands-on review specifically validating insight quality/accuracy, and more detail on how insights surface in-product beyond marketing copy.",
     "evidenceIds": [
       "salesforce-docs-2",
       "salesforce-docs-3",
       "salesforce-docs-10",
       "salesforce-docs-16",
       "salesforce-docs-17",
-      "salesforce-docs-5",
-      "salesforce-docs-4"
+      "salesforce-docs-5"
     ]
   },
   {
@@ -1498,13 +1499,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Salesforce explicitly markets Agentforce agents that run 24/7 autonomously to handle repetitive sales tasks across the deal cycle without added headcount, backed by CLI tooling to create agents (sf agent create) and enterprise agent-building recipes. Missing for 10: independent/hands-on verification of true unattended autonomous execution in production, and detail on monitoring/error-handling for background automations.",
+    "rationale": "Salesforce documents Agentforce agents that run 24/7 autonomously across the sales cycle (prospecting to close), with CLI tooling (sf agent create, sf agent activate) and Agent Builder for configuring automated logic, access controls, and integrations with Flows/Apex/MuleSoft. This directly matches background autonomous automation for an AI-native user. missing for 10: independent/hands-on verification that agents genuinely run unattended in production, and more detail on monitoring/error-handling for autonomous runs",
     "evidenceIds": [
       "salesforce-docs-18",
       "salesforce-docs-21",
-      "salesforce-docs-6",
+      "salesforce-docs-31",
       "salesforce-gh-8",
-      "salesforce-docs-12"
+      "salesforce-gh-9",
+      "salesforce-docs-29",
+      "salesforce-docs-30",
+      "salesforce-docs-32"
     ]
   },
   {
@@ -1513,71 +1517,71 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Salesforce Sales Cloud ships Agentforce agents built into the CRM that can autonomously handle tasks like prospecting and pipeline management, with docs explicitly describing deploying AI agents 24/7 to handle repetitive sales tasks and turning on agents across the deal cycle. However, missing for 10: independent hands-on validation of actual task delegation UX, and no first-party detail on the delegation workflow itself beyond marketing claims.",
+    "rationale": "Sales Cloud embeds Agentforce agents directly in the CRM to autonomously handle tasks like qualifying leads, updating opportunities, and closing renewals, with natural-language agent building and 24/7 deployment described in first-party docs. Missing for 10: independent/hands-on verification of the assistant's task delegation working reliably in practice, and more detail on the interactive 'delegate a task' UX rather than marketing case studies.",
     "evidenceIds": [
       "salesforce-docs-18",
       "salesforce-docs-21",
-      "salesforce-docs-6",
-      "salesforce-docs-4",
-      "salesforce-gh-8"
+      "salesforce-docs-31",
+      "salesforce-docs-29",
+      "salesforce-docs-30"
     ]
   },
   {
     "productId": "salesforce",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The official Salesforce CLI (sf) supports headless, scriptable commands like `sf apex run test`, `sf data query`, and `sf org create scratch`, which are commonly used in CI pipelines for testing and deployment automation, and community feedback corroborates a solid CLI/dev tooling experience. However, there is no explicit documentation of CI/CD pipeline integration (e.g., GitHub Actions, Jenkins examples) or headless automation guides specific to Sales Cloud workflows. Missing for 10: explicit CI pipeline integration examples, documentation on headless/non-interactive auth flows for automation, and independent verification of CI usage at scale.",
+    "rationale": "Salesforce ships an official CLI (sf/@salesforce/cli) with headless-friendly commands like `sf data query`, `sf apex run test`, `sf org create scratch`, and even `sf agent create/activate`, which are the standard mechanism developers use to script and automate Salesforce orgs in CI pipelines. However, the evidence is CLI/platform-level rather than Sales Cloud-specific, and there's no explicit CI/CD pipeline example, GitHub Actions integration doc, or independent hands-on CI report cited. Missing for 10: explicit CI/CD pipeline integration guide or example, independent verification of headless automation in a real CI environment, Sales-Cloud-specific (not just generic platform) automation documentation.",
     "evidenceIds": [
       "salesforce-gh-1",
       "salesforce-gh-2",
       "salesforce-gh-3",
-      "salesforce-gh-4",
       "salesforce-gh-7",
-      "salesforce-comm-3",
+      "salesforce-gh-8",
+      "salesforce-gh-9",
       "salesforce-probe-4"
     ]
   },
   {
     "productId": "salesforce",
     "storyId": "agentic-mcp-client",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence shows Salesforce publishing its own official MCP server (salesforcecli/mcp) so external tools can call Salesforce — the opposite direction from the story, which asks whether Sales Cloud/Agentforce can consume external MCP servers as tools. No documentation shows Agentforce or Sales Cloud importing/plugging in third-party MCP servers to extend its own tool use. missing for 10: evidence of Agentforce/Sales Cloud acting as an MCP client, configuration steps for adding external MCP servers, and any hands-on confirmation of this working.",
+    "rationale": "Salesforce's Agentforce Builder explicitly lets users find, evaluate, and plug in trusted third-party agents, sub-agents, and MCP servers via AgentExchange, directly enabling agents to use external MCP tools, and Agent Builder also connects to Flows, Apex, MuleSoft APIs, etc. This is first-party documentation without independent hands-on corroboration of the MCP plug-in flow. Missing for 10: independent/community verification of actually connecting an MCP server in Agentforce Builder, and more detail on configuration/setup steps.",
     "evidenceIds": [
-      "salesforce-probe-3",
-      "salesforce-docs-6",
-      "salesforce-docs-12"
+      "salesforce-docs-28",
+      "salesforce-docs-29",
+      "salesforce-docs-23"
     ]
   },
   {
     "productId": "salesforce",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence shows an official Salesforce MCP server repository (salesforcecli/mcp) alongside the official CLI, indicating Salesforce provides a first-party MCP server for agent connectivity. Missing for 10: independent/hands-on corroboration of setup and usage, and detailed documentation of supported tools/capabilities within the MCP server.",
+    "rationale": "Salesforce publishes an official MCP server (salesforce-probe-3: github.com/salesforcecli/mcp) alongside its CLI, and Agentforce Builder documentation explicitly supports plugging in third-party and platform MCP servers (salesforce-docs-28), confirming the platform embraces the MCP standard for agent connectivity. Missing for 10: detailed first-party setup/usage docs for the MCP server itself, and independent/hands-on validation of its functionality beyond the repo's existence.",
     "evidenceIds": [
       "salesforce-probe-3",
-      "salesforce-gh-8",
-      "salesforce-probe-4"
+      "salesforce-docs-28",
+      "salesforce-gh-6"
     ]
   },
   {
     "productId": "salesforce",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Salesforce markets Agentforce agents that can 'autonomously handle repetitive tasks' and 'Agent Script Recipes' for building agents, implying a natural-language/agentic layer over Sales Cloud, but the evidence never explicitly shows an end-user typing plain-English commands to operate the CRM (e.g., 'update this opportunity' via chat) — most detail is CLI/developer-facing (sf CLI, MCP server) rather than an end-user NL interface.  missing for 10: explicit end-user natural-language command examples, independent/hands-on verification that Agentforce responds to free-form commands, and confirmation this is available broadly (not just via developer tooling).",
+    "rationale": "Salesforce documents natural-language agent building (\"Use natural language and Agent Optimizer to get started quickly\" — salesforce-docs-30) and Agentforce agents executing sales tasks like qualifying leads and closing deals via natural-language-driven automation (salesforce-docs-21, salesforce-docs-31), which supports agentic natural-language operation within Sales Cloud's Agentforce layer. However, this is mostly about configuring/building agents rather than a general natural-language command interface for day-to-day CRM operation by end users, and there's no hands-on/independent confirmation of reliability. Missing for 10: independent verification of natural-language command execution in daily use, clear evidence of a conversational interface for core CRM tasks beyond agent-builder configuration.",
     "evidenceIds": [
-      "salesforce-docs-6",
-      "salesforce-docs-18",
+      "salesforce-docs-30",
       "salesforce-docs-21",
-      "salesforce-docs-10",
-      "salesforce-probe-3"
+      "salesforce-docs-31",
+      "salesforce-docs-18",
+      "salesforce-docs-29"
     ]
   },
   {
@@ -1586,7 +1590,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Salesforce ships an official, actively maintained CLI (@salesforce/cli, installable via npm) with commands for org management, data queries, Apex testing, agent creation (sf agent create), and even scratch org provisioning, corroborated by independent developer commentary praising the CLI tooling. missing for 10: no independent hands-on review specifically praising AI-native/agentic workflows via the CLI, and no evidence of deeper CLI-specific AI tooling beyond agent creation commands.",
+    "rationale": "Salesforce ships an official, actively documented CLI (@salesforce/cli / sf) with commands for org management, data queries, Apex tests, and even agent creation/activation, corroborated by GitHub docs and independent community praise for its command-line tooling. Missing for 10: deeper AI-native agent workflow examples in the CLI itself and more independent hands-on reviews specifically of newer 'sf agent' subcommands.",
     "evidenceIds": [
       "salesforce-gh-1",
       "salesforce-gh-2",
@@ -1595,6 +1599,7 @@
       "salesforce-gh-6",
       "salesforce-gh-7",
       "salesforce-gh-8",
+      "salesforce-gh-9",
       "salesforce-probe-4",
       "salesforce-comm-3"
     ]
@@ -1622,14 +1627,12 @@
   {
     "productId": "salesforce",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "No evidence describes scoped or least-privilege API credential issuance for agents (e.g., named credentials, permission sets, connected app scopes limited to agent use); evidence only covers general CLI, MCP server existence, and marketing claims about AI features. Missing for 10: documentation of scoped OAuth/connected-app credentials for agents, permission-set/least-privilege configuration guidance, or any hands-on confirmation of credential scoping for AI agents.",
+    "rationale": "Salesforce documents attribute-based access control (ABAC) policies that admins can enforce to control what data agents (not just humans) can see, which speaks to least-privilege access for agents, but there is no explicit mention of scoped/least-privilege API credentials, tokens, or connected-app OAuth scopes issued specifically to an agent. Missing for 10: explicit API credential/token scoping mechanism for agents, OAuth scope documentation, and any independent/hands-on confirmation of least-privilege enforcement in practice.",
     "evidenceIds": [
-      "salesforce-gh-8",
-      "salesforce-probe-3",
-      "salesforce-docs-12"
+      "salesforce-docs-32"
     ]
   },
   {
@@ -1656,8 +1659,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions webhooks or event subscription mechanisms (e.g., Platform Events, Change Data Capture) for Sales Cloud; evidence covers AI features, CLI, and pricing but nothing about webhook subscriptions.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of webhooks, Platform Events, Streaming API, or any push-notification subscription mechanism for Salesforce Sales Cloud; only CLI, MCP server, and marketing content are documented. missing for 10: webhook subscription API/docs, event notification setup guide, any first-party or community confirmation of webhook support.",
     "evidenceIds": []
   },
   {
@@ -1666,10 +1669,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Salesforce has developer tooling (CLI, mentions of APIs) but no documentation of an interactive API reference with runnable examples; the openapi probe explicitly returned 404s for standard API spec endpoints. missing for 10: interactive API explorer/sandbox, runnable code examples, OpenAPI/Swagger spec availability.",
+    "rationale": "There is no evidence of an interactive API reference with runnable examples; the openapi probe returned 404s and no docs mention a try-it-console or embedded runnable examples for the API. Only marketing mentions of 'Discover Salesforce APIs' and CLI tooling exist, which is not an interactive reference experience.",
     "evidenceIds": [
-      "salesforce-docs-7",
-      "salesforce-probe-2"
+      "salesforce-probe-2",
+      "salesforce-docs-7"
     ]
   },
   {
@@ -1678,7 +1681,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack includes a direct probe for a machine-readable OpenAPI spec that returned 404 on all candidate paths (openapi.json, swagger.json, etc.), and no other citation provides a downloadable OpenAPI/Swagger file or equivalent machine-readable API spec — only marketing copy about 'Discover Salesforce APIs' with no link to a spec.",
+    "rationale": "The evidence pack includes an explicit probe showing all standard OpenAPI spec paths (openapi.json, swagger.json, etc.) return 404, and no docs item describes a downloadable machine-readable API spec — only vague marketing copy about 'Discover Salesforce APIs.' No concrete OpenAPI/Swagger artifact is shown to exist.",
     "evidenceIds": [
       "salesforce-probe-2",
       "salesforce-docs-7"
@@ -1705,59 +1708,61 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence pack shows marketing content, CLI/MCP tooling, and an OpenAPI probe returning 404s, but no documentation of API versioning scheme or deprecation policy is present anywhere in the pack.",
-    "evidenceIds": [
-      "salesforce-probe-2",
-      "salesforce-docs-7"
-    ]
+    "rationale": "No evidence in the pack references API versioning, version deprecation timelines, or a documented deprecation policy for Salesforce APIs; the pack only shows CLI/MCP tooling and marketing content. missing for 10: documentation of API version numbering, deprecation schedule/policy, and any changelog or support-lifecycle references.",
+    "evidenceIds": []
   },
   {
     "productId": "salesforce",
     "storyId": "auto-enrichment",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows lead/contact/account management, AI lead scoring, and forecasting features, but nothing about auto-enrichment of contact/company records with third-party firmographic or contact data (e.g., no Data.com, Clearbit, ZoomInfo integration mentioned). Missing for 10: any mention of firmographic data enrichment, third-party data provider integration, or automated record completion from external sources.",
-    "evidenceIds": [
-      "salesforce-docs-22",
-      "salesforce-docs-17",
-      "salesforce-docs-8"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence covers lead scoring, forecasting, pipeline management, and CRM sync, but no citation mentions auto-enrichment of contact/company records with third-party firmographic or contact data. Missing for 10: any documented data-enrichment feature/integration, evidence of firmographic data append, or contact/company auto-fill from external sources.",
+    "evidenceIds": []
   },
   {
     "productId": "salesforce",
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items describe bulk operations (e.g., Bulk API, mass update/create/delete across many records) accessible to an AI-native user; CLI mentions (sf data query, sf apex run test) address single-record queries or testing, not bulk automation across many items.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows CLI/query commands (sf data query, sf org create scratch) and general AI/automation marketing claims, but nothing documents bulk create/update/delete operations across many records for an AI-native workflow. Missing for 10: explicit bulk API or bulk data manipulation documentation, evidence of batch processing at scale, or AI-agent-triggered bulk operations.",
+    "evidenceIds": [
+      "salesforce-gh-3",
+      "salesforce-gh-1",
+      "salesforce-docs-7"
+    ]
   },
   {
     "productId": "salesforce",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Salesforce markets Agentforce agents that can be 'turned on across every stage of the deal cycle' and 'deployed 24/7 to autonomously handle repetitive tasks' (docs-18, docs-21), and independent community evidence confirms Salesforce's rule-based automation (e.g., timed emails) is easy to configure compared to competitors (comm-2), suggesting event-triggered automation exists. However, evidence is largely marketing copy without technical documentation of the actual rule/trigger configuration mechanism (e.g., Flow Builder, workflow rules, or agent trigger conditions) for AI-native users. Missing for 10: first-party technical docs on defining trigger conditions/rules, examples of AI-agent-specific event triggers, and independent hands-on validation of building custom automation rules.",
+    "rationale": "Salesforce documents rule-based automation constructs (Built-in Sales Flows and Lead Routing, Agentforce agents triggered across deal-cycle stages, Agent Script Recipes) and CLI/agent tooling (sf agent create/activate) that support event-driven automation, but the evidence is largely marketing copy rather than technical documentation of a rules engine or trigger/condition/action framework a developer could inspect. Missing for 10: concrete docs on defining trigger conditions (e.g., Flow Builder trigger types, Apex triggers) with independent/hands-on verification that automations reliably fire on events, and no community corroboration of automation reliability.",
     "evidenceIds": [
-      "salesforce-docs-18",
+      "salesforce-docs-27",
       "salesforce-docs-21",
-      "salesforce-docs-8",
-      "salesforce-comm-2"
+      "salesforce-docs-18",
+      "salesforce-docs-6",
+      "salesforce-gh-8",
+      "salesforce-gh-9",
+      "salesforce-docs-31"
     ]
   },
   {
     "productId": "salesforce",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence describes generic AI agents, automation of the sales cycle, and 24/7 autonomous task handling (e.g. salesforce-docs-18, salesforce-docs-21), but nothing documents an ability to schedule recurring jobs/workflows (e.g. cron-like scheduled Apex, scheduled Flows, or agent job scheduling) for an AI-native user. Missing for 10: documentation of recurring/scheduled automation configuration, API or CLI support for scheduling jobs, and any hands-on confirmation that Agentforce agents can be set to run on a recurring cadence.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Sales Cloud advertises built-in Sales Flows, automation of the sales cycle, and 24/7 autonomous agents (salesforce-docs-27, salesforce-docs-11, salesforce-docs-18), implying some workflow/automation scheduling capability, but there is no explicit documentation of an AI-native interface (API/CLI) for creating or managing recurring scheduled jobs — the CLI evidence only shows org/test/agent commands, not job scheduling. missing for 10: explicit docs on scheduled/recurring Flow or batch job creation via API/CLI, AI-native scheduling interface, and independent confirmation of recurring automation working as claimed.",
     "evidenceIds": [
+      "salesforce-docs-27",
+      "salesforce-docs-11",
       "salesforce-docs-18",
-      "salesforce-docs-21",
-      "salesforce-docs-11"
+      "salesforce-gh-5",
+      "salesforce-gh-7"
     ]
   },
   {
@@ -1766,7 +1771,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes version control, review workflows, or rollback capabilities for automations (Flows/Agent scripts); DevOps Center is mentioned only as a name with no detail on versioning/rollback mechanics.",
+    "rationale": "No evidence describes versioning, review workflows, or rollback specifically for automations/agents (e.g., Flow version history, agent build rollback); only DevOps Center is mentioned generically without detail on versioning/rollback mechanics.",
     "evidenceIds": []
   },
   {
@@ -1774,9 +1779,13 @@
     "storyId": "bidirectional-sync-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains only marketing content, CLI/dev-tool mentions, and community pricing/complaint threads, with no documentation of the API's bidirectional sync, upsert operations, rate limits, or change-detection mechanisms (e.g., Bulk API, Streaming API, Change Data Capture) despite these being well-known Salesforce capabilities in general knowledge — none of that is present here.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "While Salesforce is known for REST/Bulk APIs, the evidence pack only offers generic marketing lines about 'APIs' and a CLI for org/data querying (salesforce-docs-7, salesforce-gh-3) with no documentation of upsert operations, rate limits, or change-data-capture/streaming for bidirectional sync at scale. Missing for 10: documented rate limits, upsert API details, change detection (CDC/PushTopic/Platform Events) evidence.",
+    "evidenceIds": [
+      "salesforce-docs-7",
+      "salesforce-gh-3",
+      "salesforce-probe-2"
+    ]
   },
   {
     "productId": "salesforce",
@@ -1795,11 +1804,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Salesforce Sales Cloud explicitly lists \"Lead, Account, Contact, and Opportunity Management\" as a core feature, implying linked contact/company records, but the evidence pack contains no documentation of an activity timeline feature or how activities/interactions are surfaced on a record. missing for 10: explicit activity timeline documentation, screenshots/feature descriptions of linked record views, independent hands-on confirmation of the timeline UI.",
+    "rationale": "Salesforce Sales Cloud explicitly lists 'Lead, Account, Contact, and Opportunity Management' as a core capability, implying linked contact/company records, but the evidence pack contains no direct documentation of an activity timeline feature on records or details on how records are linked. missing for 10: explicit documentation/screenshots of activity timeline on contact/account records, independent hands-on confirmation of the linked-record UI.",
     "evidenceIds": [
       "salesforce-docs-22",
-      "salesforce-docs-8",
-      "salesforce-docs-19"
+      "salesforce-docs-19",
+      "salesforce-docs-25"
     ]
   },
   {
@@ -1807,8 +1816,8 @@
     "storyId": "crm-migration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses CRM data migration, import tools, data mapping, owner/history preservation, or third-party migration utilities; evidence covers AI features, CLI/dev tooling, pricing, and general sentiment instead.",
+    "confidence": "low",
+    "rationale": "No evidence pack items address CRM migration tooling, data import from competing CRMs, preservation of record ownership, or historical activity data; all evidence covers AI/sales features, CLI/dev tooling, and general community sentiment unrelated to migration.",
     "evidenceIds": []
   },
   {
@@ -1817,8 +1826,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item documents self-service custom field creation or filtered/sorted/shared view building for ops users; the closest community evidence (salesforce-comm-4, salesforce-comm-6) actually indicates customization in Salesforce typically requires admins or paid consultants, reinforcing that this is not a documented self-serve capability.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains no documentation or citation that ops users can add custom fields, build filtered/sorted views, or share views without going through an admin/dev project — all cited material is generic marketing (AI, pipeline, forecasting) or CLI/developer tooling, not self-service customization UI. Community comment [salesforce-comm-4] even suggests customization in practice requires paid consultants rather than being self-serve, but this is general skepticism rather than a concrete hands-on contradiction, so it doesn't elevate to 'disputed' — it simply reinforces the lack of supporting evidence.",
+    "evidenceIds": [
+      "salesforce-comm-4",
+      "salesforce-comm-6"
+    ]
   },
   {
     "productId": "salesforce",
@@ -1841,19 +1853,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains only generic marketing content about AI, sales pipeline, forecasting, and CLI/MCP tooling; there is no mention of duplicate detection or contact/company merge functionality despite this being a known Salesforce feature area, so no evidence supports the claim here.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains no mention of duplicate detection, deduplication rules, or merge tools for contacts/accounts (e.g., no reference to Salesforce's native 'Merge Duplicates' or matching/duplicate rule features). Only generic lead/contact/account management mentions (salesforce-docs-22) appear, with no specifics on dedup or merge workflows.",
+    "evidenceIds": [
+      "salesforce-docs-22"
+    ]
   },
   {
     "productId": "salesforce",
     "storyId": "email-templates-sequences",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Salesforce's Sales Engagement feature ('engagement built directly into your CRM', docs-19) and automatic email sync (docs-8) point to templated/sequenced outreach capability, and a community comment corroborates quickly setting up timed/templated emails in SFDC (salesforce-comm-2). However, the evidence pack lacks first-party documentation specifically naming 'email templates' or 'multi-step sequences/cadences' features, or hands-on proof of sequence automation. Missing for 10: dedicated docs on Sales Engagement/Cadences feature set, screenshots or independent reviews of multi-step sequence building, and confirmation of template management UI.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Marketing copy mentions 'engagement built directly into your CRM' and automatic email syncing, and a community anecdote praises how quickly a timed email could be set up in Salesforce, but there is no explicit documentation of templated email or multi-step sequence/cadence tooling. Missing for 10: explicit feature docs for email templates, cadence/sequence builder, or multi-step engagement workflows, and independent verification beyond a single anecdotal comment.",
     "evidenceIds": [
       "salesforce-docs-19",
       "salesforce-docs-8",
+      "salesforce-docs-27",
       "salesforce-comm-2"
     ]
   },
@@ -1874,24 +1889,25 @@
   {
     "productId": "salesforce",
     "storyId": "lead-assignment-routing",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack mentions lead management, lead scoring, and general CRM/automation marketing copy but never references assignment rules, lead routing logic, or round-robin distribution specifically. Without concrete documentation of this capability in the provided pack, it cannot be credited even though it is plausible for this product category.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Pricing page explicitly lists 'Built-in Sales Flows and Lead Routing' and lead scoring/management features, indicating assignment/routing capability exists, but no evidence details round-robin logic, configuration specifics, or independent confirmation it works as expected. Missing for 10: documentation of round-robin assignment mechanics, admin setup guide, and hands-on/independent verification of lead routing behavior.",
     "evidenceIds": [
+      "salesforce-docs-27",
       "salesforce-docs-22",
-      "salesforce-docs-17",
-      "salesforce-docs-11"
+      "salesforce-docs-17"
     ]
   },
   {
     "productId": "salesforce",
     "storyId": "marketplace-integrations",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Evidence confirms Salesforce ships marketplace access ('Access to AgentExchange') as part of Sales Cloud packaging, consistent with an app-marketplace model for prebuilt integrations, but the pack contains no detail on the specific integration categories named in the story (Slack, support desk, marketing, data warehouse) or on installation flow/experience. Missing for 10: named connectors for Slack/support desk/marketing/data warehouse, install/setup walkthrough, independent hands-on confirmation of marketplace installs.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows Salesforce has a marketplace concept (AgentExchange) where admins can 'find, evaluate, and plug in trusted third-party agents, sub-agents, and MCP servers' (salesforce-docs-28) and pricing tiers reference 'Access to AgentExchange' (salesforce-docs-23), suggesting some app-marketplace capability exists. However, none of the evidence specifically confirms prebuilt Slack, support-desk, marketing, or data-warehouse integrations being installable from this or the classic AppExchange marketplace. Missing for 10: explicit mention of AppExchange, named integrations (Slack, ServiceNow/Zendesk, marketing tools, Snowflake/data warehouses), and any independent confirmation of installation workflow.",
     "evidenceIds": [
+      "salesforce-docs-28",
       "salesforce-docs-23"
     ]
   },
@@ -1901,12 +1917,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Salesforce is well known for supporting multiple sales processes/record types with distinct stage sets per pipeline, but the evidence pack contains no docs or mentions of multiple pipelines, sales processes, or record-type-based stage configuration—only generic pipeline visibility and forecasting marketing copy. missing for 10: any mention of Sales Processes, Record Types, or multiple pipeline/stage configurations for different products or motions.",
-    "evidenceIds": [
-      "salesforce-docs-20",
-      "salesforce-docs-3",
-      "salesforce-docs-24"
-    ]
+    "rationale": "Salesforce Sales Cloud supports customizable sales processes and multiple record types with different stage sets in principle, but the evidence pack contains no mention of multiple pipelines, record-type-based sales processes, or configurable stage sets for different products/motions — only generic AI/forecasting/pipeline-visibility marketing copy and CLI/dev tooling references.",
+    "evidenceIds": []
   },
   {
     "productId": "salesforce",
@@ -1914,15 +1926,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Salesforce documents extensive APIs, a full-featured CLI (sf), and developer tooling that historically has offered broad programmatic access to CRM objects and metadata (salesforce-docs-7, salesforce-gh-1–8, salesforce-comm-3), supporting the general claim that most sales-cloud data/operations are scriptable. However, none of the evidence explicitly confirms 1:1 parity between every UI action (e.g., new AI/Agentforce features, forecasting UI, dashboards) and API equivalents, and no OpenAPI spec was discoverable (salesforce-probe-2 returned 404s), leaving API completeness unverified. missing for 10: explicit UI-to-API parity documentation, independent test/hands-on confirmation that AI/Agentforce and forecasting features are fully API-accessible, and a public OpenAPI/schema reference.",
+    "rationale": "Evidence shows Salesforce has a broad API/CLI ecosystem (sf CLI, data query, org management, agent creation) and community praise for developer tooling, plus an MCP server, suggesting programmatic access is extensive. However, there's no explicit documentation or claim of full UI/API feature parity, and the openapi probe returned 404s, leaving the actual scope of API coverage unverified. Missing for 10: explicit API-vs-UI parity documentation, enumeration of UI-only features (if any), and independent confirmation that all sales-cycle actions (forecasting, quoting, agent config) are fully API-accessible.",
     "evidenceIds": [
       "salesforce-docs-7",
       "salesforce-gh-1",
       "salesforce-gh-3",
       "salesforce-gh-8",
-      "salesforce-comm-3",
+      "salesforce-probe-3",
+      "salesforce-probe-4",
       "salesforce-probe-2",
-      "salesforce-probe-4"
+      "salesforce-comm-3"
     ]
   },
   {
@@ -1931,8 +1944,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of a data-export feature to open formats or account portability/deletion tooling; evidence covers CLI/dev tools, AI sales features, and pricing/community sentiment unrelated to data export or exit rights.",
-    "evidenceIds": []
+    "rationale": "No evidence of bulk data export in open/standard formats or a documented data-portability/exit path; CLI (sf data query) supports querying but not evidenced as a full open-format export mechanism. Missing for 10: documented bulk export tools (e.g., Data Loader/Bulk API) producing open formats like CSV/JSON, data portability/exit guarantees, and any independent confirmation of a clean 'leave with your data' workflow.",
+    "evidenceIds": [
+      "salesforce-gh-3",
+      "salesforce-probe-4"
+    ]
   },
   {
     "productId": "salesforce",
@@ -1940,7 +1956,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Salesforce Sales Cloud is closed-source proprietary SaaS; while the CLI is open on GitHub, there is no evidence the product's actual source (the CRM application/platform) is available under an open license.",
+    "rationale": "Salesforce Sales Cloud is closed-source proprietary SaaS; while a CLI is open-source, the core product source is not available under any open license, and no evidence indicates otherwise.",
     "evidenceIds": []
   },
   {
@@ -1949,7 +1965,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Salesforce Sales Cloud is a proprietary multi-tenant SaaS platform; self-hosting the core product is not offered nor a fair expectation for this category of product, making this a category error rather than a missing feature.",
+    "rationale": "Salesforce Sales Cloud is a proprietary multi-tenant SaaS platform; self-hosting the core product is fundamentally outside its architecture/business model, making this a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1958,8 +1974,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or Salesforce's data center/region selection features; all citations focus on sales AI features, CLI tooling, or general community sentiment unrelated to data residency.",
-    "evidenceIds": []
+    "rationale": "No evidence pack items mention data residency, regional hosting options, or org data location controls for Sales Cloud; only ABAC access control and general AI feature marketing are covered. Salesforce is known to offer data residency options in reality, but this evidence pack contains no documentation of that capability, so verdict must be none. Missing for 10: any documentation of region/data-residency selection, hyperforce or org shard location controls, or data storage compliance options.",
+    "evidenceIds": [
+      "salesforce-docs-32"
+    ]
   },
   {
     "productId": "salesforce",
@@ -1967,16 +1985,18 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses data-usage-for-AI-training controls, opt-outs, or privacy commitments regarding model training; all citations focus on AI features, CLI tooling, or unrelated community pricing/reliability complaints.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains no documentation or policy statement addressing whether customer data is used to train AI models or how users can opt out of such training; only ABAC access control policies and generic AI feature marketing are mentioned. Missing for 10: explicit data-usage/training opt-out policy, documentation of a no-training guarantee or toggle, any independent confirmation of such controls.",
+    "evidenceIds": [
+      "salesforce-docs-32"
+    ]
   },
   {
     "productId": "salesforce",
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mentions of data retention policies, deletion controls, data lifecycle management, or privacy/compliance tooling for AI-native users; all evidence covers sales productivity, AI features, CLI tooling, and general community sentiment unrelated to retention/deletion controls.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers AI sales features, CLI/DevOps tooling, and access-control (ABAC) mentions, but nothing addresses data retention policies, deletion workflows, or how AI-processed data is purged or retained. missing for 10: documentation on data retention schedules, right-to-erasure/deletion tooling, AI-specific data handling/retention policy statements.",
     "evidenceIds": []
   },
   {
@@ -1985,8 +2005,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address telemetry opt-out or usage tracking controls for AI-native users; all evidence covers product features, CLI, and general community sentiment unrelated to privacy/telemetry settings.",
-    "evidenceIds": []
+    "rationale": "No evidence pack items mention telemetry opt-out, usage tracking controls, or any privacy toggle for AI-native usage data collection; ABAC data access controls (salesforce-docs-32) address data visibility, not telemetry opt-out. Missing for 10: any documentation of a telemetry/usage-tracking opt-out mechanism, settings or admin controls for disabling analytics/telemetry collection.",
+    "evidenceIds": [
+      "salesforce-docs-32"
+    ]
   },
   {
     "productId": "salesforce",
@@ -1994,13 +2016,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Salesforce Sales Cloud markets pipeline visibility, forecasting, and lead-scoring dashboards (salesforce-docs-3, salesforce-docs-16, salesforce-docs-20, salesforce-docs-10), which implies native reporting/dashboard capability without spreadsheet export, but no evidence describes the actual report-builder/dashboard tool, customization options, or activity-tracking reports in depth, nor any hands-on account of building reports. Missing for 10: concrete documentation or first-hand account of the report/dashboard builder UI, activity reporting specifics, and independent corroboration that founders can build these without exporting data.",
+    "rationale": "Evidence shows Sales Cloud provides built-in pipeline visibility, forecasting, and a dashboard view (salesforce-docs-3, salesforce-docs-9, salesforce-docs-10, salesforce-docs-20) rather than requiring spreadsheet export, supporting the core of the story. However, there is no explicit documentation of a report/dashboard builder tool, activity reporting, or conversion-rate analytics specifically, so the coverage of the full story is only partial. missing for 10: dedicated report-builder documentation, activity-metrics reporting evidence, conversion funnel analytics, and independent/hands-on corroboration of dashboard customization.",
     "evidenceIds": [
       "salesforce-docs-3",
-      "salesforce-docs-16",
-      "salesforce-docs-20",
+      "salesforce-docs-9",
       "salesforce-docs-10",
-      "salesforce-docs-11"
+      "salesforce-docs-20"
     ]
   },
   {
@@ -2023,8 +2044,8 @@
     "storyId": "spreadsheet-import",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses spreadsheet import, field mapping, validation, or row-level error handling for contacts/deals; the evidence is generic marketing, CLI, and community sentiment unrelated to data import onboarding.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack addresses spreadsheet/CSV import, field mapping, validation, or handling of failed/skipped rows during data import — the pack only covers AI sales features, CLI tooling, and general community sentiment. This is a fair onboarding-migration axis for a CRM, but nothing here demonstrates it.",
     "evidenceIds": []
   },
   {
@@ -2033,7 +2054,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "There's a direct claim of automatic email/event/contact sync ('AI Automatically Syncs Emails, Events, and Contacts') suggesting Gmail/Outlook integration exists, but no documentation details the two-way sync setup, connector configuration, or automatic logging to specific records, and no independent/hands-on evidence confirms it works as described. Missing for 10: detailed setup/configuration docs for Gmail/Outlook connectors, explanation of matching/logging logic to records, and independent user corroboration of reliability.",
+    "rationale": "Salesforce Sales Cloud pricing docs list \"AI Automatically Syncs Emails, Events, and Contacts\" as a feature, implying Gmail/Outlook two-way sync and activity logging, but there is no detail on setup, reliability, or which records emails log to, nor any independent/hands-on confirmation. missing for 10: detailed docs on Einstein Activity Capture/Gmail-Outlook integration setup, confirmation of two-way sync behavior, independent user validation that emails log to correct records.",
     "evidenceIds": [
       "salesforce-docs-8"
     ]
@@ -2056,13 +2077,13 @@
     "productId": "salesforce",
     "storyId": "workflow-builder",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "General marketing language claims sales-cycle automation and AI agents handling tasks (salesforce-docs-11, salesforce-docs-18), and a community comment notes quickly building a timed-email automation in SFDC (salesforce-comm-2), suggesting some trigger-based workflow capability exists. However, the pack never names or documents Flow Builder/Process Builder or specific mechanics for record updates, task creation, and notification triggers. Missing for 10: explicit documentation of trigger/workflow builder tools, examples of record-update automations, task-creation automation, and notification automation with independent verification.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Salesforce Sales Cloud includes Flow/automation ('Built-in Sales Flows and Lead Routing') and community evidence confirms trigger-based automation like timed emails is easy to build, supporting record updates, tasks, and notifications. However, the evidence pack lacks first-party documentation specifically detailing trigger-based workflow builders (e.g., Flow Builder, Process Builder) with concrete examples of update/create/notify actions chained together. missing for 10: detailed first-party docs on Flow Builder/trigger automation mechanics, independent hands-on verification of multi-action workflows (update+task+notification) working end-to-end.",
     "evidenceIds": [
-      "salesforce-docs-11",
-      "salesforce-docs-18",
-      "salesforce-comm-2"
+      "salesforce-docs-27",
+      "salesforce-comm-2",
+      "salesforce-docs-11"
     ]
   },
   {
