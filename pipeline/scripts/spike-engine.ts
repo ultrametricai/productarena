@@ -575,8 +575,15 @@ async function run(): Promise<void> {
 }
 
 if (require.main === module) {
-  run().catch((err) => {
-    console.error(err)
-    process.exit(1)
-  })
+  run()
+    .then(() => {
+      // Same force-exit as pipeline/cli.ts: kept-alive HTTP sessions from the discovery
+      // fetches (seen live on docs.mem0.ai, 2026-09-15) hold the event loop open after all
+      // work is written; all writes above are synchronous.
+      setImmediate(() => process.exit(0))
+    })
+    .catch((err) => {
+      console.error(err)
+      process.exit(1)
+    })
 }
