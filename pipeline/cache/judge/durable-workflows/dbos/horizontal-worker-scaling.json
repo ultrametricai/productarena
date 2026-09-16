@@ -1,18 +1,15 @@
 {
-  "hash": "729b10f39d5486099c4c90f7d181e2ee86e28306cac56c38e7fcb639f192daa8",
+  "hash": "45ee956406f8be6f1a172fec258de72675389943316a9359f8f8eed54b512f4e",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "DBOS's queue system provides 'managed concurrency' and flow control for running many workflows across a program (dbos-docs-6), and workflows/steps are checkpointed to Postgres so any worker crash leaves state recoverable and workflows can restart from where they left off (dbos-docs-3, dbos-docs-4). A competitor's technical critique (dbos-comm-6) confirms DBOS actually implements a Postgres 'FOR UPDATE SKIP LOCKED' pattern for distributing queued tasks among workers, which is the underlying mechanism that would let multiple worker processes pull tasks and load-balance without a central dispatcher, and worker/service crash tolerance is repeatedly emphasized (dbos-docs-11, dbos-comm-13, dbos-comm-14). However, there is no first-party documentation or benchmark that explicitly frames 'add workers → throughput scales linearly' or describes fleet-wide load-balancing guarantees, and one community note (dbos-comm-7) raises operational caveats about locking/lock contention at scale. Missing for 10: an explicit docs page/benchmark on horizontal worker scaling and throughput, and independent verification of load-balancing behavior under real multi-worker fleets.",
+    "rationale": "DBOS's queues provide managed concurrency/flow control across many workflows (dbos-docs-6/26), and Conductor explicitly detects when a workflow's executor disconnects or crashes and recovers it onto another healthy executor (dbos-docs-31), which directly supports fleet-wide load-balancing and worker-loss tolerance. However, community critique raises concerns about worker contention using FOR UPDATE SKIP LOCKED and potential Postgres bottlenecks at scale (dbos-comm-6, dbos-comm-7), suggesting real-world scaling limits are not fully proven. Missing for 10: independent benchmarks or case studies showing throughput actually scaling linearly with added workers, and resolution/rebuttal of the contention/lock-based scaling concerns.",
     "evidenceIds": [
       "dbos-docs-6",
-      "dbos-docs-3",
-      "dbos-docs-4",
-      "dbos-docs-11",
+      "dbos-docs-26",
+      "dbos-docs-31",
       "dbos-comm-6",
-      "dbos-comm-13",
-      "dbos-comm-14",
       "dbos-comm-7"
     ],
     "productId": "dbos",

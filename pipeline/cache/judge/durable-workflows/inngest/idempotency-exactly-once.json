@@ -1,15 +1,16 @@
 {
-  "hash": "7a7d2fb374836ad799231be90b6f24a65cf2fc14f8c98ee8dbfe16615b89626f",
+  "hash": "7793bfc483919b82d1edc9c009784da17cafd4a193533926081f61373cfbfd1e",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Inngest documents step memoization and automatic retries which give exactly-once execution for each step (docs-2, docs-15) and durable-agent checkpointing (docs-21), but the evidence pack contains no explicit documentation of an idempotency-key mechanism for deduplicating incoming event triggers (e.g., to stop a duplicate webhook from double-charging), which is the core of the story. Missing for 10: explicit idempotency-key/event-deduplication docs, and independent/community verification that duplicate triggers are actually suppressed in practice.",
+    "confidence": "low",
+    "rationale": "Inngest provides step memoization, retries, and checkpointed resumption (docs-2, docs-15, docs-26) which help avoid re-executing already-completed side effects on retry, and rate limiting/concurrency keys (docs-12, docs-13) reduce duplicate trigger risk. However, there is no explicit documentation of idempotency keys for event deduplication or a guarantee of exactly-once step execution semantics — Inngest's model is at-least-once with retries plus memoization, not a documented idempotency-key API for dedup. missing for 10: explicit idempotency-key/event-deduplication feature docs, explicit 'exactly-once' guarantee language, and hands-on/community confirmation that duplicate triggers are prevented from double-charging or double-sending.",
     "evidenceIds": [
       "inngest-docs-2",
       "inngest-docs-15",
-      "inngest-docs-21",
-      "inngest-docs-1"
+      "inngest-docs-26",
+      "inngest-docs-12",
+      "inngest-docs-13"
     ],
     "productId": "inngest",
     "storyId": "idempotency-exactly-once"

@@ -1,17 +1,15 @@
 {
-  "hash": "bf3213645bc43905164b474356c6274918b555b517fc22f10ba9d6dec29add22",
+  "hash": "f294e2e841cdd39fc28d53520419a6e9475558a9abe767e9d024939d68ed8994",
   "verdict": {
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Inngest's docs explicitly describe deploying function changes without explicit version markers or migration logic, and its durable-execution model checkpoints in-flight steps so runs resume from the last successful checkpoint rather than restarting on new code — together implying in-flight runs continue on their original logic while new runs pick up new code. This is corroborated by durability/memoization docs and community reports of reliable production use. Missing for 10: explicit first-party documentation or example specifically confirming that an in-flight run's *remaining* steps execute against the exact version of code they started with (rather than the newest deployed version) and independent/hands-on verification of this specific deploy-time behavior.",
+    "rationale": "Inngest has a dedicated versioning doc stating deployments don't require explicit version markers or migration logic, and durable step/state execution means in-flight runs resume from checkpointed state so new code doesn't retroactively alter their execution path. This is corroborated by the broader durable-execution model (memoized steps, resumption from last checkpoint) which underlies deterministic replay across deploys. Missing for 10: independent/hands-on verification of the exact in-flight-run-vs-new-deploy behavior, and more detail on edge cases (e.g., changed step signatures mid-run).",
     "evidenceIds": [
       "inngest-docs-19",
       "inngest-docs-2",
-      "inngest-docs-21",
-      "inngest-docs-15",
-      "inngest-comm-4",
-      "inngest-comm-8"
+      "inngest-docs-26",
+      "inngest-docs-25"
     ],
     "productId": "inngest",
     "storyId": "safe-workflow-versioning"

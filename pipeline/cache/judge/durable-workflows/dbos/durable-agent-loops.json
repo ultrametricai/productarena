@@ -1,20 +1,21 @@
 {
-  "hash": "5952b0dcfc8e2637fb8e08e4cf47697d49ac9052434ff3e68c3f81ab309fad0c",
+  "hash": "35c04a2184bbf4ab102ad9f2e90542b31cf2661550b503087df56a3b9a689d3c",
   "verdict": {
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "DBOS ships dedicated docs for agent workloads (ai-quickstart, hitl, debugging) describing exactly this pattern: LLM/tool calls as durable steps that checkpoint to Postgres and recover after crashes, restarts, or long human-in-the-loop waits, plus fork/replay for debugging and OpenAI Agents SDK drop-in integration (DBOSRunner). Community posts corroborate the underlying checkpointing/recovery mechanism (log-and-replay steps, exactly-once semantics) though one HN critique notes durability is bounded by Postgres's own replication guarantees rather than being stronger. Missing for 10: independent hands-on case study specifically of an LLM agent loop (not just generic workflows) surviving a crash, and no benchmark/evidence on step-level cost for long LLM tool-call chains.",
+    "rationale": "DBOS has an explicit AI-agent-focused doc set showing durable workflow checkpointing for agent loops (model/tool calls as steps), crash recovery mid-run, human-in-the-loop waits, durable streaming, and integrations with OpenAI Agents SDK/Vercel AI SDK that preserve progress across restarts. This is corroborated by core architecture docs on checkpointing/recovery and independent community confirmation of the durability mechanism (transactional step logging) and real-world usage. Missing for 10: no independent hands-on benchmark specifically for agent-loop workloads (only generic durable-execution HN discussion), and some community concerns about long-running steps holding transactions open.",
     "evidenceIds": [
-      "dbos-docs-4",
       "dbos-docs-11",
-      "dbos-docs-12",
-      "dbos-docs-13",
-      "dbos-docs-15",
       "dbos-docs-22",
-      "dbos-comm-1",
+      "dbos-docs-28",
+      "dbos-docs-30",
+      "dbos-docs-36",
+      "dbos-docs-38",
+      "dbos-docs-4",
       "dbos-comm-13",
-      "dbos-comm-3"
+      "dbos-comm-14",
+      "dbos-comm-5"
     ],
     "productId": "dbos",
     "storyId": "durable-agent-loops"

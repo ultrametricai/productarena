@@ -1,16 +1,17 @@
 {
-  "hash": "bd56056bb16c46fc6d3a94936108652606bf8ec0684cd58d187192514c73912c",
+  "hash": "d29abcc4eaabf3c58db2a5140952a3dcec6eaccc14420710f7c9d8c01d7e69cb",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "DBOS supports event/queue-driven workflow triggering via queues (managed concurrency, flow control) and cron-based scheduling, and a real Kafka-consumer customer built an event-processing pipeline that runs workflows per message, which is direct evidence of queue-triggered fan-out. However, there is no explicit documentation of a declarative webhook-trigger decorator or of one event fanning out to multiple distinct downstream functions—queues let many workflow instances run concurrently, but 'one event -> many functions' fan-out semantics are not directly evidenced. Missing for 10: explicit webhook/HTTP-trigger annotation docs, explicit multi-function fan-out example from a single event, and independent confirmation beyond one customer anecdote.",
+    "rationale": "DBOS supports queue-based fan-out (many workflows run concurrently with managed flow control), cron-scheduled workflows, external triggering via DBOSClient/HTTP endpoints, and community evidence of a Kafka-consumer pipeline processing events exactly-once — covering the 'trigger from queues/events, fan out to many functions' pattern. However, there's no explicit declarative webhook/event-trigger decorator shown (e.g., an @DBOS.webhook or built-in Kafka trigger annotation), and fan-out is implemented via manual queue.enqueue calls rather than a single declarative trigger-to-many mapping. Missing for 10: explicit declarative webhook trigger primitive, native queue/broker trigger decorators (e.g. Kafka consumer decorator), and independent hands-on confirmation of fan-out from a single event.",
     "evidenceIds": [
       "dbos-docs-6",
+      "dbos-docs-26",
       "dbos-docs-7",
-      "dbos-docs-8",
+      "dbos-docs-42",
       "dbos-comm-15",
-      "dbos-gh-1"
+      "dbos-docs-24"
     ],
     "productId": "dbos",
     "storyId": "event-driven-triggers"
