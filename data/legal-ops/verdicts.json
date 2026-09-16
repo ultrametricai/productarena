@@ -1325,18 +1325,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docusign has a documented REST API and SDKs for creating/sending envelopes (docusign-docs-21, docusign-gh-1, docusign-docs-40) plus an official MCP server/connector for Claude that can retrieve agreement context and trigger IAM workflow actions (docusign-docs-11, docusign-docs-12, docusign-docs-39, docusign-probe-3), and AI-assisted drafting/redlining tools (CLM, AI-Assisted Review) that could generate NDA language. However, no single documented example ties these together into an agent autonomously drafting an NDA and routing it end-to-end for signature, and community reports flag real friction/edge-case bugs in embedded API signing flows (docusign-comm-1, docusign-comm-3) alongside positive integration reports (docusign-comm-4, docusign-comm-5). Missing for 10: an explicit end-to-end agent workflow doc/demo combining drafting+signature routing via API/MCP, and independent confirmation that the MCP server exposes document-creation (not just querying/triggering) actions.",
+    "rationale": "Docusign provides real building blocks: a REST/eSign API to create envelopes and route documents for signature (docusign-docs-21, docusign-docs-40), an official MCP server connector for Claude that can retrieve agreement context and 'trigger workflow actions through IAM tools' (docusign-docs-47, docusign-probe-3), and AI-assisted drafting/redlining features (docusign-docs-16, docusign-docs-20, docusign-docs-44) that could draft NDA language. However, no single documented workflow shows an agent drafting an NDA and then routing it end-to-end for signature purely via the MCP server or API in one flow — drafting lives in CLM/AI-Assisted Review while signature routing lives in eSignature API/MCP triggers, and there's no first-party or independent example stitching these together for a document like an NDA. missing for 10: an explicit worked example (docs or hands-on) of drafting+signature routing combined via MCP/API, independent confirmation the MCP trigger actions actually send envelopes, and any real-world demo showing this specific NDA-drafting-to-signature pipeline.",
     "evidenceIds": [
       "docusign-docs-21",
-      "docusign-docs-39",
-      "docusign-docs-11",
-      "docusign-docs-12",
-      "docusign-probe-3",
       "docusign-docs-40",
+      "docusign-docs-47",
+      "docusign-docs-16",
       "docusign-docs-20",
-      "docusign-docs-41",
-      "docusign-comm-1",
-      "docusign-comm-4"
+      "docusign-probe-3",
+      "docusign-intdir-6"
     ]
   },
   {
@@ -1345,43 +1342,47 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docusign's MCP connector lets agents (e.g., Claude) retrieve agreement context and trigger IAM workflow actions, and CLM/AI-Assisted Review can flag non-compliant clauses and draft language, which are building blocks an agent could use in a compliance-related agreement workflow. However, there is no evidence of Docusign supporting end-to-end preparation of an annual report or compliance filing with minimal human input — it only offers agreement/e-signature automation pieces, not full filing-preparation orchestration. Missing for 10: evidence of an agent autonomously assembling/filing a full compliance report or annual filing, evidence of minimal-human-input approval flow, and independent confirmation the MCP/agent pipeline works end-to-end for this use case.",
+    "rationale": "Docusign's MCP connector lets an agent (e.g. Claude) retrieve agreement context, query status, and trigger IAM workflow actions, and its CLM/AI-Assisted Review features can flag non-compliant clauses and draft language, suggesting a path toward agent-driven contract/compliance workflows. However, there is no evidence of an agent autonomously preparing a full 'annual report' or 'compliance filing' end-to-end with minimal human input — the evidence only covers discrete building blocks (signing, clause review, status queries) rather than a demonstrated compliance-filing delegation flow. Missing for 10: concrete example of an agent completing a compliance filing/annual report task autonomously, evidence of minimal-human-input completion, and independent corroboration beyond vendor blog/docs.",
     "evidenceIds": [
-      "docusign-docs-11",
-      "docusign-docs-12",
       "docusign-docs-39",
+      "docusign-docs-47",
       "docusign-docs-16",
       "docusign-docs-20",
       "docusign-docs-25",
-      "docusign-intdir-6"
-    ]
-  },
-  {
-    "productId": "docusign",
-    "storyId": "agent-monitors-renewals",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docusign exposes agreement metadata and workflow-trigger actions via its REST API and a documented MCP connector for Claude/Gemini/Copilot (docusign-docs-11, docusign-docs-12, docusign-docs-39, docusign-intdir-4), which could let an agent query contract data and fire workflow actions. However, there is no explicit documentation of renewal/deadline tracking fields, expiration alerts, or an agent workflow specifically built to monitor and act on lapsing contracts. missing for 10: explicit renewal/deadline tracking API or webhook documentation, a worked example of an agent acting before contract expiration, independent verification that MCP tools support this exact use case.",
-    "evidenceIds": [
-      "docusign-docs-11",
-      "docusign-docs-12",
-      "docusign-docs-39",
-      "docusign-intdir-4",
       "docusign-intdir-6",
       "docusign-probe-3"
     ]
   },
   {
     "productId": "docusign",
+    "storyId": "agent-monitors-renewals",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docusign's REST API and new MCP connector explicitly expose agreement status, key dates, and metadata, and let AI agents (Claude, Gemini CLI, Copilot) trigger workflow actions through IAM tools, which supports agent-driven monitoring and pre-lapse action. However, there's no explicit documentation of renewal-specific alerts/triggers or an end-to-end example of an agent proactively acting before a deadline lapses, and no independent corroboration of this MCP monitoring workflow in production. Missing for 10: explicit renewal/deadline-triggered automation examples, third-party/hands-on validation of the MCP agent acting autonomously before lapse.",
+    "evidenceIds": [
+      "docusign-docs-11",
+      "docusign-docs-12",
+      "docusign-docs-39",
+      "docusign-docs-47",
+      "docusign-probe-3",
+      "docusign-intdir-4",
+      "docusign-intdir-6"
+    ]
+  },
+  {
+    "productId": "docusign",
     "storyId": "agentic-agent-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "A direct probe of Docusign's developer site found no llms.txt (404), and no evidence pack item describes any agent-oriented documentation format (e.g., llms.txt, agent manifest) that an AI agent could be pointed at; the OpenAPI spec probes also 404'd.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docusign has no llms.txt (confirmed 404 probe) but does provide agent-oriented documentation such as the Claude MCP connector guide, an official MCP server, and machine-readable OpenAPI specs explicitly described as enabling 'computers to discover and understand the capabilities of the service.' This covers part of the story but lacks the specific llms.txt convention many AI-native tools expect. missing for 10: llms.txt file, dedicated agent-facing doc index, independent confirmation that agents can consume these docs successfully.",
     "evidenceIds": [
       "docusign-probe-1",
-      "docusign-probe-2"
+      "docusign-probe-3",
+      "docusign-docs-39",
+      "docusign-docs-47",
+      "docusign-gh-2"
     ]
   },
   {
@@ -1422,14 +1423,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docusign ships built-in AI features like AI-Assisted Review's 'AI-powered chat' for flagging risky language, drafting clauses, and suggesting redlines, plus AI-Assisted Summary/Q&A within eSignature (docs-20, docs-25, docs-33, docs-16). These represent task delegation to an embedded assistant rather than a generic chatbot, but the story's broader 'delegate tasks' framing is only partially matched — most AI capability documentation centers on document analysis/drafting, not a general-purpose in-app assistant, and there's no independent/hands-on verification of its assistant behavior. missing for 10: independent or hands-on confirmation that the AI assistant reliably completes delegated tasks, broader scope beyond contract review/summarization, and no community evidence validating the assistant's actual performance.",
+    "rationale": "Docusign ships AI-Assisted Review, AI-Assisted Summary/Q&A, and Iris-powered form conversion embedded within its products, letting users delegate agreement-analysis and drafting tasks to built-in AI features rather than a single unified conversational assistant that can be delegated arbitrary tasks. missing for 10: evidence of a general-purpose, agentic in-product assistant that can autonomously execute multi-step tasks (not just summarize/flag/draft within a specific workflow), and independent/hands-on validation of these AI features actually working as described.",
     "evidenceIds": [
+      "docusign-docs-2",
       "docusign-docs-20",
       "docusign-docs-25",
+      "docusign-docs-28",
       "docusign-docs-33",
       "docusign-docs-16",
-      "docusign-docs-44",
-      "docusign-docs-28"
+      "docusign-docs-27"
     ]
   },
   {
@@ -1438,18 +1440,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docusign exposes a REST API, official Node.js SDK, and OpenAPI/Swagger specs used to generate client SDKs, which are the standard building blocks for headless/CI automation of signing and agreement workflows (docusign-docs-21, docusign-docs-13/40, docusign-gh-1/2/3). Community reports confirm the REST API can be integrated programmatically without a UI (docusign-comm-4, docusign-comm-5), though other reports describe friction and workarounds needed for embedded/automated flows (docusign-comm-1, docusign-comm-3). Missing for 10: explicit CI/CD pipeline examples, a documented CLI, or first-party guidance on running Docusign flows unattended in automated test/build environments.",
+    "rationale": "Docusign exposes a REST API, official SDKs (e.g., Node.js client) and OpenAPI specs that let developers script sending/signing/approving documents programmatically, and the Gemini CLI + Docusign MCP integration explicitly supports automating agreement processes 'from your terminal.' However, there is no explicit CI/CD documentation, headless-mode guide, or automated pipeline example, and community feedback notes real integration friction (mixed embedded-API experiences). Missing for 10: dedicated CI/headless deployment guide, service-account/automation-focused docs, and independent verification of running the API in automated pipelines without a UI.",
     "evidenceIds": [
       "docusign-docs-21",
       "docusign-docs-13",
       "docusign-docs-40",
       "docusign-gh-1",
       "docusign-gh-2",
-      "docusign-gh-3",
+      "docusign-intdir-4",
       "docusign-comm-4",
-      "docusign-comm-5",
-      "docusign-comm-1",
-      "docusign-comm-3"
+      "docusign-comm-5"
     ]
   },
   {
@@ -1471,33 +1471,33 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docusign documents an official MCP server (docusign-probe-3) with a dedicated Claude connector guide describing retrieving agreement context/metadata and triggering IAM workflow actions (docusign-docs-11, docusign-docs-12, docusign-docs-39), and its integrations directory lists multiple agent clients pairing with the Docusign MCP (Claude, Gemini CLI, Copilot Studio, GitHub Copilot) (docusign-intdir-4, docusign-intdir-6, docusign-intdir-7). Missing for 10: independent/hands-on community verification that the MCP server works as documented (no third-party reports in the pack).",
+    "confidence": "high",
+    "rationale": "Docusign documents an official MCP server (Docusign Connector via Anthropic Claude and Gemini CLI) with a dedicated developer platform page and guide, exposing IAM tools like retrieving agreement context/metadata and triggering workflow actions. Missing for 10: independent/hands-on verification of the MCP server's reliability and broader third-party adoption beyond vendor blog examples.",
     "evidenceIds": [
-      "docusign-probe-3",
       "docusign-docs-39",
-      "docusign-docs-11",
-      "docusign-docs-12",
+      "docusign-docs-47",
       "docusign-intdir-4",
       "docusign-intdir-6",
-      "docusign-intdir-7"
+      "docusign-probe-3"
     ]
   },
   {
     "productId": "docusign",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docusign supports natural-language interaction indirectly via its MCP connector for Claude/Gemini CLI/Copilot, letting users query agreements and trigger workflow actions in natural language through an AI assistant, plus AI-Assisted Review chat and Q&A features for agreements. However, this is mediated through third-party AI clients rather than a native NL command interface built into Docusign itself, and there's no independent evidence of robustness or breadth of commands supported. missing for 10: first-party evidence of a native NL command interface (not just via external MCP clients), independent hands-on validation of natural-language command coverage/reliability, and detail on the range of actions controllable via NL beyond querying/triggering workflows.",
+    "rationale": "Docusign documents a supported MCP connector enabling Claude, Gemini CLI, and Copilot Studio to query agreement status/metadata and trigger IAM workflow actions via natural-language commands, plus AI-powered chat interfaces for contract review and summaries. This directly shows natural-language operation of core agreement workflows through agentic integrations. Missing for 10: independent/hands-on user verification of the MCP connector's reliability and breadth of NL command coverage beyond vendor blog examples.",
     "evidenceIds": [
       "docusign-docs-11",
       "docusign-docs-12",
       "docusign-docs-39",
-      "docusign-docs-20",
+      "docusign-docs-47",
       "docusign-intdir-4",
       "docusign-intdir-6",
-      "docusign-probe-3"
+      "docusign-intdir-7",
+      "docusign-probe-3",
+      "docusign-docs-20"
     ]
   },
   {
@@ -1506,13 +1506,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docusign offers REST APIs, SDKs, OpenAPI specs, and an MCP server, and third-party CLIs (e.g., Gemini CLI) can pair with its MCP server, but there is no evidence of an official Docusign-branded CLI tool for direct AI-native command-line use.",
+    "rationale": "The evidence pack shows SDKs, REST APIs, an MCP server/connector, and third-party CLI pairing (Gemini CLI + Docusign MCP), but no official Docusign-branded CLI tool is documented anywhere in the evidence.",
     "evidenceIds": [
-      "docusign-docs-21",
-      "docusign-docs-22",
-      "docusign-gh-1",
       "docusign-intdir-4",
-      "docusign-probe-3"
+      "docusign-docs-21",
+      "docusign-docs-40"
     ]
   },
   {
@@ -1541,13 +1539,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of scoped or least-privilege API credential/token issuance for agents (e.g., OAuth scopes limited per-agent, fine-grained API keys). Docs mention general API/OAuth-based access, MCP connectors, and SDKs, but nothing about creating restricted-permission credentials specifically for AI agents. missing for 10: documentation of scoped OAuth scopes or granular API key permissions, agent-specific credential issuance workflow, any least-privilege access control mechanism.",
+    "rationale": "No evidence describes granular, scoped/least-privilege API credentials or OAuth scopes tailored for AI agents; the MCP connector docs mention triggering IAM workflow actions but not credential scoping controls. A community report even describes an API-user permission failure where embedded signing let a single API user's session expose the entire account's data, undermining any claim of fine-grained least-privilege access.",
     "evidenceIds": [
-      "docusign-docs-11",
-      "docusign-docs-12",
       "docusign-docs-39",
-      "docusign-probe-3",
-      "docusign-docs-21"
+      "docusign-docs-47",
+      "docusign-comm-1"
     ]
   },
   {
@@ -1556,15 +1552,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docusign publishes official developer resources including a REST API, an OpenAPI/Swagger-generated official Node.js client SDK on GitHub, and a developer center with docs, and community evidence confirms real-world usage of the REST API with 'fantastic' documentation. missing for 10: independent corroboration across multiple language SDKs (only Node.js explicitly evidenced) and no confirmation of a discoverable OpenAPI spec at the expected developer endpoint (404s in probes).",
+    "rationale": "Docusign ships official client SDKs (e.g., docusign-esign-node-client) built from OpenAPI/Swagger specs, backed by a dedicated developer center and REST API docs, and community reports include successful hands-on integrations using the REST API. Missing for 10: independent corroboration of SDK quality/completeness across all supported languages, and machine-discoverable API specs (llms.txt and openapi.json probes both returned 404), plus some community reports of API friction that temper confidence in a flawless experience.",
     "evidenceIds": [
-      "docusign-docs-21",
-      "docusign-docs-22",
       "docusign-docs-13",
       "docusign-docs-40",
+      "docusign-docs-21",
+      "docusign-docs-22",
       "docusign-gh-1",
       "docusign-gh-3",
+      "docusign-comm-4",
       "docusign-comm-5",
+      "docusign-probe-1",
       "docusign-probe-2"
     ]
   },
@@ -1573,8 +1571,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of Docusign Connect or any webhook/event-subscription mechanism, only general API, SDK, and MCP connector references; while Docusign is known to support webhooks, no evidence in this pack documents it, so absence of evidence yields 'none'.",
+    "confidence": "low",
+    "rationale": "The evidence pack never mentions webhooks, event subscriptions, or DocuSign Connect (the product's known webhook feature); only REST APIs, SDKs, MCP connector, and unrelated product features are cited. Since webhook support is a plausible axis for an API-driven product like Docusign, absence of evidence makes this 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -1583,7 +1581,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Docusign is an e-signature/agreement management platform; filing annual reports and franchise tax with state agencies is a registered-agent/compliance-filing function entirely outside its product category.",
+    "rationale": "Docusign is an e-signature/agreement management platform; filing annual reports and franchise taxes is a registered-agent/compliance-service function entirely outside its product category, so this axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -1624,7 +1622,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of a developer/demo sandbox environment separate from production for testing Docusign integrations or AI features; only production-oriented docs, APIs, and MCP connector details are present. missing for 10: explicit documentation of a sandbox/demo account, sandbox API endpoints, or test-mode credentials distinct from production.",
+    "rationale": "The evidence pack contains no mention of a developer/demo sandbox account, test environment, or non-production testing capability for Docusign's API or MCP connector; only production docs, SDKs, and integration guides are cited. missing for 10: explicit sandbox/demo account documentation, guidance on testing without production data, any developer-center reference to a sandbox environment.",
     "evidenceIds": []
   },
   {
@@ -1647,35 +1645,39 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of a tamper-evident audit trail or completion certificate feature (e.g., Certificate of Completion, envelope history, hash-based tamper seals). Only adjacent security-adjacent items (identity verification, secure storage) appear, but none address the specific audit-trail/certificate deliverable central to legal-ops trust in signed documents.",
-    "evidenceIds": [
-      "docusign-docs-10",
-      "docusign-docs-14",
-      "docusign-docs-36"
-    ]
+    "rationale": "The evidence pack contains no mention of a tamper-evident audit trail, certificate of completion, or any compliance/audit documentation for signed envelopes — only generic e-signature marketing copy, integrations, and AI features. Although this is a core, expected capability for an e-signature platform (so the axis applies), nothing in the provided docs, GitHub, or community sources substantiates it. missing for 10: documentation of Certificate of Completion, audit trail/tamper-evidence mechanism (e.g., hash-sealing, timestamping), and any independent verification of its integrity.",
+    "evidenceIds": []
   },
   {
     "productId": "docusign",
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers e-signature workflows, templates, identity verification, AI-assisted review, and MCP/API integrations, but there is no documentation of bulk operations (e.g., batch envelope sending, bulk recipient processing, or bulk API calls) across many items at once. No REST API bulk endpoints, bulk send features, or automation-at-scale capabilities are cited.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Docusign has a REST API, SDKs, and an MCP connector for triggering workflow actions, but nothing explicitly describes bulk/batch operations (e.g., a bulk-send feature, batch API endpoint, or multi-item automation) that would let an AI-native user act on many items at once. Missing for 10: any explicit bulk-send/batch-processing feature, batch API endpoint documentation, or evidence of MCP/agent tools operating on multiple envelopes/agreements simultaneously.",
+    "evidenceIds": [
+      "docusign-docs-21",
+      "docusign-docs-13",
+      "docusign-docs-11",
+      "docusign-docs-12",
+      "docusign-docs-47"
+    ]
   },
   {
     "productId": "docusign",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docusign documents 'configurable workflows' for agreements, conditional logic in web forms, and an MCP connector that can 'trigger workflow actions through IAM tools,' suggesting some event-driven automation capability accessible to AI agents. However there's no explicit documentation of a rule-definition engine (e.g., webhooks/Docusign Connect, if-this-then-that style triggers) that an AI-native user could configure themselves, and no independent evidence confirming this works reliably. Missing for 10: explicit rule/trigger configuration docs (e.g., event-based webhook system), independent corroboration of automated action triggers, and detail on how an AI agent defines these rules end-to-end.",
+    "confidence": "low",
+    "rationale": "Docusign advertises 'configurable workflows,' conditional logic in web forms, and CLM's drag-and-drop workflow builder, plus MCP-based 'trigger workflow actions through IAM tools,' suggesting some rule-based automation exists. However there's no concrete documentation of an event-trigger/webhook rule engine (e.g., Docusign Connect-style event listeners) or examples of automatically firing actions on defined events. Missing for 10: explicit event/trigger API or webhook docs, examples of rule definitions, independent verification that automation runs reliably without manual intervention.",
     "evidenceIds": [
       "docusign-docs-4",
-      "docusign-docs-12",
+      "docusign-docs-17",
       "docusign-docs-19",
-      "docusign-docs-24",
-      "docusign-docs-39"
+      "docusign-docs-26",
+      "docusign-docs-12",
+      "docusign-docs-47",
+      "docusign-docs-41"
     ]
   },
   {
@@ -1684,20 +1686,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docusign's evidence covers configurable workflows, templates, API/SDK access, and MCP connectors for agreement actions, but nothing describes scheduling recurring jobs or workflows (e.g., cron-like triggers, recurring automation runs). The axis is plausible for a workflow-capable platform, but no evidence supports the capability.",
-    "evidenceIds": [
-      "docusign-docs-4",
-      "docusign-docs-21",
-      "docusign-docs-39"
-    ]
+    "rationale": "Docusign documents configurable workflows, templates, MCP/API integrations, and third-party connectors (Zapier-style), so a buyer could reasonably ask about recurring/scheduled job automation, but no evidence pack item describes any cron-like scheduler, recurring trigger, or automated recurring workflow execution capability.",
+    "evidenceIds": []
   },
   {
     "productId": "docusign",
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any version control, review/diff, or rollback mechanism for Docusign's workflow/automation configurations (templates, CLM workflows, MCP integrations, etc.). The evidence describes configurable workflows, templates, and AI-assisted review, but nothing about versioning automations, reviewing changes, or reverting to prior automation states.",
+    "confidence": "medium",
+    "rationale": "No evidence describes any version history, review/approval workflow, or rollback mechanism for automations (workflows, templates, or MCP-triggered actions); Docusign's docs cover building and configuring workflows/templates but not versioning or reverting them.",
     "evidenceIds": []
   },
   {
@@ -1722,7 +1720,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes templates, workflows, and integrations but never mentions a bulk-send feature for sending the same document to many recipients at once; this is an applicable esignature-flows capability for Docusign, but no citation documents it.",
+    "rationale": "The evidence pack describes templates, workflows, branding, identity verification, and AI features but never mentions a bulk-send/mass-mail capability for sending one document to many recipients simultaneously. Missing for 10: any documentation of a 'bulk send' or mass-recipient distribution feature, recipient list upload, or per-recipient tracking at scale.",
     "evidenceIds": []
   },
   {
@@ -1754,16 +1752,16 @@
     "storyId": "contract-draft-negotiate",
     "verdict": "partial",
     "quality": 6,
-    "confidence": "low",
-    "rationale": "Docusign's CLM and AI-Assisted Review products explicitly support drafting, redlining, and reviewing agreements against playbooks with suggested edits and MS Word integration, replacing ad hoc email-based negotiation (docusign-docs-16, docusign-docs-20, docusign-docs-25, docusign-docs-28, docusign-docs-41, docusign-docs-44). However, all evidence is first-party marketing copy with no independent or hands-on corroboration that the redline/negotiation workflow works as described, and community evidence in the pack focuses on e-signature API integration pain points and phishing, not on the negotiation/redlining experience. Missing for 10: independent/hands-on validation of the redlining workflow, detail on version control/audit trail during negotiation, and confirmation that email attachments are fully displaced in real deployments.",
+    "confidence": "medium",
+    "rationale": "Docusign CLM and AI-Assisted Review offer redlining, playbook-based suggested edits, and MS Word integration for contract negotiation, moving beyond email attachments, and web forms/templates support structured drafting workflows. However, evidence is entirely vendor-sourced marketing copy with no independent hands-on account of a full negotiation/redline cycle, and community threads focus on unrelated integration/security complaints rather than corroborating the CLM/redlining workflow. Missing for 10: independent or hands-on verification of the redline/negotiation workflow in practice, detail on multi-party version control during negotiation, and confirmation that AI-Assisted Review's Word integration handles full negotiation cycles reliably.",
     "evidenceIds": [
       "docusign-docs-16",
+      "docusign-docs-17",
       "docusign-docs-20",
       "docusign-docs-25",
       "docusign-docs-28",
       "docusign-docs-41",
-      "docusign-docs-44",
-      "docusign-docs-17"
+      "docusign-docs-44"
     ]
   },
   {
@@ -1772,14 +1770,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docusign provides secure centralized storage of agreements (docusign-docs-36) plus AI-powered analysis, metadata/context extraction, and search-like retrieval via IAM/CLM and AI-Assisted Review (docusign-docs-11, 20, 25, 45, 46), directly matching the searchable repository with extracted key terms/metadata story. missing for 10: independent/hands-on verification of search accuracy or extraction quality, and no detail on repository UI/search functionality beyond marketing claims.",
+    "rationale": "Docusign's IAM/CLM platform explicitly markets a searchable agreement repository ('Securely store and access all your agreements in one place', 'Find, analyze, and act on agreements powered by AI') plus metadata/key-term extraction via AI-assisted review and MCP connector features ('Retrieve agreement context and metadata', AI flags clauses and suggests terms). This directly matches the legal-ops story of a searchable repository with extracted key terms and metadata. missing for 10: independent/hands-on corroboration of the repository search and metadata-extraction UX, and detail on extraction accuracy or breadth of metadata fields captured",
     "evidenceIds": [
       "docusign-docs-36",
-      "docusign-docs-45",
       "docusign-docs-46",
+      "docusign-docs-45",
+      "docusign-docs-11",
+      "docusign-docs-16",
       "docusign-docs-20",
-      "docusign-docs-25",
-      "docusign-docs-11"
+      "docusign-docs-44"
     ]
   },
   {
@@ -1808,7 +1807,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Docusign is an e-signature/agreement management platform; obtaining a federal EIN is a government registration task entirely outside its product category, not something an e-signature tool would plausibly offer.",
+    "rationale": "Docusign is an e-signature/agreement management platform; obtaining a federal EIN is a government registration task entirely outside its product category, not an axis this kind of product could plausibly cover.",
     "evidenceIds": []
   },
   {
@@ -1817,31 +1816,29 @@
     "verdict": "disputed",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docusign's REST API, Node SDK, and web-forms embedding features (docusign-docs-21, docusign-docs-40, docusign-docs-43) document first-party support for embedding signing/forms into third-party apps, and some developers report smooth embedded-signing integrations (docusign-comm-4, docusign-comm-5). However, a concrete hands-on report describes a security flaw in the embedded signing flow (users could break out of the signing iframe and view account data) that required Docusign to push a legacy API workaround with no sunset guarantee (docusign-comm-1), directly contradicting the polished 'seamless embed' narrative for at least one real integration. missing for 10: independent verification the security issue was fully resolved in current API versions, and a first-party embedded-signing quickstart/guide in the evidence pack.",
+    "rationale": "Docusign's docs and API support embedding signing/forms into apps (docusign-docs-43 embed forms, docusign-docs-21/22 REST API for building custom flows), and community reports confirm working embedded signing integrations built via the REST API (docusign-comm-4, docusign-comm-5). However, a separate hands-on account documents a concrete security flaw in the embedded signing flow — users could break out of the signing iframe and access the whole account, forcing a downgrade to a legacy API (docusign-comm-1) — a documented counter-example that contradicts the claim of a clean embed experience. Missing for 10: first-party embedded-signing quickstart/tutorial evidence, resolution confirmation of the reported security issue, and independent recent corroboration beyond a single old HN thread.",
     "evidenceIds": [
-      "docusign-docs-21",
-      "docusign-docs-40",
       "docusign-docs-43",
+      "docusign-docs-21",
       "docusign-comm-1",
       "docusign-comm-4",
-      "docusign-comm-5"
+      "docusign-comm-5",
+      "docusign-comm-3"
     ]
   },
   {
     "productId": "docusign",
     "storyId": "equity-hiring-paperwork",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docusign's core eSignature and CLM features (reusable templates, standardized agreements, identity verification, workflow automation) generically support routing offer letters, NDAs/IP agreements, and other paperwork through signing workflows, and templates can be built for any document type including HR/equity forms. However there is no specific evidence of purpose-built hiring or equity-grant templates, HRIS/ATS integrations, or cap-table/equity-platform connectors (e.g., Carta) that would streamline option grant paperwork specifically. Missing for 10: named HR/hiring template library, equity-management platform integrations, and any case study of running offer/IP/option paperwork end-to-end.",
+    "rationale": "Docusign's generic eSignature and template/workflow features (reusable templates, configurable workflows, real-time collaboration, Salesforce integration) could be used to send and sign offer letters, IP agreements, or option grants, but there is no evidence of equity/HR-specific templates, cap-table or option-grant management integration, or hiring-specific workflow support. Missing for 10: dedicated offer-letter/option-grant templates, HR/equity system integrations (e.g., cap table tools like Carta), and any case study or docs specifically covering hiring/equity paperwork use cases.",
     "evidenceIds": [
       "docusign-docs-6",
       "docusign-docs-7",
-      "docusign-docs-9",
-      "docusign-docs-10",
-      "docusign-docs-17",
-      "docusign-docs-24",
-      "docusign-docs-34"
+      "docusign-docs-4",
+      "docusign-docs-5",
+      "docusign-docs-49"
     ]
   },
   {
@@ -1859,7 +1856,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Docusign is an e-signature/agreement management platform, not a company-formation or legal-filing service; incorporating a Delaware entity (state filing, bylaws drafting, board resolutions) is entirely outside its product category — this is a wrong-axis question for this product type.",
+    "rationale": "Docusign is an e-signature/agreement management platform, not a legal/incorporation service; it can be used to sign documents but has no filing, registered agent, or legal formation capability for Delaware incorporation, so this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1868,8 +1865,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Docusign's 'templates' feature is about saving and reusing your own previously-created agreements/workflows (docs-6, docs-7, docs-34), not a curated library of vetted standard legal documents (NDAs, policies) that a founder could use in place of counsel. No evidence pack item describes pre-built legal templates authored/vetted by lawyers for common startup documents.",
-    "evidenceIds": []
+    "rationale": "Docusign's evidence describes reusable/custom templates that users build and share within their own workflows (e.g., docusign-docs-6, docusign-docs-7, docusign-docs-34), but there is no mention of a pre-built, vetted library of standard legal documents (NDAs, agreements, policies) that a founder could use in place of counsel. Docusign's template features are about reusing your own document setup, not sourcing vetted legal content.",
+    "evidenceIds": [
+      "docusign-docs-6",
+      "docusign-docs-7",
+      "docusign-docs-34"
+    ]
   },
   {
     "productId": "docusign",
@@ -1877,18 +1878,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docusign ships a broad REST API and SDKs (esign-rest-api, Node client, OpenAPI specs) covering core send/sign/template/status workflows, and community reports confirm smooth embedded-signing API use, but many newer UI-centric capabilities (drag-and-drop CLM workflow builder, AI-Assisted Review's Word plugin, Web Forms visual editor) are described only as UI features with no evidence of equivalent API coverage. One community report (docusign-comm-1) also describes a case where the modern API lacked a needed capability, forcing a fallback to a legacy version — a concrete gap in API/UI parity. missing for 10: explicit documentation of API parity for CLM workflow builder, AI-Assisted Review, and Web Forms editor; independent confirmation that no UI-only features exist.",
+    "rationale": "Docusign publishes a comprehensive eSignature REST API, SDKs, OpenAPI specs, and an MCP server enabling programmatic sending, signing, and workflow triggering (docusign-docs-21, docusign-gh-1, docusign-docs-47, docusign-probe-3), but several UI-only capabilities (CLM drag-and-drop process builder, web-forms drag-and-drop editor, AI-assisted review chat) are marketed as click/drag experiences without documented API equivalents. Community reports also describe real API limitations/security issues in embedded signing flows that forced a downgrade to a legacy API (docusign-comm-1), undercutting full UI/API parity. Missing for 10: explicit API endpoints for CLM workflow design, web-forms builder, and AI-review features, plus independent confirmation that all UI actions are API-reachable without workarounds.",
     "evidenceIds": [
       "docusign-docs-21",
-      "docusign-docs-22",
       "docusign-gh-1",
-      "docusign-docs-13",
-      "docusign-comm-4",
-      "docusign-comm-5",
+      "docusign-docs-47",
+      "docusign-probe-3",
       "docusign-comm-1",
       "docusign-docs-17",
-      "docusign-docs-18",
-      "docusign-docs-28"
+      "docusign-docs-18"
     ]
   },
   {
@@ -1897,13 +1895,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a bulk data-export feature in open/portable formats or account-closure data-portability workflow; evidence only covers APIs, integrations, and MCP connectors for accessing agreement data, not exporting all user data to leave the platform. missing for 10: bulk export/download-all-data feature, open format specification (CSV/JSON/etc.), account closure/data portability documentation, any community confirmation of successful full data export.",
-    "evidenceIds": [
-      "docusign-docs-21",
-      "docusign-docs-22",
-      "docusign-probe-1",
-      "docusign-probe-2"
-    ]
+    "rationale": "The evidence pack shows Docusign APIs for sending/retrieving individual agreements and metadata, but no documented bulk data-export tool, account-closure export, or open-format portability feature that would let a user extract all their data and leave the platform.",
+    "evidenceIds": []
   },
   {
     "productId": "docusign",
@@ -1911,7 +1904,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Docusign is closed-source SaaS; while it publishes OpenAPI specs and SDK client libraries under open licenses, the core product source itself is not open-licensed, and no evidence indicates otherwise.",
+    "rationale": "Docusign is a closed-source commercial SaaS platform; while it publishes SDKs, OpenAPI specs, and an MCP connector, none of the evidence indicates the core product source is released under an open license, and its client libraries/specs are auxiliary developer tools rather than the product's source.",
     "evidenceIds": []
   },
   {
@@ -1920,7 +1913,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Docusign is a SaaS agreement/e-signature platform; self-hosting the core product is not a fair axis for this category of hosted cloud service.",
+    "rationale": "Docusign is a SaaS e-signature/agreement platform with no self-hosted deployment option; self-hosting is a category error for this kind of cloud service, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1938,7 +1931,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency options, region selection, or data storage location controls for Docusign; all evidence covers e-signature features, AI review, integrations, and MCP connectors rather than storage location choice.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or geographic data controls for Docusign; all citations focus on e-signature features, AI capabilities, integrations, and unrelated community complaints. Missing for 10: any mention of data center regions, EU/US data residency options, or customer-selectable storage location settings.",
     "evidenceIds": []
   },
   {
@@ -1947,7 +1940,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI-training data opt-out or any privacy control over model training; all AI-related items describe feature capabilities (summaries, review, MCP connectors) rather than data-use/training policies.",
+    "rationale": "The evidence pack contains no mention of AI training data opt-out, data usage policies, or privacy controls specific to AI model training; only unrelated feature and integration descriptions plus community complaints about API issues and phishing. Missing for 10: any documented opt-out/consent mechanism for AI training, privacy policy language on data usage, or admin controls to restrict data use for model training.",
     "evidenceIds": []
   },
   {
@@ -1956,7 +1949,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data retention or deletion controls—no retention policy docs, deletion APIs, data lifecycle settings, or AI-specific data handling disclosures for the MCP/AI connector features. missing for 10: retention policy documentation, deletion/erasure controls or API, data handling disclosure for AI features, any user-facing settings for data lifecycle management.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or configurable data lifecycle management for AI/agent interactions; the evidence covers e-signature, CLM, identity verification, and MCP connector features but nothing about retention/deletion settings.",
     "evidenceIds": []
   },
   {
@@ -1965,7 +1958,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address telemetry, usage tracking, or opt-out controls for Docusign or its AI/MCP features; this is a fair question given the product handles sensitive agreement data and AI features, but nothing documents such a control.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Docusign or its AI features; the pack covers product features, integrations, and unrelated community complaints. This axis applies to any AI-native product handling user data, but no documentation of an opt-out mechanism exists.",
     "evidenceIds": []
   },
   {
@@ -1974,7 +1967,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Docusign is an e-signature/agreement management platform, not a registered agent service that receives service of process or scanned legal mail on behalf of a business — this is a category error, not a missing feature.",
+    "rationale": "Docusign is an e-signature/agreement platform, not a registered agent service; acting as a registered agent for legal mail/service of process is an entirely different regulated business function outside its product category.",
     "evidenceIds": []
   },
   {
@@ -1982,12 +1975,12 @@
     "storyId": "renewal-obligation-tracking",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Docusign's CLM product is documented for workflow design, clause analysis, and auto-population of agreement data, but no evidence describes tracking contract renewal dates, expirations, or obligations with automatic alerts. Missing for 10: any documentation of renewal/expiration tracking, obligation management, or automated alerting features within CLM.",
+    "confidence": "low",
+    "rationale": "Docusign's CLM and IAM materials mention querying 'agreement status and key dates' and general agreement analysis, but no evidence describes automated renewal/expiration tracking or alerting for obligations. missing for 10: explicit renewal/expiration tracking feature, automatic alert/notification mechanism, obligation management documentation.",
     "evidenceIds": [
-      "docusign-docs-16",
-      "docusign-docs-17",
-      "docusign-docs-41"
+      "docusign-docs-47",
+      "docusign-docs-45",
+      "docusign-docs-17"
     ]
   },
   {
@@ -1996,7 +1989,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Docusign is an e-signature/agreement-management platform, not a legal-document drafting or template-generation tool for specific financing instruments like SAFEs or convertible notes; generating standardized startup fundraising paperwork is outside its product category and belongs to legal-template tools, not e-signature workflow software.",
+    "rationale": "Docusign is an e-signature/agreement management platform, not a legal-document drafting tool for equity instruments like SAFEs or convertible notes; generating standard-terms legal instruments from scratch is outside its product category (it supports templates and e-signing of already-drafted documents, not legal-content generation for specific fundraising instruments).",
     "evidenceIds": []
   },
   {
@@ -2021,7 +2014,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docusign Identify explicitly supports multiple stronger verification methods—ID document authenticity checks, biometric selfie challenge, SMS one-time-passcode, and risk-based dynamic verification—directly matching the requested SMS/ID/knowledge-based options, plus a '5 identity verifications' pricing feature reinforcing breadth. Missing for 10: no independent/hands-on corroboration of these verification features in practice and no explicit mention of knowledge-based authentication (KBA) by name.",
+    "rationale": "Docusign Identify offers multiple ID verification methods explicitly (SMS one-time-passcode, government ID + biometric check, knowledge-based/risk-based verification) and a Risk-Based Verification workflow that dynamically escalates verification strength based on risk — directly matching the legal-ops need for stronger identity checks on sensitive documents. The pricing page also confirms '5 identity verifications' as a configurable feature tier. Missing for 10: independent/hands-on third-party validation of these verification flows in practice and clearer documentation on per-document/per-envelope configuration granularity.",
     "evidenceIds": [
       "docusign-docs-14",
       "docusign-docs-15",
