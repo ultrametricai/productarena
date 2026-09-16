@@ -5,6 +5,7 @@
 import { computeAccessGlyphs, type AccessGlyph } from './accessGlyphs'
 import { confidenceFor } from './confidence'
 import { isGroupUntested, type CategoryData } from './data-helpers'
+import { loadFamilies } from './families'
 import { computeHotFlags } from './hotProducts'
 import { hasLogo } from './logos'
 import { type MegaTableAccessGlyph, type MegaTableRow } from './megaTableSort'
@@ -25,12 +26,27 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
   // 🔥 flags (see lib/hotProducts.ts) are global per product — computed once over the whole
   // fleet, then serialized as a plain reason string per row.
   const hotFlags = computeHotFlags(categories)
+  // Founder 2026-09-16: the homepage table defaults to COMPANIES — a multi-product family
+  // shows only its parent row (one Stripe, not Stripe + Issuing + Tax + Treasury + …). Sub-
+  // product rows are still BUILT, flagged isFamilySubProduct, and hidden client-side behind
+  // the "Include all products of companies" toggle (components/MegaTable.tsx). A judged
+  // sub-product always stays fully ranked in its own arena.
+  const familySubProducts = new Set<string>()
+  for (const family of loadFamilies()) {
+    for (const sub of family.subProducts) {
+      const ref = sub.arenaRef
+      if (ref && ref.productId !== family.parent.productId) {
+        familySubProducts.add(`${ref.arenaId}:${ref.productId}`)
+      }
+    }
+  }
   for (const data of categories) {
     const productById = new Map(data.products.map((p) => [p.id, p]))
     const intervals = loadScoreIntervals(data.category.id)
     for (const entry of data.rankings.leaderboard) {
       const product = productById.get(entry.productId)
       if (!product) continue
+      const isFamilySubProduct = familySubProducts.has(`${data.category.id}:${product.id}`) || undefined
       const glyphs = computeAccessGlyphs(data, product.id)
       const arenaId = data.category.id
       rows.push({
@@ -53,6 +69,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         hotReason: hotFlags.get(product.id)?.reason ?? null,
         ycBatch: product.ycBatch,
         enterprise: product.enterprise,
+        isFamilySubProduct,
         naDimensions: data.category.naDimensions,
         trendDelta: metricTrendDelta(arenaId, product.id, 'aiEra'),
         agentReadyTrendDelta: metricTrendDelta(arenaId, product.id, 'agentReady'),
