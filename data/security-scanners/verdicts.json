@@ -2115,16 +2115,18 @@
     "productId": "snyk",
     "storyId": "agent-runs-scan-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The Snyk CLI is confirmed to run headlessly in CI/CD pipelines (snyk-gh-3, snyk-gh-7) and produces a terminal report of vulnerabilities with severity, path, and fix guidance (snyk-gh-4, snyk-gh-6), and Jira/Slack integrations exist for tracking issues (snyk-docs-6, snyk-intdir-1). However, the pack never documents a machine-readable (JSON/SARIF) output flag for CLI scans, nor an automated pipeline that parses CLI results and files issues for real findings specifically — Jira export appears to be a platform-level feature rather than a CLI-driven headless workflow. missing for 10: documented CLI JSON/SARIF output flag, evidence of an agent parsing that output and auto-filing issues end-to-end.",
+    "rationale": "Snyk CLI clearly supports headless execution in CI/CD pipelines with a dedicated CI-CD-tester service-account role (snyk-docs-47, snyk-docs-73, snyk-gh-3), and terminal-based test/code-test commands report findings with severity, path, and fix guidance (snyk-gh-4, snyk-gh-5, snyk-gh-6). Jira and Slack integrations exist for tracking/exporting issues (snyk-docs-6, snyk-intdir-1), which supports 'filing issues for real findings.' Missing for 10: explicit documentation of machine-readable output flags (JSON/SARIF) for CLI results, and explicit evidence that an autonomous agent (rather than a human or existing integration) programmatically files issues from parsed CLI output.",
     "evidenceIds": [
       "snyk-gh-3",
-      "snyk-gh-7",
       "snyk-gh-4",
+      "snyk-gh-5",
       "snyk-gh-6",
+      "snyk-docs-47",
+      "snyk-docs-73",
       "snyk-docs-6",
-      "snyk-probe-5"
+      "snyk-intdir-1"
     ]
   },
   {
@@ -2145,20 +2147,17 @@
   {
     "productId": "snyk",
     "storyId": "agentic-ai-insights",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Snyk provides AI-generated insights directly in-product: DeepCode AI-powered risk scoring/prioritization, actionable fix advice, an LLM-driven Remediation Agent that scans, generates fix plans enriched with Snyk security intelligence, applies fixes, and verifies results, plus natural-language querying via MCP/Snyk Studio. missing for 10: independent/hands-on validation of insight quality and accuracy (community evidence is largely about unrelated PR/dependency issues, not AI-insight quality), and no data on how these insights surface for non-code data sources beyond code/deps/IaC.",
+    "rationale": "Snyk documents multiple AI-driven insight/suggestion features—DeepCode AI's 85%-accurate autofixes and context-aware risk scoring, an LLM-driven Remediation Agent that generates and applies fix plans, and risk-based prioritization—directly surfaced in the product (IDE, CLI, coding assistants). However, independent community feedback specifically criticizes the quality of Snyk's automated fix/PR suggestions ('disappointed with their PR tools... ended up turning off their automated PRs'), tempering confidence in how well these AI-generated suggestions perform in practice. Missing for 10: independent hands-on validation of the newer DeepCode AI/Remediation Agent accuracy claims, and resolution of community concerns about suggestion quality.",
     "evidenceIds": [
       "snyk-docs-12",
       "snyk-docs-14",
-      "snyk-docs-29",
       "snyk-docs-36",
-      "snyk-docs-13",
-      "snyk-docs-23",
-      "snyk-docs-10",
-      "snyk-docs-11",
-      "snyk-probe-6"
+      "snyk-docs-29",
+      "snyk-docs-4",
+      "snyk-comm-6"
     ]
   },
   {
@@ -2167,53 +2166,52 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Snyk supports autonomous background operation via CI/CD pipeline scanning (snyk-gh-3) and an LLM-driven Remediation Agent that scans, generates a fix plan, applies fixes and verifies results without manual step-by-step intervention (snyk-docs-12, snyk-docs-29). However, the CLI's flagship 'agentic' fix mode is explicitly described as a 'human-in-the-loop interactive' experience rather than fully autonomous (snyk-docs-13), and community reports describe Snyk's older automated PR/remediation feature as noisy and low-value, leading users to disable it (snyk-comm-6, snyk-comm-11) — a concrete real-world caveat on unattended automation quality. Missing for 10: independent verification that the newer Remediation Agent runs unattended in production pipelines at scale, and confirmation that automated PR/fix quality issues raised by users have been resolved.",
+    "rationale": "Snyk supports background automation via CI/CD pipeline integration (snyk test/monitor running unattended in pipelines) and an LLM-driven Remediation Agent that autonomously scans, plans, applies, and verifies fixes, plus `snyk monitor` for continuous project tracking. However, most agentic features (Remediation Agent, `snyk fix --agentic`, MCP server prompts) are explicitly framed as human-in-the-loop or invoked on-demand from an IDE/CLI/coding assistant rather than self-scheduling background jobs, and there is no evidence of a scheduler or fully unattended trigger system. Missing for 10: evidence of a scheduling/trigger mechanism for fully unattended runs, independent confirmation that the Remediation Agent operates without human prompts, and clarity that CI/CD scans qualify as 'autonomous' vs event-triggered.",
     "evidenceIds": [
       "snyk-docs-12",
       "snyk-docs-13",
-      "snyk-docs-23",
       "snyk-docs-29",
-      "snyk-docs-30",
       "snyk-gh-3",
-      "snyk-comm-6",
-      "snyk-comm-11"
+      "snyk-gh-7",
+      "snyk-docs-73",
+      "snyk-docs-28"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Snyk ships a documented built-in AI 'Remediation Agent' that scans a project, generates and applies a fix plan, and verifies results directly inside the coding assistant or CLI (snyk-docs-12/13/23/29/30), backed by DeepCode AI-driven autofixes (snyk-docs-14/15/36) and a local MCP server confirmed to actually start and respond via handshake (snyk-probe-6). This goes beyond simple scanning to actual task delegation to an in-product AI agent. Missing for 10: independent/hands-on evidence validating the remediation agent's real-world fix quality/success rate (only vendor-claimed 85% accuracy), and no third-party review of the delegation UX itself.",
+    "rationale": "Snyk documents an LLM-driven 'Remediation Agent' that users delegate remediation tasks to via `snyk fix --agentic` or slash commands in a coding assistant, and it scans, plans, applies, and verifies fixes autonomously — a genuine built-in AI agent. However, this agent operates largely through/inside external coding assistants and the Snyk CLI rather than as a fully self-contained in-product chat assistant, and there's no independent/hands-on corroboration of its reliability. Missing for 10: independent verification of the Remediation Agent's real-world performance, and clearer evidence of a native (non-third-party-assistant) chat/delegation interface within Snyk itself.",
     "evidenceIds": [
       "snyk-docs-12",
       "snyk-docs-13",
-      "snyk-docs-23",
       "snyk-docs-29",
       "snyk-docs-30",
-      "snyk-docs-28",
-      "snyk-probe-6",
-      "snyk-docs-14",
-      "snyk-docs-36"
+      "snyk-docs-23",
+      "snyk-docs-63",
+      "snyk-docs-10",
+      "snyk-docs-28"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Snyk CLI explicitly supports running in CI/CD pipelines (snyk-gh-3, snyk-gh-7) with test/code test commands producing terminal reports (snyk-gh-4, snyk-gh-5, snyk-gh-6), and Snyk Code/Open Source docs confirm scanning integrates across CI/CD pipelines (snyk-docs-18, snyk-docs-26, snyk-docs-33). missing for 10: no independent/community corroboration of CI usage specifically (only vendor docs/GitHub), and no explicit example of a CI YAML config or automation-friendly non-interactive flags/output formats (e.g., JSON output for pipelines) in the evidence.",
+    "rationale": "Snyk CLI is explicitly documented to run locally, in IDEs, and in CI/CD pipelines, with dedicated CI/CD-oriented service account roles (cli-tester-role-template) that grant scoped permissions to run `snyk test`/`snyk monitor` in pipelines, plus headless commands across languages (snyk test, snyk code test, snyk iac test, snyk secrets test). Missing for 10: no explicit named CI plugin/integration docs (e.g., Jenkins/GitHub Actions specifics) or independent hands-on CI automation report beyond docs.",
     "evidenceIds": [
+      "snyk-gh-1",
       "snyk-gh-3",
       "snyk-gh-7",
-      "snyk-gh-4",
-      "snyk-gh-5",
-      "snyk-gh-6",
-      "snyk-docs-18",
-      "snyk-docs-26",
-      "snyk-docs-33"
+      "snyk-docs-47",
+      "snyk-docs-73",
+      "snyk-docs-48",
+      "snyk-docs-45",
+      "snyk-docs-66",
+      "snyk-probe-4"
     ]
   },
   {
@@ -2222,13 +2220,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All MCP-related evidence describes Snyk shipping its own local MCP server (snyk-docs-28, snyk-probe-3, snyk-probe-6) so other agents/IDEs can call Snyk's tools — this is Snyk acting as an MCP tool provider, not as a client that plugs in external MCP servers to use their tools. There is no evidence that Snyk's Remediation Agent, Snyk Studio, or CLI can consume/connect to third-party MCP servers.",
+    "rationale": "Evidence describes Snyk exposing its own MCP server (snyk-docs-28) so external coding agents can call Snyk's tools, and Snyk Studio/Remediation Agent integrating with ADEs — this is Snyk acting as an MCP server/tool provider, not evidence that a user can plug additional external MCP servers into Snyk so its own agent can use their tools. No documentation shows Snyk consuming or configuring third-party MCP servers as a client.",
     "evidenceIds": [
       "snyk-docs-28",
-      "snyk-probe-3",
-      "snyk-probe-6",
-      "snyk-docs-12",
-      "snyk-docs-35"
+      "snyk-docs-10",
+      "snyk-docs-69",
+      "snyk-probe-3"
     ]
   },
   {
@@ -2237,13 +2234,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snyk documents an official local MCP server (Snyk Studio/MCP server running via the CLI) that lets coding agents connect and be prompted with natural language to scan for security issues, and a hands-on probe confirms the CLI actually responds to a JSON-RPC MCP handshake exposing tools/prompts/resources. missing for 10: independent third-party corroboration of MCP client interoperability across multiple agents, and clearer documentation on authentication requirements for the MCP server itself.",
+    "rationale": "Snyk documents an official local MCP server (Snyk MCP Server, part of Snyk Studio) that agents can connect to for security scanning, corroborated by a probe confirming the official docs page, and usage examples like prompting coding agents with natural language and running /snyk-fix commands in the agent. Missing for 10: independent/hands-on third-party validation of the MCP server working reliably, and more detail on setup/configuration beyond docs snippets.",
     "evidenceIds": [
-      "snyk-docs-10",
-      "snyk-docs-11",
       "snyk-docs-28",
-      "snyk-probe-3",
-      "snyk-probe-6"
+      "snyk-docs-11",
+      "snyk-docs-10",
+      "snyk-docs-69",
+      "snyk-probe-3"
     ]
   },
   {
@@ -2251,74 +2248,77 @@
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Snyk documents an MCP server and 'Snyk Studio' agentic workflow where users prompt coding agents in natural language (e.g., 'scan my directory for security issues'), plus slash-style commands (/snyk-fix, /snyk-batch-fix) and an LLM-driven Remediation Agent that plans and applies fixes autonomously. A hands-on probe confirms the MCP server actually starts and responds to JSON-RPC initialize, corroborating the documented natural-language/agentic workflow beyond marketing claims. Missing for 10: broader independent (non-Snyk) user reports specifically validating natural-language command accuracy/reliability in real projects.",
+    "confidence": "medium",
+    "rationale": "Snyk documents an official MCP server plus Snyk Studio hooks for agentic IDEs, explicitly instructing users to prompt their coding agent in natural language (e.g. \"scan my directory for security issues\"), and supports slash commands like /snyk-fix and /snyk-batch-fix plus an LLM-driven Remediation Agent that plans and applies fixes conversationally. Missing for 10: independent/hands-on corroboration that natural-language commands reliably work end-to-end outside vendor docs.",
     "evidenceIds": [
+      "snyk-docs-10",
       "snyk-docs-11",
-      "snyk-docs-35",
-      "snyk-docs-23",
-      "snyk-docs-30",
       "snyk-docs-28",
       "snyk-docs-12",
       "snyk-docs-13",
-      "snyk-probe-3",
-      "snyk-probe-6"
+      "snyk-docs-23",
+      "snyk-probe-3"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Snyk ships a well-documented official CLI (snyk-gh-1/3/7, snyk-probe-4/7) supporting local, IDE, and CI/CD workflows, plus explicit AI-native/agentic capabilities: `snyk fix --agentic` for human-in-the-loop remediation, `/snyk-fix` and `/snyk-batch-fix` slash commands for coding assistants, and a built-in MCP server (`snyk mcp -t stdio`) verified live via handshake probe. This directly satisfies the ai-native CLI story with both docs and hands-on confirmation. missing for 10: independent/community corroboration specifically praising the CLI's agentic features (community evidence here is generic and mixed, not focused on this), and probe-5 shows every scan requires prior authentication (no keyless/unauthenticated use).",
+    "rationale": "Snyk ships an official, well-documented CLI (snyk/cli) supporting test, monitor, code test, secrets test, and fix --agentic commands, plus explicit AI-native integrations (MCP server, /snyk-fix slash commands, agentic remediation agent) confirming CLI usability in AI-native workflows. missing for 10: no independent/hands-on review specifically validating the CLI's AI-native agentic commands in production use.",
     "evidenceIds": [
       "snyk-gh-1",
       "snyk-gh-3",
-      "snyk-gh-7",
-      "snyk-probe-4",
-      "snyk-probe-6",
-      "snyk-probe-7",
+      "snyk-gh-5",
       "snyk-docs-13",
       "snyk-docs-23",
       "snyk-docs-28",
-      "snyk-docs-30"
+      "snyk-probe-4",
+      "snyk-probe-3"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "agentic-public-api",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The evidence pack shows CLI and MCP-server access but no documented public REST/GraphQL API; a direct probe for OpenAPI/swagger specs on docs.snyk.io returned 404 for all candidate paths, indicating no discoverable public API documentation.",
+    "rationale": "Docs reference a Snyk API/Web product (e.g., running operations on targets, scans, and findings via identifiers or filters), implying a public API exists, but a direct probe for an OpenAPI/swagger spec returned 404s, and there is no dedicated API reference page cited in the evidence pack. This indicates some documented API surface but not a clearly published, comprehensive public API doc. missing for 10: a dedicated public API reference/OpenAPI spec, authentication/rate-limit docs, and independent confirmation of API usage.",
     "evidenceIds": [
+      "snyk-docs-71",
       "snyk-probe-2"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence describes scoped or least-privilege API credentials/tokens for AI agents; the only authentication evidence shows the CLI/MCP server requiring a standard Snyk account/API token with no mention of granular scopes or agent-specific permission levels. missing for 10: any documentation of scoped API tokens, role/permission-limited credentials, or agent-specific least-privilege auth mechanisms.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Snyk offers custom Organization-level role templates (e.g., 'CLI Tester' and 'Read-only CLI Tester') that grant service accounts in CI/CD pipelines only basic, limited permissions like running `snyk test`/`snyk monitor`, which is a form of least-privilege credentialing that could be applied to an automated/agent identity, and general RBAC is listed as a plan feature. However, there is no evidence of credentials or tokens explicitly scoped for an 'AI agent' persona, no mention of agent-specific API scopes, and no documentation tying these role templates to the MCP server or Remediation Agent workflows. Missing for 10: agent-specific scoped API token/credential issuance, documentation linking least-privilege roles to AI agent use cases, and any first-party guidance on securing agent access via limited-scope keys.",
     "evidenceIds": [
-      "snyk-probe-5",
-      "snyk-probe-6"
+      "snyk-docs-47",
+      "snyk-docs-48",
+      "snyk-docs-73",
+      "snyk-docs-37"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows Snyk's CLI, MCP server, and various product scanners, but contains no mention of an official SDK (e.g., Python, Node, Java client libraries) for programmatic integration, and a probe for an OpenAPI/swagger spec returned 404s, indicating no discoverable official API SDK.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Snyk documents an SDK for writing custom IaC rules in Rego (install, parse, test, bundle, push) — a real official SDK, but narrowly scoped to IaC rule authoring rather than a general-purpose SDK for building AI-native integrations or agents against Snyk's platform/API. No official multi-language client SDKs for the core Snyk API/scanning capabilities are evidenced, and the OpenAPI spec probe returned 404s. Missing for 10: general-purpose language SDKs (Python/JS/Go) for the Snyk API, evidence of broader AI-native SDK usage beyond the niche IaC rules SDK, and independent corroboration of SDK adoption.",
     "evidenceIds": [
-      "snyk-probe-2",
-      "snyk-gh-1",
-      "snyk-docs-28"
+      "snyk-docs-59",
+      "snyk-docs-68",
+      "snyk-docs-60",
+      "snyk-docs-61",
+      "snyk-docs-62",
+      "snyk-docs-74",
+      "snyk-probe-2"
     ]
   },
   {
@@ -2326,8 +2326,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention webhooks or event subscription mechanisms; Snyk's integrations directory references Jira, Slack, GitHub/GitLab brokers, but nothing about outbound webhook events for AI-native consumption.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions webhooks or event subscription mechanisms; Snyk's integrations are covered via Jira/Slack partner integrations, Broker, MCP server, and CLI, but none describe a webhook subscription API for AI-native event consumption.",
     "evidenceIds": []
   },
   {
@@ -2336,12 +2336,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snyk documents AI-driven risk scoring (reachability, exploit maturity, popularity) and a Remediation Agent that scans, explains, and applies fixes, which supports explaining/prioritizing findings, but there is no explicit evidence of AI-based deduplication of findings or automated false-positive flagging — only manual 'ignore' suppression is documented. Community feedback (snyk-comm-10) also notes that legacy alerts remain largely 'noise' without context-aware triage, tempering confidence in how well false positives are actually filtered. Missing for 10: explicit deduplication feature, explicit AI false-positive detection/flagging, and independent hands-on confirmation that noise is meaningfully reduced.",
+    "rationale": "Snyk's DeepCode AI and Snyk Code provide AI-driven risk scoring, reachability and exploit-maturity analysis to prioritize findings (snyk-docs-4, snyk-docs-36, snyk-docs-14), and users can manually suppress/ignore findings (snyk-docs-5), which partially supports the triage-noise theme. However there is no explicit AI-driven deduplication or automated false-positive flagging feature documented, and community feedback explicitly states that alerts 'remain mostly noise' without context-aware understanding and that users are confused about vulnerability validity (snyk-comm-9, snyk-comm-10), undercutting the strength of the triage claim. Missing for 10: explicit AI deduplication capability, explicit automated false-positive detection/flagging, and independent evidence that AI prioritization concretely reduces noise in practice.",
     "evidenceIds": [
       "snyk-docs-4",
       "snyk-docs-36",
-      "snyk-docs-12",
+      "snyk-docs-14",
       "snyk-docs-5",
+      "snyk-comm-9",
       "snyk-comm-10"
     ]
   },
@@ -2365,10 +2366,11 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an interactive API reference with runnable examples; the evidence pack includes an explicit probe showing all candidate OpenAPI/Swagger spec URLs return 404, and no docs reference an API explorer or 'try it' console.",
+    "confidence": "medium",
+    "rationale": "Snyk has an API/web platform (referenced in snyk-docs-71) but there is no evidence of an interactive API reference with runnable examples; a probe for OpenAPI/Swagger specs at docs.snyk.io returned 404 across all candidate paths, and no docs mention a live API playground or runnable code samples.",
     "evidenceIds": [
-      "snyk-probe-2"
+      "snyk-probe-2",
+      "snyk-docs-71"
     ]
   },
   {
@@ -2377,9 +2379,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "A probe explicitly checked for an OpenAPI/swagger spec at Snyk's docs domain and found all candidate paths (openapi.json, swagger.json, etc.) returning 404 — no machine-readable API spec was found. No other evidence in the pack shows a downloadable OpenAPI/Swagger file for Snyk's API.",
+    "rationale": "The evidence includes explicit probes for an OpenAPI/Swagger spec at Snyk's docs domain, all returning 404, and no other citation in the pack references a downloadable OpenAPI file for Snyk's API despite Snyk having a documented REST API (snyk-api-web). No first-party or independent evidence shows a machine-readable API spec is published.",
     "evidenceIds": [
-      "snyk-probe-2"
+      "snyk-probe-2",
+      "snyk-docs-71"
     ]
   },
   {
@@ -2388,7 +2391,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence describes a dedicated sandbox/test environment isolated from production data; Snyk's CLI, remediation agent, and MCP server all operate directly on the user's local project or repository, and no docs mention an explicit non-production sandbox mode for AI-native agent testing.",
+    "rationale": "Snyk's remediation agent and CLI tools operate directly on user code/projects, but the evidence pack contains no mention of a sandbox environment, test/staging mode, or any mechanism to try Snyk's agentic remediation or scanning without touching the user's actual codebase or production configs. Missing for 10: any documented sandbox/staging mode, dry-run isolation for the Remediation Agent, or synthetic test-data environment.",
     "evidenceIds": []
   },
   {
@@ -2397,7 +2400,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of a versioned API or a deprecation policy; in fact the probe for OpenAPI/swagger specs at docs.snyk.io returned 404 on all candidate paths, and no other artifact (CLI, MCP server, docs) references API versioning or deprecation guarantees.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; the OpenAPI spec probe returned 404s and no docs reference version lifecycle or deprecation commitments.",
     "evidenceIds": [
       "snyk-probe-2"
     ]
@@ -2408,33 +2411,31 @@
     "verdict": "disputed",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Snyk's docs document multiple concrete fix-application paths beyond reporting: PR-based fix workflows for open-source (snyk-docs-21), suggested-fix ignore/config (snyk-docs-5), IaC 'fix advice... make changes directly to code' (snyk-docs-34), and newer agentic tooling — Remediation Agent that 'applies the fixes and verifies the result', `snyk fix --agentic`, and `/snyk-fix`/`/snyk-batch-fix` slash commands (snyk-docs-12,13,23,29,30) plus DeepCode AI's '85%-accurate security autofixes' (snyk-docs-14). However, independent hands-on community feedback specifically on the PR-based auto-fix workflow contradicts vendor claims of quality: a developer reports being 'very disappointed with their PR tools' to the point of disabling automated PRs, saying Dependabot is '100x better to work with' (snyk-comm-6), and another calls the appsec/PR tooling 'not worth it' after a demo (snyk-comm-12). missing for 10: independent verification that the newer Remediation Agent/agentic autofix and SAST/IaC suggested-fix mechanisms (as opposed to the older PR-fix flow) actually work reliably in practice, and resolution of the direct community contradiction on fix-PR quality.",
+    "rationale": "Snyk documents multiple fix-application paths beyond reporting: automated fix PRs for Open Source vulnerabilities, DeepCode AI-driven autofixes with claimed 85% accuracy, the LLM-driven Remediation Agent (`snyk fix --agentic`, `/snyk-fix`, `/snyk-batch-fix`) that scans, plans, applies and verifies fixes, and IaC/Code fix advice with an 'ignore suggested fix' override (snyk-docs-12/13/14/21/23/30/5). However, hands-on community feedback specifically about the automated PR fix workflow reports it creates noisy, low-value PRs that miss versions or wrongly replace legitimately forked packages, leading users to disable the automated PR feature (snyk-comm-6, snyk-comm-11) — a concrete counter-example to the 'automatic fix' claim for at least one workflow. Missing for 10: independent verification of the newer Remediation Agent/DeepCode autofix accuracy claims, and resolution of the documented PR-quality complaints.",
     "evidenceIds": [
-      "snyk-docs-21",
-      "snyk-docs-5",
-      "snyk-docs-34",
       "snyk-docs-12",
       "snyk-docs-13",
-      "snyk-docs-23",
-      "snyk-docs-29",
-      "snyk-docs-30",
       "snyk-docs-14",
+      "snyk-docs-21",
+      "snyk-docs-23",
+      "snyk-docs-30",
+      "snyk-docs-5",
       "snyk-comm-6",
-      "snyk-comm-12"
+      "snyk-comm-11"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "automation-bulk-operations",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Snyk explicitly documents a `/snyk-batch-fix` slash command for coding assistants to fix multiple vulnerabilities in one operation, and the Remediation Agent scans, generates a fix plan, and applies fixes across a whole project rather than one issue at a time. Independent community evidence corroborates bulk behavior in practice (Snyk generating 'dozens or hundreds of PRs' for dependency updates), showing the batch capability actually operates at scale, even if some users found the volume unwieldy. Missing for 10: a documented bulk/batch REST API for programmatic multi-item operations, and clearer scale limits or first-party benchmarks for large-scale automation.",
+    "rationale": "Snyk documents explicit bulk operations: the API/CLI supports running operations on targets, scans, and findings 'one by one or in bulk by providing identifiers or applying a filter' (snyk-docs-71), CLI flags like --all-projects/--yarn-workspaces for testing many projects at once (snyk-docs-43), and /snyk-batch-fix for addressing multiple vulnerabilities at once in agentic workflows (snyk-docs-23). This shows genuine bulk-operation support across CLI, API, and agentic/AI-native fix flows. missing for 10: no independent/hands-on corroboration of bulk API usage at scale, no detail on bulk operation limits or performance, and no evidence of bulk operations for other item types (e.g., bulk policy or ignore rule management).",
     "evidenceIds": [
+      "snyk-docs-71",
       "snyk-docs-23",
-      "snyk-docs-12",
-      "snyk-docs-29",
-      "snyk-comm-6"
+      "snyk-docs-43",
+      "snyk-docs-13"
     ]
   },
   {
@@ -2443,13 +2444,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Snyk supports some automated, event-driven actions (auto-generated fix PRs on new vulnerabilities, CI/CD pipeline gating, hooks-based Studio integration for agentic environments, and policy management mentioned in pricing docs) but there is no documented general-purpose rule engine letting an AI-native user define custom triggers/conditions to fire arbitrary actions. Community feedback (snyk-comm-6, snyk-comm-11) even notes the automated PR behavior is inflexible and noisy rather than configurable. missing for 10: explicit custom rule/condition builder, documentation of webhook or event-subscription API for arbitrary triggers, evidence of user-configurable automation beyond default PRs/hooks.",
+    "rationale": "Snyk offers some automated actions triggered by scan events — e.g., automatically opening fix PRs (snyk-docs-21), exporting issues to Jira (snyk-docs-6), and a vaguely-documented 'Policy management' feature (snyk-docs-32) — plus custom Rego-based IaC detection rules (snyk-docs-60/68). However there is no evidence of a general-purpose rule engine or webhook-style 'on event X, trigger action Y' automation framework that an AI-native user could configure themselves. Missing for 10: documented rule/trigger builder, webhook or event-subscription API, examples of custom automated actions beyond PR creation and Jira export.",
     "evidenceIds": [
-      "snyk-docs-10",
+      "snyk-docs-6",
       "snyk-docs-21",
       "snyk-docs-32",
-      "snyk-comm-6",
-      "snyk-comm-11"
+      "snyk-docs-60",
+      "snyk-docs-68"
     ]
   },
   {
@@ -2457,8 +2458,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Snyk supports scanning via CLI, CI/CD pipelines, and IDE integrations, but there is no evidence of a native scheduler or built-in mechanism for recurring/cron-style jobs or workflows; recurring scans would need to be built externally via CI/CD cron triggers, which is not documented as a Snyk feature.",
+    "confidence": "high",
+    "rationale": "Snyk offers scanning that can run in CI/CD pipelines and a CLI, but there is no evidence of a scheduler, recurring job/workflow orchestration, or cron-like automation feature for AI-native users to define and run recurring jobs. CI/CD integration (snyk-gh-3) only means Snyk can be invoked from a pipeline someone else schedules, not that Snyk itself schedules recurring workflows.",
     "evidenceIds": []
   },
   {
@@ -2476,10 +2477,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snyk docs mention configuring Snyk to ignore suggested fixes to suppress specific warnings (snyk-docs-5) and 'Policy management' as a platform capability (snyk-docs-32), which map to ignoring/baselining findings so only new issues surface. However, there's no detailed evidence of a dedicated baseline/false-positive triage workflow, ignore-policy scope (temporary vs permanent, org-wide), or CLI/API commands for it. missing for 10: explicit baseline scan feature, false-positive marking UI/API, ignore policy scoping and audit trail, independent confirmation of noise reduction effectiveness.",
+    "rationale": "Docs confirm an explicit ignore capability ('Configure Snyk to ignore suggested fixes for an issue to suppress specific warnings') and a 'Policy management' feature is listed in plans, which supports suppressing known/false-positive findings. However, there is no evidence of a dedicated baseline mechanism (e.g., 'only alert on new issues since baseline scan') or detail on ignore workflows across SCA/Container/IaC beyond Snyk Code, and community feedback notes ongoing noise complaints suggesting the ignore/triage experience is imperfect in practice. Missing for 10: dedicated baseline/'new-only' gating documentation, cross-product ignore policy details (SCA, IaC, Container), and independent confirmation that ignored/baselined findings stay suppressed reliably.",
     "evidenceIds": [
       "snyk-docs-5",
-      "snyk-docs-32"
+      "snyk-docs-32",
+      "snyk-comm-10"
     ]
   },
   {
@@ -2488,13 +2490,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence confirms Snyk CLI is explicitly designed to run in CI/CD pipelines (snyk-gh-3, snyk-gh-7) and that `snyk test`/`snyk code test` reports vulnerabilities found (snyk-gh-4, snyk-gh-6), which is the standard mechanism CI systems use to gate builds. However, the pack has no explicit documentation of PR-trigger configuration or exit-code semantics for failing builds, and the probe shows the CLI requires authentication for every scan (snyk-probe-5), adding an operational caveat for CI setup. Missing for 10: explicit docs on PR-triggered CI workflows, documented exit-code behavior (e.g., non-zero on new findings), and any GitHub Actions/PR-check integration guide.",
+    "rationale": "Snyk CLI is explicitly documented to run in CI/CD pipelines (snyk-gh-3, snyk-gh-7), with a dedicated CLI Tester role for CI/CD service accounts to run `snyk test`/`monitor` (snyk-docs-47, snyk-docs-73), and PR inline-comment integration is documented (snyk-docs-50). However, the evidence never explicitly confirms exit-code-based build failure behavior or documents a PR-triggered scan gating workflow. Missing for 10: explicit documentation of exit codes/build-fail behavior, explicit PR-trigger CI config examples, independent hands-on confirmation of CI gating working as described.",
     "evidenceIds": [
       "snyk-gh-3",
       "snyk-gh-7",
-      "snyk-gh-4",
-      "snyk-gh-6",
-      "snyk-probe-5"
+      "snyk-docs-47",
+      "snyk-docs-73",
+      "snyk-docs-50"
     ]
   },
   {
@@ -2529,12 +2531,17 @@
     "productId": "snyk",
     "storyId": "custom-sast-rules",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Only one thin mention (writing custom queries with DeepCode AI logic and autocomplete) suggests any custom rule authoring, but there is no detail on the rule syntax, no evidence of how rules are structured or shared across repositories, and no mention of a rule-sharing/policy mechanism analogous to Semgrep-style custom SAST rules. Missing for 10: documented custom rule syntax/DSL, examples of custom rules, and a clear cross-repo sharing/config mechanism.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Snyk documents a full custom-rules SDK (writing rules in Rego, unit testing, parsing, and pushing a compiled bundle to an OCI registry for distribution) but this applies specifically to Snyk IaC, not to Snyk Code (the SAST product) — the only SAST-adjacent hook is a one-line mention of writing custom DeepCode AI queries with autocomplete, which is far less developed. Rego is also a specialized policy language rather than a 'simple syntax'. Missing for 10: documented custom rule authoring for Snyk Code/SAST specifically, evidence that Rego/DeepCode queries are beginner-simple, and a clear cross-repo sharing workflow beyond OCI bundle push.",
     "evidenceIds": [
-      "snyk-docs-15",
-      "snyk-docs-36"
+      "snyk-docs-59",
+      "snyk-docs-60",
+      "snyk-docs-61",
+      "snyk-docs-62",
+      "snyk-docs-68",
+      "snyk-docs-74",
+      "snyk-docs-15"
     ]
   },
   {
@@ -2543,45 +2550,43 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Snyk's SAST, SCA, container, IaC, and agentic remediation features but contains no mention of secret detection or custom secret/token pattern rules; the story requires a capability not evidenced anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "Snyk documents a secrets-scanning feature (`snyk secrets test` for hard-coded API keys/passwords) but there is no evidence of any mechanism to define custom detection rules/regex patterns for an organization's own internal token or secret formats. The custom-rules SDK/Rego capability documented elsewhere is scoped to Snyk IaC (infrastructure configuration rules), not to secret detection. Missing for 10: any documented custom-pattern/rule authoring for Snyk Secrets, API/config for adding internal token signatures, or community evidence of this being used in practice.",
+    "evidenceIds": [
+      "snyk-docs-66",
+      "snyk-docs-59",
+      "snyk-docs-60",
+      "snyk-docs-68"
+    ]
   },
   {
     "productId": "snyk",
     "storyId": "dependency-vulnerability-scan",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Snyk Open Source is documented extensively as a dependency/manifest/lockfile scanner for known vulnerabilities, including indirect dependencies, with CLI (`snyk test`) and CI/IDE integration, actionable fix advice, and PR-based remediation (snyk-docs-1,19,20,21,27; snyk-gh-1,2,4,6). Hands-on probes confirm the CLI scan functionality actually works end-to-end (reporting severity, path, fix guidance) and community reports corroborate real-world usage, though some users note noisy/low-value alerts and mismatches with npm audit.\n\nmissing for 10: independent benchmark data on false-positive rate, and confirmation of coverage across all lockfile formats (e.g., poetry.lock, Gemfile.lock) beyond npm examples.",
+    "rationale": "Snyk Open Source explicitly scans manifests/lockfiles across ecosystems (npm, yarn workspaces, Maven/Gradle, .NET, Python) via `snyk test`, reports severity, vulnerable path, and fix advice, including indirect/transitive dependencies, and this is corroborated by community usage reports confirming it surfaces real vulnerabilities from its own database. Missing for 10: independent benchmark of detection accuracy/false-positive rate beyond community anecdotes.",
     "evidenceIds": [
       "snyk-docs-1",
       "snyk-docs-19",
-      "snyk-docs-20",
       "snyk-docs-21",
-      "snyk-docs-27",
-      "snyk-gh-1",
       "snyk-gh-2",
       "snyk-gh-4",
       "snyk-gh-6",
-      "snyk-comm-4",
-      "snyk-comm-7",
-      "snyk-comm-9",
-      "snyk-probe-5"
+      "snyk-docs-41",
+      "snyk-docs-43",
+      "snyk-docs-46",
+      "snyk-comm-7"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "detect-secrets-in-repo",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Snyk Open Source (dependency vulnerabilities), Snyk Code (SAST), Snyk Container, and Snyk IaC, but contains no mention of secret/credential detection or git-history scanning for hardcoded secrets. This is a fair capability to expect from an AppSec scanning platform, but no evidence shows Snyk offers it.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Snyk explicitly offers secrets scanning via `snyk secrets test` to detect hardcoded API keys and passwords in the codebase, but no evidence describes scanning the full git history (e.g., past commits) for secrets. Missing for 10: documented git-history scanning capability, evidence of commit-level secret detection, and independent confirmation of history-wide coverage.",
     "evidenceIds": [
-      "snyk-docs-25",
-      "snyk-docs-2",
-      "snyk-docs-1",
-      "snyk-docs-7",
-      "snyk-docs-8"
+      "snyk-docs-66"
     ]
   },
   {
@@ -2590,12 +2595,12 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Snyk docs claim actionable fix advice and automated PR-based remediation workflows (snyk-docs-21), reinforced by CLI fix guidance (snyk-gh-6) and newer agentic 'snyk fix --agentic'/Remediation Agent features (snyk-docs-12, snyk-docs-13, snyk-docs-29). However, hands-on community reports concretely contradict the automated-PR experience: users describe disappointment with the PR tool generating dozens/hundreds of noisy PRs instead of proper rewrites, missing whole version bumps, and disabling the feature entirely in favor of Dependabot (snyk-comm-6, snyk-comm-11). missing for 10: independent verification that the newer agentic/Remediation Agent fix-PR flow resolves these historically reported PR-quality issues, and quantitative data on fix-PR success/merge rates.",
+    "rationale": "Snyk's docs clearly claim actionable fix advice, automated fix PRs, and an agentic Remediation Agent that generates and applies fix plans (snyk-docs-21, snyk-docs-12, snyk-docs-13, snyk-docs-23). However, hands-on community reports concretely contradict the PR remediation experience: users report Snyk's automated PRs were low-quality, generated 'dozens or hundreds' of PRs rather than sensible upgrades, missed version updates, and were ultimately turned off in favor of Dependabot (snyk-comm-6, snyk-comm-11). Missing for 10: independent corroboration that the newer agentic/Remediation Agent workflow fixes these earlier PR-quality complaints.",
     "evidenceIds": [
       "snyk-docs-21",
       "snyk-docs-12",
       "snyk-docs-13",
-      "snyk-gh-6",
+      "snyk-docs-23",
       "snyk-comm-6",
       "snyk-comm-11"
     ]
@@ -2604,17 +2609,17 @@
     "productId": "snyk",
     "storyId": "guardrails-for-agent-code",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Snyk documents and a hands-on probe confirm a local MCP server (snyk mcp -t stdio) that plugs into coding agents/ADEs, plus hooks-based secure-at-inception workflows, natural-language scan prompts, and slash-commands (/snyk-fix, /snyk-batch-fix) for scanning and remediating AI-generated code before it lands. This is corroborated independently by a local probe showing the MCP server actually starts and responds to JSON-RPC initialize. Missing for 10: independent/community verification specifically of the agentic MCP workflow's real-world reliability (community evidence found is about the CLI/PR features generally, not the MCP-agent integration).",
+    "rationale": "Snyk Studio provides an official local MCP server and hooks-based integration for agentic dev environments (Claude Code, Cursor, Codex CLI, Gemini CLI, GitHub Copilot) so AI-generated code is scanned via natural-language prompts or hooks before landing, plus CLI slash-commands like /snyk-fix for in-agent remediation. missing for 10: independent/hands-on verification of the Studio MCP workflow in production, and detail on automatic pre-commit enforcement (vs. manual prompting).",
     "evidenceIds": [
       "snyk-docs-10",
       "snyk-docs-11",
       "snyk-docs-28",
+      "snyk-docs-69",
       "snyk-docs-23",
       "snyk-docs-30",
-      "snyk-probe-3",
-      "snyk-probe-6"
+      "snyk-probe-3"
     ]
   },
   {
@@ -2623,32 +2628,39 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snyk IaC explicitly documents scanning Terraform, CloudFormation, Kubernetes, and Azure ARM configs for misconfigurations across IDE, SCM, CLI, and CI workflows, plus drift detection for manually-created cloud resources. This is corroborated by CLI docs and the general Snyk platform overview listing cloud configuration scanning as a core capability. Missing for 10: independent hands-on validation of IaC scan accuracy/false-positive rates and no direct probe confirming `snyk iac test` output.",
+    "rationale": "Snyk IaC is explicitly documented to scan Terraform, Kubernetes, CloudFormation, and ARM configurations for misconfigurations, with CLI/IDE/SCM/CI integration, drift detection, and custom Rego rules for extending checks. The Snyk CLI GitHub docs corroborate this with a direct feature description (\"Snyk IaC: Find and fix insecure configurations in Terraform and Kubernetes code\"). Missing for 10: independent/hands-on user reports specifically validating IaC misconfiguration detection quality (community evidence in the pack concerns dependency/OSS scanning, not IaC).",
     "evidenceIds": [
       "snyk-docs-8",
       "snyk-docs-9",
       "snyk-docs-22",
       "snyk-docs-34",
-      "snyk-docs-25"
+      "snyk-docs-40",
+      "snyk-docs-65",
+      "snyk-docs-59",
+      "snyk-docs-60",
+      "snyk-docs-68",
+      "snyk-gh-8"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "language-coverage",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Snyk documents dedicated scanners spanning open-source dependencies (with indirect/transitive dependency detection), SAST (Snyk Code) across IDEs/repos/CI, container images, and IaC configs (Terraform, CloudFormation, Kubernetes, ARM), plus a CLI usable locally, in IDEs, and in CI/CD — collectively covering the major ecosystems a typical org would need. Community feedback raises accuracy/noise concerns (e.g., mismatched results vs npm audit, PR spam) but does not concretely dispute the breadth of language/ecosystem coverage itself. Missing for 10: an explicit enumerated list of supported languages/package managers and independent verification of coverage completeness across less-common ecosystems.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Snyk documents broad ecosystem coverage: Open Source (SCA) with dependency scanning across languages (Java/Kotlin, JavaScript/Yarn, .NET, Python explicitly documented CLI usage), Snyk Code (SAST), Container, IaC (Terraform, CloudFormation, Kubernetes, ARM), and secrets scanning, all via CLI/IDE/CI-CD integrations. Community evidence corroborates real-world usage across npm and other ecosystems, though some users note database discrepancies vs npm audit and noise/false-positive complaints, which don't contradict breadth of coverage. Missing for 10: independent benchmark of coverage across all claimed languages/ecosystems and no explicit list of all supported package managers beyond the few named.",
     "evidenceIds": [
       "snyk-docs-1",
-      "snyk-docs-19",
       "snyk-docs-2",
-      "snyk-docs-18",
       "snyk-docs-7",
       "snyk-docs-8",
-      "snyk-docs-22",
+      "snyk-docs-41",
+      "snyk-docs-43",
+      "snyk-docs-45",
+      "snyk-docs-46",
+      "snyk-docs-66",
       "snyk-gh-1",
-      "snyk-gh-3",
+      "snyk-gh-5",
       "snyk-comm-7",
       "snyk-comm-9"
     ]
@@ -2659,11 +2671,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Snyk Open Source explicitly scans dependency licenses for compliance against known licenses (snyk-docs-20), and the platform advertises general 'Policy management' features (snyk-docs-32), implying license policy enforcement capability. However, the evidence never details concrete license-policy enforcement mechanics (e.g., failing builds/PRs on license violations, custom license policy rules) and lacks independent/hands-on corroboration of this specific workflow. Missing for 10: explicit enforcement workflow details (build/PR gating on license violations), documented custom license policy configuration, and independent confirmation of license-policy enforcement in practice.",
+    "rationale": "Snyk Open Source explicitly documents license compliance scanning ('checking against licenses known to Snyk') and finding/addressing licensing issues in dependencies, plus a general 'Policy management' plan feature. However, evidence lacks detail on how license enforcement policies are configured (e.g., allow/deny lists, build-breaking thresholds) and no independent/community confirmation of this specific feature working well. missing for 10: explicit documentation of license policy configuration/enforcement workflow, evidence of blocking builds on license violations, independent corroboration of license scanning accuracy.",
     "evidenceIds": [
       "snyk-docs-20",
-      "snyk-docs-32",
-      "snyk-docs-27"
+      "snyk-docs-39",
+      "snyk-docs-64",
+      "snyk-docs-32"
     ]
   },
   {
@@ -2671,38 +2684,40 @@
     "storyId": "machine-readable-output",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack documents Snyk CLI's terminal reports, CI/CD integration, and various scan types, but never mentions JSON or SARIF output formats or any machine-readable export capability for downstream tooling. This is a fair and applicable axis for a security scanner, but no evidence confirms it.",
+    "confidence": "medium",
+    "rationale": "The evidence pack documents Snyk CLI commands (test, code test, monitor) and even a report-generation plugin (snyk-to-html) but never mentions JSON or SARIF output formats anywhere in the docs or CLI descriptions provided. Missing for 10: explicit mention of --json/--sarif flags, SARIF format support, or documentation of machine-readable output for CI/downstream tooling.",
     "evidenceIds": [
+      "snyk-gh-1",
       "snyk-gh-4",
-      "snyk-gh-6",
-      "snyk-gh-3"
+      "snyk-docs-42",
+      "snyk-docs-45"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of a public Snyk API offering feature parity with the UI/CLI; the only probe for an OpenAPI spec returned 404s at all candidate locations, and all other evidence focuses on CLI, IDE, MCP, and UI-based workflows rather than a comprehensive API surface for AI-native/programmatic use.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Snyk documents a Web API (snyk-api-web) that lets users run operations on targets, scans, and findings individually or in bulk, and has a CLI/MCP server for automation, implying some programmatic parity with core scanning workflows. However, there's no evidence the API covers UI-only features like reporting dashboards, policy management, RBAC, or Jira/Slack integrations, and a probe for a discoverable OpenAPI spec returned 404s. Missing for 10: explicit API coverage of dashboard/reporting, policy management, RBAC, and integration configuration; a published OpenAPI spec confirming full UI-API parity.",
     "evidenceIds": [
+      "snyk-docs-71",
       "snyk-probe-2",
-      "snyk-gh-1",
-      "snyk-gh-3"
+      "snyk-docs-37",
+      "snyk-docs-32"
     ]
   },
   {
     "productId": "snyk",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Snyk can export individual issues to Jira and CLI scan reports print to terminal, but there is no documentation of a comprehensive data export feature (projects, scan history, findings) in open/portable formats, nor any account-deletion/data-portability guidance for users wanting to leave the platform.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Snyk offers some data egress mechanisms—exporting issues to Jira, generating local HTML reports via snyk-to-html, and API endpoints to operate on targets/scans/findings in bulk—but there is no documented full-data export/backup feature or explicit open-format portability/exit path for a user's entire account data. missing for 10: a comprehensive 'export all my data' feature, explicit open format guarantees (e.g., JSON/CSV bulk export), and documentation on data portability upon account closure.",
     "evidenceIds": [
       "snyk-docs-6",
-      "snyk-gh-4",
-      "snyk-gh-6"
+      "snyk-docs-42",
+      "snyk-docs-71"
     ]
   },
   {
@@ -2711,25 +2726,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Snyk is a proprietary SaaS security platform; only the CLI wrapper is on GitHub (snyk-gh-1..7) with no license text or claim of an open license provided in the evidence, and the core scanning engine, Snyk Code, DeepCode AI, and platform backend remain closed-source. No evidence pack item states an open-source license for any Snyk component, so the story is unmet. missing for 10: explicit open-source license (e.g., MIT/Apache) for the CLI repo, open-sourcing of core scanning/backend code, any statement of source availability for Snyk Code/DeepCode AI.",
-    "evidenceIds": [
-      "snyk-gh-1",
-      "snyk-gh-3",
-      "snyk-gh-7"
-    ]
+    "rationale": "Snyk is a commercial SaaS security platform; while the Snyk CLI repo is hosted on GitHub (snyk-gh-1..9), no evidence in the pack states an open-source license for the CLI or any other Snyk component, and the core scanning/backend product is proprietary. No claimed-docs or community evidence confirms open licensing of the product's source.",
+    "evidenceIds": []
   },
   {
     "productId": "snyk",
     "storyId": "openness-self-host",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a self-hosted/on-prem deployment option for Snyk's core scanning platform; instead, hands-on probe evidence shows the opposite — `snyk test` fails with a 401 Authentication error unless connected to Snyk's cloud, and the CLI/MCP server function as clients to a hosted backend, with only a 'Broker' for connecting on-prem SCM to Snyk's cloud (not a self-hosted core).",
+    "confidence": "medium",
+    "rationale": "Snyk's core product (scanning engine, vulnerability database, dashboard, prioritization) is a hosted SaaS platform; the evidence only shows a CLI/IDE client and a 'Broker' that lets the SaaS reach into private networks (e.g., self-hosted registries/repos) — it does not self-host the core analysis/platform itself. No documentation describes an on-prem/self-hosted deployment of the core Snyk service.",
     "evidenceIds": [
-      "snyk-probe-5",
-      "snyk-probe-6",
-      "snyk-intdir-3",
-      "snyk-intdir-4"
+      "snyk-docs-49",
+      "snyk-docs-56",
+      "snyk-docs-52",
+      "snyk-gh-1",
+      "snyk-docs-25"
     ]
   },
   {
@@ -2755,11 +2767,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Snyk CLI can run locally, in IDEs, and in CI/CD pipelines, but there is no mention of a pre-commit hook integration, and Snyk's product line (SAST, SCA, container, IaC) does not include secrets scanning at all. Missing for 10: any documentation of a pre-commit hook workflow, and any secrets-detection capability.",
+    "rationale": "Snyk documents CLI-based scanning (including a dedicated `snyk secrets test` command) that can run locally or in CI/CD, but no evidence describes a pre-commit git hook integration or any workflow to block commits before secrets enter git history. The axis applies to a CLI security scanner, but no such hook capability is documented anywhere in the evidence pack.",
     "evidenceIds": [
+      "snyk-docs-66",
       "snyk-gh-3",
-      "snyk-gh-1",
-      "snyk-docs-2"
+      "snyk-gh-1"
     ]
   },
   {
@@ -2767,8 +2779,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or data location controls for Snyk's platform or AI features.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack discusses data residency, region selection, or geographic storage controls for Snyk data; all documentation focuses on scanning, remediation, CLI, and integrations. Since Snyk is a SaaS platform, data residency is a fair axis, but absence of evidence means it cannot be credited.",
     "evidenceIds": []
   },
   {
@@ -2776,8 +2788,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of an opt-out or data-usage policy specifically preventing customer code/data from being used to train Snyk's AI models (DeepCode AI, Remediation Agent, MCP-based agents). The only related evidence is a general licensing clause granting Snyk broad rights to uploaded content (snyk-comm-13), which if anything raises concern rather than confirming a training opt-out. Since Snyk processes source code via AI features, this axis clearly applies, but no capability or setting addressing AI-training data use is evidenced.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation of an AI-training opt-out, data-retention policy, or explicit 'your code will not be used to train models' commitment; the only related evidence (an old policy excerpt granting Snyk broad license to uploaded source) actually points the opposite direction. No first-party or independent source demonstrates this privacy control.",
     "evidenceIds": [
       "snyk-comm-13"
     ]
@@ -2788,7 +2800,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item documents Snyk offering configurable data-retention windows or a user-initiated deletion mechanism for scanned code/data; the only tangential evidence is a community citation noting Snyk's terms grant it a broad, perpetual license to uploaded source code, which runs counter to user control over retention rather than supporting it. missing for 10: documented retention policy/settings, data deletion request workflow, DPA/GDPR deletion tooling, any first-party privacy-controls page.",
+    "rationale": "No evidence pack items document data retention controls, deletion policies, or configurable data lifecycle management for Snyk's platform or its AI/agentic features; if anything, the community evidence (perpetual, transferable license grant over uploaded source code) points the opposite direction. No first-party documentation addresses how users can control or delete stored scan data, source snapshots, or AI-related data.",
     "evidenceIds": [
       "snyk-comm-13"
     ]
@@ -2799,7 +2811,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item discusses a telemetry/usage-tracking opt-out mechanism for Snyk CLI, IDE plugins, or MCP server; scans require authentication with a Snyk account (per snyk-probe-5), implying data is sent to Snyk servers, but no opt-out or privacy controls are documented.",
+    "rationale": "No evidence pack item mentions telemetry, usage data collection, or an opt-out/opt-out flag for Snyk's CLI, MCP server, or platform. This is a fair question for a dev tool that runs locally and could collect usage analytics, but nothing in the provided docs, GitHub, or community sources addresses telemetry settings. missing for 10: any mention of telemetry collection, a documented opt-out flag/env var, privacy policy details on usage tracking, or community confirmation of opt-out behavior.",
     "evidenceIds": []
   },
   {
@@ -2821,7 +2833,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Snyk Code is explicitly documented as a developer-first SAST solution that scans source code in real-time across IDEs, repos, and CI/CD, with source-to-sink flow visualization and CLI support (`snyk code test`) confirming actual static analysis capability. While injection/XSS are common SAST vulnerability classes, the evidence doesn't explicitly name these specific classes as detected, and community feedback focuses mostly on Open Source/dependency scanning rather than Snyk Code's SAST accuracy for these specific vuln types. Missing for 10: explicit mention of injection/XSS as detected vulnerability classes, independent hands-on verification of SAST rule coverage/accuracy for these specific classes.",
+    "rationale": "Snyk Code is documented as a dedicated SAST solution that scans source code in real time across IDEs, repos, and CI/CD, with source-to-sink flow visualization for tracing vulnerable paths (e.g., injection/XSS-style taint flows), risk-based prioritization, and CLI/IDE integration confirmed by both docs and CLI usage examples (`snyk code test`). Missing for 10: explicit named CWE/OWASP coverage lists (e.g., explicit mention of 'SQL injection' or 'XSS' rule categories) and independent benchmark/accuracy validation beyond vendor claims.",
     "evidenceIds": [
       "snyk-docs-2",
       "snyk-docs-3",
@@ -2837,7 +2849,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of SBOM generation, SPDX, or CycloneDX anywhere across Snyk's docs, CLI, or MCP materials — only vulnerability scanning, fixing, and prioritization features are documented. Missing for 10: any documentation or CLI command output referencing SBOM export, SPDX format, or CycloneDX format.",
+    "rationale": "The evidence pack covers Snyk Open Source, Code, Container, IaC scanning, remediation agents, and CLI usage, but nowhere mentions SBOM generation, SPDX, or CycloneDX output. Missing for 10: any documentation of an `snyk sbom` command or SPDX/CycloneDX export capability, missing for 10: any reference to bill-of-materials format support.",
     "evidenceIds": []
   },
   {
@@ -2845,9 +2857,13 @@
     "storyId": "scan-beyond-git",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Snyk's evidence pack covers SAST, SCA, container/image vulnerability scanning, IaC scanning, and AI-code-assist security, but there is no mention anywhere of secret-detection scanning of non-git sources such as S3 buckets, standalone Docker images for embedded secrets, or CI logs. The container scanning focus is vulnerabilities, not leaked secrets, so this axis is unaddressed.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Snyk documents secrets scanning only via `snyk secrets test` against a codebase, and container/IaC scanning is for vulnerabilities, not secrets, in container images. There is no evidence of scanning S3 buckets, Docker images, or CI logs specifically for leaked secrets.",
+    "evidenceIds": [
+      "snyk-docs-66",
+      "snyk-docs-51",
+      "snyk-docs-56"
+    ]
   },
   {
     "productId": "snyk",
@@ -2855,14 +2871,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show severity reporting per issue (snyk-gh-6), risk-based prioritization scoring (snyk-docs-4, snyk-docs-17, snyk-docs-36), policy management (snyk-docs-32), and the ability to ignore/suppress specific findings (snyk-docs-5), which together support filtering low-value noise. However, there is no explicit documentation of a CI/CD severity-threshold gate flag or confidence-level filtering mechanism in the evidence pack. Missing for 10: explicit severity-threshold CLI/CI gating docs, confidence-score filtering mechanism, independent hands-on verification of gating behavior.",
+    "rationale": "Snyk documents risk-based prioritization (issue prevalence, risk score, context-aware exploit maturity/reachability scoring), the ability to filter/operate on findings, and the ability to suppress specific issues via ignore rules and policy management, which supports reducing noise. However, the evidence pack never explicitly documents a severity-threshold or confidence-threshold CLI/CI gating flag, and community feedback (e.g., low-severity findings called 'mostly noise') suggests the filtering doesn't fully eliminate noise in practice. Missing for 10: explicit documented severity/confidence threshold gating mechanism for CI builds, independent confirmation that gating reduces false-positive build blocks.",
     "evidenceIds": [
-      "snyk-gh-6",
       "snyk-docs-4",
+      "snyk-docs-5",
       "snyk-docs-17",
-      "snyk-docs-36",
       "snyk-docs-32",
-      "snyk-docs-5"
+      "snyk-docs-36",
+      "snyk-docs-71",
+      "snyk-gh-6",
+      "snyk-comm-10"
     ]
   },
   {
@@ -2871,8 +2889,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers Snyk's SAST, SCA, container, IaC, and agentic remediation capabilities, but there is no mention of secret detection at all, let alone verifying detected secrets against issuing services to determine liveness. No product feature for secrets scanning or validation is documented anywhere in this pack.",
-    "evidenceIds": []
+    "rationale": "Snyk documents a secrets scanning capability (snyk secrets test) that detects hard-coded secrets like API keys and passwords, but there is no evidence of any verification step that checks detected secrets against the issuing service to determine if they are live/valid.",
+    "evidenceIds": [
+      "snyk-docs-66"
+    ]
   },
   {
     "productId": "trivy",
