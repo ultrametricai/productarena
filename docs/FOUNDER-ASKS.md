@@ -8,6 +8,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Internally-created GitHub issues auto-solved + update PRs fixed | in-lane (gh-hygiene) — 13 engine "ready" issues dispositioned (merge-if-newer / close-superseded), 3 Renovate majors gate-tested |
 | Signup/login live using the Ultrametric WorkOS key | blocked (founder, 1 min) — everything works except the dashboard redirect URI: AuthKit live-returns "Invalid Redirect URI" for https://ultrametric.ai/productarena/auth/callback. Dashboard → Redirects → add sign-in URI above + logout URI https://ultrametric.ai/productarena. Say "go live" after and the Log in button ships to everyone |
 | "Irreducibly human" → "Temporarily human" on process verdicts | shipped 2026-09-17 |
 | Install section: no boxes around brew/install commands | shipped 2026-09-17 |
