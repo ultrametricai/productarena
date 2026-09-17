@@ -1,17 +1,16 @@
 {
-  "hash": "85bc81f2e3d45308c6839d208884dddea31017236b7eb856b48dd4202bb9bb5c",
+  "hash": "593255c89e9803b9e61b75745c25a85be97119535364b7476ad847e049f75859",
   "verdict": {
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Neon ships an official MCP Server (docs + live runtime probe confirming the hosted endpoint) and CLI that let agents run SQL/schema operations against Neon Postgres, and the MCP server docs likely expose scoped tools (e.g., run_sql, list_projects, migrations) though the evidence pack doesn't detail a read-only vs destructive tool permission split. missing for 10: explicit documentation of separate read-only vs destructive tool scopes/permissions within the MCP server, independent hands-on confirmation of safe-delegation behavior, and evidence of confirmation/guardrails for destructive actions.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Neon's hosted MCP server exposes a documented 113-tool surface with explicit read-only mode (?readonly=true), category scoping, and project scoping, verified keylessly via the list-tools endpoint returning tools tagged readOnlySafe:true and injecting a guardrail notice that write tools are removed. Runtime probes confirm the server is live, OAuth-gated, and the read-only filtering works as documented, directly matching the story of scoped tools distinguishing read-only from destructive actions. missing for 10: independent third-party (non-Neon) hands-on report of an agent actually being blocked from a destructive action in practice, beyond Neon's own docs/probes.",
     "evidenceIds": [
-      "neon-docs-12",
-      "neon-docs-33",
-      "neon-probe-4",
-      "neon-probe-rt-2",
-      "neon-docs-11",
-      "neon-probe-rt-1"
+      "neon-supp-mcp-scoping-readonly",
+      "neon-probe-7",
+      "neon-probe-6",
+      "neon-supp-mcp-tool-surface",
+      "neon-docs-33"
     ],
     "productId": "neon",
     "storyId": "agent-safe-sql-operations"

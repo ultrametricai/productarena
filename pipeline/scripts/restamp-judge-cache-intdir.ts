@@ -34,6 +34,16 @@ const PROMPT_VERSION = 'v3' // keep in sync with pipeline/stages/judge.ts
 // cache and the pack's only post-judge change is the intdir append.
 const WAVE: Record<string, string[]> = {
   'project-management': ['asana', 'clickup', 'notion', 'monday', 'jira'],
+  // 2026-09-15 hot-repos fairness wave: the same 54b6a895 staleness blocked judging in three
+  // more arenas. Verified per product (tmp check, same method as above): caches 0-stale against
+  // 54b6a895^, cache verdicts byte-equal to committed verdicts.json, and every post-judge pack
+  // addition is committed 54b6a895 material (the intdir append plus that commit's monotonic
+  // re-extract docs/gh items — verdicts deliberately untouched by that wave). Only NON-target
+  // products are restamped; the wave's targets (vercel, posthog) get a real re-judge with
+  // 54b6a895^ as their churn baseline instead.
+  'team-chat': ['slack'],
+  'edge-platforms': ['netlify'],
+  'product-analytics': ['amplitude', 'mixpanel'],
 }
 
 type Story = { id: string; title: string }

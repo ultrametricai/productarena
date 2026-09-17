@@ -65,6 +65,34 @@ export const probes: LocalProbe[] = [
     timeoutMs: 30_000,
   },
   {
+    // Ramp's Developer MCP (docs server) completes a REAL initialize with no credentials at
+    // all — documented as unauthenticated ("does not require a Ramp account, OAuth login,
+    // API key, or developer app"), verified live 2026-09-15.
+    probeId: 'mcp-developer-keyless-initialize',
+    productId: 'ramp',
+    storyIds: ['agentic-mcp-server', 'agentic-agent-docs'],
+    bin: 'curl',
+    argv: [
+      'sh', '-c',
+      `curl -s --max-time 20 -X POST https://mcp.ramp.com/developer/mcp -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' -d '${CURL_MCP_INIT.replace(/'/g, `'\\''`)}' | head -c 300`,
+    ],
+    displayCommand: `curl -s -X POST https://mcp.ramp.com/developer/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'  # Ramp's docs MCP server, fully unauthenticated → real initialize result`,
+    expect: /"serverInfo":\{"name":"Ramp MCP Remote"/,
+    timeoutMs: 30_000,
+  },
+  {
+    // The canonical OpenAPI schema linked from docs.ramp.com/llms.txt is live and starts with
+    // the production server block — the machine spec agents generate clients from.
+    probeId: 'openapi-machine-spec',
+    productId: 'ramp',
+    storyIds: ['api-machine-spec', 'agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 30 https://docs.ramp.com/openapi/developer-api.json | head -c 300'],
+    displayCommand: 'curl -s https://docs.ramp.com/openapi/developer-api.json | head -c 300  # canonical OpenAPI schema, keyless',
+    expect: /"url": "https:\/\/api\.ramp\.com"/,
+    timeoutMs: 45_000,
+  },
+  {
     // Brex's platform API answers a keyless request with a clean 401.
     probeId: 'api-auth-challenge',
     productId: 'brex',

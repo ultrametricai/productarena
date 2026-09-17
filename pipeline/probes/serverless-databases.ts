@@ -29,6 +29,43 @@ export const probes: LocalProbe[] = [
       timeoutMs: 30_000,
     },
     {
+      // Documented keyless tool-inventory endpoint: verifies read-only + category scoping and
+      // returns the scoped tool list with guardrail notices ("to verify which tools are active
+      // for a given config without authenticating" — docs/ai/neon-mcp-server).
+      probeId: 'mcp-list-tools-readonly',
+      productId: 'neon',
+      storyIds: ['agentic-mcp-server', 'agentic-scoped-keys'],
+      bin: 'curl',
+      argv: ['curl', '-s', '--max-time', '20', 'https://mcp.neon.tech/api/list-tools?readonly=true&category=querying'],
+      displayCommand: 'curl -s "https://mcp.neon.tech/api/list-tools?readonly=true&category=querying"',
+      expect: /"name":"run_sql".*"readOnlySafe":true/,
+      timeoutMs: 30_000,
+    },
+    {
+      // `neon claim` creates/claims a temporary project with NO account — the CLI face of the
+      // neon.com/auth.md agent-provisioning flow. Help prints keylessly.
+      probeId: 'cli-claim-help',
+      productId: 'neon',
+      storyIds: ['agent-provisions-database', 'agentic-headless'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'neon@latest', 'claim', '--help'],
+      displayCommand: 'npx -y neon@latest claim --help',
+      expect: /Create a temporary Neon project without an account/,
+      timeoutMs: 120_000,
+    },
+    {
+      // `neon ask` answers from Neon's docs in the terminal, keylessly ("No login is required"),
+      // with `--output json` for machine-readable agent use.
+      probeId: 'cli-ask-docs-assistant',
+      productId: 'neon',
+      storyIds: ['agentic-builtin-assistant'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'neon@latest', 'ask', '--prompt', 'What is a Neon branch?', '--output', 'json'],
+      displayCommand: `npx -y neon@latest ask --prompt 'What is a Neon branch?' --output json`,
+      expect: /"text":/,
+      timeoutMs: 120_000,
+    },
+    {
       // Official Turso CLI, installed via the vendor's get.tur.so installer into ~/.turso.
       probeId: 'cli-version',
       productId: 'turso',

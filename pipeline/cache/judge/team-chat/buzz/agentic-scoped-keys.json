@@ -1,14 +1,17 @@
 {
-  "hash": "e4de27affb9cca3ec4c5aee4648309e6dc795721b16af7a267d37fb109947409",
+  "hash": "b4998f815d135e277ca79c4fd15eb36860ca3a87e3a0eb620daaf09a8aaace54",
   "verdict": {
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Buzz documents that each agent gets 'their own keys, their own channel memberships, and their own audit trail' (buzz-gh-4), implying some per-agent credential isolation, and CLI commands like `repos protect` show coarse-grained permission levels (buzz-docs-7). However there is no first-party documentation of a formal least-privilege API credential/scoping mechanism (e.g., issuing a key with defined capability sets), and community commentary raises concrete doubts about whether the permission model handles real-world scoping correctly (buzz-comm-3, buzz-comm-5, buzz-comm-6), though this is speculative critique rather than a confirmed hands-on failure. Missing for 10: explicit docs on scoped/limited-permission key issuance, examples of restricting an agent's API access to specific resources, and independent verification that the scoping works as intended.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Buzz issues each agent its own Nostr keypair as a distinct credential/identity (buzz-supp-acp-harness, buzz-gh-4), with a dedicated agent-authentication spec (NIP-AA) that scopes agent access to owner enrollment and auto-revokes when the owner's membership is revoked (buzz-supp-nip-aa-agent-auth), a fail-closed owned-agent discovery model where discovery alone does not confer authorization (buzz-supp-owned-agent-guardrails), and an admin API that requires signed per-request events rather than static tokens with a two-tier principal model (buzz-supp-admin-api). Git access is similarly scoped to the agent's own keypair rather than a shared PAT (buzz-supp-git-nostr-credentials).\n\nmissing for 10: independent/hands-on validation of real-world least-privilege enforcement (community members flag that the group/permission rules may not survive real-world edge cases, e.g. buzz-comm-6), and no documented fine-grained per-API-scope (read/write/admin) system beyond channel membership + admin tiers.",
     "evidenceIds": [
       "buzz-gh-4",
-      "buzz-docs-7",
-      "buzz-comm-3",
+      "buzz-supp-acp-harness",
+      "buzz-supp-nip-aa-agent-auth",
+      "buzz-supp-admin-api",
+      "buzz-supp-owned-agent-guardrails",
+      "buzz-supp-git-nostr-credentials",
       "buzz-comm-5",
       "buzz-comm-6"
     ],
