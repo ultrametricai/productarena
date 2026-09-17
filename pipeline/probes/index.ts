@@ -61,6 +61,9 @@ import { probes as fraudPrevention } from './fraud-prevention'
 import { probes as llmEvalsObservability } from './llm-evals-observability'
 import { probes as webScraping } from './web-scraping'
 import { probes as agenticCommerce } from './agentic-commerce'
+import { probes as backendAsAService } from './backend-as-a-service'
+import { probes as edgePlatforms } from './edge-platforms'
+import { probes as productAnalytics } from './product-analytics'
 
 export type { LocalProbe } from './types'
 
@@ -117,4 +120,7 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'llm-evals-observability': llmEvalsObservability,
   'web-scraping': webScraping,
   'agentic-commerce': agenticCommerce,
+  'backend-as-a-service': backendAsAService,
+  'edge-platforms': edgePlatforms,
+  'product-analytics': productAnalytics,
 }

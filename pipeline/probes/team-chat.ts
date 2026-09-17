@@ -27,6 +27,42 @@ export const probes: LocalProbe[] = [
       timeoutMs: 30_000,
     },
     {
+      // Root AGENTS.md (agents.md standard): a vendor-shipped AI-agent contributor guide,
+      // keylessly fetchable — found in the 2026-09-15 hot-repos fairness wave.
+      probeId: 'agents-md-guide',
+      productId: 'buzz',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://raw.githubusercontent.com/block/buzz/main/AGENTS.md | head -3'],
+      displayCommand: 'curl -s https://raw.githubusercontent.com/block/buzz/main/AGENTS.md | head -3',
+      expect: /AI Agent Contributor Guide/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The Desktop-bundled managed-agent skill pack (frontmatter name: buzz-cli) — vendor-shipped
+      // agent instructions mirrored into .agents/.claude/.codex/.goose skills dirs.
+      probeId: 'managed-skill-pack',
+      productId: 'buzz',
+      storyIds: ['agentic-agent-docs', 'agentic-nl-commands'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://raw.githubusercontent.com/block/buzz/main/desktop/src-tauri/src/managed_agents/nest_skill.md | head -4'],
+      displayCommand: 'curl -s https://raw.githubusercontent.com/block/buzz/main/desktop/src-tauri/src/managed_agents/nest_skill.md | head -4',
+      expect: /name: buzz-cli/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The documented `helm install oci://ghcr.io/block/buzz/charts/buzz` distribution is live:
+      // an anonymous GHCR pull token lists the published chart versions, keylessly.
+      probeId: 'helm-oci-tags',
+      productId: 'buzz',
+      storyIds: ['openness-self-host'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'TOK=$(curl -s --max-time 20 "https://ghcr.io/token?scope=repository:block/buzz/charts/buzz:pull" | sed -n "s/.*\\"token\\":\\"\\([^\\"]*\\)\\".*/\\1/p"); curl -s --max-time 20 -H "Authorization: Bearer $TOK" https://ghcr.io/v2/block/buzz/charts/buzz/tags/list'],
+      displayCommand: 'curl -s -H "Authorization: Bearer $(curl -s \'https://ghcr.io/token?scope=repository:block/buzz/charts/buzz:pull\' | jq -r .token)" https://ghcr.io/v2/block/buzz/charts/buzz/tags/list',
+      expect: /"name":"block\/buzz\/charts\/buzz","tags":\["0\.1\.\d+/,
+      timeoutMs: 45_000,
+    },
+    {
       // The LICENSE file at HEAD is the Apache License 2.0 verbatim — open license verified
       // from the source of truth, not a badge.
       probeId: 'open-license-apache2',

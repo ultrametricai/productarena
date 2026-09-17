@@ -6798,37 +6798,46 @@
   {
     "productId": "cursor",
     "storyId": "agentic-agent-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions llms.txt, agent-oriented documentation ingestion, or a mechanism to point Cursor's agent at such files; only generic doc/MCP/tooling references are present. missing for 10: any mention of llms.txt support, crawling agent-oriented doc formats, or a documented feature for feeding external agent docs to Cursor's agent.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cursor publishes agent-oriented documentation in the llms.txt standard: a live-verified probe confirms cursor.com/docs/llms.txt (and cursor.com/llms.txt, llms-full.txt) return HTTP 200 with a sectioned, machine-readable index, and every doc page is also available as raw markdown at URL+'.md', explicitly enabling agents to be pointed at these docs. The Origin API additionally ships its own llms.txt/llms-full.txt. Missing for 10: no independent (non-Cursor) corroboration that third-party agents actually consume these files successfully, and no detail on llms-full.txt content completeness.",
+    "evidenceIds": [
+      "cursor-probe-2",
+      "cursor-supp-origin",
+      "cursor-probe-3"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-ai-insights",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Cursor's core value proposition is analyzing the user's codebase to surface AI-generated insights (tracing repo structure, finding root causes, reviewing diffs) and suggestions for next actions, as documented across multiple first-party docs. Missing for 10: independent/hands-on evidence validating the accuracy or depth of these insights, and no detail on insight types beyond code-centric suggestions (e.g., data analytics or business data outside code).",
+    "rationale": "Cursor provides analytics/insights APIs (Analytics API, AI Code Tracking API) that surface AI-usage metrics and accepted-edit data, and agents can generate summaries/artifacts (PR summaries, Bugbot findings) as a byproduct of code work, but there is no evidence of a dedicated 'AI-generated insights from your data' feature (e.g., analyzing business/user datasets and surfacing proactive suggestions) — Cursor's insight generation is scoped to code/repo/team-usage data, not general data analysis. missing for 10: evidence of insight generation over arbitrary/business datasets, proactive suggestion surfacing in a dashboard/UI beyond code review, independent validation of insight quality.",
     "evidenceIds": [
-      "cursor-docs-1",
-      "cursor-docs-2",
-      "cursor-docs-3",
-      "cursor-docs-4"
+      "cursor-supp-analytics-api",
+      "cursor-supp-ai-code-tracking-api",
+      "cursor-supp-bugbot",
+      "cursor-supp-automations",
+      "cursor-docs-31"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-autonomous-automation",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cursor explicitly documents 'always-on agents that run on schedules or triggers to build, maintain, and fix your software' and 'fleets of agents that work in parallel for hours or days,' directly matching autonomous background automation. This is first-party vendor documentation without independent hands-on corroboration of scheduling/triggers working reliably. Missing for 10: independent/community verification that scheduled/triggered background agents work reliably in practice, and more detail on trigger configuration options.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor Automations run cloud agents in the background on schedules or event triggers (GitHub/GitLab/Slack/webhooks/Linear), configurable via a plain-language /automate skill, marketplace templates, or the Cloud Agents API/webhooks — this is explicitly documented autonomous background automation, corroborated by live-probed API/OpenAPI endpoints. missing for 10: independent hands-on validation of automations reliability beyond vendor docs.",
     "evidenceIds": [
-      "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-12"
+      "cursor-docs-25",
+      "cursor-docs-26",
+      "cursor-supp-automations",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-agent-webhooks",
+      "cursor-probe-3",
+      "cursor-probe-4"
     ]
   },
   {
@@ -6837,42 +6846,48 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Cursor's docs clearly describe delegating tasks to built-in agents that plan, code, test, and demo work end-to-end while the user focuses on review/decisions, including background/parallel agents and always-on scheduled agents. This is a core, heavily documented capability of the product, though independent hands-on validation of agent task quality is thin (only general community commentary, some critical, exists). Missing for 10: deeper independent verification of agent task success rates beyond vendor docs.",
+    "rationale": "Cursor's built-in Agent/Composer is extensively documented as delegating coding tasks — handing off implementation, testing, and demoing to an in-editor and cloud agent while the user reviews and decides (cursor-docs-11, cursor-docs-12, cursor-supp-cloud-agents). This is corroborated by probes confirming live docs and API surfaces. Missing for 10: independent hands-on validation specifically of task-delegation quality (community evidence is mostly about unrelated bugs/pricing, not delegation itself).",
     "evidenceIds": [
-      "cursor-docs-8",
-      "cursor-docs-9",
       "cursor-docs-11",
       "cursor-docs-12",
-      "cursor-docs-2"
+      "cursor-supp-cloud-agents",
+      "cursor-docs-8",
+      "cursor-supp-subagents"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Cursor ships an official CLI (cursor.com/cli, curl installer) and background/cloud agents that run 'on schedules or triggers' to build and fix software autonomously, which implies non-interactive/headless automation. However, there is no explicit documentation of CI pipeline integration, exit codes, or scripting examples for pipelines. Missing for 10: explicit CI/CD integration docs (e.g., GitHub Actions example), documented headless flags/exit-code behavior, and independent confirmation of CLI use in automated pipelines.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor's CLI has a documented print/headless mode explicitly for CI pipelines and scripts (--print, --force, non-interactive API key auth), machine-readable JSON/stream-json output formats, and a first-class GitHub Actions recipe. This is corroborated by live probes confirming the docs and API endpoints actually resolve. Missing for 10: independent (non-vendor) hands-on report of someone running it successfully in a real CI pipeline.",
     "evidenceIds": [
-      "cursor-probe-1",
-      "cursor-docs-14",
-      "cursor-docs-9",
-      "cursor-docs-12"
+      "cursor-supp-cli-headless",
+      "cursor-supp-cli-output-formats",
+      "cursor-supp-cli-github-actions",
+      "cursor-supp-service-accounts",
+      "cursor-probe-2"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-mcp-client",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Cursor's docs explicitly describe MCP support: connecting to external tools/data sources, marketplace one-click install with OAuth, custom JSON server configuration, toggling servers, and enterprise admin controls over allowed servers. This directly matches the story of plugging in MCP servers so the agent can use their tools. Missing for 10: independent hands-on verification of MCP tool usage in practice and no community corroboration of the feature's reliability.",
+    "rationale": "Cursor's docs extensively cover MCP as a client-side integration: connecting to external tools/data sources, marketplace one-click install with OAuth, custom JSON server configuration, per-server toggling, enterprise admin controls, image-return support, and MCP usage inside Cloud Agents (up to 50 inline mcpServers) and self-hosted workers (\"local MCP servers\"). This is corroborated by a live probe confirming documented MCP client behavior. Missing for 10: independent hands-on user reports of MCP tool usage in practice beyond vendor docs.",
     "evidenceIds": [
       "cursor-docs-15",
       "cursor-docs-16",
       "cursor-docs-17",
       "cursor-docs-18",
-      "cursor-docs-20"
+      "cursor-docs-19",
+      "cursor-docs-20",
+      "cursor-docs-21",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-self-hosted",
+      "cursor-probe-4"
     ]
   },
   {
@@ -6881,88 +6896,123 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cursor is itself an AI coding agent; the evidence (cursor-docs-15 to cursor-docs-19) shows Cursor acting as an MCP client that connects to external MCP servers, not Cursor exposing an official MCP server for other agents to connect to. Per the agent-role exception, client-side MCP support does not make this server-side story applicable.",
-    "evidenceIds": []
+    "rationale": "Cursor is itself a coding agent/assistant; the evidence shows it acts as an MCP client (connecting to external MCP servers) rather than exposing itself as an MCP server for other agents to connect to. A probe explicitly confirms mcp.cursor.com does not resolve, meaning Cursor documents MCP client support, not a hosted MCP server — this story's axis (serving as an MCP server) is a category mismatch for an agent-role product like Cursor.",
+    "evidenceIds": [
+      "cursor-docs-15",
+      "cursor-docs-21",
+      "cursor-probe-4"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cursor's core interaction model is natural-language driven agents that plan, code, test, and operate across terminal/Slack/GitHub (cursor-docs-2, cursor-docs-8, cursor-docs-9, cursor-docs-10, cursor-docs-11), consistent with an AI-native product. Missing for 10: independent hands-on evidence specifically validating natural-language command reliability/accuracy (community evidence focuses on bugginess/pricing complaints unrelated to NL command capability itself).",
+    "confidence": "high",
+    "rationale": "Cursor's core agent interaction model is natural-language driven: chat/agent prompts in the IDE, CLI (`agent -p \"...\"`), Slack, and cloud agents all accept plain-language instructions, and features like /automate explicitly let users 'describe the workflow you want in plain language' to configure automations. This is corroborated by extensive first-party docs across IDE, CLI, and cloud agent surfaces, though independent hands-on confirmation specifically of NL command fidelity is thin. Missing for 10: independent/third-party verification that natural-language commands reliably produce correct actions (community evidence only covers unrelated complaints), and no benchmark of NL command success/failure rates.",
     "evidenceIds": [
-      "cursor-docs-2",
-      "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-10",
-      "cursor-docs-11",
-      "cursor-docs-12"
+      "cursor-docs-22",
+      "cursor-docs-26",
+      "cursor-supp-cli-headless",
+      "cursor-supp-automations",
+      "cursor-docs-11"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cursor documents an official CLI with an install command (curl https://cursor.com/install) and a dedicated CLI docs page (cursor.com/cli), confirming a first-party terminal tool for AI-native workflows. Missing for 10: independent/hands-on corroboration of CLI capabilities and depth of documentation beyond install instructions.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor ships an official CLI documented at cursor.com/cli with install script, headless/print mode for scripts and CI, structured JSON/stream-json output, ACP support, permission tokens, GitHub Actions integration, and service-account auth for non-interactive use — directly matching the ai-native agentic CLI story. missing for 10: independent/community hands-on validation of the CLI itself (only vendor docs and probes cited).",
     "evidenceIds": [
+      "cursor-docs-22",
+      "cursor-docs-23",
       "cursor-docs-14",
-      "cursor-docs-10",
+      "cursor-supp-cli-headless",
+      "cursor-supp-cli-output-formats",
+      "cursor-supp-cli-acp",
+      "cursor-supp-cli-permissions",
+      "cursor-supp-cli-github-actions",
       "cursor-probe-1"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Evidence shows an official CLI (cursor.com/cli) that lets users invoke Cursor from scripts, which partially satisfies 'driving the product programmatically,' but there is no documented public REST/SDK API, authentication scheme, or endpoint reference — MCP docs describe Cursor consuming external tools, not exposing itself as an API. Missing for 10: documented REST/GraphQL API, SDK/client libraries, API authentication and rate-limit docs, independent corroboration of programmatic usage.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor documents and live-verifies a public, key-gated Cloud Agents API (endpoints, OpenAPI spec, webhooks), an Admin/Analytics/AI Code Tracking API, an Origin public API, and official TypeScript/Python SDKs, plus a scriptable CLI with structured JSON output for CI/automation — this is a broad, documented, independently-probed public API surface. missing for 10: no independent third-party developer report of building against these APIs beyond Cursor's own docs/probes.",
     "evidenceIds": [
-      "cursor-probe-1",
-      "cursor-docs-14"
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-cloud-agents-openapi",
+      "cursor-supp-apis-overview",
+      "cursor-supp-admin-api",
+      "cursor-supp-analytics-api",
+      "cursor-supp-sdk",
+      "cursor-probe-3",
+      "cursor-probe-4",
+      "cursor-supp-cli-output-formats"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Cursor lets users mint scoped or least-privilege API credentials for agents; docs cover MCP server toggling and enterprise admin control of which servers can run, but nothing about issuing scoped/limited API keys or credentials specifically for agent use.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cursor documents scoped API-key mechanisms usable for agents: service accounts are non-human credentials that can be created, rotated, and revoked for automation without tying to personal accounts (cursor-supp-service-accounts), API keys carry named scopes (e.g., 'Required scope: admin:*') and per-endpoint rate limits (cursor-supp-apis-overview), and CLI agents can be constrained via least-privilege permission tokens for shell/file access (cursor-supp-cli-permissions). This covers issuing restricted, non-personal credentials and limiting agent action scope, but the granularity of API-key scopes shown is coarse (single admin scope example) and there's no documented fine-grained scope picker or independent verification. Missing for 10: evidence of granular/custom scope selection when generating keys, and independent/hands-on confirmation of least-privilege enforcement.",
+    "evidenceIds": [
+      "cursor-supp-service-accounts",
+      "cursor-supp-apis-overview",
+      "cursor-supp-cli-permissions",
+      "cursor-supp-admin-api"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Cursor offers a CLI, MCP integration, and marketplace extensions, but there is no mention of any official SDK (e.g., a documented library/API package) for developers to build against Cursor itself.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor documents official TypeScript/Python SDKs (@cursor/sdk) that let developers script the same agent used in the IDE/CLI/web, with both Local and Cloud runtimes, service-account/API-key auth, and an open SDK Bridge for other languages, plus a live Cookbook with end-to-end examples. This is corroborated by a documented, machine-verified live API (Cloud Agents API with OpenAPI spec, key-gated endpoint confirmed via probe) and additional official APIs (Admin, Analytics, AI Code Tracking, Origin) for building integrations. Missing for 10: independent third-party developer reports of building production integrations against the SDK (only first-party docs and probes are cited).",
+    "evidenceIds": [
+      "cursor-supp-sdk",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-cloud-agents-openapi",
+      "cursor-probe-3",
+      "cursor-probe-4",
+      "cursor-supp-apis-overview"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "agentic-webhooks",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence covers MCP integration, background agents, and IDE integrations, but there is no mention of a webhook subscription mechanism for external event notifications.",
-    "evidenceIds": []
+    "rationale": "Cursor documents webhook subscriptions for cloud agent status changes (HMAC-signed POST notifications on ERROR/FINISHED) and Automations that can react to webhook-based triggers, showing real webhook support in an agentic context. However this is scoped to a legacy v0 API with the docs themselves noting 'Webhooks are coming soon' for v1, and there's no evidence of a general-purpose, broad event-subscription system beyond agent lifecycle events. missing for 10: v1 webhook API evidence, broader event catalog beyond agent status changes, independent/hands-on confirmation of webhook delivery reliability.",
+    "evidenceIds": [
+      "cursor-supp-agent-webhooks",
+      "cursor-docs-24",
+      "cursor-supp-automations",
+      "cursor-docs-25"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "always-on-scheduled-agents",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cursor's own site directly states the capability: \"Set up always-on agents that run on schedules or triggers to build, maintain, and fix your software,\" plus related background-agent features (parallel fleets, agents running on their own machines) that support this workflow. Missing for 10: independent/hands-on confirmation of scheduled/triggered agents actually running reliably in practice, and more detail on trigger types/configuration.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor Automations explicitly deliver this story: cloud agents run on cron schedules or in response to GitHub/GitLab/Slack/webhook/Linear triggers, configurable via UI, the /automate skill, or Marketplace templates, with managed always-on agents like Bugbot and Security Agents shipped out of the box. This is backed by first-party docs and a live API/OpenAPI spec for programmatic automation management. Missing for 10: independent/hands-on community verification that scheduled automations reliably maintain/fix software over time (only vendor docs, no third-party corroboration in the evidence pack).",
     "evidenceIds": [
       "cursor-docs-9",
-      "cursor-docs-8",
-      "cursor-docs-12"
+      "cursor-supp-automations",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-service-accounts",
+      "cursor-supp-agent-webhooks"
     ]
   },
   {
@@ -6970,36 +7020,59 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of an interactive API reference with runnable examples for Cursor; docs entries describe product features and MCP setup but nothing about an API reference or executable code samples.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Cursor publishes API docs as raw markdown plus a downloadable OpenAPI 3.0.3 spec (cloud-agents-openapi.yaml) and llms.txt indexes, but there is no evidence of an interactive API reference (e.g., a Swagger/Postman-style 'try it' console) with runnable examples in-browser — the docs are static markdown/spec files, not an interactive explorer.",
+    "evidenceIds": [
+      "cursor-supp-cloud-agents-openapi",
+      "cursor-probe-3",
+      "cursor-probe-2",
+      "cursor-supp-apis-overview"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "api-key-auth",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack describes API key authentication as an alternative to account login for Cursor; docs reference OAuth-based MCP authentication and account-based login flows only.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cursor documents API-key authentication as a first-class alternative to account login: CLI supports 'export CURSOR_API_KEY=...' for scripts/CI, service accounts issue non-human API keys to 'authenticate the CLI...without tying integrations to individual developers' personal accounts,' and the Cloud Agents/Admin/Analytics APIs all authenticate via Basic/Bearer API keys rather than interactive login. A live probe confirms the API host is key-gated (401 Invalid User API Key) rather than session-based. missing for 10: independent/hands-on confirmation outside Cursor's own docs that API-key auth fully substitutes for login in the IDE itself (docs focus on CLI/CI/service-account contexts, not primary IDE sign-in).",
+    "evidenceIds": [
+      "cursor-supp-cli-headless",
+      "cursor-supp-service-accounts",
+      "cursor-supp-apis-overview",
+      "cursor-probe-4",
+      "cursor-docs-49"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "api-machine-spec",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of Cursor publishing a downloadable OpenAPI or equivalent machine-readable API spec; docs reference MCP config and CLI but not an API spec.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor publishes downloadable, machine-readable OpenAPI specs for its Cloud Agents API and Origin API (verified live at cursor.com/docs-static/cloud-agents-openapi.yaml and cursor.com/docs/api/origin/openapi.yaml), plus llms.txt/llms-full.txt indexes and raw markdown docs confirmed by live probes. Missing for 10: no independent third-party corroboration beyond first-party probes/docs.",
+    "evidenceIds": [
+      "cursor-probe-3",
+      "cursor-supp-cloud-agents-openapi",
+      "cursor-probe-2",
+      "cursor-supp-origin",
+      "cursor-probe-4"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "api-sandbox",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Sandbox testing environments vs production data isolation is a data/infrastructure axis relevant to backend/platform products, not to an AI coding assistant like Cursor, which operates on local/repo code rather than managing production data environments.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cursor documents multiple isolation mechanisms relevant to safe testing: Cloud Agents run in isolated VMs with encrypted, temporary repo copies (cursor-supp-cloud-agents, cursor-supp-privacy-governance), Worktrees keep the main checkout untouched during agent work (cursor-supp-worktrees), agents can spin up dev servers and click through UI flows to verify changes before opening a PR (cursor-docs-28), and Run Modes sandbox shell commands where possible (cursor-supp-run-modes). However, none of this is framed explicitly around separating sandbox vs. production data (e.g. staging DBs, seeded test data, or production-data masking) — it's about isolated git/VM execution rather than data environments, and the docs themselves caveat that 'Auto-review is not a security boundary.' Missing for 10: explicit production-vs-sandbox data separation, staging environment/test-data provisioning features, and independent confirmation that production data is never reachable during agent testing.",
+    "evidenceIds": [
+      "cursor-supp-cloud-agents",
+      "cursor-supp-worktrees",
+      "cursor-docs-28",
+      "cursor-supp-run-modes",
+      "cursor-supp-privacy-governance"
+    ]
   },
   {
     "productId": "cursor",
@@ -7007,45 +7080,53 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack mentions API versioning or a deprecation policy for Cursor's APIs (CLI, extensions, or MCP config); docs cover features like MCP setup, agents, and integrations but nothing about version stability guarantees or deprecation timelines.",
-    "evidenceIds": []
+    "rationale": "The evidence pack documents multiple APIs (Admin, Analytics, AI Code Tracking, Cloud Agents, Origin, SDKs) with OpenAPI specs and beta labels, but nowhere states a version numbering scheme (e.g., v1/v2) with a documented deprecation policy, sunset timeline, or backward-compatibility guarantees. Cloud Agents API is explicitly labeled 'public beta' and webhooks are 'v0'/'coming soon' for v1, suggesting instability rather than a stated deprecation policy. missing for 10: explicit API versioning scheme, documented deprecation/sunset policy, backward-compatibility commitments, changelog of breaking changes.",
+    "evidenceIds": [
+      "cursor-supp-apis-overview",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-agent-webhooks"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "architecture-navigation",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "low",
-    "rationale": "Cursor's docs explicitly claim the ability to 'trace how a repo fits together and find the right places to start,' directly matching the story, but this is a single marketing-style doc line with no detailed walkthrough, feature docs (e.g., codebase indexing/@codebase chat), or independent corroboration of how it actually surfaces architecture understanding. Missing for 10: detailed documentation of the codebase-mapping/indexing feature itself, concrete examples of it locating relevant code, and independent/hands-on validation of accuracy.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Cursor's docs explicitly claim the capability to 'trace how a repo fits together and find the right places to start' (cursor-docs-1), and project rules can 'encode domain-specific knowledge about your codebase' (cursor-docs-35), which support codebase-understanding for onboarding/navigation. However, the evidence pack lacks deeper mechanism detail (e.g., codebase indexing, semantic search, @-file/@-codebase chat context) or independent corroboration of how well this actually works in practice. Missing for 10: detailed docs on codebase indexing/semantic search features, hands-on/independent validation that navigation actually helps developers find the right starting point, and coverage of large/legacy codebase scenarios.",
     "evidenceIds": [
-      "cursor-docs-1"
+      "cursor-docs-1",
+      "cursor-docs-35"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "automated-commit-and-pr-creation",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs show GitHub/GitLab integration and agents that build/test/demo work end-to-end for review (cursor-docs-6, cursor-docs-10, cursor-docs-12), implying some git-workflow automation, but there's no explicit documentation of the agent staging changes, writing commit messages, creating branches, or opening pull requests. missing for 10: explicit commit-message generation, branch creation, PR-opening workflow documentation, and any hands-on confirmation these steps work end-to-end.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cursor's Cloud Agents documentation shows agents working in isolated Git worktrees, staging and committing changes, targeting branches, and opening pull requests (autoCreatePR flag, multi-repo repos array in the Cloud Agents API), plus Bugbot and Origin support reviewing, opening, and merging pull requests. This covers the full workflow described in the story with concrete mechanics. Missing for 10: explicit first-party mention of staging terminology and independent hands-on user confirmation that commit messages and branch creation work reliably in practice.",
     "evidenceIds": [
-      "cursor-docs-6",
-      "cursor-docs-10",
-      "cursor-docs-12",
-      "cursor-docs-4"
+      "cursor-supp-cloud-agents",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-worktrees",
+      "cursor-supp-bugbot",
+      "cursor-supp-origin",
+      "cursor-supp-automations"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "automated-pr-review",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Cursor's docs explicitly claim it 'reviews PRs in GitHub' and can 'inspect diffs, run checks, and catch problems before you merge,' directly matching automated PR review with contextual feedback, backed by GitHub/GitLab/Bitbucket integration claims. missing for 10: independent/hands-on verification of review quality, details on triggering on every PR automatically, and no community corroboration of this specific feature.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Bugbot automatically reviews every PR, flagging bugs, security issues, and code quality problems, with manual trigger via PR comment and support across GitHub/GitLab/Bitbucket/Azure DevOps; Automations also offer Security Agents and PR Routing bots layering contextual review. missing for 10: independent/hands-on validation of review quality and no evidence on false-positive rates or reviewer trust from community sources.",
     "evidenceIds": [
-      "cursor-docs-10",
-      "cursor-docs-4",
-      "cursor-docs-6"
+      "cursor-supp-bugbot",
+      "cursor-docs-38",
+      "cursor-supp-automations",
+      "cursor-docs-10"
     ]
   },
   {
@@ -7054,12 +7135,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cursor's docs describe agents that write code, run tests/checks, and 'build, maintain, and fix' software autonomously (cursor-docs-3, cursor-docs-4, cursor-docs-9, cursor-docs-12), which implies test-writing and general maintenance tasks, but there is no explicit documentation of lint-error fixing, merge-conflict resolution, or dependency-update workflows specifically. missing for 10: explicit lint-fixing examples, explicit merge-conflict-resolution examples, explicit dependency-update examples, independent hands-on verification of these specific tasks.",
+    "rationale": "Cursor's agent is documented as a general-purpose coding agent that writes/reviews/modifies code (cursor-docs-22), reproduces issues and verifies fixes (cursor-docs-3), runs checks/inspects diffs (cursor-docs-4), and hooks can 'run formatters after edits' (cursor-docs-34), with Bugbot flagging code-quality issues (cursor-docs-38) — collectively implying it can write tests, fix lint issues, and do maintenance-style edits (cursor-docs-13 shows a changelog example of updating Node version constraints). However, no evidence explicitly documents automated merge-conflict resolution or a dedicated 'update dependencies' workflow as named capabilities. Missing for 10: explicit documentation of merge-conflict resolution, an explicit dependency-update/upgrade workflow, and a concrete first-party example of the agent writing a test suite end-to-end.",
     "evidenceIds": [
       "cursor-docs-3",
       "cursor-docs-4",
-      "cursor-docs-9",
-      "cursor-docs-12"
+      "cursor-docs-13",
+      "cursor-docs-22",
+      "cursor-docs-34",
+      "cursor-docs-38"
     ]
   },
   {
@@ -7068,82 +7151,101 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Cursor lets developers manually choose among multiple models (OpenAI, Anthropic, Gemini, etc.) but nothing indicates an automatic 'best model for the task' selection feature. missing for 10: any documentation or claim of an auto-select/router feature that picks models per task, evidence of cost/performance-based automatic routing.",
+    "rationale": "The evidence pack shows Cursor lets developers manually choose among many models (cursor-docs-7, cursor-supp-byo-api-keys) and even pass an explicit --model flag in CLI/API calls (cursor-supp-cli-github-actions, cursor-supp-cloud-agents-api), but there is no documentation of an automatic 'best model for the task' selection/routing feature. Missing for 10: any first-party or independent evidence of automatic model selection/routing logic, criteria used, or cost-optimization behavior tied to pricing/limits.",
     "evidenceIds": [
-      "cursor-docs-7"
+      "cursor-docs-7",
+      "cursor-supp-byo-api-keys",
+      "cursor-supp-cloud-agents-api"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Cursor supports launching 'fleets of agents' in parallel and always-on scheduled/triggered agents, which enables some multi-item automation, but there's no direct evidence of bulk operations across many discrete items (e.g., bulk file edits, batch refactors, or multi-repo operations) as a first-class feature. missing for 10: explicit documentation or hands-on evidence of bulk/batch operations across many items (files, tickets, repos), user-facing UI for selecting many items at once, and independent corroboration of this working in practice.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Cursor supports fleet-scale automation: launching many parallel cloud agents/subagents, CLI scripting with `find | while read` loops piping files into agent calls, headless print mode with JSON output for scripting, and the Cloud Agents API for programmatically launching/managing many agents across repos. However, this is oriented toward parallel agent tasks/PRs rather than a native 'bulk operations across many items' UI primitive (e.g., no documented bulk-select-and-edit across files/tickets in one action). missing for 10: a first-party bulk-operation UI/API explicitly scoped to acting on many discrete items (files, PRs, tickets) in a single invocation, and independent hands-on evidence confirming reliability at scale.",
     "evidenceIds": [
+      "cursor-supp-cli-headless",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-subagents",
+      "cursor-supp-cloud-agents",
       "cursor-docs-8",
-      "cursor-docs-9"
+      "cursor-supp-worktrees"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "automation-rules-engine",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Cursor docs describe 'always-on agents that run on schedules or triggers' and a way to 'add rules' from one place, matching the idea of rule-based automation triggered by events. However the evidence pack doesn't detail how rules are authored/scoped to specific events beyond the marketing blurb, and there's no independent/hands-on confirmation of this automation working as described. Missing for 10: concrete rule-definition syntax/examples, independent verification that scheduled/triggered agents reliably fire on events, and detail on event types supported.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cursor's rules and Automations documentation directly deliver this story: project rules (cursor-docs-35) encode standing behavior, hooks (cursor-supp-hooks) trigger on defined lifecycle events (preToolUse, afterFileEdit, beforeShellExecution, etc.) to run scripts and gate actions, and Cursor Automations (cursor-supp-automations) run cloud agents on schedules or in response to GitHub/GitLab/Slack/webhook/Linear events, with the /automate skill letting users describe triggers in plain language. Webhooks (cursor-supp-agent-webhooks) further confirm event-driven automation. missing for 10: independent/hands-on verification that rule-triggered automation reliably fires as configured, and clearer detail on rule-based (vs hook/automation-based) event triggering specifically.",
     "evidenceIds": [
-      "cursor-docs-9",
-      "cursor-docs-5"
+      "cursor-docs-35",
+      "cursor-supp-hooks",
+      "cursor-supp-automations",
+      "cursor-supp-agent-webhooks",
+      "cursor-docs-9"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "automation-scheduled-jobs",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Cursor documents 'always-on agents that run on schedules or triggers to build, maintain, and fix your software,' directly matching recurring scheduled workflow automation, alongside parallel agent fleets for ambitious tasks. Missing for 10: independent hands-on verification of scheduling reliability, details on trigger configuration options, and any community corroboration of this specific feature working in practice.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor Automations directly deliver this story: 'Cursor Automations run cloud agents in the background, either on a schedule or in response to events' with scheduled triggers taking 'preset options or ... a cron expression,' plus event triggers from GitHub, GitLab, Slack, webhooks, Linear. Setup is easy via the /automate skill, the Agents Window, or Marketplace templates, and Team Owned automations run under a shared service account for reliability. Missing for 10: independent/hands-on corroboration of scheduling reliability in practice (evidence is entirely first-party docs).",
     "evidenceIds": [
-      "cursor-docs-9",
-      "cursor-docs-8"
+      "cursor-docs-25",
+      "cursor-docs-26",
+      "cursor-supp-automations",
+      "cursor-supp-cloud-agents"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "automation-versioned-workflows",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows Cursor can inspect diffs and review changes before merge, but there is no documented capability to version, review, or roll back the automations themselves (e.g., scheduled/always-on agents, rules, MCP configs) as distinct artifacts with history/rollback support.",
-    "evidenceIds": []
+    "rationale": "Cursor Automations, rules, and skills are version-controlled artifacts (skills are described as 'portable, version-controlled packages') and automations can be toggled/managed, but there is no documented review workflow, diff/version history UI, or rollback mechanism specifically for automations themselves (as opposed to code changes via git/worktrees). missing for 10: a dedicated automation version-history or audit trail, an explicit rollback/revert feature for automation configs, and any review/approval flow for changes to automations before they take effect.",
+    "evidenceIds": [
+      "cursor-supp-automations",
+      "cursor-supp-skills",
+      "cursor-docs-36",
+      "cursor-supp-service-accounts"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "autonomous-end-to-end-feature-delivery",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Cursor's docs explicitly describe cloud/background agents that 'use their own computers to build, test, and demo features end to end for you to review,' plus the ability to launch fleets of agents working in parallel for hours/days, and always-on scheduled agents — directly matching the story. Corroboration is entirely first-party marketing/docs rather than independent hands-on verification of an actual demo workflow. Missing for 10: independent/hands-on evidence confirming the build-test-demo loop works reliably end-to-end, and detail on what 'demo' concretely produces (e.g., preview links, recordings).",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor's Cloud Agents run in isolated cloud VMs, can build features, start dev servers, click through UI flows to verify changes, and attach screenshots/videos/logs as artifacts to PRs so a reviewer can validate without checking out the branch — directly matching 'build, test, and demo end-to-end for review.' This is backed by first-party docs (capabilities, cloud-agent overview) and a live, key-gated API confirming the platform is real and operational. Missing for 10: independent/hands-on third-party verification of the demo-artifact quality and no community corroboration of this specific cloud-agent workflow.",
     "evidenceIds": [
-      "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-11",
-      "cursor-docs-12"
+      "cursor-docs-12",
+      "cursor-docs-28",
+      "cursor-docs-29",
+      "cursor-supp-cloud-agents",
+      "cursor-probe-4"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "background-cloud-tasks",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cursor documents cloud/background agents ('Agents use their own computers to build, test, and demo features end to end', 'Launch fleets of agents that work in parallel on ambitious tasks for hours or days', and hand-off delegation while the developer focuses elsewhere), matching the isolated cloud-background-task story. Missing for 10: independent hands-on verification of the background agent's isolation/reliability and details on session duration limits or failure modes.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor's Cloud Agents run in isolated VMs in the cloud, support parallel execution for hours/days, and can be launched via IDE, Slack, GitHub PR comments, or the Cloud Agents API, with artifacts (screenshots, videos, logs) attached to PRs for review — directly matching the story of delegating long-running tasks to an isolated cloud environment. This is backed by detailed first-party docs plus a live API probe confirming the endpoint is real and key-gated. missing for 10: independent/hands-on third-party verification of actual background task completion quality, and community evidence is mostly about unrelated complaints rather than corroborating cloud-agent reliability.",
     "evidenceIds": [
+      "cursor-supp-cloud-agents",
+      "cursor-supp-cloud-agents-api",
       "cursor-docs-8",
-      "cursor-docs-11",
-      "cursor-docs-12",
-      "cursor-docs-9"
+      "cursor-supp-self-hosted",
+      "cursor-probe-4",
+      "cursor-supp-privacy-governance"
     ]
   },
   {
@@ -7151,28 +7253,28 @@
     "storyId": "configurable-tool-permissions",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs show enterprise admins can restrict which MCP servers users may run from the Cursor dashboard, and users can toggle individual servers on/off, giving engineering leads direct control over external tool/integration access. Missing for 10: independent/hands-on corroboration of the admin dashboard controls and finer-grained per-tool permission examples beyond MCP servers.",
+    "confidence": "high",
+    "rationale": "Cursor gives engineering leads multiple concrete controls over external tool/integration access: enterprise admins can control which MCP servers users may run from the dashboard (cursor-docs-18), CLI permission tokens gate Shell/Read/Write actions including denylists (cursor-supp-cli-permissions), Run Modes (Auto-review/Allowlist/Run Everything) govern shell/MCP/Fetch calls with sandboxing (cursor-supp-run-modes), hooks can gate risky operations like beforeMCPExecution (cursor-supp-hooks), and Admin API exposes model access controls and repo blocklists (cursor-supp-admin-api). missing for 10: independent/hands-on corroboration that these admin controls work as documented in practice, and more detail on granularity of MCP allow/deny lists at the team level beyond the single doc claim.",
     "evidenceIds": [
       "cursor-docs-18",
-      "cursor-docs-20",
-      "cursor-docs-15",
-      "cursor-docs-17"
+      "cursor-supp-cli-permissions",
+      "cursor-supp-run-modes",
+      "cursor-supp-hooks",
+      "cursor-supp-admin-api",
+      "cursor-supp-service-accounts"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "cross-device-task-continuity",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Cursor's Background Agents run remotely and can be monitored/interacted with via terminal, Slack, and GitHub PRs, implying a task could be checked or continued from different surfaces, but there is no explicit documentation of resuming a specific in-progress task from a different device or browser session. Missing for 10: explicit cross-device/browser session handoff documentation, hands-on confirmation of resuming a task started elsewhere, and details on state syncing across clients.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cursor's Cloud Agents are explicitly documented as being launchable and monitorable from many devices/surfaces ('cursor.com/agents on any device (Android PWA), Desktop, Slack, GitHub/Bitbucket PR comments, Linear, or the API') and run in isolated cloud VMs independent of the local machine ('do not require your local machine to be connected to the internet'), which directly enables starting a task on one device and checking/continuing it from another via the web dashboard or other clients. Missing for 10: hands-on/independent confirmation that an in-progress task's full state (chat history, context) seamlessly resumes across devices, and no explicit browser-based 'continue where you left off' walkthrough.",
     "evidenceIds": [
-      "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-10",
-      "cursor-docs-11",
-      "cursor-docs-12"
+      "cursor-supp-cloud-agents",
+      "cursor-docs-50",
+      "cursor-supp-cloud-agents-api"
     ]
   },
   {
@@ -7180,37 +7282,36 @@
     "storyId": "cross-session-memory",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes persistent memory that automatically builds and recalls context across sessions; docs mention repo tracing, plan mode, and MCP integrations but nothing about cross-session memory recall.",
+    "confidence": "medium",
+    "rationale": "The evidence pack documents rules, hooks, skills, worktrees, and cloud agent context, but none of these describe automatic memory that persists and is recalled across sessions without user configuration — rules/skills are manually authored artifacts, not agent-built memory. No feature resembling 'Cursor Memories' or automatic session-to-session recall is mentioned anywhere in the pack.",
     "evidenceIds": []
   },
   {
     "productId": "cursor",
     "storyId": "custom-agent-skills",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Cursor's docs mention a marketplace to 'Add plugins, skills, MCPs, and rules from one place' and detailed MCP support (custom servers, marketplace install, enterprise controls), enabling developers to extend the agent with specialized tool integrations. However, there's no dedicated documentation on a 'skills' framework distinct from MCP/rules, no examples of custom skill creation workflow, and no independent/community corroboration of this specific capability. Missing for 10: detailed skills documentation/tutorial, examples of custom skill authoring, independent hands-on validation.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor has a dedicated first-party 'Agent Skills' feature: portable, version-controlled packages that teach agents domain-specific tasks, auto-discovered at startup, invocable via '/' in chat, with built-in managed skills plus user-added ones (cursor-docs-36, cursor-supp-skills). This is complemented by a marketplace to add plugins/skills/MCPs/rules from one place (cursor-docs-5) and rules for custom workflows (cursor-docs-35), giving strong ecosystem support for custom capabilities. Missing for 10: independent/community hands-on validation of the skills feature specifically (only vendor docs cited).",
     "evidenceIds": [
+      "cursor-supp-skills",
+      "cursor-docs-36",
       "cursor-docs-5",
-      "cursor-docs-15",
-      "cursor-docs-16",
-      "cursor-docs-17",
-      "cursor-docs-18"
+      "cursor-docs-35"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "desktop-visual-diff-review",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cursor's docs explicitly describe inspecting diffs before merge and launching fleets of agents to work in parallel, both core to a desktop IDE experience with visual diff review and concurrent sessions. Missing for 10: independent/hands-on confirmation of the side-by-side session UI and a detailed walkthrough of the diff viewer beyond marketing copy.",
+    "rationale": "Docs mention diff inspection before merge (cursor-docs-4) and support for running multiple agent sessions in parallel via worktrees and subagents (cursor-supp-worktrees, cursor-supp-subagents, cursor-docs-8), which together imply the desktop app can host concurrent, isolated sessions. However, none of the evidence describes the actual visual diff-review UI or a literal side-by-side session view, and all evidence is vendor-documented with no independent/hands-on confirmation. Missing for 10: concrete UI screenshots/description of the diff viewer, explicit 'side-by-side sessions' UI documentation, and independent corroboration of the desktop experience.",
     "evidenceIds": [
       "cursor-docs-4",
-      "cursor-docs-8",
-      "cursor-docs-11",
-      "cursor-docs-12"
+      "cursor-supp-worktrees",
+      "cursor-supp-subagents",
+      "cursor-docs-8"
     ]
   },
   {
@@ -7219,20 +7320,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Cursor has enterprise admin controls for MCP servers but contains no evidence of SSO/SAML integration, enterprise identity provider authentication (e.g., Okta, Azure AD, Google Workspace), or cloud platform login for compliance purposes. This is a fair and applicable axis for a widely-adopted dev tool sold to enterprises, so absence of evidence yields 'none' rather than 'na'.",
-    "evidenceIds": [
-      "cursor-docs-18"
-    ]
+    "rationale": "The evidence pack details many Enterprise features (service accounts, Admin API, privacy governance, OpenTelemetry export) but never mentions SSO/SAML, Okta, Azure AD, or any enterprise identity-provider integration for user authentication. Since enterprise IdP login is a standard and fair expectation for an enterprise coding tool, its absence from the evidence means this capability is not demonstrated.",
+    "evidenceIds": []
   },
   {
     "productId": "cursor",
     "storyId": "existing-subscription-auth",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The evidence pack describes Cursor's agent features, MCP integrations, and installation steps, but contains no documentation or confirmation that users authenticate with an existing subscription plan to access the coding agent (only tangential community chatter about login policy hallucinations). Missing for 10: explicit account/subscription sign-in flow docs, plan-tier access confirmation, and any first-party statement linking subscription plan to agent usage.",
+    "rationale": "Evidence shows sign-in flows such as browser-flow authentication service accounts and API keys tied to a Cursor account and Cloud Agents and CLI are documented as available across plans implying the coding agent is unlocked simply by signing into an existing paid Cursor subscription rather than a separate purchase. However there is no explicit documentation stating sign in with your existing plan to use the agent or clarifying tier by tier inclusion and limits. missing for 10: explicit statement that signing in with an existing subscription unlocks the agent without extra purchase, tier-by-tier feature and limit breakdown, independent corroboration of this sign-in-to-agent flow",
     "evidenceIds": [
-      "cursor-comm-1"
+      "cursor-docs-49",
+      "cursor-supp-apis-overview",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-service-accounts"
     ]
   },
   {
@@ -7241,64 +7343,71 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Cursor documents MCP support that connects to external tools/data sources, an MCP marketplace with OAuth install, and explicit integration with Slack alongside GitHub/GitLab/Linear/Jira-style trackers, plus Slack-based agent collaboration—covering the story's workflow-tool extension use case. Missing for 10: explicit first-party Jira/Google Drive connector documentation and independent hands-on verification of these integrations working end-to-end.",
+    "rationale": "Cursor documents MCP support to connect to external tools/data sources with a marketplace and OAuth (cursor-docs-15/16/17/21), explicitly lists Slack and Linear integration and Automations triggered by Slack/Linear/GitHub/GitLab events (cursor-docs-6, cursor-docs-25), and Cloud Agents can be kicked off from Slack and Linear per supplementary docs. Jira and Google Drive are not explicitly named, but MCP's open protocol plus marketplace entries make these addable in principle. missing for 10: explicit named Jira and Google Drive connectors/marketplace entries, independent hands-on confirmation of these specific integrations working end-to-end.",
     "evidenceIds": [
       "cursor-docs-15",
       "cursor-docs-16",
       "cursor-docs-17",
+      "cursor-docs-21",
       "cursor-docs-6",
-      "cursor-docs-10"
+      "cursor-docs-25",
+      "cursor-supp-automations",
+      "cursor-supp-cloud-agents"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "free-tier-account-access",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack contains no documentation or first-party description of a sign-in flow that grants free-tier access without requiring API keys; only tangential community mentions of account workarounds for usage limits exist. Missing for 10: any docs on account creation/sign-in, free-tier terms, or explicit no-API-key requirement.",
+    "rationale": "Evidence shows Cursor supports a simple browser-based sign-in flow (cursor-docs-49) and that using Cursor's own hosted models by default does not require managing personal API keys (cursor-supp-byo-api-keys implies keys are optional, only needed for bringing your own models). However, the pack contains no direct mention of a free tier, pricing plan, or usage quota tied to signing in with a personal account. Missing for 10: explicit documentation of a free/Hobby tier, sign-up flow for personal accounts, and any quota/limit details tied to that tier.",
     "evidenceIds": [
-      "cursor-comm-5"
+      "cursor-docs-49",
+      "cursor-supp-byo-api-keys"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "full-codebase-mapping",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "First-party docs claim Cursor can 'trace how a repo fits together and find the right places to start' (cursor-docs-1), implying automatic codebase mapping, but there's no detail on how context is auto-gathered (e.g., codebase indexing/@codebase) nor any independent/hands-on confirmation that it explains an unfamiliar codebase without manual file selection. Missing for 10: technical explanation of automatic context retrieval, independent user validation of whole-codebase explanation, and comparison to manual context selection workflows.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cursor's docs claim the agent can 'trace how a repo fits together and find the right places to start' (cursor-docs-1), implying automatic codebase mapping without manual file selection, and its agent/codebase indexing generally underlies features like Bugbot and cloud agents that operate across whole repos (cursor-supp-bugbot, cursor-supp-cloud-agents). However, evidence is thin on the specific mechanism (e.g., @codebase search, indexing architecture) or any hands-on account of the agent explaining an unfamiliar codebase end-to-end; the single doc line is a marketing blurb rather than a detailed walkthrough. Missing for 10: concrete documentation or examples of automatic whole-codebase indexing/summarization, hands-on/independent validation that context files needn't be manually selected, and detail on the underlying retrieval mechanism.",
     "evidenceIds": [
-      "cursor-docs-1"
+      "cursor-docs-1",
+      "cursor-supp-bugbot",
+      "cursor-supp-cloud-agents"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "inline-code-completion",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no first-party documentation or hands-on account describing Cursor's own inline code completion or next-edit suggestion feature; only tangential community references compare competitors' tab-completion tools (e.g., Continue, SuperMaven) without confirming or detailing Cursor's implementation. Missing for 10: any first-party doc on Cursor's Tab/inline completion feature, hands-on confirmation it works as typed, and mention of 'next-edit' suggestion behavior.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Evidence confirms Cursor ships a built-in \"Tab\" completion feature (distinct from chat models, tracked via tab-usage analytics) but the pack contains no dedicated first-party documentation describing the inline-completion/next-edit-suggestion UX itself, and community signal is thin/mixed (a user mentions keeping a rival tab-completion tool, SuperMaven, alongside Cursor). Missing for 10: dedicated docs on next-edit-suggestion behavior, independent hands-on validation of completion quality/accuracy, and detail on how suggestions are triggered/accepted.",
+    "evidenceIds": [
+      "cursor-supp-byo-api-keys",
+      "cursor-supp-analytics-api",
+      "cursor-comm-12"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "issue-to-pr-automation",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Cursor's docs describe agents that trace repos, plan changes, reproduce issues, inspect diffs/run checks, and integrate with issue trackers (GitHub, Linear) and PR review, which together support a full issue-to-PR workflow (cursor-docs-1 through cursor-docs-4, cursor-docs-6, cursor-docs-8–cursor-docs-12). However, there's no explicit first-party or independent case study showing a single tracked issue being turned into a merged PR end-to-end without manual intervention, and community evidence focuses on unrelated bugs/pricing complaints rather than this workflow. Missing for 10: a concrete end-to-end example/case study of issue→PR automation and independent verification that the full pipeline works reliably.",
+    "rationale": "Cursor's Cloud Agents can be triggered directly from a Linear ticket or GitHub/Bitbucket PR comment, work in an isolated VM to build and verify changes (start dev servers, click through UI, run tests), and then open a pull request automatically (autoCreatePR) with attached artifacts (screenshots/videos/logs) for review — a full issue-to-PR pipeline documented across automations, service-accounts, and cloud-agent capabilities docs. Missing for 10: independent/hands-on evidence confirming this end-to-end flow reliably works in practice (only vendor docs cited), and no explicit worked example tying a GitHub Issue specifically (vs Linear ticket) through to a merged PR.",
     "evidenceIds": [
-      "cursor-docs-1",
-      "cursor-docs-2",
-      "cursor-docs-3",
-      "cursor-docs-4",
-      "cursor-docs-6",
-      "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-10",
-      "cursor-docs-11",
-      "cursor-docs-12"
+      "cursor-docs-25",
+      "cursor-docs-28",
+      "cursor-docs-29",
+      "cursor-supp-cloud-agents",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-service-accounts",
+      "cursor-supp-automations"
     ]
   },
   {
@@ -7306,10 +7415,12 @@
     "storyId": "jetbrains-diff-integration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The only evidence touching JetBrains is a single line listing JetBrains among integrations (cursor-docs-6), with no detail on interactive diffs or context-sharing features within a JetBrains IDE specifically. No documentation, screenshots, or community reports confirm this JetBrains-specific capability.",
+    "confidence": "medium",
+    "rationale": "The only trace of 'JetBrains' in the evidence pack is a bare mention in a generic integrations list (cursor-docs-6) with no detail on diffs, context sharing, or an actual JetBrains IDE plugin; all other evidence describes Cursor as a VS Code fork/extension (cursor-comm-9, cursor-comm-4), with no documentation of interactive diff viewing or code-context sharing from within a JetBrains IDE.",
     "evidenceIds": [
-      "cursor-docs-6"
+      "cursor-docs-6",
+      "cursor-comm-9",
+      "cursor-comm-4"
     ]
   },
   {
@@ -7318,42 +7429,52 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions license detection, public code matching, provenance references, or IP attribution for AI-suggested code; docs focus on repo navigation, diffs, agents, and integrations, none of which addresses license/code-match transparency.",
+    "rationale": "No evidence anywhere in the pack that Cursor surfaces license attribution or public-code (e.g., GitHub/OSS) matching references for AI-suggested completions; Bugbot and other review tools cover bugs/security/quality but not license/provenance matching. Missing for 10: license detection engine, public-code match/citation surfacing, any documentation or feature mention of license compliance checking for suggestions.",
     "evidenceIds": []
   },
   {
     "productId": "cursor",
     "storyId": "live-app-debugging",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "No evidence pack item describes attaching a debugger, inspecting runtime state, or interacting with a live running web app from Cursor; docs mention reproducing issues and root-causing bugs conceptually, but not live-app debugging integration (e.g., breakpoints, browser dev tools, runtime inspection). missing for 10: evidence of live debugger attach/breakpoints, browser/runtime inspection tooling, or integration with running app state.",
+    "rationale": "Cursor's Cloud/Background Agents can 'start dev servers, open the app in a browser, click through UI flows, and verify their changes work' and capture screenshots/videos/log references as evidence — a form of live-app verification, but this is agent-driven QA/testing rather than interactive debugging (no breakpoints, stack inspection, console/network tooling, or step-through debugging is documented). Missing for 10: documented breakpoint/step-debugging integration, console/network inspection tools, and evidence of interactively debugging a running app rather than just launching/verifying it via scripted UI flows.",
     "evidenceIds": [
-      "cursor-docs-3",
-      "cursor-docs-4"
+      "cursor-docs-28",
+      "cursor-docs-29",
+      "cursor-supp-cloud-agents"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "local-terminal-agent",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Cursor ships an official CLI (cursor.com/cli) with a documented install command (curl ... | bash) and docs explicitly state 'Cursor runs in your terminal', confirming a local terminal-based agent capability alongside its IDE. Missing for 10: independent/hands-on verification of terminal agent usage and deeper CLI usage documentation beyond the install step.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor CLI is well documented as a terminal-native coding agent: installable via curl script, interactive and headless/print modes, JSON/stream-json output, permission tokens, CI/GitHub Actions usage, and ACP support for custom clients — clearly enabling local terminal agent runs. missing for 10: independent/hands-on community confirmation of the CLI's day-to-day reliability (community evidence in this pack focuses on the IDE/editor experience, not the CLI specifically).",
     "evidenceIds": [
-      "cursor-probe-1",
+      "cursor-docs-22",
+      "cursor-docs-23",
       "cursor-docs-14",
-      "cursor-docs-10"
+      "cursor-supp-cli-headless",
+      "cursor-supp-cli-output-formats",
+      "cursor-supp-cli-permissions",
+      "cursor-supp-cli-github-actions",
+      "cursor-supp-cli-acp",
+      "cursor-probe-1"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "multi-directory-context",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions multi-root workspaces or including multiple project directories in a single Cursor session; docs cover repo navigation, MCP, agents, and integrations but not multi-directory context.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cloud Agents docs confirm multi-repo sessions ('up to 20 repos', 'inspect the full workspace, make coordinated changes, and open pull requests in the repos it changes'), which supports including multiple project directories/repos in one session, but this is scoped to Cloud Agents rather than a general local-editor session feature, and no explicit local-IDE 'multi-root workspace' or multi-folder context capability is documented. missing for 10: explicit local/editor-session multi-directory context support, independent/hands-on confirmation of multi-repo context actually broadening understanding, and details on how cross-repo context is unified for search/chat.",
+    "evidenceIds": [
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-cloud-agents"
+    ]
   },
   {
     "productId": "cursor",
@@ -7375,24 +7496,27 @@
     "productId": "cursor",
     "storyId": "multi-model-selection",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "cursor-docs-7 confirms Cursor lets developers choose between models from multiple providers (OpenAI, Anthropic, Gemini, and Cursor's own), directly matching the story. Missing for 10: independent hands-on verification of per-session model switching UI/behavior and pricing implications tied to model choice.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor explicitly documents choosing between models from multiple providers (OpenAI, Anthropic, Gemini, Cursor's own, etc.) and supports bringing your own API keys for OpenAI, Anthropic, Google, Azure OpenAI, and AWS Bedrock, giving developers direct control over which model powers their session. Missing for 10: no independent hands-on corroboration of the model-switching UI experience beyond first-party docs.",
     "evidenceIds": [
-      "cursor-docs-7"
+      "cursor-docs-7",
+      "cursor-supp-byo-api-keys",
+      "cursor-docs-46"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "multi-platform-task-kickoff",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Cursor's docs explicitly list integrations with GitHub, GitLab, Slack, and Linear, and describe agents that run on triggers/schedules and collaborate in Slack or review PRs in GitHub, supporting the story's core claim. However, there's no detailed first-party documentation of the exact trigger mechanics per platform (e.g., a Linear ticket auto-spawning an agent) nor independent/hands-on confirmation that this works reliably. Missing for 10: platform-specific trigger documentation for each of GitHub/GitLab/Linear/Slack, and independent verification of the workflow in practice.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cursor Automations explicitly runs cloud agents 'in response to events from GitHub, GitLab, Slack, webhooks, Linear, and more,' and Cloud Agents can be kicked off from GitHub/Bitbucket PR comments, Slack (@cursor), and Linear directly, matching the story precisely. missing for 10: independent/hands-on community corroboration of triggering agents from these specific integrations (evidence is entirely first-party docs).",
     "evidenceIds": [
+      "cursor-supp-automations",
+      "cursor-supp-cloud-agents",
       "cursor-docs-6",
-      "cursor-docs-9",
-      "cursor-docs-10"
+      "cursor-docs-25"
     ]
   },
   {
@@ -7401,57 +7525,65 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack describes image/sketch/PDF-to-app generation, multimodal design input, or any UI-from-design workflow; the docs snippets cover repo navigation, plan mode, agents, MCP, and integrations but nothing about visual design inputs.",
+    "rationale": "The evidence pack documents Cursor's agent, CLI, cloud agents, MCP, hooks, skills, and enterprise APIs extensively, but contains no mention of accepting a sketch, image, or PDF design as input to scaffold or generate a working app. No image-to-code, design-to-app, or PDF-parsing capability is described anywhere in the docs, community, or probe evidence. missing for 10: any documentation of image/sketch/PDF input handling, design-to-code conversion, or UI generation from visual mockups.",
     "evidenceIds": []
   },
   {
     "productId": "cursor",
     "storyId": "natural-language-debugging",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "cursor-docs-3 directly claims support for reproducing issues, narrowing root cause, and verifying fixes via natural-language-driven agent workflows, and docs-1 supports tracing how a repo fits together to find bug locations. However, there's no independent/hands-on evidence corroborating debugging quality, and community evidence highlights buginess and unreliability concerns (cursor-comm-2, cursor-comm-8) that add caveats without directly contradicting the specific debugging workflow claim. Missing for 10: independent verification of debugging accuracy, concrete examples of NL-driven troubleshooting sessions, and resolution of buggy-product complaints.",
+    "rationale": "Cursor's docs explicitly describe natural-language debugging workflows — reproducing issues, narrowing root causes, verifying fixes, tracing codebase structure, inspecting diffs, and running checks (cursor-docs-1, cursor-docs-3, cursor-docs-4) — and Bugbot extends this to automated bug/security detection in PRs via NL-driven review (cursor-supp-bugbot). Missing for 10: independent/hands-on evidence validating debugging accuracy or effectiveness in practice, and more detail on how root-cause analysis is surfaced conversationally beyond marketing-style doc snippets.",
     "evidenceIds": [
       "cursor-docs-1",
       "cursor-docs-3",
-      "cursor-comm-2",
-      "cursor-comm-8"
+      "cursor-docs-4",
+      "cursor-supp-bugbot"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "natural-language-feature-implementation",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Cursor's docs describe an agent that traces repo structure, plans and scopes multi-file changes, implements features/fixes end-to-end, runs checks, and produces diffs for review — directly matching plain-language feature/bug requests across multiple files. Community evidence corroborates the product is used daily for this purpose (albeit with complaints about bugginess), without disputing the core multi-file agentic editing capability. Missing for 10: independent hands-on benchmarks showing successful multi-file fixes, and no first-party demo/case study detailing a concrete before/after example.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor's core Agent (in editor, CLI, and Cloud Agents) is documented to take natural-language descriptions of features/bugs and implement multi-file changes: it can trace a repo, plan, edit across files, run tests, start dev servers, and open PRs, with artifacts to verify the fix. This is corroborated by extensive first-party docs on Agent, Cloud Agents, worktrees for parallel multi-file tasks, and CLI headless mode for scripted fixes. Missing for 10: independent hands-on benchmarks or third-party reviews specifically confirming multi-file bug-fix accuracy/quality (community evidence is mostly about general product sentiment, not this specific capability).",
     "evidenceIds": [
       "cursor-docs-1",
       "cursor-docs-2",
       "cursor-docs-3",
-      "cursor-docs-4",
       "cursor-docs-11",
       "cursor-docs-12",
-      "cursor-comm-2",
-      "cursor-comm-8"
+      "cursor-supp-cloud-agents",
+      "cursor-supp-worktrees",
+      "cursor-supp-cli-headless"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack shows no public API for Cursor; it mentions an official CLI and MCP (for connecting external tools INTO Cursor), but nothing about a programmatic interface exposing Cursor's own UI capabilities (agents, plan mode, review, etc.) for external control.",
-    "evidenceIds": []
+    "rationale": "Cursor exposes a broad and well-documented API/SDK surface — Cloud Agents API (create/manage/stream/cancel agents, artifacts), Admin/Analytics/AI-Code-Tracking APIs, TypeScript/Python SDK, CLI with headless/JSON output, webhooks, and Automations triggered via API/schedule/events — covering most agentic and team-management workflows performable in the UI (cursor-supp-cloud-agents-api, cursor-supp-apis-overview, cursor-supp-sdk, cursor-supp-cli-headless). However, there's no evidence that purely interactive/editor-native UI capabilities (tab completion, inline chat editing, Plan Mode UI, live diff review) have full programmatic parity — the APIs focus on agent orchestration and telemetry, not 1:1 mirroring of every UI interaction. Missing for 10: explicit documentation of API parity for editor-native features like tab completion/inline chat, and independent confirmation that all UI actions map to API calls rather than just agent/automation workflows.",
+    "evidenceIds": [
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-apis-overview",
+      "cursor-supp-sdk",
+      "cursor-supp-cli-headless",
+      "cursor-supp-automations",
+      "cursor-supp-admin-api",
+      "cursor-supp-analytics-api"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data export, portability, or open-format data extraction from Cursor; being built on VS Code (a fork) doesn't itself guarantee user data/settings export tooling is documented anywhere here.",
+    "confidence": "medium",
+    "rationale": "The evidence shows enterprise-focused APIs (Admin, Analytics, AI Code Tracking) and an OpenTelemetry export for team usage telemetry, but none of these constitute a user-facing 'export all my data in open formats and leave' capability — there's no documented way for an individual user to export their chat history, prompts, settings, or account data to migrate away from Cursor. Code itself lives in standard git repos, but that's incidental, not a stated data-portability/export feature.",
     "evidenceIds": []
   },
   {
@@ -7460,30 +7592,40 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cursor is known to be closed-source (a proprietary VS Code fork), and the evidence pack contains no mention of any open-source license or public repository for Cursor's source code; all references are to product docs, features, or community complaints unrelated to licensing.",
-    "evidenceIds": []
+    "rationale": "Cursor is closed-source: no evidence in the pack indicates its source code is published under any open license, and Cursor is widely known as a proprietary VS Code fork with no public source repository. Community comments even reference an 'unused GitHub' rather than an open-source repo, further indicating no open-license source availability.",
+    "evidenceIds": [
+      "cursor-comm-2"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "openness-self-host",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Cursor is a proprietary AI coding assistant/IDE fork product, not an open-source or self-hostable platform; self-hosting the core product is a category error for this type of closed commercial tool.",
-    "evidenceIds": []
+    "rationale": "Cursor is a closed-source, cloud-backed product; the only self-hosting option documented is 'Self-Hosted Machines' for Cloud Agent tool execution, but even there 'Cursor runs the agent loop, inference, and planning' on Cursor's servers — the core product (IDE, agent orchestration, model inference) cannot be self-hosted. No evidence of an open-source release or fully self-hostable deployment.",
+    "evidenceIds": [
+      "cursor-supp-self-hosted",
+      "cursor-supp-privacy-governance"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "parallel-agent-fleets",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "First-party marketing/docs explicitly state the exact capability: \"Launch fleets of agents that work in parallel on ambitious tasks for hours or days,\" plus supporting evidence of background/always-on agents and agents using their own compute to build/test/demo. No independent hands-on verification of multi-day parallel fleet execution is present, and no community corroboration confirms this specific feature works at scale. Missing for 10: independent/hands-on validation of parallel agent fleets running for hours/days, details on concurrency limits or reliability over long runs.",
+    "confidence": "high",
+    "rationale": "Cursor's own marketing and docs directly claim this exact capability (Launch fleets of agents that work in parallel on ambitious tasks for hours or days), backed by extensive supporting documentation on Cloud Agents (parallel VM-isolated agents, no local machine needed), the Cloud Agents API/OpenAPI spec for programmatic fleet orchestration, worktrees for conflict-free parallel tasks, subagents for simultaneous delegation, and Automations for scheduled/always-on agents, with live probes confirming the API endpoints actually exist and are key-gated as documented. Missing for 10: independent/hands-on evidence outside vendor docs of agents actually running successfully in parallel for multi-hour/multi-day spans at scale.",
     "evidenceIds": [
       "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-12",
-      "cursor-docs-11"
+      "cursor-docs-50",
+      "cursor-supp-cloud-agents",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-worktrees",
+      "cursor-supp-subagents",
+      "cursor-supp-automations",
+      "cursor-probe-3",
+      "cursor-probe-4"
     ]
   },
   {
@@ -7492,10 +7634,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Cursor's docs describe launching 'fleets of agents that work in parallel on ambitious tasks for hours or days,' directly supporting parallel task execution, and agents run in isolated environments for review before merging changes. However, there is no explicit documentation of a UI/workflow for comparing multiple parallel attempts side-by-side before choosing one, and no independent/hands-on evidence corroborating this specific comparison workflow. Missing for 10: dedicated compare/diff-across-attempts feature documentation, independent verification of parallel-agent comparison in practice.",
+    "rationale": "Cursor documents genuine parallel-agent execution (cloud agents run 'as many agents as you want in parallel', fleets of agents, and subagents that can be launched simultaneously) plus Worktrees explicitly designed to 'start several agents on the same repo without conflicts,' giving each attempt isolated files/changes to inspect. However, no evidence describes a dedicated UI/workflow for comparing multiple attempts side-by-side and selecting a winner—only isolated execution and PR-attached artifacts for review of a single agent's output. Missing for 10: explicit multi-attempt comparison/diff UI, documented workflow for discarding losing attempts, and independent hands-on confirmation of comparing parallel task attempts.",
     "evidenceIds": [
       "cursor-docs-8",
-      "cursor-docs-12"
+      "cursor-supp-cloud-agents",
+      "cursor-supp-worktrees",
+      "cursor-supp-subagents"
     ]
   },
   {
@@ -7504,38 +7648,41 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Cursor documents a marketplace for adding third-party plugins, skills, and MCP servers with OAuth authentication, plus native integrations with GitHub, GitLab, Slack, Linear, and more, letting teams plug partner-built tools/agents into their workflows, with enterprise admin controls over which servers are allowed. Missing for 10: independent/hands-on corroboration of using specific partner-built agent apps (vs. generic tool connectors) and clearer distinction between simple MCP data-tools and full third-party 'agent apps'.",
+    "rationale": "Cursor documents an MCP marketplace for one-click installing third-party MCP servers/tools, plus native integrations with GitHub, GitLab, Bitbucket, Slack, Linear and Automations that trigger cloud agents from these partner platforms' events, letting a lead wire external agent apps into engineering workflows. Missing for 10: independent/hands-on evidence of specific partner-built agent apps actually integrated, and more detail on the breadth/curation of the MCP marketplace itself.",
     "evidenceIds": [
       "cursor-docs-5",
       "cursor-docs-6",
       "cursor-docs-15",
       "cursor-docs-16",
       "cursor-docs-17",
-      "cursor-docs-18"
+      "cursor-supp-automations",
+      "cursor-supp-hooks"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "persistent-project-instructions",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Cursor's docs mention adding 'rules' as one of its features (alongside plugins, skills, MCPs) which aligns with the project-instructions concept, but the evidence pack gives no detail on how project rule files work, their scope, or how the agent applies them to enforce coding standards. missing for 10: documentation of the rules file format/location, examples of coding standards enforcement, independent confirmation the agent actually follows these instructions consistently.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor's documented 'Project Rules' feature explicitly lets developers encode domain-specific knowledge, standardize style/architecture decisions, and automate project-specific workflows via rule files that the agent follows (cursor-docs-35). This directly matches the story of a project instructions file for coding standards and conventions. Missing for 10: independent/hands-on corroboration of rules actually being followed in practice beyond first-party docs.",
     "evidenceIds": [
-      "cursor-docs-5"
+      "cursor-docs-35"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "pre-merge-diff-inspection",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "cursor-docs-4 explicitly claims the capability ('Inspect diffs, run checks, and catch problems before you merge') and cursor-docs-10/12 support a broader PR review workflow, but there is no independent or hands-on corroboration of diff inspection or check-running in practice, and community evidence focuses on unrelated bugs/pricing rather than this feature. missing for 10: independent verification of diff review UI, details on what 'checks' run (tests/linters/CI), and hands-on confirmation of pre-merge workflow.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cursor's docs explicitly describe diff inspection and pre-merge checks: 'Inspect diffs, run checks, and catch problems before you merge' (cursor-docs-4), backed by Bugbot's automated PR review for bugs/security/quality issues (cursor-supp-bugbot), Run Modes with sandboxing and classifier review before applying changes (cursor-supp-run-modes), and hooks that can gate risky operations or scan for secrets pre-merge (cursor-supp-hooks). CI integration via Cursor CLI in GitHub Actions further supports running checks before merge (cursor-supp-cli-github-actions). Missing for 10: independent/hands-on validation of diff review accuracy and no first-party demo of the actual diff UI workflow beyond docs summaries.",
     "evidenceIds": [
       "cursor-docs-4",
-      "cursor-docs-10",
-      "cursor-docs-12"
+      "cursor-supp-bugbot",
+      "cursor-supp-run-modes",
+      "cursor-supp-hooks",
+      "cursor-supp-cli-github-actions"
     ]
   },
   {
@@ -7543,129 +7690,166 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for Cursor; the docs snippets cover agents, MCP, and integrations but nothing about choosing data storage region. Missing for 10: any mention of regional data residency options, enterprise data location controls, or compliance documentation addressing storage jurisdiction.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence covers privacy mode (no training on code) and Enterprise data governance/subprocessors, but there is no mention of data residency or the ability to choose a storage region/geography for code, chats, or cloud agent data. Missing for 10: any documentation of regional data centers, residency guarantees, or user/admin controls to select storage location.",
+    "evidenceIds": [
+      "cursor-supp-privacy-governance"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "privacy-no-training",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation of a privacy mode, opt-out of training, or data-retention controls for Cursor; all cited docs cover unrelated features (agents, MCP, integrations) and community threads are unrelated to training-data privacy.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Cursor's docs explicitly state Privacy Mode ensures 'your code is never used for training by Cursor or other AI model providers,' and it's on by default for Enterprise teams, directly satisfying the story. Missing for 10: independent/hands-on verification of this claim and clarity on whether Privacy Mode is opt-in vs default for non-Enterprise individual users.",
+    "evidenceIds": [
+      "cursor-docs-42",
+      "cursor-supp-privacy-governance",
+      "cursor-supp-byo-api-keys"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "privacy-retention-controls",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no documentation of data retention settings, deletion controls, privacy dashboard, or data handling policies for Cursor; only unrelated docs on features (MCP, agents, integrations) and community complaints about bugs/pricing are present. Missing for 10: any first-party privacy policy docs, retention period settings, data deletion request mechanism, or enterprise data controls.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Cursor documents Privacy Mode (no training on code) and enterprise data governance including subprocessor disclosure and encrypted temporary storage for Cloud Agents, plus service-account key revocation with audit trails. However, there is no documented self-service data deletion/export mechanism, no explicit retention period policy, and no user-facing control to delete stored chat/agent history or account data. missing for 10: explicit data retention periods, user-initiated deletion/export workflow, documentation of how long stored data persists before deletion, non-enterprise (individual user) retention controls.",
+    "evidenceIds": [
+      "cursor-supp-privacy-governance",
+      "cursor-supp-service-accounts",
+      "cursor-supp-otel-export"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of telemetry settings, privacy controls, or usage-tracking opt-out mechanisms; docs only cover unrelated features like MCP, agents, and integrations. Missing for 10: any privacy policy or settings documentation, telemetry opt-out toggle, or usage data collection disclosure.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Cursor documents Privacy Mode (code not used for training) and OpenTelemetry Export (streaming usage data to a customer-run collector), plus extensive Admin/Analytics/AI Code Tracking APIs that collect usage metrics — but none of this evidence describes a setting or mechanism for an individual user to opt out of telemetry/usage tracking itself. Privacy Mode addresses training-data usage, not telemetry collection, and OTel Export is about exporting collected telemetry, not disabling it.",
+    "evidenceIds": [
+      "cursor-supp-privacy-governance",
+      "cursor-supp-otel-export",
+      "cursor-supp-analytics-api",
+      "cursor-supp-admin-api"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "reproducible-cloud-environment-config",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Cursor's docs mention cloud/background agents that 'use their own computers to build, test, and demo features' and can be launched in fleets or run on schedules, implying some cloud execution environment, but there's no evidence pack detail on how a developer configures dependencies, install scripts, or a reproducible environment spec (e.g. Dockerfile/environment.json) for these agents. Missing for 10: explicit documentation of environment configuration format, dependency/setup step definition, and evidence of reproducibility across runs.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cursor's Cloud Agents run in 'isolated VMs in the cloud with full development environments' and the Cloud Agents API lets you route agents to specific 'env' (Cursor-hosted VM, or your own pool/machine) with session-scoped envVars, while Self-Hosted Machines let teams manage the underlying dependency setup, and Worktrees support reproducible per-task environments via `.cursor/worktrees.json` setup scripts. However, the pack never shows a dedicated environment-configuration schema (e.g., an install/build-steps file analogous to a Dockerfile) for onboarding a repo's dependencies into the cloud agent, so reproducibility is implied but not concretely documented end-to-end. Missing for 10: explicit dependency/setup-step configuration docs for Cloud Agent environments, and independent/hands-on confirmation that a configured environment reproduces reliably.",
     "evidenceIds": [
-      "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-12"
+      "cursor-supp-cloud-agents",
+      "cursor-supp-cloud-agents-api",
+      "cursor-supp-self-hosted",
+      "cursor-supp-worktrees"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "root-cause-analysis",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "low",
-    "rationale": "cursor-docs-3 directly claims the exact capability ('Reproduce issues, narrow the root cause, and verify the fix'), and supporting docs on codebase tracing, diffs/checks, and agents running their own environments (cursor-docs-1, cursor-docs-4, cursor-docs-12) plausibly back this workflow. However, this is a first-party marketing/docs claim only, with no independent or hands-on corroboration of actual debugging workflows, and community evidence highlights general bugginess/quality concerns rather than validating this specific capability. Missing for 10: independent verification or hands-on case studies of reproduce/root-cause/verify-fix workflows, more detail on how reproduction (e.g., test running, log inspection) is concretely supported.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Cursor's docs directly state the capability — \"Reproduce issues, narrow the root cause, and verify the fix\" — and this is backed by concrete supporting features: agents can start dev servers, click through UI flows, and verify changes work before pushing a PR, producing screenshots/videos/logs as verification artifacts, plus Bugbot flagging bugs pre-merge and diff/check inspection tooling. Missing for 10: deeper first-party elaboration of the debugging/root-cause workflow itself (the doc citation is essentially a page title), and no independent/hands-on corroboration that this reproduce-diagnose-verify loop works well in practice.",
     "evidenceIds": [
       "cursor-docs-3",
-      "cursor-docs-1",
+      "cursor-docs-28",
+      "cursor-docs-29",
       "cursor-docs-4",
-      "cursor-docs-12"
+      "cursor-supp-bugbot",
+      "cursor-supp-cloud-agents"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "sandboxed-agent-execution",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of sandboxing, isolated execution environments, or network/tool restriction controls for the agent; docs describe agents using 'their own computers' but give no detail on containment/sandboxing mechanisms. Missing for 10: any documentation of a sandbox/isolation feature, network egress controls, or filesystem restriction for agent actions.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Cursor documents explicit sandboxing of agent shell commands under Run Modes ('sandboxes shell commands when it can'), isolated-VM execution for Cloud Agents, git worktree isolation, and permission tokens/hooks to gate risky tool/network actions — directly matching the sandbox-for-review-safety story. However, the same docs candidly state 'Auto-review is not a security boundary' and sandboxing only applies 'when it can', so coverage across all tools/network calls is inconsistent rather than guaranteed. Missing for 10: independent/hands-on verification that sandboxing actually contains network access and tool calls, and clearer documentation of network-resource sandboxing specifically (most detail is shell-command-focused).",
     "evidenceIds": [
-      "cursor-docs-12"
+      "cursor-supp-run-modes",
+      "cursor-supp-cloud-agents",
+      "cursor-supp-worktrees",
+      "cursor-supp-hooks",
+      "cursor-supp-cli-permissions"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "shared-knowledge-workspace",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows integrations (GitHub, Slack, Linear), MCP/plugins, and rules configuration, but nothing describes a dedicated 'shared workspace' feature that unifies docs and repos into a common team source of truth — this is a fair ask for a team-oriented dev tool but unaddressed in the pack.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Cursor offers pieces that could support a shared source of truth — Origin (a git forge for storing/sharing repos with your team, browsing/searching a shared codebase), project Rules to 'encode domain-specific knowledge about your codebase' and standardize architecture decisions, and integrations with GitHub/GitLab/Slack/Linear — but there is no documented unified 'workspace' feature that ingests docs plus repos into a single team-wide knowledge base/source of truth. Missing for 10: explicit documentation-ingestion/knowledge-base workspace UI, evidence of combining external docs with repo content in one shared artifact, and any hands-on confirmation this is used as a team 'source of truth.'",
+    "evidenceIds": [
+      "cursor-supp-origin",
+      "cursor-docs-35",
+      "cursor-docs-6"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "terminal-scripting-automation",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Cursor ships an official CLI (cursor-probe-1, cursor-docs-14) and documents 'always-on agents that run on schedules or triggers to build, maintain, and fix your software' (cursor-docs-9), which implies non-interactive/automated agent execution suitable for scripts/CI. However, there is no concrete documentation of CLI flags, headless/print modes, exit codes, or scripting examples, nor independent hands-on confirmation of this workflow. Missing for 10: explicit CLI non-interactive flag/usage docs, examples of piping/scripting the agent, and independent verification that scheduled/triggered agents work as scripted automation.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Cursor CLI has a documented print/headless mode explicitly for non-interactive scripts, CI pipelines, and automation, with structured JSON/stream-json output, non-zero exit codes on failure, API key auth for scripts, and a documented GitHub Actions recipe. This is corroborated by a live-checked docs index and OpenAPI/CLI reference pages. Missing for 10: independent (non-vendor) hands-on validation of headless CLI scripting in a real CI pipeline.",
     "evidenceIds": [
-      "cursor-probe-1",
-      "cursor-docs-14",
-      "cursor-docs-9"
+      "cursor-supp-cli-headless",
+      "cursor-supp-cli-output-formats",
+      "cursor-supp-cli-github-actions",
+      "cursor-docs-23",
+      "cursor-docs-47"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "training-data-opt-out",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of privacy settings, opt-out of training, or data usage policies for Cursor; all docs entries relate to unrelated features (agents, MCP, integrations) and community items focus on bugs/pricing/model sourcing, not training data controls.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cursor documents Privacy Mode, on by default for Enterprise, which guarantees code is never used for training by Cursor or other model providers, directly satisfying the opt-out story; this is reinforced by the broader enterprise data governance and subprocessor disclosures. missing for 10: independent/third-party audit confirming enforcement, and clarity on whether prompts specifically (not just code) are covered by the same guarantee.",
+    "evidenceIds": [
+      "cursor-docs-42",
+      "cursor-supp-privacy-governance",
+      "cursor-supp-byo-api-keys"
+    ]
   },
   {
     "productId": "cursor",
     "storyId": "unified-multi-session-workspace",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Cursor's docs explicitly describe launching 'fleets of agents that work in parallel on ambitious tasks for hours or days' and setting up always-on agents on schedules/triggers, all accessible from Cursor's interface spanning terminal, Slack, and GitHub — directly matching a unified multi-session agent workspace for a lead overseeing parallel work. Missing for 10: independent/hands-on corroboration of the multi-agent dashboard UX, and no detail on cross-session visibility/coordination features specifically framed for engineering-lead oversight.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Cursor provides an Agents Window/Cloud Agents dashboard where multiple parallel cloud agents can be launched, tracked, and managed across repos ('run as many agents as you want in parallel'), plus worktrees for isolated concurrent local sessions, subagents for parallel delegation, and automations/webhooks for background fleets — all documented as a unified workspace an engineering lead can oversee. missing for 10: no independent/hands-on account of a lead actually coordinating multiple engineers' agent sessions in one shared dashboard, and no evidence of cross-session visibility/analytics tailored specifically to a lead role beyond general team analytics APIs.",
     "evidenceIds": [
       "cursor-docs-8",
-      "cursor-docs-9",
-      "cursor-docs-10",
-      "cursor-docs-11",
-      "cursor-docs-12"
+      "cursor-supp-cloud-agents",
+      "cursor-supp-worktrees",
+      "cursor-supp-subagents",
+      "cursor-supp-automations",
+      "cursor-supp-cloud-agents-api"
     ]
   },
   {
     "productId": "cursor",
     "storyId": "vulnerability-autofix",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack shows general code review/diff-inspection features (cursor-docs-4) and broad agent capabilities, but nothing specifically documents contextual security vulnerability explanations or automated security fixes. Missing for 10: any mention of vulnerability detection, security scanning integration, or CVE/security-specific fix suggestions.",
-    "evidenceIds": []
+    "rationale": "Bugbot explicitly identifies 'bugs, security issues, and code quality problems' in PRs and provides 'Fix in Cursor'/'Fix in Web' links, and the Security Agents automation is documented to 'review pull requests and scan codebases for vulnerabilities' — giving contextual explanations plus a one-click path to a fix. However, fixes are applied via a follow-up agent action rather than being fully automatic, and there is no independent/community evidence corroborating detection quality or fix accuracy. Missing for 10: fully autonomous vulnerability remediation without developer intervention, independent hands-on validation of security-fix quality.",
+    "evidenceIds": [
+      "cursor-docs-38",
+      "cursor-supp-bugbot",
+      "cursor-supp-automations"
+    ]
   },
   {
     "productId": "devin",

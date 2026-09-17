@@ -1,15 +1,15 @@
 {
-  "hash": "392ac349f77d2e067b1723df855dc36a761c56b75c933d77fe5616323f034c2d",
+  "hash": "a2e1da19cde9bca3c0318404ba644938a4aa744903f02c036d145fb9b2f858fc",
   "verdict": {
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Workers' serverless, global-network architecture ('no servers to manage', 'no cold starts or region complexity') implies automatic scaling to traffic without ops intervention, and community posts corroborate quick, hands-off scaling in production use. However, there is no explicit documentation of autoscaling mechanics, burst-handling guarantees, or SLAs, and community evidence flags CPU-time limits (30s free/15min paid) as a real constraint for sustained high-load workloads. Missing for 10: explicit autoscaling/burst-capacity documentation, quantified traffic-spike case studies, and confirmation that limits don't throttle under load.",
+    "rationale": "Cloudflare Workers documentation directly supports automatic, load-based scaling: 'no servers to manage,' 'without having to worry about scaling, maintaining, or paying for unused infrastructure,' and the Agents SDK notes 'Deploy once and Cloudflare runs your agents across its global network, scaling to tens of millions of instances' with agents hibernating when idle and waking on demand. This is architecturally consistent with Workers' isolate-based model built for burst traffic without pre-provisioning. missing for 10: no independent benchmark or hands-on report specifically demonstrating a large traffic burst being absorbed, and no documented capacity limits/throttling behavior under extreme load — community evidence only touches on CPU-time duration limits for long-running tasks (comm-9), not burst-traffic autoscaling itself.",
     "evidenceIds": [
       "cloudflare-docs-1",
-      "cloudflare-docs-19",
-      "cloudflare-comm-3",
-      "cloudflare-comm-9"
+      "cloudflare-docs-24",
+      "cloudflare-supp-agents-sdk",
+      "cloudflare-docs-32"
     ],
     "productId": "cloudflare",
     "storyId": "load-based-autoscaling"
