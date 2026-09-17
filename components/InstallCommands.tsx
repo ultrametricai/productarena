@@ -48,7 +48,9 @@ function InstallRow({ entry }: { entry: NonNullable<Product['install']>[number] 
 
   return (
     <div>
-      <div className="inline-flex w-fit max-w-full items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-1.5">
+      {/* Founder 2026-09-17: no box around install commands — a quiet inline row (label chip,
+          command, copy) reads cleaner than a bordered pill per command. */}
+      <div className="inline-flex w-fit max-w-full items-center gap-2 py-0.5">
         {entry.url ? (
           <a
             href={entry.url}

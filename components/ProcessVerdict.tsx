@@ -41,7 +41,7 @@ export default function ProcessVerdict({ ceiling, nodes }: { ceiling: ProcessCei
           )}
           {irreducible.length > 0 && (
             <p>
-              <span className="text-red-300/80">Irreducibly human ({irreducible.length}):</span>{' '}
+              <span className="text-red-300/80">Temporarily human ({irreducible.length}):</span>{' '}
               {irreducible.map((g, i) => (
                 <span key={`${g.label}-${i}`}>
                   {i > 0 && '; '}
