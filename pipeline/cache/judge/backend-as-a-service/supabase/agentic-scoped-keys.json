@@ -1,16 +1,17 @@
 {
-  "hash": "16c439553eddc4c074074d0e26aacda51f1dfc2ef4fe43807f0a91b8fb1f6bad",
+  "hash": "6eb3a67722870d9779c0a56df18d07c020751181572b9989a43c72c47e05dc93",
   "verdict": {
-    "verdict": "disputed",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Supabase offers RLS-based fine-grained authorization and says it encourages read-only access by default for its MCP integration (mitigating agent access scope), but a concrete hands-on community report shows the Cursor/Supabase MCP integration actually running with elevated service_role access that bypasses RLS entirely — the opposite of least-privilege scoping. This is a direct, concrete contradiction rather than general skepticism. Missing for 10: documented ability to mint scoped/least-privilege API keys or tokens specifically for agent use, and confirmation that MCP connections default to restricted roles rather than service_role.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "high",
+    "rationale": "Supabase documents multiple mechanisms for scoping agent credentials: publishable vs. secret keys tied to RLS, MCP server flags (read_only=true, project_ref scoping, feature-group toggles disabling account/write tools), and a live OAuth-protected MCP endpoint exposing granular per-scope permissions (projects:read, database:write, storage:read, etc., per supabase-probe-10). However the docs themselves admit PATs used for CI 'require all scopes' for write access rather than fine-grained ones (supabase-supp-mcp-agent-security), and community evidence shows a real-world case where an AI assistant operated via service_role, bypassing RLS entirely (supabase-comm-15) — a concrete gap against the least-privilege ideal. Missing for 10: fully granular PAT/API-key scoping (not just MCP OAuth scopes), and stronger community corroboration that least-privilege defaults are actually followed in practice rather than requiring manual read_only/project_ref configuration.",
     "evidenceIds": [
-      "supabase-docs-4",
-      "supabase-docs-15",
-      "supabase-comm-13",
+      "supabase-supp-mcp-config-params",
+      "supabase-supp-api-key-model",
+      "supabase-probe-10",
+      "supabase-supp-mcp-agent-security",
       "supabase-comm-15",
-      "supabase-probe-7"
+      "supabase-docs-43"
     ],
     "productId": "supabase",
     "storyId": "agentic-scoped-keys"

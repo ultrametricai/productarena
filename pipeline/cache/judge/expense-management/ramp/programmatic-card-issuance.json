@@ -1,16 +1,19 @@
 {
-  "hash": "0e3069086dc75fc7b41a47620feff2ecc900366aa3ee561dc1c2001bed70ffe3",
+  "hash": "3b267faec7b1b0cf0a07798fb675c7b6749e483775cdd9371ea21940db50b3d1",
   "verdict": {
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Ramp's marketing pages describe issuing virtual/physical cards with spend controls (ramp-docs-7, ramp-docs-11) and the MCP integration shows a 'lock my card' action (ramp-docs-30), suggesting the underlying platform supports card issuance/locking, but the developer docs index only explicitly names a Transactions API (ramp-docs-1) and the llms.txt probe doesn't surface a dedicated Cards API with create/lock/update-controls endpoints. Missing for 10: explicit public API reference/endpoints for card creation, locking, and limit/control updates, and any independent confirmation these are callable outside the MCP/CLI natural-language layer.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Ramp's Developer API and Vault API let backends create virtual cards with limits (Funds with amount/interval/merchant restrictions), retrieve PAN/CVV synchronously, and the CLI/agent tooling exposes lock and control actions (funds list/activate/creds/lock, cards:write scope, limits:write scope confirmed live in mcp OAuth scopes). OpenAPI schema (174 paths) and scopes like cards:write, limits:write, funds:write are independently probe-verified. missing for 10: no explicit hands-on/independent example of a full REST call sequence (create card → set limit → lock → update controls) purely via the public Developer API outside CLI/MCP wrappers, and no third-party corroboration of reliability.",
     "evidenceIds": [
       "ramp-docs-7",
-      "ramp-docs-11",
-      "ramp-docs-30",
-      "ramp-docs-1",
-      "ramp-probe-1"
+      "ramp-docs-37",
+      "ramp-docs-41",
+      "ramp-supp-virtual-cards-vault",
+      "ramp-supp-cli-agent-mode",
+      "ramp-probe-4",
+      "ramp-probe-6",
+      "ramp-supp-oauth-scopes"
     ],
     "productId": "ramp",
     "storyId": "programmatic-card-issuance"

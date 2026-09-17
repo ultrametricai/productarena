@@ -74,6 +74,9 @@ import { probes as gameEngines } from './game-engines'
 import { probes as identityVerification } from './identity-verification'
 import { probes as bankingDataApis } from './banking-data-apis'
 import { probes as stablecoinPayments } from './stablecoin-payments'
+import { probes as backendAsAService } from './backend-as-a-service'
+import { probes as edgePlatforms } from './edge-platforms'
+import { probes as productAnalytics } from './product-analytics'
 
 export type { LocalProbe } from './types'
 
@@ -143,4 +146,7 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'identity-verification': identityVerification,
   'banking-data-apis': bankingDataApis,
   'stablecoin-payments': stablecoinPayments,
+  'backend-as-a-service': backendAsAService,
+  'edge-platforms': edgePlatforms,
+  'product-analytics': productAnalytics,
 }
