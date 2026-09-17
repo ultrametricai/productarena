@@ -8,6 +8,9 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Signup/login live using the Ultrametric WorkOS key | blocked (founder, 1 min) — everything works except the dashboard redirect URI: AuthKit live-returns "Invalid Redirect URI" for https://ultrametric.ai/productarena/auth/callback. Dashboard → Redirects → add sign-in URI above + logout URI https://ultrametric.ai/productarena. Say "go live" after and the Log in button ships to everyone |
+| "Irreducibly human" → "Temporarily human" on process verdicts | shipped 2026-09-17 |
+| Install section: no boxes around brew/install commands | shipped 2026-09-17 |
 | Homepage table: companies only + "Include all products of companies" toggle | shipped 2026-09-16 — 55 family sub-product rows hidden by default, checkbox reveals every line |
 | Broaden processes: every step lists all key suppliers for the general function | in-lane (process-suppliers) |
 | Finish the depth run: exhaustive scoring for ALL covered companies | in-flight — wave 2 launched over the full remaining queue |
