@@ -9,6 +9,10 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, '**/.claude/**', '**/.next/**'],
     passWithNoTests: true,
     setupFiles: ['./vitest.setup.ts'],
+    // vitest 5 spawns a fresh isolated worker per test file (v4 reused workers), which slows the
+    // handful of heavy integration tests (full data/ copies + spawned pipeline CLIs) past the 5s
+    // default. Headroom, not semantics: genuinely-hung tests still fail.
+    testTimeout: 30_000,
   },
   resolve: { alias: { '@': path.resolve(__dirname) } },
 })
