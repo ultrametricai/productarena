@@ -1297,11 +1297,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly confirm chip/contactless card reader support, Tap to Pay on iPhone and Android contactless via SDK, and Apple Pay/Google Pay via Stripe's payment methods on Terminal-compatible readers/devices, plus real-world community validation of the API-based in-person integration. Missing for 10: independent hands-on confirmation specifically of Apple Pay/Google Pay wallet taps on readers (evidence focuses more on contactless generally) and no dispute found.",
+    "rationale": "Docs confirm chip/contactless via smart readers and Tap to Pay on iPhone (Apple Pay/Google Pay/contactless), SDKs across platforms, no-code options, and independent HN commentary corroborates real-world card-present integration usage. missing for 10: independent hands-on review confirming mobile-wallet (Apple/Google Pay) acceptance specifically, and no explicit third-party verification of chip transaction success.",
     "evidenceIds": [
       "stripe-terminal-docs-2",
       "stripe-terminal-docs-19",
-      "stripe-terminal-docs-18",
+      "stripe-terminal-docs-47",
+      "stripe-terminal-docs-1",
       "stripe-terminal-docs-26",
       "stripe-terminal-comm-1",
       "stripe-terminal-comm-3"
@@ -1313,12 +1314,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Stripe provides webhooks and API access to dispute data plus a Smart Disputes feature to automate evidence collection/submission, and an MCP server that could let agents interact with the Stripe API — but there is no evidence of an agent-specific workflow that monitors dispute deadlines and drafts evidence responses for human review; this is inferred by combining generic webhook/dispute docs. missing for 10: explicit documentation of agent-driven deadline monitoring, evidence-drafting workflow tailored for AI agents, and confirmation that Smart Disputes integrates with the MCP/agent tooling rather than being a Dashboard-only automation.",
+    "rationale": "Stripe (the platform Terminal sits on) exposes a Disputes object/API, webhook events for real-time notifications, and even 'Smart Disputes' to automate evidence collection, plus an official MCP server letting AI agents call the Stripe API — together these could support an agent watching dispute deadlines and preparing evidence. But nothing describes deadline-specific webhook triggers, an agent drafting evidence for human review (Smart Disputes is described as automating submission, not human-reviewed drafts), and none of this is Terminal-specific functionality. Missing for 10: explicit dispute-deadline webhook/event documentation, agent-drafted-evidence-for-review workflow, and Terminal-specific dispute handling.",
     "evidenceIds": [
-      "stripe-terminal-docs-38",
       "stripe-terminal-docs-40",
+      "stripe-terminal-docs-38",
       "stripe-terminal-docs-35",
-      "stripe-terminal-docs-36"
+      "stripe-terminal-docs-28"
     ]
   },
   {
@@ -1327,15 +1328,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Stripe Terminal's docs explicitly describe API-based management of locations/zones and reader registration (by serial number, registration code, or order number), and require readers be registered to a location before use — all doable via API calls without physical device access, which an agent could drive end-to-end. Stripe also has a general MCP server for agents to interact with the Stripe API. Missing for 10: no explicit example or confirmation that the MCP server's toolset covers Terminal locations/readers specifically, and no hands-on/independent evidence of an agent actually performing this end-to-end flow.",
+    "rationale": "Stripe's docs explicitly describe an API-based approach to managing multiple locations and registering readers (via serial number, registration code, or order number), and require reader-to-location registration for payments—covering both halves of the story. Community evidence (stripe-terminal-comm-1) corroborates that full API-level integration for terminal/location management is a real, valued capability. Missing for 10: a concrete end-to-end code/agent example combining location creation + reader registration in one API workflow, and no direct evidence of an AI agent performing this specific provisioning flow (the MCP server exists but isn't shown driving Terminal fleet setup).",
     "evidenceIds": [
       "stripe-terminal-docs-4",
       "stripe-terminal-docs-5",
       "stripe-terminal-docs-13",
       "stripe-terminal-docs-20",
       "stripe-terminal-docs-44",
-      "stripe-terminal-docs-35",
-      "stripe-terminal-probe-4"
+      "stripe-terminal-comm-1",
+      "stripe-terminal-docs-35"
     ]
   },
   {
@@ -1359,12 +1360,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe's documentation confirms an llms.txt is live (HTTP 200) and individual docs pages are available as .md files (e.g., terminal.md), confirmed by direct probes, letting an agent be pointed at agent-oriented docs. Missing for 10: no independent/community confirmation that agents actually consume this successfully in practice.",
+    "rationale": "Stripe hosts a live llms.txt at docs.stripe.com/llms.txt (HTTP 200) and provides machine-readable .md versions of docs pages (e.g., terminal.md), confirmed by direct probes, plus explicit agent-oriented documentation pages (agents.md, mcp.md) referencing AI-native workflows. Missing for 10: independent/hands-on confirmation that an agent successfully consumed llms.txt end-to-end rather than just the file's existence.",
     "evidenceIds": [
       "stripe-terminal-probe-1",
       "stripe-terminal-probe-2",
-      "stripe-terminal-docs-35",
-      "stripe-terminal-docs-36"
+      "stripe-terminal-docs-36",
+      "stripe-terminal-docs-35"
     ]
   },
   {
@@ -1373,21 +1374,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence that Stripe Terminal surfaces AI-generated insights or suggestions from transaction/business data inside its dashboard or SDKs. The MCP server and agent tooling references (docs-35, docs-36) enable external AI agents to call the Stripe API, but that is not the same as the product itself generating insights/suggestions from a user's data.",
-    "evidenceIds": []
+    "rationale": "Stripe Terminal is a payment-acceptance/POS SDK product; the evidence shows Dashboard reporting, Smart Disputes automation, and a general Stripe MCP server for agents to call the API, but nothing indicates the Terminal product itself surfaces AI-generated insights or suggestions from a merchant's transaction/payment data (e.g., sales trend analysis, anomaly detection, recommendations) within the product experience.",
+    "evidenceIds": [
+      "stripe-terminal-docs-10",
+      "stripe-terminal-docs-40",
+      "stripe-terminal-docs-35"
+    ]
   },
   {
     "productId": "stripe-terminal",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Stripe's broader platform offers building blocks for background automation—webhooks that trigger automatic reactions to events (e.g., completed Terminal payments), Smart Disputes that automate evidence collection, and an MCP server letting AI agents call the Stripe API—but none of this is a dedicated 'set up an autonomous background automation' feature specific to Terminal itself; it requires the developer to wire up webhook listeners or agent integrations themselves. Missing for 10: a first-party Terminal-specific automation/workflow engine, evidence of autonomous scheduled/triggered Terminal actions, and independent confirmation that these pieces compose into hands-off background automations.",
+    "confidence": "low",
+    "rationale": "Stripe Terminal integrations can react automatically to events via webhooks and offline payments auto-forward when connectivity resumes, and Stripe's broader platform offers agent-first tools (MCP server, agents.md) that could be used to build autonomous workflows. However, none of this evidence describes a dedicated 'set up an automation that runs autonomously in the background' capability specific to Terminal itself (e.g., scheduled jobs, agent-driven POS automation). Missing for 10: Terminal-specific automation/orchestration features, documented autonomous agent workflows tied to in-person payment flows, and independent confirmation of such automations working end-to-end.",
     "evidenceIds": [
+      "stripe-terminal-docs-6",
       "stripe-terminal-docs-38",
-      "stripe-terminal-docs-40",
+      "stripe-terminal-docs-36",
       "stripe-terminal-docs-35",
-      "stripe-terminal-docs-36"
+      "stripe-terminal-docs-40"
     ]
   },
   {
@@ -1396,11 +1402,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Stripe offers an MCP server so external AI agents can call the Stripe API, and general 'Agents and AI on Stripe' agent-first tooling, but nothing indicates Stripe Terminal itself embeds a built-in AI assistant that a user can delegate tasks to within the product.",
+    "rationale": "The evidence pack shows Stripe has agent-facing tooling (MCP server, agent commerce docs) for AI agents to call Stripe's API, but nothing describes a built-in AI assistant inside Stripe Terminal that a user can delegate tasks to (e.g., a chat-based assistant in the Dashboard or POS app). This is a fair question for a Dashboard-based product, but no such capability is documented.",
     "evidenceIds": [
       "stripe-terminal-docs-35",
-      "stripe-terminal-docs-36",
-      "stripe-terminal-probe-4"
+      "stripe-terminal-docs-36"
     ]
   },
   {
@@ -1408,11 +1413,13 @@
     "storyId": "agentic-headless",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Stripe Terminal SDKs ship a built-in simulated card reader so developers can build/test integrations without physical hardware (docs-9), and the Stripe CLI (docs-37) supports scripting Stripe integrations, which together enable some automated/CI-style testing. However, there's no explicit documentation of running Terminal itself headlessly in CI pipelines, GitHub Actions examples, or automated end-to-end payment flows without human/device interaction, since the product's core function requires physical readers for real transactions. missing for 10: explicit CI/automation docs or examples (GitHub Actions, headless test harness), confirmation that simulated-reader testing can run fully unattended in CI, and evidence of production-grade headless orchestration beyond manual SDK/CLI use.",
+    "confidence": "low",
+    "rationale": "Terminal provides a simulated card reader and API-based/server-driven integration so developers can test without physical hardware (stripe-terminal-docs-9, stripe-terminal-docs-48), which could support headless automated testing, and Stripe CLI can be scripted (stripe-terminal-docs-37). However, there is no explicit documentation of running Terminal integrations in CI pipelines or fully headless automated workflows beyond dev testing. missing for 10: explicit CI/automation pipeline documentation, evidence of unattended/headless production runs, independent confirmation of CI usage.",
     "evidenceIds": [
       "stripe-terminal-docs-9",
-      "stripe-terminal-docs-37"
+      "stripe-terminal-docs-48",
+      "stripe-terminal-docs-37",
+      "stripe-terminal-docs-1"
     ]
   },
   {
@@ -1420,9 +1427,12 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Stripe Terminal is a payment-acceptance SDK/hardware product for in-person transactions, not an AI agent or agent framework that would itself consume external tools via MCP. The evidence about an MCP server (docs-35) describes Stripe exposing tools *to* AI agents, which is the opposite relationship and not about Terminal acting as an MCP client.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Stripe Terminal is a payment-acceptance SDK/hardware platform, not an AI agent or agent framework that consumes external tools via MCP; the evidence only shows Stripe publishing its own MCP server (docs-35, probe-4), which is the opposite (server) role, not Terminal acting as an MCP client plugging in third-party servers.",
+    "evidenceIds": [
+      "stripe-terminal-docs-35",
+      "stripe-terminal-probe-4"
+    ]
   },
   {
     "productId": "stripe-terminal",
@@ -1430,7 +1440,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe (the parent platform) documents an official MCP server that lets AI agents interact with 'the Stripe API' and search Stripe's knowledge base, and this is corroborated by a probe confirming the live docs page; since Stripe Terminal is exposed via the Stripe API, this MCP server plausibly covers Terminal use cases, but no evidence explicitly names Terminal-specific tools or endpoints within the MCP server. missing for 10: explicit documentation that the MCP server exposes Terminal-specific actions (e.g., reader registration, payment collection) rather than generic Stripe API access, and independent/hands-on confirmation of Terminal agent workflows via MCP.",
+    "rationale": "Stripe (the parent platform that Terminal is built on) documents an official MCP server enabling AI agents to interact with the Stripe API and knowledge base, and this is confirmed live at docs.stripe.com/mcp. However, the evidence doesn't specify that Terminal-specific in-person payment/reader operations are exposed as MCP tools, so it's unclear how much of Terminal's functionality is agent-accessible via this server. Missing for 10: explicit confirmation that Terminal-specific APIs (readers, locations, offline payments) are covered by the MCP tool set, and independent/hands-on corroboration of agent usage against Terminal endpoints.",
     "evidenceIds": [
       "stripe-terminal-docs-35",
       "stripe-terminal-probe-4",
@@ -1443,11 +1453,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Stripe (the parent platform) documents an official MCP server that lets AI agents interact with 'the Stripe API' and search documentation, which could in principle route Terminal-related API calls through natural-language agent commands, but there is no Terminal-specific evidence of natural-language control of readers, payments, or fleet management. missing for 10: Terminal-specific natural-language command support, agent-driven reader/payment control examples, independent corroboration of MCP-driven Terminal operations.",
+    "rationale": "Stripe's platform-wide MCP server lets AI agents call the general Stripe API and search docs, and Stripe advertises 'agent-first developer tools,' but no evidence specifically shows natural-language control of Terminal (in-person payment/reader) operations rather than generic Stripe API usage. Missing for 10: Terminal-specific MCP tools or docs showing an agent issuing NL commands to readers, and hands-on/community confirmation that Terminal actions (charge, refund, reader management) can be driven conversationally.",
     "evidenceIds": [
       "stripe-terminal-docs-35",
-      "stripe-terminal-probe-4",
-      "stripe-terminal-docs-36"
+      "stripe-terminal-docs-36",
+      "stripe-terminal-probe-4"
     ]
   },
   {
@@ -1456,7 +1466,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe provides an official CLI ('Stripe CLI helps you build, test, and manage your Stripe integration right from the terminal'), which applies to Stripe's platform including Terminal integrations, and this is corroborated by a dedicated docs probe confirming its existence. missing for 10: no evidence of Terminal-specific CLI subcommands or independent hands-on validation of CLI usage for Terminal workflows specifically.",
+    "rationale": "Stripe publishes an official Stripe CLI for building, testing, and managing Stripe integrations (including Terminal) directly from the terminal, documented at docs.stripe.com/cli and confirmed via probe. Missing for 10: no evidence of Terminal-specific CLI commands or AI-native/agentic CLI features (e.g., natural-language or agent-oriented CLI workflows), and no independent hands-on review of the CLI itself.",
     "evidenceIds": [
       "stripe-terminal-docs-37",
       "stripe-terminal-probe-5"
@@ -1485,11 +1495,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Terminal's POS/hardware features, MCP server availability, and general agent commerce framing, but contains no mention of restricted/scoped API keys, granular permissions, or any mechanism for issuing least-privilege credentials specifically for an AI agent using Terminal's API.",
-    "evidenceIds": [
-      "stripe-terminal-docs-35",
-      "stripe-terminal-docs-36"
-    ]
+    "rationale": "The evidence pack documents Stripe's general API access (CLI, OpenAPI spec, MCP server for agents) but contains no mention of scoped or restricted API keys, permission scoping, or least-privilege credential issuance mechanisms for agents. Missing for 10: any documentation of restricted API keys, role-based permissions, or scoped credential issuance for AI agents interacting with Stripe Terminal.",
+    "evidenceIds": []
   },
   {
     "productId": "stripe-terminal",
@@ -1497,15 +1504,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe Terminal ships official SDKs for Android, iOS, JavaScript (with a public GitHub repo), and React Native plus a server-driven API integration, backed by an OpenAPI spec and CLI for tooling — all first-party documented and corroborated by a hands-on developer report praising the API-level integration power for building custom terminals. Missing for 10: independent third-party benchmarking/reviews of the SDKs' developer experience specifically for AI-native/agentic workflows beyond the general MCP/agents docs.",
+    "rationale": "Stripe Terminal ships official SDKs for Android, iOS, JavaScript, and React Native alongside an API-based integration path, with a public GitHub repo for the JS SDK confirming real developer tooling exists beyond just docs. Missing for 10: independent/hands-on developer corroboration for the iOS/Android SDKs and no AI-agent-specific SDK extension (the general MCP server is a separate, adjacent capability).",
     "evidenceIds": [
       "stripe-terminal-docs-1",
       "stripe-terminal-docs-18",
       "stripe-terminal-gh-1",
-      "stripe-terminal-docs-41",
-      "stripe-terminal-docs-37",
-      "stripe-terminal-comm-1",
-      "stripe-terminal-probe-2"
+      "stripe-terminal-docs-30"
     ]
   },
   {
@@ -1524,12 +1528,11 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows extensive Terminal docs, SDKs, and an OpenAPI spec repo, but nothing describes an interactive API reference with runnable/executable examples (e.g., a live 'try it' console); a probe even shows openapi.json endpoints returning 404 at the docs site, suggesting no readily discoverable interactive spec integration.",
+    "confidence": "medium",
+    "rationale": "The evidence pack lists Stripe's OpenAPI spec repo and various docs, but nothing in the pack confirms an interactive API reference with runnable/try-it code examples for Terminal; a probe for openapi.json/swagger.json endpoints even returned 404s, and no docs entry describes an interactive reference explorer.",
     "evidenceIds": [
-      "stripe-terminal-probe-3",
       "stripe-terminal-docs-41",
-      "stripe-terminal-probe-2"
+      "stripe-terminal-probe-3"
     ]
   },
   {
@@ -1538,7 +1541,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stripe publishes a public OpenAPI specification repository for its API (stripe/openapi) which underlies Terminal's API-based integration, giving AI-native users a machine-readable spec to consume; probe attempts at docs.stripe.com-hosted openapi.json paths 404 but the canonical GitHub-hosted spec is well documented. missing for 10: no direct download link from Terminal-specific docs pages, and probe could not confirm a docs.stripe.com-hosted openapi.json endpoint.",
+    "rationale": "Stripe publishes an official OpenAPI specification repository for its API (which Terminal is built on) at github.com/stripe/openapi, machine-readable and maintained, though direct probe attempts at docs.stripe.com/openapi.json returned 404s, indicating it's hosted separately rather than at a predictable docs endpoint. Missing for 10: a direct discoverable link from Terminal-specific docs to the spec, and confirmation the spec covers Terminal endpoints specifically.",
     "evidenceIds": [
       "stripe-terminal-docs-41",
       "stripe-terminal-probe-3"
@@ -1547,22 +1550,24 @@
   {
     "productId": "stripe-terminal",
     "storyId": "api-sandbox",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe Terminal SDKs include a built-in simulated card reader for developing and testing without physical hardware, and Stripe broadly supports test mode (sandbox) separate from live/production data. missing for 10: explicit mention of full sandbox parity (test API keys/test mode) specific to Terminal payments beyond the simulated reader, and independent hands-on confirmation of sandbox isolation.",
+    "rationale": "Stripe Terminal docs confirm a built-in simulated card reader and reader simulator for developing/testing without physical hardware, and Stripe's broader test-mode/sandbox concept (API keys, test data) is implied but not explicitly detailed for Terminal beyond hardware simulation. missing for 10: explicit documentation of a full sandbox/test-mode environment covering data isolation (test vs live API keys), independent hands-on confirmation of sandbox fidelity for AI-driven testing, and any AI-native tooling specifically validating sandbox use.",
     "evidenceIds": [
-      "stripe-terminal-docs-9"
+      "stripe-terminal-docs-9",
+      "stripe-terminal-docs-48"
     ]
   },
   {
     "productId": "stripe-terminal",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack includes general Terminal docs, SDKs, CLI, and MCP references, but nothing documents API versioning conventions or a deprecation policy for the Stripe API/Terminal endpoints (e.g. no mention of API version headers, changelogs, or sunset timelines). The OpenAPI spec repo (stripe-terminal-docs-41) only points to spec files, not a versioning/deprecation policy.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows Stripe Terminal SDKs are versioned (a documented v5.0.0 migration guide) and a public OpenAPI spec repo exists, implying some API versioning discipline, but there is no explicit documented deprecation policy, versioning cadence, or sunset timeline provided in the evidence pack. missing for 10: explicit deprecation policy documentation, API version lifecycle/support timeline, sunset notices for older Terminal API versions.",
     "evidenceIds": [
+      "stripe-terminal-docs-51",
       "stripe-terminal-docs-41"
     ]
   },
@@ -1572,11 +1577,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Stripe Terminal docs describe managing multiple readers via locations/zones and registering readers individually, but there is no evidence of a bulk/batch API (e.g., batch payment processing, bulk reader configuration, or bulk refunds) that an AI agent could invoke to operate on many items in a single call. missing for 10: batch/bulk API endpoints for Terminal, evidence of programmatic bulk operations on payments or readers, AI-agent-oriented bulk automation examples.",
+    "rationale": "Stripe Terminal's docs describe fleet management (registering/monitoring multiple readers via locations and zones) and API-based integration, but there is no evidence of a bulk/batch API for processing many payments, refunds, or reader operations in a single call as an AI agent would need. missing for 10: batch/bulk API endpoints, documented multi-item operation examples, evidence of programmatic bulk processing.",
     "evidenceIds": [
       "stripe-terminal-docs-4",
-      "stripe-terminal-docs-5",
-      "stripe-terminal-docs-20"
+      "stripe-terminal-docs-32",
+      "stripe-terminal-docs-1"
     ]
   },
   {
@@ -1585,7 +1590,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Stripe provides generic webhook infrastructure (\"Listen for events from Stripe... so your integration can automatically trigger reactions\") which lets developers build event-driven automation on top of Terminal transactions, and Smart Disputes shows some automated action-on-event behavior. However, there is no Terminal-specific rules engine or no-code trigger/action builder — automation still requires custom webhook-handling code rather than user-defined rules. Missing for 10: a declarative rules/trigger UI or API specific to Terminal events, and evidence of AI-native users defining conditional automations without writing webhook handlers.",
+    "rationale": "Stripe's webhooks documentation explicitly supports automatic reactions to events (docs-38), and Smart Disputes automates part of the dispute workflow (docs-40), giving a basic event-triggered automation capability. However, this is a raw webhook/event system requiring custom code rather than a declarative rules engine an AI-native user could configure directly, and there's no Terminal-specific rules/automation builder. Missing for 10: a no-code or declarative rule-definition interface, Terminal-specific event-trigger examples, and independent/hands-on evidence of automation reliability.",
     "evidenceIds": [
       "stripe-terminal-docs-38",
       "stripe-terminal-docs-40"
@@ -1597,7 +1602,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Terminal is a POS/payment-hardware SDK product; scheduling recurring jobs or workflows is not part of its product category (no orchestration/scheduling capability is a fair expectation here), so this axis is a category error.",
+    "rationale": "Stripe Terminal is a POS/payment-hardware SDK product; scheduling recurring jobs or workflows is not a category-relevant capability for this axis (it's a payments/checkout tool, not an automation/orchestration platform).",
     "evidenceIds": []
   },
   {
@@ -1606,7 +1611,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Terminal is a POS/payments hardware-integration product, not an automation/workflow-building tool; there is no concept of 'automations' with versioning, review, or rollback in this product category.",
+    "rationale": "Stripe Terminal is a payments/POS hardware-integration product; 'versioning, reviewing, and rolling back automations' is an axis for AI automation/workflow builders, not a card-reader/payments SDK — this is a category mismatch, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1615,7 +1620,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Terminal is a payment-acceptance/hardware SDK product focused on card-present transactions, reader fleet management, tipping, receipts, and offline payments—not an inventory/catalog management system. Managing an item catalog with synced inventory counts across registers/channels is a POS/inventory-software concern, outside Terminal's product category.",
+    "rationale": "Stripe Terminal is a payment-acceptance SDK/hardware platform for processing in-person card payments; it has no product catalog or inventory-management functionality — that's the domain of a POS/inventory system built on top of Terminal, not Terminal itself.",
     "evidenceIds": []
   },
   {
@@ -1623,8 +1628,8 @@
     "storyId": "digital-receipts",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Stripe Terminal docs explicitly state merchants must offer physical or email receipts, prebuilt email receipts include all card-network-required fields, and receipts can be customized while retaining required information. This directly matches the story of issuing digital/printed receipts meeting card-network requirements. Missing for 10: independent/hands-on verification of receipt compliance and no explicit mention of SMS receipts (only email/print).",
+    "confidence": "medium",
+    "rationale": "Stripe Terminal docs explicitly state merchants must offer customers a physical or email receipt, provide prebuilt email receipts that already include all card-network-required fields, and allow custom-branded receipts that still list required information—directly matching the story. Missing for 10: independent/hands-on verification of receipt compliance and details on printed receipt formatting beyond the API/customization docs.",
     "evidenceIds": [
       "stripe-terminal-docs-8",
       "stripe-terminal-docs-25",
@@ -1639,7 +1644,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Stripe (the broader platform) documents a dispute workflow in the Dashboard, guiding merchants through evidence submission and offering 'Smart Disputes' to automate evidence collection for eligible disputes, which covers the core of this story. However, this evidence is generic Stripe platform documentation, not specific to Stripe Terminal or in-person/card-present disputes, and there's no explicit mention of chargeback notification mechanisms (e.g., webhook events for disputes) tied to Terminal transactions. Missing for 10: Terminal-specific dispute handling details, explicit notification/webhook triggers for disputes, deadline tracking specifics, and any hands-on/independent corroboration of the dispute workflow.",
+    "rationale": "Stripe's platform docs describe a Dashboard-guided dispute process and 'Smart Disputes' automation for evidence collection/submission (docs-40), which would apply to Terminal-processed payments as part of the broader Stripe account. However, the evidence is generic Stripe documentation (not Terminal-specific) and never details chargeback notification mechanisms, deadline tracking, or how disputes surface for in-person transactions specifically. missing for 10: explicit notification/alerting for new disputes, deadline visibility, Terminal-specific dispute workflow details, independent/hands-on confirmation.",
     "evidenceIds": [
       "stripe-terminal-docs-40",
       "stripe-terminal-docs-38"
@@ -1651,14 +1656,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly support a fleet model: readers are grouped into 'locations and zones' to manage multiple physical sites, registered to a specific location, and can be ordered/configured/monitored from the Dashboard (stripe-terminal-docs-4, -5, -13, -20, -32, -44). However, evidence does not show per-location reporting breakdowns or per-location configurable settings (e.g., distinct tipping/receipt/tax rules per site) beyond the general reader/location grouping. missing for 10: explicit per-location reporting/analytics in the Dashboard, per-location settings customization (receipts, tipping, tax), and independent/hands-on confirmation of multi-location fleet operations at scale.",
+    "rationale": "Docs confirm locations/zones for managing readers across multiple physical sites, reader registration tied to a location, and unified Dashboard reporting for in-person and online payments, which supports multi-location fleet management. However, there is no explicit evidence of per-location settings customization (e.g., location-specific tax, receipt, or tipping configs) or per-location reporting breakdowns beyond the general unified Dashboard. missing for 10: explicit per-location settings/config differentiation, per-location reporting/analytics breakdown, independent hands-on validation of multi-location fleet workflows at scale.",
     "evidenceIds": [
       "stripe-terminal-docs-4",
-      "stripe-terminal-docs-5",
       "stripe-terminal-docs-13",
       "stripe-terminal-docs-20",
       "stripe-terminal-docs-32",
-      "stripe-terminal-docs-44"
+      "stripe-terminal-docs-10",
+      "stripe-terminal-docs-45"
     ]
   },
   {
@@ -1667,14 +1672,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly confirm official Terminal SDKs for iOS and Android (plus JS/React Native) for building custom in-person payment integrations, with support for Tap to Pay on iPhone, offline payment storage, tipping, receipts, and built-in simulated readers for testing without hardware. Community evidence corroborates real-world developers building custom POS apps on top of the Terminal SDK/API, reinforcing that this is a viable, used integration path. Missing for 10: independent hands-on review of the actual mobile SDK integration experience (vs. docs only) and more detail on SDK API specifics/version history.",
+    "rationale": "Official docs confirm dedicated iOS and Android SDKs for Terminal, alongside JS/React Native, enabling developers to embed custom in-person payment flows including reader management, offline support, tipping, and testing simulators. Community evidence corroborates real-world use of the API-based integration for building custom POS apps on Stripe's stack. Missing for 10: independent hands-on verification specifically of the iOS/Android SDK integration experience (most community evidence discusses the broader Terminal API/hardware rather than the mobile SDKs specifically).",
     "evidenceIds": [
       "stripe-terminal-docs-1",
       "stripe-terminal-docs-18",
-      "stripe-terminal-docs-19",
-      "stripe-terminal-docs-2",
-      "stripe-terminal-docs-9",
       "stripe-terminal-docs-30",
+      "stripe-terminal-docs-9",
+      "stripe-terminal-docs-6",
       "stripe-terminal-comm-1"
     ]
   },
@@ -1683,8 +1687,8 @@
     "storyId": "offline-payments",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Stripe's docs explicitly describe offline payment storage on POS device/smart reader with automatic forwarding once connectivity resumes, directly matching the story. Missing for 10: independent/hands-on merchant evidence corroborating real-world offline behavior and details on limits/timeouts of offline storage.",
+    "confidence": "medium",
+    "rationale": "Stripe's docs explicitly describe the offline-reliability capability: payments are stored locally on the POS device or smart reader when connectivity drops and automatically forwarded once the network is restored, matching the story closely. Missing for 10: independent/hands-on confirmation of this specific offline-and-forward behavior beyond first-party docs, and details on limits (e.g., how long/how many transactions can be queued offline).",
     "evidenceIds": [
       "stripe-terminal-docs-6",
       "stripe-terminal-docs-15",
@@ -1698,16 +1702,16 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Stripe Terminal documents a full API-based integration path (reader registration/config via API, offline payment storage, receipts generated from API data, tips, refunds via API or Dashboard) and independent commentary confirms deep API-level control over terminal hardware, suggesting most Dashboard actions are API-accessible. However, some Dashboard-centric features (e.g., Smart Disputes automation, fleet monitoring dashboards) aren't explicitly confirmed as fully API-equivalent. Missing for 10: explicit API parity for dispute management/analytics dashboards, and stronger independent verification that every UI action has a documented API equivalent.",
+    "rationale": "Stripe Terminal exposes a broad API surface (custom POS integration, reader registration via serial/registration/order number, locations/zones fleet management, tips, receipts, refunds via Refunds API) that mirrors most Dashboard/UI capabilities, and Stripe's own OpenAPI spec exists for programmatic access. However, some flows (e.g., ordering readers, Smart Disputes automation, reader monitoring/configuration UI) are described as Dashboard-centric without explicit API equivalents, and no-code options are positioned as UI-first rather than API-parity features. Missing for 10: explicit API equivalents for reader ordering/monitoring dashboard actions, confirmation that Smart Disputes and other dashboard-only workflows are fully API-accessible, and independent hands-on verification of full parity.",
     "evidenceIds": [
       "stripe-terminal-docs-1",
       "stripe-terminal-docs-4",
       "stripe-terminal-docs-5",
-      "stripe-terminal-docs-8",
       "stripe-terminal-docs-20",
       "stripe-terminal-docs-28",
       "stripe-terminal-docs-32",
-      "stripe-terminal-comm-1"
+      "stripe-terminal-docs-40",
+      "stripe-terminal-docs-41"
     ]
   },
   {
@@ -1716,7 +1720,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Stripe Terminal's evidence pack covers payments, hardware, receipts, offline mode, and Connect integration, but contains no mention of bulk data export in open formats (e.g., CSV/JSON exports of transaction/customer data) or any facility for a user to extract all their data and migrate away from the platform.",
+    "rationale": "The evidence pack covers Stripe Terminal's hardware, SDKs, offline payments, receipts, and API access, but contains no mention of bulk data export tools, open-format export of transaction/customer data, or any data-portability/exit guarantee for merchants using Terminal.",
     "evidenceIds": []
   },
   {
@@ -1737,7 +1741,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Terminal is a hosted SaaS payments/hardware platform, not software distributed for self-hosting; self-hosting the core product is a category error for this type of service.",
+    "rationale": "Stripe Terminal is a hosted payments/hardware service, not open-source software; self-hosting the core product is a category error for this kind of SaaS/hardware offering.",
     "evidenceIds": []
   },
   {
@@ -1746,7 +1750,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Stripe's general webhook system is well documented (docs-38: register an HTTPS endpoint and receive real-time events), and Terminal payments flow through core Stripe objects (PaymentIntents, Refunds, Disputes) that are webhook-eligible, with dispute (docs-40) and refund (docs-24, docs-28) API/dashboard support shown. However, the evidence never explicitly enumerates Terminal-specific webhook event types (e.g., terminal.reader.action_succeeded, payment_intent.succeeded for in-person) or shows a Terminal webhook integration example. Missing for 10: explicit list of Terminal-triggered webhook event names, a Terminal-specific webhook code sample, and independent developer confirmation that lifecycle events (authorized/captured/refunded/disputed) fire reliably for in-person transactions.",
+    "rationale": "Stripe's general webhook system (docs-38) lets developers subscribe to real-time events, and Stripe documents refunds (docs-24/28) and disputes (docs-40) as distinct API/dashboard flows that would generate corresponding events; since Terminal payments use the core PaymentIntent/Charge objects, these lifecycle events apply to it. However, the evidence never explicitly enumerates Terminal-specific webhook event names (e.g., a documented list of 'authorized', 'captured', 'refunded', 'disputed' events for terminal reader payments) or shows an example webhook payload tied to Terminal transactions. Missing for 10: explicit Terminal-context webhook event list/examples, confirmation of 'authorized' and 'captured' as distinct fired events for in-person payments, and independent developer corroboration of using webhooks specifically with Terminal.",
     "evidenceIds": [
       "stripe-terminal-docs-38",
       "stripe-terminal-docs-24",
@@ -1760,7 +1764,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Stripe's general payouts docs confirm funds move from available balance to bank account and that Instant Payouts can be triggered anytime with funds landing in ~30 minutes, which would apply to Terminal-collected funds as well. However, this is generic Stripe platform documentation, not Terminal-specific, and there's no evidence of a dashboard view for tracking individual payout status/timing or an explicit next-day payout toggle description tied to in-person transactions. Missing for 10: Terminal-specific payout scheduling/dashboard visibility, explicit next-day payout option details, and any reconciliation UI tying Terminal transactions to payout batches.",
+    "rationale": "Stripe docs confirm Instant Payouts (funds within ~30 minutes, including weekends/holidays) as an accelerated payout option [stripe-terminal-docs-39], but there is no evidence of a dashboard view showing exact payout landing times/schedules or an explicit next-day payout toggle. missing for 10: dashboard payout-timing visibility, next-day payout details, independent confirmation of speed.",
     "evidenceIds": [
       "stripe-terminal-docs-39"
     ]
@@ -1771,7 +1775,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack addresses data residency, region selection, or data storage location controls for Stripe Terminal; the docs cover payments, receipts, offline storage of transactions, and fleet management but never data residency options.",
+    "rationale": "No evidence in the pack mentions data residency, regional data storage, or any control over where Stripe Terminal data is stored; the axis is applicable to a payments platform handling customer/transaction data, but nothing addresses it.",
     "evidenceIds": []
   },
   {
@@ -1780,7 +1784,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stripe Terminal is a payment-hardware/POS integration product; it has no AI-model-training data usage at all, so opting out of AI training is a category error for this product type rather than a missing feature.",
+    "rationale": "Stripe Terminal is a payments/POS hardware-integration product; it has no AI-model-training data usage in the first place, so an AI-training opt-out control is a category error for this product type, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1789,7 +1793,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence describes data retention controls, deletion mechanisms, or privacy-posture settings for Stripe Terminal data; evidence pack covers payments, hardware, receipts, and unrelated compliance/dispute topics only. Missing for 10: any documentation of data retention policy, customer data deletion API/process, or configurable retention windows.",
+    "rationale": "The evidence pack covers payment processing, receipts, refunds, disputes, and MCP/agent tooling, but contains no documentation about data retention policies, deletion controls, or privacy/data lifecycle management for Terminal transaction or customer data. Missing for 10: data retention policy docs, data deletion/export API or dashboard controls, GDPR/CCPA compliance mechanisms specific to Terminal data.",
     "evidenceIds": []
   },
   {
@@ -1798,7 +1802,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions telemetry opt-out or usage-tracking controls for Stripe Terminal; the docs cover payments, hardware, receipts, and MCP/agent tooling but nothing about disabling analytics/telemetry collection.",
+    "rationale": "No evidence anywhere in the pack addresses telemetry/usage tracking opt-out settings for Stripe Terminal; the axis is plausible for a payment/SDK product but no documentation or community source confirms such a control exists.",
     "evidenceIds": []
   },
   {
@@ -1807,13 +1811,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs detail multiple quick registration paths (serial number usable immediately after unboxing, registration code, order number), no-code acceptance, and Dashboard-based reader/location management, directly matching the 'pair and take a payment within minutes' story. Community accounts corroborate that Terminal's hardware/API integration is powerful and solves real in-store pain points for merchants moving off legacy POS hardware.  Missing for 10: independent hands-on timing evidence explicitly confirming a 'within minutes' setup experience.",
+    "rationale": "Docs detail multiple registration methods (serial number, registration code, order number) that work immediately after unboxing, plus no-code Dashboard app and Tap to Pay options for taking a payment quickly, and fleet management via locations/zones. Community evidence corroborates real-world use for in-store payment acceptance. Missing for 10: independent hands-on account of actual pairing time/setup friction and no direct evidence of 'within minutes' onboarding speed claims being verified by third parties.",
     "evidenceIds": [
       "stripe-terminal-docs-5",
       "stripe-terminal-docs-20",
+      "stripe-terminal-docs-44",
       "stripe-terminal-docs-13",
       "stripe-terminal-docs-21",
-      "stripe-terminal-docs-32",
+      "stripe-terminal-docs-26",
+      "stripe-terminal-docs-50",
       "stripe-terminal-docs-4",
       "stripe-terminal-comm-1",
       "stripe-terminal-comm-3"
@@ -1836,11 +1842,17 @@
   {
     "productId": "stripe-terminal",
     "storyId": "reduced-pci-scope",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes Stripe Terminal's SDKs, readers, offline handling, receipts, and fleet management, but nowhere does it mention PCI DSS, PCI scope, certified reader compliance guidance, or vendor documentation on the developer's remaining compliance obligations. missing for 10: any documentation of PCI DSS certification for Terminal readers, explicit vendor guidance on developer PCI scope reduction, and confirmation that card data never touches developer servers/code.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Stripe Terminal's architecture — certified smart readers/Tap to Pay/SDKs that capture card data directly on the device rather than passing it through the merchant's own systems (docs-1, docs-18, docs-19, docs-26, docs-46) — inherently supports minimized PCI scope, and this is the standard value proposition of a certified terminal solution. However, the evidence pack contains no explicit vendor documentation mentioning PCI DSS, SAQ levels, or specific guidance on the developer's remaining compliance obligations. Missing for 10: explicit PCI compliance/SAQ documentation, statement of certified reader PCI validation, and guidance on merchant's residual PCI responsibilities.",
+    "evidenceIds": [
+      "stripe-terminal-docs-1",
+      "stripe-terminal-docs-19",
+      "stripe-terminal-docs-26",
+      "stripe-terminal-docs-46",
+      "stripe-terminal-docs-9"
+    ]
   },
   {
     "productId": "stripe-terminal",
@@ -1862,14 +1874,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly confirm an API-based, server-driven integration path (in addition to SDKs) for building a custom POS, with supporting infrastructure like reader registration, locations/zones, offline payment storage, and a simulated reader for testing without hardware; a hands-on developer account corroborates building a fully custom terminal integration via the API. missing for 10: no independent third-party benchmark of the raw REST/server-driven API surface itself (only docs + one anecdotal HN account).",
+    "rationale": "Docs explicitly describe API-based custom POS integration (server-driven, no SDK required) alongside SDKs for Android/iOS/JS/React Native, plus built-in reader simulator for testing without hardware, and community evidence (Sidestep) confirms real-world developers built custom terminal integrations directly on Stripe's API. missing for 10: no independent hands-on report specifically validating the server-driven (SDK-less) API path in production.",
     "evidenceIds": [
       "stripe-terminal-docs-1",
       "stripe-terminal-docs-18",
-      "stripe-terminal-docs-42",
       "stripe-terminal-docs-9",
-      "stripe-terminal-docs-5",
-      "stripe-terminal-docs-4",
+      "stripe-terminal-docs-46",
       "stripe-terminal-comm-1"
     ]
   },
@@ -1878,12 +1888,11 @@
     "storyId": "simulated-reader-testing",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly state Terminal SDKs and server-driven integration include a built-in simulated card reader for developing/testing without physical hardware, and the Stripe CLI supports building/testing integrations. missing for 10: no independent/hands-on developer account confirming the simulated reader workflow end-to-end, and no detail on test card numbers specific to Terminal.",
+    "confidence": "high",
+    "rationale": "Docs explicitly state Terminal SDKs and server-driven integration come with a built-in simulated card reader for development/testing without physical hardware, and recommend testing with the reader simulator before ordering a physical reader. Missing for 10: independent/hands-on developer corroboration of the simulator workflow and details on simulated test card scenarios (e.g., specific decline/edge-case simulation coverage).",
     "evidenceIds": [
       "stripe-terminal-docs-9",
-      "stripe-terminal-docs-37",
-      "stripe-terminal-probe-5"
+      "stripe-terminal-docs-48"
     ]
   },
   {
@@ -1892,23 +1901,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack describes split-tender functionality (splitting one sale across multiple payment methods or payers); documentation covers tipping, refunds, receipts, offline payments, and fleet management but nothing about multi-tender or split payment splitting at checkout.",
+    "rationale": "No evidence in the pack addresses splitting a single sale across multiple payment methods or multiple payers (e.g., split tender). Stripe Terminal docs cover reader management, tipping, receipts, refunds, offline payments, and Connect integration, but none mention split-tender or multi-payer sale functionality.",
     "evidenceIds": []
   },
   {
     "productId": "stripe-terminal",
     "storyId": "start-accepting-same-week",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm hardware ordering and reader registration/configuration directly from the Dashboard (docs-32, docs-5, docs-20, docs-44) and no-code acceptance options (docs-21, docs-26, docs-31), supporting a founder's ability to get set up for in-person payments quickly. However, there is no evidence describing the account signup/approval process, approval timelines, or shipping/delivery speed for hardware, so the 'same week' claim is unverified.\nmissing for 10: evidence of signup/approval flow and timeline, hardware shipping/delivery speed, independent confirmation of onboarding speed.",
+    "rationale": "Docs confirm hardware can be ordered, registered, and configured directly from the Dashboard (docs-32, docs-5, docs-20, docs-44) and that no-code options let a business start accepting payments immediately without building an integration (docs-21, docs-26, docs-31, docs-46). However, there is no evidence in the pack about the account sign-up/approval flow, KYC/underwriting timelines, or shipping speed that would substantiate 'approved and taking payments the same week.' missing for 10: evidence on account approval/underwriting turnaround, hardware shipping/delivery timelines, and independent confirmation of a same-week setup experience.",
     "evidenceIds": [
       "stripe-terminal-docs-32",
       "stripe-terminal-docs-5",
       "stripe-terminal-docs-20",
       "stripe-terminal-docs-44",
       "stripe-terminal-docs-21",
-      "stripe-terminal-docs-26"
+      "stripe-terminal-docs-26",
+      "stripe-terminal-docs-31",
+      "stripe-terminal-docs-46"
     ]
   },
   {
@@ -1917,11 +1928,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stripe Terminal explicitly documents Tap to Pay on iPhone (and Android) for accepting contactless payments on a compatible off-the-shelf phone without a separate physical reader, directly matching the story. Missing for 10: independent/hands-on confirmation of the Tap to Pay experience specifically (community evidence covers general Terminal use, not Tap to Pay directly).",
+    "rationale": "Stripe Terminal explicitly documents Tap to Pay on iPhone (and Android) for accepting contactless payments on a compatible off-the-shelf phone with no separate reader hardware required, including a no-code Dashboard mobile app option for founders who don't want to build custom integrations. Missing for 10: independent hands-on confirmation specifically of Tap to Pay (community evidence in the pack is about the physical reader hardware/API rather than the phone-only Tap to Pay flow).",
     "evidenceIds": [
       "stripe-terminal-docs-2",
       "stripe-terminal-docs-19",
-      "stripe-terminal-docs-18"
+      "stripe-terminal-docs-47",
+      "stripe-terminal-docs-50",
+      "stripe-terminal-docs-21"
     ]
   },
   {
@@ -1946,7 +1959,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe on-reader tipping with suggested tip prompts before payment collection, plus on-receipt tipping as an alternative, directly matching the story's percentage/smart-amount/custom-tip prompt configuration on the terminal. Missing for 10: no explicit documentation of configuring specific percentage values or 'smart amount' algorithms, nor independent/hands-on merchant confirmation of the tipping UX.",
+    "rationale": "Docs explicitly detail on-reader tipping (reader suggests tip percentages/amounts before payment) and on-receipt tipping, collected before or after authorizing a payment, directly matching the merchant-ops tipping configuration story. Missing for 10: no independent/hands-on confirmation of configuring specific percentage/smart-amount/custom-tip values in the Dashboard, and no evidence of granular UI screenshots or API parameter details for tip customization.",
     "evidenceIds": [
       "stripe-terminal-docs-7",
       "stripe-terminal-docs-14",
