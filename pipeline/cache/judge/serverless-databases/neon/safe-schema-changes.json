@@ -1,14 +1,17 @@
 {
-  "hash": "6e25723e0d7f81597477fc79cedc845a532e6ace5ec437ed0467d1bb78fc62ab",
+  "hash": "0bac72a2981a54c53a6f63924fa7a32d4a403c23ff1992ef4975c5e10c0ae67c",
   "verdict": {
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Neon's branching (copy-on-write branches, instant restore) supports a branch-based workflow for testing schema changes before applying to production, and community confirms this pattern works well in practice (branch off main, test, reset). However there is no documented 'merge back' or schema-diff/merge tooling, no deploy-request workflow, and no explicit online-DDL/zero-downtime-migration guidance in the evidence. Missing for 10: explicit branch-merge or schema-diff tooling, deploy-request/approval workflow, documented online DDL or lock-free migration guarantees, and independent verification of safe production rollout beyond generic branching praise.",
+    "rationale": "Neon's branch-based workflow is explicitly documented as the mechanism for safe schema changes: GitHub Copilot agents (and other agents) 'run safe schema migrations and query optimizations on temporary Neon branches, keeping production untouched until changes are validated,' the MCP server exposes 'Prepare Database Migration'/'Complete Database Migration' tools, and instant restore/branch-reset lets you finalize or roll back without changing connection strings. Community testimony corroborates real-world use of branching to 'branch off main to test things out, and periodically reset the branch to its parent.' Missing for 10: no explicit 'online DDL without locking' engine-level guarantee or PlanetScale-style formal 'deploy request' review workflow, and no independent hands-on report specifically validating zero-downtime production cutover at scale.",
     "evidenceIds": [
       "neon-docs-25",
+      "neon-docs-45",
+      "neon-supp-copilot-agents",
+      "neon-supp-mcp-tool-surface",
+      "neon-docs-44",
       "neon-docs-8",
-      "neon-docs-29",
       "neon-comm-10"
     ],
     "productId": "neon",

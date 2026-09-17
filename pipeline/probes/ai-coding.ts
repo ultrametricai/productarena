@@ -188,4 +188,42 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // Cursor's docs llms.txt index — sectioned agent-surface tree (Agent, cloud-agents, CLI
+      // incl. headless, SDK, API docs); every page mirrors as raw markdown at URL + `.md`.
+      // Added in the 2026-09-15 hot-repos fairness wave (cursor exhaustive pass).
+      probeId: 'llms-docs-index',
+      productId: 'cursor',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://cursor.com/docs/llms.txt | head -4'],
+      displayCommand: 'curl -s https://cursor.com/docs/llms.txt | head -4',
+      expect: /# Cursor Documentation/,
+      timeoutMs: 30_000,
+    },
+    {
+      // The Cloud Agents API v1 ships a downloadable OpenAPI spec — machine-readable schema
+      // for the durable-agent + runs surface (docs/cloud-agent/api/endpoints.md links it).
+      probeId: 'cloud-agents-openapi',
+      productId: 'cursor',
+      storyIds: ['api-machine-spec', 'agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://cursor.com/docs-static/cloud-agents-openapi.yaml | head -4'],
+      displayCommand: 'curl -s https://cursor.com/docs-static/cloud-agents-openapi.yaml | head -4',
+      expect: /title: Cursor Cloud Agents API/,
+      timeoutMs: 30_000,
+    },
+    {
+      // api.cursor.com is live and key-gated exactly as docs/api.md documents: a keyless
+      // GET /v1/me answers 401 "Invalid User API Key" (Basic/Bearer with user or
+      // service-account API keys).
+      probeId: 'api-auth-challenge',
+      productId: 'cursor',
+      storyIds: ['agentic-public-api', 'api-key-auth'],
+      bin: 'curl',
+      argv: ['curl', '-s', '-i', '--max-time', '20', 'https://api.cursor.com/v1/me'],
+      displayCommand: 'curl -si https://api.cursor.com/v1/me',
+      expect: /Invalid User API Key/,
+      timeoutMs: 30_000,
+    },
 ]

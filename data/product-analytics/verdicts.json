@@ -2191,63 +2191,69 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PostHog's Experiments docs explicitly describe defining variants, picking goal metrics, randomizing users, tracking exposures, and running statistics (Bayesian or frequentist) to determine significance, which directly matches the story. Missing for 10: independent/hands-on validation of the statistical reporting accuracy and no community corroboration specific to experiments (only analytics/session-replay community feedback exists).",
+    "rationale": "PostHog's Experiments docs explicitly describe defining variants, picking goal metrics, randomizing users, tracking exposures, and running statistics (Bayesian or frequentist) to get a real answer — directly matching the story. Evidence is first-party docs only (docs-7, docs-23, docs-27, docs-30, docs-33), with no independent/hands-on report specifically validating the stats output. missing for 10: independent/community corroboration of the experiments significance reporting, and no detail on specific significance metrics/UI screenshots shown in evidence.",
     "evidenceIds": [
       "posthog-docs-7",
       "posthog-docs-23",
       "posthog-docs-27",
-      "posthog-docs-30"
+      "posthog-docs-30",
+      "posthog-docs-33"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agent-answers-growth-questions",
-    "verdict": "disputed",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "PostHog documents a first-party MCP server and CLI that let agents run HogQL/SQL queries, ship flags, and answer product questions from live data (posthog-docs-2, posthog-docs-19, posthog-docs-24, posthog-probe-4, posthog-docs-8/17 for SQL, posthog-docs-9 for warehouse queries). However, a hands-on community report describes the LLM/query integration failing to create a cohort via a SQL query and causing severe UI slowdowns, directly contradicting the smooth 'agent answers growth questions via query' promise (posthog-comm-8). missing for 10: independent corroboration that MCP-driven SQL queries reliably work at scale, and resolution of the reported failure/performance bug.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "PostHog has an extensively documented MCP server (mcp.posthog.com) and REST/HogQL query API that let agents run trends, funnels, retention, and SQL queries against live product data, with a live probe confirming the OAuth-gated MCP endpoint is real and reachable. It's corroborated by hosted client support (Claude, Cursor, VS Code, Slack bot), CLI SQL execution, and a documented query endpoint with scoped API keys. missing for 10: no independent third-party hands-on report validating query accuracy/robustness at scale (one community comment notes flaky LLM/cohort behavior in the UI, though not specifically the MCP/API query path).",
     "evidenceIds": [
       "posthog-docs-2",
+      "posthog-docs-8",
       "posthog-docs-19",
-      "posthog-docs-24",
-      "posthog-probe-4",
-      "posthog-docs-9",
-      "posthog-docs-17",
-      "posthog-comm-8"
+      "posthog-supp-mcp-tools-inventory",
+      "posthog-supp-mcp-hosted-clients",
+      "posthog-supp-mcp-scoping",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-scoped-keys",
+      "posthog-probe-6",
+      "posthog-supp-cli-agent-first"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agent-creates-dashboard",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "PostHog has a documented official MCP server and public API (openapi.json) that let an agent run trends, funnels, retention, and SQL queries, ship feature flags, and inspect stack traces from an editor/agent (posthog-docs-2, 12, 19, 24, 31, posthog-probe-4, posthog-probe-3). Dashboard assembly, sharing, and alerting are documented product capabilities (posthog-docs-3, 25), but the evidence never explicitly shows the MCP/API path being used to assemble and publish a full dashboard end-to-end, and a hands-on community report describes the AI/LLM integration failing on a related task (cohort creation) and causing severe UI slowdown (posthog-comm-8), raising doubts about reliability of agent-driven workflows. Missing for 10: explicit documentation/demo of an agent creating and saving a dashboard object (not just insights/queries) via MCP or API, and independent corroboration that this specific end-to-end flow works reliably.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PostHog's hosted MCP server exposes explicit dashboard-related tools (e.g. 'Dashboards (18)' category, 'dashboard-get') plus insight/trends/funnel/SQL tools, and docs describe agents assembling insights and dashboards and sharing/alerting on them via MCP or API (query endpoint, OpenAPI-generated SDKs). PostHog AI is also documented as creating dashboards directly. Missing for 10: an independent hands-on report of an agent building a full dashboard end-to-end (only a tangential community complaint about a different AI feature, cohort creation via SQL, exists).",
     "evidenceIds": [
-      "posthog-docs-2",
       "posthog-docs-3",
-      "posthog-docs-12",
-      "posthog-docs-19",
-      "posthog-docs-24",
-      "posthog-docs-31",
-      "posthog-probe-3",
-      "posthog-probe-4",
-      "posthog-comm-8"
+      "posthog-docs-25",
+      "posthog-supp-mcp-tools-inventory",
+      "posthog-supp-posthog-ai-analyst",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-endpoints-openapi",
+      "posthog-probe-6"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agent-manages-feature-flags",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "PostHog has an official MCP server (posthog-probe-4) and docs explicitly state that 'with just plain text questions your agents can ship a feature flag from a prompt' (posthog-docs-19, posthog-docs-24, posthog-docs-31), showing agent-driven flag creation via MCP. An OpenAPI spec exists (posthog-probe-3) implying REST API access to flags, but no evidence explicitly documents targeting rules or toggling flags via API/MCP endpoints specifically. missing for 10: explicit documentation of flag targeting (cohorts/properties) and toggle actions via MCP/API, and independent hands-on confirmation that agent-driven flag creation works reliably.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "PostHog documents feature-flag tool categories (27 tools) in its MCP server, explicit examples of agents shipping/targeting flags from a prompt ('ship a feature flag from a prompt', '@PostHog add a feature flag ... roll it out to everyone with an @example.com email'), and API access for flags via personal API keys/OAuth scopes plus the CLI. The MCP server is a live, OAuth-gated hosted endpoint confirmed by probe evidence. missing for 10: no explicit hands-on transcript showing an agent toggling an existing flag on/off via MCP, and no independent third-party verification of flag-specific MCP tool behavior.",
     "evidenceIds": [
       "posthog-docs-19",
       "posthog-docs-24",
       "posthog-docs-31",
-      "posthog-probe-4",
-      "posthog-probe-3"
+      "posthog-supp-mcp-tools-inventory",
+      "posthog-supp-mcp-hosted-clients",
+      "posthog-supp-slack-agent",
+      "posthog-supp-scoped-keys",
+      "posthog-probe-6",
+      "posthog-supp-cli-agent-first"
     ]
   },
   {
@@ -2256,14 +2262,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PostHog serves a working llms.txt (probe confirms HTTP 200 with structured content describing the platform) and extensive agent-oriented docs like the MCP integration page (posthog-docs-12, 19, 24, 31) explicitly designed for AI agents/editors to consume. Individual docs pages also expose `.md` variants as seen in citations (e.g., product-analytics.md, session-replay.md), showing a broader agent-readable docs pattern. Missing for 10: a root docs.md aggregate returned 404, so machine-readable coverage isn't perfectly uniform across all docs.",
+    "rationale": "PostHog directly probes and confirms a live llms.txt at posthog.com/llms.txt (HTTP 200), plus extensive agent-oriented docs (MCP server docs, CLI docs, skills specs, OpenAPI specs) explicitly designed for agents to consume and act on. missing for 10: no independent third-party confirmation that agents actually parse/use llms.txt in practice, and docs.md itself 404s (only llms.txt works).",
     "evidenceIds": [
       "posthog-probe-1",
-      "posthog-docs-12",
-      "posthog-docs-19",
-      "posthog-docs-24",
+      "posthog-probe-2",
       "posthog-probe-4",
-      "posthog-probe-2"
+      "posthog-probe-5",
+      "posthog-docs-20",
+      "posthog-supp-ai-plugin"
     ]
   },
   {
@@ -2272,41 +2278,44 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "PostHog markets in-product AI ('PostHog AI', 'self-driving products') that can suggest code fixes from stack traces, auto-write Hog functions, and turn product signals into researched reports/PRs (posthog-docs-12, posthog-docs-28, posthog-gh-1, posthog-probe-1). However a hands-on community report describes the in-app LLM feature failing a basic task (creating a SQL-based cohort) and severely degrading device performance, directly contradicting the polished 'insights on demand' claim (posthog-comm-8). missing for 10: independent corroboration that AI-generated insights/suggestions work reliably at scale, no rebuttal or fix documented for the reported failure.",
+    "rationale": "PostHog ships an in-product AI analyst (PostHog AI) that queries data, builds insights/SQL, and explains findings, plus adjacent AI-generated insight features like Replay Vision and self-driving reports, all documented in depth. However, a hands-on community report describes the LLM feature failing a basic request (couldn't create a SQL-based cohort) and causing severe UI slowdowns, directly contradicting the polish implied by the docs. Missing for 10: independent corroboration that the AI insights actually work reliably in typical use, and resolution of the reported failure/performance bug.",
     "evidenceIds": [
-      "posthog-docs-12",
-      "posthog-docs-28",
-      "posthog-gh-1",
-      "posthog-probe-1",
+      "posthog-docs-35",
+      "posthog-supp-posthog-ai-analyst",
+      "posthog-docs-36",
+      "posthog-supp-self-driving-loop",
       "posthog-comm-8"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "PostHog's CDP pipelines and workflows can run automatically in realtime or on a schedule (posthog-docs-18, posthog-gh-7), with Hog functions optionally written by PostHog AI (posthog-docs-28), and alerts/feature-flag automation exist (posthog-docs-3, posthog-docs-5). However, evidence centers on data-pipeline/workflow automation rather than an AI-native agent explicitly setting up and running autonomous background jobs end-to-end, and one community report notes friction with AI-driven query/cohort creation (posthog-comm-8). Missing for 10: first-party documentation of an AI agent configuring and monitoring a fully autonomous background automation, independent success reports of such automations running unattended.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PostHog's self-driving feature runs an autonomous background loop (scouts detect signals, an agent investigates, drafts fixes, opens PRs) that operates continuously without user prompting, and Workflows lets users configure no-code automations triggered by product behavior that run unattended. This is corroborated by dogfooding evidence (90+ scouts monitoring posthog.com) and a live public skills.zip release. Missing for 10: independent/third-party validation of the self-driving loop's real-world reliability and no community hands-on reports confirming autonomous runs succeed without heavy supervision.",
     "evidenceIds": [
-      "posthog-docs-18",
-      "posthog-gh-7",
-      "posthog-docs-28",
-      "posthog-docs-3",
-      "posthog-comm-8"
+      "posthog-supp-self-driving-loop",
+      "posthog-docs-36",
+      "posthog-supp-workflows",
+      "posthog-docs-41",
+      "posthog-supp-skills-store",
+      "posthog-supp-mcp-analytics"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agentic-builtin-assistant",
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "PostHog documents an in-product AI assistant/agent (\"PostHog AI\") that can write Hog functions, turn product signals into researched reports and PRs, and be steered from Slack/web/desktop/editor (posthog-docs-28, posthog-gh-1, posthog-gh-2), which matches the story of delegating tasks to a built-in assistant. However, a hands-on community report describes the LLM integration failing to perform a requested task (creating a cohort via SQL) and causing severe performance degradation, directly contradicting smooth delegation (posthog-comm-8). Missing for 10: first-party detail on the assistant's task scope/reliability, more independent corroboration of successful delegation, and resolution of the reported failure.",
+    "rationale": "PostHog ships a built-in AI assistant (PostHog AI) living in a chat sidebar and inline UI entry points that can be delegated tasks in plain English — it queries data, builds insights/dashboards/surveys/alerts/flags, and even kicks off coding tasks that produce PRs — with parallel access via Slack bot and Desktop app. However, a hands-on community report describes concrete failures: the assistant incorrectly claimed cohorts can't use SQL queries (a supported feature) and severely degraded local performance after a couple of prompts, contradicting the polished vendor narrative. Missing for 10: independent corroboration beyond one mixed community report, and clarity on how consistently task delegation (vs. simple Q&A) succeeds in practice.",
     "evidenceIds": [
-      "posthog-docs-28",
-      "posthog-gh-1",
-      "posthog-gh-2",
+      "posthog-docs-35",
+      "posthog-supp-posthog-ai-analyst",
+      "posthog-supp-self-driving-loop",
+      "posthog-supp-slack-agent",
+      "posthog-supp-desktop-agents",
       "posthog-comm-8"
     ]
   },
@@ -2314,47 +2323,44 @@
     "productId": "posthog",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "PostHog's CLI is explicitly documented for use in 'local scripts, and CI/CD pipelines' alongside terminal and coding agent use, plus REST/HTTP APIs and OpenAPI spec enable headless automation of data capture, queries, and flag management. missing for 10: independent/hands-on confirmation of CI/CD usage, and no explicit CI example/config shown (e.g., GitHub Actions snippet).",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PostHog documents a CLI explicitly designed for CI/CD pipelines and headless agents, with env-var based headless auth (POSTHOG_CLI_HOST/PROJECT_ID/API_KEY) for environments without a browser, plus programmatic API/SQL query endpoints, OAuth-scoped personal API keys, and an OpenAPI spec for typed clients enabling full automation. The AI wizard's `--ci` mode is explicitly noted as disabled in published builds, and the CLI/MCP tooling is the primary evidenced path for headless use rather than a dedicated 'CI mode' product. missing for 10: independent/hands-on confirmation of the CLI running successfully inside a real CI pipeline, and clarity on why wizard --ci is disabled in production builds.",
     "evidenceIds": [
+      "posthog-supp-cli-agent-first",
       "posthog-docs-20",
-      "posthog-probe-5",
-      "posthog-docs-11",
-      "posthog-probe-3",
-      "posthog-docs-13"
+      "posthog-supp-query-endpoint",
+      "posthog-supp-scoped-keys",
+      "posthog-supp-wizard-signup",
+      "posthog-supp-endpoints-openapi",
+      "posthog-probe-3"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agentic-mcp-client",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "All MCP-related evidence describes PostHog exposing its own MCP server so external AI clients/editors (Claude, Cursor, etc.) can query PostHog's data and tools — the reverse direction of this story. There is no evidence that PostHog itself acts as an MCP client that can plug in external MCP servers to use their tools.",
+    "rationale": "PostHog Desktop's coding agents can be given \"Other MCP servers for services such as issue trackers, design tools, and internal APIs\" alongside PostHog's own MCP server, showing PostHog can consume external MCP tools as a client. However this is documented only briefly for the Desktop app specifically, not as a general platform-wide capability, with no detail on configuration UX, supported server types, or limits, and no independent/hands-on corroboration. Missing for 10: broader documentation of MCP-client support across PostHog products (not just Desktop), configuration details/UX for adding third-party servers, and independent verification that it works in practice.",
     "evidenceIds": [
-      "posthog-docs-2",
-      "posthog-docs-12",
-      "posthog-docs-19",
-      "posthog-docs-24",
-      "posthog-docs-31",
-      "posthog-probe-4",
-      "posthog-gh-2"
+      "posthog-supp-desktop-agents"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "PostHog documents an official MCP server (docs/model-context-protocol) enabling agents to run trends, funnels, HogQL queries, ship feature flags, and pull stack traces directly from MCP clients like Claude, corroborated by the GitHub README describing steering via MCP and a dedicated probe confirming the docs page exists. Missing for 10: independent third-party hands-on validation of the MCP server (only vendor docs/GitHub and one unrelated community complaint about a different AI assistant feature).",
+    "rationale": "PostHog documents a first-party hosted MCP server (mcp.posthog.com/mcp) with extensive tool coverage, OAuth-based auth, scoping, and CLI mode, and this is independently probed (401 with OAuth metadata) confirming it's live rather than just claimed. It works with numerous standard MCP clients (Cursor, Claude, VS Code, Windsurf, Zed, etc.) per posthog-supp-mcp-hosted-clients. missing for 10: no independent hands-on user report of successfully connecting an agent via the MCP server (only vendor docs and infra probes, plus one unrelated community complaint about LLM cohort creation that doesn't concretely test MCP itself).",
     "evidenceIds": [
       "posthog-docs-12",
       "posthog-docs-19",
-      "posthog-docs-24",
-      "posthog-docs-31",
-      "posthog-gh-2",
+      "posthog-supp-mcp-hosted-clients",
+      "posthog-supp-mcp-tools-inventory",
+      "posthog-supp-mcp-cli-mode",
+      "posthog-probe-6",
       "posthog-probe-4"
     ]
   },
@@ -2364,13 +2370,13 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "PostHog documents natural-language operation via its MCP integration—shipping feature flags, running HogQL queries, and debugging stack traces 'from a prompt' or 'plain text questions' (posthog-docs-12, posthog-docs-19, posthog-docs-24, posthog-docs-31, posthog-probe-4). However, a hands-on community report directly contradicts this: a user tried the LLM integration to create a cohort via SQL and it failed with an incorrect response, plus caused severe performance degradation (posthog-comm-8). missing for 10: independent corroboration that the failure was fixed, broader hands-on validation of natural-language commands across other product areas (analytics, experiments, session replay) beyond MCP docs.",
+    "rationale": "PostHog documents extensive natural-language control surfaces (PostHog AI chat, MCP 'plain text questions' to ship flags/run SQL, Slack agent, CLI/wizard) letting users operate the product conversationally, e.g. posthog-docs-35, posthog-supp-posthog-ai-analyst, posthog-docs-19/24/31, posthog-supp-slack-agent. However, a hands-on community report (posthog-comm-8) describes the LLM/natural-language integration failing outright (unable to create a SQL-based cohort despite being asked to) and causing severe UI performance degradation, directly contradicting the polished vendor narrative. Missing for 10: broader independent corroboration that natural-language commands reliably work across products, and no vendor acknowledgment/fix of the reported failure mode.",
     "evidenceIds": [
-      "posthog-docs-12",
+      "posthog-docs-35",
+      "posthog-supp-posthog-ai-analyst",
       "posthog-docs-19",
       "posthog-docs-24",
-      "posthog-docs-31",
-      "posthog-probe-4",
+      "posthog-supp-slack-agent",
       "posthog-comm-8"
     ]
   },
@@ -2378,13 +2384,14 @@
     "productId": "posthog",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "PostHog documents an official CLI usable from terminal, coding agents, local scripts, and CI/CD pipelines, with concrete features like source-map injection/upload for error tracking, and this is corroborated by a dedicated docs page and a probe confirming the CLI documentation is live. missing for 10: independent hands-on community review of the CLI itself (community evidence only covers MCP/LLM features, not the CLI specifically).",
+    "rationale": "PostHog documents a first-party CLI (posthog-cli) installable via npx, usable from terminal, coding agents, scripts, and CI/CD with headless auth, plus a probe confirming the docs page is live; it integrates with the MCP tool catalog and supports source-map upload, schema management, and task CRUD. missing for 10: independent/hands-on community verification of the CLI itself (only vendor docs and a probe corroborate it).",
     "evidenceIds": [
       "posthog-docs-20",
-      "posthog-docs-13",
-      "posthog-probe-5"
+      "posthog-supp-cli-agent-first",
+      "posthog-probe-5",
+      "posthog-docs-13"
     ]
   },
   {
@@ -2393,85 +2400,92 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PostHog has a documented public API (posthog.com/docs/api.md, HTTP capture from any language), a live OpenAPI spec confirmed by probe (openapi.json), an official CLI for terminal/CI/CD use, and a documented MCP server enabling AI agents to run queries, ship flags, and inspect stack traces via plain text — all first-party documented and probe-verified. Missing for 10: independent hands-on corroboration of the API/OpenAPI usage beyond vendor docs and probes.",
+    "rationale": "PostHog documents and exposes a full public REST API with an OpenAPI 3.0 spec (verified live via probe at /openapi.json), scoped personal API keys, a dedicated /query endpoint for HogQL, and Endpoints that generate typed SDK clients, plus CLI and MCP tooling built directly on that API surface, letting AI-native users drive nearly every product surface programmatically. Missing for 10: independent/community corroboration of the raw REST API (beyond MCP/CLI) in real-world agent usage.",
     "evidenceIds": [
-      "posthog-docs-11",
+      "posthog-docs-45",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-scoped-keys",
+      "posthog-supp-endpoints-openapi",
       "posthog-probe-3",
-      "posthog-probe-4",
-      "posthog-probe-5",
-      "posthog-docs-19",
-      "posthog-docs-20",
-      "posthog-docs-12"
+      "posthog-supp-cli-agent-first",
+      "posthog-probe-6"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes scoped or least-privilege API key/credential issuance for agents — the API docs mention basic HTTP event capture and an OpenAPI spec exists, but nothing about permission scoping, token minting with restricted access, or credential management for AI agents specifically.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "PostHog documents personal API keys with individually invalidatable, per-scope grants (e.g. insight:read) plus org-level scope auditing, an OAuth flow for third-party apps to get scoped access without sharing keys, a live OAuth-gated MCP server exposing 150 granular scopes (action:read/write, cohort:read/write, etc., confirmed by probe), and CLI/MCP tool-level scoping via URL params or presets for agent workflows. This directly matches issuing least-privilege credentials for an agent. missing for 10: no independent/hands-on report specifically validating scope enforcement in practice beyond vendor docs and probes.",
+    "evidenceIds": [
+      "posthog-supp-scoped-keys",
+      "posthog-probe-6",
+      "posthog-supp-mcp-scoping",
+      "posthog-supp-cli-agent-first",
+      "posthog-supp-mcp-hosted-clients"
+    ]
   },
   {
     "productId": "posthog",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "PostHog documents official SDKs/APIs (HTTP capture from any language, OpenAPI spec, CLI, MCP server) that let AI-native builders integrate programmatically, including AI-specific tooling like LLM observability SDKs and MCP-based agent workflows (posthog-docs-11, posthog-probe-3, posthog-docs-20/24, posthog-gh-6/9). A hands-on community comment corroborates smooth SDK integration for a Swift iOS app (posthog-comm-3), though another notes friction with LLM/AI query features (posthog-comm-8), suggesting some rough edges. Missing for 10: an explicit enumerated list of officially maintained language SDKs and stronger independent third-party validation of SDK completeness/versioning.",
+    "rationale": "PostHog documents official client/server SDKs used to capture events and instrument products ('any SDK', 'PostHog SDKs client-side and server-side' via the AI wizard across 26+ frameworks/languages), plus OpenAPI-based typed SDK client generation for Endpoints, and independent corroboration of straightforward SDK integration (Swift iOS use case). Missing for 10: an explicit enumerated list of all first-party SDK repos/languages and broader independent hands-on reports across multiple SDKs beyond a single anecdote.",
     "evidenceIds": [
+      "posthog-docs-1",
       "posthog-docs-11",
-      "posthog-probe-3",
-      "posthog-docs-20",
-      "posthog-docs-24",
-      "posthog-gh-6",
-      "posthog-gh-9",
-      "posthog-comm-3",
-      "posthog-comm-8"
+      "posthog-supp-ai-wizard",
+      "posthog-docs-45",
+      "posthog-comm-3"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "agentic-webhooks",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "PostHog's CDP pipelines can send event data to Slack, PagerDuty, and other SaaS destinations, and can filter/reshape events and route them 'wherever it needs to go' in realtime, which implies webhook-style outbound delivery — but no evidence pack item explicitly names 'webhook' as a subscription mechanism or ties this to AI-agent consumption of the event stream. missing for 10: explicit webhook endpoint/subscription documentation, confirmation that arbitrary event streams can be pushed to a caller-defined webhook URL, and any AI-native usage example of subscribing via webhook.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PostHog's CDP explicitly supports generic webhook destinations that 'send events to any HTTP endpoint' filterable by event type/property/SQL, plus dozens of pre-built webhook-style integrations (Slack, PagerDuty, etc.), directly enabling event subscription via webhooks. missing for 10: independent/hands-on confirmation of webhook reliability at scale and no explicit mention of inbound webhook subscription management UI details beyond docs.",
     "evidenceIds": [
-      "posthog-docs-10",
-      "posthog-docs-18",
+      "posthog-supp-realtime-destinations",
       "posthog-intdir-1",
       "posthog-intdir-2",
-      "posthog-gh-7"
+      "posthog-docs-10",
+      "posthog-docs-18"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "analytics-query-api",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "PostHog documents a full HogQL SQL query interface, a data warehouse that lets you query events/persons alongside external sources, a public OpenAPI spec (confirmed live at /openapi.json), and API-based event capture/export, plus MCP support for running queries programmatically. This directly satisfies running analytical queries and pulling raw event data via a documented API. missing for 10: independent/hands-on confirmation of raw event export via REST API specifically (evidence is mostly first-party docs), and no third-party validation of API rate limits/completeness for large-scale export.",
+    "rationale": "PostHog documents a full HogQL/SQL query API (/api/projects/:project_id/query/ with HogQLQuery), an OpenAPI 3.0 spec generator for typed clients, batch exports and realtime CDP destinations for pulling raw event data, and scoped personal API keys for authenticated programmatic access. This is well-documented first-party API/export tooling directly matching the developer story. missing for 10: independent/hands-on developer confirmation of the query API's export limits and pagination workarounds in practice.",
     "evidenceIds": [
-      "posthog-docs-8",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-endpoints-openapi",
+      "posthog-supp-scoped-keys",
+      "posthog-docs-44",
+      "posthog-supp-realtime-destinations",
       "posthog-docs-17",
-      "posthog-docs-9",
-      "posthog-docs-11",
-      "posthog-probe-3",
-      "posthog-docs-24"
+      "posthog-docs-8"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "api-interactive-docs",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The evidence shows PostHog publishes a machine-readable OpenAPI spec (openapi.json) and API docs referencing HTTP-based event capture, which implies some API reference exists, but there is no direct evidence of an interactive reference page with runnable/try-it examples. missing for 10: confirmation of an interactive API console, runnable code snippets, or live 'try it' functionality in the docs.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PostHog exposes a live OpenAPI 3.0 spec (openapi.json probe confirms it) and endpoint-level OpenAPI specs for generating typed clients, which supports an API reference, but there is no evidence of an interactive documentation UI (like Swagger UI/Redoc) with runnable/try-it-now examples embedded in the docs site itself — the closest 'runnable' experience shown is MCP tool calling (call/exec commands) rather than a browsable interactive API reference. missing for 10: evidence of an interactive API reference UI (e.g., Swagger/Redoc try-it-out console) on posthog.com/docs, and independent/hands-on confirmation that examples in the API docs are actually runnable in-browser.",
     "evidenceIds": [
       "posthog-probe-3",
-      "posthog-docs-11"
+      "posthog-docs-45",
+      "posthog-supp-endpoints-openapi",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-mcp-cli-mode"
     ]
   },
   {
@@ -2480,10 +2494,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms PostHog serves a machine-readable OpenAPI spec at https://posthog.com/openapi.json (HTTP 200, contains 'openapi' key), and the API docs reference programmatic access via HTTP. Missing for 10: no explicit first-party docs page describing the OpenAPI spec's usage/versioning or independent community confirmation of its completeness.",
+    "rationale": "PostHog exposes a full OpenAPI 3.0 spec at posthog.com/openapi.json (confirmed live via probe), plus per-endpoint OpenAPI specs for Endpoints that can generate typed SDK clients, documented in posthog-docs-45/posthog-supp-endpoints-openapi. missing for 10: independent third-party corroboration of spec completeness/usability beyond PostHog's own docs and probes.",
     "evidenceIds": [
       "posthog-probe-3",
-      "posthog-docs-11"
+      "posthog-docs-45",
+      "posthog-supp-endpoints-openapi"
     ]
   },
   {
@@ -2491,9 +2506,13 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers self-hosting (Docker Compose/MIT license), MCP integration, feature flags, and experiments, but nothing describes a dedicated sandbox/staging environment or test-mode data isolation from production. Self-hosting is a deployment option, not a sandbox testing feature, so it does not satisfy this story.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows self-hosting via Docker Compose and multiple product/agent features, plus a coding-agent 'sandboxed environment' for making code edits, but there is no documented sandbox/staging PostHog project, test API key mode, or any mechanism to test AI-agent actions (flags, experiments, SQL) against non-production data. Missing for 10: dedicated sandbox/staging environment feature, test-mode API keys, or explicit guidance on isolating AI testing from production analytics data.",
+    "evidenceIds": [
+      "posthog-supp-slack-agent",
+      "posthog-docs-14",
+      "posthog-docs-21"
+    ]
   },
   {
     "productId": "posthog",
@@ -2501,8 +2520,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is an OpenAPI spec probe (posthog-probe-3) confirming an API exists, but no evidence anywhere in the pack of API versioning scheme or a documented deprecation policy for that API.",
+    "rationale": "Evidence shows PostHog publishes OpenAPI 3.0 specs for endpoints and calls MCP tool names 'stable,' but nowhere does the pack describe a versioned API scheme (e.g., v1/v2) or a documented deprecation policy/timeline for breaking changes. Missing for 10: explicit API versioning scheme, a published deprecation policy or changelog, migration guidance for breaking changes, and any independent confirmation of long-term API stability commitments.",
     "evidenceIds": [
+      "posthog-docs-45",
+      "posthog-supp-endpoints-openapi",
+      "posthog-supp-mcp-tools-inventory",
       "posthog-probe-3"
     ]
   },
@@ -2511,11 +2533,13 @@
     "storyId": "autocapture-events",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack discusses capturing custom events via SDKs/HTTP requests and building insights, but nowhere states that PostHog automatically captures clicks, pageviews, or form interactions without instrumenting code (no mention of autocapture). Missing for 10: any documented autocapture feature, evidence of automatic click/pageview/form tracking, or an example of a PM enabling capture with zero code.",
+    "confidence": "low",
+    "rationale": "The evidence pack describes custom event capture via SDKs, HTTP-based event capture, and session replay/DevTools panels, but never mentions PostHog's autocapture-style feature for automatically capturing clicks, pageviews, and form interactions without instrumentation code. Missing for 10: explicit documentation of autocapture configuration/toggle, evidence that pageviews/clicks/form submits are captured by default, and any hands-on confirmation that no per-event code is required.",
     "evidenceIds": [
       "posthog-docs-1",
-      "posthog-docs-11"
+      "posthog-docs-11",
+      "posthog-docs-25",
+      "posthog-docs-26"
     ]
   },
   {
@@ -2524,52 +2548,57 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "PostHog offers SQL for querying/modifying data at scale, a CDP pipeline that can reshape/filter events in bulk, and a CLI/API for scripting operations, which could underpin bulk actions, but there is no explicit documentation of a 'bulk update/delete/tag N items' feature, and a hands-on report shows the AI/SQL interface failing on a basic bulk task (creating a cohort via SQL). missing for 10: explicit bulk-operation API/UI (e.g., mass edit flags, batch delete events), documented bulk-scale limits, and independent confirmation that SQL/CLI bulk actions work reliably for AI-driven workflows.",
+    "rationale": "PostHog documents bulk data movement at scale — batch exports (posthog-docs-44), CDP destinations syncing 50+ tools in bulk (posthog-docs-34), and warehouse syncing whole tables (posthog-docs-9) — plus a query API for running large SQL queries. But there's no documented capability for an AI agent to perform bulk CRUD operations across many discrete items (e.g., batch-update flags, bulk-tag events, bulk-close issues) via MCP or API; the MCP `call` tool and API docs describe single-item operations with explicit pagination/export limits (posthog-supp-query-endpoint notes the query endpoint 'is not a supported export mechanism'). Missing for 10: explicit bulk-item CRUD endpoints/MCP tools, evidence of multi-item batch operations in one call, and independent confirmation of bulk-scale agent workflows.",
     "evidenceIds": [
-      "posthog-docs-8",
+      "posthog-docs-44",
+      "posthog-docs-34",
       "posthog-docs-9",
-      "posthog-docs-10",
-      "posthog-docs-20",
-      "posthog-comm-8"
+      "posthog-supp-query-endpoint",
+      "posthog-supp-mcp-cli-mode"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "PostHog's CDP/Pipelines ('destinations') and alerting system let users define trigger conditions on events (errors, rage clicks, property changes, etc.) that automatically fire actions like Slack alerts, CRM syncs, PagerDuty notifications, or custom Hog functions, and workflows can automate actions/messages to users. missing for 10: no independent/hands-on verification of complex multi-condition automation rules, and no detail on latency/reliability of the automation engine at scale.",
+    "rationale": "PostHog's Workflows product is explicitly a rules engine: 'You decide when a workflow is triggered, who it reaches, and what happens at each step – triggers, delays, audience splits, message sends, and PostHog actions,' running on the events/person properties already captured. This is reinforced by CDP realtime destinations that filter events 'by event types, properties, or any SQL statement' and fire actions (webhooks, Slack, CRM syncs) automatically, plus alerting on insights and the self-driving loop that reacts to signals. Missing for 10: independent/hands-on validation of Workflows in production and more detail on rule complexity/limits beyond vendor docs.",
     "evidenceIds": [
-      "posthog-docs-10",
-      "posthog-docs-18",
-      "posthog-docs-28",
-      "posthog-intdir-1",
+      "posthog-supp-workflows",
+      "posthog-supp-realtime-destinations",
+      "posthog-docs-3",
       "posthog-intdir-2",
-      "posthog-gh-7"
+      "posthog-docs-28"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "PostHog's CDP/pipelines can run 'in realtime or on a schedule' (posthog-docs-18) and GitHub notes 'workflows that automate actions or send messages to your users' (posthog-gh-7), suggesting some recurring automation capability, but there's no documentation of a general-purpose recurring job/workflow scheduler accessible via API, CLI, or MCP for AI-native orchestration. Missing for 10: explicit docs on scheduling arbitrary jobs/workflows via API or agent tooling, cron-like configuration details, and independent confirmation that scheduled pipelines work reliably.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "PostHog documents scheduled/recurring data movement — batch exports 'give you a platform to schedule data exports to supported destinations' and the CDP can send data 'in realtime or on a schedule' — plus Workflows for automating multi-step processes triggered by events/person properties. However, none of this is framed as a general-purpose recurring job/workflow scheduler exposed to an AI-native user via MCP/CLI (e.g. no evidence of cron-like scheduling of arbitrary agent tasks, skills, or MCP tool calls); the closest AI-agent automation loop (Self-driving/scouts) runs continuously in the background rather than being user-scheduled. Missing for 10: user-facing recurring/cron scheduling of arbitrary AI-agent jobs or MCP tool invocations, and independent confirmation of scheduling reliability.",
     "evidenceIds": [
+      "posthog-docs-44",
       "posthog-docs-18",
-      "posthog-gh-7",
-      "posthog-docs-28"
+      "posthog-supp-workflows",
+      "posthog-supp-realtime-destinations"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "automation-versioned-workflows",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "No evidence pack items describe version history, review workflows, or rollback capabilities for automations (feature flags, CDP pipelines, or workflows); feature flags can be toggled off but there's no mention of versioning, diffing, or rollback to a previous version. Missing for 10: version history for flags/pipelines, review/approval workflow, rollback mechanism, audit trail of changes.",
-    "evidenceIds": []
+    "rationale": "PostHog documents version-like mechanics for pieces of its automation stack: Skills are described as 'versioned, reusable instructions for AI agents' with 'every edit creates an immutable version, with base_version concurrency checks' (review/rollback via version history), and the self-driving loop routes agent-made changes through PRs 'you review and merge' (git-native review/revert). Feature flags can be toggled off instantly as a rollback mechanism. However, there's no dedicated versioning/rollback UI for Workflows or CDP destinations, and no explicit 'revert to previous skill version' action documented. Missing for 10: explicit rollback UI/history for Workflows automations, explicit revert action for Skills versions, and independent/hands-on confirmation of rollback working in practice.",
+    "evidenceIds": [
+      "posthog-supp-skills-store",
+      "posthog-supp-self-driving-loop",
+      "posthog-docs-5",
+      "posthog-supp-workflows"
+    ]
   },
   {
     "productId": "posthog",
@@ -2577,26 +2606,30 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PostHog's CDP explicitly supports streaming events to third-party destinations including CRMs (Salesforce, HubSpot), ad platforms, webhooks, and SaaS tools (Braze, Customer.io, Slack, PagerDuty), with real-time or scheduled delivery via configurable Hog functions. missing for 10: independent/hands-on confirmation of destination reliability or throughput, and a full list of supported destinations beyond the named examples.",
+    "rationale": "PostHog's CDP explicitly supports streaming events onward via realtime destinations to CRM (Salesforce, HubSpot), ad platforms, SaaS tools (Braze, Customer.io, Slack, PagerDuty), and generic webhooks (any HTTP endpoint), with filtering, transformation, testing, and monitoring built in (posthog-docs-9, posthog-docs-32, posthog-docs-34, posthog-intdir-1, posthog-intdir-2, posthog-supp-realtime-destinations). Batch exports also support scheduled exports to supported destinations. missing for 10: independent/hands-on third-party validation of specific destination integrations working reliably in production, and no community corroboration of the CDP destinations feature specifically.",
     "evidenceIds": [
+      "posthog-docs-9",
       "posthog-docs-10",
       "posthog-docs-18",
-      "posthog-docs-28",
       "posthog-docs-32",
+      "posthog-docs-34",
       "posthog-intdir-1",
-      "posthog-intdir-2"
+      "posthog-intdir-2",
+      "posthog-supp-realtime-destinations",
+      "posthog-docs-44"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "client-server-sdks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm event capture from \"any SDK\" and from any HTTP-capable language, and community evidence corroborates real-world use of the iOS SDK integrating smoothly, supporting broad SDK coverage across platforms. Missing for 10: an explicit enumerated list of official SDKs per language/platform (web, Android, Node, Python, etc.) and independent confirmation for backend/server SDKs beyond the HTTP API and iOS mention.",
+    "rationale": "PostHog's docs confirm event capture works via 'any SDK' and via HTTP from any language, the AI wizard instruments SDKs across 26+ frameworks/languages, and community evidence confirms real-world success with a Swift iOS integration. However, the pack never enumerates or documents a concrete list of official SDKs per platform (web JS, iOS, Android, Node, Python, etc.) with first-party SDK docs pages, relying instead on generic 'any SDK'/'any HTTP' claims. Missing for 10: explicit first-party documentation/list of official SDKs per major language/platform, mobile SDK specifics beyond one community anecdote, backend SDK examples beyond generic HTTP capture claim.",
     "evidenceIds": [
       "posthog-docs-1",
       "posthog-docs-11",
+      "posthog-supp-ai-wizard",
       "posthog-comm-3",
       "posthog-comm-5"
     ]
@@ -2607,29 +2640,33 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of cookie-based vs cookieless tracking, consent banners, or privacy-compliant capture configuration—only general analytics, session replay, and SDK/API capture details. Without any documentation addressing cookieless tracking or consent-banner avoidance, this axis has no supporting evidence.",
+    "rationale": "The evidence pack covers PostHog's analytics, AI, MCP, CDP, and self-hosting features extensively, but contains no mention of cookieless tracking, first-party/no-cookie identification, IP anonymization, or reducing cookie-consent banner requirements. While this axis is clearly applicable to a product-analytics tool, no evidence supports the claim.",
     "evidenceIds": []
   },
   {
     "productId": "posthog",
     "storyId": "dashboards-api",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "The evidence confirms PostHog exposes a general REST API (openapi.json spec) and documents building/sharing dashboards and insights with alerts, implying programmatic access is plausible, but no citation explicitly documents dashboard/insight CRUD API endpoints or SDK examples for managing them programmatically. missing for 10: explicit API docs/endpoints for creating/updating dashboards and insights, code examples for programmatic dashboard management, independent confirmation of this specific API surface.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PostHog documents a full REST API with OpenAPI 3.0 spec generation, dashboard and insight scopes in personal API keys (e.g. insight:read/write, dashboard scopes visible in OAuth scope list), and query endpoints for programmatic insight creation; the MCP tools inventory explicitly lists 18 Dashboards tools and 40 Experiments tools, and the CLI/wizard can generate insights and dashboards programmatically. missing for 10: a dedicated first-party docs page specifically walking through 'create a dashboard via REST API' with a request/response example, and independent/hands-on confirmation of dashboard CRUD via API outside PostHog's own docs.",
     "evidenceIds": [
-      "posthog-probe-3",
-      "posthog-docs-3",
-      "posthog-docs-25"
+      "posthog-docs-45",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-scoped-keys",
+      "posthog-supp-mcp-tools-inventory",
+      "posthog-supp-endpoints-openapi",
+      "posthog-docs-25",
+      "posthog-probe-6"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "dashboards-builder",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state users can build insights, save them to dashboards, share them, and set alerts (posthog-docs-3, posthog-docs-25), directly matching the story of composing saved insights into shareable dashboards. Missing for 10: no independent/hands-on corroboration of the dashboard-sharing workflow specifically, and no detail on team-level permissions or collaboration features around shared dashboards.",
+    "rationale": "PostHog docs explicitly describe building insights, saving them to dashboards, sharing them, and setting alerts — directly matching the PM story. Missing for 10: no independent/hands-on evidence of team collaboration on dashboards, no detail on permissioning/sharing workflow specifics, and no community corroboration of dashboard composition experience.",
     "evidenceIds": [
       "posthog-docs-3",
       "posthog-docs-25",
@@ -2642,10 +2679,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PostHog docs explicitly describe flagging changes and rolling out to a percentage of users, and targeting by person property, cohort, or group, which directly matches the story. missing for 10: no independent/hands-on corroboration of targeting accuracy or percentage rollout behavior beyond vendor docs.",
+    "rationale": "PostHog's feature flags docs explicitly support rollout by person property, cohort, or group, plus percentage-based gradual rollout (e.g. 1% of users), and MCP tooling extends this to agent-driven flag creation/rollout. Missing for 10: independent/hands-on verification of targeting precision at scale and no community corroboration specifically of flag targeting behavior.",
     "evidenceIds": [
       "posthog-docs-5",
-      "posthog-docs-6"
+      "posthog-docs-6",
+      "posthog-docs-19",
+      "posthog-docs-24"
     ]
   },
   {
@@ -2654,35 +2693,35 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PostHog's product analytics explicitly builds funnels, retention, trends, paths, stickiness, and lifecycle insights on captured events, with dashboards and alerts, all self-serve without requiring an analyst (posthog-docs-15, posthog-docs-25, posthog-docs-1). This directly supports self-service drop-off/activation analysis via funnels. missing for 10: no independent/hands-on evidence of a founder successfully using funnels to diagnose activation drop-off, and no case study demonstrating non-analyst usability in practice.",
+    "rationale": "PostHog's product analytics docs explicitly describe building funnels, retention, and drop-off insights directly from events without needing a data team, plus dashboards/alerts for ongoing monitoring (posthog-docs-15, posthog-docs-25). PostHog AI further lets a non-technical founder ask plain-English questions and get insights/SQL built automatically (posthog-docs-35, posthog-supp-posthog-ai-analyst), reinforcing self-serve analysis. missing for 10: a concrete hands-on example/testimonial of a founder using funnels specifically to diagnose an activation drop-off, and independent (non-vendor) validation of ease-of-use for this exact workflow.",
     "evidenceIds": [
       "posthog-docs-15",
       "posthog-docs-25",
-      "posthog-docs-1",
-      "posthog-docs-3"
+      "posthog-docs-3",
+      "posthog-supp-posthog-ai-analyst",
+      "posthog-docs-35"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "funnel-analysis",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "PostHog docs explicitly state funnels are a first-class insight type built on captured events ('Build trends, funnels, retention, paths, stickiness...') alongside dashboards, alerts, and saved insights, which covers the core funnel-building use case for a PM. However, the evidence pack doesn't explicitly detail funnel-specific filter/breakdown UI mechanics beyond the general mention. Missing for 10: explicit documentation or screenshots of step-level filters and breakdown-by-property configuration within funnels, and independent user validation of funnel usability.",
+    "rationale": "Docs confirm PostHog builds funnels as a core insight type alongside trends, retention, paths, stickiness (posthog-docs-15, posthog-docs-25), which supports the product-manager use case, but the evidence pack never details funnel-specific filtering or breakdown functionality, drop-off visualization, or step conversion analysis. Missing for 10: explicit documentation of funnel filters, breakdown-by-property support, drop-off/step analysis UI, and independent hands-on confirmation that funnels work as described.",
     "evidenceIds": [
       "posthog-docs-15",
       "posthog-docs-25",
-      "posthog-docs-1",
-      "posthog-docs-3"
+      "posthog-docs-1"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "group-account-analytics",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "PostHog documents a group concept for targeting (person property, cohort, or group) used in feature flag rollouts, implying group-level segmentation exists, but the evidence pack never explicitly ties 'groups' to trends/funnels/retention insights or shows account-level rollups in analytics dashboards. missing for 10: explicit docs on group-level funnels/retention insights, account/company entity definition and configuration, examples of B2B account analytics dashboards.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack never mentions PostHog's group/account-level analytics capability (grouping events by company/organization rather than individual user) — only a passing mention of rolling out feature flags 'by group' (posthog-docs-6), which is about flag targeting, not account-level trends/funnels/retention analysis. Since this is a fair and applicable axis for a B2B product-analytics tool, absence of concrete evidence means 'none' rather than 'na'.",
     "evidenceIds": [
       "posthog-docs-6",
       "posthog-docs-15",
@@ -2695,11 +2734,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "There's no first-party documentation of a dedicated bulk-import tool for historical events from another analytics tool, but the data warehouse/CDP features allow syncing external data sources into PostHog for unified querying, and a community comment notes Mixpanel-library compatibility making switching 'really easy.' missing for 10: explicit import API/tool for historical event data, documented data-export ingestion pipeline, and first-party confirmation of the Mixpanel-compatibility claim.",
+    "rationale": "PostHog's generic HTTP capture API (posthog-docs-11) could technically be used to backfill historical events, and community evidence notes Mixpanel-library compatibility to ease switching (posthog-comm-5), while the AI wizard advertises it can 'migrate you from another vendor' (posthog-docs-37). However, there is no dedicated bulk-import/historical-backfill tool, no documented event-timestamp override guidance, and no case study of importing a data export from another analytics tool. Missing for 10: a documented bulk-import or backfill endpoint/tool, guidance on historical timestamp handling, and independent confirmation of a successful cross-platform migration.",
     "evidenceIds": [
-      "posthog-docs-9",
-      "posthog-docs-10",
-      "posthog-comm-5"
+      "posthog-docs-11",
+      "posthog-comm-5",
+      "posthog-docs-37"
     ]
   },
   {
@@ -2708,7 +2747,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers event capture, analytics, session replay, feature flags, experiments, and CDP integrations, but nowhere mentions identify()/alias() calls, distinct_id merging, or cross-device/anonymous-to-identified user reconciliation. This is a standard axis for an event-ingestion/analytics product, but no evidence supports it here. Missing for 10: any mention of identify/alias APIs, anonymous-to-known user merging, or cross-device identity resolution documentation.",
+    "rationale": "The evidence pack contains no mention of PostHog's identify()/alias() functionality, cross-device identity resolution, or merging anonymous pre-signup events into an identified user profile. While this is a core capability area for a product-analytics tool (so the axis applies), nothing in the provided docs, GitHub excerpts, or community items addresses it.",
     "evidenceIds": []
   },
   {
@@ -2717,7 +2756,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "PostHog docs explicitly state dashboards/insights can be saved, shared, and users can 'get alerted when they move' (posthog-docs-3, posthog-docs-25), and alerts can be routed to Slack/PagerDuty (posthog-intdir-2), directly matching the PM story of dashboard subscriptions with abnormal-metric alerts. Missing for 10: no independent/hands-on confirmation of the alerting UX, no detail on anomaly-detection thresholds, and no explicit mention of subscribing to an entire dashboard vs individual insights.",
+    "rationale": "PostHog docs explicitly state you can save insights to dashboards, share them, and get alerted when the numbers move abnormally (posthog-docs-3, posthog-docs-25), plus alert routing to Slack/PagerDuty/monitoring tools (posthog-intdir-2). This directly matches the PM story of subscribing to dashboard alerts. missing for 10: no documentation of subscription mechanics (e.g., email digest cadence, per-user subscription vs org-wide alert), no independent/hands-on confirmation of alert accuracy or anomaly-detection sophistication.",
     "evidenceIds": [
       "posthog-docs-3",
       "posthog-docs-25",
@@ -2727,20 +2766,18 @@
   {
     "productId": "posthog",
     "storyId": "openness-api-parity",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "PostHog exposes a full OpenAPI-documented REST API (posthog-probe-3, posthog-docs-11), an MCP server enabling agents to run queries, ship flags, and inspect errors (posthog-docs-2, -12, -19, -24, probe-4), a CLI for terminal/CI use (posthog-docs-20, probe-5), and SQL access throughout the product (posthog-docs-8, -17), collectively covering analytics, flags, experiments, error tracking, and data warehouse operations programmatically. missing for 10: an explicit vendor statement guaranteeing 1:1 API/UI parity, and independent verification that every UI workflow (e.g. survey building, dashboard sharing) is fully replicable via API without gaps.",
+    "rationale": "PostHog exposes a very broad API surface (OpenAPI spec, personal API keys with granular scopes, a query endpoint for arbitrary SQL/HogQL, an MCP server with 953 tools across 65 product categories, and a CLI/wizard covering most UI-visible products), and probes confirm live OAuth-gated MCP and OpenAPI endpoints — strong evidence of near-parity between API/agent access and the UI. However, the docs themselves admit gaps (query endpoint 'not a supported export mechanism', pagination limits) and one community report describes the AI/LLM interface failing on a specific cohort-creation task, showing real-world friction rather than perfect parity. Missing for 10: independent third-party confirmation of full UI/API feature parity, and resolution of the documented API limitations/community failure report.",
     "evidenceIds": [
-      "posthog-docs-2",
-      "posthog-docs-11",
-      "posthog-docs-12",
-      "posthog-docs-19",
-      "posthog-docs-20",
-      "posthog-docs-8",
+      "posthog-supp-mcp-tools-inventory",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-scoped-keys",
+      "posthog-docs-45",
       "posthog-probe-3",
-      "posthog-probe-4",
-      "posthog-probe-5"
+      "posthog-probe-6",
+      "posthog-comm-8"
     ]
   },
   {
@@ -2749,36 +2786,37 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "PostHog is open-source (MIT-licensed self-host Docker Compose) and exposes data via SQL, an HTTP API, and data-warehouse sync, which together give strong data portability and self-hosting options implying users can retain full control of their data. However, there is no explicit documented 'export all your data' feature or open-format bulk export tool, and no independent evidence of someone successfully exporting/migrating a full production dataset. Missing for 10: explicit bulk-export/download-all-data documentation, confirmation of open standard export formats (e.g., CSV/Parquet dumps), and independent hands-on evidence of a full data migration/exit.",
+    "rationale": "PostHog is open-source/self-hostable (MIT Docker Compose) and offers multiple export paths — batch exports, realtime CDP destinations/webhooks, SQL/HogQL query API, OpenAPI-spec'd endpoints, and personal API keys — which together let a user extract and self-host their data in open formats. However, the query API explicitly warns it 'is not a supported export mechanism' for bulk data, and there's no single documented one-click full-account export/portability guarantee. missing for 10: a dedicated full-account data export/portability doc or tool, independent confirmation that self-hosted data matches cloud data fully, and explicit open-format (e.g. CSV/Parquet) guarantees for bulk exports.",
     "evidenceIds": [
-      "posthog-docs-21",
       "posthog-docs-14",
-      "posthog-docs-8",
-      "posthog-docs-17",
-      "posthog-docs-9",
-      "posthog-docs-11",
-      "posthog-probe-3"
+      "posthog-docs-21",
+      "posthog-docs-44",
+      "posthog-supp-realtime-destinations",
+      "posthog-supp-query-endpoint",
+      "posthog-supp-endpoints-openapi",
+      "posthog-supp-scoped-keys"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "openness-open-license",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "PostHog explicitly documents its open-source nature and MIT-licensed self-host deployment (Docker Compose), with the actual source hosted publicly on GitHub, satisfying the ability to read the product's source under an open license. Missing for 10: no explicit confirmation of the license covering the entire codebase (vs just the self-host component) or independent audit of license terms.",
+    "rationale": "PostHog explicitly states it is open-source, with source hosted at github.com/PostHog/posthog and a free self-host deployment under an MIT license, directly satisfying an AI-native user's ability to read the source under an open license. Missing for 10: independent/community confirmation of full-repo license scope (e.g., whether enterprise-only modules carry a different license) and no third-party audit of license terms.",
     "evidenceIds": [
       "posthog-docs-14",
-      "posthog-docs-21"
+      "posthog-docs-21",
+      "posthog-gh-1"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "openness-self-host",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "PostHog's docs explicitly state the core product is open-source and offers a free MIT-licensed Docker Compose self-host deployment (posthog-docs-14/21), which is a clear ai-native/openness claim. However, a hands-on community report describes the production Dockerfile/posthog:latest image as 'busted' and failing to create a database, requiring significant debugging effort — a concrete contradiction of the self-host claim working out of the box. Missing for 10: independent confirmation the current self-host path works reliably, resolution or acknowledgment of the reported Docker issue, and details on feature parity between self-hosted and cloud versions.",
+    "rationale": "Docs explicitly state PostHog is open-source and offers a free, MIT-licensed Docker Compose self-hosting option (posthog-docs-14, posthog-docs-21), which directly supports self-hosting the core product. However, a hands-on community report describes the production Docker deployment as broken (no database created), indicating real friction in practice. Missing for 10: recent/independent confirmation that the current self-host Docker setup works reliably, and documentation of feature parity between self-hosted and cloud versions.",
     "evidenceIds": [
       "posthog-docs-14",
       "posthog-docs-21",
@@ -2788,13 +2826,15 @@
   {
     "productId": "posthog",
     "storyId": "privacy-data-residency",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack has self-hosting/open-source docs (posthog-docs-14, posthog-docs-21) which relate to deployment flexibility but no mention of data residency/region selection (e.g., EU vs US cloud region choice) for PostHog Cloud. Missing for 10: explicit region/residency selection options, data storage location controls, compliance documentation on where data resides.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "PostHog documents US/EU region selection at signup (--region us flag) and confirms the MCP/auth layer routes to the correct data region (US or EU) based on account, with self-hosting also offered as a full data-residency option. However, evidence only names two regions (US/EU) with no broader residency/localization options, no details on data transfer/compliance certifications, and no independent confirmation of enforcement. missing for 10: broader region choices beyond US/EU, compliance/certification documentation (e.g. GDPR/SOC2 region guarantees), and independent/hands-on verification of residency enforcement.",
     "evidenceIds": [
-      "posthog-docs-14",
-      "posthog-docs-21"
+      "posthog-supp-wizard-signup",
+      "posthog-supp-mcp-hosted-clients",
+      "posthog-docs-21",
+      "posthog-supp-mcp-scoping"
     ]
   },
   {
@@ -2802,8 +2842,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI-training data opt-out or any privacy control preventing customer data from being used to train AI models; nothing in the docs or community items mentions this capability.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers PostHog's analytics, AI agent, MCP, and self-driving features extensively, but contains no mention of any setting, policy, or control letting users opt out of having their data used to train AI models. This is a fair privacy-posture question for any product exposing AI features, but no evidence addresses it.",
     "evidenceIds": []
   },
   {
@@ -2811,8 +2851,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of data retention settings, deletion APIs, GDPR-style data deletion, or retention policy controls anywhere in the docs, CLI, API, or CDP descriptions. This is a fair and expected axis for an analytics/data platform handling user event data, so absence of evidence means the story is unmet rather than inapplicable.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers PostHog's analytics, MCP, AI agent, and API capabilities extensively, but nowhere documents data retention settings, deletion APIs/workflows, or GDPR/CCPA-style data lifecycle controls. As a platform that ingests and stores user event/person data, this axis is clearly applicable, but no evidence shows it being delivered. missing for 10: retention period configuration, person/event deletion tooling or API, compliance/GDPR deletion workflow documentation.",
     "evidenceIds": []
   },
   {
@@ -2820,8 +2860,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers PostHog's product analytics, session replay, feature flags, MCP/CLI integrations, and self-hosting, but contains no mention of an opt-out setting for PostHog's own telemetry/usage tracking (e.g., CLI or SDK phone-home data collection). No documentation or community evidence addresses this capability.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses opting out of telemetry/usage tracking for PostHog itself (e.g., self-host telemetry toggles, anonymized usage reporting settings, or opt-out flags). The privacy-posture axis clearly applies to a data-collection platform like PostHog, but nothing in the evidence documents an opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -2830,27 +2870,26 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "PostHog documents linking session replays directly to flag rollouts and to exceptions/errors ('see the session replays, events, and exceptions from the people who got the flag'), and session replay's synced DevTools panel shows errors at the moment they happened, supporting a PM-style jump from error/event to replay. However, the evidence never explicitly documents jumping from a funnel drop-off step to session replays, only from feature-flag cohorts/exceptions. missing for 10: explicit funnel-to-replay linking documentation, independent/hands-on confirmation of this specific workflow.",
+    "rationale": "PostHog documents strong error/session-replay linkage (AI Observability traces come with 'the user who triggered it, their session replay, and any exceptions the request threw', PostHog AI 'finds the session replay' when answering questions, and feature-flag rollouts let you 'see the session replays, events, and exceptions from the people who got the flag'), which supports jumping from errors to replays. However there is no explicit documentation of clicking from a funnel drop-off step directly into filtered session replays of the affected users.  Missing for 10: explicit funnel-insight-to-replay deep link, independent/hands-on confirmation of this specific PM workflow.",
     "evidenceIds": [
       "posthog-docs-6",
-      "posthog-docs-26",
-      "posthog-docs-16",
-      "posthog-docs-29"
+      "posthog-docs-35",
+      "posthog-supp-ai-observability",
+      "posthog-docs-26"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "retention-cohorts",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "PostHog explicitly ships retention as a core insight type (posthog-docs-15, posthog-docs-25) alongside cohort support elsewhere in the product (posthog-docs-6 references rolling out and analyzing by cohort, posthog-docs-8/17 SQL for custom cohort queries). This directly matches the PM story of measuring retention and slicing by behavioral cohorts, though the evidence doesn't show a dedicated doc excerpt showing retention insight breakdown-by-cohort UI directly. missing for 10: an explicit doc/screenshot showing retention insight with cohort breakdown control, and independent hands-on confirmation of this specific workflow.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PostHog docs explicitly list retention as a built-in insight type alongside trends/funnels/paths, built on events sent to PostHog, and cohorts (behavioral or property-based) are a first-class filter usable across insights, including retention, per feature-flag/cohort docs. Missing for 10: no explicit doc snippet showing 'retention insight filtered by cohort' in the same sentence, and no independent/hands-on evidence of this specific workflow beyond product docs.",
     "evidenceIds": [
       "posthog-docs-15",
       "posthog-docs-25",
       "posthog-docs-6",
-      "posthog-docs-8",
-      "posthog-docs-17"
+      "posthog-docs-1"
     ]
   },
   {
@@ -2859,10 +2898,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms PostHog's session replay lets PMs watch DVR-style recordings with synced DevTools panel (posthog-docs-26, posthog-docs-29, posthog-gh-8), but nothing in the pack mentions input masking, privacy controls, or sensitive-data redaction being applied by default. missing for 10: any documentation of input masking/privacy defaults, evidence of what is masked or how, and confirmation it's on by default rather than opt-in.",
+    "rationale": "The evidence pack documents session replay's DVR-style playback and synced DevTools panel (posthog-docs-26, posthog-docs-4, posthog-gh-8), but nowhere mentions masking of sensitive inputs, passwords, or PII by default. Since the specific privacy/masking capability the story hinges on has no supporting evidence, this axis cannot be credited even though generic replay viewing is well documented.",
     "evidenceIds": [
       "posthog-docs-26",
-      "posthog-docs-29",
+      "posthog-docs-4",
       "posthog-gh-8"
     ]
   },
@@ -2870,28 +2909,28 @@
     "productId": "posthog",
     "storyId": "sql-query-access",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "PostHog documents HogQL, a SQL-like query language, that lets developers directly query raw events with SELECT/FROM/JOIN/WHERE/GROUP BY, and also join across data warehouse sources alongside events/persons/sessions in one SQL query, plus MCP/agent access to run HogQL queries. This is well-documented first-party capability with clear syntax examples. missing for 10: independent hands-on verification of SQL query correctness/performance at scale (one community comment notes LLM confusion with cohorts, not the SQL feature itself).",
+    "rationale": "PostHog documents native HogQL (SQL-equivalent) querying with SELECT/JOIN/WHERE/GROUP BY directly on events, persons, sessions and warehouse-synced data, both in the UI (SQL insights) and via a programmatic /query API endpoint with HogQLQuery kind. This is well-documented first-party across multiple docs pages and the query-endpoint reference. Missing for 10: independent/hands-on community corroboration specifically validating SQL insight query performance/UX (community evidence is mostly about unrelated topics like LLM cohort bugs or old Postgres scaling concerns).",
     "evidenceIds": [
       "posthog-docs-8",
       "posthog-docs-17",
       "posthog-docs-9",
-      "posthog-docs-19",
-      "posthog-docs-24"
+      "posthog-supp-query-endpoint",
+      "posthog-docs-22"
     ]
   },
   {
     "productId": "posthog",
     "storyId": "user-paths",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "PostHog explicitly documents 'paths' insights alongside trends, funnels, retention, stickiness, and lifecycle built on captured events (posthog-docs-15, posthog-docs-25), directly matching the path-analysis story. Missing for 10: no dedicated docs excerpt detailing path-specific configuration (e.g., start/end event anchoring, wildcard grouping) or independent/hands-on validation of the paths feature specifically.",
+    "rationale": "PostHog explicitly ships Paths as a native insight type alongside trends, funnels, and retention, letting PMs explore user navigation before/after a key event (docs-15, docs-25). Missing for 10: no dedicated docs excerpt detailing path-specific configuration (e.g., wildcarding, start/end event targeting) or independent hands-on validation of the Paths feature specifically.",
     "evidenceIds": [
       "posthog-docs-15",
       "posthog-docs-25",
-      "posthog-docs-1"
+      "posthog-docs-3"
     ]
   },
   {
@@ -2900,14 +2939,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PostHog's data warehouse feature lets developers sync external sources (Stripe, Postgres, Salesforce, HubSpot, etc.) and query them alongside native events/persons/sessions in one SQL query, and the CDP allows continuous export of events to external destinations in realtime or on a schedule, satisfying both directions of the sync story. Missing for 10: independent/hands-on verification of the warehouse sync reliability or performance at scale, and clearer documentation of specific export destinations (data warehouses) beyond CRM/Slack examples.",
+    "rationale": "PostHog's data warehouse feature lets developers sync external sources (Stripe, Postgres, Salesforce, HubSpot, etc.) and query them in-product alongside events via SQL, while batch exports and a CDP with 50+ destinations support continuous export of events out to a warehouse or other systems. missing for 10: independent/hands-on confirmation of warehouse sync reliability at scale and no explicit mention of exporting to major warehouses like BigQuery/Snowflake/Redshift by name.",
     "evidenceIds": [
       "posthog-docs-9",
-      "posthog-docs-8",
       "posthog-docs-17",
-      "posthog-docs-18",
-      "posthog-docs-28",
-      "posthog-docs-22"
+      "posthog-docs-44",
+      "posthog-docs-34",
+      "posthog-supp-realtime-destinations",
+      "posthog-docs-8"
     ]
   }
 ]

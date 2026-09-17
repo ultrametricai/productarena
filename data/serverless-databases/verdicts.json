@@ -1469,104 +1469,108 @@
     "productId": "neon",
     "storyId": "agent-provisions-database",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Neon documents a full API (openapi.json, Neon API docs), an official CLI (neon-docs-11/34, confirmed runnable keylessly via npx per probe), and an official MCP server (neon-docs-12/33, confirmed live and functioning with OAuth per probe), covering project/database creation, connection string retrieval, and SQL execution — enabling end-to-end agent-driven provisioning without the dashboard. Missing for 10: no hands-on independent third-party account of a full agent-driven create→connect→schema→query workflow end-to-end via MCP/CLI, only first-party docs and isolated runtime probes.",
+    "rationale": "Neon documents and probes confirm end-to-end agent provisioning: CLI (neon claim create, neon init, neon mcp) or REST API can create a project/database without a human account, write connection strings to .env, and the hosted MCP server (verified live via keyless probes) exposes 113 tools including project/branch creation, run_sql, migrations, and schema inspection - all without touching the dashboard. Read-only/scoped modes and API key scoping further support safe agent automation. missing for 10: independent non-vendor hands-on account of an agent completing the full create-connect-schema-query flow end-to-end.",
     "evidenceIds": [
-      "neon-docs-11",
-      "neon-docs-12",
-      "neon-docs-20",
-      "neon-probe-3",
-      "neon-probe-4",
-      "neon-probe-5",
-      "neon-probe-rt-1",
-      "neon-probe-rt-2"
+      "neon-supp-agent-claim-flow",
+      "neon-docs-47",
+      "neon-supp-cli-agent-setup",
+      "neon-supp-mcp-tool-surface",
+      "neon-probe-rt-2",
+      "neon-probe-6",
+      "neon-probe-7",
+      "neon-docs-38",
+      "neon-docs-11"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agent-safe-sql-operations",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Neon ships an official MCP Server (docs + live runtime probe confirming the hosted endpoint) and CLI that let agents run SQL/schema operations against Neon Postgres, and the MCP server docs likely expose scoped tools (e.g., run_sql, list_projects, migrations) though the evidence pack doesn't detail a read-only vs destructive tool permission split. missing for 10: explicit documentation of separate read-only vs destructive tool scopes/permissions within the MCP server, independent hands-on confirmation of safe-delegation behavior, and evidence of confirmation/guardrails for destructive actions.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Neon's hosted MCP server exposes a documented 113-tool surface with explicit read-only mode (?readonly=true), category scoping, and project scoping, verified keylessly via the list-tools endpoint returning tools tagged readOnlySafe:true and injecting a guardrail notice that write tools are removed. Runtime probes confirm the server is live, OAuth-gated, and the read-only filtering works as documented, directly matching the story of scoped tools distinguishing read-only from destructive actions. missing for 10: independent third-party (non-Neon) hands-on report of an agent actually being blocked from a destructive action in practice, beyond Neon's own docs/probes.",
     "evidenceIds": [
-      "neon-docs-12",
-      "neon-docs-33",
-      "neon-probe-4",
-      "neon-probe-rt-2",
-      "neon-docs-11",
-      "neon-probe-rt-1"
+      "neon-supp-mcp-scoping-readonly",
+      "neon-probe-7",
+      "neon-probe-6",
+      "neon-supp-mcp-tool-surface",
+      "neon-docs-33"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 9,
+    "quality": 10,
     "confidence": "high",
-    "rationale": "Neon has a live llms.txt (HTTP 200, structured markdown index) and a machine-readable docs.md summary page, both directly verified via probes, confirming agent-oriented documentation an AI agent can consume. Missing for 10: no independent/community confirmation of an agent actually using llms.txt successfully.",
+    "rationale": "Neon publishes a top-level llms.txt (verified live via probe returning HTTP 200) plus a full docs/reference/api/llms.txt index, and per-page .md versions of docs (e.g. neon-ts.md, with-an-agent.md, agent-skills.md) explicitly designed for agent consumption; this is corroborated by independent runtime probes.",
     "evidenceIds": [
       "neon-probe-1",
-      "neon-probe-2"
+      "neon-probe-2",
+      "neon-probe-8",
+      "neon-supp-api-llms-index",
+      "neon-docs-41",
+      "neon-docs-42"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Neon provides AI infrastructure (AI Gateway, pgvector, MCP server for agent access) but nothing about Neon itself analyzing a user's data and surfacing AI-generated insights or suggestions (e.g., query optimization tips, anomaly detection, usage recommendations). These are tools for building AI apps on top of Neon, not an in-product insight/suggestion feature.",
+    "rationale": "Neon does offer AI-generated help inside the product: the SQL Editor has AI-powered query writing/optimization/naming assistance, the CLI 'ask' command answers questions from docs, and an AI Gateway/Functions let apps build agentic features on top of data. However, this is mostly AI assisting with writing SQL/queries and platform Q&A rather than the product proactively generating insights or suggestions from the user's actual data content, and the docs explicitly note schema (not data) is shared with the AI. missing for 10: proactive data-content insights/suggestions (e.g., anomaly detection, trend summaries) generated from stored data itself, and independent/hands-on evidence of the AI SQL Editor's quality beyond first-party docs.",
     "evidenceIds": [
-      "neon-docs-5",
-      "neon-docs-15",
-      "neon-docs-33"
+      "neon-supp-sql-editor-ai",
+      "neon-supp-cli-ask",
+      "neon-supp-ai-gateway",
+      "neon-supp-functions-agents",
+      "neon-docs-55"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Neon's evidence covers database infrastructure (branching, autoscaling, functions, MCP server, CLI) but nothing describes a scheduling/trigger/automation mechanism that lets an AI-native user configure work to run autonomously in the background without a live agent invoking it. Neon Functions and the MCP server enable agent-driven interactions, but no cron/trigger/webhook automation feature is documented.",
+    "rationale": "Neon provides real building blocks for autonomous background automation tied to its database: Neon Functions are explicitly pitched as a 'long-running home for AI agents' that stream responses for minutes without lambda-style timeouts, and Neon documents fully automated, unattended project-per-user provisioning/cleanup at scale plus scheduled snapshot creation/restore, driven declaratively via neon.ts and CLI deploy commands. These are genuine autonomous, background-running capabilities rather than just interactive agent assistance, but Functions and AI Gateway are labeled beta, there's no dedicated cron/scheduler UI beyond snapshot scheduling, and no independent/hands-on evidence confirms these automations running unattended in production. Missing for 10: GA (non-beta) status for Functions/AI Gateway, a general-purpose scheduler beyond snapshots, and independent corroboration of autonomous background runs.",
     "evidenceIds": [
-      "neon-docs-3",
-      "neon-docs-12",
-      "neon-probe-rt-2"
+      "neon-supp-functions-agents",
+      "neon-supp-branching-for-agents",
+      "neon-supp-neon-ts-config",
+      "neon-supp-mcp-tool-surface",
+      "neon-docs-52"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Neon offers an AI Gateway for routing to external AI models and an MCP server so external AI agents can control Neon, but there is no evidence of a built-in AI assistant inside the Neon console/product itself that users can delegate tasks to.",
+    "rationale": "Neon documents a built-in AI assistant in two places: the SQL Editor's AI-powered features for writing/optimizing/naming SQL queries (sharing schema, not data, with an LLM) and the CLI's `neon ask` command, which answers questions from Neon's docs. These let a user delegate discrete query-writing/optimization or documentation-lookup tasks to an in-product assistant, but the `ask` assistant explicitly 'doesn't touch your projects or account,' so it can't execute broader account/database actions — deeper task delegation (migrations, provisioning) is routed through the external MCP server/agent integrations rather than a built-in assistant. Missing for 10: evidence of a built-in assistant that can execute broader in-product actions (not just SQL suggestions/doc Q&A) and independent/hands-on corroboration of these AI features.",
     "evidenceIds": [
-      "neon-docs-5",
-      "neon-docs-21",
-      "neon-docs-12",
-      "neon-docs-33"
+      "neon-supp-sql-editor-ai",
+      "neon-supp-cli-ask"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Neon ships a documented CLI and REST API usable non-interactively (API-key auth), plus a GitHub Actions integration for branch-per-PR workflows, and a runtime probe confirms the CLI can be invoked keylessly via npx (`npx -y neon@latest --version`), supporting scripted/CI use. Missing for 10: explicit CI/GitHub Actions workflow YAML examples in the evidence pack and a probe showing authenticated (API-key) command execution in a pipeline context.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Neon provides a documented, keylessly-runnable CLI (verified via npx running without an account), a full Management API with API keys/OpenAPI spec, neon.ts config plus @neon/config-runtime for calling the same plan/apply logic from scripts or CI, and CLI subcommands (init -y --agent, claim, mcp) explicitly designed for unattended/automated setup. This directly supports headless/CI automation workflows. missing for 10: no explicit third-party CI pipeline (e.g. GitHub Actions) walkthrough or independent report confirming CI usage in production beyond first-party docs and probes.",
     "evidenceIds": [
-      "neon-docs-11",
-      "neon-docs-34",
+      "neon-probe-rt-1",
+      "neon-supp-neon-ts-config",
+      "neon-supp-cli-agent-setup",
       "neon-docs-20",
-      "neon-docs-38",
-      "neon-docs-18",
-      "neon-docs-35",
-      "neon-probe-5",
-      "neon-probe-rt-1"
+      "neon-supp-api-key-scoping",
+      "neon-docs-47"
     ]
   },
   {
@@ -1575,37 +1579,46 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Neon is a database platform, not an agentic client application — the story asks whether Neon can consume external MCP servers' tools, which is a category mismatch. Evidence instead shows Neon ships an official MCP *server* (neon-docs-12/33, neon-probe-4) for other agents to use, i.e. the reverse role, so this client-side axis does not apply.",
+    "rationale": "Neon is a database/backend platform, not an agent or orchestrator that consumes external tools — the evidence shows Neon ships its own MCP server for other AI agents to connect to (client role belongs to Claude, Cursor, etc.), not that Neon itself plugs into external MCP servers to use their tools. This 'MCP-client' axis is a category error for a database platform's product role.",
     "evidenceIds": []
   },
   {
     "productId": "neon",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Neon publishes an official MCP server, documented at neon.com/docs/ai/neon-mcp-server, and a runtime probe confirms the hosted endpoint (mcp.neon.tech/mcp) is live and correctly implements the MCP OAuth handshake. Missing for 10: independent/community hands-on reports of an agent successfully using the MCP server in production workflows.",
+    "rationale": "Neon documents and runtime-probes confirm a live official hosted MCP server (mcp.neon.tech/mcp) with OAuth-gated auth, a 113-tool surface, read-only/category/project scoping verifiable keylessly, and CLI installers (`neon mcp`) that wire the official server into major coding agents (Cursor, Claude Code, Codex, etc.). Independent runtime probes corroborate the endpoint is live and speaks the documented MCP OAuth flow. Missing for 10: independent third-party (non-probe) hands-on report of an agent successfully using the server end-to-end.",
     "evidenceIds": [
       "neon-docs-12",
-      "neon-docs-33",
+      "neon-docs-43",
+      "neon-docs-49",
       "neon-probe-4",
-      "neon-probe-rt-2"
+      "neon-probe-rt-2",
+      "neon-probe-6",
+      "neon-probe-7",
+      "neon-supp-mcp-tool-surface",
+      "neon-supp-mcp-scoping-readonly",
+      "neon-supp-mcp-transport"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Neon ships an official MCP server (hosted, live per runtime probe with OAuth flow) and a CLI, both of which let AI agents/natural-language tools operate the database (create branches, run queries, manage projects) via MCP tool calls rather than requiring raw SQL/API calls. This supports agentic/natural-language operation but the evidence doesn't show a first-party conversational NL interface (e.g., a chat UI translating plain English to SQL) beyond MCP-mediated tool use. missing for 10: no evidence of a native NL-to-SQL/chat interface distinct from MCP tool-calling, no independent/hands-on account of an agent successfully operating Neon end-to-end via natural language.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Neon supports natural-language operation through its hosted MCP Server (113 tools, scoped/read-only modes, verified live via probes) that lets AI agents/clients query and manage databases in natural language, plus the CLI's `neon ask` natural-language assistant and SQL Editor's AI query generation. Coverage spans multiple official surfaces (MCP, CLI ask, SQL editor AI) with runtime probe corroboration. missing for 10: no independent/community hands-on evidence of end-to-end natural-language task completion (only vendor docs and probes), and some features (AI Gateway, MCP hosted server) are explicitly beta/deprecated in places.",
     "evidenceIds": [
       "neon-docs-33",
-      "neon-docs-34",
-      "neon-probe-4",
-      "neon-probe-5",
-      "neon-probe-rt-1",
-      "neon-probe-rt-2"
+      "neon-docs-46",
+      "neon-supp-mcp-tool-surface",
+      "neon-supp-mcp-scoping-readonly",
+      "neon-probe-rt-2",
+      "neon-probe-6",
+      "neon-probe-7",
+      "neon-supp-sql-editor-ai",
+      "neon-supp-cli-ask"
     ]
   },
   {
@@ -1614,12 +1627,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon documents and ships an official CLI (neon/neonctl), confirmed both in docs and a hands-on runtime probe showing `npx neon@latest --version` working keylessly. Missing for 10: independent community commentary specifically evaluating the CLI's AI-native workflows/UX.",
+    "rationale": "Neon ships a well-documented official CLI (`neon`) covering project/branch management, AI-agent setup (`init`, `mcp`, `skills`, `plugins`, `ask`, `claim`, `api-keys`), with unattended/agent flags (`-y --agent`) explicitly for AI-native workflows, and this was independently verified by a keyless runtime probe (`npx -y neon@latest --version`) confirming it works without an account. Missing for 10: no independent third-party (non-vendor) review of CLI usability/agenticness beyond the single runtime probe.",
     "evidenceIds": [
       "neon-docs-11",
       "neon-docs-34",
-      "neon-probe-5",
-      "neon-probe-rt-1"
+      "neon-supp-cli-agent-setup",
+      "neon-supp-cli-ask",
+      "neon-docs-47",
+      "neon-docs-56",
+      "neon-probe-rt-1",
+      "neon-probe-5"
     ]
   },
   {
@@ -1628,52 +1645,59 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon publishes a documented public REST API (neon-docs-20/38) backed by a live OpenAPI spec (neon-probe-3), plus an llms.txt and docs.md tailored for AI agents (neon-probe-1, neon-probe-2), enabling programmatic control of projects, branches, etc. Missing for 10: independent hands-on verification of API usage beyond probes and richer coverage of API scopes/rate limits.",
+    "rationale": "Neon publishes a documented, OpenAPI-specified public Management API (neon.com/docs/reference/api, openapi.json, llms.txt index with per-endpoint docs), plus API key scoping, CLI, and SDKs, and this was independently probed live returning HTTP 200 with real endpoint documentation. missing for 10: no independent third-party (non-Neon) hands-on report of building an integration purely against the raw REST API to fully corroborate beyond docs/probes.",
     "evidenceIds": [
       "neon-docs-20",
       "neon-docs-38",
       "neon-probe-3",
-      "neon-probe-1",
-      "neon-probe-2"
+      "neon-supp-api-llms-index",
+      "neon-probe-8",
+      "neon-supp-api-key-scoping"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Neon's hosted MCP server enforces an OAuth-protected-resource flow (401 + WWW-Authenticate + resource_metadata) rather than handing over a full-account API key, and the 'Claimable database integration' guide suggests a mechanism for issuing scoped, per-project credentials to external/agent consumers. However, there is no explicit documentation of configurable least-privilege scopes (e.g., read-only, project-limited API keys) for general API/agent use beyond the MCP OAuth flow. Missing for 10: explicit docs on granular API-key scoping/roles, examples of issuing a restricted key specifically for an agent, and independent confirmation that the MCP OAuth tokens are least-privilege rather than full-account.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Neon provides project-scoped and organization-scoped API keys with immediate revocation (neon-supp-api-key-scoping), plus MCP-server-level least-privilege controls (read-only mode, category scoping, project scoping) that are independently verified via a live probe returning a scoped, read-only tool grant (neon-probe-7, neon-supp-mcp-scoping-readonly). The MCP tool surface itself even exposes 'Issue a scoped credential on the branch' tooling for agents (neon-supp-mcp-tool-surface), directly matching the story. missing for 10: no independent/community corroboration of scoped-credential issuance in practice beyond vendor docs and probes.",
     "evidenceIds": [
-      "neon-probe-rt-2",
-      "neon-docs-22",
-      "neon-docs-20",
-      "neon-docs-33"
+      "neon-supp-api-key-scoping",
+      "neon-supp-mcp-scoping-readonly",
+      "neon-probe-7",
+      "neon-probe-6",
+      "neon-supp-mcp-tool-surface",
+      "neon-docs-56"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Neon documents an official serverless driver (JS/TS) and a full REST API with a published OpenAPI spec, plus a CLI and MCP server for programmatic/agentic access, giving AI-native builders official tooling to integrate against. Missing for 10: multi-language official SDKs beyond the JS serverless driver, and independent/hands-on validation of SDK ergonomics or completeness.",
+    "rationale": "Neon documents an official serverless driver (JS/TS) for Postgres access, a full REST Management API with published OpenAPI spec for codegen, and an official CLI/MCP tooling explicitly designed for AI-agent integration, giving AI-native developers first-party SDK-like building blocks. missing for 10: explicit multi-language SDK coverage (e.g. Python, Go) beyond the JS/TS serverless driver, and independent hands-on validation of SDK ergonomics.",
     "evidenceIds": [
       "neon-docs-14",
       "neon-docs-20",
       "neon-probe-3",
-      "neon-docs-11",
-      "neon-docs-12"
+      "neon-supp-api-llms-index",
+      "neon-docs-11"
     ]
   },
   {
     "productId": "neon",
     "storyId": "agentic-webhooks",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "No evidence of a webhooks subscription feature for Neon events (e.g., project/branch/compute state changes); Neon's API, CLI, and MCP server are documented but no webhook/event-subscription mechanism appears anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "Neon documents webhooks only within its Managed Better Auth module — for authentication events like sign-up/login, enabling custom server logic and replacing email delivery channels — with per-branch isolated auth environments for testing. There's no evidence of a general-purpose webhook subscription system covering broader platform events (branch creation, project lifecycle, compute state changes), which would matter for an AI-native/agentic workflow. Missing for 10: platform-wide event webhook catalog, payload/signing documentation, and evidence of subscribing to non-auth events like branch or compute state changes.",
+    "evidenceIds": [
+      "neon-docs-54",
+      "neon-supp-auth-webhooks",
+      "neon-docs-53"
+    ]
   },
   {
     "productId": "neon",
@@ -1681,11 +1705,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Neon is positioned as serverless Postgres with branching, autoscaling, read replicas, and connection pooling, but the evidence pack contains no mention of columnar storage, OLAP-optimized query engine, materialized views, or any benchmark showing fast large-table aggregation performance suitable for dashboards. Community commentary even raises concerns about storage/compute separation introducing latency, but this doesn't rise to a concrete contradiction of a specific claim—there's simply no claim to contradict.",
+    "rationale": "Neon's evidence pack documents OLTP-oriented Postgres features (branching, autoscaling, read replicas, connection pooling, pgvector) but contains no evidence of columnar storage, OLAP query acceleration, materialized views, or any benchmark showing fast aggregation over large tables for dashboard workloads. Community commentary even raises latency concerns from Neon's storage/compute separation, but nothing directly confirms or denies dashboard-scale aggregation performance, so this is unevidenced rather than a documented failure.",
     "evidenceIds": [
       "neon-docs-16",
-      "neon-docs-10",
-      "neon-docs-13",
+      "neon-docs-28",
       "neon-comm-2",
       "neon-comm-3"
     ]
@@ -1693,14 +1716,16 @@
   {
     "productId": "neon",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Neon has an API reference and OpenAPI spec (neon-docs-20/38, neon-probe-3), but no evidence describes an interactive, runnable-example experience (e.g., in-browser 'try it' consoles) for that API reference.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Neon publishes a Management API reference and a machine-readable OpenAPI spec (openapi.json) plus an LLM-addressed endpoint index with per-endpoint doc pages, which could support interactive exploration, but no evidence describes a 'try it now' console or runnable code examples embedded in the docs. Missing for 10: explicit interactive 'run this request' UI, live code sandboxes/snippets execution, and any independent confirmation of runnable examples in the API reference.",
     "evidenceIds": [
       "neon-docs-20",
       "neon-docs-38",
-      "neon-probe-3"
+      "neon-probe-3",
+      "neon-supp-api-llms-index",
+      "neon-probe-8"
     ]
   },
   {
@@ -1709,11 +1734,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon publishes a live OpenAPI spec at https://neon.com/openapi.json (confirmed by probe returning HTTP 200 with an 'openapi' key), plus a documented reference API page, satisfying a machine-readable API spec download for AI-native tooling. Missing for 10: no independent/community corroboration of third-party consumption of the spec.",
+    "rationale": "Neon publishes a live, machine-readable OpenAPI spec (neon.com/openapi.json, confirmed via probe to return HTTP 200 with an 'openapi' key) plus a full Management API reference with an LLM-addressed endpoint index (llms.txt) linking to neon.com/api_spec/release/v2.json for codegen/validation. This directly satisfies the story of downloading a machine-readable API spec. Missing for 10: independent/community confirmation of using the OpenAPI spec for codegen in practice (all evidence is first-party docs/probes).",
     "evidenceIds": [
       "neon-probe-3",
       "neon-docs-20",
-      "neon-docs-38"
+      "neon-docs-38",
+      "neon-supp-api-llms-index",
+      "neon-probe-8"
     ]
   },
   {
@@ -1722,26 +1749,29 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Neon's branching feature (instant copy-on-write branches of a Postgres database) is explicitly designed to let users spin up isolated environments to test changes without touching production data, and community users corroborate this exact workflow ('We can branch off the main database to test things out, and periodically reset the branch to its parent'). Docs on branching, instant restore, and claimable database integration further support safe, disposable test environments. missing for 10: independent hands-on verification of data isolation guarantees at scale, and explicit documentation of a dedicated 'sandbox' mode distinct from branching terminology.",
+    "rationale": "Neon's branching model creates isolated, ephemeral database copies (including isolated auth environments) for testing without touching production, and this is explicitly documented for agentic workflows: 'run safe schema migrations and query optimizations on temporary Neon branches, keeping production untouched until changes are validated,' and 'Every database branch gets its own isolated auth environment, so you can test sign-up, login, and OAuth flows in preview or CI branches without touching production.' The MCP server and CLI expose branch creation/reset/restore programmatically for agents, and community evidence corroborates branching for test/reset workflows (neon-comm-10). missing for 10: independent hands-on verification specifically confirming data isolation guarantees under agent-driven test workflows, and no case study showing an AI agent using this sandbox pattern end-to-end in production.",
     "evidenceIds": [
+      "neon-docs-45",
+      "neon-docs-53",
+      "neon-supp-copilot-agents",
+      "neon-supp-branching-for-agents",
       "neon-docs-25",
-      "neon-comm-10",
-      "neon-docs-8",
-      "neon-docs-22",
-      "neon-docs-1"
+      "neon-comm-10"
     ]
   },
   {
     "productId": "neon",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Neon has a documented REST API and OpenAPI spec (neon-docs-20, neon-probe-3), but nothing in the pack mentions API versioning scheme or a documented deprecation policy for breaking changes.",
+    "rationale": "Neon's Management API is versioned (base URL /api/v2) with a full OpenAPI spec and machine-readable endpoint index, and the MCP server docs show a concrete, dated deprecation policy (SSE endpoint deprecated, stops working Oct 1 2026; stdio package deprecated in favor of hosted server). This is real evidence of versioning plus at least one documented deprecation timeline, but there's no broader, general-purpose deprecation policy statement covering the core Management/Data APIs themselves. Missing for 10: an explicit general API deprecation/versioning policy page for the core Management API (not just MCP transport), and independent confirmation that deprecated versions are supported for a stated period.",
     "evidenceIds": [
-      "neon-docs-20",
-      "neon-docs-38",
-      "neon-probe-3"
+      "neon-supp-mcp-transport",
+      "neon-probe-8",
+      "neon-supp-api-llms-index",
+      "neon-probe-3",
+      "neon-docs-20"
     ]
   },
   {
@@ -1750,39 +1780,55 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Neon documents self-serve 'Instant restore' via branch/restore, which lets founders roll back a database without vendor support, satisfying the restore half of the story. However, there is no evidence of a traditional scheduled-backup mechanism with a visible/configurable schedule (Neon's architecture is continuous storage/branching rather than periodic backup jobs), so the 'schedule I can see and configure' part is unaddressed. Missing for 10: documentation of backup schedule visibility/configuration, retention policy controls, or backup frequency settings.",
+    "rationale": "Neon documents self-serve 'Instant restore' via branch-based point-in-time recovery (neon-docs-8/29) and its continuous WAL storage architecture (neon-gh-5), and the MCP tool surface exposes snapshot create/restore/schedule tools (neon-supp-mcp-tool-surface), suggesting some backup scheduling capability. However there's no dedicated docs page showing a founder-facing backup schedule UI/config (retention windows, frequency settings) distinct from continuous point-in-time recovery — Neon's model is largely continuous rather than a visible/configurable schedule. Missing for 10: a documented backup-schedule dashboard/settings page, explicit retention/frequency configuration options, and independent confirmation that restores work reliably in practice.",
     "evidenceIds": [
       "neon-docs-8",
       "neon-docs-29",
-      "neon-docs-25"
+      "neon-supp-mcp-tool-surface",
+      "neon-gh-5"
     ]
   },
   {
     "productId": "neon",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "Neon offers an API, CLI, and MCP server (neon-docs-20/34/33) that could in principle be scripted for bulk actions, but no evidence pack item documents batch/bulk endpoints, bulk branch/project creation, or any explicit bulk-operation capability across many items at once.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Neon supports bulk/programmatic operations mainly at the infrastructure level — the Management API and MCP server expose project/branch lifecycle operations (create/delete/restore) and Neon explicitly documents managing 'tens of thousands (in some cases, millions) of projects programmatically through the Neon API' for project-per-user platforms, plus scoped API keys for automation. However, there is no evidence of bulk operations on data/rows within a database (e.g., batch SQL execution across many records/tables in one call beyond standard SQL, or a dedicated bulk-import/bulk-update tool) — the MCP tools are largely single-item (create/restore/delete one project/branch at a time) rather than an explicit multi-item batch primitive. missing for 10: evidence of a dedicated bulk/batch API endpoint or MCP tool operating on many items in a single call, and independent/hands-on confirmation of bulk operations at scale beyond vendor docs.",
+    "evidenceIds": [
+      "neon-docs-50",
+      "neon-supp-branching-for-agents",
+      "neon-supp-mcp-tool-surface",
+      "neon-supp-api-llms-index",
+      "neon-supp-api-key-scoping"
+    ]
   },
   {
     "productId": "neon",
     "storyId": "automation-rules-engine",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "No evidence of Neon supporting event-driven rule/action automation (e.g., webhooks, triggers-as-a-service, or rule engines) is present; the evidence pack covers branching, scaling, Functions, storage, and MCP/CLI tooling but nothing about defining automatic rule-based triggers on events.",
-    "evidenceIds": []
+    "rationale": "Neon documents auth webhooks that let you 'handle authentication events with custom server logic' (e.g., replacing email delivery on sign-up/login events) and Neon Functions expose a 'triggers' concept for deploying code that reacts to events, but these are narrow, single-domain integrations rather than a general-purpose rules/automation engine for arbitrary events across the platform. Missing for 10: a documented general event-rule system spanning database changes, branch lifecycle, or API events (not just auth), and independent/hands-on evidence that these triggers reliably fire actions in production.",
+    "evidenceIds": [
+      "neon-docs-54",
+      "neon-supp-auth-webhooks",
+      "neon-supp-mcp-tool-surface",
+      "neon-supp-functions-agents"
+    ]
   },
   {
     "productId": "neon",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence that Neon offers scheduled/recurring job or workflow capabilities (e.g., pg_cron support, cron-like triggers, or workflow scheduling); the evidence pack covers branching, scaling, storage, and connectivity but nothing about job scheduling.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only evidence of any scheduling capability is the MCP tool surface listing snapshot management as \"create/restore/schedule\", implying Neon can schedule recurring database snapshots — but there's no evidence of a general-purpose recurring job/workflow scheduler (e.g., cron-like task execution, scheduled function runs, or workflow orchestration) that an AI-native user could hook arbitrary automation into. missing for 10: a documented generic job/workflow scheduler, recurring trigger configuration beyond snapshots, and any independent confirmation of scheduled automation working end-to-end.",
+    "evidenceIds": [
+      "neon-supp-mcp-tool-surface",
+      "neon-supp-functions-agents",
+      "neon-supp-branching-for-agents"
+    ]
   },
   {
     "productId": "neon",
@@ -1813,14 +1859,16 @@
     "productId": "neon",
     "storyId": "branch-reset-restore",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Neon's docs explicitly document 'Instant restore' for branches (branch-restore) and 'Branching' overview, and a community user confirms real-world usage: 'we branch off the main database to test things out, and periodically reset the branch to its parent.' This directly matches the story of resetting/restoring a branch without dump-based rebuilds. Missing for 10: no first-party CLI/API example walkthrough of the exact reset-to-parent command cited directly in the pack.",
+    "rationale": "Neon docs explicitly cover 'Instant restore' for branches and reset/restore branch tooling is corroborated by the MCP tool surface ('reset/restore branches', 'Finalize branch restore from snapshot') and by a community report of periodically resetting a branch to its parent in production use. missing for 10: a first-party CLI/API code example walking through the exact reset-to-parent command and independent hands-on verification beyond the one community comment.",
     "evidenceIds": [
       "neon-docs-8",
       "neon-docs-29",
       "neon-docs-25",
-      "neon-comm-10"
+      "neon-supp-mcp-tool-surface",
+      "neon-comm-10",
+      "neon-supp-branching-for-agents"
     ]
   },
   {
@@ -1828,11 +1876,15 @@
     "storyId": "builtin-connection-pooling",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Neon documents a built-in connection pooler (PgBouncer-based) enabled via a dedicated pooled connection endpoint, described in official docs as a first-class feature (neon-docs-13/30), eliminating the need to operate a separate pgbouncer/proxy. missing for 10: independent hands-on benchmarks proving thousands-of-connections scale, and no community corroboration specifically about pooler behavior under load (community comments focus on branching/pricing/storage, not pooling).",
+    "confidence": "medium",
+    "rationale": "Neon documents built-in connection pooling (PgBouncer-based, per Neon's docs) as a standard feature (neon-docs-13/30), so platform engineers do not need to run their own pooler/proxy; this is reinforced by the serverless driver and autoscaling docs which imply high concurrent connection handling without external infra. missing for 10: no explicit numeric concurrency benchmarks (e.g., 'thousands of connections') and no independent/hands-on report validating pooling behavior under load.",
     "evidenceIds": [
       "neon-docs-13",
-      "neon-docs-30"
+      "neon-docs-30",
+      "neon-docs-14",
+      "neon-docs-31",
+      "neon-docs-10",
+      "neon-docs-26"
     ]
   },
   {
@@ -1841,28 +1893,36 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Neon's branching is a first-class feature with docs, API, CLI, and GitHub integration explicitly designed for automated branch creation/teardown per PR (Neon API, Neon CLI, GitHub integration docs), and community evidence confirms real-world use of branching to test changes and reset to parent. Missing for 10: a concrete third-party CI/CD platform (e.g., Vercel preview or GitHub Actions) walkthrough or hands-on confirmation of automated PR-triggered teardown beyond docs/API existence.",
+    "rationale": "Neon documents branching as a core primitive with full API/CLI support (create/reset/restore branches), a first-party GitHub integration for automated per-PR branch workflows, TTL-based auto-expiring branches configurable via neon.ts, and a project-per-user/branch-per-PR pattern explicitly documented for CI/CD and platform automation at scale. The Neon API and CLI also allow scripted teardown, and MCP/agent tooling further supports automated branch lifecycle management. missing for 10: no independent/hands-on case study explicitly confirming a CI pipeline (e.g., GitHub Actions) auto-creating/destroying a branch per PR end-to-end, and no direct quote from the GitHub integration docs describing PR-close teardown behavior.",
     "evidenceIds": [
       "neon-docs-25",
       "neon-docs-18",
+      "neon-docs-40",
+      "neon-docs-50",
+      "neon-supp-branching-for-agents",
+      "neon-supp-neon-ts-config",
       "neon-docs-20",
-      "neon-docs-11",
-      "neon-comm-10"
+      "neon-docs-11"
     ]
   },
   {
     "productId": "neon",
     "storyId": "cli-daily-workflow",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Neon CLI is documented and runtime-verified to run keylessly, and Neon's docs describe CLI-based project/branch creation, connection strings, and SQL/psql-based inspection (neon-docs-11/34, neon-probe-5, neon-probe-rt-1, neon-gh-1). This covers create/connect/shell/inspect without the dashboard, though evidence doesn't show a single first-party walkthrough of the full daily loop end-to-end or independent hands-on review of CLI ergonomics. missing for 10: a documented end-to-end CLI workflow example combining create+connect+shell+inspect in one place, and independent/community validation of CLI usability.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Neon's CLI is well documented (create/init/claim, connection string/.env writing, `inspect db` with 15 read-only health checks, `ask`, `api-keys`) and runtime probes confirm it works keylessly, but the evidence never shows a dedicated 'shell into' command (e.g. a built-in psql wrapper) — the GitHub docs instead point users to external clients like psql/dbeaver for that step. missing for 10: explicit CLI subcommand for opening an interactive DB shell, independent hands-on confirmation of the full create→connect→shell→inspect loop end-to-end.",
     "evidenceIds": [
       "neon-docs-11",
       "neon-docs-34",
       "neon-probe-5",
       "neon-probe-rt-1",
-      "neon-gh-1"
+      "neon-supp-mcp-transport",
+      "neon-docs-47",
+      "neon-docs-48",
+      "neon-gh-1",
+      "neon-docs-46",
+      "neon-docs-56"
     ]
   },
   {
@@ -1871,46 +1931,48 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon's core product feature is instant copy-on-write branching of Postgres databases including schema and data, documented explicitly in the branching docs, and corroborated by independent community usage describing branching off main to test and reset ('We can branch off the main database to test things out, and periodically reset the branch to its parent'). Instant restore and branch-based workflows are further documented, reinforcing the copy-on-write branch model used for dev/test against production-shaped data. Missing for 10: deeper hands-on verification of 'production-shaped data' fidelity at scale beyond a single community quote.",
+    "rationale": "Neon's core product is Postgres branching that copies both schema and data via copy-on-write storage, with dedicated docs (neon-docs-25 Branching, neon-docs-8/29 Instant restore), CLI support, and independent community confirmation of the branch-and-reset workflow against production data (neon-comm-10). Copilot agent docs further describe running migrations on temporary branches to keep production untouched (neon-supp-copilot-agents), corroborating real-world dev/test usage. Missing for 10: a hands-on benchmark of branch creation speed/independent verification beyond one HN comment.",
     "evidenceIds": [
       "neon-docs-25",
       "neon-docs-8",
-      "neon-docs-1",
-      "neon-comm-10"
+      "neon-docs-29",
+      "neon-comm-10",
+      "neon-supp-copilot-agents",
+      "neon-supp-branching-for-agents"
     ]
   },
   {
     "productId": "neon",
     "storyId": "engine-compatibility",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Neon is real Postgres (not a lookalike), evidenced by connecting via standard psql/dbeaver clients, support for extensions like pgvector, and community confirmation it's genuinely Postgres under the hood (used by Vercel). However, Neon only supports Postgres — no MySQL or SQLite dialect compatibility is offered or claimed, and some architectural differences (storage/compute separation, S3-backed storage) draw community pushback on whether behavior fully matches traditional Postgres performance expectations. missing for 10: MySQL/SQLite dialect support, exhaustive extension-compatibility list, independent verification that all Postgres extensions/behaviors work identically at scale.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Neon is explicitly documented as real, open-source Postgres (not a compatible-only layer), connectable via standard clients (psql, dbeaver) and supporting genuine Postgres extensions like pgvector, and community users note it preserves 'Postgres features' unlike moving to non-Postgres systems. missing for 10: a broader documented extension compatibility list beyond pgvector and independent third-party compatibility/regression testing against vanilla Postgres.",
     "evidenceIds": [
-      "neon-gh-1",
       "neon-gh-5",
+      "neon-gh-6",
+      "neon-gh-1",
+      "neon-gh-9",
       "neon-docs-15",
-      "neon-comm-11",
-      "neon-comm-2",
-      "neon-comm-3"
+      "neon-docs-32",
+      "neon-comm-4",
+      "neon-comm-10"
     ]
   },
   {
     "productId": "neon",
     "storyId": "fleet-per-agent-databases",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Neon documents programmatic fleet management via its API/CLI and instant, cheap branching (branch-per-tenant/agent pattern), plus a 'claimable database integration' workflow for spinning up isolated DBs on demand, and scale-to-zero to keep idle databases cheap. However, the pricing page caps at '100 projects' (neon-docs-6), and there is no direct evidence of managing 'thousands' of isolated databases or of per-agent isolation specifically validated at that scale — missing for 10: documented support/pricing for thousands of projects/branches, hands-on evidence of bulk automated provisioning at scale, and confirmation that the 100-project cap doesn't bottleneck a thousands-scale fleet.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Neon explicitly documents a project-per-agent/tenant model 'at large scale,' with the API managing 'tens of thousands (in some cases, millions) of projects programmatically,' automated provisioning/cleanup, ephemeral idle-cost-free databases, and cost efficiency via scale-to-zero; it also ships CLI, Management API, and MCP tooling (create/delete/restore projects and branches) plus an anonymous agent-claim flow for provisioning before a human even signs in. missing for 10: independent/third-party corroboration of actual fleet sizes in production and concrete unit-economics figures at thousand-plus scale beyond vendor docs.",
     "evidenceIds": [
-      "neon-docs-25",
-      "neon-docs-22",
+      "neon-supp-branching-for-agents",
+      "neon-docs-50",
+      "neon-supp-agent-claim-flow",
       "neon-docs-20",
-      "neon-docs-11",
-      "neon-docs-9",
-      "neon-docs-6",
-      "neon-comm-6",
-      "neon-comm-10"
+      "neon-supp-api-key-scoping",
+      "neon-docs-9"
     ]
   },
   {
@@ -1918,13 +1980,15 @@
     "storyId": "free-tier-depth",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Neon's pricing docs explicitly promote a free tier with 'no time limits and no credit card required' and 100 projects allowed, and community comments corroborate quick provisioning for hobby/prototype use ('game-changer' for pay-per-call relational DB, fast to spin up databases). Missing for 10: independent evidence specifically confirming free-tier limits are sufficient for a 'real prototype' (e.g., storage/compute caps) and any hands-on account of hitting free-tier ceilings.",
+    "confidence": "high",
+    "rationale": "Neon's pricing page explicitly advertises a genuinely usable free tier: 'Build and learn free with no time limits and no credit card required' plus generous limits like 100 projects and unlimited team members, and community commentary corroborates ease of quickly spinning up real databases (fast provisioning, serverless scale-to-zero keeping costs low for hobby/prototype use). Scale-to-zero and branching further support running real prototypes cheaply before committing to paid tiers. Missing for 10: independent hands-on confirmation specifically of free-tier limits/usability (vs. paid-tier complaints dominating community threads), and explicit compute/storage caps for the free tier are not detailed in the pack.",
     "evidenceIds": [
       "neon-docs-24",
       "neon-docs-6",
+      "neon-docs-7",
       "neon-comm-1",
-      "neon-comm-6"
+      "neon-comm-6",
+      "neon-docs-9"
     ]
   },
   {
@@ -1933,12 +1997,10 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Neon documents a 'Read Replicas' feature (neon-docs-16/28) which could in principle be used to place read copies closer to users, but the evidence pack contains no documentation of explicit region selection, multi-region deployment, or replica placement guidance, and community comments raise concerns about storage/compute separation adding latency (neon-comm-2, neon-comm-3). missing for 10: explicit docs on choosing/creating replicas in specific regions, guidance on multi-region latency optimization, and independent confirmation that cross-region replicas actually reduce latency.",
+    "rationale": "The evidence only confirms Neon offers a 'Read Replicas' feature (by title) with no detail on cross-region placement, latency benefits, or how regions are selected for compute/storage. missing for 10: explicit region-selection UI/API docs, multi-region replica deployment guide, and latency benchmarks or user reports confirming reduced read latency worldwide.",
     "evidenceIds": [
       "neon-docs-16",
-      "neon-docs-28",
-      "neon-comm-2",
-      "neon-comm-3"
+      "neon-docs-28"
     ]
   },
   {
@@ -1947,7 +2009,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Neon's branching, autoscaling, CLI, MCP server, and other features, but contains no documentation or reference to a migration path for importing an existing production database (e.g., pg_dump/restore, logical replication, minimal-downtime cutover guide). No citation addresses this specific story.",
+    "rationale": "The evidence pack covers branching, autoscaling, MCP/agent tooling, and schema-migration workflows on branches, but contains no documented path for importing an existing production database (e.g., pg_dump/restore, logical replication, or a dedicated migration/import guide) with minimal downtime. Absence of evidence for this applicable database-product capability means it is not shown to be delivered.",
     "evidenceIds": []
   },
   {
@@ -1956,16 +2018,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon provides an official CLI and REST API (neon-docs-11, neon-docs-20, neon-probe-5, neon-probe-3), a free tier with instant serverless Postgres provisioning (neon-gh-2), and community testimony that databases become available very quickly without infra planning (neon-comm-6). Autoscaling and scale-to-zero eliminate manual capacity planning (neon-docs-9, neon-docs-10, neon-docs-26). Missing for 10: no independent benchmark timing the exact provisioning speed in seconds via CLI/API.",
+    "rationale": "Neon documents a CLI (`neon`) and Management API for instant project/database creation with no capacity planning: docs describe autoscaling, scale-to-zero, and instant provisioning, and a runtime probe confirms the CLI runs keylessly via npx to create/manage projects. The claim/auth.md flow shows programmatic, no-signup provisioning in seconds, and community feedback corroborates fast provisioning speed ('Leaps and bounds faster than RDS... amazing when you need something now').\n\nmissing for 10: no independent benchmark specifically timing 'seconds to ready-to-connect' end-to-end via CLI/API.",
     "evidenceIds": [
       "neon-docs-11",
       "neon-docs-20",
-      "neon-gh-2",
-      "neon-comm-6",
       "neon-docs-9",
       "neon-docs-10",
-      "neon-probe-5",
-      "neon-probe-3"
+      "neon-probe-rt-1",
+      "neon-supp-agent-claim-flow",
+      "neon-comm-6"
     ]
   },
   {
@@ -1990,19 +2051,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Neon publishes a full public API (openapi.json), an official CLI wrapping it, and a documented MCP server, covering project/branch/database management, auth, and most operations available in the UI (branching, autoscaling, connection pooling, restore, etc.). missing for 10: no explicit independent confirmation that every single UI action (e.g. billing/team management nuances) maps 1:1 to API endpoints, and no third-party audit of API completeness vs UI.",
+    "rationale": "Neon exposes a comprehensive, well-documented Management API and OpenAPI spec covering project/branch lifecycle, compute, auth, data API, functions, object storage, and more, plus a 113-tool MCP surface and CLI that mirror console capabilities, and an LLM-addressed endpoint index for machine consumption. This gives strong evidence that nearly all console actions (branching, restore, autoscaling, keys, functions, storage, auth, AI gateway) are API/CLI/MCP-reachable. missing for 10: explicit vendor statement guaranteeing 1:1 API/UI parity, and independent third-party confirmation that no console-only features exist",
     "evidenceIds": [
       "neon-docs-20",
-      "neon-docs-38",
       "neon-probe-3",
+      "neon-supp-mcp-tool-surface",
+      "neon-supp-api-llms-index",
+      "neon-probe-8",
+      "neon-supp-api-key-scoping",
       "neon-docs-11",
-      "neon-docs-34",
-      "neon-probe-5",
-      "neon-docs-12",
-      "neon-docs-33",
-      "neon-probe-4",
-      "neon-probe-rt-1",
-      "neon-probe-rt-2"
+      "neon-docs-34"
     ]
   },
   {
@@ -2041,13 +2099,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Neon's GitHub repo is explicitly open-source and documents that you can compile and run it locally, and that 'Neon can be run on a workstation for small experiments and to test code changes,' with a community comment confirming some users self-host the storage/compute architecture in production. However, the official docs and framing position self-hosting as workstation-scale testing rather than a fully supported production self-host path (no HA/scaling guide for self-hosted deployments). Missing for 10: production-grade self-hosting documentation, official support/guides for scaling a self-hosted cluster, and independent confirmation of large-scale self-hosted production use.",
+    "rationale": "Neon's GitHub repo explicitly states it is open-source, separates storage/compute, and documents that it 'can be run on a workstation for small experiments' and can be compiled and run locally, which supports self-hosting the core engine. However, the evidence frames this as suitable only for small-scale experiments/testing changes, not as a fully documented production self-hosting/deployment path (no docs on scaling, HA, or ops for self-hosted clusters). Missing for 10: production-grade self-hosting docs (clustering, storage backends, ops guidance) and independent confirmation of running Neon at scale outside the managed service.",
     "evidenceIds": [
       "neon-gh-3",
       "neon-gh-4",
       "neon-gh-5",
-      "neon-gh-8",
-      "neon-comm-7"
+      "neon-gh-6",
+      "neon-gh-8"
     ]
   },
   {
@@ -2056,7 +2114,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents general Postgres compatibility features (connection pooling, serverless driver, branching, CLI, API) but contains no citation mentioning Prisma, Drizzle, Django, or Rails integration guides specifically. Without documented framework/ORM-specific guides in the evidence, this axis cannot be credited as delivered.",
+    "rationale": "The evidence pack lists many Neon docs (connection pooling, serverless driver, CLI, MCP, branching, etc.) but contains no citation to any Prisma, Drizzle, Django, or Rails integration guide, so there is no documented evidence that Neon ships out-of-the-box, guide-backed support for these specific ORMs/frameworks.",
     "evidenceIds": []
   },
   {
@@ -2065,11 +2123,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Neon documents Instant restore (point-in-time recovery within retention window) and Branching, and community evidence corroborates branch-and-reset workflows in production use. This directly matches the story of restoring/branching to a point in time to recover from bad writes.\n\nmissing for 10: independent hands-on verification of exact restore-to-timestamp mechanics and retention-window limits beyond docs, and confirmation of behavior at scale/edge cases.",
+    "rationale": "Neon documents instant restore and point-in-time branch restore (branch-restore docs), plus a 'finalize_restore' flag that swaps compute endpoints to a restored branch without changing connection strings, and the MCP tool surface includes 'Finalize branch restore from snapshot' and 'Recover a deleted project' tools for programmatic recovery. Branching itself is well documented and independently corroborated by community users describing branch/reset workflows for recovery-like use cases. Missing for 10: independent/hands-on confirmation of restoring to an arbitrary point within a long retention window (vs. just branch reset), and explicit documentation of retention window limits per plan tier.",
     "evidenceIds": [
       "neon-docs-8",
       "neon-docs-29",
+      "neon-docs-44",
       "neon-docs-25",
+      "neon-supp-mcp-tool-surface",
       "neon-comm-10"
     ]
   },
@@ -2078,45 +2138,61 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention region selection, data residency, or geographic deployment options for Neon projects; nothing addresses where data is physically stored.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack never documents a general data-residency/region-selection feature for Neon's core Postgres storage; the only region-specific detail is that the AI Gateway (a bolt-on LLM proxy) is currently limited to two AWS regions in beta, which does not address database/data residency choice. missing for 10: no docs on selecting a home region for the Postgres project/branches, no residency/compliance statements, no evidence of region choice at project creation.",
+    "evidenceIds": [
+      "neon-supp-ai-gateway"
+    ]
   },
   {
     "productId": "neon",
     "storyId": "privacy-no-training",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of any AI-training opt-out, data-use policy for model training, or privacy controls governing whether customer data is used to train AI models; all evidence covers unrelated product features (branching, autoscaling, MCP server, CLI, pricing). Since Neon stores and processes user data and could plausibly offer such a privacy guarantee, the axis applies but is unaddressed. missing for 10: any documentation of an AI-training opt-out policy, data-processing/privacy terms addressing model training, or statements that customer data is excluded from AI training.",
-    "evidenceIds": []
+    "rationale": "Neon's docs state that its SQL Editor AI features share only the database schema with the AI provider ('no actual data is shared') and that its AI assistant draws on public docs/GitHub content 'without ingesting PII,' which implies limited exposure of customer data to AI tooling — but there is no explicit statement or toggle guaranteeing customer data is never used to train AI models across the platform (e.g. AI Gateway, MCP server, or Functions data flows). Missing for 10: an explicit no-training-on-customer-data policy statement, an opt-out control, and third-party/independent verification of these privacy claims.",
+    "evidenceIds": [
+      "neon-docs-55",
+      "neon-supp-sql-editor-ai"
+    ]
   },
   {
     "productId": "neon",
     "storyId": "privacy-retention-controls",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Neon's general Postgres/branching/API/CLI capabilities but contains no documentation on data retention policies, deletion guarantees, or privacy-oriented data lifecycle controls (e.g., project/branch purge SLAs, GDPR-style deletion assurances). Missing for 10: any retention-policy docs, explicit deletion/purge guarantees, or compliance statements addressing data retention.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Neon exposes real technical levers for retention/deletion control — branch TTLs and auto-expiring branches declared in neon.ts, automated cleanup of ephemeral per-agent projects, a documented 72-hour expiry/claim window for unclaimed agent-provisioned projects, instant restore/snapshot mechanics, and revocable/scoped API keys — and it states that its SQL-editor AI feature shares schema but 'no actual data' with the LLM. However there is no dedicated privacy/compliance documentation (GDPR/CCPA-style data deletion policy, account/data export-and-delete workflow, retention SLAs) tying these mechanisms together into a coherent 'control your data retention and deletion' story for an AI-native user. Missing for 10: explicit data retention/deletion policy or compliance docs, user-facing account/data deletion workflow, audit log of deletions, independent confirmation these mechanisms satisfy privacy requirements.",
+    "evidenceIds": [
+      "neon-docs-8",
+      "neon-supp-branching-for-agents",
+      "neon-supp-neon-ts-config",
+      "neon-supp-agent-claim-flow",
+      "neon-supp-api-key-scoping",
+      "neon-supp-sql-editor-ai"
+    ]
   },
   {
     "productId": "neon",
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry collection or an opt-out mechanism for Neon's CLI, MCP server, or platform usage tracking; privacy/telemetry policy is simply not documented here.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of a telemetry/usage-tracking opt-out setting for Neon's CLI, MCP server, console, or platform, despite extensive coverage of CLI commands, MCP tooling, and AI features. Telemetry opt-out is a fair axis for a developer tool/CLI product, but no documentation or probe confirms such a control exists.",
     "evidenceIds": []
   },
   {
     "productId": "neon",
     "storyId": "query-insights",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "No evidence in the pack references a built-in insights view, slow query logging, index recommendations, or performance dashboards; documentation focuses on branching, scaling, connection pooling, and integrations instead. Neon does offer monitoring features per general knowledge, but this evidence pack contains no citation supporting the specific story.",
-    "evidenceIds": []
+    "rationale": "Neon documents real performance-insight capabilities — the MCP server's 'List Slow Queries', 'Explain SQL Statement', and 'inspect_database' tool (which runs the same 15 read-only checks as `neon inspect db`: table/index sizes, unused indexes, stalled queries with waits/blockers, cache hit rate, bloat, replication state) — giving a platform engineer slow-query and index-recommendation data via CLI/MCP. However, the evidence never describes a dedicated built-in console 'insights' dashboard view; the data is exposed through CLI commands and MCP tool calls rather than a persistent UI panel. Missing for 10: a documented native console insights/dashboard UI, explicit index-recommendation feature (vs. unused-index detection), and independent/hands-on confirmation of this workflow.",
+    "evidenceIds": [
+      "neon-supp-mcp-tool-surface",
+      "neon-supp-mcp-transport",
+      "neon-probe-7"
+    ]
   },
   {
     "productId": "neon",
@@ -2135,14 +2211,17 @@
   {
     "productId": "neon",
     "storyId": "safe-schema-changes",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Neon's branching (copy-on-write branches, instant restore) supports a branch-based workflow for testing schema changes before applying to production, and community confirms this pattern works well in practice (branch off main, test, reset). However there is no documented 'merge back' or schema-diff/merge tooling, no deploy-request workflow, and no explicit online-DDL/zero-downtime-migration guidance in the evidence. Missing for 10: explicit branch-merge or schema-diff tooling, deploy-request/approval workflow, documented online DDL or lock-free migration guarantees, and independent verification of safe production rollout beyond generic branching praise.",
+    "rationale": "Neon's branch-based workflow is explicitly documented as the mechanism for safe schema changes: GitHub Copilot agents (and other agents) 'run safe schema migrations and query optimizations on temporary Neon branches, keeping production untouched until changes are validated,' the MCP server exposes 'Prepare Database Migration'/'Complete Database Migration' tools, and instant restore/branch-reset lets you finalize or roll back without changing connection strings. Community testimony corroborates real-world use of branching to 'branch off main to test things out, and periodically reset the branch to its parent.' Missing for 10: no explicit 'online DDL without locking' engine-level guarantee or PlanetScale-style formal 'deploy request' review workflow, and no independent hands-on report specifically validating zero-downtime production cutover at scale.",
     "evidenceIds": [
       "neon-docs-25",
+      "neon-docs-45",
+      "neon-supp-copilot-agents",
+      "neon-supp-mcp-tool-surface",
+      "neon-docs-44",
       "neon-docs-8",
-      "neon-docs-29",
       "neon-comm-10"
     ]
   },
@@ -2152,13 +2231,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon's docs explicitly document Scale to Zero (idle compute suspends) alongside durable storage separation (compute/storage split), and free tier/pricing pages confirm no-cost prototyping with no credit card required; community comments corroborate pay-per-use idle cost savings for hobby projects. missing for 10: independent verification of data durability specifically across scale-to-zero cycles (only vendor docs, no third-party confirmation of zero data loss).",
+    "rationale": "Neon's docs explicitly document Scale to Zero for idle compute (neon-docs-9/27) alongside branching/storage durability, autoscaling, and a free tier with no credit card and no time limits (neon-docs-24), directly matching the founder/prototype cost story; community evidence corroborates pay-per-use economics being a 'game-changer' for hobby projects (neon-comm-1) and fast provisioning (neon-comm-6). Missing for 10: independent hands-on confirmation of zero idle cost specifically (vs. general community sentiment) and no explicit mention of storage durability guarantees during scale-to-zero beyond the docs claim.",
     "evidenceIds": [
       "neon-docs-9",
       "neon-docs-27",
       "neon-docs-24",
-      "neon-gh-5",
-      "neon-comm-1"
+      "neon-docs-10",
+      "neon-comm-1",
+      "neon-comm-6"
     ]
   },
   {
@@ -2167,13 +2247,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Neon documents an official serverless driver ([neon-docs-14]/[neon-docs-31]) purpose-built for querying over HTTP or WebSockets, designed for serverless/edge environments with short-lived connections, and complements it with documented connection pooling ([neon-docs-13]/[neon-docs-30]) and scale-to-zero behavior. missing for 10: independent hands-on benchmarking or third-party validation of the HTTP/WebSocket driver specifically (community evidence covers general Neon experience but not this driver directly).",
+    "rationale": "Neon documents an official serverless driver (@neondatabase/serverless) purpose-built for HTTP and WebSocket queries from serverless/edge runtimes, plus connection pooling docs and Neon Local for short-lived connection scenarios [neon-docs-14, neon-docs-31, neon-docs-13, neon-docs-30]. Community evidence corroborates the value of this pay-per-call, gateway-free model for serverless workloads [neon-comm-1]. Missing for 10: independent hands-on benchmarks specifically testing the HTTP/WebSocket driver's edge performance, and explicit documentation quoting HTTP vs WebSocket query examples in the evidence pack.",
     "evidenceIds": [
       "neon-docs-14",
       "neon-docs-31",
       "neon-docs-13",
       "neon-docs-30",
-      "neon-docs-9"
+      "neon-comm-1"
     ]
   },
   {
@@ -2181,9 +2261,13 @@
     "storyId": "spend-caps-alerts",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions spend caps, budget alerts, usage-based billing alerts, or any mechanism to cap or notify on cost overruns; pricing complaints in community citations discuss cost surprises but do not show Neon offering a cap/alert feature. This is a fair axis for a usage-billed cloud database service, so absence of evidence yields none rather than na.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Neon's usage-based, autoscaling pricing model makes spend-cap/usage-alert controls a fair and relevant axis, but the evidence pack contains no mention of billing alerts, spend limits, budget caps, or usage notifications anywhere in the docs, CLI, or API references. Community comments even highlight pricing/cost surprises (e.g. egress and per-CPU pricing confusion) without any counter-evidence of a caps/alerts feature.",
+    "evidenceIds": [
+      "neon-docs-6",
+      "neon-comm-8",
+      "neon-comm-13"
+    ]
   },
   {
     "productId": "neon",
@@ -2191,13 +2275,13 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Neon does publish a pricing page (docs-6,7,24) referencing tiers, projects, and team members, but the evidence pack contains no published per-unit rates for compute/storage/traffic that would let a founder predict a bill in advance. Community feedback directly contradicts predictability: users note pricing is based on 'CPU' that is 'never defined' (neon-comm-13), report surprise jumps to $69+/month after a pricing change (neon-comm-8), and question egress cost predictability for non-AWS clouds (neon-comm-12). Missing for 10: explicit per-unit $/compute-hour, $/GB-storage, $/GB-egress figures and independent confirmation that bills match expectations.",
+    "rationale": "Neon does publish a pricing page (neon-docs-6, neon-docs-7, neon-docs-24) with plan-level details like project counts and free-tier terms, but the evidence pack contains no actual per-unit rates for compute, storage, or traffic that would let a founder compute a bill in advance. Independent community feedback directly contradicts the predictability claim: users report confusion about the pricing basis ('What is a CPU?... pricing is based on CPU but it's never defined' — neon-comm-13) and unexpected cost jumps ('$69+ a month... It was under $10 before the switch' — neon-comm-8), and one commenter explicitly couldn't find clear pricing at all (neon-comm-5). Missing for 10: explicit published $/compute-unit, $/GB-storage, $/GB-egress rates, and resolution of the CPU-definition ambiguity that commenters flagged as undermining bill prediction.",
     "evidenceIds": [
       "neon-docs-6",
       "neon-docs-7",
       "neon-docs-24",
+      "neon-comm-5",
       "neon-comm-8",
-      "neon-comm-12",
       "neon-comm-13"
     ]
   },
@@ -2206,8 +2290,8 @@
     "storyId": "vector-embeddings",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Neon documents native pgvector extension support, allowing embeddings storage and vector similarity search directly in Postgres without a separate vector DB (neon-docs-15/32). This is first-party docs only, without independent hands-on benchmarks of vector search performance. Missing for 10: independent/community validation of pgvector performance at scale on Neon, and details on index types (HNSW/IVFFlat) support depth.",
+    "confidence": "high",
+    "rationale": "Neon documents native pgvector extension support (neon-docs-15/32) which allows storing embeddings and running vector similarity search directly in Postgres without a separate vector DB, and this is corroborated as a dedicated first-party doc page rather than a passing mention. missing for 10: independent/hands-on community corroboration of pgvector usage specifically (e.g. benchmarks or real-world embeddings workloads on Neon) and details on index types (HNSW/IVFFlat) or performance at scale.",
     "evidenceIds": [
       "neon-docs-15",
       "neon-docs-32"

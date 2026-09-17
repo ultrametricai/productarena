@@ -3,51 +3,58 @@
     "productId": "buzz",
     "storyId": "admin-audit-logs",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The only relevant evidence is a passing mention that agents have 'their own audit trail' alongside keys and channel memberships, which hints at some logging of agent actions but says nothing about a queryable/reviewable log covering both admin and human user actions across the workspace, nor any export/compliance tooling. Missing for 10: documented audit log viewer or export, coverage of admin actions and human user actions (not just agent actions), retention/compliance controls, and any independent corroboration.",
+    "rationale": "Buzz has scattered audit-adjacent primitives — agents have their own signed-event audit trail (buzz-gh-4), an admin API secured with NIP-98 signed events (buzz-supp-admin-api), and a moderation dashboard showing reports/feedback (buzz-docs-16) — but there is no documented consolidated audit-log view/export covering both admin and general user actions across the workspace for compliance review. missing for 10: a dedicated audit-log feature/UI for reviewing all admin+user actions, log retention/export controls, and any compliance-oriented reporting or independent confirmation it works as described.",
     "evidenceIds": [
-      "buzz-gh-4"
+      "buzz-gh-4",
+      "buzz-supp-admin-api",
+      "buzz-docs-16"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agent-channel-member",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Buzz's core design explicitly gives agents their own channel memberships, keys, and audit trail, and describes agents participating in channel conversations (searching history, posting threads, orchestrating other agents) — directly matching the story of adding an AI agent as a channel member that engages when mentioned. However, there's no explicit documentation of an '@mention triggers agent response' mechanism, and community commentary treats it simply as 'bots in chat rooms' without confirming mention-based triggering specifics. Missing for 10: explicit documentation of mention-triggered activation, independent hands-on confirmation of this exact UX flow.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Buzz has a documented mechanism (buzz-acp harness) that listens for @mentions on the relay and has an agent reply via the Buzz CLI, with agents enrolled as first-class channel members via Nostr keypairs and add-member membership events; this is corroborated by the ACP harness docs, AGENTS.md ecosystem docs, and a live probe confirming the harness README. missing for 10: independent hands-on account of an agent actually responding to a mention in production, and more detail on multi-channel membership management UX beyond docs.",
     "evidenceIds": [
-      "buzz-gh-2",
-      "buzz-gh-3",
-      "buzz-gh-4",
-      "buzz-comm-7"
+      "buzz-docs-10",
+      "buzz-supp-acp-harness",
+      "buzz-supp-nip-aa-agent-auth",
+      "buzz-supp-agents-md",
+      "buzz-supp-agent-benchmark"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agent-reads-posts-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Buzz is explicitly agent-first: agents have their own keys, channel memberships, and audit trails, can search history and post threads, and there's a documented CLI and MCP server for programmatic interaction. However, no OpenAPI/API spec was found (404s on all probed endpoints), and no explicit documentation of 'scoped tokens' for API access was cited, so the 'official API with scoped tokens' framing is only partially evidenced. missing for 10: explicit scoped-token/auth-scope documentation, a discoverable official REST/HTTP API spec (openapi.json returned 404).",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Buzz gives agents their own Nostr keypairs as scoped credentials for channel membership, reading history, and posting messages, with NIP-98/NIP-42 signed-event auth replacing tokens, plus a CLI and ACP harness that let agents read (@mentions, search) and post via this identity model. Evidence spans first-party docs (buzz-gh-4, buzz-supp-acp-harness, buzz-supp-nip-aa-agent-auth, buzz-supp-nostr-open-protocol) and probes confirming these docs are live. missing for 10: no independent/hands-on confirmation of an agent actually posting via the API in production, and no traditional 'official API' with bearer tokens (auth uses signed Nostr events rather than conventional scoped tokens, requiring interpretation).",
     "evidenceIds": [
-      "buzz-gh-3",
       "buzz-gh-4",
-      "buzz-docs-5",
-      "buzz-probe-3",
-      "buzz-probe-4",
-      "buzz-probe-2"
+      "buzz-supp-acp-harness",
+      "buzz-supp-nip-aa-agent-auth",
+      "buzz-supp-nostr-open-protocol",
+      "buzz-supp-admin-api",
+      "buzz-probe-5",
+      "buzz-probe-3"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-agent-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "high",
-    "rationale": "A direct probe found no llms.txt at buzz.xyz (404), and no evidence pack item references agent-oriented documentation formats or discoverability files; only an MCP server and CLI are documented, which don't satisfy this specific story. Missing for 10: an llms.txt or equivalent agent-readable docs endpoint, any mention of agent-oriented documentation standards.",
+    "rationale": "Buzz ships a root AGENTS.md (confirmed live via direct probe) written explicitly as agent-oriented contributor documentation, cross-linked from CLAUDE.md, and mirrored into four different agent-harness skill directories (.agents, .claude, .codex, .goose), giving an AI agent a concrete, discoverable entry point into project conventions — fulfilling the 'agent-oriented docs' half of the story even though no llms.txt file exists (confirmed 404). missing for 10: an actual llms.txt endpoint at the documented site, and independent (non-vendor) confirmation that agents successfully consume AGENTS.md in practice.",
     "evidenceIds": [
+      "buzz-supp-agents-md",
+      "buzz-probe-5",
+      "buzz-probe-6",
       "buzz-probe-1"
     ]
   },
@@ -55,98 +62,103 @@
     "productId": "buzz",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Evidence shows agents can search history and 'post the threads, not vibes' and orchestrate workflows/reviews, implying some data-derived context surfacing, but there is no explicit documentation of dedicated AI-generated insights, summaries, or suggestion features surfaced to users. Missing for 10: dedicated insight/summary dashboards, proactive suggestion features, and independent confirmation that agents actually generate actionable insights rather than just retrieving raw history.",
+    "rationale": "Buzz's agent framework lets in-product agents search full channel/repo history and surface findings ('post the threads, not vibes') and the VISION doc promises a 'personalized feed' surfacing what matters to the user, which maps to AI-generated insights from the platform's own data. But this is delivered only via general-purpose agents/workflows rather than a dedicated insights/suggestions feature, and there's no first-party demo or independent evidence of the personalized feed or agent-generated insights actually working end-to-end. Missing for 10: a documented dedicated insights/suggestions surface, concrete example outputs, and independent corroboration that the personalized feed or agent history-search actually produces useful proactive suggestions.",
     "evidenceIds": [
       "buzz-gh-3",
+      "buzz-docs-14",
       "buzz-gh-2",
-      "buzz-gh-5"
+      "buzz-supp-agent-benchmark"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Buzz's docs show agents with their own keys/channels/audit trail, workflow-trigger CLI commands, and an MCP-driven-hooks system that lets agents act on events without direct human invocation, all pointing to autonomous background automation. However there is no first-party documentation of scheduling, persistence, or long-running unattended jobs, and no independent hands-on report confirming such automations work reliably in practice. Missing for 10: explicit scheduling/trigger-on-interval docs, independent verification of autonomous background runs, and detail on failure/retry handling.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Buzz supports autonomous background agents via buzz-agent runtime, buzz-acp harness that listens for @mentions and prompts agents headlessly, remote agent deployment on Kubernetes substrates with no ongoing control channel, workflow triggers/YAML automations, and a benchmark suite validating autonomous behavior — all documented first-party with a live repo probe confirming AGENTS.md and skill mirroring. missing for 10: independent/hands-on validation that automations reliably run unattended in production (community commentary is skeptical but not a concrete failure report), and more detail on scheduling/triggering conditions beyond @mentions and workflow triggers.",
     "evidenceIds": [
-      "buzz-gh-2",
-      "buzz-gh-4",
+      "buzz-supp-remote-agents",
+      "buzz-supp-acp-harness",
+      "buzz-supp-agent-runtime",
+      "buzz-docs-13",
       "buzz-docs-8",
-      "buzz-probe-3"
+      "buzz-supp-agent-benchmark",
+      "buzz-supp-agents-md"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Buzz's docs/GitHub describe agents as first-class participants that can open repos, send patches, review code, run workflows, and orchestrate other agents inside the product, and it ships MCP-driven hooks for agent integration (buzz-gh-2, buzz-gh-4, buzz-probe-3). However this is framed as a multi-agent chat/dev platform where external agents join with their own keys, rather than a single dedicated 'built-in assistant' persona users delegate to by default. Missing for 10: a documented default/first-party assistant persona, evidence of a simple task-delegation UX (vs. general agent orchestration infrastructure), and independent hands-on confirmation that delegation works reliably (community threads mostly debate permissions/architecture, not task delegation itself).",
+    "rationale": "Buzz ships a Desktop-bundled 'managed agent' with a first-party skill that lets users conversationally delegate tasks (create agents, send messages, manage channels/workflows/repos) directly inside the product, backed by buzz-acp/buzz-agent runtimes and an owner-review governance gate. Missing for 10: independent/hands-on verification of the assistant's real-world reliability and no non-vendor benchmark results beyond Block's own harbor tasks.",
     "evidenceIds": [
+      "buzz-supp-managed-skill",
+      "buzz-supp-acp-harness",
+      "buzz-supp-agent-runtime",
       "buzz-gh-2",
-      "buzz-gh-4",
-      "buzz-probe-3",
-      "buzz-gh-3"
+      "buzz-probe-6"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Buzz ships a CLI (buzz-cli) with scriptable commands for channels, workflows, repos, etc. (buzz-docs-5/7/8), which implies it can be driven non-interactively/automated, and agents have their own keys/audit trails (buzz-gh-4) suggesting programmatic access. However, there is no explicit documentation of a headless mode, CI pipeline integration, or CI-specific examples for Buzz itself. Missing for 10: explicit headless/CI-mode documentation, CI pipeline examples, and independent confirmation of running Buzz unattended in automation.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Buzz ships a full CLI (buzz-cli), a headless agent runtime (buzz-agent, 'stdio in, tool calls out') designed for 'headless autonomous coding work', an ACP harness (buzz-acp) that runs agents unattended against relay events, Helm/Docker-compose deployment bundles for server automation, and a public benchmark harness (Harbor) for CI-style automated grading — together covering headless/CI operation end-to-end. missing for 10: no explicit GitHub Actions/CI-pipeline example or independent hands-on confirmation that a full workflow runs unattended in a CI runner.",
     "evidenceIds": [
+      "buzz-supp-agent-runtime",
+      "buzz-supp-acp-harness",
       "buzz-docs-5",
-      "buzz-docs-7",
-      "buzz-docs-8",
-      "buzz-gh-4",
-      "buzz-probe-4"
+      "buzz-supp-helm-chart",
+      "buzz-probe-7",
+      "buzz-supp-agent-benchmark",
+      "buzz-docs-11"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-mcp-client",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The only evidence is a documented file titled MCP_DRIVEN_HOOKS.md, suggesting Buzz supports MCP-driven hook integration, but no actual content, examples, or independent confirmation of plugging in third-party MCP servers is provided. Missing for 10: detailed docs on configuring/adding MCP servers, examples of tool usage via MCP, and community or hands-on validation.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Buzz's own agent runtime (buzz-agent) is explicitly documented as an MCP client — 'call the LLM → get tool calls → run them via MCP' — and it is paired with buzz-dev-mcp, an MCP server providing shell/file tools. The Persona Pack spec further lets users bundle 'MCP server config' into a persona so an agent can use external tools. This is first-party documentation only, with no independent/hands-on confirmation that arbitrary third-party MCP servers can be plugged in smoothly. Missing for 10: independent/community verification of adding external MCP servers, and clearer end-user instructions for connecting arbitrary third-party MCP servers (not just the bundled buzz-dev-mcp).",
     "evidenceIds": [
-      "buzz-probe-3"
+      "buzz-supp-agent-runtime",
+      "buzz-supp-persona-pack",
+      "buzz-docs-18"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-mcp-server",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Buzz is a chat/collaboration platform (not itself an agent), so shipping an MCP server axis applies; probe evidence confirms an official MCP-related doc (MCP_DRIVEN_HOOKS.md) exists in the repo, and the product's core design explicitly gives agents their own keys, channel memberships, and audit trails for connecting to the platform. However, the evidence pack lacks detailed documentation of the MCP server's setup, tool surface, or independent confirmation it works as described, and community commentary raises real concerns about the permission/auth model's real-world robustness. Missing for 10: full MCP server documentation/spec, independent hands-on verification of connecting an agent via MCP, and resolution of the permission-model critiques.",
+    "rationale": "Buzz documents an official MCP server (buzz-dev-mcp, referenced in VISION_AGENT.md and probe-3's MCP_DRIVEN_HOOKS.md) that 'gives any agent a shell and a file editor,' plus Persona Packs that declare 'MCP server config' as a first-class manifest field, giving agents a documented, vendor-shipped way to connect via MCP. missing for 10: independent/hands-on verification that external agents can actually connect to buzz-dev-mcp, and more detail on the MCP_DRIVEN_HOOKS.md content itself beyond the probe confirming its existence.",
     "evidenceIds": [
       "buzz-probe-3",
-      "buzz-gh-4",
-      "buzz-gh-2",
-      "buzz-comm-5",
-      "buzz-comm-6"
+      "buzz-supp-agent-runtime",
+      "buzz-supp-persona-pack",
+      "buzz-docs-18"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Buzz is agent-native chat where agents interact via structured commands, channels, and an MCP/CLI interface (buzz-gh-2, buzz-probe-3, buzz-docs-5/7/8), but the CLI commands shown are structured flags/subcommands rather than natural-language input, and there's no evidence of a conversational NL interface for operating the product. missing for 10: documentation or demo of actual natural-language command parsing/interpretation (vs. structured CLI/MCP calls), independent confirmation that NL commands work in practice.",
+    "rationale": "The managed-agent skill explicitly translates natural-language requests into structured Buzz CLI actions (e.g., 'When someone naturally asks to create an agent... run: buzz agents draft-create...'), and the ACP harness lets agents interpret @mention conversation and reply via the CLI, showing genuine NL-to-command operation. However this is demonstrated mainly for agent-creation and messaging flows rather than the full breadth of product operations, and most CLI examples (buzz-docs-5/6/7/8) are structured, not NL. Missing for 10: evidence of NL commands covering the full CLI surface (repos, workflows, channels beyond agent creation), and independent/hands-on confirmation that NL parsing works reliably in practice.",
     "evidenceIds": [
-      "buzz-gh-2",
-      "buzz-docs-5",
-      "buzz-docs-7",
-      "buzz-docs-8",
-      "buzz-probe-3",
-      "buzz-probe-4"
+      "buzz-supp-managed-skill",
+      "buzz-supp-acp-harness",
+      "buzz-docs-10"
     ]
   },
   {
@@ -155,44 +167,52 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Buzz ships an official CLI (buzz-cli crate) with documented commands spanning channels, repos, workflows, and GIF search, confirming it's a first-class part of the product for agentic/scripted workflows. missing for 10: independent hands-on verification of the CLI beyond vendor docs, and no evidence of broader AI-native conveniences like an llms.txt or shell completions.",
+    "rationale": "Buzz ships an official, richly documented CLI (buzz-cli) with concrete commands for channels, repos, workflows, GIFs, and agent management (buzz-docs-5/6/7/8, buzz-probe-4), designed explicitly for AI-native use — agents 'reply using the Buzz CLI' via the ACP harness (buzz-docs-10, buzz-supp-acp-harness), and it's bundled/mirrored as an agent skill across four agent harnesses (buzz-probe-6). Missing for 10: independent/hands-on third-party verification of CLI usage beyond vendor docs, and no explicit mention of interactive vs scriptable output modes.",
     "evidenceIds": [
       "buzz-docs-5",
       "buzz-docs-6",
       "buzz-docs-7",
       "buzz-docs-8",
-      "buzz-probe-4"
+      "buzz-probe-4",
+      "buzz-docs-10",
+      "buzz-supp-acp-harness",
+      "buzz-probe-6",
+      "buzz-supp-managed-skill"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Buzz ships a documented CLI (buzz-cli commands for channels, repos, workflows, gifs) and an official MCP server for agent-driven hooks, plus agents get their own API keys/audit trails — all enabling AI-native programmatic control. However, probes show no formal public REST API docs (openapi.json/swagger 404, llms.txt 404), so there's no single canonical 'documented public API' surface, only CLI/MCP tooling. Missing for 10: a published OpenAPI/REST spec or llms.txt, and independent confirmation that agents actually use these interfaces successfully in production.",
+    "rationale": "Buzz has no conventional REST/OpenAPI-documented API (llms.txt and openapi.json all 404), but it does expose a documented, protocol-level public API: third-party Nostr clients can connect directly to buzz-relay using NIP-29/NIP-42 authentication (buzz-docs-19, buzz-supp-nostr-open-protocol), there's a documented admin API with NIP-98 signed-event auth and NIP-11 self-advertisement (buzz-supp-admin-api), and a documented CLI (buzz-cli) that wraps these operations for agents (buzz-docs-5/7/8, buzz-probe-4). This gives AI-native users a genuine documented interface to drive the product, just not in the conventional REST/OpenAPI form buyers might expect.  Missing for 10: a standard OpenAPI/REST spec or SDK, working llms.txt, and independent hands-on confirmation of third parties successfully building against the API.",
     "evidenceIds": [
+      "buzz-docs-19",
+      "buzz-supp-nostr-open-protocol",
+      "buzz-supp-admin-api",
       "buzz-docs-5",
       "buzz-docs-7",
       "buzz-docs-8",
-      "buzz-gh-4",
-      "buzz-probe-3",
-      "buzz-probe-4",
       "buzz-probe-1",
-      "buzz-probe-2"
+      "buzz-probe-2",
+      "buzz-probe-4"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Buzz documents that each agent gets 'their own keys, their own channel memberships, and their own audit trail' (buzz-gh-4), implying some per-agent credential isolation, and CLI commands like `repos protect` show coarse-grained permission levels (buzz-docs-7). However there is no first-party documentation of a formal least-privilege API credential/scoping mechanism (e.g., issuing a key with defined capability sets), and community commentary raises concrete doubts about whether the permission model handles real-world scoping correctly (buzz-comm-3, buzz-comm-5, buzz-comm-6), though this is speculative critique rather than a confirmed hands-on failure. Missing for 10: explicit docs on scoped/limited-permission key issuance, examples of restricting an agent's API access to specific resources, and independent verification that the scoping works as intended.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Buzz issues each agent its own Nostr keypair as a distinct credential/identity (buzz-supp-acp-harness, buzz-gh-4), with a dedicated agent-authentication spec (NIP-AA) that scopes agent access to owner enrollment and auto-revokes when the owner's membership is revoked (buzz-supp-nip-aa-agent-auth), a fail-closed owned-agent discovery model where discovery alone does not confer authorization (buzz-supp-owned-agent-guardrails), and an admin API that requires signed per-request events rather than static tokens with a two-tier principal model (buzz-supp-admin-api). Git access is similarly scoped to the agent's own keypair rather than a shared PAT (buzz-supp-git-nostr-credentials).\n\nmissing for 10: independent/hands-on validation of real-world least-privilege enforcement (community members flag that the group/permission rules may not survive real-world edge cases, e.g. buzz-comm-6), and no documented fine-grained per-API-scope (read/write/admin) system beyond channel membership + admin tiers.",
     "evidenceIds": [
       "buzz-gh-4",
-      "buzz-docs-7",
-      "buzz-comm-3",
+      "buzz-supp-acp-harness",
+      "buzz-supp-nip-aa-agent-auth",
+      "buzz-supp-admin-api",
+      "buzz-supp-owned-agent-guardrails",
+      "buzz-supp-git-nostr-credentials",
       "buzz-comm-5",
       "buzz-comm-6"
     ]
@@ -201,13 +221,16 @@
     "productId": "buzz",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Buzz ships a documented CLI (buzz-cli) and an MCP-driven hooks system that agents can call, and evidence notes agents have their own API keys — giving AI-native users some official programmatic surface. However, there is no evidence of a dedicated SDK library (Python/JS/etc.), and probes for an OpenAPI/swagger spec and llms.txt all returned 404, suggesting no formal SDK or API spec is published. Missing for 10: an actual SDK package/library, published API reference (OpenAPI/swagger), and independent confirmation of SDK usage by developers.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Buzz ships multiple official developer-facing building blocks — a documented CLI (buzz-cli), an ACP harness (buzz-acp) that lets goose/codex/claude-code agents plug in, a provider-agnostic agent runtime (buzz-agent) that is itself an MCP client, a Persona Pack spec, and open wire protocols (NIP-29/NIP-42/NIP-AA) that third-party clients can connect to directly. This gives AI-native builders real official surfaces to target, but there is no traditional multi-language SDK library, and probes show no OpenAPI spec or llms.txt (404s), so 'SDK' support is protocol/CLI-based rather than packaged client libraries. Missing for 10: language-specific SDK packages (Python/JS/Go clients), published OpenAPI/REST SDK, and independent third-party confirmation that developers have built against these interfaces.",
     "evidenceIds": [
       "buzz-probe-4",
-      "buzz-probe-3",
-      "buzz-gh-4",
+      "buzz-supp-acp-harness",
+      "buzz-supp-agent-runtime",
+      "buzz-supp-persona-pack",
+      "buzz-supp-nostr-open-protocol",
+      "buzz-supp-nip-aa-agent-auth",
       "buzz-probe-1",
       "buzz-probe-2"
     ]
@@ -217,27 +240,38 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a webhook subscription mechanism; Buzz's architecture is built around Nostr-based signed events, CLI commands, and an MCP-driven hooks system, but nothing in the evidence pack mentions webhooks specifically for external event subscription. Missing for 10: any documentation of a webhook API, subscription endpoint, or event push mechanism.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack describes Buzz's event model as a Nostr relay: agents subscribe to relay events over WebSocket/NIP-29 groups and NIP-42 auth, and the admin API uses signed NIP-98 events rather than HTTP push callbacks. No documentation, CLI command, or spec anywhere mentions 'webhook' or an outbound HTTP callback subscription mechanism for third-party integrations.",
+    "evidenceIds": [
+      "buzz-supp-nostr-open-protocol",
+      "buzz-supp-admin-api",
+      "buzz-docs-19"
+    ]
   },
   {
     "productId": "buzz",
     "storyId": "ai-channel-summaries",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Buzz evidence focuses on agents searching history and pulling up relevant threads (buzz-gh-3, buzz-gh-5) but there's no documentation of an AI-generated summary/recap feature for channels or threads a user missed; the CLI and docs list channel creation, repo management, and workflow triggers with no summarization command or feature mentioned.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Buzz documents agents searching full channel/thread history and returning real threads (not vibes), plus a 'personalized feed' surfacing what matters, which supports catching up on missed content, but there is no explicit documentation of an AI-generated summary/recap feature for channels or threads. missing for 10: explicit summarization/recap capability, examples of generated digest output, evidence of thread-level condensation rather than raw search results.",
+    "evidenceIds": [
+      "buzz-gh-3",
+      "buzz-gh-5",
+      "buzz-docs-14"
+    ]
   },
   {
     "productId": "buzz",
     "storyId": "ai-meeting-recaps",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Buzz's evidence covers voice huddles, channels, agent search of history, and repo/workflow features, but there is no mention of AI-generated meeting notes, recaps, or summaries for huddles attended or missed. Missing for 10: any documentation of automatic meeting/huddle transcription or summary generation, evidence of a recap feature for missed huddles.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Buzz supports voice huddles and agent search over channel history (e.g., buzz-gh-2 mentions dropping into voice huddles; buzz-gh-3 references agents searching six months of history), but there is no evidence of an AI-generated meeting notes/recap feature summarizing huddle audio or content for attendees or absentees. missing for 10: any documented transcript/summary generation from huddle audio, a recap artifact delivered to users, or evidence of catching up on missed huddles via AI notes.",
+    "evidenceIds": [
+      "buzz-gh-2",
+      "buzz-gh-3"
+    ]
   },
   {
     "productId": "buzz",
@@ -245,11 +279,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence of an interactive API reference or runnable examples; the probe explicitly found no OpenAPI/Swagger spec and no llms.txt at Buzz's domain. Only a CLI and MCP hooks documentation exist, which do not constitute an interactive API reference with runnable examples. Missing for 10: any API reference site, OpenAPI/Swagger spec, or interactive/runnable example sandbox.",
+    "rationale": "Probes explicitly checked for an interactive API reference (llms.txt, openapi/swagger endpoints) and all returned 404; documentation exists as static markdown/CLI reference docs but nothing resembling a runnable/interactive API explorer was found.",
     "evidenceIds": [
       "buzz-probe-1",
-      "buzz-probe-2",
-      "buzz-probe-4"
+      "buzz-probe-2"
     ]
   },
   {
@@ -258,20 +291,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes for OpenAPI/swagger specs and llms.txt all returned 404, and no evidence pack item mentions a downloadable API spec; only a CLI and MCP hooks are documented.",
+    "rationale": "Direct probes confirm no OpenAPI/Swagger spec is served at any standard path (buzz.xyz/openapi.json, swagger.json, etc. all 404), and no equivalent machine-readable REST API schema is documented elsewhere in the evidence pack — only human-readable protocol docs (NIPs) and CLI usage exist, not a downloadable machine-readable API spec.",
     "evidenceIds": [
-      "buzz-probe-1",
       "buzz-probe-2"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack describes a sandbox/staging environment or test mode distinct from production data; Buzz's evidence focuses on chat rooms, channels, code review, and agent orchestration, not on data isolation for testing.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Buzz's self-hosting docs describe a distinct 'Quickstart (eval)' Helm profile (in-cluster Postgres/Redis/MinIO, auto-generated secrets) separate from the 'Production' profile with external managed data stores, and a single-node/VPS compose bundle with 'no external services required' — implying an AI-native user could stand up an isolated instance for testing rather than touching a production deployment. There's also an agent-behavior benchmark suite (buzz-dataset) that exercises agent actions in a controlled test harness. However, there is no explicit sandbox/staging mode within a single running instance, no documented data-seeding or reset tooling, and no first-party statement guaranteeing test isolation from production data. Missing for 10: an explicit sandbox/staging environment feature (not just a separate self-hosted deployment), documented test-data seeding/reset tooling, and independent confirmation that eval deployments safely avoid production data.",
+    "evidenceIds": [
+      "buzz-supp-helm-chart",
+      "buzz-docs-11",
+      "buzz-docs-12",
+      "buzz-supp-agent-benchmark"
+    ]
   },
   {
     "productId": "buzz",
@@ -279,8 +316,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of API versioning or a documented deprecation policy; openapi probes returned 404 and no changelog/versioning docs are cited. Missing for 10: versioned API docs, deprecation policy documentation, changelog or stability guarantees.",
+    "rationale": "No evidence anywhere in the pack of versioned public APIs or a documented deprecation policy; probes explicitly show no OpenAPI/swagger spec (404s) and no llms.txt, and the NIP/protocol docs describe features and auth but never versioning guarantees or deprecation timelines.",
     "evidenceIds": [
+      "buzz-probe-1",
       "buzz-probe-2"
     ]
   },
@@ -290,7 +328,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an app directory or marketplace for prebuilt integrations that a team-admin could browse and install; Buzz's evidence covers CLI commands, agent orchestration, MCP hooks, and chat/dev workflows but nothing about an installable integrations marketplace. Missing for 10: any mention of an app directory, marketplace listing, or one-click integration install flow.",
+    "rationale": "Buzz documents a Persona Pack/Open Plugin Spec format for building and distributing agent bundles, but there is no evidence of an actual app directory or marketplace UI where a team-admin can browse and install prebuilt integrations with a click — packs are described as portable zip/git bundles requiring manual distribution, not a curated store.",
     "evidenceIds": []
   },
   {
@@ -299,9 +337,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence mentions 'drop into voice huddles' as a feature (buzz-gh-2), suggesting audio/video calling exists within the app, but there is no documentation on how to initiate a call from a channel/DM, no UI walkthrough, and no independent confirmation it works as described. Missing for 10: dedicated call-initiation documentation, admin-specific controls, video call evidence beyond a single passing mention, and hands-on/community confirmation of the feature working.",
+    "rationale": "Buzz's relay hosts 'huddle audio' (buzz-supp-agents-md mentions relay 'also hosts git + huddle audio') and mentions 'drop into voice huddles' (buzz-gh-2), suggesting some in-app audio call capability exists, but there is no documentation of a team-admin-facing UI flow for starting an audio/video call directly from a channel or DM, no video call evidence beyond frame-anchored video comments (buzz-docs-3), and no admin-specific controls for initiating calls. missing for 10: explicit UI/UX documentation of starting audio or video calls from a channel/DM, video call support (not just audio huddles), admin-specific call controls, and independent/hands-on confirmation that this works in practice.",
     "evidenceIds": [
-      "buzz-gh-2"
+      "buzz-gh-2",
+      "buzz-supp-agents-md",
+      "buzz-docs-3"
     ]
   },
   {
@@ -309,25 +349,23 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows CLI/agent commands operating on single items (one channel, one repo, one workflow) but no documented bulk/batch operations across many items at once; no evidence of scripting loops, batch APIs, or multi-item commands.",
-    "evidenceIds": [
-      "buzz-docs-5",
-      "buzz-docs-7",
-      "buzz-docs-8"
-    ]
+    "confidence": "medium",
+    "rationale": "The evidence shows a rich CLI and API surface (channels, repos, workflows, agents) but every documented command operates on a single named item (e.g., 'buzz channels create --name', 'buzz repos protect set --id'); there is no documented batch/bulk mode, multi-item selector, or scripted bulk-operation feature across channels, repos, or agents. missing for 10: any documented bulk/batch command or API (e.g., bulk channel creation, bulk agent enrollment, bulk workflow triggering), evidence of looping/batch semantics in the CLI or API, independent confirmation of bulk usage.",
+    "evidenceIds": []
   },
   {
     "productId": "buzz",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Buzz documents workflow triggers (buzz-docs-8) and a dedicated 'MCP-driven hooks' doc (buzz-probe-3) implying event-based automation tied to agent actions, but there is no detailed spec of rule syntax, supported event types, or conditions, and no independent confirmation of reliability. missing for 10: full rule-definition schema/docs, breadth of triggerable events, hands-on/independent verification that hooks fire reliably.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Buzz shows multiple event-driven automation primitives — the ACP harness listens for @mentions and triggers agent replies (buzz-docs-10, buzz-supp-acp-harness), workflow CLI commands (`buzz workflows trigger/approve`) tie CI events to actions (buzz-docs-8), and a dedicated 'MCP-driven hooks' doc is referenced (buzz-probe-3), plus 'YAML-as-code automation' is listed as a vision feature (buzz-docs-13). These support event-triggered automation but the evidence pack never shows the actual content/flexibility of the hooks/rules DSL, nor independent confirmation it works as a general-purpose rule engine beyond mention-triggering and workflow approval. Missing for 10: full content of MCP_DRIVEN_HOOKS.md showing a general rule-condition-action system, examples of custom event-rule definitions beyond mentions/CI, and independent/hands-on corroboration that automation rules fire reliably.",
     "evidenceIds": [
+      "buzz-docs-10",
+      "buzz-supp-acp-harness",
       "buzz-docs-8",
-      "buzz-probe-3",
-      "buzz-probe-4"
+      "buzz-docs-13",
+      "buzz-probe-3"
     ]
   },
   {
@@ -336,8 +374,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of any scheduling/cron/recurring-trigger capability in Buzz — workflows can be triggered manually or via CLI/MCP hooks, but nothing documents recurring or time-based scheduling. Missing for 10: any docs/CLI command for cron-style or recurring job scheduling, evidence of scheduled workflow runs.",
-    "evidenceIds": []
+    "rationale": "Buzz documents workflows, triggers, and manual approval commands (buzz workflows trigger/approve) but no evidence anywhere describes cron-like or recurring/scheduled execution of jobs or workflows — only manual/event-driven triggers (e.g., @mentions, patches, CI) are documented.",
+    "evidenceIds": [
+      "buzz-docs-8",
+      "buzz-docs-13",
+      "buzz-gh-2"
+    ]
   },
   {
     "productId": "buzz",
@@ -358,8 +400,8 @@
     "storyId": "custom-slash-commands",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of a slash-command registration API or SDK for developers to add custom commands invoked from the message box; evidence only covers CLI usage, channels, workflows, and MCP hooks. missing for 10: slash command registration API/SDK, documentation of command syntax, examples of third-party commands appearing in the message box.",
+    "confidence": "medium",
+    "rationale": "The evidence pack documents Buzz's CLI, agent harnesses, MCP integrations, and workflow triggers, but nowhere describes a developer-facing mechanism to register custom slash commands invoked from the message box (the classic Slack-style bot integration). Absence of any such API or docs means this applicable app-platform capability is unevidenced.",
     "evidenceIds": []
   },
   {
@@ -367,8 +409,8 @@
     "storyId": "external-guest-access",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence covers channel creation, visibility settings, and agent-specific permissions, but nothing describes guest accounts for external partners or a limited-access sharing model for outside collaborators. Missing for 10: guest account mechanism, external-partner access controls, documentation of restricted/limited-access collaboration for non-org members.",
+    "confidence": "medium",
+    "rationale": "Buzz documents channel creation with private/open visibility (buzz-docs-4, buzz-docs-5) and pubkey allowlists for relay-level access control, but there is no evidence of a dedicated 'guest account' concept or a documented workflow for granting external partners limited-access participation in specific channels versus full membership.",
     "evidenceIds": []
   },
   {
@@ -397,9 +439,11 @@
     "storyId": "granular-notifications",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of notification tuning by channel, keyword, or schedule anywhere in the docs, CLI reference, or README; the CLI examples cover channels, repos, workflows, and GIFs but nothing about notification preferences or muting/alerting rules. Missing for 10: any mention of notification settings, keyword alerts, schedule/quiet-hours controls, or per-channel notification toggles.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence shows only a vague 'Personalized feed. What matters to you.' vision statement (buzz-docs-14) with no documented per-channel notification settings, keyword alerts, or scheduling/quiet-hours controls anywhere in the CLI, docs, or admin materials. Missing for 10: per-channel notification toggles, keyword/mention alerting configuration, schedule/quiet-hours settings, and any admin UI or CLI command implementing these controls.",
+    "evidenceIds": [
+      "buzz-docs-14"
+    ]
   },
   {
     "productId": "buzz",
@@ -407,12 +451,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a simple incoming webhook URL feature for posting messages; Buzz's integration surface described is CLI commands, agent keys/channel membership, and MCP hooks, not a plug-and-play webhook URL. Missing for 10: any documentation of a webhook endpoint, webhook URL generation, or simple HTTP POST-to-channel mechanism.",
+    "rationale": "No evidence of a simple incoming-webhook URL for posting messages; Buzz's documented posting mechanisms require Nostr keypairs and NIP-98 signed HTTP auth events (buzz-supp-admin-api, buzz-supp-git-nostr-credentials, buzz-supp-nip-aa-agent-auth) rather than a bare webhook URL, and no OpenAPI/llms.txt endpoint was found (buzz-probe-1, buzz-probe-2).",
     "evidenceIds": [
-      "buzz-docs-5",
-      "buzz-gh-4",
-      "buzz-probe-3",
-      "buzz-probe-4"
+      "buzz-supp-admin-api",
+      "buzz-supp-git-nostr-credentials",
+      "buzz-supp-nip-aa-agent-auth",
+      "buzz-probe-1",
+      "buzz-probe-2"
     ]
   },
   {
@@ -421,35 +466,39 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Buzz as a chat/collaboration platform with channels, canvases, CLI, and agent integration, but there is no mention of a developer-facing SDK or API for building interactive UI elements like modals, buttons, or structured message layouts inside chat — this is a distinct app-platform capability (like Slack's Block Kit) that is not documented anywhere in the pack. Missing for 10: any API/SDK for interactive components, modal/button primitives, message-layout builder documentation.",
+    "rationale": "Buzz's evidence covers chat, git, workflows, canvases, and video comments, but nothing describes a UI-building capability for modals, buttons, or structured interactive message components (à la Slack Block Kit or Discord embeds) — the closest hints (canvas editing, GIF search, workflow triggers) don't constitute rich interactive message UI.",
     "evidenceIds": []
   },
   {
     "productId": "buzz",
     "storyId": "no-code-workflow-builder",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Buzz has developer-oriented 'workflows' tied to CI/CD and code review (e.g., 'buzz workflows trigger/approve' CLI commands, 'run workflows' in agent capabilities) but nothing describing a no-code workflow builder for team-admins with triggers from events, schedules, or form submissions. This is a CLI/agent-driven automation surface, not a no-code admin tool.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Buzz has a workflows subsystem (CLI commands like `buzz workflows trigger/approve`, CI/patch/workflow-run integration) and vision text mentioning 'YAML-as-code automation,' showing event-triggered automation exists inside the chat tool. But this is explicitly YAML/CLI-driven, not a no-code builder, and there is no evidence of schedule-based or form-submission triggers or any drag-and-drop/no-code workflow designer for team-admins. Missing for 10: a documented no-code workflow builder UI, schedule-trigger support, form-submission trigger support, and admin-facing (non-CLI) workflow configuration.",
     "evidenceIds": [
+      "buzz-docs-8",
+      "buzz-docs-13",
       "buzz-gh-2",
-      "buzz-docs-8"
+      "buzz-gh-5"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Buzz's CLI (buzz-cli) and agent capabilities (buzz-gh-2, buzz-docs-5/7/8) show many UI actions—creating channels, protecting repos, triggering/approving workflows—are exposed programmatically, and agents are described as having full access to open repos, review code, run workflows, and join channels (buzz-gh-2, buzz-gh-4). However, there's no documented OpenAPI/REST spec (buzz-probe-2 shows 404s) confirming full API parity, and some UI-only features like video comments or huddles are not shown as CLI/API accessible. missing for 10: a public API/OpenAPI reference proving complete UI-API parity, evidence that video/canvas/huddle features are scriptable via API.",
+    "rationale": "Buzz is architected so that its underlying Nostr relay protocol IS the API — third-party clients can connect directly via NIP-29/NIP-42 (buzz-supp-nostr-open-protocol), and the CLI documents parity for channels, repos, workflows, gifs, and protection rules (buzz-docs-5..8), with agents explicitly able to open repos, review code, run workflows, edit canvases, and join huddles (buzz-gh-2). However there's no formal OpenAPI/swagger spec (buzz-probe-2 404s) or llms.txt (buzz-probe-1), and some richer UI surfaces (frame-anchored video comments, huddles, feed personalization) aren't confirmed to have CLI/API equivalents. Missing for 10: a published OpenAPI/REST spec confirming full UI-feature parity, and explicit API coverage for video annotation/huddle/feed features.",
     "evidenceIds": [
-      "buzz-gh-2",
-      "buzz-gh-4",
+      "buzz-supp-nostr-open-protocol",
       "buzz-docs-5",
+      "buzz-docs-6",
       "buzz-docs-7",
       "buzz-docs-8",
+      "buzz-gh-2",
       "buzz-probe-2",
+      "buzz-probe-1",
       "buzz-probe-4"
     ]
   },
@@ -457,42 +506,47 @@
     "productId": "buzz",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Buzz's open-source, self-hostable design and Nostr-based signed-event architecture imply data ownership and portability ('the project lives in one place, and that place is yours'; run your own relay), but no CLI command or documented feature explicitly exports data in an open format for a user to leave with. Missing for 10: an explicit export/backup command, documentation of the open data format schema, and independent confirmation that self-hosted data can be fully extracted and reused elsewhere.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Buzz's architecture is built on open, portable substrates — chat is stored as Nostr events over an open protocol (NIP-29/NIP-42) that any third-party client can read directly, git repos are standard git accessible via git-credential-nostr, and the whole stack is OSS and self-hostable (Helm chart, VPS compose bundle) so a community can 'run your own relay' rather than being locked to Block's hosting. This gives strong architectural openness/portability, but there is no documented explicit bulk 'export my data' command or archive format for a leaving user beyond standing up your own relay/git server. Missing for 10: an explicit data-export CLI/API command, a documented export file format, and independent confirmation that a full self-hosted migration actually preserves history/identity end-to-end.",
     "evidenceIds": [
-      "buzz-docs-1",
-      "buzz-docs-2",
-      "buzz-probe-4"
+      "buzz-supp-nostr-open-protocol",
+      "buzz-docs-19",
+      "buzz-supp-git-nostr-credentials",
+      "buzz-supp-helm-chart",
+      "buzz-docs-11",
+      "buzz-docs-1"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "openness-open-license",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Buzz's source is hosted publicly on GitHub (block/buzz) with docs, CLI code, and README all visible, and community discussion confirms it's treated as an open-source project ('decentralized, self-sovereign, and open source'). However, the evidence pack never explicitly states or cites a specific OSI license file/name. Missing for 10: explicit citation of the license type (e.g., Apache/MIT) confirming open-license terms, independent verification of license terms.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Buzz is hosted as a public GitHub repo (block/buzz) with full source across crates (relay, CLI, ACP harness, agent runtime, etc.), and multiple docs explicitly describe it as an 'OSS codebase' / 'OSS source' whose code an AI agent or user can read directly. Missing for 10: no citation of an explicit LICENSE file or SPDX identifier confirming which specific open license governs the code, and no independent third-party confirmation of license terms.",
     "evidenceIds": [
       "buzz-gh-1",
-      "buzz-gh-2",
-      "buzz-docs-1",
-      "buzz-comm-17",
-      "buzz-probe-4"
+      "buzz-docs-2",
+      "buzz-supp-agents-md",
+      "buzz-probe-4",
+      "buzz-probe-7"
     ]
   },
   {
     "productId": "buzz",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Buzz is explicitly open source and self-hostable: docs state 'Run your own relay for one community... same OSS codebase' and 'The project lives in one place, and that place is yours,' with a public GitHub repo and CLI for setup. Missing for 10: no independent/hands-on report confirming a successful self-hosted deployment, and community comments raise skepticism about maturity/reliability rather than confirming self-hosting works in practice.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Buzz is explicitly designed for self-hosting: it ships a docker-compose single-node/VPS bundle, a Helm chart on GHCR (verified live with published versions), a Kubernetes-based production profile with external Postgres/Redis/S3, and messaging stating 'No external services required' and 'The project lives in one place, and that place is yours.' This is corroborated independently via a live GHCR probe confirming the chart is actually published and pullable. Missing for 10: independent hands-on report of a successful self-hosted deployment by a third party (community evidence is mostly skeptical commentary rather than deployment verification).",
     "evidenceIds": [
       "buzz-docs-1",
-      "buzz-docs-2",
-      "buzz-gh-1",
-      "buzz-probe-4"
+      "buzz-docs-11",
+      "buzz-docs-12",
+      "buzz-supp-helm-chart",
+      "buzz-probe-7",
+      "buzz-docs-2"
     ]
   },
   {
@@ -501,11 +555,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Buzz supports creating channels/rooms with a visibility flag ('make it private', CLI --visibility open) and per-agent/user channel memberships, indicating basic public/private organization with membership. However, evidence for granular admin membership controls (e.g., invite management, role-based permissions, moderation) is thin, and community critique raises concrete doubts about the robustness of its custom permission model in real-world edge cases (e.g., auto-invite conflicts). missing for 10: detailed admin UI/CLI for managing membership/invites, documented role-based access control, independent verification that private channels reliably restrict access.",
+    "rationale": "Buzz supports creating channels/rooms with visibility settings (buzz channels create --visibility open, 'make it private') and repo protection controls, but evidence is thin on explicit team-admin membership management (invite/remove members, role-based permissions across public/private channels) beyond agent enrollment via keys; community critique also flags that the group/permission model is untested in real-world scenarios. missing for 10: documented admin UI/CLI for managing human member lists per channel, robust real-world validation of the permission model, and independent corroboration of private-channel access controls holding up in practice.",
     "evidenceIds": [
       "buzz-docs-4",
       "buzz-docs-5",
-      "buzz-gh-4",
+      "buzz-docs-7",
       "buzz-comm-5",
       "buzz-comm-6"
     ]
@@ -513,11 +567,17 @@
   {
     "productId": "buzz",
     "storyId": "privacy-data-residency",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The evidence pack mentions self-hosting relay options (buzz-docs-2) but nowhere addresses data residency, regional storage choice, or compliance-driven data location controls. Buyers cannot determine whether or where data can be pinned to a specific region.",
-    "evidenceIds": []
+    "rationale": "Buzz is fully self-hostable (single-node/VPS compose bundle, Helm chart with external Postgres/Redis/S3) and lets an operator 'run your own relay' anywhere, which indirectly gives control over where data physically resides. However, there is no explicit region/residency feature, multi-region hosting option, or compliance documentation for the hosted/managed offering — residency is only achievable by self-hosting infrastructure yourself. Missing for 10: explicit data-residency controls, documented region selection for any hosted/managed deployment, and compliance (GDPR/SOC2 residency) statements.",
+    "evidenceIds": [
+      "buzz-docs-11",
+      "buzz-docs-12",
+      "buzz-supp-helm-chart",
+      "buzz-docs-2",
+      "buzz-probe-7"
+    ]
   },
   {
     "productId": "buzz",
@@ -525,17 +585,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage or opt-out controls for Buzz; nothing discusses data being used to train models or a way to prevent it.",
+    "rationale": "No evidence in the pack addresses AI-training data usage, opt-out controls, or any privacy policy statement about model training on user content; Buzz's evidence covers self-hosting, agent identity/auth, and infra deployment but nothing about training-data exclusion.",
     "evidenceIds": []
   },
   {
     "productId": "buzz",
     "storyId": "privacy-retention-controls",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack describes any data retention policy, deletion controls, export, or purge mechanisms in Buzz; self-hosting (buzz-docs-2) implies ownership of infrastructure but says nothing about controlling retention/deletion of data itself.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Buzz's self-hosting model ('the project lives in one place, and that place is yours', run-your-own-relay, first-class Helm/VPS distributions) gives an operator ultimate control over where data resides and thus indirect control over retention/deletion by managing their own database/infrastructure, and the admin API shows some data-visibility tooling. However there is no documented feature for message/channel/data deletion, configurable retention windows, or a deletion API/command exposed to end users or agents. Missing for 10: explicit data-retention settings, message/channel deletion commands or APIs, and any GDPR-style data-erasure workflow.",
+    "evidenceIds": [
+      "buzz-docs-1",
+      "buzz-docs-2",
+      "buzz-supp-helm-chart",
+      "buzz-supp-admin-api"
+    ]
   },
   {
     "productId": "buzz",
@@ -549,16 +614,17 @@
   {
     "productId": "buzz",
     "storyId": "realtime-bot-events",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Buzz's architecture gives agents their own keys, channel memberships, and audit trails, and documents MCP-driven hooks for agent integration, implying some event-driven mechanism for bots to react to chat activity. However, there is no explicit documentation of a formal events API, WebSocket/gateway protocol, or real-time subscription model comparable to Slack's Events API, and probes for openapi/llms.txt returned 404s. Missing for 10: explicit gateway/WebSocket protocol docs, formal events API reference, and independent confirmation that bots receive events in real time.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Buzz's core architecture is a Nostr WebSocket relay that agents connect to in real time — buzz-acp explicitly documents 'The harness listens for @mentions on the relay, prompts your agent, and the agent replies using the Buzz CLI,' and NOSTR.md documents a real-time wire protocol (NIP-29/NIP-42) any third-party client can connect to directly for group chat/reaction events. Agents get first-class identities (their own Nostr keypairs) and remote/headless agents operate entirely through relay-delivered messages/mentions per VISION_REMOTE_AGENTS.md, with a documented benchmark suite grading real-time reply/notification behavior. Missing for 10: no REST/OpenAPI events API (probes show openapi.json 404s), and no independent hands-on report confirming real-time reliability in production beyond first-party docs.",
     "evidenceIds": [
+      "buzz-docs-10",
+      "buzz-supp-acp-harness",
+      "buzz-supp-nostr-open-protocol",
+      "buzz-supp-remote-agents",
       "buzz-gh-4",
-      "buzz-gh-2",
-      "buzz-probe-3",
-      "buzz-probe-1",
-      "buzz-probe-2"
+      "buzz-supp-agent-benchmark"
     ]
   },
   {
@@ -567,7 +633,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of retention policy configuration, legal hold mechanisms, or eDiscovery/compliance export tooling in Buzz's docs or CLI; the product focuses on chat/agent collaboration and repo protection, not compliance retention. missing for 10: retention policy controls, legal hold feature, eDiscovery export capability, compliance documentation.",
+    "rationale": "No evidence of message retention policy enforcement or legal-hold/eDiscovery features anywhere in the evidence pack; the admin/moderation docs (buzz-docs-16, buzz-supp-admin-api) cover moderation reports and signed-event auth, not retention/hold policies. This is a fair axis for a chat platform but Buzz shows no capability for it.",
     "evidenceIds": []
   },
   {
@@ -576,7 +642,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Buzz documents voice huddles (buzz-gh-2) and video-with-comments features (buzz-docs-3), but no evidence anywhere describes screen sharing during a call. Missing for 10: any mention of screen-share functionality, UI, or CLI command for sharing a screen in a huddle.",
+    "rationale": "Buzz documents voice huddles (buzz-gh-2) and video-with-comments features (buzz-docs-3), but no evidence anywhere describes live screen sharing during a call; missing for 10: any mention of screen-share capability, UI, or admin controls for it.",
     "evidenceIds": [
       "buzz-gh-2",
       "buzz-docs-3"
@@ -585,24 +651,28 @@
   {
     "productId": "buzz",
     "storyId": "threaded-replies",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack describes channels, search across conversations, and agent chat rooms, but no documentation or feature mentions threaded replies to keep side discussions attached to an original message. missing for 10: any mention of a reply/thread UI or API, docs on thread creation, or community confirmation of threading behavior.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only evidence touching threaded replies is a benchmark task named 'reply-to-thread' testing whether an agent's reply lands in the correct thread, implying the platform supports threaded replies, but there is no first-party documentation, UI description, or CLI command explicitly describing thread creation/reply for team-admins or users generally. Missing for 10: dedicated docs/CLI for reply-in-thread UX, screenshots or admin-facing description, and independent corroboration that threading works as a user feature beyond the agent benchmark.",
+    "evidenceIds": [
+      "buzz-supp-agent-benchmark"
+    ]
   },
   {
     "productId": "buzz",
     "storyId": "topic-based-catchup",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Buzz documents named rooms/channels created per feature or topic (buzz-docs-4, buzz-docs-5) and shows agents searching and posting 'threads, not vibes' with unified search across conversation, patch, workflow and approval (buzz-gh-3, buzz-gh-5), supporting organized, catch-up-friendly channels. However there's no explicit catch-up/unread-summary tooling or independent hands-on evidence that this actually makes busy-channel triage efficient for a human admin. missing for 10: explicit catch-up/digest feature, independent/hands-on validation of thread organization reducing admin overhead.",
+    "rationale": "Buzz supports named, purpose-built channels/rooms (buzz-docs-4, buzz-docs-5) and threaded conversation history that agents can search rather than relying on unstructured chat (buzz-gh-3, buzz-gh-5, buzz-gh-1), which gives a team-admin a named-topic structure to navigate. However there is no explicit admin-facing 'catch-up' feature like unread summaries, digesting, or thread-level read status — only a generic personalized feed (buzz-docs-14) is mentioned without detail. Missing for 10: dedicated catch-up/unread summary tooling, evidence of thread-level (vs channel-level) organization granularity, and independent/hands-on confirmation that this reduces admin overhead in busy channels.",
     "evidenceIds": [
       "buzz-docs-4",
       "buzz-docs-5",
+      "buzz-gh-1",
       "buzz-gh-3",
-      "buzz-gh-5"
+      "buzz-gh-5",
+      "buzz-docs-14"
     ]
   },
   {
@@ -610,8 +680,8 @@
     "storyId": "workspace-history-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any export/compliance feature for full workspace message history in machine-readable formats; evidence covers CLI for channels, workflows, repos, but nothing about admin data export or e-discovery. missing for 10: export/download tooling, machine-readable format documentation, admin controls over private conversation export, compliance/legal-hold features.",
+    "confidence": "medium",
+    "rationale": "There is no evidence of any workspace-wide message export feature, compliance/eDiscovery tooling, or machine-readable bulk-export API in Buzz's docs — search over history (buzz-gh-3), admin dashboards (buzz-supp-admin-api), and audit trails for agents are documented, but none describe exporting full message history (including private conversations) for a team-admin. This is an applicable axis for a team-chat product but is simply unaddressed by any evidence item.",
     "evidenceIds": []
   },
   {
