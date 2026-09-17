@@ -1,15 +1,15 @@
 {
-  "hash": "c0a52ee64bc5bd7bcab7897d271a69769deac08081f14ddcf146aef8bbb37b84",
+  "hash": "11fe7e598cee28e5c4171ba4638dde84854e64c95590fb5206810f313d156200",
   "verdict": {
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "dlt provides sequential execution within a pipeline.run() call, a dbt runner that runs transformations after load (implicit step ordering), and dltHub's 'deploy/schedule/refresh/backfill' surface for scheduling runs, but this is not the same as declaring explicit dependencies between multiple pipeline steps/datasets with a platform resolving execution order — the docs explicitly position dlt as something you drop into Airflow, serverless functions, etc. for orchestration rather than owning DAG-style dependency resolution itself. missing for 10: explicit dependency-declaration API between steps/datasets, evidence of a scheduler resolving multi-pipeline/dataset dependency graphs, and independent confirmation that dlthub's scheduling handles cross-pipeline ordering rather than single-pipeline cron-like scheduling.",
+    "rationale": "dlt itself is primarily an ingestion/loading library that can be embedded in orchestrators (Airflow, Dagster, Lambda) and its dltHub product adds scheduling, backfill, and 'lineage-aware pipeline chaining' (dlt-docs-59, dlt-docs-70, dlt-docs-11), suggesting some native orchestration of dependent runs. However, core dlt docs mostly describe running individual pipelines, not defining explicit dependency graphs between multiple pipeline steps/datasets, and orchestration is largely delegated to external tools rather than dlt inferring/enforcing run order itself. missing for 10: concrete documentation or examples of defining explicit step/dataset dependencies and DAG-style ordering within dlt/dltHub, independent evidence of dltHub's orchestration actually resolving dependencies correctly, and clarification of how it differs from just embedding dlt calls in Airflow/Dagster.",
     "evidenceIds": [
-      "dlt-docs-6",
-      "dlt-docs-8",
+      "dlt-docs-59",
+      "dlt-docs-70",
       "dlt-docs-11",
-      "dlt-docs-30",
+      "dlt-docs-6",
       "dlt-gh-2"
     ],
     "productId": "dlt",

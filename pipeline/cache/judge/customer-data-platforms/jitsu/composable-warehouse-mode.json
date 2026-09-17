@@ -1,14 +1,15 @@
 {
-  "hash": "26a2d863c8d477d67f6cb7fe44a6792b8f492bca6e15338508a8a433b774bc08",
+  "hash": "e77319c76a396fcac129746b52f95573bb0126699cab3559d74b7795f1b23384",
   "verdict": {
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jitsu's Profile Builder explicitly builds profiles from events data sent *to* Jitsu ('Profiles are customer records stored in your warehouse, based on the events data you send to Jitsu'), not from pre-existing warehouse tables — the opposite of a warehouse-native, no-re-collection model. The only warehouse-read capability shown is `ctx.getWarehouse` inside Functions, which is far short of defining models/audiences on existing tables and activating them via reverse ETL. Missing for 10: any evidence of modeling on pre-existing warehouse tables, an audience-builder UI over arbitrary warehouse schemas, or activation/sync-back without first ingesting data through Jitsu's own collection pipeline.",
+    "rationale": "Jitsu's core model is event collection that streams data INTO the warehouse and builds Profiles from those collected events (jitsu-docs-39, jitsu-docs-53), not defining models/audiences on tables that already exist in the warehouse and activating them without re-collection. The only warehouse-query hook (ctx.getWarehouse in Functions, jitsu-docs-34/55) is a minor read API inside event-processing functions, not a reverse-ETL/audience-activation workflow on existing warehouse tables.",
     "evidenceIds": [
-      "jitsu-docs-11",
       "jitsu-docs-39",
-      "jitsu-docs-34"
+      "jitsu-docs-53",
+      "jitsu-docs-34",
+      "jitsu-docs-55"
     ],
     "productId": "jitsu",
     "storyId": "composable-warehouse-mode"

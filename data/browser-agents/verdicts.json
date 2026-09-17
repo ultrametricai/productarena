@@ -2707,27 +2707,29 @@
   {
     "productId": "smooth",
     "storyId": "agent-framework-adapters",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Smooth positions itself as a browser tool usable by agents like Claude Code, but there is no documentation of adapters for Claude Agent SDK, Vercel AI SDK, LangChain, or CrewAI specifically. Missing for 10: any documented integration guide or adapter package for these named frameworks.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Smooth documents integration with Claude Code and generic CLI agents, and offers custom-tools/API hooks that could be wired into agent frameworks, but there is no documented adapter for Vercel AI SDK, LangChain, or CrewAI specifically. missing for 10: named/documented adapters for Claude Agent SDK, Vercel AI SDK, LangChain, and CrewAI; independent confirmation of framework integrations.",
     "evidenceIds": [
-      "smooth-gh-1",
-      "smooth-docs-6"
+      "smooth-docs-22",
+      "smooth-docs-23",
+      "smooth-docs-24",
+      "smooth-docs-16",
+      "smooth-docs-35"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "A direct probe confirms docs.smooth.sh/llms.txt returns HTTP 200 with a structured index of docs pages, and the docs themselves are mirrored as .md files (e.g. live-share.md, proxies.md) enabling agent-friendly consumption. One community comment notes the docs pages aren't fully token-efficient, a minor caveat. Missing for 10: independent verification that agents actually consume llms.txt effectively, and no evidence of additional agent-specific doc formats beyond the single llms.txt file.",
+    "rationale": "A direct probe confirms llms.txt is live and returns HTTP 200 with a structured docs index, and Smooth's docs are extensively agent-oriented (CLI usage guides for Claude Code/other agents, .md-suffixed doc pages for machine consumption). Missing for 10: no independent/community confirmation that agents actually consume the llms.txt successfully in practice.",
     "evidenceIds": [
       "smooth-probe-1",
-      "smooth-docs-2",
-      "smooth-docs-3",
-      "smooth-comm-9"
+      "smooth-docs-24",
+      "smooth-docs-22"
     ]
   },
   {
@@ -2736,10 +2738,10 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Smooth is a browser-automation SDK/CLI that lets AI agents navigate the web and extract structured data from pages — it is not a data platform or analytics product with a UI that surfaces AI-generated insights/suggestions from a user's own data. This story targets a different product category (BI/analytics-style in-product insights), so it does not apply to Smooth's browser-agent tooling.",
+    "rationale": "Smooth is a browser-automation SDK/CLI that lets AI agents navigate websites and extract structured data on request; it is not a data platform that ingests a user's own data and proactively surfaces AI-generated insights or suggestions from it. This is a category mismatch rather than a missing feature.",
     "evidenceIds": [
       "smooth-gh-1",
-      "smooth-docs-7",
+      "smooth-docs-21",
       "smooth-docs-8"
     ]
   },
@@ -2749,29 +2751,31 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Smooth lets users kick off browser-agent tasks programmatically that run autonomously (navigating, extracting data, solving CAPTCHAs) and provides a live_url to monitor progress, which supports hands-off execution once started. However there's no evidence of scheduling, triggers, webhooks, or persistent 'set it and forget it' background jobs that run without an explicit API call — the model shown is synchronous task invocation, not autonomous background automation setup. Missing for 10: scheduling/cron or event-trigger support, evidence of long-running unattended jobs, and independent confirmation of background execution beyond a single task call.",
+    "rationale": "Smooth lets users kick off tasks via API/CLI that then run asynchronously (task run, live_url to watch progress, polling for status, persistent sessions/auth) and can be invoked by agents like Claude Code, so there is some background/async execution. However there is no evidence of scheduling, triggers, or recurring/autonomous automation setup — the API explicitly relies on client polling rather than webhooks, and every task appears to be manually initiated rather than self-triggering. Missing for 10: scheduling/cron or trigger-based automation setup, evidence of tasks running without a user/agent explicitly starting them, and independent confirmation of unattended long-running automations.",
     "evidenceIds": [
-      "smooth-docs-1",
+      "smooth-docs-13",
       "smooth-docs-2",
-      "smooth-docs-7",
-      "smooth-docs-9"
+      "smooth-docs-3",
+      "smooth-docs-36",
+      "smooth-docs-22",
+      "smooth-docs-37"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Smooth's core product is a task-delegation interface: users hand off a task description (e.g., navigate, extract, multi-step session workflow) to Smooth's built-in AI/browser agent, which executes autonomously and returns live_url and structured outputs (smooth-docs-1, smooth-docs-7, smooth-docs-8, smooth-docs-5). Community hands-on feedback corroborates it executing complex prompts well (smooth-comm-2, smooth-comm-1), though it is agent-facing (tool for other agents like Claude Code) as well as human-facing. Missing for 10: independent/reproducible benchmarks of task success (raised unanswered in smooth-comm-14) and clearer human-only assistant UX beyond API/CLI task calls.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Smooth's docs show a built-in AI agent that users delegate tasks to via simple calls like `smooth_client.run(\"Go to google flights and find the cheapest flight...\")`, with live view, structured output, session workflows, and CLI integration for agents like Claude Code — a clear delegate-a-task-to-built-in-AI pattern. Missing for 10: independent/third-party validation of task success quality (community comments raise unanswered questions about evals and reproducibility), and no polished end-user chat/assistant UI beyond API/CLI/SDK interfaces.",
     "evidenceIds": [
-      "smooth-docs-1",
+      "smooth-docs-13",
       "smooth-docs-7",
-      "smooth-docs-8",
-      "smooth-docs-5",
       "smooth-docs-2",
-      "smooth-comm-1",
-      "smooth-comm-2"
+      "smooth-docs-22",
+      "smooth-gh-1",
+      "smooth-comm-2",
+      "smooth-comm-14"
     ]
   },
   {
@@ -2780,13 +2784,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Smooth is explicitly designed as an SDK/API and CLI for programmatic browser automation, with 'plug-and-play' 4-line-of-code task execution and custom tools/session workflows suited to unattended automation, and a documented CLI (smooth-gh-1, smooth-docs-1, smooth-probe-3). However there is no explicit documentation or example of running it inside a CI pipeline (e.g., GitHub Actions), headless flags, or exit-code/automation-specific guidance. Missing for 10: explicit CI/CD integration docs or examples, confirmation of non-interactive/headless auth flow for pipelines, independent confirmation of CI usage.",
+    "rationale": "Smooth exposes a REST API, Python SDK, and CLI that can run tasks headlessly (4-line quickstart, polling-based task list/cancel/event endpoints, CLI usable by 'any agent that can run CLI commands'), all consistent with CI-style automation. However there is no explicit CI/CD example, no mention of headless flags, containerization, or GitHub Actions integration, and community feedback focuses on live-view/human-in-the-loop demos rather than pure automation. missing for 10: explicit CI/CD pipeline example, headless-mode documentation/flags, independent confirmation of unattended automation use.",
     "evidenceIds": [
       "smooth-docs-1",
-      "smooth-gh-1",
-      "smooth-probe-3",
-      "smooth-docs-6",
-      "smooth-docs-7"
+      "smooth-docs-13",
+      "smooth-docs-20",
+      "smooth-docs-36",
+      "smooth-docs-37",
+      "smooth-docs-38",
+      "smooth-docs-24",
+      "smooth-probe-3"
     ]
   },
   {
@@ -2794,11 +2801,12 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Smooth documents a 'custom tools' feature for arbitrary functions but there is no mention anywhere in docs, GitHub, or community discussion of MCP server support or integration, so this applicable capability is unevidenced.",
+    "confidence": "high",
+    "rationale": "Smooth's docs explicitly describe its custom-tools mechanism as an alternative to MCP ('similar to MCP... but without having to deal with servers or additional infrastructure'), meaning it does not support plugging in external MCP servers — it offers its own proprietary tool-registration API instead.",
     "evidenceIds": [
+      "smooth-docs-16",
       "smooth-docs-6",
-      "smooth-probe-1"
+      "smooth-docs-35"
     ]
   },
   {
@@ -2807,36 +2815,42 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Smooth is a browser-automation SDK/CLI used by agents like Claude Code, but the evidence pack contains no mention of an official MCP server or MCP protocol integration anywhere in its docs, GitHub repo, or community discussion — only generic SDK/CLI methods and custom tool functions are documented.",
+    "rationale": "Smooth is a browser-automation service (not itself an agent), so an official MCP server is a plausible ask, but the docs explicitly say custom tools are offered 'similar to MCP... but without having to deal with servers or additional infrastructure' — indicating no MCP server is provided. No evidence of an official MCP server integration exists anywhere in the pack.",
     "evidenceIds": [
-      "smooth-gh-1",
-      "smooth-docs-6",
-      "smooth-probe-1",
-      "smooth-probe-3"
+      "smooth-docs-16",
+      "smooth-docs-6"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Smooth's core interaction model is task-based: you give it a task description that an agent executes in a browser (session workflow, extract, navigate), and it is explicitly positioned as \"a browser for AI agents\" usable by tools like Claude Code, implying natural-language task instructions. However, no evidence shows an explicit example of a natural-language prompt/command syntax or confirms this is exposed to end-users beyond agent-to-agent orchestration. Missing for 10: explicit example of a natural-language task string/command, confirmation of human-facing NL command interface, independent corroboration of NL usability.",
+    "rationale": "Docs show the core interaction model is natural-language task strings (e.g. smooth_client.run(\"Go to google flights and find the cheapest flight...\")) and CLI integrations where you simply 'ask Claude to do something on the web' and Smooth executes it automatically, confirming NL-driven operation across SDK, API, and CLI. Missing for 10: independent hands-on validation of NL command reliability/robustness on complex tasks (community comments focus on speed/pricing/security, not NL fidelity) and no published evals confirming consistent natural-language task success.",
     "evidenceIds": [
-      "smooth-docs-1",
-      "smooth-docs-7",
-      "smooth-gh-1",
-      "smooth-docs-8"
+      "smooth-docs-13",
+      "smooth-docs-22",
+      "smooth-docs-23",
+      "smooth-docs-24",
+      "smooth-docs-21",
+      "smooth-gh-1"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "GitHub repo describes Smooth CLI explicitly as 'a browser for AI agents, enabling tools like Claude Code to navigate the web' and a docs probe confirms an official CLI overview page exists, showing a first-party CLI built for AI-agent workflows. Missing for 10: independent hands-on confirmation of the CLI's usage/reliability and more detailed CLI documentation content beyond the overview link.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Smooth ships an official CLI documented extensively (overview, integrations with Claude Code/OpenClaw/other agents, localhost tunneling, data extraction, auth, file handling, live view) and is explicitly framed as 'a browser for AI agents' per GitHub docs. missing for 10: independent/hands-on verification of the CLI itself (community discussion focuses on the API/product broadly, not CLI-specific experience) and no changelog/version history showing CLI maturity.",
     "evidenceIds": [
+      "smooth-docs-21",
+      "smooth-docs-22",
+      "smooth-docs-23",
+      "smooth-docs-24",
+      "smooth-docs-25",
+      "smooth-docs-29",
       "smooth-gh-1",
       "smooth-probe-3"
     ]
@@ -2844,17 +2858,19 @@
   {
     "productId": "smooth",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Smooth provides documented SDK/API methods (task execution, session workflows, structured outputs, custom tools, proxies) and an llms.txt docs index plus a CLI, showing a documented programmatic interface for AI-native use. However, no formal OpenAPI/REST spec was found (404s on all standard paths), and there is no independent corroboration of API robustness beyond vendor docs. missing for 10: a discoverable OpenAPI/REST spec, independent/hands-on verification of API completeness and stability.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Smooth documents a full REST API with programmatic task running, sessions, custom tools, structured outputs, and event endpoints (smooth-docs-20, 34, 35, 37-39), plus a quickstart SDK code example (smooth-docs-13). This is a well-documented public API clearly aimed at AI-native/agentic use cases. Missing for 10: no formal OpenAPI/swagger spec found (smooth-probe-2 shows 404s on all candidate paths) and no independent third-party corroboration of API robustness beyond docs.",
     "evidenceIds": [
-      "smooth-docs-1",
-      "smooth-docs-6",
-      "smooth-docs-7",
-      "smooth-probe-1",
-      "smooth-probe-2",
-      "smooth-probe-3"
+      "smooth-docs-20",
+      "smooth-docs-34",
+      "smooth-docs-35",
+      "smooth-docs-37",
+      "smooth-docs-38",
+      "smooth-docs-39",
+      "smooth-docs-13",
+      "smooth-probe-2"
     ]
   },
   {
@@ -2863,23 +2879,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of scoped or least-privilege API credential issuance, API key scoping, or permission management for agents; docs cover task execution, sessions, proxies, and privacy features but nothing about credential scoping. missing for 10: scoped API key/token generation, permission/role controls, credential revocation or least-privilege access management.",
+    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents; Smooth uses standard API keys/auth but there's no mention of scoped permissions, role-based access, or credential minimization features for agents.",
     "evidenceIds": []
   },
   {
     "productId": "smooth",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Smooth documents SDK-style integration (4-line task execution, custom tools, structured outputs, session workflows) and a CLI positioned as \"a browser for AI agents\" usable with tools like Claude Code, indicating official first-party SDK/CLI support for AI-native workflows. However, there is no OpenAPI spec, no evidence of multi-language SDKs, and no independent/hands-on confirmation of SDK reliability beyond docs and a GitHub repo. missing for 10: OpenAPI/API spec availability, multi-language SDK coverage, independent developer corroboration of SDK usage/quality.",
+    "rationale": "Docs show a Python-style client (`smooth_client.run(...)`), a full REST API reference (tasks, sessions, events, custom tools), and a CLI positioned for agent integration (Claude Code, generic agents), demonstrating an official SDK/API surface for building AI-native workflows. Missing for 10: an OpenAPI/swagger spec (probe found all candidate paths 404), explicit multi-language SDK coverage beyond the single quickstart snippet, and independent hands-on corroboration of SDK developer experience beyond community demo reactions.",
     "evidenceIds": [
-      "smooth-docs-1",
+      "smooth-docs-13",
+      "smooth-docs-20",
       "smooth-docs-6",
-      "smooth-docs-7",
-      "smooth-gh-1",
-      "smooth-probe-3",
-      "smooth-probe-2"
+      "smooth-docs-16",
+      "smooth-docs-34",
+      "smooth-docs-35",
+      "smooth-probe-2",
+      "smooth-gh-1"
     ]
   },
   {
@@ -2888,8 +2906,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions webhooks or event subscriptions; Smooth's documented features (live_url, structured outputs, custom tools, sessions) do not include a webhook/event notification mechanism.",
-    "evidenceIds": []
+    "rationale": "The docs explicitly state Smooth's API uses polling instead of webhooks or WebSockets, and no evidence anywhere describes a webhook subscription mechanism for task/session events.",
+    "evidenceIds": [
+      "smooth-docs-36"
+    ]
   },
   {
     "productId": "smooth",
@@ -2897,9 +2917,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows only static markdown docs (llms.txt, feature pages) and explicitly shows the openapi.json/swagger endpoints returning 404, indicating no interactive API reference or runnable-example playground exists. No mention of a Swagger UI, Postman collection, or in-browser code runner is present anywhere in docs or community discussion.",
+    "rationale": "Docs include an API reference section (smooth-docs-20, smooth-docs-34–39) and quickstart code snippets, but there is no evidence of an interactive reference with runnable/try-it examples — the openapi probe found no spec at any standard location (smooth-probe-2), and no docs page mentions a live console or executable code sandbox.",
     "evidenceIds": [
-      "smooth-probe-1",
+      "smooth-docs-20",
+      "smooth-docs-34",
+      "smooth-docs-37",
       "smooth-probe-2"
     ]
   },
@@ -2909,10 +2931,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for OpenAPI/Swagger spec files at all standard paths returned 404, and no docs page references a downloadable machine-readable API spec; only an llms.txt (docs index) is available.",
+    "rationale": "Smooth has an API reference documented as prose (endpoints like list-tasks, cancel-task, send-event) but a direct probe for OpenAPI/Swagger spec files at all standard paths returned 404, and no evidence shows a downloadable machine-readable spec.",
     "evidenceIds": [
       "smooth-probe-2",
-      "smooth-probe-1"
+      "smooth-docs-20",
+      "smooth-docs-37"
     ]
   },
   {
@@ -2921,7 +2944,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Smooth's docs describe browser-automation features (live sessions, proxies, persistent auth, structured outputs) but nowhere mention a sandbox/staging mode or any mechanism to isolate test runs from production data or accounts. Community feedback even flags unresolved concerns about data handling and security, but no concrete sandbox capability is described or corroborated.",
+    "rationale": "Smooth is a browser-automation/agent tool for navigating the live web; there is no evidence of a sandbox/staging environment or test-data isolation feature to avoid touching production data. missing for 10: any mention of sandbox mode, test/staging environment, or production-data isolation.",
     "evidenceIds": []
   },
   {
@@ -2930,7 +2953,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probe returned 404s and docs show no changelog/versioning references. missing for 10: versioned API scheme, deprecation policy documentation, changelog/migration guides.",
+    "rationale": "No evidence of API versioning scheme (e.g., /v1/ paths) or any documented deprecation policy; OpenAPI spec probe returned 404s and docs mention no versioning/deprecation guidance.",
     "evidenceIds": [
       "smooth-probe-2"
     ]
@@ -2938,24 +2961,30 @@
   {
     "productId": "smooth",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Smooth's docs describe single-task execution, session workflows, and structured extraction, but nothing about running/orchestrating bulk operations across many items (e.g., batch task queues, parallel task fan-out) is documented or mentioned by users.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Smooth supports multi-step sequential task execution within a persistent browser session (docs-7, docs-14, docs-34) and a task-list/cancel API (docs-37, docs-38), which lets a workflow process several items one after another, but there is no documented bulk/batch endpoint, parallel execution, or 'run against N items' primitive.  missing for 10: explicit batch/bulk API or parallel multi-item execution, evidence of throughput at scale, independent confirmation of bulk workflows.",
     "evidenceIds": [
-      "smooth-docs-1",
       "smooth-docs-7",
-      "smooth-docs-8"
+      "smooth-docs-14",
+      "smooth-docs-34",
+      "smooth-docs-37",
+      "smooth-docs-38"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "automation-rules-engine",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Smooth is a browser-automation/agent-tool product for running tasks on demand, not an event-driven rules/automation-trigger platform; there is no mention of defining rules or triggers that fire actions on events, so this automation-depth axis (workflow/event triggers) is a category mismatch for this product type.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Smooth is a browser-automation SDK/CLI that runs tasks on demand or in sequential sessions, but there is no evidence of a rules/trigger engine that fires actions automatically on external events — it explicitly uses polling rather than webhooks/WebSockets (smooth-docs-36) and 'monitoring' is described as on-demand checks (smooth-docs-33), not autonomous event-driven rules.",
+    "evidenceIds": [
+      "smooth-docs-36",
+      "smooth-docs-33",
+      "smooth-docs-39"
+    ]
   },
   {
     "productId": "smooth",
@@ -2963,11 +2992,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of scheduling, cron-like triggers, or recurring workflow orchestration; Smooth is documented as a task-execution/browser-automation tool (session workflows, extraction, structured output) with no mention of recurring/scheduled jobs. Missing for 10: any scheduling API, cron/trigger mechanism, or recurring workflow docs.",
-    "evidenceIds": [
-      "smooth-docs-7",
-      "smooth-docs-1"
-    ]
+    "rationale": "Smooth is a browser-automation/agent-tool product for running and orchestrating tasks, sessions, and workflows, but nothing in the evidence mentions scheduling, cron-like recurrence, or triggering jobs on a recurring basis; the API instead relies on synchronous task runs and polling with no scheduler mentioned.",
+    "evidenceIds": []
   },
   {
     "productId": "smooth",
@@ -2975,7 +3001,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Smooth is a browser-automation/AI-agent-browsing tool (task execution, sessions, structured extraction) rather than an automation-authoring platform with version history or workflow rollback semantics; versioning/review/rollback of 'automations' is not an applicable axis for this product category.",
+    "rationale": "Smooth is a browser-automation-for-agents tool (running tasks, sessions, extraction), not a workflow/automation builder with a concept of saved 'automations' that could be versioned or rolled back. The story's axis of version control/review/rollback for automations does not apply to this product category.",
     "evidenceIds": []
   },
   {
@@ -2996,22 +3022,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Smooth's docs describe its own SDK/task API (structured outputs, sessions, custom tools) but there is no mention of a CDP endpoint, Playwright/Puppeteer connect() compatibility, or any way to point existing automation code at Smooth's browsers; one commenter even notes 'agent-browser helped a lot over playwright but doesn't completely close the gap,' underscoring the absence of such interoperability. Missing for 10: any CDP/WebSocket endpoint, official Playwright/Puppeteer connect examples, or documented browser-endpoint compatibility.",
-    "evidenceIds": [
-      "smooth-docs-7",
-      "smooth-docs-12",
-      "smooth-comm-8"
-    ]
+    "rationale": "Smooth's docs describe a task/prompt-driven API (run natural-language tasks, sessions, extract, custom tools) and a CLI for AI agents, but nowhere mention exposing a CDP endpoint, Playwright `connectOverCDP`, or Puppeteer compatibility that would let developers point existing automation scripts at Smooth's browsers. The product's interface is agent/task-based rather than a raw remote-browser protocol.",
+    "evidenceIds": []
   },
   {
     "productId": "smooth",
     "storyId": "credential-vault-2fa",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The docs describe persistent sessions (log in once, reuse authentication) but there is no mention of a credential vault, secret injection to avoid model exposure, or TOTP/2FA handling anywhere in the evidence pack. This axis clearly applies to a browser-automation agent product, but no capability matching the story is documented.",
+    "confidence": "high",
+    "rationale": "Smooth documents session/profile persistence (log in once, reuse cookies for future tasks) but there is no evidence of a credential vault, TOTP/2FA handling, or any mechanism ensuring secrets are never exposed to the underlying model — the story's core requirements are unaddressed.",
     "evidenceIds": [
-      "smooth-docs-3"
+      "smooth-docs-3",
+      "smooth-docs-17",
+      "smooth-docs-27"
     ]
   },
   {
@@ -3020,23 +3044,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of caching resolved actions/generated code for deterministic, cheaper replay; docs mention persistent sessions (auth reuse), structured outputs, and cost efficiency via small models, but nothing about caching or replay of prior task executions to skip re-prompting the LLM. Missing for 10: any mention of action/result caching, replay mechanism, or cost/latency comparison for repeat runs.",
-    "evidenceIds": [
-      "smooth-docs-3",
-      "smooth-docs-5",
-      "smooth-docs-11"
-    ]
+    "rationale": "Smooth is a browser-automation/agent-execution product; nothing in the evidence describes caching resolved actions or generated code for deterministic, cheaper replay. Structured outputs (docs-5/19) enable deterministic parsing of results but not caching/replay of prior runs to avoid re-prompting the LLM.",
+    "evidenceIds": []
   },
   {
     "productId": "smooth",
     "storyId": "dom-action-primitives",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Smooth's docs describe a 'Session Workflow' that lets you orchestrate smaller tasks, navigate to URLs, and extract data within a persistent session, and the whole product is framed as an AI browser agent that understands pages rather than relying on brittle selectors (smooth-docs-7, smooth-gh-1). However, there is no explicit documentation of discrete act/click/type primitives on described elements, nor any evidence/testing showing these survive selector or layout changes — community comments even note it doesn't fully close the gap versus Playwright-style tools (smooth-comm-8). Missing for 10: explicit act/click/type API reference, documented resilience testing against DOM/selector changes, independent verification of robustness claims.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Smooth is fundamentally a natural-language task/agent runner (\"run this task,\" \"extract this schema,\" \"navigate complex forms\") rather than exposing explicit act/click/type primitives on described elements, so selector-resilience is implied by its AI-driven, description-based navigation but not framed as discrete DOM action primitives like click/type. Docs show it handles form filling, data extraction, and navigation robustly via natural-language description (docs-26, docs-31), which supports layout/selector resilience, but there's no explicit low-level action API or documentation of survival across selector/layout changes, and one community comment notes agent-browser (a competitor) 'doesn't completely close the gap' versus Playwright, suggesting these AI-driven approaches aren't fully proven equivalents to primitive-level control. missing for 10: explicit act/click/type primitive API documentation, independent evidence of survival across selector/layout changes, and direct comparison data validating robustness claims.",
     "evidenceIds": [
-      "smooth-docs-7",
-      "smooth-gh-1",
+      "smooth-docs-26",
+      "smooth-docs-31",
+      "smooth-docs-13",
       "smooth-comm-8"
     ]
   },
@@ -3045,51 +3066,56 @@
     "storyId": "ethics-abuse-guardrails",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a published acceptable-use policy, anti-abuse terms, or guidance on permissible use of the stealth/CAPTCHA-bypass and automation features; docs only describe how to use auto-CAPTCHA and proxy features, not what usage is disallowed. Community commentary even calls out the lack of any such framing (e.g., accusing the marketing of enabling spambots), reinforcing the absence rather than disputing a claim.",
+    "confidence": "medium",
+    "rationale": "Smooth markets auto-CAPTCHA bypass, proxy rotation, and stealth automation (smooth-docs-9, smooth-docs-18) but no evidence pack item shows any published acceptable-use policy, terms of service, or anti-abuse stance governing these features. Community feedback even calls out the lack of such framing ('shamelessly selling spambots' — smooth-comm-3) and flags absence of any security/data-handling disclosure (smooth-comm-11), reinforcing the gap rather than filling it.",
     "evidenceIds": [
       "smooth-docs-9",
-      "smooth-comm-3"
+      "smooth-docs-18",
+      "smooth-comm-3",
+      "smooth-comm-11"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "file-download-upload",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Smooth's session workflows, structured extraction, live-view, proxies, and persistent auth, but nothing addresses file download/upload during a browser session or persisting artifacts for later retrieval. Since browser automation tools plausibly support file transfer (e.g., downloading a report from a site or uploading a document to a form), this axis applies but is unaddressed.",
+    "rationale": "Docs explicitly state the agent can upload files to sites and download files from the web, with structured/session-based workflows and live_url/task retrieval implying artifacts remain accessible afterward. missing for 10: independent/hands-on confirmation of file upload/download working in practice, and explicit detail on how downloaded artifacts are retrieved/stored post-task.",
     "evidenceIds": [
+      "smooth-docs-28",
+      "smooth-docs-2",
       "smooth-docs-7",
-      "smooth-docs-8",
-      "smooth-docs-2"
+      "smooth-docs-34"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "hosted-task-api",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs confirm a hosted task-submission model (4-line integration, live_url for tracking, persistent sessions, structured outputs) consistent with an agent submitting tasks without managing a browser, but no evidence pack item explicitly documents a polling endpoint or webhook delivery mechanism, and probes found no public OpenAPI/REST spec. missing for 10: explicit polling endpoint docs, explicit webhook/callback docs, confirmed REST API schema (openapi probe 404s).",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Smooth's REST API lets an agent submit a task (smooth_client.run), poll task status/list tasks, cancel tasks, and send events, with docs explicitly describing polling as the primary mechanism (and webhooks mentioned as an alternative rejected in favor of polling for simplicity) — all without the caller managing a browser itself. missing for 10: no independent/hands-on confirmation of webhook support or polling reliability at scale, and no public OpenAPI spec was found to verify full REST contract.",
     "evidenceIds": [
-      "smooth-docs-1",
-      "smooth-docs-2",
-      "smooth-docs-7",
-      "smooth-probe-2",
-      "smooth-probe-3"
+      "smooth-docs-13",
+      "smooth-docs-20",
+      "smooth-docs-36",
+      "smooth-docs-37",
+      "smooth-docs-38",
+      "smooth-docs-34",
+      "smooth-probe-2"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "live-view-human-takeover",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm a live_url to watch agent actions in real time (smooth-docs-2), satisfying the 'watch a session live' half of the story, but there is no evidence of any mechanism for a human to intervene or take control mid-run when the agent gets stuck. missing for 10: documented human-takeover/control API or UI, evidence of pausing/resuming agent execution, hands-on confirmation of mid-run intervention.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm live_url/live-view to watch an agent session in real time and explicitly state users can 'take over and interact with the browser yourself' when needed, directly matching the story. However, there's no documented workflow for detecting when the agent is 'stuck', no hands-on/independent confirmation of the handoff mechanics, and no replay/debugging tooling described beyond live viewing. missing for 10: independent verification of the takeover UX, stuck-detection/alerting mechanism, and session replay/debugging after handoff.",
     "evidenceIds": [
       "smooth-docs-2",
-      "smooth-docs-7"
+      "smooth-docs-29"
     ]
   },
   {
@@ -3097,25 +3123,28 @@
     "storyId": "local-browser-mode",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Smooth is documented as a cloud-hosted browser agent service (task execution via live_url, proxies, zero-data-retention as an 'enterprise' add-on), with no docs describing a local-browser/offline mode; a P2P tunnel feature only lets the cloud agent reach your localhost, not run without an account. Community feedback explicitly asks for self-hosting ('Make it self-hostable, the conversation can change'), confirming no local/no-account mode exists.",
+    "confidence": "high",
+    "rationale": "Smooth is architected as a cloud service — tasks run via API/CLI against Smooth's hosted browser infrastructure, requiring sign-in (e.g. Google SSO) and producing a live_url on Smooth's servers; the closest local feature is a tunnel that lets the *cloud* agent reach your localhost (smooth-docs-12, smooth-docs-25), not the agent itself running locally without an account. Community feedback explicitly asks for self-hosting because it currently isn't available (\"Make it self-hostable, the conversation can change\" — smooth-comm-10) and flags discomfort sending data to Smooth's third-party servers (smooth-comm-11, smooth-comm-13), confirming no local/no-cloud-account mode exists.",
     "evidenceIds": [
-      "smooth-docs-10",
       "smooth-docs-12",
+      "smooth-docs-25",
+      "smooth-comm-6",
       "smooth-comm-10",
-      "smooth-comm-12"
+      "smooth-comm-11",
+      "smooth-comm-13"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "login-session-persistence",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Smooth's docs explicitly describe a persistent-sessions feature ('Log in once, then reuse that authentication for future tasks') and a session workflow that maintains a persistent browser session across multi-step tasks, directly matching the story. However, there is no independent/hands-on corroboration of this specific feature working reliably, and no detail on profile management (multiple reusable profiles, storage/export). Missing for 10: independent verification of session persistence in practice, documentation on managing multiple reusable profiles.",
+    "rationale": "Docs explicitly describe browser profiles that persist cookies/authentication so agents can 'log in once' and reuse that session indefinitely, both in the API/SDK docs and CLI docs. This directly matches the story, though there's no independent/hands-on verification of the feature working in practice. Missing for 10: independent/community confirmation of persistent-session reliability, details on profile management/rotation across multiple agents.",
     "evidenceIds": [
       "smooth-docs-3",
-      "smooth-docs-7"
+      "smooth-docs-17",
+      "smooth-docs-27"
     ]
   },
   {
@@ -3124,24 +3153,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Smooth's docs describe it as using its own internal 'small and efficient AI models' for browser-agent tasks, and none of the documentation, CLI, or API references mention any mechanism for developers to configure or swap in their own LLM provider (e.g., OpenAI, Anthropic, custom model endpoints). This suggests the opposite of model-agnosticism — the models are an implementation detail of the service, not a pluggable choice.",
+    "rationale": "Smooth's docs describe it as using its own internal 'small and efficient AI models' (smooth-docs-11) with no mention anywhere in the docs, API reference, or CLI guides of a way to configure or swap in a different LLM provider — the product is presented as a fixed browser-automation service, not a model-agnostic framework.",
     "evidenceIds": [
       "smooth-docs-11",
-      "smooth-gh-1",
-      "smooth-probe-1"
+      "smooth-docs-20",
+      "smooth-docs-21"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "nl-task-to-completion",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Docs describe exactly this capability: multi-step 'Session Workflow' that navigates URLs, orchestrates sub-tasks, and extracts data, plus a live_url to watch the agent act, and a community commenter confirms 'I just wrote a complex prompt and it did a good job.' This matches the natural-language, end-to-end web task story well.  Missing for 10: independently reproducible benchmarks/evals (a commenter explicitly asks for third-party reproducible comparisons and gets no clear answer), and broader hands-on validation beyond a single anecdote.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs give a concrete quickstart example (\"Go to google flights and find the cheapest flight...\") plus dedicated use-case docs for form-filling, multi-step session workflows, navigation, and data extraction, and community feedback confirms real-world use (\"wrote a complex prompt and it did a good job\", \"impressive demo\"). Missing for 10: independent reproducible benchmarks/evals (community explicitly asks for this and it's unanswered) and no hands-on failure reports to corroborate reliability at scale.",
     "evidenceIds": [
+      "smooth-docs-13",
       "smooth-docs-7",
-      "smooth-docs-8",
-      "smooth-docs-2",
+      "smooth-docs-31",
+      "smooth-docs-30",
+      "smooth-docs-34",
+      "smooth-comm-1",
       "smooth-comm-2",
       "smooth-comm-14"
     ]
@@ -3152,20 +3184,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Smooth's docs describe live viewing of actions as they execute (live_url) and data extraction, but there is no evidence of a distinct observe/plan step that lets a developer preview candidate actions before committing the agent to act.",
+    "rationale": "Smooth's docs describe live viewing of an agent already running (live_url, live-view) and a pause-and-wait mechanism for custom tools, but nothing lets a developer preview/list candidate actions and approve a plan before the agent commits to acting on the page — no dry-run, plan-preview, or action-approval primitive is documented.",
     "evidenceIds": []
   },
   {
     "productId": "smooth",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The evidence pack shows Smooth as an API/CLI/SDK-first browser-automation tool with docs for tasks, sessions, proxies, custom tools, and a live_url for viewing agent actions, but there is no mention of a separate web dashboard/UI or any comparison of UI-only vs API-only capabilities. Without evidence of what a UI offers (or that all UI features are mirrored in the API), the parity claim can't be substantiated. Missing for 10: any documented web UI/dashboard, and an explicit statement or demonstration that all UI actions are also achievable via API.",
+    "rationale": "Smooth's primary interface is the API (task run, sessions, custom tools, extraction, event sending) with the CLI acting as a thin wrapper on top of it, suggesting the API is close to feature-complete. However, there's no dashboard/UI described beyond a live-view/take-over feature, and no explicit statement confirming that UI-only actions (like manually taking over a live browser session) are also achievable via the API. missing for 10: explicit UI vs API parity statement, evidence of a full dashboard whose features are all API-accessible, confirmation that live-view interactive takeover can be done programmatically.",
     "evidenceIds": [
-      "smooth-docs-1",
-      "smooth-docs-7",
-      "smooth-probe-3"
+      "smooth-docs-20",
+      "smooth-docs-29",
+      "smooth-docs-34",
+      "smooth-docs-39",
+      "smooth-docs-24"
     ]
   },
   {
@@ -3174,9 +3208,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Smooth's docs mention Zero Data Retention (deletion of task data) but there is no evidence of a bulk data export feature or open-format export for users to take their data and leave — the closest related item is deletion, not portability. missing for 10: any documented export mechanism, open format specification, or user data portability tooling.",
+    "rationale": "Smooth's docs cover task lists, structured outputs, and a Zero Data Retention deletion feature, but nowhere mention exporting user data (tasks, sessions, extracted data) in open/portable formats or account data export. Since Smooth stores task history and outputs via its API, this axis is a fair question, but no evidence of an export capability exists.",
     "evidenceIds": [
-      "smooth-docs-10"
+      "smooth-docs-10",
+      "smooth-docs-37"
     ]
   },
   {
@@ -3185,7 +3220,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Smooth ships a GitHub repo for its SDK/CLI, but there is no evidence of an open-source license for the core product, and community comments explicitly request self-hosting/open-source alternatives ('Make it self-hostable, the conversation can change', 'I'll wait for a free/open source browser'), implying the core service is closed.",
+    "rationale": "While a GitHub repo (smooth-sdk) exists for the CLI, there is no evidence of an open-source license covering the product's core source, and a community comment explicitly requests Smooth 'make it self-hostable' implying the core service is closed. No docs or GitHub evidence confirm an open license for the full product source.",
     "evidenceIds": [
       "smooth-gh-1",
       "smooth-comm-10",
@@ -3198,10 +3233,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Smooth is offered only as a hosted cloud API/SaaS with no documented self-host option, and community feedback explicitly requests self-hosting as a missing capability ('Make it self-hostable, the conversation can change').",
+    "rationale": "Smooth is exclusively offered as a hosted cloud API/CLI service; no docs mention any self-hosted deployment option, and community feedback explicitly requests self-hosting as a missing feature ('Make it self-hostable, the conversation can change' and a plea for a 'free/open source browser' alternative), indicating it does not exist.",
     "evidenceIds": [
       "smooth-comm-10",
-      "smooth-comm-11"
+      "smooth-comm-12",
+      "smooth-docs-20"
     ]
   },
   {
@@ -3210,11 +3246,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers single-session features (persistent sessions, live URL, proxies, structured output) but contains no documentation of concurrency limits, fleet/pool management, or APIs for running many sessions in parallel. Missing for 10: documented concurrency limits, fleet/pool orchestration APIs, rate-limit or scaling guidance, evidence of parallel session usage.",
+    "rationale": "Smooth's docs describe programmatic task/session APIs (create, list, cancel tasks) but nowhere document concurrency limits, fleet-level orchestration, or guidance for running many parallel sessions at scale.",
     "evidenceIds": [
-      "smooth-docs-7",
-      "smooth-docs-3",
-      "smooth-docs-2"
+      "smooth-docs-20",
+      "smooth-docs-34",
+      "smooth-docs-37",
+      "smooth-docs-38"
     ]
   },
   {
@@ -3223,9 +3260,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of data residency/region selection options; only Zero Data Retention (deletion) is mentioned, which is a different capability. Missing for 10: any mention of region choice, data center locations, or residency controls.",
+    "rationale": "No evidence of any data residency/region selection feature; Smooth only mentions Zero Data Retention as an enterprise privacy feature, and community feedback even notes an absence of clear security/data-handling info.",
     "evidenceIds": [
-      "smooth-docs-10"
+      "smooth-docs-10",
+      "smooth-comm-11"
     ]
   },
   {
@@ -3234,9 +3272,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Smooth documents a 'Zero Data Retention' enterprise feature that lets customers delete all data tied to completed tasks, which is adjacent to preventing data reuse, but there is no explicit statement that data is excluded from model training, and this feature is gated to enterprise tier. Community feedback also notes an absence of any detailed security/privacy documentation despite marketing claims of 'enterprise-grade security', raising trust concerns without disputing the ZDR feature itself. missing for 10: explicit AI-training opt-out policy, default (non-enterprise) privacy guarantees, independent verification of data handling.",
+    "rationale": "Smooth offers a 'Zero Data Retention' enterprise feature that lets users delete all task-associated data, which implicitly limits data being retained/used afterward, but there is no explicit statement that data is excluded from AI model training, and this protection is gated behind an enterprise tier. Community feedback (smooth-comm-10, smooth-comm-11) shows users are skeptical about data handling and found no clear security/privacy documentation beyond vague marketing claims. Missing for 10: explicit training-data-usage policy, default (non-enterprise) opt-out, and independent verification of the retention/deletion claim.",
     "evidenceIds": [
       "smooth-docs-10",
+      "smooth-comm-10",
       "smooth-comm-11"
     ]
   },
@@ -3246,7 +3285,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm a 'Zero Data Retention' feature letting customers delete all data tied to completed tasks, directly addressing retention/deletion control, but it's explicitly gated as an 'enterprise feature' rather than a universal capability, and no detail is given on default retention periods, deletion APIs/CLI commands, or granular controls for non-enterprise users. Community feedback (e.g., concerns about sending data to a third party, no security details found) shows some skepticism but doesn't concretely contradict the ZDR claim itself. missing for 10: default/non-enterprise retention policy, self-serve deletion mechanism (API/CLI), independent verification of ZDR working in practice.",
+    "rationale": "Smooth documents a 'Zero Data Retention' feature letting customers delete all data tied to completed tasks, directly addressing retention/deletion control, but it is explicitly gated as an 'enterprise' feature rather than a default/self-serve capability for all AI-native users. Community feedback (smooth-comm-11) also notes a broader lack of visible security/data-handling documentation on the product, though this doesn't concretely contradict the ZDR feature itself. Missing for 10: default (non-enterprise) retention policy details, self-service deletion/export controls for standard users, and independent verification that ZDR works as claimed.",
     "evidenceIds": [
       "smooth-docs-10",
       "smooth-comm-11"
@@ -3257,8 +3296,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence describes a telemetry/usage-tracking opt-out control; the only related privacy feature is 'Zero Data Retention' for enterprise customers, which addresses data deletion after tasks rather than disabling telemetry/tracking. Community comments raise general privacy/security concerns but do not confirm or deny an opt-out mechanism.",
+    "confidence": "low",
+    "rationale": "No evidence of a telemetry/usage-tracking opt-out setting; the only related feature is an enterprise Zero Data Retention option for deleting completed task data, which is not the same as opting out of telemetry/usage tracking. Community comments even raise unresolved concerns about data being sent to a third party with no security details, but no dispute of an explicit opt-out claim since none is made.",
     "evidenceIds": [
       "smooth-docs-10",
       "smooth-comm-11"
@@ -3270,22 +3309,26 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe structured outputs via `response_model` for deterministic typed data and a dedicated `session-extract` method to extract structured data from a page by providing a schema, directly matching the story. Missing for 10: explicit Zod/Pydantic code examples and independent/hands-on confirmation that extraction validation works as documented.",
+    "rationale": "Smooth's docs explicitly describe structured/typed extraction via a `response_model` schema field and a dedicated `session-extract` method that extracts structured data from the current page using a provided schema, directly matching the story's requirement for schema-validated extraction beyond raw text. Missing for 10: independent/hands-on confirmation that the schema validation behaves like Zod/Pydantic (e.g., error handling on validation failure) and no third-party review of this specific feature.",
     "evidenceIds": [
       "smooth-docs-5",
+      "smooth-docs-19",
       "smooth-docs-8",
-      "smooth-docs-7"
+      "smooth-docs-15",
+      "smooth-docs-26",
+      "smooth-docs-34"
     ]
   },
   {
     "productId": "smooth",
     "storyId": "session-replay-recordings",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Docs mention a `live_url` for viewing agent actions live during a run, but there is no evidence of persisted video recordings, screenshots, or a step-by-step action timeline that can be replayed after a run has finished and failed. Missing for 10: recorded video/screenshot artifacts, post-hoc replay viewer, structured action timeline, and any independent confirmation of replay-based debugging.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Smooth documents only a real-time 'live_url'/live-view for watching an agent browse as it happens (smooth-docs-2, smooth-docs-29), with no evidence of recorded video/screenshot replays or a post-hoc step-by-step action timeline for debugging failed runs after the fact.",
     "evidenceIds": [
-      "smooth-docs-2"
+      "smooth-docs-2",
+      "smooth-docs-29"
     ]
   },
   {
@@ -3294,11 +3337,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm auto-CAPTCHA solving and configurable proxy server parameters plus persistent authenticated sessions, which support anti-bot automation goals, but there is no explicit mention of residential/geo-targeted proxy pools or stealth browser fingerprinting techniques. Missing for 10: explicit residential/geo-targeted proxy options, stealth fingerprinting details, and independent verification that bot-detection evasion actually works in practice.",
+    "rationale": "Docs confirm proxy support (\"specify the proxy server details in your task parameters\") and auto-CAPTCHA solving, which support anti-blocking automation, but there is no documentation of stealth/fingerprint spoofing techniques or explicitly residential/geo-targeted proxy pools — only generic proxy configuration. Missing for 10: explicit stealth fingerprinting mechanism, residential proxy pool/geo-targeting options, and independent verification that these features actually avoid bot detection.",
     "evidenceIds": [
       "smooth-docs-4",
+      "smooth-docs-18",
       "smooth-docs-9",
-      "smooth-docs-3",
       "smooth-comm-3"
     ]
   },
@@ -3308,8 +3351,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions webhooks, callback URLs, or event-driven notifications for task/session completion; the docs describe live_url viewing, structured outputs, and session workflows but nothing about push notifications versus polling.",
-    "evidenceIds": []
+    "rationale": "Smooth's docs explicitly state the API uses polling instead of webhooks or WebSockets, and no evidence anywhere in the pack shows a webhook notification feature for task/session completion. missing for 10: webhook/callback support, event subscription mechanism, any push-based notification alternative to polling.",
+    "evidenceIds": [
+      "smooth-docs-36"
+    ]
   },
   {
     "productId": "smooth",
@@ -3317,11 +3362,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of documented per-task/per-browser-hour pricing tiers or rate/concurrency limits; only a vague claim of being '7x more affordable' with no actual pricing page or limits documented, and community comments call it 'too expensive' without citing specifics.",
+    "rationale": "Evidence includes only a vague marketing claim of being '7x more affordable than browser-use' and a community complaint calling it 'way too expensive,' but no documented per-task/per-browser-hour pricing table, rate limits, or concurrency limits are found anywhere in the docs or API reference.",
     "evidenceIds": [
       "smooth-docs-11",
-      "smooth-comm-12",
-      "smooth-comm-15"
+      "smooth-comm-12"
     ]
   },
   {
@@ -3330,11 +3374,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers Smooth's session workflows, extraction, custom tools, proxies, and CAPTCHA solving, but nowhere mentions a vision/computer-use mode operating on screenshots for canvases or non-DOM UI elements. This axis is plausible for a browser-automation agent, but no documentation or community report confirms such a capability exists.",
+    "rationale": "Smooth's docs describe task-based, session-based, and CLI browser automation with structured extraction, but nowhere mention a vision/computer-use mode operating on screenshots for canvases or non-DOM UI elements. This is a fair axis for a browser-automation product, but no evidence supports it. Missing for 10: any mention of vision-based/computer-use action mode, screenshot-driven interaction, or canvas/non-DOM element handling.",
     "evidenceIds": [
       "smooth-docs-7",
+      "smooth-docs-14",
+      "smooth-docs-34",
       "smooth-docs-8",
-      "smooth-docs-6",
       "smooth-gh-1"
     ]
   },
@@ -3342,37 +3387,43 @@
     "productId": "smooth",
     "storyId": "workflow-loops-conditionals",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Smooth documents a 'Session Workflow' method for multi-step execution—orchestrating smaller tasks, navigating URLs, and extracting data within a persistent browser session—plus structured outputs and custom tools that let developers build deterministic logic around agent calls. However, there is no explicit documentation of native loop/conditional constructs or parameterized workflow templates; any control flow would rely on the surrounding SDK code rather than a built-in workflow engine. Missing for 10: explicit loop/conditional primitives, parameterization/templating of workflows, and independent evidence of repeatable multi-step automations beyond simple session chaining.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Smooth supports composing multi-step workflows via persistent browser 'sessions' where you can chain sub-tasks, navigate, and extract data (smooth-docs-7, smooth-docs-14, smooth-docs-34), plus custom tools and structured outputs that let developers write deterministic branching code around agent calls (smooth-docs-5, smooth-docs-6, smooth-docs-35). However, this is achieved by the developer scripting loops/conditionals in their own code around Smooth's session/task API rather than Smooth providing a native workflow DSL with built-in loop/conditional/parameter constructs. Missing for 10: a first-class declarative workflow definition language (loops, conditionals, parameters) documented as a Smooth feature, and independent evidence of complex repeatable workflows being built this way.",
     "evidenceIds": [
       "smooth-docs-7",
+      "smooth-docs-14",
+      "smooth-docs-34",
       "smooth-docs-5",
-      "smooth-docs-6"
+      "smooth-docs-6",
+      "smooth-docs-35"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "agent-framework-adapters",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs and community evidence confirm a documented MCP/stdio integration for Claude Code agents (and a Browserbase MCP server actually powered by Stagehand), but there is no evidence of documented adapters for Vercel AI SDK, LangChain, or CrewAI as the story specifically requires. missing for 10: Vercel AI SDK adapter docs, LangChain adapter docs, CrewAI adapter docs, and any first-party guide unifying these framework integrations.",
+    "rationale": "Docs confirm dedicated adapters for CrewAI (stagehand-docs-25, stagehand-docs-32) and Claude Code via MCP/stdio (stagehand-docs-11), plus a generic 'integrations overview' pattern of run/snapshot/screenshot tools (stagehand-docs-22, stagehand-docs-24). However, there is no evidence of documented adapters for Vercel AI SDK or LangChain, and 'Claude Agent SDK' is only implied via Claude Code/MCP rather than explicitly named. missing for 10: explicit LangChain adapter docs, explicit Vercel AI SDK adapter docs, confirmation that the Claude Code MCP integration equals the 'Claude Agent SDK' specifically.",
     "evidenceIds": [
       "stagehand-docs-11",
-      "stagehand-comm-9",
-      "stagehand-probe-rt-1"
+      "stagehand-docs-22",
+      "stagehand-docs-24",
+      "stagehand-docs-25",
+      "stagehand-docs-32"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "The probe confirms Stagehand's docs site serves a valid llms.txt (HTTP 200) with structured links to docs pages, directly enabling an agent to be pointed at agent-oriented documentation. missing for 10: no evidence of independent/community confirmation that agents actually consume this llms.txt successfully in practice, and no detail on completeness/coverage of the llms.txt beyond the introduction page.",
+    "rationale": "A probe confirms Stagehand serves a proper llms.txt at docs.stagehand.dev/llms.txt returning HTTP 200 with structured links to docs pages, and the docs also include an explicit ai-rules page for coding assistants to consume. This directly satisfies pointing an agent at agent-oriented docs. Missing for 10: independent/community confirmation of an agent actually consuming llms.txt successfully.",
     "evidenceIds": [
-      "stagehand-probe-1"
+      "stagehand-probe-1",
+      "stagehand-docs-23"
     ]
   },
   {
@@ -3381,54 +3432,47 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stagehand is a browser-automation/data-extraction library (act/observe/extract on web pages), not a product that stores 'my data' and surfaces AI-generated insights/dashboards from it — this consumer-analytics axis doesn't apply to its category.",
+    "rationale": "Stagehand is a browser-automation SDK for driving web actions/extraction via AI, not a data platform that stores user data and surfaces analytic insights/suggestions from it — this axis is a category mismatch for the product type.",
     "evidenceIds": []
   },
   {
     "productId": "stagehand",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Stagehand supports cloud-hosted Browserbase sessions with persistent user data/contexts, caching to speed repeat runs, and a real-time observability dashboard, all of which enable automations to run without a local machine and be monitored asynchronously. However there's no documented scheduler, trigger system, or explicit 'run unattended over time' capability distinguishing this from any scripted automation run on-demand. missing for 10: explicit scheduling/cron or trigger mechanism, evidence of long-running unattended multi-step autonomous sessions, independent confirmation of background execution reliability.",
+    "rationale": "Stagehand's v3 `agent()` API explicitly supports 'fully autonomous' browser workflows with configurable steps and fallbacks, suggesting some background/autonomous automation capability, but the current v4 docs explicitly state 'v4 has no autonomous loop' and require the developer to write the orchestration themselves, undercutting the 'runs autonomously' claim for the current version. There's also no evidence of scheduling, unattended/background execution infrastructure, or persistent job runners beyond a single script's runtime. missing for 10: evidence of true unattended/scheduled background execution, confirmation that v4 (current version) supports autonomous loops without manual orchestration, and independent corroboration of autonomous run reliability.",
     "evidenceIds": [
-      "stagehand-docs-7",
-      "stagehand-docs-8",
-      "stagehand-docs-9",
-      "stagehand-docs-10",
-      "stagehand-docs-6"
+      "stagehand-docs-28",
+      "stagehand-docs-26",
+      "stagehand-docs-30"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Stagehand's core capability is letting an AI-native user delegate actions to a built-in AI (act/extract/observe) via natural language, with self-healing and DOM handling reducing manual work — this is the product's central value proposition and is corroborated by community praise for its natural-language automation and self-healing behavior. missing for 10: independent quantitative benchmarks of task delegation success/reliability and more explicit UI/chat-assistant framing beyond programmatic act()/extract() calls.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Stagehand's v3 docs describe an `agent` primitive that turns high-level tasks into 'fully autonomous' browser workflows with configurable LLM/model and max steps, matching a built-in AI assistant a user can delegate to; act()/observe()/extract() also let users issue natural-language instructions. However, current v4 docs explicitly state 'v4 has no autonomous loop, you are already writing the orchestration,' meaning the flagship autonomous-delegation feature is either deprecated or requires the user to hand-roll the loop themselves in the current version. missing for 10: confirmation that full autonomous agent delegation still exists and is documented in the current (v4) product, independent/community verification of agent-mode reliability, and clarity on why v3's autonomous agent was removed from v4.",
     "evidenceIds": [
-      "stagehand-docs-1",
-      "stagehand-docs-2",
-      "stagehand-docs-3",
-      "stagehand-docs-5",
-      "stagehand-docs-13",
-      "stagehand-comm-8",
-      "stagehand-comm-1"
+      "stagehand-docs-28",
+      "stagehand-docs-26",
+      "stagehand-docs-30"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "agentic-headless",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Stagehand is a Node/TS library built on Playwright with a scriptable API (act/observe/extract), headless browser support via Browserbase or CDP-attached Chromium, and npm-installable package confirmed via runtime probe, making CI/headless automation straightforward. missing for 10: explicit first-party CI pipeline examples (GitHub Actions/Docker recipes) and independent hands-on confirmation of a full unattended CI run.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Stagehand is a programmatic SDK (TypeScript/Python/Go) with local browser launch, CDP attach, and Browserbase cloud session options, which implies it can run without a UI and be scripted into pipelines, but no evidence explicitly mentions a headless flag, CI/CD examples, or GitHub Actions integration. missing for 10: explicit headless-mode documentation, CI/CD pipeline examples or guides, independent confirmation of running Stagehand unattended in automated build environments.",
     "evidenceIds": [
-      "stagehand-docs-4",
-      "stagehand-docs-9",
+      "stagehand-docs-21",
       "stagehand-docs-15",
-      "stagehand-probe-rt-1",
-      "stagehand-comm-4"
+      "stagehand-docs-20",
+      "stagehand-docs-9"
     ]
   },
   {
@@ -3437,10 +3481,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence shows Stagehand exposing its own browser-automation tools via MCP (server role) to other agents like Claude Code, not Stagehand acting as an MCP client that consumes external MCP servers' tools. No evidence describes configuring Stagehand to plug into third-party MCP servers so it can call their tools.",
+    "rationale": "Stagehand's docs position it as the tool that agents (e.g., Claude Code, CrewAI, Deep Agents) consume over MCP/stdio, not as a client that plugs in external MCP servers itself. The mcp-integrations doc explicitly states v4 'has no autonomous loop' and that the user's own orchestration layer interleaves MCP tool results with Stagehand's primitives, indicating Stagehand does not itself ingest/plug-in third-party MCP servers to gain their tools.",
     "evidenceIds": [
       "stagehand-docs-11",
-      "stagehand-probe-rt-1"
+      "stagehand-docs-22",
+      "stagehand-docs-26"
     ]
   },
   {
@@ -3448,11 +3493,12 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Stagehand ships an official MCP server ('Give a Claude Code agent persistent Stagehand browser tools over MCP/stdio') and a runtime probe confirms `npx -y @browserbasehq/mcp` actually boots and identifies as 'Browserbase MCP Server ... powered by Browserbase and Stagehand', responding to JSON-RPC initialize. Community evidence corroborates real-world use (the Stagehand MCP server won Anthropic's Claude MCP hackathon). Missing for 10: independent third-party review of the full tool surface/robustness of the MCP server beyond the hackathon anecdote and the first-party docs/probe.",
+    "confidence": "medium",
+    "rationale": "Stagehand ships an official MCP server/integration ('Give a Claude Code agent persistent Stagehand browser tools over MCP/stdio', docs on MCP introduction and MCP best-practices), and independent community evidence corroborates this (the Stagehand MCP server won Anthropic's Claude MCP hackathon). Missing for 10: deeper hands-on user reports specifically testing the MCP server in production and more comprehensive first-party MCP setup docs beyond the overview pages.",
     "evidenceIds": [
       "stagehand-docs-11",
-      "stagehand-probe-rt-1",
+      "stagehand-docs-26",
+      "stagehand-docs-31",
       "stagehand-comm-9"
     ]
   },
@@ -3462,12 +3508,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Stagehand's core API (act/extract/observe) is explicitly designed around natural-language instructions instead of hardcoded selectors, with docs describing instruction-driven execution and self-healing when selectors break. Community commentary independently corroborates that this NL-driven approach dynamically generates Playwright actions and is more resilient than traditional automation frameworks. Missing for 10: independent quantitative benchmarks on NL command accuracy/reliability across diverse sites.",
+    "rationale": "Stagehand's core act()/extract()/observe() APIs are explicitly natural-language driven ('write automation in plain English, no selectors'), with self-healing and structured output, and this is corroborated by community accounts calling it self-healing/resilient to DOM changes. missing for 10: independent hands-on benchmark of NL command accuracy across diverse real-world sites.",
     "evidenceIds": [
       "stagehand-docs-1",
+      "stagehand-docs-16",
       "stagehand-docs-3",
       "stagehand-docs-5",
-      "stagehand-docs-14",
       "stagehand-comm-8"
     ]
   },
@@ -3476,12 +3522,9 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Stagehand is distributed as an npm SDK/library plus an MCP server; the evidence pack shows npm install and MCP server invocation via npx, but no dedicated official CLI tool for direct AI-native command-line interaction is documented anywhere.",
-    "evidenceIds": [
-      "stagehand-probe-rt-1",
-      "stagehand-docs-11"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence of an official Stagehand CLI tool; docs mention SDKs, quickstart steps, and MCP/agent integrations but never a standalone CLI. Missing for 10: any mention of a CLI binary/command, its install method, or its command set.",
+    "evidenceIds": []
   },
   {
     "productId": "stagehand",
@@ -3489,30 +3532,25 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stagehand ships a well-documented public SDK API (act(), extract(), observe(), page methods, selfHeal, caching) with a dedicated docs site and llms.txt, and an npm package that a runtime probe confirms actually installs and exports a working class plus a functioning MCP server exposing the same tools. Community posts corroborate real developer usage of this API for browser automation. Missing for 10: an OpenAPI/REST spec (404s) and deeper independent (non-community) validation of API stability/versioning.",
+    "rationale": "Stagehand ships a well-documented SDK API (act/observe/extract/agent) across TypeScript, Python, and Go, with a quickstart, AI-rules page for coding assistants, and an llms.txt endpoint confirming AI-native documentation access. missing for 10: no formal OpenAPI/REST spec (openapi probe returned 404s) and no independent third-party audit of API completeness beyond docs/community sentiment.",
     "evidenceIds": [
-      "stagehand-docs-1",
-      "stagehand-docs-2",
-      "stagehand-docs-3",
-      "stagehand-docs-4",
-      "stagehand-docs-5",
+      "stagehand-docs-19",
+      "stagehand-docs-20",
+      "stagehand-docs-23",
       "stagehand-probe-1",
       "stagehand-probe-2",
-      "stagehand-probe-rt-1",
-      "stagehand-comm-8"
+      "stagehand-docs-1",
+      "stagehand-docs-28"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stagehand is a browser-automation library; evidence covers API keys for model/Browserbase access but no scoped/least-privilege credential issuance, role-based permissions, or token-scoping features for agents are documented anywhere in docs, community, or probes. Missing for 10: any mention of scoped API key issuance, permission scoping, or least-privilege credential management for agents.",
-    "evidenceIds": [
-      "stagehand-docs-9",
-      "stagehand-probe-rt-1"
-    ]
+    "rationale": "Stagehand is a browser automation/agent framework, not an identity or credential-management platform; issuing scoped API credentials is not a capability class this product's category addresses.",
+    "evidenceIds": []
   },
   {
     "productId": "stagehand",
@@ -3520,13 +3558,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Stagehand ships an official TypeScript/JS SDK (@browserbasehq/stagehand npm package) with documented APIs (act, observe, extract) and confirmed runtime install/import success, making it directly usable by AI-native developers building agentic browser automation. missing for 10: no evidence of official SDKs in other languages (e.g., Python) or independent third-party corroboration of SDK API stability beyond docs and one runtime probe.",
+    "rationale": "Stagehand ships official SDKs across TypeScript, Python, and Go with documented APIs (act/observe/extract/agent), quickstart guides, AI coding rules, and llms.txt for AI-native consumption, corroborated by community usage. Missing for 10: no official REST/OpenAPI spec (probe shows 404s) and no independent benchmark of SDK completeness across all three languages.",
     "evidenceIds": [
-      "stagehand-probe-rt-1",
-      "stagehand-docs-2",
-      "stagehand-docs-3",
-      "stagehand-docs-1",
-      "stagehand-probe-1"
+      "stagehand-docs-19",
+      "stagehand-docs-20",
+      "stagehand-docs-23",
+      "stagehand-probe-1",
+      "stagehand-probe-2",
+      "stagehand-comm-1"
     ]
   },
   {
@@ -3535,7 +3574,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stagehand is a browser automation SDK for agents/scripts to control web pages, not an event-driven platform; no evidence of any webhook subscription mechanism, and this is a category error for the product type rather than a missing feature.",
+    "rationale": "Stagehand is a browser-automation/agent tool for controlling web pages, not a service exposing subscribable events; webhooks are a wrong-axis capability for this product category and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -3544,11 +3583,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows standard prose documentation pages (docs.stagehand.dev) and confirms no OpenAPI/swagger spec exists (404s on all candidate paths), with no mention anywhere of an interactive, runnable-example API reference (e.g., live code sandbox or Swagger-style explorer). The llms.txt probe only shows a docs index for LLM ingestion, not an interactive reference.",
+    "rationale": "Stagehand's docs (docs.stagehand.dev) provide code snippets and an llms.txt for AI consumption, but there's no evidence of an interactive, runnable API reference (e.g., embedded sandbox/playground) — the probe explicitly found no OpenAPI/Swagger spec (404s), and no docs item mentions runnable in-browser examples. missing for 10: interactive/runnable code playground, OpenAPI/API-explorer UI, evidence of executable examples within the docs site.",
     "evidenceIds": [
       "stagehand-probe-2",
-      "stagehand-probe-1",
-      "stagehand-docs-1"
+      "stagehand-docs-20",
+      "stagehand-probe-1"
     ]
   },
   {
@@ -3557,10 +3596,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes for OpenAPI/swagger specs at all standard paths returned 404, and no documentation mentions a downloadable machine-readable API spec; only an llms.txt exists which is not an API spec.",
+    "rationale": "Direct probes for OpenAPI/swagger specs all returned 404, and no documentation mentions a downloadable machine-readable API spec; Stagehand is an SDK/library, not an HTTP API with a published spec.",
     "evidenceIds": [
-      "stagehand-probe-2",
-      "stagehand-probe-1"
+      "stagehand-probe-2"
     ]
   },
   {
@@ -3569,18 +3607,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Stagehand's docs cover browser session persistence, regions, and observability but nothing about a dedicated sandbox/staging mode or safeguards to prevent hitting production data; the evidence pack shows only live browser automation against real or Browserbase-hosted sites.",
+    "rationale": "Evidence covers browser automation features (act/observe/extract, caching, session persistence, Browserbase regions) but nothing addresses sandboxed test environments or isolation from production data/systems. Missing for 10: any mention of staging/sandbox environment configuration, data isolation guarantees, or safeguards against touching production systems.",
     "evidenceIds": []
   },
   {
     "productId": "stagehand",
     "storyId": "api-versioning-policy",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Docs reference a 'v4' version path, but there is no evidence of a documented API versioning scheme or deprecation policy for Stagehand's SDK/API; no openapi spec or changelog/deprecation docs were found (openapi probe 404s).",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs show a versioned structure (v3 vs v4 paths, e.g. stagehand-docs-28 through -32 under /v3/ and current docs under /v4/), implying some API versioning practice, but there is no documented deprecation policy, migration timeline, or changelog referenced anywhere in the evidence. missing for 10: explicit deprecation policy, version support lifecycle/migration guide, changelog of breaking changes.",
     "evidenceIds": [
-      "stagehand-probe-2"
+      "stagehand-docs-28",
+      "stagehand-docs-29",
+      "stagehand-docs-30",
+      "stagehand-docs-31",
+      "stagehand-docs-32",
+      "stagehand-docs-20"
     ]
   },
   {
@@ -3589,7 +3632,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers single-page act/extract/observe primitives, caching, and session persistence, but nothing describes batch/bulk operations across many items or parallelized runs at once. A browser-automation framework could plausibly support this (e.g., running many sessions in parallel), so the axis applies, but no such capability is documented.",
+    "rationale": "Stagehand's docs focus on single-page primitives (act/observe/extract) and single-session agent workflows; there is no evidence of built-in bulk/batch operation support (e.g., running the same action across many items, URLs, or records in parallel) or a bulk API surface. missing for 10: any documentation of parallel/batch execution across multiple items, batch job scheduling, or a bulk-processing API.",
     "evidenceIds": []
   },
   {
@@ -3597,9 +3640,13 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence describes Stagehand's act/observe/extract primitives for executing AI-driven browser actions, caching, and self-healing selectors, but nothing about defining persistent rules that automatically trigger on events (e.g., webhooks, schedules, DOM-change listeners) outside of an explicit script invocation.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Stagehand's docs describe imperative act()/extract()/observe() calls and agent-driven workflows, plus self-healing selector re-inference, but there is no evidence of a mechanism for AI-native users to define persistent 'if event then action' rules that trigger automatically outside of a script's control flow.",
+    "evidenceIds": [
+      "stagehand-docs-5",
+      "stagehand-docs-28",
+      "stagehand-docs-30"
+    ]
   },
   {
     "productId": "stagehand",
@@ -3607,7 +3654,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Stagehand is a browser-automation SDK/library for scripting and controlling browser sessions via natural language, not a scheduling/orchestration platform; the evidence pack contains no concept of cron-like recurring job scheduling, and this capability is outside the product's category (scheduling would be handled by an external orchestrator invoking Stagehand scripts).",
+    "rationale": "Stagehand is a browser automation/agent SDK for driving actions on web pages, not a workflow scheduler or orchestration platform with recurring job scheduling — scheduling recurring jobs is outside its product category (that would be handled by an external cron/orchestrator invoking Stagehand scripts).",
     "evidenceIds": []
   },
   {
@@ -3635,13 +3682,14 @@
     "productId": "stagehand",
     "storyId": "cdp-connect-existing-stack",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Stagehand explicitly supports attaching over CDP to any existing Chromium browser and lets you keep using familiar page-level (Playwright) methods when you don't need AI inference, which lets developers reuse existing Playwright/CDP automation rather than rewriting from scratch. However there is no evidence of native Puppeteer script compatibility, and community comments note Stagehand is positioned as a replacement/wrapper rather than a drop-in for arbitrary existing Playwright suites. Missing for 10: explicit Puppeteer interop, first-party guide on migrating existing Playwright test suites unmodified, and independent confirmation that CDP-attach preserves auth/session state seamlessly.",
+    "rationale": "Docs show Stagehand attaches to any existing Chromium browser via CDP (localBrowser.connect) and lets developers use familiar Playwright page methods/selectors directly alongside AI actions, which supports bringing over existing Playwright/CDP automation code. However, there's no explicit mention of Puppeteer compatibility, and one community comment notes Stagehand is designed to run directly rather than as a drop-in wrapper for pre-existing Playwright/Puppeteer test suites. Missing for 10: explicit Puppeteer support/migration docs, hands-on confirmation of reusing full existing Playwright/Puppeteer codebases without rewrites.",
     "evidenceIds": [
-      "stagehand-docs-15",
       "stagehand-docs-4",
-      "stagehand-comm-8",
+      "stagehand-docs-15",
+      "stagehand-docs-19",
+      "stagehand-docs-21",
       "stagehand-comm-2"
     ]
   },
@@ -3651,38 +3699,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers session/state persistence (cookies, local storage, Browserbase contexts) but there is no mention of vault-based credential storage, secret injection to avoid model exposure, or TOTP/2FA handling anywhere in the docs or community evidence.",
-    "evidenceIds": [
-      "stagehand-docs-7",
-      "stagehand-docs-8",
-      "stagehand-docs-9"
-    ]
+    "rationale": "No evidence of a credential vault, secure secret injection, or TOTP/2FA handling in Stagehand's docs or community sources; the pack covers session persistence via cookies/local storage but not secret management or MFA challenge automation.",
+    "evidenceIds": []
   },
   {
     "productId": "stagehand",
     "storyId": "deterministic-replay-caching",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Stagehand's docs explicitly state that act(), observe(), and extract() results are cached server-side to reduce LLM costs and speed up automations, directly matching the story's request for cached deterministic replay at lower cost/latency. Additional support for persistent user data (cookies/local storage, Browserbase contexts) reinforces cross-run determinism, though there's no independent/hands-on corroboration of cache-hit behavior or cache invalidation details. Missing for 10: independent verification of caching effectiveness/determinism claims, details on cache invalidation when page structure changes, and quantified latency/cost savings.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stagehand explicitly documents server-side caching of act()/observe()/extract() results to cut LLM cost/latency, and a dedicated v3 guide describes converting agent-discovered workflows into deterministic, cached scripts running 10-100x faster. missing for 10: independent/hands-on benchmarks confirming the speedup and cost savings, and details on cache invalidation/consistency across page changes.",
     "evidenceIds": [
       "stagehand-docs-6",
-      "stagehand-docs-7",
-      "stagehand-docs-8"
+      "stagehand-docs-29"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "dom-action-primitives",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Docs describe act()/observe()/extract() as natural-language, DOM-understanding primitives with selfHeal to re-infer broken selectors and automatic iframe/shadow-DOM handling, directly matching the story; independent HN commentary corroborates that Stagehand dynamically regenerates Playwright actions making it resilient to DOM changes. Missing for 10: rigorous independent benchmark of resilience across real layout changes and more than a single third-party account.",
+    "rationale": "Stagehand's core primitives (act/observe/extract) are explicitly documented as natural-language, DOM-understanding actions that discover elements and execute them, with selfHeal to re-infer actions when selectors break, plus automatic iframe/shadow DOM handling — directly matching the story. Community feedback corroborates the self-healing/resilience claim (dynamically regenerating Playwright actions vs brittle hardcoded selectors), though skepticism about cost-effectiveness exists as caveat, not contradiction. Missing for 10: independent, rigorous benchmark of selector-survival across real layout changes (community evidence is anecdotal/qualitative only).",
     "evidenceIds": [
       "stagehand-docs-1",
       "stagehand-docs-3",
       "stagehand-docs-5",
       "stagehand-docs-13",
+      "stagehand-docs-14",
+      "stagehand-docs-16",
+      "stagehand-docs-19",
       "stagehand-comm-8"
     ]
   },
@@ -3692,7 +3738,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item references a published acceptable-use policy, anti-abuse terms, or governance statement about how Stagehand's automation/anti-detection features may or may not be used; docs focus entirely on features (act/observe/extract, caching, proxies) with no mention of usage policy or abuse prevention stance.",
+    "rationale": "No evidence pack item references an acceptable-use policy, anti-abuse terms, or governance around stealth/automation/captcha-bypass usage; docs focus purely on technical capability and community comments only discuss captcha-evasion effectiveness, not policy.",
     "evidenceIds": []
   },
   {
@@ -3700,8 +3746,8 @@
     "storyId": "file-download-upload",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Stagehand's act/observe/extract primitives, session persistence, and MCP integration, but nowhere mentions file download/upload handling or artifact retrieval after a session ends. Since browser automation tools plausibly support file transfer, this is an applicable axis with no supporting evidence.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack describes file download/upload handling or retrievable artifact storage from browser sessions; Stagehand's docs focus on act/extract/observe automation, caching, and browser session config, not file transfer or artifact retrieval.",
     "evidenceIds": []
   },
   {
@@ -3710,11 +3756,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Stagehand is presented as an SDK/library (with an MCP server for agent tool-use) rather than a hosted HTTP task-submission API; the probe explicitly found no OpenAPI/REST endpoint (openapi paths all 404), and no docs describe submitting a task and polling or receiving a webhook result. Evidence shows Browserbase-hosted browser sessions and MCP/stdio integration, but nothing matching the described async HTTP task API.",
+    "rationale": "Stagehand is an SDK (TypeScript/Python/Go) that developers embed in their own code to drive a browser (local or Browserbase-hosted), not a hosted HTTP API where an agent submits a task and polls or receives a webhook for the result; the probe explicitly found no OpenAPI/API endpoints (404s across all candidate paths). Evidence only shows Browserbase providing remote browser infrastructure and session dashboards, not a task-submission/result-retrieval API contract.",
     "evidenceIds": [
       "stagehand-probe-2",
-      "stagehand-docs-11",
-      "stagehand-probe-rt-1"
+      "stagehand-docs-9",
+      "stagehand-docs-19"
     ]
   },
   {
@@ -3723,23 +3769,23 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Stagehand's docs mention Browserbase's session dashboard offering real-time browser screen recording and replay, which covers 'watching a session live,' but there is no evidence of a mechanism to hand control back to a human mid-run when the agent stalls. missing for 10: explicit live take-over/human-in-the-loop control feature, evidence of pausing agent execution for manual intervention, and independent confirmation of this workflow.",
+    "rationale": "Stagehand docs mention Browserbase's session dashboard offering real-time screen recording/replay for observability (stagehand-docs-10), which supports 'watching a session live,' but there is no evidence of a mechanism for a human to seize control mid-run when the agent stalls — no handoff, pause-and-resume, or manual override feature is documented. missing for 10: documented human-takeover/handoff control during an active agent run, evidence of pausing autonomous execution for manual intervention, independent confirmation of live control switching.",
     "evidenceIds": [
       "stagehand-docs-10",
-      "stagehand-docs-9"
+      "stagehand-docs-28"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "local-browser-mode",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs confirm Stagehand can attach to a local Chromium browser over CDP (localBrowser.connect) and persist local user data on disk, meaning it can run fully locally without Browserbase/cloud accounts; Browserbase is presented as optional rather than required. missing for 10: independent hands-on confirmation of a pure-local run with no cloud account, and clearer docs distinguishing local-only setup from Browserbase defaults.",
+    "rationale": "Docs explicitly describe launching a Local browser (`localBrowser.launch`) or attaching over CDP to a Chromium instance you're already running, as alternatives to Browserbase cloud sessions, and the quickstart shows getting from an empty directory to a working automation without mention of requiring a cloud account. This directly supports running against a local browser for development. Missing for 10: no independent/hands-on confirmation of a fully offline/no-account local workflow, and no explicit statement that no API keys/cloud accounts are ever needed for LLM inference during local runs.",
     "evidenceIds": [
+      "stagehand-docs-21",
       "stagehand-docs-15",
-      "stagehand-docs-7",
-      "stagehand-docs-4"
+      "stagehand-docs-20"
     ]
   },
   {
@@ -3758,42 +3804,43 @@
   {
     "productId": "stagehand",
     "storyId": "model-agnostic-llm",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack never documents which LLM providers Stagehand supports or describes any provider-swapping configuration; it only notes that a 'model key' is required to run (stagehand-probe-rt-1), without specifying that multiple vendors' models are interchangeable. Missing for 10: any docs or examples showing configuration for OpenAI/Anthropic/other providers, a provider-agnostic API surface, or community confirmation of using non-default models.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state you can customize the agent by specifying the LLM provider and model, indicating Stagehand is not locked to a single vendor's models [stagehand-docs-28]. However, evidence doesn't enumerate the full list of supported providers or show independent confirmation of multi-provider use in practice. missing for 10: a documented list of supported LLM providers/models, independent/community confirmation of switching providers.",
     "evidenceIds": [
-      "stagehand-probe-rt-1"
+      "stagehand-docs-28"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "nl-task-to-completion",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Stagehand's docs confirm natural-language act()/observe()/extract() primitives that can navigate, click, and fill forms, plus self-healing and iframe/shadow-DOM handling that support robustness across steps, and community posts confirm real-world scraping/automation use (stagehand-comm-1, stagehand-comm-9). However, the evidence shows these as composable single-action primitives rather than a documented single-call 'give it a goal and it autonomously completes a multi-step flow' agent mode — multi-step chains appear to require the developer to sequence act/observe/extract calls or wire it via MCP into another agent (stagehand-docs-11). Missing for 10: first-party or hands-on evidence of a single natural-language goal driving full end-to-end multi-step task completion without developer-orchestrated step chaining.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Stagehand's `agent` primitive explicitly turns high-level natural-language tasks into fully autonomous multi-step browser workflows (navigating, clicking, filling forms), backed by act/observe/extract primitives and self-healing selectors, with community corroboration of natural-language control and self-healing resilience. missing for 10: independent end-to-end hands-on validation of a complex multi-step flow (e.g., checkout) succeeding autonomously, and quantitative reliability/success-rate data beyond docs and anecdotal HN comments.",
     "evidenceIds": [
-      "stagehand-docs-1",
+      "stagehand-docs-28",
+      "stagehand-docs-19",
+      "stagehand-docs-16",
       "stagehand-docs-3",
+      "stagehand-docs-2",
       "stagehand-docs-5",
-      "stagehand-docs-13",
-      "stagehand-docs-11",
-      "stagehand-comm-1",
-      "stagehand-comm-8"
+      "stagehand-comm-8",
+      "stagehand-comm-1"
     ]
   },
   {
     "productId": "stagehand",
     "storyId": "observe-suggest-actions",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "observe() is a first-class primitive documented explicitly for discovering actionable elements and returning structured actions 'you can execute or validate before acting,' directly matching the preview/plan-before-act story, and it composes with act()/extract() as separate committed steps (stagehand-docs-3). Runtime probe confirms the package installs and exposes the Stagehand class in practice. missing for 10: independent hands-on developer confirmation specifically of observe()'s preview behavior (community evidence discusses self-healing/act() but not observe() directly).",
+    "rationale": "Stagehand's observe() explicitly discovers actionable elements and returns structured actions that can be inspected, validated, or executed before acting, directly matching the preview-before-commit workflow; act() can then take an observed action to execute deterministically. missing for 10: independent hands-on developer confirmation specifically of the observe→act preview workflow (community evidence covers other features but not this one).",
     "evidenceIds": [
       "stagehand-docs-3",
-      "stagehand-docs-1",
-      "stagehand-probe-rt-1"
+      "stagehand-docs-18",
+      "stagehand-docs-19"
     ]
   },
   {
@@ -3801,8 +3848,8 @@
     "storyId": "openness-api-parity",
     "verdict": "na",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Stagehand is fundamentally a code-first SDK/API for browser automation (act/observe/extract calls, MCP integration); it has no separate primary UI whose feature set the API would need to match, aside from the auxiliary Browserbase session dashboard which is a different product's observability layer. The API-vs-UI parity framing is a category error for this kind of dev tool.",
+    "confidence": "medium",
+    "rationale": "Stagehand is a code-first browser automation SDK/API; it has no primary end-user UI whose functionality would need to be mirrored via API — the only 'UI' mentioned is Browserbase's session dashboard, a separate companion product for observability, not a Stagehand feature surface. This makes the UI-vs-API parity question a category mismatch for this product.",
     "evidenceIds": []
   },
   {
@@ -3819,8 +3866,8 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains only docs, community discussion, and runtime probes about Stagehand's automation features; none of it references a public source repository, license, or open-source status. Missing for 10: any mention of a GitHub repo, license file, or open-source claim.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions a GitHub repository, license (e.g., MIT/Apache), or any statement about source availability; all evidence is docs/community discussion of features, not code openness.",
     "evidenceIds": []
   },
   {
@@ -3829,12 +3876,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Stagehand is installable via npm and can run against a locally-controlled Chromium instance via CDP (localBrowser.connect), and the runtime probe confirms local install/execution without requiring Browserbase credentials, indicating the core library can be self-hosted. However, several advanced features (proxies, captcha handling, session recording, multi-region hosting) are documented as Browserbase-cloud-only, and there is no explicit self-hosting/Docker deployment guide or licensing statement. Missing for 10: dedicated self-host deployment docs, confirmation that captcha/proxy features work without Browserbase, and independent hands-on confirmation of a fully self-hosted setup.",
+    "rationale": "Stagehand is an open-source automation library that can run entirely locally without depending on Browserbase's cloud service, via `localBrowser.launch` or attaching over CDP to a browser you already run — meaning the core product can be self-hosted rather than requiring the vendor's cloud backend. However, there's no explicit self-hosting/deployment guide, container image, or independent confirmation of a fully self-hosted setup (caching and observability features still reference Browserbase-hosted infra). Missing for 10: dedicated self-host deployment docs, containerization/infra guidance, and community corroboration of running fully self-hosted.",
     "evidenceIds": [
+      "stagehand-docs-21",
       "stagehand-docs-15",
-      "stagehand-probe-rt-1",
-      "stagehand-docs-9",
-      "stagehand-docs-8"
+      "stagehand-docs-4"
     ]
   },
   {
@@ -3842,13 +3888,9 @@
     "storyId": "parallel-fleet-scale",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows Stagehand/Browserbase supports single-session configuration (regions, contexts, persistence, observability) but nowhere documents fleet-level concurrency limits or APIs for managing many concurrent sessions programmatically. Missing for 10: documented concurrency caps, fleet/session-pool management API, and any evidence of running many sessions in parallel.",
-    "evidenceIds": [
-      "stagehand-docs-9",
-      "stagehand-docs-10",
-      "stagehand-docs-8"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack covers single-session configuration (region selection, CDP attach, persistence) but contains no documentation of concurrency limits, fleet-level session orchestration, or programmatic management of multiple simultaneous sessions.",
+    "evidenceIds": []
   },
   {
     "productId": "stagehand",
@@ -3891,19 +3933,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item discusses telemetry, usage tracking, or opt-out settings for Stagehand; documentation covers automation features, caching, and Browserbase infrastructure but is silent on telemetry practices.",
+    "rationale": "No evidence pack mention of telemetry collection, usage tracking, or an opt-out mechanism/env variable/config flag for Stagehand; the axis is applicable since developer tools commonly ship telemetry controls, but no documentation or community evidence addresses it.",
     "evidenceIds": []
   },
   {
     "productId": "stagehand",
     "storyId": "schema-structured-extraction",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Stagehand's documented extract() API takes an instruction plus an output shape (schema), directly matching typed/schema-validated extraction rather than raw text scraping. Missing for 10: explicit mention of Zod/Pydantic naming in the evidence pack, independent/hands-on confirmation of schema validation behavior beyond docs.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs explicitly describe extract() taking an output shape and validating results against that shape before returning, so returned data is typed/schema-validated rather than raw text (stagehand-docs-2, stagehand-docs-17). This directly matches the story of schema-driven structured extraction from visited pages. Missing for 10: explicit mention of Zod/Pydantic naming and independent hands-on confirmation of schema validation behavior beyond first-party docs.",
     "evidenceIds": [
       "stagehand-docs-2",
-      "stagehand-docs-3"
+      "stagehand-docs-17",
+      "stagehand-docs-18"
     ]
   },
   {
@@ -3911,10 +3954,11 @@
     "storyId": "session-replay-recordings",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Stagehand relies on Browserbase's session dashboard for real-time screen recording and replay, giving some visibility into runs, but there is no documented step-by-step action timeline correlated with agent decisions, no screenshot-per-step artifact, and no dedicated debugging/replay tooling built into Stagehand itself. missing for 10: native step-by-step action timeline tied to LLM decisions, per-step screenshots, first-party replay/debug UI (beyond Browserbase's generic session recording), independent hands-on confirmation of replay-based debugging workflows.",
+    "confidence": "low",
+    "rationale": "Stagehand docs mention Browserbase's session dashboard providing real-time screen recording and replay (stagehand-docs-10), and integrations expose a screenshot tool (stagehand-docs-22), giving partial support for replay-based debugging. However there is no documented step-by-step action timeline or dedicated debugging UI beyond the generic session recording feature, and no community corroboration of using these for debugging failed runs. Missing for 10: dedicated action-timeline/step-log feature, explicit debugging workflow docs, independent hands-on confirmation of replay-based debugging.",
     "evidenceIds": [
-      "stagehand-docs-10"
+      "stagehand-docs-10",
+      "stagehand-docs-22"
     ]
   },
   {
@@ -3944,18 +3988,20 @@
     "storyId": "usage-pricing-transparency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items mention pricing tiers, per-task/per-browser-hour costs, or documented rate/concurrency limits — docs cover only technical features (caching, contexts, regions) and community comments are unrelated to pricing transparency.",
+    "confidence": "high",
+    "rationale": "No evidence pack item discusses Stagehand's pricing, per-task/per-browser-hour costs, or documented rate/concurrency limits; documentation focuses on features, integrations, and configuration only.",
     "evidenceIds": []
   },
   {
     "productId": "stagehand",
     "storyId": "vision-computer-use",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No documentation describes a vision/computer-use mode operating on screenshots; the only related evidence is a community comment stating the team is 'working on a better computer use integration' — implying it isn't shipped yet.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Stagehand's core act/observe/extract primitives operate on the DOM/accessibility tree, not screenshots, and its integrations expose a generic `screenshot` tool and an autonomous `agent` primitive that could invoke vision-capable LLMs, but there is no documentation describing a dedicated vision/computer-use mode specifically for canvas or non-DOM UI elements. A community comment even states the team is still 'working on a better computer use integration,' implying this capability is not yet mature or shipped.  missing for 10: explicit docs on a vision/computer-use fallback mode, evidence of canvas/non-DOM UI handling, confirmation the feature is released rather than in-progress.",
     "evidenceIds": [
+      "stagehand-docs-22",
+      "stagehand-docs-28",
       "stagehand-comm-9"
     ]
   },
@@ -3964,24 +4010,29 @@
     "storyId": "workflow-loops-conditionals",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Stagehand is a code-first SDK (act/observe/extract primitives) that developers embed in regular TypeScript/Python code, which implicitly allows loops, conditionals, and parameters since it's just function calls in a host language — but no docs explicitly describe workflow composition, control-flow patterns, or parameterized repeatable workflows as a first-class feature. missing for 10: explicit workflow/orchestration documentation, examples of loops or conditionals chaining act/observe/extract calls, parameterized workflow templates, and any community evidence of engineers building such multi-step conditional workflows.",
+    "confidence": "medium",
+    "rationale": "Stagehand is an SDK (act/observe/extract primitives) embedded in normal TS/Python/Go code, and docs note 'you are already writing the orchestration' (stagehand-docs-26) and describe converting 'agent-discovered workflows' into deterministic scripts (stagehand-docs-29), implying loops/conditionals/parameters come from the host language rather than a built-in workflow engine. There's no explicit documentation of a dedicated workflow-composition feature (e.g., parameterized flows, branching primitives) as a first-class product capability. Missing for 10: explicit docs/examples of parameterized reusable workflows, native conditional/loop constructs, or a workflow templating system beyond raw host-language code.",
     "evidenceIds": [
-      "stagehand-docs-2",
-      "stagehand-docs-3",
-      "stagehand-docs-4",
-      "stagehand-docs-6"
+      "stagehand-docs-26",
+      "stagehand-docs-29",
+      "stagehand-docs-30"
     ]
   },
   {
     "productId": "steel",
     "storyId": "agent-framework-adapters",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Steel documents a concrete integration with the Claude Agent SDK exposing its browser as in-process MCP tools (steel-docs-9), showing at least one first-party framework adapter exists. However, the evidence pack contains no documented adapters or integration guides for Vercel AI SDK, LangChain, or CrewAI, so the broader multi-framework claim is only partially substantiated. missing for 10: documented adapters for Vercel AI SDK, LangChain, and CrewAI, plus independent corroboration of any of these integrations working in practice.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Steel documents dedicated integration guides for Claude Agent SDK, Vercel AI SDK, LangChain-adjacent (CrewAI), and other frameworks, each describing how Steel's cloud browser plugs in as a tool/MCP server for the agent loop (steel-docs-9/43, steel-docs-39, steel-docs-40, plus AgentKit, OpenAI Agents SDK, Pydantic AI). Missing for 10: explicit LangChain-named adapter page (only CrewAI/AgentKit/AI SDK/Claude named) and independent/hands-on confirmation beyond vendor docs.",
     "evidenceIds": [
-      "steel-docs-9"
+      "steel-docs-9",
+      "steel-docs-39",
+      "steel-docs-40",
+      "steel-docs-38",
+      "steel-docs-42",
+      "steel-docs-43",
+      "steel-docs-46"
     ]
   },
   {
@@ -3990,10 +4041,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Probe confirms llms.txt is live at docs.steel.dev/llms.txt (HTTP 200) with agent-oriented framing, and the docs also expose an OpenAPI spec, making the docs machine/agent consumable. missing for 10: no independent third-party confirmation that agents actually consume the llms.txt file successfully in practice.",
+    "rationale": "Steel serves a live llms.txt file at docs.steel.dev/llms.txt (HTTP 200, confirmed via probe) summarizing its docs, which an agent can be pointed at directly, plus a full agent-oriented docs site with skills, MCP, and SDK integration guides. Missing for 10: no independent/community confirmation that agents actually consume the llms.txt file successfully in practice.",
     "evidenceIds": [
       "steel-probe-1",
-      "steel-probe-2"
+      "steel-docs-11",
+      "steel-docs-46"
     ]
   },
   {
@@ -4002,24 +4054,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Steel is browser automation/session infrastructure for AI agents, not a product holding a user's own dataset to analyze; its agent-traces feature is a raw activity timeline/export, not AI-generated insights or suggestions over user data. This axis is a category mismatch for an infra API rather than a data/analytics product.",
-    "evidenceIds": [
-      "steel-docs-6",
-      "steel-docs-7"
-    ]
+    "rationale": "Steel is a browser automation/session infrastructure API for AI agents, not a data product that generates insights or suggestions from user data; its features (sessions, proxies, CAPTCHA solving, traces) are infrastructure and observability tooling, not AI-generated analytical insights, so this story is a category mismatch.",
+    "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Steel provides on-demand browser sessions, CLI, SDK, and agent-trace tooling for agents to control browsers, but nothing in the evidence describes a scheduling/trigger mechanism or persistent background job runner that lets a user set up automations to run autonomously without invocation — sessions are explicitly spun up 'on demand' by an agent/script, not scheduled by Steel itself.",
+    "rationale": "Steel provides infrastructure that agents can call programmatically (Sessions API, CLI, and integrations with agent frameworks like CrewAI, OpenAI Agents SDK, Claude Agent SDK) to run browser automations without human intervention, and sessions can be created on-demand for autonomous agent workflows. However, there is no evidence of a native scheduler, cron/trigger mechanism, or persistent background job runner within Steel itself — autonomy and 'background' execution depend entirely on the calling agent/framework, not a Steel-native automation scheduler. Missing for 10: native scheduling/triggers, evidence of long-running/persistent background jobs managed by Steel, and independent confirmation of autonomous unattended runs.",
     "evidenceIds": [
       "steel-docs-1",
       "steel-docs-8",
-      "steel-docs-10",
-      "steel-probe-rt-1"
+      "steel-docs-9",
+      "steel-docs-38",
+      "steel-docs-40",
+      "steel-docs-42"
     ]
   },
   {
@@ -4028,23 +4079,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Steel is browser infrastructure/API tooling for AI agents (session management, stealth, proxies, CLI, MCP tool exposure) — it is consumed by external AI agents, not itself a product with a built-in AI assistant a user delegates tasks to. This story is a category error for an infrastructure/API product like Steel.",
+    "rationale": "Steel is browser automation infrastructure (an API/SDK) that other AI agents and frameworks call into — it is consumed by agents, not itself a product with an end-user chat interface or built-in assistant persona to delegate tasks to. This axis targets consumer/IDE-style products with an internal assistant, which doesn't fit Steel's category.",
     "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Steel provides a documented CLI for end-to-end headless browser workflows from the terminal, a REST/SDK API for programmatic session creation, an open-source Docker image for self-hosting, and a verified probe confirming a keyless self-host roundtrip (docker run, health check, session creation via API, CLI install, SDK install) — all strongly supporting CI/headless automation use. missing for 10: no explicit first-party CI pipeline example (e.g., GitHub Actions template) or independent hands-on report of running Steel inside an actual CI system.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Steel is API-first and ships a CLI, Docker image (API+UI), and Sessions API that spins up isolated cloud browsers on demand, all designed to be driven programmatically with no GUI required — exactly the shape needed for CI/headless automation. It also supports standard automation clients (Puppeteer/Playwright/Selenium via CDP) which are routinely run headlessly in CI pipelines.\n\nMissing for 10: an explicit CI/CD example (e.g., GitHub Actions workflow) or independent report confirming real-world headless CI usage.",
     "evidenceIds": [
       "steel-docs-8",
+      "steel-docs-1",
       "steel-gh-4",
       "steel-gh-1",
-      "steel-probe-rt-1",
-      "steel-probe-3",
-      "steel-docs-1"
+      "steel-probe-3"
     ]
   },
   {
@@ -4053,46 +4103,49 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Steel is a cloud browser infrastructure/API product, not an agent or orchestrator that would consume external MCP servers' tools. The evidence shows the opposite direction — Steel itself is exposed as MCP tools to other agent frameworks (e.g., Claude Agent SDK) — meaning Steel plays the tool-provider role, not the MCP-client role this story describes.",
+    "rationale": "Steel is a browser-automation infrastructure/tool provider — all its MCP-related evidence describes Steel being exposed AS an MCP server/tool for other agents to consume (steel-docs-9, steel-docs-43, steel-docs-46), not Steel acting as an MCP client that plugs in external MCP servers to gain their tools. Since Steel isn't itself an agent orchestrating tool use, the 'plug MCP servers into this product' client-side story is a category mismatch for this product's role.",
     "evidenceIds": [
-      "steel-docs-9"
+      "steel-docs-9",
+      "steel-docs-43",
+      "steel-docs-46"
     ]
   },
   {
     "productId": "steel",
     "storyId": "agentic-mcp-server",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Steel's docs mention an integration with the Claude Agent SDK that 'exposes a cloud browser as in-process MCP tools,' showing some official MCP tool exposure for agents, but there's no evidence of a standalone, general-purpose official MCP server endpoint independent of this one SDK integration. missing for 10: a dedicated/standalone MCP server doc or endpoint usable by any agent framework, independent corroboration or hands-on proof of MCP connectivity.",
+    "verdict": "full",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Steel is a browser-API platform (not itself an agent), so the axis applies, and its docs explicitly describe exposing a Steel browser as an MCP server/tool set ('Expose a Steel browser to any MCP client' and 'exposes a cloud browser as in-process MCP tools' for the Claude Agent SDK integration), letting external agents connect via MCP. Missing for 10: deeper standalone MCP-server setup docs/config reference, and independent/hands-on confirmation beyond a single cookbook and integration mention.",
     "evidenceIds": [
-      "steel-docs-9"
+      "steel-docs-46",
+      "steel-docs-9",
+      "steel-docs-43"
     ]
   },
   {
     "productId": "steel",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Steel exposes its browser control as MCP tools within agent SDKs (e.g., Claude Agent SDK) so an AI agent can translate natural-language user requests into Steel API calls, and the CLI/SDK/API allow full programmatic control — but there's no evidence of a native natural-language interface to Steel itself (e.g., a chat command layer); control still requires structured API/CLI calls or a separate agent framework. Missing for 10: a first-party NL command interface or chat-driven control surface, and independent confirmation that NL-driven agent use works end-to-end in production.",
+    "rationale": "Steel is a browser-automation infrastructure API for agents/developers, not itself an interface that accepts natural-language commands from a user; the CLI (steel-docs-8) is a scriptable command-line tool with structured commands, not NL input, and no evidence shows a chat/NL interface for operating Steel directly. missing for 10: any documented NL command interface, chatbot/assistant front-end, or evidence that end users type plain-English instructions to control Steel.",
     "evidenceIds": [
-      "steel-docs-9",
       "steel-docs-8",
-      "steel-gh-1"
+      "steel-docs-12"
     ]
   },
   {
     "productId": "steel",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Steel ships a documented official CLI (steel-docs-8) that supports end-to-end browser workflows from the terminal, and probe evidence confirms real installation via setup.steel.dev installing 'steel CLI 0.4.4' into a fresh environment (steel-probe-rt-1), corroborating the docs. Missing for 10: independent third-party reviews of the CLI's UX/reliability beyond the vendor-run probe, and more detail on advanced CLI subcommands/scripting capabilities.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Steel ships an official CLI (documented at docs.steel.dev/overview/steel-cli) that lets users run full browser workflows from the terminal—start sessions, navigate, click/fill/type, extract content, and stop sessions—directly serving agentic/AI-native use cases. missing for 10: independent/hands-on community corroboration of the CLI itself, and detail on CLI scripting/composability beyond the basic workflow description.",
     "evidenceIds": [
       "steel-docs-8",
       "steel-probe-3",
-      "steel-probe-rt-1"
+      "steel-docs-12"
     ]
   },
   {
@@ -4101,13 +4154,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Steel publishes a full OpenAPI spec (steel-probe-2), documented Sessions API with SDKs, and a CLI, all confirmed hands-on by a runtime probe showing session creation, health checks, and SDK usage working end-to-end. This is strong first-party documentation plus independent verification of a working public API. Missing for 10: no third-party community deep-dive validating API completeness beyond the probe.",
+    "rationale": "Steel exposes a fully documented public REST API (Sessions, CAPTCHA, Credentials, Files, Agent Traces) confirmed by a live openapi.json spec, plus an official CLI and SDK/agent-framework integrations (CrewAI, OpenAI Agents SDK, AI SDK, Claude Agent SDK, AgentKit, Pydantic AI) that let AI-native users drive it programmatically. Community comments corroborate the API/docs quality and usability. Missing for 10: independent hands-on benchmarking of the API's reliability/limits beyond docs and one HN thread.",
     "evidenceIds": [
       "steel-probe-2",
-      "steel-docs-1",
+      "steel-docs-14",
       "steel-docs-8",
-      "steel-probe-3",
-      "steel-probe-rt-1"
+      "steel-docs-38",
+      "steel-docs-40",
+      "steel-docs-42",
+      "steel-comm-3"
     ]
   },
   {
@@ -4115,23 +4170,31 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of scoped or least-privilege API key/credential issuance (e.g., role-based keys, permission scopes, restricted tokens) for agents — only session isolation, proxies, and CLI features are documented, none of which address credential scoping.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows a general API key/auth model (referenced implicitly by API usage) and a 'Credentials' endpoint, but that endpoint is for storing website login credentials for browser sessions (steel-docs-15, steel-docs-24), not for issuing scoped/least-privilege API keys to control agent access to Steel's own platform. No docs mention role-based access control, permission scopes, or restricted API key issuance for the Steel API itself.",
+    "evidenceIds": [
+      "steel-docs-15",
+      "steel-docs-24"
+    ]
   },
   {
     "productId": "steel",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Steel ships an official steel-sdk npm package (verified working via probe: exports a Steel client class), a documented OpenAPI spec, and an official CLI for full browser workflows, all covered in first-party docs and confirmed by a hands-on runtime probe. missing for 10: explicit multi-language SDK coverage (e.g., Python/other languages) and independent community confirmation of SDK usage beyond the CLI/API.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Steel exposes a documented REST API (OpenAPI spec, steel-probe-2), an official CLI (steel-docs-8, steel-probe-3), and native connectivity via Puppeteer/Playwright/Selenium (steel-gh-1), plus first-party integrations with major agent frameworks (AI SDK, CrewAI, OpenAI Agents SDK, Claude Agent SDK, Pydantic AI, AgentKit) that act as official SDK-level bindings for AI-native development.  Missing for 10: explicit named client-library SDKs (e.g., dedicated Python/Node package docs) and independent/hands-on developer confirmation of SDK ergonomics beyond vendor docs.",
     "evidenceIds": [
-      "steel-probe-rt-1",
+      "steel-gh-1",
+      "steel-docs-8",
       "steel-probe-2",
       "steel-probe-3",
-      "steel-docs-8",
-      "steel-docs-9"
+      "steel-docs-39",
+      "steel-docs-40",
+      "steel-docs-41",
+      "steel-docs-42",
+      "steel-docs-43",
+      "steel-docs-38"
     ]
   },
   {
@@ -4140,19 +4203,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions webhooks or event subscriptions; Steel's documented surfaces are Sessions API, CLI, MCP tools, and agent traces, none of which describe a webhook/event notification mechanism.",
+    "rationale": "No evidence pack mentions webhooks or event subscriptions anywhere in Steel's docs, CLI, API, or integrations; Steel's observability is presented via agent traces/session replays rather than push-based webhook events.",
     "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "api-interactive-docs",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Steel publishes a full OpenAPI spec (docs.steel.dev/openapi.json) and an llms.txt, and a community commenter independently praised the docs/API reference quality, suggesting an interactive, well-documented API surface. However, there's no explicit evidence of an in-browser 'try it' / runnable-example console distinct from static docs. Missing for 10: direct confirmation of an interactive try-it console with live runnable code snippets, and independent hands-on verification of that specific feature.",
+    "rationale": "Steel documents dedicated API-reference pages ('Explore API endpoints for...') and exposes a live OpenAPI spec (openapi.json), and a community commenter independently praised the 'beautiful docs + api ref', suggesting a solid reference exists. However, there's no explicit evidence of interactive 'try it now' / runnable-example functionality within that reference (e.g., embedded request builders or live code execution) — missing for 10: confirmation of in-browser runnable/try-it examples, independent hands-on demonstration of executing calls directly from the docs.",
     "evidenceIds": [
+      "steel-docs-13",
+      "steel-docs-14",
+      "steel-docs-15",
+      "steel-docs-16",
       "steel-probe-2",
-      "steel-probe-1",
       "steel-comm-3"
     ]
   },
@@ -4162,10 +4228,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms a live, valid OpenAPI JSON spec served at docs.steel.dev/openapi.json (HTTP 200 with 'openapi' key), directly satisfying the machine-readable spec requirement, complemented by an llms.txt index for discoverability. missing for 10: independent third-party corroboration beyond the automated probe.",
+    "rationale": "Steel exposes a live, machine-readable OpenAPI spec confirmed via probe (HTTP 200 with valid 'openapi' key), and docs reference extensive API endpoint documentation (steel-docs-13 through steel-docs-16) built on this spec. Missing for 10: no independent/community confirmation of the OpenAPI spec's completeness or third-party tooling built against it.",
     "evidenceIds": [
       "steel-probe-2",
-      "steel-probe-1"
+      "steel-docs-14",
+      "steel-docs-13",
+      "steel-docs-15",
+      "steel-docs-16"
     ]
   },
   {
@@ -4174,12 +4243,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Steel's core Sessions API spins up isolated, on-demand browser instances each with their own state, cookies, and storage, and this isolation was independently verified via a self-hosted runtime probe that created a live, separate browser session from a throwaway Docker instance — effectively a sandbox with no shared production state. Missing for 10: explicit documentation framing sessions as a 'test vs production' environment, and no first-party guidance on staging/production data separation policies beyond session isolation.",
+    "rationale": "Steel's Sessions API explicitly provisions isolated browser instances, each with its own state, cookies, and storage, letting an agent test without affecting other sessions or shared/production data, and session lifecycle docs show sessions can be created/torn down independently (steel-docs-1, steel-docs-10, steel-docs-33). Self-hosted Docker image and CLI further support standing up isolated test environments (steel-gh-4, steel-docs-8). Missing for 10: independent/hands-on verification that isolation holds in practice, and no explicit framing of 'sandbox vs production' terminology in the docs.",
     "evidenceIds": [
       "steel-docs-1",
       "steel-docs-10",
-      "steel-probe-rt-1",
-      "steel-gh-4"
+      "steel-docs-33",
+      "steel-gh-4",
+      "steel-docs-8"
     ]
   },
   {
@@ -4188,8 +4258,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions API versioning scheme or a documented deprecation policy; only an OpenAPI spec and general docs are shown, neither of which discuss version lifecycle or deprecation commitments.",
-    "evidenceIds": []
+    "rationale": "Evidence shows an OpenAPI spec and extensive API documentation, but nothing addresses API versioning scheme or a documented deprecation policy. missing for 10: versioning scheme documentation, deprecation policy, changelog/migration guides for breaking changes.",
+    "evidenceIds": [
+      "steel-probe-2",
+      "steel-docs-14"
+    ]
   },
   {
     "productId": "steel",
@@ -4197,11 +4270,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Steel's Sessions API allows spinning up isolated browser sessions on demand and reusing auth context across multiple sessions, which implies you could programmatically launch many sessions for parallel/bulk tasks, but there is no explicit documentation of a batch/bulk API, concurrency limits, or guidance for orchestrating many items at once. missing for 10: explicit bulk/batch API or documented pattern for running many operations concurrently, concurrency/rate limits, and independent evidence of large-scale parallel session usage.",
+    "rationale": "Steel supports spinning up many isolated browser sessions concurrently (Sessions API, CLI, SDK integrations) which enables running many browser tasks in parallel, but there is no explicit documentation of a bulk/batch operations API (e.g., batch session creation, bulk item processing, or queue-based multi-item automation) — the evidence only shows single-session workflows orchestrated one at a time via various agent frameworks. missing for 10: explicit bulk/batch API or documented pattern for orchestrating many items at once, concurrency limits/guidance, and any hands-on evidence of large-scale parallel session usage.",
     "evidenceIds": [
       "steel-docs-1",
-      "steel-docs-4",
-      "steel-docs-10"
+      "steel-docs-10",
+      "steel-docs-8",
+      "steel-docs-4"
     ]
   },
   {
@@ -4219,7 +4293,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Steel is a browser automation/session API for AI agents (sessions, stealth, proxies, CLI, MCP tools), but nothing in the evidence describes a scheduler, cron-like trigger, or recurring job/workflow orchestration feature; usage is invoked on-demand per session, not on a schedule.",
+    "rationale": "Steel is a browser-automation infrastructure product (sessions, proxies, CAPTCHA solving, agent traces, integrations) with no evidence of any scheduling, cron, or recurring-workflow trigger mechanism; jobs must be invoked externally rather than scheduled by Steel itself.",
     "evidenceIds": []
   },
   {
@@ -4237,34 +4311,41 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Steel documents a single explicit flag covering captcha detection, solving, and verification for the whole session, plus a separate human-in-the-loop debug URL feature for manual takeover when needed — giving automation engineers a documented stance rather than silent failures. Missing for 10: independent/hands-on verification that automatic captcha solving actually succeeds on real-world captchas, and clearer documentation of failure/fallback behavior when auto-solve fails.",
+    "rationale": "Steel documents an explicit CAPTCHA stance: automatic solving is built into the stealth mode (one flag covers detection/solving/verification) with a dedicated captcha-solving doc and API endpoints, plus human-in-the-loop debug URLs for manual takeover as fallback, avoiding silent failures. Missing for 10: independent/hands-on confirmation that captcha solving actually succeeds in practice and clearer documentation of failure/error signaling when solving fails.",
     "evidenceIds": [
       "steel-docs-2",
-      "steel-docs-5"
+      "steel-docs-26",
+      "steel-docs-13",
+      "steel-docs-5",
+      "steel-docs-23",
+      "steel-docs-11"
     ]
   },
   {
     "productId": "steel",
     "storyId": "cdp-connect-existing-stack",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Steel explicitly supports connecting existing Puppeteer, Playwright, or Selenium code via CDP to control its browser instances, and a runtime probe confirms live sessions expose websocket/debugger URLs consistent with CDP connectivity. Docs and SDK further corroborate first-class session management compatible with standard automation libraries. Missing for 10: independent third-party hands-on confirmation specifically of a rewritten Playwright/Puppeteer script running unmodified against Steel.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "GitHub docs explicitly state Steel exposes CDP endpoints that let developers connect using Puppeteer, Playwright, or Selenium, meaning existing automation code can target Steel's browsers with minimal rewrite, and the Sessions API/session lifecycle docs support this connection model. Missing for 10: independent hands-on developer reports confirming drop-in compatibility and more detail on any required code changes beyond endpoint swapping.",
     "evidenceIds": [
       "steel-gh-1",
-      "steel-probe-rt-1",
-      "steel-docs-1"
+      "steel-docs-1",
+      "steel-docs-10",
+      "steel-docs-33"
     ]
   },
   {
     "productId": "steel",
     "storyId": "credential-vault-2fa",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Steel's docs show session-level auth persistence (reusing cookies/storage across sessions) but no evidence of a credentials vault, secret injection without model exposure, or TOTP/2FA challenge automation — the core asks of this story are unaddressed.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Steel documents a 'Credentials' API endpoint and separate 'Reusing Auth Context' feature for persisting authenticated sessions/cookies across runs, which addresses avoiding repeated logins, but there is no evidence describing a credential vault workflow, TOTP/2FA handling, or explicit guarantees that secrets are withheld from the model during login. missing for 10: dedicated vault/secrets-manager docs, TOTP/2FA challenge handling, explicit model-isolation guarantee for credentials, independent corroboration.",
     "evidenceIds": [
-      "steel-docs-4"
+      "steel-docs-15",
+      "steel-docs-4",
+      "steel-docs-24"
     ]
   },
   {
@@ -4281,11 +4362,15 @@
     "storyId": "dom-action-primitives",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Steel's evidence shows only traditional CDP/Puppeteer/Selenium-based control and CLI commands like click/fill/type (steel-docs-8, steel-gh-1), which are selector-based automation primitives, not AI/DOM-understanding 'act on described element' primitives that resolve targets semantically and survive selector/layout changes. No documentation or hands-on evidence describes a Stagehand-like natural-language action resolver.",
+    "confidence": "medium",
+    "rationale": "Steel's own docs describe CLI-level click/fill/type and CDP/Puppeteer control (steel-gh-1, steel-docs-8), which is standard selector-based automation, not a DOM-understanding 'act on described element' primitive that survives layout/selector changes. Semantic action-taking is delegated to third-party integrations (Claude/OpenAI/Gemini Computer Use, Browser-Use) rather than being a native Steel capability.",
     "evidenceIds": [
       "steel-docs-8",
-      "steel-gh-1"
+      "steel-gh-1",
+      "steel-docs-17",
+      "steel-docs-18",
+      "steel-docs-19",
+      "steel-docs-20"
     ]
   },
   {
@@ -4294,57 +4379,63 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack documents Steel's stealth/captcha-solving, proxy, and CAPTCHA features extensively, but contains no published acceptable-use policy, terms of service, or anti-abuse statement governing what these stealth capabilities may be used for. No AUP, ToS, or anti-abuse page is cited or referenced anywhere in the docs, GitHub repo, or community discussion. Missing for 10: a published acceptable-use policy, anti-abuse/misuse guidelines, or ToS language specifically addressing stealth/captcha feature usage.",
+    "rationale": "The evidence pack contains extensive documentation of Steel's stealth, captcha-solving, and proxy features, but no published acceptable-use policy, anti-abuse guidelines, or terms governing what these features may legally/ethically be used for. No AUP, ToS excerpt, or abuse-prevention statement is cited anywhere in the pack.",
     "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "file-download-upload",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers session artifacts (traces, screenshots, page-to-markdown conversion) and CLI-driven browser control, but nothing documents actual file upload to web forms or downloading files from a site with persistent artifact retrieval — a distinct capability from trace export.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Steel documents a Files API endpoint for managing files on Steel sessions (steel-docs-16), plus agent traces that can be downloaded as JSON/ZIP/markdown artifacts (steel-docs-7), suggesting some upload/download and artifact retrieval capability. However, there's no detailed documentation of the file upload/download workflow itself (e.g., how an agent uploads a file to a site form or downloads a file from a page and retrieves it via API), no code examples, and no independent verification of this working end-to-end. missing for 10: detailed docs/examples of agent-initiated file upload to sites and file download from sites, confirmation of artifact retrieval workflow, independent/hands-on corroboration.",
+    "evidenceIds": [
+      "steel-docs-16",
+      "steel-docs-7",
+      "steel-docs-6"
+    ]
   },
   {
     "productId": "steel",
     "storyId": "hosted-task-api",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Steel's docs describe a Sessions API that hands agents a raw, controllable browser (via CDP/Puppeteer/Playwright) plus a CLI for scripted step-by-step actions, but there is no evidence of a higher-level 'submit a task, poll or get a webhook for the result' abstraction — the agent still must drive the browser session itself rather than delegate a task and retrieve a finished output.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Steel's Sessions API lets an agent spin up a hosted, isolated browser via HTTP without managing browser infrastructure (steel-docs-1, steel-docs-33), and its agent-trace/timeline features (steel-docs-6, steel-docs-27, steel-docs-29) could support polling for run results. But there is no evidence of a discrete 'submit task, get result via polling/webhook' primitive — the model shown is that the agent (or a partner SDK like AgentKit/CrewAI) still drives actions step-by-step over CDP/Puppeteer/Playwright or the CLI (steel-gh-1, steel-docs-8), not a single task-submission endpoint. Missing for 10: an explicit task/job endpoint, webhook-based completion notification, and confirmation that the calling agent need not issue any browser actions itself.",
     "evidenceIds": [
       "steel-docs-1",
-      "steel-docs-8",
+      "steel-docs-33",
+      "steel-docs-6",
+      "steel-docs-27",
+      "steel-docs-29",
       "steel-gh-1",
-      "steel-probe-rt-1"
+      "steel-docs-8"
     ]
   },
   {
     "productId": "steel",
     "storyId": "live-view-human-takeover",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Steel's debug URL feature is explicitly documented for human-in-the-loop workflows enabling users to directly interact with and control a live browser session, and runtime proof confirms sessions expose a live debugger/websocket URL for real-time viewing/control. The agent-traces timeline feature complements this by letting engineers review what happened, though it's more post-hoc than live takeover. Missing for 10: explicit documentation of mid-run handoff back to the agent after human control, and independent/community corroboration of the human-in-the-loop debug feature specifically (vs. general product commentary).",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Steel's debug URL / human-in-the-loop feature explicitly enables watching a live session and taking direct control when an agent gets stuck, and embed-sessions support live viewing in an app context. Missing for 10: independent/hands-on verification of the live handoff experience and no detail on how control reverts to the agent after human intervention.",
     "evidenceIds": [
       "steel-docs-5",
-      "steel-docs-6",
-      "steel-probe-rt-1"
+      "steel-docs-23",
+      "steel-docs-22"
     ]
   },
   {
     "productId": "steel",
     "storyId": "local-browser-mode",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Steel Browser is open-source and can be self-hosted via Docker with no cloud account, confirmed by a runtime probe showing a local Docker container booting the browser API, creating live sessions, and working with the official CLI and SDK entirely locally. missing for 10: independent third-party (non-vendor) confirmation of long-term local dev workflow beyond the single recorded probe.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Steel is explicitly open-source with a pre-built Docker image combining the API and UI, letting a developer self-host the browser locally, and it exposes CDP so Puppeteer/Playwright/Selenium can connect directly to a local instance without any cloud account (steel-gh-4, steel-gh-1, steel-gh-5). This directly satisfies running an agent against a local browser for development.  Missing for 10: a dedicated 'local dev quickstart' doc walking through docker-compose setup and confirmation that no cloud sign-in/telemetry is required, plus independent hands-on confirmation of local-only usage.",
     "evidenceIds": [
-      "steel-probe-rt-1",
       "steel-gh-4",
       "steel-gh-1",
-      "steel-probe-3"
+      "steel-gh-5"
     ]
   },
   {
@@ -4353,157 +4444,168 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Steel docs explicitly document reusing auth context across sessions to let agents skip repeated logins, backed by session isolation, custom session IDs, and a real API/CLI/SDK confirmed via runtime probe. Missing for 10: independent third-party hands-on confirmation of the reuse-auth-context feature specifically (only vendor docs cite it) and no explicit profile-export/import UX details beyond the docs description.",
+    "rationale": "Steel's docs explicitly describe reusing auth context/persistent profiles across sessions so agents can access protected resources without repeating login flows, backed by a dedicated docs page and general session state/cookie persistence via the Sessions API. Missing for 10: independent/hands-on developer confirmation that reused profiles reliably skip login walls in practice, and more detail on profile creation/management UX.",
     "evidenceIds": [
       "steel-docs-4",
+      "steel-docs-24",
       "steel-docs-1",
-      "steel-docs-10",
-      "steel-probe-rt-1"
+      "steel-docs-11"
     ]
   },
   {
     "productId": "steel",
     "storyId": "model-agnostic-llm",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Steel documents integrations across many LLM/agent ecosystems — OpenAI Computer Use, Claude Computer Use, Gemini Computer Use, Browser-Use, CrewAI, Pydantic AI (explicitly 'provider-agnostic'), OpenAI Agents SDK, AI SDK, Claude Agent SDK — showing it is not locked to a single vendor's models and can be paired with whichever LLM the developer chooses. Missing for 10: an explicit first-party 'model-agnostic' positioning statement and independent/community corroboration of using Steel with a non-default LLM provider.",
+    "evidenceIds": [
+      "steel-docs-17",
+      "steel-docs-18",
+      "steel-docs-19",
+      "steel-docs-20",
+      "steel-docs-41",
+      "steel-docs-38",
+      "steel-docs-39",
+      "steel-docs-42",
+      "steel-docs-43"
+    ]
   },
   {
     "productId": "steel",
     "storyId": "nl-task-to-completion",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Steel provides the browser primitives (sessions, navigate/click/fill/extract via CLI or API, CDP control) that a multi-step web task requires, and its CLI/MCP integrations let external agent frameworks drive those actions from natural-language goals. However, Steel's own docs state the agent loop and NL reasoning are handled by the paired SDK (e.g., Claude Agent SDK), not by Steel itself — Steel 'handles the browser' while the SDK runs the reasoning loop, so Steel alone does not accept a raw NL goal and autonomously plan/execute it end to end. missing for 10: evidence of Steel natively parsing/planning from a raw NL instruction without an external agent/LLM orchestrating the steps, and independent hands-on proof of a full NL-driven multi-step flow completed unattended.",
+    "rationale": "Steel provides the browser infrastructure (sessions, navigation, click/fill/extract via CLI or API) and integrates with third-party agent loops (Claude/OpenAI Computer Use, browser-use, CrewAI, OpenAI Agents SDK) that can take a natural-language goal and drive multi-step web flows end-to-end, but Steel itself explicitly delegates the 'agent loop'/reasoning to these other SDKs rather than natively interpreting NL goals itself (e.g. 'the SDK runs the agent loop and Steel handles the browser'). The CLI supports scripted end-to-end browser workflows but not NL-goal parsing on its own.\n\nmissing for 10: a native Steel agent loop that itself parses an NL goal and autonomously plans/executes steps without pairing with an external agent SDK; independent hands-on evidence of a full NL-to-task run succeeding.",
     "evidenceIds": [
       "steel-docs-8",
       "steel-docs-9",
-      "steel-gh-1",
-      "steel-probe-rt-1"
+      "steel-docs-19",
+      "steel-docs-20",
+      "steel-docs-40",
+      "steel-docs-42",
+      "steel-docs-17",
+      "steel-docs-18"
     ]
   },
   {
     "productId": "steel",
     "storyId": "observe-suggest-actions",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Steel exposes browser observation primitives (page-to-markdown/readability/screenshot extraction, agent traces/timeline, and a debug URL for human-in-the-loop review) that let a developer inspect page state or a human intervene mid-session, but there is no documented 'plan' or dry-run API that lets an agent preview a set of candidate actions before committing to execute them. missing for 10: an explicit plan/observe-then-act primitive or dry-run action preview API, evidence of independent developers using it specifically for pre-commit action review.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Steel exposes session snapshot/extract/screenshot tools and a human-in-the-loop debug URL (steel-docs-5, steel-docs-39), but there is no evidence of an explicit preview/plan primitive that lets a developer see candidate actions on a page before committing the agent to execute them — it's an observability/handoff feature, not an action-preview mechanism.",
     "evidenceIds": [
-      "steel-gh-3",
       "steel-docs-5",
-      "steel-docs-6"
+      "steel-docs-39",
+      "steel-gh-3"
     ]
   },
   {
     "productId": "steel",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "low",
-    "rationale": "Steel is fundamentally API-first: the Sessions API, CAPTCHA/proxy/auth-reuse, human-in-the-loop debug URLs, agent traces, and even the CLI are all documented as thin wrappers over the same REST/OpenAPI surface (steel-docs-1..10, steel-probe-2, steel-probe-3), and the runtime probe confirms the API alone (no UI) can create/list live sessions end-to-end. However, there's no explicit evidence enumerating the dashboard/UI feature set and confirming 1:1 parity with the API — it's inferred rather than directly stated. Missing for 10: an explicit doc/comparison confirming every UI-only feature (e.g. dashboard analytics, trace viewer) is also exposed via API, and independent confirmation of full parity.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Steel is API-first (Sessions API, CAPTCHA, proxies, agent traces, credentials, files all documented as API endpoints with an OpenAPI spec), and the UI features (debug URL, embed sessions, human-in-the-loop) are explicitly built to expose live sessions that are themselves API-created, suggesting strong parity. However, there's no explicit statement or independent confirmation that every UI-only feature (e.g., dashboard analytics, skill management, billing/team settings) has a documented API equivalent. missing for 10: explicit doc mapping UI dashboard features 1:1 to API endpoints, independent/hands-on confirmation of full parity, and detail on any UI-only settings lacking API access.",
     "evidenceIds": [
       "steel-docs-1",
-      "steel-docs-2",
-      "steel-docs-4",
-      "steel-docs-5",
-      "steel-docs-6",
-      "steel-docs-8",
+      "steel-docs-11",
+      "steel-docs-14",
+      "steel-docs-27",
+      "steel-docs-33",
       "steel-probe-2",
-      "steel-probe-rt-1"
+      "steel-docs-5",
+      "steel-docs-22"
     ]
   },
   {
     "productId": "steel",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Steel's agent-traces feature explicitly supports exporting run data as markdown, JSON, or a ZIP with markdown+screenshots (steel-docs-7), and the product itself is open-source and self-hostable (steel-gh-4, steel-probe-rt-1), meaning users are never locked into a proprietary cloud and can run/keep everything themselves. However, there's no documented comprehensive 'export all my data' capability covering sessions, auth contexts, or account-level data beyond traces. Missing for 10: a documented full-account data export/portability feature covering sessions, auth states, and configs, not just trace recordings.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Steel documents exporting agent trace/session run data in open formats (markdown, JSON, ZIP with screenshots) and is itself open-source/self-hostable via Docker, giving users a path to leave the managed cloud. However there is no documentation of exporting other data types (credentials, files, session history/metadata, account data) in open formats, nor any explicit 'export everything and leave' workflow. missing for 10: full-account data export (credentials, files, session records) in open formats, documented data-portability/deletion workflow, independent confirmation of successful export/migration.",
     "evidenceIds": [
       "steel-docs-7",
+      "steel-docs-27",
       "steel-gh-4",
-      "steel-probe-rt-1"
+      "steel-gh-5",
+      "steel-docs-11"
     ]
   },
   {
     "productId": "steel",
     "storyId": "openness-open-license",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "The product's llms.txt explicitly states 'Steel is the open-source browser API for AI agents,' there's a public GitHub repo (steel-dev/steel-browser) with feature docs, and a runtime probe confirms the self-hostable OSS image can be pulled and run via Docker — all consistent with source availability. However, no evidence pack item names or shows a specific OSS license (e.g., MIT/AGPL) or a LICENSE file, so the exact openness terms are unconfirmed. Missing for 10: explicit license file/type citation, independent confirmation of license terms.",
+    "rationale": "Steel is explicitly described as an open-source browser API with a public GitHub repository (steel-dev/steel-browser) containing the source code, docs, and Docker image, confirming readable open-source code. Missing for 10: explicit statement of the license type (e.g., MIT/Apache) in the evidence pack and independent confirmation of license terms.",
     "evidenceIds": [
       "steel-gh-1",
       "steel-gh-4",
-      "steel-probe-1",
-      "steel-probe-rt-1",
-      "steel-comm-3"
+      "steel-gh-5",
+      "steel-docs-11",
+      "steel-docs-21"
     ]
   },
   {
     "productId": "steel",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 10,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Steel is explicitly open-source with a pre-built Docker image (combined API + UI), and a runtime probe confirms a full keyless self-host roundtrip: docker-running the OSS image, health check succeeding, and creating/listing live browser sessions, corroborating vendor docs and GitHub claims.",
+    "rationale": "Steel is explicitly open-source (steel-dev/steel-browser repo) and ships a pre-built combined API+UI Docker image, letting an AI-native user self-host the core product; community comments corroborate its open-source nature. Missing for 10: detailed self-host deployment/config docs (scaling, storage, auth setup) beyond the single Docker image mention, and no independent hands-on report of a successful self-hosted deployment.",
     "evidenceIds": [
       "steel-gh-4",
-      "steel-gh-1",
-      "steel-probe-rt-1",
-      "steel-probe-1"
+      "steel-gh-5",
+      "steel-docs-11",
+      "steel-docs-21",
+      "steel-comm-3"
     ]
   },
   {
     "productId": "steel",
     "storyId": "parallel-fleet-scale",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Steel's Sessions API and CLI clearly support spinning up isolated on-demand browser sessions with custom session IDs, and a runtime probe confirms working session creation/listing via self-hosted API — solid programmatic session management. However, the evidence pack contains no documented concurrency limits, quotas, or fleet-scale guidance for running many sessions in parallel. Missing for 10: explicit documented concurrency/session limits, guidance or examples for orchestrating many simultaneous sessions, and independent corroboration of scale behavior.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Steel's Sessions API supports spinning up isolated on-demand browser sessions with programmatic lifecycle management (create, custom session IDs, session lifecycle docs) and a CLI/SDK for scripting sessions, which supports parallel automation use cases. However, there is no documented concurrency limit, fleet-level quota, or explicit guidance on running many sessions concurrently (rate limits, max parallel sessions per plan, autoscaling behavior) in the evidence provided. missing for 10: documented concurrency/session limits per plan, explicit fleet-scale orchestration guidance, benchmarks or independent confirmation of concurrent session handling at scale.",
     "evidenceIds": [
       "steel-docs-1",
       "steel-docs-10",
+      "steel-docs-33",
       "steel-docs-8",
-      "steel-probe-rt-1"
+      "steel-gh-1"
     ]
   },
   {
     "productId": "steel",
     "storyId": "privacy-data-residency",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "low",
-    "rationale": "Steel offers a self-hostable open-source Docker image (steel-gh-4, steel-probe-rt-1) which lets users control where their data physically resides by hosting it themselves, but there is no explicit region/residency selection feature documented for the managed cloud offering. missing for 10: explicit region-selection UI/API for the managed cloud service, documentation on data residency guarantees or compliance certifications (e.g., GDPR/SOC2 region controls).",
-    "evidenceIds": [
-      "steel-gh-4",
-      "steel-probe-rt-1"
-    ]
+    "rationale": "No evidence in the pack mentions data residency, region selection, or geographic hosting options for Steel's cloud browser sessions; docs cover proxies, sessions, stealth, and integrations but never data storage location controls. Missing for 10: any mention of region selection, data residency options, or geographic data storage controls.",
+    "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "confidence": "low",
+    "rationale": "No evidence pack item addresses AI training data usage or opt-out policies for Steel; the docs focus on browser automation, sessions, proxies, and integrations with no mention of a data-training privacy commitment.",
     "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "privacy-retention-controls",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Steel is open-source and self-hostable (steel-gh-4, steel-probe-rt-1), which gives users full control over where session data lives and how long it's retained, and session lifecycle docs show sessions can be created/stopped with custom IDs (steel-docs-10). However, there is no explicit documentation of a retention policy, data-deletion API, or GDPR-style controls for the managed cloud offering. Missing for 10: documented retention/deletion controls or policy for the hosted cloud service, explicit data-purge API, independent confirmation of retention behavior.",
-    "evidenceIds": [
-      "steel-gh-4",
-      "steel-probe-rt-1",
-      "steel-docs-10"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "While Steel manages sessions, credentials, and files (which could involve data retention concerns), no evidence describes user-facing controls for data retention periods, deletion policies, or GDPR-style data purging.",
+    "evidenceIds": []
   },
   {
     "productId": "steel",
@@ -4511,19 +4613,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions telemetry, analytics, usage tracking, or an opt-out mechanism; the self-hostable OSS nature is noted (steel-probe-rt-1) but that alone does not confirm any telemetry opt-out control exists or is documented.",
+    "rationale": "No evidence pack item mentions telemetry, usage analytics, or an opt-out/opt-in setting for data collection; Steel is open-source and self-hostable which could make this a fair question, but no documentation addresses it.",
     "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "schema-structured-extraction",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Steel's docs/GitHub only show raw content extraction utilities (markdown, readability, screenshots, PDF conversion) and generic 'extract content' CLI commands, with no mention of Zod/Pydantic-style schema validation or typed structured outputs. The axis is fair for a browser-automation API since competitors offer schema-based extraction, but no evidence shows Steel provides this.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Steel doesn't natively expose a Zod/Pydantic-style schema-validated extraction API, but several ecosystem integrations reference typed extraction — the AI SDK integration explicitly does 'extract, return typed results' and the Pydantic AI integration builds 'typed Python agents' on Steel sessions, implying schema validation is handled by those frameworks atop Steel's browser access rather than by Steel itself. Missing for 10: first-party Steel API/SDK documentation showing a defined schema (Zod or Pydantic model) passed directly to a Steel extraction endpoint, and independent confirmation that this pattern works reliably.",
     "evidenceIds": [
-      "steel-gh-3",
-      "steel-docs-8"
+      "steel-docs-39",
+      "steel-docs-41",
+      "steel-docs-42",
+      "steel-gh-3"
     ]
   },
   {
@@ -4532,10 +4636,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Steel's Agent Traces feature explicitly turns a run into a timeline of agent activity with screenshots, and lets you export as markdown, JSON, or a ZIP with markdown+screenshots, directly matching the replay-debugging story for automation engineers. Missing for 10: explicit video recording/playback evidence and independent/hands-on corroboration of the traces UI beyond first-party docs.",
+    "rationale": "Steel's Agent Traces feature explicitly turns a run into a step-by-step timeline of agent activity, and lets you export the run as markdown, JSON, or a ZIP with markdown plus screenshots, directly supporting replay debugging; session replays and debug URLs (live session view) are also documented. Missing for 10: independent/hands-on corroboration of the replay/timeline UI actually working, and explicit detail on 'video' replay format beyond the general 'session replays' tagline.",
     "evidenceIds": [
       "steel-docs-6",
       "steel-docs-7",
+      "steel-docs-27",
+      "steel-docs-28",
+      "steel-docs-29",
+      "steel-docs-11",
       "steel-docs-5"
     ]
   },
@@ -4544,11 +4652,12 @@
     "storyId": "stealth-fingerprint-proxies",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Steel's docs explicitly document stealth mode (single flag covering detection evasion, captcha solving, and verification) plus both Managed Residential Proxies and Bring-Your-Own-Proxy (BYOP) for geo-targeting, directly matching the story, and community comment confirms custom proxy support works in practice. Missing for 10: no independent/hands-on evidence quantifying bot-detection bypass success rates or geo-targeting granularity, and no first-party benchmark showing reduced block rates.",
+    "confidence": "medium",
+    "rationale": "Steel's docs explicitly describe stealth mode (bot-detection evasion + CAPTCHA solving in one flag) and both Managed Residential Proxies and Bring-Your-Own-Proxy options, directly matching the story; a community comment corroborates that custom proxies work. Missing for 10: explicit geo-targeting/country-selection documentation and independent hands-on verification that stealth actually reduces bot-blocking in production.",
     "evidenceIds": [
       "steel-docs-2",
       "steel-docs-3",
+      "steel-docs-11",
       "steel-comm-4"
     ]
   },
@@ -4558,28 +4667,34 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions webhooks, event callbacks, or push notifications for session/task completion; Steel's docs cover sessions API, CLI, proxies, captcha, and traces but nothing about async status notifications, implying developers must poll session status endpoints.",
+    "rationale": "No evidence anywhere in the pack of a webhook or event-notification system for session/task completion; Steel's docs focus on session lifecycle, agent traces, and API endpoints but never mention webhooks or push notifications for status changes.",
     "evidenceIds": []
   },
   {
     "productId": "steel",
     "storyId": "usage-pricing-transparency",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "disputed",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "No first-party documentation in the evidence pack lays out per-task or per-browser-hour pricing or concurrency/rate limits; the only pricing-related evidence is a community report of inconsistency between the pricing page and docs pricing ($59 vs $99), which itself signals the opposite of transparent, dependable pricing rather than confirming it.",
+    "rationale": "There is a pricing page implied but no documented rate/concurrency limits in the evidence pack, and community evidence directly contradicts pricing transparency: a user reports the pricing page shows $59 while the docs show $99 for the developer tier, indicating inconsistent/undocumented pricing rather than clear transparent pricing. missing for 10: documented per-task or per-browser-hour rate card, documented concurrency/rate limits, resolution of the pricing discrepancy, independent confirmation of consistent current pricing.",
     "evidenceIds": [
-      "steel-comm-1"
+      "steel-comm-1",
+      "steel-docs-11"
     ]
   },
   {
     "productId": "steel",
     "storyId": "vision-computer-use",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Evidence shows Steel can capture screenshots, convert pages to markdown/PDF, and offers a debug URL for human-in-the-loop control, but there is no mention of a vision/computer-use action mode where an agent issues click/type actions based on screenshot coordinates instead of DOM selectors.",
-    "evidenceIds": []
+    "rationale": "Steel documents dedicated integrations for OpenAI, Claude, and Gemini Computer Use that run vision-based agent loops (operating on screenshots) atop a Steel browser session, directly enabling a vision/computer-use mode alongside its DOM-based Sessions API and CLI actions. missing for 10: independent/hands-on corroboration of vision mode working on canvas-heavy UIs, and detail on switching seamlessly between DOM and vision modes within one session.",
+    "evidenceIds": [
+      "steel-docs-17",
+      "steel-docs-18",
+      "steel-docs-19",
+      "steel-docs-8"
+    ]
   },
   {
     "productId": "steel",
@@ -4587,11 +4702,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Steel's docs describe browser session management, stealth, CLI scripting of sequential steps (create session → navigate → click/fill → extract → stop), and MCP tool exposure, but nothing in the evidence pack shows a workflow-composition layer with loops, conditionals, or parameterized branching — the CLI and SDK are linear step sequences, not a control-flow DSL. missing for 10: any documented loop/conditional constructs, parameterized workflow templates, or reusable multi-branch automation definitions.",
+    "rationale": "Steel's CLI and Sessions API support running sequential browser steps (navigate, click, extract, stop) via terminal or SDK, but nothing in the evidence describes composing workflows with loops, conditionals, or parameterized reusable flows — that logic is left to whichever orchestrating agent framework (CrewAI, AgentKit, etc.) sits on top of Steel. Missing for 10: any documentation of control-flow constructs (loops/branches), workflow parameters, or a workflow builder/editor within Steel itself.",
     "evidenceIds": [
       "steel-docs-8",
-      "steel-docs-10",
-      "steel-gh-1"
+      "steel-docs-9",
+      "steel-docs-38",
+      "steel-docs-40"
     ]
   }
 ]

@@ -1,18 +1,20 @@
 {
-  "hash": "b5fca63234a9ac25c51d288204feef5148b4494fcdc075ae7abe297196f29011",
+  "hash": "a0e5923671c46d307a2bc3aca4e93ac10609abb8df7993015145313524e88162",
   "verdict": {
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Airbyte's docs explicitly define incremental sync as pulling only changed data since the last sync, backed by sync-mode and CDC (log-based, position-tracked) documentation that implies automated cursor/state handling (airbyte-docs-22, airbyte-docs-7/23, airbyte-docs-15/25). However, community reports show real friction: one engineer notes unclear handling of hard deletions without CDC and another had to manually 'trick' Airbyte's state for an 8-billion-row table to avoid a full reload, indicating state management isn't always seamless in practice (airbyte-comm-2, airbyte-comm-4). Missing for 10: independent verification of cursor/state robustness across all sources, clearer documentation on hard-delete handling, and evidence of large-table incremental sync working without manual workarounds.",
+    "rationale": "Airbyte's docs explicitly define incremental sync as pulling 'only the data that has changed since the previous sync' (airbyte-docs-22), backed by sync-mode concepts (airbyte-docs-7/23) and CDC log-based replication that tracks position and captures INSERT/UPDATE/DELETE changes without full reloads (airbyte-docs-15/25/38/42) — this is exactly cursor/state management handled automatically. Community reports corroborate real-world use for continuous incremental syncing (airbyte-comm-4/5), though one shows a workaround needed for an extremely large initial-load table before incremental syncing worked reliably. missing for 10: independent large-scale benchmarking of state/cursor reliability across all connector types, and confirmation that non-CDC sources handle hard deletes as cleanly as CDC ones (an older community complaint flagged this gap).",
     "evidenceIds": [
       "airbyte-docs-22",
       "airbyte-docs-7",
       "airbyte-docs-23",
       "airbyte-docs-15",
       "airbyte-docs-25",
-      "airbyte-comm-2",
-      "airbyte-comm-4"
+      "airbyte-docs-38",
+      "airbyte-docs-42",
+      "airbyte-comm-4",
+      "airbyte-comm-2"
     ],
     "productId": "airbyte",
     "storyId": "incremental-sync"
