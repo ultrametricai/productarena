@@ -30,7 +30,7 @@ import { weightedPercent } from './scoring'
 // The committed step→stories mapping
 // ---------------------------------------------------------------------------
 
-export const STEP_STORY_KINDS = ['function', 'computer-use'] as const
+export const STEP_STORY_KINDS = ['function', 'computer-use', 'extra'] as const
 
 // One mapping: which of arena {arenaId}'s stories are RELEVANT to step {taskId}:{nodeId}.
 //   kind 'function'     — the step's covering arena (optionsArenaId, else the canonical
@@ -38,6 +38,10 @@ export const STEP_STORY_KINDS = ['function', 'computer-use'] as const
 //   kind 'computer-use' — a temporarily-human step mapped onto the computer-use fleet's
 //                         stories (browser-agents; ai-assistants restricted to its judged
 //                         computer-use stories) — "agents that could attempt it today".
+//   kind 'extra'        — the step mapped onto one of its ADDITIONAL covering arenas
+//                         (extraOptionArenas / extraOptionRefs): "generate a website" onto
+//                         ai-assistants or design-tools stories, so cross-arena vendors are
+//                         scored by the same judged-evidence mechanism as the primary market.
 // storyIds may be empty: an honest "no arena story is genuinely relevant", which consumers
 // treat as "no ranking" (the UI falls back to the arena-ordered roster).
 export const StepStoryEntrySchema = z.object({
@@ -99,6 +103,30 @@ export function functionMappingFor(taskId: string, node: DagNode, dir?: string):
 export function computerUseMappingsFor(taskId: string, nodeId: string, dir?: string): StepStoryEntry[] {
   return COMPUTER_USE_SOURCES
     .map((s) => mapIndex(dir).get(stepStoryKey(taskId, nodeId, 'computer-use', s.arenaId)))
+    .filter((e): e is StepStoryEntry => e !== undefined)
+}
+
+// The step's ADDITIONAL covering arenas, in declaration order: extraOptionArenas first, then
+// the arenas of explicit extraOptionRefs — deduped, never repeating the primary covering arena.
+// The single source of truth the mapping generator (pipeline/scripts/map-step-stories.ts) and
+// every 'extra'-kind consumer share, mirroring coveringArenaId for the 'function' kind.
+export function extraArenasFor(
+  node: Pick<DagNode, 'optionsArenaId' | 'vendor' | 'extraOptionArenas' | 'extraOptionRefs'>,
+): string[] {
+  const primary = coveringArenaId(node)
+  const out: string[] = []
+  for (const arenaId of [
+    ...(node.extraOptionArenas ?? []),
+    ...(node.extraOptionRefs ?? []).map((r) => r.arenaId),
+  ]) {
+    if (arenaId !== primary && !out.includes(arenaId)) out.push(arenaId)
+  }
+  return out
+}
+
+export function extraMappingsFor(taskId: string, node: DagNode, dir?: string): StepStoryEntry[] {
+  return extraArenasFor(node)
+    .map((arenaId) => mapIndex(dir).get(stepStoryKey(taskId, node.id, 'extra', arenaId)))
     .filter((e): e is StepStoryEntry => e !== undefined)
 }
 
@@ -237,6 +265,44 @@ export function stepRanking(taskId: string, node: DagNode, dir?: string): StepRa
   const vendors = rankVendors(entry.arenaId, stories.map((s) => s.id), dir).slice(0, STEP_OPTIONS_CAP)
   if (vendors.length === 0) return null
   return { arenaId: entry.arenaId, arenaName: lookup.arenaName, kind: 'function', stories, vendors }
+}
+
+// The cross-arena markets for one step — one ranking per ADDITIONAL covering arena
+// (extraOptionArenas / extraOptionRefs), scored by the SAME story-derived mechanism as the
+// primary market but with a stricter gate (computerUseOptions' bar): a vendor appears only when
+//   - the step's committed 'extra' mapping for that arena is non-empty,
+//   - the node allows it (whole arena via extraOptionArenas, else only the listed refs),
+//   - its score is positive AND backed by at least one judged full/partial verdict among the
+//     mapped stories — judged evidence, or nothing. Founder ask: "generate a website" should
+// list ChatGPT and Framer beside the vibe-coding roster, each traceable to its own arena's
+// verdicts (the UI shows an arena chip naming where the evidence lives).
+export function crossArenaStepRankings(taskId: string, node: DagNode, dir?: string): StepRanking[] {
+  const refsByArena = new Map<string, Set<string>>()
+  for (const r of node.extraOptionRefs ?? []) {
+    const set = refsByArena.get(r.arenaId) ?? new Set<string>()
+    set.add(r.productId)
+    refsByArena.set(r.arenaId, set)
+  }
+  const wholeArena = new Set(node.extraOptionArenas ?? [])
+
+  const rankings: StepRanking[] = []
+  for (const entry of extraMappingsFor(taskId, node, dir)) {
+    if (entry.storyIds.length === 0 || !isPopulated(entry.arenaId, dir)) continue
+    const lookup = arenaLookup(entry.arenaId, dir)
+    const stories = entry.storyIds
+      .map((id) => lookup.storyById.get(id))
+      .filter((s): s is Story => s !== undefined)
+      .map((s) => ({ id: s.id, title: s.title, weight: s.weight }))
+    if (stories.length === 0) continue
+    const allowed = wholeArena.has(entry.arenaId) ? null : refsByArena.get(entry.arenaId) ?? new Set<string>()
+    const vendors = rankVendors(entry.arenaId, stories.map((s) => s.id), dir)
+      .filter((v) => allowed === null || allowed.has(v.productId))
+      .filter((v) => v.score > 0 && v.cites.some((c) => c.verdict === 'full' || c.verdict === 'partial'))
+      .slice(0, STEP_OPTIONS_CAP)
+    if (vendors.length === 0) continue
+    rankings.push({ arenaId: entry.arenaId, arenaName: lookup.arenaName, kind: 'extra', stories, vendors })
+  }
+  return rankings
 }
 
 // ---------------------------------------------------------------------------

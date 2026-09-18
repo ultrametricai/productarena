@@ -7,7 +7,7 @@ import { resolveGapStep } from '@/lib/gapClosers'
 import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
 import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
-import { stepRanking, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
+import { crossArenaStepRankings, stepRanking, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
 
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
@@ -177,7 +177,19 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
 // weightedPercent over the judged verdicts on exactly the stories mapped to this step. The
 // tooltip names the verdicts so every pill traces to evidence even before expanding the
 // "how these are ranked" details.
-function StepScoreChip({ vendor, rank, arenaName }: { vendor: StepVendorScore; rank: number; arenaName: string }) {
+function StepScoreChip({
+  vendor,
+  rank,
+  arenaName,
+  crossArena = false,
+}: {
+  vendor: StepVendorScore
+  rank: number
+  arenaName: string
+  // Cross-arena option (the step's extraOptionArenas/extraOptionRefs market): the chip carries
+  // a small arena tag so users see where this vendor's judged evidence lives.
+  crossArena?: boolean
+}) {
   const full = vendor.cites.filter((c) => c.verdict === 'full').length
   const partial = vendor.cites.filter((c) => c.verdict === 'partial').length
   return (
@@ -188,6 +200,11 @@ function StepScoreChip({ vendor, rank, arenaName }: { vendor: StepVendorScore; r
     >
       <ProductLogoView product={{ id: vendor.productId, name: vendor.name }} size={16} hasLogo={hasLogo(vendor.productId)} />
       <span className="truncate">{vendor.name}</span>
+      {crossArena && (
+        <span className="rounded bg-zinc-800 px-1 py-px text-[9px] uppercase tracking-wide text-zinc-500">
+          {arenaName}
+        </span>
+      )}
       <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{vendor.score.toFixed(0)}</span>
     </Link>
   )
@@ -213,62 +230,95 @@ function citeLine(v: StepVendorScore): string {
 // actually support, don't assume the user has a vendor). Replaces the arena-ordered "via:" row
 // when the step has a committed story mapping; the expandable underneath exposes the mapped
 // stories and every verdict behind every score — same transparency bar as the /score pages.
-function StepRankingRow({ ranking, node }: { ranking: StepRanking; node: DagNode }) {
+//
+// Cross-arena options (founder ask: "generate a website" is also served by ChatGPT, Framer,
+// Figma, Canva — not just the vibe-coding roster) merge into the SAME ranked list, sorted by
+// step score, each carrying a small arena tag naming where its judged evidence lives. `ranking`
+// may be null for steps whose only judged market is cross-arena.
+function StepRankingRow({ ranking, extras, node }: { ranking: StepRanking | null; extras: StepRanking[]; node: DagNode }) {
   // Curated market entries we don't rank (untracked vendors — no judged verdicts) stay visible
-  // as honest unlinked chips after the ranked list.
-  const untracked = stepVendorOptions(node).filter((o) => !o.productId)
+  // as honest unlinked chips after the ranked list. Only when the primary market is ranked —
+  // extras-only steps keep their full "via:" row separately.
+  const untracked = ranking ? stepVendorOptions(node).filter((o) => !o.productId) : []
+  const merged = [
+    ...(ranking?.vendors ?? []).map((v) => ({ vendor: v, arenaName: ranking!.arenaName, cross: false })),
+    ...extras.flatMap((r) => r.vendors.map((v) => ({ vendor: v, arenaName: r.arenaName, cross: true }))),
+  ].sort((a, b) => b.vendor.score - a.vendor.score || a.vendor.name.localeCompare(b.vendor.name))
+  const blocks = [...(ranking ? [ranking] : []), ...extras]
+  const storyCount = blocks.reduce((n, b) => n + b.stories.length, 0)
   return (
     <>
       <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
         <span
           className="text-[10px] uppercase tracking-wide text-zinc-500"
-          title={`Vendors ranked for THIS step — scored from their judged verdicts on the ${ranking.stories.length} ${ranking.arenaName} stories mapped to it, not the arena's overall PA Score`}
+          title={`Vendors ranked for THIS step — scored from their judged verdicts on the ${storyCount} stories mapped to it${
+            extras.length > 0 ? '; vendors from another arena carry a tag naming where their evidence lives' : ''
+          } — not the arena's overall PA Score`}
         >
           ranked for this step:
         </span>
-        {ranking.vendors.map((v, i) => (
-          <StepScoreChip key={v.productId} vendor={v} rank={i + 1} arenaName={ranking.arenaName} />
+        {merged.map((e, i) => (
+          <StepScoreChip
+            key={`${e.vendor.arenaId}:${e.vendor.productId}`}
+            vendor={e.vendor}
+            rank={i + 1}
+            arenaName={e.arenaName}
+            crossArena={e.cross}
+          />
         ))}
         {untracked.map((o) => (
           <VendorChip key={o.vendor} info={o} />
         ))}
-        <Link
-          href={`/arena/${ranking.arenaId}`}
-          title="See the whole judged market for this step's function"
-          className="whitespace-nowrap text-[10px] text-zinc-500 transition hover:text-emerald-300"
-        >
-          full arena →
-        </Link>
+        {ranking && (
+          <Link
+            href={`/arena/${ranking.arenaId}`}
+            title="See the whole judged market for this step's function"
+            className="whitespace-nowrap text-[10px] text-zinc-500 transition hover:text-emerald-300"
+          >
+            full arena →
+          </Link>
+        )}
       </div>
       <details className="group mt-1.5">
         <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
           <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
-          how these are ranked — {ranking.stories.length} judged stories · {ranking.vendors.length} vendors
+          how these are ranked — {storyCount} judged stories · {merged.length} vendors
+          {extras.length > 0 && ` · ${blocks.length} arenas`}
         </summary>
         <div className="mt-1.5 space-y-1.5 border-l border-zinc-800 pl-3 text-[11px] text-zinc-500">
           <p>
-            Score = story-weighted verdicts on the {ranking.arenaName} stories mapped to this step
+            Score = story-weighted verdicts on the stories mapped to this step
             (full=1, partial=0.6, disputed=0.3, none=0 · n/a excluded) — every number below traces
             to a judged verdict on the vendor&rsquo;s product page.
+            {extras.length > 0
+              && ' Cross-arena vendors are scored on THEIR arena’s mapped stories and appear only with at least one judged full/partial verdict.'}
           </p>
-          <ul className="space-y-0.5">
-            {ranking.stories.map((s) => (
-              <li key={s.id} className="text-zinc-400">
-                <span className="text-zinc-600">w{s.weight}</span> {s.title}
-              </li>
-            ))}
-          </ul>
-          <ul className="space-y-0.5">
-            {ranking.vendors.map((v) => (
-              <li key={v.productId}>
-                <Link href={`/arena/${v.arenaId}/product/${v.productId}`} className="text-zinc-300 transition hover:text-emerald-300">
-                  {v.name}
-                </Link>{' '}
-                <span className="font-mono tabular-nums text-emerald-400/80">{v.score.toFixed(0)}</span>{' '}
-                — {citeLine(v)}
-              </li>
-            ))}
-          </ul>
+          {blocks.map((b) => (
+            <div key={b.arenaId} className="space-y-0.5">
+              <p className="text-[10px] uppercase tracking-wide text-zinc-600">
+                {b.arenaName}
+                {b.kind === 'extra' && ' (cross-arena)'}
+              </p>
+              <ul className="space-y-0.5">
+                {b.stories.map((s) => (
+                  <li key={s.id} className="text-zinc-400">
+                    <span className="text-zinc-600">w{s.weight}</span> {s.title}
+                  </li>
+                ))}
+              </ul>
+              <ul className="space-y-0.5">
+                {b.vendors.map((v) => (
+                  <li key={v.productId}>
+                    <Link href={`/arena/${v.arenaId}/product/${v.productId}`} className="text-zinc-300 transition hover:text-emerald-300">
+                      {v.name}
+                    </Link>{' '}
+                    <span className="font-mono tabular-nums text-emerald-400/80">{v.score.toFixed(0)}</span>{' '}
+                    — {citeLine(v)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </details>
     </>
@@ -283,6 +333,9 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
   // arena-ordered "via:" roster and the "or:" alternatives — the same market, ranked by step
   // relevance instead of overall arena rank.
   const ranking = taskId ? stepRanking(taskId, node) : null
+  // Cross-arena markets for the step (extraOptionArenas / extraOptionRefs), evidence-gated —
+  // merged into the ranked row with an arena tag per vendor.
+  const extras = taskId ? crossArenaStepRankings(taskId, node) : []
   // Steps with a derived market (optionsArenaId) already show the whole arena in the "via:"
   // row — a second "or:" row of alternatives would just repeat it.
   const alts = node.vendor && !node.optionsArenaId && !ranking ? vendorAlternatives(node.vendor) : []
@@ -346,7 +399,9 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
         )}
       </div>
 
-      {ranking && <StepRankingRow ranking={ranking} node={node} />}
+      {(ranking !== null || extras.length > 0) && (
+        <StepRankingRow ranking={ranking} extras={extras} node={node} />
+      )}
 
       {options.length > 0 && (
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">

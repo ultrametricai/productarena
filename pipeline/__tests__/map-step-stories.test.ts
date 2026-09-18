@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest'
 import { classifyGapStep } from '../../lib/gapClosers'
 import { loadProcesses, type DagNode } from '../../lib/processes'
-import { COMPUTER_USE_SOURCES, coveringArenaId } from '../../lib/processRankings'
+import { COMPUTER_USE_SOURCES, coveringArenaId, extraArenasFor } from '../../lib/processRankings'
 import type { Story } from '../../lib/schemas'
 import {
   enumerateTargets, mapPrompt, MAX_STORIES_PER_STEP, RawStepMapSchema, STEP_STORY_PROMPT_VERSION,
@@ -102,7 +102,7 @@ describe('RawStepMapSchema', () => {
 describe('enumerateTargets mirrors lib/processRankings consumption', () => {
   const targets = enumerateTargets(loadProcesses(DATA_DIR))
 
-  it('function targets use exactly the covering arena; computer-use targets only fleet arenas on irreducible steps', () => {
+  it('function targets use exactly the covering arena; extra targets only declared extra arenas; computer-use targets only fleet arenas on irreducible steps', () => {
     const nodeByKey = new Map<string, DagNode>(
       loadProcesses(DATA_DIR).flatMap((t) => t.dag.nodes.map((n) => [`${t.id}:${n.id}`, n] as const)),
     )
@@ -112,6 +112,11 @@ describe('enumerateTargets mirrors lib/processRankings consumption', () => {
       expect(node).toBeDefined()
       if (t.kind === 'function') {
         expect(t.arenaId).toBe(coveringArenaId(node))
+      } else if (t.kind === 'extra') {
+        // Extras mirror the 'function' posture: the arena's FULL story list is offered — the
+        // ref allowlist and full/partial gate live in the consumer, not the mapper.
+        expect(extraArenasFor(node)).toContain(t.arenaId)
+        expect(t.arenaId).not.toBe(coveringArenaId(node))
       } else {
         const cls = classifyGapStep({ label: node.label, route: node.route, async: node.async })
         expect(cls?.kind).toBe('irreducible')
@@ -125,11 +130,18 @@ describe('enumerateTargets mirrors lib/processRankings consumption', () => {
     }
   })
 
-  it('covers the corpus: hundreds of function cells plus computer-use cells for every irreducible step', () => {
+  it('covers the corpus: hundreds of function cells, extra cells for every declared cross-arena market, computer-use cells for every irreducible step', () => {
     const fn = targets.filter((t) => t.kind === 'function')
     const cu = targets.filter((t) => t.kind === 'computer-use')
+    const extra = targets.filter((t) => t.kind === 'extra')
     expect(fn.length).toBeGreaterThan(100)
     expect(cu.length).toBeGreaterThan(0)
+    // One cell per declared (step, extra arena) pair across the whole corpus.
+    const declared = loadProcesses(DATA_DIR)
+      .flatMap((t) => t.dag.nodes.map((n) => extraArenasFor(n).length))
+      .reduce((a, b) => a + b, 0)
+    expect(extra.length).toBe(declared)
+    expect(extra.length).toBeGreaterThanOrEqual(50)
     // One cell per (step, arena, kind) — no duplicates.
     const keys = new Set(targets.map((t) => `${t.stepKey}:${t.kind}:${t.arenaId}`))
     expect(keys.size).toBe(targets.length)
