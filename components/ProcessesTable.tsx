@@ -146,16 +146,29 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
                   </span>
                 </td>
                 <td className="hidden px-2 py-2 text-xs text-zinc-500 md:table-cell">
-                  <span className="flex items-center gap-1.5 whitespace-nowrap">
+                  {/* Founder 2026-09-18: the phase is the filter — click it to scope the table
+                      to that phase; click again (or pick All) to clear. */}
+                  <button
+                    type="button"
+                    onClick={() => setPhase(phase === r.phase ? 'all' : r.phase)}
+                    title={`${phaseTooltip(r.phase)} — click to ${phase === r.phase ? 'clear the phase filter' : `filter to ${r.phase}`}`}
+                    className={`flex cursor-pointer items-center gap-1.5 whitespace-nowrap transition hover:text-emerald-300 ${phase === r.phase ? 'text-emerald-300' : ''}`}
+                  >
                     <IconChip icon={phaseIcon(r.phase)} title={phaseTooltip(r.phase)} />
                     {r.phase}
-                  </span>
+                  </button>
                 </td>
                 <td className="px-2 py-2">
                   <CeilingBar pct={r.pct} />
                 </td>
                 <td className="hidden px-2 py-2 font-mono text-xs tabular-nums text-zinc-400 sm:table-cell">
-                  {r.agentSteps}/{r.totalSteps}
+                  <Link
+                    href={`/processes/${r.slug}#steps`}
+                    title={`${r.agentSteps} of ${r.totalSteps} steps are agent-runnable — open the step-by-step breakdown`}
+                    className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+                  >
+                    {r.agentSteps}/{r.totalSteps}
+                  </Link>
                 </td>
                 <td className="hidden px-2 py-2 lg:table-cell">
                   <span className="flex flex-wrap gap-1">

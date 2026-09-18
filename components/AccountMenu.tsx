@@ -45,17 +45,25 @@ export default function AccountMenu() {
     // Founder 2026-09-18: the Sign up button ships visibly (supersedes the 09-14 hide-until-
     // tested call) — AuthKit's hosted page handles both signup and login in one flow via the
     // standard Ultrametric WorkOS environment. The pa-auth-test flag is retired.
+    // Signed-out: quiet "Log in" text link + the Sign up pill (founder 2026-09-18). Both land
+    // on the same AuthKit hosted page, which serves login and signup in one flow.
+    const go = (e: React.MouseEvent) => {
+      e.preventDefault()
+      window.location.href = loginUrl(currentUrl())
+    }
     return (
-      <a
-        href={loginUrl(SITE_URL)}
-        onClick={(e) => {
-          e.preventDefault()
-          window.location.href = loginUrl(currentUrl())
-        }}
-        className="shrink-0 rounded-full border border-emerald-400/60 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300 transition hover:bg-emerald-400/20"
-      >
-        Sign up
-      </a>
+      <span className="flex shrink-0 items-center gap-2.5">
+        <a href={loginUrl(SITE_URL)} onClick={go} className="text-xs text-zinc-400 transition hover:text-emerald-300">
+          Log in
+        </a>
+        <a
+          href={loginUrl(SITE_URL)}
+          onClick={go}
+          className="rounded-full border border-emerald-400/60 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300 transition hover:bg-emerald-400/20"
+        >
+          Sign up
+        </a>
+      </span>
     )
   }
 
