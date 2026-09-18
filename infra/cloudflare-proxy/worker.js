@@ -28,7 +28,9 @@
 // Also hosts the site's auth backend at /productarena/auth/* (WorkOS AuthKit login/callback,
 // our own HMAC-signed pa_session cookie, /auth/me, /auth/logout) — see the "Auth backend"
 // section below and docs/AUTH.md for setup — and the session-gated GET/PUT
-// /productarena/api/watchlist (per-account starred product ids in KV; "Watchlist API" section).
+// /productarena/api/watchlist (per-account starred product ids in KV; "Watchlist API" section)
+// and GET/PUT /productarena/api/my-stack (per-account one-pick-per-arena stack map in KV;
+// "My Stack API" section).
 import { LIVE_PROBES } from './live-probes.generated.js'
 
 const ORIGIN = 'https://productarena.vercel.app'
@@ -1961,11 +1963,99 @@ export async function handleWatchlist(request, env) {
   return authJson(200, { ok: true, ids })
 }
 
+// ---------------------------------------------------------------------------------------------
+// My Stack API: GET/PUT /productarena/api/my-stack — the logged-in reader's account stack, ONE
+// product pick per arena (client: lib/myStack.ts's account-stack half; UI: /my-stack "Your
+// stack" and the process pages' "Check my process"). Same posture as the Watchlist API above in
+// every particular — session gate, same-origin only (no CORS), KV storage, rate limit, tolerant
+// normalization:
+//
+//   GET                       → { ok, stack: { [arenaId]: productId } }
+//   PUT  { stack: {…} }       → { ok, stack } (normalized) — replaces the whole map; the client
+//                               always sends its full merged state, so PUT is idempotent.
+//
+// Storage: one KV value per account under stack:<WorkOS user id> — the PA_WATCHLIST namespace
+// when bound, else PA_COMPARE_STATS (the stack: prefix can't collide with pair:/watchlist:/
+// tryrl: keys). Both keys and values must be slug-shaped and the map is capped; junk could only
+// ever waste bytes — the site resolves the map against its own judged catalog client-side.
+
+const STACK_KEY_PREFIX = 'stack:'
+const STACK_ID_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/ // same slug shape as watchlist/compare ids
+const STACK_MAX_ARENAS = 100
+const STACK_RATE_LIMIT = { max: 120, windowMs: 5 * 60 * 1000 }
+const stackRateBuckets = new Map() // separate from the other buckets
+
+// null = not a plain object at all (a 400); otherwise the slug-validated, capped map. Junk
+// entries (non-string values, unslug-like keys/values) are dropped, not errors.
+export function normalizeStackMap(raw) {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null
+  const stack = {}
+  let kept = 0
+  for (const [rawArena, rawProduct] of Object.entries(raw)) {
+    if (typeof rawProduct !== 'string') continue
+    const arenaId = rawArena.trim().toLowerCase()
+    const productId = rawProduct.trim().toLowerCase()
+    if (!STACK_ID_RE.test(arenaId) || !STACK_ID_RE.test(productId)) continue
+    stack[arenaId] = productId
+    kept += 1
+    if (kept >= STACK_MAX_ARENAS) break
+  }
+  return stack
+}
+
+export async function handleMyStack(request, env) {
+  const url = new URL(request.url)
+  const ctx = authContext(env, url)
+  if (request.method !== 'GET' && request.method !== 'PUT') {
+    return authJson(405, { error: 'GET or PUT only' }, { allow: 'GET, PUT' })
+  }
+  if (!ctx.sessionKey) return authNotConfigured('PA_SESSION_KEY secret')
+  const claims = await verifySessionCookieValue(ctx.sessionKey, getCookie(request, SESSION_COOKIE))
+  if (!claims || typeof claims.sub !== 'string' || claims.sub === '') {
+    return authJson(401, { error: 'log in to keep a stack' })
+  }
+  const kv = env?.PA_WATCHLIST ?? env?.PA_COMPARE_STATS
+  if (!kv) return authJson(503, { error: 'stack storage not available' })
+  const key = `${STACK_KEY_PREFIX}${claims.sub}`
+
+  if (request.method === 'GET') {
+    let stack = {}
+    try {
+      const stored = await kv.get(key)
+      stack = normalizeStackMap(stored ? JSON.parse(stored) : {}) ?? {}
+    } catch {
+      stack = {} // unreadable KV / stored junk degrades to empty, same as the client-side parser
+    }
+    return authJson(200, { ok: true, stack })
+  }
+
+  // PUT
+  const ip = request.headers.get('cf-connecting-ip') ?? 'unknown'
+  if (isRateLimited(stackRateBuckets, ip, STACK_RATE_LIMIT)) {
+    return authJson(429, { error: 'rate limited — try again in a few minutes' })
+  }
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return authJson(400, { error: 'JSON body required' })
+  }
+  const stack = normalizeStackMap(body?.stack)
+  if (stack === null) return authJson(400, { error: '"stack" must be an object of arenaId → productId strings' })
+  try {
+    await kv.put(key, JSON.stringify(stack))
+  } catch {
+    return authJson(503, { error: 'stack storage not available' })
+  }
+  return authJson(200, { ok: true, stack })
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
     if (url.pathname.startsWith('/productarena/auth/')) return handleAuth(request, env)
     if (url.pathname === '/productarena/api/watchlist') return handleWatchlist(request, env)
+    if (url.pathname === '/productarena/api/my-stack') return handleMyStack(request, env)
     if (url.pathname === '/productarena/api/scan') return handleScan(request)
     if (url.pathname === '/productarena/api/mcp-probe') return handleMcpProbe(request, fetch, env)
     if (url.pathname.startsWith('/productarena/api/try/')) return handleTryProbe(request, env)

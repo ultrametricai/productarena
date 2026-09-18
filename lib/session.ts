@@ -12,6 +12,7 @@
 // components/WatchButton.tsx (☆/★ gate) and components/WatchlistGate.tsx (/watchlist gate).
 
 import { useSyncExternalStore } from 'react'
+import { syncStackFromServer } from './myStack'
 import { syncWatchlistFromServer } from './watchlist'
 
 // Same-origin path — the worker only exists on ultrametric.ai, and relative URLs mean the
@@ -76,9 +77,13 @@ export function subscribeSession(callback: () => void): () => void {
     started = true
     void fetchSession().then((session) => {
       current = session
-      // Logged-in readers get their account watchlist merged in (lib/watchlist.ts) — one GET
-      // per page load, fire-and-forget, silently a no-op wherever the worker route is absent.
-      if (session.state === 'authenticated') void syncWatchlistFromServer()
+      // Logged-in readers get their account watchlist and account stack merged in
+      // (lib/watchlist.ts / lib/myStack.ts) — one GET each per page load, fire-and-forget,
+      // silently a no-op wherever the worker routes are absent.
+      if (session.state === 'authenticated') {
+        void syncWatchlistFromServer()
+        void syncStackFromServer()
+      }
       for (const listener of listeners) listener()
     })
   }

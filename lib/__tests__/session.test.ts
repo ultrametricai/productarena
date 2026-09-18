@@ -110,13 +110,14 @@ describe('session store state machine', () => {
     expect(fetchMock.mock.calls.filter(([url]) => url === '/productarena/auth/me')).toHaveLength(1)
   })
 
-  it('kicks off exactly one watchlist account sync when authenticated, none when anonymous', async () => {
-    const authed = vi.fn().mockResolvedValue(jsonResponse(200, ME_OK))
+  it('kicks off exactly one watchlist sync and one stack sync when authenticated, none when anonymous', async () => {
+    const authed = vi.fn().mockImplementation(async () => jsonResponse(200, ME_OK))
     vi.stubGlobal('fetch', authed)
     subscribeSession(() => {})
     await settledSession()
     await vi.waitFor(() => {
       expect(authed.mock.calls.filter(([url]) => url === '/productarena/api/watchlist')).toHaveLength(1)
+      expect(authed.mock.calls.filter(([url]) => url === '/productarena/api/my-stack')).toHaveLength(1)
     })
 
     resetSessionForTests()
@@ -125,6 +126,7 @@ describe('session store state machine', () => {
     subscribeSession(() => {})
     await settledSession()
     expect(anon.mock.calls.filter(([url]) => url === '/productarena/api/watchlist')).toHaveLength(0)
+    expect(anon.mock.calls.filter(([url]) => url === '/productarena/api/my-stack')).toHaveLength(0)
   })
 })
 

@@ -403,3 +403,240 @@ export function parseStoredStack(raw: string | null): string[] {
     return []
   }
 }
+
+// ---------------------------------------------------------------------------
+// The ACCOUNT stack — one pick per arena, synced to the logged-in account
+// ---------------------------------------------------------------------------
+//
+// Founder ask: "in signed-in mode, allow the user to define their stack and get upgraded stack
+// advice" — and run process pages against it. Distinct from the free-form tool above (a flat
+// id list in ?s=/localStorage): this is a MAP { arenaId: productId }, exactly one pick per
+// arena, only ids the catalog actually judges in that arena. It follows lib/watchlist.ts
+// verbatim: localStorage is the source the UI reads (instant, offline-safe); for logged-in
+// readers it syncs to the worker's session-gated GET/PUT /productarena/api/my-stack
+// (infra/cloudflare-proxy/worker.js "My Stack API", KV key stack:<user id>). Anonymous
+// readers, worker-less origins, and any network failure just leave the stack device-local.
+
+export type StackMap = Record<string, string>
+
+export const STACK_KEY = 'pa-account-stack'
+export const STACK_API = '/productarena/api/my-stack'
+// Same-tab change event — localStorage's 'storage' event only fires in OTHER tabs.
+export const STACK_EVENT = 'pa-account-stack-change'
+export const MAX_STACK_ARENAS = 100
+
+// Tolerant parse: anything that isn't a plain object of non-empty string → non-empty string
+// degrades entry-wise (junk values dropped) or wholesale (not an object → {}), never a crash.
+export function parseStackMap(raw: string | null): StackMap {
+  if (!raw) return {}
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(raw)
+  } catch {
+    return {}
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return {}
+  const out: StackMap = {}
+  for (const [arenaId, productId] of Object.entries(parsed)) {
+    if (arenaId === '' || typeof productId !== 'string' || productId === '') continue
+    out[arenaId] = productId
+    if (Object.keys(out).length >= MAX_STACK_ARENAS) break
+  }
+  return out
+}
+
+// Canonical serialization (sorted keys) so equality checks and useSyncExternalStore snapshots
+// are stable regardless of insertion order.
+export function serializeStackMap(stack: StackMap): string {
+  return JSON.stringify(Object.fromEntries(Object.entries(stack).sort(([a], [b]) => a.localeCompare(b))))
+}
+
+// First-sync merge. Unlike the watchlist's union (a set can keep both sides), a map must pick
+// ONE product per arena: the ACCOUNT value wins a conflict (it is the cross-device source of
+// truth), and arenas only the device knows about are kept. Nothing is ever dropped outright —
+// clearing a pick only propagates through an explicit write while synced, so a stale device
+// can't silently erase the account stack.
+export function mergeStackMaps(server: StackMap, local: StackMap): StackMap {
+  return { ...local, ...server }
+}
+
+// Raw snapshot for useSyncExternalStore — the STRING is the snapshot (stable identity between
+// writes), parsed by the consumer. '{}' on the server and where localStorage throws.
+export function readStackRaw(): string {
+  if (typeof window === 'undefined') return '{}'
+  try {
+    return window.localStorage.getItem(STACK_KEY) ?? '{}'
+  } catch {
+    return '{}'
+  }
+}
+
+export function writeStack(stack: StackMap): void {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(STACK_KEY, serializeStackMap(stack))
+  } catch {
+    return // storage unavailable — the edit is a silent no-op, same as reads
+  }
+  window.dispatchEvent(new Event(STACK_EVENT))
+  if (stackServerSync) pushStack(stack)
+}
+
+// True once syncStackFromServer has confirmed the account store answers — only then do local
+// writes also PUT (an anonymous reader's stack never leaves the device).
+let stackServerSync = false
+
+export function resetStackSyncForTests(): void {
+  stackServerSync = false
+}
+
+// Fire-and-forget PUT of the full map. Local state is already right; a lost write (offline,
+// rate limit) is repaired by the next sync's merge.
+function pushStack(stack: StackMap): void {
+  void fetch(STACK_API, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ stack }),
+  }).catch(() => {})
+}
+
+// One-shot account sync, called by lib/session.ts when /auth/me answers 'authenticated' — the
+// exact syncWatchlistFromServer flow: GET the account stack, merge with local (account wins
+// per-arena, see mergeStackMaps), write the result both ways as needed, switch writeStack into
+// push-through mode. Any non-200 or thrown fetch leaves everything device-local, silently.
+export async function syncStackFromServer(): Promise<void> {
+  let server: StackMap
+  try {
+    const res = await fetch(STACK_API, { credentials: 'include' })
+    if (!res.ok) return
+    const payload: unknown = await res.json()
+    const stack = (payload as { stack?: unknown } | null)?.stack
+    if (typeof stack !== 'object' || stack === null || Array.isArray(stack)) return
+    server = parseStackMap(JSON.stringify(stack))
+  } catch {
+    return
+  }
+  stackServerSync = true
+  const local = parseStackMap(readStackRaw())
+  const merged = mergeStackMaps(server, local)
+  if (serializeStackMap(merged) !== serializeStackMap(local)) {
+    writeStack(merged) // updates the UI everywhere and (stackServerSync) pushes the merge up
+  } else if (serializeStackMap(merged) !== serializeStackMap(server)) {
+    pushStack(merged) // local already complete but the account is missing picks — upload
+  }
+}
+
+export function subscribeStack(callback: () => void): () => void {
+  if (typeof window === 'undefined') return () => {}
+  window.addEventListener('storage', callback)
+  window.addEventListener(STACK_EVENT, callback)
+  return () => {
+    window.removeEventListener('storage', callback)
+    window.removeEventListener(STACK_EVENT, callback)
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Upgraded stack advice — every number the arena leaderboard's published score
+// ---------------------------------------------------------------------------
+
+// How many same-arena products ranked above a pick to surface as upgrade candidates.
+export const STACK_UPGRADE_CANDIDATES = 2
+
+export interface StackUpgradeCandidate {
+  product: MyStackProduct
+  /** PA Score gap over the pick (candidate − pick), one decimal. Null when either side is unscored. */
+  paDelta: number | null
+  agentReadyDelta: number | null
+}
+
+export interface StackPickAdvice {
+  arenaId: string
+  arenaName: string
+  pick: MyStackProduct
+  /** The arena's PA-Score leader (rank 1 among scored rows) — the pick itself when it leads. */
+  leader: MyStackProduct
+  /** Leader − pick on each score, one decimal; null when either side is unscored. */
+  paDelta: number | null
+  agentReadyDelta: number | null
+  /** Up to STACK_UPGRADE_CANDIDATES products scoring strictly above the pick, best first. */
+  upgrades: StackUpgradeCandidate[]
+}
+
+export interface StackAdvice {
+  picks: StackPickAdvice[]
+  /** Mean PA Score of the scored picks — the honest "stack score". Null with no scored pick. */
+  stackScore: number | null
+  /** Mean PA Score of those same arenas' leaders — "best possible" with the same coverage. */
+  bestPossible: number | null
+}
+
+const round1Adv = (n: number) => Math.round(n * 10) / 10
+
+const delta = (a: number | null, b: number | null): number | null =>
+  a === null || b === null ? null : round1Adv(a - b)
+
+// Resolve the account stack against the catalog and compare each pick with its arena
+// leaderboard. Invalid entries (unknown arena, product not judged in that arena) are dropped
+// silently — the store only ever holds judged picks, but a stale device may lag the catalog.
+// Advice order follows the catalog's arena order (the site's canonical ordering).
+export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackAdvice {
+  const byArena = new Map<string, MyStackProduct[]>()
+  for (const p of products) {
+    const list = byArena.get(p.arenaId) ?? []
+    list.push(p)
+    byArena.set(p.arenaId, list)
+  }
+
+  const picks: StackPickAdvice[] = []
+  for (const [arenaId, field] of byArena) {
+    const productId = stack[arenaId]
+    if (!productId) continue
+    const pick = field.find((p) => p.id === productId)
+    if (!pick) continue // not judged in this arena (stale pick) — nothing honest to say
+    const scored = field.filter((p) => p.aiEra !== null).sort((a, b) => a.rank - b.rank)
+    const leader = scored[0] ?? pick
+    const upgrades: StackUpgradeCandidate[] =
+      pick.aiEra === null
+        ? []
+        : scored
+            .filter((p) => p.id !== pick.id && (p.aiEra as number) > (pick.aiEra as number))
+            .sort((a, b) => (b.aiEra as number) - (a.aiEra as number) || a.rank - b.rank)
+            .slice(0, STACK_UPGRADE_CANDIDATES)
+            .map((product) => ({
+              product,
+              paDelta: delta(product.aiEra, pick.aiEra),
+              agentReadyDelta: delta(product.agentReady, pick.agentReady),
+            }))
+    picks.push({
+      arenaId,
+      arenaName: pick.arenaName,
+      pick,
+      leader,
+      paDelta: delta(leader.aiEra, pick.aiEra),
+      agentReadyDelta: delta(leader.agentReady, pick.agentReady),
+      upgrades,
+    })
+  }
+
+  const scoredPicks = picks.filter((p) => p.pick.aiEra !== null)
+  const mean = (values: number[]) =>
+    values.length === 0 ? null : round1Adv(values.reduce((a, b) => a + b, 0) / values.length)
+  return {
+    picks,
+    stackScore: mean(scoredPicks.map((p) => p.pick.aiEra as number)),
+    bestPossible: mean(scoredPicks.map((p) => p.leader.aiEra ?? (p.pick.aiEra as number))),
+  }
+}
+
+// Seed the one-per-arena account stack from the free-form tool's device-local list (the
+// "prefilled from any existing device-local state" contract): each list id resolves to its
+// canonical arena row; the FIRST pick per arena wins, later same-arena picks are skipped.
+export function stackMapFromList(ids: string[], products: MyStackProduct[]): StackMap {
+  const out: StackMap = {}
+  for (const pick of resolvePicks(ids, products)) {
+    if (!(pick.arenaId in out)) out[pick.arenaId] = pick.id
+  }
+  return out
+}
