@@ -72,8 +72,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
       <section>
         {alias && (
           <p className="mb-4 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-2 text-sm text-zinc-400">
-            &ldquo;{alias.label}&rdquo; is the vendor-specific flavor of this process — it&rsquo;s
-            now vendor-neutral, with the vendor as one of the market options.{' '}
+            &ldquo;{alias.label}&rdquo; is an earlier name for this work — it now lives in this
+            process, with the specifics (vendors, jurisdictions) as market options and steps.{' '}
             <Link
               href={`/processes/${canonicalSlug}`}
               className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"

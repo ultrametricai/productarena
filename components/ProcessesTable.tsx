@@ -14,6 +14,15 @@ import { phaseIcon, phaseTooltip } from '@/lib/processIcons'
 // list. Rows are pre-flattened server-side; every row clicks out to its own process page.
 // Each row leads with its curated process icon (lib/processIcons.ts) and its software chips
 // carry real product logos (hasLogo resolved server-side — ProductLogoView is client-safe).
+//
+// Rank-by presets (founder ask 2026-09-18) — beyond the agent ceiling, five curated orderings
+// over the corpus (fields on data/processes.json, coverage-tested):
+//   Founder timeline — timeOrder, the sequence a founder actually hits these processes;
+//   Regularity       — cadence, daily loops first through one-time setup;
+//   Most annoying    — annoyance 1–5, the drudgery score;
+//   Riskiest         — risk 1–5, cost of getting it wrong (legal/tax/security exposure);
+//   Growth-focused   — growthImpact 1–5, how directly it drives revenue/user growth.
+// The metric column adapts to the active preset so the number being ranked on is always visible.
 
 export interface ProcessRow {
   slug: string
@@ -25,22 +34,66 @@ export interface ProcessRow {
   agentSteps: number
   totalSteps: number
   complexity: string
+  // The five-orderings fields (curated in data/processes.json; cadence label/rank resolved
+  // server-side so this component stays free of the node-only cadence helpers).
+  timeOrder: number
+  cadenceLabel: string
+  cadenceRank: number
+  annoyance: number
+  risk: number
+  growthImpact: number
   vendors: Array<{ id: string; label: string; arena: string | null; hasLogo: boolean }>
 }
 
-type Column = 'title' | 'phase' | 'pct' | 'steps'
+type Column = 'title' | 'phase' | 'pct' | 'steps' | 'order' | 'cadence' | 'annoyance' | 'risk' | 'growth'
 type Direction = 'asc' | 'desc'
+
+// Columns whose preset/default direction is ascending (timeline runs first→last; regularity
+// runs daily→once). Everything numeric-desc otherwise.
+const ASC_DEFAULT = new Set<Column>(['title', 'phase', 'order', 'cadence'])
+const defaultDirection = (col: Column): Direction => (ASC_DEFAULT.has(col) ? 'asc' : 'desc')
 
 const PRESETS: Array<{ col: Column; label: string }> = [
   { col: 'pct', label: 'Most automatable' },
   { col: 'steps', label: 'Most steps' },
+  { col: 'order', label: 'Founder timeline' },
+  { col: 'cadence', label: 'Regularity' },
+  { col: 'annoyance', label: 'Most annoying' },
+  { col: 'risk', label: 'Riskiest' },
+  { col: 'growth', label: 'Growth-focused' },
 ]
+
+// The adaptive metric column: which of the five orderings it currently shows. Defaults to the
+// regularity axis when the sort lives elsewhere (ceiling, title…).
+type Metric = 'order' | 'cadence' | 'annoyance' | 'risk' | 'growth'
+const METRIC_META: Record<Metric, { header: string; tooltip: string }> = {
+  order: { header: 'Timeline', tooltip: 'The order a founder typically hits this process — incorporation first, then banking, payroll, …' },
+  cadence: { header: 'Cadence', tooltip: 'How often this really recurs in a running company — daily loops through one-time setup' },
+  annoyance: { header: 'Annoyance', tooltip: 'Curated drudgery score: how much of a toil this is to do by hand (1–5)' },
+  risk: { header: 'Risk', tooltip: 'Cost of getting it wrong — legal, tax, and security exposure (1–5)' },
+  growth: { header: 'Growth impact', tooltip: 'How directly this process drives revenue and user growth (1–5)' },
+}
 
 function fieldOf(row: ProcessRow, col: Column): number | string {
   if (col === 'title') return row.title
   if (col === 'phase') return row.phase
   if (col === 'pct') return row.pct
+  if (col === 'order') return row.timeOrder
+  if (col === 'cadence') return row.cadenceRank
+  if (col === 'annoyance') return row.annoyance
+  if (col === 'risk') return row.risk
+  if (col === 'growth') return row.growthImpact
   return row.totalSteps
+}
+
+// 1–5 score rendered as dots, tooltip carries the number.
+function ScoreDots({ value, label }: { value: number; label: string }) {
+  return (
+    <span title={`${label}: ${value}/5`} className="font-mono text-xs tracking-tight text-zinc-300">
+      <span className="text-emerald-300">{'●'.repeat(value)}</span>
+      <span className="text-zinc-700">{'○'.repeat(5 - value)}</span>
+    </span>
+  )
 }
 
 function SortableTh({
@@ -89,6 +142,9 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
       const av = fieldOf(a, column)
       const bv = fieldOf(b, column)
       const cmp = typeof av === 'string' ? av.localeCompare(bv as string) : (av as number) - (bv as number)
+      // Ties (cadence buckets, 1–5 scores) fall back to the founder timeline so the order is
+      // deterministic and still reads as a journey inside each bucket.
+      if (cmp === 0) return a.timeOrder - b.timeOrder
       return direction === 'desc' ? -cmp : cmp
     })
   }, [filtered, column, direction])
@@ -97,8 +153,21 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
     if (col === column) setDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
     else {
       setColumn(col)
-      setDirection(col === 'title' || col === 'phase' ? 'asc' : 'desc')
+      setDirection(defaultDirection(col))
     }
+  }
+
+  // Which ordering the adaptive metric column shows.
+  const metric: Metric = (['order', 'cadence', 'annoyance', 'risk', 'growth'] as const).includes(column as Metric)
+    ? (column as Metric)
+    : 'cadence'
+
+  function metricCell(r: ProcessRow): ReactNode {
+    if (metric === 'order') return <span className="font-mono text-xs tabular-nums text-zinc-400">#{r.timeOrder}</span>
+    if (metric === 'cadence') return <span className="text-xs text-zinc-400">{r.cadenceLabel}</span>
+    if (metric === 'annoyance') return <ScoreDots value={r.annoyance} label="Annoyance" />
+    if (metric === 'risk') return <ScoreDots value={r.risk} label="Risk" />
+    return <ScoreDots value={r.growthImpact} label="Growth impact" />
   }
 
   return (
@@ -106,10 +175,10 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
       <TableControls
         presets={PRESETS}
         activeColumn={column}
-        presetActive={direction === 'desc'}
+        presetActive={direction === defaultDirection(column)}
         onPreset={(col) => {
           setColumn(col)
-          setDirection('desc')
+          setDirection(defaultDirection(col))
         }}
         scope={{
           value: phase,
@@ -131,6 +200,9 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
               <SortableTh col="phase" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell"><span title="Where in the life of the company this process happens (formation, finance, hiring…)">Phase</span></SortableTh>
               <SortableTh col="pct" current={column} direction={direction} onSort={handleSort}><span title="Agent ceiling: the share of this process's steps an AI agent can run today — the rest still needs forms or people">Current agent ceiling</span></SortableTh>
               <SortableTh col="steps" current={column} direction={direction} onSort={handleSort} className="hidden sm:table-cell"><span title="Agent-runnable steps out of the total steps in the process">Steps</span></SortableTh>
+              {/* Adaptive metric column: shows whichever of the five orderings is active (falls
+                  back to cadence) — the ranked-on number is always on screen. */}
+              <SortableTh col={metric} current={column} direction={direction} onSort={handleSort}><span title={METRIC_META[metric].tooltip}>{METRIC_META[metric].header}</span></SortableTh>
               <SortableTh col="title" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden lg:table-cell"><span title="The main software this process runs on — judged vendors link to their product page">Software</span></SortableTh>
             </tr>
           </thead>
@@ -170,6 +242,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
                     {r.agentSteps}/{r.totalSteps}
                   </Link>
                 </td>
+                <td className="whitespace-nowrap px-2 py-2">{metricCell(r)}</td>
                 <td className="hidden px-2 py-2 lg:table-cell">
                   <span className="flex flex-wrap gap-1">
                     {r.vendors.slice(0, 3).map((v) =>
@@ -196,7 +269,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
             ))}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={6} className="px-3 py-6 text-center text-zinc-500">
                   {/* Echo the active filters — same convention as the product tables. */}
                   No processes match{query.trim() ? <> &ldquo;{query}&rdquo;</> : ''}{phase !== 'all' ? ` in the ${phase} phase` : ''}.
                 </td>

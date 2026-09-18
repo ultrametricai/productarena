@@ -90,8 +90,8 @@
         },
         {
           "id": "n8",
-          "label": "File 83(b) election with IRS",
-          "route": "person",
+          "label": "File 83(b) election with the IRS",
+          "route": "form",
           "actionUrl": "https://www.irs.gov/pub/irs-pdf/f15620.pdf",
           "actionLabel": "IRS Form 15620 (83(b) election)",
           "vendor": "irs",
@@ -181,7 +181,21 @@
     "activeMinutes": 77,
     "totalEstimatedMinutes": 2977,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "slugAliases": [
+      {
+        "slug": "incorporate-a-company",
+        "label": "Incorporate a company"
+      },
+      {
+        "slug": "evaluate-c-corp-conversion",
+        "label": "Evaluate C Corp conversion"
+      }
+    ],
+    "timeOrder": 1,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "form_002",
@@ -282,7 +296,11 @@
     "activeMinutes": 12,
     "totalEstimatedMinutes": 12,
     "hasAsyncSteps": false,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 3,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "form_005",
@@ -385,7 +403,11 @@
     "activeMinutes": 57,
     "totalEstimatedMinutes": 57,
     "hasAsyncSteps": false,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 39,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "fund_001",
@@ -638,7 +660,250 @@
     ],
     "activeMinutes": 125,
     "totalEstimatedMinutes": 4925,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 37,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 4
+  },
+  {
+    "id": "fund_002",
+    "title": "Close a priced equity round",
+    "description": "Close a priced round (seed or Series A): term sheet, diligence, definitive documents, board and stockholder approvals, signatures, wires, and the cap table made true.",
+    "phase": "fundraising",
+    "cadence": "event-driven",
+    "complexity": "very_complex",
+    "category": "fundraising",
+    "supportLevel": "partial",
+    "supportReason": "The term sheet, diligence, and approvals are human; the paperwork routing, signatures, share issuance, and cap-table updates run on APIs.",
+    "vendors": [
+      "carta",
+      "docusign"
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Negotiate and sign the term sheet",
+          "route": "person",
+          "riskLevel": "high",
+          "estimatedMinutes": 2880
+        },
+        {
+          "id": "n2",
+          "label": "Refresh the data room for diligence",
+          "route": "agent",
+          "vendorOptions": [
+            "notion",
+            "google_drive"
+          ],
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n3",
+          "label": "Investor diligence and Q&A",
+          "route": "person",
+          "estimatedMinutes": 10080,
+          "async": true
+        },
+        {
+          "id": "n4",
+          "label": "Counsel drafts the definitive documents",
+          "route": "person",
+          "estimatedMinutes": 4320
+        },
+        {
+          "id": "n5",
+          "label": "Board and stockholder approvals",
+          "route": "person",
+          "estimatedMinutes": 1440
+        },
+        {
+          "id": "n6",
+          "label": "Route the closing packet for e-signature",
+          "route": "agent",
+          "vendor": "docusign",
+          "estimatedMinutes": 15,
+          "functionCalls": [
+            {
+              "method": "envelopes.create()",
+              "type": "rest",
+              "description": "Send the closing packet for signature"
+            }
+          ]
+        },
+        {
+          "id": "n7",
+          "label": "Verify the wires and issue the shares",
+          "route": "agent",
+          "vendor": "carta",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 20,
+          "functionCalls": [
+            {
+              "method": "securities.issue()",
+              "type": "sdk",
+              "description": "Draft the share issuance on the cap table"
+            }
+          ]
+        },
+        {
+          "id": "n8",
+          "label": "File Form D with the SEC",
+          "route": "form",
+          "vendor": "sec",
+          "actionUrl": "https://www.onlineforms.edgarfiling.sec.gov/",
+          "actionLabel": "SEC EDGAR online forms",
+          "riskLevel": "high",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n9",
+          "label": "Update the cap table and kick off the 409A refresh",
+          "route": "agent",
+          "vendor": "carta",
+          "estimatedMinutes": 15,
+          "functionCalls": [
+            {
+              "method": "capTable.update()",
+              "type": "sdk",
+              "description": "Record the round on the cap table"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        },
+        {
+          "from": "n7",
+          "to": "n8"
+        },
+        {
+          "from": "n8",
+          "to": "n9"
+        }
+      ]
+    },
+    "contextNeeded": [],
+    "tags": [
+      "fundraising",
+      "priced-round",
+      "series-a"
+    ],
+    "activeMinutes": 8750,
+    "totalEstimatedMinutes": 18830,
+    "hasAsyncSteps": true,
+    "timeOrder": 97,
+    "annoyance": 5,
+    "risk": 5,
+    "growthImpact": 4
+  },
+  {
+    "id": "fund_005",
+    "title": "Set up a data room",
+    "description": "Stand up the diligence data room investors expect: charter docs, cap table, financials, and key contracts — organized, permissioned, and kept current.",
+    "phase": "fundraising",
+    "cadence": "event-driven",
+    "complexity": "simple",
+    "category": "fundraising",
+    "supportLevel": "partial",
+    "supportReason": "Document collection and permissions are API work; the hosting choice and diligence answers stay with the founder.",
+    "vendors": [
+      "notion",
+      "google_drive",
+      "dropbox"
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Choose where to host the data room",
+          "route": "person",
+          "vendorOptions": [
+            "notion",
+            "google_drive",
+            "dropbox"
+          ],
+          "estimatedMinutes": 10
+        },
+        {
+          "id": "n2",
+          "label": "Assemble the core documents (charter, cap table, financials, contracts)",
+          "route": "agent",
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n3",
+          "label": "Set access controls and share links",
+          "route": "agent",
+          "estimatedMinutes": 10,
+          "functionCalls": [
+            {
+              "method": "permissions.create()",
+              "type": "sdk",
+              "description": "Grant per-investor access to the room"
+            }
+          ]
+        },
+        {
+          "id": "n4",
+          "label": "Answer diligence follow-ups as they land",
+          "route": "person",
+          "estimatedMinutes": 60
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        }
+      ]
+    },
+    "contextNeeded": [],
+    "tags": [
+      "fundraising",
+      "data-room",
+      "diligence"
+    ],
+    "activeMinutes": 110,
+    "totalEstimatedMinutes": 110,
+    "hasAsyncSteps": false,
+    "timeOrder": 36,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "fund_003",
@@ -771,7 +1036,11 @@
     "activeMinutes": 120,
     "totalEstimatedMinutes": 14520,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 49,
+    "annoyance": 5,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "fund_004",
@@ -933,7 +1202,11 @@
     "activeMinutes": 27,
     "totalEstimatedMinutes": 2907,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 50,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 2
   },
   {
     "id": "legal_001",
@@ -1070,7 +1343,11 @@
     ],
     "activeMinutes": 14,
     "totalEstimatedMinutes": 15,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 23,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "legal_002",
@@ -1222,7 +1499,11 @@
     ],
     "activeMinutes": 70,
     "totalEstimatedMinutes": 2952,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 70,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "legal_003",
@@ -1360,7 +1641,11 @@
     ],
     "activeMinutes": 13,
     "totalEstimatedMinutes": 1455,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 22,
+    "annoyance": 3,
+    "risk": 5,
+    "growthImpact": 1
   },
   {
     "id": "legal_004",
@@ -1511,7 +1796,11 @@
     ],
     "activeMinutes": 105,
     "totalEstimatedMinutes": 4425,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 71,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 2
   },
   {
     "id": "tax_001",
@@ -1642,7 +1931,17 @@
     "activeMinutes": 33,
     "totalEstimatedMinutes": 33,
     "hasAsyncSteps": false,
-    "region": "us"
+    "region": "us",
+    "slugAliases": [
+      {
+        "slug": "file-de-annual-report",
+        "label": "File DE annual report"
+      }
+    ],
+    "timeOrder": 79,
+    "annoyance": 4,
+    "risk": 5,
+    "growthImpact": 1
   },
   {
     "id": "tax_002",
@@ -1802,7 +2101,11 @@
     "activeMinutes": 112,
     "totalEstimatedMinutes": 20272,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 83,
+    "annoyance": 5,
+    "risk": 5,
+    "growthImpact": 1
   },
   {
     "id": "tax_003",
@@ -1910,7 +2213,11 @@
     "activeMinutes": 45,
     "totalEstimatedMinutes": 45,
     "hasAsyncSteps": false,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 82,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "ins_001",
@@ -2036,7 +2343,11 @@
     ],
     "activeMinutes": 65,
     "totalEstimatedMinutes": 4385,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 40,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "comp_001",
@@ -2220,400 +2531,22 @@
     ],
     "activeMinutes": 1125,
     "totalEstimatedMinutes": 34245,
-    "hasAsyncSteps": true
-  },
-  {
-    "id": "qs_001",
-    "title": "Summarize my company",
-    "description": "Coworker chat suggestion: \"Tell me about my company.\" Agent retrieves company profile, team info, and connected integrations to present a summary.",
-    "phase": "operations",
-    "cadence": "event-driven",
-    "complexity": "simple",
-    "category": "quick_start",
-    "supportLevel": "full",
-    "supportReason": "All data via platform context tools — company.get(), integrations.list(), team.list().",
-    "vendors": [],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Fetch company profile",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "company.get()",
-              "type": "sdk",
-              "description": "Retrieve company profile data"
-            }
-          ]
-        },
-        {
-          "id": "n2",
-          "label": "Fetch team members",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "team.list()",
-              "type": "sdk",
-              "description": "List team members"
-            }
-          ]
-        },
-        {
-          "id": "n3",
-          "label": "Fetch connected integrations",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "integrations.list()",
-              "type": "sdk",
-              "description": "List connected integrations"
-            }
-          ]
-        },
-        {
-          "id": "n4",
-          "label": "Present company summary",
-          "route": "agent",
-          "estimatedMinutes": 1
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n4"
-        },
-        {
-          "from": "n2",
-          "to": "n4"
-        },
-        {
-          "from": "n3",
-          "to": "n4"
-        }
-      ]
-    },
-    "contextNeeded": [
-      {
-        "tool": "company.get",
-        "tier": "tools",
-        "required": true
-      },
-      {
-        "tool": "team.list",
-        "tier": "tools",
-        "required": false
-      },
-      {
-        "tool": "integrations.list",
-        "tier": "tools",
-        "required": false
-      }
-    ],
-    "tags": [
-      "quick-start",
-      "coworker-chat",
-      "read-only"
-    ],
-    "activeMinutes": 4,
-    "totalEstimatedMinutes": 4,
-    "hasAsyncSteps": false
-  },
-  {
-    "id": "qs_002",
-    "title": "List my tasks",
-    "description": "Coworker chat suggestion: \"Show tasks assigned to me.\" Agent queries active tasks for the current user.",
-    "phase": "operations",
-    "cadence": "daily",
-    "complexity": "simple",
-    "category": "quick_start",
-    "supportLevel": "full",
-    "supportReason": "Core platform capability via tasks.list() with user filter.",
-    "vendors": [
-      "linear"
-    ],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Fetch user tasks",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "tasks.list(assignee=me)",
-              "type": "sdk",
-              "description": "List tasks assigned to current user"
-            }
-          ]
-        },
-        {
-          "id": "n2",
-          "label": "Present task list",
-          "route": "agent",
-          "estimatedMinutes": 1
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n2"
-        }
-      ]
-    },
-    "contextNeeded": [
-      {
-        "tool": "tasks.list",
-        "query": "assignee=me",
-        "tier": "tools",
-        "required": true
-      }
-    ],
-    "tags": [
-      "quick-start",
-      "coworker-chat",
-      "read-only"
-    ],
-    "activeMinutes": 2,
-    "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
-  },
-  {
-    "id": "qs_003",
-    "title": "Goals due this week",
-    "description": "Coworker chat suggestion: \"Goal progress this week.\" Agent retrieves active goals with deadlines in the current week.",
-    "phase": "operations",
-    "cadence": "weekly",
-    "complexity": "simple",
-    "category": "quick_start",
-    "supportLevel": "full",
-    "supportReason": "Goals are a core platform object queried via goals.list().",
-    "vendors": [],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Fetch goals due this week",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "goals.list(due=this_week)",
-              "type": "sdk",
-              "description": "List goals due this week"
-            }
-          ]
-        },
-        {
-          "id": "n2",
-          "label": "Present goal progress",
-          "route": "agent",
-          "estimatedMinutes": 1
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n2"
-        }
-      ]
-    },
-    "contextNeeded": [
-      {
-        "tool": "goals.list",
-        "query": "due=this_week",
-        "tier": "tools",
-        "required": true
-      }
-    ],
-    "tags": [
-      "quick-start",
-      "coworker-chat",
-      "read-only"
-    ],
-    "activeMinutes": 2,
-    "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
-  },
-  {
-    "id": "qs_004",
-    "title": "List capabilities",
-    "description": "Coworker chat suggestion: \"What can you do for my company?\" Agent checks connected integrations and company context to present capabilities.",
-    "phase": "operations",
-    "cadence": "event-driven",
-    "complexity": "simple",
-    "category": "quick_start",
-    "supportLevel": "full",
-    "supportReason": "Derived from integrations.list() and tools metadata.",
-    "vendors": [],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Fetch connected integrations",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "integrations.list()",
-              "type": "sdk",
-              "description": "List connected integrations"
-            }
-          ]
-        },
-        {
-          "id": "n2",
-          "label": "Fetch company context",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "company.get()",
-              "type": "sdk",
-              "description": "Get company profile"
-            }
-          ]
-        },
-        {
-          "id": "n3",
-          "label": "Present capabilities summary",
-          "route": "agent",
-          "estimatedMinutes": 1
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n3"
-        },
-        {
-          "from": "n2",
-          "to": "n3"
-        }
-      ]
-    },
-    "contextNeeded": [
-      {
-        "tool": "integrations.list",
-        "tier": "tools",
-        "required": true
-      },
-      {
-        "tool": "company.get",
-        "tier": "tools",
-        "required": false
-      }
-    ],
-    "tags": [
-      "quick-start",
-      "coworker-chat",
-      "read-only"
-    ],
-    "activeMinutes": 3,
-    "totalEstimatedMinutes": 3,
-    "hasAsyncSteps": false
-  },
-  {
-    "id": "qs_010",
-    "title": "Extract Ultrametric context",
-    "description": "Setup wizard suggested task when user connects Gmail, Google Workspace, or Microsoft 365. Build an entity graph about the company; save time with vendor forms and AI context.",
-    "phase": "operations",
-    "cadence": "once",
-    "complexity": "moderate",
-    "category": "quick_start",
-    "supportLevel": "full",
-    "supportReason": "Gmail/Google Workspace are production integrations. Entity extraction runs on connected email data.",
-    "vendors": [
-      "gmail"
-    ],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Connect email provider",
-          "route": "agent",
-          "estimatedMinutes": 3,
-          "async": true,
-          "functionCalls": [
-            {
-              "method": "integrations.connect()",
-              "type": "sdk",
-              "description": "OAuth connect email"
-            }
-          ]
-        },
-        {
-          "id": "n2",
-          "label": "Scan emails for entities",
-          "route": "agent",
-          "estimatedMinutes": 10,
-          "async": true,
-          "functionCalls": [
-            {
-              "method": "emails.scan()",
-              "type": "sdk",
-              "description": "Extract company entities from email"
-            }
-          ],
-          "extraOptionArenas": [
-            "email"
-          ]
-        },
-        {
-          "id": "n3",
-          "label": "Build entity graph",
-          "route": "agent",
-          "estimatedMinutes": 5,
-          "functionCalls": [
-            {
-              "method": "context.update()",
-              "type": "sdk",
-              "description": "Store extracted entities in company context"
-            }
-          ]
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n2"
-        },
-        {
-          "from": "n2",
-          "to": "n3"
-        }
-      ]
-    },
-    "contextNeeded": [
-      {
-        "tool": "integrations.connect",
-        "tier": "tools",
-        "required": true
-      }
-    ],
-    "tags": [
-      "quick-start",
-      "setup-wizard",
-      "onboarding",
-      "context"
-    ],
-    "activeMinutes": 5,
-    "totalEstimatedMinutes": 18,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 96,
+    "annoyance": 5,
+    "risk": 3,
+    "growthImpact": 3
   },
   {
     "id": "qs_015",
     "title": "Set up doc storage",
-    "description": "Setup wizard suggested task covering Google Drive, Dropbox, and Notion users as well as companies with no document system. Connect an existing provider or set up a shared document system.",
+    "description": "Stand up the company’s shared document system — pick a provider, configure the workspace, and bring the existing documents in.",
     "phase": "operations",
     "cadence": "once",
     "complexity": "simple",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Requires manual account creation with a storage provider. Platform guides the choice and connects once ready.",
+    "supportReason": "Account creation is manual; sharing and document import run over the provider APIs.",
     "vendors": [
       "google_drive",
       "dropbox",
@@ -2634,21 +2567,32 @@
         },
         {
           "id": "n2",
-          "label": "Create account and configure",
-          "route": "person",
-          "estimatedMinutes": 15,
-          "async": true
+          "label": "Create the account and set the folder structure",
+          "route": "form",
+          "estimatedMinutes": 15
         },
         {
           "id": "n3",
-          "label": "Connect to Ultrametric",
+          "label": "Share the workspace with the team",
           "route": "agent",
           "estimatedMinutes": 3,
           "functionCalls": [
             {
-              "method": "integrations.connect()",
+              "method": "permissions.create()",
               "type": "sdk",
-              "description": "Connect storage provider"
+              "description": "Grant team access to the shared drive"
+            }
+          ]
+        },
+        {
+          "id": "n4",
+          "label": "Import existing company documents",
+          "route": "agent",
+          "estimatedMinutes": 5,
+          "extraOptionRefs": [
+            {
+              "arenaId": "notes-knowledge",
+              "productId": "poly"
             }
           ]
         }
@@ -2661,6 +2605,10 @@
         {
           "from": "n2",
           "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
         }
       ]
     },
@@ -2671,9 +2619,19 @@
       "onboarding",
       "documents"
     ],
-    "activeMinutes": 8,
-    "totalEstimatedMinutes": 23,
-    "hasAsyncSteps": true
+    "activeMinutes": 28,
+    "totalEstimatedMinutes": 28,
+    "hasAsyncSteps": false,
+    "slugAliases": [
+      {
+        "slug": "import-documents-from-dropbox",
+        "label": "Import documents from Dropbox"
+      }
+    ],
+    "timeOrder": 16,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 1
   },
   {
     "id": "qs_021",
@@ -2684,13 +2642,13 @@
         "label": "Connect Stripe"
       }
     ],
-    "description": "Connect your payment processor to track payments, subscriptions, and revenue. Stripe is the canonical route; alternatives are ranked in the payments arena.",
+    "description": "Take payments: pick a processor, activate the account, integrate the API, and confirm money actually lands.",
     "phase": "finance",
     "cadence": "once",
     "complexity": "simple",
     "category": "quick_start",
-    "supportLevel": "full",
-    "supportReason": "Stripe is a sandbox integration with comprehensive API for payments, subscriptions, and invoices.",
+    "supportLevel": "partial",
+    "supportReason": "Account activation and KYC are processor-hosted forms; the integration, test charge, and payout checks run on the API.",
     "vendors": [
       "stripe"
     ],
@@ -2698,45 +2656,49 @@
       "nodes": [
         {
           "id": "n1",
-          "label": "Connect Stripe",
-          "route": "agent",
-          "vendor": "stripe",
-          "estimatedMinutes": 3,
-          "async": true,
-          "functionCalls": [
-            {
-              "method": "integrations.connect()",
-              "type": "sdk",
-              "description": "Connect Stripe via API key"
-            }
-          ]
+          "label": "Choose a payment processor",
+          "route": "person",
+          "vendorOptions": [
+            "stripe"
+          ],
+          "optionsArenaId": "payments",
+          "estimatedMinutes": 10
         },
         {
           "id": "n2",
-          "label": "Sync customers and subscriptions",
+          "label": "Activate the account (business details, KYC)",
+          "route": "form",
+          "estimatedMinutes": 20,
+          "async": true
+        },
+        {
+          "id": "n3",
+          "label": "Integrate the API keys and SDK",
           "route": "agent",
           "vendor": "stripe",
-          "estimatedMinutes": 5,
-          "async": true,
+          "estimatedMinutes": 15,
+          "extraOptionArenas": [
+            "ai-coding"
+          ],
           "functionCalls": [
             {
-              "method": "stripe.customers.list()",
+              "method": "stripe.webhookEndpoints.create()",
               "type": "rest",
-              "description": "Sync customer and subscription data"
+              "description": "Wire API keys and webhooks into the app"
             }
           ]
         },
         {
-          "id": "n3",
-          "label": "Sync payment history",
+          "id": "n4",
+          "label": "Run a test charge and confirm the payout schedule",
           "route": "agent",
           "vendor": "stripe",
-          "estimatedMinutes": 3,
+          "estimatedMinutes": 10,
           "functionCalls": [
             {
-              "method": "stripe.charges.list()",
+              "method": "stripe.paymentIntents.create()",
               "type": "rest",
-              "description": "Fetch payment history"
+              "description": "Create and confirm a test charge end-to-end"
             }
           ]
         }
@@ -2747,8 +2709,12 @@
           "to": "n2"
         },
         {
-          "from": "n1",
+          "from": "n2",
           "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
         }
       ]
     },
@@ -2766,20 +2732,24 @@
       "finance",
       "payments"
     ],
-    "activeMinutes": 3,
-    "totalEstimatedMinutes": 11,
-    "hasAsyncSteps": true
+    "activeMinutes": 35,
+    "totalEstimatedMinutes": 55,
+    "hasAsyncSteps": true,
+    "timeOrder": 51,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 4
   },
   {
     "id": "qs_023",
     "title": "Open bank account",
-    "description": "Setup wizard suggested task when user has no bank yet. Open a business checking account to separate personal and company finances.",
+    "description": "Open a business checking account to separate personal and company finances. The application is fully online with the major startup banks; approval typically takes a day or two.",
     "phase": "finance",
     "cadence": "once",
     "complexity": "moderate",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Bank account opening requires manual application. Platform guides vendor selection.",
+    "supportReason": "The application and KYC upload are online forms (no public API); approval is a bank-side wait. Once open, the account connects to the books over the bank API.",
     "vendors": [
       "mercury",
       "brex",
@@ -2789,7 +2759,7 @@
       "nodes": [
         {
           "id": "n2",
-          "label": "Choose bank provider",
+          "label": "Choose a bank",
           "route": "person",
           "vendorOptions": [
             "mercury",
@@ -2801,29 +2771,42 @@
         },
         {
           "id": "n3",
-          "label": "Apply for business account",
-          "route": "person",
+          "label": "Complete the online application (company details, EIN, founders)",
+          "route": "form",
           "vendorOptions": [
             "mercury",
             "brex",
             "relay"
           ],
           "optionsArenaId": "startup-banking",
-          "estimatedMinutes": 20,
+          "estimatedMinutes": 15
+        },
+        {
+          "id": "n5",
+          "label": "Upload founder ID and formation documents (KYC)",
+          "route": "form",
+          "estimatedMinutes": 10
+        },
+        {
+          "id": "n6",
+          "label": "Wait for the bank to open the account (1–2 business days)",
+          "route": "person",
+          "estimatedMinutes": 2880,
           "async": true
         },
         {
           "id": "n4",
-          "label": "Connect bank to Ultrametric",
+          "label": "Connect the bank feed to the books",
           "route": "agent",
           "estimatedMinutes": 3,
           "functionCalls": [
             {
-              "method": "integrations.connect()",
-              "type": "sdk",
-              "description": "Connect bank"
+              "method": "GET /api/v1/accounts",
+              "type": "rest",
+              "description": "Verify the new account and pull the first transactions into accounting"
             }
-          ]
+          ],
+          "vendor": "mercury"
         }
       ],
       "edges": [
@@ -2833,6 +2816,14 @@
         },
         {
           "from": "n3",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
           "to": "n4"
         }
       ]
@@ -2852,21 +2843,25 @@
       "finance",
       "banking"
     ],
-    "activeMinutes": 13,
-    "totalEstimatedMinutes": 33,
+    "activeMinutes": 38,
+    "totalEstimatedMinutes": 2918,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 12,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "qs_024",
     "title": "Set up credit card",
-    "description": "Setup wizard suggested task for Stripe and \"Not Yet\" banking users. Set up a corporate credit card or connect an existing card vendor like Brex or Ramp.",
+    "description": "Get a corporate card for company spend — compare issuers, apply online, and sync transactions into the books.",
     "phase": "finance",
     "cadence": "once",
     "complexity": "simple",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Card application is manual. Platform can guide vendor comparison.",
+    "supportReason": "Card applications are fully online with the startup issuers; transaction sync runs on their APIs.",
     "vendors": [
       "brex",
       "ramp"
@@ -2901,8 +2896,8 @@
         },
         {
           "id": "n2",
-          "label": "Apply for corporate card",
-          "route": "person",
+          "label": "Apply for the corporate card online",
+          "route": "form",
           "vendorOptions": [
             "brex",
             "ramp",
@@ -2914,14 +2909,14 @@
         },
         {
           "id": "n3",
-          "label": "Connect to Ultrametric",
+          "label": "Sync card transactions into the books",
           "route": "agent",
           "estimatedMinutes": 3,
           "functionCalls": [
             {
-              "method": "integrations.connect()",
-              "type": "sdk",
-              "description": "Connect card provider"
+              "method": "transactions.list()",
+              "type": "rest",
+              "description": "Pull card transactions into accounting"
             }
           ]
         }
@@ -2946,94 +2941,22 @@
     ],
     "activeMinutes": 8,
     "totalEstimatedMinutes": 23,
-    "hasAsyncSteps": true
-  },
-  {
-    "id": "qs_041",
-    "title": "File DE annual report",
-    "description": "Setup wizard suggested task for Delaware C Corp users. File annual report with Delaware Division of Corporations.",
-    "phase": "compliance",
-    "cadence": "annual",
-    "complexity": "simple",
-    "category": "quick_start",
-    "supportLevel": "manual_guide",
-    "supportReason": "Delaware filing portal has no API. Platform provides deadline tracking and guidance.",
-    "vendors": [
-      "state_sos"
-    ],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Gather filing details",
-          "route": "agent",
-          "estimatedMinutes": 5,
-          "functionCalls": [
-            {
-              "method": "company.get()",
-              "type": "sdk",
-              "description": "Retrieve incorporation details"
-            }
-          ]
-        },
-        {
-          "id": "n2",
-          "label": "File annual report online",
-          "route": "person",
-          "actionUrl": "https://icis.corp.delaware.gov/ecorp/logintax.aspx",
-          "actionLabel": "Delaware annual report & franchise tax portal",
-          "riskLevel": "medium",
-          "estimatedMinutes": 20,
-          "async": true
-        },
-        {
-          "id": "n3",
-          "label": "Upload confirmation",
-          "route": "form",
-          "estimatedMinutes": 2
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n2"
-        },
-        {
-          "from": "n2",
-          "to": "n3"
-        }
-      ]
-    },
-    "contextNeeded": [
-      {
-        "tool": "company.get",
-        "query": "incorporation_state",
-        "tier": "tools",
-        "required": true
-      }
-    ],
-    "tags": [
-      "quick-start",
-      "setup-wizard",
-      "onboarding",
-      "compliance",
-      "delaware"
-    ],
-    "activeMinutes": 7,
-    "totalEstimatedMinutes": 27,
     "hasAsyncSteps": true,
-    "region": "us"
+    "timeOrder": 13,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "qs_043",
     "title": "Set up registered agent",
-    "description": "Setup wizard suggested task for C Corp, LLC, and S Corp users. Required in your state of incorporation for legal documents.",
+    "description": "Every state of incorporation requires a registered agent for legal documents — pick a service and designate it online.",
     "phase": "legal",
     "cadence": "once",
     "complexity": "simple",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Registered agent services require manual signup. Platform suggests providers.",
+    "supportReason": "Registered agent services have no public signup API — the designation is an online form; provider comparison is agent work.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -3051,8 +2974,8 @@
         },
         {
           "id": "n2",
-          "label": "Sign up and provide details",
-          "route": "person",
+          "label": "Sign up online and designate the agent",
+          "route": "form",
           "estimatedMinutes": 15,
           "async": true
         }
@@ -3081,18 +3004,22 @@
     "activeMinutes": 10,
     "totalEstimatedMinutes": 25,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 4,
+    "annoyance": 2,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "qs_044",
     "title": "Set up mailing address",
-    "description": "Setup wizard suggested task for all entity types. Get a business mailing address for legal and banking purposes.",
+    "description": "Get a business mailing address for legal and banking purposes — sign up with a virtual mailbox and complete the USPS authorization.",
     "phase": "formation",
     "cadence": "once",
     "complexity": "simple",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Requires signing up with a virtual mailbox or coworking space. No API.",
+    "supportReason": "Signup is an online form; USPS Form 1583 needs a notarized founder signature — genuinely human.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -3104,14 +3031,19 @@
         },
         {
           "id": "n2",
-          "label": "Sign up and verify",
+          "label": "Sign up and pick an address plan",
+          "route": "form",
+          "estimatedMinutes": 10
+        },
+        {
+          "id": "n4",
+          "label": "Complete the notarized USPS Form 1583",
           "route": "person",
-          "estimatedMinutes": 15,
-          "async": true
+          "estimatedMinutes": 20
         },
         {
           "id": "n3",
-          "label": "Update company profile",
+          "label": "Update the address on file (bank, IRS, vendors)",
           "route": "agent",
           "estimatedMinutes": 1,
           "functionCalls": [
@@ -3130,6 +3062,10 @@
         },
         {
           "from": "n2",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
           "to": "n3"
         }
       ]
@@ -3141,20 +3077,24 @@
       "onboarding",
       "formation"
     ],
-    "activeMinutes": 11,
-    "totalEstimatedMinutes": 26,
-    "hasAsyncSteps": true
+    "activeMinutes": 41,
+    "totalEstimatedMinutes": 41,
+    "hasAsyncSteps": false,
+    "timeOrder": 5,
+    "annoyance": 4,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "qs_045",
     "title": "Review state registration",
-    "description": "Setup wizard suggested task for incorporated companies. Check if you need to register in states where you have employees or offices.",
+    "description": "Check whether you need to register in states where you have employees or offices, and file the foreign qualifications that apply.",
     "phase": "compliance",
     "cadence": "annual",
     "complexity": "moderate",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "State registration requirements vary. Platform can identify states based on team locations but filings are manual.",
+    "supportReason": "An agent can map employee locations to registration duties; the foreign-qualification filings themselves are state-portal form work.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -3179,8 +3119,8 @@
         },
         {
           "id": "n3",
-          "label": "File foreign qualifications",
-          "route": "person",
+          "label": "File foreign qualifications on the state portals",
+          "route": "form",
           "approvalRequired": true,
           "riskLevel": "medium",
           "estimatedMinutes": 30,
@@ -3213,86 +3153,22 @@
     ],
     "activeMinutes": 15,
     "totalEstimatedMinutes": 45,
-    "hasAsyncSteps": true
-  },
-  {
-    "id": "qs_046",
-    "title": "Evaluate C Corp conversion",
-    "description": "Setup wizard suggested task for LLC users. Consider converting to C Corp before raising VC funding.",
-    "phase": "formation",
-    "cadence": "once",
-    "complexity": "moderate",
-    "category": "quick_start",
-    "supportLevel": "manual_guide",
-    "supportReason": "Legal conversion requires attorney. Platform provides guidance on when and why to convert.",
-    "vendors": [
-      "clerky"
-    ],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Assess fundraising plans",
-          "route": "person",
-          "estimatedMinutes": 10
-        },
-        {
-          "id": "n2",
-          "label": "Consult attorney on conversion",
-          "route": "person",
-          "estimatedMinutes": 30,
-          "async": true
-        },
-        {
-          "id": "n3",
-          "label": "File conversion documents",
-          "route": "person",
-          "approvalRequired": true,
-          "riskLevel": "high",
-          "estimatedMinutes": 30,
-          "async": true
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n2"
-        },
-        {
-          "from": "n2",
-          "to": "n3"
-        }
-      ]
-    },
-    "contextNeeded": [
-      {
-        "tool": "company.get",
-        "query": "entity_type",
-        "tier": "tools",
-        "required": true
-      }
-    ],
-    "tags": [
-      "quick-start",
-      "setup-wizard",
-      "onboarding",
-      "formation",
-      "legal"
-    ],
-    "activeMinutes": 10,
-    "totalEstimatedMinutes": 70,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 81,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "qs_047",
     "title": "File state annual report",
-    "description": "Setup wizard suggested task for C Corp (other state) and S Corp users. File annual report and maintain corporate compliance with your state.",
+    "description": "File the annual report and keep the company in good standing with your state of incorporation.",
     "phase": "compliance",
     "cadence": "annual",
     "complexity": "simple",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "State filing portals have no API. Platform provides deadline tracking and guidance.",
+    "supportReason": "State filing portals have no API — the filing is manual form work; gathering the details and saving the receipt are agent steps.",
     "vendors": [
       "state_sos"
     ],
@@ -3313,16 +3189,15 @@
         },
         {
           "id": "n2",
-          "label": "File annual report online",
-          "route": "person",
+          "label": "File the annual report on the state portal",
+          "route": "form",
           "riskLevel": "medium",
-          "estimatedMinutes": 20,
-          "async": true
+          "estimatedMinutes": 20
         },
         {
           "id": "n3",
-          "label": "Upload confirmation",
-          "route": "form",
+          "label": "Save the confirmation receipt",
+          "route": "agent",
           "estimatedMinutes": 2
         }
       ],
@@ -3351,14 +3226,24 @@
       "onboarding",
       "compliance"
     ],
-    "activeMinutes": 7,
+    "activeMinutes": 27,
     "totalEstimatedMinutes": 27,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": false,
+    "slugAliases": [
+      {
+        "slug": "file-an-annual-report-registered-agent",
+        "label": "File an annual report / registered agent"
+      }
+    ],
+    "timeOrder": 80,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "qs_050",
     "title": "Track runway",
-    "description": "Setup wizard suggested task for bootstrapped companies. Set up financial tracking to monitor runway and burn rate.",
+    "description": "Track runway and burn — pull balances, read the monthly spend, and know the zero-cash date.",
     "phase": "finance",
     "cadence": "monthly",
     "complexity": "simple",
@@ -3471,12 +3356,16 @@
     ],
     "activeMinutes": 9,
     "totalEstimatedMinutes": 9,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 35,
+    "annoyance": 1,
+    "risk": 3,
+    "growthImpact": 2
   },
   {
     "id": "qs_051",
     "title": "Set up cap table",
-    "description": "Setup wizard suggested task for Friends & Family and Pre-seed users. Track all investments in a cap table — even informal rounds.",
+    "description": "Track every investment on a real cap table from day one — even informal rounds.",
     "phase": "fundraising",
     "cadence": "once",
     "complexity": "moderate",
@@ -3555,12 +3444,16 @@
     ],
     "activeMinutes": 60,
     "totalEstimatedMinutes": 60,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 21,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "qs_052",
     "title": "Update cap table",
-    "description": "Setup wizard suggested task for Seed stage companies. Ensure your cap table is current and board-approved.",
+    "description": "Keep the cap table current after new SAFEs, grants, or transfers — reconciled and board-approved.",
     "phase": "fundraising",
     "cadence": "event-driven",
     "complexity": "moderate",
@@ -3624,18 +3517,22 @@
     ],
     "activeMinutes": 35,
     "totalEstimatedMinutes": 50,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 38,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "qs_053",
     "title": "Audit cap table",
-    "description": "Setup wizard suggested task for Series A+ companies. Ensure your cap table, board consents, and investor rights are documented.",
+    "description": "Audit the cap table before a raise: verify ownership, board consents, and investor rights are documented.",
     "phase": "fundraising",
     "cadence": "annual",
     "complexity": "complex",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Complex legal review requiring attorney involvement. Platform can organize documents.",
+    "supportReason": "Verifying ownership and consents is judgment work with attorney sign-off; document gathering runs on the cap-table APIs.",
     "vendors": [
       "carta",
       "clerky"
@@ -3708,18 +3605,22 @@
     ],
     "activeMinutes": 105,
     "totalEstimatedMinutes": 165,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 78,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "qs_063",
     "title": "Set up payroll",
-    "description": "Setup wizard suggested task covering Gusto, Rippling, Deel, and Justworks users as well as companies with no payroll. Set up or verify a payroll provider for payroll, tax filings, and benefits.",
+    "description": "Set up a payroll provider to run payroll, file employment taxes, and administer benefits.",
     "phase": "hr",
     "cadence": "once",
     "complexity": "moderate",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Payroll provider signup requires EIN and bank account. Platform guides selection and verifies once connected.",
+    "supportReason": "Provider onboarding is a guided online form (needs EIN and bank account); the journal sync runs on the payroll API.",
     "vendors": [
       "gusto",
       "rippling",
@@ -3757,8 +3658,8 @@
         },
         {
           "id": "n3",
-          "label": "Sign up for payroll",
-          "route": "person",
+          "label": "Sign up and configure payroll online",
+          "route": "form",
           "vendorOptions": [
             "gusto",
             "rippling",
@@ -3771,16 +3672,17 @@
         },
         {
           "id": "n4",
-          "label": "Connect to Ultrametric",
+          "label": "Connect payroll to the books",
           "route": "agent",
           "estimatedMinutes": 3,
           "functionCalls": [
             {
-              "method": "integrations.connect()",
-              "type": "sdk",
-              "description": "Connect payroll"
+              "method": "payrolls.list()",
+              "type": "rest",
+              "description": "Sync payroll journals into accounting"
             }
-          ]
+          ],
+          "vendor": "gusto"
         }
       ],
       "edges": [
@@ -3812,18 +3714,22 @@
     "activeMinutes": 8,
     "totalEstimatedMinutes": 38,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 43,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "qs_073",
     "title": "Set up accounting",
-    "description": "Setup wizard suggested task covering QuickBooks, Xero, and Pilot users as well as companies with no accounting software. Connect bookkeeping and configure chart of accounts.",
+    "description": "Choose accounting software and configure the chart of accounts so the books can close every month.",
     "phase": "finance",
     "cadence": "once",
     "complexity": "moderate",
     "category": "quick_start",
     "supportLevel": "manual_guide",
-    "supportReason": "Requires choosing and setting up accounting software. Platform guides selection and connects once ready; Pilot onboarding is manual coordination.",
+    "supportReason": "Choosing and configuring the software is guided form work; connecting bank and card feeds runs on the accounting APIs.",
     "vendors": [
       "quickbooks",
       "xero",
@@ -3859,8 +3765,8 @@
         },
         {
           "id": "n2",
-          "label": "Sign up and configure",
-          "route": "person",
+          "label": "Sign up and configure the chart of accounts",
+          "route": "form",
           "vendorOptions": [
             "quickbooks",
             "xero",
@@ -3872,16 +3778,17 @@
         },
         {
           "id": "n3",
-          "label": "Connect to Ultrametric",
+          "label": "Connect bank and card feeds",
           "route": "agent",
           "estimatedMinutes": 3,
           "functionCalls": [
             {
-              "method": "integrations.connect()",
+              "method": "bankfeeds.connect()",
               "type": "sdk",
-              "description": "Connect accounting"
+              "description": "Connect bank and card feeds to the ledger"
             }
-          ]
+          ],
+          "vendor": "quickbooks"
         }
       ],
       "edges": [
@@ -3905,111 +3812,11 @@
     ],
     "activeMinutes": 8,
     "totalEstimatedMinutes": 38,
-    "hasAsyncSteps": true
-  },
-  {
-    "id": "qs_081",
-    "title": "Set up website",
-    "description": "Setup wizard suggested task when user has no website. A website establishes credibility with investors, customers, and hires.",
-    "phase": "product",
-    "cadence": "once",
-    "complexity": "moderate",
-    "category": "quick_start",
-    "supportLevel": "manual_guide",
-    "supportReason": "Website creation requires design and deployment decisions. Platform provides guidance.",
-    "vendors": [
-      "vercel",
-      "cloudflare"
-    ],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Choose website platform",
-          "route": "person",
-          "vendorOptions": [
-            "lovable",
-            "v0",
-            "bolt"
-          ],
-          "optionsArenaId": "vibe-coding",
-          "estimatedMinutes": 10
-        },
-        {
-          "id": "n2",
-          "label": "Design and build site",
-          "route": "person",
-          "estimatedMinutes": 120,
-          "extraOptionArenas": [
-            "vibe-coding"
-          ],
-          "extraOptionRefs": [
-            {
-              "arenaId": "design-tools",
-              "productId": "framer"
-            },
-            {
-              "arenaId": "design-tools",
-              "productId": "figma"
-            },
-            {
-              "arenaId": "design-tools",
-              "productId": "canva"
-            }
-          ]
-        },
-        {
-          "id": "n3",
-          "label": "Configure DNS and deploy",
-          "route": "form",
-          "vendorOptions": [
-            "vercel",
-            "cloudflare"
-          ],
-          "optionsArenaId": "edge-platforms",
-          "riskLevel": "medium",
-          "estimatedMinutes": 15,
-          "async": true
-        },
-        {
-          "id": "n4",
-          "label": "Update company profile",
-          "route": "agent",
-          "estimatedMinutes": 1,
-          "functionCalls": [
-            {
-              "method": "company.update()",
-              "type": "sdk",
-              "description": "Store website URL"
-            }
-          ]
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n2"
-        },
-        {
-          "from": "n2",
-          "to": "n3"
-        },
-        {
-          "from": "n3",
-          "to": "n4"
-        }
-      ]
-    },
-    "contextNeeded": [],
-    "tags": [
-      "quick-start",
-      "setup-wizard",
-      "onboarding",
-      "product"
-    ],
-    "activeMinutes": 131,
-    "totalEstimatedMinutes": 146,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 20,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "hr_001",
@@ -4253,7 +4060,11 @@
     ],
     "activeMinutes": 62,
     "totalEstimatedMinutes": 5822,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 42,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 4
   },
   {
     "id": "hr_002",
@@ -4386,7 +4197,11 @@
     ],
     "activeMinutes": 11,
     "totalEstimatedMinutes": 11,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 44,
+    "annoyance": 2,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "hr_003",
@@ -4533,7 +4348,11 @@
     ],
     "activeMinutes": 22,
     "totalEstimatedMinutes": 7222,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 46,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 2
   },
   {
     "id": "hr_004",
@@ -4646,7 +4465,11 @@
     ],
     "activeMinutes": 75,
     "totalEstimatedMinutes": 75,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 84,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 2
   },
   {
     "id": "hr_005",
@@ -4829,7 +4652,11 @@
     ],
     "activeMinutes": 24,
     "totalEstimatedMinutes": 1464,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 89,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "fin_001",
@@ -4848,17 +4675,18 @@
       "nodes": [
         {
           "id": "n1",
-          "label": "Look up outstanding invoices",
+          "label": "Pull the outstanding bills",
           "route": "agent",
-          "toolCall": "company_data_get",
+          "toolCall": "bills_list",
           "estimatedMinutes": 2,
           "functionCalls": [
             {
-              "method": "company_data_get({query: \"vendors outstanding\"})",
+              "method": "bills.list()",
               "type": "sdk",
-              "description": "Query vendor balances"
+              "description": "List unpaid bills in the ledger"
             }
-          ]
+          ],
+          "vendor": "quickbooks"
         },
         {
           "id": "n2",
@@ -4877,47 +4705,13 @@
         },
         {
           "id": "n3",
-          "label": "Create wire for AWS ($4,250)",
+          "label": "Create the payment run for approved bills",
           "route": "agent",
           "toolCall": "mercury_create_wire",
           "vendor": "mercury",
           "approvalRequired": true,
           "riskLevel": "high",
-          "estimatedMinutes": 2,
-          "functionCalls": [
-            {
-              "method": "POST /api/v1/accounts/{id}/wires",
-              "type": "rest",
-              "description": "Initiate wire transfer"
-            }
-          ]
-        },
-        {
-          "id": "n4",
-          "label": "Create wire for Vercel ($2,100)",
-          "route": "agent",
-          "toolCall": "mercury_create_wire",
-          "vendor": "mercury",
-          "approvalRequired": true,
-          "riskLevel": "high",
-          "estimatedMinutes": 2,
-          "functionCalls": [
-            {
-              "method": "POST /api/v1/accounts/{id}/wires",
-              "type": "rest",
-              "description": "Initiate wire transfer"
-            }
-          ]
-        },
-        {
-          "id": "n5",
-          "label": "Create wire for Figma ($850)",
-          "route": "agent",
-          "toolCall": "mercury_create_wire",
-          "vendor": "mercury",
-          "approvalRequired": true,
-          "riskLevel": "high",
-          "estimatedMinutes": 2,
+          "estimatedMinutes": 5,
           "functionCalls": [
             {
               "method": "POST /api/v1/accounts/{id}/wires",
@@ -4928,10 +4722,18 @@
         },
         {
           "id": "n6",
-          "label": "Post summary to task",
+          "label": "Post the payment summary to the team channel",
           "route": "agent",
-          "toolCall": "tasks_comment",
-          "estimatedMinutes": 1
+          "toolCall": "chat_post_message",
+          "estimatedMinutes": 1,
+          "vendor": "slack",
+          "functionCalls": [
+            {
+              "method": "chat.postMessage()",
+              "type": "rest",
+              "description": "Post the payment-run summary"
+            }
+          ]
         }
       ],
       "edges": [
@@ -4944,23 +4746,7 @@
           "to": "n3"
         },
         {
-          "from": "n2",
-          "to": "n4"
-        },
-        {
-          "from": "n2",
-          "to": "n5"
-        },
-        {
           "from": "n3",
-          "to": "n6"
-        },
-        {
-          "from": "n4",
-          "to": "n6"
-        },
-        {
-          "from": "n5",
           "to": "n6"
         }
       ]
@@ -4984,9 +4770,13 @@
       "payments",
       "recurring"
     ],
-    "activeMinutes": 10,
-    "totalEstimatedMinutes": 10,
-    "hasAsyncSteps": false
+    "activeMinutes": 9,
+    "totalEstimatedMinutes": 9,
+    "hasAsyncSteps": false,
+    "timeOrder": 72,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "fin_002",
@@ -5162,7 +4952,11 @@
     ],
     "activeMinutes": 72,
     "totalEstimatedMinutes": 1512,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 74,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "fin_003",
@@ -5366,7 +5160,11 @@
     ],
     "activeMinutes": 50,
     "totalEstimatedMinutes": 50,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 75,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "ops_001",
@@ -5476,7 +5274,11 @@
     ],
     "activeMinutes": 25,
     "totalEstimatedMinutes": 25,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 17,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 1
   },
   {
     "id": "ops_002",
@@ -5605,7 +5407,11 @@
     ],
     "activeMinutes": 26,
     "totalEstimatedMinutes": 26,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 18,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 2
   },
   {
     "id": "ops_003",
@@ -5724,7 +5530,11 @@
     ],
     "activeMinutes": 25,
     "totalEstimatedMinutes": 25,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 19,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 1
   },
   {
     "id": "ops_004",
@@ -5854,7 +5664,11 @@
     ],
     "activeMinutes": 55,
     "totalEstimatedMinutes": 55,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 14,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "ops_005",
@@ -5964,7 +5778,11 @@
     ],
     "activeMinutes": 25,
     "totalEstimatedMinutes": 25,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 15,
+    "annoyance": 2,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "scale_001",
@@ -6102,7 +5920,11 @@
     ],
     "activeMinutes": 295,
     "totalEstimatedMinutes": 3175,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 86,
+    "annoyance": 5,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "scale_002",
@@ -6237,7 +6059,11 @@
     ],
     "activeMinutes": 220,
     "totalEstimatedMinutes": 14620,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 48,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 2
   },
   {
     "id": "scale_003",
@@ -6371,7 +6197,11 @@
     ],
     "activeMinutes": 380,
     "totalEstimatedMinutes": 3260,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 87,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "scale_004",
@@ -6485,7 +6315,11 @@
     ],
     "activeMinutes": 65,
     "totalEstimatedMinutes": 65,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 88,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "scale_005",
@@ -6703,7 +6537,11 @@
     ],
     "activeMinutes": 243,
     "totalEstimatedMinutes": 243,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 77,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "scale_006",
@@ -6863,7 +6701,11 @@
     ],
     "activeMinutes": 70,
     "totalEstimatedMinutes": 70,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 90,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 1
   },
   {
     "id": "scale_007",
@@ -7024,7 +6866,11 @@
     ],
     "activeMinutes": 335,
     "totalEstimatedMinutes": 815,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 92,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "scale_008",
@@ -7172,7 +7018,11 @@
     ],
     "activeMinutes": 165,
     "totalEstimatedMinutes": 165,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 85,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 3
   },
   {
     "id": "scale_009",
@@ -7325,7 +7175,11 @@
     ],
     "activeMinutes": 65,
     "totalEstimatedMinutes": 65,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 93,
+    "annoyance": 2,
+    "risk": 3,
+    "growthImpact": 2
   },
   {
     "id": "scale_010",
@@ -7364,11 +7218,11 @@
         },
         {
           "id": "n3",
-          "label": "Set up data models",
-          "route": "person",
+          "label": "Draft the warehouse data models",
+          "route": "agent",
           "approvalRequired": true,
           "riskLevel": "high",
-          "estimatedMinutes": 480
+          "estimatedMinutes": 240
         },
         {
           "id": "n4",
@@ -7450,9 +7304,13 @@
       "bi",
       "infrastructure"
     ],
-    "activeMinutes": 990,
-    "totalEstimatedMinutes": 1110,
-    "hasAsyncSteps": true
+    "activeMinutes": 750,
+    "totalEstimatedMinutes": 870,
+    "hasAsyncSteps": true,
+    "timeOrder": 94,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "scale_011",
@@ -7575,7 +7433,11 @@
     ],
     "activeMinutes": 175,
     "totalEstimatedMinutes": 7375,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 95,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "scale_012",
@@ -7690,7 +7552,17 @@
     ],
     "activeMinutes": 400,
     "totalEstimatedMinutes": 400,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "slugAliases": [
+      {
+        "slug": "goals-due-this-week",
+        "label": "Goals due this week"
+      }
+    ],
+    "timeOrder": 91,
+    "annoyance": 3,
+    "risk": 1,
+    "growthImpact": 2
   },
   {
     "id": "prod_001",
@@ -7901,7 +7773,11 @@
     ],
     "activeMinutes": 300,
     "totalEstimatedMinutes": 300,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 27,
+    "annoyance": 3,
+    "risk": 3,
+    "growthImpact": 2
   },
   {
     "id": "prod_002",
@@ -8042,7 +7918,11 @@
     ],
     "activeMinutes": 55,
     "totalEstimatedMinutes": 55,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 26,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 3
   },
   {
     "id": "prod_003",
@@ -8185,7 +8065,11 @@
     ],
     "activeMinutes": 15,
     "totalEstimatedMinutes": 20,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 28,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "prod_004",
@@ -8264,7 +8148,7 @@
         {
           "id": "n5",
           "label": "Install SDK in codebase",
-          "route": "form",
+          "route": "agent",
           "approvalRequired": true,
           "estimatedMinutes": 10,
           "extraOptionArenas": [
@@ -8312,7 +8196,11 @@
     ],
     "activeMinutes": 30,
     "totalEstimatedMinutes": 30,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 29,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "prod_005",
@@ -8353,7 +8241,7 @@
         {
           "id": "n2",
           "label": "Install SDK in codebase",
-          "route": "form",
+          "route": "agent",
           "approvalRequired": true,
           "estimatedMinutes": 20,
           "extraOptionArenas": [
@@ -8459,7 +8347,11 @@
     ],
     "activeMinutes": 75,
     "totalEstimatedMinutes": 75,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 30,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 4
   },
   {
     "id": "prod_006",
@@ -8598,7 +8490,11 @@
     ],
     "activeMinutes": 23,
     "totalEstimatedMinutes": 23,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 25,
+    "annoyance": 1,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "sales_001",
@@ -8743,7 +8639,11 @@
     ],
     "activeMinutes": 60,
     "totalEstimatedMinutes": 60,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 54,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 3
   },
   {
     "id": "sales_002",
@@ -8872,7 +8772,11 @@
     ],
     "activeMinutes": 7,
     "totalEstimatedMinutes": 7,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 56,
+    "annoyance": 1,
+    "risk": 2,
+    "growthImpact": 3
   },
   {
     "id": "growth_001",
@@ -9043,7 +8947,11 @@
     ],
     "activeMinutes": 50,
     "totalEstimatedMinutes": 50,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 52,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 4
   },
   {
     "id": "growth_002",
@@ -9217,7 +9125,11 @@
     ],
     "activeMinutes": 15,
     "totalEstimatedMinutes": 45,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 64,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 3
   },
   {
     "id": "growth_003",
@@ -9342,7 +9254,11 @@
     ],
     "activeMinutes": 55,
     "totalEstimatedMinutes": 55,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 59,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 3
   },
   {
     "id": "growth_004",
@@ -9376,7 +9292,7 @@
         {
           "id": "n2",
           "label": "Install Messenger widget",
-          "route": "form",
+          "route": "agent",
           "approvalRequired": true,
           "estimatedMinutes": 15,
           "extraOptionArenas": [
@@ -9473,7 +9389,11 @@
     ],
     "activeMinutes": 120,
     "totalEstimatedMinutes": 120,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 63,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 3
   },
   {
     "id": "growth_005",
@@ -9602,18 +9522,22 @@
     ],
     "activeMinutes": 25,
     "totalEstimatedMinutes": 35,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 58,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "opp_001",
     "title": "Send a wire or ACH payment",
-    "description": "Opportunity: move money out of a connected Mercury account (wire/ACH) from the agent. Mercury is wired for reads today; payments would extend it.",
+    "description": "Move money out of the company bank account — create a wire or ACH payment behind an approval gate.",
     "phase": "finance",
     "cadence": "event-driven",
     "complexity": "moderate",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Mercury client already connected for balances/transactions; payment endpoints not yet exposed.",
+    "supportReason": "The banking APIs expose payments (wires/ACH) — an agent can create the payment; a human approves before money moves.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9636,18 +9560,22 @@
     ],
     "activeMinutes": 2,
     "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 73,
+    "annoyance": 2,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "opp_002",
     "title": "Add a contractor (1099)",
-    "description": "Opportunity: onboard a 1099 contractor in Gusto. Gusto is wired for employee onboarding/payroll today.",
+    "description": "Onboard a 1099 contractor in payroll so they can be paid and 1099’d at year-end.",
     "phase": "hr",
     "cadence": "event-driven",
     "complexity": "moderate",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Gusto client connected for company/employee onboarding; contractor flow not exposed.",
+    "supportReason": "Payroll APIs expose contractor onboarding — an agent can add the contractor; the contractor completes their own tax info.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9669,18 +9597,22 @@
     "activeMinutes": 3,
     "totalEstimatedMinutes": 3,
     "hasAsyncSteps": false,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 47,
+    "annoyance": 2,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "opp_003",
     "title": "Create a subscription product",
-    "description": "Opportunity: set up a Stripe subscription/price for recurring billing. Stripe SDK is wired for domain checkout today.",
+    "description": "Create a subscription product and price for recurring billing.",
     "phase": "growth",
     "cadence": "event-driven",
     "complexity": "moderate",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Stripe SDK already used for domain payments; product/subscription management not exposed to the agent.",
+    "supportReason": "Products and prices are first-class API objects — an agent creates both in one pass.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9701,18 +9633,22 @@
     ],
     "activeMinutes": 3,
     "totalEstimatedMinutes": 3,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 53,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 3
   },
   {
     "id": "opp_004",
     "title": "Issue a refund",
-    "description": "Opportunity: refund a Stripe charge from the agent. Stripe refunds are already used internally in the domain-purchase failure path.",
+    "description": "Refund a customer charge, behind an approval gate.",
     "phase": "finance",
     "cadence": "event-driven",
     "complexity": "simple",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Stripe Refund.create already used in domain_purchase_workflow; not exposed as a user-facing task.",
+    "supportReason": "Refunds are a single API call — an agent can issue one behind an approval gate.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9735,7 +9671,11 @@
     ],
     "activeMinutes": 1,
     "totalEstimatedMinutes": 1,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 57,
+    "annoyance": 1,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "opp_005",
@@ -9746,13 +9686,13 @@
         "label": "Create an Asana project"
       }
     ],
-    "description": "Opportunity: create a project and tasks in Asana. Asana has a hand-written client wired but no agent workflow surfaces it yet.",
+    "description": "Create a project with its initial tasks in the team’s tracker.",
     "phase": "operations",
     "cadence": "event-driven",
     "complexity": "moderate",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Asana client wired (app/vendors/asana) but no agent task surfaces it.",
+    "supportReason": "Project and task creation are core tracker APIs — a one-call agent step.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9773,45 +9713,11 @@
     ],
     "activeMinutes": 2,
     "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
-  },
-  {
-    "id": "opp_006",
-    "title": "Import documents from Dropbox",
-    "description": "Opportunity: pull and index company documents from a connected Dropbox. Dropbox client is wired.",
-    "phase": "operations",
-    "cadence": "once",
-    "complexity": "moderate",
-    "category": "opportunity",
-    "supportLevel": "partial",
-    "supportReason": "Dropbox client wired for file listing; bulk import into company documents not exposed.",
-    "vendors": [],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "List + import Dropbox files",
-          "route": "agent",
-          "estimatedMinutes": 2,
-          "extraOptionRefs": [
-            {
-              "arenaId": "notes-knowledge",
-              "productId": "poly"
-            }
-          ]
-        }
-      ],
-      "edges": []
-    },
-    "contextNeeded": [],
-    "tags": [
-      "opportunity",
-      "dropbox",
-      "documents"
-    ],
-    "activeMinutes": 2,
-    "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 67,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 1
   },
   {
     "id": "opp_007",
@@ -9822,13 +9728,13 @@
         "label": "Provision a Google Workspace user"
       }
     ],
-    "description": "Opportunity: create a Google Workspace account for a new hire. Google Workspace directory sync is wired today.",
+    "description": "Create a workspace account for a new hire (email, drive, groups).",
     "phase": "hr",
     "cadence": "event-driven",
     "complexity": "moderate",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Google Workspace directory is synced (read); user provisioning (write) not wired.",
+    "supportReason": "Workspace directory APIs expose user provisioning — an agent can create the account; access grants stay approval-gated.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9852,7 +9758,11 @@
     ],
     "activeMinutes": 2,
     "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 45,
+    "annoyance": 1,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "opp_008",
@@ -9863,13 +9773,13 @@
         "label": "Draft and send an email via Gmail"
       }
     ],
-    "description": "Opportunity: send an email from a connected Gmail account. Gmail scanning (read) is wired today.",
+    "description": "Draft and send an email from the company account, behind an approval gate.",
     "phase": "operations",
     "cadence": "daily",
     "complexity": "simple",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Gmail scan (read) is wired; send (write) not exposed to the agent.",
+    "supportReason": "Email APIs expose drafting and sending — an agent drafts, a human approves the send.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9894,7 +9804,11 @@
     ],
     "activeMinutes": 1,
     "totalEstimatedMinutes": 1,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 65,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 2
   },
   {
     "id": "opp_009",
@@ -9905,13 +9819,13 @@
         "label": "Create a Linear issue from a task"
       }
     ],
-    "description": "Opportunity: push a platform task into Linear as an issue. Linear is wired (API + MCP) and read today.",
+    "description": "Create a tracker issue from a task or bug report.",
     "phase": "product",
     "cadence": "daily",
     "complexity": "simple",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Linear connected (GraphQL + MCP) and read in /project-management; create-issue not surfaced as a task.",
+    "supportReason": "Issue creation is a core tracker API (GraphQL + MCP) — a one-call agent step.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -9932,56 +9846,22 @@
     ],
     "activeMinutes": 1,
     "totalEstimatedMinutes": 1,
-    "hasAsyncSteps": false
-  },
-  {
-    "id": "opp_010",
-    "title": "File an annual report / registered agent",
-    "description": "Opportunity: file a state annual report or manage registered agent via Doola. Doola is wired for incorporation today.",
-    "phase": "compliance",
-    "cadence": "annual",
-    "complexity": "moderate",
-    "category": "opportunity",
-    "supportLevel": "partial",
-    "supportReason": "Doola client wired for incorporation; ongoing compliance filings not exposed.",
-    "vendors": [],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "File annual report (Doola)",
-          "route": "form",
-          "estimatedMinutes": 3,
-          "async": true,
-          "optionsArenaId": "legal-ops",
-          "vendorOptions": [
-            "clerky"
-          ]
-        }
-      ],
-      "edges": []
-    },
-    "contextNeeded": [],
-    "tags": [
-      "opportunity",
-      "doola",
-      "compliance"
-    ],
-    "activeMinutes": 0,
-    "totalEstimatedMinutes": 3,
-    "hasAsyncSteps": true,
-    "region": "us"
+    "hasAsyncSteps": false,
+    "timeOrder": 66,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 2
   },
   {
     "id": "opp_011",
     "title": "Set up email routing on your domain",
-    "description": "Opportunity: configure Cloudflare Email Routing for a purchased domain. Cloudflare DNS/zones are wired via domain purchase today.",
+    "description": "Configure email routing on the company domain so aliases forward to real inboxes.",
     "phase": "operations",
     "cadence": "once",
     "complexity": "simple",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "Cloudflare zone/DNS already managed for customer domains; email routing not exposed.",
+    "supportReason": "DNS providers expose email-routing configuration over their APIs — an agent wires the aliases.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10006,18 +9886,22 @@
     ],
     "activeMinutes": 2,
     "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 68,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "opp_012",
     "title": "Monitor trademark / handle availability",
-    "description": "Opportunity: ongoing monitoring of trademark conflicts and social-handle availability for the brand. A trademark/handle monitoring service is wired for one-off brand checks today.",
+    "description": "Monitor trademark conflicts and social-handle availability for the brand, on a schedule.",
     "phase": "legal",
     "cadence": "monthly",
     "complexity": "simple",
     "category": "opportunity",
     "supportLevel": "partial",
-    "supportReason": "A trademark/handle monitoring service covers one-off brand candidate checks today; recurring monitoring is not exposed.",
+    "supportReason": "Trademark and handle checks run over search APIs — an agent can schedule the recurring monitor.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10037,7 +9921,11 @@
     ],
     "activeMinutes": 2,
     "totalEstimatedMinutes": 2,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 69,
+    "annoyance": 1,
+    "risk": 2,
+    "growthImpact": 1
   },
   {
     "id": "brand_001",
@@ -10048,7 +9936,7 @@
     "complexity": "moderate",
     "category": "branding",
     "supportLevel": "full",
-    "supportReason": "Agent generates candidates; availability intel via Name.com (domains) plus social-handle and trademark checks.",
+    "supportReason": "An agent generates candidates and scores each on domain availability, social handles, and trademark conflicts via search APIs.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10104,7 +9992,11 @@
     ],
     "activeMinutes": 4,
     "totalEstimatedMinutes": 4,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 7,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 3
   },
   {
     "id": "brand_002",
@@ -10115,7 +10007,7 @@
     "complexity": "moderate",
     "category": "branding",
     "supportLevel": "full",
-    "supportReason": "generate_brand_logo tool; OpenAI image generation; stored to S3.",
+    "supportReason": "Image-generation APIs produce the candidates; the founder picks the primary logo.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10165,7 +10057,11 @@
     ],
     "activeMinutes": 3,
     "totalEstimatedMinutes": 3,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 8,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 2
   },
   {
     "id": "brand_003",
@@ -10176,7 +10072,7 @@
     "complexity": "simple",
     "category": "branding",
     "supportLevel": "full",
-    "supportReason": "set_brand_palette tool, native.",
+    "supportReason": "Palette selection is a pure generation step — fully agent-runnable.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10202,7 +10098,11 @@
     ],
     "activeMinutes": 1,
     "totalEstimatedMinutes": 1,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 9,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 1
   },
   {
     "id": "domain_001",
@@ -10213,7 +10113,7 @@
     "complexity": "simple",
     "category": "domains",
     "supportLevel": "full",
-    "supportReason": "check_domain_availability / search_domains tools; Name.com plus a social-handle availability check.",
+    "supportReason": "Domain and social-handle availability are public search APIs — fully agent-runnable.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10234,7 +10134,11 @@
     ],
     "activeMinutes": 1,
     "totalEstimatedMinutes": 1,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 10,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 2
   },
   {
     "id": "domain_002",
@@ -10245,7 +10149,7 @@
     "complexity": "complex",
     "category": "domains",
     "supportLevel": "full",
-    "supportReason": "domain_purchase_workflow; Name.com (register) + Stripe (pay) + Cloudflare (provision).",
+    "supportReason": "Registrar, payment, and DNS APIs cover the whole purchase — quote, register, and provision run end to end.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10301,24 +10205,28 @@
     ],
     "activeMinutes": 2,
     "totalEstimatedMinutes": 10,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 11,
+    "annoyance": 1,
+    "risk": 2,
+    "growthImpact": 2
   },
   {
     "id": "site_001",
     "title": "Generate a website",
-    "description": "Generate and publish a website via the sitegen agent (sandboxed code generation + content firewall + CDN publish).",
+    "description": "Generate and publish the company website with a vibe-coding agent — human-reviewed before it goes live.",
     "phase": "growth",
     "cadence": "once",
     "complexity": "very_complex",
     "category": "branding",
     "supportLevel": "full",
-    "supportReason": "generate_site tool / sitegen workflows; sandboxed code-generation agent + content firewall + CDN publish.",
+    "supportReason": "A vibe-coding agent generates and deploys the site end to end; the founder reviews the copy and design before it goes live.",
     "vendors": [],
     "dag": {
       "nodes": [
         {
           "id": "n1",
-          "label": "Agent generates site code",
+          "label": "Generate the website with an agent",
           "route": "agent",
           "vendorOptions": [
             "lovable",
@@ -10352,8 +10260,14 @@
           ]
         },
         {
+          "id": "n3",
+          "label": "Review the site before it goes live",
+          "route": "person",
+          "estimatedMinutes": 15
+        },
+        {
           "id": "n2",
-          "label": "Content firewall + publish to CDN",
+          "label": "Publish to the CDN (edge deploy + SSL)",
           "route": "agent",
           "vendorOptions": [
             "cloudflare",
@@ -10370,6 +10284,10 @@
       "edges": [
         {
           "from": "n1",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
           "to": "n2"
         }
       ]
@@ -10380,58 +10298,19 @@
       "website",
       "vendor"
     ],
-    "activeMinutes": 0,
-    "totalEstimatedMinutes": 11,
-    "hasAsyncSteps": true
-  },
-  {
-    "id": "form_010",
-    "title": "Incorporate a company",
-    "description": "Prefill and submit company incorporation; check readiness, choose state and NAICS code.",
-    "phase": "formation",
-    "cadence": "once",
-    "complexity": "complex",
-    "category": "company_formation",
-    "supportLevel": "partial",
-    "supportReason": "Doola incorporation tools (status, readiness, states, NAICS, draft, prefill).",
-    "vendors": [],
-    "dag": {
-      "nodes": [
-        {
-          "id": "n1",
-          "label": "Check readiness + pick state/NAICS",
-          "route": "form",
-          "estimatedMinutes": 4,
-          "optionsArenaId": "legal-ops",
-          "vendorOptions": [
-            "clerky",
-            "stripe_atlas"
-          ]
-        },
-        {
-          "id": "n2",
-          "label": "Prefill + submit incorporation",
-          "route": "agent",
-          "estimatedMinutes": 3,
-          "async": true
-        }
-      ],
-      "edges": [
-        {
-          "from": "n1",
-          "to": "n2"
-        }
-      ]
-    },
-    "contextNeeded": [],
-    "tags": [
-      "formation",
-      "doola",
-      "vendor"
+    "activeMinutes": 15,
+    "totalEstimatedMinutes": 26,
+    "hasAsyncSteps": true,
+    "slugAliases": [
+      {
+        "slug": "set-up-website",
+        "label": "Set up website"
+      }
     ],
-    "activeMinutes": 4,
-    "totalEstimatedMinutes": 7,
-    "hasAsyncSteps": true
+    "timeOrder": 24,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 4
   },
   {
     "id": "team_001",
@@ -10442,7 +10321,7 @@
     "complexity": "simple",
     "category": "hr",
     "supportLevel": "full",
-    "supportReason": "invite_member / set_member_access tools, native.",
+    "supportReason": "Member invites and access levels are workspace admin APIs — a one-call agent step.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10466,18 +10345,22 @@
     ],
     "activeMinutes": 1,
     "totalEstimatedMinutes": 1,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 34,
+    "annoyance": 1,
+    "risk": 1,
+    "growthImpact": 1
   },
   {
     "id": "vendor_010",
     "title": "Connect a vendor or MCP server",
-    "description": "Connect a third-party vendor, or register a custom MCP server for the org (encrypted credentials).",
+    "description": "Connect a third-party vendor integration, or register a custom MCP server so agents can drive it.",
     "phase": "operations",
     "cadence": "event-driven",
     "complexity": "moderate",
     "category": "operations",
     "supportLevel": "full",
-    "supportReason": "vendor connect flow + backend/app/mcp org-scoped MCP server registration.",
+    "supportReason": "Credential exchange is a manual connect flow; once connected, MCP servers expose the vendor to agents.",
     "vendors": [],
     "dag": {
       "nodes": [
@@ -10503,7 +10386,11 @@
     ],
     "activeMinutes": 3,
     "totalEstimatedMinutes": 3,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 33,
+    "annoyance": 2,
+    "risk": 3,
+    "growthImpact": 2
   },
   {
     "id": "startup_001",
@@ -10648,7 +10535,11 @@
     ],
     "activeMinutes": 90,
     "totalEstimatedMinutes": 570,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 6,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 5
   },
   {
     "id": "startup_002",
@@ -10737,10 +10628,14 @@
       "legal",
       "equity"
     ],
-    "activeMinutes": 125,
+    "activeMinutes": 95,
     "totalEstimatedMinutes": 125,
     "hasAsyncSteps": true,
-    "region": "us"
+    "region": "us",
+    "timeOrder": 2,
+    "annoyance": 3,
+    "risk": 5,
+    "growthImpact": 1
   },
   {
     "id": "comp_010",
@@ -10843,9 +10738,13 @@
       "privacy",
       "legal"
     ],
-    "activeMinutes": 175,
+    "activeMinutes": 55,
     "totalEstimatedMinutes": 175,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 41,
+    "annoyance": 3,
+    "risk": 4,
+    "growthImpact": 1
   },
   {
     "id": "comp_011",
@@ -10926,7 +10825,11 @@
     ],
     "activeMinutes": 85,
     "totalEstimatedMinutes": 85,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 76,
+    "annoyance": 4,
+    "risk": 3,
+    "growthImpact": 1
   },
   {
     "id": "growth_010",
@@ -11033,7 +10936,11 @@
     ],
     "activeMinutes": 195,
     "totalEstimatedMinutes": 195,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 60,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 4
   },
   {
     "id": "growth_011",
@@ -11154,7 +11061,11 @@
     ],
     "activeMinutes": 130,
     "totalEstimatedMinutes": 130,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 61,
+    "annoyance": 3,
+    "risk": 1,
+    "growthImpact": 4
   },
   {
     "id": "growth_012",
@@ -11263,9 +11174,13 @@
       "sales",
       "outbound"
     ],
-    "activeMinutes": 145,
+    "activeMinutes": 130,
     "totalEstimatedMinutes": 145,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 55,
+    "annoyance": 3,
+    "risk": 2,
+    "growthImpact": 5
   },
   {
     "id": "growth_013",
@@ -11340,7 +11255,11 @@
     ],
     "activeMinutes": 80,
     "totalEstimatedMinutes": 80,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 62,
+    "annoyance": 2,
+    "risk": 1,
+    "growthImpact": 3
   },
   {
     "id": "sw_001",
@@ -11496,7 +11415,11 @@
     ],
     "activeMinutes": 240,
     "totalEstimatedMinutes": 240,
-    "hasAsyncSteps": false
+    "hasAsyncSteps": false,
+    "timeOrder": 31,
+    "annoyance": 2,
+    "risk": 2,
+    "growthImpact": 5
   },
   {
     "id": "sw_002",
@@ -11583,8 +11506,12 @@
       "release",
       "engineering"
     ],
-    "activeMinutes": 65,
+    "activeMinutes": 35,
     "totalEstimatedMinutes": 65,
-    "hasAsyncSteps": true
+    "hasAsyncSteps": true,
+    "timeOrder": 32,
+    "annoyance": 2,
+    "risk": 3,
+    "growthImpact": 3
   }
 ]

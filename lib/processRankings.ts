@@ -35,7 +35,9 @@ export const STEP_STORY_KINDS = ['function', 'computer-use', 'extra'] as const
 // One mapping: which of arena {arenaId}'s stories are RELEVANT to step {taskId}:{nodeId}.
 //   kind 'function'     — the step's covering arena (optionsArenaId, else the canonical
 //                         vendor's VENDOR_ARENA arena): "run payroll" → payroll stories.
-//   kind 'computer-use' — a temporarily-human step mapped onto the computer-use fleet's
+//   kind 'computer-use' — a MANUAL step (any non-agent route: form portals AND human steps —
+//                         founder 2026-09-18: "any time 'manual' is seen, see if we can do a
+//                         computer use process for it") mapped onto the computer-use fleet's
 //                         stories (browser-agents; ai-assistants restricted to its judged
 //                         computer-use stories) — "agents that could attempt it today".
 //   kind 'extra'        — the step mapped onto one of its ADDITIONAL covering arenas
@@ -462,6 +464,18 @@ export function computerUseEligibleProducts(source: ComputerUseSource, dir?: str
   return eligible
 }
 
+// Which steps get computer-use mappings — the single source of truth shared by the mapping
+// generator (pipeline/scripts/map-step-stories.ts) and every consumer, mirroring
+// coveringArenaId/extraArenasFor for the other kinds. Founder 2026-09-18: "any time 'manual'
+// is seen, see if we can do a computer use process for it" — EVERY non-agent step qualifies
+// (manual form/portal work and human steps alike), not just the irreducible-judgment subset.
+// The honest gate stays downstream: the mapper may answer [] (no fleet story genuinely
+// describes attempting the step), and computerUseOptions only surfaces vendors with judged
+// full/partial evidence.
+export function isComputerUseCandidate(node: Pick<DagNode, 'route'>): boolean {
+  return node.route !== 'agent'
+}
+
 // A temporarily-human step of one task, with node identity (splitGaps only carries labels).
 export interface HumanStep {
   taskId: string
@@ -484,11 +498,12 @@ export interface ComputerUseOption extends StepVendorScore {
   arenaName: string
 }
 
-// Ranked "computer use could attempt this today" options for one temporarily-human step, drawn
-// from every eligible source across the fleet and scored on the step's committed computer-use
-// story mapping. A vendor appears only with a positive story-derived score backed by at least
-// one full/partial verdict among the mapped stories — judged evidence, or nothing. The step
-// STAYS temporarily human; this is never a claim it's solved.
+// Ranked "computer use could attempt this today" options for one MANUAL step (any non-agent
+// route — see isComputerUseCandidate), drawn from every eligible source across the fleet and
+// scored on the step's committed computer-use story mapping. A vendor appears only with a
+// positive story-derived score backed by at least one full/partial verdict among the mapped
+// stories — judged evidence, or nothing. The step STAYS form/manual/human; this is never a
+// claim it's solved.
 export function computerUseOptions(taskId: string, nodeId: string, dir?: string): ComputerUseOption[] {
   const options: ComputerUseOption[] = []
   for (const entry of computerUseMappingsFor(taskId, nodeId, dir)) {
