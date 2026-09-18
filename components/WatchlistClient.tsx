@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
+import ProductLogoView from '@/components/ProductLogoView'
 import Sparkline from '@/components/Sparkline'
 import WatchButton, { useWatchlist } from '@/components/WatchButton'
 import { seriesFor } from '@/lib/scoreTrend'
@@ -61,6 +62,7 @@ export default function WatchlistClient({ products }: { products: WatchlistProdu
           <li key={`${p.arenaId}/${p.id}`} className="rounded-xl border border-zinc-800 p-3">
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
               <WatchButton productId={p.id} productName={p.name} />
+              <ProductLogoView product={{ id: p.id, name: p.name }} size={32} hasLogo={p.hasLogo} />
               <div className="min-w-0 flex-1">
                 <Link href={`/arena/${p.arenaId}/product/${p.id}`} className="font-medium hover:text-emerald-300">
                   {p.name}

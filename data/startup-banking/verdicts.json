@@ -980,7 +980,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of live customer support, phone/chat support hours, or urgent account-issue escalation channels; all evidence covers API/product/banking features and MCP/CLI tooling. Missing for 10: any documentation or claim about support channels, live/24-7 availability, or response times for urgent issues.",
+    "rationale": "No evidence in the pack addresses live customer support availability, hours, or channels for urgent account issues; all evidence concerns banking features, API/MCP capabilities, and developer tooling.",
     "evidenceIds": []
   },
   {
@@ -1001,14 +1001,13 @@
     "productId": "mercury",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Mercury explicitly documents an llms.txt endpoint for AI agents ('For AI agents: visit https://docs.mercury.com/llms.txt for an index of all pages formatted in Markdown and endpoints in OpenAPI. Append .md to any documentation page URL...'), and a live probe confirms llms.txt returns HTTP 200 with the expected markdown index content. This directly satisfies the story of pointing an agent at agent-oriented docs. Missing for 10: the OpenAPI spec referenced by llms.txt is not actually publicly downloadable (404s on all conventional paths, openapiVisibility set to admin-only), a minor inconsistency between the llms.txt promise and reality.",
+    "rationale": "Mercury explicitly documents an llms.txt endpoint ('For AI agents: visit https://docs.mercury.com/llms.txt for an index of all pages formatted in Markdown and endpoints in OpenAPI. Append .md to any documentation page URL to get its markdown version') and this was independently confirmed via a live probe returning HTTP 200 with the expected content. This directly satisfies the story of pointing an agent at llms.txt or agent-oriented docs. Missing for 10: independent confirmation that the OpenAPI file referenced alongside llms.txt is actually reachable (probe found candidate OpenAPI paths 404), which slightly undercuts the completeness of the agent-oriented doc surface.",
     "evidenceIds": [
       "mercury-docs-14",
       "mercury-probe-1",
-      "mercury-probe-2",
-      "mercury-probe-6"
+      "mercury-probe-2"
     ]
   },
   {
@@ -1017,14 +1016,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury offers AI-driven automation for specific workflows (auto-reading bills, auto-attaching receipts, AI-powered bookkeeping close) and an MCP server plus agent skills like mercury-analyze-spend and mercury-detect-anomaly that let AI query balances/transactions in natural language and surface anomalies. However, there's no evidence of proactive, in-product generated insights/dashboards (e.g., spend trend analysis, cash-flow forecasting, or automatic suggestions surfaced in the UI) — the MCP tools are read-only query/retrieval, not generative insight/suggestion features, and the skills repo is a separate CLI-driven agent toolkit rather than an in-product experience. missing for 10: proactive/native in-app AI insights or suggestions dashboard, evidence of forecasting or recommendation generation, independent confirmation these AI features produce actionable suggestions beyond data retrieval.",
+    "rationale": "Mercury shows some AI-driven data processing (bill-reading AI populating details, AI-powered automations for bookkeeping) and MCP-based natural-language querying of balances/transactions, plus agent skills like mercury-analyze-spend and mercury-detect-anomaly for anomaly detection. However, these are largely retrieval/automation features rather than proactive, in-product 'insights and suggestions' generated from a user's data (e.g., no evidence of spend trend analysis, forecasting, or recommendation surfaces inside the main product UI). missing for 10: in-product proactive insights/dashboards synthesizing user financial data, evidence of suggestion-generation beyond anomaly-detection skill, and independent/hands-on confirmation these AI features work as described.",
     "evidenceIds": [
       "mercury-docs-3",
       "mercury-docs-6",
-      "mercury-docs-5",
-      "mercury-probe-5",
+      "mercury-docs-32",
+      "mercury-docs-48",
       "mercury-supp-agent-skills",
-      "mercury-docs-32"
+      "mercury-docs-40"
     ]
   },
   {
@@ -1033,30 +1032,27 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury ships several automation primitives that can run in the background — webhooks/events API for reactive automation, auto-invoicing, AI-driven receipt matching and bookkeeping sync, plus an official CLI/API usable from scripts or CI pipelines and an 'agent skills' repo for CLI-driven automations. However, the flagship agent-facing surface (the hosted MCP server) is explicitly read-only (31 get/list tools, no write actions), so autonomous write-side actions (payments, invoices) would have to go through the API/CLI/webhooks rather than a persistent scheduled agent runtime, and no dedicated scheduler/cron/'run this automation on a trigger' product feature is documented. Missing for 10: a first-party scheduling/trigger engine for autonomous multi-step workflows, evidence of write-capable autonomous agent execution, and independent confirmation that background automations run reliably unattended.",
+    "rationale": "Mercury provides webhooks for event-driven automation, an API/CLI/MCP for programmatic financial actions, and AI-agent skills (mercury-analyze-spend, mercury-detect-anomaly) that could run autonomously, but these are developer-oriented building blocks rather than a native scheduler/rules engine for background automations aimed at an 'AI-native user' persona (e.g., no evidence of scheduled/triggered agent workflows running unattended within the product UI). missing for 10: a first-party scheduling/trigger system for autonomous background runs, documented always-on agent execution, and independent evidence of such automations actually running unattended.",
     "evidenceIds": [
-      "mercury-docs-3",
-      "mercury-docs-4",
-      "mercury-docs-6",
-      "mercury-docs-17",
-      "mercury-docs-29",
-      "mercury-probe-5",
+      "mercury-docs-42",
+      "mercury-docs-43",
+      "mercury-docs-40",
       "mercury-supp-agent-skills",
-      "mercury-probe-4"
+      "mercury-docs-29"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Mercury exposes narrow AI-powered automations (bill scanning, receipt auto-attach, bookkeeping sync) and offers external interfaces (API, CLI, MCP server) for other agents/tools to connect to Mercury data, but there is no evidence of a built-in conversational AI assistant inside the Mercury product itself that a user can delegate tasks to.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Mercury offers scattered AI automation features (AI reads bills and auto-fills details, AI-powered bookkeeping automation) but no evidence of a single built-in conversational AI assistant inside the product to which a user delegates arbitrary tasks; the natural-language 'What's my balance' capability is delivered via the external MCP server (for third-party AI clients like Claude/ChatGPT) rather than an assistant embedded in Mercury's own UI. Missing for 10: a dedicated in-app AI assistant/chat interface, evidence of multi-step task delegation, and independent hands-on confirmation of these AI features working as described.",
     "evidenceIds": [
       "mercury-docs-3",
       "mercury-docs-6",
-      "mercury-probe-4",
-      "mercury-probe-5"
+      "mercury-docs-48",
+      "mercury-docs-41"
     ]
   },
   {
@@ -1064,16 +1060,16 @@
     "storyId": "agentic-headless",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Mercury ships an official CLI (mercury-cli, verified via probe: install, version, full command tree) explicitly runnable from terminal, script, or CI pipeline, plus a REST API with scoped API tokens, an OAuth2 flow, a sandbox environment, and an official Go SDK — all suitable for headless/CI automation. Docs explicitly state 'Run Mercury operations from your terminal, a script, or a CI pipeline' and provide sandbox base URLs for safe automated testing. missing for 10: no independent third-party report of the CLI actually running inside a CI pipeline end-to-end, no official npm/PyPI SDK (only Go), and no public OpenAPI spec download for tooling generation.",
+    "confidence": "medium",
+    "rationale": "Mercury explicitly documents running operations 'from your terminal, a script, or a CI pipeline' via its REST API, official CLI (mercury-cli), scoped API tokens, and a sandbox environment for safe automated testing — all core building blocks for headless/CI use. missing for 10: independent third-party confirmation of actual CI pipeline usage and more detail on non-interactive auth flows for CI (e.g., service accounts) beyond scoped tokens.",
     "evidenceIds": [
       "mercury-docs-17",
       "mercury-docs-20",
-      "mercury-probe-3",
+      "mercury-docs-30",
       "mercury-docs-34",
-      "mercury-supp-sandbox-base-urls",
+      "mercury-probe-4",
       "mercury-supp-go-sdk",
-      "mercury-docs-30"
+      "mercury-supp-agent-skills"
     ]
   },
   {
@@ -1081,12 +1077,12 @@
     "storyId": "agentic-mcp-client",
     "verdict": "na",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Mercury is a banking/fintech platform, not an AI agent or assistant host; its AI-native positioning is as an MCP *server* (mcp.mercury.com) that other agents connect to, not as a client/host that plugs in third-party MCP servers to gain their tools. There is no evidence of any Mercury interface (chat, agent, orchestrator) into which external MCP servers can be registered — the natural and only role evidenced is the reverse direction, so this client-side axis is a category error for this product.",
+    "confidence": "high",
+    "rationale": "Mercury is a banking/fintech platform that itself exposes an official MCP server (mcp.mercury.com) for other AI clients to consume its tools — the reverse relationship of this story. There is no evidence Mercury has an agent/assistant surface that itself acts as an MCP client consuming external MCP servers' tools, so this client-role axis is a category mismatch for this kind of product.",
     "evidenceIds": [
       "mercury-docs-22",
-      "mercury-probe-4",
-      "mercury-probe-5"
+      "mercury-docs-41",
+      "mercury-probe-3"
     ]
   },
   {
@@ -1095,30 +1091,34 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury ships an official, hosted MCP server at https://mcp.mercury.com/mcp, documented and independently verified live via probes showing OAuth2-gated (PKCE, dynamic client registration) access and a concrete inventory of 31 read-only tools (balances, transactions, cards, invoices, etc.), matching the docs' description of connecting agents to financial context. Missing for 10: write/action capabilities via MCP (currently read-only by design) and independent community corroboration of real-world agent usage beyond vendor docs/probes.",
+    "rationale": "Mercury ships an official, documented MCP server (mcp.mercury.com/mcp) with connection instructions, supported tools (balance queries, transaction graphs, natural-language Q&A), and security controls like access revocation, corroborated by a probe confirming the docs page exists. This is a SaaS/banking platform, not itself an agent, so the axis applies and is clearly delivered. Missing for 10: independent third-party/hands-on confirmation of a live agent successfully connecting via the MCP server beyond vendor docs.",
     "evidenceIds": [
       "mercury-docs-22",
-      "mercury-docs-23",
+      "mercury-docs-33",
+      "mercury-docs-41",
+      "mercury-docs-50",
       "mercury-docs-24",
+      "mercury-docs-32",
       "mercury-docs-25",
-      "mercury-probe-4",
-      "mercury-probe-5"
+      "mercury-probe-3"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury ships a live, OAuth-gated hosted MCP server confirmed via probe to support natural-language queries like 'What's my balance today?' and 'Graph my last 6 months of transactions' (mercury-docs-23, mercury-docs-32, mercury-probe-4). However, independent tool-inventory verification shows all 31 MCP tools are read-only (get*/list*) with zero write/send/create actions, so natural-language commands can query data but cannot execute operations like payments or invoice creation. missing for 10: natural-language-driven write/action capability (payments, transfers, invoice creation) via MCP, and broader hands-on confirmation beyond query examples.",
+    "rationale": "Mercury ships an official MCP server allowing natural-language queries ('What's my balance today?', 'Graph my last 6 months of transactions') plus a documented CLI with agent skills for natural-language-driven financial operations, corroborated by first-party docs and a probe confirming the MCP endpoint. Missing for 10: independent/hands-on user testimony specifically about using natural-language commands (community evidence covers general product satisfaction, not NL command usage) and detail on the breadth/accuracy of NL command coverage beyond the two example queries.",
     "evidenceIds": [
+      "mercury-docs-22",
       "mercury-docs-23",
       "mercury-docs-32",
-      "mercury-docs-18",
-      "mercury-docs-31",
-      "mercury-probe-4",
-      "mercury-probe-5"
+      "mercury-docs-41",
+      "mercury-docs-48",
+      "mercury-supp-agent-skills",
+      "mercury-probe-3",
+      "mercury-probe-4"
     ]
   },
   {
@@ -1140,18 +1140,21 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Mercury publishes a comprehensive, versioned REST API (accounts, cards, transactions, invoices, payments, treasury) with interactive docs, OAuth2 and scoped API tokens, a sandbox environment, an official Go SDK, and an official CLI (verified via probe) covering the full resource surface — clearly documented and independently confirmed as working. It also explicitly caters to AI agents via llms.txt, agent skills repo, and a hosted MCP server. missing for 10: no publicly downloadable OpenAPI spec (confirmed gated to admin-only) and no official Python/Node SDKs, only community packages.",
+    "rationale": "Mercury exposes a well-documented public REST API (accounts, transactions, cards, invoicing, payments, webhooks, treasury) with versioned base paths, an interactive API reference with live request runner, an OAuth2 flow, scoped API tokens, an official Go SDK, sandbox environment, and an llms.txt/markdown index explicitly aimed at AI agents, plus an official MCP server and CLI/skills for agentic use. Missing for 10: independent third-party corroboration of API robustness/documentation completeness beyond Mercury's own docs, and no official Python/Node SDK (only community packages).",
     "evidenceIds": [
       "mercury-docs-12",
       "mercury-docs-13",
       "mercury-docs-14",
       "mercury-docs-15",
+      "mercury-docs-16",
       "mercury-docs-20",
-      "mercury-probe-3",
-      "mercury-supp-sandbox-base-urls",
+      "mercury-docs-30",
       "mercury-supp-interactive-docs",
+      "mercury-supp-versioned-api-docs",
       "mercury-supp-go-sdk",
-      "mercury-probe-6"
+      "mercury-supp-sandbox-base-urls",
+      "mercury-probe-1",
+      "mercury-probe-2"
     ]
   },
   {
@@ -1160,14 +1163,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury documents scoped/least-privilege credential issuance for agents: read-only, read-write, and custom API tokens (mercury-docs-35), 'Issue scoped API tokens with fine-grained permissions' (mercury-docs-20), OAuth2 authorization flows (mercury-docs-15), and dashboard-based revocation (mercury-docs-25). This is independently corroborated by a live probe of the hosted MCP server showing OAuth2/PKCE-gated access with explicit granular scopes (read, offline_access) and a read-only-only tool inventory (mercury-probe-4, mercury-probe-5), confirming scoped agent credentials work in practice. Missing for 10: independent hands-on verification of actually minting a 'custom' scoped token end-to-end and assigning it to a live agent workflow.",
+    "rationale": "Mercury explicitly documents issuing scoped API tokens with fine-grained permissions (read-only, read-write, custom), OAuth2 flows requiring approval for third-party access, and the ability to revoke access anytime from the dashboard — directly supporting least-privilege credential issuance for agents. missing for 10: independent/hands-on verification of granularity (e.g. exact permission scopes available), and no explicit documentation of per-agent credential rotation or expiry policies.",
     "evidenceIds": [
       "mercury-docs-20",
       "mercury-docs-35",
-      "mercury-docs-25",
       "mercury-docs-15",
-      "mercury-probe-4",
-      "mercury-probe-5"
+      "mercury-docs-25",
+      "mercury-docs-56"
     ]
   },
   {
@@ -1175,15 +1177,13 @@
     "storyId": "agentic-sdks",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Mercury ships one official SDK (Go, generated via Stainless) plus a public REST API, official CLI, and MCP server, giving AI-native builders real programmatic surface area, but there is no official JS/TypeScript or Python SDK — only community packages (e.g. n8n-nodes-mercury) — and the OpenAPI spec is deliberately kept non-public (openapiVisibility:'admin'), limiting SDK-generation/tooling for other languages. missing for 10: official SDKs in mainstream AI-stack languages (JS/Python), publicly downloadable OpenAPI spec, independent hands-on confirmation of SDK usage beyond docs.",
+    "confidence": "high",
+    "rationale": "Mercury ships one official SDK (Go, generated via Stainless) plus a documented REST API, OpenAPI-adjacent docs, and interactive reference with multi-language code samples, but explicitly has no official Python or JS/TS SDK — only community packages like n8n-nodes-mercury — which is a major gap for AI-native builders who overwhelmingly work in Python/TypeScript. Missing for 10: official Python SDK, official JS/TS SDK, independent hands-on validation of SDK usage in production agent workflows.",
     "evidenceIds": [
       "mercury-supp-go-sdk",
-      "mercury-supp-agent-skills",
-      "mercury-probe-3",
-      "mercury-probe-6",
-      "mercury-docs-16",
-      "mercury-docs-30"
+      "mercury-supp-interactive-docs",
+      "mercury-docs-14",
+      "mercury-probe-2"
     ]
   },
   {
@@ -1202,23 +1202,27 @@
     "productId": "mercury",
     "storyId": "ai-anomaly-spend-detection",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The official mercury-skills repo lists a 'mercury-detect-anomaly' skill for the Mercury CLI, indicating an AI-driven anomaly-detection capability exists, but there is no documentation of how it works, whether it flags out-of-policy transactions specifically, or how review/approval is triggered. Missing for 10: detailed docs on anomaly/policy-violation detection logic, automatic flagging-for-review workflow, and independent confirmation the skill functions as described.",
+    "rationale": "Mercury's official agent-skills repo lists a 'mercury-detect-anomaly' skill that could drive anomaly flagging via AI agents, and the platform separately offers rule-based controls like spend limits and 'Gate Disbursements' for manual review before fund release — but these are policy-based approval gates, not AI-driven anomaly detection built into the core product. There's no documentation of a native, automatic AI system that scans transactions and flags out-of-policy ones for review without external agent setup. Missing for 10: first-party documentation of an automatic AI anomaly-detection feature integrated into the banking product itself, evidence the mercury-detect-anomaly skill actually works end-to-end, and independent/hands-on confirmation of this capability in practice.",
     "evidenceIds": [
-      "mercury-supp-agent-skills"
+      "mercury-supp-agent-skills",
+      "mercury-docs-47",
+      "mercury-docs-10",
+      "mercury-docs-55"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "ai-bill-data-extraction",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Mercury explicitly markets an AI bill-pay feature that reads bills, auto-populates payment details, and remembers past recipients for quick approval, directly matching the story (mercury-docs-3). However, this is a single marketing-line claim with no deeper documentation of the review/approval workflow, no independent or hands-on corroboration, and the separate MCP tool inventory confirms only read-only capabilities with no bill-reading or auto-populate tools exposed there. Missing for 10: detailed product documentation of the bill-reading/approval UI, independent user reports confirming accuracy, and API/MCP support for this specific workflow.",
+    "rationale": "Mercury explicitly markets AI bill reading with auto-population: \"AI reads bills, populates details automatically, and remembers past recipients — so you can approve and pay in seconds\" plus receipt auto-attach automation, directly matching the story's review-before-pay workflow. Missing for 10: independent/hands-on verification of this specific AI bill-reading feature beyond vendor marketing copy, and detail on accuracy/edge cases.",
     "evidenceIds": [
       "mercury-docs-3",
-      "mercury-probe-5"
+      "mercury-docs-5",
+      "mercury-docs-28"
     ]
   },
   {
@@ -1242,12 +1246,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury's AI document-reading is limited to bills for bill-pay (auto-populating bill details) and receipt auto-attach; there is no evidence of parsing vendor contracts or auto-populating procurement request forms, which is a distinct workflow not covered in any docs, API, or MCP tool inventory.",
-    "evidenceIds": [
-      "mercury-docs-3",
-      "mercury-docs-5",
-      "mercury-probe-5"
-    ]
+    "rationale": "Mercury has AI-powered bill/receipt reading and invoicing automation, but there is no evidence of vendor contract parsing or auto-populating procurement request forms — this is a distinct capability from bill/receipt automation and is not documented anywhere in the evidence pack.",
+    "evidenceIds": []
   },
   {
     "productId": "mercury",
@@ -1267,7 +1267,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury is a business banking/finance platform (cards, payments, invoicing, treasury); travel booking and travel-rate monitoring/rebooking is entirely outside its product category, not a banking feature.",
+    "rationale": "Mercury is a business banking/finance platform; travel booking and travel-rate price monitoring/rebooking is entirely outside its product category (cards, payments, invoicing, banking API/MCP) — this is a wrong-axis story, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1276,25 +1276,27 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury's docs.mercury.com/reference hub is a ReadMe-based interactive API reference with a live 'Try It!' request runner, language-specific code samples (Shell, Node, Ruby, PHP, Python), Bearer auth field, and real endpoint schemas, backed by a sandbox environment for safe testing. This is corroborated by probes confirming the reference page loads and the sandbox base URLs work. Missing for 10: publicly downloadable OpenAPI spec (confirmed 404/admin-only via probes), and no independent hands-on account of actually running examples through the 'Try It' button.",
+    "rationale": "Mercury's API Reference hub (docs.mercury.com/reference, built on ReadMe) provides an interactive explorer with a 'Try It!' live request runner, generated code samples across multiple languages, param/auth fields, and response schemas per endpoint, plus a dedicated Sandbox environment with pre-loaded dummy data for safe testing. missing for 10: no independently verified OpenAPI/swagger file was found (probe returned 404s on standard paths), and no hands-on independent review specifically confirms the 'Try It' runner works end-to-end.",
     "evidenceIds": [
       "mercury-supp-interactive-docs",
       "mercury-supp-sandbox-base-urls",
-      "mercury-probe-6",
-      "mercury-docs-34"
+      "mercury-docs-34",
+      "mercury-docs-54",
+      "mercury-probe-2"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "api-machine-spec",
-    "verdict": "disputed",
-    "quality": 4,
-    "confidence": "high",
-    "rationale": "Mercury's llms.txt claims endpoints are documented 'in OpenAPI' format for AI agents (mercury-docs-14), and the docs hub has an interactive API reference, but direct probes of all standard OpenAPI spec paths return 404, and the reverify probe confirms the OpenAPI 3.0 definitions exist internally but are deliberately hidden from public download (showOpenAPIDownload:false, openapiVisibility:admin). So the claimed machine-readable spec is not actually obtainable by an AI-native user. Missing for 10: a publicly downloadable OpenAPI/JSON spec file, confirmation the llms.txt claim resolves to an actual retrievable machine-readable spec.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Mercury's docs explicitly tell AI agents to fetch llms.txt for an index of pages 'with endpoints in OpenAPI' format, and a probe confirms llms.txt returns 200 with real content, plus the API reference hub (ReadMe-based) exposes machine-generated schemas per endpoint. However, a direct probe for the actual OpenAPI/Swagger JSON file at conventional locations (openapi.json, swagger.json, etc.) returned 404s, so a downloadable, discoverable single spec file wasn't independently verified. Missing for 10: a verified direct download link/URL for the full OpenAPI spec file, and independent confirmation that the llms.txt-linked OpenAPI content is a complete, importable spec rather than just markdown-formatted endpoint descriptions.",
     "evidenceIds": [
       "mercury-docs-14",
+      "mercury-probe-1",
       "mercury-probe-2",
-      "mercury-probe-6"
+      "mercury-supp-interactive-docs"
     ]
   },
   {
@@ -1303,12 +1305,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Mercury documents a dedicated sandbox environment (sandbox.mercury.com/signup, api-sandbox.mercury.com base URL, oauth2-sandbox base URL) explicitly stated to use 'dummy data' with 'no real money involved,' and production tokens are rejected in sandbox, enforcing isolation; the API docs and CLI also expose an --environment sandbox|production flag confirming first-class sandbox support across API and CLI. missing for 10: no independent/hands-on community report of actually using the sandbox (only vendor docs and a CLI probe showing the flag exists, not an end-to-end sandbox test transcript).",
+    "rationale": "Mercury documents a dedicated Sandbox environment with its own signup, base URL (api-sandbox.mercury.com), pre-loaded dummy data, and explicit no-real-money guarantee, plus a note that production tokens don't work there — directly matching the story of testing without touching production data. The 'test safely in sandbox, then swap one URL for production' messaging and separate OAuth2-sandbox base URL further corroborate this as a first-class, documented workflow. Missing for 10: independent/hands-on developer confirmation that the sandbox behaves as documented (only vendor docs support this, no community verification found).",
     "evidenceIds": [
       "mercury-docs-30",
       "mercury-docs-34",
-      "mercury-supp-sandbox-base-urls",
-      "mercury-probe-3"
+      "mercury-docs-54",
+      "mercury-supp-sandbox-base-urls"
     ]
   },
   {
@@ -1329,23 +1331,21 @@
     "storyId": "application-status-tracking",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Mercury's onboarding application flow (apply online, CLI 'Onboarding (apply)' command) but nothing about being able to check or track the status of an application while it's under review — no dashboard, CLI, or API endpoint for application/review status is documented anywhere in the pack.",
-    "evidenceIds": [
-      "mercury-docs-26",
-      "mercury-probe-3"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence covers account application ('Apply online in 10 minutes') but nothing about tracking or checking the status of an application while it's under review. No status-check feature, dashboard indicator, or notification about pending application review is documented.",
+    "evidenceIds": []
   },
   {
     "productId": "mercury",
     "storyId": "auto-cash-topup-alerts",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "A long-time customer describes creating 'dozens of purpose-named accounts with auto-funding rules' (mercury-comm-1), which is real-world evidence of auto top-up/fund-transfer automation between accounts, and Mercury's Treasury product (mercury-docs-39) supports the treasury-yield angle. However, there is no vendor documentation describing configurable auto top-up rules or low-balance alert features anywhere in the docs/API/MCP evidence. missing for 10: first-party docs on auto top-up configuration, explicit low-balance alert/notification feature, and any API/webhook evidence for balance threshold alerts.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Community evidence confirms Mercury supports 'purpose-named accounts with auto-funding rules' (mercury-comm-1), indicating real auto top-up/sweep capability between accounts, and Mercury's API/webhooks let developers subscribe to account balance change events (mercury-docs-43) which could be used to build low-balance alerts. However, there is no first-party documentation of a native, built-in low-balance alert/notification feature — only the raw webhook/event API that a customer would need to wire up themselves, and no dedicated docs describing 'auto top-up' as a named product feature. Missing for 10: official docs describing a dedicated auto-top-up feature, native low-balance alert/notification UI, and independent confirmation that alerts fire automatically without custom integration.",
     "evidenceIds": [
       "mercury-comm-1",
-      "mercury-docs-39"
+      "mercury-docs-43",
+      "mercury-docs-57"
     ]
   },
   {
@@ -1382,45 +1382,40 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Mercury exposes per-resource CRUD endpoints (cards, invoices, transactions, categories) and a CLI/API that let scripts loop to create many cards or invoices, and a real customer reports creating 'hundreds of virtual debit cards' and 'dozens of purpose-named accounts' this way. However there's no documented native bulk/batch endpoint (e.g. batch-create invoices/cards in one call), and the MCP server is entirely read-only (list/get only, no write tools), so bulk write actions must be hand-scripted item-by-item via the REST API or CLI rather than a first-class bulk operation feature. Missing for 10: a documented batch/bulk-create API endpoint, bulk operations support in the MCP/agent surface, and vendor documentation explicitly describing bulk workflows.",
+    "rationale": "Mercury supports scaling operations like issuing unlimited virtual cards, listing all transactions/merchants/invoices, and scripting via API/CLI/skills (mercury-analyze-spend, mercury-receipt-upload), and a real user reports creating hundreds of virtual cards - concrete evidence of bulk-scale usage. However, there's no documented native 'batch' or 'bulk' endpoint (e.g., bulk transfer, bulk invoice creation, bulk categorize) - operations are exposed as single-item CRUD (Create/Get/Update/Delete one at a time) that an AI agent would need to loop over via API/CLI/MCP rather than a purpose-built bulk API.\nmissing for 10: native bulk/batch endpoints (e.g., batch payments, bulk categorization), evidence of bulk MCP tool calls, independent benchmark of large-scale automation reliability.",
     "evidenceIds": [
       "mercury-docs-2",
+      "mercury-docs-12",
+      "mercury-docs-13",
       "mercury-docs-21",
-      "mercury-comm-1",
-      "mercury-probe-3",
-      "mercury-probe-5",
-      "mercury-docs-13"
+      "mercury-supp-agent-skills",
+      "mercury-probe-4",
+      "mercury-comm-1"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Mercury exposes an Events/Webhooks API (create/update/verify webhook endpoints, get events) that lets external systems react to account events, and ships some built-in automatic behaviors (auto-attach receipts, automatic cashback deposit, AI bill-reading automations). However there is no evidence of a native in-product 'if event X then action Y' rule-builder that AI-native users can configure themselves — webhooks require the user to build their own listener/automation logic outside Mercury, and MCP tools are read-only so agents cannot trigger write actions from natural-language rules. Missing for 10: a documented rules/automation engine or trigger-action builder inside Mercury, and evidence that MCP/agent tooling can autonomously execute rule-based actions.",
+    "rationale": "Mercury supports event-driven automation via webhooks (transaction/balance-change events), approval-policy-gated disbursements, and community-confirmed auto-funding rules across accounts, letting users define conditions that trigger downstream actions. However, this is not a unified no-code 'rules engine' — it requires combining webhooks with external logic or relying on built-in approval/auto-funding features rather than a general-purpose trigger-action builder. Missing for 10: a native flexible rules/automation builder spanning arbitrary triggers and actions, and independent evidence of AI-native users actually building custom event-triggered automations.",
     "evidenceIds": [
-      "mercury-docs-13",
-      "mercury-docs-6",
-      "mercury-docs-5",
-      "mercury-docs-8",
-      "mercury-probe-5"
+      "mercury-docs-42",
+      "mercury-docs-43",
+      "mercury-docs-47",
+      "mercury-docs-55",
+      "mercury-comm-1"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Mercury offers some recurring, automation-like features (automatic invoices, AI-powered bill-pay automations, auto-funding rules for accounts) but there is no evidence of a general-purpose scheduler or 'recurring job/workflow' API, CLI command, or MCP tool that an AI-native user could invoke to schedule arbitrary tasks. The MCP server is explicitly read-only (31 get/list tools) and the CLI/API expose transactional resources, not job scheduling. Missing for 10: dedicated recurring-job/cron API or MCP tool, evidence of scheduling arbitrary workflows beyond built-in invoice/bill automations, and any documentation of a scheduler for AI agents.",
-    "evidenceIds": [
-      "mercury-docs-4",
-      "mercury-docs-6",
-      "mercury-docs-3",
-      "mercury-comm-1",
-      "mercury-probe-5"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Mercury's evidence covers APIs, CLI, MCP, invoicing, and webhooks, but nowhere describes a scheduler, cron-style trigger, or recurring-workflow mechanism that an AI agent could use to automate repeated tasks; 'automatic invoices' and webhooks are event-driven, not user-schedulable recurring jobs. No documentation, changelog entry, or community report mentions recurring job/workflow scheduling.",
+    "evidenceIds": []
   },
   {
     "productId": "mercury",
@@ -1428,45 +1423,52 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Mercury's API, CLI, MCP server, and sandbox for building integrations/automations, plus an API changelog for endpoint version history, but nothing about versioning, reviewing, or rolling back user-created automations themselves (e.g., no workflow/rule history, diff, or undo mechanism for automations built on top of Mercury).",
-    "evidenceIds": []
+    "rationale": "Mercury offers approval workflows for payments (e.g., gate disbursements, approval policies) but no evidence of versioning, reviewing, or rolling back automations/workflows themselves (e.g., no changelog or rollback mechanism for automation rules, agent skills, or webhook configs). API versioning (v1/v2) pertains to the API surface, not user-created automations.",
+    "evidenceIds": [
+      "mercury-docs-47",
+      "mercury-docs-55",
+      "mercury-supp-versioned-api-docs",
+      "mercury-supp-agent-skills"
+    ]
   },
   {
     "productId": "mercury",
     "storyId": "bank-verification-letter",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers cards, payments, invoicing, API/MCP tooling, and statement PDF downloads, but nowhere mentions displaying account/routing numbers or generating a bank verification letter — a standard banking feature that a business bank like Mercury could plausibly offer, but no evidence confirms it exists.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers cards, invoicing, payments, MCP/API access, and statement PDF downloads, but nowhere mentions viewing account/routing numbers or generating a bank verification letter — a standard banking feature that clearly applies to a business bank account product like Mercury.",
     "evidenceIds": []
   },
   {
     "productId": "mercury",
     "storyId": "bill-pay-approval-workflow",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Mercury's bill-pay feature explicitly supports uploading/reading bills via AI and an approve-then-pay flow (mercury-docs-3), plus granular permissions letting specific roles (e.g., an accountant) execute payments (mercury-docs-11) and spend/approval controls (mercury-docs-10, mercury-docs-38). The MCP tool inventory also lists dedicated approval-workflow endpoints like listSendMoneyApprovalRequests and getSafeRequest(s) (mercury-probe-5), corroborating a real multi-step approval mechanism for vendor payments. Missing for 10: no first-party documentation detailing the full workflow UI/steps (multi-approver routing rules, thresholds), and no independent/hands-on user report specifically validating the bill-approval process end-to-end.",
+    "rationale": "Mercury's bill pay flow lets users upload/email bills which AI reads and auto-populates (mercury-docs-3), and payments support optional approval controls via org approval policies and 'Gate Disbursements' for manual review/sign-off before funds release (mercury-docs-47, mercury-docs-53, mercury-docs-55), backed by granular permissions (mercury-docs-10, mercury-docs-11). Missing for 10: independent/hands-on verification of the end-to-end bill-to-approval-to-payment workflow and more detail on multi-step approver configuration.",
     "evidenceIds": [
       "mercury-docs-3",
-      "mercury-docs-11",
+      "mercury-docs-47",
+      "mercury-docs-53",
+      "mercury-docs-55",
       "mercury-docs-10",
-      "mercury-docs-38",
-      "mercury-probe-5"
+      "mercury-docs-11"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "budget-based-spend-enforcement",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury supports per-card spending limits, spend controls, and granular user permissions (mercury-docs-10, mercury-docs-38), and the Cards API lets you 'manage spending limits' programmatically (mercury-docs-36), which enforces spend caps at the card/user level. However, there is no evidence of a dedicated department- or program-level 'budget' object that aggregates multiple cards/users under one enforced ceiling — only individual card limits and role-based permissions are documented. Missing for 10: explicit department/program budget creation, budget rollup/aggregation across multiple cards or cost centers, and automatic alerts/enforcement tied to a program-level allocation rather than per-card limits.",
+    "rationale": "Mercury supports card-level and team-level spend controls — 'curb team spend with card limits, spend controls, and granular user permissions' (mercury-docs-10), programmatic spending-limit management via the Cards API (mercury-docs-36/52), and cashback/expense controls 'with cards, reimbursements, limits, and approvals' (mercury-docs-38) — which can approximate department/program budgets by issuing purpose-specific cards with individual limits (corroborated by a community user who created 'hundreds of virtual debit cards with individual limits' and 'dozens of purpose-named accounts', mercury-comm-1). However there's no evidence of a dedicated 'department/program budget' construct that aggregates spend across multiple cards/users against one enforced pool, only per-card/per-user limits and approval policies. Missing for 10: an explicit department- or program-level budget object with automatic aggregate enforcement across multiple cards/users, and independent verification of that specific feature beyond per-card limits.",
     "evidenceIds": [
       "mercury-docs-10",
       "mercury-docs-36",
+      "mercury-docs-52",
       "mercury-docs-38",
-      "mercury-docs-11"
+      "mercury-comm-1"
     ]
   },
   {
@@ -1475,11 +1477,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury explicitly markets per-card spend limits and granular permissions ('Curb team spend with card limits, spend controls, and granular user permissions'), backed by virtual card creation, card lifecycle/limit management via API, and independent community confirmation of creating hundreds of virtual cards with individual limits. missing for 10: no hands-on walkthrough of setting a specific per-employee limit in the UI, and no detail on the granularity of permission types available to finance leads beyond marketing copy.",
+    "rationale": "Mercury explicitly documents card-level spend limits, granular user permissions, and card lifecycle controls ('Curb team spend with card limits, spend controls, and granular user permissions'; virtual card issuance with per-card limits via API), and this is corroborated by a 5-year customer describing 'hundreds of virtual debit cards with individual limits.' Missing for 10: more detail on per-employee role-based control granularity and independent finance-lead-specific usage reports beyond one customer anecdote.",
     "evidenceIds": [
       "mercury-docs-10",
       "mercury-docs-2",
       "mercury-docs-36",
+      "mercury-docs-52",
       "mercury-docs-38",
       "mercury-comm-1"
     ]
@@ -1490,39 +1493,35 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury documents a unified platform covering banking, virtual/physical cards with spend controls, bill pay with AI-assisted invoice reading, AR/invoicing, receipt auto-attachment, accounting sync (QuickBooks/Xero/NetSuite), Treasury yield, and FX/international payments, all inside one account — directly consolidating spend, bill pay, and banking tools. Independent community evidence (5-year customer) corroborates real-world use across cards, wires, and multi-account structures replacing other tools. missing for 10: no independent evidence of replacing named specific competitor point-solutions (e.g., Expensify/Bill.com) or third-party case studies quantifying tool consolidation.",
+    "rationale": "Mercury's evidence pack documents a consolidated platform covering banking/accounts, cards & spend controls, bill pay/AI-read invoices, receipt capture, invoicing/AR, international payments, treasury yield, and accounting sync (QuickBooks/Xero/NetSuite) all within one dashboard, and a 5-year real customer account (mercury-comm-1) confirms heavy real-world use replacing multiple functions (cards, accounts, wires, shared access). Missing for 10: independent third-party comparison confirming full replacement of dedicated point solutions (e.g., expense management, dedicated bill-pay software) and no case study explicitly framing 'consolidation' as a stated outcome/testimonial.",
     "evidenceIds": [
       "mercury-docs-2",
       "mercury-docs-3",
       "mercury-docs-4",
       "mercury-docs-5",
       "mercury-docs-6",
-      "mercury-docs-7",
       "mercury-docs-10",
       "mercury-docs-38",
       "mercury-docs-39",
-      "mercury-comm-1"
+      "mercury-comm-1",
+      "mercury-comm-2"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "dedicated-accounting-api",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury publishes a dedicated REST API with extensive accounting-related resources — transactions, categories, statements, invoices, customers/AR, webhooks, treasury — supporting both viewing (list/get) and managing (create/update/delete/cancel) data, backed by OAuth2, scoped tokens, a sandbox environment, versioned docs, an official CLI (verified working via probe), and a Go SDK. Probes independently confirm the CLI installs and lists real resource commands and the sandbox/interactive docs are functional, giving strong first-party plus hands-on corroboration.\nMissing for 10: independent third-party developer reviews of the core REST API itself (vs. MCP) and a publicly downloadable OpenAPI spec (confirmed internal-only via probe).",
+    "rationale": "Mercury exposes a dedicated Accounting/Accounts Receivable-adjacent API surface covering transactions, categories, statements, merchants, invoices, customers, webhooks, and events, plus QuickBooks/Xero/NetSuite sync, sandbox testing, OAuth2, and an official Go SDK, letting developers view and manage accounting-related data programmatically. Missing for 10: independent/hands-on developer corroboration of the accounting-specific endpoints (categories, statements, AR API) beyond vendor docs, and no official npm/PyPI SDK for broader language coverage.",
     "evidenceIds": [
       "mercury-docs-12",
       "mercury-docs-13",
-      "mercury-docs-15",
+      "mercury-docs-6",
       "mercury-docs-34",
-      "mercury-docs-35",
-      "mercury-probe-3",
-      "mercury-supp-sandbox-base-urls",
-      "mercury-supp-interactive-docs",
-      "mercury-supp-versioned-api-docs",
+      "mercury-docs-15",
       "mercury-supp-go-sdk",
-      "mercury-probe-6"
+      "mercury-docs-42"
     ]
   },
   {
@@ -1539,17 +1538,11 @@
   {
     "productId": "mercury",
     "storyId": "embedded-banking-no-license",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury's evidence describes a business bank account plus an API/MCP/CLI for managing that single business's own accounts, cards, invoices, and payments — not a banking-as-a-service platform for issuing white-labeled accounts to a developer's end customers under Mercury's charter. Nothing in the docs, changelog, SDKs, or API catalog mentions account issuance for third-party end users, program management, or BaaS partnership terms.",
-    "evidenceIds": [
-      "mercury-docs-16",
-      "mercury-docs-13",
-      "mercury-docs-29",
-      "mercury-probe-3",
-      "mercury-probe-5"
-    ]
+    "rationale": "Mercury's evidence pack describes a business bank account with API/CLI/MCP access for managing one's OWN Mercury account (payments, invoicing, cards, transactions) — not a banking-as-a-service/embedded-finance program that lets a developer issue licensed bank accounts to their own end customers under Mercury's charter. This story targets a fundamentally different product category (BaaS/embedded banking platform), which is outside what Mercury is shown to offer.",
+    "evidenceIds": []
   },
   {
     "productId": "mercury",
@@ -1557,9 +1550,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Mercury advertises 'no-fee USD payments around the globe' but nothing in the evidence specifies transfer speed, let alone a sub-minute arrival time for international payments; typical wire/ACH rails imply multi-day settlement, and no probe or doc confirms near-instant delivery abroad.",
+    "rationale": "Mercury documents international/domestic wire transfers and no-fee USD payments abroad (mercury-docs-7, mercury-docs-46, mercury-docs-53), but nothing in the evidence pack claims or demonstrates sub-minute arrival times for cross-border transfers — wires/ACH are the described rails, not instant settlement. Missing for 10: any documentation or claim of speed guarantees, real-time/instant international settlement, or evidence contradicting typical wire transfer timelines.",
     "evidenceIds": [
-      "mercury-docs-7"
+      "mercury-docs-7",
+      "mercury-docs-46",
+      "mercury-docs-53"
     ]
   },
   {
@@ -1579,8 +1574,8 @@
     "storyId": "fdic-insurance-sweep",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Mercury markets Treasury sweep accounts (mercury-docs-39 mentions 'Treasury by Mercury Advisory' yield) but no evidence describes automatic sweeping of deposits across multiple partner banks specifically to maximize FDIC coverage — the docs focus on cards, invoicing, API/MCP tooling, and yield, not multi-bank FDIC sweep networks.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers Mercury's banking API, cards, invoicing, MCP, and Treasury yield products, but nowhere mentions automatic sweeping of deposits across partner banks for expanded FDIC coverage — a core feature category (like sweep networks) that other fintechs advertise explicitly.",
     "evidenceIds": []
   },
   {
@@ -1589,20 +1584,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers card issuance, virtual cards, cashback, and no-fee USD payments/transfers, but nothing addresses foreign transaction fees, currency conversion fees, or ATM cash withdrawal abroad on a Mercury card. 'No-fee USD payments around the globe' (mercury-docs-7) refers to outbound payments, not card spend/withdrawal abroad, so it does not substantiate this specific claim.",
-    "evidenceIds": []
+    "rationale": "Evidence covers cards, virtual cards, cashback, and no-fee USD payments, but there is no mention of foreign currency spending, foreign ATM withdrawals, or FX/foreign transaction fee waivers on the card product itself — the 'no-fee' claim is specific to USD payments/transfers, not card FX spend abroad.",
+    "evidenceIds": [
+      "mercury-docs-7",
+      "mercury-docs-38",
+      "mercury-docs-27"
+    ]
   },
   {
     "productId": "mercury",
     "storyId": "freeze-replace-card",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Mercury lets you retrieve cards and, via the Cards API, 'manage spending limits and control card lifecycle states' (mercury-docs-1, mercury-docs-36), which plausibly covers freezing/deactivating a card, but there is no explicit documentation of a 'freeze card' action or of ordering a physical replacement card for a lost/stolen card. missing for 10: explicit freeze/lock card documentation, explicit lost/stolen card replacement flow, UI or API evidence of the finance-lead-facing freeze button.",
+    "rationale": "Mercury's Cards API supports 'control card lifecycle states' and spending limits (mercury-docs-36, mercury-docs-52), which could plausibly include locking/freezing a card, and card management is a core feature (mercury-docs-1, mercury-docs-10). However, no evidence explicitly documents a one-click freeze action for a lost/stolen card or an 'order replacement card' workflow. Missing for 10: explicit freeze/lock terminology, replacement-card issuance flow, and any confirmation this works for physical (not just virtual) cards.",
     "evidenceIds": [
-      "mercury-docs-1",
       "mercury-docs-36",
-      "mercury-docs-2"
+      "mercury-docs-52",
+      "mercury-docs-1",
+      "mercury-docs-10",
+      "mercury-docs-27"
     ]
   },
   {
@@ -1611,22 +1612,24 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Mercury advertises syncing with QuickBooks, Xero, and NetSuite to help close books faster (mercury-docs-6), which addresses the ERP-integration theme, but there is no detail confirming true real-time bidirectional sync (versus periodic export/import) or automated journal-entry creation, and no independent/hands-on evidence validating the sync's reliability or completeness. Missing for 10: documentation of bidirectional data flow direction, real-time sync frequency/latency, automated journal entry mapping, and independent confirmation the integration works as described.",
+    "rationale": "Mercury claims it can 'Sync with Quickbooks, Xero or NetSuite, and save hours with AI-powered automations to close your books faster,' which touches accounting-integration sync, and webhooks/events APIs support real-time notifications for transactions and balances. However, the evidence never specifies whether this sync is bidirectional (i.e., writing journal entries back into the ERP) or merely a one-way export/reconciliation feed, and QuickBooks/Xero/NetSuite are accounting platforms rather than full ERP systems. Missing for 10: explicit description of bidirectional data flow, real-time journal-entry posting, true ERP (SAP/Oracle-class) integration, and independent confirmation that manual journal entries are eliminated.",
     "evidenceIds": [
-      "mercury-docs-6"
+      "mercury-docs-6",
+      "mercury-docs-42",
+      "mercury-docs-43"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "high-yield-savings-subaccount",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Mercury offers a high-yield Treasury product (up to 3.89% yield) and supports multiple purpose-named sub-accounts, and a long-tenure customer reports using 'auto-funding rules' across dozens of these accounts, supporting the described workflow. However, there is no official documentation describing a dedicated 'automated transfer rule' feature or explicit high-yield savings sub-account mechanics — this evidence comes only from a single community anecdote, not vendor docs or API endpoints. Missing for 10: official docs on automated/recurring transfer rule configuration, explicit sub-account-to-Treasury auto-sweep feature documentation, and independent verification beyond one HN comment.",
+    "rationale": "Mercury offers Treasury accounts yielding up to 3.89% and internal transfer APIs/rules that support moving funds between checking and treasury/investment accounts, which enables building a cash cushion. However, there's no explicit evidence of automated 'sweep' or rule-based recurring transfer scheduling (e.g., auto-move excess cash above a threshold) specifically tied to the high-yield sub-account. missing for 10: documented automated transfer/sweep rules or scheduled recurring transfer feature explicitly tied to the Treasury/high-yield sub-account, and independent confirmation of yield reliability.",
     "evidenceIds": [
       "mercury-docs-39",
-      "mercury-docs-12",
-      "mercury-comm-1"
+      "mercury-docs-49",
+      "mercury-docs-57"
     ]
   },
   {
@@ -1635,26 +1638,28 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury's docs explicitly market instant virtual card creation scoped to purposes like ad spend or vendor use, backed by spend controls/limits and an API for issuing/managing card lifecycle, and a 5-year customer corroborates creating hundreds of individually-limited virtual cards in practice. Missing for 10: explicit documentation of merchant-lock/single-vendor restriction mechanics beyond naming and limits, and independent confirmation specifically of 'purpose-scoped' (vs just limited) cards.",
+    "rationale": "Mercury explicitly markets instant virtual card creation scoped to purpose (ad spend, contractors, vendors) with spend limits and permissions, backed by API endpoints to issue/manage cards and control lifecycle states, plus community corroboration of creating hundreds of purpose-scoped virtual cards with individual limits. missing for 10: independent quantitative benchmarks on creation speed and more detail on 'single-vendor lock' enforcement beyond limits/permissions.",
     "evidenceIds": [
       "mercury-docs-2",
       "mercury-docs-10",
       "mercury-docs-36",
+      "mercury-docs-52",
       "mercury-comm-1"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "invoice-creation-collection",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Mercury explicitly supports sending manual/automatic invoices with flexible payment methods and customer management (mercury-docs-4), a dedicated Invoices API (create/list/get/update/cancel, download PDF) (mercury-docs-13), and invoice volume tied to paid plans (mercury-docs-21). However, evidence does not confirm invoice 'branding' customization (logos/colors) or hands-on/community confirmation of the invoicing UX itself. missing for 10: independent/hands-on evidence of invoice branding customization options, and third-party confirmation of the payment-collection experience from a customer's perspective.",
+    "rationale": "Mercury clearly supports invoice creation and sending with payment collection (manual/automatic invoices, flexible payment methods, ACH/card collection, invoice limits by plan) and an Accounts Receivable API for programmatic invoicing, but there is no explicit evidence of 'branded' invoices (custom logo/branding, templates) or of a finance-lead-facing UI for designing invoice appearance — most evidence is API/developer-oriented rather than a described finance-lead dashboard workflow. missing for 10: branding/customization evidence, direct UI walkthrough for finance-lead, independent/hands-on confirmation of invoicing feature.",
     "evidenceIds": [
       "mercury-docs-4",
-      "mercury-docs-13",
       "mercury-docs-21",
-      "mercury-docs-19"
+      "mercury-docs-45",
+      "mercury-docs-13",
+      "mercury-docs-53"
     ]
   },
   {
@@ -1672,12 +1677,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Mercury offers USD checking/savings/Treasury accounts and no-fee USD international payments (mercury-docs-7, mercury-docs-39), but nothing indicates the ability to hold or manage balances in foreign currencies (e.g., EUR, GBP) within a single account — all documented balances, cards, and API/MCP tools reference USD only. Missing for 10: any documentation of multi-currency account creation, foreign-currency balance holding, or currency conversion/FX management features.",
-    "evidenceIds": [
-      "mercury-docs-7",
-      "mercury-docs-39",
-      "mercury-docs-24"
-    ]
+    "rationale": "Evidence shows Mercury supports no-fee USD payments internationally and domestic/international wires (mercury-docs-7, mercury-docs-46, mercury-docs-53), but there is no evidence of holding or managing balances in multiple currencies within a single account — everything described (accounts, transfers, treasury) is USD-denominated.",
+    "evidenceIds": []
   },
   {
     "productId": "mercury",
@@ -1685,20 +1686,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Mercury offers yield via 'Treasury by Mercury Advisory' (up to 3.89%) but this and all cash/banking references are USD-only — there is no mention of interest-bearing balances in multiple currencies, multi-currency accounts, or FX-denominated yield anywhere in the pack. Missing for 10: any documentation of multi-currency account holding, multi-currency interest rates, or FX yield products.",
+    "rationale": "Evidence shows Mercury offers a single-currency (USD) yield product via 'Treasury by Mercury Advisory' (up to 3.89%), but there is no mention anywhere in the evidence pack of holding or earning interest on balances in multiple currencies — Mercury is depicted as a USD-centric business banking platform with no multi-currency account or FX interest feature documented.",
     "evidenceIds": [
       "mercury-docs-39",
-      "mercury-docs-7"
+      "mercury-docs-49"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "multiple-checking-subaccounts",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "A long-term hands-on user reports creating 'dozens of purpose-named accounts with auto-funding rules,' directly confirming both multiple checking sub-accounts and automated allocation of funds across them. No first-party Mercury docs in the pack explicitly describe the sub-account/auto-allocation feature or its configuration options, so evidence rests on a single community account rather than documented capability. Missing for 10: first-party docs on creating sub-accounts and configuring auto-allocation rules, and additional independent corroboration.",
+    "rationale": "Mercury natively supports opening multiple checking accounts and internal transfers between them (mercury-docs-57, mercury-docs-39), and a long-time customer explicitly describes running 'dozens of purpose-named accounts with auto-funding rules' (mercury-comm-1), corroborating auto-allocation of deposits. However, this auto-allocation capability is not documented in Mercury's own first-party product pages or API docs — only confirmed anecdotally. Missing for 10: first-party documentation of an 'auto-allocation'/auto-funding-rules feature, configuration UI details, and independent corroboration beyond a single community post.",
     "evidenceIds": [
+      "mercury-docs-57",
+      "mercury-docs-39",
       "mercury-comm-1"
     ]
   },
@@ -1708,7 +1711,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Mercury explicitly advertises automatic, unlimited cashback deposited directly into the account with no manual redemption or points system, and separately states a concrete 1.5% cashback rate on credit card spend, directly matching the founder story. Missing for 10: independent/community corroboration that the cashback mechanic works as described in practice, and clarity on whether it applies uniformly to debit vs credit cards.",
+    "rationale": "Mercury explicitly advertises automatic, no-redemption cashback ('Earn unlimited cashback automatically deposited into your account — no manual redemption or confusing points') and quantifies it as 1.5% cashback on credit card spend integrated with card controls. Missing for 10: independent/hands-on user corroboration specifically of the cashback mechanic (community evidence covers cards/limits but not cashback crediting) and detail on eligibility/tiering.",
     "evidenceIds": [
       "mercury-docs-8",
       "mercury-docs-38"
@@ -1720,11 +1723,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mercury docs explicitly describe granular user permissions and built-in approval permissions that let designated teammates (e.g. an accountant) approve and send payments in one click, and product marketing highlights team spend controls with approvals. Community evidence corroborates real-world use of card/account permission controls, though not specifically the one-click approval flow. Missing for 10: independent/hands-on confirmation of the one-click approval UX itself and detail on how granular approval roles are configured (e.g., approval thresholds, multi-approver workflows).",
+    "rationale": "Mercury explicitly documents granular user permissions and role-based approval controls, with direct claims like 'Built-in permissions means our accountant can easily make payments — literally one click and it's done' and 'Curb team spend with card limits, spend controls, and granular user permissions.' This is corroborated by API-level features (Gate Disbursements, approval-based request-to-send-money) and a 5-year customer's community account describing granular access setups for shared users, supporting real-world use of permission controls. Missing for 10: independent hands-on confirmation specifically of the one-click approval UI/workflow (rather than just the marketing claim), and detail on configuring which teammates get approver roles.",
     "evidenceIds": [
-      "mercury-docs-10",
       "mercury-docs-11",
+      "mercury-docs-10",
       "mercury-docs-38",
+      "mercury-docs-47",
+      "mercury-docs-55",
+      "mercury-docs-53",
       "mercury-comm-1"
     ]
   },
@@ -1732,19 +1738,20 @@
     "productId": "mercury",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Mercury's REST API, CLI, and SDK expose most core UI actions—accounts, transactions, card issuance/lifecycle, invoices/customers, categories, statements, webhooks, ACH payments, and even Vault agent-card credentials (mercury-docs-12,13,36,37; mercury-probe-3)—with sandbox, versioning, and changelog support. However parity is incomplete: the AI bill-reading/bill-pay flow (mercury-docs-3) has no documented API equivalent, and the hosted MCP surface is explicitly read-only (31 get/list tools, zero write actions per mercury-probe-5), meaning an AI agent using MCP cannot perform actions like payments or invoice creation that a human can in the UI. Missing for 10: documented API/CLI parity for bill-pay AI feature, write-capable MCP tools matching UI actions, and confirmation that all UI-only conveniences (universal search, cashback redemption) have functional API analogs.",
+    "rationale": "Mercury's API/MCP/CLI surface covers most core banking actions available in the UI — accounts, transactions, cards (including virtual card issuance and lifecycle control), invoicing/AR, payments (ACH/wire/check), transfers, categories, statements, webhooks, and OAuth2 access (mercury-docs-12,13,36,46,53,57,15) — and Mercury explicitly markets 'a full banking API, terminal-native CLI, and AI-ready MCP server' (mercury-docs-40). However, several UI-surfaced capabilities (account opening/onboarding, cashback/rewards redemption, QuickBooks/Xero/NetSuite sync automation, universal search, accountant one-click permission flows) are not documented as API-accessible, and no vendor statement claims full UI/API parity. Missing for 10: explicit parity claim, API endpoints for onboarding/rewards/accounting-sync features, and independent confirmation that no UI action lacks an API equivalent.",
     "evidenceIds": [
-      "mercury-docs-3",
       "mercury-docs-12",
       "mercury-docs-13",
-      "mercury-docs-29",
       "mercury-docs-36",
-      "mercury-docs-37",
-      "mercury-probe-3",
-      "mercury-probe-5",
-      "mercury-probe-4"
+      "mercury-docs-40",
+      "mercury-docs-46",
+      "mercury-docs-53",
+      "mercury-docs-6",
+      "mercury-docs-8",
+      "mercury-docs-26",
+      "mercury-docs-9"
     ]
   },
   {
@@ -1767,7 +1774,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury is a proprietary banking/fintech product, not open-source software; the question of reading its source under an open license is a category error for this type of product (a bank platform), not an applicable openness axis.",
+    "rationale": "Mercury is a fintech/banking platform (business banking, cards, payments, API/MCP), not an open-source software product; its core product (the banking service) has no open-source license and there's no evidence its source is available under any license. This axis is a category error for a proprietary SaaS/banking product.",
     "evidenceIds": []
   },
   {
@@ -1776,7 +1783,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury is a hosted banking/fintech SaaS platform (accounts, cards, payments, API/MCP access to a regulated financial service); self-hosting the 'core product' is a category error since banking infrastructure cannot be run by customers themselves — this axis does not apply to this kind of product.",
+    "rationale": "Mercury is a banking/fintech SaaS platform, not open-source software that can be deployed on one's own infrastructure; self-hosting a bank's core ledger/product is not a coherent axis for this category of product.",
     "evidenceIds": []
   },
   {
@@ -1798,13 +1805,16 @@
     "productId": "mercury",
     "storyId": "po-matched-invoice-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Mercury's bill pay AI reads and auto-populates bill details and remembers recipients for quick approval (mercury-docs-3), and permissions allow routing payments to approvers like accountants (mercury-docs-11), but there is no evidence of purchase-order matching or GL/expense coding logic tying invoices to POs — core parts of the described workflow are unevidenced. missing for 10: purchase order matching/reconciliation, explicit invoice coding to GL categories tied to POs, and a documented multi-step approval routing workflow for AP.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Mercury supports AP-adjacent automation — AI reads bills and auto-populates details for approval (mercury-docs-3), receipt auto-attachment (mercury-docs-5/28), payment routing with approval policies (mercury-docs-47, mercury-docs-55), and QuickBooks/Xero/NetSuite sync with AI-powered close automations (mercury-docs-6) — but there is no evidence of purchase-order creation/management, three-way PO-to-invoice matching, or GL coding logic tied to POs anywhere in the pack. missing for 10: purchase order data model/API, automated PO-invoice matching logic, GL/expense coding rules engine, end-to-end evidence of the full match-code-route workflow rather than separate bill-pay and sync features.",
     "evidenceIds": [
       "mercury-docs-3",
-      "mercury-docs-11",
-      "mercury-docs-10"
+      "mercury-docs-5",
+      "mercury-docs-6",
+      "mercury-docs-28",
+      "mercury-docs-47",
+      "mercury-docs-55"
     ]
   },
   {
@@ -1822,7 +1832,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury is a business banking/API platform, not an AI model provider or consumer content service that trains models on user data — the 'prevent my data from being used to train AI models' privacy axis doesn't apply to this category of product.",
+    "rationale": "Mercury is a banking/financial platform, not an AI model provider or data-processing tool that trains AI models on user data; there is no applicable 'AI training opt-out' axis for this product category — this is a category error for a banking API/service.",
     "evidenceIds": []
   },
   {
@@ -1831,7 +1841,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only the ability to revoke MCP/API access (mercury-docs-25), but nothing about controlling data retention periods or deleting stored/processed data for AI-native usage; banking retention requirements make this a fair question but no capability is documented.",
+    "rationale": "Evidence shows Mercury lets users revoke API/MCP access from the dashboard (mercury-docs-25), but there is no evidence of any data retention policy, data export, or data deletion controls for account/transaction data processed by AI agents or MCP tools. Missing for 10: documented retention periods, a deletion/export mechanism for stored financial/AI-interaction data, and any privacy-policy statement on how long data used by AI tools is kept.",
     "evidenceIds": [
       "mercury-docs-25"
     ]
@@ -1842,7 +1852,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mercury is a banking/fintech platform, not an AI tool that itself collects/transmits telemetry about a user's usage of the product—no evidence pack item addresses telemetry opt-out and this axis is a mismatch for a financial services product's evidence.",
+    "rationale": "Mercury is a banking/financial platform, not an AI tool or SDK collecting user telemetry from AI-native usage; telemetry opt-out is a category mismatch for this product type, and no evidence discusses telemetry settings at all.",
     "evidenceIds": []
   },
   {
@@ -1851,12 +1861,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Mercury's docs explicitly state receipts can be emailed or uploaded and are auto-attached to the correct card transaction, directly matching the story, with API support for uploading transaction attachments. missing for 10: independent/hands-on confirmation (e.g. community report) that auto-attach matching works reliably in practice, and no detail on edge cases (mismatched/ambiguous receipts).",
+    "rationale": "Mercury's product docs explicitly state receipts can be emailed or uploaded and are auto-attached to the correct card transaction with no manual effort, directly matching the story, and this is corroborated by an API endpoint for uploading transaction attachments and metadata. Missing for 10: independent/hands-on user confirmation of the auto-matching accuracy and no detail on edge cases (e.g., ambiguous matches or multi-currency receipts).",
     "evidenceIds": [
       "mercury-docs-5",
       "mercury-docs-28",
-      "mercury-docs-29",
-      "mercury-docs-12"
+      "mercury-docs-12",
+      "mercury-docs-29"
     ]
   },
   {
@@ -1864,24 +1874,27 @@
     "storyId": "receive-multi-currency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Mercury offers USD checking/savings accounts and sending no-fee USD payments globally, but there is no evidence of local currency receiving account details (e.g., local IBAN/EUR, GBP, local clearing numbers) for accepting multi-currency payments — this is a fair question for a business banking product but Mercury's evidence pack is USD-centric throughout.",
+    "confidence": "high",
+    "rationale": "The evidence pack shows Mercury supports USD banking, ACH/wire/check payouts, invoicing, and sending 'no-fee USD payments around the globe' (mercury-docs-7), but nothing indicates Mercury offers local account details (e.g., local IBANs, sort codes, or routing numbers) in multiple currencies for receiving payments. This is a plausible axis for a business banking product, but no supporting evidence exists.",
     "evidenceIds": [
       "mercury-docs-7",
-      "mercury-docs-39"
+      "mercury-docs-46",
+      "mercury-docs-53"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "request-limit-increase",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Mercury documents self-service control over card spend limits (\"Curb team spend with card limits, spend controls\" and API support to \"manage spending limits\"), which lets an admin set/adjust limits directly rather than submit a request for approval. There is no explicit evidence of a dedicated 'request a transaction/credit limit increase' self-service screen or approval workflow. Missing for 10: explicit UI/flow for submitting and approving a limit-increase request, confirmation this applies to overall account/credit limits (not just per-card spend caps), and independent/hands-on verification of the flow.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Mercury documents setting and managing card/spend limits (mercury-docs-10, mercury-docs-36, mercury-docs-52) and approval-gated money movement (mercury-docs-47, mercury-docs-55), but there is no evidence of a self-service screen specifically for a finance-lead to *request* a transaction limit *increase* (e.g., an increase workflow with review/approval for existing limits). Limit controls shown are admin-configured, not a request-for-increase flow.",
     "evidenceIds": [
       "mercury-docs-10",
       "mercury-docs-36",
-      "mercury-docs-38"
+      "mercury-docs-52",
+      "mercury-docs-47",
+      "mercury-docs-55"
     ]
   },
   {
@@ -1902,26 +1915,29 @@
     "productId": "mercury",
     "storyId": "send-domestic-ach-wire",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "high",
-    "rationale": "Mercury's core banking product supports sending ACH transfers and wires, evidenced by API docs referencing 'initiate ACH transfers' and payment creation (mercury-docs-16, mercury-docs-29, mercury-docs-9), plus independent community corroboration of reliable wire transfers in production use (mercury-comm-1). AI bill-pay features (mercury-docs-3) further support vendor payment workflows for finance leads. missing for 10: dedicated documentation detailing wire vs ACH fees, transfer limits, cutoff times, and a full end-to-end vendor payment approval workflow beyond generic mentions.",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Mercury's docs explicitly document sending payments to recipients via ACH, check, domestic wire, and international wire, with optional approval controls (mercury-docs-46, mercury-docs-53), plus dashboard-based payment approval permissions for accountants/finance leads (mercury-docs-11) and request-to-send-money approval flows (mercury-docs-55). Community evidence corroborates reliable wire transfers over years of use (mercury-comm-1). Missing for 10: independent third-party verification specifically of ACH/domestic-wire vendor payments (beyond general wire reliability), and more detail on vendor-specific workflows (e.g., recipient management UI) rather than API/product docs alone.",
     "evidenceIds": [
-      "mercury-docs-16",
-      "mercury-docs-29",
-      "mercury-docs-9",
-      "mercury-docs-3",
+      "mercury-docs-46",
+      "mercury-docs-53",
+      "mercury-docs-11",
+      "mercury-docs-55",
       "mercury-comm-1"
     ]
   },
   {
     "productId": "mercury",
     "storyId": "send-international-payments",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Mercury's documented international payment feature is explicitly USD-only ('Send no-fee USD payments around the globe' — mercury-docs-7), with no evidence of multi-currency/local-currency payment support, FX conversion, or transparent FX fee disclosure anywhere in the API, MCP, or product docs.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Mercury advertises 'no-fee USD payments around the globe' and API/dashboard support for domestic/international wire transfers, but all evidence points to USD-denominated payments — there is no mention of sending in local/foreign currencies or FX conversion, and wire fee transparency is not detailed beyond the USD no-fee claim. Missing for 10: evidence of multi-currency/local-currency disbursement, FX rate transparency, and fee schedules for international wires beyond the USD-only claim.",
     "evidenceIds": [
-      "mercury-docs-7"
+      "mercury-docs-7",
+      "mercury-docs-46",
+      "mercury-docs-53",
+      "mercury-docs-47"
     ]
   },
   {
@@ -1929,8 +1945,8 @@
     "storyId": "transfer-delivery-estimate",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers cards, invoicing, API/MCP/CLI tooling, and sandbox testing, but nothing describes a transfer confirmation UI showing an estimated delivery date/time for ACH or wire payments before the user confirms.",
+    "confidence": "medium",
+    "rationale": "Evidence shows Mercury supports initiating ACH/wire payments, approval workflows, and gate disbursements, but nowhere in the pack is there mention of a delivery-time estimate (e.g., 'arrives in 1-2 business days') shown to the user before confirming a transfer.",
     "evidenceIds": []
   },
   {
