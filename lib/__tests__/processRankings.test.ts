@@ -2,12 +2,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { isPopulated, loadCategory } from '@/lib/data'
-import { classifyGapStep } from '@/lib/gapClosers'
 import { chainTasks, loadChains, loadProcesses, STEP_OPTIONS_CAP } from '@/lib/processes'
 import {
   COMPUTER_USE_SOURCES, computerUseEligibleProducts, computerUseMappingsFor, computerUseOptions,
   coveringArenaId, crossArenaStepRankings, extraArenasFor, extraMappingsFor, functionMappingFor,
-  loadStepStoryMap, processLeaderboard, stepRanking, temporarilyHumanSteps,
+  isComputerUseCandidate, loadStepStoryMap, processLeaderboard, stepRanking, temporarilyHumanSteps,
 } from '@/lib/processRankings'
 import { VERDICT_FACTORS } from '@/lib/scoring'
 
@@ -42,7 +41,7 @@ describe('committed step→story mapping (data/process-step-stories.json)', () =
     }
   })
 
-  it('kinds are honest: function entries match the step\'s covering arena; extra entries only for declared extra arenas; computer-use entries only for temporarily-human steps, only from fleet sources', () => {
+  it('kinds are honest: function entries match the step\'s covering arena; extra entries only for declared extra arenas; computer-use entries only for manual (non-agent) steps, only from fleet sources', () => {
     const nodeByKey = new Map(
       tasks().flatMap((t) => t.dag.nodes.map((n) => [`${t.id}:${n.id}`, n] as const)),
     )
@@ -60,8 +59,9 @@ describe('committed step→story mapping (data/process-step-stories.json)', () =
         expect(extraArenasFor(node), `extra mapping ${e.taskId}:${e.nodeId} targets undeclared arena ${e.arenaId}`)
           .toContain(e.arenaId)
       } else {
-        const cls = classifyGapStep({ label: node.label, route: node.route, async: node.async })
-        expect(cls?.kind, `computer-use mapping on non-irreducible step ${e.taskId}:${e.nodeId}`).toBe('irreducible')
+        // Founder 2026-09-18: every MANUAL step (any non-agent route) is a computer-use
+        // candidate — agent steps never are.
+        expect(isComputerUseCandidate(node), `computer-use mapping on agent step ${e.taskId}:${e.nodeId}`).toBe(true)
         const source = sourceByArena.get(e.arenaId)
         expect(source, `computer-use mapping from non-fleet arena ${e.arenaId}`).toBeDefined()
         // Assistants may only be mapped onto their judged computer-use stories — never onto
@@ -73,7 +73,7 @@ describe('committed step→story mapping (data/process-step-stories.json)', () =
     }
   })
 
-  it('is complete: every step with a populated covering arena has a function mapping; every declared extra arena has an extra mapping; every temporarily-human step has its computer-use mappings', () => {
+  it('is complete: every step with a populated covering arena has a function mapping; every declared extra arena has an extra mapping; every manual step has its computer-use mappings', () => {
     for (const task of tasks()) {
       for (const node of task.dag.nodes) {
         const arenaId = coveringArenaId(node)
@@ -89,9 +89,15 @@ describe('committed step→story mapping (data/process-step-stories.json)', () =
     }
     const populatedSources = COMPUTER_USE_SOURCES.filter((s) => isPopulated(s.arenaId, DATA_DIR))
     expect(populatedSources.length).toBeGreaterThan(0)
-    for (const g of temporarilyHumanSteps(tasks())) {
-      const mapped = computerUseMappingsFor(g.taskId, g.node.id, DATA_DIR)
-      expect(mapped.length, `missing computer-use mappings for ${g.taskId}:${g.node.id}`).toBe(populatedSources.length)
+    for (const task of tasks()) {
+      for (const node of task.dag.nodes) {
+        const mapped = computerUseMappingsFor(task.id, node.id, DATA_DIR)
+        if (isComputerUseCandidate(node)) {
+          expect(mapped.length, `missing computer-use mappings for ${task.id}:${node.id}`).toBe(populatedSources.length)
+        } else {
+          expect(mapped.length, `computer-use mapping on agent step ${task.id}:${node.id}`).toBe(0)
+        }
+      }
     }
   })
 })
@@ -195,29 +201,59 @@ describe('process leaderboard (coverage × step scores)', () => {
   })
 })
 
-describe('computer use for temporarily-human steps — judged evidence only', () => {
-  it('every option comes from the browser-agents roster or an assistant with a judged full/partial computer-use verdict', () => {
+describe('computer use for manual steps — judged evidence only', () => {
+  it('every option (across ALL manual steps, form and person alike) comes from the browser-agents roster or an assistant with a judged full/partial computer-use verdict', () => {
     const eligibleByArena = new Map(
       COMPUTER_USE_SOURCES
         .filter((s) => isPopulated(s.arenaId, DATA_DIR))
         .map((s) => [s.arenaId, computerUseEligibleProducts(s, DATA_DIR)] as const),
     )
     let optionSteps = 0
-    for (const g of temporarilyHumanSteps(tasks())) {
-      const options = computerUseOptions(g.taskId, g.node.id, DATA_DIR)
-      expect(options.length).toBeLessThanOrEqual(STEP_OPTIONS_CAP)
-      if (options.length > 0) optionSteps += 1
-      for (const o of options) {
-        const eligible = eligibleByArena.get(o.arenaId)
-        expect(eligible, `option from non-fleet arena ${o.arenaId}`).toBeDefined()
-        expect(eligible!.has(o.productId), `${o.productId} has no judged computer-use evidence`).toBe(true)
-        // Never a vibes entry: a positive score backed by at least one full/partial verdict.
-        expect(o.score).toBeGreaterThan(0)
-        expect(o.cites.some((c) => c.verdict === 'full' || c.verdict === 'partial')).toBe(true)
+    for (const task of tasks()) {
+      for (const node of task.dag.nodes.filter(isComputerUseCandidate)) {
+        const options = computerUseOptions(task.id, node.id, DATA_DIR)
+        expect(options.length).toBeLessThanOrEqual(STEP_OPTIONS_CAP)
+        if (options.length > 0) optionSteps += 1
+        for (const o of options) {
+          const eligible = eligibleByArena.get(o.arenaId)
+          expect(eligible, `option from non-fleet arena ${o.arenaId}`).toBeDefined()
+          expect(eligible!.has(o.productId), `${o.productId} has no judged computer-use evidence`).toBe(true)
+          // Never a vibes entry: a positive score backed by at least one full/partial verdict.
+          expect(o.score).toBeGreaterThan(0)
+          expect(o.cites.some((c) => c.verdict === 'full' || c.verdict === 'partial')).toBe(true)
+        }
       }
     }
     // The feature actually surfaces options somewhere (not vacuously green).
     expect(optionSteps).toBeGreaterThan(0)
+  })
+
+  it('founder 2026-09-18: "any time manual is seen" — form-route steps carry computer-use options too, not just irreducible human steps', () => {
+    // Steps beyond the old irreducible-only set now get options (the founder's ask): count the
+    // form-route steps with judged evidence that the previous mechanism would have skipped.
+    const irreducibleKeys = new Set(temporarilyHumanSteps(tasks()).map((g) => `${g.taskId}:${g.node.id}`))
+    let formStepsWithOptions = 0
+    let beyondIrreducible = 0
+    for (const task of tasks()) {
+      for (const node of task.dag.nodes) {
+        if (node.route !== 'form') continue
+        if (computerUseOptions(task.id, node.id, DATA_DIR).length > 0) {
+          formStepsWithOptions += 1
+          if (!irreducibleKeys.has(`${task.id}:${node.id}`)) beyondIrreducible += 1
+        }
+      }
+    }
+    // A real share of the manual-portal work has judged attempt-it-today evidence, and most of
+    // it is NEW coverage the irreducible-only mechanism never reached.
+    expect(formStepsWithOptions).toBeGreaterThanOrEqual(20)
+    expect(beyondIrreducible).toBeGreaterThanOrEqual(20)
+    // The anchor: the Mercury application (manual form, no API path) shows who could attempt it.
+    const bank = tasks().find((t) => t.id === 'qs_023')!
+    const apply = bank.dag.nodes.find((n) => n.id === 'n3')!
+    expect(apply.route).toBe('form')
+    const options = computerUseOptions(bank.id, apply.id, DATA_DIR)
+    expect(options.length).toBeGreaterThan(0)
+    expect(options.some((o) => o.arenaId === 'browser-agents')).toBe(true)
   })
 
   it('assistants without judged computer-use evidence are excluded from eligibility', () => {

@@ -2,9 +2,10 @@
 // enumeration mirrors lib/processRankings.ts's consumption, hashing, prompt shape, and rule
 // validation. No LLM/network — same posture as classify-story-tiers.test.ts.
 import { describe, expect, it } from 'vitest'
-import { classifyGapStep } from '../../lib/gapClosers'
 import { loadProcesses, type DagNode } from '../../lib/processes'
-import { COMPUTER_USE_SOURCES, coveringArenaId, extraArenasFor } from '../../lib/processRankings'
+import {
+  COMPUTER_USE_SOURCES, coveringArenaId, extraArenasFor, isComputerUseCandidate,
+} from '../../lib/processRankings'
 import type { Story } from '../../lib/schemas'
 import {
   enumerateTargets, mapPrompt, MAX_STORIES_PER_STEP, RawStepMapSchema, STEP_STORY_PROMPT_VERSION,
@@ -102,7 +103,7 @@ describe('RawStepMapSchema', () => {
 describe('enumerateTargets mirrors lib/processRankings consumption', () => {
   const targets = enumerateTargets(loadProcesses(DATA_DIR))
 
-  it('function targets use exactly the covering arena; extra targets only declared extra arenas; computer-use targets only fleet arenas on irreducible steps', () => {
+  it('function targets use exactly the covering arena; extra targets only declared extra arenas; computer-use targets only fleet arenas on manual (non-agent) steps', () => {
     const nodeByKey = new Map<string, DagNode>(
       loadProcesses(DATA_DIR).flatMap((t) => t.dag.nodes.map((n) => [`${t.id}:${n.id}`, n] as const)),
     )
@@ -118,8 +119,8 @@ describe('enumerateTargets mirrors lib/processRankings consumption', () => {
         expect(extraArenasFor(node)).toContain(t.arenaId)
         expect(t.arenaId).not.toBe(coveringArenaId(node))
       } else {
-        const cls = classifyGapStep({ label: node.label, route: node.route, async: node.async })
-        expect(cls?.kind).toBe('irreducible')
+        // Founder 2026-09-18: every manual step (any non-agent route) is a computer-use cell.
+        expect(isComputerUseCandidate(node)).toBe(true)
         const source = fleet.get(t.arenaId)!
         expect(source).toBeDefined()
         // Assistants are only offered their judged computer-use stories as candidates.
@@ -130,12 +131,16 @@ describe('enumerateTargets mirrors lib/processRankings consumption', () => {
     }
   })
 
-  it('covers the corpus: hundreds of function cells, extra cells for every declared cross-arena market, computer-use cells for every irreducible step', () => {
+  it('covers the corpus: hundreds of function cells, extra cells for every declared cross-arena market, computer-use cells for every manual step', () => {
     const fn = targets.filter((t) => t.kind === 'function')
     const cu = targets.filter((t) => t.kind === 'computer-use')
     const extra = targets.filter((t) => t.kind === 'extra')
     expect(fn.length).toBeGreaterThan(100)
     expect(cu.length).toBeGreaterThan(0)
+    // One computer-use cell per (manual step, populated fleet source) — form AND person routes.
+    const manualSteps = loadProcesses(DATA_DIR)
+      .flatMap((t) => t.dag.nodes.filter(isComputerUseCandidate)).length
+    expect(cu.length).toBe(manualSteps * COMPUTER_USE_SOURCES.length)
     // One cell per declared (step, extra arena) pair across the whole corpus.
     const declared = loadProcesses(DATA_DIR)
       .flatMap((t) => t.dag.nodes.map((n) => extraArenasFor(n).length))

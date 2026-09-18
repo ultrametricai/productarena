@@ -1,9 +1,10 @@
 // Step→story mapper: for every process step with a covering arena, one LLM pass decides which
 // of that arena's user stories are RELEVANT to the step ("run payroll" → the payroll-run
-// stories, not the whole arena) — plus, for every temporarily-human step (lib/gapClosers.ts
-// irreducible classification), which computer-use stories describe attempting it
-// (browser-agents' full story set; ai-assistants restricted to its judged computer-use
-// stories) — plus, for every step declaring ADDITIONAL covering arenas (extraOptionArenas /
+// stories, not the whole arena) — plus, for every MANUAL step (any non-agent route: form
+// portals and human steps alike — lib/processRankings.ts isComputerUseCandidate), which
+// computer-use stories describe attempting it (browser-agents' full story set; ai-assistants
+// restricted to its judged computer-use stories) — plus, for every step declaring ADDITIONAL
+// covering arenas (extraOptionArenas /
 // extraOptionRefs), which of THAT arena's stories describe performing the step (kind 'extra':
 // "generate a website" onto ai-assistants / design-tools). Writes the committed
 // data/process-step-stories.json that lib/processRankings.ts derives every step/process
@@ -24,10 +25,10 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
-import { classifyGapStep } from '../../lib/gapClosers'
 import { loadProcesses, type ProcessTask } from '../../lib/processes'
 import {
-  COMPUTER_USE_SOURCES, coveringArenaId, extraArenasFor, StepStoryMapSchema, type StepStoryEntry,
+  COMPUTER_USE_SOURCES, coveringArenaId, extraArenasFor, isComputerUseCandidate,
+  StepStoryMapSchema, type StepStoryEntry,
 } from '../../lib/processRankings'
 import { StorySchema, type Story } from '../../lib/schemas'
 import { llmJson } from '../llm'
@@ -174,9 +175,11 @@ export function enumerateTargets(tasks: ProcessTask[]): MapTarget[] {
         if (!extraStories) continue
         targets.push({ ...base, kind: 'extra', arenaId: extraArena, candidates: extraStories })
       }
-      // Temporarily-human steps → 'computer-use' mapping per fleet source.
-      const cls = classifyGapStep({ label: node.label, route: node.route, async: node.async })
-      if (cls?.kind === 'irreducible') {
+      // Every MANUAL step (any non-agent route — founder 2026-09-18: "any time 'manual' is
+      // seen, see if we can do a computer use process for it") → 'computer-use' mapping per
+      // fleet source. The mapper may honestly answer [] for steps no browser agent could
+      // attempt (meetings, notarization, judgment calls).
+      if (isComputerUseCandidate(node)) {
         for (const source of COMPUTER_USE_SOURCES) {
           const all = storiesFor(source.arenaId)
           if (!all) continue

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Fragment } from 'react'
 import CeilingBar from '@/components/CeilingBar'
+import ComputerUseChips from '@/components/ComputerUseChips'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import { resolveGapStep } from '@/lib/gapClosers'
@@ -471,6 +472,16 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
         </details>
       ) : (
         node.toolCall && <p className="mt-2 truncate font-mono text-[11px] text-zinc-500">{node.toolCall}</p>
+      )}
+
+      {/* Founder 2026-09-18: "any time 'manual' is seen, see if we can do a computer use
+          process for it." Every non-agent step block surfaces the judged computer-use fleet —
+          who could attempt the mechanical part today, verdict-backed. The route badge above is
+          unchanged: the step stays form/manual/human. Renders nothing without judged evidence. */}
+      {taskId && node.route !== 'agent' && (
+        <div className="mt-2 text-[11px]">
+          <ComputerUseChips taskId={taskId} nodeId={node.id} />
+        </div>
       )}
 
       {closer && (
