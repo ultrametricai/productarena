@@ -8,8 +8,9 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
-| Process + step rankings derived from vendors' judged stories (vendor-agnostic) | in-lane (process-rankings) |
-| Computer-use options (all capable vendors, judged evidence only) on "Temporarily human" steps | in-lane (process-rankings) |
+| typescript-eslint broken under TS 7 (repo-wide lint) | open — pre-existing from TS7 merge; needs typescript-eslint major or pin |
+| Process + step rankings derived from vendors' judged stories (vendor-agnostic) | shipped 2026-09-18 — 291 step-story mappings (cached LLM pass, $single-digit); per-step ranked vendors with score pills + cite expandables; "Who covers this process best" leaderboard + best-per-step chain on every process page |
+| Computer-use options (all capable vendors, judged evidence only) on "Temporarily human" steps | shipped 2026-09-18 — 32/36 irreducible steps got ranked "could attempt it today" chips (browser-agents roster + chatgpt/claude/copilot/gemini/martin/muse via judged CU stories; grok/poke/perplexity honestly excluded) |
 | Internally-created GitHub issues auto-solved + update PRs fixed | shipped 2026-09-17 — 13 engine issues closed (4 branches merged per-product: rippling+tailscale wrong verdicts fixed, agent-skills + 4 mobile-dev refreshed, 3.6k history lines unioned); TypeScript 7 + Vitest 5 merged green; eslint 10 left open (upstream peer-dep dead-end, commented). Founder decision pending: disable story-runner/spike-engine GH workflows (orphan-branch problem) or enable "Actions can create PRs" in org settings |
 | Signup/login live using the Ultrametric WorkOS key | blocked (founder, 1 min) — everything works except the dashboard redirect URI: AuthKit live-returns "Invalid Redirect URI" for https://ultrametric.ai/productarena/auth/callback. Dashboard → Redirects → add sign-in URI above + logout URI https://ultrametric.ai/productarena. Say "go live" after and the Log in button ships to everyone |
 | "Irreducibly human" → "Temporarily human" on process verdicts | shipped 2026-09-17 |
