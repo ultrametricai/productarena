@@ -52,6 +52,9 @@ export const AiStackSchema = z.object({
   name: z.string().min(1),
   tagline: z.string().min(1),
   audience: z.string().min(1),
+  // Emoji for the stack's persona (founder 2026-09-18) — rendered beside the "For:" audience
+  // line and on stack cards, same visual system as arena icons.
+  personaIcon: z.string().min(1).optional(),
   slots: z.array(AiStackSlotSchema).min(2),
 })
 
@@ -100,6 +103,7 @@ export interface ResolvedStack {
   name: string
   tagline: string
   audience: string
+  personaIcon?: string
   slots: ResolvedSlot[]
 }
 
@@ -208,7 +212,7 @@ export function resolveStack(stack: AiStack, categories: CategoryData[]): Resolv
     })
   }
 
-  return { id: stack.id, name: stack.name, tagline: stack.tagline, audience: stack.audience, slots }
+  return { id: stack.id, name: stack.name, tagline: stack.tagline, audience: stack.audience, personaIcon: stack.personaIcon, slots }
 }
 
 export function resolveAllStacks(categories: CategoryData[], dataDir?: string): ResolvedStack[] {

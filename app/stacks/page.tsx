@@ -54,7 +54,7 @@ export default function StacksPage() {
       {stacks.map((stack) => (
         <section key={stack.id} id={stack.id} className="scroll-mt-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">{stack.name}</h2>
+            <h2 className="font-display leading-[1.1] flex items-center gap-2 text-xl font-semibold tracking-tight">{stack.personaIcon && <span aria-hidden title={`Persona: ${stack.audience}`}>{stack.personaIcon}</span>}{stack.name}</h2>
             <Link
               href={`/stacks/battle?a=${stack.id}`}
               title={`Put the ${stack.name} up against another stack's aggregates`}
