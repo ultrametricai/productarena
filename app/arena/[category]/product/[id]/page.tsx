@@ -30,6 +30,7 @@ import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import ThemeIcon from '@/components/ThemeIcon'
 import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
+import ImUsing from '@/components/ImUsing'
 import WatchButton from '@/components/WatchButton'
 import EnterpriseBadge from '@/components/EnterpriseBadge'
 import ShutdownBadge from '@/components/ShutdownBadge'
@@ -200,6 +201,7 @@ export default async function ProductPage({
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-3">
             <WatchButton productId={id} productName={product.name} />
+            <ImUsing arenaId={category} productId={id} productName={product.name} />
             {tryable ? (
               <>
                 {/* Vendor link stays, demoted to plain domain text — trying beats bouncing. */}
@@ -215,7 +217,7 @@ export default async function ProductPage({
                   href="#try-it"
                   className="shrink-0 rounded-lg bg-emerald-400 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-300"
                 >
-                  Try it →
+                  Try it agentically →
                 </a>
               </>
             ) : (

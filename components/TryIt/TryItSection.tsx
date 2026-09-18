@@ -32,7 +32,7 @@ export default function TryItSection({
   return (
     <div id="try-it" className="scroll-mt-4">
       <h2 className="font-display leading-[1.1] mb-1 flex items-center gap-2 text-lg font-semibold">
-        Try it
+        Try it agentically
         <span
           title="This section is experimental — recorded replays are stable; live re-runs and the live MCP handshake are new and may change"
           className="rounded border border-amber-400/50 bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300"
