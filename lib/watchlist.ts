@@ -127,6 +127,8 @@ export function subscribeWatchlist(callback: () => void): () => void {
 export interface WatchlistProduct {
   id: string
   name: string
+  // Resolved server-side (lib/logos.ts is fs-backed) so the client row can render the logo.
+  hasLogo: boolean
   arenaId: string
   arenaName: string
   aiEra: number | null

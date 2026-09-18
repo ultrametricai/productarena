@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import AuthGatedMarker from '@/components/AuthGatedMarker'
 import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ContestLink from '@/components/ContestLink'
+import RowMenu from '@/components/RowMenu'
 import PersonaChip from '@/components/PersonaChip'
 import SurfaceChip from '@/components/SurfaceChip'
 import ThemeIcon from '@/components/ThemeIcon'
@@ -366,6 +367,7 @@ export default function StoryVerdictsTable({
               <SortableTh col="evidence" current={column} direction={direction} onSort={handleSort}>
                 <span title="How many cited sources back this verdict — expand the row to read them">Evidence</span>
               </SortableTh>
+              <th scope="col" aria-label="Row actions" className="w-8 px-1 py-2" />
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
@@ -388,7 +390,7 @@ export default function StoryVerdictsTable({
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={9} className="px-3 py-6 text-center text-zinc-500">
                   No stories match{theme !== '' ? ` theme “${humanizeTheme(theme)}”` : ''}{query.trim() !== '' ? ` “${query}”` : ''}.
                 </td>
               </tr>
@@ -515,10 +517,13 @@ function StoryRowPair({
           </button>
           )}
         </td>
+        <td className="px-1 py-2 text-right">
+          <RowMenu category={category} productId={productId} storyId={row.storyId} verdict={row.verdict} quality={row.quality} />
+        </td>
       </tr>
       {isOpen && (
         <tr id={detailsId} className="bg-zinc-900/30">
-          <td colSpan={8} className="px-3 py-3 pl-9">
+          <td colSpan={9} className="px-3 py-3 pl-9">
             {/* Judge rationales are written for auditability, not skimming — collapse them by
                 default behind a plain-language one-liner so the row leads with evidence. */}
             <details>

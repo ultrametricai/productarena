@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import WatchlistClient from '@/components/WatchlistClient'
 import WatchlistGate from '@/components/WatchlistGate'
 import { loadAll } from '@/lib/data'
+import { hasLogo } from '@/lib/logos'
 import { loadScoreHistory } from '@/lib/scoreHistory'
 import type { WatchlistProduct } from '@/lib/watchlist'
 
@@ -30,6 +31,7 @@ function buildWatchlistProducts(): WatchlistProduct[] {
       rows.push({
         id: product.id,
         name: product.name,
+        hasLogo: hasLogo(product.id),
         arenaId: data.category.id,
         arenaName: data.category.name,
         aiEra: entry.aiEra,
