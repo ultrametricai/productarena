@@ -2,6 +2,7 @@
 // every product in every arena). Deliberately produces a flat, minimal MegaTableRow per product
 // — no evidence, verdicts, stories, or claims — since this gets serialized as a client-component
 // prop and every extra field is bundle weight the table's columns never use.
+import arenaIcons from '../data/arena-icons.json'
 import { computeAccessGlyphs, type AccessGlyph } from './accessGlyphs'
 import { confidenceFor } from './confidence'
 import { isGroupUntested, type CategoryData } from './data-helpers'
@@ -89,8 +90,15 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
 export interface MegaTableArenaOption {
   id: string
   name: string
+  // Emoji arena icon (data/arena-icons.json) — native <option> renders emoji text fine, so the
+  // homepage dropdown shows the same glyphs as the top-bar Arenas menu (founder 2026-09-18).
+  icon?: string
 }
 
 export function buildMegaTableArenaOptions(categories: CategoryData[]): MegaTableArenaOption[] {
-  return categories.map((data) => ({ id: data.category.id, name: data.category.name }))
+  return categories.map((data) => ({
+    id: data.category.id,
+    name: data.category.name,
+    icon: (arenaIcons as Record<string, string>)[data.category.id],
+  }))
 }

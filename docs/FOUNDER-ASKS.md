@@ -32,7 +32,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Story-type icons left of story text on arena pages | shipped 2026-09-15 (theme icon per row) |
 | Front page: "+" card in Arenas grid → suggest an arena via GitHub issue | shipped 2026-09-15 |
 | Front-page scope dropdown: "All products" → "All arenas" | shipped 2026-09-15 |
-| Arena icons in the front-page arena dropdown (same as top bar) | open — UI lane |
+| Arena icons in the front-page arena dropdown (same as top bar) | shipped 2026-09-18 — emoji icons prefix every option, matching the top-bar menu |
 | Pulley possibly shut down — verify, mark closed, keep data | shipped 2026-09-15 — vendor notice: ceasing operations 2026-12-08, Carta migration; CLOSING badge, data kept |
 | "⚿ auth 1 auth-gated probe" not useful above the fold | shipped 2026-09-15 (moved to page bottom) |
 | Vendor pills: "Built-in AI XX/100", "Agent-ready XX/100" + click through to evidence log | shipped 2026-09-15 — /score per-vendor receipt pages (+439 pages), pills show /100 and deep-link |
