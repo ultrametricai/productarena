@@ -99,6 +99,29 @@ export function buildStackEntries(stacks: StackSearchSource[], keywords?: Record
   })
 }
 
+// End-to-end playbooks (process chains) surfaced in ⌘K — one entry per chain, labeled from the
+// chain data itself; alias phrases come from search-aliases.json `pages`, keyed by the chain's
+// href (`/processes/chains/{id}`), same convention as the static pages below.
+export interface ChainSearchSource {
+  id: string
+  name: string
+  tagline: string
+}
+
+export function buildChainEntries(chains: ChainSearchSource[], keywords?: Record<string, string[]>): SearchEntry[] {
+  return chains.map((c) => {
+    const href = `/processes/chains/${c.id}`
+    const aliases = keywords?.[href]
+    return {
+      type: 'page' as const,
+      label: `${c.name} (playbook)`,
+      sublabel: c.tagline,
+      href,
+      ...(aliases && aliases.length > 0 ? { keywords: aliases.map((k) => k.toLowerCase()) } : {}),
+    }
+  })
+}
+
 // The key tool pages worth surfacing in ⌘K. Labels/sublabels live here (they're UI copy, not
 // data); alias phrases come from data/search-aliases.json `pages`, keyed by href.
 const PAGE_DEFS: { href: string; label: string; sublabel: string }[] = [

@@ -12,7 +12,7 @@ import {
   VENDOR_ARENA, vendorLabel, vendorProductId, type ProcessTask,
 } from '@/lib/processes'
 
-// The operating rhythm — "what really happens in a company": the same 106-process corpus as
+// The operating rhythm — "what really happens in a company": the same founder-process corpus as
 // /processes, sliced by the honest recurrence axis (the `cadence` field) instead of lifecycle
 // phase. Formation pages tell you what a startup does ONCE; this page is the x-ray of what it
 // does every day/week/month/quarter/year — and what only fires on a trigger — each process
@@ -22,7 +22,7 @@ import {
 export const metadata: Metadata = {
   title: 'Operating rhythm — a year of running a startup — ProductArena',
   description:
-    'What a startup actually does, on the record: the recurring operations x-ray. Which of the 106 founder processes run daily, weekly, monthly, quarterly, or annually — with each one’s agent ceiling and the software that runs it.',
+    'What a startup actually does, on the record: the recurring operations x-ray. Which founder processes run daily, weekly, monthly, quarterly, or annually — with each one’s agent ceiling and the software that runs it.',
 }
 
 function ProcessCard({ task }: { task: ProcessTask }) {

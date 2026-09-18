@@ -353,8 +353,11 @@ describe('end-to-end: launch-website chain (founder ask: key other vendors for e
       const vendors = crossArenaStepRankings(site.id, node, DATA_DIR).flatMap((r) => r.vendors)
       expect(vendors.some((v) => v.productId === 'poly')).toBe(false)
     }
-    const dropboxImport = tasks().find((t) => t.id === 'opp_006')!
-    const poly = crossArenaStepRankings(dropboxImport.id, dropboxImport.dag.nodes[0], DATA_DIR)
+    // The Dropbox-import opportunity folded into doc-storage setup (curation 2026-09-18) — the
+    // import step carries the same Poly cross-arena ref.
+    const docStorage = tasks().find((t) => t.id === 'qs_015')!
+    const importStep = docStorage.dag.nodes.find((n) => n.id === 'n4')!
+    const poly = crossArenaStepRankings(docStorage.id, importStep, DATA_DIR)
       .flatMap((r) => r.vendors)
       .find((v) => v.productId === 'poly')
     expect(poly).toBeDefined()
