@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fetchLogoutUrl, loginUrl, useSession } from '@/lib/session'
 import { SITE_URL } from '@/lib/site'
 
@@ -20,34 +20,9 @@ function currentUrl(): string {
   return typeof window === 'undefined' ? SITE_URL : window.location.href
 }
 
-// Founder-only test switch (see docs/AUTH.md): localStorage.setItem('pa-auth-test', '1') then
-// reload reveals the login link on this device only. Read via useSyncExternalStore with a
-// `false` server snapshot — same pattern as components/DoViaAfk.tsx's pa-admin flag — so the
-// static HTML never includes the link.
-export const AUTH_TEST_FLAG_KEY = 'pa-auth-test'
-
-function readAuthTestFlag(): boolean {
-  try {
-    return window.localStorage.getItem(AUTH_TEST_FLAG_KEY) === '1'
-  } catch {
-    // localStorage unavailable (privacy mode) — stay hidden.
-    return false
-  }
-}
-
-function subscribeAuthTestFlag(callback: () => void): () => void {
-  window.addEventListener('storage', callback)
-  return () => window.removeEventListener('storage', callback)
-}
-
-function getServerAuthTestFlag(): boolean {
-  return false
-}
-
 export default function AccountMenu() {
   const session = useSession()
   const [open, setOpen] = useState(false)
-  const testFlag = useSyncExternalStore(subscribeAuthTestFlag, readAuthTestFlag, getServerAuthTestFlag)
   const rootRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -67,12 +42,9 @@ export default function AccountMenu() {
   }, [open])
 
   if (session.state !== 'authenticated') {
-    // Founder call 2026-09-14: no visible "Log in" until the WorkOS auth is tested. Signed-in
-    // readers still get the account chip below; anonymous readers see nothing — UNLESS the
-    // pa-auth-test localStorage flag is set (localStorage['pa-auth-test'] = '1'), which reveals
-    // the link so the founder can exercise the full flow invisibly to everyone else. Go-live =
-    // drop the testFlag condition (docs/AUTH.md "Going live").
-    if (!testFlag) return null
+    // Founder 2026-09-18: the Sign up button ships visibly (supersedes the 09-14 hide-until-
+    // tested call) — AuthKit's hosted page handles both signup and login in one flow via the
+    // standard Ultrametric WorkOS environment. The pa-auth-test flag is retired.
     return (
       <a
         href={loginUrl(SITE_URL)}
@@ -80,9 +52,9 @@ export default function AccountMenu() {
           e.preventDefault()
           window.location.href = loginUrl(currentUrl())
         }}
-        className="shrink-0 px-1 text-xs text-zinc-500 transition hover:text-emerald-300"
+        className="shrink-0 rounded-full border border-emerald-400/60 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300 transition hover:bg-emerald-400/20"
       >
-        Log in
+        Sign up
       </a>
     )
   }

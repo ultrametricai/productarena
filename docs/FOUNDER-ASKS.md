@@ -8,6 +8,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Sign up button top-right, standard UM WorkOS | shipped 2026-09-18 — visible to everyone (emerald pill; account chip + watchlist menu when signed in; pa-auth-test flag retired). NOTE: signup errors at WorkOS until the dashboard redirect URI is added — monitor armed, auto-confirms |
 | US flag on US-centric processes | shipped 2026-09-18 — region:'us' on 15 processes (DE franchise tax, 409A, EIN, 1099s, state taxes, registered agent, 83(b)-citing founder agreement…); 🇺🇸 on index + detail pages with a tooltip |
 | Rename "cells" → "product user stories" in user-facing copy | shipped 2026-09-18 — pipeline, methodology, score receipts, reports, rankings pages (18+ prose spots; code identifiers untouched) |
 | Larger vendor logos on process chain steps | shipped 2026-09-18 (16→28px step blocks, 14→22px ranked options) |
