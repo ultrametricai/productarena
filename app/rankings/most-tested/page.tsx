@@ -108,14 +108,14 @@ export default function MostTestedRankingPage() {
             <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-500">
               <th className="w-10 px-3 py-2 font-normal">#</th>
               <th className="px-3 py-2 font-normal">Product</th>
-              <th className="px-3 py-2 font-normal" title="Share of applicable verdict cells whose strongest cited evidence is tested (hands-on probe or inspectable source)">
+              <th className="px-3 py-2 font-normal" title="Share of applicable verdict product user stories whose strongest cited evidence is tested (hands-on probe or inspectable source)">
                 Tested
               </th>
-              <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Share of applicable verdict cells that cite any evidence at all — the complement is 'we found nothing either way'">
+              <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Share of applicable verdict product user stories that cite any evidence at all — the complement is 'we found nothing either way'">
                 Evidenced
               </th>
-              <th className="hidden px-3 py-2 font-normal md:table-cell" title="Verified verdict cells: probed by us or community-corroborated, out of all evidenced cells">
-                Verified cells
+              <th className="hidden px-3 py-2 font-normal md:table-cell" title="Verified verdict product user stories: probed by us or community-corroborated, out of all evidenced product user stories">
+                Verified product user stories
               </th>
               <th className="px-3 py-2 font-normal" title="Confidence grade A–D: how much of the published score rests on tested vs claimed evidence">
                 <span className="inline-flex items-center gap-1.5">Grade<ColumnsHelpLink /></span>

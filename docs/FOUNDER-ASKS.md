@@ -8,6 +8,10 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Rename "cells" → "product user stories" in user-facing copy | shipped 2026-09-18 — pipeline, methodology, score receipts, reports, rankings pages (18+ prose spots; code identifiers untouched) |
+| Larger vendor logos on process chain steps | shipped 2026-09-18 (16→28px step blocks, 14→22px ranked options) |
+| Share image says "Companies, ranked for the AI era" | shipped 2026-09-18 — regenerated as og3.png (cache-busting filename), metadata updated |
+| ALL processes: key cross-arena vendors per step (chatgpt sites, poly, …) | in-lane (cross-arena-options) |
 | Vercel bill: cut build-minute burn without slowing progress | shipped 2026-09-18 — prebuilt tested and ruled out (41 fn bundles / 12GB output exceeds upload limits); fix = batched cadence via scripts/deploy-prod.sh (git push per merge stays; production deploys ≤3/day, 2h soft floor, FORCE=1 override) |
 | Remove "Rank #X of Y in <arena>" eyebrow on vendor pages (arenas strip already shows it) | shipped 2026-09-18 |
 | typescript-eslint broken under TS 7 (repo-wide lint) | open — pre-existing from TS7 merge; needs typescript-eslint major or pin |

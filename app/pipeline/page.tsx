@@ -22,7 +22,7 @@ import {
 export const metadata: Metadata = {
   title: 'Testing pipeline — what we have NOT tested — ProductArena',
   description:
-    'The transparency board: every arena’s untested cells, the share of verdicts backed by hands-on probes, the most-wanted untested product/story pairs, and which arenas are next.',
+    'The transparency board: every arena’s untested product user stories, the share of verdicts backed by hands-on probes, the most-wanted untested product/story pairs, and which arenas are next.',
 }
 
 // The answer to "what have you NOT tested" — a static transparency board that leads with the
@@ -70,14 +70,14 @@ export default function PipelinePage() {
           What we have <span className="text-emerald-400">not</span> tested
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          Every ranking on this site is built from per-cell verdicts — and{' '}
+          Every ranking on this site is built from per-product-user-story verdicts — and{' '}
           <span className="text-zinc-200 font-medium">
-            {totals.untestedCells.toLocaleString()} of {totals.totalCells.toLocaleString()} cells
+            {totals.untestedCells.toLocaleString()} of {totals.totalCells.toLocaleString()} product user stories
             ({totals.untestedPct}%)
           </span>{' '}
           are still untested: a zero-evidence none/na where we found nothing pro or con and never
-          probed it. Those cells can&rsquo;t score — they read as unknown, never as 0 — and this
-          page is the standing list of them. {totals.probedPct}% of all cells are backed by a
+          probed it. Those product user stories can&rsquo;t score — they read as unknown, never as 0 — and this
+          page is the standing list of them. {totals.probedPct}% of all product user stories are backed by a
           hands-on probe.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
@@ -91,9 +91,9 @@ export default function PipelinePage() {
 
       <section className="grid gap-4 sm:grid-cols-3">
         {[
-          { id: 'cells-judged', label: 'cells judged', value: totals.totalCells.toLocaleString(), sub: `${totals.arenas} arenas` },
-          { id: 'untested', label: 'still untested', value: `${totals.untestedPct}%`, sub: `${totals.untestedCells.toLocaleString()} zero-evidence cells` },
-          { id: 'probed', label: 'probed hands-on', value: `${totals.probedPct}%`, sub: `${totals.probedCells.toLocaleString()} cells cite a probe` },
+          { id: 'cells-judged', label: 'product user stories judged', value: totals.totalCells.toLocaleString(), sub: `${totals.arenas} arenas` },
+          { id: 'untested', label: 'still untested', value: `${totals.untestedPct}%`, sub: `${totals.untestedCells.toLocaleString()} zero-evidence product user stories` },
+          { id: 'probed', label: 'probed hands-on', value: `${totals.probedPct}%`, sub: `${totals.probedCells.toLocaleString()} product user stories cite a probe` },
         ].map((stat) => (
           <div key={stat.label} className="rounded-2xl border border-zinc-800 p-4">
             <p className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-zinc-500">
@@ -119,8 +119,8 @@ export default function PipelinePage() {
 
       <section>
         <h2 className="font-display flex items-center gap-2 text-xl font-semibold tracking-tight">
-          <GeoMark seed="most-wanted" title="Most-wanted untested cells — the highest-impact gaps" size={18} className="text-zinc-500" />
-          Most-wanted untested cells
+          <GeoMark seed="most-wanted" title="Most-wanted untested product user stories — the highest-impact gaps" size={18} className="text-zinc-500" />
+          Most-wanted untested product user stories
         </h2>
         <p className="mt-1 max-w-2xl text-sm text-zinc-400">
           The ten untested (product, story) pairs whose testing would move the most-read scores
@@ -184,9 +184,9 @@ export default function PipelinePage() {
               <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
                 <th scope="col" className="px-3 py-2 font-normal">Arena</th>
                 <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Judged products in this arena">Products</span></th>
-                <th scope="col" className="px-3 py-2 font-normal"><span title="Judged (product, story) verdict cells in this arena">Cells</span></th>
-                <th scope="col" className="px-3 py-2 font-normal"><span title="Cells with no hands-on tested evidence yet">Untested</span></th>
-                <th scope="col" className="px-3 py-2 font-normal"><span title="Share of cells backed by our own hands-on probes">Probed</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Judged (product, story) verdict product user stories in this arena">Product user stories</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Product user stories with no hands-on tested evidence yet">Untested</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Share of product user stories backed by our own hands-on probes">Probed</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-800/70">

@@ -116,7 +116,7 @@ export default function BestApiRankingPage() {
         </p>
         <p className="mt-2 text-xs text-zinc-500">
           {untestedCount} products show <span className="italic">untested</span> instead of a number: every
-          api-quality cell is a zero-evidence blank — we found nothing either way and never probed it. That is a
+          api-quality product user story is a zero-evidence blank — we found nothing either way and never probed it. That is a
           different claim from a scored 0 (judged, and the evidence came up short), so they sort last, unranked.
         </p>
       </div>

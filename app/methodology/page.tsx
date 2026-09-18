@@ -21,7 +21,7 @@ export default function MethodologyPage() {
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">How ProductArena scores products</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Evidence in, rankings out. Every claim traces back to a cited evidence item — vendor docs, GitHub, an
-          independent community source, or a hands-on probe — and an LLM judge scores every (product, story) cell
+          independent community source, or a hands-on probe — and an LLM judge scores every product user story (each product × user story pair)
           from that evidence alone, never outside knowledge.
         </p>
       </div>
@@ -61,7 +61,7 @@ export default function MethodologyPage() {
           <p className="font-semibold text-zinc-300">Scoring</p>
           <p className="mt-1">
             <span className={CODE}>score = story.weight × quality × verdictFactor</span>, summed over applicable
-            (non-<span className={CODE}>na</span>) cells only.
+            (non-<span className={CODE}>na</span>) product user stories only.
           </p>
         </div>
         <div className={PILL}>
@@ -127,7 +127,7 @@ export default function MethodologyPage() {
         <table className="mt-3 w-full max-w-2xl border-collapse text-sm">
           <tbody className="divide-y divide-zinc-800/70">
             <tr><td className="py-1.5 pr-3 font-mono text-emerald-300">A</td><td className="py-1.5 text-zinc-300">broad story coverage and a high share of probe/community-tested verdicts</td></tr>
-            <tr><td className="py-1.5 pr-3 font-mono text-emerald-400/80">B</td><td className="py-1.5 text-zinc-300">solid coverage, mostly tested — a few cells still rest on vendor docs alone</td></tr>
+            <tr><td className="py-1.5 pr-3 font-mono text-emerald-400/80">B</td><td className="py-1.5 text-zinc-300">solid coverage, mostly tested — a few product user stories still rest on vendor docs alone</td></tr>
             <tr><td className="py-1.5 pr-3 font-mono text-amber-400/90">C</td><td className="py-1.5 text-zinc-300">meaningful gaps: thin coverage or verdicts leaning on claimed docs</td></tr>
             <tr><td className="py-1.5 pr-3 font-mono text-red-400/90">D</td><td className="py-1.5 text-zinc-300">treat the score as provisional — little tested evidence behind it yet</td></tr>
           </tbody>

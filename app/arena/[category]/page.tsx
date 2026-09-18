@@ -175,7 +175,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
         <p className="mt-2 text-xs text-zinc-400">
           <a
             href="#story-matrix"
-            title="The full story matrix — every judged (product, story) cell below"
+            title="The full story matrix — every judged (product, story) product user story below"
             className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
           >
             {data.stories.length} user stories · {data.verdicts.length} judged cells

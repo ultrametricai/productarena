@@ -1,4 +1,4 @@
-// Generates the OG share card (app/opengraph-image.png, 1200×630) by screenshotting a styled
+// Generates the OG share card (public/og3.png, 1200×630 — new filename per change so WhatsApp/Slack caches bust) by screenshotting a styled
 // HTML template with Playwright — the only way to get the site's real display font (Satoshi via
 // Fontshare) and the real rankings table into the card. Golden-ratio horizontal split: brand
 // panel left (38.2%), live table screenshot right (61.8%).
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SNAPSHOT = path.join(ROOT, 'docs/assets/rankings-snapshot.png')
-const OUT = path.join(ROOT, 'app/opengraph-image.png')
+const OUT = path.join(ROOT, 'public/og3.png')
 
 const { chromium } = await import(path.join(ROOT, '.proof-scratch/node_modules/playwright/index.mjs'))
 
@@ -39,7 +39,7 @@ const html = `<!doctype html>
   <div class="left">
     <div class="crumb">ultrametric /</div>
     <div class="wordmark">Product<em>Arena</em></div>
-    <div class="tag">Evidence-based software rankings for the AI era</div>
+    <div class="tag">Companies, ranked for the AI era</div>
     <div class="url">ultrametric.ai/productarena</div>
   </div>
   <div class="right">
