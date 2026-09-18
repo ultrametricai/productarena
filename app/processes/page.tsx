@@ -7,7 +7,7 @@ import { hasLogo } from '@/lib/logos'
 import { crossArenaStepRankings, processLeaderboard, stepRanking } from '@/lib/processRankings'
 import { chainIcon, processIcon } from '@/lib/processIcons'
 import {
-  chainTasks, computeCeiling, loadChains, loadProcesses,
+  CADENCE_META, cadenceRank, chainTasks, computeCeiling, loadChains, loadProcesses,
   phaseRank, processSlug, taskCeiling, VENDOR_ARENA, vendorLabel, vendorProductId,
 } from '@/lib/processes'
 
@@ -46,6 +46,14 @@ export default function ProcessesPage() {
       agentSteps: c.agentSteps,
       totalSteps: c.totalSteps,
       complexity: t.complexity,
+      // The five-orderings fields (curated on the corpus; cadence resolved to its display
+      // label/rank here so the client table never imports the node-only helpers).
+      timeOrder: t.timeOrder,
+      cadenceLabel: CADENCE_META[t.cadence].label,
+      cadenceRank: cadenceRank(t.cadence),
+      annoyance: t.annoyance,
+      risk: t.risk,
+      growthImpact: t.growthImpact,
       // Founder 2026-09-18: no empty vendor cells — processes without hand-curated vendors
       // fall back to the top story-ranked options across their steps (same evidence-gated
       // rankings the process page shows; cross-arena entries included). Cap 4 for the cell.

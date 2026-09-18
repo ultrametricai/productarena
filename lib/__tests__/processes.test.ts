@@ -8,6 +8,7 @@ import {
   VENDOR_ARENA, VENDOR_SIGNUP_URL, vendorChipInfo, vendorProductId, vendorRoles,
   type DagNode,
 } from '@/lib/processes'
+import { buildSimRun } from '@/lib/processSim'
 
 const DATA_DIR = path.resolve(__dirname, '../../data')
 
@@ -20,9 +21,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 106 processes with unique, non-empty slugs', () => {
+  it('loads all 97 processes with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(106)
+    expect(tasks.length).toBe(97)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -43,6 +44,30 @@ describe('corpus', () => {
     expect(slugAliasFor(viaAlias!, 'send-stripe-invoice')?.label).toBe('Send Stripe invoice')
     expect(slugAliasFor(viaAlias!, 'send-an-invoice')).toBeNull()
     expect(findProcessBySlug('send-an-invoice', DATA_DIR)?.id).toBe(viaAlias?.id)
+  })
+
+  it('folded processes redirect to their keeper; AFK-app-legacy slugs are gone', () => {
+    // Curation sweep (founder 2026-09-18): duplicates fold into the real process via slug
+    // aliases, so old indexed links keep landing somewhere honest.
+    const folded: Array<[string, string]> = [
+      ['incorporate-a-company', 'form_001'], // 2-step duplicate of the full incorporation flow
+      ['evaluate-c-corp-conversion', 'form_001'], // LLC-wizard branch — the answer IS incorporating
+      ['file-de-annual-report', 'tax_001'], // the DE annual report IS the franchise-tax filing
+      ['file-an-annual-report-registered-agent', 'qs_047'], // duplicate of the state annual report
+      ['set-up-website', 'site_001'], // wizard duplicate of "Generate a website"
+      ['import-documents-from-dropbox', 'qs_015'], // now an import step inside doc-storage setup
+      ['goals-due-this-week', 'scale_012'], // goal tracking lives in Company OKRs
+    ]
+    for (const [slug, keeperId] of folded) {
+      const task = findProcessBySlug(slug, DATA_DIR)
+      expect(task?.id, `${slug} should fold into ${keeperId}`).toBe(keeperId)
+      expect(slugAliasFor(task!, slug)).not.toBeNull()
+    }
+    // AFK-app chat/wizard suggestions were removed outright — not general startup operations,
+    // and there is no honest keeper to redirect them onto.
+    for (const gone of ['summarize-my-company', 'list-my-tasks', 'list-capabilities', 'extract-ultrametric-context']) {
+      expect(findProcessBySlug(gone, DATA_DIR), `${gone} should be removed`).toBeNull()
+    }
   })
 
   it('vendor-neutral titles: no tracked vendor is named in a process title', () => {
@@ -96,6 +121,40 @@ describe('corpus', () => {
     expect(cadenceOf('sw_002')).toBe('weekly')
   })
 
+  it('the five orderings are fully curated: timeOrder unique, 1–5 scores everywhere', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    for (const t of tasks) {
+      expect(Number.isInteger(t.timeOrder) && t.timeOrder >= 1, `${t.id} timeOrder`).toBe(true)
+      for (const [field, v] of [['annoyance', t.annoyance], ['risk', t.risk], ['growthImpact', t.growthImpact]] as const) {
+        expect(Number.isInteger(v) && v >= 1 && v <= 5, `${t.id} ${field}=${v} must be an integer 1–5`).toBe(true)
+      }
+    }
+    // The founder timeline is a total order: every position unique, so the sort is deterministic.
+    expect(new Set(tasks.map((t) => t.timeOrder)).size).toBe(tasks.length)
+    // …and every score axis actually discriminates (not a wall of 3s).
+    for (const field of ['annoyance', 'risk', 'growthImpact'] as const) {
+      expect(new Set(tasks.map((t) => t[field])).size, `${field} should span multiple values`).toBeGreaterThanOrEqual(4)
+    }
+  })
+
+  it('ordering anchors: the founder spot checks hold', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const byId = (id: string) => tasks.find((t) => t.id === id)!
+    // Incorporation is where the founder timeline starts.
+    const first = tasks.reduce((min, t) => (t.timeOrder < min.timeOrder ? t : min))
+    expect(first.id).toBe('form_001')
+    expect(byId('form_001').timeOrder).toBe(1)
+    // DE franchise tax: high risk, annual.
+    expect(byId('tax_001').risk).toBe(5)
+    expect(byId('tax_001').cadence).toBe('annual')
+    // Daily ship-a-feature: the growth loop.
+    expect(byId('sw_001').growthImpact).toBe(5)
+    expect(byId('sw_001').cadence).toBe('daily')
+    // 409A: annoying AND risky.
+    expect(byId('fund_003').annoyance).toBeGreaterThanOrEqual(4)
+    expect(byId('fund_003').risk).toBeGreaterThanOrEqual(4)
+  })
+
   it('cadence display helpers cover every bucket in board order', () => {
     for (const c of CADENCE_ORDER) {
       expect(CADENCE_META[c].label).toBeTruthy()
@@ -106,9 +165,13 @@ describe('corpus', () => {
     expect(cadenceRank('once')).toBe(CADENCE_ORDER.length - 1)
   })
 
-  it('contains no scrubbed vendor names', () => {
+  it('contains no scrubbed vendor names and no AFK-app-legacy framing', () => {
     const raw = JSON.stringify(loadProcesses(DATA_DIR)).toLowerCase()
-    for (const banned of ['searchmarq', 'domscan', 'daytona', 'linear.app']) {
+    for (const banned of [
+      'searchmarq', 'domscan', 'daytona', 'linear.app',
+      // The corpus is a general startup-operations map, not the original AFK app's task list.
+      'ultrametric', 'setup wizard', 'coworker chat', 'content firewall',
+    ]) {
       expect(raw.includes(banned), `corpus must not mention ${banned}`).toBe(false)
     }
   })
@@ -400,9 +463,25 @@ describe('cross-arena option declarations (extraOptionArenas / extraOptionRefs)'
 })
 
 describe('chains', () => {
+  it('the YC-journey playbooks exist and compose real processes', () => {
+    const ids = new Set(loadChains(DATA_DIR).map((c) => c.id))
+    for (const id of [
+      'company-launch', 'first-hire', 'month-end-close', 'get-paid', 'launch-website',
+      // Founder 2026-09-18: the missing end-to-end journeys YC startups actually run.
+      'raise-a-seed-round', 'get-first-10-customers', 'launch-on-product-hunt',
+      'set-up-compliance', 'ship-v1', 'go-fundraise-follow-on',
+    ]) {
+      expect(ids.has(id), `chain ${id} should exist`).toBe(true)
+    }
+    // The follow-on raise runs through the new atomic processes it genuinely needed.
+    const followOn = loadChains(DATA_DIR).find((c) => c.id === 'go-fundraise-follow-on')!
+    expect(followOn.taskIds).toContain('fund_002') // Close a priced equity round
+    expect(followOn.taskIds).toContain('fund_005') // Set up a data room
+  })
+
   it('every chain taskId exists in the corpus and ids are unique kebab-case', () => {
     const chains = loadChains(DATA_DIR)
-    expect(chains.length).toBeGreaterThanOrEqual(4)
+    expect(chains.length).toBeGreaterThanOrEqual(11)
     const taskIds = new Set(loadProcesses(DATA_DIR).map((t) => t.id))
     const ids = new Set<string>()
     for (const chain of chains) {
@@ -412,6 +491,55 @@ describe('chains', () => {
         expect(taskIds.has(tid), `${chain.id}: unknown task ${tid}`).toBe(true)
       }
       expect(chainTasks(chain, DATA_DIR).map((t) => t.id)).toEqual(chain.taskIds)
+    }
+  })
+})
+
+describe('simulator correctness — the Mercury bank case (founder 2026-09-18)', () => {
+  // "mercury was selected and the AI said it was a human process but it's already been done."
+  // Two fixes under test: (1) the corpus routes the online application/KYC as FORM work, never
+  // "needs a human" for something the bank fully automates; (2) the transcript resolves the
+  // "Choose a bank" step from the role picker instead of declaring a human gap.
+  it('open-bank-account: choosing Mercury resolves the decision; no step claims a human agent is needed to apply', () => {
+    const task = loadProcesses(DATA_DIR).find((t) => t.id === 'qs_023')!
+    const apply = task.dag.nodes.find((n) => n.label.toLowerCase().includes('application'))!
+    expect(apply.route).toBe('form') // Mercury's application is a fully online form
+    const kyc = task.dag.nodes.find((n) => n.label.includes('KYC'))!
+    expect(kyc.route).toBe('form') // the founder uploads docs — no human agent involved
+    const wait = task.dag.nodes.find((n) => n.label.toLowerCase().includes('wait'))!
+    expect(wait.route).toBe('person')
+    expect(wait.async).toBe(true) // the only human-ish part is the bank-side wait
+    const connect = task.dag.nodes.find((n) => n.id === 'n4')!
+    expect(connect.route).toBe('agent') // the opened account connects over the bank API
+
+    const steps = buildSimSteps([task], DATA_DIR)
+    const roles = vendorRoles([task], DATA_DIR)
+    const banking = roles.find((r) => r.arenaId === 'startup-banking')!
+    expect(banking.canonicalVendor).toBe('mercury')
+
+    const { lines, stats } = buildSimRun(steps, { 'startup-banking': 'mercury' }, roles)
+    const text = lines.map((l) => l.text).join('\n')
+    // The choice was made in the picker — the transcript says decided, never GAP.
+    expect(text).not.toContain('GAP: Choose a bank')
+    const decision = lines.find((l) => l.kind === 'decision')!
+    expect(decision.text).toContain('Choose a bank')
+    expect(decision.text).toContain('Mercury')
+    // No transcript line declares the application "needs a human".
+    for (const line of lines.filter((l) => l.text.includes('application'))) {
+      expect(line.text).not.toContain('needs a human')
+    }
+    expect(stats.decidedSteps).toBe(1)
+    // decided steps are not counted as human handoffs
+    expect(stats.gaps).toBe(steps.filter((s) => s.route !== 'agent').length - 1)
+  })
+
+  it('choice steps carry their market arena so any derived-market decision resolves', () => {
+    const steps = buildSimSteps(loadProcesses(DATA_DIR), DATA_DIR)
+    const bankChoice = steps.find((s) => s.taskId === 'qs_023' && s.label === 'Choose a bank')!
+    expect(bankChoice.choiceArenaId).toBe('startup-banking')
+    // Non-choice steps never carry one.
+    for (const s of steps.filter((x) => !/^(choose|select|pick)\b/i.test(x.label))) {
+      expect(s.choiceArenaId).toBeNull()
     }
   })
 })

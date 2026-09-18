@@ -47,9 +47,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   form_001: '🏛️', // Incorporate C-Corp
   form_002: '🆔', // Get EIN
   form_005: '🗺️', // Register state taxes
-  form_010: '🏛️', // Incorporate a company (same concept as form_001)
   qs_044: '📬', // Set up mailing address
-  qs_046: '🧭', // Evaluate C Corp conversion
   brand_001: '💡', // Generate a company name
   brand_002: '🎨', // Generate a brand logo
   brand_003: '🌈', // Pick a brand color palette
@@ -57,7 +55,9 @@ export const PROCESS_ICONS: Record<string, string> = {
   domain_002: '🌐', // Buy a domain
   // Fundraising
   fund_001: '🌱', // Raise pre-seed (SAFEs)
+  fund_002: '💼', // Close a priced equity round (the suits arrive)
   fund_003: '💲', // 409A valuation
+  fund_005: '📁', // Set up a data room (the diligence folder)
   fund_004: '🎟️', // Issue stock options
   qs_051: '🥧', // Set up cap table (ownership pie)
   qs_052: '🥧', // Update cap table
@@ -75,10 +75,8 @@ export const PROCESS_ICONS: Record<string, string> = {
   tax_003: '📮', // Issue 1099s
   ins_001: '☂️', // Get insurance quotes
   comp_001: '🛡️', // Start SOC 2 Type I
-  qs_041: '📆', // File DE annual report
   qs_045: '🗂️', // Review state registration
-  qs_047: '📆', // File state annual report (same concept as qs_041)
-  opp_010: '📆', // File an annual report / registered agent
+  qs_047: '📆', // File state annual report (annual-filing calendar concept)
   scale_007: '🔑', // SSO & access mgmt
   scale_011: '🕵️', // Vendor security review
   comp_010: '🔒', // Publish privacy policy & DPA (privacy is 🔒 site-wide)
@@ -111,11 +109,6 @@ export const PROCESS_ICONS: Record<string, string> = {
   opp_007: '🪪', // Provision a workspace user (canonical: Google Workspace)
   team_001: '💌', // Invite a teammate
   // Operations
-  qs_001: '📝', // Summarize my company
-  qs_002: '✅', // List my tasks
-  qs_003: '🎯', // Goals due this week
-  qs_004: '🧰', // List capabilities
-  qs_010: '🧠', // Extract Ultrametric context
   qs_015: '🗄️', // Set up doc storage
   ops_001: '💬', // Set up team chat (canonical: Slack)
   ops_002: '🎫', // Set up a project tracker (canonical: Linear)
@@ -123,9 +116,8 @@ export const PROCESS_ICONS: Record<string, string> = {
   ops_004: '🏢', // Set up company email & docs (canonical: Google Workspace)
   ops_005: '🔐', // Set up a password manager (canonical: 1Password)
   scale_006: '🏗️', // Multi-team structure
-  scale_012: '🎯', // Company OKRs (same concept as qs_003)
+  scale_012: '🎯', // Company OKRs (goals are 🎯 site-wide)
   opp_005: '📋', // Create a project in your tracker (canonical: Asana)
-  opp_006: '📦', // Import documents from Dropbox
   opp_008: '✉️', // Draft and send an email (canonical: Gmail)
   opp_011: '📨', // Set up email routing on your domain
   vendor_010: '🔌', // Connect a vendor or MCP server
@@ -135,7 +127,6 @@ export const PROCESS_ICONS: Record<string, string> = {
   prod_002: '🔄', // Set up CI/CD
   prod_004: '🚨', // Set up error tracking (canonical: Sentry)
   // Product
-  qs_081: '🖥️', // Set up website
   prod_001: '☁️', // Set up cloud infrastructure (canonical: AWS)
   prod_003: '🔗', // Set up custom domain
   prod_005: '🦔', // Set up product analytics (canonical: PostHog — the hedgehog)
@@ -172,6 +163,12 @@ export const CHAIN_ICONS: Record<string, string> = {
   'month-end-close': '📒',
   'get-paid': '🤑',
   'launch-website': '🌐',
+  'raise-a-seed-round': '🌱', // same concept as fund_001 (the seed)
+  'get-first-10-customers': '🧲', // pull the first customers in
+  'launch-on-product-hunt': '😺', // the Product Hunt cat
+  'set-up-compliance': '🛡️', // same concept as comp_001 (SOC 2 shield)
+  'ship-v1': '🚢', // same concept as sw_001 (ship it)
+  'go-fundraise-follow-on': '💰', // same concept as the fundraising phase
 }
 
 export function chainIcon(chainId: string): string {
