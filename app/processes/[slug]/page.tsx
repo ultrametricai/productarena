@@ -91,6 +91,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         <h1 className="font-display leading-[1.1] mt-1 flex items-center gap-2.5 text-3xl font-bold tracking-tight">
           <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} process`} />
           {task.title}
+          {task.region === 'us' && (
+            <span aria-label="US-specific process" title="US-specific: this flow is written around US law and agencies (IRS, Delaware, state filings)" className="text-xl">🇺🇸</span>
+          )}
         </h1>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
           <span className="rounded-full border border-zinc-700 px-2 py-0.5 text-zinc-300">

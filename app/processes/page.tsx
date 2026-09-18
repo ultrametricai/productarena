@@ -98,6 +98,7 @@ export default function ProcessesPage() {
                       </span>
                       <IconChip icon={processIcon(t.id)} title={`${t.title} — ${t.phase} process`} />
                       <span className="min-w-0 truncate">{t.title}</span>
+                      {t.region === 'us' && <span aria-label="US-specific process" title="US-specific: this flow is written around US law and agencies (IRS, Delaware, state filings)" className="shrink-0 text-xs">🇺🇸</span>}
                     </li>
                   ))}
                 </ol>

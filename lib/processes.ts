@@ -90,6 +90,10 @@ export const ProcessTaskSchema = z.object({
   // and the rest is the real calendar (payroll runs monthly per the corpus DAG, books close
   // monthly, boards meet quarterly, franchise tax is annual).
   cadence: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'annual', 'event-driven', 'once']),
+  // Display-only jurisdiction marker (founder 2026-09-18): 'us' renders a 🇺🇸 flag on the
+  // processes index + detail page for flows written around US law/agencies (DE franchise tax,
+  // 409A, 1099s, EIN prerequisites, IRS/83(b) references). Absent = jurisdiction-neutral.
+  region: z.enum(['us']).optional(),
   complexity: z.enum(['simple', 'moderate', 'complex', 'very_complex']),
   category: z.string().min(1),
   supportLevel: z.enum(['full', 'partial', 'manual_guide']),
