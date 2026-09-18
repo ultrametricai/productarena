@@ -135,6 +135,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           <span className="text-red-300/90">red = needs a human</span>. ⏸ approval gate · ⏳ async wait.
         </p>
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
+          <div id="steps" className="scroll-mt-4" />
           <ProcessDag nodes={task.dag.nodes} edges={task.dag.edges} taskId={task.id} />
         </div>
         {task.contextNeeded.length > 0 && (

@@ -424,6 +424,10 @@ export const VENDOR_ARENA: Record<string, string> = {
   docusign: 'legal-ops',
   // Lifecycle email to users — judged in email-marketing.
   mailchimp: 'email-marketing',
+  // Domain email + connect-a-vendor steps (founder 2026-09-18 vendor-cell fill).
+  fastmail: 'email',
+  composio: 'mcp-infrastructure',
+  smithery: 'mcp-infrastructure',
   // Cap table & option grants.
   carta: 'equity-management',
   pulley: 'equity-management',

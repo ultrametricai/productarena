@@ -4,6 +4,7 @@ import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProcessesTable, { type ProcessRow } from '@/components/ProcessesTable'
 import { hasLogo } from '@/lib/logos'
+import { crossArenaStepRankings, processLeaderboard, stepRanking } from '@/lib/processRankings'
 import { chainIcon, processIcon } from '@/lib/processIcons'
 import {
   chainTasks, computeCeiling, loadChains, loadProcesses,
@@ -45,10 +46,15 @@ export default function ProcessesPage() {
       agentSteps: c.agentSteps,
       totalSteps: c.totalSteps,
       complexity: t.complexity,
-      vendors: [...new Set(t.vendors)].map((v) => {
-        const id = vendorProductId(v)
-        return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
-      }),
+      // Founder 2026-09-18: no empty vendor cells — processes without hand-curated vendors
+      // fall back to the top story-ranked options across their steps (same evidence-gated
+      // rankings the process page shows; cross-arena entries included). Cap 4 for the cell.
+      vendors: (t.vendors.length > 0
+        ? [...new Set(t.vendors)].map((v) => {
+            const id = vendorProductId(v)
+            return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
+          })
+        : derivedVendorsFor(t)),
     }
   })
 
@@ -130,3 +136,29 @@ export default function ProcessesPage() {
     </div>
   )
 }
+// Founder 2026-09-18: the index table's vendor cell must never be empty. Processes without
+// hand-curated vendors derive their cell from the story-ranked options across their steps —
+// process leaderboard first (coverage × step quality), then cross-arena step winners — the
+// same evidence-gated rankings the process page itself shows. Cap 4.
+function derivedVendorsFor(t: import('@/lib/processes').ProcessTask) {
+  const seen = new Set<string>()
+  const out: { id: string; label: string; arena: string | null; hasLogo: boolean }[] = []
+  const push = (id: string, label: string, arena: string | null) => {
+    if (seen.has(id) || out.length >= 4) return
+    seen.add(id)
+    out.push({ id, label, arena, hasLogo: hasLogo(id) })
+  }
+  for (const e of processLeaderboard(t).entries) push(e.productId, e.name, e.arenaId)
+  if (out.length < 4) {
+    for (const node of t.dag.nodes) {
+      const rankings = [stepRanking(t.id, node), ...crossArenaStepRankings(t.id, node)]
+      for (const r of rankings) {
+        if (!r) continue
+        for (const v of r.vendors.slice(0, 2)) push(v.productId, v.name, v.arenaId)
+      }
+    }
+  }
+  return out
+}
+
+
