@@ -8,6 +8,8 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Vercel bill: cut build-minute burn without slowing progress | shipped 2026-09-18 — prebuilt tested and ruled out (41 fn bundles / 12GB output exceeds upload limits); fix = batched cadence via scripts/deploy-prod.sh (git push per merge stays; production deploys ≤3/day, 2h soft floor, FORCE=1 override) |
+| Remove "Rank #X of Y in <arena>" eyebrow on vendor pages (arenas strip already shows it) | shipped 2026-09-18 |
 | typescript-eslint broken under TS 7 (repo-wide lint) | open — pre-existing from TS7 merge; needs typescript-eslint major or pin |
 | Process + step rankings derived from vendors' judged stories (vendor-agnostic) | shipped 2026-09-18 — 291 step-story mappings (cached LLM pass, $single-digit); per-step ranked vendors with score pills + cite expandables; "Who covers this process best" leaderboard + best-per-step chain on every process page |
 | Computer-use options (all capable vendors, judged evidence only) on "Temporarily human" steps | shipped 2026-09-18 — 32/36 irreducible steps got ranked "could attempt it today" chips (browser-agents roster + chatgpt/claude/copilot/gemini/martin/muse via judged CU stories; grok/poke/perplexity honestly excluded) |

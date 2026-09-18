@@ -104,7 +104,6 @@ export default async function ProductPage({
   const product = data.products.find((p) => p.id === id)
   if (!product) notFound()
   const entry = data.rankings.leaderboard.find((e) => e.productId === id)!
-  const rank = data.rankings.leaderboard.indexOf(entry) + 1
   const naDims = new Set(data.category.naDimensions ?? [])
   const byTheme = groupInOrder<Story>(data.stories, (s) => s.theme)
   // Flattened, serializable (story, verdict) rows for the client-side sortable table — the
@@ -179,19 +178,8 @@ export default async function ProductPage({
           <span aria-hidden className="text-zinc-700">→</span>
           <span className="text-zinc-400">{product.name}</span>
         </nav>
-        <p className="mt-1.5 text-sm uppercase tracking-widest text-emerald-400">
-          Rank #{rank} of {data.rankings.leaderboard.length} in{' '}
-          <Link
-            href={`/arena/${category}`}
-            title={`${data.category.name} — the arena (category) this product competes in. See the full leaderboard.`}
-            className="font-semibold text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
-          >
-            {(arenaIcons as Record<string, string>)[category] && (
-              <span aria-hidden className="mr-1">{(arenaIcons as Record<string, string>)[category]}</span>
-            )}
-            {data.category.name}
-          </Link>
-        </p>
+        {/* Founder 2026-09-18: no "Rank #X of Y in <arena>" eyebrow — the arenas strip below
+            already carries the arena chips with live ranks; saying it twice wasted the top. */}
         <div className="mt-1 flex flex-wrap items-center gap-4">
           <ProductLogo product={product} size={56} />
           <div>
