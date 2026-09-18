@@ -4,14 +4,14 @@ import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
 import { resolveGapStep } from './gapClosers'
 import type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
-import { formatMinutes, gapWhy } from './processSim'
+import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
 
 // Client-safe prop shapes + display helpers live in lib/processSim.ts (no node:fs) so the
 // simulator client component can import them; re-exported here for server-side callers.
 export { formatMinutes, gapWhy }
 export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
-// The founder-process corpus (data/processes.json): 106 real startup operating processes, each
+// The founder-process corpus (data/processes.json): 97 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
 // API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (genuinely
 // needs a human: signatures, meetings, judgment, waiting on a third party). The whole feature's
@@ -117,6 +117,20 @@ export const ProcessTaskSchema = z.object({
   // processes index + detail page for flows written around US law/agencies (DE franchise tax,
   // 409A, 1099s, EIN prerequisites, IRS/83(b) references). Absent = jurisdiction-neutral.
   region: z.enum(['us']).optional(),
+  // The five founder orderings (founder ask 2026-09-18) — curated, display-only rank axes for
+  // the /processes table. All four are REQUIRED so coverage is total by construction:
+  //   timeOrder   — unique position in the sequence a founder actually hits these processes
+  //                 (incorporation first, then banking, payroll, … — the founder timeline).
+  //   annoyance   — 1–5 drudgery score: how much of a toil this is to do by hand.
+  //   risk        — 1–5 cost of getting it wrong: legal / tax / security exposure
+  //                 (DE franchise tax and the federal return sit at 5; naming a brand at 1).
+  //   growthImpact— 1–5 how directly the process drives revenue/user growth (daily feature
+  //                 shipping and outbound at 5; compliance filings at 1).
+  // The regularity ordering reuses `cadence` (daily → once) — no extra field needed.
+  timeOrder: z.number().int().min(1),
+  annoyance: z.number().int().min(1).max(5),
+  risk: z.number().int().min(1).max(5),
+  growthImpact: z.number().int().min(1).max(5),
   complexity: z.enum(['simple', 'moderate', 'complex', 'very_complex']),
   category: z.string().min(1),
   supportLevel: z.enum(['full', 'partial', 'manual_guide']),
@@ -721,6 +735,10 @@ export function buildSimSteps(tasks: ProcessTask[], dir?: string): SimStep[] {
       vendor: n.vendor ?? null,
       vendorLabel: n.vendor ? vendorLabel(n.vendor) : null,
       arenaId: (n.vendor && VENDOR_ARENA[n.vendor]) || null,
+      // A "Choose/Select/Pick …" step over a derived market IS the vendor decision the simulator
+      // asks for up front — carrying the arena lets the transcript mark it decided instead of
+      // declaring a human gap for a choice the user already made (the Mercury bank case).
+      choiceArenaId: n.optionsArenaId && DECISION_STEP_RE.test(n.label) ? n.optionsArenaId : null,
       calls: (n.functionCalls ?? []).map((fc) => fc.method),
       toolCall: n.toolCall ?? null,
       approvalRequired: n.approvalRequired ?? false,
