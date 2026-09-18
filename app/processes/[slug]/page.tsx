@@ -141,7 +141,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
       </p>
 
       <section>
-        <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">How it runs</h2>
+        <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Step-by-step: what an agent can do vs you</h2>
         <p className="mt-1 text-sm text-zinc-400">
           Route-coded block flow: <span className="text-emerald-300">emerald = agent</span>,{' '}
           <span className="text-amber-300">amber = manual form/portal</span>,{' '}

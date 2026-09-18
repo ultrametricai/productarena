@@ -70,7 +70,7 @@ export default function ProductActions({
                 </span>
               </SectionLabel>
               <a href="#try-it" className={linkClass}>
-                Run it in the microterminal →
+                Try it agentically — run it in the microterminal →
               </a>
               <p className="mt-1 text-zinc-500">
                 Recorded agent sessions — and a live MCP handshake where the vendor ships one.
