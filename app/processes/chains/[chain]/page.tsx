@@ -66,7 +66,7 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
         </p>
       </section>
 
-      <ProcessVerdict ceiling={ceiling} nodes={tasks.flatMap((t) => t.dag.nodes)} />
+      <ProcessVerdict ceiling={ceiling} tasks={tasks} />
 
       <section>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">The full run</h2>
@@ -87,6 +87,7 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
               href: `/processes/${processSlug(task.title)}`,
               meta: task.description,
               pct: taskCeiling(task).pct,
+              taskId: task.id,
               nodes: task.dag.nodes,
               edges: task.dag.edges,
             }))}
