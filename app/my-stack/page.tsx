@@ -3,7 +3,9 @@ import Link from 'next/link'
 import { Suspense } from 'react'
 import GeoMark from '@/components/GeoMark'
 import MyStackBuilder from '@/components/MyStackBuilder'
+import YourStack from '@/components/YourStack'
 import adjacencyClusters from '@/data/adjacent-arenas.json'
+import { loadArenaSections } from '@/lib/arenaSections'
 import { loadAll } from '@/lib/data'
 import { loadIntegrationGraph, verifiedPairKeys } from '@/lib/integrations'
 import { buildMyStackProducts, curatedStackArenaPatterns } from '@/lib/myStackData'
@@ -21,6 +23,9 @@ export default function MyStackPage() {
   const categories = loadAll()
   const products = buildMyStackProducts(categories)
   const verifiedPairs = verifiedPairKeys(loadIntegrationGraph(categories.map((d) => d.category.id)))
+  // The header's curated arena groupings, reused to organize the signed-in "Your stack" pickers
+  // (lean {name, arenaIds} rows — YourStack drops arenas the catalog doesn't rank).
+  const sections = loadArenaSections().map((s) => ({ name: s.name, arenaIds: s.arenaIds }))
 
   return (
     <div className="space-y-8">
@@ -45,6 +50,11 @@ export default function MyStackPage() {
           .
         </p>
       </section>
+
+      {/* Signed-in: define the account stack (one pick per arena) + upgraded stack advice;
+          signed-out: a "sign up to save your stack" prompt. Client-gated (lib/session.ts) —
+          the static HTML carries neither state. */}
+      <YourStack products={products} sections={sections} />
 
       <Suspense fallback={null}>
         <MyStackBuilder
