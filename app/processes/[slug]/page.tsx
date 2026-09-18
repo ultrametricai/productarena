@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
+import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
 import ProductLogoView from '@/components/ProductLogoView'
@@ -117,7 +118,11 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
       </section>
 
-      <ProcessVerdict ceiling={ceiling} nodes={task.dag.nodes} />
+      <ProcessVerdict ceiling={ceiling} tasks={[task]} />
+
+      {/* Story-derived process ranking: who covers this process best, no vendor assumed —
+          derived from the committed step→story mapping × judged verdicts (lib/processRankings). */}
+      <ProcessLeaderboard task={task} />
 
       <section>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">How it runs</h2>
@@ -127,7 +132,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           <span className="text-red-300/90">red = needs a human</span>. ⏸ approval gate · ⏳ async wait.
         </p>
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
-          <ProcessDag nodes={task.dag.nodes} edges={task.dag.edges} />
+          <ProcessDag nodes={task.dag.nodes} edges={task.dag.edges} taskId={task.id} />
         </div>
         {task.contextNeeded.length > 0 && (
           <p className="mt-3 text-xs text-zinc-500">

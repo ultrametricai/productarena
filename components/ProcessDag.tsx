@@ -7,6 +7,7 @@ import { resolveGapStep } from '@/lib/gapClosers'
 import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
 import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
+import { stepRanking, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
 
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
@@ -37,6 +38,9 @@ export interface DagSection {
   href?: string
   meta?: string
   pct?: number
+  // Corpus task id — lets each step block look up its committed story mapping
+  // (lib/processRankings.ts) and rank vendors by STEP relevance instead of arena order.
+  taskId?: string
   nodes: DagNode[]
   edges?: DagEdge[]
 }
@@ -169,15 +173,122 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
   )
 }
 
-function NodeBlock({ node, index }: { node: DagNode; index: number }) {
+// One vendor of a step ranking: linked chip with the STEP score (not the arena PA Score) —
+// weightedPercent over the judged verdicts on exactly the stories mapped to this step. The
+// tooltip names the verdicts so every pill traces to evidence even before expanding the
+// "how these are ranked" details.
+function StepScoreChip({ vendor, rank, arenaName }: { vendor: StepVendorScore; rank: number; arenaName: string }) {
+  const full = vendor.cites.filter((c) => c.verdict === 'full').length
+  const partial = vendor.cites.filter((c) => c.verdict === 'partial').length
+  return (
+    <Link
+      href={`/arena/${vendor.arenaId}/product/${vendor.productId}`}
+      title={`${vendor.name} — #${rank} for this step · ${vendor.score.toFixed(0)}/100 from judged verdicts on ${vendor.cites.length} mapped ${arenaName} stories (${full} full, ${partial} partial) — expand "how these are ranked" for the full trace, or open the judged product page`}
+      className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-300"
+    >
+      <ProductLogoView product={{ id: vendor.productId, name: vendor.name }} size={16} hasLogo={hasLogo(vendor.productId)} />
+      <span className="truncate">{vendor.name}</span>
+      <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{vendor.score.toFixed(0)}</span>
+    </Link>
+  )
+}
+
+// Compact one-line verdict trace for one vendor inside the "how these are ranked" expandable:
+// which mapped stories it delivers full / partial / not at all.
+function citeLine(v: StepVendorScore): string {
+  const titles = (kind: string) => v.cites.filter((c) => c.verdict === kind).map((c) => c.storyTitle)
+  const parts: string[] = []
+  const full = titles('full')
+  const partial = titles('partial')
+  const disputed = titles('disputed')
+  if (full.length > 0) parts.push(`full: ${full.join(' · ')}`)
+  if (partial.length > 0) parts.push(`partial: ${partial.join(' · ')}`)
+  if (disputed.length > 0) parts.push(`disputed: ${disputed.join(' · ')}`)
+  const rest = v.cites.length - full.length - partial.length - disputed.length
+  if (rest > 0) parts.push(`not delivered: ${rest}`)
+  return parts.join(' — ')
+}
+
+// The story-derived step ranking (founder ask: rank vendors per STEP from the stories they
+// actually support, don't assume the user has a vendor). Replaces the arena-ordered "via:" row
+// when the step has a committed story mapping; the expandable underneath exposes the mapped
+// stories and every verdict behind every score — same transparency bar as the /score pages.
+function StepRankingRow({ ranking, node }: { ranking: StepRanking; node: DagNode }) {
+  // Curated market entries we don't rank (untracked vendors — no judged verdicts) stay visible
+  // as honest unlinked chips after the ranked list.
+  const untracked = stepVendorOptions(node).filter((o) => !o.productId)
+  return (
+    <>
+      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
+        <span
+          className="text-[10px] uppercase tracking-wide text-zinc-500"
+          title={`Vendors ranked for THIS step — scored from their judged verdicts on the ${ranking.stories.length} ${ranking.arenaName} stories mapped to it, not the arena's overall PA Score`}
+        >
+          ranked for this step:
+        </span>
+        {ranking.vendors.map((v, i) => (
+          <StepScoreChip key={v.productId} vendor={v} rank={i + 1} arenaName={ranking.arenaName} />
+        ))}
+        {untracked.map((o) => (
+          <VendorChip key={o.vendor} info={o} />
+        ))}
+        <Link
+          href={`/arena/${ranking.arenaId}`}
+          title="See the whole judged market for this step's function"
+          className="whitespace-nowrap text-[10px] text-zinc-500 transition hover:text-emerald-300"
+        >
+          full arena →
+        </Link>
+      </div>
+      <details className="group mt-1.5">
+        <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
+          <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
+          how these are ranked — {ranking.stories.length} judged stories · {ranking.vendors.length} vendors
+        </summary>
+        <div className="mt-1.5 space-y-1.5 border-l border-zinc-800 pl-3 text-[11px] text-zinc-500">
+          <p>
+            Score = story-weighted verdicts on the {ranking.arenaName} stories mapped to this step
+            (full=1, partial=0.6, disputed=0.3, none=0 · n/a excluded) — every number below traces
+            to a judged verdict on the vendor&rsquo;s product page.
+          </p>
+          <ul className="space-y-0.5">
+            {ranking.stories.map((s) => (
+              <li key={s.id} className="text-zinc-400">
+                <span className="text-zinc-600">w{s.weight}</span> {s.title}
+              </li>
+            ))}
+          </ul>
+          <ul className="space-y-0.5">
+            {ranking.vendors.map((v) => (
+              <li key={v.productId}>
+                <Link href={`/arena/${v.arenaId}/product/${v.productId}`} className="text-zinc-300 transition hover:text-emerald-300">
+                  {v.name}
+                </Link>{' '}
+                <span className="font-mono tabular-nums text-emerald-400/80">{v.score.toFixed(0)}</span>{' '}
+                — {citeLine(v)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
+    </>
+  )
+}
+
+function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; taskId?: string }) {
   const style = ROUTE_STYLE[node.route]
   const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
+  // Story-derived ranking for the step (lib/processRankings.ts): present whenever the step has
+  // a covering arena and a committed non-empty story mapping. When it exists it REPLACES the
+  // arena-ordered "via:" roster and the "or:" alternatives — the same market, ranked by step
+  // relevance instead of overall arena rank.
+  const ranking = taskId ? stepRanking(taskId, node) : null
   // Steps with a derived market (optionsArenaId) already show the whole arena in the "via:"
   // row — a second "or:" row of alternatives would just repeat it.
-  const alts = node.vendor && !node.optionsArenaId ? vendorAlternatives(node.vendor) : []
+  const alts = node.vendor && !node.optionsArenaId && !ranking ? vendorAlternatives(node.vendor) : []
   // Live market for the step's general function: arena-derived roster (top by PA Score, in
   // arena-rank order) plus curated extras — lib/processes.ts stepVendorOptions.
-  const options = stepVendorOptions(node)
+  const options = ranking ? [] : stepVendorOptions(node)
   const calls = node.functionCalls ?? []
   const gap = resolveGapStep(node)
   const closer = gap?.kind === 'closer' ? gap.closer : null
@@ -234,6 +345,8 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
           </a>
         )}
       </div>
+
+      {ranking && <StepRankingRow ranking={ranking} node={node} />}
 
       {options.length > 0 && (
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
@@ -325,7 +438,7 @@ function NodeBlock({ node, index }: { node: DagNode; index: number }) {
   )
 }
 
-function Flow({ nodes, edges }: { nodes: DagNode[]; edges?: DagEdge[] }) {
+function Flow({ nodes, edges, taskId }: { nodes: DagNode[]; edges?: DagEdge[]; taskId?: string }) {
   const layers = layerNodes(nodes, edges)
   // Cumulative step offsets, precomputed so nothing is reassigned inside the render map
   // (react-compiler lint: "Cannot reassign variable after render completes").
@@ -343,7 +456,7 @@ function Flow({ nodes, edges }: { nodes: DagNode[]; edges?: DagEdge[] }) {
           <Fragment key={layer[0].id}>
             {li > 0 && <Connector />}
             {layer.length === 1 ? (
-              <NodeBlock node={layer[0]} index={start + 1} />
+              <NodeBlock node={layer[0]} index={start + 1} taskId={taskId} />
             ) : (
               <div className="rounded-xl border border-dashed border-zinc-700/80 p-2">
                 <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
@@ -351,7 +464,7 @@ function Flow({ nodes, edges }: { nodes: DagNode[]; edges?: DagEdge[] }) {
                 </p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {layer.map((n, ni) => (
-                    <NodeBlock key={n.id} node={n} index={start + ni + 1} />
+                    <NodeBlock key={n.id} node={n} index={start + ni + 1} taskId={taskId} />
                   ))}
                 </div>
               </div>
@@ -397,10 +510,12 @@ export default function ProcessDag({
   nodes,
   edges,
   sections,
+  taskId,
 }: {
   nodes?: DagNode[]
   edges?: DagEdge[]
   sections?: DagSection[]
+  taskId?: string
 }) {
   if (sections && sections.length > 0) {
     return (
@@ -410,7 +525,7 @@ export default function ProcessDag({
             {si > 0 && <Connector />}
             <SectionHeader section={s} />
             <Connector />
-            <Flow nodes={s.nodes} edges={s.edges} />
+            <Flow nodes={s.nodes} edges={s.edges} taskId={s.taskId} />
           </Fragment>
         ))}
       </div>
@@ -418,7 +533,7 @@ export default function ProcessDag({
   }
   return (
     <div>
-      <Flow nodes={nodes ?? []} edges={edges} />
+      <Flow nodes={nodes ?? []} edges={edges} taskId={taskId} />
     </div>
   )
 }
