@@ -121,10 +121,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         <p className="mt-2 max-w-2xl text-sm text-zinc-500">{task.supportReason}</p>
       </section>
 
-      <ProcessVerdict ceiling={ceiling} tasks={[task]} />
-
-      {/* Story-derived process ranking: who covers this process best, no vendor assumed —
-          derived from the committed step→story mapping × judged verdicts (lib/processRankings). */}
+      {/* Founder 2026-09-18: the process ITSELF leads — who covers it, then the step-by-step
+          flow with per-step vendors. The agent-ceiling gap analysis moved below the steps and
+          collapsed (it repeated every step's computer-use chips at the top of the page). */}
       <ProcessLeaderboard task={task} />
 
       {/* Founder ask: "Check my process" — the personalized run (your vendor per step vs the
@@ -166,6 +165,8 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           </p>
         )}
       </section>
+
+      <ProcessVerdict ceiling={ceiling} tasks={[task]} />
 
       {roles.length > 0 && (
         <section>
