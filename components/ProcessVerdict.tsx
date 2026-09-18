@@ -64,6 +64,13 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
       {gaps.length === 0 ? (
         <p className="mt-2 text-sm text-emerald-300/90">No gaps — every step of this process is agent-runnable today.</p>
       ) : (
+        <details className="mt-2">
+          <summary className="cursor-pointer select-none text-sm text-zinc-400 transition hover:text-emerald-300">
+            {closable.length > 0 && <span className="mr-3">⚡ {closable.length} closable with today&rsquo;s market</span>}
+            {irreducible.length > 0 && <span className="mr-3 text-red-300/80">{irreducible.length} human or computer use</span>}
+            {unclosed.length > 0 && <span className="text-amber-300/90">{unclosed.length} no workaround yet</span>}
+            <span className="ml-1 text-zinc-600">— details</span>
+          </summary>
         <div className="mt-2 space-y-2.5 text-sm text-zinc-400">
           {closable.length > 0 && (
             <div>
@@ -119,6 +126,7 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
             </div>
           )}
         </div>
+        </details>
       )}
     </div>
   )
