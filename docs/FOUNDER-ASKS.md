@@ -8,6 +8,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| US flag on US-centric processes | shipped 2026-09-18 — region:'us' on 15 processes (DE franchise tax, 409A, EIN, 1099s, state taxes, registered agent, 83(b)-citing founder agreement…); 🇺🇸 on index + detail pages with a tooltip |
 | Rename "cells" → "product user stories" in user-facing copy | shipped 2026-09-18 — pipeline, methodology, score receipts, reports, rankings pages (18+ prose spots; code identifiers untouched) |
 | Larger vendor logos on process chain steps | shipped 2026-09-18 (16→28px step blocks, 14→22px ranked options) |
 | Share image says "Companies, ranked for the AI era" | shipped 2026-09-18 — regenerated as og3.png (cache-busting filename), metadata updated |
