@@ -135,7 +135,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
                 <th className="px-3 py-2 font-medium">Product</th>
                 <th className="px-3 py-2 text-right font-medium"><span title="PA Score (0–100): the blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">PA Score</span></th>
                 <th className="px-3 py-2 text-right font-medium"><span title="Story coverage (0–100): how much of the arena's judged story set the product delivers, weighted by importance">Coverage score</span></th>
-                <th className="px-3 py-2 text-right font-medium"><span title="Judged (product, story) cells that apply to this product — n/a stories excluded">Applicable cells</span></th>
+                <th className="px-3 py-2 text-right font-medium"><span title="Judged (product, story) product user stories that apply to this product — n/a stories excluded">Applicable product user stories</span></th>
                 <th className="px-3 py-2 text-right font-medium"><span title="Mean judge confidence across this product's verdicts">Confidence</span></th>
               </tr>
             </thead>

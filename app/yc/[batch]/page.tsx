@@ -131,7 +131,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums text-emerald-300">
                   {row.agentReady === null ? (
-                    <span className="font-sans text-xs italic text-zinc-500" title="No applicable agent-access cells — unscored, not zero.">
+                    <span className="font-sans text-xs italic text-zinc-500" title="No applicable agent-access product user stories — unscored, not zero.">
                       unscored
                     </span>
                   ) : (
@@ -160,7 +160,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
 
       <p className="text-xs text-zinc-500">
         A product tracked in more than one arena appears once, in the arena where its PA Score is highest. Unscored
-        means no applicable cells — never zero. Batch stamps verified against YC&rsquo;s public directory by website
+        means no applicable product user stories — never zero. Batch stamps verified against YC&rsquo;s public directory by website
         domain, never by name.
       </p>
     </div>

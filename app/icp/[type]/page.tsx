@@ -109,7 +109,7 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
                 <td className="px-3 py-2">
                   <span
                     className="inline-flex w-fit items-center rounded-full bg-emerald-400 px-2 py-0.5 font-mono text-xs font-bold text-zinc-950 ring-1 ring-emerald-300 tabular-nums"
-                    title={`Lens-weighted score over ${row.applicable} applicable emphasized cells — canonical verdicts, ${icp.name} weighting.`}
+                    title={`Lens-weighted score over ${row.applicable} applicable emphasized product user stories — canonical verdicts, ${icp.name} weighting.`}
                   >
                     {row.score.toFixed(0)}
                     <span className="font-medium opacity-60">/100</span>
@@ -140,9 +140,9 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
       <p className="text-xs text-zinc-500">
         How this works: a lens multiplies each story&rsquo;s canonical weight by the buyer&rsquo;s
         persona and theme emphasis, then applies the site&rsquo;s standard weighted-percent
-        normalization over the emphasized cells only. Verdicts are never re-judged, and products
+        normalization over the emphasized product user stories only. Verdicts are never re-judged, and products
         with no applicable emphasized evidence — or fewer than {MIN_ICP_APPLICABLE} emphasized
-        cells to judge from — are excluded rather than shown as 0 — see{' '}
+        product user stories to judge from — are excluded rather than shown as 0 — see{' '}
         <Link href="/methodology" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
           methodology
         </Link>

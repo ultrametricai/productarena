@@ -98,7 +98,7 @@ function GiftCard({ gift }: { gift: GiftEntry }) {
       </p>
 
       <p className="mt-2 break-words text-xs text-zinc-400">
-        <span className="uppercase tracking-widest text-zinc-600" title="Our own verdict/certification cells that honestly improve if the gift lands and the surface goes live (re-judged only after a live re-probe)">
+        <span className="uppercase tracking-widest text-zinc-600" title="Our own verdict/certification product user stories that honestly improve if the gift lands and the surface goes live (re-judged only after a live re-probe)">
           Flips{' '}
         </span>
         {stripBold(gift.flips)}

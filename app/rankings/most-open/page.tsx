@@ -125,7 +125,7 @@ export default function MostOpenRankingPage() {
         </p>
         <p className="mt-2 text-xs text-zinc-500">
           A &ldquo;none&rdquo; verdict means no evidence was found either way — click any chip for the rationale and
-          citations. Products with no applicable openness cells are unscored (never zero) and sort last.
+          citations. Products with no applicable openness product user stories are unscored (never zero) and sort last.
         </p>
       </div>
       <div className="overflow-x-auto rounded-xl border border-zinc-800">
@@ -165,7 +165,7 @@ export default function MostOpenRankingPage() {
                 </td>
                 <td className="px-3 py-2 font-mono tabular-nums text-emerald-300">
                   {row.openness === null ? (
-                    <span className="font-sans text-xs italic text-zinc-500" title="No applicable openness cells — unscored, not zero.">
+                    <span className="font-sans text-xs italic text-zinc-500" title="No applicable openness product user stories — unscored, not zero.">
                       unscored
                     </span>
                   ) : (

@@ -121,7 +121,7 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
   const logoId = info.productId ?? info.vendor
   const body = (
     <>
-      <ProductLogoView product={{ id: logoId, name: info.label }} size={16} hasLogo={hasLogo(logoId)} />
+      <ProductLogoView product={{ id: logoId, name: info.label }} size={28} hasLogo={hasLogo(logoId)} />
       <span className="truncate">{info.label}</span>
       {info.agentReady !== null && (
         <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">
@@ -186,7 +186,7 @@ function StepScoreChip({ vendor, rank, arenaName }: { vendor: StepVendorScore; r
       title={`${vendor.name} — #${rank} for this step · ${vendor.score.toFixed(0)}/100 from judged verdicts on ${vendor.cites.length} mapped ${arenaName} stories (${full} full, ${partial} partial) — expand "how these are ranked" for the full trace, or open the judged product page`}
       className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-300"
     >
-      <ProductLogoView product={{ id: vendor.productId, name: vendor.name }} size={16} hasLogo={hasLogo(vendor.productId)} />
+      <ProductLogoView product={{ id: vendor.productId, name: vendor.name }} size={28} hasLogo={hasLogo(vendor.productId)} />
       <span className="truncate">{vendor.name}</span>
       <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{vendor.score.toFixed(0)}</span>
     </Link>
@@ -381,7 +381,7 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
                 href={`/arena/${o.arenaId}/product/${o.id}`}
                 className="inline-flex items-center gap-1 align-middle text-zinc-300 transition hover:text-emerald-300"
               >
-                <ProductLogoView product={{ id: o.id, name: o.name }} size={14} hasLogo={hasLogo(o.id)} />
+                <ProductLogoView product={{ id: o.id, name: o.name }} size={22} hasLogo={hasLogo(o.id)} />
                 {o.name}
               </Link>
               {o.agentReady !== null && (

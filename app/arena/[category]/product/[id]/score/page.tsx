@@ -143,7 +143,7 @@ function DimensionSection({ dim, productHref }: { dim: DimensionBreakdown; produ
         <p className="mt-1 border-t border-zinc-700 pt-3 font-mono text-sm tabular-nums text-zinc-300">
           {dim.score === null ? (
             <span className="italic text-zinc-500">
-              every cell n/a — unscored (not zero), excluded from the blend
+              every product user story n/a — unscored (not zero), excluded from the blend
             </span>
           ) : (
             <>
