@@ -362,6 +362,43 @@ describe('derived step options (optionsArenaId)', () => {
   })
 })
 
+describe('cross-arena option declarations (extraOptionArenas / extraOptionRefs)', () => {
+  it('every declared extra arena is real and populated, never repeats the covering arena; every ref names a real product, no duplicates', () => {
+    const arenaIds = new Set(loadCategories(DATA_DIR).map((c) => c.id))
+    let declaredSteps = 0
+    for (const t of loadProcesses(DATA_DIR)) {
+      for (const n of t.dag.nodes) {
+        if (!n.extraOptionArenas && !n.extraOptionRefs) continue
+        declaredSteps += 1
+        const primary = n.optionsArenaId ?? (n.vendor ? VENDOR_ARENA[n.vendor] : undefined)
+        const seenArenas = new Set<string>()
+        for (const a of n.extraOptionArenas ?? []) {
+          expect(arenaIds.has(a), `${t.id}/${n.id}: unknown extra arena ${a}`).toBe(true)
+          expect(isPopulated(a, DATA_DIR), `${t.id}/${n.id}: extra arena ${a} not populated`).toBe(true)
+          expect(a, `${t.id}/${n.id}: extra arena repeats the covering arena`).not.toBe(primary)
+          expect(seenArenas.has(a), `${t.id}/${n.id}: duplicate extra arena ${a}`).toBe(false)
+          seenArenas.add(a)
+        }
+        const seenRefs = new Set<string>()
+        for (const r of n.extraOptionRefs ?? []) {
+          expect(arenaIds.has(r.arenaId), `${t.id}/${n.id}: unknown ref arena ${r.arenaId}`).toBe(true)
+          expect(isPopulated(r.arenaId, DATA_DIR), `${t.id}/${n.id}: ref arena ${r.arenaId} not populated`).toBe(true)
+          expect(r.arenaId, `${t.id}/${n.id}: ref arena repeats the covering arena`).not.toBe(primary)
+          const key = `${r.arenaId}:${r.productId}`
+          expect(seenRefs.has(key), `${t.id}/${n.id}: duplicate ref ${key}`).toBe(false)
+          seenRefs.add(key)
+          expect(
+            loadCategory(r.arenaId, DATA_DIR).products.some((p) => p.id === r.productId),
+            `${t.id}/${n.id}: ref ${key} is not a judged product`,
+          ).toBe(true)
+        }
+      }
+    }
+    // The founder sweep is in the data, not vacuously green.
+    expect(declaredSteps).toBeGreaterThanOrEqual(50)
+  })
+})
+
 describe('chains', () => {
   it('every chain taskId exists in the corpus and ids are unique kebab-case', () => {
     const chains = loadChains(DATA_DIR)
