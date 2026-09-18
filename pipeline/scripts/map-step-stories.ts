@@ -3,8 +3,11 @@
 // stories, not the whole arena) — plus, for every temporarily-human step (lib/gapClosers.ts
 // irreducible classification), which computer-use stories describe attempting it
 // (browser-agents' full story set; ai-assistants restricted to its judged computer-use
-// stories). Writes the committed data/process-step-stories.json that lib/processRankings.ts
-// derives every step/process ranking from.
+// stories) — plus, for every step declaring ADDITIONAL covering arenas (extraOptionArenas /
+// extraOptionRefs), which of THAT arena's stories describe performing the step (kind 'extra':
+// "generate a website" onto ai-assistants / design-tools). Writes the committed
+// data/process-step-stories.json that lib/processRankings.ts derives every step/process
+// ranking from.
 //
 // Same honesty + cost architecture as classify-story-tiers.ts (the model for this script):
 //   - the mapping is an ANNOTATION: verdicts, scoring, judge caches are never touched;
@@ -24,7 +27,7 @@ import { z } from 'zod'
 import { classifyGapStep } from '../../lib/gapClosers'
 import { loadProcesses, type ProcessTask } from '../../lib/processes'
 import {
-  COMPUTER_USE_SOURCES, coveringArenaId, StepStoryMapSchema, type StepStoryEntry,
+  COMPUTER_USE_SOURCES, coveringArenaId, extraArenasFor, StepStoryMapSchema, type StepStoryEntry,
 } from '../../lib/processRankings'
 import { StorySchema, type Story } from '../../lib/schemas'
 import { llmJson } from '../llm'
@@ -111,6 +114,7 @@ Rules:
 - Platform-quality stories (pricing transparency, openness/self-hosting, privacy posture, docs quality, SLAs) are NOT step-relevant unless the step itself is about that concern.
 - Agent-access plumbing stories (public API, MCP, SDKs, webhooks) are relevant only when the step is executed BY an agent through that surface — which is the default framing here: prefer the stories about doing this step's actual work; include at most the 1-2 access stories that carry it.
 - kind=computer-use steps are human steps a computer-use agent might ATTEMPT: pick the stories about executing that kind of web/desktop task (navigating portals, filling forms, completing tasks end-to-end, handling logins/files), not unrelated platform features.
+- kind=extra maps the step onto an ADJACENT arena (the step's primary market lives elsewhere): be strict — select only stories a product of THIS arena would directly exercise to perform the step itself, and return [] unless this arena's products genuinely perform this move.
 Return JSON: an array with EXACTLY one entry per step listed, in any order:
 [{"stepKey":"...","storyIds":["..."]}]`
 
@@ -161,6 +165,14 @@ export function enumerateTargets(tasks: ProcessTask[]): MapTarget[] {
       const stories = arenaId ? storiesFor(arenaId) : null
       if (arenaId && stories) {
         targets.push({ ...base, kind: 'function', arenaId, candidates: stories })
+      }
+      // Additional covering arenas (extraOptionArenas / extraOptionRefs) → 'extra' mappings,
+      // one per arena, offered the arena's FULL story list (same posture as 'function' — the
+      // ref/arena allowlist and full/partial gate are applied by the consumer, not here).
+      for (const extraArena of extraArenasFor(node)) {
+        const extraStories = storiesFor(extraArena)
+        if (!extraStories) continue
+        targets.push({ ...base, kind: 'extra', arenaId: extraArena, candidates: extraStories })
       }
       // Temporarily-human steps → 'computer-use' mapping per fleet source.
       const cls = classifyGapStep({ label: node.label, route: node.route, async: node.async })

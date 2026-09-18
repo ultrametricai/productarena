@@ -29,6 +29,19 @@ export const FunctionCallSchema = z.object({
   description: z.string().optional(),
 })
 
+// One explicit cross-arena vendor for a step: a judged product in an arena OTHER than the
+// step's covering arena that genuinely performs this move ("generate a website" is served by
+// ChatGPT from ai-assistants and Framer from design-tools, not just the vibe-coding roster).
+// Display-only, and evidence-gated downstream: lib/processRankings.ts surfaces a ref only when
+// the committed (step, extra-arena) story mapping exists and the product has at least one
+// judged full/partial verdict on the mapped stories — a ref is a candidate, never a claim.
+export const ExtraOptionRefSchema = z.object({
+  arenaId: z.string().min(1),
+  productId: z.string().min(1),
+})
+
+export type ExtraOptionRef = z.infer<typeof ExtraOptionRefSchema>
+
 export const DagNodeSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
@@ -47,6 +60,16 @@ export const DagNodeSchema = z.object({
   // (formation services inside legal-ops) or has no arena yet (SEO tools, cloud file storage,
   // launch platforms) omit this and keep their curated options frozen.
   optionsArenaId: z.string().min(1).optional(),
+  // ADDITIONAL covering arenas whose whole market genuinely performs this move — "install SDK
+  // in codebase" is served by every ai-coding agent, not just the step's own arena. Like
+  // optionsArenaId these are display-only, but stricter: cross-arena vendors surface ONLY via
+  // the story-derived ranking (lib/processRankings.ts crossArenaStepRankings) — the committed
+  // (step, extra-arena) mapping plus a judged full/partial verdict — never as an ungated roster.
+  extraOptionArenas: z.string().min(1).array().optional(),
+  // Explicit cross-arena vendor candidates (see ExtraOptionRefSchema) for steps where only
+  // SPECIFIC products of another arena do the move (Framer/Figma/Canva build sites; the rest of
+  // design-tools doesn't). Same evidence gate as extraOptionArenas.
+  extraOptionRefs: ExtraOptionRefSchema.array().optional(),
   toolCall: z.string().min(1).optional(),
   // The canonical external page a HUMAN uses to do this step themselves (the IRS EIN
   // application, Delaware's filing portal, USPTO search…) — rendered as a small
@@ -607,7 +630,10 @@ function arenaOptionChips(arenaId: string, dir?: string): VendorChipInfo[] {
 }
 
 // The full supplier list for one step, resolved against the live market — every key supplier a
-// founder could genuinely pick for the step's general function. When the step declares
+// founder could genuinely pick for the step's general function. Cross-arena vendors
+// (extraOptionArenas / extraOptionRefs) are deliberately NOT appended here: they only surface
+// through lib/processRankings.ts crossArenaStepRankings, which gates each one on the committed
+// step→story mapping and a judged full/partial verdict. When the step declares
 // optionsArenaId, the list is DERIVED from that arena's current leaderboard (top
 // STEP_OPTIONS_CAP by PA Score, in arena-rank order) so roster changes flow through on the
 // next build; hand-curated vendorOptions not already in the derived roster are appended after
