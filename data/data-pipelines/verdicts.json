@@ -3056,18 +3056,18 @@
   {
     "productId": "meltano",
     "storyId": "agent-builds-pipeline",
-    "verdict": "partial",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "CLI-driven headless scaffolding is well documented and runtime-verified (uvx meltano init lays out a full ELT project keylessly, meltano add/config test are idempotent and CLI-native), and MeltanoHub exposes a queryable plugin registry an agent could use to select connectors. However, there is no evidence of an official API for triggering/monitoring pipeline runs (openapi and llms.txt probes both 404), and no runtime evidence of an agent actually executing a full pipeline (extract/load/transform run) rather than just initializing the project skeleton. Missing for 10: demonstrated headless pipeline execution (meltano run/elt) and an official API surface for orchestration beyond the CLI.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Meltano's CLI is thoroughly documented for headless scaffolding (`meltano init`), configuration (`meltano add`, `meltano config test`), and execution (orchestration via Airflow, containerized runs), all scriptable without a UI. Community reports (GitLab data team) confirm real production use of these CLI-driven pipelines, though no REST/OpenAPI API exists (confirmed 404 probes) so 'API' fallback is unsupported. Missing for 10: explicit documented 'meltano run' end-to-end example, an official API alternative, and independent verification of an agent orchestrating the full flow autonomously.",
     "evidenceIds": [
-      "meltano-probe-rt-1",
-      "meltano-probe-rt-2",
       "meltano-docs-2",
       "meltano-docs-3",
       "meltano-docs-9",
       "meltano-docs-24",
-      "meltano-probe-1",
+      "meltano-docs-33",
+      "meltano-docs-7",
+      "meltano-comm-2",
       "meltano-probe-2",
       "meltano-probe-3"
     ]
@@ -3078,13 +3078,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence of an MCP server, REST/status API, or agent-facing mechanism to check sync status, diagnose failures, or re-trigger runs; probes explicitly show no OpenAPI spec and no llms.txt, and the only APIs found are the plugin registry (Hub) and CLI init, neither of which address run monitoring or re-triggering.",
+    "rationale": "No evidence of an API or MCP server for checking sync status, diagnosing failures, or re-triggering runs; probes explicitly show no OpenAPI/llms.txt and no MCP server mentioned anywhere. Only a CLI and generic 'pipeline monitoring' claim exist, with no agent-facing interface.",
     "evidenceIds": [
       "meltano-probe-1",
       "meltano-probe-2",
-      "meltano-probe-3",
-      "meltano-probe-rt-1",
-      "meltano-probe-rt-2"
+      "meltano-docs-13",
+      "meltano-probe-3"
     ]
   },
   {
@@ -3093,10 +3092,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe found no llms.txt (404) and no agent-oriented docs endpoint (openapi 404s), and no evidence pack item mentions agent-facing documentation formats; the only agent-relevant surface found is MeltanoHub's plugin API, which is a registry, not agent-oriented docs guidance.",
+    "rationale": "A direct probe of docs.meltano.com/llms.txt returned 404, and no evidence exists of any agent-oriented documentation format offered by Meltano.",
     "evidenceIds": [
-      "meltano-probe-1",
-      "meltano-probe-2"
+      "meltano-probe-1"
     ]
   },
   {
@@ -3105,7 +3103,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Meltano is an ELT/data pipeline orchestration tool; generating AI insights/suggestions from data is a downstream analytics/BI capability outside its category, not an axis this product type addresses.",
+    "rationale": "Meltano is an ELT/data pipeline orchestration tool, not an analytics or BI product that surfaces AI-generated insights from data to end users; this axis is a category mismatch for a data integration platform.",
     "evidenceIds": []
   },
   {
@@ -3114,11 +3112,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Meltano supports scheduled/orchestrated pipeline runs via Airflow integration, and the CLI can programmatically scaffold an ELT project with an 'orchestrate' directory (meltano init) that a script or agent could invoke unattended. However, there's no evidence of a native, always-on background scheduler (Airflow is an external dependency to set up separately) or any agent-specific trigger/webhook mechanism for autonomous operation. Missing for 10: built-in native scheduler independent of external orchestrator, evidence of agent-triggered/event-based automation, and hands-on confirmation of unattended long-running background execution.",
+    "rationale": "Meltano documents scheduled pipelines orchestrated via Apache Airflow, allowing ELT jobs to run unattended/autonomously in the background, and CLI commands support fully automated pipeline execution. However, this is traditional cron/orchestrator-based scheduling rather than AI-native, agent-driven autonomy (no evidence of AI agents deciding when/what to run or reacting dynamically). Missing for 10: AI-agent-triggered automation, dynamic/adaptive scheduling logic, and independent evidence of autonomous background operation beyond docs.",
     "evidenceIds": [
       "meltano-docs-7",
-      "meltano-probe-rt-1",
-      "meltano-docs-17"
+      "meltano-docs-33",
+      "meltano-docs-24"
     ]
   },
   {
@@ -3136,13 +3134,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Meltano is a CLI-first tool with a documented, scriptable command-line interface (meltano init, meltano add, meltano config test, meltano run) that requires no GUI, confirmed by a hands-on runtime probe showing keyless CLI execution producing a full project layout. Docs explicitly endorse treating projects like software repos with version control and CI/CD, and containerization/Docker support further enables headless CI use. Missing for 10: no explicit first-party CI pipeline example (e.g. GitHub Actions YAML) or independent report of running Meltano inside a CI system in production.",
+    "rationale": "Meltano is explicitly CLI-driven, dockerizable, and documented for DataOps CI/CD workflows (version control, CI/CD, code review) and scheduled/orchestrated pipelines via Airflow, all of which enable headless automation. Independent evidence confirms production use (GitLab running pipelines) without a GUI dependency. Missing for 10: no explicit CI-platform-specific guide (e.g., GitHub Actions/GitLab CI example) or hands-on CI log evidence beyond general production usage.",
     "evidenceIds": [
-      "meltano-docs-18",
+      "meltano-docs-7",
       "meltano-docs-8",
-      "meltano-probe-3",
-      "meltano-probe-rt-1",
-      "meltano-docs-24"
+      "meltano-docs-18",
+      "meltano-docs-31",
+      "meltano-docs-33",
+      "meltano-comm-2"
     ]
   },
   {
@@ -3169,8 +3168,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Meltano is CLI/YAML-driven (meltano init, meltano add, meltano config) with no evidence of a natural-language interface, chat command layer, or NL-to-CLI translation anywhere in the docs, community, or probes.",
-    "evidenceIds": []
+    "rationale": "Meltano's interface is a traditional CLI with explicit commands (meltano init, meltano add, meltano config test), not natural-language commands, and there's no evidence of an LLM-based or NL command interface. missing for 10: any natural-language interface, chat-based command parsing, or AI-native command layer.",
+    "evidenceIds": [
+      "meltano-docs-33",
+      "meltano-docs-24",
+      "meltano-docs-2"
+    ]
   },
   {
     "productId": "meltano",
@@ -3178,28 +3181,26 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Meltano ships a well-documented official CLI (meltano init, meltano add, meltano config test, etc.) with a full CLI reference page, and a runtime probe confirms it actually works keylessly end-to-end (uvx meltano init scaffolding a complete ELT project) — machine-scriptable behavior well-suited to agentic/AI-native use. Missing for 10: explicit first-party framing or tooling for AI-agent consumption (e.g., structured JSON output modes, MCP/agent SDK) beyond the generic CLI and hub API.",
+    "rationale": "Meltano ships a well-documented, scriptable CLI covering project init, plugin management, config testing, and pipeline orchestration, with idempotent commands suitable for automation by AI agents (meltano-docs-33, meltano-docs-24, meltano-probe-3). Missing for 10: no explicit documentation of AI-agent-specific usage patterns (e.g., machine-readable output modes, MCP/agent SDK bindings) or independent hands-on confirmation of agentic use.",
     "evidenceIds": [
-      "meltano-probe-3",
-      "meltano-probe-rt-1",
+      "meltano-docs-33",
       "meltano-docs-24",
       "meltano-docs-2",
-      "meltano-probe-rt-2"
+      "meltano-docs-9",
+      "meltano-probe-3"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "medium",
-    "rationale": "Meltano ships a fully documented CLI (meltano add/init/config, etc.) that can be scripted, and MeltanoHub exposes a machine-readable plugin registry API, but explicit probes show no OpenAPI/REST API or llms.txt for the core product, meaning an AI agent cannot drive Meltano through a conventional public API beyond shelling out to the CLI. missing for 10: a documented REST/OpenAPI or SDK-style public API, llms.txt or agent-facing API spec, independent confirmation of programmatic (non-CLI) control.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Meltano exposes a CLI and project-file configuration, but no documented public REST/GraphQL API is evidenced; probes for llms.txt and OpenAPI/Swagger specs both returned 404, indicating no discoverable API for AI-native programmatic access.",
     "evidenceIds": [
       "meltano-probe-1",
       "meltano-probe-2",
-      "meltano-probe-3",
-      "meltano-probe-rt-2",
-      "meltano-docs-24"
+      "meltano-probe-3"
     ]
   },
   {
@@ -3208,20 +3209,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Meltano is an ELT/data pipeline orchestration tool, not an identity/credential-issuing platform; issuing scoped API credentials for agents is outside its product category and not addressed anywhere in its docs or evidence.",
+    "rationale": "Meltano is an ELT/data pipeline tool, not an agent-facing platform issuing scoped API credentials for AI agents; this axis is a category error for its product type.",
     "evidenceIds": []
   },
   {
     "productId": "meltano",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Meltano docs mention building custom connectors (\"Build your own Meltano connector to move data from any source to any destination\") and a community developer confirms the SDK experience was \"absolutely top class\" for building a custom tap, indicating a real official SDK exists for extractor/loader development. However, the evidence pack lacks direct documentation links to the SDK itself (e.g., API reference, versioning, language support) and no first-party SDK docs page is cited. missing for 10: dedicated SDK reference/API docs, language/version support details, more than one third-party corroboration.",
+    "rationale": "Meltano officially ships and documents an SDK for building Singer connectors (and EDK for Meltano components), and the docs explicitly promote building custom connectors rather than being blocked by vendor ticket queues. Community evidence corroborates a positive hands-on experience building a custom tap with the SDK. Missing for 10: dedicated SDK reference/API docs, code examples, and independent benchmarks beyond a single anecdote.",
     "evidenceIds": [
       "meltano-docs-4",
-      "meltano-comm-8",
-      "meltano-docs-16"
+      "meltano-docs-26",
+      "meltano-docs-27",
+      "meltano-comm-8"
     ]
   },
   {
@@ -3238,13 +3240,12 @@
     "storyId": "ai-connector-builder",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Meltano documents building custom connectors via its SDK (meltano-docs-4, meltano-comm-8) and has a plugin/tap architecture, but there is no evidence of an AI-assisted or automated workflow that drafts a connector (auth, pagination, streams) directly from API documentation for human review — connector creation is manual/SDK-based, not AI-drafted.",
+    "confidence": "high",
+    "rationale": "Meltano offers an SDK for building Singer connectors manually and a large catalog of pre-built connectors, but there is no evidence of any AI-assisted or automated drafting of a connector from API documentation (auth, pagination, streams inference). All evidence points to manual SDK-based development or using existing plugins, not AI-drafted connectors.",
     "evidenceIds": [
       "meltano-docs-4",
-      "meltano-comm-8",
-      "meltano-docs-16",
-      "meltano-docs-19"
+      "meltano-docs-27",
+      "meltano-docs-26"
     ]
   },
   {
@@ -3253,11 +3254,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No interactive API reference with runnable examples is evidenced; explicit probes confirm no OpenAPI/Swagger docs exist (404s across all candidate paths) and no llms.txt. Only CLI reference docs and plugin registry endpoints are documented, not an interactive runnable API explorer.",
+    "rationale": "No evidence of an interactive API reference or runnable examples; probes explicitly show no OpenAPI spec or llms.txt available (404s), only static CLI/plugin documentation exists.",
     "evidenceIds": [
       "meltano-probe-1",
       "meltano-probe-2",
-      "meltano-probe-3"
+      "meltano-docs-33"
     ]
   },
   {
@@ -3266,24 +3267,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Explicit probes show no OpenAPI/machine-readable API spec exists at any standard location, and no evidence of an alternative spec elsewhere.",
+    "rationale": "Direct probes for OpenAPI/swagger endpoints and llms.txt all returned 404, and no documentation mentions a machine-readable API spec being available.",
     "evidenceIds": [
-      "meltano-probe-2",
-      "meltano-probe-1"
+      "meltano-probe-1",
+      "meltano-probe-2"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "api-sandbox",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Meltano's project scaffold explicitly creates dev/staging/prod environments out of the box (confirmed by a runtime probe), giving users a built-in way to run pipelines against a non-production environment before touching prod, and the CLI/plugin registry can be tested config-wise via `meltano config test`. However, the evidence pack lacks first-party documentation specifically framing 'environments' as a sandbox/test-without-touching-production feature, and there's no guidance on data masking, synthetic data, or isolation guarantees between environments. Missing for 10: dedicated environments/sandbox documentation, explicit data-isolation guarantees, and independent user corroboration of safe sandbox testing.",
-    "evidenceIds": [
-      "meltano-probe-rt-1",
-      "meltano-docs-9",
-      "meltano-docs-17"
-    ]
+    "rationale": "The evidence pack covers Meltano's installation, plugin architecture, orchestration, and pricing but contains no mention of environment isolation, sandbox/staging configurations, or any mechanism to test pipelines against non-production data. While such a capability is plausible for an ELT tool (dev/staging/prod environment separation), nothing in the provided docs, GitHub, or community evidence documents this.",
+    "evidenceIds": []
   },
   {
     "productId": "meltano",
@@ -3291,9 +3288,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a versioned public API, API changelog, or documented deprecation policy; the OpenAPI probe returned 404s and no API-versioning docs are cited. The evidence focuses on CLI/plugin usage, not API versioning/deprecation guarantees.",
+    "rationale": "No evidence of a versioned public API or any documented deprecation policy; OpenAPI/spec probes returned 404s and no docs mention API versioning or deprecation practices.",
     "evidenceIds": [
-      "meltano-probe-2"
+      "meltano-probe-2",
+      "meltano-probe-1"
     ]
   },
   {
@@ -3301,22 +3299,22 @@
     "storyId": "asset-lineage-view",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers extraction, loading, dbt transformations, orchestration via Airflow, and plugin architecture, but nothing addresses lineage tracking or visualization — no mention of a lineage graph, column/table provenance metadata, or lineage UI. This is a reasonable ask for an ELT/orchestration tool, but no evidence shows Meltano surfaces end-to-end lineage of sources/steps/transformations per table.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers Meltano's ELT/EL pipeline setup, connectors, dbt transformations, and orchestration via Airflow, but nowhere mentions dataset-level lineage tracking, lineage visualization, or metadata about which sources/transformations produced a given table. Lineage is a plausible axis for a data orchestration tool, but no capability is documented.",
     "evidenceIds": []
   },
   {
     "productId": "meltano",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Meltano's CLI supports stream/property selection (docs-19, docs-10) and idempotent plugin add/update (docs-24), which enable bulk-style configuration across many streams or plugins, and the plugin registry API (probe-rt-2) lets an agent enumerate/query many connectors programmatically. However there is no explicit documentation of a single command that runs bulk operations across many pipelines/plugins/streams at once (e.g., batch install-all or run-all), nor independent evidence of this working at scale. Missing for 10: explicit bulk-run/bulk-install command docs, hands-on evidence of processing many items in one invocation, and independent corroboration.",
+    "rationale": "Meltano's YAML-based project config and idempotent CLI commands (meltano add, meltano run) allow scripting operations across multiple plugins/pipelines, which could be leveraged for bulk automation, but there's no explicit bulk-operation feature, batch API, or multi-item command documented. missing for 10: explicit bulk/batch command or API, evidence of running actions across many items simultaneously, AI-native automation examples.",
     "evidenceIds": [
-      "meltano-docs-19",
-      "meltano-docs-10",
       "meltano-docs-24",
-      "meltano-probe-rt-2"
+      "meltano-docs-29",
+      "meltano-docs-33",
+      "meltano-docs-17"
     ]
   },
   {
@@ -3324,9 +3322,11 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Meltano's evidence covers ELT pipelines, scheduling via Airflow, and plugin/connector management, but there is no mention of event-driven rule definitions or automatic action triggering based on arbitrary events - its orchestration is schedule-based, not event/rule-based automation.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Meltano supports scheduled pipeline orchestration via Airflow, but there is no evidence of event-driven rule definitions that trigger arbitrary actions automatically (e.g., webhooks, conditional triggers, event-based automation). Missing for 10: event-trigger/rules engine, webhook or condition-based action execution, any documentation of automated rule-based triggers.",
+    "evidenceIds": [
+      "meltano-docs-7"
+    ]
   },
   {
     "productId": "meltano",
@@ -3334,10 +3334,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Meltano docs explicitly state scheduled pipelines can be orchestrated via Apache Airflow, and the project's meltano.yml structure supports environments/orchestrate directories confirmed via runtime probe, but scheduling itself is delegated to an external orchestrator rather than a native built-in scheduler, and no evidence shows an AI-native/agent-triggered recurring job interface. missing for 10: native built-in scheduler (not dependent on external Airflow setup), evidence of AI-agent-driven recurring workflow triggering, and independent confirmation of scheduling reliability in production.",
+    "rationale": "Meltano docs state pipelines can be scheduled and orchestrated via Apache Airflow integration, enabling recurring job execution, and plugins/CLI support running pipelines repeatably (meltano-docs-7, meltano-docs-33). However, scheduling is not a native built-in scheduler but delegated to an external orchestrator plugin, and there's no evidence of AI-native specific triggers or agent-driven scheduling. Missing for 10: native/first-party scheduler docs, AI-agent-triggered scheduling examples, independent confirmation of scheduling reliability in production.",
     "evidenceIds": [
       "meltano-docs-7",
-      "meltano-probe-rt-1",
+      "meltano-docs-33",
       "meltano-docs-17"
     ]
   },
@@ -3347,24 +3347,26 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Meltano projects are file-based (meltano.yml) and docs explicitly state projects can be treated like software, benefiting from 'version control, code review, and CI/CD' — directly supporting versioning and review of pipeline automations. Rollback is only implicitly supported via standard git workflows (reverting meltano.yml), with no dedicated rollback feature or UI documented. Missing for 10: explicit rollback/undo tooling or docs, independent evidence of teams actually using git-based rollback with Meltano.",
+    "rationale": "Meltano's project-as-code model (meltano.yml, plugins defined as code) explicitly supports version control and code review as part of DataOps best practices, and idempotent `meltano add`/CLI commands make config changes trackable in git (meltano-docs-18, meltano-docs-24, meltano-docs-33). However, there is no explicit built-in 'rollback' feature or UI for reverting pipeline runs—rollback would rely entirely on external git operations, which isn't documented as a first-class Meltano capability. Missing for 10: explicit rollback/undo mechanism for pipeline configs or runs, evidence of a review workflow (PR/approval) beyond generic git use, and independent corroboration of this workflow in practice.",
     "evidenceIds": [
       "meltano-docs-18",
-      "meltano-docs-17",
-      "meltano-probe-rt-1"
+      "meltano-docs-24",
+      "meltano-docs-29",
+      "meltano-docs-33"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "backfill-resync",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Meltano's docs describe per-stream selection (extract only chosen streams/tables) and per-stream incremental state tracking that lets subsequent runs resume or be reset independently of other streams, which directly supports backfilling/resyncing a single table without touching the whole pipeline. However, there is no explicit documented command example (e.g., a full-refresh/backfill flag) or community/hands-on confirmation of this exact workflow. missing for 10: explicit backfill/full-refresh CLI example, independent user report of resyncing a single stream in production.",
+    "rationale": "Docs confirm Meltano supports per-stream selection (choosing which streams/tables to extract) and tracks incremental replication state per job, which together enable running a pipeline for just one table and resuming/continuing from a specific state — the building blocks for backfill/resync of a single table. However, there is no explicit documentation of a 'full-refresh' or 'resync' flag/workflow or state-reset command for a single table cited in evidence. Missing for 10: explicit doc/example of full-refresh or state-clearing for a single stream, and any community/hands-on confirmation of this specific backfill workflow.",
     "evidenceIds": [
       "meltano-docs-19",
       "meltano-docs-20",
-      "meltano-docs-17"
+      "meltano-docs-30",
+      "meltano-docs-10"
     ]
   },
   {
@@ -3372,10 +3374,11 @@
     "storyId": "cdc-log-replication",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack only documents generic incremental-key based replication state tracking (meltano-docs-20) via Singer taps, but nothing mentions log-based CDC, binlog, or WAL capture for updates/deletes without full-table scanning. Missing for 10: any documentation or community evidence of log-based CDC support (e.g., tap-postgres WAL/logical replication, tap-mysql binlog reading), performance claims about reduced source load, or handling of deletes via CDC.",
+    "confidence": "high",
+    "rationale": "The evidence only describes generic incremental replication via stream state tracking (meltano-docs-20, meltano-docs-30) and key-based selection, with no mention of binlog/WAL log-based CDC capture for updates and deletes. No specific CDC connectors, replication slots, or log-based mechanisms are documented anywhere in the pack.",
     "evidenceIds": [
       "meltano-docs-20",
+      "meltano-docs-30",
       "meltano-docs-19"
     ]
   },
@@ -3383,17 +3386,15 @@
     "productId": "meltano",
     "storyId": "connector-catalog-breadth",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Meltano documents access to 600+ built-in connectors via MeltanoHub covering SaaS APIs, databases, and files, backed by a runtime probe confirming the plugin registry API is live and queryable, plus community evidence of real-world use (Zoom, Slack, GitLab extractors) and custom tap development support. Missing for 10: independent third-party audits of connector maintenance quality/freshness across the full catalog, and clearer breakdown of maintained vs community-contributed connector support tiers.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Meltano advertises 600+ built-in connectors spanning SaaS APIs, databases, and files, and community evidence confirms real-world use extracting from multiple SaaS sources (Zoom, Slack, Gmail) at GitLab. Docs also show a CLI-driven workflow (`meltano add tap-github`) for adding connectors and an SDK for building custom ones when needed. Missing for 10: independent verification of connector maintenance quality/freshness across the catalog, and no comparative data on connector reliability versus rivals.",
     "evidenceIds": [
       "meltano-docs-5",
-      "meltano-docs-16",
-      "meltano-docs-17",
+      "meltano-docs-3",
+      "meltano-gh-1",
       "meltano-comm-2",
-      "meltano-comm-7",
-      "meltano-comm-8",
-      "meltano-probe-rt-2"
+      "meltano-docs-17"
     ]
   },
   {
@@ -3402,24 +3403,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms Meltano has a large connector catalog (600+ built-in, MeltanoHub registry API returning taps and variants) but nothing in the pack shows the catalog exposing per-connector maturity, support level, or maintainer metadata to help engineers assess trustworthiness before adoption.",
+    "rationale": "Evidence shows Meltano has a large connector count (600+) and a plugin/hub concept, but nothing in the pack indicates the catalog surfaces per-connector maturity level, official support tier, or maintainer identity before use. Community comments even suggest confusion about the product itself, not clarity on connector metadata.",
     "evidenceIds": [
       "meltano-docs-5",
-      "meltano-probe-rt-2"
+      "meltano-docs-17",
+      "meltano-gh-1"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "custom-connector-builder",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Meltano supports building custom connectors via the Meltano SDK (Singer taps/targets) for long-tail APIs, evidenced by docs on building your own connector, plugin architecture, and a community testimonial of developing a custom tap with SDK support described as 'top class.' missing for 10: no dedicated low-code builder UI evidence, no detailed SDK walkthrough or scaffolding command example in the pack, and no independent benchmark of connector build effort beyond one anecdote.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Meltano provides the Singer SDK (EDK) framework specifically for building custom connectors for long-tail APIs, documented as first-party tooling with meltano add/init workflow, and community evidence corroborates hands-on custom tap development with a positive experience. missing for 10: independent evidence of a low-code builder UI (only SDK/code-based framework is evidenced), and more detailed hands-on walkthrough of building a connector from scratch for an unsupported API.",
     "evidenceIds": [
       "meltano-docs-4",
-      "meltano-docs-17",
-      "meltano-docs-24",
-      "meltano-comm-8"
+      "meltano-docs-27",
+      "meltano-docs-26",
+      "meltano-docs-35",
+      "meltano-comm-8",
+      "meltano-comm-7"
     ]
   },
   {
@@ -3428,12 +3432,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Meltano documents scheduled pipelines that can be orchestrated via Apache Airflow, and its project model chains extractors/loaders/transformers (dbt) in a defined ELT sequence, but there's no evidence of a native DAG/dependency-definition system for arbitrary pipeline steps or cross-dataset dependencies — that capability is delegated to an external orchestrator (Airflow) rather than built into Meltano itself. Missing for 10: native dependency-graph definition between steps/datasets, evidence of conditional/cross-pipeline dependency resolution, and independent confirmation of complex DAG orchestration beyond simple scheduling.",
+    "rationale": "Meltano documents that a single pipeline's steps (extract → load → transform via dbt) run in sequence, and separately states pipelines can be scheduled and orchestrated using Apache Airflow, which supports dependency-based DAG orchestration. However, there's no first-party evidence of a native, Airflow-independent mechanism for declaring explicit dependencies between arbitrary pipeline steps or datasets across pipelines — the orchestration capability is delegated to Airflow rather than built into Meltano's own engine. Missing for 10: evidence of Meltano's own dependency graph/DAG definition syntax, cross-pipeline dataset dependency examples, and confirmation orchestration works without relying on a separate Airflow plugin.",
     "evidenceIds": [
+      "meltano-docs-6",
       "meltano-docs-7",
       "meltano-docs-17",
-      "meltano-docs-6",
-      "meltano-docs-20"
+      "meltano-docs-29"
     ]
   },
   {
@@ -3442,41 +3446,38 @@
     "verdict": "partial",
     "quality": 2,
     "confidence": "low",
-    "rationale": "Meltano's marketing page claims 'Built-in pipeline monitoring and alerts' and pipelines can be scheduled via Airflow with incremental state tracking, but there is no documentation describing freshness metrics per destination table or alerts specifically for missed cadence/SLA violations. missing for 10: docs on table-level freshness dashboards, cadence/SLA-based alerting configuration, and any independent/hands-on confirmation that monitoring or alerts actually work as described.",
+    "rationale": "Meltano's marketing page claims 'Built-in pipeline monitoring and alerts' and pipelines can be scheduled via Airflow, but there is no documentation describing table freshness tracking, SLA/cadence definitions, or alerting mechanics for missed runs — the claim is a single unelaborated bullet with no feature detail or independent corroboration. Missing for 10: freshness dashboards/metrics per destination table, explicit cadence/SLA configuration, alert channel setup docs, and any hands-on or community confirmation that monitoring/alerting actually works as described.",
     "evidenceIds": [
       "meltano-docs-13",
-      "meltano-docs-7",
-      "meltano-docs-20"
+      "meltano-docs-7"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "dbt-integration",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Meltano documents dbt as its built-in transformation layer and structures projects with explicit extract/load/transform directories (confirmed live via `meltano init`), implying dbt runs as a pipeline stage rather than a standalone cron job, and orchestration is described as pipeline-based (via Airflow) rather than dbt running independently on a timer. However, the pack never cites the actual `meltano run tap-x target-y dbt-run` invocation pattern or documentation explicitly describing dbt firing immediately after fresh load completion as opposed to scheduled runs. Missing for 10: explicit CLI/docs excerpt showing chained extract→load→transform execution triggering dbt post-load, and independent/hands-on confirmation that dbt steps wait on load completion rather than running on a separate schedule.",
+    "rationale": "Docs confirm dbt transformations are natively supported (meltano-docs-6) and pipelines including dbt workflows can be orchestrated (meltano-docs-7, meltano-docs-25), implying transform steps are chained to extract-load runs rather than being a separate service. However, no evidence explicitly shows a single 'meltano run' invocation triggering dbt immediately after fresh load completion versus a time-based schedule, nor any hands-on confirmation of this dependency-driven execution. Missing for 10: explicit example/documentation of EL+T chained in one pipeline run, evidence of dependency-triggered (not just time-scheduled) execution, and independent confirmation of this workflow in production.",
     "evidenceIds": [
       "meltano-docs-6",
       "meltano-docs-7",
-      "meltano-docs-17",
-      "meltano-docs-25",
-      "meltano-probe-rt-1"
+      "meltano-docs-25"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "destination-breadth",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Meltano's plugin architecture (extractors/loaders) and '600+ built-in connectors' claim, plus a live Hub registry serving Singer taps/targets, support loading to many destinations without pipeline rewrites, and 'meltano add' plus config testing show swapping loaders is idempotent and standardized. However, the evidence pack never explicitly names Snowflake, BigQuery, Databricks, Postgres, or object-storage loaders, so warehouse/lake coverage is inferred rather than directly documented. Missing for 10: explicit named loader plugins for each of Snowflake/BigQuery/Databricks/Postgres/S3, and independent confirmation that switching between them requires no pipeline changes.",
+    "rationale": "Meltano's docs assert broad destination support via its 600+ Singer-based connectors and the ability to 'build your own connector to move data from any source to any destination,' plus explicit mention of cloud object storage (S3/GCS/Azure) support, which aligns with the code-first, pipeline-portable model the story describes. However, the evidence pack never names Snowflake, BigQuery, Databricks, or Postgres loaders explicitly, so warehouse-specific portability isn't directly documented here. missing for 10: explicit documentation/citation of named loaders for Snowflake, BigQuery, Databricks, and Postgres, and independent confirmation that pipelines are portable across these targets without rewrites.",
     "evidenceIds": [
       "meltano-docs-5",
-      "meltano-docs-17",
-      "meltano-docs-24",
-      "meltano-docs-9",
-      "meltano-probe-rt-2"
+      "meltano-docs-4",
+      "meltano-docs-32",
+      "meltano-gh-1",
+      "meltano-docs-25"
     ]
   },
   {
@@ -3485,13 +3486,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Meltano's docs explicitly describe incremental replication state tracking (\"keeps track of the incremental replication state, so that subsequent pipeline runs with the same state ID will always pick up right where the previous run left off\") and stream/property selection to control what is extracted, which together handle cursor/state management for new-and-changed-record syncs rather than full reloads. This is corroborated by production usage reports (GitLab data team running Meltano extractors) and a runtime probe confirming a real ELT project scaffold with extract/load/transform structure. Missing for 10: independent hands-on evidence specifically demonstrating incremental sync behavior across runs (vs. full table reloads) and details on edge cases like state file storage/backends.",
+    "rationale": "Docs explicitly state Meltano tracks incremental replication state so subsequent runs pick up where the previous left off, and stream/property selection lets engineers scope extraction rather than full reload (meltano-docs-20, meltano-docs-30, meltano-docs-19). This directly matches the story of cursor/state-managed incremental syncs. Missing for 10: independent hands-on confirmation of incremental behavior in production and detail on state storage/backends.",
     "evidenceIds": [
       "meltano-docs-20",
+      "meltano-docs-30",
       "meltano-docs-19",
-      "meltano-docs-10",
-      "meltano-comm-2",
-      "meltano-probe-rt-1"
+      "meltano-docs-10"
     ]
   },
   {
@@ -3499,23 +3499,23 @@
     "storyId": "llm-ready-destinations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Meltano's evidence covers general-purpose ELT (extractors/loaders, dbt transforms, Airflow orchestration, plugin catalog) but nothing in the pack mentions vector store destinations, embeddings, or LLM-ready output formats for agent retrieval.",
+    "confidence": "high",
+    "rationale": "Evidence shows Meltano is a general ELT tool with 600+ connectors, dbt transformations, and Airflow orchestration, but nothing indicates support for loading into vector stores, embeddings generation, or LLM-ready output formats for agent retrieval.",
     "evidenceIds": []
   },
   {
     "productId": "meltano",
     "storyId": "local-dev-testing",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Meltano's docs and a runtime probe confirm `meltano init` scaffolds dev/staging/prod environments plus extract/load/transform directories, and `meltano config test <plugin>` lets engineers validate a source/destination before running it for real, matching the local-first, pre-production testing story. Community posts confirm real teams (e.g. GitLab) run Meltano pipelines, though none specifically confirm a lightweight-destination local test workflow end-to-end.\n\nmissing for 10: explicit example of a lightweight/local destination (e.g. target-jsonl or DuckDB) used for pre-production testing, and independent hands-on confirmation of a full local dev-to-prod promotion test.",
+    "rationale": "Meltano's docs clearly support local project creation (`meltano init`), adding extractors/loaders, and testing plugin configuration locally (`meltano config test`), which aligns with local pipeline development before production. However, there is no explicit mention of a 'lightweight' destination (e.g., SQLite, JSONL) commonly used for local testing, nor documentation of a distinct local-vs-production workflow separation. missing for 10: explicit lightweight/test destination examples, documented local-to-production promotion workflow, independent hands-on confirmation of local testing experience.",
     "evidenceIds": [
+      "meltano-docs-2",
+      "meltano-docs-3",
       "meltano-docs-9",
       "meltano-docs-24",
-      "meltano-probe-rt-1",
-      "meltano-docs-17",
-      "meltano-comm-2"
+      "meltano-docs-33"
     ]
   },
   {
@@ -3524,25 +3524,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Meltano's interface is CLI/YAML-based, and the evidence pack explicitly shows no discoverable REST/OpenAPI API (llms.txt and openapi.json probes both 404), so there is no documented way to achieve UI-equivalent parity through a formal API. While the CLI and MeltanoHub plugin registry are queryable, this does not constitute evidence of a full API surface matching a UI's capabilities.",
+    "rationale": "Meltano's primary interface is the CLI and YAML project files, and while it has a UI, there is no evidence of a documented REST/HTTP API that mirrors UI functionality — probes for OpenAPI/swagger specs returned 404s and no docs mention an API surface for AI-native programmatic control.",
     "evidenceIds": [
-      "meltano-probe-1",
       "meltano-probe-2",
-      "meltano-probe-3"
+      "meltano-probe-3",
+      "meltano-docs-33"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Meltano is fully open-source, self-hostable (\"You host and manage everything on your own servers\"), and lets you load data to any destination you own (files, databases) via open Singer taps/targets, plus version-controlled projects — all supporting a no-lock-in exit path. However there is no explicit documented 'export all your data' or migration/portability feature, and the openness is architectural (self-hosting, plugin ecosystem) rather than a first-class data-export guarantee. Missing for 10: dedicated data-export/backup tooling, explicit documentation of destination-agnostic bulk export, and independent evidence of users actually migrating away with full data intact.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Meltano is open-source, self-hostable, and config-as-code (project files can be versioned and moved), and as an ELT tool it writes data into destinations you own (databases, files, warehouses) rather than a proprietary store, which supports data portability by design. However, there is no explicit documentation or feature addressing bulk data export or a guaranteed open-format 'leave' path, and no independent confirmation of portability in practice. Missing for 10: explicit data-export/portability documentation, evidence of format guarantees across all destinations, and independent confirmation of frictionless migration away from Meltano.",
     "evidenceIds": [
       "meltano-docs-21",
-      "meltano-docs-4",
-      "meltano-docs-25",
       "meltano-docs-18",
+      "meltano-docs-33",
       "meltano-comm-1"
     ]
   },
@@ -3550,25 +3549,24 @@
     "productId": "meltano",
     "storyId": "openness-open-license",
     "verdict": "full",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Community evidence confirms Meltano is an open-source project that anyone can inspect and modify ('you can just start playing with it and change the code'), and Meltano is widely known as a GitHub-hosted project, consistent with the docs' DataOps/version-control framing. Missing for 10: an explicit license name/citation (e.g., MIT) or a direct link to the source repository in the evidence pack, and independent corroboration beyond a single HN comment.",
+    "rationale": "Meltano's source is hosted publicly on GitHub and community members confirm it is open source, allowing users to read and even modify the code without support obligations. missing for 10: explicit license name/text in evidence and first-party documentation citing the license.",
     "evidenceIds": [
-      "meltano-comm-1",
-      "meltano-docs-18"
+      "meltano-gh-1",
+      "meltano-comm-1"
     ]
   },
   {
     "productId": "meltano",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Meltano is pip-installable and Docker-packaged, explicitly documented as something you can 'host and manage on your own servers,' and a runtime probe confirms `meltano init` works locally and keylessly to lay out a full project; community evidence corroborates real production self-hosted use (GitLab Data Team). Missing for 10: independent third-party audit or dedicated production self-hosting/hardening guide beyond anecdotal community reports.",
+    "rationale": "Meltano is open source, pip-installable, and dockerized, with docs explicitly stating 'You host and manage everything on your own servers,' confirmed by community reports of self-hosted production use (GitLab Data Team). Missing for 10: independent hands-on deployment guides/case studies beyond one community report, and more detail on self-hosted scaling/operational hardening.",
     "evidenceIds": [
       "meltano-docs-1",
       "meltano-docs-21",
-      "meltano-probe-rt-1",
       "meltano-comm-1",
       "meltano-comm-2"
     ]
@@ -3591,14 +3589,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Meltano projects are code/config-based (meltano.yml, plugin definitions) initialized via CLI, explicitly documented as being treatable like any software project with version control, code review, and CI/CD, and this is confirmed by real-world usage (GitLab Data Team running it in production with extractors managed as project files) and a runtime probe showing a full ELT project scaffolded as plain files/directories. missing for 10: independent third-party audit or case study specifically describing a full PR-review workflow on a Meltano repo (only vendor docs plus indirect community confirmation).",
+    "rationale": "Meltano projects are initialized via CLI (meltano init), define plugins/config as YAML in the project directory, and docs explicitly state projects can be treated like any software project with version control, code review, and CI/CD; community evidence confirms production use (GitLab Data Team) and open-source code access. missing for 10: independent hands-on account specifically praising git-based review workflows beyond docs' own claim.",
     "evidenceIds": [
       "meltano-docs-18",
+      "meltano-docs-17",
+      "meltano-docs-29",
       "meltano-docs-2",
       "meltano-docs-24",
-      "meltano-docs-17",
-      "meltano-comm-2",
-      "meltano-probe-rt-1"
+      "meltano-comm-2"
     ]
   },
   {
@@ -3607,13 +3605,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Meltano's pricing page references a compute-based model ('pay for compute, not rows') and a Fivetran savings estimator, and the core OSS tool is free to self-host, suggesting some cost predictability. However there's no published rate card, connector-level cost breakdown, or transparent estimator shown in evidence that would let a lead calculate the exact cost of adding a specific new source before connecting it. Missing for 10: a concrete pricing tier/rate table, per-connector or per-source cost estimation tool, and independent confirmation that costs are predictable in practice.",
+    "rationale": "Meltano's pricing page publishes a general model (pay for compute, not rows, includes reverse ETL, 8 hrs engineering/mo, and a Fivetran savings estimator) but there is no documented calculator or per-connector cost table that lets a lead estimate the specific cost of adding a new source before connecting it — since sources are free/open-source connectors, cost is tied to compute usage rather than to the source itself, so predictability is only implicit. Missing for 10: an explicit cost-estimation tool for a specific new source, published compute pricing rates/tiers, and independent confirmation that estimates match real bills.",
     "evidenceIds": [
       "meltano-docs-12",
-      "meltano-docs-23",
       "meltano-docs-14",
-      "meltano-docs-21",
-      "meltano-docs-22"
+      "meltano-docs-23",
+      "meltano-docs-34"
     ]
   },
   {
@@ -3622,9 +3619,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Meltano supports full self-hosting ('You host and manage everything on your own servers'), which implicitly lets users control where data physically resides, but there is no explicit region/residency selection feature, cloud region picker, or data-locality documentation. missing for 10: explicit region/residency configuration options, documented compliance/data-locality features, evidence of managed-hosting region choices.",
+    "rationale": "Meltano documents that users can self-host and manage everything on their own servers, which implicitly gives control over where data resides, but there is no explicit region/residency feature, cloud-region selection, or compliance documentation addressing data residency. missing for 10: explicit region/data-residency controls, compliance documentation (GDPR/data locality), and evidence of hosted-offering region choice.",
     "evidenceIds": [
-      "meltano-docs-21"
+      "meltano-docs-21",
+      "meltano-docs-22"
     ]
   },
   {
@@ -3633,7 +3631,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Meltano is a self-hosted/open-source ELT tool, not an AI-model provider or SaaS with a data-training policy to opt out of; the concept of 'preventing data from being used to train AI models' is a wrong axis for this category of product.",
+    "rationale": "Meltano is an open-source ELT data pipeline tool, not an AI model or AI service that trains on user data; the concept of 'preventing data from being used to train AI models' is not applicable to its product category, which is self-hosted/open-source data integration.",
     "evidenceIds": []
   },
   {
@@ -3654,7 +3652,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses telemetry, usage tracking, or an opt-out mechanism (e.g. environment variables or config flags to disable analytics); this is a plausible axis for a self-hosted OSS data tool but is entirely unaddressed in the docs or community evidence provided.",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism for Meltano; the axis applies since Meltano is a self-hosted/open-source data tool that could plausibly collect anonymous usage stats, but nothing documents this capability. missing for 10: any mention of telemetry collection, opt-out flag/env var, or privacy policy statement.",
     "evidenceIds": []
   },
   {
@@ -3663,10 +3661,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Meltano documents state-based incremental replication that lets a pipeline resume from where it left off using the same state ID (meltano-docs-20), which addresses checkpoint-based resumption, but there is no documentation or community evidence of automatic retry logic for transient failures (e.g., network blips, API rate limits) triggering re-attempts without manual intervention.  missing for 10: explicit automatic retry-on-failure mechanism, evidence of retry configuration/backoff, and independent confirmation that resumed syncs actually skip already-processed data in practice.",
+    "rationale": "Meltano documents incremental replication state tracking so pipelines 'pick up right where the previous run left off' (meltano-docs-20, meltano-docs-30), which supports resuming from checkpoints. However, there is no evidence of automatic retry logic for transient failures (e.g., network blips, API rate limits) built into Meltano itself. Missing for 10: documented automatic retry/backoff mechanism for transient failures, evidence of partial-sync resume mid-stream (vs. only between full runs), and independent confirmation of this reliability behavior in production.",
     "evidenceIds": [
       "meltano-docs-20",
-      "meltano-docs-13"
+      "meltano-docs-30"
     ]
   },
   {
@@ -3675,11 +3673,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Meltano's pricing page explicitly claims 'Reverse ETL included' and it has 600+ connectors including loaders/targets, implying it could push warehouse data to SaaS tools, but there is no documentation naming specific reverse-ETL targets (CRM, ads, support tools), no walkthrough of a reverse-ETL pipeline, and no community/hands-on corroboration of this use case — most evidence centers on extractor-to-warehouse ELT rather than warehouse-to-SaaS activation. Missing for 10: named reverse-ETL/CRM-ads-support loader connectors, a documented reverse-ETL pipeline example, and independent confirmation of this workflow in production.",
+    "rationale": "The pricing page mentions 'Reverse ETL included' as a feature, and Meltano's loader/connector ecosystem could theoretically push data to SaaS tools, but there's no documentation, tutorial, or community evidence describing actual reverse-ETL workflows (e.g., syncing warehouse data to CRM/ads/support tools). Missing for 10: dedicated reverse-ETL guide/connector list, concrete loader examples for CRM/ads/support destinations, and independent confirmation of this workflow in production use.",
     "evidenceIds": [
       "meltano-docs-14",
-      "meltano-docs-5",
-      "meltano-docs-25"
+      "meltano-docs-25",
+      "meltano-docs-5"
     ]
   },
   {
@@ -3688,19 +3686,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers catalog generation, stream/property selection, and incremental state tracking, but nothing explicitly addresses detecting upstream schema changes or applying a chosen policy (e.g., auto-add columns, fail-fast, quarantine) to prevent silent load breakage.",
-    "evidenceIds": []
+    "rationale": "The evidence covers catalog generation, stream/property selection, and incremental replication state tracking, but nothing describes detecting upstream schema changes or offering a configurable policy (e.g., auto-add columns, fail, or version) to propagate them safely. Missing for 10: schema drift detection, configurable schema-change policies, and any documentation or community report of handling breaking upstream schema changes.",
+    "evidenceIds": [
+      "meltano-docs-10",
+      "meltano-docs-19",
+      "meltano-docs-20",
+      "meltano-docs-30"
+    ]
   },
   {
     "productId": "meltano",
     "storyId": "sync-scheduling-frequency",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Meltano docs confirm scheduled pipelines orchestrated via Apache Airflow, which supports cron-based scheduling, and the CLI (`meltano run`/`elt`) implies manual execution is possible. However, there is no explicit documentation of sub-hour scheduling granularity, dedicated schedule/cron configuration syntax, or manual-trigger controls per pipeline. missing for 10: explicit sub-hour/cron schedule configuration syntax, documented manual-trigger mechanism, per-pipeline schedule management UI or CLI flags.",
+    "confidence": "low",
+    "rationale": "Meltano docs confirm scheduled pipelines orchestrated via Apache Airflow and a CLI for managing pipelines, which implies flexible scheduling and manual runs, but there is no explicit mention of cron expression syntax, sub-hour scheduling granularity, or a dedicated manual-trigger command in the evidence. Missing for 10: explicit cron/interval configuration docs, sub-hour scheduling examples, and documented manual trigger workflow (e.g., `meltano run` on demand).",
     "evidenceIds": [
       "meltano-docs-7",
-      "meltano-probe-rt-1"
+      "meltano-docs-33"
     ]
   },
   {
@@ -3709,12 +3712,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Meltano's Singer-based loaders land data into destination tables, and Meltano explicitly supports dbt transformations for typing/deduplication after loading (meltano-docs-6, meltano-docs-11), plus incremental state tracking to avoid full reloads (meltano-docs-20). However, the evidence never describes how raw loader output (often JSON columns for nested Singer streams) is automatically typed or deduplicated without a separate dbt step, so the guarantee of 'typed, deduplicated tables ready to query' depends on additional configuration rather than being inherent to the load step. Missing for 10: explicit documentation on loader schema typing/column casting, built-in deduplication logic (vs. requiring dbt), and independent confirmation that destination tables are query-ready without extra transformation work.",
+    "rationale": "Meltano's docs show loaders move data (often as JSON-based Singer records) and require a separate dbt transformation step to type and model data (meltano-docs-6, meltano-docs-11), plus incremental state tracking (meltano-docs-20) that dedupes on replication key changes but doesn't guarantee typed, deduplicated final tables without additional dbt modeling. There is no direct evidence that the loader itself produces analyst-ready typed/deduplicated tables without extra transformation work. missing for 10: evidence that loaders alone type and dedupe destination tables, independent confirmation of load-time schema casting, and hands-on validation that raw JSON is not exposed to end users.",
     "evidenceIds": [
       "meltano-docs-6",
       "meltano-docs-11",
       "meltano-docs-20",
-      "meltano-docs-19"
+      "meltano-docs-30"
     ]
   }
 ]
