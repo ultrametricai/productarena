@@ -1,15 +1,15 @@
 {
-  "hash": "a9ef6f395a8034070a96c61e4124814b13ce2df9467b6212d3a042d2c5b2636d",
+  "hash": "5fc2ae3b69506207e09c59ebb568fa3be7875e40a907d2932ce396b049237b94",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Meltano's Singer-based loaders land data into destination tables, and Meltano explicitly supports dbt transformations for typing/deduplication after loading (meltano-docs-6, meltano-docs-11), plus incremental state tracking to avoid full reloads (meltano-docs-20). However, the evidence never describes how raw loader output (often JSON columns for nested Singer streams) is automatically typed or deduplicated without a separate dbt step, so the guarantee of 'typed, deduplicated tables ready to query' depends on additional configuration rather than being inherent to the load step. Missing for 10: explicit documentation on loader schema typing/column casting, built-in deduplication logic (vs. requiring dbt), and independent confirmation that destination tables are query-ready without extra transformation work.",
+    "rationale": "Meltano's docs show loaders move data (often as JSON-based Singer records) and require a separate dbt transformation step to type and model data (meltano-docs-6, meltano-docs-11), plus incremental state tracking (meltano-docs-20) that dedupes on replication key changes but doesn't guarantee typed, deduplicated final tables without additional dbt modeling. There is no direct evidence that the loader itself produces analyst-ready typed/deduplicated tables without extra transformation work. missing for 10: evidence that loaders alone type and dedupe destination tables, independent confirmation of load-time schema casting, and hands-on validation that raw JSON is not exposed to end users.",
     "evidenceIds": [
       "meltano-docs-6",
       "meltano-docs-11",
       "meltano-docs-20",
-      "meltano-docs-19"
+      "meltano-docs-30"
     ],
     "productId": "meltano",
     "storyId": "typed-deduped-tables"
