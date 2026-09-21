@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-83-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-509-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-29133-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-511-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-29254-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **83 arenas, 509 products, 29,133 judged verdicts.**
+As of the last full pipeline run: **83 arenas, 511 products, 29,254 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -159,7 +159,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Frontend Frameworks (`frontend-frameworks`) | react, vue, svelte, angular, solid |
 | Local LLM Runtimes (`local-llm-runtimes`) | ollama, llama-cpp, vllm, lm-studio, jan, localai, llamafile |
 | Payroll & HR Ops (`payroll`) | gusto, rippling, deel, justworks |
-| Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard |
+| Product Feedback & Intent (`product-feedback`) | canny, featurebase, productboard, foreloop |
 | Software Factory (`software-factory`) | foreloop, factory, devin, openhands, codegen, jules, omnara, yylo, humanlayer |
 | Mobile & In-Person Payments (`mobile-payments`) | stripe-terminal, square, sumup, adyen-pos |
 | API platforms (`api-platforms`) | postman, kong, bruno, hoppscotch, insomnia |
@@ -186,7 +186,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Vector Databases & Memory Stores (`vector-databases`) | pinecone, weaviate, qdrant, chroma, milvus, helixdb, lancedb |
 | Auth & Identity (`auth-platforms`) | auth0, clerk, workos, keycloak, better-auth |
 | AI Inference Providers (`inference-providers`) | groq, together-ai, fireworks-ai, cerebras, deepinfra, baseten, morph |
-| Workflow Automation (`workflow-automation`) | n8n, zapier, make, temporal, pipedream, windmill |
+| Workflow Automation (`workflow-automation`) | n8n, zapier, make, temporal, pipedream, windmill, afk |
 | Observability & Monitoring (`observability`) | datadog, grafana, sentry, new-relic, honeycomb, signoz |
 | MCP Infrastructure & Registries (`mcp-infrastructure`) | composio, smithery, glama, pipedream-mcp, gram, manufact |
 | Browser Automation for Agents (`browser-agents`) | browser-use, stagehand, skyvern, hyperbrowser, steel, notte, smooth |
