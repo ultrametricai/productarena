@@ -564,7 +564,14 @@ model and folding cross-model disagreement into the interval is listed as future
 Ultrametric Inc — the company that operates ProductArena. Foreloop is judged by the identical evidence
 rules as every other product (it placed third of four in its own arena as of this writing), its
 product page carries an affiliation banner, and every one of its verdicts is contestable like
-any other.
+any other. An adversarial bias audit of Foreloop's verdicts (2026-09-21) found and corrected 14
+overcalls in Foreloop's favor — four quality/tier downgrades on the `agentic-*` cells (including
+`agentic-public-api` `full` 8 → `partial` 5, applying the same "documented public REST/HTTP API"
+bar used for its competitors, per the claude-code precedent below) and ten `na` → `none`
+reclassifications where the wrong-axis call had improperly shrunk Foreloop's score denominator
+relative to peers graded `none` on the same stories. Each corrected verdict carries a dated
+audit note in its rationale, applied in the committed judge cache so re-judges preserve it; the
+corrections moved Foreloop from second to third of four.
 
 **Read this before trusting the `ai-coding` arena's numbers.** The judge model
 (`claude-sonnet-5`) is made by Anthropic, and the `ai-coding` arena includes Anthropic's own
