@@ -38,6 +38,8 @@ const KIND_CHIP_CLASSES: Record<RecommendationKind, string> = {
   overlap: 'border-amber-400/40 bg-amber-400/5 text-amber-300',
   group: 'border-violet-400/40 bg-violet-400/5 text-violet-300',
   breakout: 'border-zinc-600 bg-zinc-800/40 text-zinc-300',
+  // Stronger amber than OVERLAP — a vendor-announced shutdown, not a maybe.
+  migrate: 'border-amber-400/60 bg-amber-400/10 text-amber-300',
 }
 
 const KIND_TOOLTIPS: Record<RecommendationKind, string> = {
@@ -46,6 +48,7 @@ const KIND_TOOLTIPS: Record<RecommendationKind, string> = {
   overlap: 'Possible overlap — two of your picks may cover the same job',
   group: 'Group — one vendor family could consolidate two of your slots',
   breakout: 'Break out — your pick trails specialists by a wide margin in this arena',
+  migrate: 'Migrate — this pick’s vendor has announced it is shutting down',
 }
 
 export default function MyStackBuilder({

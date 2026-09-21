@@ -36,6 +36,7 @@ function buildWatchlistProducts(): WatchlistProduct[] {
         arenaName: data.category.name,
         aiEra: entry.aiEra,
         agentReady: entry.agentReady,
+        shutdown: product.shutdown,
         history: (history.get(product.id) ?? []).map(({ date, aiEra, agentReady }) => ({ date, aiEra, agentReady })),
       })
     }

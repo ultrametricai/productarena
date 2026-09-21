@@ -1,0 +1,2298 @@
+[
+  {
+    "taskId": "comp_010",
+    "nodeId": "n3",
+    "arenaId": "edge-platforms",
+    "productId": "netlify",
+    "calls": [
+      {
+        "method": "netlify deploy --allow-anonymous",
+        "type": "cli",
+        "description": "Deploy the site (including published privacy policy/DPA pages) to Netlify from the working directory",
+        "sourceUrl": "https://netlify.com"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_010",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Create a notarization request for the DPA document with AI-detected signature fields",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n1",
+    "arenaId": "scheduling",
+    "productId": "cal-com",
+    "calls": [
+      {
+        "method": "POST /v2/bookings",
+        "type": "rest",
+        "description": "Create a recurring booking for the board meeting cadence",
+        "sourceUrl": "https://cal.com/docs/api-reference/v2/bookings/create-a-booking.md"
+      },
+      {
+        "method": "POST /v2/schedules",
+        "type": "rest",
+        "description": "Create a schedule defining when the board cadence event type is available",
+        "sourceUrl": "https://cal.com/docs/api-reference/v2/schedules/create-a-schedule.md"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n1",
+    "arenaId": "scheduling",
+    "productId": "calendly",
+    "calls": [
+      {
+        "method": "POST /event_types",
+        "type": "rest",
+        "description": "Create an event type representing the recurring board meeting cadence",
+        "sourceUrl": "https://developer.calendly.com/docs/mcp/supported-tools.md"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /v1/notarization",
+        "type": "rest",
+        "description": "Creates a notarization request for a document, using AI-detected signature fields to circulate for signature",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "paddle",
+    "calls": [
+      {
+        "method": "POST /transactions",
+        "type": "rest",
+        "description": "Create a transaction representing the domain quote for checkout",
+        "sourceUrl": "https://developer.paddle.com/build/transactions/create-transaction.md"
+      },
+      {
+        "method": "execute",
+        "type": "mcp",
+        "description": "Run a chained API call (e.g., create transaction/checkout) via the Paddle MCP codemode tool",
+        "sourceUrl": "https://mcp.paddle.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "create_order",
+        "type": "mcp",
+        "description": "Create a PayPal order for the domain purchase quote",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      },
+      {
+        "method": "pay_order",
+        "type": "mcp",
+        "description": "Capture payment on the created order to complete checkout",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      },
+      {
+        "method": "POST /v2/checkout/orders",
+        "type": "rest",
+        "description": "Create a checkout order via PayPal's Orders v2 REST API",
+        "sourceUrl": "https://raw.githubusercontent.com/paypal/paypal-rest-api-specifications/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create the Checkout Session for the domain quote via Stripe's generic write tool",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe sandbox create --help",
+        "type": "cli",
+        "description": "Provision a sandbox with API keys to test the checkout flow",
+        "sourceUrl": "https://docs.stripe.com/sandboxes.md"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n3",
+    "arenaId": "edge-platforms",
+    "productId": "cloudflare",
+    "calls": [
+      {
+        "method": "execute",
+        "type": "mcp",
+        "description": "Invoke Cloudflare API endpoints (e.g. DNS record creation, SSL settings) via the Code Mode MCP server",
+        "sourceUrl": "https://mcp.cloudflare.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_001",
+    "nodeId": "n2",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "List Ramp business bank accounts and their balances",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Retrieve daily available balance history for an account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_001",
+    "nodeId": "n6",
+    "arenaId": "team-chat",
+    "productId": "discord",
+    "calls": [
+      {
+        "method": "POST /webhooks/{webhook.id}/{webhook.token}",
+        "type": "rest",
+        "description": "Post the payment summary message to the team channel via webhook",
+        "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_001",
+    "nodeId": "n6",
+    "arenaId": "team-chat",
+    "productId": "slack",
+    "calls": [
+      {
+        "method": "chat.postMessage()",
+        "type": "sdk",
+        "description": "Post the payment run summary to a channel",
+        "sourceUrl": "https://docs.slack.dev/reference/methods/chat.postMessage"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_002",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /api/v1/account/{accountId}/transactions",
+        "type": "rest",
+        "description": "List transactions for an account",
+        "sourceUrl": "https://docs.mercury.com/reference"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_002",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "Retrieve banking transactions available to sync to an accounting provider for bookkeeping close",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "List cash accounts whose transactions need to be pulled for reconciliation",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_002",
+    "nodeId": "n3",
+    "arenaId": "accounting",
+    "productId": "zoho-books",
+    "calls": [
+      {
+        "method": "POST /bankaccounts/{bank_account_id}/reconciliation",
+        "type": "rest",
+        "description": "Create a bank reconciliation for a bank account",
+        "sourceUrl": "https://www.zoho.com/books/api/v3/bank-transactions/"
+      },
+      {
+        "method": "GET /bankaccounts/{bank_account_id}/reconciliation",
+        "type": "rest",
+        "description": "List existing bank reconciliations for an account",
+        "sourceUrl": "https://www.zoho.com/books/api/v3/bank-transactions/"
+      },
+      {
+        "method": "POST /banktransactions/{transaction_id}/categorize",
+        "type": "rest",
+        "description": "Categorize an uncategorized imported bank transaction",
+        "sourceUrl": "https://www.zoho.com/books/api/v3/bank-transactions/"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_002",
+    "nodeId": "n6",
+    "arenaId": "accounting",
+    "productId": "quickbooks",
+    "calls": [
+      {
+        "method": "balance_sheet",
+        "type": "mcp",
+        "description": "Generate balance sheet financial report",
+        "sourceUrl": "https://github.com/intuit/quickbooks-online-mcp-server"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_003",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Returns bank accounts (checking, investment, managed portfolio) held by the business",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Returns daily available balance history for a given bank account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_003",
+    "nodeId": "n2",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_analytics",
+        "type": "mcp",
+        "description": "Query MRR/revenue metrics or run financial report templates for board reporting",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_report",
+        "type": "mcp",
+        "description": "Generate downloadable financial reports (balance, payouts, revenue recognition) for the board report",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_api_read",
+        "type": "mcp",
+        "description": "Read raw balance/charges data via any Stripe GET API method to pull revenue figures",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_003",
+    "nodeId": "n5",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new Notion page for the board report draft",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "form_001",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /incorporation",
+        "type": "rest",
+        "description": "Creates an incorporation request for a company (e.g. GmbH/UG) including company details, shareholders, and directors",
+        "sourceUrl": "https://docs.beglaubigt.de/incorporation/post"
+      }
+    ]
+  },
+  {
+    "taskId": "form_001",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "clerky",
+    "calls": [
+      {
+        "method": "POST /v1/document_sets",
+        "type": "rest",
+        "description": "Create a document set from a template to initiate the incorporation filing",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n3",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /task",
+        "type": "rest",
+        "description": "Create tasks in ClickUp to track individual investors in the pipeline",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      },
+      {
+        "method": "POST /view",
+        "type": "rest",
+        "description": "Create a view to organize and track investor pipeline stages",
+        "sourceUrl": "https://developer.clickup.com/docs/views.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n6",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Create a notarization request to send SAFE document for signature",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n7",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /api/v1/account/{accountId}/transactions",
+        "type": "rest",
+        "description": "List account transactions to confirm incoming SAFE wire transfers have posted",
+        "sourceUrl": "https://docs.mercury.com"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n7",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Check daily balance movement on the checking account for incoming wire deposits",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "List banking transactions (including incoming wires) available on the account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Retrieve the business's checking accounts to locate the account receiving the wire",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n8",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "GET /v1alpha1/issuers/{issuer_id}/capitalization-table",
+        "type": "rest",
+        "description": "Retrieve issuer's capitalization table by share class to view updated ownership",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-get-capitalization-table/"
+      },
+      {
+        "method": "GET /v1alpha1/issuers/{issuer_id}/stakeholders",
+        "type": "rest",
+        "description": "List stakeholders on the cap table after a SAFE issuance",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-stakeholders/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n8",
+    "arenaId": "equity-management",
+    "productId": "ledgy",
+    "calls": [
+      {
+        "method": "query companyCaptable(...)",
+        "type": "graphql",
+        "description": "Retrieve cap table data for the company after recording SAFE",
+        "sourceUrl": "https://docs.ledgy.com"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n6",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Create a notarization request for the closing packet with signature fields auto-detected",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n6",
+    "arenaId": "legal-ops",
+    "productId": "ironclad",
+    "calls": [
+      {
+        "method": "POST /public/api/v1/workflows",
+        "type": "rest",
+        "description": "Launch a workflow to route the closing packet through approval and signature",
+        "sourceUrl": "https://developer.ironcladapp.com/docs/launch-a-workflow.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n9",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/capitalization-table",
+        "type": "rest",
+        "description": "Retrieve the issuer's capitalization table by share class",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-get-capitalization-table/"
+      },
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/stakeholders",
+        "type": "rest",
+        "description": "List stakeholders on the cap table",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-stakeholders/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_003",
+    "nodeId": "n1",
+    "arenaId": "accounting",
+    "productId": "quickbooks",
+    "calls": [
+      {
+        "method": "get_balance_sheet",
+        "type": "mcp",
+        "description": "Retrieve Balance Sheet report for financial statement compilation",
+        "sourceUrl": "https://github.com/intuit/quickbooks-online-mcp-server"
+      },
+      {
+        "method": "get_profit_and_loss",
+        "type": "mcp",
+        "description": "Retrieve P&L report for financial statement compilation",
+        "sourceUrl": "https://github.com/intuit/quickbooks-online-mcp-server"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_003",
+    "nodeId": "n2",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/capitalization-table",
+        "type": "rest",
+        "description": "Retrieve issuer's capitalization table by share class",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-get-capitalization-table/"
+      },
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/stakeholders",
+        "type": "rest",
+        "description": "List stakeholders on the issuer's cap table",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-stakeholders/"
+      },
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/fair-market-values",
+        "type": "rest",
+        "description": "Retrieve fair market values from prior 409A valuations",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-fair-market-values/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_003",
+    "nodeId": "n2",
+    "arenaId": "equity-management",
+    "productId": "ledgy",
+    "calls": [
+      {
+        "method": "query companyCaptable",
+        "type": "graphql",
+        "description": "Retrieve cap table data for the queried company",
+        "sourceUrl": "https://docs.ledgy.com"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_003",
+    "nodeId": "n5",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "GET /v1alpha1/issuers/{issuer_id}/fair_market_values",
+        "type": "rest",
+        "description": "Retrieve the fair market values from the issuer's completed 409A valuation",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-fair-market-values/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_004",
+    "nodeId": "n1",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/fair-market-values",
+        "type": "rest",
+        "description": "Retrieve issuer's fair market values from its 409A valuations to verify currency",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-fair-market-values/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_004",
+    "nodeId": "n4",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "POST /v1alpha1/issuers/{issuerId}/draftSecurities/optionGrants",
+        "type": "rest",
+        "description": "Create a draft option grant pending board consent/approval",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-draftsecurities-create-draft-option-grant/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_004",
+    "nodeId": "n5",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Create a notarization request to send document for signature/notarization",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_004",
+    "nodeId": "n6",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "POST /v1alpha1/issuers/{issuerId}/draft-securities/option-grants",
+        "type": "rest",
+        "description": "Create a draft option grant to record a new stock option grant pending approval",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-draftsecurities-create-draft-option-grant/"
+      },
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/option-grants",
+        "type": "rest",
+        "description": "Retrieve option grants to confirm the recorded grant appears on the cap table",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-option-grants/"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_001",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "create_product",
+        "type": "mcp",
+        "description": "Create a new product in the PayPal catalog",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_001",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create a product via Stripe's generic POST/PATCH/PUT/DELETE write tool",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe products create --name=...",
+        "type": "cli",
+        "description": "Create a product from the Workbench Shell/Stripe CLI",
+        "sourceUrl": "https://docs.stripe.com/workbench/shell.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_001",
+    "nodeId": "n2",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create or update product/price records to configure pricing plans",
+        "sourceUrl": "https://docs.stripe.com/mcp.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_001",
+    "nodeId": "n4",
+    "arenaId": "payments",
+    "productId": "polar",
+    "calls": [
+      {
+        "method": "polar listen http://localhost:3000/",
+        "type": "cli",
+        "description": "Forward webhook events to a local endpoint for testing/configuration",
+        "sourceUrl": "https://polar.sh/docs/integrate/webhooks/locally.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_001",
+    "nodeId": "n4",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create a webhook endpoint to receive subscription billing events",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_001",
+    "nodeId": "n5",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "create_subscription",
+        "type": "mcp",
+        "description": "Create a subscription via the agent-toolkit's subscriptions tool, used against the PayPal sandbox to test the billing flow",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
+    "nodeId": "n2",
+    "arenaId": "crm",
+    "productId": "hubspot",
+    "calls": [
+      {
+        "method": "GET /crm/v3/objects/contacts/{contactId}",
+        "type": "rest",
+        "description": "Retrieve contact record properties (e.g., custom health score field) to assess account status",
+        "sourceUrl": "https://developers.hubspot.com/docs/guides/api/crm/objects/contacts"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
+    "nodeId": "n6",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "cancel_subscription",
+        "type": "mcp",
+        "description": "Cancel the customer's subscription if save attempt fails",
+        "sourceUrl": "https://developer.paypal.com/ai-tools/agent-tools.md"
+      },
+      {
+        "method": "update_subscription",
+        "type": "mcp",
+        "description": "Modify subscription plan/pricing to apply a retention discount",
+        "sourceUrl": "https://developer.paypal.com/ai-tools/agent-tools.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_003",
+    "nodeId": "n2",
+    "arenaId": "email-marketing",
+    "productId": "loops",
+    "calls": [
+      {
+        "method": "POST /contacts/create",
+        "type": "rest",
+        "description": "Add a contact to your audience list",
+        "sourceUrl": "https://loops.so/agents/api"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_003",
+    "nodeId": "n4",
+    "arenaId": "email-marketing",
+    "productId": "loops",
+    "calls": [
+      {
+        "method": "POST /events/send",
+        "type": "rest",
+        "description": "Send an event to trigger the welcome automation workflow",
+        "sourceUrl": "https://loops.so/agents/api"
+      },
+      {
+        "method": "POST /contacts/create",
+        "type": "rest",
+        "description": "Add a contact to the audience to enter the welcome automation",
+        "sourceUrl": "https://loops.so/agents/api"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_010",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "mixpanel",
+    "calls": [
+      {
+        "method": "GET /api/2.0/query/segmentation",
+        "type": "rest",
+        "description": "Query event counts (e.g., signups) broken down over time to detect the launch-day spike",
+        "sourceUrl": "https://docs.mixpanel.com/reference/query-api.md"
+      },
+      {
+        "method": "GET /export",
+        "type": "rest",
+        "description": "Export raw signup event data for the launch period for detailed spike analysis",
+        "sourceUrl": "https://docs.mixpanel.com/reference/raw-event-export.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_010",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "plausible",
+    "calls": [
+      {
+        "method": "POST /api/v2/query",
+        "type": "rest",
+        "description": "Query stats to track the signup spike on launch day",
+        "sourceUrl": "https://plausible.io/docs/stats-api"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_010",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "posthog",
+    "calls": [
+      {
+        "method": "POST /api/projects/:project_id/query/",
+        "type": "rest",
+        "description": "Run HogQL query to track launch-day signup spike",
+        "sourceUrl": "https://posthog.com/docs/api/queries.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_011",
+    "nodeId": "n4",
+    "arenaId": "edge-platforms",
+    "productId": "netlify",
+    "calls": [
+      {
+        "method": "POST /api/v1/sites/{site_id}/deploys",
+        "type": "rest",
+        "description": "Publish a new deploy to a Netlify site via the REST API",
+        "sourceUrl": "https://docs.netlify.com"
+      },
+      {
+        "method": "netlify deploy --prod",
+        "type": "cli",
+        "description": "Deploy the site to production from the command line",
+        "sourceUrl": "https://docs.netlify.com"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_012",
+    "nodeId": "n1",
+    "arenaId": "crm",
+    "productId": "hubspot",
+    "calls": [
+      {
+        "method": "POST /crm/v3/objects/contacts",
+        "type": "rest",
+        "description": "Create target contact records for the sequence list",
+        "sourceUrl": "https://developers.hubspot.com/docs/guides/api/crm/objects/contacts"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_012",
+    "nodeId": "n5",
+    "arenaId": "scheduling",
+    "productId": "cal-com",
+    "calls": [
+      {
+        "method": "POST /v2/bookings",
+        "type": "rest",
+        "description": "Create a booking for a responder using an event type slug and username",
+        "sourceUrl": "https://cal.com/docs/api-reference/v2/bookings/create-a-booking.md"
+      },
+      {
+        "method": "create_booking",
+        "type": "mcp",
+        "description": "Schedule a meeting with a responder via MCP-compatible agent client",
+        "sourceUrl": "https://mcp.cal.com/mcp"
+      },
+      {
+        "method": "POST /v2/bookings/{bookingUid}/reschedule",
+        "type": "rest",
+        "description": "Reschedule a booking if the responder needs a new time",
+        "sourceUrl": "https://cal.com/docs/api-reference/v2/bookings/reschedule-a-booking.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n3",
+    "arenaId": "email-marketing",
+    "productId": "customer-io",
+    "calls": [
+      {
+        "method": "trigger_broadcast",
+        "type": "mcp",
+        "description": "Trigger a broadcast to announce the referral program to existing users",
+        "sourceUrl": "https://mcp.customer.io/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n3",
+    "arenaId": "email-marketing",
+    "productId": "kit",
+    "calls": [
+      {
+        "method": "POST /v1/broadcasts",
+        "type": "rest",
+        "description": "Create/draft a broadcast to announce the referral program to existing subscribers",
+        "sourceUrl": "https://developers.kit.com/api-reference/broadcasts/create-a-broadcast"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n3",
+    "arenaId": "email-marketing",
+    "productId": "klaviyo",
+    "calls": [
+      {
+        "method": "POST /api/campaigns",
+        "type": "rest",
+        "description": "Creates a campaign to announce the referral program to existing users",
+        "sourceUrl": "https://developers.klaviyo.com/en/reference/create_campaign"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n3",
+    "arenaId": "email-marketing",
+    "productId": "loops",
+    "calls": [
+      {
+        "method": "POST /events/send",
+        "type": "rest",
+        "description": "Trigger a workflow event (e.g. referral announcement) to existing contacts",
+        "sourceUrl": "https://loops.so/agents/api"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n3",
+    "arenaId": "email-marketing",
+    "productId": "mailchimp",
+    "calls": [
+      {
+        "method": "POST /campaigns/{campaign_id}/actions/send",
+        "type": "rest",
+        "description": "Send the referral program announcement campaign to the existing subscriber audience",
+        "sourceUrl": "https://mailchimp.com/developer/marketing/api/"
+      },
+      {
+        "method": "POST /lists/{list_id}/members",
+        "type": "rest",
+        "description": "Create/update contact records for existing users to target with the referral announcement",
+        "sourceUrl": "https://mailchimp.com/developer/marketing/api/"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n4",
+    "arenaId": "product-analytics",
+    "productId": "amplitude",
+    "calls": [
+      {
+        "method": "POST /2/httpapi",
+        "type": "rest",
+        "description": "Send referral conversion event data directly from server to Amplitude's HTTP V2 endpoint",
+        "sourceUrl": "https://amplitude.com/docs/apis"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_013",
+    "nodeId": "n4",
+    "arenaId": "product-analytics",
+    "productId": "plausible",
+    "calls": [
+      {
+        "method": "POST /api/event",
+        "type": "rest",
+        "description": "Record a custom event (e.g. referral conversion) via server-side tracking",
+        "sourceUrl": "https://plausible.io/docs/events-api"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_001",
+    "nodeId": "n10",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "POST /v1alpha1/issuers/{issuerId}/draftSecurities/draftOptionGrant",
+        "type": "rest",
+        "description": "Create a draft option grant pending board approval",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-draftsecurities-create-draft-option-grant/"
+      },
+      {
+        "method": "GET /v1alpha1/issuers/{issuerId}/optionGrants",
+        "type": "rest",
+        "description": "List existing option grants",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-option-grants/"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_002",
+    "nodeId": "n1",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "GET /v1/companies/{company_id}/employees",
+        "type": "rest",
+        "description": "Retrieve employee roster with pagination to check for changes",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/api-fundamentals.md"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_002",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "PUT /v1/time_off_requests/{time_off_request_uuid}/decline",
+        "type": "rest",
+        "description": "Decline a pending or approved time off request",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/reference/put-v1-time_off-requests-time_off_request_uuid-decline.md"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_002",
+    "nodeId": "n5",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "Retrieve banking transactions to verify the payroll debit occurred",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Check daily available balance change to confirm debit posted",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_003",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "deel",
+    "calls": [
+      {
+        "method": "POST /rest/contracts",
+        "type": "rest",
+        "description": "Create a contractor contract/agreement",
+        "sourceUrl": "https://developer.deel.com/home"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_003",
+    "nodeId": "n5",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
+        "type": "rest",
+        "description": "Validate contractor payment inputs and determine payment timing/blockers",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_001",
+    "nodeId": "n4",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Create a notarization request with AI-detected signature fields for signers",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "ops_001",
+    "nodeId": "n2",
+    "arenaId": "team-chat",
+    "productId": "buzz",
+    "calls": [
+      {
+        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
+        "type": "cli",
+        "description": "Create a default channel with a given name, type, and visibility",
+        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "ops_003",
+    "nodeId": "n4",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page in Notion to serve as a process template",
+        "sourceUrl": "https://developers.notion.com"
+      },
+      {
+        "method": "POST /v1/databases",
+        "type": "rest",
+        "description": "Create a database to structure repeatable process templates",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_002",
+    "nodeId": "n5",
+    "arenaId": "edge-platforms",
+    "productId": "fly-io",
+    "calls": [
+      {
+        "method": "fly launch",
+        "type": "cli",
+        "description": "Create and configure a new app's deploy settings (fly.toml) for CI/CD",
+        "sourceUrl": "https://fly.io/docs/getting-started/launch/"
+      },
+      {
+        "method": "fly machine run",
+        "type": "cli",
+        "description": "Configure, build, and start a new Machine with deploy settings in one line",
+        "sourceUrl": "https://fly.io"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_002",
+    "nodeId": "n5",
+    "arenaId": "edge-platforms",
+    "productId": "render",
+    "calls": [
+      {
+        "method": "trigger_deploy",
+        "type": "mcp",
+        "description": "Trigger a new deploy of an existing service via Render MCP server",
+        "sourceUrl": "https://render.com/changelog/trigger-service-deploys-with-the-render-mcp-server.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n4",
+    "arenaId": "edge-platforms",
+    "productId": "cloudflare",
+    "calls": [
+      {
+        "method": "search",
+        "type": "mcp",
+        "description": "Search the Cloudflare API surface for the DNS records endpoint",
+        "sourceUrl": "https://mcp.cloudflare.com/mcp"
+      },
+      {
+        "method": "execute",
+        "type": "mcp",
+        "description": "Execute the discovered DNS create-record API call against the zone",
+        "sourceUrl": "https://mcp.cloudflare.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_005",
+    "nodeId": "n4",
+    "arenaId": "product-analytics",
+    "productId": "mixpanel",
+    "calls": [
+      {
+        "method": "Create-Dashboard",
+        "type": "mcp",
+        "description": "Create a new dashboard with text cards and reports",
+        "sourceUrl": "https://docs.mixpanel.com/docs/mcp.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_021",
+    "nodeId": "n3",
+    "arenaId": "payments",
+    "productId": "airwallex",
+    "calls": [
+      {
+        "method": "Airwallex.createElement(...)",
+        "type": "sdk",
+        "description": "Create a drop-in payment element in the app using the Airwallex SDK",
+        "sourceUrl": "https://www.airwallex.com/docs/payments/integration-options/web-checkout/drop-in-element.md"
+      },
+      {
+        "method": "airwallex-cli login",
+        "type": "cli",
+        "description": "Authenticate the CLI/agent with Airwallex API keys to wire the integration into automated systems",
+        "sourceUrl": "https://www.airwallex.com/docs/developer-tools/cli.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_021",
+    "nodeId": "n3",
+    "arenaId": "payments",
+    "productId": "paddle",
+    "calls": [
+      {
+        "method": "search",
+        "type": "mcp",
+        "description": "Looks up Paddle API methods to integrate keys/SDK calls into the app",
+        "sourceUrl": "https://mcp.paddle.com/mcp"
+      },
+      {
+        "method": "execute",
+        "type": "mcp",
+        "description": "Runs a JS function chaining Paddle API calls to wire up the integration",
+        "sourceUrl": "https://mcp.paddle.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_021",
+    "nodeId": "n3",
+    "arenaId": "payments",
+    "productId": "square",
+    "calls": [
+      {
+        "method": "client.payments.create({...})",
+        "type": "sdk",
+        "description": "Use the Square Node.js SDK with API keys to create a payment call",
+        "sourceUrl": "https://github.com/square/square-nodejs-sdk"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_021",
+    "nodeId": "n3",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Write API keys/config via generic write tool for SDK integration",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_api_read",
+        "type": "mcp",
+        "description": "Read account/API data needed to configure SDK integration",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe sandbox create --help",
+        "type": "cli",
+        "description": "Provision a sandbox with working API keys for SDK integration",
+        "sourceUrl": "https://docs.stripe.com/sandboxes.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_021",
+    "nodeId": "n4",
+    "arenaId": "payments",
+    "productId": "square",
+    "calls": [
+      {
+        "method": "client.payments.create(...)",
+        "type": "sdk",
+        "description": "Create a test charge using a payment source (sandbox or production)",
+        "sourceUrl": "https://github.com/square/square-nodejs-sdk"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_021",
+    "nodeId": "n4",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create a test charge (e.g., PaymentIntent) via generic Stripe write tool",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_api_read",
+        "type": "mcp",
+        "description": "Read account/payout data to confirm payout schedule",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_023",
+    "nodeId": "n3",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "ramp applications",
+        "type": "cli",
+        "description": "Pre-fill and submit the Ramp account application (company details, EIN, founders) on behalf of a new business",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/applications.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_023",
+    "nodeId": "n4",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Retrieve the business's bank/checking accounts to confirm the feed is connected",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "Pull banking transactions available to sync into the accounting/books provider",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "ramp accounting",
+        "type": "cli",
+        "description": "Manage the accounting integration connecting the bank feed to the books via the Ramp CLI",
+        "sourceUrl": "https://raw.githubusercontent.com/ramp-public/ramp-cli/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "brex",
+    "calls": [
+      {
+        "method": "GET /v1/transactions/accounts",
+        "type": "rest",
+        "description": "View accounts and balances via Transactions API",
+        "sourceUrl": "https://developer.brex.com"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /api/v1/accounts",
+        "type": "rest",
+        "description": "Pull account-level balances via Mercury's REST API",
+        "sourceUrl": "https://mercury.com/api"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Fetch the business's cash accounts and current balances",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Fetch daily available balance history for an account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "expense-management",
+    "productId": "brex",
+    "calls": [
+      {
+        "method": "GET /transactions",
+        "type": "rest",
+        "description": "List Brex card/account transactions to analyze monthly spend",
+        "sourceUrl": "https://developer.brex.com/openapi/transactions_api.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "expense-management",
+    "productId": "navan",
+    "calls": [
+      {
+        "method": "analyze_spend_data",
+        "type": "mcp",
+        "description": "Query expenses and break down costs by department, vendor, or category to analyze monthly spend",
+        "sourceUrl": "https://mcp.navan.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "expense-management",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "ramp transactions list --agent",
+        "type": "cli",
+        "description": "List transactions via Ramp CLI to analyze monthly spend",
+        "sourceUrl": "https://raw.githubusercontent.com/ramp-public/ramp-cli/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /transactions",
+        "type": "rest",
+        "description": "List transactions to analyze monthly spend",
+        "sourceUrl": "https://docs.mercury.com"
+      },
+      {
+        "method": "mercury run mercury-analyze-spend",
+        "type": "cli",
+        "description": "Run the Mercury CLI skill that analyzes spend",
+        "sourceUrl": "https://github.com/MercuryTechnologies/mercury-skills"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_001",
+    "nodeId": "n3",
+    "arenaId": "crm",
+    "productId": "twenty",
+    "calls": [
+      {
+        "method": "POST /rest/metadata/fields",
+        "type": "rest",
+        "description": "Create custom fields on an object via the Metadata API schema management",
+        "sourceUrl": "https://docs.twenty.com/developers/extend/api.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_001",
+    "nodeId": "n6",
+    "arenaId": "crm",
+    "productId": "hubspot",
+    "calls": [
+      {
+        "method": "POST /crm/v3/objects/contacts",
+        "type": "rest",
+        "description": "Create a contact record via API, usable to import contacts individually",
+        "sourceUrl": "https://developers.hubspot.com/docs/guides/api/crm/objects/contacts"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_002",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_read",
+        "type": "mcp",
+        "description": "Look up existing customer via Stripe API GET method",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create a new customer via Stripe API POST method",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_002",
+    "nodeId": "n2",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "create_invoice",
+        "type": "mcp",
+        "description": "Create an invoice with line items via agent toolkit",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_002",
+    "nodeId": "n2",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create invoice with line items via generic write tool against invoices API",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_002",
+    "nodeId": "n3",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "send_invoice",
+        "type": "mcp",
+        "description": "Sends a created invoice to the customer via the agent tool inventory",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_002",
+    "nodeId": "n4",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "get_invoice",
+        "type": "mcp",
+        "description": "Retrieve an invoice's current payment status",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "sales_002",
+    "nodeId": "n4",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_read",
+        "type": "mcp",
+        "description": "Read invoice/payment data via generic GET tool to check payment status",
+        "sourceUrl": "https://docs.stripe.com/mcp.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_001",
+    "nodeId": "n7",
+    "arenaId": "team-chat",
+    "productId": "ms-teams",
+    "calls": [
+      {
+        "method": "POST /teams/{team-id}/channels/{channel-id}/messages",
+        "type": "rest",
+        "description": "Post review delivery message to a channel via Graph API",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/channel-post-messages"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_001",
+    "nodeId": "n7",
+    "arenaId": "team-chat",
+    "productId": "zulip",
+    "calls": [
+      {
+        "method": "POST /v1/messages",
+        "type": "rest",
+        "description": "Send a message to deliver review or schedule a 1:1 conversation",
+        "sourceUrl": "https://zulip.com/api/"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_003",
+    "nodeId": "n4",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page in Notion to publish handbook content",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_004",
+    "nodeId": "n4",
+    "arenaId": "team-chat",
+    "productId": "discord",
+    "calls": [
+      {
+        "method": "POST /webhooks/{webhook.id}/{webhook.token}",
+        "type": "rest",
+        "description": "Post expense notification messages into a Discord channel via webhook",
+        "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /api/v1/transactions",
+        "type": "rest",
+        "description": "List account transactions to pull financial data for board prep",
+        "sourceUrl": "https://docs.mercury.com"
+      },
+      {
+        "method": "GET /api/v1/transactions/{id}",
+        "type": "rest",
+        "description": "Retrieve a specific transaction's details",
+        "sourceUrl": "https://docs.mercury.com"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Retrieve business bank/treasury accounts and balances for board financial reporting",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Pull daily cash balance history for quarterly financial trends",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "Pull banking transactions to compile spend data for board prep",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n2",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_analytics",
+        "type": "mcp",
+        "description": "Query MRR and other revenue metrics via pre-built templates or SQL",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_006",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "buzz",
+    "calls": [
+      {
+        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
+        "type": "cli",
+        "description": "Create a new team channel via Buzz CLI",
+        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_006",
+    "nodeId": "n6",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page in Notion to document the process",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_008",
+    "nodeId": "n6",
+    "arenaId": "team-chat",
+    "productId": "buzz",
+    "calls": [
+      {
+        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
+        "type": "cli",
+        "description": "Create a hiring channel via Buzz CLI",
+        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_009",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "buzz",
+    "calls": [
+      {
+        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
+        "type": "cli",
+        "description": "Create an incident channel via the buzz-cli",
+        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_009",
+    "nodeId": "n6",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page (post-mortem template) in a workspace",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_012",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "buzz",
+    "calls": [
+      {
+        "method": "buzz channels create --name \"company-okrs\" --type stream --visibility open",
+        "type": "cli",
+        "description": "Creates a channel/room to host the OKR kickoff discussion for the team",
+        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_012",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "discord",
+    "calls": [
+      {
+        "method": "POST /webhooks/{webhook.id}/{webhook.token}",
+        "type": "rest",
+        "description": "Post the OKR kickoff message into a Discord channel via webhook",
+        "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_012",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "slack",
+    "calls": [
+      {
+        "method": "POST /chat.postMessage",
+        "type": "rest",
+        "description": "Send kickoff announcement message to a Slack channel",
+        "sourceUrl": "https://docs.slack.dev/reference/methods/chat.postMessage"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_012",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "zulip",
+    "calls": [
+      {
+        "method": "POST /api/v1/messages",
+        "type": "rest",
+        "description": "Send a channel message to kick off the OKR announcement to the team",
+        "sourceUrl": "https://zulip.com/api/"
+      },
+      {
+        "method": "zulip-send --help",
+        "type": "cli",
+        "description": "Send a message from a script/headless CLI to announce kickoff",
+        "sourceUrl": "https://zulip.com/api/installation-instructions"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n1",
+    "arenaId": "vibe-coding",
+    "productId": "v0",
+    "calls": [
+      {
+        "method": "v0.chats.create(...)",
+        "type": "sdk",
+        "description": "Creates a new chat that generates a website from a prompt message",
+        "sourceUrl": "https://github.com/vercel/v0-sdk"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n2",
+    "arenaId": "edge-platforms",
+    "productId": "cloudflare",
+    "calls": [
+      {
+        "method": "wrangler deploy",
+        "type": "cli",
+        "description": "Deploy Worker to Cloudflare's global edge network, publishing the site",
+        "sourceUrl": "https://developers.cloudflare.com/workers/wrangler/commands/"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n2",
+    "arenaId": "edge-platforms",
+    "productId": "netlify",
+    "calls": [
+      {
+        "method": "netlify deploy --allow-anonymous",
+        "type": "cli",
+        "description": "Deploy site build to Netlify's edge CDN with SSL",
+        "sourceUrl": "https://netlify.com"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n2",
+    "arenaId": "edge-platforms",
+    "productId": "render",
+    "calls": [
+      {
+        "method": "trigger_deploy",
+        "type": "mcp",
+        "description": "Kick off a new deploy of an existing service via Render MCP server",
+        "sourceUrl": "https://render.com/changelog/trigger-service-deploys-with-the-render-mcp-server.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n1",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /api/v2/list/{list_id}/task",
+        "type": "rest",
+        "description": "Create a task to capture the problem hypothesis and target customer",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n1",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page to document the problem hypothesis and target customer",
+        "sourceUrl": "https://developers.notion.com"
+      },
+      {
+        "method": "create_pages",
+        "type": "mcp",
+        "description": "Create a page via MCP to capture the hypothesis and target customer",
+        "sourceUrl": "https://developers.notion.com/guides/mcp/overview.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n3",
+    "arenaId": "product-analytics",
+    "productId": "amplitude",
+    "calls": [
+      {
+        "method": "POST /2/httpapi",
+        "type": "rest",
+        "description": "Send signup and event data directly from server to Amplitude's HTTP V2 endpoint",
+        "sourceUrl": "https://amplitude.com/docs/apis"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n3",
+    "arenaId": "product-analytics",
+    "productId": "plausible",
+    "calls": [
+      {
+        "method": "POST /api/event",
+        "type": "rest",
+        "description": "Record a custom signup event via the Events API for signup analytics tracking",
+        "sourceUrl": "https://plausible.io/docs/events-api"
+      },
+      {
+        "method": "POST /api/v2/query",
+        "type": "rest",
+        "description": "Query signup event stats to validate signup funnel performance",
+        "sourceUrl": "https://plausible.io/docs/stats-api"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n3",
+    "arenaId": "product-analytics",
+    "productId": "posthog",
+    "calls": [
+      {
+        "method": "npx @posthog/wizard@latest --signup --email you@example.com --region us",
+        "type": "cli",
+        "description": "Agentic wizard signs up for PostHog, provisions a project, and wires up SDK instrumentation in one command",
+        "sourceUrl": "https://posthog.com/docs/ai-engineering/wizard-signup.md"
+      },
+      {
+        "method": "npx -y @posthog/wizard@latest",
+        "type": "cli",
+        "description": "AI wizard scans the codebase and writes signup/event capture instrumentation using PostHog SDKs",
+        "sourceUrl": "https://posthog.com/docs/ai-engineering/ai-wizard.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "amplitude",
+    "calls": [
+      {
+        "method": "GET /2/export",
+        "type": "rest",
+        "description": "Export project event data for offline analysis of signup behavior",
+        "sourceUrl": "https://amplitude.com/docs/apis"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "mixpanel",
+    "calls": [
+      {
+        "method": "GET /api/2.0/export",
+        "type": "rest",
+        "description": "Pull raw signup event data for analysis of drop-off and conversion patterns",
+        "sourceUrl": "https://docs.mixpanel.com/reference/raw-event-export.md"
+      },
+      {
+        "method": "GET /engage",
+        "type": "rest",
+        "description": "Export user profile data to correlate signups with interview cohort segments",
+        "sourceUrl": "https://docs.mixpanel.com/docs/export-methods.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "plausible",
+    "calls": [
+      {
+        "method": "GET /api/v1/stats/aggregate",
+        "type": "rest",
+        "description": "Retrieve aggregated signup/visitor stats for analysis",
+        "sourceUrl": "https://plausible.io/docs/stats-api"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_002",
+    "nodeId": "n2",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /v1/notarization",
+        "type": "rest",
+        "description": "Creates a notarization request for the founder agreement/IP assignment document",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_002",
+    "nodeId": "n3",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Creates a notarization request, routing document for signature and notarization",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_002",
+    "nodeId": "n3",
+    "arenaId": "legal-ops",
+    "productId": "clerky",
+    "calls": [
+      {
+        "method": "POST /v1/document_sets",
+        "type": "rest",
+        "description": "Create a document set that bundles documents/signatures for the agreement to be routed",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
+      },
+      {
+        "method": "GET /v1/document_sets/{id}/forms",
+        "type": "rest",
+        "description": "Retrieve forms needed before documents can be submitted and signed",
+        "sourceUrl": "https://developers.clerky.com/getting-started/lifecycle/index.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n1",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page (e.g., a spec document) in a Notion workspace or database",
+        "sourceUrl": "https://developers.notion.com"
+      },
+      {
+        "method": "PATCH /v1/blocks/{block_id}",
+        "type": "rest",
+        "description": "Update page content blocks to write or revise the spec text",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /task",
+        "type": "rest",
+        "description": "Create a ClickUp task to track the feature work",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "linear",
+    "calls": [
+      {
+        "method": "mutation IssueCreate(...)",
+        "type": "graphql",
+        "description": "Creates a new Linear issue to track the feature work",
+        "sourceUrl": "https://linear.app/developers/graphql.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page (tracking issue) in a Notion database",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n3",
+    "arenaId": "ai-coding",
+    "productId": "cursor",
+    "calls": [
+      {
+        "method": "Agent.create(...)",
+        "type": "sdk",
+        "description": "Invokes Cursor's agent (local or cloud runtime) from code to implement the feature per spec",
+        "sourceUrl": "https://cursor.com/docs/sdk/typescript.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n5",
+    "arenaId": "ai-code-review",
+    "productId": "greptile",
+    "calls": [
+      {
+        "method": "greptile review",
+        "type": "cli",
+        "description": "Run a review of the feature branch diff from the terminal",
+        "sourceUrl": "https://www.greptile.com/cli"
+      },
+      {
+        "method": "greptile onboard",
+        "type": "cli",
+        "description": "Set up Greptile org, connect repo, and enable code review from terminal",
+        "sourceUrl": "https://www.greptile.com/docs/code-review/cli-onboarding"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n8",
+    "arenaId": "error-tracking",
+    "productId": "honeybadger",
+    "calls": [
+      {
+        "method": "POST /v1/deploys",
+        "type": "rest",
+        "description": "Notify Honeybadger that a deploy occurred to correlate errors with the new release",
+        "sourceUrl": "https://docs.honeybadger.io/api/reporting-deployments/"
+      },
+      {
+        "method": "honeybadger deploy",
+        "type": "cli",
+        "description": "Record a deployment from CI/CD so post-deploy errors can be tracked and auto-resolved",
+        "sourceUrl": "https://docs.honeybadger.io/lib/ruby/gem-reference/cli/"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n8",
+    "arenaId": "error-tracking",
+    "productId": "rollbar",
+    "calls": [
+      {
+        "method": "GET /api/1/reports/error/{env}",
+        "type": "rest",
+        "description": "List error/critical items filtered to production environment to verify no new errors after deploy",
+        "sourceUrl": "https://docs.rollbar.com/reference/list-all-items"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_002",
+    "nodeId": "n4",
+    "arenaId": "error-tracking",
+    "productId": "bugsnag",
+    "calls": [
+      {
+        "method": "Bugsnag.notify()",
+        "type": "sdk",
+        "description": "Report handled exceptions from the app for post-release error monitoring",
+        "sourceUrl": "https://github.com/bugsnag/bugsnag-js"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_002",
+    "nodeId": "n4",
+    "arenaId": "error-tracking",
+    "productId": "honeybadger",
+    "calls": [
+      {
+        "method": "POST /v1/notices",
+        "type": "rest",
+        "description": "Report exceptions/errors to Honeybadger for post-release monitoring",
+        "sourceUrl": "https://docs.honeybadger.io/api/reporting-exceptions/"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_002",
+    "nodeId": "n4",
+    "arenaId": "error-tracking",
+    "productId": "sentry",
+    "calls": [
+      {
+        "method": "search_errors",
+        "type": "mcp",
+        "description": "Search for errors reported to Sentry after release",
+        "sourceUrl": "https://mcp.sentry.dev/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "vendor_010",
+    "nodeId": "n1",
+    "arenaId": "mcp-infrastructure",
+    "productId": "smithery",
+    "calls": [
+      {
+        "method": "smithery mcp add <url>",
+        "type": "cli",
+        "description": "Add an MCP server connection via the Smithery CLI",
+        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
+      }
+    ]
+  }
+]

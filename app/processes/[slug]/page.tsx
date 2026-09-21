@@ -9,6 +9,7 @@ import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
 import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
+import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { phaseIcon, phaseTooltip, processIcon } from '@/lib/processIcons'
 import { processManifestPath, processManifestUrl } from '@/lib/processManifest'
 import {
@@ -66,6 +67,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   const simSteps = buildSimSteps([task])
   const alias = slugAliasFor(task, slug)
   const canonicalSlug = processSlug(task.title)
+  const mineHref = `/processes/${canonicalSlug}/mine`
+  // Same pre-serialized rows as /mine — the client-side "yours" chips hydrate over them; the
+  // static HTML is unchanged for readers without a stack (server stack snapshot is '{}').
+  const checkSteps = Object.fromEntries(buildProcessCheckSteps(task).map((s) => [s.nodeId, s]))
 
   return (
     <div className="space-y-10">
@@ -124,7 +129,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
       {/* Founder 2026-09-18: the process ITSELF leads — who covers it, then the step-by-step
           flow with per-step vendors. The agent-ceiling gap analysis moved below the steps and
           collapsed (it repeated every step's computer-use chips at the top of the page). */}
-      <ProcessLeaderboard task={task} />
+      <ProcessLeaderboard task={task} mineHref={mineHref} />
 
       {/* Founder ask: "Check my process" — the personalized run (your vendor per step vs the
           best, upgrade flags) lives at its own noindex route so this shared SEO page stays the
@@ -148,7 +153,13 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
         </p>
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <div id="steps" className="scroll-mt-4" />
-          <ProcessDag nodes={task.dag.nodes} edges={task.dag.edges} taskId={task.id} />
+          <ProcessDag
+            nodes={task.dag.nodes}
+            edges={task.dag.edges}
+            taskId={task.id}
+            checkSteps={checkSteps}
+            mineHref={mineHref}
+          />
         </div>
         {task.contextNeeded.length > 0 && (
           <p className="mt-3 text-xs text-zinc-500">

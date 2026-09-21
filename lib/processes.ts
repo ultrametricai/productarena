@@ -3,6 +3,7 @@ import path from 'node:path'
 import { z } from 'zod'
 import { isPopulated, loadCategory } from './data'
 import { resolveGapStep } from './gapClosers'
+import { isShutdown } from './shutdown'
 import type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole } from './processSim'
 import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
 
@@ -564,6 +565,14 @@ function arenaSwapOptions(arenaId: string, dir?: string): SwapOption[] {
     .map((e) => ({ id: e.productId, name: nameOf(e.productId), agentReady: e.agentReady }))
 }
 
+// Product ids of one arena whose vendor announced a shutdown (lib/shutdown.ts founder rule):
+// excluded from every OFFER surface below (derived rosters, alternatives, swap options) while
+// the canonical vendor chip (vendorChipInfo) keeps resolving — a process that names the vendor
+// still shows it, we just never suggest it.
+function shutdownIdsFor(arenaId: string, dir?: string): Set<string> {
+  return new Set(loadCategory(arenaId, dir).products.filter((p) => isShutdown(p)).map((p) => p.id))
+}
+
 // Top arena alternatives for one mapped vendor — the same live leaderboard the swap options
 // use, minus the canonical vendor itself. Powers the "or:" row on DAG vendor blocks. Unmapped
 // vendors (irs, clerky, docusign…) have no arena, so they yield [] and the block shows only
@@ -576,8 +585,9 @@ export function vendorAlternatives(vendor: string, limit = 2, dir?: string): Ven
   const arenaId = VENDOR_ARENA[vendor]
   if (!arenaId || !isPopulated(arenaId, dir)) return []
   const productId = vendorProductId(vendor)
+  const shutdown = shutdownIdsFor(arenaId, dir)
   return arenaSwapOptions(arenaId, dir)
-    .filter((o) => o.id !== productId)
+    .filter((o) => o.id !== productId && !shutdown.has(o.id))
     .slice(0, limit)
     .map((o) => ({ ...o, arenaId }))
 }
@@ -634,7 +644,10 @@ function arenaOptionChips(arenaId: string, dir?: string): VendorChipInfo[] {
   const data = loadCategory(arenaId, dir)
   const ladder = arenaSwapOptions(arenaId, dir)
   const rankOf = new Map(ladder.map((o, i) => [o.id, i + 1]))
-  return data.rankings.leaderboard.map((e) => ({
+  // A derived roster is an OFFER — shutdown products drop out and the rest keep their ladder
+  // ranks (positions are identity, not a re-count).
+  const shutdown = shutdownIdsFor(arenaId, dir)
+  return data.rankings.leaderboard.filter((e) => !shutdown.has(e.productId)).map((e) => ({
     vendor: e.productId,
     label: data.products.find((p) => p.id === e.productId)?.name ?? e.productId,
     productId: e.productId,
@@ -661,7 +674,12 @@ export function stepVendorOptions(
   node: Pick<DagNode, 'vendorOptions' | 'optionsArenaId'>,
   dir?: string,
 ): VendorChipInfo[] {
-  const curated = (node.vendorOptions ?? []).map((v) => vendorChipInfo(v, dir))
+  // A supplier roster is an OFFER (lib/shutdown.ts founder rule): tracked curated vendors whose
+  // product announced a shutdown are dropped alongside the derived-roster filter in
+  // arenaOptionChips. Untracked chips (no judged product) can't be checked and stay.
+  const curated = (node.vendorOptions ?? [])
+    .map((v) => vendorChipInfo(v, dir))
+    .filter((c) => !c.productId || !c.arenaId || !shutdownIdsFor(c.arenaId, dir).has(c.productId))
   const arenaId = node.optionsArenaId
   if (!arenaId || !isPopulated(arenaId, dir)) return curated
   const derived = arenaOptionChips(arenaId, dir).slice(0, STEP_OPTIONS_CAP)
@@ -702,7 +720,10 @@ export function vendorRoles(tasks: ProcessTask[], dir?: string): VendorRole[] {
   const roles: VendorRole[] = []
   for (const [arenaId, { canonical, stepCount }] of byArena) {
     const data = loadCategory(arenaId, dir)
-    const alternatives = arenaSwapOptions(arenaId, dir)
+    // Swap options are OFFERS — shutdown products drop out; a canonical vendor that announced
+    // a shutdown falls through to the arena's agent-readiness leader as the default pick.
+    const shutdown = shutdownIdsFor(arenaId, dir)
+    const alternatives = arenaSwapOptions(arenaId, dir).filter((o) => !shutdown.has(o.id))
     const canonicalId = canonical ? vendorProductId(canonical) : null
     const def = (canonicalId && alternatives.find((o) => o.id === canonicalId)) || alternatives[0]
     if (!def) continue

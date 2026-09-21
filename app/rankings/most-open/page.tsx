@@ -4,6 +4,7 @@ import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import GeoMark from '@/components/GeoMark'
 import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import RankingsNav from '@/components/RankingsNav'
 import VerdictBadge from '@/components/VerdictBadge'
 import { loadAll, verdictFor, type CategoryData } from '@/lib/data'
@@ -155,6 +156,7 @@ export default function MostOpenRankingPage() {
                   >
                     <ProductLogo product={row.product} size={16} />
                     <span className="min-w-0 truncate font-medium">{row.product.name}</span>
+                    <ShutdownBadge shutdown={row.product.shutdown} />
                   </Link>
                   <span className="mt-0.5 flex flex-wrap items-center gap-1.5">
                     <Link href={`/arena/${row.data.category.id}`} className="text-xs text-zinc-500 hover:text-emerald-300">

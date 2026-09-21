@@ -4,6 +4,7 @@ import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ConfidenceChip from '@/components/ConfidenceChip'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import RankingsNav from '@/components/RankingsNav'
 import VerificationMixChip from '@/components/VerificationMixChip'
 import { confidenceFor, type ProductConfidence } from '@/lib/confidence'
@@ -133,6 +134,7 @@ export default function MostTestedRankingPage() {
                   >
                     <ProductLogo product={row.product} size={16} />
                     <span className="min-w-0 truncate font-medium">{row.product.name}</span>
+                    <ShutdownBadge shutdown={row.product.shutdown} />
                   </Link>
                   <Link href={`/arena/${row.data.category.id}`} className="mt-0.5 block text-xs text-zinc-500 hover:text-emerald-300">
                     {row.data.category.name}

@@ -70,6 +70,7 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
         hotReason: hotFlags.get(product.id)?.reason ?? null,
         ycBatch: product.ycBatch,
         enterprise: product.enterprise,
+        shutdown: product.shutdown,
         isFamilySubProduct,
         naDimensions: data.category.naDimensions,
         trendDelta: metricTrendDelta(arenaId, product.id, 'aiEra'),

@@ -1,0 +1,127 @@
+'use client'
+
+import { useMyStackMap } from '@/components/useMyStackMap'
+
+// One concrete call a vendor exposes for this step — from the evidence-grounded committed
+// mapping (data/step-vendor-calls.json via lib/stepVendorCalls.ts); canonical reference calls
+// come from the node's own functionCalls. sourceUrl is the evidence page the call was read from.
+export interface ApiCall {
+  method: string
+  type?: string
+  description?: string
+  sourceUrl?: string
+}
+
+export interface VendorApiCalls {
+  productId: string
+  name: string
+  arenaId: string
+  calls: ApiCall[]
+}
+
+// How many vendors' call rows are visible before the rest fold into a <details>.
+const VISIBLE_VENDORS = 4
+
+function CallLine({ call }: { call: ApiCall }) {
+  return (
+    <li className="truncate font-mono text-[11px] text-zinc-400" title={call.description}>
+      {call.method}
+      {call.type === 'manual' && <span className="ml-1 text-amber-400/80">(manual)</span>}
+      {call.sourceUrl && (
+        <a
+          href={call.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={`Read in the vendor's docs — ${call.sourceUrl}`}
+          className="ml-1 text-zinc-600 transition hover:text-emerald-300"
+        >
+          ↗
+        </a>
+      )}
+    </li>
+  )
+}
+
+function VendorGroup({ vendor, yours }: { vendor: VendorApiCalls; yours: boolean }) {
+  return (
+    <div>
+      <p className="text-[10px] uppercase tracking-wide text-zinc-500">
+        {vendor.name}
+        {yours && (
+          <span className="ml-1.5 rounded bg-emerald-400/10 px-1 py-px text-[9px] font-semibold text-emerald-300">
+            your pick
+          </span>
+        )}
+      </p>
+      <ul className="mt-0.5 space-y-0.5">
+        {vendor.calls.map((c) => (
+          <CallLine key={c.method} call={c} />
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+// Per-vendor API calls for one step, UPFRONT (founder 2026-09-21: "have the API calls for the
+// other vendors as well upfront (if they have not defined their vendors yet)"). The server
+// snapshot of the stack is '{}', so the static page shows every vendor's grounded calls — that
+// IS the no-stack view the founder asked for, and real SEO content. For readers with an
+// "I'm using" pick, hydration pins their vendor first ("your pick") and folds the rest away.
+export default function StepApiCalls({
+  canonical,
+  canonicalVendor,
+  vendors,
+}: {
+  // The node's own functionCalls — the curated reference flow, shown when not already covered
+  // by a grounded vendor group.
+  canonical: ApiCall[]
+  canonicalVendor?: string
+  vendors: VendorApiCalls[]
+}) {
+  const stack = useMyStackMap()
+  const isYours = (v: VendorApiCalls) => stack[v.arenaId] === v.productId
+  const ordered = [...vendors.filter(isYours), ...vendors.filter((v) => !isYours(v))]
+  const hasPick = ordered.length > 0 && isYours(ordered[0])
+  // With a pick set, only the reader's vendor stays upfront; without one, the first few vendors
+  // all do (the "haven't defined their vendors yet" view).
+  const visible = ordered.slice(0, hasPick ? 1 : VISIBLE_VENDORS)
+  const folded = ordered.slice(hasPick ? 1 : VISIBLE_VENDORS)
+
+  if (vendors.length === 0 && canonical.length === 0) return null
+  return (
+    <div className="mt-2 space-y-1.5">
+      <p className="text-[10px] uppercase tracking-wide text-zinc-500" title="Concrete calls each vendor exposes for this step — every generated call links to the vendor docs evidence it was read from">
+        API calls by vendor
+      </p>
+      {visible.map((v) => (
+        <VendorGroup key={v.productId} vendor={v} yours={isYours(v)} />
+      ))}
+      {folded.length > 0 && (
+        <details className="group">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
+            <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
+            {hasPick ? `other vendors (${folded.length})` : `${folded.length} more vendor${folded.length === 1 ? '' : 's'}`}
+          </summary>
+          <div className="mt-1.5 space-y-1.5 border-l border-zinc-800 pl-3">
+            {folded.map((v) => (
+              <VendorGroup key={v.productId} vendor={v} yours={false} />
+            ))}
+          </div>
+        </details>
+      )}
+      {canonical.length > 0 && !vendors.some((v) => v.name === canonicalVendor) && (
+        <details className="group">
+          <summary className="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
+            <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
+            reference flow{canonicalVendor ? ` (${canonicalVendor})` : ''} · {canonical.length} call{canonical.length === 1 ? '' : 's'}
+          </summary>
+          <ul className="mt-1.5 space-y-0.5 border-l border-zinc-800 pl-3">
+            {canonical.map((c) => (
+              <CallLine key={c.method} call={c} />
+            ))}
+          </ul>
+        </details>
+      )}
+    </div>
+  )
+}

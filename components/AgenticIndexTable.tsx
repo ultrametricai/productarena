@@ -7,6 +7,7 @@ import AiModeBadge from '@/components/AiModeBadge'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import type { CategoryData } from '@/lib/data'
 
 interface IndexRow {
@@ -99,9 +100,10 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
                 </Link>
                 {/* Founder 2026-09-15: the AI-mode pill moved to its own column — inside the
                     name cell it added a second line and broke the constant row height. */}
-                {row.product.type === 'oss' && (
+                {(row.product.type === 'oss' || row.product.shutdown) && (
                   <div className="mt-1 flex items-center gap-1.5">
-                    <OssPill variant="compact" />
+                    {row.product.type === 'oss' && <OssPill variant="compact" />}
+                    <ShutdownBadge shutdown={row.product.shutdown} source={row.product.shutdownSource} />
                   </div>
                 )}
               </td>

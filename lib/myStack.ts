@@ -15,6 +15,7 @@
 //   - A score gap where either side's confidence grade is D (lib/confidence.ts: a substantial
 //     share of the score rests on no evidence) is NOT actionable — upgrade/break-out recs are
 //     suppressed rather than recommending on footing we've said is thin.
+import { isShutdown } from './shutdown'
 import { stackPairKey } from './stackBuilder'
 
 // One catalog row — the lean serialized shape both /my-stack and /stacks/battle receive as a
@@ -37,6 +38,10 @@ export interface MyStackProduct {
   rank: number
   fieldSize: number
   hasLogo: boolean
+  /** The verified shutdown note (lib/schemas.ts ProductSchema) when the vendor announced it is
+   *  closing — never offered as an upgrade/leader/add (lib/shutdown.ts founder rule); a reader
+   *  who RUNS one gets MIGRATE advice on top. */
+  shutdown?: string
 }
 
 // Everything the engine needs besides the reader's picks. adjacency/curatedStackArenas carry
@@ -49,7 +54,7 @@ export interface MyStackInputs {
   verifiedPairs: ReadonlyArray<string>
 }
 
-export type RecommendationKind = 'upgrade' | 'add' | 'overlap' | 'group' | 'breakout'
+export type RecommendationKind = 'upgrade' | 'add' | 'overlap' | 'group' | 'breakout' | 'migrate'
 
 export const RECOMMENDATION_KIND_LABELS: Record<RecommendationKind, string> = {
   upgrade: 'UPGRADE',
@@ -57,6 +62,7 @@ export const RECOMMENDATION_KIND_LABELS: Record<RecommendationKind, string> = {
   overlap: 'OVERLAP',
   group: 'GROUP',
   breakout: 'BREAK OUT',
+  migrate: 'MIGRATE',
 }
 
 export interface EvidenceLink {
@@ -126,6 +132,35 @@ const agentReadyClause = (challenger: MyStackProduct, pick: MyStackProduct): str
     ? `; agent-ready ${score(challenger.agentReady)} vs ${score(pick.agentReady)}`
     : ''
 
+// ---- rule 0: MIGRATE (a pick's vendor announced it is shutting down) ----
+
+// Sorts above every score-gap rec by construction: upgrade/breakout impact is delta ×
+// arenaWeight, bounded by 100 × log2(1 + fieldSize) — far below this for any real field size.
+// A shutdown pick is not a ranking nuance, it's a deadline.
+export const MIGRATE_IMPACT = 1000
+
+function migrateRecs(picks: MyStackProduct[], byArena: Map<string, MyStackProduct[]>): Recommendation[] {
+  const out: Recommendation[] = []
+  for (const pick of picks) {
+    if (!isShutdown(pick)) continue
+    // The honest migration target: the arena's best-ranked non-shutdown scored product, when
+    // one exists. Confidence gating deliberately does NOT suppress this rec — the reason to
+    // move is the vendor's own announcement, not a score gap.
+    const target = (byArena.get(pick.arenaId) ?? [])
+      .filter((c) => c.id !== pick.id && !isShutdown(c) && c.aiEra !== null)
+      .sort((a, b) => a.rank - b.rank)[0]
+    out.push({
+      kind: 'migrate',
+      reason: target
+        ? `${pick.name} is shutting down — migrate: ${pick.shutdown} The ${pick.arenaName} leader among remaining products is ${target.name} at ${score(target.aiEra as number)} (confidence ${target.confidence}).`
+        : `${pick.name} is shutting down — migrate: ${pick.shutdown}`,
+      links: target ? [linkTo(pick), linkTo(target)] : [linkTo(pick)],
+      impact: MIGRATE_IMPACT,
+    })
+  }
+  return out
+}
+
 // ---- rule 1 + 5: UPGRADE / BREAK OUT (one rec per pick, break-out wins when both apply) ----
 
 function upgradeAndBreakoutRecs(picks: MyStackProduct[], byArena: Map<string, MyStackProduct[]>): Recommendation[] {
@@ -133,14 +168,19 @@ function upgradeAndBreakoutRecs(picks: MyStackProduct[], byArena: Map<string, My
   const pickIds = new Set(picks.map((p) => p.id))
   for (const pick of picks) {
     if (pick.aiEra === null) continue
+    // A shutdown pick's advice is rule 0's MIGRATE (see migrateRecs) — a score-gap upgrade
+    // beside it would bury the lede.
+    if (isShutdown(pick)) continue
     const field = byArena.get(pick.arenaId) ?? []
     // Best confident challenger: highest PA Score, must clear UPGRADE_DELTA, must not be
-    // another of the reader's own picks (that pair is rule 3's overlap, not an upgrade).
+    // another of the reader's own picks (that pair is rule 3's overlap, not an upgrade) —
+    // and never a shutdown product (lib/shutdown.ts: not an offer).
     const challenger = field
       .filter(
         (c) =>
           c.id !== pick.id &&
           !pickIds.has(c.id) &&
+          !isShutdown(c) &&
           c.aiEra !== null &&
           c.aiEra - (pick.aiEra as number) >= UPGRADE_DELTA &&
           gapIsConfident(c, pick),
@@ -220,7 +260,8 @@ function addRecs(picks: MyStackProduct[], inputs: MyStackInputs, byArena: Map<st
   for (const [arenaId, { via, curated }] of [...candidates.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
     const field = byArena.get(arenaId)
     if (!field) continue // adjacency names an arena that isn't live — nothing honest to suggest
-    const leader = field.filter((p) => p.aiEra !== null).sort((a, b) => a.rank - b.rank)[0]
+    // Never suggest adding a shutdown product (lib/shutdown.ts) — the next-ranked leader stands.
+    const leader = field.filter((p) => p.aiEra !== null && !isShutdown(p)).sort((a, b) => a.rank - b.rank)[0]
     if (!leader) continue
     const neighbors = pickNamesIn(via)
     const viaClause = neighbors.length > 0 ? `sits next to your ${neighbors.slice(0, 3).join(', ')} pick${neighbors.length === 1 ? '' : 's'}` : 'is adjacent to your stack'
@@ -308,7 +349,8 @@ function groupRecs(picks: MyStackProduct[], products: MyStackProduct[], verified
         if (vendor === p.vendor && vendor === q.vendor) continue // already one family
         const bestIn = (arenaId: string, floor: number) =>
           (byVendorArena.get(`${vendor}::${arenaId}`) ?? [])
-            .filter((r) => r.aiEra !== null && r.aiEra >= floor)
+            // A consolidation is an offer — never onto a product that announced a shutdown.
+            .filter((r) => r.aiEra !== null && r.aiEra >= floor && !isShutdown(r))
             .sort((a, b) => (b.aiEra as number) - (a.aiEra as number))[0]
         const rp = bestIn(p.arenaId, p.aiEra)
         const rq = bestIn(q.arenaId, q.aiEra)
@@ -355,6 +397,7 @@ export function recommend(pickIds: string[], inputs: MyStackInputs): Recommendat
   const adds = addRecs(picks, inputs, byArena)
   const addOverflow = Math.max(0, adds.length - MAX_ADD_RECS)
   const all = [
+    ...migrateRecs(picks, byArena),
     ...upgradeAndBreakoutRecs(picks, byArena),
     ...adds.slice(0, MAX_ADD_RECS),
     ...overlapRecs(picks, inputs.products),
@@ -595,7 +638,10 @@ export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackA
     if (!productId) continue
     const pick = field.find((p) => p.id === productId)
     if (!pick) continue // not judged in this arena (stale pick) — nothing honest to say
-    const scored = field.filter((p) => p.aiEra !== null).sort((a, b) => a.rank - b.rank)
+    // Leader and upgrade candidates are OFFERS — shutdown products never appear
+    // (lib/shutdown.ts); a shutdown PICK still resolves, and the UI surfaces its
+    // "shutting down — migrate" line off pick.shutdown.
+    const scored = field.filter((p) => p.aiEra !== null && !isShutdown(p)).sort((a, b) => a.rank - b.rank)
     const leader = scored[0] ?? pick
     const upgrades: StackUpgradeCandidate[] =
       pick.aiEra === null

@@ -110,7 +110,7 @@ export default function ProcessCheck({
         .
         {check.flaggedSteps > 0 && (
           <span className="ml-1 text-amber-300">
-            {check.flaggedSteps} step{check.flaggedSteps === 1 ? '' : 's'} materially behind (Δ&gt;{STEP_UPGRADE_DELTA}).
+            {check.flaggedSteps} step{check.flaggedSteps === 1 ? '' : 's'} flagged (Δ&gt;{STEP_UPGRADE_DELTA}, or a pick that is shutting down).
           </span>
         )}
       </p>
@@ -156,7 +156,22 @@ export default function ProcessCheck({
                 </span>
               )}
             </div>
-            {s.flagged && s.yours !== null && (
+            {/* A shutdown pick is always flagged (lib/processCheck.ts) — the reason is the
+                vendor's own announcement, not the delta, so say so instead of a Δ line. */}
+            {s.flagged && s.yours !== null && s.yours.shutdown && (
+              <p className="mt-1 text-xs text-amber-300/90">
+                {s.yours.name} is shutting down — migrate; the step&rsquo;s best is{' '}
+                <Link href={`/arena/${s.best.arenaId}/product/${s.best.productId}`} className="underline decoration-amber-400/40 hover:text-amber-200">
+                  {s.best.name}
+                </Link>{' '}
+                (
+                <Link href={receiptHref(s.best.arenaId, s.best.productId)} className="underline decoration-amber-400/40 hover:text-amber-200">
+                  score receipt
+                </Link>
+                ).
+              </p>
+            )}
+            {s.flagged && s.yours !== null && !s.yours.shutdown && (
               <p className="mt-1 text-xs text-amber-300/90">
                 Δ{(s.delta as number).toFixed(0)} behind on this step&rsquo;s judged stories — consider{' '}
                 <Link href={`/arena/${s.best.arenaId}/product/${s.best.productId}`} className="underline decoration-amber-400/40 hover:text-amber-200">

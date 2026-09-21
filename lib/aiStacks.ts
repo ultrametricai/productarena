@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
 import type { CategoryData } from './data-helpers'
+import { isShutdown } from './shutdown'
 
 // Cross-arena curated stacks (data/ai-stacks.json): named bundles of one pick per role. Picks:
 // - "arena-top": resolved LIVE from an arena's leaderboard (the pick moves when the evidence
@@ -164,7 +165,12 @@ export function resolveStack(stack: AiStack, categories: CategoryData[]): Resolv
     const field = slot.pick.kind === 'arena-top' && slot.pick.ossOnly
       ? data.rankings.leaderboard.filter((e) => ossIds.has(e.productId))
       : data.rankings.leaderboard
+    // Shutdown products are never a stack pick, runner-up or co-pick (lib/shutdown.ts founder
+    // rule) — filtering the ranked field means the next product simply moves up, and a curated
+    // product pick pointing at one degrades like any other dead slot.
+    const shutdownIds = new Set(data.products.filter((p) => isShutdown(p)).map((p) => p.id))
     const ranked = [...field]
+      .filter((e) => !shutdownIds.has(e.productId))
       .filter((e) => e[metric] !== null)
       .sort((a, b) => (b[metric] as number) - (a[metric] as number))
 

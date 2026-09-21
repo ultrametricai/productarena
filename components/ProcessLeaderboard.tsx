@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ProcessYourVendor from '@/components/ProcessYourVendor'
 import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
 import type { ProcessTask } from '@/lib/processes'
@@ -20,7 +21,7 @@ import { processLeaderboard } from '@/lib/processRankings'
 // How many leaderboard rows to show — same legibility cap as the per-step chip roster.
 const LEADERBOARD_CAP = 8
 
-export default function ProcessLeaderboard({ task }: { task: ProcessTask }) {
+export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTask; mineHref?: string }) {
   const lb = processLeaderboard(task)
   if (lb.entries.length === 0 || lb.rankableSteps === 0) return null
   const entries = lb.entries.slice(0, LEADERBOARD_CAP)
@@ -36,6 +37,25 @@ export default function ProcessLeaderboard({ task }: { task: ProcessTask }) {
         over the {lb.rankableSteps} rankable of {lb.totalSteps} steps. Expand a row for the
         per-step trail; the verdict citations behind each step score are in the diagram below.
       </p>
+
+      {/* Client-side "you run X" banner (founder 2026-09-21): hydrates in only for readers whose
+          "I'm using" stack matches a covering arena — built from the FULL entry list so the
+          reader's pick is found wherever it ranks; the static HTML is unchanged. */}
+      {mineHref && (
+        <ProcessYourVendor
+          entries={lb.entries.map((e, i) => ({
+            productId: e.productId,
+            name: e.name,
+            arenaId: e.arenaId,
+            hasLogo: hasLogo(e.productId),
+            rank: i + 1,
+            processScore: e.processScore,
+            stepsServed: e.stepsServed,
+          }))}
+          rankableSteps={lb.rankableSteps}
+          mineHref={mineHref}
+        />
+      )}
 
       <div className="mt-4 overflow-hidden rounded-2xl border border-zinc-800">
         {entries.map((e, i) => (

@@ -5,6 +5,7 @@ import GeoMark from '@/components/GeoMark'
 import HotChip from '@/components/HotChip'
 import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import RankingsNav from '@/components/RankingsNav'
 import popularIds from '@/data/popular-products.json'
 import { loadAll, type CategoryData } from '@/lib/data'
@@ -134,6 +135,7 @@ function ProductCell({ row }: { row: PopularRow }) {
           <span className="min-w-0 truncate font-medium">{row.name}</span>
         </Link>
         {row.hot && <HotChip reason={row.hot.reason} />}
+        <ShutdownBadge shutdown={row.product.shutdown} source={row.product.shutdownSource} />
       </span>
       <span className="mt-0.5 flex flex-wrap items-center gap-1.5">
         <Link href={`/arena/${row.arenaId}`} className="text-xs text-zinc-500 hover:text-emerald-300">

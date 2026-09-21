@@ -31,6 +31,9 @@ export function buildMyStackProducts(categories: CategoryData[]): MyStackProduct
         rank: i + 1,
         fieldSize,
         hasLogo: hasLogo(product.id),
+        // Verified shutdown note (ProductSchema) — drives the engine's never-offer filters and
+        // MIGRATE advice (lib/myStack.ts) plus the row tag. Absent for going concerns.
+        shutdown: product.shutdown,
       })
     })
   }

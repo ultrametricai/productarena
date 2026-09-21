@@ -5,6 +5,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import type { CategoryData } from '@/lib/data'
 
 interface IndexRow {
@@ -76,9 +77,10 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
                   <ProductLogo product={row.product} size={24} />
                   <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                 </Link>
-                {row.product.type === 'oss' && (
-                  <div className="mt-1">
-                    <OssPill variant="compact" />
+                {(row.product.type === 'oss' || row.product.shutdown) && (
+                  <div className="mt-1 flex items-center gap-1.5">
+                    {row.product.type === 'oss' && <OssPill variant="compact" />}
+                    <ShutdownBadge shutdown={row.product.shutdown} source={row.product.shutdownSource} />
                   </div>
                 )}
               </td>

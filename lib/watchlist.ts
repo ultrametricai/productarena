@@ -133,5 +133,8 @@ export interface WatchlistProduct {
   arenaName: string
   aiEra: number | null
   agentReady: number | null
+  // Verified shutdown note (lib/schemas.ts ProductSchema.shutdown), serialized only for marked
+  // products — the starred row stays with its scores/trend, tagged (lib/shutdown.ts).
+  shutdown?: string
   history: Array<{ date: string; aiEra: number | null; agentReady: number | null }>
 }

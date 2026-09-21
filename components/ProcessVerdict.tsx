@@ -1,5 +1,7 @@
 import ComputerUseChips from '@/components/ComputerUseChips'
 import { resolveGapStep } from '@/lib/gapClosers'
+import { humanStepAudit, type HumanStepAudit } from '@/lib/humanSteps'
+import { FEASIBILITY_META, showComputerUseChips } from '@/lib/humanStepsUi'
 import type { DagNode, ProcessCeiling, ProcessTask } from '@/lib/processes'
 
 // The agent-ceiling verdict box: the single honest sentence for a process — how much an agent
@@ -19,6 +21,23 @@ import type { DagNode, ProcessCeiling, ProcessTask } from '@/lib/processes'
 interface GapRef {
   taskId: string
   node: DagNode
+  // Authored root cause + computer-use feasibility (data/human-step-audit.json) — null until
+  // the node is audited; renderers then fall back to the legacy generic reason.
+  audit: HumanStepAudit | null
+}
+
+// The per-node "why + can computer use do it" line (founder 2026-09-21: "get to the bottom of
+// why, and why computer use can't be used there").
+function AuditLine({ audit }: { audit: HumanStepAudit }) {
+  const meta = FEASIBILITY_META[audit.computerUse]
+  return (
+    <span className="text-zinc-500">
+      {' '}— {audit.why}{' '}
+      <span className="whitespace-nowrap" title={audit.computerUseWhy}>
+        · {meta.icon} {meta.label}
+      </span>
+    </span>
+  )
 }
 
 export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCeiling; tasks: ProcessTask[] }) {
@@ -35,15 +54,17 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
     for (const node of task.dag.nodes) {
       if (node.route === 'agent') continue
       const res = resolveGapStep(node)
+      const audit = humanStepAudit(task.id, node.id)
       if (res?.kind === 'closer') {
-        closable.push({ taskId: task.id, node, blurb: res.closer.blurb })
+        closable.push({ taskId: task.id, node, audit, blurb: res.closer.blurb })
         if (!arenas.includes(res.closer.arenaName)) arenas.push(res.closer.arenaName)
       } else if (res?.kind === 'irreducible') {
-        irreducible.push({ taskId: task.id, node, reason: res.reason })
+        irreducible.push({ taskId: task.id, node, audit, reason: res.reason })
       } else {
         unclosed.push({
           taskId: task.id,
           node,
+          audit,
           why: node.route === 'person' ? 'needs a human' : 'manual form/portal — no API path',
         })
       }
@@ -83,7 +104,10 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
                 {closable.map((g) => (
                   <li key={`${g.taskId}-${g.node.id}`}>
                     {g.node.label} <span className="text-zinc-500">({g.blurb})</span>
-                    <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
+                    {g.audit && <AuditLine audit={g.audit} />}
+                    {showComputerUseChips(g.audit?.computerUse) && (
+                      <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
+                    )}
                   </li>
                 ))}
               </ul>
@@ -103,8 +127,15 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
               <ul className="mt-1 space-y-1">
                 {irreducible.map((g) => (
                   <li key={`${g.taskId}-${g.node.id}`}>
-                    {g.node.label} <span className="text-zinc-500">({g.reason})</span>
-                    <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
+                    {g.node.label}{' '}
+                    {g.audit ? (
+                      <AuditLine audit={g.audit} />
+                    ) : (
+                      <span className="text-zinc-500">({g.reason})</span>
+                    )}
+                    {showComputerUseChips(g.audit?.computerUse) && (
+                      <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
+                    )}
                   </li>
                 ))}
               </ul>
@@ -118,8 +149,15 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
               <ul className="mt-1 space-y-1">
                 {unclosed.map((g) => (
                   <li key={`${g.taskId}-${g.node.id}`}>
-                    {g.node.label} <span className="text-zinc-500">({g.why})</span>
-                    <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
+                    {g.node.label}{' '}
+                    {g.audit ? (
+                      <AuditLine audit={g.audit} />
+                    ) : (
+                      <span className="text-zinc-500">({g.why})</span>
+                    )}
+                    {showComputerUseChips(g.audit?.computerUse) && (
+                      <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
+                    )}
                   </li>
                 ))}
               </ul>

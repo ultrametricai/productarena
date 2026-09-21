@@ -59,6 +59,10 @@ export interface MegaTableRow {
   // Enterprise-motion flag (lib/schemas.ts ProductSchema.enterprise) — optional for the same
   // fixture-compat reason as ycBatch. Rendered as EnterpriseBadge next to the name.
   enterprise?: boolean
+  // Verified shutdown note (lib/schemas.ts ProductSchema.shutdown) — optional for the same
+  // fixture-compat reason as ycBatch. Rendered as the compact ShutdownBadge next to the name
+  // (tooltip = the dated vendor note); the row itself stays ranked (lib/shutdown.ts).
+  shutdown?: string
   // Arena-level not-applicable dimensions (CategorySchema.naDimensions, hardware arenas) —
   // optional for fixture compat; the table renders n/a for these instead of a number.
   naDimensions?: string[]

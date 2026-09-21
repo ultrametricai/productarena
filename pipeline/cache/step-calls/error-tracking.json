@@ -1,0 +1,75 @@
+{
+  "sw_001:n8:raygun": {
+    "hash": "33fc77c90a7bc1e7110ae7479d82aa529978f3881f418c712623c6215cdc0c26",
+    "calls": []
+  },
+  "sw_001:n8:sentry": {
+    "hash": "5675362b1cba5e891e553e5c3292bffac871e2fa05680cccf89e35d4159b2498",
+    "calls": []
+  },
+  "sw_001:n8:honeybadger": {
+    "hash": "3bdc37495a988cf970ae38ffa2f778468fb47c59944a5ed016c6e7795b9e63f2",
+    "calls": [
+      {
+        "method": "POST /v1/deploys",
+        "type": "rest",
+        "description": "Notify Honeybadger that a deploy occurred to correlate errors with the new release",
+        "sourceUrl": "https://docs.honeybadger.io/api/reporting-deployments/"
+      },
+      {
+        "method": "honeybadger deploy",
+        "type": "cli",
+        "description": "Record a deployment from CI/CD so post-deploy errors can be tracked and auto-resolved",
+        "sourceUrl": "https://docs.honeybadger.io/lib/ruby/gem-reference/cli/"
+      }
+    ]
+  },
+  "sw_001:n8:rollbar": {
+    "hash": "40c6d02e97e8d55609b7d657b944cfd308b2273af51706fa769bbafec336fbb0",
+    "calls": [
+      {
+        "method": "GET /api/1/reports/error/{env}",
+        "type": "rest",
+        "description": "List error/critical items filtered to production environment to verify no new errors after deploy",
+        "sourceUrl": "https://docs.rollbar.com/reference/list-all-items"
+      }
+    ]
+  },
+  "sw_002:n4:rollbar": {
+    "hash": "f70f81fc247978a9787c067613d93594a17bd8fa446bd50acb9afa502afc9afb",
+    "calls": []
+  },
+  "sw_002:n4:sentry": {
+    "hash": "4707f549dfb2d33c10e87b32ae0aff8cba0a5ff91de45f6a514d7ea84daa018d",
+    "calls": [
+      {
+        "method": "search_errors",
+        "type": "mcp",
+        "description": "Search for errors reported to Sentry after release",
+        "sourceUrl": "https://mcp.sentry.dev/mcp"
+      }
+    ]
+  },
+  "sw_002:n4:honeybadger": {
+    "hash": "a324a12f1c1f9a00e012dcd06ead0360e2730d2c8ff6fd10ac8a79bfcabac48e",
+    "calls": [
+      {
+        "method": "POST /v1/notices",
+        "type": "rest",
+        "description": "Report exceptions/errors to Honeybadger for post-release monitoring",
+        "sourceUrl": "https://docs.honeybadger.io/api/reporting-exceptions/"
+      }
+    ]
+  },
+  "sw_002:n4:bugsnag": {
+    "hash": "971b19162da6d5b58d68943f8650dea32d36823cdceec1462639cff3ee9d32df",
+    "calls": [
+      {
+        "method": "Bugsnag.notify()",
+        "type": "sdk",
+        "description": "Report handled exceptions from the app for post-release error monitoring",
+        "sourceUrl": "https://github.com/bugsnag/bugsnag-js"
+      }
+    ]
+  }
+}

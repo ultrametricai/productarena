@@ -7,6 +7,7 @@ import type { DagNode, ProcessTask } from './processes'
 import { STEP_OPTIONS_CAP, VENDOR_ARENA } from './processes'
 import type { Story, Verdict } from './schemas'
 import { weightedPercent } from './scoring'
+import { isShutdown } from './shutdown'
 
 // Story-derived step & process rankings — the founder ask: "rank vendors for the overall
 // process and for each step, without assuming the user has a vendor — from what stories the
@@ -178,6 +179,12 @@ interface ArenaLookup {
   verdictByCell: Map<string, Verdict>
   productName: Map<string, string>
   leaderboardRank: Map<string, number>
+  // Products whose vendor announced a shutdown (lib/shutdown.ts founder rule) — every ranked
+  // vendor list here is an OFFER, so rankVendors skips them and all consumers (stepRanking,
+  // crossArenaStepRankings, processLeaderboard, computerUseOptions) inherit the exclusion.
+  // stepVendorScore itself stays unfiltered: the reader's own shutdown pick must still score
+  // (lib/processCheckData.ts) so their check can tell them to migrate.
+  shutdownIds: Set<string>
 }
 
 const arenaLookupCache = new Map<string, ArenaLookup>()
@@ -193,6 +200,7 @@ function arenaLookup(arenaId: string, dir?: string): ArenaLookup {
     verdictByCell: new Map(data.verdicts.map((v) => [`${v.productId}:${v.storyId}`, v])),
     productName: new Map(data.products.map((p) => [p.id, p.name])),
     leaderboardRank: new Map(data.rankings.leaderboard.map((e, i) => [e.productId, i])),
+    shutdownIds: new Set(data.products.filter((p) => isShutdown(p)).map((p) => p.id)),
   }
   arenaLookupCache.set(key, lookup)
   return lookup
@@ -236,10 +244,14 @@ export function stepVendorScore(
 }
 
 // All of one arena's products scored on a mapped story set, ranked. Uncapped — callers cap.
+// Shutdown products are excluded here, the shared eligibility layer, so every consumer's
+// vendor list (an offer) inherits the founder rule; their verdicts stay untouched and still
+// resolve through stepVendorScore directly.
 function rankVendors(arenaId: string, storyIds: string[], dir?: string): StepVendorScore[] {
   const lookup = arenaLookup(arenaId, dir)
   const scored: StepVendorScore[] = []
   for (const productId of lookup.productName.keys()) {
+    if (lookup.shutdownIds.has(productId)) continue
     const s = stepVendorScore(arenaId, storyIds, productId, dir)
     if (s) scored.push(s)
   }

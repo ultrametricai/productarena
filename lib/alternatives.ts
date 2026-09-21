@@ -6,6 +6,7 @@
 // tests pass fixtures.
 import { battleSlug, stripPersonaPrefix, type CategoryData } from './data-helpers'
 import type { LeaderboardEntry, Product } from './schemas'
+import { isShutdown } from './shutdown'
 
 // The canonical lens themes injected into EVERY arena (see pipeline/agentic-stories.ts):
 // shared by construction, so they carry zero adjacency signal and are excluded from the
@@ -144,9 +145,15 @@ export function adjacentProducts(
     if (other.category.id === data.category.id) continue
     const shared = [...domainThemes(other)].filter((t) => baseThemes.has(t)).sort()
     if (shared.length < 2) continue
-    // Skip X itself when the same product id is ranked in the adjacent arena too.
-    const entry = other.rankings.leaderboard.find((e) => e.productId !== productId)
-    const product = entry && other.products.find((p) => p.id === entry.productId)
+    // Skip X itself when the same product id is ranked in the adjacent arena too — and any
+    // shutdown product (lib/shutdown.ts: an adjacent suggestion is an offer): next one up.
+    const productById = new Map(other.products.map((p) => [p.id, p]))
+    const entry = other.rankings.leaderboard.find((e) => {
+      if (e.productId === productId) return false
+      const p = productById.get(e.productId)
+      return p !== undefined && !isShutdown(p)
+    })
+    const product = entry && productById.get(entry.productId)
     if (!entry || !product) continue
     out.push({
       categoryId: other.category.id,
@@ -197,7 +204,11 @@ export function adjacentArenas(categories: CategoryData[], data: CategoryData, c
   const out: AdjacentArena[] = []
   for (const [id, sharedThemes] of picked) {
     const other = byId.get(id)!
-    const top = other.rankings.leaderboard[0]
+    // The strip names the arena's leader as a nudge — never a shutdown product (lib/shutdown.ts).
+    const top = other.rankings.leaderboard.find((e) => {
+      const p = other.products.find((pr) => pr.id === e.productId)
+      return p !== undefined && !isShutdown(p)
+    })
     out.push({
       categoryId: id,
       categoryName: other.category.name,

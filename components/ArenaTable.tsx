@@ -13,6 +13,7 @@ import MomentumChip from '@/components/MomentumChip'
 import OssPill from '@/components/OssPill'
 import PopularTag, { isNotablyPopular } from '@/components/PopularTag'
 import ProductLogoView from '@/components/ProductLogoView'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import TableControls from '@/components/TableControls'
 import VerificationMixChip from '@/components/VerificationMixChip'
 import { claimsIntegrity } from '@/lib/claimsIntegrity'
@@ -146,7 +147,12 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
     return map
   }, [data])
 
-  const topRivalId = data.rankings.leaderboard[0]?.productId
+  // Products whose vendor announced a shutdown (lib/shutdown.ts): the row stays, tagged, but
+  // the "vs …" affordance never SUGGESTS one as the rival to compare against.
+  const shutdownIds = useMemo(
+    () => new Set(data.products.filter((p) => p.shutdown).map((p) => p.id)),
+    [data],
+  )
 
   // Battle slugs are ordered by each product's position in data.products (see
   // lib/data.ts's battleSlug + how rankings.battles is built in lib/scoring.ts), not
@@ -233,7 +239,10 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
             {sorted.map((row) => {
               const product = productById.get(row.productId)!
               const rank = rankOf.get(row.productId) ?? sorted.length
-              const rival = row.productId === topRivalId ? data.rankings.leaderboard[1] : data.rankings.leaderboard[0]
+              // Suggested rival: the best-ranked OTHER product that isn't shutting down.
+              const rival = data.rankings.leaderboard.find(
+                (e) => e.productId !== row.productId && !shutdownIds.has(e.productId),
+              )
               return (
                 <tr key={row.productId} className="transition hover:bg-zinc-800/70">
                   <td className="w-8 px-2 py-2 font-mono tabular-nums text-zinc-400">
@@ -263,6 +272,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                         </button>
                       )}
                       <BusinessModelChip product={product} skipOpenSource={product.type === 'oss'} />
+                      <ShutdownBadge shutdown={product.shutdown} source={product.shutdownSource} />
                     </div>
                     {rival && (
                       <Link
