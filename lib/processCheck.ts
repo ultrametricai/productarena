@@ -19,6 +19,10 @@ export interface CheckVendor {
    *  the reader's own pick must stay findable so the check can tell them to migrate — but never
    *  `best`, and a pick that resolves to one is always flagged regardless of delta. */
   shutdown?: true
+  /** Whether a committed logo exists (lib/logos.ts, resolved server-side) — lets client rows
+   *  (components/StepVendorRow.tsx) render ProductLogoView for a resolved pick without touching
+   *  node builtins. Optional so lean fixtures and older callers stay valid. */
+  hasLogo?: boolean
 }
 
 // One market a step can be served from: the covering arena ('function') or an evidence-gated

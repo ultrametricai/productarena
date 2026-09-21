@@ -9,6 +9,7 @@
 // check is a pure re-arrangement of what the process page already publishes (deterministic;
 // asserted by lib/__tests__/processCheck.test.ts's recompute).
 import { isPopulated, loadCategory } from './data'
+import { hasLogo } from './logos'
 import type { ProcessCheckStep } from './processCheck'
 import type { ProcessTask } from './processes'
 import { crossArenaStepRankings, functionMappingFor, stepVendorScore } from './processRankings'
@@ -41,6 +42,7 @@ export function buildProcessCheckSteps(task: ProcessTask, dir?: string): Process
               productId: s.productId,
               name: s.name,
               score: s.score,
+              hasLogo: hasLogo(s.productId),
               ...(isShutdown(p) ? { shutdown: true as const } : {}),
             }]
           : []
@@ -59,7 +61,12 @@ export function buildProcessCheckSteps(task: ProcessTask, dir?: string): Process
       arenaId: r.arenaId,
       arenaName: r.arenaName,
       kind: 'extra' as const,
-      vendors: r.vendors.map((v) => ({ productId: v.productId, name: v.name, score: v.score })),
+      vendors: r.vendors.map((v) => ({
+        productId: v.productId,
+        name: v.name,
+        score: v.score,
+        hasLogo: hasLogo(v.productId),
+      })),
     }))
 
     steps.push({

@@ -1,23 +1,33 @@
 'use client'
 
 import { useState } from 'react'
-import { useMyStackMap } from '@/components/useMyStackMap'
+import { useProcessLens } from '@/lib/processLens'
 
 // Copy-pasteable agent prompt for one process step (founder pilot 2026-09-21: "generate prompts
 // for each step"). The generated prompt (data/step-prompts.json) carries a literal {{vendor}}
-// placeholder; here it resolves to the reader's own "I'm using" pick when their stack covers one
-// of the step's market arenas, else the step's top-ranked vendor — so the same static prompt is
-// personalized client-side without touching the SEO HTML (server stack snapshot is '{}').
+// placeholder; here it resolves in the process lens's order (lib/processLens.ts): the vendor
+// the reader CLICKED on this page, else their "I'm using" stack pick, else the step's
+// top-ranked vendor — so the same static prompt is personalized client-side without touching
+// the SEO HTML (server lens and stack snapshots are both '{}').
 export interface PromptVendor {
   productId: string
   arenaId: string
   name: string
 }
 
-export default function StepPromptBox({ prompt, vendors }: { prompt: string; vendors: PromptVendor[] }) {
-  const stack = useMyStackMap()
+export default function StepPromptBox({
+  prompt,
+  vendors,
+  lensKey,
+}: {
+  prompt: string
+  vendors: PromptVendor[]
+  lensKey?: string
+}) {
+  const { lens, stack } = useProcessLens(lensKey)
   const [copied, setCopied] = useState(false)
-  const yours = vendors.find((v) => stack[v.arenaId] === v.productId)
+  const viaLens = vendors.find((v) => lens.picks[v.arenaId] === v.productId)
+  const yours = viaLens ?? vendors.find((v) => stack[v.arenaId] === v.productId)
   const vendorName = yours?.name ?? vendors[0]?.name ?? 'your vendor'
   const resolved = prompt.replaceAll('{{vendor}}', vendorName)
 
@@ -27,8 +37,11 @@ export default function StepPromptBox({ prompt, vendors }: { prompt: string; ven
         <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
         🪄 agent prompt
         {yours ? (
-          <span className="rounded bg-emerald-400/10 px-1 py-px text-[9px] font-semibold text-emerald-300">
-            set for {yours.name}
+          <span
+            className="rounded bg-emerald-400/10 px-1 py-px text-[9px] font-semibold text-emerald-300"
+            title={viaLens ? 'Resolved to the vendor you selected on this page' : 'Resolved to your "I\'m using" stack pick'}
+          >
+            {viaLens ? `✓ via ${yours.name}` : `set for ${yours.name}`}
           </span>
         ) : (
           vendors[0] && <span className="text-zinc-600">for {vendors[0].name} — set yours via “I&rsquo;m using”</span>

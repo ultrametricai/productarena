@@ -7,6 +7,7 @@ import ProductLogoView from '@/components/ProductLogoView'
 import StepYourPick from '@/components/StepYourPick'
 import StepApiCalls from '@/components/StepApiCalls'
 import StepPromptBox from '@/components/StepPromptBox'
+import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { humanStepAudit } from '@/lib/humanSteps'
 import { FEASIBILITY_META, showComputerUseChips } from '@/lib/humanStepsUi'
@@ -52,6 +53,12 @@ export interface DagSection {
   // Corpus task id — lets each step block look up its committed story mapping
   // (lib/processRankings.ts) and rank vendors by STEP relevance instead of arena order.
   taskId?: string
+  // Pre-serialized step rows for THIS section's task (lib/processCheckData.ts, keyed by node
+  // id) — powers the client-side lens/stack personalization on chain pages exactly as the
+  // single-process page's checkSteps prop does.
+  checkSteps?: Record<string, ProcessCheckStep>
+  // The section task's own /processes/<slug>/mine route for the per-step upgrade nudge.
+  mineHref?: string
   nodes: DagNode[]
   edges?: DagEdge[]
 }
@@ -193,43 +200,6 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
   )
 }
 
-// One vendor of a step ranking: linked chip with the STEP score (not the arena PA Score) —
-// weightedPercent over the judged verdicts on exactly the stories mapped to this step. The
-// tooltip names the verdicts so every pill traces to evidence even before expanding the
-// "how these are ranked" details.
-function StepScoreChip({
-  vendor,
-  rank,
-  arenaName,
-  crossArena = false,
-}: {
-  vendor: StepVendorScore
-  rank: number
-  arenaName: string
-  // Cross-arena option (the step's extraOptionArenas/extraOptionRefs market): the chip carries
-  // a small arena tag so users see where this vendor's judged evidence lives.
-  crossArena?: boolean
-}) {
-  const full = vendor.cites.filter((c) => c.verdict === 'full').length
-  const partial = vendor.cites.filter((c) => c.verdict === 'partial').length
-  return (
-    <Link
-      href={`/arena/${vendor.arenaId}/product/${vendor.productId}`}
-      title={`${vendor.name} — #${rank} for this step · ${vendor.score.toFixed(0)}/100 from judged verdicts on ${vendor.cites.length} mapped ${arenaName} stories (${full} full, ${partial} partial) — expand "how these are ranked" for the full trace, or open the judged product page`}
-      className="inline-flex min-w-0 items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-900/60 py-0.5 pl-0.5 pr-2 text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-300"
-    >
-      <ProductLogoView product={{ id: vendor.productId, name: vendor.name }} size={28} hasLogo={hasLogo(vendor.productId)} />
-      <span className="truncate">{vendor.name}</span>
-      {crossArena && (
-        <span className="rounded bg-zinc-800 px-1 py-px text-[9px] uppercase tracking-wide text-zinc-500">
-          {arenaName}
-        </span>
-      )}
-      <span className="font-mono text-[10px] tabular-nums text-emerald-400/80">{vendor.score.toFixed(0)}</span>
-    </Link>
-  )
-}
-
 // Compact one-line verdict trace for one vendor inside the "how these are ranked" expandable:
 // which mapped stories it delivers full / partial / not at all.
 function citeLine(v: StepVendorScore): string {
@@ -255,7 +225,25 @@ function citeLine(v: StepVendorScore): string {
 // Figma, Canva — not just the vibe-coding roster) merge into the SAME ranked list, sorted by
 // step score, each carrying a small arena tag naming where its judged evidence lives. `ranking`
 // may be null for steps whose only judged market is cross-arena.
-function StepRankingRow({ ranking, extras, node }: { ranking: StepRanking | null; extras: StepRanking[]; node: DagNode }) {
+//
+// The chip row itself is CLIENT-rendered (components/StepVendorRow.tsx) so vendors are
+// selectable — founder 2026-09-21: clicking a vendor adapts the whole process to run via it.
+// This server component serializes the SAME merged list the row always showed (order, scores,
+// tooltips preserved; SSR of the client row with the empty lens/stack snapshots renders the
+// identical default chips), and keeps the "how these are ranked" evidence trail server-side.
+function StepRankingRow({
+  ranking,
+  extras,
+  node,
+  lensKey,
+  checkStep,
+}: {
+  ranking: StepRanking | null
+  extras: StepRanking[]
+  node: DagNode
+  lensKey?: string
+  checkStep?: ProcessCheckStep
+}) {
   // Curated market entries we don't rank (untracked vendors — no judged verdicts) stay visible
   // as honest unlinked chips after the ranked list. Only when the primary market is ranked —
   // extras-only steps keep their full "via:" row separately.
@@ -266,39 +254,34 @@ function StepRankingRow({ ranking, extras, node }: { ranking: StepRanking | null
   ].sort((a, b) => b.vendor.score - a.vendor.score || a.vendor.name.localeCompare(b.vendor.name))
   const blocks = [...(ranking ? [ranking] : []), ...extras]
   const storyCount = blocks.reduce((n, b) => n + b.stories.length, 0)
+  const rowVendors: StepRowVendor[] = merged.map((e) => ({
+    productId: e.vendor.productId,
+    arenaId: e.vendor.arenaId,
+    arenaName: e.arenaName,
+    name: e.vendor.name,
+    score: e.vendor.score,
+    hasLogo: hasLogo(e.vendor.productId),
+    cross: e.cross,
+    citesTotal: e.vendor.cites.length,
+    citesFull: e.vendor.cites.filter((c) => c.verdict === 'full').length,
+    citesPartial: e.vendor.cites.filter((c) => c.verdict === 'partial').length,
+  }))
+  const rowUntracked: StepRowUntracked[] = untracked.map((o) => ({
+    vendor: o.vendor,
+    label: o.label,
+    hasLogo: hasLogo(o.vendor),
+    signupUrl: o.signupUrl,
+  }))
   return (
     <>
-      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
-        <span
-          className="text-[10px] uppercase tracking-wide text-zinc-500"
-          title={`Vendors ranked for THIS step — scored from their judged verdicts on the ${storyCount} stories mapped to it${
-            extras.length > 0 ? '; vendors from another arena carry a tag naming where their evidence lives' : ''
-          } — not the arena's overall PA Score`}
-        >
-          ranked for this step:
-        </span>
-        {merged.map((e, i) => (
-          <StepScoreChip
-            key={`${e.vendor.arenaId}:${e.vendor.productId}`}
-            vendor={e.vendor}
-            rank={i + 1}
-            arenaName={e.arenaName}
-            crossArena={e.cross}
-          />
-        ))}
-        {untracked.map((o) => (
-          <VendorChip key={o.vendor} info={o} />
-        ))}
-        {ranking && (
-          <Link
-            href={`/arena/${ranking.arenaId}`}
-            title="See the whole judged market for this step's function"
-            className="whitespace-nowrap text-[10px] text-zinc-500 transition hover:text-emerald-300"
-          >
-            full arena →
-          </Link>
-        )}
-      </div>
+      <StepVendorRow
+        vendors={rowVendors}
+        untracked={rowUntracked}
+        arenaLink={ranking?.arenaId ?? null}
+        storyCount={storyCount}
+        lensKey={lensKey}
+        checkStep={checkStep}
+      />
       <details className="group mt-1.5">
         <summary className="flex cursor-pointer list-none items-center gap-1.5 text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
           <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">▶</span>
@@ -351,6 +334,7 @@ function NodeBlock({
   taskId,
   checkStep,
   mineHref,
+  lensKey,
 }: {
   node: DagNode
   index: number
@@ -359,6 +343,9 @@ function NodeBlock({
   // static HTML is unchanged; only readers with an "I'm using" stack see it hydrate in.
   checkStep?: ProcessCheckStep
   mineHref?: string
+  // Process-lens page key (lib/processLens.ts): taskId on /processes/[slug], the chain id on
+  // /processes/chains/[chain] so one clicked vendor flows across every section.
+  lensKey?: string
 }) {
   const style = node.legalSignature ? SIGNATURE_STYLE : ROUTE_STYLE[node.route]
   const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
@@ -451,7 +438,7 @@ function NodeBlock({
       </div>
 
       {(ranking !== null || extras.length > 0) && (
-        <StepRankingRow ranking={ranking} extras={extras} node={node} />
+        <StepRankingRow ranking={ranking} extras={extras} node={node} lensKey={lensKey} checkStep={checkStep} />
       )}
 
       {checkStep && mineHref && <StepYourPick step={checkStep} mineHref={mineHref} />}
@@ -521,13 +508,14 @@ function NodeBlock({
         </p>
       )}
 
-      {stepPrompt && <StepPromptBox prompt={stepPrompt.prompt} vendors={promptVendors} />}
+      {stepPrompt && <StepPromptBox prompt={stepPrompt.prompt} vendors={promptVendors} lensKey={lensKey} />}
 
       {vendorCalls.length > 0 ? (
         <StepApiCalls
           canonical={calls}
           canonicalVendor={node.vendor}
           vendors={vendorCalls}
+          lensKey={lensKey}
         />
       ) : calls.length > 0 ? (
         <details className="group mt-2">
@@ -590,12 +578,14 @@ function Flow({
   taskId,
   checkSteps,
   mineHref,
+  lensKey,
 }: {
   nodes: DagNode[]
   edges?: DagEdge[]
   taskId?: string
   checkSteps?: Record<string, ProcessCheckStep>
   mineHref?: string
+  lensKey?: string
 }) {
   const layers = layerNodes(nodes, edges)
   // Cumulative step offsets, precomputed so nothing is reassigned inside the render map
@@ -620,6 +610,7 @@ function Flow({
                 taskId={taskId}
                 checkStep={checkSteps?.[layer[0].id]}
                 mineHref={mineHref}
+                lensKey={lensKey}
               />
             ) : (
               <div className="rounded-xl border border-dashed border-zinc-700/80 p-2">
@@ -635,6 +626,7 @@ function Flow({
                       taskId={taskId}
                       checkStep={checkSteps?.[n.id]}
                       mineHref={mineHref}
+                      lensKey={lensKey}
                     />
                   ))}
                 </div>
@@ -684,6 +676,7 @@ export default function ProcessDag({
   taskId,
   checkSteps,
   mineHref,
+  lensKey,
 }: {
   nodes?: DagNode[]
   edges?: DagEdge[]
@@ -691,6 +684,10 @@ export default function ProcessDag({
   taskId?: string
   checkSteps?: Record<string, ProcessCheckStep>
   mineHref?: string
+  // One lens key for the WHOLE diagram (lib/processLens.ts): the task id on a process page, the
+  // chain id on a chain page — so a vendor clicked in one section applies to every later step
+  // whose arena matches.
+  lensKey?: string
 }) {
   if (sections && sections.length > 0) {
     return (
@@ -700,7 +697,14 @@ export default function ProcessDag({
             {si > 0 && <Connector />}
             <SectionHeader section={s} />
             <Connector />
-            <Flow nodes={s.nodes} edges={s.edges} taskId={s.taskId} />
+            <Flow
+              nodes={s.nodes}
+              edges={s.edges}
+              taskId={s.taskId}
+              checkSteps={s.checkSteps}
+              mineHref={s.mineHref}
+              lensKey={lensKey}
+            />
           </Fragment>
         ))}
       </div>
@@ -708,7 +712,14 @@ export default function ProcessDag({
   }
   return (
     <div>
-      <Flow nodes={nodes ?? []} edges={edges} taskId={taskId} checkSteps={checkSteps} mineHref={mineHref} />
+      <Flow
+        nodes={nodes ?? []}
+        edges={edges}
+        taskId={taskId}
+        checkSteps={checkSteps}
+        mineHref={mineHref}
+        lensKey={lensKey}
+      />
     </div>
   )
 }

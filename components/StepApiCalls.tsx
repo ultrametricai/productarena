@@ -1,6 +1,6 @@
 'use client'
 
-import { useMyStackMap } from '@/components/useMyStackMap'
+import { useProcessLens, type LensSource } from '@/lib/processLens'
 
 // One concrete call a vendor exposes for this step — from the evidence-grounded committed
 // mapping (data/step-vendor-calls.json via lib/stepVendorCalls.ts); canonical reference calls
@@ -42,14 +42,17 @@ function CallLine({ call }: { call: ApiCall }) {
   )
 }
 
-function VendorGroup({ vendor, yours }: { vendor: VendorApiCalls; yours: boolean }) {
+function VendorGroup({ vendor, yours }: { vendor: VendorApiCalls; yours: LensSource | null }) {
   return (
     <div>
       <p className="text-[10px] uppercase tracking-wide text-zinc-500">
         {vendor.name}
         {yours && (
-          <span className="ml-1.5 rounded bg-emerald-400/10 px-1 py-px text-[9px] font-semibold text-emerald-300">
-            your pick
+          <span
+            className="ml-1.5 rounded bg-emerald-400/10 px-1 py-px text-[9px] font-semibold text-emerald-300"
+            title={yours === 'lens' ? 'The vendor you selected on this page' : 'From your "I\'m using" stack'}
+          >
+            {yours === 'lens' ? '✓ via' : 'your pick'}
           </span>
         )}
       </p>
@@ -65,23 +68,33 @@ function VendorGroup({ vendor, yours }: { vendor: VendorApiCalls; yours: boolean
 // Per-vendor API calls for one step, UPFRONT (founder 2026-09-21: "have the API calls for the
 // other vendors as well upfront (if they have not defined their vendors yet)"). The server
 // snapshot of the stack is '{}', so the static page shows every vendor's grounded calls — that
-// IS the no-stack view the founder asked for, and real SEO content. For readers with an
-// "I'm using" pick, hydration pins their vendor first ("your pick") and folds the rest away.
+// IS the no-stack view the founder asked for, and real SEO content. For readers with a pick,
+// hydration pins their vendor first and folds the rest away. Pick resolution is the process
+// lens's order (lib/processLens.ts): the vendor CLICKED on this page ("✓ via") beats the
+// "I'm using" stack pick ("your pick").
 export default function StepApiCalls({
   canonical,
   canonicalVendor,
   vendors,
+  lensKey,
 }: {
   // The node's own functionCalls — the curated reference flow, shown when not already covered
   // by a grounded vendor group.
   canonical: ApiCall[]
   canonicalVendor?: string
   vendors: VendorApiCalls[]
+  lensKey?: string
 }) {
-  const stack = useMyStackMap()
-  const isYours = (v: VendorApiCalls) => stack[v.arenaId] === v.productId
-  const ordered = [...vendors.filter(isYours), ...vendors.filter((v) => !isYours(v))]
-  const hasPick = ordered.length > 0 && isYours(ordered[0])
+  const { lens, stack } = useProcessLens(lensKey)
+  const pick =
+    vendors.find((v) => lens.picks[v.arenaId] === v.productId) ??
+    vendors.find((v) => stack[v.arenaId] === v.productId) ??
+    null
+  const pickSource: LensSource | null =
+    pick === null ? null : lens.picks[pick.arenaId] === pick.productId ? 'lens' : 'stack'
+  const yoursOf = (v: VendorApiCalls): LensSource | null => (v === pick ? pickSource : null)
+  const ordered = pick ? [pick, ...vendors.filter((v) => v !== pick)] : vendors
+  const hasPick = pick !== null
   // With a pick set, only the reader's vendor stays upfront; without one, the first few vendors
   // all do (the "haven't defined their vendors yet" view).
   const visible = ordered.slice(0, hasPick ? 1 : VISIBLE_VENDORS)
@@ -94,7 +107,7 @@ export default function StepApiCalls({
         API calls by vendor
       </p>
       {visible.map((v) => (
-        <VendorGroup key={v.productId} vendor={v} yours={isYours(v)} />
+        <VendorGroup key={v.productId} vendor={v} yours={yoursOf(v)} />
       ))}
       {folded.length > 0 && (
         <details className="group">
@@ -104,7 +117,7 @@ export default function StepApiCalls({
           </summary>
           <div className="mt-1.5 space-y-1.5 border-l border-zinc-800 pl-3">
             {folded.map((v) => (
-              <VendorGroup key={v.productId} vendor={v} yours={false} />
+              <VendorGroup key={v.productId} vendor={v} yours={null} />
             ))}
           </div>
         </details>

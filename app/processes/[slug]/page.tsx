@@ -5,6 +5,7 @@ import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessLeaderboard from '@/components/ProcessLeaderboard'
+import ProcessLensBanner from '@/components/ProcessLensBanner'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
 import ProductLogoView from '@/components/ProductLogoView'
@@ -68,9 +69,11 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
   const alias = slugAliasFor(task, slug)
   const canonicalSlug = processSlug(task.title)
   const mineHref = `/processes/${canonicalSlug}/mine`
-  // Same pre-serialized rows as /mine — the client-side "yours" chips hydrate over them; the
-  // static HTML is unchanged for readers without a stack (server stack snapshot is '{}').
-  const checkSteps = Object.fromEntries(buildProcessCheckSteps(task).map((s) => [s.nodeId, s]))
+  // Same pre-serialized rows as /mine — the client-side lens/"yours" chips hydrate over them;
+  // the static HTML is unchanged for readers without a click or a stack (server lens and stack
+  // snapshots are both '{}').
+  const checkStepList = buildProcessCheckSteps(task)
+  const checkSteps = Object.fromEntries(checkStepList.map((s) => [s.nodeId, s]))
 
   return (
     <div className="space-y-10">
@@ -152,6 +155,10 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           <span className="text-sky-300">sky = human or computer use</span>,{' '}
           <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate · ⏳ async wait.
         </p>
+        {/* Client-side lens banner (founder 2026-09-21: click a vendor → the process adapts to
+            run via it). Renders nothing in the static HTML — hydrates in only for readers with
+            a clicked vendor or an "I'm using" stack pick. */}
+        <ProcessLensBanner steps={checkStepList} pageKey={task.id} />
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <div id="steps" className="scroll-mt-4" />
           <ProcessDag
@@ -160,6 +167,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             taskId={task.id}
             checkSteps={checkSteps}
             mineHref={mineHref}
+            lensKey={task.id}
           />
         </div>
         {task.contextNeeded.length > 0 && (
