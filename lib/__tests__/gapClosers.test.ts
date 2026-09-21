@@ -183,7 +183,7 @@ describe('splitGaps — the sharper ceiling story', () => {
     expect(split.human.filter((g) => !g.irreducible).map((g) => g.label))
       .toEqual(['Collect company property'])
     // every human gap keeps its honest why
-    for (const g of split.human) expect(g.why).toMatch(/needs a human|manual form/)
+    for (const g of split.human) expect(g.why).toMatch(/human or computer use|manual form/)
   })
 
   it('corpus-wide: every non-agent step lands in exactly one bucket and some are closable', () => {

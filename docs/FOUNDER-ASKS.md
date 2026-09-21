@@ -8,6 +8,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Human steps: calm coloring + extract legally-required signatures | shipped 2026-09-21 — person steps sky "human or computer use" (red retired everywhere: DAG blocks, verdict box, index dots, legends, simulator); new `legalSignature` flag = the true human floor (13 nodes, violet "✍ signature — legally human", no workarounds/CU chips ever); 7 tasks split prep-vs-signature (bylaws+consent, founder SPAs, 83(b) sign-vs-mail ×2, term sheet, round consents, cap-table consent, notarized 1583, 8879-CORP jurat); mappings/audit/vendor-calls regenerated (155 audited steps) |
 | Process pages change for the reader's selected vendor | shipped 2026-09-21 — client-side over the /mine serialization: per-step "✓ yours" chips + upgrade deltas, "you run X" leaderboard banner; static SEO HTML byte-identical for readers without a stack |
 | API calls for the other vendors upfront on process steps | shipped 2026-09-21 — data/step-vendor-calls.json: 196 grounded calls / 91 steps / 54 vendors, every call carries a sourceUrl from the vendor's own evidence (84% of cells honestly empty); reader's pick pins first when set |
 | Human steps: root cause + why computer use can't do it | shipped 2026-09-21 — data/human-step-audit.json covers all 147 non-agent steps (19 drivable / 55 assist / 44 policy-gate / 17 third-party-wait / 12 no-screen); CU chips suppressed where the blocker is authority/physics/waiting; per-step "why human" lines + verdict-box detail |

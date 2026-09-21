@@ -94,7 +94,7 @@ process of a chain independently.
 |--------------|----------------|-------------------|
 | `agent`      | `api`          | MCP-first: connect to a `vendorOptions[].mcpEndpoint` when one exists, else drive the recorded `calls` directly. |
 | `form`       | `computer-use` | Manual portal/form work with no API path — a browser agent may drive it, always behind an approval gate, never autonomously. |
-| `person`     | `human`        | Genuinely needs a human — render as a checklist item. Steps also carrying `irreducible` must never be attempted by an agent at all: the reason string says why (judgment/identity work). |
+| `person`     | `human`        | A human (or a supervised computer-use agent, where the audit says the blocker is mechanical) — render as a checklist item. Steps also carrying `irreducible` must never be attempted by an agent at all: the reason string says why (judgment/identity work). Steps carrying `legalSignature: true` are the true human floor — a statute or counterparty requires a human signature/attestation; never attempt or work around them. |
 
 ### Side-effect policy (`approvalRequired`)
 

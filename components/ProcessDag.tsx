@@ -21,9 +21,11 @@ import { stepVendorCallsFor } from '@/lib/stepVendorCalls'
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
 // adapted to the zinc/emerald theme: each step is a bordered block card with a route-coded
-// border + tinted fill (emerald = agent-runnable, amber = manual form/portal, red-zinc = needs
-// a human), blocks joined by a vertical connector spine with arrowheads. Layers with true
-// parallelism (from dag.edges) render side by side inside a dashed "runs in parallel" group.
+// border + tinted fill (emerald = agent-runnable, amber = manual form/portal, sky = human or
+// computer use, violet = a legally required human signature — the founder's 2026-09-21
+// softening: human work is not an error state, so person steps are no longer red), blocks
+// joined by a vertical connector spine with arrowheads. Layers with true parallelism (from
+// dag.edges) render side by side inside a dashed "runs in parallel" group.
 //
 // Every mapped-vendor block also surfaces the market: beneath the canonical vendor chip, an
 // "or:" row lists the arena's top alternatives by agent-readiness (lib/processes.ts swap-options
@@ -66,10 +68,19 @@ const ROUTE_STYLE: Record<DagNode['route'], { block: string; badge: string; labe
     label: 'manual form',
   },
   person: {
-    block: 'border-red-900/70 bg-red-400/[0.04]',
-    badge: 'bg-red-400/10 text-red-300/90',
-    label: 'human',
+    block: 'border-sky-400/40 bg-sky-400/[0.05]',
+    badge: 'bg-sky-400/10 text-sky-300',
+    label: 'human or computer use',
   },
+}
+
+// Legally required human signature/attestation acts (DagNode.legalSignature — the founder's
+// true human floor, 2026-09-21) get their own visual identity: distinct from the calm sky
+// person tone, still never negative.
+const SIGNATURE_STYLE: { block: string; badge: string; label: string } = {
+  block: 'border-violet-400/40 bg-violet-400/[0.05]',
+  badge: 'bg-violet-400/10 text-violet-300',
+  label: '✍ signature — legally human',
 }
 
 // Kahn layering (same approach as the ai-docs dashboard's layoutDAG): each topological layer is
@@ -349,7 +360,7 @@ function NodeBlock({
   checkStep?: ProcessCheckStep
   mineHref?: string
 }) {
-  const style = ROUTE_STYLE[node.route]
+  const style = node.legalSignature ? SIGNATURE_STYLE : ROUTE_STYLE[node.route]
   const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
   // Story-derived ranking for the step (lib/processRankings.ts): present whenever the step has
   // a covering arena and a committed non-empty story mapping. When it exists it REPLACES the
@@ -367,7 +378,9 @@ function NodeBlock({
   const options = ranking ? [] : stepVendorOptions(node)
   const calls = node.functionCalls ?? []
   const gap = resolveGapStep(node)
-  const closer = gap?.kind === 'closer' ? gap.closer : null
+  // A legally-required signature act never gets a workaround — the e-sign medium may be
+  // electronic, but the signing human is not replaceable (founder 2026-09-21).
+  const closer = !node.legalSignature && gap?.kind === 'closer' ? gap.closer : null
   // Evidence-grounded per-vendor calls for this step (data/step-vendor-calls.json) — when
   // present they take over the API-calls block, with the node's own functionCalls kept as the
   // canonical reference flow.
@@ -495,8 +508,8 @@ function NodeBlock({
       {/* Why this step is human/manual, specifically — and the honest computer-use verdict. */}
       {audit && (
         <p className="mt-2 text-[11px] leading-relaxed text-zinc-400">
-          <span className={node.route === 'person' ? 'text-red-300/80' : 'text-amber-300/90'}>
-            why {node.route === 'person' ? 'human' : 'manual'}:
+          <span className={node.legalSignature ? 'text-violet-300/90' : node.route === 'person' ? 'text-sky-300/90' : 'text-amber-300/90'}>
+            why {node.legalSignature ? 'legally human' : node.route === 'person' ? 'human' : 'manual'}:
           </span>{' '}
           {audit.why}{' '}
           <span
@@ -543,8 +556,9 @@ function NodeBlock({
           unchanged: the step stays form/manual/human. Renders nothing without judged evidence.
           Audited nodes gate the chips on feasibility (founder 2026-09-21): where the blocker is
           authority, physics, or a third party's clock, "could attempt it today" would mislead —
-          the "why human" line above carries the honest verdict instead. */}
-      {taskId && node.route !== 'agent' && showComputerUseChips(audit?.computerUse) && (
+          the "why human" line above carries the honest verdict instead. Legally-required
+          signature acts (legalSignature) never show chips at all. */}
+      {taskId && node.route !== 'agent' && showComputerUseChips(audit?.computerUse, node.legalSignature) && (
         <div className="mt-2 text-[11px]">
           <ComputerUseChips taskId={taskId} nodeId={node.id} />
         </div>
