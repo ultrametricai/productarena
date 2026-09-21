@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import AiEraBadge from '@/components/AiEraBadge'
+import HomeModes from '@/components/HomeModes'
 import IconChip from '@/components/IconChip'
 import MegaTable from '@/components/MegaTable'
+import ProcessesTable from '@/components/ProcessesTable'
 import ProductLogo from '@/components/ProductLogo'
 import arenaIcons from '@/data/arena-icons.json'
 import { battleSlug, leadingBattle, loadAll } from '@/lib/data'
 import { buildMegaTableArenaOptions, buildMegaTableRows } from '@/lib/megaTable'
+import { buildProcessRows } from '@/lib/processRows'
 
 export const metadata: Metadata = {
   title: 'ProductArena — which software is most AI-friendly?',
@@ -18,8 +21,13 @@ export default function Home() {
   const categories = loadAll()
   const megaRows = buildMegaTableRows(categories)
   const arenaOptions = buildMegaTableArenaOptions(categories)
+  const processes = buildProcessRows()
 
-  return (
+  // Founder 2026-09-21: "add processes onto the homepage as well, maybe have two modes,
+  // company mode/process mode." Both modes ship in the static HTML; companies stays the
+  // default visible mode ("the homepage IS the table", founder call 2026-09-14) and the
+  // toggle persists per device (components/HomeModes.tsx).
+  const companiesMode = (
     <div className="space-y-12">
       <section>
         {/* The homepage IS the table — one visible title above the rank-by controls (founder
@@ -127,4 +135,31 @@ export default function Home() {
       </section>
     </div>
   )
+
+  const processesMode = (
+    <div className="space-y-8">
+      <section>
+        <h2 className="font-display mb-1 text-2xl font-bold leading-tight tracking-tight">
+          Startup processes, run by agents
+        </h2>
+        <p className="max-w-2xl text-sm text-zinc-400">
+          {processes.totalProcesses} founder processes mapped step-by-step — an agent can run{' '}
+          <span className="font-mono text-emerald-300">{processes.agentStepPct}%</span> of the steps
+          today. Every step routed honestly (agent / manual form / human), every vendor ranked from
+          judged evidence. Sort by automatability, timeline, regularity, annoyance, risk, or growth.
+        </p>
+      </section>
+      <ProcessesTable rows={processes.rows} phases={processes.phases} />
+      <p className="text-sm">
+        <Link
+          href="/processes"
+          className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300"
+        >
+          All processes, end-to-end playbooks &amp; the operating rhythm →
+        </Link>
+      </p>
+    </div>
+  )
+
+  return <HomeModes companies={companiesMode} processes={processesMode} />
 }
