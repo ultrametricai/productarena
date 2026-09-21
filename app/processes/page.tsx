@@ -2,14 +2,10 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
-import ProcessesTable, { type ProcessRow } from '@/components/ProcessesTable'
-import { hasLogo } from '@/lib/logos'
-import { crossArenaStepRankings, processLeaderboard, stepRanking } from '@/lib/processRankings'
+import ProcessesTable from '@/components/ProcessesTable'
 import { chainIcon, processIcon } from '@/lib/processIcons'
-import {
-  CADENCE_META, cadenceRank, chainTasks, computeCeiling, loadChains, loadProcesses,
-  phaseRank, processSlug, taskCeiling, VENDOR_ARENA, vendorLabel, vendorProductId,
-} from '@/lib/processes'
+import { buildProcessRows } from '@/lib/processRows'
+import { chainTasks, computeCeiling, loadChains } from '@/lib/processes'
 
 export const metadata: Metadata = {
   title: 'Processes — ProductArena',
@@ -24,47 +20,10 @@ const ROUTE_DOT: Record<string, string> = {
 }
 
 export default function ProcessesPage() {
-  const tasks = loadProcesses()
   const chains = loadChains()
-
-  const byPhase = new Map<string, typeof tasks>()
-  for (const t of tasks) {
-    const list = byPhase.get(t.phase) ?? []
-    list.push(t)
-    byPhase.set(t.phase, list)
-  }
-  const phases = [...byPhase.keys()].sort((a, b) => phaseRank(a) - phaseRank(b) || a.localeCompare(b))
-
-  const tableRows: ProcessRow[] = tasks.map((t) => {
-    const c = taskCeiling(t)
-    return {
-      slug: processSlug(t.title),
-      title: t.title,
-      icon: processIcon(t.id),
-      phase: t.phase,
-      pct: c.pct,
-      agentSteps: c.agentSteps,
-      totalSteps: c.totalSteps,
-      complexity: t.complexity,
-      // The five-orderings fields (curated on the corpus; cadence resolved to its display
-      // label/rank here so the client table never imports the node-only helpers).
-      timeOrder: t.timeOrder,
-      cadenceLabel: CADENCE_META[t.cadence].label,
-      cadenceRank: cadenceRank(t.cadence),
-      annoyance: t.annoyance,
-      risk: t.risk,
-      growthImpact: t.growthImpact,
-      // Founder 2026-09-18: no empty vendor cells — processes without hand-curated vendors
-      // fall back to the top story-ranked options across their steps (same evidence-gated
-      // rankings the process page shows; cross-arena entries included). Cap 4 for the cell.
-      vendors: (t.vendors.length > 0
-        ? [...new Set(t.vendors)].map((v) => {
-            const id = vendorProductId(v)
-            return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
-          })
-        : derivedVendorsFor(t)),
-    }
-  })
+  // Rows + phases now come from the shared builder (lib/processRows.ts) so the homepage's
+  // process mode renders exactly this table.
+  const { rows: tableRows, phases } = buildProcessRows()
 
   return (
     <div className="space-y-12">
@@ -143,30 +102,6 @@ export default function ProcessesPage() {
       </section>
     </div>
   )
-}
-// Founder 2026-09-18: the index table's vendor cell must never be empty. Processes without
-// hand-curated vendors derive their cell from the story-ranked options across their steps —
-// process leaderboard first (coverage × step quality), then cross-arena step winners — the
-// same evidence-gated rankings the process page itself shows. Cap 4.
-function derivedVendorsFor(t: import('@/lib/processes').ProcessTask) {
-  const seen = new Set<string>()
-  const out: { id: string; label: string; arena: string | null; hasLogo: boolean }[] = []
-  const push = (id: string, label: string, arena: string | null) => {
-    if (seen.has(id) || out.length >= 4) return
-    seen.add(id)
-    out.push({ id, label, arena, hasLogo: hasLogo(id) })
-  }
-  for (const e of processLeaderboard(t).entries) push(e.productId, e.name, e.arenaId)
-  if (out.length < 4) {
-    for (const node of t.dag.nodes) {
-      const rankings = [stepRanking(t.id, node), ...crossArenaStepRankings(t.id, node)]
-      for (const r of rankings) {
-        if (!r) continue
-        for (const v of r.vendors.slice(0, 2)) push(v.productId, v.name, v.arenaId)
-      }
-    }
-  }
-  return out
 }
 
 
