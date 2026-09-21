@@ -28,10 +28,11 @@
 // gap note can name a vendor on steps where it has no judged evidence (and thus no row to read
 // the name from).
 
-import { useCallback, useMemo, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useSyncExternalStore } from 'react'
 import { useMyStackMap } from '@/components/useMyStackMap'
 import type { StackMap } from './myStack'
 import { yoursForStep, type CheckVendor, type ProcessCheckStep } from './processCheck'
+import { readParamAll, setParams } from './urlState'
 
 // One pick per arena — the same shape as the account stack's StackMap, deliberately: a lens is
 // a per-page, click-scoped override of the same "which vendor serves this arena" question.
@@ -116,6 +117,82 @@ export function subscribeLens(callback: () => void): () => void {
     window.removeEventListener('storage', callback)
     window.removeEventListener(PROCESS_LENS_EVENT, callback)
   }
+}
+
+// ---------------------------------------------------------------------------
+// Shareable lens URLs — ?via=<arenaId>:<productId> (founder 2026-09-21: "if they share the URL
+// by copying it, the other user gets the view they were in"). Multi-arena lenses join entries
+// with commas (?via=banking:mercury,payroll:gusto); a repeated ?via=…&via=… also parses. The
+// lib/urlState.ts contract applies: read on mount only (static HTML untouched), written with
+// replaceState, and the empty lens — the default view — never appears in the URL.
+// ---------------------------------------------------------------------------
+
+export const LENS_URL_PARAM = 'via'
+
+// Tolerant ?via parse: entries missing either side of the colon are skipped silently (a mangled
+// shared URL degrades to the default view, never crashes), capped like parseLensState.
+export function parseViaParam(values: string[]): LensMap {
+  const picks: LensMap = {}
+  for (const value of values) {
+    for (const entry of value.split(',')) {
+      const sep = entry.indexOf(':')
+      if (sep <= 0 || sep === entry.length - 1) continue
+      if (Object.keys(picks).length >= MAX_LENS_ARENAS) return picks
+      picks[entry.slice(0, sep)] = entry.slice(sep + 1)
+    }
+  }
+  return picks
+}
+
+// Canonical param value (sorted arenas, comma-joined) — null when the lens is empty, so the
+// caller's setParams({ via: … }) deletes the param and a cleared lens leaves a clean URL.
+export function encodeViaParam(picks: LensMap): string | null {
+  const entries = Object.entries(picks).sort(([a], [b]) => a.localeCompare(b))
+  if (entries.length === 0) return null
+  return entries.map(([arenaId, productId]) => `${arenaId}:${productId}`).join(',')
+}
+
+// URL ⇄ lens sync — mounted ONCE per process/chain page (components/ProcessLensBanner.tsx, the
+// one component every lens page renders exactly once with the canonical pageKey), never inside
+// useProcessLens itself: per-step hooks may someday mount with OTHER pageKeys on the same page,
+// and a stray ?via must not be imported into every one of them.
+//   Mount:  a ?via lens WINS over localStorage for this pageKey and is saved to it (stored
+//           click-time names are kept for ids the URL still picks); no ?via → storage stands
+//           and the URL stays clean (a lens from last week is not exported unasked).
+//   After:  every pick/clear — from ANY component on the page, via the subscribe event —
+//           mirrors the whole lens back into ?via (empty lens deletes the param).
+export function useLensUrlSync(pageKey: string | undefined): void {
+  const storageKey = pageKey === undefined || pageKey === '' ? null : lensStorageKey(pageKey)
+
+  useEffect(() => {
+    if (storageKey === null) return
+    const picks = parseViaParam(readParamAll(LENS_URL_PARAM))
+    if (Object.keys(picks).length === 0) return // absent or fully invalid — silent fallback
+    const current = parseLensState(readLensRaw(storageKey))
+    const pickedIds = new Set(Object.values(picks))
+    const names: Record<string, string> = {}
+    for (const [id, name] of Object.entries(current.names)) if (pickedIds.has(id)) names[id] = name
+    const next: LensState = { picks, names }
+    if (serializeLensState(next) !== serializeLensState(current)) writeLens(storageKey, next)
+  }, [storageKey])
+
+  const getSnapshot = useCallback(
+    () => (storageKey === null ? EMPTY_LENS_RAW : readLensRaw(storageKey)),
+    [storageKey],
+  )
+  const raw = useSyncExternalStore(subscribeLens, getSnapshot, () => EMPTY_LENS_RAW)
+  const mirroring = useRef(false)
+  useEffect(() => {
+    if (storageKey === null) return
+    // Skip the first run (the state as-loaded): only CHANGES write the URL — see the mount
+    // semantics above. The URL-import write above lands as a later `raw` and mirrors ?via to
+    // its own (already identical) value, which setParams no-ops.
+    if (!mirroring.current) {
+      mirroring.current = true
+      return
+    }
+    setParams({ [LENS_URL_PARAM]: encodeViaParam(parseLensState(raw).picks) })
+  }, [raw, storageKey])
 }
 
 // ---------------------------------------------------------------------------

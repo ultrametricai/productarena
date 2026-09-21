@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useMemo } from 'react'
-import { lensProcessSummary, useProcessLens } from '@/lib/processLens'
+import { lensProcessSummary, useLensUrlSync, useProcessLens } from '@/lib/processLens'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 
 // Process-level lens banner above the DAG (founder 2026-09-21): when any lens click or
@@ -23,6 +23,11 @@ export default function ProcessLensBanner({
   /** Lens page key: taskId on /processes/[slug], the chain id on /processes/chains/[chain]. */
   pageKey: string
 }) {
+  // Shareable lens URLs (?via=<arenaId>:<productId>, lib/processLens.ts): this banner is the
+  // one component every lens page mounts exactly once with the canonical pageKey, so it owns
+  // the URL ⇄ lens sync — a shared link opens in the sender's exact "via vendor" view, and any
+  // pick/clear anywhere on the page (step rows, this banner's clear) updates ?via.
+  useLensUrlSync(pageKey)
   const { lens, stack, clearLens } = useProcessLens(pageKey)
   const summary = useMemo(() => lensProcessSummary(steps, lens.picks, stack), [steps, lens, stack])
   const lensPickCount = Object.keys(lens.picks).length

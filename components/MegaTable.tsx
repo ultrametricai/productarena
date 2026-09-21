@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import AiEraBadge from '@/components/AiEraBadge'
 import ConfidenceChip from '@/components/ConfidenceChip'
 import HotChip from '@/components/HotChip'
@@ -17,6 +17,7 @@ import WatchButton from '@/components/WatchButton'
 import EnterpriseBadge from '@/components/EnterpriseBadge'
 import YcBadge from '@/components/YcBadge'
 import { useSession } from '@/lib/session'
+import { readParams, setParams } from '@/lib/urlState'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
   DEFAULT_COLUMN,
@@ -25,6 +26,7 @@ import {
   filterMegaRowsByArena,
   filterMegaRowsByQuery,
   megaRowKey,
+  parseMegaColumn,
   rankMegaRows,
   sortMegaRows,
   type MegaTableColumn,
@@ -108,6 +110,25 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   // anonymous view render the same 9-column table as before login existed.
   const watchlistOn = useSession().state === 'authenticated'
 
+  // Shareable-view URL state (founder 2026-09-21, lib/urlState.ts): read once on mount — the
+  // static HTML always renders the default view, then ?rank/?dir/?arena/?all/?q reproduce the
+  // sender's view after hydration. Invalid values fall back to the defaults silently, and a
+  // param never appears for a default (writes below elide them the same way).
+  useEffect(() => {
+    const p = readParams()
+    const col = parseMegaColumn(p.get('rank')) ?? DEFAULT_COLUMN
+    const dir = p.get('dir')
+    setColumn(col)
+    setDirection(dir === 'asc' || dir === 'desc' ? dir : defaultDirectionFor(col))
+    const arena = p.get('arena')
+    if (arena !== null && arenas.some((a) => a.id === arena)) setArenaId(arena)
+    if (p.get('all') === '1') setIncludeSubProducts(true)
+    const q = p.get('q')
+    if (q !== null && q !== '') setQuery(q)
+    // Mount-only by design: the URL is the INITIAL view; after that the reader's clicks own it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const companyRows = useMemo(
     () => (includeSubProducts ? rows : rows.filter((r) => !r.isFamilySubProduct)),
     [rows, includeSubProducts],
@@ -123,18 +144,26 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   // its arena anyway. Filtering/sorting always applies to the full set; the cap is display-only.
   const visible = showAll ? sorted : sorted.slice(0, 50)
 
+  // Mirror the sort into ?rank/?dir — defaults elided so the pristine view has a clean URL
+  // (?dir only when the direction isn't the column's own default).
+  function writeSortParams(col: MegaTableColumn, dir: SortDirection) {
+    setParams({
+      rank: col === DEFAULT_COLUMN ? null : col,
+      dir: dir === defaultDirectionFor(col) ? null : dir,
+    })
+  }
+
   function handleSort(col: MegaTableColumn) {
-    if (col === column) {
-      setDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
-    } else {
-      setColumn(col)
-      setDirection(defaultDirectionFor(col))
-    }
+    const next: SortDirection = col === column ? (direction === 'asc' ? 'desc' : 'asc') : defaultDirectionFor(col)
+    setColumn(col)
+    setDirection(next)
+    writeSortParams(col, next)
   }
 
   function applyPreset(col: MegaTableColumn) {
     setColumn(col)
     setDirection('desc')
+    writeSortParams(col, 'desc')
   }
 
   return (
@@ -146,19 +175,28 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
         onPreset={applyPreset}
         scope={{
           value: arenaId,
-          onChange: setArenaId,
+          onChange: (value) => {
+            setArenaId(value)
+            setParams({ arena: value === 'all' ? null : value })
+          },
           ariaLabel: 'Filter by arena',
           options: [{ value: 'all', label: 'All arenas' }, ...arenas.map((a) => ({ value: a.id, label: a.icon ? `${a.icon} ${a.name}` : a.name }))],
         }}
         query={query}
-        onQuery={setQuery}
+        onQuery={(value) => {
+          setQuery(value)
+          setParams({ q: value.trim() === '' ? null : value })
+        }}
       />
 
       <label className="flex w-fit cursor-pointer items-center gap-2 text-xs text-zinc-500 transition hover:text-zinc-300">
         <input
           type="checkbox"
           checked={includeSubProducts}
-          onChange={(e) => setIncludeSubProducts(e.target.checked)}
+          onChange={(e) => {
+            setIncludeSubProducts(e.target.checked)
+            setParams({ all: e.target.checked ? '1' : null })
+          }}
           className="h-3.5 w-3.5 accent-emerald-400"
         />
         Include all products of companies

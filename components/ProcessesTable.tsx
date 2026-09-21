@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import CeilingBar from '@/components/CeilingBar'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
 import TableControls from '@/components/TableControls'
 import { phaseIcon, phaseTooltip } from '@/lib/processIcons'
+import { readParams, setParams } from '@/lib/urlState'
 
 // The /processes controller: one dense sortable/filterable table over the whole founder-process
 // corpus (mega-table pattern — see components/MegaTable.tsx), replacing the phase-grouped card
@@ -52,6 +53,18 @@ type Direction = 'asc' | 'desc'
 // runs daily→once). Everything numeric-desc otherwise.
 const ASC_DEFAULT = new Set<Column>(['title', 'phase', 'order', 'cadence'])
 const defaultDirection = (col: Column): Direction => (ASC_DEFAULT.has(col) ? 'asc' : 'desc')
+
+// Shareable ?order= values (founder 2026-09-21, lib/urlState.ts): every pickable column, with
+// the timeOrder column spelled 'timeline' in the URL (?order=order reads badly; ?order=timeline
+// says what it is). The default sort (pct — the agent ceiling) never appears in the URL, and
+// bad values fall back to it silently. Both `timeline` and the raw `order` are accepted on read.
+const ALL_COLUMNS: readonly Column[] = ['title', 'phase', 'pct', 'steps', 'order', 'cadence', 'annoyance', 'risk', 'growth']
+const columnToParam = (col: Column): string => (col === 'order' ? 'timeline' : col)
+function paramToColumn(value: string | null): Column | null {
+  if (value === null) return null
+  if (value === 'timeline') return 'order'
+  return (ALL_COLUMNS as readonly string[]).includes(value) ? (value as Column) : null
+}
 
 const PRESETS: Array<{ col: Column; label: string }> = [
   { col: 'pct', label: 'Most automatable' },
@@ -128,6 +141,40 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
   const [phase, setPhase] = useState('all')
   const [query, setQuery] = useState('')
 
+  // Shareable-view URL state (lib/urlState.ts), read once on mount so the static HTML is
+  // untouched: ?order=<preset>, ?phase=<phase>, ?pq=<text> (pq, not q — this table co-mounts
+  // with MegaTable on the homepage's process mode and the two filters must coexist). Invalid
+  // values fall back to the defaults silently.
+  useEffect(() => {
+    const p = readParams()
+    const col = paramToColumn(p.get('order'))
+    if (col !== null && col !== 'pct') {
+      setColumn(col)
+      setDirection(defaultDirection(col))
+    }
+    const ph = p.get('phase')
+    if (ph !== null && phases.includes(ph)) setPhase(ph)
+    const q = p.get('pq')
+    if (q !== null && q !== '') setQuery(q)
+    // Mount-only by design: the URL is the INITIAL view; after that the reader's clicks own it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Every phase change (the <select> AND the in-row phase buttons) mirrors into ?phase=,
+  // with the 'all' default elided.
+  function changePhase(value: string) {
+    setPhase(value)
+    setParams({ phase: value === 'all' ? null : value })
+  }
+
+  // Sort changes mirror into ?order= (default pct elided). Direction is deliberately NOT in the
+  // URL: a shared ordering opens in its preset direction — the five orderings are what's shared.
+  function changeSort(col: Column, dir: Direction) {
+    setColumn(col)
+    setDirection(dir)
+    setParams({ order: col === 'pct' ? null : columnToParam(col) })
+  }
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return rows.filter(
@@ -151,10 +198,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
 
   function handleSort(col: Column) {
     if (col === column) setDirection((d) => (d === 'asc' ? 'desc' : 'asc'))
-    else {
-      setColumn(col)
-      setDirection(defaultDirection(col))
-    }
+    else changeSort(col, defaultDirection(col))
   }
 
   // Which ordering the adaptive metric column shows.
@@ -176,13 +220,10 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
         presets={PRESETS}
         activeColumn={column}
         presetActive={direction === defaultDirection(column)}
-        onPreset={(col) => {
-          setColumn(col)
-          setDirection(defaultDirection(col))
-        }}
+        onPreset={(col) => changeSort(col, defaultDirection(col))}
         scope={{
           value: phase,
-          onChange: setPhase,
+          onChange: changePhase,
           ariaLabel: 'Filter by phase',
           options: [
             { value: 'all', label: 'All phases' },
@@ -190,7 +231,10 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
           ],
         }}
         query={query}
-        onQuery={setQuery}
+        onQuery={(value) => {
+          setQuery(value)
+          setParams({ pq: value.trim() === '' ? null : value })
+        }}
       />
       <div className="overflow-x-auto rounded-2xl border border-zinc-800 md:overflow-x-visible">
         <table className="w-full border-collapse text-sm">
@@ -222,7 +266,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
                       to that phase; click again (or pick All) to clear. */}
                   <button
                     type="button"
-                    onClick={() => setPhase(phase === r.phase ? 'all' : r.phase)}
+                    onClick={() => changePhase(phase === r.phase ? 'all' : r.phase)}
                     title={`${phaseTooltip(r.phase)} — click to ${phase === r.phase ? 'clear the phase filter' : `filter to ${r.phase}`}`}
                     className={`flex cursor-pointer items-center gap-1.5 whitespace-nowrap transition hover:text-emerald-300 ${phase === r.phase ? 'text-emerald-300' : ''}`}
                   >
