@@ -483,9 +483,12 @@ export function computerUseEligibleProducts(source: ComputerUseSource, dir?: str
 // (manual form/portal work and human steps alike), not just the irreducible-judgment subset.
 // The honest gate stays downstream: the mapper may answer [] (no fleet story genuinely
 // describes attempting the step), and computerUseOptions only surfaces vendors with judged
-// full/partial evidence.
-export function isComputerUseCandidate(node: Pick<DagNode, 'route'>): boolean {
-  return node.route !== 'agent'
+// full/partial evidence. Founder 2026-09-21 carve-out: legally-required signature acts
+// (DagNode.legalSignature — the true human floor) are NEVER computer-use candidates; the
+// mechanical click may exist, but "could attempt it today" is not an honest frame for a
+// signature only a human may make, so no mapping is generated or consumed for them.
+export function isComputerUseCandidate(node: Pick<DagNode, 'route' | 'legalSignature'>): boolean {
+  return node.route !== 'agent' && !node.legalSignature
 }
 
 // A temporarily-human step of one task, with node identity (splitGaps only carries labels).

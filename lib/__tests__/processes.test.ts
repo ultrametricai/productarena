@@ -8,7 +8,9 @@ import {
   VENDOR_ARENA, VENDOR_SIGNUP_URL, vendorChipInfo, vendorProductId, vendorRoles,
   type DagNode,
 } from '@/lib/processes'
-import { buildSimRun } from '@/lib/processSim'
+import { verdictGaps } from '@/lib/humanSteps'
+import { showComputerUseChips } from '@/lib/humanStepsUi'
+import { buildSimRun, LEGAL_SIGNATURE_WHY } from '@/lib/processSim'
 
 const DATA_DIR = path.resolve(__dirname, '../../data')
 
@@ -192,7 +194,7 @@ describe('computeCeiling', () => {
     expect(ceiling.totalMinutes).toBe(24)
     expect(ceiling.approvalGates).toBe(1)
     expect(ceiling.gaps).toEqual([
-      { label: 'Notarized signature', route: 'person', why: 'needs a human' },
+      { label: 'Notarized signature', route: 'person', why: 'human or computer use' },
       { label: 'State portal filing', route: 'form', why: 'manual form/portal — no API path' },
     ])
   })
@@ -557,6 +559,104 @@ describe('buildSimSteps', () => {
     }
     // steps must be plain JSON (client-component props)
     expect(JSON.parse(JSON.stringify(steps))).toEqual(steps)
+  })
+})
+
+describe('legalSignature — the true human floor (founder 2026-09-21)', () => {
+  const SPLIT_TASK_IDS = ['form_001', 'fund_002', 'fund_004', 'qs_044', 'qs_052', 'tax_002', 'startup_002'] as const
+
+  it('every legalSignature node is route person', () => {
+    let count = 0
+    for (const t of loadProcesses(DATA_DIR)) {
+      for (const n of t.dag.nodes) {
+        if (!n.legalSignature) continue
+        count += 1
+        expect(n.route, `${t.id}:${n.id} legalSignature must stay route person`).toBe('person')
+      }
+    }
+    // The extraction is in the data, not vacuously green.
+    expect(count).toBeGreaterThanOrEqual(13)
+  })
+
+  it('split tasks keep valid DAGs: every edge resolves, acyclic, every node reachable', () => {
+    for (const id of SPLIT_TASK_IDS) {
+      const task = loadProcesses(DATA_DIR).find((t) => t.id === id)!
+      const ids = new Set(task.dag.nodes.map((n) => n.id))
+      expect(ids.size).toBe(task.dag.nodes.length)
+      const edges = task.dag.edges ?? []
+      for (const e of edges) {
+        expect(ids.has(e.from), `${id}: edge from unknown node ${e.from}`).toBe(true)
+        expect(ids.has(e.to), `${id}: edge to unknown node ${e.to}`).toBe(true)
+      }
+      // Kahn: with a cycle, some node never reaches in-degree 0 — the peel stalls short.
+      const inDegree = new Map<string, number>(task.dag.nodes.map((n) => [n.id, 0]))
+      for (const e of edges) inDegree.set(e.to, (inDegree.get(e.to) ?? 0) + 1)
+      const peeled = new Set<string>()
+      let frontier = task.dag.nodes.filter((n) => inDegree.get(n.id) === 0).map((n) => n.id)
+      while (frontier.length > 0) {
+        const next: string[] = []
+        for (const nid of frontier) {
+          peeled.add(nid)
+          for (const e of edges.filter((e) => e.from === nid)) {
+            const d = inDegree.get(e.to)! - 1
+            inDegree.set(e.to, d)
+            if (d === 0) next.push(e.to)
+          }
+        }
+        frontier = next
+      }
+      expect(peeled.size, `${id}: DAG has a cycle or an unreachable node`).toBe(task.dag.nodes.length)
+      // Split tasks stay connected as before: with edges present, exactly one source-less
+      // node would mean a single linear-ish flow; at minimum no node is stranded with neither
+      // an in- nor out-edge (the corpus's split flows are single components).
+      if (edges.length > 0) {
+        for (const n of task.dag.nodes) {
+          const touched = edges.some((e) => e.from === n.id || e.to === n.id)
+          expect(touched, `${id}:${n.id} is stranded — no edge touches it`).toBe(true)
+        }
+      }
+    }
+  })
+
+  it('verdict buckets: legalSignature nodes land in the signature bucket and never render computer-use chips', () => {
+    const tasks = loadProcesses(DATA_DIR)
+    const buckets = verdictGaps(tasks, DATA_DIR)
+    const sigKeys = new Set(buckets.signature.map((g) => `${g.taskId}:${g.node.id}`))
+    for (const t of tasks) {
+      for (const n of t.dag.nodes) {
+        if (!n.legalSignature) continue
+        expect(sigKeys.has(`${t.id}:${n.id}`), `${t.id}:${n.id} must bucket as signature`).toBe(true)
+        // The chip gate the verdict box and the DAG blocks share: a signature node never
+        // shows "could attempt it today", whatever its audited feasibility.
+        for (const f of ['drivable', 'assist', 'policy-gate', 'no-screen', 'third-party-wait', undefined] as const) {
+          expect(showComputerUseChips(f, n.legalSignature)).toBe(false)
+        }
+      }
+    }
+    // …and no signature node leaks into the other buckets (the e-sign closer rule would
+    // otherwise claim "Sign the term sheet").
+    for (const bucket of [buckets.closable, buckets.irreducible, buckets.unclosed]) {
+      for (const g of bucket) {
+        expect(g.node.legalSignature ?? false, `${g.taskId}:${g.node.id} leaked out of the signature bucket`).toBe(false)
+      }
+    }
+  })
+
+  it('the simulator names signature steps honestly and never offers them a workaround', () => {
+    const task = loadProcesses(DATA_DIR).find((t) => t.id === 'fund_002')!
+    const steps = buildSimSteps([task], DATA_DIR)
+    const { lines } = buildSimRun(steps, {}, vendorRoles([task], DATA_DIR))
+    const text = lines.map((l) => l.text).join('\n')
+    expect(text).toContain('✍ SIGNATURE: Sign the term sheet')
+    expect(text).toContain(LEGAL_SIGNATURE_WHY)
+    // No workaround line directly follows a signature line.
+    lines.forEach((line, i) => {
+      if (line.text.startsWith('✍ SIGNATURE')) {
+        expect(lines[i + 1]?.kind).not.toBe('workaround')
+      }
+    })
+    // The generic person gap phrase is the calm one everywhere.
+    expect(text).not.toContain('needs a human')
   })
 })
 
