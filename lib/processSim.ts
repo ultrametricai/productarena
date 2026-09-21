@@ -50,10 +50,15 @@ export type GapResolution =
   | { kind: 'irreducible'; reason: string }
 
 // The one-line honest reason a non-agent step blocks the agent — shared by the ceiling verdict,
-// the simulator transcript, and the gap-closer split.
+// the simulator transcript, and the gap-closer split. Founder 2026-09-21: person steps are no
+// longer framed negatively as "needs a human" — a human OR a computer-use agent handles them;
+// only legally required signature acts (DagNode.legalSignature) are the true human floor.
 export function gapWhy(route: 'form' | 'person'): string {
-  return route === 'person' ? 'needs a human' : 'manual form/portal — no API path'
+  return route === 'person' ? 'human or computer use' : 'manual form/portal — no API path'
 }
+
+// The honest reason for a legally-required signature act — the one gap no agent closes.
+export const LEGAL_SIGNATURE_WHY = 'legally human — a signature/attestation only a human can make'
 
 export interface SimStep {
   taskId: string
@@ -72,6 +77,9 @@ export interface SimStep {
   calls: string[]
   toolCall: string | null
   approvalRequired: boolean
+  // True when the step is a legally required human signature/attestation act (the founder's
+  // "true human floor") — the transcript names it instead of the generic gap reason.
+  legalSignature: boolean
   riskLevel: 'low' | 'medium' | 'high' | null
   estimatedMinutes: number
   async: boolean
@@ -177,13 +185,17 @@ export function buildSimRun(
     }
 
     stats.gaps += 1
-    const why = gapWhy(step.route)
+    const why = step.legalSignature ? LEGAL_SIGNATURE_WHY : gapWhy(step.route)
     lines.push({
       kind: 'gap',
-      text: `⚠ GAP: ${step.label} — ${why} — agent hands off${step.async ? ' ⏳' : ''}`,
+      text: step.legalSignature
+        ? `✍ SIGNATURE: ${step.label} — ${why}${step.async ? ' ⏳' : ''}`
+        : `⚠ GAP: ${step.label} — ${why} — agent hands off${step.async ? ' ⏳' : ''}`,
     })
     // Pre-resolved server-side (lib/gapClosers.ts) — the client never runs the rule engine.
-    if (step.gap?.kind === 'closer') {
+    // No workaround is ever offered for a legally-required signature act: the e-sign medium
+    // may be electronic, but the signing human is not replaceable.
+    if (!step.legalSignature && step.gap?.kind === 'closer') {
       const { blurb, topProduct, caution } = step.gap.closer
       lines.push({
         kind: 'workaround',

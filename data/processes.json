@@ -75,21 +75,45 @@
     },
     {
      "id": "n6",
-     "label": "Adopt bylaws & initial resolutions",
+     "label": "Prepare bylaws & initial resolutions",
      "route": "form",
      "vendor": "clerky",
      "approvalRequired": true,
      "riskLevel": "medium",
-     "estimatedMinutes": 20
+     "estimatedMinutes": 15
+    },
+    {
+     "id": "n6b",
+     "label": "Sign the bylaws and initial board consent",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "medium",
+     "estimatedMinutes": 5
     },
     {
      "id": "n7",
-     "label": "Issue founder stock",
+     "label": "Prepare the founder stock issuance",
      "route": "form",
      "vendor": "clerky",
      "approvalRequired": true,
      "riskLevel": "high",
-     "estimatedMinutes": 15
+     "estimatedMinutes": 10
+    },
+    {
+     "id": "n7b",
+     "label": "Founders sign the stock purchase agreements",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 5
+    },
+    {
+     "id": "n8a",
+     "label": "Sign the 83(b) election",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 5
     },
     {
      "id": "n8",
@@ -99,7 +123,7 @@
      "actionLabel": "IRS Form 15620 (83(b) election)",
      "vendor": "irs",
      "riskLevel": "high",
-     "estimatedMinutes": 20,
+     "estimatedMinutes": 15,
      "async": true,
      "functionCalls": [
       {
@@ -129,10 +153,22 @@
     },
     {
      "from": "n6",
+     "to": "n6b"
+    },
+    {
+     "from": "n6b",
      "to": "n7"
     },
     {
      "from": "n7",
+     "to": "n7b"
+    },
+    {
+     "from": "n7b",
+     "to": "n8a"
+    },
+    {
+     "from": "n8a",
      "to": "n8"
     }
    ]
@@ -181,7 +217,7 @@
    "high-priority",
    "day-1"
   ],
-  "activeMinutes": 77,
+  "activeMinutes": 82,
   "totalEstimatedMinutes": 2977,
   "hasAsyncSteps": true,
   "region": "us",
@@ -687,10 +723,18 @@
    "nodes": [
     {
      "id": "n1",
-     "label": "Negotiate and sign the term sheet",
+     "label": "Negotiate the term sheet",
      "route": "person",
      "riskLevel": "high",
-     "estimatedMinutes": 2880
+     "estimatedMinutes": 2820
+    },
+    {
+     "id": "n1b",
+     "label": "Sign the term sheet",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 60
     },
     {
      "id": "n2",
@@ -720,9 +764,27 @@
     },
     {
      "id": "n5",
-     "label": "Board and stockholder approvals",
+     "label": "Prepare and circulate the board and stockholder consents",
+     "route": "agent",
+     "estimatedMinutes": 30,
+     "vendor": "docusign",
+     "approvalRequired": true,
+     "functionCalls": [
+      {
+       "method": "POST /v2.1/accounts/{accountId}/envelopes",
+       "type": "rest",
+       "description": "Send the board and stockholder consent packet for signature"
+      }
+     ]
+    },
+    {
+     "id": "n5b",
+     "label": "Board and stockholders sign the consents",
      "route": "person",
-     "estimatedMinutes": 1440
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 1410,
+     "async": true
     },
     {
      "id": "n6",
@@ -782,6 +844,10 @@
    "edges": [
     {
      "from": "n1",
+     "to": "n1b"
+    },
+    {
+     "from": "n1b",
      "to": "n2"
     },
     {
@@ -798,6 +864,10 @@
     },
     {
      "from": "n5",
+     "to": "n5b"
+    },
+    {
+     "from": "n5b",
      "to": "n6"
     },
     {
@@ -820,7 +890,7 @@
    "priced-round",
    "series-a"
   ],
-  "activeMinutes": 8750,
+  "activeMinutes": 7340,
   "totalEstimatedMinutes": 18830,
   "hasAsyncSteps": true,
   "timeOrder": 97,
@@ -1099,12 +1169,13 @@
     },
     {
      "id": "n3",
-     "label": "Board approves grant",
+     "label": "Board approves and signs the grant consent",
      "route": "person",
      "approvalRequired": true,
      "riskLevel": "high",
      "estimatedMinutes": 2880,
-     "async": true
+     "async": true,
+     "legalSignature": true
     },
     {
      "id": "n4",
@@ -2029,12 +2100,20 @@
      "estimatedMinutes": 60
     },
     {
+     "id": "n5b",
+     "label": "Officer signs the e-file authorization (Form 8879-CORP)",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 10
+    },
+    {
      "id": "n6",
      "label": "CPA files return with IRS",
      "route": "person",
      "vendor": "irs",
      "riskLevel": "high",
-     "estimatedMinutes": 30
+     "estimatedMinutes": 20
     },
     {
      "id": "n7",
@@ -2070,6 +2149,10 @@
     },
     {
      "from": "n5",
+     "to": "n5b"
+    },
+    {
+     "from": "n5b",
      "to": "n6"
     },
     {
@@ -3057,10 +3140,17 @@
      "estimatedMinutes": 10
     },
     {
-     "id": "n4",
-     "label": "Complete the notarized USPS Form 1583",
+     "id": "n4a",
+     "label": "Fill out USPS Form 1583",
      "route": "person",
-     "estimatedMinutes": 20
+     "estimatedMinutes": 10
+    },
+    {
+     "id": "n4",
+     "label": "Notarize and sign Form 1583",
+     "route": "person",
+     "estimatedMinutes": 10,
+     "legalSignature": true
     },
     {
      "id": "n3",
@@ -3083,6 +3173,10 @@
     },
     {
      "from": "n2",
+     "to": "n4a"
+    },
+    {
+     "from": "n4a",
      "to": "n4"
     },
     {
@@ -3501,13 +3595,20 @@
      "estimatedMinutes": 30
     },
     {
+     "id": "n2b",
+     "label": "Draft the board consent for the changes",
+     "route": "agent",
+     "estimatedMinutes": 5
+    },
+    {
      "id": "n3",
-     "label": "Board approval",
+     "label": "Board signs the consent",
      "route": "person",
      "approvalRequired": true,
      "riskLevel": "high",
-     "estimatedMinutes": 15,
-     "async": true
+     "estimatedMinutes": 10,
+     "async": true,
+     "legalSignature": true
     }
    ],
    "edges": [
@@ -3517,6 +3618,10 @@
     },
     {
      "from": "n2",
+     "to": "n2b"
+    },
+    {
+     "from": "n2b",
      "to": "n3"
     }
    ]
@@ -3536,7 +3641,7 @@
    "equity",
    "fundraising"
   ],
-  "activeMinutes": 35,
+  "activeMinutes": 40,
   "totalEstimatedMinutes": 50,
   "hasAsyncSteps": true,
   "timeOrder": 38,
@@ -3949,7 +4054,8 @@
      "async": true,
      "extraOptionArenas": [
       "workflow-automation"
-     ]
+     ],
+     "legalSignature": true
     },
     {
      "id": "n7",
@@ -4325,7 +4431,8 @@
      "async": true,
      "extraOptionArenas": [
       "workflow-automation"
-     ]
+     ],
+     "legalSignature": true
     }
    ],
    "edges": [
@@ -10636,6 +10743,13 @@
      ]
     },
     {
+     "id": "n3b",
+     "label": "Founders sign the agreements",
+     "route": "person",
+     "legalSignature": true,
+     "estimatedMinutes": 10
+    },
+    {
      "id": "n4",
      "label": "Record splits on the cap table",
      "route": "form",
@@ -10648,6 +10762,14 @@
      "estimatedMinutes": 10
     },
     {
+     "id": "n4b",
+     "label": "Sign the 83(b) elections",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 10
+    },
+    {
      "id": "n5",
      "label": "File 83(b) elections with the IRS",
      "route": "form",
@@ -10655,7 +10777,7 @@
      "actionLabel": "IRS Form 15620 (83(b) election)",
      "vendor": "irs",
      "riskLevel": "high",
-     "estimatedMinutes": 30,
+     "estimatedMinutes": 20,
      "async": true
     }
    ]
@@ -10673,8 +10795,8 @@
    "legal",
    "equity"
   ],
-  "activeMinutes": 95,
-  "totalEstimatedMinutes": 125,
+  "activeMinutes": 115,
+  "totalEstimatedMinutes": 135,
   "hasAsyncSteps": true,
   "region": "us",
   "timeOrder": 2,
