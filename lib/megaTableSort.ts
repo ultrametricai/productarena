@@ -111,6 +111,28 @@ export const COLUMN_LABELS: Record<MegaTableColumn, string> = {
   popularity: 'Popularity',
 }
 
+// The columns a reader can actually pick as a sort (everything but the synthetic 'rank', which
+// is a fixed identity, never a live sort) — also the legal values of the shareable ?rank= URL
+// param (components/MegaTable.tsx, lib/urlState.ts).
+export const SORTABLE_COLUMNS = [
+  'name',
+  'arena',
+  'oss',
+  'initScore',
+  'agentReady',
+  'agenticApp',
+  'apiQuality',
+  'popularity',
+] as const satisfies readonly MegaTableColumn[]
+
+// Tolerant ?rank= parse — anything that isn't a sortable column name is null (the caller falls
+// back to the default silently; a bad shared URL must never break the table).
+export function parseMegaColumn(value: string | null): MegaTableColumn | null {
+  return value !== null && (SORTABLE_COLUMNS as readonly string[]).includes(value)
+    ? (value as MegaTableColumn)
+    : null
+}
+
 // `oss` defaults to desc like the numeric columns: desc = open-source rows first (oss sorts as
 // 1, commercial as 0), so the first click answers "which of these are open source?".
 export function defaultDirectionFor(column: MegaTableColumn): SortDirection {

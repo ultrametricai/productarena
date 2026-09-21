@@ -6,9 +6,11 @@
 import { describe, expect, it } from 'vitest'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 import {
+  encodeViaParam,
   lensGapFor,
   lensProcessSummary,
   parseLensState,
+  parseViaParam,
   resolveStepVendor,
   serializeLensState,
 } from '@/lib/processLens'
@@ -156,5 +158,33 @@ describe('lensProcessSummary — processLeaderboard normalization, client-safe',
     expect(summary.vendors).toEqual([{ productId: 'mid-bank', name: 'Mid Bank', source: 'lens' }])
     expect(summary.score).toBe(71)
     expect(lensProcessSummary([], {}, {})).toEqual({ vendors: [], served: 0, rankable: 0, score: 0 })
+  })
+})
+
+describe('shareable ?via param (parseViaParam / encodeViaParam)', () => {
+  it('parses comma-separated and repeated forms identically', () => {
+    const want = { 'startup-banking': 'mid-bank', payroll: 'gusto' }
+    expect(parseViaParam(['startup-banking:mid-bank,payroll:gusto'])).toEqual(want)
+    expect(parseViaParam(['startup-banking:mid-bank', 'payroll:gusto'])).toEqual(want)
+  })
+
+  it('skips invalid entries silently — a mangled shared URL degrades, never crashes', () => {
+    expect(parseViaParam(['no-colon', ':no-arena', 'no-product:', '', 'ok:fine'])).toEqual({ ok: 'fine' })
+    expect(parseViaParam([])).toEqual({})
+  })
+
+  it('splits on the FIRST colon so a product id containing one survives', () => {
+    expect(parseViaParam(['arena:prod:v2'])).toEqual({ arena: 'prod:v2' })
+  })
+
+  it('encodes sorted + comma-joined, and an empty lens encodes to null (param deleted)', () => {
+    expect(encodeViaParam({ payroll: 'gusto', banking: 'mercury' })).toBe('banking:mercury,payroll:gusto')
+    expect(encodeViaParam({})).toBeNull()
+  })
+
+  it('round-trips: encode(parse(v)) is canonical for any valid value', () => {
+    const picks = parseViaParam(['b:two,a:one'])
+    expect(encodeViaParam(picks)).toBe('a:one,b:two')
+    expect(parseViaParam([encodeViaParam(picks) as string])).toEqual(picks)
   })
 })
