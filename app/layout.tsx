@@ -5,6 +5,7 @@ import "./globals.css";
 import AccountMenu from "@/components/AccountMenu";
 import InstantTooltip from "@/components/InstantTooltip";
 import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
+import { GLOBAL_RANKINGS, PROCESS_RANKINGS } from "@/components/RankingsNav";
 import { loadArenaSections } from "@/lib/arenaSections";
 import CommandPalette from "@/components/CommandPalette";
 import GeoMark from "@/components/GeoMark";
@@ -280,36 +281,44 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <ArenaMenu sections={arenaMenuSections} searchable />
               {/* geo: every Explore destination wears its deterministic concept mark
                   (components/GeoMark.tsx), the same mark it wears on its own page header. */}
+              {/* Founder 2026-09-21: the ranking entries come in TWO labeled groups so it's
+                  never ambiguous what is a company ranking and what is a process ranking. Both
+                  lists are the single sources of truth in components/RankingsNav.tsx — the
+                  header menu, the /rankings/* cross-link footer, and each page's GeoMark all
+                  derive from them. */}
               <ArenaMenu
                 title="Explore"
                 geo
-                items={[
-                  { id: "agentic", name: "Most agent-ready", label: "ranking", href: "/rankings/agentic" },
-                  { id: "init", name: "Highest PA Score", label: "ranking", href: "/rankings/init" },
-                  { id: "ai-native", name: "Best built-in AI", label: "ranking", href: "/rankings/ai-native" },
-                  { id: "claims-integrity", name: "Claims vs reality", label: "ranking", href: "/rankings/claims-integrity" },
-                  { id: "most-connected", name: "Most connected", label: "ranking", href: "/rankings/most-connected" },
-                  { id: "most-tested", name: "Most tested", label: "ranking", href: "/rankings/most-tested" },
-                  { id: "rising", name: "Rising & falling", label: "ranking", href: "/rankings/rising" },
-                  { id: "popular", name: "Most popular", label: "ranking", href: "/rankings/popular" },
-                  { id: "most-open", name: "Most open", label: "ranking", href: "/rankings/most-open" },
-                  { id: "best-api", name: "Best API", label: "ranking", href: "/rankings/best-api" },
-                  { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
-                  { id: "missing", name: "Missing startups", label: "gaps", href: "/missing" },
-                  { id: "operating-rhythm", name: "Operating rhythm", label: "processes", href: "/processes/operating-rhythm" },
-                  { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
-                  { id: "yc", name: "YC batches", label: "ranking", href: "/yc" },
-                  { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },
-                  { id: "my-stack", name: "My Stack", label: "tool", href: "/my-stack" },
-                  { id: "stack-battle", name: "Battle of the stacks", label: "tool", href: "/stacks/battle" },
-                  { id: "changelog", name: "Changelog", label: "history", href: "/changelog" },
-                  { id: "predictions", name: "Predictions", label: "forecasts", href: "/predictions" },
-                  { id: "reports", name: "Weekly reports", label: "history", href: "/reports" },
-                  { id: "methodology", name: "Methodology", label: "docs", href: "/methodology" },
-                  { id: "pipeline", name: "Testing pipeline", label: "docs", href: "/pipeline" },
-                  { id: "proofs", name: "Recorded proofs", label: "docs", href: "/proofs" },
-                  { id: "certified", name: "Certified Agent-Ready", label: "program", href: "/certified" },
-                  { id: "mcp", name: "MCP server", label: "agents", href: "/mcp" },
+                sections={[
+                  {
+                    name: "🏢 Company rankings",
+                    items: GLOBAL_RANKINGS.map((r) => ({ id: r.id, name: r.name, label: "companies", href: r.href })),
+                  },
+                  {
+                    name: "🔁 Process rankings",
+                    items: PROCESS_RANKINGS.map((r) => ({ id: r.id, name: r.name, label: "processes", href: r.href })),
+                  },
+                  {
+                    name: "More views",
+                    items: [
+                      { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
+                      { id: "missing", name: "Missing startups", label: "gaps", href: "/missing" },
+                      { id: "operating-rhythm", name: "Operating rhythm", label: "processes", href: "/processes/operating-rhythm" },
+                      { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
+                      { id: "yc", name: "YC batches", label: "ranking", href: "/yc" },
+                      { id: "integrations", name: "Integration graph", label: "graph", href: "/integrations" },
+                      { id: "my-stack", name: "My Stack", label: "tool", href: "/my-stack" },
+                      { id: "stack-battle", name: "Battle of the stacks", label: "tool", href: "/stacks/battle" },
+                      { id: "changelog", name: "Changelog", label: "history", href: "/changelog" },
+                      { id: "predictions", name: "Predictions", label: "forecasts", href: "/predictions" },
+                      { id: "reports", name: "Weekly reports", label: "history", href: "/reports" },
+                      { id: "methodology", name: "Methodology", label: "docs", href: "/methodology" },
+                      { id: "pipeline", name: "Testing pipeline", label: "docs", href: "/pipeline" },
+                      { id: "proofs", name: "Recorded proofs", label: "docs", href: "/proofs" },
+                      { id: "certified", name: "Certified Agent-Ready", label: "program", href: "/certified" },
+                      { id: "mcp", name: "MCP server", label: "agents", href: "/mcp" },
+                    ],
+                  },
                 ]}
               />
               {/* The three tools + the power view each wear their GeoMark (same seed as their
