@@ -139,4 +139,98 @@ export const probes: LocalProbe[] = [
       expect: /MCP/,
       timeoutMs: 30_000,
     },
+    {
+      // Gumloop publishes a full llms.txt docs index for agents on the docs origin.
+      probeId: 'llms-site-index',
+      productId: 'gumloop',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.gumloop.com/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.gumloop.com/llms.txt | head -6',
+      expect: /# Gumloop/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Every Gumloop docs page ships a raw-Markdown .md mirror — the MCP connector guide
+      // (attach custom MCP servers to agents) round-trips keyless.
+      probeId: 'docs-md-endpoint',
+      productId: 'gumloop',
+      storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.gumloop.com/nodes/mcp/custom_mcp_servers.md | head -8'],
+      displayCommand: 'curl -s https://docs.gumloop.com/nodes/mcp/custom_mcp_servers.md | head -8',
+      expect: /MCP/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Lindy's docs origin publishes an llms.txt index for agents.
+      probeId: 'llms-site-index',
+      productId: 'lindy',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.lindy.ai/llms.txt | head -6'],
+      displayCommand: 'curl -s https://docs.lindy.ai/llms.txt | head -6',
+      expect: /# Lindy/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Lindy docs pages serve raw-Markdown .md mirrors — the hosted-MCP-servers guide
+      // (point Lindy at any MCP server, it builds actions from its tools) round-trips keyless.
+      probeId: 'docs-md-endpoint',
+      productId: 'lindy',
+      storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.lindy.ai/integrations/mcp.md | head -8'],
+      displayCommand: 'curl -s https://docs.lindy.ai/integrations/mcp.md | head -8',
+      expect: /MCP/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Activepieces Cloud answers /api/v1/flags keyless — the documented public REST API
+      // surface (activepieces.com/docs/endpoints/overview) is live and reachable by an agent.
+      probeId: 'api-flags-endpoint',
+      productId: 'activepieces',
+      storyIds: ['agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://cloud.activepieces.com/api/v1/flags | head -c 300'],
+      displayCommand: 'curl -s https://cloud.activepieces.com/api/v1/flags | head -c 300',
+      expect: /"ENVIRONMENT":"prod"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Activepieces docs ship .md mirrors — the MCP server guide (expose flows/pieces as MCP
+      // tools to AI assistants) round-trips as raw Markdown keyless.
+      probeId: 'docs-md-endpoint',
+      productId: 'activepieces',
+      storyIds: ['agentic-agent-docs', 'workflows-as-mcp-tools'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://www.activepieces.com/docs/mcp/overview.md | head -8'],
+      displayCommand: 'curl -s https://www.activepieces.com/docs/mcp/overview.md | head -8',
+      expect: /MCP/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Official CLI straight off npm answers --version keyless (npx one-shot install) —
+      // the same binary that runs `trigger.dev dev`, `deploy`, and `install-mcp`.
+      probeId: 'cli-version',
+      productId: 'trigger-dev',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'trigger.dev@latest', '--version'],
+      displayCommand: 'npx -y trigger.dev@latest --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Trigger.dev docs ship .md mirrors — the MCP server install guide (npx trigger.dev
+      // install-mcp wires the MCP server into Claude/Cursor/etc.) round-trips keyless.
+      probeId: 'docs-md-endpoint',
+      productId: 'trigger-dev',
+      storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://trigger.dev/docs/mcp-introduction.md | head -8'],
+      displayCommand: 'curl -s https://trigger.dev/docs/mcp-introduction.md | head -8',
+      expect: /MCP/,
+      timeoutMs: 30_000,
+    },
 ]
