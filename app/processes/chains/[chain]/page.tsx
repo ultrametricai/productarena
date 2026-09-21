@@ -4,8 +4,10 @@ import { notFound } from 'next/navigation'
 import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
+import ProcessLensBanner from '@/components/ProcessLensBanner'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
+import { buildProcessCheckSteps } from '@/lib/processCheckData'
 import { chainIcon, processIcon } from '@/lib/processIcons'
 import { chainManifestPath, chainManifestUrl } from '@/lib/processManifest'
 import {
@@ -44,6 +46,10 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
   const ceiling = computeCeiling(tasks.flatMap((t) => t.dag.nodes))
   const roles = vendorRoles(tasks)
   const simSteps = buildSimSteps(tasks)
+  // Pre-serialized step rows per section task (lib/processCheckData.ts) — the same lens/stack
+  // personalization contract as /processes/[slug]: static HTML unchanged, and a vendor clicked
+  // in one section (lens pageKey = the chain id) applies to any later step whose arena matches.
+  const checkStepsByTask = tasks.map((task) => buildProcessCheckSteps(task))
 
   return (
     <div className="space-y-10">
@@ -77,8 +83,12 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
           <span className="text-sky-300">sky = human or computer use</span>,{' '}
           <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate · ⏳ async wait.
         </p>
+        {/* Client-side lens banner over the WHOLE chain — one clicked vendor flows across every
+            section. Renders nothing in the static HTML. */}
+        <ProcessLensBanner steps={checkStepsByTask.flat()} pageKey={def.id} />
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <ProcessDag
+            lensKey={def.id}
             sections={tasks.map((task, i) => ({
               key: `${task.id}-${i}`,
               kicker: `process ${i + 1} of ${tasks.length}`,
@@ -89,6 +99,8 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
               meta: task.description,
               pct: taskCeiling(task).pct,
               taskId: task.id,
+              checkSteps: Object.fromEntries(checkStepsByTask[i].map((s) => [s.nodeId, s])),
+              mineHref: `/processes/${processSlug(task.title)}/mine`,
               nodes: task.dag.nodes,
               edges: task.dag.edges,
             }))}
