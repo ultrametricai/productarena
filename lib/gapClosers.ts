@@ -1,6 +1,7 @@
 import { isPopulated, loadCategories, loadCategory } from './data'
 import type { GapCloser, GapResolution, StepRoute, SwapOption } from './processSim'
 import { gapWhy } from './processSim'
+import { isShutdown } from './shutdown'
 
 // Agentic gap-closers: clever-but-honest ways to achieve a process's non-agent steps with
 // today's agentic vendors. A pure keyword rule engine (classifyGapStep — unit-testable without
@@ -149,12 +150,16 @@ function isLiveArena(arenaId: string, dir?: string): boolean {
 const topProductCache = new Map<string, SwapOption>()
 
 // The arena's current #1 by agentReady (nulls last) — same ranking the swap options use.
+// Shutdown products are never suggested (lib/shutdown.ts founder rule): the next product on
+// the agent-readiness ladder moves up.
 function topProduct(arenaId: string, dir?: string): SwapOption | null {
   const key = `${dir ?? ''}::${arenaId}`
   const hit = topProductCache.get(key)
   if (hit) return hit
   const data = loadCategory(arenaId, dir)
+  const shutdownIds = new Set(data.products.filter((p) => isShutdown(p)).map((p) => p.id))
   const best = [...data.rankings.leaderboard]
+    .filter((e) => !shutdownIds.has(e.productId))
     .sort((a, b) => (b.agentReady ?? -1) - (a.agentReady ?? -1))[0]
   if (!best) return null
   const top: SwapOption = {

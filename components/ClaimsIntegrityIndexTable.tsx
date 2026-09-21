@@ -2,6 +2,7 @@ import Link from 'next/link'
 import ClaimsChip from '@/components/ClaimsChip'
 import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import { claimsIntegrity, type ClaimsIntegrity } from '@/lib/claimsIntegrity'
 import type { CategoryData } from '@/lib/data'
 
@@ -85,6 +86,7 @@ export default function ClaimsIntegrityIndexTable({ categories, limit }: { categ
                   <ProductLogo product={row.product} size={24} />
                   <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                 </Link>
+                <ShutdownBadge shutdown={row.product.shutdown} source={row.product.shutdownSource} className="mt-1" />
               </td>
               <td className="hidden px-3 py-2 md:table-cell">
                 <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-emerald-300">

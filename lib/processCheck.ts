@@ -15,6 +15,10 @@ export interface CheckVendor {
   productId: string
   name: string
   score: number
+  /** Vendor announced a shutdown (lib/shutdown.ts founder rule). Kept in the serialized list —
+   *  the reader's own pick must stay findable so the check can tell them to migrate — but never
+   *  `best`, and a pick that resolves to one is always flagged regardless of delta. */
+  shutdown?: true
 }
 
 // One market a step can be served from: the covering arena ('function') or an evidence-gated
@@ -52,7 +56,8 @@ export interface StepCheckResult {
   best: CheckVendor & { arenaId: string }
   /** best − yours, one decimal; null when uncovered. */
   delta: number | null
-  /** Covered, but the pick trails the step's best by more than STEP_UPGRADE_DELTA. */
+  /** Covered, but the pick trails the step's best by more than STEP_UPGRADE_DELTA — or the
+   *  pick's vendor announced a shutdown (always needs a migration, whatever the delta). */
   flagged: boolean
 }
 
@@ -103,8 +108,12 @@ export function runProcessCheck(
       best: step.best,
       delta,
       // Never flag the step's own best pick (delta 0 by construction, but be explicit).
+      // A shutdown pick is ALWAYS flagged — it still resolves as "yours" (the reader really
+      // runs it) but needs a migration regardless of how small the score gap is.
       flagged:
-        yours !== null && yours.productId !== step.best.productId && (delta as number) > STEP_UPGRADE_DELTA,
+        yours !== null &&
+        (yours.shutdown === true ||
+          (yours.productId !== step.best.productId && (delta as number) > STEP_UPGRADE_DELTA)),
     }
   })
 

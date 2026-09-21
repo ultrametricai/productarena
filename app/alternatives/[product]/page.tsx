@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import AiEraBadge from '@/components/AiEraBadge'
 import ProductLogo from '@/components/ProductLogo'
 import ScoreBar from '@/components/ScoreBar'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import { adjacentProducts, findProductArena, rivalsFor } from '@/lib/alternatives'
 import { loadAll } from '@/lib/data'
 import { humanizeTheme } from '@/lib/icons'
@@ -114,6 +115,9 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
                 >
                   {rival.product.name}
                 </Link>
+                {/* The rival list is the judged arena field, honestly complete — but a rival
+                    whose vendor announced a shutdown is tagged, never silently offered. */}
+                <ShutdownBadge shutdown={rival.product.shutdown} source={rival.product.shutdownSource} className="ml-2" />
                 <p className="text-xs text-zinc-500">{rival.product.vendor}</p>
               </div>
               <div className="ml-auto flex shrink-0 items-center gap-3">

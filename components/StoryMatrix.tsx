@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import PersonaChip from '@/components/PersonaChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
@@ -141,6 +142,9 @@ function StoryMatrixGroup({
                 <div className="flex flex-col items-center gap-1">
                   <ProductLogoView product={p} size={24} hasLogo={logoMap[p.id] ?? false} />
                   <span className="text-[10px] text-zinc-400">{p.name}</span>
+                  {/* Column-header honesty marker: verdicts below stay judged as-is, but the
+                      vendor announced this product is closing (lib/shutdown.ts). */}
+                  <ShutdownBadge shutdown={p.shutdown} source={p.shutdownSource} />
                 </div>
               </th>
             ))}

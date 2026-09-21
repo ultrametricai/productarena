@@ -134,6 +134,9 @@ export interface IcpRankingRow {
   // How many applicable emphasized cells the score rests on — surfaced so a thin-evidence
   // score reads as thin.
   applicable: number
+  // Verified shutdown note (ProductSchema.shutdown) — the lens is a ranking, so the row stays
+  // and is tagged (lib/shutdown.ts), never dropped.
+  shutdown?: string
 }
 
 // A lens ranking row must rest on at least this many applicable emphasized cells. Without a
@@ -175,6 +178,7 @@ export function buildIcpRanking(categories: CategoryData[], icp: IcpType): IcpRa
         score,
         dimensions,
         applicable,
+        shutdown: product.shutdown,
       })
     }
   }

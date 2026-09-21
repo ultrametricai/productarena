@@ -12,6 +12,7 @@ import { isPopulated, loadCategory } from './data'
 import type { ProcessCheckStep } from './processCheck'
 import type { ProcessTask } from './processes'
 import { crossArenaStepRankings, functionMappingFor, stepVendorScore } from './processRankings'
+import { isShutdown } from './shutdown'
 
 export function buildProcessCheckSteps(task: ProcessTask, dir?: string): ProcessCheckStep[] {
   const steps: ProcessCheckStep[] = []
@@ -29,17 +30,28 @@ export function buildProcessCheckSteps(task: ProcessTask, dir?: string): Process
     // ranks). Ordering mirrors lib/processRankings.ts's rankVendors: score desc, leaderboard
     // order as the deterministic tie-break.
     const leaderboardRank = new Map(data.rankings.leaderboard.map((e, i) => [e.productId, i]))
+    // Shutdown vendors STAY in this serialized list, marked (unlike every offer surface, which
+    // filters them via lib/processRankings.ts's rankVendors): the reader's own pick must remain
+    // findable wherever it ranks so the check can tell them to migrate. They are never `best`.
     const vendors = data.products
       .flatMap((p) => {
         const s = stepVendorScore(entry.arenaId, storyIds, p.id, dir)
-        return s ? [{ productId: s.productId, name: s.name, score: s.score }] : []
+        return s
+          ? [{
+              productId: s.productId,
+              name: s.name,
+              score: s.score,
+              ...(isShutdown(p) ? { shutdown: true as const } : {}),
+            }]
+          : []
       })
       .sort(
         (a, b) =>
           b.score - a.score ||
           (leaderboardRank.get(a.productId) ?? 0) - (leaderboardRank.get(b.productId) ?? 0),
       )
-    if (vendors.length === 0) continue
+    const best = vendors.find((v) => !v.shutdown)
+    if (!best) continue
 
     // Evidence-gated cross-arena markets, exactly as the process page shows them (committed
     // 'extra' mapping + full/partial verdict + node allowlist — see crossArenaStepRankings).
@@ -58,7 +70,8 @@ export function buildProcessCheckSteps(task: ProcessTask, dir?: string): Process
         { arenaId: entry.arenaId, arenaName: data.category.name, kind: 'function', vendors },
         ...extras,
       ],
-      best: { ...vendors[0], arenaId: entry.arenaId },
+      // The best non-shutdown vendor — usually vendors[0]; never a shutdown pick.
+      best: { productId: best.productId, name: best.name, score: best.score, arenaId: entry.arenaId },
     })
   }
   return steps

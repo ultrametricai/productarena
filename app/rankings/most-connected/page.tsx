@@ -3,6 +3,7 @@ import Link from 'next/link'
 import ColumnsHelpLink from '@/components/ColumnsHelpLink'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import RankingsNav from '@/components/RankingsNav'
 import { loadAll, type CategoryData } from '@/lib/data'
 import { loadIntegrationGraph, productRefIndex } from '@/lib/integrations'
@@ -151,6 +152,7 @@ export default function MostConnectedRankingPage() {
                   >
                     <ProductLogo product={row.product} size={16} />
                     <span className="min-w-0 truncate font-medium">{row.product.name}</span>
+                    <ShutdownBadge shutdown={row.product.shutdown} />
                   </Link>
                   <Link href={`/arena/${row.arenaId}`} className="mt-0.5 block text-xs text-zinc-500 hover:text-emerald-300">
                     {row.arenaName}

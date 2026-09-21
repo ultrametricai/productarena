@@ -11,6 +11,7 @@ import TableControls from '@/components/TableControls'
 import OssPill from '@/components/OssPill'
 import PopularTag, { isNotablyPopular } from '@/components/PopularTag'
 import ProductLogoView from '@/components/ProductLogoView'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import TrendArrow from '@/components/TrendArrow'
 import WatchButton from '@/components/WatchButton'
 import EnterpriseBadge from '@/components/EnterpriseBadge'
@@ -232,6 +233,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       {row.hotReason && <HotChip reason={row.hotReason} />}
                       <YcBadge ycBatch={row.ycBatch} />
                       <EnterpriseBadge enterprise={row.enterprise} />
+                      <ShutdownBadge shutdown={row.shutdown} />
                     </div>
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">

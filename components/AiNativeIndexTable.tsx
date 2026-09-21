@@ -5,6 +5,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import MomentumChip from '@/components/MomentumChip'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import type { CategoryData } from '@/lib/data'
 
 interface IndexRow {
@@ -94,6 +95,7 @@ export default function AiNativeIndexTable({ categories, limit }: { categories: 
                     <ProductLogo product={row.product} size={24} />
                     <span className="min-w-0 truncate font-medium">{row.product.name}</span>
                   </Link>
+                  <ShutdownBadge shutdown={row.product.shutdown} source={row.product.shutdownSource} className="mt-1" />
                 </td>
                 <td className="px-3 py-2">
                   <Link href={`/arena/${row.data.category.id}`} className="text-zinc-400 hover:text-emerald-300">

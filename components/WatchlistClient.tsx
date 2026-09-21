@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useMemo } from 'react'
 import ProductLogoView from '@/components/ProductLogoView'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import Sparkline from '@/components/Sparkline'
 import WatchButton, { useWatchlist } from '@/components/WatchButton'
 import { seriesFor } from '@/lib/scoreTrend'
@@ -67,6 +68,7 @@ export default function WatchlistClient({ products }: { products: WatchlistProdu
                 <Link href={`/arena/${p.arenaId}/product/${p.id}`} className="font-medium hover:text-emerald-300">
                   {p.name}
                 </Link>
+                <ShutdownBadge shutdown={p.shutdown} className="ml-2" />
                 <p className="text-xs text-zinc-500">
                   <Link href={`/arena/${p.arenaId}`} className="hover:text-emerald-300">
                     {p.arenaName}

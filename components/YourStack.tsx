@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ProductLogoView from '@/components/ProductLogoView'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import { useMyStackMap } from '@/components/useMyStackMap'
 import {
   MY_STACK_KEY,
@@ -226,6 +227,7 @@ export default function YourStack({
                   <Link href={`/arena/${p.arenaId}/product/${p.pick.id}`} className="font-medium text-zinc-100 hover:text-emerald-300">
                     {p.pick.name}
                   </Link>
+                  <ShutdownBadge shutdown={p.pick.shutdown} />
                   <Link href={`/arena/${p.arenaId}`} className="text-xs text-zinc-500 hover:text-emerald-300">
                     {p.arenaName}
                   </Link>
@@ -239,6 +241,23 @@ export default function YourStack({
                     score receipt
                   </Link>
                 </div>
+                {/* Rule 0, ahead of any score-gap line: the vendor's own shutdown announcement
+                    outranks every delta. The migration target is the arena's best remaining
+                    (non-shutdown) product — the same leader stackAdvice already resolved. */}
+                {p.pick.shutdown && (
+                  <p className="mt-1.5 text-xs text-amber-300/90" title={p.pick.shutdown}>
+                    Shutting down — migrate: the vendor has announced this product is closing
+                    {p.leader.id !== p.pick.id ? (
+                      <>
+                        ; the {p.arenaName} leader among remaining products is{' '}
+                        <Link href={`/arena/${p.leader.arenaId}/product/${p.leader.id}`} className="underline decoration-amber-400/40 hover:text-amber-200">
+                          {p.leader.name}
+                        </Link>
+                      </>
+                    ) : null}
+                    .
+                  </p>
+                )}
                 {p.pick.id === p.leader.id ? (
                   <p className="mt-1.5 text-xs text-emerald-300/90">Leads its arena — nothing above it to upgrade to.</p>
                 ) : (

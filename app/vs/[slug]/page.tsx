@@ -8,6 +8,7 @@ import BattleView from '@/components/BattleView'
 import { BusinessModelChip } from '@/components/BusinessModel'
 import ClaimsChip from '@/components/ClaimsChip'
 import ProductLogo from '@/components/ProductLogo'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import { battleSlug, findBattleBySlug, loadAll, type CategoryData } from '@/lib/data'
 import type { BattleRecord, Product } from '@/lib/schemas'
 import { SITE_URL } from '@/lib/site'
@@ -138,6 +139,9 @@ export default async function VsPage({ params }: { params: Promise<{ slug: strin
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <BusinessModelChip product={p} />
+              {/* Honesty marker (lib/shutdown.ts): the judged record stands, but a reader
+                  weighing this head-to-head must see the vendor announced it is closing. */}
+              <ShutdownBadge shutdown={p.shutdown} source={p.shutdownSource} />
               <ClaimsChip
                 data={data}
                 productId={p.id}

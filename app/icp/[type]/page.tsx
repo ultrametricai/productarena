@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductLogoView from '@/components/ProductLogoView'
 import OssPill from '@/components/OssPill'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import { loadAll } from '@/lib/data'
 import ThemeIcon from '@/components/ThemeIcon'
 import { humanizeTheme } from '@/lib/icons'
@@ -99,6 +100,7 @@ export default async function IcpPage({ params }: { params: Promise<{ type: stri
                     {/* On requireOss lenses every product is open source (the header already
                         says so) — a per-row pill would repeat one fact N times. */}
                     {row.type === 'oss' && !icp.emphasis.requireOss && <OssPill variant="compact" />}
+                    <ShutdownBadge shutdown={row.shutdown} />
                   </div>
                 </td>
                 <td className="hidden whitespace-nowrap px-3 py-2 text-xs text-zinc-400 sm:table-cell">

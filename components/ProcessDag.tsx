@@ -4,11 +4,19 @@ import CeilingBar from '@/components/CeilingBar'
 import ComputerUseChips from '@/components/ComputerUseChips'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import StepYourPick from '@/components/StepYourPick'
+import StepApiCalls from '@/components/StepApiCalls'
+import StepPromptBox from '@/components/StepPromptBox'
 import { resolveGapStep } from '@/lib/gapClosers'
+import { humanStepAudit } from '@/lib/humanSteps'
+import { FEASIBILITY_META, showComputerUseChips } from '@/lib/humanStepsUi'
+import type { ProcessCheckStep } from '@/lib/processCheck'
 import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
 import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
 import { crossArenaStepRankings, stepRanking, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
+import { stepPromptFor } from '@/lib/stepPrompts'
+import { stepVendorCallsFor } from '@/lib/stepVendorCalls'
 
 // Block-diagram rendering of a process DAG (server component — <details> for expansion, no
 // client JS). Visual language ported from Ultrametric's internal ai-docs eval dashboard and
@@ -326,7 +334,21 @@ function StepRankingRow({ ranking, extras, node }: { ranking: StepRanking | null
   )
 }
 
-function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; taskId?: string }) {
+function NodeBlock({
+  node,
+  index,
+  taskId,
+  checkStep,
+  mineHref,
+}: {
+  node: DagNode
+  index: number
+  taskId?: string
+  // Pre-serialized step row (lib/processCheckData.ts) for the client-side "yours" line — the
+  // static HTML is unchanged; only readers with an "I'm using" stack see it hydrate in.
+  checkStep?: ProcessCheckStep
+  mineHref?: string
+}) {
   const style = ROUTE_STYLE[node.route]
   const vendorInfo = node.vendor ? vendorChipInfo(node.vendor) : null
   // Story-derived ranking for the step (lib/processRankings.ts): present whenever the step has
@@ -346,6 +368,21 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
   const calls = node.functionCalls ?? []
   const gap = resolveGapStep(node)
   const closer = gap?.kind === 'closer' ? gap.closer : null
+  // Evidence-grounded per-vendor calls for this step (data/step-vendor-calls.json) — when
+  // present they take over the API-calls block, with the node's own functionCalls kept as the
+  // canonical reference flow.
+  const vendorCalls = taskId ? stepVendorCallsFor(taskId, node.id) : []
+  // Authored root cause + computer-use feasibility for human/manual steps (founder 2026-09-21:
+  // "get to the bottom of why, and why computer use can't be used there"). Null until the
+  // audited entry exists — renderers then fall back to today's behavior.
+  const audit = taskId && node.route !== 'agent' ? humanStepAudit(taskId, node.id) : null
+  // Copy-pasteable agent prompt for the step (founder pilot 2026-09-21, data/step-prompts.json —
+  // currently generated for set-up-transactional-email only; renders wherever data exists).
+  const stepPrompt = taskId ? stepPromptFor(taskId, node.id) : null
+  const promptVendors = [
+    ...(ranking?.vendors ?? []).map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name })),
+    ...extras.flatMap((r) => r.vendors.map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name }))),
+  ]
 
   return (
     <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
@@ -404,6 +441,8 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
         <StepRankingRow ranking={ranking} extras={extras} node={node} />
       )}
 
+      {checkStep && mineHref && <StepYourPick step={checkStep} mineHref={mineHref} />}
+
       {options.length > 0 && (
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
           <span
@@ -453,7 +492,31 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
         </p>
       )}
 
-      {calls.length > 0 ? (
+      {/* Why this step is human/manual, specifically — and the honest computer-use verdict. */}
+      {audit && (
+        <p className="mt-2 text-[11px] leading-relaxed text-zinc-400">
+          <span className={node.route === 'person' ? 'text-red-300/80' : 'text-amber-300/90'}>
+            why {node.route === 'person' ? 'human' : 'manual'}:
+          </span>{' '}
+          {audit.why}{' '}
+          <span
+            className="whitespace-nowrap text-zinc-500"
+            title={audit.computerUseWhy}
+          >
+            · {FEASIBILITY_META[audit.computerUse].icon} {FEASIBILITY_META[audit.computerUse].label}
+          </span>
+        </p>
+      )}
+
+      {stepPrompt && <StepPromptBox prompt={stepPrompt.prompt} vendors={promptVendors} />}
+
+      {vendorCalls.length > 0 ? (
+        <StepApiCalls
+          canonical={calls}
+          canonicalVendor={node.vendor}
+          vendors={vendorCalls}
+        />
+      ) : calls.length > 0 ? (
         <details className="group mt-2">
           <summary className="flex cursor-pointer list-none items-center gap-1.5 font-mono text-[11px] text-zinc-500 transition hover:text-zinc-300 [&::-webkit-details-marker]:hidden">
             <span aria-hidden className="inline-block text-[9px] transition-transform group-open:rotate-90">
@@ -477,8 +540,11 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
       {/* Founder 2026-09-18: "any time 'manual' is seen, see if we can do a computer use
           process for it." Every non-agent step block surfaces the judged computer-use fleet —
           who could attempt the mechanical part today, verdict-backed. The route badge above is
-          unchanged: the step stays form/manual/human. Renders nothing without judged evidence. */}
-      {taskId && node.route !== 'agent' && (
+          unchanged: the step stays form/manual/human. Renders nothing without judged evidence.
+          Audited nodes gate the chips on feasibility (founder 2026-09-21): where the blocker is
+          authority, physics, or a third party's clock, "could attempt it today" would mislead —
+          the "why human" line above carries the honest verdict instead. */}
+      {taskId && node.route !== 'agent' && showComputerUseChips(audit?.computerUse) && (
         <div className="mt-2 text-[11px]">
           <ComputerUseChips taskId={taskId} nodeId={node.id} />
         </div>
@@ -504,7 +570,19 @@ function NodeBlock({ node, index, taskId }: { node: DagNode; index: number; task
   )
 }
 
-function Flow({ nodes, edges, taskId }: { nodes: DagNode[]; edges?: DagEdge[]; taskId?: string }) {
+function Flow({
+  nodes,
+  edges,
+  taskId,
+  checkSteps,
+  mineHref,
+}: {
+  nodes: DagNode[]
+  edges?: DagEdge[]
+  taskId?: string
+  checkSteps?: Record<string, ProcessCheckStep>
+  mineHref?: string
+}) {
   const layers = layerNodes(nodes, edges)
   // Cumulative step offsets, precomputed so nothing is reassigned inside the render map
   // (react-compiler lint: "Cannot reassign variable after render completes").
@@ -522,7 +600,13 @@ function Flow({ nodes, edges, taskId }: { nodes: DagNode[]; edges?: DagEdge[]; t
           <Fragment key={layer[0].id}>
             {li > 0 && <Connector />}
             {layer.length === 1 ? (
-              <NodeBlock node={layer[0]} index={start + 1} taskId={taskId} />
+              <NodeBlock
+                node={layer[0]}
+                index={start + 1}
+                taskId={taskId}
+                checkStep={checkSteps?.[layer[0].id]}
+                mineHref={mineHref}
+              />
             ) : (
               <div className="rounded-xl border border-dashed border-zinc-700/80 p-2">
                 <p className="mb-2 px-1 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
@@ -530,7 +614,14 @@ function Flow({ nodes, edges, taskId }: { nodes: DagNode[]; edges?: DagEdge[]; t
                 </p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {layer.map((n, ni) => (
-                    <NodeBlock key={n.id} node={n} index={start + ni + 1} taskId={taskId} />
+                    <NodeBlock
+                      key={n.id}
+                      node={n}
+                      index={start + ni + 1}
+                      taskId={taskId}
+                      checkStep={checkSteps?.[n.id]}
+                      mineHref={mineHref}
+                    />
                   ))}
                 </div>
               </div>
@@ -577,11 +668,15 @@ export default function ProcessDag({
   edges,
   sections,
   taskId,
+  checkSteps,
+  mineHref,
 }: {
   nodes?: DagNode[]
   edges?: DagEdge[]
   sections?: DagSection[]
   taskId?: string
+  checkSteps?: Record<string, ProcessCheckStep>
+  mineHref?: string
 }) {
   if (sections && sections.length > 0) {
     return (
@@ -599,7 +694,7 @@ export default function ProcessDag({
   }
   return (
     <div>
-      <Flow nodes={nodes ?? []} edges={edges} taskId={taskId} />
+      <Flow nodes={nodes ?? []} edges={edges} taskId={taskId} checkSteps={checkSteps} mineHref={mineHref} />
     </div>
   )
 }

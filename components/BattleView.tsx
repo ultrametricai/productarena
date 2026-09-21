@@ -2,6 +2,7 @@ import AgenticBadge from '@/components/AgenticBadge'
 import { BusinessModelLine } from '@/components/BusinessModel'
 import ContestLink from '@/components/ContestLink'
 import PersonaChip from '@/components/PersonaChip'
+import ShutdownBadge from '@/components/ShutdownBadge'
 import ThemeIcon from '@/components/ThemeIcon'
 import VerdictBadge from '@/components/VerdictBadge'
 import VerificationBadge from '@/components/VerificationBadge'
@@ -131,8 +132,10 @@ export default function BattleView({
             </h1>
             <div className="mt-1 flex items-center justify-center gap-2 text-xs text-zinc-400">
               <BusinessModelLine product={a} />
+              <ShutdownBadge shutdown={a.shutdown} source={a.shutdownSource} />
               <span className="text-zinc-700">·</span>
               <BusinessModelLine product={b} />
+              <ShutdownBadge shutdown={b.shutdown} source={b.shutdownSource} />
             </div>
           </>
         )}
