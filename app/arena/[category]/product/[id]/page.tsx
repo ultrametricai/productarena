@@ -30,6 +30,7 @@ import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import ThemeIcon from '@/components/ThemeIcon'
 import StoryViewToggle from '@/components/StoryViewToggle'
 import TryItSection from '@/components/TryIt/TryItSection'
+import VendorProcesses from '@/components/VendorProcesses'
 import ImUsing from '@/components/ImUsing'
 import WatchButton from '@/components/WatchButton'
 import EnterpriseBadge from '@/components/EnterpriseBadge'
@@ -54,6 +55,7 @@ import { SITE_URL } from '@/lib/site'
 import { loadStoryTiers, storyTiersByCell, tierCountsFor } from '@/lib/storyTiers'
 import { buildStoryVerdictRows } from '@/lib/storyVerdictsSort'
 import { hasTryIt } from '@/lib/tryit'
+import { processesForVendor } from '@/lib/vendorProcesses'
 
 const AI_MODE_STORY_ID = 'agentic-builtin-assistant'
 
@@ -158,6 +160,13 @@ export default async function ProductPage({
   // startup-banking AND expense-management), each with its live rank there — the header's
   // arenas strip, so a user can jump straight to any leaderboard the vendor is a member of.
   const memberships = arenaMembershipsOf(allCategories, id)
+  // Founder 2026-09-21: the processes this product interacts with and serves — the reverse of
+  // the process pages' vendor rankings (lib/vendorProcesses.ts one-pass cached index). The
+  // header chip counts only judged step-SERVING appearances (function/extra step scores);
+  // computer-use-only "could attempt it" appearances stay out of the chip (and out of
+  // stepsServed) so a browser agent's ~100 attempt candidacies never read as coverage.
+  const processAppearances = processesForVendor(category, id)
+  const processesServed = processAppearances.filter((a) => a.stepsServed > 0).length
 
   return (
     <div className="space-y-8">
@@ -296,6 +305,18 @@ export default async function ProductPage({
               </span>
             </Link>
           ))}
+          {/* One small chip only (the header is crowded): jumps to the processes section below.
+              Rendered only when judged step-serving appearances exist — never for
+              computer-use-only vendors. */}
+          {processesServed > 0 && (
+            <a
+              href="#processes"
+              title={`${product.name} has a judged step score in ${processesServed} founder operating ${processesServed === 1 ? 'process' : 'processes'} — see the table below.`}
+              className="inline-flex items-center gap-1 rounded-full border border-zinc-800 px-2.5 py-0.5 text-xs text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
+            >
+              serves {processesServed} {processesServed === 1 ? 'process' : 'processes'} →
+            </a>
+          )}
         </div>
       </div>
 
@@ -430,6 +451,12 @@ export default async function ProductPage({
       <PricingSignals entry={loadPricing(category)[id]} />
 
       <BusinessModelSection product={product} />
+
+      {/* Founder 2026-09-21: the founder operating processes this product comes up in — the
+          reverse index over the process pages' own rankings. After the evidence material
+          (verdicts, proofs, claims, pricing), before the bottom utility rail; renders nothing
+          for products no process surfaces. */}
+      <VendorProcesses arenaId={category} productId={id} productName={product.name} />
 
       {/* Founder 2026-09-15: score trend + the utility rail (Try/Flag/Badge/For agents/Data)
           and the auth-gated probe chip live at the page end — provenance and tooling for readers
