@@ -103,6 +103,34 @@ for (const arena of fs.readdirSync(DATA, { withFileTypes: true }).filter((d) => 
   }
 }
 
+// Curated pins (data/mcp-endpoint-pins.json): endpoints whose verdicts stand but whose
+// URL-bearing evidence excerpt rotated out on a re-judge. Same security bar as the scan —
+// asEndpoint shape check + vendor-domain guard against the product's own committed domains.
+const pinsFile = path.join(DATA, 'mcp-endpoint-pins.json')
+if (fs.existsSync(pinsFile)) {
+  const { pins } = JSON.parse(fs.readFileSync(pinsFile, 'utf8'))
+  for (const [key, url] of Object.entries(pins ?? {})) {
+    const [arena, productId] = key.split('/')
+    const productsFile = path.join(DATA, arena ?? '', 'products.json')
+    if (!fs.existsSync(productsFile)) {
+      console.error(`generate-mcp-allowlist: pin ${key} names a missing arena — remove the pin`)
+      process.exit(1)
+    }
+    const product = JSON.parse(fs.readFileSync(productsFile, 'utf8')).find((p) => p.id === productId)
+    if (!product) {
+      console.error(`generate-mcp-allowlist: pin ${key} names a missing product — remove the pin`)
+      process.exit(1)
+    }
+    const before = endpoints.get(key)
+    consider(key, productDomains(product), url)
+    if (!endpoints.has(key)) {
+      console.error(`generate-mcp-allowlist: pin ${key} -> ${url} failed the endpoint/domain guard`)
+      process.exit(1)
+    }
+    if (!before) console.log(`generate-mcp-allowlist: pinned ${key} -> ${url}`)
+  }
+}
+
 const sorted = [...endpoints.entries()].sort(([a], [b]) => a.localeCompare(b))
 const entries = sorted.map(([key, ep]) => `  '${key}': '${ep.url}',`).join('\n')
 
