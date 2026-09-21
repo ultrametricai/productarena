@@ -14,8 +14,9 @@ export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole
 
 // The founder-process corpus (data/processes.json): 97 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
-// API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (genuinely
-// needs a human: signatures, meetings, judgment, waiting on a third party). The whole feature's
+// API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (a human
+// or a computer-use agent does it: meetings, judgment, waiting on a third party — with
+// legally required signature acts flagged legalSignature, the true human floor). The feature's
 // thesis lives in that routing: the per-process **agent ceiling** (share of steps an agent can
 // run today) and the **gaps** (the non-agent steps) are first-class findings, not footnotes.
 //
@@ -85,6 +86,14 @@ export const DagNodeSchema = z.object({
   // above are the canonical declarations; this is the remaining forward-compat field.
   signupUrl: z.string().min(1).optional(),
   approvalRequired: z.boolean().optional(),
+  // The founder's "true human floor" (2026-09-21): this step IS a legally required human
+  // signature/attestation act — a statute or counterparty genuinely requires a human to sign
+  // or swear (board/stockholder consents, 83(b) elections, notarized USPS 1583, I-9/W-4
+  // attestations, tax-return jurats). Only meaningful on route 'person'. Judgment calls that
+  // merely FEEL human (go/no-go decisions, reviews, meetings) are NOT legalSignature — they
+  // present as "human or computer use". Combined prep+signature steps are split in the corpus
+  // so this flag marks only the signature act itself.
+  legalSignature: z.boolean().optional(),
   riskLevel: z.enum(['low', 'medium', 'high']).optional(),
   estimatedMinutes: z.number().min(0),
   async: z.boolean().optional(),
@@ -763,6 +772,7 @@ export function buildSimSteps(tasks: ProcessTask[], dir?: string): SimStep[] {
       calls: (n.functionCalls ?? []).map((fc) => fc.method),
       toolCall: n.toolCall ?? null,
       approvalRequired: n.approvalRequired ?? false,
+      legalSignature: n.legalSignature ?? false,
       riskLevel: n.riskLevel ?? null,
       estimatedMinutes: n.estimatedMinutes,
       async: n.async ?? false,

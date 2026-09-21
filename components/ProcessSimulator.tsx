@@ -62,7 +62,9 @@ export default function ProcessSimulator({
     call: 'pl-6 text-zinc-400',
     approval: 'pl-4 text-amber-300',
     decision: 'text-sky-300/90',
-    gap: 'text-red-300/90',
+    // Human handoffs read calm (founder 2026-09-21: human work is not an error state) —
+    // the ⚠/✍ glyphs carry the distinction from ✓ decided lines.
+    gap: 'text-sky-300/90',
     workaround: 'pl-4 text-emerald-300/80',
     task: 'pt-2 text-zinc-500',
     done: 'text-zinc-300',

@@ -13,10 +13,12 @@ export const metadata: Metadata = {
     'Startup operations in the open — every founder process, the software that runs it, and the best an agent can do today. Agent ceilings, human/manual gaps, and simulated dry runs over real market options.',
 }
 
+// Person steps read calm (sky), not negative red — founder 2026-09-21: a human step is
+// "human or computer use", not an error state.
 const ROUTE_DOT: Record<string, string> = {
   agent: 'bg-emerald-400',
   form: 'bg-amber-400',
-  person: 'bg-red-400/70',
+  person: 'bg-sky-400/80',
 }
 
 export default function ProcessesPage() {
@@ -32,7 +34,8 @@ export default function ProcessesPage() {
         <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
           Startup operations in the open — every process, the software that runs it, and the best
           an agent can do today. Each step is routed honestly: agent-runnable via a recorded API
-          call, a manual form with no API path, or genuinely human. The gaps are the finding.
+          call, a manual form with no API path, or human-or-computer-use work — with the legally
+          required signatures flagged as the true human floor. The gaps are the finding.
         </p>
       </section>
 
@@ -66,7 +69,11 @@ export default function ProcessesPage() {
                     <li key={`${t.id}-${i}`} className="flex items-center gap-2 text-xs text-zinc-400">
                       <span className="flex shrink-0 gap-0.5">
                         {t.dag.nodes.map((n, j) => (
-                          <span key={j} aria-hidden className={`h-1.5 w-1.5 rounded-full ${ROUTE_DOT[n.route]}`} />
+                          <span
+                            key={j}
+                            aria-hidden
+                            className={`h-1.5 w-1.5 rounded-full ${n.legalSignature ? 'bg-violet-400/80' : ROUTE_DOT[n.route]}`}
+                          />
                         ))}
                       </span>
                       <IconChip icon={processIcon(t.id)} title={`${t.title} — ${t.phase} process`} />

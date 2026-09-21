@@ -1,30 +1,22 @@
 import ComputerUseChips from '@/components/ComputerUseChips'
-import { resolveGapStep } from '@/lib/gapClosers'
-import { humanStepAudit, type HumanStepAudit } from '@/lib/humanSteps'
+import { verdictGaps, type HumanStepAudit, type VerdictGap } from '@/lib/humanSteps'
 import { FEASIBILITY_META, showComputerUseChips } from '@/lib/humanStepsUi'
-import type { DagNode, ProcessCeiling, ProcessTask } from '@/lib/processes'
+import type { ProcessCeiling, ProcessTask } from '@/lib/processes'
 
 // The agent-ceiling verdict box: the single honest sentence for a process — how much an agent
-// can run today, and exactly which steps still need a human or a manual portal. The gaps split
-// three ways (lib/gapClosers.ts resolution, same buckets as splitGaps but with node identity):
-// closable with today's market (an agentic vendor covers the step), irreducibly human
-// (judgment/identity — no workaround is invented), and no workaround yet (still manual, the
-// market hasn't closed it).
+// can run today, and exactly which steps still sit with a human or a manual portal. The gaps
+// bucket four ways (lib/humanSteps.ts verdictGaps): legally-required signature acts (the
+// founder's 2026-09-21 "true human floor" — DagNode.legalSignature, never given a workaround
+// or computer-use chips), closable with today's market (an agentic vendor covers the step),
+// judgment/identity work ("human or computer use" — presented calmly, never as an error
+// state), and no workaround yet (still manual, the market hasn't closed it).
 //
-// EVERY manual step — all three buckets, form portals and human steps alike (founder
-// 2026-09-18: "any time 'manual' is seen, see if we can do a computer use process for it") —
-// additionally surfaces the judged computer-use fleet (components/ComputerUseChips.tsx →
-// lib/processRankings.ts computerUseOptions) as "🖥 could attempt it today". The step KEEPS its
-// manual routing — the row is honest capability evidence, never a claim the step is solved,
-// and it renders nothing where no vendor has judged full/partial evidence.
-
-interface GapRef {
-  taskId: string
-  node: DagNode
-  // Authored root cause + computer-use feasibility (data/human-step-audit.json) — null until
-  // the node is audited; renderers then fall back to the legacy generic reason.
-  audit: HumanStepAudit | null
-}
+// Every NON-SIGNATURE manual step (founder 2026-09-18: "any time 'manual' is seen, see if we
+// can do a computer use process for it") additionally surfaces the judged computer-use fleet
+// (components/ComputerUseChips.tsx → lib/processRankings.ts computerUseOptions) as "🖥 could
+// attempt it today". The step KEEPS its manual routing — the row is honest capability
+// evidence, never a claim the step is solved, and it renders nothing where no vendor has
+// judged full/partial evidence.
 
 // The per-node "why + can computer use do it" line (founder 2026-09-21: "get to the bottom of
 // why, and why computer use can't be used there").
@@ -40,36 +32,27 @@ function AuditLine({ audit }: { audit: HumanStepAudit }) {
   )
 }
 
+// One bucket row: label, the honest why (audited when available), and — only where honest —
+// the judged computer-use fleet. Signature rows suppress the chips entirely.
+function GapRow({ gap }: { gap: VerdictGap }) {
+  return (
+    <li>
+      {gap.node.label}{' '}
+      {gap.audit ? (
+        <AuditLine audit={gap.audit} />
+      ) : (
+        <span className="text-zinc-500">({gap.why})</span>
+      )}
+      {showComputerUseChips(gap.audit?.computerUse, gap.node.legalSignature) && (
+        <ComputerUseChips taskId={gap.taskId} nodeId={gap.node.id} />
+      )}
+    </li>
+  )
+}
+
 export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCeiling; tasks: ProcessTask[] }) {
   const { agentSteps, totalSteps, approvalGates, gaps } = ceiling
-
-  // Non-agent steps with node identity, bucketed by their gap resolution (mirrors splitGaps,
-  // which only carries labels — each row here needs taskId:nodeId to look up its committed
-  // computer-use story mapping).
-  const closable: Array<GapRef & { blurb: string }> = []
-  const irreducible: Array<GapRef & { reason: string }> = []
-  const unclosed: Array<GapRef & { why: string }> = []
-  const arenas: string[] = []
-  for (const task of tasks) {
-    for (const node of task.dag.nodes) {
-      if (node.route === 'agent') continue
-      const res = resolveGapStep(node)
-      const audit = humanStepAudit(task.id, node.id)
-      if (res?.kind === 'closer') {
-        closable.push({ taskId: task.id, node, audit, blurb: res.closer.blurb })
-        if (!arenas.includes(res.closer.arenaName)) arenas.push(res.closer.arenaName)
-      } else if (res?.kind === 'irreducible') {
-        irreducible.push({ taskId: task.id, node, audit, reason: res.reason })
-      } else {
-        unclosed.push({
-          taskId: task.id,
-          node,
-          audit,
-          why: node.route === 'person' ? 'needs a human' : 'manual form/portal — no API path',
-        })
-      }
-    }
-  }
+  const { signature, closable, irreducible, unclosed, arenas } = verdictGaps(tasks)
 
   return (
     <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/5 p-4 sm:p-5">
@@ -88,7 +71,8 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
         <details className="mt-2">
           <summary className="cursor-pointer select-none text-sm text-zinc-400 transition hover:text-emerald-300">
             {closable.length > 0 && <span className="mr-3">⚡ {closable.length} closable with today&rsquo;s market</span>}
-            {irreducible.length > 0 && <span className="mr-3 text-red-300/80">{irreducible.length} human or computer use</span>}
+            {signature.length > 0 && <span className="mr-3 text-violet-300/90">✍ {signature.length} legally human — signature</span>}
+            {irreducible.length > 0 && <span className="mr-3 text-sky-300/90">{irreducible.length} human or computer use</span>}
             {unclosed.length > 0 && <span className="text-amber-300/90">{unclosed.length} no workaround yet</span>}
             <span className="ml-1 text-zinc-600">— details</span>
           </summary>
@@ -103,9 +87,9 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
               <ul className="mt-1 space-y-1">
                 {closable.map((g) => (
                   <li key={`${g.taskId}-${g.node.id}`}>
-                    {g.node.label} <span className="text-zinc-500">({g.blurb})</span>
+                    {g.node.label} <span className="text-zinc-500">({g.why})</span>
                     {g.audit && <AuditLine audit={g.audit} />}
-                    {showComputerUseChips(g.audit?.computerUse) && (
+                    {showComputerUseChips(g.audit?.computerUse, g.node.legalSignature) && (
                       <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
                     )}
                   </li>
@@ -113,12 +97,31 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
               </ul>
             </div>
           )}
+          {signature.length > 0 && (
+            <div>
+              <p>
+                {/* Founder 2026-09-21: signatures are the only thing that legally needs a
+                    human today — the one bucket no agent, workaround, or computer-use chip
+                    ever touches. */}
+                <span className="text-violet-300/90">✍ Legally human — signature ({signature.length}):</span>{' '}
+                <span className="text-zinc-500">
+                  a statute or counterparty requires a human signature or sworn attestation
+                  here — the true human floor, never offered a workaround.
+                </span>
+              </p>
+              <ul className="mt-1 space-y-1">
+                {signature.map((g) => (
+                  <GapRow key={`${g.taskId}-${g.node.id}`} gap={g} />
+                ))}
+              </ul>
+            </div>
+          )}
           {irreducible.length > 0 && (
             <div>
               <p>
-                {/* Founder 2026-09-18: was "Temporarily human" — the section now lists ranked
-                    computer-use attempts, so the old name undersold it. */}
-                <span className="text-red-300/80">Human or computer use ({irreducible.length}):</span>{' '}
+                {/* Founder 2026-09-21: was red "Human or computer use" — the calm sky tone
+                    replaces the negative coloring; human work is not an error state. */}
+                <span className="text-sky-300/90">Human or computer use ({irreducible.length}):</span>{' '}
                 <span className="text-zinc-500">
                   judgment or identity work — where judged computer-use agents could attempt the
                   mechanical part, they&rsquo;re listed with their verdict-backed scores.
@@ -126,17 +129,7 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
               </p>
               <ul className="mt-1 space-y-1">
                 {irreducible.map((g) => (
-                  <li key={`${g.taskId}-${g.node.id}`}>
-                    {g.node.label}{' '}
-                    {g.audit ? (
-                      <AuditLine audit={g.audit} />
-                    ) : (
-                      <span className="text-zinc-500">({g.reason})</span>
-                    )}
-                    {showComputerUseChips(g.audit?.computerUse) && (
-                      <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
-                    )}
-                  </li>
+                  <GapRow key={`${g.taskId}-${g.node.id}`} gap={g} />
                 ))}
               </ul>
             </div>
@@ -148,17 +141,7 @@ export default function ProcessVerdict({ ceiling, tasks }: { ceiling: ProcessCei
               </p>
               <ul className="mt-1 space-y-1">
                 {unclosed.map((g) => (
-                  <li key={`${g.taskId}-${g.node.id}`}>
-                    {g.node.label}{' '}
-                    {g.audit ? (
-                      <AuditLine audit={g.audit} />
-                    ) : (
-                      <span className="text-zinc-500">({g.why})</span>
-                    )}
-                    {showComputerUseChips(g.audit?.computerUse) && (
-                      <ComputerUseChips taskId={g.taskId} nodeId={g.node.id} />
-                    )}
-                  </li>
+                  <GapRow key={`${g.taskId}-${g.node.id}`} gap={g} />
                 ))}
               </ul>
             </div>

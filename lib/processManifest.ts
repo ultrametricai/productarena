@@ -23,7 +23,8 @@ export const MANIFEST_VERSION = 1 as const
 // Executor-facing step kind, mapped from the corpus route:
 //   agent  → 'api'          (drive it through recorded API/tool calls — MCP-first)
 //   form   → 'computer-use' (manual portal/form work — a browser agent behind an approval gate)
-//   person → 'human'        (genuinely needs a human — render as a checklist item)
+//   person → 'human'        (a human or a supervised computer-use agent — render as a checklist
+//                            item; steps flagged legalSignature are strictly human)
 export type ManifestStepKind = 'api' | 'computer-use' | 'human'
 
 export function stepKind(route: DagNode['route']): ManifestStepKind {
@@ -70,6 +71,10 @@ export interface ManifestStep {
   // (lib/gapClosers.ts classification) — the executor must render it as a human checklist
   // item, never attempt it.
   irreducible?: string
+  // True when the step is a legally required human signature/attestation act (the corpus's
+  // legalSignature flag — the founder's "true human floor"): the executor must never attempt
+  // or work around it. Additive, optional — not a breaking shape change.
+  legalSignature?: true
   // True whenever the step is side-effectful: explicit corpus gate, any flagged risk, every
   // computer-use step (a browser agent acting on a real portal), and any api step whose calls
   // aren't all read-only. The executor must hold for human approval before running these.
@@ -210,6 +215,7 @@ export function buildManifestStep(node: DagNode, dir?: string): ManifestStep {
   if (node.actionUrl) step.actionUrl = node.actionUrl
   if (node.signupUrl) step.signupUrl = node.signupUrl
   if (cls?.kind === 'irreducible') step.irreducible = cls.reason
+  if (node.legalSignature) step.legalSignature = true
   return step
 }
 

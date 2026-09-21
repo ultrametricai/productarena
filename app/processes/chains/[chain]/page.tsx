@@ -74,7 +74,8 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
           One continuous flow, sectioned per process. Route-coded blocks:{' '}
           <span className="text-emerald-300">emerald = agent</span>,{' '}
           <span className="text-amber-300">amber = manual form/portal</span>,{' '}
-          <span className="text-red-300/90">red = needs a human</span>. ⏸ approval gate · ⏳ async wait.
+          <span className="text-sky-300">sky = human or computer use</span>,{' '}
+          <span className="text-violet-300">violet ✍ = signature, legally human</span>. ⏸ approval gate · ⏳ async wait.
         </p>
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <ProcessDag
