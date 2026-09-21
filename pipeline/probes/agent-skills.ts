@@ -86,6 +86,37 @@ export const probes: LocalProbe[] = [
       timeoutMs: 300_000,
     },
     {
+      // Same REAL install roundtrip for garrytan/gstack — the repo publishes ONE router skill
+      // ("gstack", the top-level SKILL.md that dispatches to the 23 specialists), and the open
+      // skills CLI fetches and installs it keylessly into ./.claude/skills.
+      probeId: 'scratch-install-roundtrip',
+      productId: 'gstack',
+      storyIds: ['one-command-install', 'agent-installs-skill'],
+      bin: 'npx',
+      argv: [
+        'sh', '-c',
+        'rm -rf /tmp/pa-skill-gs; mkdir -p /tmp/pa-skill-gs; cd /tmp/pa-skill-gs; npx -y skills add garrytan/gstack --skill gstack -a claude-code -y --copy; echo "--- installed SKILL.md frontmatter ---"; sed -n 1,5p .claude/skills/gstack/SKILL.md; cd /; rm -rf /tmp/pa-skill-gs',
+      ],
+      displayCommand: 'npx -y skills add garrytan/gstack --skill gstack -a claude-code -y --copy  # in a scratch dir, then print installed SKILL.md frontmatter',
+      expect: /name: gstack/,
+      timeoutMs: 300_000,
+    },
+    {
+      // Review-before-install, keyless: every gstack skill is a plain SKILL.md whose full
+      // instructions are public — fetch the /review skill's frontmatter straight from the repo.
+      probeId: 'skillmd-inspect',
+      productId: 'gstack',
+      storyIds: ['inspect-before-install', 'plain-files-portability', 'per-skill-documentation'],
+      bin: 'curl',
+      argv: [
+        'sh', '-c',
+        'curl -s https://raw.githubusercontent.com/garrytan/gstack/HEAD/review/SKILL.md | sed -n 1,8p',
+      ],
+      displayCommand: 'curl -s https://raw.githubusercontent.com/garrytan/gstack/HEAD/review/SKILL.md | sed -n 1,8p',
+      expect: /name: review/,
+      timeoutMs: 60_000,
+    },
+    {
       // The Codex marketplace manifest is a public, keyless JSON catalog of curated plugins.
       probeId: 'marketplace-manifest',
       productId: 'codex-plugins',
