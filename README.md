@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-83-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-517-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-29626-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-518-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-29678-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **83 arenas, 517 products, 29,626 judged verdicts.**
+As of the last full pipeline run: **83 arenas, 518 products, 29,678 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -197,7 +197,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | GPU Clouds (`gpu-clouds`) | runpod, lambda-labs, coreweave, vast-ai, paperspace |
 | Feature Flags & Experimentation (`feature-flags`) | launchdarkly, statsig, growthbook, flagsmith, unleash |
 | Serverless & Developer Databases (`serverless-databases`) | neon, turso, planetscale, clickhouse, cockroachdb |
-| Agent Skills & Extensions (`agent-skills`) | superpowers, anthropic-skills, mattpocock-skills, skills-cli, codex-plugins |
+| Agent Skills & Extensions (`agent-skills`) | superpowers, anthropic-skills, mattpocock-skills, skills-cli, codex-plugins, gstack |
 | Data Warehouses & Lakehouses (`data-warehouses`) | snowflake, databricks, bigquery, motherduck |
 | Search Infrastructure (`search-infra`) | algolia, meilisearch, typesense, elastic, orama |
 | Scheduling & Calendar (`scheduling`) | cal-com, calendly, motion, reclaim, savvycal |
