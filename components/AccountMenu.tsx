@@ -95,6 +95,15 @@ export default function AccountMenu() {
           )}
           <Link
             role="menuitem"
+            href="/account"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-800 hover:text-emerald-300"
+          >
+            <span aria-hidden className="text-emerald-400">⚙</span>
+            Account &amp; my vendors
+          </Link>
+          <Link
+            role="menuitem"
             href="/watchlist"
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-800 hover:text-emerald-300"
