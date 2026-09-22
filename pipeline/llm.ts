@@ -30,8 +30,7 @@ export function setClientForTests(fake: Anthropic): void {
   client = fake
 }
 
-export function extractJson(text: string): unknown {
-  const unfenced = text.replace(/```(?:json)?/g, '')
+function walkBackParse(unfenced: string): unknown {
   const start = unfenced.search(/[[{]/)
   if (start === -1) return undefined
   // walk back from the end until a parse succeeds
@@ -47,6 +46,33 @@ export function extractJson(text: string): unknown {
   return undefined
 }
 
+// Escapes raw control characters ONLY inside string literals (a raw newline/tab in a rationale
+// is the model's most common JSON-breaking slip; between tokens they're legal whitespace and
+// must be left alone). Minimal scanner: tracks in-string state and backslash escapes.
+export function escapeControlCharsInStrings(text: string): string {
+  let out = ''
+  let inString = false
+  let escaped = false
+  for (const ch of text) {
+    if (inString && !escaped && ch.charCodeAt(0) < 0x20) {
+      out += ch === '\n' ? '\\n' : ch === '\r' ? '\\r' : ch === '\t' ? '\\t' : ''
+      continue
+    }
+    out += ch
+    if (escaped) escaped = false
+    else if (ch === '\\' && inString) escaped = true
+    else if (ch === '"') inString = !inString
+  }
+  return out
+}
+
+export function extractJson(text: string): unknown {
+  const unfenced = text.replace(/```(?:json)?/g, '')
+  const plain = walkBackParse(unfenced)
+  if (plain !== undefined) return plain
+  return walkBackParse(escapeControlCharsInStrings(unfenced))
+}
+
 export async function llmJson<T>(opts: {
   schema: z.ZodType<T>
   system: string
@@ -55,6 +81,7 @@ export async function llmJson<T>(opts: {
 }): Promise<T> {
   const messages: Anthropic.MessageParam[] = [{ role: 'user', content: opts.prompt }]
   let lastError = ''
+  let noJsonStreak = 0
   // A response cut off by max_tokens can never parse — retrying at the same cap just burns
   // attempts (observed under prompt v3, whose rubric rationales run longer). Escalate the cap
   // on truncation and retry the ORIGINAL prompt (appending half a JSON object only confuses
@@ -80,21 +107,34 @@ export async function llmJson<T>(opts: {
     const parsed = json === undefined ? undefined : opts.schema.safeParse(json)
     if (parsed?.success) return parsed.data
     lastError = json === undefined ? 'response contained no parseable JSON' : JSON.stringify(parsed?.error.issues)
+    noJsonStreak = json === undefined ? noJsonStreak + 1 : 0
     if (json === undefined) {
       // Keep a forensic sample: the recurring story-runner flake only ever reported "no
       // parseable JSON" with zero hint of WHAT the model said instead.
       console.warn(`llmJson: attempt ${attempt + 1} had no parseable JSON; first 200 chars: ${JSON.stringify(text.slice(0, 200))}`)
     }
-    messages.push(
-      { role: 'assistant', content: text },
-      {
+    if (noJsonStreak >= 2) {
+      // A malformed completion left in context tends to be reproduced almost verbatim on the
+      // next turn (observed 5/5 on payroll/gusto:multi-state-payroll, 2026-09-22). After two
+      // consecutive no-JSON replies, drop the poisoned turns and re-ask fresh instead of
+      // stacking more corrections onto them.
+      messages.length = 0
+      messages.push({
         role: 'user',
-        content:
-          json === undefined
-            ? 'Your previous reply contained no parseable JSON. Reply with ONLY the JSON object — no prose, no markdown fences, no explanation before or after it.'
-            : `Your response failed validation: ${lastError}\nReply with ONLY the corrected JSON. No prose, no code fences.`,
-      },
-    )
+        content: `${opts.prompt}\n\nReply with ONLY the JSON object — no prose, no markdown fences, no explanation before or after it.`,
+      })
+    } else {
+      messages.push(
+        { role: 'assistant', content: text },
+        {
+          role: 'user',
+          content:
+            json === undefined
+              ? 'Your previous reply contained no parseable JSON. Reply with ONLY the JSON object — no prose, no markdown fences, no explanation before or after it.'
+              : `Your response failed validation: ${lastError}\nReply with ONLY the corrected JSON. No prose, no code fences.`,
+        },
+      )
+    }
     if (attempt < MAX_RETRIES) await sleep(retryBackoffMs(attempt))
   }
   throw new Error(`LLM output failed validation after ${MAX_RETRIES + 1} attempts: ${lastError}`)
