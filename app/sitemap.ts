@@ -16,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // One /alternatives/[product] page per unique product id (see that page's dedupe rule).
   const seenProductIds = new Set<string>()
 
-  // Deliberately absent: /watchlist (feature-flagged off — see lib/flags.ts's
+  // Deliberately absent: /watchlist (session-gated, noindex — same posture as /account's
   // WATCHLIST_ENABLED; add it here when the flag flips), /rankings/init (the homepage
   // mega-table's default view already owns that ranking's search intent), and /everything
   // (unlisted by founder call — the route stays alive for old links but isn't advertised).
@@ -48,6 +48,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/rankings/popular`, lastModified: now },
     { url: `${SITE_URL}/rankings/most-open`, lastModified: now },
     { url: `${SITE_URL}/rankings/best-api`, lastModified: now },
+    // Process rankings (🔁 group in the Explore menu — launch audit S5).
+    { url: `${SITE_URL}/rankings/processes/most-automatable`, lastModified: now },
+    { url: `${SITE_URL}/rankings/processes/best-covered`, lastModified: now },
+    { url: `${SITE_URL}/rankings/processes/riskiest`, lastModified: now },
+    { url: `${SITE_URL}/rankings/processes/most-annoying`, lastModified: now },
+    { url: `${SITE_URL}/rankings/processes/growth-drivers`, lastModified: now },
   ]
 
   for (const data of categories) {
