@@ -9,6 +9,7 @@ import AiEraBadge from '@/components/AiEraBadge'
 import AiModeBadge from '@/components/AiModeBadge'
 import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
+import CompareRivals from '@/components/CompareRivals'
 import CoverageMapSection from '@/components/CoverageMapSection'
 import FamilySection from '@/components/FamilySection'
 import { familyForProduct, loadFamilies } from '@/lib/families'
@@ -350,6 +351,10 @@ export default async function ProductPage({
           above the Products (family) section. What work a product does ranks above who its
           siblings are. */}
       <VendorProcesses arenaId={category} productId={id} productName={product.name} />
+
+      {/* Founder 2026-09-22: the similar-products comparison — this product vs its leaderboard
+          neighbors, every score a receipt link, head-to-head records into the /vs pages. */}
+      <CompareRivals data={data} productId={id} />
 
       {/* Multi-product vendors: the family breakdown block (lib/families.ts) — renders for any
           product with a data/product-families.json entry, nothing for everyone else. Founder
