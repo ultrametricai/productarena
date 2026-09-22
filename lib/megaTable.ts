@@ -85,6 +85,30 @@ export function buildMegaTableRows(categories: CategoryData[]): MegaTableRow[] {
       })
     }
   }
+  // One row per product in the default companies view: a product judged in several arenas
+  // (airwallex: payments + startup-banking; brex/ramp/foreloop likewise) keeps its best-scoring
+  // arena row; the others are flagged isSecondaryArena and hidden behind the same "Include all
+  // products of companies" toggle as family sub-rows. Founder 2026-09-21. Family-sub rows are
+  // skipped in the best-row election so a parent never loses its row to a hidden sub.
+  const bestByProduct = new Map<string, MegaTableRow>()
+  for (const row of rows) {
+    if (row.isFamilySubProduct) continue
+    const best = bestByProduct.get(row.productId)
+    const score = row.initScore ?? -1
+    const bestScore = best?.initScore ?? -1
+    if (
+      !best ||
+      score > bestScore ||
+      (score === bestScore && (row.popularity ?? 0) > (best.popularity ?? 0))
+    ) {
+      bestByProduct.set(row.productId, row)
+    }
+  }
+  for (const row of rows) {
+    if (!row.isFamilySubProduct && bestByProduct.get(row.productId) !== row) {
+      row.isSecondaryArena = true
+    }
+  }
   return rows
 }
 

@@ -130,7 +130,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   }, [])
 
   const companyRows = useMemo(
-    () => (includeSubProducts ? rows : rows.filter((r) => !r.isFamilySubProduct)),
+    () => (includeSubProducts ? rows : rows.filter((r) => !r.isFamilySubProduct && !r.isSecondaryArena)),
     [rows, includeSubProducts],
   )
   const byArena = useMemo(() => filterMegaRowsByArena(companyRows, arenaId), [companyRows, arenaId])
