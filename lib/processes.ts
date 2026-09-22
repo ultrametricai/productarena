@@ -517,6 +517,9 @@ const VENDOR_LABELS: Record<string, string> = {
   google_search_console: 'Google Search Console',
   iubenda: 'iubenda',
   coderabbit: 'CodeRabbit',
+  // Contextual vendor selection (vendor_011): our own evidence-comparison surface, disclosed as
+  // ours — same honest-affiliation posture as Ultrametric products judged in their arenas.
+  productarena: 'ProductArena (ours)',
 }
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives
@@ -555,6 +558,9 @@ export const VENDOR_SIGNUP_URL: Record<string, string> = {
   vercel: 'https://vercel.com/',
   posthog: 'https://posthog.com/',
   slack: 'https://slack.com/',
+  // Our own compare-against-your-stack page (vendor_011) — verified live; the chip label
+  // discloses the affiliation.
+  productarena: 'https://ultrametric.ai/productarena/my-stack',
 }
 
 export function vendorLabel(vendor: string): string {
