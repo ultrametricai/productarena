@@ -251,6 +251,9 @@ describe('vendor -> arena mapping', () => {
       // 2026-09-22 corpus expansion — real suppliers with no arena yet, shown as honest
       // unlinked chips: R&D-credit study shops, pen-test firms, 401(k) providers, MDMs,
       // EOR/status-page/questionnaire vendors, and mobile build/submit tooling.
+      // 2026-09-22 founder: 'check domain availability' had an empty vendor cell — the
+      // registrar market has no arena yet, so these are honest unlinked chips.
+      'name_com', 'namecheap', 'porkbun',
       'fondo', 'neo_tax', 'cobalt', 'oneleet', 'guideline', 'human_interest',
       'kandji', 'jamf', 'remote', 'statuspage', 'conveyor', 'fastlane', 'expo',
     ])
