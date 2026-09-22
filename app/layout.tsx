@@ -96,6 +96,7 @@ const NAV_LABELS: Record<string, string> = {
   "security-keys": "Security keys",
   "authenticator-apps": "2FA apps",
   "game-engines": "Game engines",
+  "self-hosted-assistants": "Self-hosted AI",
   "email-marketing": "Email Mktg",
 };
 

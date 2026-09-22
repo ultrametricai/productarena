@@ -69,6 +69,7 @@ import { probes as marketplacePayments } from './marketplace-payments'
 import { probes as processors } from './processors'
 import { probes as gpus } from './gpus'
 import { probes as securityKeys } from './security-keys'
+import { probes as selfHostedAssistants } from './self-hosted-assistants'
 import { probes as authenticatorApps } from './authenticator-apps'
 import { probes as gameEngines } from './game-engines'
 import { probes as identityVerification } from './identity-verification'
@@ -141,6 +142,7 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   processors,
   gpus,
   'security-keys': securityKeys,
+  'self-hosted-assistants': selfHostedAssistants,
   'authenticator-apps': authenticatorApps,
   'game-engines': gameEngines,
   'identity-verification': identityVerification,

@@ -104,6 +104,7 @@ export const DOMAIN_VOCAB: Record<string, string[]> = {
   'edge-platforms': ['deploy', 'edge', 'serverless', 'cdn', 'dns', 'domain', 'traffic', 'runtime', 'infra', 'scaling', 'autoscal', 'container', 'function', 'tls', 'ddos', 'waf', 'postgres', 'database', 'preview', 'rollback', 'log'],
   'frontend-frameworks': ['component', 'dom\\b', 'framework', 'render', 'hydration', 'bundle', 'reactiv', 'template', 'routing', 'state management', 'scaffold', 'browser', 'polyfill', 'typescript', 'ssr'],
   'local-llm-runtimes': ['model', 'inference', 'gpu', 'quantiz', 'llm', 'token', 'cpu', 'runtime', 'vram', 'gguf', 'lora', 'decoding', 'serving', 'chat'],
+  'self-hosted-assistants': ['assistant', 'agent', 'self-host', 'gateway', 'messenger', 'whatsapp', 'telegram', 'discord', 'imessage', 'slack\\b', 'channel', 'skill', 'plugin', 'model', 'ollama', 'local model', 'memory', 'browser', 'shell', 'exec', 'sandbox', 'secret', 'credential', 'voice', 'wizard', 'installer', 'docker', 'subagent', 'swarm', 'session', 'chat'],
   payroll: ['payroll', 'employee', 'contractor', 'tax', 'w-2', 'w-4', '1099', 'i-9', 'pay\\b', 'hire', 'benefit', 'pto', 'onboard', 'deposit', 'wage'],
   'product-feedback': ['feedback', 'changelog', 'roadmap', 'portal', 'customer', 'release note', 'widget', 'vote', 'request', 'initiative'],
   'software-factory': ['agent', 'code', 'repo', 'pull request', 'task', 'ci\\b', 'build', 'diff', 'model'],
