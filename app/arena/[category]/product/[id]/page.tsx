@@ -296,15 +296,15 @@ export default async function ProductPage({
             </a>
           )}
         </div>
-        {/* Arenas strip — one chip per arena this product id is ranked in, emoji + name +
-            live rank, each linking to that leaderboard (founder: members-of arenas belong at
-            the top; the old tertiary "Evidence as of · story coverage" line that held this
-            slot is now provenance fine print in ProductFinePrint at the page bottom). The
-            current arena is included, highlighted, so multi-arena products (sentry, brex)
-            read as one roster rather than "this arena + others". */}
+        {/* Founder 2026-09-22: the breadcrumb already names THIS arena — repeating it here under
+            the stats wasted the top. The strip now lists only OTHER arenas the product is ranked
+            in ("Also ranked in") and disappears entirely for single-arena products; the
+            processes chip keeps its slot either way. */}
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="text-[10px] uppercase tracking-widest text-zinc-500">Arenas</span>
-          {memberships.map((m) => (
+          {memberships.some((m) => m.arenaId !== category) && (
+            <span className="text-[10px] uppercase tracking-widest text-zinc-500">Also ranked in</span>
+          )}
+          {memberships.filter((m) => m.arenaId !== category).map((m) => (
             <Link
               key={m.arenaId}
               href={`/arena/${m.arenaId}`}

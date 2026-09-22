@@ -11,19 +11,24 @@ import {
 // (2026-09-21) so the homepage's process mode renders the exact same rows as /processes; one
 // derivation, two surfaces.
 
-// Founder 2026-09-18: no empty vendor cells — processes without hand-curated vendors fall back
-// to the top story-ranked options across their steps (same evidence-gated rankings the process
-// page shows; cross-arena entries included). Cap 4 for the cell.
-function derivedVendorsFor(t: ProcessTask) {
-  const seen = new Set<string>()
-  const out: { id: string; label: string; arena: string | null; hasLogo: boolean }[] = []
+// Vendor-cell cap for the index table — founder 2026-09-22 ("we are missing vendors on the
+// processes main page, e.g. GitLab for 'Cut a release' — I want a more complete answer"):
+// raised from 4, and the cell now always tops up from the derived market after the curated
+// vendors instead of showing one source or the other.
+const VENDOR_CELL_CAP = 6
+
+// Founder 2026-09-18: no empty vendor cells — the top story-ranked options across the task's
+// steps (same evidence-gated rankings the process page shows; cross-arena entries included).
+function derivedVendorsFor(t: ProcessTask, seed?: { id: string; label: string; arena: string | null; hasLogo: boolean }[]) {
+  const out = [...(seed ?? [])]
+  const seen = new Set<string>(out.map((v) => v.id))
   const push = (id: string, label: string, arena: string | null) => {
-    if (seen.has(id) || out.length >= 4) return
+    if (seen.has(id) || out.length >= VENDOR_CELL_CAP) return
     seen.add(id)
     out.push({ id, label, arena, hasLogo: hasLogo(id) })
   }
   for (const e of processLeaderboard(t).entries) push(e.productId, e.name, e.arenaId)
-  if (out.length < 4) {
+  if (out.length < VENDOR_CELL_CAP) {
     for (const node of t.dag.nodes) {
       const rankings = [stepRanking(t.id, node), ...crossArenaStepRankings(t.id, node)]
       for (const r of rankings) {
@@ -73,12 +78,15 @@ export function buildProcessRows(): ProcessRowsBundle {
       annoyance: t.annoyance,
       risk: t.risk,
       growthImpact: t.growthImpact,
-      vendors: (t.vendors.length > 0
-        ? [...new Set(t.vendors)].map((v) => {
-            const id = vendorProductId(v)
-            return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
-          })
-        : derivedVendorsFor(t)),
+      // Curated vendors lead, then the cell tops up from the derived market to the cap — so
+      // "Cut a release" shows github + sentry AND the ranked code-hosting field (gitlab…).
+      vendors: derivedVendorsFor(
+        t,
+        [...new Set(t.vendors)].slice(0, VENDOR_CELL_CAP).map((v) => {
+          const id = vendorProductId(v)
+          return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
+        }),
+      ),
     }
   })
 
