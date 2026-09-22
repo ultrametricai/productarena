@@ -98,6 +98,7 @@ const NAV_LABELS: Record<string, string> = {
   "game-engines": "Game engines",
   "self-hosted-assistants": "Self-hosted AI",
   "email-marketing": "Email Mktg",
+  "frontier-models": "Frontier models",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to
