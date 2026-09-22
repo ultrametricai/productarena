@@ -19,6 +19,7 @@ import type { VendorResponse, Verdict } from '@/lib/schemas'
 import { isCoveredVerdict, surfacesForEvidence } from '@/lib/storyCoverage'
 import {
   type SortDirection,
+  type StoryProcessLink,
   type StoryVerdictColumn,
   type StoryVerdictRow,
   COLUMN_LABELS,
@@ -173,10 +174,17 @@ export default function StoryVerdictsTable({
   category,
   productId,
   rows,
+  processes,
 }: {
   category: string
   productId: string
   rows: StoryVerdictRow[]
+  // storyId → related founder processes (lib/storyGraph.ts's storyProcessesForArena) — the
+  // story↔process connection layer (founder ask 2026-09-22). OPTIONAL: undefined hides the
+  // "Processes" column entirely (pages not yet wired render exactly as before); present, every
+  // row gets a cell — up to two icon+title chips linking to /processes/<slug>#steps, a "+N"
+  // tooltip for the rest, an em-dash when no process maps onto the story.
+  processes?: Record<string, StoryProcessLink[]>
 }) {
   const [column, setColumn] = useState<StoryVerdictColumn>('importance')
   const [direction, setDirection] = useState<SortDirection>('desc')
@@ -220,6 +228,11 @@ export default function StoryVerdictsTable({
 
   const filtered = useMemo(() => filterStoryVerdictRows(rows, query, theme, scope, tier, persona), [rows, query, theme, scope, tier, persona])
   const sorted = useMemo(() => sortStoryVerdictRows(filtered, column, direction), [filtered, column, direction])
+
+  // 9 base columns; the optional "Processes" column (present only when the page passed the
+  // story→process map) makes it 10 — every full-width cell (no-match row, expanded details)
+  // spans whichever count is live.
+  const colSpan = processes ? 10 : 9
 
   // Auto-expand the row a #story-<id> deep link targets — on mount for cross-page links
   // (StoryMatrix, mega table, glyph tables) and on hashchange for same-page ones (ClaimsSection,
@@ -367,6 +380,16 @@ export default function StoryVerdictsTable({
               <SortableTh col="evidence" current={column} direction={direction} onSort={handleSort}>
                 <span title="How many cited sources back this verdict — expand the row to read them">Evidence</span>
               </SortableTh>
+              {processes && (
+                <th scope="col" className="px-3 py-2 font-normal">
+                  <span
+                    className="whitespace-nowrap"
+                    title="Founder processes this story's capability maps onto (via the committed step→story mapping) — chips link to the process page's step list"
+                  >
+                    Processes
+                  </span>
+                </th>
+              )}
               <th scope="col" aria-label="Row actions" className="w-8 px-1 py-2" />
             </tr>
           </thead>
@@ -384,13 +407,15 @@ export default function StoryVerdictsTable({
                   untested={untested}
                   category={category}
                   productId={productId}
+                  processLinks={processes ? processes[row.storyId] ?? [] : undefined}
+                  colSpan={colSpan}
                   onToggle={() => toggle(row.storyId)}
                 />
               )
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={colSpan} className="px-3 py-6 text-center text-zinc-500">
                   No stories match{theme !== '' ? ` theme “${humanizeTheme(theme)}”` : ''}{query.trim() !== '' ? ` “${query}”` : ''}.
                 </td>
               </tr>
@@ -408,6 +433,8 @@ function StoryRowPair({
   untested,
   category,
   productId,
+  processLinks,
+  colSpan,
   onToggle,
 }: {
   row: StoryVerdictRow
@@ -415,6 +442,9 @@ function StoryRowPair({
   untested: boolean
   category: string
   productId: string
+  // undefined = the table has no "Processes" column at all; [] = column present, none related.
+  processLinks?: StoryProcessLink[]
+  colSpan: number
   onToggle: () => void
 }) {
   const detailsId = `story-details-${row.storyId}`
@@ -517,13 +547,44 @@ function StoryRowPair({
           </button>
           )}
         </td>
+        {processLinks !== undefined && (
+          <td className="px-3 py-2 text-xs">
+            {processLinks.length === 0 ? (
+              <span className="text-zinc-600" title="No founder process maps onto this story">
+                —
+              </span>
+            ) : (
+              <span className="inline-flex flex-wrap items-center gap-1">
+                {processLinks.slice(0, 2).map((p) => (
+                  <Link
+                    key={p.slug}
+                    href={`/processes/${p.slug}#steps`}
+                    title={`${p.title} — a founder process this story's capability maps onto; opens the process page's step list`}
+                    className="inline-flex max-w-[11rem] items-center gap-1 whitespace-nowrap rounded border border-zinc-800 px-1.5 py-0.5 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+                  >
+                    <span aria-hidden>{p.icon}</span>
+                    <span className="truncate">{p.title}</span>
+                  </Link>
+                ))}
+                {processLinks.length > 2 && (
+                  <span
+                    className="rounded border border-zinc-800 px-1.5 py-0.5 font-mono text-[10px] tabular-nums text-zinc-500"
+                    title={processLinks.slice(2).map((p) => p.title).join(' · ')}
+                  >
+                    +{processLinks.length - 2}
+                  </span>
+                )}
+              </span>
+            )}
+          </td>
+        )}
         <td className="px-1 py-2 text-right">
           <RowMenu category={category} productId={productId} storyId={row.storyId} verdict={row.verdict} quality={row.quality} />
         </td>
       </tr>
       {isOpen && (
         <tr id={detailsId} className="bg-zinc-900/30">
-          <td colSpan={9} className="px-3 py-3 pl-9">
+          <td colSpan={colSpan} className="px-3 py-3 pl-9">
             {/* Judge rationales are written for auditability, not skimming — collapse them by
                 default behind a plain-language one-liner so the row leads with evidence. */}
             <details>

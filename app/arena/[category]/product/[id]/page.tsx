@@ -11,6 +11,8 @@ import { BusinessModelSection } from '@/components/BusinessModel'
 import ClaimsSection from '@/components/ClaimsSection'
 import CoverageMapSection from '@/components/CoverageMapSection'
 import FamilySection from '@/components/FamilySection'
+import { familyForProduct, loadFamilies } from '@/lib/families'
+import { storyProcessesForArena } from '@/lib/storyProcessGraph'
 import GeoMark from '@/components/GeoMark'
 import IntegrationChips, { chipTitle } from '@/components/IntegrationChips'
 import MomentumChip from '@/components/MomentumChip'
@@ -160,6 +162,9 @@ export default async function ProductPage({
   // startup-banking AND expense-management), each with its live rank there — the header's
   // arenas strip, so a user can jump straight to any leaderboard the vendor is a member of.
   const memberships = arenaMembershipsOf(allCategories, id)
+  // Company link target for the vendor line: the family page for multi-product vendors, else
+  // the homepage table filtered to the company (founder 2026-09-22).
+  const vendorFamily = familyForProduct(loadFamilies(), category, id)
   // Founder 2026-09-21: the processes this product interacts with and serves — the reverse of
   // the process pages' vendor rankings (lib/vendorProcesses.ts one-pass cached index). The
   // header chip counts only judged step-SERVING appearances (function/extra step scores);
@@ -202,9 +207,22 @@ export default async function ProductPage({
               <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
             </div>
             {/* The OssPill beside the name is the one open-source signal — repeating "open
-                source" here would say it twice, so the prose only ever adds "commercial". */}
+                source" here would say it twice, so the prose only ever adds "commercial".
+                Founder 2026-09-22: the company name is the way BACK to the company — its
+                family page when one exists (multi-product vendors), else the homepage table
+                filtered to the company (shareable ?q=). */}
             <p className="text-zinc-500">
-              {product.vendor}
+              <Link
+                href={vendorFamily ? `/family/${vendorFamily.id}` : `/?q=${encodeURIComponent(product.vendor)}`}
+                title={
+                  vendorFamily
+                    ? `${product.vendor} — see the whole ${vendorFamily.name} product family`
+                    : `${product.vendor} — see every ${product.vendor} product across the arenas`
+                }
+                className="underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+              >
+                {product.vendor}
+              </Link>
               {product.type === 'commercial' && ' · commercial'}
             </p>
           </div>
@@ -328,6 +346,11 @@ export default async function ProductPage({
           looks like before the hands-on replay. */}
       <ProductShowcase product={product} />
 
+      {/* Founder 2026-09-22: the processes-served table moved up here — just below the images,
+          above the Products (family) section. What work a product does ranks above who its
+          siblings are. */}
+      <VendorProcesses arenaId={category} productId={id} productName={product.name} />
+
       {/* Multi-product vendors: the family breakdown block (lib/families.ts) — renders for any
           product with a data/product-families.json entry, nothing for everyone else. Founder
           2026-09-15: Products above Try it — the portfolio orients before the hands-on replay. */}
@@ -429,7 +452,7 @@ export default async function ProductPage({
             product's capability frontier greys out. */}
         <StoryViewToggle
           map={<StoryMap rows={verdictRows} productName={product.name} />}
-          table={<StoryVerdictsTable category={category} productId={id} rows={verdictRows} />}
+          table={<StoryVerdictsTable category={category} productId={id} rows={verdictRows} processes={storyProcessesForArena(category)} />}
         />
       </div>
 
@@ -452,11 +475,6 @@ export default async function ProductPage({
 
       <BusinessModelSection product={product} />
 
-      {/* Founder 2026-09-21: the founder operating processes this product comes up in — the
-          reverse index over the process pages' own rankings. After the evidence material
-          (verdicts, proofs, claims, pricing), before the bottom utility rail; renders nothing
-          for products no process surfaces. */}
-      <VendorProcesses arenaId={category} productId={id} productName={product.name} />
 
       {/* Founder 2026-09-15: score trend + the utility rail (Try/Flag/Badge/For agents/Data)
           and the auth-gated probe chip live at the page end — provenance and tooling for readers

@@ -24,6 +24,16 @@ export type StoryVerdictColumn =
 
 export type SortDirection = 'asc' | 'desc'
 
+// One related founder process, flattened to exactly what the table's "Processes" column chip
+// renders — icon + title linking to /processes/<slug>#steps. Serializable (server page →
+// client table); produced by lib/storyGraph.ts's storyProcessesForArena, defined here (the
+// table's client-safe types module) so the client bundle never touches node:fs.
+export interface StoryProcessLink {
+  slug: string
+  title: string
+  icon: string
+}
+
 // One cited evidence item, flattened to exactly what the expanded row renders — url, tier
 // badge, excerpt. Serializable (server page → client table), no Map/CategoryData crossing.
 export interface StoryVerdictEvidenceLink {
