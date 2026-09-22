@@ -137,6 +137,59 @@ describe('StoryVerdictsTable', () => {
     expect(screen.queryByLabelText('Filter stories by pricing tier')).toBeNull()
   })
 
+  it('hides the Processes column entirely when the prop is absent (9 columns, colSpan 9)', () => {
+    const { container } = renderTable()
+    expect(screen.queryByText('Processes')).toBeNull()
+    expect(container.querySelectorAll('thead th').length).toBe(9)
+    // Expanded details row spans the 9 base columns.
+    fireEvent.click(screen.getByLabelText(`Details for story ${rows[0].storyId}`))
+    expect(container.querySelector(`#story-details-${rows[0].storyId} td`)?.getAttribute('colspan')).toBe('9')
+    // The no-match row does too.
+    const input = screen.getByLabelText('Filter stories by title, persona, or theme')
+    fireEvent.change(input, { target: { value: 'zzz-no-such-story' } })
+    expect(screen.getByText(/No stories match/).getAttribute('colspan')).toBe('9')
+  })
+
+  it('renders the Processes column when the prop is present: chips, +N overflow, em-dash, colSpan 10', () => {
+    const processes = {
+      [rows[0].storyId]: [
+        { slug: 'run-payroll', title: 'Run payroll', icon: '💸' },
+        { slug: 'open-bank-account', title: 'Open bank account', icon: '🏦' },
+        { slug: 'track-runway', title: 'Track runway', icon: '📉' },
+      ],
+    }
+    const { container } = render(
+      <StoryVerdictsTable category="desktop-os" productId={productId} rows={rows} processes={processes} />,
+    )
+    // Header present, 10 columns.
+    expect(screen.getByText('Processes')).toBeDefined()
+    expect(container.querySelectorAll('thead th').length).toBe(10)
+
+    // The mapped row: 2 chips linking to /processes/<slug>#steps + a "+1" title-tooltip chip.
+    const mappedRow = container.querySelector(`[id="story-${rows[0].storyId}"]`)!
+    const chips = [...mappedRow.querySelectorAll('a[href^="/processes/"]')]
+    expect(chips.map((a) => a.getAttribute('href'))).toEqual([
+      '/processes/run-payroll#steps',
+      '/processes/open-bank-account#steps',
+    ])
+    expect(chips[0].textContent).toContain('Run payroll')
+    const overflow = screen.getByText('+1')
+    expect(overflow.getAttribute('title')).toBe('Track runway')
+
+    // Every unmapped row renders the honest em-dash.
+    const dashes = container.querySelectorAll('td [title="No founder process maps onto this story"]')
+    expect(dashes.length).toBe(rows.length - 1)
+
+    // Expanded details row spans all 10 columns.
+    fireEvent.click(screen.getByLabelText(`Details for story ${rows[0].storyId}`))
+    expect(container.querySelector(`#story-details-${rows[0].storyId} td`)?.getAttribute('colspan')).toBe('10')
+
+    // The no-match row too.
+    const input = screen.getByLabelText('Filter stories by title, persona, or theme')
+    fireEvent.change(input, { target: { value: 'zzz-no-such-story' } })
+    expect(screen.getByText(/No stories match/).getAttribute('colspan')).toBe('10')
+  })
+
   it('re-sorts when a column header is clicked, with aria-sort on the current column', () => {
     renderTable()
     // importance is the default composite sort — no column header carries aria-sort until a
