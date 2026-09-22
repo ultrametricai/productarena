@@ -131,6 +131,10 @@ const THEME_EXACT: Record<string, string> = {
   // authenticator-apps arena
   'totp-core': '🔢',
   'passkey-support': '🔑',
+  // self-hosted-assistants arena ('messaging-surfaces' would land on the generic surfaces
+  // puzzle-piece and 'computer-control' on the operations gear — both wrong concepts here)
+  'messaging-surfaces': '💬',
+  'computer-control': '🖥️',
   // game-engines arena
   'core-engine': '🎮',
   'editor-tooling': '🛠️',
@@ -237,6 +241,15 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'self-hosting': 'running it yourself — self-hosted servers, open-source clients',
   'security-posture': 'how it protects itself — app lock, E2EE design, audits, breach alerting',
   'team-admin': 'shared and managed use — shared vaults, org policies, programmatic provisioning',
+  // self-hosted-assistants arena
+  'self-host-install': 'getting it running on your own machine — installers, Docker, updates, recovery',
+  'messaging-surfaces': 'where you talk to it — WhatsApp/Telegram/Discord channels, voice, native apps',
+  'model-backends': 'the models behind it — multi-provider keys, local models, failover, cost visibility',
+  'skills-plugins': 'extending it — skill registries, plugin authoring, ecosystem scale and safety',
+  'computer-control': 'hands on the computer — shell and file exec, browser automation, paired devices',
+  'credential-security': 'keeping your keys and machine safe — secret stores, sandboxing, approval gates',
+  'memory-context': 'what it remembers — persistent memory, knowledge bases, context you can inspect',
+  'orchestration-multi-agent': 'more than one agent — named agents, routing, subagents and swarms',
   // game-engines arena
   'core-engine': 'the engine core — rendering, 2D, physics, performance at scale',
   'scripting': 'writing the game — languages, visual scripting, iteration speed',

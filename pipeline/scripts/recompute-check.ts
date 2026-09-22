@@ -80,6 +80,7 @@ const CATEGORIES = [
   'search-infra',
   'security-keys',
   'security-scanners',
+  'self-hosted-assistants',
   'serverless-databases',
   'software-factory',
   'stablecoin-payments',
