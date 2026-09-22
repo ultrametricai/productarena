@@ -20,6 +20,13 @@ describe('extractJson', () => {
   it('returns undefined for garbage', () => {
     expect(extractJson('no json here')).toBeUndefined()
   })
+  it('recovers JSON whose strings contain raw control characters', () => {
+    expect(extractJson('{"rationale":"line one\nline two\ttabbed"}')).toEqual({
+      rationale: 'line one\nline two\ttabbed',
+    })
+    // ...while raw newlines BETWEEN tokens stay legal whitespace
+    expect(extractJson('{\n  "a": "x\ny"\n}')).toEqual({ a: 'x\ny' })
+  })
 })
 
 describe('llmJson', () => {
@@ -68,6 +75,22 @@ describe('llmJson', () => {
     await expect(llmJson({ schema, system: 's', prompt: 'p' })).resolves.toEqual({ name: 'ok' })
     const correction = create.mock.calls[1][0].messages[2]
     expect(JSON.stringify(correction)).toMatch(/ONLY the JSON object/)
+    warn.mockRestore()
+  })
+
+  it('resets the poisoned conversation after two consecutive no-JSON replies', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const create = vi
+      .fn()
+      .mockResolvedValueOnce(textResponse('prose only'))
+      .mockResolvedValueOnce(textResponse('more prose'))
+      .mockResolvedValueOnce(textResponse('{"name":"ok"}'))
+    setClientForTests({ messages: { create } } as never)
+    await expect(llmJson({ schema, system: 's', prompt: 'p' })).resolves.toEqual({ name: 'ok' })
+    // Third call runs on a FRESH single-message conversation, not the stacked corrections.
+    const thirdCallMessages = create.mock.calls[2][0].messages
+    expect(thirdCallMessages).toHaveLength(1)
+    expect(thirdCallMessages[0].content).toMatch(/^p\n\nReply with ONLY the JSON object/)
     warn.mockRestore()
   })
 
