@@ -1861,7 +1861,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions live support channels, 24/7 support availability, SLAs, or any customer support mechanism at all — the evidence pack covers only product features (cards, payments, APIs, MCP) with no reference to support-reliability.",
+    "rationale": "The evidence pack covers Jeeves' product features (cards, payments, expenses, MCP/API) but contains no mention of a live customer support channel, support hours, SLAs, or urgent account issue escalation process.",
     "evidenceIds": []
   },
   {
@@ -1870,13 +1870,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Jeeves documents one-click sync of transactions with reference IDs, timestamps, and on-chain hashes to NetSuite, QuickBooks, and Xero, plus APIs/webhooks for transaction and expense data that could feed accounting systems. However, this sync claim appears only on the Instant Pay page, not corroborated elsewhere, and OpenAPI/llms.txt probes for deeper API verification 404'd, and there's no independent confirmation of the accounting sync working in practice. Missing for 10: independent/hands-on verification of the NetSuite/QuickBooks/Xero sync, dedicated accounting-integration documentation beyond a single marketing line, and confirmation the sync is automatic/bidirectional rather than a one-time export.",
+    "rationale": "Docs claim 'One-click sync with NetSuite, QuickBooks, and Xero' for transaction/expense export, plus API/webhook capabilities for pulling transaction and expense data, supporting automated accounting sync. However this is only a first-party marketing claim on one product page with no independent corroboration, no details on setup/mapping, and openapi/schema probes for the API 404'd, leaving implementation depth unverified. Missing for 10: independent/hands-on confirmation of the sync working, technical documentation of the accounting-software integration endpoints, and details on sync frequency/error handling.",
     "evidenceIds": [
       "jeeves-docs-16",
+      "jeeves-docs-46",
       "jeeves-docs-14",
-      "jeeves-docs-11",
       "jeeves-docs-7",
-      "jeeves-probe-1",
       "jeeves-probe-2"
     ]
   },
@@ -1884,14 +1883,16 @@
     "productId": "jeeves",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Multiple docs entries (jeeves-docs-4,5,6,7) explicitly cite https://tryjeeves.com/llms.txt as their source, indicating Jeeves publishes an agent-oriented llms.txt file with structured product/API summaries that an agent could be pointed at. Missing for 10: an independent probe confirming the tryjeeves.com/llms.txt endpoint returns 200 (the only probe run was against a different subdomain, tryjeeves.redocly.app, which 404'd), and no sample of the full llms.txt content structure.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Jeeves hosts an llms.txt at https://tryjeeves.com/llms.txt, and multiple documentation snippets (jeeves-docs-4,5,6,7,49) are explicitly sourced from that file, confirming it exists and contains structured, agent-readable product/API summaries. A probe against a different domain (redocly.app/llms.txt) 404s, but that is not the canonical llms.txt path and doesn't contradict the working one at tryjeeves.com. Missing for 10: independent/hands-on confirmation that an agent can successfully fetch and parse the file end-to-end, and clarity on why two different domains have inconsistent llms.txt availability.",
     "evidenceIds": [
       "jeeves-docs-4",
       "jeeves-docs-5",
       "jeeves-docs-6",
-      "jeeves-docs-7"
+      "jeeves-docs-7",
+      "jeeves-docs-49",
+      "jeeves-probe-1"
     ]
   },
   {
@@ -1915,12 +1916,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Jeeves ships an MCP server that lets AI assistants/agents take financial actions (query spend, pay vendors, submit reimbursements) on behalf of a user, which supports agentic automation, plus some built-in business-process automation (auto-emailing for missing receipts, automating invoice approval flows). However, there is no documentation of scheduling, triggers, or truly autonomous background execution loops—MCP actions appear to be invoked per-request by an assistant rather than persistent unattended jobs. Missing for 10: evidence of scheduled/recurring autonomous runs, trigger-based automation setup, and confirmation that MCP-driven actions can execute without a live agent session.",
+    "rationale": "Jeeves ships an MCP server that lets AI assistants/autonomous agents pay vendors, submit reimbursements, and query finances (jeeves-docs-13/33/43/47), which is a step toward AI-native automation, and separate docs mention automated invoice/approval flows and automated reminder emails (jeeves-docs-21, jeeves-docs-27). However there is no evidence of a scheduling/background-job mechanism, persistent triggers, or any documented 'run autonomously without user invocation' capability — the MCP tools appear to be invoked per-request by an agent rather than set up as standing background automations. Missing for 10: explicit scheduling/trigger configuration, evidence of persistent/background execution, and any hands-on confirmation that agents act without ongoing user prompting.",
     "evidenceIds": [
       "jeeves-docs-13",
       "jeeves-docs-33",
-      "jeeves-docs-34",
-      "jeeves-docs-35",
+      "jeeves-docs-43",
+      "jeeves-docs-47",
       "jeeves-docs-21",
       "jeeves-docs-27",
       "jeeves-probe-3"
@@ -1954,13 +1955,14 @@
   {
     "productId": "jeeves",
     "storyId": "agentic-mcp-client",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jeeves is a fintech/financial-operations platform that ships its own MCP server so external AI agents can call ITS tools (jeeves-docs-13/33, jeeves-probe-3); there is no evidence of Jeeves itself acting as an MCP client that plugs in and consumes other parties' MCP servers. Given Jeeves's product role is a financial back-office SaaS exposing tools (not an AI agent/assistant consuming external tool servers), this client-side axis is a category mismatch for the evidence and product role presented.",
+    "rationale": "All MCP evidence describes Jeeves shipping its own MCP server so external AI assistants can call Jeeves's tools (docs-13,33,43, probe-3) — the opposite direction from this story, which asks whether Jeeves itself can consume external MCP servers' tools. No evidence shows Jeeves acting as an MCP client or allowing users to plug third-party MCP servers into it.",
     "evidenceIds": [
       "jeeves-docs-13",
       "jeeves-docs-33",
+      "jeeves-docs-43",
       "jeeves-probe-3"
     ]
   },
@@ -1970,12 +1972,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Jeeves documents an official MCP server enabling AI assistants/agents to manage company finances (query spend, pay vendors, pull statements, submit reimbursements, manage cards), confirmed by both docs and a probe verifying the endpoint exists. Missing for 10: independent/hands-on third-party corroboration of the MCP server working in practice, and no detail on authentication/setup flow for connecting agents.",
+    "rationale": "Jeeves documents an official MCP server that lets AI assistants/agents manage finances (query spend, pay vendors, submit reimbursements, manage cards) and this is corroborated by a probe confirming the docs page exists. Missing for 10: independent/hands-on verification of actual connectivity (probe only confirms docs page, not live server behavior) and details on authentication/setup steps for connecting an agent.",
     "evidenceIds": [
       "jeeves-docs-13",
       "jeeves-docs-33",
       "jeeves-docs-34",
       "jeeves-docs-35",
+      "jeeves-docs-47",
       "jeeves-probe-3"
     ]
   },
@@ -1985,13 +1988,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Jeeves ships an official MCP server explicitly designed so AI assistants/agents can manage finances via natural-language requests ('ask about card spend, pay a vendor, pull a statement, submit a reimbursement'), directly matching the ai-native/agentic story. Missing for 10: independent/hands-on corroboration that NL commands work reliably in practice, and detail on the breadth of NL command coverage beyond the listed examples.",
+    "rationale": "Jeeves documents an official MCP server that lets AI assistants and autonomous agents manage company finances via natural-language requests (e.g., 'ask about card spend, pay a vendor, pull a statement, or submit a reimbursement') without opening the app, covering cards, reimbursements, vendors, and transactions. This directly supports natural-language operation for AI-native users, though it is all vendor-provided documentation. missing for 10: independent/hands-on verification of MCP natural-language interactions, and broader coverage beyond the listed actions.",
     "evidenceIds": [
       "jeeves-docs-13",
-      "jeeves-docs-14",
       "jeeves-docs-33",
       "jeeves-docs-34",
       "jeeves-docs-35",
+      "jeeves-docs-47",
       "jeeves-probe-3"
     ]
   },
@@ -2011,17 +2014,17 @@
     "productId": "jeeves",
     "storyId": "agentic-public-api",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Jeeves documents a public API platform (cards, payments, transactions, expense data) with authentication (mTLS/OAuth2), specific endpoints, webhooks with HMAC verification, and SDKs (TypeScript/Python), which supports AI-native programmatic access. However, probes show no discoverable OpenAPI/llms.txt spec at the redocly root, and no independent corroboration of the API being usable/robust in practice. Missing for 10: public machine-readable OpenAPI spec discoverable via probe, independent/hands-on verification of API usage, and broader endpoint documentation beyond a few examples.",
+    "rationale": "Jeeves publishes public API docs (tryjeeves.redocly.app) covering concrete endpoints (POST /v1/cards/transactions, Boleto API lifecycle), authentication (mTLS + OAuth 2.0), webhooks with HMAC verification, and TypeScript/Python SDKs, which together constitute a documented public API a developer could drive programmatically. However, probes show standard machine-readable spec discovery paths (openapi.json, swagger.json, llms.txt) all 404 on the docs domain, undercutting full 'AI-native' discoverability of the API. Missing for 10: working openapi.json/swagger spec endpoint, llms.txt on the API docs domain, and independent/hands-on confirmation the API actually works as documented.",
     "evidenceIds": [
-      "jeeves-docs-7",
       "jeeves-docs-8",
       "jeeves-docs-9",
       "jeeves-docs-10",
       "jeeves-docs-11",
       "jeeves-docs-12",
       "jeeves-docs-17",
+      "jeeves-docs-42",
       "jeeves-probe-1",
       "jeeves-probe-2"
     ]
@@ -2032,9 +2035,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows general OAuth 2.0/mTLS authentication (jeeves-docs-8) and an MCP server for agent access (jeeves-docs-13/33), but there is no documentation of scoped, least-privilege, or agent-specific API credential/token issuance (e.g., granular scopes, per-agent API keys, or permission tiers). Missing for 10: scoped API key/token creation mechanism, documented permission granularity for agent credentials, any least-privilege access control model for machine/agent identities.",
+    "rationale": "Docs confirm an API platform secured by mTLS and OAuth 2.0, and an MCP server enabling agents to act on financial data, but there is no evidence of a mechanism to issue scoped or least-privilege API credentials/tokens specifically for an agent (e.g., limited-scope API keys, per-agent OAuth scopes, or role-restricted MCP credentials). Card spend limits address employee card controls, not API credential scoping.",
     "evidenceIds": [
       "jeeves-docs-8",
+      "jeeves-docs-42",
       "jeeves-docs-13",
       "jeeves-docs-33"
     ]
@@ -2045,7 +2049,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Jeeves claims TypeScript and Python SDKs for its payments API (jeeves-docs-17), plus a broader API platform with authentication and webhook docs, but the evidence pack contains no SDK repo links, code samples, package names, or version history, and probes show the OpenAPI/llms.txt discovery endpoints returning 404s, suggesting weak SDK-adjacent documentation infrastructure. Missing for 10: links to actual SDK repositories/packages, code examples using the SDKs, versioning/release notes, and independent corroboration of SDK usability.",
+    "rationale": "The evidence only mentions 'TypeScript and Python SDKs' once (jeeves-docs-17) with no links to repos, package registries, or usage examples, while probes show the docs site's llms.txt and OpenAPI spec endpoints return 404, undermining easy SDK discoverability. The broader API platform (mTLS/OAuth2, REST endpoints) is documented, suggesting SDK-adjacent capability, but there's no independent corroboration that official SDKs exist and work as claimed. missing for 10: SDK repository/package links, installation or code examples, independent verification, working llms.txt/OpenAPI discovery.",
     "evidenceIds": [
       "jeeves-docs-17",
       "jeeves-docs-7",
@@ -2073,42 +2077,42 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves documents expense controls, spend limits, real-time review, and webhook notifications, but there is no evidence of AI-driven anomaly detection or automated flagging of out-of-policy transactions for review; the MCP/API docs describe agents querying/managing finances, not proactive policy-violation flagging. Missing for 10: any mention of anomaly detection, fraud/policy-violation scoring, or automated flagging workflows.",
+    "rationale": "Evidence covers card controls, spend limits, expense policies, and real-time transaction review/notifications, but nothing describes AI-driven anomaly detection or automatic flagging of out-of-policy transactions for review — the controls described are manual/rule-based (limits, permissions) rather than AI-flagged. No mention of ML/AI-based fraud or policy-violation detection anywhere in the pack.",
     "evidenceIds": [
       "jeeves-docs-20",
       "jeeves-docs-23",
-      "jeeves-docs-11",
-      "jeeves-docs-13"
+      "jeeves-docs-29",
+      "jeeves-docs-11"
     ]
   },
   {
     "productId": "jeeves",
     "storyId": "ai-bill-data-extraction",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Jeeves offers 'smart invoice scanning technology' to automate entering recipient/invoice details for global payments, and its MCP server lets AI agents pay vendors and pull statements, which together suggest some AI-assisted bill-to-payment population. However, there's no explicit documentation of an end-to-end 'read incoming bill, extract payment details, present for user review' workflow. Missing for 10: explicit description of AI reading/parsing incoming bill documents, structured extraction of payment fields, and a review/approval UI step before payment execution.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs describe 'smart invoice scanning technology' that can auto-populate recipient/payment details in place of manual entry (jeeves-docs-28), automated invoice payment/approval flows (jeeves-docs-27), and the MCP server lets an agent 'review bill pay invoices, manage vendors and their payment details' (jeeves-docs-47), which together support AI-assisted bill reading and review. However these are marketing-level descriptions without hands-on demos, screenshots, or independent verification of accuracy/quality of the AI extraction. Missing for 10: concrete demo or case study of OCR/AI reading a real bill, error-rate/accuracy evidence, and independent corroboration beyond first-party docs.",
     "evidenceIds": [
       "jeeves-docs-28",
       "jeeves-docs-27",
-      "jeeves-docs-33",
-      "jeeves-docs-35"
+      "jeeves-docs-47",
+      "jeeves-docs-33"
     ]
   },
   {
     "productId": "jeeves",
     "storyId": "ai-books-close-automation",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Jeeves offers AI-agent automation via its MCP server (query transactions, export CSV, pull statements) and one-click sync of transactions to QuickBooks/NetSuite/Xero, which can accelerate reconciliation and data prep for close. However, there is no explicit evidence of month-end close automation, journal entries, accruals, or a 'faster close' workflow — the automations are framed around expense/spend management, not the accounting close process itself. Missing for 10: explicit close-cycle automation (accruals, journal entries, reconciliation matching), evidence of close-time reduction, and integration depth beyond transaction export/sync.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Jeeves offers automated syncing (NetSuite/QuickBooks/Xero) and an MCP server letting AI agents query spend, pay vendors, pull statements, and submit reimbursements, which supports faster month-end close via AI automation. However, evidence doesn't show close-specific features like automated reconciliation, journal entries, or month-end close checklists/reporting. missing for 10: dedicated month-end close/reconciliation automation, evidence of AI-driven categorization or journal entry creation, independent user testimonials confirming faster close times.",
     "evidenceIds": [
       "jeeves-docs-13",
       "jeeves-docs-14",
       "jeeves-docs-16",
-      "jeeves-docs-33",
-      "jeeves-docs-34",
-      "jeeves-docs-35"
+      "jeeves-docs-46",
+      "jeeves-docs-47",
+      "jeeves-probe-3"
     ]
   },
   {
@@ -2116,13 +2120,9 @@
     "storyId": "ai-contract-parsing-procurement",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Jeeves documents invoice scanning to auto-fill payment recipient details and receipt/memo capture, but there is no evidence of parsing vendor contracts or auto-populating procurement request forms — a distinct workflow from invoice/receipt capture. Missing for 10: contract parsing capability, procurement request form generation/integration, any mention of 'procurement' or 'contract' processing.",
-    "evidenceIds": [
-      "jeeves-docs-28",
-      "jeeves-docs-21",
-      "jeeves-docs-24"
-    ]
+    "confidence": "high",
+    "rationale": "There is no mention anywhere in the evidence of parsing vendor contracts or auto-populating procurement request forms; Jeeves' AI features (MCP server, smart invoice scanning) relate to expenses, cards, payments and reimbursements, not contract parsing or procurement request generation.",
+    "evidenceIds": []
   },
   {
     "productId": "jeeves",
@@ -2130,8 +2130,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Jeeves offers expense management, card controls, payments, NetSuite/QuickBooks/Xero sync, and an MCP server, but there is no mention of automated GL code assignment or entity-level coding to accelerate month-end close.",
-    "evidenceIds": []
+    "rationale": "Jeeves offers accounting sync (one-click sync with NetSuite/QuickBooks/Xero) and expense/transaction export, but there is no evidence of AI-driven automatic GL code assignment across entities. Missing for 10: any mention of GL code mapping, categorization/classification of transactions, or multi-entity coding automation.",
+    "evidenceIds": [
+      "jeeves-docs-16",
+      "jeeves-docs-46",
+      "jeeves-docs-14"
+    ]
   },
   {
     "productId": "jeeves",
@@ -2139,22 +2143,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jeeves is a corporate cards/spend-management and cross-border payments platform; nothing in its evidence pack relates to travel booking, rate monitoring, or rebooking. This story is about travel-price optimization, which is a completely different product category (travel booking/OTA tools), not a fair axis for a fintech expense/payments product.",
+    "rationale": "Jeeves is a corporate cards/expense/cross-border payments platform with no travel-booking product; monitoring travel rates and automatic rebooking is outside its category and not a plausible axis for this fintech tool.",
     "evidenceIds": []
   },
   {
     "productId": "jeeves",
     "storyId": "api-interactive-docs",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Jeeves has an API reference on Redocly (tryjeeves.redocly.app/apis) documenting endpoints like POST /v1/cards/transactions and the Boleto API, which suggests some interactive reference exists, but there's no evidence of runnable/try-it examples, code samples, or sandbox execution within the docs, and probes for openapi.json/llms.txt failed (404s), suggesting the reference may not be fully machine-explorable. missing for 10: confirmed runnable/try-it examples in the API reference, working OpenAPI spec discovery, evidence of interactive code execution.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows only static API reference docs (Redocly-hosted pages listing endpoints and auth) with no mention of an interactive 'try it' console or runnable code examples; probes even show openapi.json/llms.txt 404s on the docs domain, suggesting no live spec-driven playground.",
     "evidenceIds": [
-      "jeeves-docs-8",
       "jeeves-docs-9",
-      "jeeves-docs-10",
       "jeeves-docs-31",
-      "jeeves-docs-32",
+      "jeeves-docs-42",
       "jeeves-probe-1",
       "jeeves-probe-2"
     ]
@@ -2164,8 +2166,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Jeeves hosts an API reference on Redocly (suggesting an underlying OpenAPI spec), but direct probes for a downloadable machine-readable spec (openapi.json, swagger.json, llms.txt) all returned 404, and no evidence shows a public download link for the spec itself.",
+    "confidence": "high",
+    "rationale": "Jeeves documents its API platform on a Redocly-hosted docs site, but direct probes for a downloadable OpenAPI/swagger spec (openapi.json, swagger.json, etc.) and llms.txt at the API docs domain all returned 404, and no evidence pack item shows a spec download link or file being offered.",
     "evidenceIds": [
       "jeeves-probe-1",
       "jeeves-probe-2",
@@ -2177,8 +2179,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of a sandbox/test environment for Jeeves' API, MCP server, or agent tooling; all documentation covers production financial operations (cards, payments, expense management) with no mention of test/sandbox mode or non-production data isolation. Missing for 10: sandbox environment docs, test API keys/mode, staging endpoints, or any statement about safe testing without touching real financial data.",
+    "confidence": "medium",
+    "rationale": "This is a real financial platform (cards, payments, MCP agent access) but there is no mention anywhere in the evidence of a sandbox/test environment or ability to test without touching production data or funds.",
     "evidenceIds": []
   },
   {
@@ -2187,9 +2189,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes API endpoints, authentication, webhooks, and an MCP server, but nowhere mentions API versioning or a documented deprecation policy; probes for openapi/llms.txt spec files 404, suggesting no discoverable versioning documentation.",
+    "rationale": "The evidence pack describes the API platform (auth methods, endpoints, webhooks) but contains no mention of API versioning scheme or a documented deprecation policy; probes for llms.txt and OpenAPI specs returned 404s, further indicating no accessible versioning/deprecation documentation.",
     "evidenceIds": [
       "jeeves-docs-7",
+      "jeeves-docs-8",
       "jeeves-probe-1",
       "jeeves-probe-2"
     ]
@@ -2200,7 +2203,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions an account application process, onboarding status tracking, or any way for a founder to check application review status; all evidence concerns cards, payments, expense management, and API/MCP capabilities post-onboarding.",
+    "rationale": "No evidence in the pack addresses account application/onboarding status tracking for founders; all documentation covers cards, payments, expense management, APIs, and MCP capabilities post-onboarding.",
     "evidenceIds": []
   },
   {
@@ -2209,11 +2212,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves offers multi-currency accounts, yield, FX conversion, and manual currency-to-currency conversion between Jeeves Cash accounts, but there is no evidence of automated auto top-up between accounts or configurable low-balance alerts/thresholds triggering automated transfers.",
+    "rationale": "Jeeves offers multi-currency accounts, manual FX conversion between accounts, and yield, but there is no evidence of an automated top-up-between-accounts feature or low-balance alerting capability anywhere in the docs.",
     "evidenceIds": [
       "jeeves-docs-5",
-      "jeeves-docs-41",
-      "jeeves-docs-38"
+      "jeeves-docs-25",
+      "jeeves-docs-41"
     ]
   },
   {
@@ -2221,8 +2224,8 @@
     "storyId": "auto-receipt-capture-on-swipe",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Jeeves documents mobile receipt capture and automated memo/receipt collection emails, plus real-time transaction webhooks and card controls, but receipt capture is described as an app-based upload/collection workflow rather than fully automatic capture and coding at the moment of card swipe with no manual entry. missing for 10: evidence of automatic receipt matching/OCR coding at transaction time without any employee action, independent/hands-on confirmation of this workflow.",
+    "confidence": "low",
+    "rationale": "Jeeves documents mobile receipt/memo capture and automated emails chasing missing receipts/memos, plus expense management tracking, which addresses part of the story, but this is manual upload via app, not automatic capture at time of card use, and no evidence of automatic coding/categorization at the moment of swipe. Missing for 10: automatic (non-manual) receipt capture triggered by card transaction, automated categorization/coding logic, and any hands-on proof of real-time capture without user action.",
     "evidenceIds": [
       "jeeves-docs-6",
       "jeeves-docs-21",
@@ -2236,11 +2239,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves is an AP/expense/payments platform focused on cards, cross-border payments, and expense tracking, but there is no evidence of accounts-receivable functionality like tracking overdue invoices owed to the company or automated dunning/follow-up on customer payments — all invoice-related features mentioned (docs-27, docs-28) concern automating outbound bill payments, not chasing overdue receivables.",
+    "rationale": "Jeeves's documented features cover corporate cards, expense management, bill pay/AP, and cross-border payments, but nothing addresses automated follow-up or dunning on overdue invoices owed to the company (accounts receivable chasing). The only invoice-automation mentioned is paying bills (AP), not collecting/chasing overdue receivables.",
     "evidenceIds": [
       "jeeves-docs-27",
       "jeeves-docs-28",
-      "jeeves-docs-21"
+      "jeeves-docs-47"
     ]
   },
   {
@@ -2266,11 +2269,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves offers webhooks for notifications and an MCP server for agent-driven queries/actions, but there is no evidence of a user-defined rules engine that automatically triggers actions on events (e.g., 'if transaction > $X then notify/block'). missing for 10: rule-definition interface, event-condition-action automation framework, evidence of automated triggers beyond static policy limits.",
+    "rationale": "Jeeves offers webhooks for event notifications and pre-built automations (e.g., auto-emailing employees for missing receipts, automated invoice approval flows), but there is no evidence of a user-facing rule engine where an AI-native user can define custom 'if event X then action Y' triggers. Webhooks only push notifications to external systems; they are not a rules-authoring interface.",
     "evidenceIds": [
       "jeeves-docs-11",
-      "jeeves-docs-13",
-      "jeeves-docs-20"
+      "jeeves-docs-21",
+      "jeeves-docs-27"
     ]
   },
   {
@@ -2279,8 +2282,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves is a fintech/expense-management product with an MCP server and payment scheduling for one-off future-dated payments, but no evidence shows support for recurring/scheduled automated jobs or workflows (e.g., cron-like recurring payments, recurring reimbursements, or scheduled agent tasks). The 'schedule for a future date' feature (jeeves-docs-30) is a single one-time future payment, not a recurring job scheduler.",
-    "evidenceIds": []
+    "rationale": "Evidence shows only one-time future-dated payment scheduling (jeeves-docs-30) and an MCP server for ad-hoc agent actions (queries, payments, reimbursements), but there is no mention of recurring/repeating job or workflow scheduling for AI-native automation. The axis is plausible for a finance automation platform, but no evidence supports recurring scheduling capability.",
+    "evidenceIds": [
+      "jeeves-docs-30",
+      "jeeves-docs-13",
+      "jeeves-docs-33"
+    ]
   },
   {
     "productId": "jeeves",
@@ -2288,7 +2295,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jeeves is a corporate finance/payments platform (cards, cross-border payments, expense management) with an MCP server for agent-driven finance operations; it is not a workflow/automation-building tool with version control concepts. Versioning, reviewing, and rolling back 'automations' is a category error for this product type.",
+    "rationale": "Jeeves is a finance/payments platform (cards, cross-border payments, expense management, MCP for agentic finance tasks), not an automation-builder product with workflows that could be versioned, reviewed, or rolled back. This story applies to workflow/automation-authoring tools, which is a different product category — wrong axis for Jeeves.",
     "evidenceIds": []
   },
   {
@@ -2296,23 +2303,23 @@
     "storyId": "bank-verification-letter",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers multi-currency accounts, cards, payments, and MCP-based agent finance management, but nowhere mentions viewing account/routing numbers or generating a bank verification letter. No feature, API endpoint, or MCP tool references this specific capability.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions account/routing numbers, bank verification letters, or any account-detail retrieval/document-generation feature; the multi-currency accounts and payment features described do not cover this specific capability.",
     "evidenceIds": []
   },
   {
     "productId": "jeeves",
     "storyId": "bill-pay-approval-workflow",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Jeeves documents invoice/bill payment and 'approval flows' automation for global vendor bills (jeeves-docs-27, 28) plus expense/spend controls, permissions, and audit trails (jeeves-docs-20, 22, 29), which together imply a bill-upload-to-approval-to-pay flow. However there is no dedicated documentation of a bill-upload feature or a configurable multi-step approval workflow engine (e.g., approval chains, thresholds, sign-off UI) — only a brief marketing mention of 'approval flows' with no detail. Missing for 10: explicit bill/invoice upload mechanism, detailed approval-workflow configuration (multi-step, role-based sign-off), and independent/hands-on confirmation that the workflow functions before payment.",
+    "verdict": "full",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs describe uploading/scanning invoices, automating invoice payments and approval flows, and paying vendors across 150+ countries, plus MCP tooling to review bill-pay invoices and manage vendors, covering the core story of upload→approve→pay. Missing for 10: detailed documentation of multi-step/role-based approval configuration, screenshots or hands-on walkthrough of the approval UI, and independent corroboration beyond vendor docs.",
     "evidenceIds": [
       "jeeves-docs-27",
       "jeeves-docs-28",
-      "jeeves-docs-29",
-      "jeeves-docs-20",
-      "jeeves-docs-22"
+      "jeeves-docs-47",
+      "jeeves-docs-26",
+      "jeeves-docs-29"
     ]
   },
   {
@@ -2321,13 +2328,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Jeeves documents departmental budget controls, spend limits/card controls, and embedding expense policies with real-time adjustment, which supports finance leads capping spend by team/program. However, evidence is all vendor marketing copy with no detail on how budgets are scoped specifically to 'departments/programs' as a distinct construct, no proof of automatic hard-block enforcement vs soft alerts, and no independent/hands-on corroboration. Missing for 10: independent verification of enforcement mechanics, explicit department/program-level budget hierarchy documentation, and confirmation limits are hard-enforced rather than advisory.",
+    "rationale": "Jeeves documents departmental budget controls and spend limits (jeeves-docs-6, jeeves-docs-20, jeeves-docs-23/44), and card controls that cap employee spend with custom limits, plus embedding expense policies into card programs. However, evidence is all first-party marketing copy without detail on program/department-level budget hierarchies, approval enforcement mechanics, or independent verification of how limits are enforced in practice. Missing for 10: technical/API documentation of budget-limit enforcement logic, evidence of department-level (vs individual card) budget rollups, and independent/hands-on confirmation that limits are actually enforced rather than just configurable.",
     "evidenceIds": [
       "jeeves-docs-6",
       "jeeves-docs-20",
       "jeeves-docs-23",
-      "jeeves-docs-22",
-      "jeeves-docs-3"
+      "jeeves-docs-44",
+      "jeeves-docs-34"
     ]
   },
   {
@@ -2335,14 +2342,15 @@
     "storyId": "card-spend-limits-controls",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Jeeves docs explicitly describe per-card spend limits ('Adjust spend limits instantly', 'Cap employees' spend with card controls and custom limits'), plus granular controls including custom roles/permissions, embedded expense policies, and per-card MCP management of spending limits and reset intervals. This directly matches the finance-lead persona's need to set per-employee card limits and controls. Missing for 10: independent/hands-on verification beyond vendor docs, and detail on granularity (e.g., category-level restrictions, MCC blocking).",
+    "confidence": "high",
+    "rationale": "Multiple docs confirm per-card spend limits, custom controls, embedded expense policies, and employee permissions/roles management (jeeves-docs-20, -23, -34, -22, -37), and this is corroborated by the MCP tool set that can adjust card spend limits programmatically (jeeves-docs-34). missing for 10: independent/hands-on verification of granularity (e.g., per-category or per-merchant limits) and no third-party review confirming these controls work as documented in production.",
     "evidenceIds": [
       "jeeves-docs-20",
       "jeeves-docs-23",
       "jeeves-docs-22",
       "jeeves-docs-34",
-      "jeeves-docs-37"
+      "jeeves-docs-37",
+      "jeeves-docs-44"
     ]
   },
   {
@@ -2350,14 +2358,14 @@
     "storyId": "consolidate-point-solutions",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Jeeves documents a consolidated platform covering corporate cards, expense management, global payments/bill pay, and multi-currency banking (Jeeves Cash) all in one product suite, with integrations to accounting tools (NetSuite, QuickBooks, Xero) reinforcing the 'replace point solutions' narrative. Missing for 10: independent/third-party validation (e.g., customer case studies or reviews) confirming actual consolidation in practice rather than only vendor marketing claims.",
+    "confidence": "medium",
+    "rationale": "Jeeves explicitly positions itself as a consolidated platform combining corporate cards, expense management, global/cross-border payments, bill pay, and multi-currency banking accounts under one product, with a direct marketing claim of replacing multiple point solutions (jeeves-docs-48). Evidence spans cards (docs-1,18-21), expense management (docs-3,6,22-24,37), global payments/bill pay (docs-2,26-30,39,45), and banking/cash accounts (docs-5,25,38,40-41), showing broad functional overlap of a typical finance stack. Missing for 10: independent/customer case studies confirming actual consolidation in practice, and clearer detail on bill pay/AP automation depth versus dedicated tools.",
     "evidenceIds": [
+      "jeeves-docs-48",
       "jeeves-docs-1",
       "jeeves-docs-3",
       "jeeves-docs-5",
       "jeeves-docs-6",
-      "jeeves-docs-16",
       "jeeves-docs-25",
       "jeeves-docs-26",
       "jeeves-docs-38"
@@ -2369,13 +2377,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Jeeves documents a dedicated developer API platform covering cards, transactions, expense data, boletos, and one-click sync/export to NetSuite/QuickBooks/Xero, with OAuth2/mTLS auth and webhooks — directly supporting viewing/managing accounting data via API. However, probes show the OpenAPI/llms.txt spec files 404, so there's no verifiable machine-readable spec, and evidence lacks concrete accounting-specific read/write endpoints (e.g., ledger entries, GL sync detail) beyond transaction/card data. Missing for 10: verifiable OpenAPI spec, explicit accounting-ledger CRUD endpoints, independent developer corroboration.",
+    "rationale": "Jeeves documents a dedicated developer API platform covering cards, payments, transactions, and expense data (jeeves-docs-7), with specific endpoints like POST /v1/cards/transactions, the Boleto API, mTLS/OAuth2 auth, and webhooks (jeeves-docs-8,9,10,11,12), plus one-click sync to accounting systems like NetSuite/QuickBooks/Xero (jeeves-docs-16,46) — this supports viewing/managing spend-adjacent accounting data programmatically. However, probes found the actual OpenAPI spec and llms.txt at the API docs host return 404s, meaning the API's machine-readable contract could not be independently verified, and there's no explicit 'accounting data' endpoint beyond transactions/cards/expense/bill-pay. Missing for 10: verifiable OpenAPI/spec access, explicit accounting-ledger-style endpoints, and independent/hands-on confirmation of API usability.",
     "evidenceIds": [
       "jeeves-docs-7",
       "jeeves-docs-8",
       "jeeves-docs-9",
       "jeeves-docs-10",
+      "jeeves-docs-11",
       "jeeves-docs-16",
+      "jeeves-docs-46",
       "jeeves-probe-1",
       "jeeves-probe-2"
     ]
@@ -2398,12 +2408,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves' API platform (jeeves-docs-7) exposes endpoints for a company's own cards, payments, and expense data — it is aimed at businesses managing their own spend, not at developers embedding branded banking accounts into their own end-customer products. There is no mention of white-labeling, sponsor-bank passthrough, or multi-tenant account issuance that would let a developer offer banking to their own customers without a license.",
+    "rationale": "Jeeves' API platform and MCP server are documented as tools for a company to manage its own cards, payments, and expenses—not as a banking-as-a-service layer that lets a third-party developer embed accounts for their own end customers. No evidence pack item mentions license-free embedded banking, white-label accounts, or a BaaS/platform partner program for developers to resell to their customers.",
     "evidenceIds": [
       "jeeves-docs-7",
-      "jeeves-docs-8",
       "jeeves-docs-25",
-      "jeeves-docs-38"
+      "jeeves-docs-38",
+      "jeeves-docs-42"
     ]
   },
   {
@@ -2412,13 +2422,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Jeeves docs claim stablecoin-powered cross-border payments settling in minutes (vs 24-48h SWIFT), with 24/7 availability, mid-market rates, and instant FX conversion, directly matching the founder's story of fast international money transfer. Multiple docs pages corroborate this via Jeeves Instant Pay / Global Payments and Jeeves Cash features. Missing for 10: independent/hands-on verification of actual transfer speed and no third-party corroboration beyond first-party docs.",
+    "rationale": "Jeeves documents stablecoin-powered cross-border payments settling in minutes (vs 24-48 hrs via SWIFT) across 190+ countries with 24/7 availability and mid-market rates, directly matching the founder's need for fast international transfers. Missing for 10: independent/third-party verification of actual settlement speed and no hands-on user reports confirming sub-minute delivery in practice.",
     "evidenceIds": [
       "jeeves-docs-4",
       "jeeves-docs-15",
       "jeeves-docs-36",
-      "jeeves-docs-41",
-      "jeeves-docs-2"
+      "jeeves-docs-49",
+      "jeeves-docs-41"
     ]
   },
   {
@@ -2427,7 +2437,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack describes product features (cards, payments, expense management, APIs) but contains no claims about account-opening speed, KYC/onboarding timelines, or a 'week vs months' onboarding process for founders. The closest mention (jeeves-docs-17) refers to developer API integration speed, not banking account onboarding.",
+    "rationale": "The evidence pack covers product features (cards, payments, FX, API) but contains no evidence about account-opening speed, KYC turnaround, or overall onboarding timeline for a founder moving to Jeeves as their banking platform. The closest mention (\"Full integration in under a sprint\") refers to API/payment integration work, not the end-to-end banking onboarding process.",
     "evidenceIds": []
   },
   {
@@ -2436,7 +2446,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions FDIC insurance, deposit sweep programs, or multi-bank partner sweeps; Jeeves' offerings focus on multi-currency accounts, cards, cross-border payments, and expense management, none of which address FDIC sweep coverage.",
+    "rationale": "No evidence anywhere in the pack mentions FDIC sweep programs, multi-bank deposit sweeping, or expanded FDIC insurance coverage — Jeeves' documented offerings focus on multi-currency accounts, cards, and cross-border payments, not deposit insurance optimization.",
     "evidenceIds": []
   },
   {
@@ -2444,14 +2454,15 @@
     "storyId": "fee-free-foreign-card-spend",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Jeeves offers corporate cards, multi-currency accounts, and FX conversion, implying reduced foreign transaction friction, but there is no explicit mention of ATM cash withdrawals abroad or an explicit 'no hidden FX fees' guarantee for card spend specifically. missing for 10: explicit cash withdrawal/ATM support abroad, explicit no-hidden-fee guarantee for card transactions, and independent verification of actual FX markup on card spend.",
+    "confidence": "low",
+    "rationale": "Jeeves offers physical/virtual corporate cards plus multi-currency accounts (USD/EUR/GBP/CAD) with real-time FX conversion and claims of competitive/mid-market rates and no transfer/wire fees, which supports low-fee spending abroad, but there is no explicit mention of ATM cash withdrawals or a specific guarantee against foreign transaction fees on card purchases. Missing for 10: explicit cash withdrawal/ATM support abroad, explicit no-foreign-transaction-fee statement for card spend, independent confirmation of actual FX rates charged.",
     "evidenceIds": [
       "jeeves-docs-1",
-      "jeeves-docs-18",
+      "jeeves-docs-19",
       "jeeves-docs-25",
+      "jeeves-docs-40",
       "jeeves-docs-38",
-      "jeeves-docs-40"
+      "jeeves-docs-2"
     ]
   },
   {
@@ -2460,8 +2471,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers card issuance, spend-limit adjustments, and general card controls, but nowhere mentions freezing/locking a card or ordering a replacement for a lost or stolen card—not in the product pages, docs, or MCP tool list (which only covers issuing new cards, updating limits/names, and reset intervals).",
-    "evidenceIds": []
+    "rationale": "Jeeves documents card issuance, spend-limit adjustments, and MCP-based card management (list/filter/issue/update limits), but no evidence anywhere mentions freezing a lost/stolen card or ordering a replacement card.",
+    "evidenceIds": [
+      "jeeves-docs-20",
+      "jeeves-docs-34",
+      "jeeves-docs-19"
+    ]
   },
   {
     "productId": "jeeves",
@@ -2469,9 +2484,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Jeeves offers one-click export/sync to NetSuite, QuickBooks, and Xero and exposes transaction data via API/webhooks, but there is no evidence of true real-time bidirectional sync (e.g., automated journal entry creation/reconciliation back into the ERP) — only export-style sync is documented. Missing for 10: bidirectional sync mechanics, automated journal-entry posting, reconciliation workflow, and independent confirmation the sync eliminates manual entries.",
+    "rationale": "Jeeves only mentions a 'one-click sync' with NetSuite, QuickBooks, and Xero on its cross-border payments product page, with no documentation of bidirectional sync mechanics, real-time journal entry posting, or reconciliation workflows — nothing framed for a finance-lead's core ask of replacing manual journal entries. Missing for 10: technical detail on the sync direction/frequency, evidence of automated journal-entry creation, reconciliation guarantees, and any independent/hands-on confirmation that ERP sync works as claimed.",
     "evidenceIds": [
-      "jeeves-docs-16"
+      "jeeves-docs-16",
+      "jeeves-docs-46"
     ]
   },
   {
@@ -2479,26 +2495,28 @@
     "storyId": "high-yield-savings-subaccount",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Jeeves Cash offers multi-currency sub-accounts with up to 5% yield (jeeves-docs-5, jeeves-docs-38), satisfying the high-yield sub-account element, and allows manual/favorable-rate conversions between Jeeves Cash accounts (jeeves-docs-41). However, there is no evidence of configurable automated transfer rules (e.g., scheduled sweeps or threshold-based auto-funding) to build a cash cushion. Missing for 10: automated/rule-based transfer scheduling between operating and high-yield accounts, sweep triggers, or policy-based cushion automation.",
+    "confidence": "low",
+    "rationale": "Jeeves Cash offers multi-currency accounts with up to 5% yield (jeeves-docs-5, jeeves-docs-38), satisfying the 'high-yield savings' half of the story, and there is some automation around FX conversion between Jeeves Cash accounts (jeeves-docs-41) and invoice payment automation (jeeves-docs-27). However, there is no evidence of a distinct 'sub-account' structure or configurable automated transfer/sweep rules to build a cash cushion specifically. Missing for 10: dedicated sub-account creation, rule-based auto-transfer/sweep configuration, and any hands-on or independent confirmation of yield accrual mechanics.",
     "evidenceIds": [
       "jeeves-docs-5",
       "jeeves-docs-38",
-      "jeeves-docs-41"
+      "jeeves-docs-41",
+      "jeeves-docs-27"
     ]
   },
   {
     "productId": "jeeves",
     "storyId": "instant-virtual-card-issuance",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Jeeves documents instant virtual card issuance for team members with spend limits and controls (jeeves-docs-19, jeeves-docs-20, jeeves-docs-23, jeeves-docs-34), which supports scoping cards by spend limit/purpose. However, there's no explicit evidence of purpose-tagging (e.g., 'ad spend' category) or single-vendor lock/merchant-restriction controls beyond generic spend limits. Missing for 10: explicit vendor-lock or merchant-category restriction features, and independent/hands-on confirmation of instant creation flow.",
+    "rationale": "Jeeves clearly supports instant virtual card issuance with spend limits, and card-level controls can scope spend (limits, reset intervals, naming), including via MCP for AI-assisted issuance. However, there's no explicit documentation of vendor-lock or category-lock (restricting a card to a single vendor/merchant category like ad spend specifically), only general spend limits and naming. Missing for 10: explicit merchant/category-locking or vendor-restriction controls, and independent/hands-on confirmation of instant issuance UX.",
     "evidenceIds": [
       "jeeves-docs-19",
       "jeeves-docs-20",
       "jeeves-docs-23",
-      "jeeves-docs-34"
+      "jeeves-docs-34",
+      "jeeves-docs-44"
     ]
   },
   {
@@ -2506,12 +2524,13 @@
     "storyId": "invoice-creation-collection",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Jeeves is an accounts-payable/spend-management platform focused on cards, bill pay, and cross-border payments; nothing in the evidence describes creating or sending branded invoices for accounts-receivable/collecting customer payments. Only invoice-related mentions are automating incoming vendor invoice payments/approvals, not issuing branded invoices to customers.",
+    "confidence": "medium",
+    "rationale": "Jeeves's evidence is entirely accounts-payable focused (corporate cards, bill pay, cross-border vendor payments, expense management) with no documented capability for a finance-lead to create/design branded outbound invoices and collect payment from customers. The closest items (invoice payment automation, smart invoice scanning, Boleto API) describe processing incoming bills for payment, not issuing branded invoices for collection.",
     "evidenceIds": [
       "jeeves-docs-27",
       "jeeves-docs-28",
-      "jeeves-docs-29"
+      "jeeves-docs-9",
+      "jeeves-docs-46"
     ]
   },
   {
@@ -2520,12 +2539,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves documents real-time FX conversion, mid-market rates, and instant currency exchange, but nowhere describes a mechanism to lock in a specific exchange rate for a fixed time window before completing a transfer. Missing for 10: any rate-lock/quote-hold feature, expiry window terms, or guaranteed-rate confirmation flow.",
+    "rationale": "Jeeves documents real-time FX conversion, mid-market rates, and converting funds 'when exchange rates are favourable' (jeeves-docs-41), but there is no mention of a rate-lock or hold feature that guarantees a fixed FX rate for a defined window before a transfer completes. missing for 10: explicit rate-lock/forward-rate mechanism, defined lock window/expiry, any documentation of guaranteeing a rate ahead of settlement.",
     "evidenceIds": [
       "jeeves-docs-41",
-      "jeeves-docs-30",
-      "jeeves-docs-15",
-      "jeeves-docs-40"
+      "jeeves-docs-5",
+      "jeeves-docs-25"
     ]
   },
   {
@@ -2533,14 +2551,15 @@
     "storyId": "multi-currency-account-creation",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Jeeves Cash and Global Accounts docs explicitly describe multi-currency balance storage (USD, EUR, GBP, CAD, MXN, BRL, COP) in a single account, with real-time FX conversion and yield, all managed from one platform. missing for 10: independent/hands-on corroboration beyond vendor docs.",
+    "confidence": "medium",
+    "rationale": "Jeeves Cash/global accounts explicitly support multi-currency balance storage (USD, EUR, GBP, CAD, and others via instant pay rails) with real-time FX conversion between currencies, all from one account/dashboard. Missing for 10: independent/hands-on verification beyond vendor docs and full consistency on which currencies are supported across pages (4 vs 7 currencies cited).",
     "evidenceIds": [
       "jeeves-docs-5",
       "jeeves-docs-25",
       "jeeves-docs-38",
       "jeeves-docs-40",
-      "jeeves-docs-41"
+      "jeeves-docs-41",
+      "jeeves-docs-15"
     ]
   },
   {
@@ -2549,7 +2568,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Jeeves Cash explicitly offers multi-currency accounts (USD, EUR, GBP, CAD, plus others via cross-border rails) with 'up to 5% yield/annually' while holding balances, directly matching the story. Missing for 10: independent/third-party corroboration of actual yield payouts, per-currency yield rates, and any hands-on confirmation beyond marketing docs.",
+    "rationale": "Jeeves Cash explicitly offers multi-currency balance storage (USD, EUR, GBP, CAD, and others) with up to 5% yield, directly matching the story. Missing for 10: independent/third-party verification of the yield claim, clarity on which currencies qualify for the 5% rate, and any real-world customer confirmation of interest actually paid.",
     "evidenceIds": [
       "jeeves-docs-5",
       "jeeves-docs-38",
@@ -2563,12 +2582,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jeeves supports multi-currency accounts, cash management, and cross-account FX conversion (jeeves-docs-5, jeeves-docs-25, jeeves-docs-41), but nothing in the evidence describes opening multiple checking sub-accounts or auto-allocating incoming deposits across them — the closest features are FX conversion between currency balances, not sub-account deposit splitting.",
+    "rationale": "Jeeves documents multi-currency accounts and manual conversion between Jeeves Cash accounts (docs-25, docs-38, docs-41), but there is no evidence of creating multiple named checking sub-accounts nor of any rule-based auto-allocation of incoming deposits across them.",
     "evidenceIds": [
-      "jeeves-docs-5",
       "jeeves-docs-25",
-      "jeeves-docs-41",
-      "jeeves-docs-38"
+      "jeeves-docs-38",
+      "jeeves-docs-41"
     ]
   },
   {
@@ -2589,8 +2607,8 @@
     "storyId": "one-click-payment-approval",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "Jeeves docs mention customizable roles & permissions (jeeves-docs-22, jeeves-docs-37), employee permissions with audit trails (jeeves-docs-29), and automated invoice payment/approval flows (jeeves-docs-27), indicating some approval-permission infrastructure exists. However, there is no explicit description of a one-click approve-and-send action for designated teammates or how approval roles are configured in practice. Missing for 10: explicit one-click approval UI/workflow documentation, detail on assigning approver roles specifically for payments, and independent/hands-on confirmation of the approval flow.",
+    "confidence": "low",
+    "rationale": "Docs mention customizable roles & permissions, employee permissions, and 'automate invoice payments and approval flows' with audit trails (jeeves-docs-22, jeeves-docs-27, jeeves-docs-29, jeeves-docs-37), suggesting some approval/permission infrastructure exists. However, there's no explicit description of a finance-lead configuring designated approvers with one-click approve-and-send payment authority. Missing for 10: explicit approval-workflow documentation showing designated approver roles, one-click send confirmation, and any independent/hands-on verification of this specific flow.",
     "evidenceIds": [
       "jeeves-docs-22",
       "jeeves-docs-27",
@@ -2604,14 +2622,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Jeeves ships an API covering cards, payments, transactions, and expense data plus an MCP server enabling agents to check spend, pay vendors, manage cards, and submit reimbursements — significant UI parity for core financial actions. However, no evidence covers API parity for account setup, yield/Jeeves Cash management, team/role administration, invoice automation, or Boleto/global-account features fully mirrored via API, and OpenAPI/llms.txt discovery endpoints returned 404s, undermining self-describability. Missing for 10: comprehensive API coverage confirmation across all UI features (team management, yield accounts, invoice automation), working OpenAPI/llms.txt spec discovery, and independent verification of full UI-API parity.",
+    "rationale": "Jeeves documents a developer API platform (cards, payments, transactions, expense data) and an MCP server covering card management, reimbursements, vendor/bill pay, and transaction queries, giving AI-native users meaningful API-level access to core functions. However, there's no explicit claim of full UI/API parity, several UI features (team invites/permissions, invoice approval workflows, cash yield/FX conversion between currencies) aren't clearly exposed via API/MCP, and probes show the OpenAPI spec/llms.txt are unreachable at the redocly host, undermining discoverability of full API surface. Missing for 10: explicit parity statement, complete endpoint coverage matching every UI feature, working public API spec discovery.",
     "evidenceIds": [
       "jeeves-docs-7",
       "jeeves-docs-13",
       "jeeves-docs-33",
       "jeeves-docs-34",
       "jeeves-docs-35",
-      "jeeves-probe-1",
+      "jeeves-docs-47",
       "jeeves-probe-2",
       "jeeves-probe-3"
     ]
@@ -2621,11 +2639,12 @@
     "storyId": "openness-full-export",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Jeeves supports exporting filtered transactions to CSV and every transaction export includes reference ID, timestamp, and on-chain hash, plus one-click sync with accounting tools — these are open, portable formats. However, there is no evidence of a full account/data export (e.g., all cards, expenses, receipts, team data) or an explicit data-portability/account-closure workflow to 'leave' with all data. missing for 10: comprehensive full-account data export beyond transactions, documented data portability/deletion process, independent verification of export completeness.",
+    "confidence": "low",
+    "rationale": "Jeeves supports exporting transaction data (CSV exports via MCP, one-click sync with NetSuite/QuickBooks/Xero, transaction exports with reference IDs) but there is no evidence of a comprehensive full-account data export or an explicit account-closure/data-portability guarantee covering all user data (cards, expenses, receipts, permissions, etc.) in open formats. missing for 10: full-account data export covering all data types (not just transactions), documented open-format export (e.g., JSON/CSV for full account), explicit 'leave and take your data' guarantee or data portability policy.",
     "evidenceIds": [
       "jeeves-docs-14",
-      "jeeves-docs-16"
+      "jeeves-docs-16",
+      "jeeves-docs-46"
     ]
   },
   {
@@ -2634,7 +2653,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jeeves is a fintech/expense-management SaaS product, not open-source software; there is no indication its source code is published under any license. Source availability is a category error for this type of product.",
+    "rationale": "Jeeves is a fintech/finance platform (corporate cards, payments, expense management), not open-source software; open licensing of source code is not a fair axis for this category, and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -2643,7 +2662,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jeeves is a fintech/SaaS platform for corporate cards and payments, not a self-hostable software product; self-hosting the core product is a category error for this type of service.",
+    "rationale": "Jeeves is a fintech SaaS (corporate cards, payments, expense management) delivered as a hosted financial service, not software designed to be deployed on a user's own infrastructure; self-hosting is a category mismatch for a regulated financial platform of this kind, so this openness axis does not apply.",
     "evidenceIds": []
   },
   {
@@ -2651,14 +2670,14 @@
     "storyId": "physical-card-issuance",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly describe shipping physical and virtual corporate cards worldwide, inviting team members with customizable roles & permissions, setting spend limits and embedding expense policies, which directly matches issuing physical/credit cards to employees with defined roles. Missing for 10: independent/hands-on verification of physical card issuance workflow and role-based permission granularity beyond marketing docs.",
+    "confidence": "high",
+    "rationale": "Jeeves documents issuing physical and virtual corporate cards worldwide, with role/permission customization ('customize roles & permissions, and issue unlimited corporate cards'), spend limits, and team invite management, directly matching the finance-lead persona need. Missing for 10: independent/hands-on verification of the role-based issuance workflow beyond vendor docs.",
     "evidenceIds": [
       "jeeves-docs-19",
-      "jeeves-docs-22",
       "jeeves-docs-20",
-      "jeeves-docs-23",
-      "jeeves-docs-1"
+      "jeeves-docs-22",
+      "jeeves-docs-37",
+      "jeeves-docs-23"
     ]
   },
   {
@@ -2667,11 +2686,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Jeeves docs mention smart invoice scanning, automated invoice payments/approval flows, and invoice audit trails, which cover invoice capture and payment routing, but there is no explicit mention of purchase-order matching or GL/expense coding of invoices. Missing for 10: explicit three-way PO matching logic, invoice coding to GL accounts, and end-to-end automated matching workflow evidence.",
+    "rationale": "Jeeves documents invoice payment automation, vendor bill pay, smart invoice scanning, and an MCP tool that can 'pay vendors and handle bills — review bill pay invoices, manage vendors,' which covers vendor payment routing. However, there is no evidence of purchase-order matching (3-way match) or GL/expense coding of invoices, which are core parts of this story. Missing for 10: purchase order matching/reconciliation, invoice coding to GL accounts, and end-to-end approval routing workflow evidence beyond generic 'approval flows' mention.",
     "evidenceIds": [
       "jeeves-docs-27",
       "jeeves-docs-28",
-      "jeeves-docs-29"
+      "jeeves-docs-47",
+      "jeeves-docs-33"
     ]
   },
   {
@@ -2679,8 +2699,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack about data residency, region selection, or data storage location controls; Jeeves' documentation covers financial products (cards, payments, MCP finance tools) but never addresses where customer data is stored or any regional storage choice.",
+    "confidence": "low",
+    "rationale": "No evidence anywhere in the pack mentions data residency, regional data storage options, or where customer data is hosted; the evidence covers payments, cards, expense management, and MCP/API features but nothing about data residency controls.",
     "evidenceIds": []
   },
   {
@@ -2698,7 +2718,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack addresses data retention policies, deletion controls, or user-facing privacy/data-lifecycle settings for Jeeves' financial or MCP data; the docs cover payments, cards, expense management, and API/webhook mechanics only.",
+    "rationale": "No evidence anywhere in the pack addresses data retention policies, deletion controls, or privacy/data-lifecycle settings for AI-native users; the docs cover finance, payments, cards, and MCP capabilities but never data governance.",
     "evidenceIds": []
   },
   {
@@ -2707,7 +2727,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism; Jeeves' documentation focuses on financial products, APIs, and its MCP server without any privacy/telemetry controls mentioned.",
+    "rationale": "Jeeves is a finance/payments platform with an MCP server for agents, but no evidence in the pack addresses telemetry, usage tracking, or opt-out controls for AI-native users; this is a fair privacy-posture question for an AI-facing product but no supporting documentation exists.",
     "evidenceIds": []
   },
   {
@@ -2730,7 +2750,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Jeeves Cash/Global Accounts docs describe multi-currency accounts (USD, EUR, GBP, CAD) for receiving cash and local bill payments across 150+ countries, which supports founders receiving payments in multiple currencies. However, evidence does not explicitly confirm 'local account details' (e.g., local IBANs/routing numbers per currency) as a receiving mechanism, and currency coverage for receiving is limited to 4 currencies vs the broader 40+ used for outbound payments. missing for 10: explicit confirmation of local account numbers/routing details per currency for inbound receipts, independent/hands-on verification beyond vendor docs.",
+    "rationale": "Jeeves Cash/Global Accounts provide multi-currency accounts (USD, EUR, GBP, CAD) for receiving and holding cash, which supports local receipt of funds in major currencies, but evidence doesn't confirm local account details (e.g., local IBAN/routing numbers) per currency as opposed to a single multi-currency balance. missing for 10: explicit confirmation of local account numbers/routing details per currency, independent/hands-on verification beyond vendor docs, and broader currency coverage matching the 40+ currencies claimed for payments.",
     "evidenceIds": [
       "jeeves-docs-25",
       "jeeves-docs-38",
@@ -2742,13 +2762,14 @@
     "productId": "jeeves",
     "storyId": "request-limit-increase",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Jeeves documents card spend-limit controls that can be adjusted instantly ('Adjust spend limits instantly'), and the MCP server can update card spending limits, but there is no evidence of a dedicated self-service 'request a limit increase' workflow or approval screen aimed at finance-leads specifically. Missing for 10: a documented self-service UI screen/flow for requesting limit increases, approval routing, and finance-lead-specific role evidence.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs show card spend limits can be adjusted instantly by an admin/finance-lead through the platform ('Adjust spend limits instantly', 'Spend Limits: Cap employees' spend with card controls and custom limits') and even via the MCP/API layer, which supports self-service limit changes. However, none of the evidence describes a dedicated 'request/approval' self-service screen specifically for transaction limit increases, only general spend-limit controls. Missing for 10: a documented request/approval workflow UI, independent/hands-on confirmation, and explicit framing of 'finance-lead requesting an increase' rather than just admin-set limits.",
     "evidenceIds": [
       "jeeves-docs-20",
       "jeeves-docs-23",
-      "jeeves-docs-34"
+      "jeeves-docs-34",
+      "jeeves-docs-44"
     ]
   },
   {
@@ -2757,12 +2778,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Jeeves documents role/permission customization at a basic level (\"customize roles & permissions,\" \"manage user permissions,\" \"employee permissions\") but provides no evidence of granularity across locations or departments, no detail on permission levels/scopes, or admin UI for role definition. missing for 10: department/location-scoped roles, list of permission levels, audit/documentation of role hierarchy, independent corroboration.",
+    "rationale": "Jeeves documents role/permission customization ('customize roles & permissions', 'employee permissions', 'manage user permissions') and card/spend limits, but evidence is limited to marketing blurbs without detail on granularity across locations/departments, admin UI, or role hierarchy configuration. missing for 10: detailed documentation of role types/permission scopes, department/location-level access control specifics, and independent/hands-on verification of granularity.",
     "evidenceIds": [
       "jeeves-docs-22",
       "jeeves-docs-37",
       "jeeves-docs-29",
-      "jeeves-docs-6"
+      "jeeves-docs-20"
     ]
   },
   {
@@ -2787,15 +2808,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Jeeves documents international payments in local currencies across 150+ countries and 40+ currencies with no transfer/wire fees, mid-market FX rates, multi-currency accounts, and stablecoin rails claiming reduced FX costs and transparent settlement details (reference IDs, timestamps, on-chain hash). Fee transparency is addressed via 'no transfer fees or wire fees' and mid-market rate claims, though exact fee schedules and independent verification are absent. Missing for 10: independent/third-party corroboration of claimed fee transparency and actual rate competitiveness, and a detailed public fee schedule.",
+    "rationale": "Jeeves offers global payments across 150+/190+ countries in 40+ currencies with mid-market/competitive FX rates, no transfer/wire fees, and stablecoin rails for fast settlement, directly matching the finance-lead's need to pay internationally in local currency with transparent fees. Evidence spans multiple product pages (global accounts, cross-border payments, instant pay) describing fee structures, FX conversion, and settlement speed, though all is vendor-authored docs without independent/third-party corroboration. Missing for 10: independent verification of actual fee transparency/rates and real customer confirmation of no hidden fees.",
     "evidenceIds": [
       "jeeves-docs-2",
-      "jeeves-docs-4",
       "jeeves-docs-15",
-      "jeeves-docs-16",
       "jeeves-docs-25",
       "jeeves-docs-26",
       "jeeves-docs-39",
+      "jeeves-docs-50",
       "jeeves-docs-41"
     ]
   },
@@ -2804,18 +2824,28 @@
     "storyId": "transfer-delivery-estimate",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only shows generic marketing claims about speed (e.g., 'arrives as soon as same day', 'settle in minutes') but no documentation of a specific delivery-estimate shown to the user at the moment of confirming an ACH/wire transfer, nor any API/UI field returning an estimated arrival time pre-confirmation.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence covers general speed claims (e.g., 'arrive as soon as the same day', 'settle in minutes') but no evidence shows a pre-confirmation estimate or quote presented to the user for a specific ACH/wire transfer before they confirm it. No UI/API detail on delivery-time estimation at time-of-transaction.",
+    "evidenceIds": [
+      "jeeves-docs-30",
+      "jeeves-docs-49",
+      "jeeves-docs-4"
+    ]
   },
   {
     "productId": "jeeves",
     "storyId": "universal-transaction-search",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows transaction/card querying via API and MCP filters, but nothing describes a universal search bar spanning transactions, vendors, and cards in the finance-lead-facing UI, nor a flow to jump from search results into initiating a payment.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Jeeves offers API/MCP capabilities to query transactions, cards, and vendors and even initiate vendor payments or card actions in one interface (jeeves-docs-10, 14, 34, 47), which loosely maps to searching across these entities and acting on them, but there is no evidence of an actual UI-level 'universal search bar' that lets a finance-lead search across transactions/vendors/cards and jump into payment initiation from one search box. missing for 10: a documented unified search-bar UI feature, evidence it spans all three entity types simultaneously, and confirmation it lets the user directly launch a payment from search results.",
+    "evidenceIds": [
+      "jeeves-docs-10",
+      "jeeves-docs-14",
+      "jeeves-docs-34",
+      "jeeves-docs-47",
+      "jeeves-docs-33"
+    ]
   },
   {
     "productId": "mercury",
