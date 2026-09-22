@@ -23,9 +23,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 100 processes with unique, non-empty slugs', () => {
+  it('loads all 119 processes with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(100)
+    expect(tasks.length).toBe(119)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -248,6 +248,11 @@ describe('vendor -> arena mapping', () => {
       // vendor_011 "Compare on evidence": our own surface, labeled '(ours)' — honest
       // affiliation, never passed off as an independently judged product.
       'productarena',
+      // 2026-09-22 corpus expansion — real suppliers with no arena yet, shown as honest
+      // unlinked chips: R&D-credit study shops, pen-test firms, 401(k) providers, MDMs,
+      // EOR/status-page/questionnaire vendors, and mobile build/submit tooling.
+      'fondo', 'neo_tax', 'cobalt', 'oneleet', 'guideline', 'human_interest',
+      'kandji', 'jamf', 'remote', 'statuspage', 'conveyor', 'fastlane', 'expo',
     ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {

@@ -12,7 +12,7 @@ import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
 export { formatMinutes, gapWhy }
 export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
-// The founder-process corpus (data/processes.json): 97 real startup operating processes, each
+// The founder-process corpus (data/processes.json): 119 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
 // API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (a human
 // or a computer-use agent does it: meetings, judgment, waiting on a third party — with
@@ -474,6 +474,25 @@ export const VENDOR_ARENA: Record<string, string> = {
   greptile: 'ai-code-review',
   cursor_bugbot: 'ai-code-review',
   datadog: 'observability',
+  // Sales-tax nexus & registration (tax_011) — judged in tax-automation.
+  stripe_tax: 'tax-automation',
+  avalara: 'tax-automation',
+  taxjar: 'tax-automation',
+  anrok: 'tax-automation',
+  // Incident postmortems & status pages (prod_010 / prod_011).
+  incident_io: 'incident-management',
+  betterstack: 'incident-management',
+  // Lifecycle email for pricing-change / win-back campaigns (growth_014 / growth_015).
+  loops: 'email-marketing',
+  customer_io: 'email-marketing',
+  // Billing plan changes (growth_014) — judged in billing-subscriptions.
+  stripe_billing: 'billing-subscriptions',
+  chargebee: 'billing-subscriptions',
+  recurly: 'billing-subscriptions',
+  // Make-the-repo-agent-ready (sw_010) — the agent-skills market.
+  superpowers: 'agent-skills',
+  gstack: 'agent-skills',
+  skills_cli: 'agent-skills',
 }
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
@@ -517,6 +536,19 @@ const VENDOR_LABELS: Record<string, string> = {
   google_search_console: 'Google Search Console',
   iubenda: 'iubenda',
   coderabbit: 'CodeRabbit',
+  // 2026-09-22 corpus expansion vendors.
+  stripe_tax: 'Stripe Tax',
+  stripe_billing: 'Stripe Billing',
+  taxjar: 'TaxJar',
+  incident_io: 'incident.io',
+  betterstack: 'Better Stack',
+  customer_io: 'Customer.io',
+  skills_cli: 'skills.sh',
+  gstack: 'gstack',
+  neo_tax: 'Neo.Tax',
+  human_interest: 'Human Interest',
+  statuspage: 'Statuspage',
+  fastlane: 'fastlane',
   // Contextual vendor selection (vendor_011): our own evidence-comparison surface, disclosed as
   // ours — same honest-affiliation posture as Ultrametric products judged in their arenas.
   productarena: 'ProductArena (ours)',
@@ -558,6 +590,28 @@ export const VENDOR_SIGNUP_URL: Record<string, string> = {
   vercel: 'https://vercel.com/',
   posthog: 'https://posthog.com/',
   slack: 'https://slack.com/',
+  // 2026-09-22 corpus expansion — every URL curl-verified reachable before listing.
+  stripe_tax: 'https://stripe.com/tax',
+  avalara: 'https://www.avalara.com/',
+  taxjar: 'https://www.taxjar.com/',
+  anrok: 'https://www.anrok.com/',
+  incident_io: 'https://incident.io/',
+  betterstack: 'https://betterstack.com/',
+  statuspage: 'https://www.statuspage.io/',
+  loops: 'https://loops.so/',
+  customer_io: 'https://customer.io/',
+  guideline: 'https://www.guideline.com/',
+  human_interest: 'https://humaninterest.com/',
+  kandji: 'https://www.kandji.io/',
+  jamf: 'https://www.jamf.com/',
+  remote: 'https://remote.com/',
+  cobalt: 'https://www.cobalt.io/',
+  oneleet: 'https://www.oneleet.com/',
+  conveyor: 'https://www.conveyor.com/',
+  neo_tax: 'https://neo.tax/',
+  fondo: 'https://www.tryfondo.com/',
+  fastlane: 'https://www.fastlane.tools/',
+  expo: 'https://expo.dev/',
   // Our own compare-against-your-stack page (vendor_011) — verified live; the chip label
   // discloses the affiliation.
   productarena: 'https://ultrametric.ai/productarena/my-stack',

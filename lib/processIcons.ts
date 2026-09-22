@@ -60,6 +60,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   fund_003: '💲', // 409A valuation
   fund_005: '📁', // Set up a data room (the diligence folder)
   fund_004: '🎟️', // Issue stock options
+  fund_006: '🔀', // Convert SAFEs at the priced round (notes become preferred stock)
   qs_051: '🥧', // Set up cap table (ownership pie)
   qs_052: '🥧', // Update cap table
   qs_053: '🥧', // Audit cap table
@@ -83,6 +84,11 @@ export const PROCESS_ICONS: Record<string, string> = {
   scale_011: '🕵️', // Vendor security review
   comp_010: '🔒', // Publish privacy policy & DPA (privacy is 🔒 site-wide)
   comp_011: '📜', // Board minutes cadence
+  comp_002: '🛡️', // Complete SOC 2 Type II (same SOC 2 concept as comp_001)
+  comp_013: '🥷', // Annual penetration test (the ethical intruder)
+  comp_014: '📝', // Answer a security questionnaire (the giant form)
+  tax_010: '🔬', // Claim the R&D tax credit (qualified research)
+  tax_011: '🛒', // Sales tax nexus & registration (tax on the cart)
   // Finance
   qs_021: '💳', // Connect a payment processor (canonical: Stripe)
   qs_023: '🏦', // Open bank account
@@ -96,6 +102,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   scale_005: '👔', // Board meeting prep
   opp_001: '📤', // Send a wire or ACH payment
   opp_004: '↩️', // Issue a refund
+  fin_010: '📐', // Annual budget & board approval (drawing up the plan)
   // HR
   qs_063: '💸', // Set up payroll
   hr_001: '🤝', // Hire first employee
@@ -110,6 +117,10 @@ export const PROCESS_ICONS: Record<string, string> = {
   opp_002: '👷', // Add a contractor (1099)
   opp_007: '🪪', // Provision a workspace user (canonical: Google Workspace)
   team_001: '💌', // Invite a teammate
+  hr_010: '🎩', // Hire an executive (the top hat)
+  hr_011: '🛂', // Sponsor a work visa (passport control)
+  hr_012: '🪺', // Set up a 401(k) (the nest egg)
+  hr_013: '🌏', // Hire abroad via an EOR (employment across the globe)
   // Operations
   qs_015: '🗄️', // Set up doc storage
   ops_001: '💬', // Set up team chat (canonical: Slack)
@@ -124,9 +135,12 @@ export const PROCESS_ICONS: Record<string, string> = {
   opp_011: '📨', // Set up email routing on your domain
   vendor_010: '🔌', // Connect a vendor or MCP server
   vendor_011: '🧭', // Contextual vendor selection (navigating the market from your context)
+  ops_013: '🖥️', // Set up device management (the managed fleet)
+  ops_014: '🏙️', // Lease an office (the building downtown)
   // Software making
   sw_001: '🚢', // Ship a feature (ship it!)
   sw_002: '🏷️', // Cut a release (tag it)
+  sw_010: '🤖', // Make the repo agent-ready
   prod_002: '🔄', // Set up CI/CD
   prod_004: '🚨', // Set up error tracking (canonical: Sentry)
   // Product
@@ -137,6 +151,9 @@ export const PROCESS_ICONS: Record<string, string> = {
   opp_009: '🎫', // Create an issue from a task (same concept as ops_002)
   scale_009: '📟', // On-call & incidents (the pager)
   scale_010: '🏭', // Data warehouse & BI (the warehouse)
+  prod_010: '🧯', // Run an incident postmortem (after the fire is out)
+  prod_011: '🟢', // Publish a status page & SLA (the uptime dot)
+  prod_012: '📱', // Launch in the app stores
   // Sales
   sales_001: '📇', // Set up a CRM (canonical: HubSpot — rolodex)
   sales_002: '🧾', // Send an invoice (canonical: Stripe)
@@ -152,6 +169,8 @@ export const PROCESS_ICONS: Record<string, string> = {
   growth_011: '🔎', // SEO & content engine (search is 🔎 site-wide)
   growth_012: '🛫', // Outbound sales sequences (departures)
   growth_013: '🎁', // Referral program (the reward)
+  growth_014: '🪙', // Roll out a pricing change (the coin flips)
+  growth_015: '🪃', // Run a win-back campaign (they come back)
 }
 
 export function processIcon(taskId: string): string {
