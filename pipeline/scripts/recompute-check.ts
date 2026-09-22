@@ -51,6 +51,7 @@ const CATEGORIES = [
   'feature-flags',
   'fraud-prevention',
   'frontend-frameworks',
+  'frontier-models',
   'game-engines',
   'gpu-clouds',
   'gpus',
