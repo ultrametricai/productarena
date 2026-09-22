@@ -23,9 +23,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 97 processes with unique, non-empty slugs', () => {
+  it('loads all 100 processes with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(97)
+    expect(tasks.length).toBe(100)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -245,6 +245,9 @@ describe('vendor -> arena mapping', () => {
       'doola', 'google_sheets', 'google_drive', 'dropbox', 'northwest',
       'vanta', 'termly', 'iubenda', 'producthunt', 'betalist', 'hackernews',
       'ahrefs', 'semrush', 'google_search_console', 'apollo', 'sendgrid',
+      // vendor_011 "Compare on evidence": our own surface, labeled '(ours)' — honest
+      // affiliation, never passed off as an independently judged product.
+      'productarena',
     ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {

@@ -45,6 +45,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   startup_002: '🖋️', // Founder agreement & equity split
   // Formation
   form_001: '🏛️', // Incorporate C-Corp
+  form_011: '🧱', // Set up an LLC (the simpler building block)
   form_002: '🆔', // Get EIN
   form_005: '🗺️', // Register state taxes
   qs_044: '📬', // Set up mailing address
@@ -69,6 +70,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   legal_004: '📑', // Negotiate SaaS agreement
   qs_043: '🕴️', // Set up registered agent
   opp_012: '🔭', // Monitor trademark / handle availability
+  shutdown_001: '🚪', // Shut down the company (closing the doors)
   // Compliance
   tax_001: '💵', // File DE franchise tax
   tax_002: '🧾', // File federal tax return
@@ -121,6 +123,7 @@ export const PROCESS_ICONS: Record<string, string> = {
   opp_008: '✉️', // Draft and send an email (canonical: Gmail)
   opp_011: '📨', // Set up email routing on your domain
   vendor_010: '🔌', // Connect a vendor or MCP server
+  vendor_011: '🧭', // Contextual vendor selection (navigating the market from your context)
   // Software making
   sw_001: '🚢', // Ship a feature (ship it!)
   sw_002: '🏷️', // Cut a release (tag it)

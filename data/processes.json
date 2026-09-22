@@ -237,6 +237,210 @@
   "growthImpact": 1
  },
  {
+  "id": "form_011",
+  "title": "Set up an LLC",
+  "description": "Form an LLC: name check, Articles of Organization with a registered agent, a signed operating agreement, then the EIN, bank account, and state-tax registrations. The default for holding companies, agencies, and bootstrapped businesses — founders planning to raise priced venture rounds should incorporate a Delaware C-Corp instead (that flow, and the LLC→C-Corp conversion question, live in Incorporate C-Corp).",
+  "phase": "formation",
+  "cadence": "once",
+  "complexity": "moderate",
+  "category": "company_formation",
+  "supportLevel": "partial",
+  "supportReason": "Formation services drive the state filing but expose limited APIs. The agent checks the name, drafts the operating agreement, and pre-fills every form; the state portal, the IRS EIN wizard, and member signatures stay manual.",
+  "vendors": [
+   "stripe_atlas",
+   "legalzoom"
+  ],
+  "dag": {
+   "nodes": [
+    {
+     "id": "n1",
+     "label": "Choose a formation service",
+     "route": "person",
+     "vendorOptions": [
+      "stripe_atlas",
+      "firstbase",
+      "legalzoom",
+      "northwest",
+      "doola"
+     ],
+     "estimatedMinutes": 10
+    },
+    {
+     "id": "n2",
+     "label": "Check name availability",
+     "route": "agent",
+     "actionUrl": "https://icis.corp.delaware.gov/ecorp/entitysearch/namesearch.aspx",
+     "actionLabel": "Delaware name search",
+     "estimatedMinutes": 2,
+     "functionCalls": [
+      {
+       "method": "GET /api/name-availability?state=DE&name={name}",
+       "type": "rest",
+       "description": "Check LLC name availability in the formation state"
+      }
+     ]
+    },
+    {
+     "id": "n3",
+     "label": "File Articles of Organization and appoint a registered agent",
+     "route": "form",
+     "vendor": "stripe_atlas",
+     "approvalRequired": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 20,
+     "functionCalls": [
+      {
+       "method": "atlas.llc.formation.submit()",
+       "type": "manual",
+       "description": "Manual submission on the formation service's portal"
+      }
+     ]
+    },
+    {
+     "id": "n4",
+     "label": "Receive the stamped Certificate of Formation",
+     "route": "person",
+     "estimatedMinutes": 2880,
+     "async": true,
+     "extraOptionArenas": [
+      "workflow-automation"
+     ]
+    },
+    {
+     "id": "n5",
+     "label": "Draft the operating agreement",
+     "route": "agent",
+     "riskLevel": "medium",
+     "estimatedMinutes": 30,
+     "extraOptionRefs": [
+      {
+       "arenaId": "ai-assistants",
+       "productId": "chatgpt"
+      },
+      {
+       "arenaId": "ai-assistants",
+       "productId": "claude"
+      }
+     ]
+    },
+    {
+     "id": "n6",
+     "label": "Members sign the operating agreement",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "medium",
+     "estimatedMinutes": 5
+    },
+    {
+     "id": "n7",
+     "label": "Apply for an EIN",
+     "route": "form",
+     "actionUrl": "https://www.irs.gov/businesses/small-businesses-self-employed/get-an-employer-identification-number",
+     "actionLabel": "IRS EIN application",
+     "vendor": "irs",
+     "estimatedMinutes": 15,
+     "functionCalls": [
+      {
+       "method": "irs.ein.apply()",
+       "type": "manual",
+       "description": "The IRS SS-4 wizard has no API — the agent pre-fills, a human submits"
+      }
+     ]
+    },
+    {
+     "id": "n8",
+     "label": "Open a business bank account",
+     "route": "form",
+     "optionsArenaId": "startup-banking",
+     "vendorOptions": [
+      "mercury"
+     ],
+     "estimatedMinutes": 15
+    },
+    {
+     "id": "n9",
+     "label": "Register for state taxes",
+     "route": "form",
+     "riskLevel": "medium",
+     "estimatedMinutes": 20
+    }
+   ],
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    },
+    {
+     "from": "n4",
+     "to": "n5"
+    },
+    {
+     "from": "n5",
+     "to": "n6"
+    },
+    {
+     "from": "n6",
+     "to": "n7"
+    },
+    {
+     "from": "n7",
+     "to": "n8"
+    },
+    {
+     "from": "n7",
+     "to": "n9"
+    }
+   ]
+  },
+  "contextNeeded": [
+   {
+    "tool": "user_input",
+    "query": "company desired name",
+    "tier": "user_input",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "member names and ownership split",
+    "tier": "user_input",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "formation state",
+    "tier": "user_input",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "member-managed or manager-managed",
+    "tier": "user_input",
+    "required": false
+   }
+  ],
+  "tags": [
+   "formation",
+   "legal",
+   "llc"
+  ],
+  "activeMinutes": 117,
+  "totalEstimatedMinutes": 2997,
+  "hasAsyncSteps": true,
+  "region": "us",
+  "timeOrder": 2,
+  "annoyance": 3,
+  "risk": 4,
+  "growthImpact": 1
+ },
+ {
   "id": "form_002",
   "title": "Get EIN",
   "description": "Apply for an Employer Identification Number (EIN) from the IRS for the newly incorporated company.",
@@ -336,7 +540,7 @@
   "totalEstimatedMinutes": 12,
   "hasAsyncSteps": false,
   "region": "us",
-  "timeOrder": 3,
+  "timeOrder": 4,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 1
@@ -443,7 +647,7 @@
   "totalEstimatedMinutes": 57,
   "hasAsyncSteps": false,
   "region": "us",
-  "timeOrder": 39,
+  "timeOrder": 41,
   "annoyance": 4,
   "risk": 4,
   "growthImpact": 1
@@ -700,7 +904,7 @@
   "activeMinutes": 125,
   "totalEstimatedMinutes": 4925,
   "hasAsyncSteps": true,
-  "timeOrder": 37,
+  "timeOrder": 39,
   "annoyance": 4,
   "risk": 4,
   "growthImpact": 4
@@ -893,7 +1097,7 @@
   "activeMinutes": 7340,
   "totalEstimatedMinutes": 18830,
   "hasAsyncSteps": true,
-  "timeOrder": 97,
+  "timeOrder": 99,
   "annoyance": 5,
   "risk": 5,
   "growthImpact": 4
@@ -976,7 +1180,7 @@
   "activeMinutes": 110,
   "totalEstimatedMinutes": 110,
   "hasAsyncSteps": false,
-  "timeOrder": 36,
+  "timeOrder": 38,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 2
@@ -1116,7 +1320,7 @@
   "totalEstimatedMinutes": 14520,
   "hasAsyncSteps": true,
   "region": "us",
-  "timeOrder": 49,
+  "timeOrder": 51,
   "annoyance": 5,
   "risk": 4,
   "growthImpact": 1
@@ -1283,7 +1487,7 @@
   "totalEstimatedMinutes": 2907,
   "hasAsyncSteps": true,
   "region": "us",
-  "timeOrder": 50,
+  "timeOrder": 52,
   "annoyance": 3,
   "risk": 4,
   "growthImpact": 2
@@ -1424,7 +1628,7 @@
   "activeMinutes": 14,
   "totalEstimatedMinutes": 15,
   "hasAsyncSteps": true,
-  "timeOrder": 23,
+  "timeOrder": 24,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 1
@@ -1580,7 +1784,7 @@
   "activeMinutes": 70,
   "totalEstimatedMinutes": 2952,
   "hasAsyncSteps": true,
-  "timeOrder": 70,
+  "timeOrder": 72,
   "annoyance": 4,
   "risk": 3,
   "growthImpact": 1
@@ -1722,7 +1926,7 @@
   "activeMinutes": 13,
   "totalEstimatedMinutes": 1455,
   "hasAsyncSteps": true,
-  "timeOrder": 22,
+  "timeOrder": 23,
   "annoyance": 3,
   "risk": 5,
   "growthImpact": 1
@@ -1877,7 +2081,7 @@
   "activeMinutes": 105,
   "totalEstimatedMinutes": 4425,
   "hasAsyncSteps": true,
-  "timeOrder": 71,
+  "timeOrder": 73,
   "annoyance": 4,
   "risk": 3,
   "growthImpact": 2
@@ -2018,7 +2222,7 @@
     "label": "File DE annual report"
    }
   ],
-  "timeOrder": 79,
+  "timeOrder": 81,
   "annoyance": 4,
   "risk": 5,
   "growthImpact": 1
@@ -2194,7 +2398,7 @@
   "totalEstimatedMinutes": 20272,
   "hasAsyncSteps": true,
   "region": "us",
-  "timeOrder": 83,
+  "timeOrder": 85,
   "annoyance": 5,
   "risk": 5,
   "growthImpact": 1
@@ -2306,7 +2510,7 @@
   "totalEstimatedMinutes": 45,
   "hasAsyncSteps": false,
   "region": "us",
-  "timeOrder": 82,
+  "timeOrder": 84,
   "annoyance": 4,
   "risk": 4,
   "growthImpact": 1
@@ -2439,7 +2643,7 @@
   "activeMinutes": 65,
   "totalEstimatedMinutes": 4385,
   "hasAsyncSteps": true,
-  "timeOrder": 40,
+  "timeOrder": 42,
   "annoyance": 4,
   "risk": 3,
   "growthImpact": 1
@@ -2630,7 +2834,7 @@
   "activeMinutes": 1125,
   "totalEstimatedMinutes": 34245,
   "hasAsyncSteps": true,
-  "timeOrder": 96,
+  "timeOrder": 98,
   "annoyance": 5,
   "risk": 3,
   "growthImpact": 3
@@ -2726,7 +2930,7 @@
     "label": "Import documents from Dropbox"
    }
   ],
-  "timeOrder": 16,
+  "timeOrder": 17,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 1
@@ -2833,7 +3037,7 @@
   "activeMinutes": 35,
   "totalEstimatedMinutes": 55,
   "hasAsyncSteps": true,
-  "timeOrder": 51,
+  "timeOrder": 53,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 4
@@ -2948,7 +3152,7 @@
   "totalEstimatedMinutes": 2918,
   "hasAsyncSteps": true,
   "region": "us",
-  "timeOrder": 12,
+  "timeOrder": 13,
   "annoyance": 3,
   "risk": 3,
   "growthImpact": 1
@@ -3046,7 +3250,7 @@
   "activeMinutes": 8,
   "totalEstimatedMinutes": 23,
   "hasAsyncSteps": true,
-  "timeOrder": 13,
+  "timeOrder": 14,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 1
@@ -3109,7 +3313,7 @@
   "totalEstimatedMinutes": 25,
   "hasAsyncSteps": true,
   "region": "us",
-  "timeOrder": 4,
+  "timeOrder": 5,
   "annoyance": 2,
   "risk": 3,
   "growthImpact": 1
@@ -3195,7 +3399,7 @@
   "activeMinutes": 41,
   "totalEstimatedMinutes": 41,
   "hasAsyncSteps": false,
-  "timeOrder": 5,
+  "timeOrder": 6,
   "annoyance": 4,
   "risk": 2,
   "growthImpact": 1
@@ -3269,7 +3473,7 @@
   "activeMinutes": 15,
   "totalEstimatedMinutes": 45,
   "hasAsyncSteps": true,
-  "timeOrder": 81,
+  "timeOrder": 83,
   "annoyance": 3,
   "risk": 3,
   "growthImpact": 1
@@ -3350,7 +3554,7 @@
     "label": "File an annual report / registered agent"
    }
   ],
-  "timeOrder": 80,
+  "timeOrder": 82,
   "annoyance": 4,
   "risk": 4,
   "growthImpact": 1
@@ -3472,7 +3676,7 @@
   "activeMinutes": 9,
   "totalEstimatedMinutes": 9,
   "hasAsyncSteps": false,
-  "timeOrder": 35,
+  "timeOrder": 37,
   "annoyance": 1,
   "risk": 3,
   "growthImpact": 2
@@ -3560,7 +3764,7 @@
   "activeMinutes": 60,
   "totalEstimatedMinutes": 60,
   "hasAsyncSteps": false,
-  "timeOrder": 21,
+  "timeOrder": 22,
   "annoyance": 3,
   "risk": 4,
   "growthImpact": 1
@@ -3644,7 +3848,7 @@
   "activeMinutes": 40,
   "totalEstimatedMinutes": 50,
   "hasAsyncSteps": true,
-  "timeOrder": 38,
+  "timeOrder": 40,
   "annoyance": 3,
   "risk": 4,
   "growthImpact": 1
@@ -3732,7 +3936,7 @@
   "activeMinutes": 105,
   "totalEstimatedMinutes": 165,
   "hasAsyncSteps": true,
-  "timeOrder": 78,
+  "timeOrder": 80,
   "annoyance": 4,
   "risk": 4,
   "growthImpact": 1
@@ -3841,7 +4045,7 @@
   "totalEstimatedMinutes": 38,
   "hasAsyncSteps": true,
   "region": "us",
-  "timeOrder": 43,
+  "timeOrder": 45,
   "annoyance": 3,
   "risk": 4,
   "growthImpact": 1
@@ -3939,7 +4143,7 @@
   "activeMinutes": 8,
   "totalEstimatedMinutes": 38,
   "hasAsyncSteps": true,
-  "timeOrder": 20,
+  "timeOrder": 21,
   "annoyance": 3,
   "risk": 3,
   "growthImpact": 1
@@ -4194,7 +4398,7 @@
   "activeMinutes": 62,
   "totalEstimatedMinutes": 5822,
   "hasAsyncSteps": true,
-  "timeOrder": 42,
+  "timeOrder": 44,
   "annoyance": 3,
   "risk": 3,
   "growthImpact": 4
@@ -4331,7 +4535,7 @@
   "activeMinutes": 11,
   "totalEstimatedMinutes": 11,
   "hasAsyncSteps": false,
-  "timeOrder": 44,
+  "timeOrder": 46,
   "annoyance": 2,
   "risk": 4,
   "growthImpact": 1
@@ -4486,7 +4690,7 @@
   "activeMinutes": 22,
   "totalEstimatedMinutes": 7222,
   "hasAsyncSteps": true,
-  "timeOrder": 46,
+  "timeOrder": 48,
   "annoyance": 3,
   "risk": 4,
   "growthImpact": 2
@@ -4603,7 +4807,7 @@
   "activeMinutes": 75,
   "totalEstimatedMinutes": 75,
   "hasAsyncSteps": false,
-  "timeOrder": 84,
+  "timeOrder": 86,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 2
@@ -4793,7 +4997,7 @@
   "activeMinutes": 24,
   "totalEstimatedMinutes": 1464,
   "hasAsyncSteps": true,
-  "timeOrder": 89,
+  "timeOrder": 91,
   "annoyance": 3,
   "risk": 4,
   "growthImpact": 1
@@ -4913,7 +5117,7 @@
   "activeMinutes": 9,
   "totalEstimatedMinutes": 9,
   "hasAsyncSteps": false,
-  "timeOrder": 72,
+  "timeOrder": 74,
   "annoyance": 3,
   "risk": 3,
   "growthImpact": 1
@@ -5093,7 +5297,7 @@
   "activeMinutes": 72,
   "totalEstimatedMinutes": 1512,
   "hasAsyncSteps": true,
-  "timeOrder": 74,
+  "timeOrder": 76,
   "annoyance": 4,
   "risk": 3,
   "growthImpact": 1
@@ -5301,7 +5505,7 @@
   "activeMinutes": 50,
   "totalEstimatedMinutes": 50,
   "hasAsyncSteps": false,
-  "timeOrder": 75,
+  "timeOrder": 77,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 1
@@ -5415,7 +5619,7 @@
   "activeMinutes": 25,
   "totalEstimatedMinutes": 25,
   "hasAsyncSteps": false,
-  "timeOrder": 17,
+  "timeOrder": 18,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 1
@@ -5548,7 +5752,7 @@
   "activeMinutes": 26,
   "totalEstimatedMinutes": 26,
   "hasAsyncSteps": false,
-  "timeOrder": 18,
+  "timeOrder": 19,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 2
@@ -5671,7 +5875,7 @@
   "activeMinutes": 25,
   "totalEstimatedMinutes": 25,
   "hasAsyncSteps": false,
-  "timeOrder": 19,
+  "timeOrder": 20,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 1
@@ -5805,7 +6009,7 @@
   "activeMinutes": 55,
   "totalEstimatedMinutes": 55,
   "hasAsyncSteps": false,
-  "timeOrder": 14,
+  "timeOrder": 15,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 1
@@ -5919,7 +6123,7 @@
   "activeMinutes": 25,
   "totalEstimatedMinutes": 25,
   "hasAsyncSteps": false,
-  "timeOrder": 15,
+  "timeOrder": 16,
   "annoyance": 2,
   "risk": 4,
   "growthImpact": 1
@@ -6064,7 +6268,7 @@
   "activeMinutes": 295,
   "totalEstimatedMinutes": 3175,
   "hasAsyncSteps": true,
-  "timeOrder": 86,
+  "timeOrder": 88,
   "annoyance": 5,
   "risk": 2,
   "growthImpact": 2
@@ -6206,7 +6410,7 @@
   "activeMinutes": 220,
   "totalEstimatedMinutes": 14620,
   "hasAsyncSteps": true,
-  "timeOrder": 48,
+  "timeOrder": 50,
   "annoyance": 4,
   "risk": 3,
   "growthImpact": 2
@@ -6344,7 +6548,7 @@
   "activeMinutes": 380,
   "totalEstimatedMinutes": 3260,
   "hasAsyncSteps": true,
-  "timeOrder": 87,
+  "timeOrder": 89,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 1
@@ -6462,7 +6666,7 @@
   "activeMinutes": 65,
   "totalEstimatedMinutes": 65,
   "hasAsyncSteps": false,
-  "timeOrder": 88,
+  "timeOrder": 90,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 1
@@ -6684,7 +6888,7 @@
   "activeMinutes": 243,
   "totalEstimatedMinutes": 243,
   "hasAsyncSteps": false,
-  "timeOrder": 77,
+  "timeOrder": 79,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 1
@@ -6848,7 +7052,7 @@
   "activeMinutes": 70,
   "totalEstimatedMinutes": 70,
   "hasAsyncSteps": false,
-  "timeOrder": 90,
+  "timeOrder": 92,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 1
@@ -7016,7 +7220,7 @@
   "activeMinutes": 335,
   "totalEstimatedMinutes": 815,
   "hasAsyncSteps": true,
-  "timeOrder": 92,
+  "timeOrder": 94,
   "annoyance": 4,
   "risk": 4,
   "growthImpact": 1
@@ -7168,7 +7372,7 @@
   "activeMinutes": 165,
   "totalEstimatedMinutes": 165,
   "hasAsyncSteps": false,
-  "timeOrder": 85,
+  "timeOrder": 87,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 3
@@ -7325,7 +7529,7 @@
   "activeMinutes": 65,
   "totalEstimatedMinutes": 65,
   "hasAsyncSteps": false,
-  "timeOrder": 93,
+  "timeOrder": 95,
   "annoyance": 2,
   "risk": 3,
   "growthImpact": 2
@@ -7456,7 +7660,7 @@
   "activeMinutes": 750,
   "totalEstimatedMinutes": 870,
   "hasAsyncSteps": true,
-  "timeOrder": 94,
+  "timeOrder": 96,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 2
@@ -7586,7 +7790,7 @@
   "activeMinutes": 175,
   "totalEstimatedMinutes": 7375,
   "hasAsyncSteps": true,
-  "timeOrder": 95,
+  "timeOrder": 97,
   "annoyance": 4,
   "risk": 3,
   "growthImpact": 1
@@ -7711,7 +7915,7 @@
     "label": "Goals due this week"
    }
   ],
-  "timeOrder": 91,
+  "timeOrder": 93,
   "annoyance": 3,
   "risk": 1,
   "growthImpact": 2
@@ -7926,7 +8130,7 @@
   "activeMinutes": 300,
   "totalEstimatedMinutes": 300,
   "hasAsyncSteps": false,
-  "timeOrder": 27,
+  "timeOrder": 28,
   "annoyance": 3,
   "risk": 3,
   "growthImpact": 2
@@ -8071,7 +8275,7 @@
   "activeMinutes": 55,
   "totalEstimatedMinutes": 55,
   "hasAsyncSteps": false,
-  "timeOrder": 26,
+  "timeOrder": 27,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 3
@@ -8218,7 +8422,7 @@
   "activeMinutes": 15,
   "totalEstimatedMinutes": 20,
   "hasAsyncSteps": true,
-  "timeOrder": 28,
+  "timeOrder": 29,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 2
@@ -8349,7 +8553,7 @@
   "activeMinutes": 30,
   "totalEstimatedMinutes": 30,
   "hasAsyncSteps": false,
-  "timeOrder": 29,
+  "timeOrder": 30,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 2
@@ -8500,7 +8704,7 @@
   "activeMinutes": 75,
   "totalEstimatedMinutes": 75,
   "hasAsyncSteps": false,
-  "timeOrder": 30,
+  "timeOrder": 31,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 4
@@ -8643,7 +8847,7 @@
   "activeMinutes": 23,
   "totalEstimatedMinutes": 23,
   "hasAsyncSteps": false,
-  "timeOrder": 25,
+  "timeOrder": 26,
   "annoyance": 1,
   "risk": 2,
   "growthImpact": 2
@@ -8792,7 +8996,7 @@
   "activeMinutes": 60,
   "totalEstimatedMinutes": 60,
   "hasAsyncSteps": false,
-  "timeOrder": 54,
+  "timeOrder": 56,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 3
@@ -8925,7 +9129,7 @@
   "activeMinutes": 7,
   "totalEstimatedMinutes": 7,
   "hasAsyncSteps": false,
-  "timeOrder": 56,
+  "timeOrder": 58,
   "annoyance": 1,
   "risk": 2,
   "growthImpact": 3
@@ -9100,7 +9304,7 @@
   "activeMinutes": 50,
   "totalEstimatedMinutes": 50,
   "hasAsyncSteps": false,
-  "timeOrder": 52,
+  "timeOrder": 54,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 4
@@ -9278,7 +9482,7 @@
   "activeMinutes": 15,
   "totalEstimatedMinutes": 45,
   "hasAsyncSteps": true,
-  "timeOrder": 64,
+  "timeOrder": 66,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 3
@@ -9407,7 +9611,7 @@
   "activeMinutes": 55,
   "totalEstimatedMinutes": 55,
   "hasAsyncSteps": false,
-  "timeOrder": 59,
+  "timeOrder": 61,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 3
@@ -9542,7 +9746,7 @@
   "activeMinutes": 120,
   "totalEstimatedMinutes": 120,
   "hasAsyncSteps": false,
-  "timeOrder": 63,
+  "timeOrder": 65,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 3
@@ -9675,7 +9879,7 @@
   "activeMinutes": 25,
   "totalEstimatedMinutes": 35,
   "hasAsyncSteps": true,
-  "timeOrder": 58,
+  "timeOrder": 60,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 2
@@ -9713,7 +9917,7 @@
   "activeMinutes": 2,
   "totalEstimatedMinutes": 2,
   "hasAsyncSteps": false,
-  "timeOrder": 73,
+  "timeOrder": 75,
   "annoyance": 2,
   "risk": 4,
   "growthImpact": 1
@@ -9750,7 +9954,7 @@
   "totalEstimatedMinutes": 3,
   "hasAsyncSteps": false,
   "region": "us",
-  "timeOrder": 47,
+  "timeOrder": 49,
   "annoyance": 2,
   "risk": 3,
   "growthImpact": 1
@@ -9786,7 +9990,7 @@
   "activeMinutes": 3,
   "totalEstimatedMinutes": 3,
   "hasAsyncSteps": false,
-  "timeOrder": 53,
+  "timeOrder": 55,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 3
@@ -9824,7 +10028,7 @@
   "activeMinutes": 1,
   "totalEstimatedMinutes": 1,
   "hasAsyncSteps": false,
-  "timeOrder": 57,
+  "timeOrder": 59,
   "annoyance": 1,
   "risk": 2,
   "growthImpact": 1
@@ -9866,7 +10070,7 @@
   "activeMinutes": 2,
   "totalEstimatedMinutes": 2,
   "hasAsyncSteps": false,
-  "timeOrder": 67,
+  "timeOrder": 69,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 1
@@ -9911,7 +10115,7 @@
   "activeMinutes": 2,
   "totalEstimatedMinutes": 2,
   "hasAsyncSteps": false,
-  "timeOrder": 45,
+  "timeOrder": 47,
   "annoyance": 1,
   "risk": 2,
   "growthImpact": 1
@@ -9957,7 +10161,7 @@
   "activeMinutes": 1,
   "totalEstimatedMinutes": 1,
   "hasAsyncSteps": false,
-  "timeOrder": 65,
+  "timeOrder": 67,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 2
@@ -9999,7 +10203,7 @@
   "activeMinutes": 1,
   "totalEstimatedMinutes": 1,
   "hasAsyncSteps": false,
-  "timeOrder": 66,
+  "timeOrder": 68,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 2
@@ -10039,7 +10243,7 @@
   "activeMinutes": 2,
   "totalEstimatedMinutes": 2,
   "hasAsyncSteps": false,
-  "timeOrder": 68,
+  "timeOrder": 70,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 1
@@ -10074,7 +10278,7 @@
   "activeMinutes": 2,
   "totalEstimatedMinutes": 2,
   "hasAsyncSteps": false,
-  "timeOrder": 69,
+  "timeOrder": 71,
   "annoyance": 1,
   "risk": 2,
   "growthImpact": 1
@@ -10145,7 +10349,7 @@
   "activeMinutes": 4,
   "totalEstimatedMinutes": 4,
   "hasAsyncSteps": false,
-  "timeOrder": 7,
+  "timeOrder": 8,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 3
@@ -10210,7 +10414,7 @@
   "activeMinutes": 3,
   "totalEstimatedMinutes": 3,
   "hasAsyncSteps": false,
-  "timeOrder": 8,
+  "timeOrder": 9,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 2
@@ -10251,7 +10455,7 @@
   "activeMinutes": 1,
   "totalEstimatedMinutes": 1,
   "hasAsyncSteps": false,
-  "timeOrder": 9,
+  "timeOrder": 10,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 1
@@ -10287,7 +10491,7 @@
   "activeMinutes": 1,
   "totalEstimatedMinutes": 1,
   "hasAsyncSteps": false,
-  "timeOrder": 10,
+  "timeOrder": 11,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 2
@@ -10358,7 +10562,7 @@
   "activeMinutes": 2,
   "totalEstimatedMinutes": 10,
   "hasAsyncSteps": true,
-  "timeOrder": 11,
+  "timeOrder": 12,
   "annoyance": 1,
   "risk": 2,
   "growthImpact": 2
@@ -10459,7 +10663,7 @@
     "label": "Set up website"
    }
   ],
-  "timeOrder": 24,
+  "timeOrder": 25,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 4
@@ -10498,7 +10702,7 @@
   "activeMinutes": 1,
   "totalEstimatedMinutes": 1,
   "hasAsyncSteps": false,
-  "timeOrder": 34,
+  "timeOrder": 36,
   "annoyance": 1,
   "risk": 1,
   "growthImpact": 1
@@ -10539,8 +10743,174 @@
   "activeMinutes": 3,
   "totalEstimatedMinutes": 3,
   "hasAsyncSteps": false,
-  "timeOrder": 33,
+  "timeOrder": 34,
   "annoyance": 2,
+  "risk": 3,
+  "growthImpact": 2
+ },
+ {
+  "id": "vendor_011",
+  "title": "Contextual vendor selection",
+  "description": "Pick software for a function given YOUR context: define requirements, research and shortlist the market, compare candidates on judged evidence against the stack you already run, trial the finalists agentically, then security review, negotiation, and a signed agreement. Rollout hands off to the Connect a vendor or MCP server process.",
+  "phase": "operations",
+  "cadence": "event-driven",
+  "complexity": "moderate",
+  "category": "operations",
+  "supportLevel": "partial",
+  "supportReason": "Requirements, market research, evidence comparison, and agentic trials run end-to-end; the security review, negotiation judgment, and the countersigned agreement stay human.",
+  "vendors": [],
+  "dag": {
+   "nodes": [
+    {
+     "id": "n1",
+     "label": "Define requirements and constraints",
+     "route": "agent",
+     "estimatedMinutes": 20
+    },
+    {
+     "id": "n2",
+     "label": "Research the market and shortlist",
+     "route": "agent",
+     "estimatedMinutes": 30,
+     "extraOptionArenas": [
+      "ai-research-agents"
+     ]
+    },
+    {
+     "id": "n3",
+     "label": "Compare on evidence and rank against your stack",
+     "route": "agent",
+     "vendorOptions": [
+      "productarena"
+     ],
+     "estimatedMinutes": 20
+    },
+    {
+     "id": "n4",
+     "label": "Trial top candidates agentically",
+     "route": "agent",
+     "estimatedMinutes": 60,
+     "extraOptionArenas": [
+      "browser-agents"
+     ]
+    },
+    {
+     "id": "n5",
+     "label": "Security and data review",
+     "route": "person",
+     "approvalRequired": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 45
+    },
+    {
+     "id": "n6",
+     "label": "Negotiate pricing and terms",
+     "route": "person",
+     "approvalRequired": true,
+     "riskLevel": "medium",
+     "estimatedMinutes": 60
+    },
+    {
+     "id": "n7",
+     "label": "Prepare the agreement for signature",
+     "route": "agent",
+     "vendor": "docusign",
+     "approvalRequired": true,
+     "estimatedMinutes": 10,
+     "functionCalls": [
+      {
+       "method": "POST /v2.1/accounts/{id}/envelopes",
+       "type": "rest",
+       "description": "Send the negotiated order form for e-signature"
+      }
+     ]
+    },
+    {
+     "id": "n8",
+     "label": "Sign the agreement",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "medium",
+     "estimatedMinutes": 5
+    },
+    {
+     "id": "n9",
+     "label": "Connect and roll out to the team",
+     "route": "agent",
+     "estimatedMinutes": 15
+    }
+   ],
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    },
+    {
+     "from": "n4",
+     "to": "n5"
+    },
+    {
+     "from": "n5",
+     "to": "n6"
+    },
+    {
+     "from": "n6",
+     "to": "n7"
+    },
+    {
+     "from": "n7",
+     "to": "n8"
+    },
+    {
+     "from": "n8",
+     "to": "n9"
+    }
+   ]
+  },
+  "contextNeeded": [
+   {
+    "tool": "user_input",
+    "query": "function you are buying for",
+    "tier": "user_input",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "budget and seat count",
+    "tier": "user_input",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "current tool stack",
+    "tier": "user_input",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "security and compliance requirements",
+    "tier": "user_input",
+    "required": false
+   }
+  ],
+  "tags": [
+   "operations",
+   "vendor-management",
+   "procurement"
+  ],
+  "activeMinutes": 265,
+  "totalEstimatedMinutes": 265,
+  "hasAsyncSteps": false,
+  "timeOrder": 35,
+  "annoyance": 3,
   "risk": 3,
   "growthImpact": 2
  },
@@ -10688,7 +11058,7 @@
   "activeMinutes": 90,
   "totalEstimatedMinutes": 570,
   "hasAsyncSteps": true,
-  "timeOrder": 6,
+  "timeOrder": 7,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 5
@@ -10799,7 +11169,7 @@
   "totalEstimatedMinutes": 135,
   "hasAsyncSteps": true,
   "region": "us",
-  "timeOrder": 2,
+  "timeOrder": 3,
   "annoyance": 3,
   "risk": 5,
   "growthImpact": 1
@@ -10908,7 +11278,7 @@
   "activeMinutes": 55,
   "totalEstimatedMinutes": 175,
   "hasAsyncSteps": true,
-  "timeOrder": 41,
+  "timeOrder": 43,
   "annoyance": 3,
   "risk": 4,
   "growthImpact": 1
@@ -10993,7 +11363,7 @@
   "activeMinutes": 85,
   "totalEstimatedMinutes": 85,
   "hasAsyncSteps": false,
-  "timeOrder": 76,
+  "timeOrder": 78,
   "annoyance": 4,
   "risk": 3,
   "growthImpact": 1
@@ -11104,7 +11474,7 @@
   "activeMinutes": 195,
   "totalEstimatedMinutes": 195,
   "hasAsyncSteps": false,
-  "timeOrder": 60,
+  "timeOrder": 62,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 4
@@ -11229,7 +11599,7 @@
   "activeMinutes": 130,
   "totalEstimatedMinutes": 130,
   "hasAsyncSteps": false,
-  "timeOrder": 61,
+  "timeOrder": 63,
   "annoyance": 3,
   "risk": 1,
   "growthImpact": 4
@@ -11344,7 +11714,7 @@
   "activeMinutes": 130,
   "totalEstimatedMinutes": 145,
   "hasAsyncSteps": true,
-  "timeOrder": 55,
+  "timeOrder": 57,
   "annoyance": 3,
   "risk": 2,
   "growthImpact": 5
@@ -11423,7 +11793,7 @@
   "activeMinutes": 80,
   "totalEstimatedMinutes": 80,
   "hasAsyncSteps": false,
-  "timeOrder": 62,
+  "timeOrder": 64,
   "annoyance": 2,
   "risk": 1,
   "growthImpact": 3
@@ -11583,7 +11953,7 @@
   "activeMinutes": 240,
   "totalEstimatedMinutes": 240,
   "hasAsyncSteps": false,
-  "timeOrder": 31,
+  "timeOrder": 32,
   "annoyance": 2,
   "risk": 2,
   "growthImpact": 5
@@ -11676,9 +12046,225 @@
   "activeMinutes": 35,
   "totalEstimatedMinutes": 65,
   "hasAsyncSteps": true,
-  "timeOrder": 32,
+  "timeOrder": 33,
   "annoyance": 2,
   "risk": 3,
   "growthImpact": 3
+ },
+ {
+  "id": "shutdown_001",
+  "title": "Shut down the company",
+  "description": "Wind down and dissolve the corporation: board and stockholder dissolution consents, the final payroll and contractor terminations, vendor cancellations, final tax returns with IRS account closure, the Delaware certificate of dissolution with franchise-tax true-up, state withdrawals, bank closure with final distributions, and records retention.",
+  "phase": "legal",
+  "cadence": "once",
+  "complexity": "very_complex",
+  "category": "company_wind_down",
+  "supportLevel": "partial",
+  "supportReason": "The agent drafts the consents, runs the final payroll, cancels vendors, and prepares every filing; the dissolution consents and return jurats need real signatures, and the Delaware, IRS, and bank-closure steps are portal or mail work.",
+  "vendors": [
+   "gusto",
+   "mercury"
+  ],
+  "dag": {
+   "nodes": [
+    {
+     "id": "n1",
+     "label": "Draft board and stockholder dissolution consents",
+     "route": "agent",
+     "riskLevel": "high",
+     "estimatedMinutes": 30
+    },
+    {
+     "id": "n2",
+     "label": "Sign the dissolution consents",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 10
+    },
+    {
+     "id": "n3",
+     "label": "Run the final payroll and terminate contractors",
+     "route": "agent",
+     "vendor": "gusto",
+     "approvalRequired": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 30,
+     "functionCalls": [
+      {
+       "method": "POST /v1/companies/{id}/payrolls",
+       "type": "rest",
+       "description": "Run the final off-cycle payroll and dismissal payments"
+      }
+     ]
+    },
+    {
+     "id": "n4",
+     "label": "Cancel vendor contracts and subscriptions",
+     "route": "agent",
+     "approvalRequired": true,
+     "riskLevel": "medium",
+     "estimatedMinutes": 45,
+     "extraOptionArenas": [
+      "browser-agents"
+     ]
+    },
+    {
+     "id": "n5",
+     "label": "File the certificate of dissolution and franchise-tax true-up",
+     "route": "form",
+     "actionUrl": "https://corp.delaware.gov/corpforms/",
+     "actionLabel": "Delaware dissolution forms",
+     "vendor": "state_sos",
+     "riskLevel": "high",
+     "estimatedMinutes": 30
+    },
+    {
+     "id": "n6",
+     "label": "Wait for the dissolution to be accepted",
+     "route": "person",
+     "estimatedMinutes": 10080,
+     "async": true,
+     "extraOptionArenas": [
+      "workflow-automation"
+     ]
+    },
+    {
+     "id": "n7",
+     "label": "CPA prepares the final federal and state returns",
+     "route": "person",
+     "riskLevel": "high",
+     "estimatedMinutes": 10080,
+     "async": true
+    },
+    {
+     "id": "n8",
+     "label": "Sign the final return jurats and Form 966",
+     "route": "person",
+     "legalSignature": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 10
+    },
+    {
+     "id": "n9",
+     "label": "File the final returns and close the IRS account",
+     "route": "form",
+     "actionUrl": "https://www.irs.gov/businesses/small-businesses-self-employed/closing-a-business",
+     "actionLabel": "IRS closing a business",
+     "vendor": "irs",
+     "estimatedMinutes": 20,
+     "async": true
+    },
+    {
+     "id": "n10",
+     "label": "Withdraw foreign-state registrations",
+     "route": "form",
+     "riskLevel": "medium",
+     "estimatedMinutes": 30
+    },
+    {
+     "id": "n11",
+     "label": "Close bank accounts and distribute remaining assets",
+     "route": "form",
+     "vendor": "mercury",
+     "approvalRequired": true,
+     "riskLevel": "high",
+     "estimatedMinutes": 20
+    },
+    {
+     "id": "n12",
+     "label": "Archive corporate records for retention",
+     "route": "agent",
+     "vendorOptions": [
+      "google_drive"
+     ],
+     "estimatedMinutes": 15
+    }
+   ],
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    },
+    {
+     "from": "n4",
+     "to": "n5"
+    },
+    {
+     "from": "n5",
+     "to": "n6"
+    },
+    {
+     "from": "n6",
+     "to": "n7"
+    },
+    {
+     "from": "n7",
+     "to": "n8"
+    },
+    {
+     "from": "n8",
+     "to": "n9"
+    },
+    {
+     "from": "n9",
+     "to": "n10"
+    },
+    {
+     "from": "n10",
+     "to": "n11"
+    },
+    {
+     "from": "n11",
+     "to": "n12"
+    }
+   ]
+  },
+  "contextNeeded": [
+   {
+    "tool": "gusto.employees",
+    "tier": "connected",
+    "required": true
+   },
+   {
+    "tool": "mercury.transactions",
+    "tier": "connected",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "dissolution effective date",
+    "tier": "user_input",
+    "required": true
+   },
+   {
+    "tool": "user_input",
+    "query": "records custodian after wind-down",
+    "tier": "user_input",
+    "required": false
+   }
+  ],
+  "tags": [
+   "legal",
+   "dissolution",
+   "wind-down",
+   "compliance"
+  ],
+  "activeMinutes": 220,
+  "totalEstimatedMinutes": 20400,
+  "hasAsyncSteps": true,
+  "region": "us",
+  "timeOrder": 100,
+  "annoyance": 5,
+  "risk": 5,
+  "growthImpact": 1
  }
 ]
