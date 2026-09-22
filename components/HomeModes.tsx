@@ -17,6 +17,9 @@ type Mode = 'companies' | 'processes'
 
 export default function HomeModes({ companies, processes }: { companies: ReactNode; processes: ReactNode }) {
   const [mode, setMode] = useState<Mode>('companies')
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM external
+     systems (URL, localStorage). The static HTML must render the default mode, so this cannot be
+     a useState initializer (hydration mismatch); it runs once and renders at most one extra pass. */
   useEffect(() => {
     const fromUrl = readParam('view')
     if (fromUrl === 'processes' || fromUrl === 'companies') {
@@ -26,6 +29,7 @@ export default function HomeModes({ companies, processes }: { companies: ReactNo
     const saved = localStorage.getItem(MODE_KEY)
     if (saved === 'processes') setMode('processes')
   }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
   const pick = (m: Mode) => {
     setMode(m)
     localStorage.setItem(MODE_KEY, m)

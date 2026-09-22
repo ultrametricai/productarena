@@ -145,6 +145,9 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
   // untouched: ?order=<preset>, ?phase=<phase>, ?pq=<text> (pq, not q — this table co-mounts
   // with MegaTable on the homepage's process mode and the two filters must coexist). Invalid
   // values fall back to the defaults silently.
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM the URL
+     (external system). The static HTML must render the default view, so these cannot be useState
+     initializers (hydration mismatch); the effect runs once and renders at most one extra pass. */
   useEffect(() => {
     const p = readParams()
     const col = paramToColumn(p.get('order'))
@@ -159,6 +162,7 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
     // Mount-only by design: the URL is the INITIAL view; after that the reader's clicks own it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Every phase change (the <select> AND the in-row phase buttons) mirrors into ?phase=,
   // with the 'all' default elided.

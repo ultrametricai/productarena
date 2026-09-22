@@ -114,6 +114,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   // static HTML always renders the default view, then ?rank/?dir/?arena/?all/?q reproduce the
   // sender's view after hydration. Invalid values fall back to the defaults silently, and a
   // param never appears for a default (writes below elide them the same way).
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM the URL
+     (external system). The static HTML must render the default view, so these cannot be useState
+     initializers (hydration mismatch); the effect runs once and renders at most one extra pass. */
   useEffect(() => {
     const p = readParams()
     const col = parseMegaColumn(p.get('rank')) ?? DEFAULT_COLUMN
@@ -128,6 +131,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     // Mount-only by design: the URL is the INITIAL view; after that the reader's clicks own it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const companyRows = useMemo(
     () => (includeSubProducts ? rows : rows.filter((r) => !r.isFamilySubProduct && !r.isSecondaryArena)),
