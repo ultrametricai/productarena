@@ -5,6 +5,7 @@ import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessLensBanner from '@/components/ProcessLensBanner'
+import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
 import { buildProcessCheckSteps } from '@/lib/processCheckData'
@@ -86,6 +87,9 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
         {/* Client-side lens banner over the WHOLE chain — one clicked vendor flows across every
             section. Renders nothing in the static HTML. */}
         <ProcessLensBanner steps={checkStepsByTask.flat()} pageKey={def.id} />
+        {/* Founder 2026-09-22: pick vendors at the top — logo buttons per covering arena; one
+            click drives the whole chain (same lens the step "use" affordances share). */}
+        <ProcessVendorPicker steps={checkStepsByTask.flat()} lensKey={def.id} />
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <ProcessDag
             lensKey={def.id}

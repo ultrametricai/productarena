@@ -6,6 +6,7 @@ import IconChip from '@/components/IconChip'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 import ProcessLensBanner from '@/components/ProcessLensBanner'
+import ProcessVendorPicker from '@/components/ProcessVendorPicker'
 import ProcessSimulator from '@/components/ProcessSimulator'
 import ProcessVerdict from '@/components/ProcessVerdict'
 import ProductLogoView from '@/components/ProductLogoView'
@@ -159,6 +160,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
             run via it). Renders nothing in the static HTML — hydrates in only for readers with
             a clicked vendor or an "I'm using" stack pick. */}
         <ProcessLensBanner steps={checkStepList} pageKey={task.id} />
+        {/* Founder 2026-09-22: pick vendors at the top — logo buttons per covering arena; one
+            click drives the whole process (same lens as the per-step "use" affordances). */}
+        <ProcessVendorPicker steps={checkStepList} lensKey={task.id} />
         <div className="mt-4 rounded-2xl border border-zinc-800 p-4 sm:p-5">
           <div id="steps" className="scroll-mt-4" />
           <ProcessDag
