@@ -493,6 +493,16 @@ export const VENDOR_ARENA: Record<string, string> = {
   superpowers: 'agent-skills',
   gstack: 'agent-skills',
   skills_cli: 'agent-skills',
+  // 2026-09-22 wave-3 vendor-cell fill: refunds run on every processor, not just Stripe.
+  square: 'payments',
+  paypal: 'payments',
+  // Brand palette work (brand_003) — judged in design-tools.
+  figma: 'design-tools',
+  canva: 'design-tools',
+  penpot: 'design-tools',
+  // Workspace-user provisioning via SSO/SCIM (opp_007) — judged in auth-platforms.
+  workos: 'auth-platforms',
+  auth0: 'auth-platforms',
 }
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
@@ -553,6 +563,9 @@ const VENDOR_LABELS: Record<string, string> = {
   // Contextual vendor selection (vendor_011): our own evidence-comparison surface, disclosed as
   // ours — same honest-affiliation posture as Ultrametric products judged in their arenas.
   productarena: 'ProductArena (ours)',
+  // 2026-09-22 wave-3 vendor-cell fill (title-case fallback misfires on these).
+  virtualpostmail: 'VirtualPostMail',
+  workos: 'WorkOS',
 }
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives
@@ -617,6 +630,20 @@ export const VENDOR_SIGNUP_URL: Record<string, string> = {
   // Our own compare-against-your-stack page (vendor_011) — verified live; the chip label
   // discloses the affiliation.
   productarena: 'https://ultrametric.ai/productarena/my-stack',
+  // 2026-09-22 wave-3 vendor-cell fill — every URL curl-verified 200 before listing.
+  // (Northwest Registered Agent's site serves 403 to non-browser clients, so its chip
+  // deliberately carries no signup link — no unverifiable URL is fabricated.)
+  stable: 'https://usestable.com/',
+  earth_class_mail: 'https://www.earthclassmail.com/',
+  virtualpostmail: 'https://www.virtualpostmail.com/',
+  onepassword: 'https://1password.com/',
+  bitwarden: 'https://bitwarden.com/',
+  dashlane: 'https://www.dashlane.com/',
+  vanta: 'https://www.vanta.com/',
+  secureframe: 'https://secureframe.com/',
+  markify: 'https://www.markify.com/',
+  corsearch: 'https://corsearch.com/',
+  harbor_compliance: 'https://www.harborcompliance.com/',
 }
 
 export function vendorLabel(vendor: string): string {
