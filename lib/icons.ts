@@ -140,6 +140,16 @@ const THEME_EXACT: Record<string, string> = {
   'editor-tooling': '🛠️',
   'asset-pipeline': '🧱',
   'platform-export': '🚀',
+  // frontier-models arena ('capability-surface' would land on the generic surfaces puzzle
+  // piece; the rest are new vocabulary)
+  'capability-surface': '🧠',
+  'pricing-rate-limits': '💸',
+  'model-transparency': '📋',
+  'model-lifecycle': '🔁',
+  'weights-licensing': '⚖️',
+  'developer-onboarding': '🚀',
+  'safety-usage-policy': '🛡️',
+  'ecosystem-availability': '🌐',
 }
 
 // Emoji for a story theme id — every live theme in data/*/stories.json must resolve to a
@@ -259,6 +269,15 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'headless-automation': 'the engine without a human — CLI builds, CI test runs, dedicated servers',
   'ai-workflows': 'AI in the engine loop — agent-driven editors, copilots, codegen-friendly APIs, runtime inference',
   'licensing-openness': 'the terms you build on — licenses, royalties, source access, pricing stability',
+  // frontier-models arena
+  'capability-surface': 'what the model can do for code — tool calling, structured/typed outputs, streaming, context, reasoning controls',
+  'pricing-rate-limits': 'the cost of intelligence — public per-token prices, rate limits, caching and batch discounts, spend controls',
+  'model-transparency': 'what the vendor admits — model/system cards, reproducible benchmarks, documented failure modes',
+  'model-lifecycle': 'models as dependencies — versioned IDs, aliases, deprecation policies, changelogs, discovery endpoints',
+  'weights-licensing': 'who owns the weights — open downloads, licenses, fine-tuning access, derivative ecosystems',
+  'developer-onboarding': 'zero to first call — self-serve keys, quickstarts, cookbooks, drop-in compatibility',
+  'safety-usage-policy': 'the rules of use — usage policies, published safety evaluations, guardrail tooling',
+  'ecosystem-availability': 'where else it lives — cloud and gateway distribution, coding-agent integrations, community scale',
 }
 
 // Honest fallback for an arena-specific niche theme no bespoke line covers.
