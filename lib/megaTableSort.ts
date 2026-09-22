@@ -71,6 +71,10 @@ export interface MegaTableRow {
   // once; the "Include all products of companies" toggle reveals them. Optional for
   // fixture compat.
   isFamilySubProduct?: boolean
+  // Same product judged in a second arena (airwallex in payments AND startup-banking): the
+  // default companies view keeps only its best-scoring arena row; the "Include all products"
+  // toggle reveals the rest (founder 2026-09-21: "we have airwallex twice on the main table").
+  isSecondaryArena?: boolean
   // 🔥 "hot right now" reason string (see lib/hotProducts.ts) — null when not hot; optional for
   // the same fixture-compat reason as ycBatch. Rendered as the small HotChip next to the name
   // (tooltip = the reason), never sorted on and never part of any score.
