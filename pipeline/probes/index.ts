@@ -78,6 +78,7 @@ import { probes as stablecoinPayments } from './stablecoin-payments'
 import { probes as backendAsAService } from './backend-as-a-service'
 import { probes as edgePlatforms } from './edge-platforms'
 import { probes as productAnalytics } from './product-analytics'
+import { probes as frontierModels } from './frontier-models'
 
 export type { LocalProbe } from './types'
 
@@ -151,4 +152,5 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'backend-as-a-service': backendAsAService,
   'edge-platforms': edgePlatforms,
   'product-analytics': productAnalytics,
+  'frontier-models': frontierModels,
 }
