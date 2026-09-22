@@ -256,6 +256,12 @@ describe('vendor -> arena mapping', () => {
       'name_com', 'namecheap', 'porkbun',
       'fondo', 'neo_tax', 'cobalt', 'oneleet', 'guideline', 'human_interest',
       'kandji', 'jamf', 'remote', 'statuspage', 'conveyor', 'fastlane', 'expo',
+      // 2026-09-22 wave-3 vendor-cell fill — real suppliers with no arena yet (virtual-address
+      // providers, password managers, compliance automation, trademark watch services), every
+      // listed signup URL curl-verified 200 in lib/processes.ts.
+      'stable', 'earth_class_mail', 'virtualpostmail',
+      'onepassword', 'bitwarden', 'dashlane', 'secureframe',
+      'markify', 'corsearch', 'harbor_compliance',
     ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {

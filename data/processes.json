@@ -239,7 +239,7 @@
  {
   "id": "form_011",
   "title": "Set up an LLC",
-  "description": "Form an LLC: name check, Articles of Organization with a registered agent, a signed operating agreement, then the EIN, bank account, and state-tax registrations. The default for holding companies, agencies, and bootstrapped businesses \u2014 founders planning to raise priced venture rounds should incorporate a Delaware C-Corp instead (that flow, and the LLC\u2192C-Corp conversion question, live in Incorporate C-Corp).",
+  "description": "Form an LLC: name check, Articles of Organization with a registered agent, a signed operating agreement, then the EIN, bank account, and state-tax registrations. The default for holding companies, agencies, and bootstrapped businesses — founders planning to raise priced venture rounds should incorporate a Delaware C-Corp instead (that flow, and the LLC→C-Corp conversion question, live in Incorporate C-Corp).",
   "phase": "formation",
   "cadence": "once",
   "complexity": "moderate",
@@ -343,7 +343,7 @@
       {
        "method": "irs.ein.apply()",
        "type": "manual",
-       "description": "The IRS SS-4 wizard has no API \u2014 the agent pre-fills, a human submits"
+       "description": "The IRS SS-4 wizard has no API — the agent pre-fills, a human submits"
       }
      ]
     },
@@ -451,7 +451,10 @@
   "supportLevel": "manual_guide",
   "supportReason": "IRS EIN application is a web form with no API. System provides step-by-step guidance and pre-fills company data.",
   "vendors": [
-   "irs"
+   "irs",
+   "stripe_atlas",
+   "firstbase",
+   "legalzoom"
   ],
   "dag": {
    "nodes": [
@@ -556,7 +559,10 @@
   "supportLevel": "manual_guide",
   "supportReason": "State tax portals have no APIs. System provides state-specific checklists and pre-fills company data.",
   "vendors": [
-   "state_sos"
+   "state_sos",
+   "avalara",
+   "anrok",
+   "taxjar"
   ],
   "dag": {
    "nodes": [
@@ -589,7 +595,14 @@
      "vendor": "state_sos",
      "approvalRequired": true,
      "riskLevel": "medium",
-     "estimatedMinutes": 20
+     "estimatedMinutes": 20,
+     "vendorOptions": [
+      "avalara",
+      "anrok",
+      "taxjar",
+      "stripe_tax"
+     ],
+     "optionsArenaId": "tax-automation"
     },
     {
      "id": "n4",
@@ -1119,7 +1132,7 @@
  {
   "id": "fund_005",
   "title": "Set up a data room",
-  "description": "Stand up the diligence data room investors expect: charter docs, cap table, financials, and key contracts \u2014 organized, permissioned, and kept current.",
+  "description": "Stand up the diligence data room investors expect: charter docs, cap table, financials, and key contracts — organized, permissioned, and kept current.",
   "phase": "fundraising",
   "cadence": "event-driven",
   "complexity": "simple",
@@ -2875,7 +2888,7 @@
  {
   "id": "qs_015",
   "title": "Set up doc storage",
-  "description": "Stand up the company\u2019s shared document system \u2014 pick a provider, configure the workspace, and bring the existing documents in.",
+  "description": "Stand up the company’s shared document system — pick a provider, configure the workspace, and bring the existing documents in.",
   "phase": "operations",
   "cadence": "once",
   "complexity": "simple",
@@ -3124,7 +3137,7 @@
     },
     {
      "id": "n6",
-     "label": "Wait for the bank to open the account (1\u20132 business days)",
+     "label": "Wait for the bank to open the account (1–2 business days)",
      "route": "person",
      "estimatedMinutes": 2880,
      "async": true,
@@ -3193,7 +3206,7 @@
  {
   "id": "qs_024",
   "title": "Set up credit card",
-  "description": "Get a corporate card for company spend \u2014 compare issuers, apply online, and sync transactions into the books.",
+  "description": "Get a corporate card for company spend — compare issuers, apply online, and sync transactions into the books.",
   "phase": "finance",
   "cadence": "once",
   "complexity": "simple",
@@ -3291,14 +3304,19 @@
  {
   "id": "qs_043",
   "title": "Set up registered agent",
-  "description": "Every state of incorporation requires a registered agent for legal documents \u2014 pick a service and designate it online.",
+  "description": "Every state of incorporation requires a registered agent for legal documents — pick a service and designate it online.",
   "phase": "legal",
   "cadence": "once",
   "complexity": "simple",
   "category": "quick_start",
   "supportLevel": "manual_guide",
-  "supportReason": "Registered agent services have no public signup API \u2014 the designation is an online form; provider comparison is agent work.",
-  "vendors": [],
+  "supportReason": "Registered agent services have no public signup API — the designation is an online form; provider comparison is agent work.",
+  "vendors": [
+   "northwest",
+   "legalzoom",
+   "firstbase",
+   "stripe_atlas"
+  ],
   "dag": {
    "nodes": [
     {
@@ -3354,21 +3372,30 @@
  {
   "id": "qs_044",
   "title": "Set up mailing address",
-  "description": "Get a business mailing address for legal and banking purposes \u2014 sign up with a virtual mailbox and complete the USPS authorization.",
+  "description": "Get a business mailing address for legal and banking purposes — sign up with a virtual mailbox and complete the USPS authorization.",
   "phase": "formation",
   "cadence": "once",
   "complexity": "simple",
   "category": "quick_start",
   "supportLevel": "manual_guide",
-  "supportReason": "Signup is an online form; USPS Form 1583 needs a notarized founder signature \u2014 genuinely human.",
-  "vendors": [],
+  "supportReason": "Signup is an online form; USPS Form 1583 needs a notarized founder signature — genuinely human.",
+  "vendors": [
+   "stable",
+   "earth_class_mail",
+   "virtualpostmail"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
      "label": "Choose mailing address provider",
      "route": "person",
-     "estimatedMinutes": 10
+     "estimatedMinutes": 10,
+     "vendorOptions": [
+      "stable",
+      "earth_class_mail",
+      "virtualpostmail"
+     ]
     },
     {
      "id": "n2",
@@ -3448,7 +3475,11 @@
   "category": "quick_start",
   "supportLevel": "manual_guide",
   "supportReason": "An agent can map employee locations to registration duties; the foreign-qualification filings themselves are state-portal form work.",
-  "vendors": [],
+  "vendors": [
+   "legalzoom",
+   "northwest",
+   "harbor_compliance"
+  ],
   "dag": {
    "nodes": [
     {
@@ -3477,7 +3508,12 @@
      "approvalRequired": true,
      "riskLevel": "medium",
      "estimatedMinutes": 30,
-     "async": true
+     "async": true,
+     "vendorOptions": [
+      "legalzoom",
+      "northwest",
+      "harbor_compliance"
+     ]
     }
    ],
    "edges": [
@@ -3521,9 +3557,12 @@
   "complexity": "simple",
   "category": "quick_start",
   "supportLevel": "manual_guide",
-  "supportReason": "State filing portals have no API \u2014 the filing is manual form work; gathering the details and saving the receipt are agent steps.",
+  "supportReason": "State filing portals have no API — the filing is manual form work; gathering the details and saving the receipt are agent steps.",
   "vendors": [
-   "state_sos"
+   "state_sos",
+   "northwest",
+   "legalzoom",
+   "harbor_compliance"
   ],
   "dag": {
    "nodes": [
@@ -3545,7 +3584,12 @@
      "label": "File the annual report on the state portal",
      "route": "form",
      "riskLevel": "medium",
-     "estimatedMinutes": 20
+     "estimatedMinutes": 20,
+     "vendorOptions": [
+      "northwest",
+      "legalzoom",
+      "harbor_compliance"
+     ]
     },
     {
      "id": "n3",
@@ -3596,7 +3640,7 @@
  {
   "id": "qs_050",
   "title": "Track runway",
-  "description": "Track runway and burn \u2014 pull balances, read the monthly spend, and know the zero-cash date.",
+  "description": "Track runway and burn — pull balances, read the monthly spend, and know the zero-cash date.",
   "phase": "finance",
   "cadence": "monthly",
   "complexity": "simple",
@@ -3718,7 +3762,7 @@
  {
   "id": "qs_051",
   "title": "Set up cap table",
-  "description": "Track every investment on a real cap table from day one \u2014 even informal rounds.",
+  "description": "Track every investment on a real cap table from day one — even informal rounds.",
   "phase": "fundraising",
   "cadence": "once",
   "complexity": "moderate",
@@ -3806,7 +3850,7 @@
  {
   "id": "qs_052",
   "title": "Update cap table",
-  "description": "Keep the cap table current after new SAFEs, grants, or transfers \u2014 reconciled and board-approved.",
+  "description": "Keep the cap table current after new SAFEs, grants, or transfers — reconciled and board-approved.",
   "phase": "fundraising",
   "cadence": "event-driven",
   "complexity": "moderate",
@@ -4348,7 +4392,7 @@
       {
        "method": "carta.draftOptionGrants.create()",
        "type": "rest",
-       "description": "Create a draft option grant via Carta's OAuth API \u2014 board approval finalizes it (the gate stays)"
+       "description": "Create a draft option grant via Carta's OAuth API — board approval finalizes it (the gate stays)"
       }
      ]
     }
@@ -5215,7 +5259,7 @@
       {
        "method": "qbo.banking.matchTransactions()",
        "type": "sdk",
-       "description": "Auto-match imported bank transactions via the QBO API / official Intuit MCP server \u2014 a human signs off on the close"
+       "description": "Auto-match imported bank transactions via the QBO API / official Intuit MCP server — a human signs off on the close"
       }
      ]
     },
@@ -6066,18 +6110,25 @@
   "supportLevel": "partial",
   "supportReason": "1Password has APIs for vault/user management. Account creation is manual. Post-setup management automatable.",
   "vendors": [
-   "onepassword"
+   "onepassword",
+   "bitwarden",
+   "dashlane"
   ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Create 1Password Business account",
+     "label": "Create the password manager business account",
      "route": "form",
      "vendor": "onepassword",
      "approvalRequired": true,
      "riskLevel": "medium",
-     "estimatedMinutes": 10
+     "estimatedMinutes": 10,
+     "vendorOptions": [
+      "onepassword",
+      "bitwarden",
+      "dashlane"
+     ]
     },
     {
      "id": "n2",
@@ -7703,7 +7754,7 @@
  {
   "id": "scale_011",
   "title": "Vendor security review",
-  "description": "Create a vendor security assessment workflow for SOC 2 compliance \u2014 questionnaires, risk scoring, and approval.",
+  "description": "Create a vendor security assessment workflow for SOC 2 compliance — questionnaires, risk scoring, and approval.",
   "phase": "compliance",
   "cadence": "event-driven",
   "complexity": "moderate",
@@ -8608,7 +8659,7 @@
   "complexity": "moderate",
   "category": "data_analytics",
   "supportLevel": "partial",
-  "supportReason": "PostHog's public REST API (live OpenAPI spec, official MCP server) covers project creation and event/dashboard management. Initial instrumentation is a code change \u2014 a coding agent can make it, a human reviews the diff.",
+  "supportReason": "PostHog's public REST API (live OpenAPI spec, official MCP server) covers project creation and event/dashboard management. Initial instrumentation is a code change — a coding agent can make it, a human reviews the diff.",
   "vendors": [
    "posthog"
   ],
@@ -9795,7 +9846,7 @@
     "label": "Set up SendGrid"
    }
   ],
-  "description": "Configure transactional email \u2014 password resets, receipts, notifications. SendGrid is the canonical route; the email arena ranks the alternatives.",
+  "description": "Configure transactional email — password resets, receipts, notifications. SendGrid is the canonical route; the email arena ranks the alternatives.",
   "phase": "growth",
   "cadence": "once",
   "complexity": "simple",
@@ -9922,26 +9973,85 @@
  {
   "id": "opp_001",
   "title": "Send a wire or ACH payment",
-  "description": "Move money out of the company bank account \u2014 create a wire or ACH payment behind an approval gate.",
+  "description": "Move money out of the company bank account — create a wire or ACH payment behind an approval gate.",
   "phase": "finance",
   "cadence": "event-driven",
   "complexity": "moderate",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "The banking APIs expose payments (wires/ACH) \u2014 an agent can create the payment; a human approves before money moves.",
-  "vendors": [],
+  "supportReason": "The banking APIs expose payments (wires/ACH) — an agent prepares and creates the payment; a human approver releases it before money moves.",
+  "vendors": [
+   "mercury",
+   "brex",
+   "relay"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Initiate wire/ACH (approval)",
-     "route": "form",
-     "estimatedMinutes": 2,
+     "label": "Collect payee details and amount",
+     "route": "agent",
+     "estimatedMinutes": 3
+    },
+    {
+     "id": "n2",
+     "label": "Create the wire/ACH payment in the bank",
+     "route": "agent",
+     "vendor": "mercury",
+     "vendorOptions": [
+      "mercury",
+      "brex",
+      "relay"
+     ],
+     "optionsArenaId": "startup-banking",
+     "functionCalls": [
+      {
+       "method": "POST /api/v1/accounts/{id}/wires",
+       "type": "rest",
+       "description": "Initiate the wire/ACH payment (pending approval)"
+      }
+     ],
      "approvalRequired": true,
-     "riskLevel": "high"
+     "riskLevel": "high",
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n3",
+     "label": "Approver releases the payment in the banking dashboard",
+     "route": "person",
+     "riskLevel": "high",
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n4",
+     "label": "Confirm the payment settled and reconcile it",
+     "route": "agent",
+     "vendor": "mercury",
+     "functionCalls": [
+      {
+       "method": "GET /api/v1/accounts/{id}/transactions",
+       "type": "rest",
+       "description": "Verify the payment posted and settled"
+      }
+     ],
+     "async": true,
+     "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -9949,9 +10059,9 @@
    "mercury",
    "payments"
   ],
-  "activeMinutes": 2,
-  "totalEstimatedMinutes": 2,
-  "hasAsyncSteps": false,
+  "activeMinutes": 7,
+  "totalEstimatedMinutes": 9,
+  "hasAsyncSteps": true,
   "timeOrder": 81,
   "annoyance": 2,
   "risk": 4,
@@ -9960,24 +10070,74 @@
  {
   "id": "opp_002",
   "title": "Add a contractor (1099)",
-  "description": "Onboard a 1099 contractor in payroll so they can be paid and 1099\u2019d at year-end.",
+  "description": "Onboard a 1099 contractor in payroll so they can be paid and 1099’d at year-end.",
   "phase": "hr",
   "cadence": "event-driven",
   "complexity": "moderate",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Payroll APIs expose contractor onboarding \u2014 an agent can add the contractor; the contractor completes their own tax info.",
-  "vendors": [],
+  "supportReason": "Payroll APIs expose contractor onboarding — an agent can add the contractor; the contractor completes their own tax info.",
+  "vendors": [
+   "gusto",
+   "rippling",
+   "deel",
+   "justworks"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Add contractor in Gusto",
-     "route": "form",
+     "label": "Add the contractor in payroll",
+     "route": "agent",
+     "vendor": "gusto",
+     "vendorOptions": [
+      "gusto",
+      "rippling",
+      "deel",
+      "justworks"
+     ],
+     "optionsArenaId": "payroll",
+     "functionCalls": [
+      {
+       "method": "POST /v1/companies/{id}/contractors",
+       "type": "rest",
+       "description": "Create the contractor record in payroll"
+      }
+     ],
      "estimatedMinutes": 3
+    },
+    {
+     "id": "n2",
+     "label": "Contractor completes their own W-9 and bank details",
+     "route": "person",
+     "async": true,
+     "estimatedMinutes": 10
+    },
+    {
+     "id": "n3",
+     "label": "Verify the contractor is payable (W-9 on file, payment method set)",
+     "route": "agent",
+     "vendor": "gusto",
+     "functionCalls": [
+      {
+       "method": "GET /v1/companies/{id}/contractors",
+       "type": "rest",
+       "description": "Confirm W-9 status and payment method"
+      }
+     ],
+     "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -9985,9 +10145,9 @@
    "gusto",
    "hr"
   ],
-  "activeMinutes": 3,
-  "totalEstimatedMinutes": 3,
-  "hasAsyncSteps": false,
+  "activeMinutes": 5,
+  "totalEstimatedMinutes": 15,
+  "hasAsyncSteps": true,
   "region": "us",
   "timeOrder": 51,
   "annoyance": 2,
@@ -10003,18 +10163,70 @@
   "complexity": "moderate",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Products and prices are first-class API objects \u2014 an agent creates both in one pass.",
-  "vendors": [],
+  "supportReason": "Products and prices are first-class API objects — an agent creates both in one pass.",
+  "vendors": [
+   "stripe_billing",
+   "chargebee",
+   "recurly"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Create Stripe product + price",
-     "route": "form",
+     "label": "Decide the price point and billing interval",
+     "route": "person",
+     "estimatedMinutes": 10
+    },
+    {
+     "id": "n2",
+     "label": "Create the product and recurring price in billing",
+     "route": "agent",
+     "vendor": "stripe_billing",
+     "vendorOptions": [
+      "stripe_billing",
+      "chargebee",
+      "recurly"
+     ],
+     "optionsArenaId": "billing-subscriptions",
+     "functionCalls": [
+      {
+       "method": "POST /v1/products",
+       "type": "rest",
+       "description": "Create the product"
+      },
+      {
+       "method": "POST /v1/prices",
+       "type": "rest",
+       "description": "Create the recurring price"
+      }
+     ],
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n3",
+     "label": "Run a test subscription end-to-end",
+     "route": "agent",
+     "vendor": "stripe_billing",
+     "functionCalls": [
+      {
+       "method": "POST /v1/subscriptions (test mode)",
+       "type": "rest",
+       "description": "Create a test subscription against the new price"
+      }
+     ],
      "estimatedMinutes": 3
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10022,8 +10234,8 @@
    "stripe",
    "billing"
   ],
-  "activeMinutes": 3,
-  "totalEstimatedMinutes": 3,
+  "activeMinutes": 15,
+  "totalEstimatedMinutes": 15,
   "hasAsyncSteps": false,
   "timeOrder": 58,
   "annoyance": 1,
@@ -10039,20 +10251,68 @@
   "complexity": "simple",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Refunds are a single API call \u2014 an agent can issue one behind an approval gate.",
-  "vendors": [],
+  "supportReason": "Refunds are a single API call — an agent can issue one behind an approval gate.",
+  "vendors": [
+   "stripe",
+   "square",
+   "paypal"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Refund a charge (approval)",
-     "route": "form",
-     "estimatedMinutes": 1,
+     "label": "Locate the charge and check it against the refund policy",
+     "route": "agent",
+     "vendor": "stripe",
+     "vendorOptions": [
+      "stripe"
+     ],
+     "optionsArenaId": "payments",
+     "functionCalls": [
+      {
+       "method": "GET /v1/charges?created[gte]={date}",
+       "type": "rest",
+       "description": "Locate the charge to refund"
+      }
+     ],
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n2",
+     "label": "Issue the refund (approval)",
+     "route": "agent",
+     "vendor": "stripe",
+     "functionCalls": [
+      {
+       "method": "POST /v1/refunds",
+       "type": "rest",
+       "description": "Create the refund for the charge"
+      }
+     ],
      "approvalRequired": true,
-     "riskLevel": "medium"
+     "riskLevel": "medium",
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n3",
+     "label": "Notify the customer and log the reason",
+     "route": "agent",
+     "extraOptionArenas": [
+      "email"
+     ],
+     "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10060,8 +10320,8 @@
    "stripe",
    "payments"
   ],
-  "activeMinutes": 1,
-  "totalEstimatedMinutes": 1,
+  "activeMinutes": 5,
+  "totalEstimatedMinutes": 5,
   "hasAsyncSteps": false,
   "timeOrder": 62,
   "annoyance": 1,
@@ -10077,24 +10337,76 @@
     "label": "Create an Asana project"
    }
   ],
-  "description": "Create a project with its initial tasks in the team\u2019s tracker.",
+  "description": "Create a project with its initial tasks in the team’s tracker.",
   "phase": "operations",
   "cadence": "event-driven",
   "complexity": "moderate",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Project and task creation are core tracker APIs \u2014 a one-call agent step.",
-  "vendors": [],
+  "supportReason": "Project and task creation are core tracker APIs — a one-call agent step.",
+  "vendors": [
+   "asana",
+   "linear",
+   "notion"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Create Asana project + tasks",
+     "label": "Draft the project brief and task breakdown",
      "route": "agent",
+     "estimatedMinutes": 3
+    },
+    {
+     "id": "n2",
+     "label": "Create the project and tasks in the tracker",
+     "route": "agent",
+     "vendor": "asana",
+     "vendorOptions": [
+      "asana",
+      "linear",
+      "notion"
+     ],
+     "optionsArenaId": "project-management",
+     "functionCalls": [
+      {
+       "method": "POST /projects",
+       "type": "rest",
+       "description": "Create the project"
+      },
+      {
+       "method": "POST /tasks",
+       "type": "rest",
+       "description": "Create the initial tasks"
+      }
+     ],
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n3",
+     "label": "Assign owners and due dates",
+     "route": "agent",
+     "vendor": "asana",
+     "functionCalls": [
+      {
+       "method": "PUT /tasks/{task_gid}",
+       "type": "rest",
+       "description": "Set assignee and due date on each task"
+      }
+     ],
      "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10102,8 +10414,8 @@
    "asana",
    "project-management"
   ],
-  "activeMinutes": 2,
-  "totalEstimatedMinutes": 2,
+  "activeMinutes": 7,
+  "totalEstimatedMinutes": 7,
   "hasAsyncSteps": false,
   "timeOrder": 75,
   "annoyance": 1,
@@ -10125,21 +10437,77 @@
   "complexity": "moderate",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Workspace directory APIs expose user provisioning \u2014 an agent can create the account; access grants stay approval-gated.",
-  "vendors": [],
+  "supportReason": "Workspace directory APIs expose user provisioning — an agent can create the account; access grants stay approval-gated.",
+  "vendors": [
+   "google_workspace",
+   "workos",
+   "auth0"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Create Workspace user",
-     "route": "form",
+     "label": "Create the workspace user (email, profile)",
+     "route": "agent",
+     "vendor": "google_workspace",
      "actionUrl": "https://admin.google.com/",
      "actionLabel": "Google Admin console",
-     "vendor": "google_workspace",
+     "functionCalls": [
+      {
+       "method": "POST /admin/directory/v1/users",
+       "type": "rest",
+       "description": "Create the user in the workspace directory"
+      }
+     ],
+     "approvalRequired": true,
      "estimatedMinutes": 2
+    },
+    {
+     "id": "n2",
+     "label": "Add the user to groups and shared drives",
+     "route": "agent",
+     "vendor": "google_workspace",
+     "functionCalls": [
+      {
+       "method": "POST /admin/directory/v1/groups/{groupKey}/members",
+       "type": "rest",
+       "description": "Add the user to their team groups"
+      }
+     ],
+     "estimatedMinutes": 3
+    },
+    {
+     "id": "n3",
+     "label": "Provision app access from the identity provider (SSO/SCIM)",
+     "route": "agent",
+     "vendorOptions": [
+      "workos",
+      "auth0"
+     ],
+     "optionsArenaId": "auth-platforms",
+     "estimatedMinutes": 5
+    },
+    {
+     "id": "n4",
+     "label": "New hire signs in and enrolls MFA",
+     "route": "person",
+     "estimatedMinutes": 5
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10147,8 +10515,8 @@
    "google",
    "hr"
   ],
-  "activeMinutes": 2,
-  "totalEstimatedMinutes": 2,
+  "activeMinutes": 15,
+  "totalEstimatedMinutes": 15,
   "hasAsyncSteps": false,
   "timeOrder": 48,
   "annoyance": 1,
@@ -10170,22 +10538,48 @@
   "complexity": "simple",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Email APIs expose drafting and sending \u2014 an agent drafts, a human approves the send.",
+  "supportReason": "Email APIs expose drafting and sending — an agent drafts, a human approves the send.",
   "vendors": [],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Draft + send email (approval)",
+     "label": "Draft the email for review",
      "route": "agent",
-     "estimatedMinutes": 1,
-     "approvalRequired": true,
      "extraOptionArenas": [
-      "email"
-     ]
+      "ai-assistants"
+     ],
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n2",
+     "label": "Send from the company account (approval)",
+     "route": "agent",
+     "vendorOptions": [
+      "fastmail"
+     ],
+     "optionsArenaId": "email",
+     "approvalRequired": true,
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n3",
+     "label": "Watch for a reply and surface it",
+     "route": "agent",
+     "async": true,
+     "estimatedMinutes": 1
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10193,9 +10587,9 @@
    "gmail",
    "comms"
   ],
-  "activeMinutes": 1,
-  "totalEstimatedMinutes": 1,
-  "hasAsyncSteps": false,
+  "activeMinutes": 2,
+  "totalEstimatedMinutes": 3,
+  "hasAsyncSteps": true,
   "timeOrder": 73,
   "annoyance": 1,
   "risk": 1,
@@ -10216,18 +10610,65 @@
   "complexity": "simple",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Issue creation is a core tracker API (GraphQL + MCP) \u2014 a one-call agent step.",
-  "vendors": [],
+  "supportReason": "Issue creation is a core tracker API (GraphQL + MCP) — a one-call agent step.",
+  "vendors": [
+   "linear",
+   "asana",
+   "notion"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Create Linear issue",
+     "label": "Extract the actionable details from the task or bug report",
      "route": "agent",
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n2",
+     "label": "Create the issue in the tracker",
+     "route": "agent",
+     "vendor": "linear",
+     "vendorOptions": [
+      "linear",
+      "asana",
+      "notion"
+     ],
+     "optionsArenaId": "project-management",
+     "functionCalls": [
+      {
+       "method": "issueCreate",
+       "type": "graphql",
+       "description": "Create the issue"
+      }
+     ],
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n3",
+     "label": "Link context and set priority and labels",
+     "route": "agent",
+     "vendor": "linear",
+     "functionCalls": [
+      {
+       "method": "mutation issueUpdate",
+       "type": "graphql",
+       "description": "Set priority, labels, and links on the issue"
+      }
+     ],
      "estimatedMinutes": 1
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10235,8 +10676,8 @@
    "linear",
    "product"
   ],
-  "activeMinutes": 1,
-  "totalEstimatedMinutes": 1,
+  "activeMinutes": 3,
+  "totalEstimatedMinutes": 3,
   "hasAsyncSteps": false,
   "timeOrder": 74,
   "annoyance": 1,
@@ -10252,22 +10693,68 @@
   "complexity": "simple",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "DNS providers expose email-routing configuration over their APIs \u2014 an agent wires the aliases.",
-  "vendors": [],
+  "supportReason": "DNS providers expose email-routing configuration over their APIs — an agent wires the aliases.",
+  "vendors": [
+   "fastmail",
+   "cloudflare"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Configure email routing",
+     "label": "List the aliases to route (support@, billing@, …)",
      "route": "agent",
-     "estimatedMinutes": 2,
-     "optionsArenaId": "email",
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n2",
+     "label": "Configure the routing rules at the mail provider",
+     "route": "agent",
+     "vendor": "fastmail",
      "vendorOptions": [
       "fastmail"
-     ]
+     ],
+     "optionsArenaId": "email",
+     "extraOptionArenas": [
+      "edge-platforms"
+     ],
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n3",
+     "label": "Add the MX and SPF records to DNS",
+     "route": "agent",
+     "vendor": "cloudflare",
+     "functionCalls": [
+      {
+       "method": "POST /zones/{id}/dns_records",
+       "type": "rest",
+       "description": "Create the MX/SPF records for mail routing"
+      }
+     ],
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n4",
+     "label": "Send a test to each alias and confirm delivery",
+     "route": "agent",
+     "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10275,8 +10762,8 @@
    "cloudflare",
    "domains"
   ],
-  "activeMinutes": 2,
-  "totalEstimatedMinutes": 2,
+  "activeMinutes": 7,
+  "totalEstimatedMinutes": 7,
   "hasAsyncSteps": false,
   "timeOrder": 76,
   "annoyance": 2,
@@ -10292,26 +10779,57 @@
   "complexity": "simple",
   "category": "opportunity",
   "supportLevel": "partial",
-  "supportReason": "Trademark and handle checks run over search APIs \u2014 an agent can schedule the recurring monitor.",
-  "vendors": [],
+  "supportReason": "Trademark and handle checks run over search APIs — an agent can schedule the recurring monitor.",
+  "vendors": [
+   "uspto",
+   "markify",
+   "corsearch"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Schedule trademark/handle monitor",
+     "label": "Run the USPTO trademark search and social-handle checks",
+     "route": "agent",
+     "actionUrl": "https://www.uspto.gov/trademarks",
+     "actionLabel": "USPTO trademark search",
+     "estimatedMinutes": 3
+    },
+    {
+     "id": "n2",
+     "label": "Choose a trademark watch service (or counsel) for conflicts",
+     "route": "person",
+     "vendorOptions": [
+      "markify",
+      "corsearch"
+     ],
+     "estimatedMinutes": 5
+    },
+    {
+     "id": "n3",
+     "label": "Schedule the recurring monitor and alerting",
      "route": "agent",
      "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
    "opportunity",
    "legal"
   ],
-  "activeMinutes": 2,
-  "totalEstimatedMinutes": 2,
+  "activeMinutes": 10,
+  "totalEstimatedMinutes": 10,
   "hasAsyncSteps": false,
   "timeOrder": 77,
   "annoyance": 1,
@@ -10462,33 +10980,80 @@
   "cadence": "once",
   "complexity": "simple",
   "category": "branding",
-  "supportLevel": "full",
-  "supportReason": "Palette selection is a pure generation step \u2014 fully agent-runnable.",
-  "vendors": [],
+  "supportLevel": "partial",
+  "supportReason": "Palette generation, accessibility checks, and token setup are agent-runnable; the founder picks the direction.",
+  "vendors": [
+   "figma",
+   "canva",
+   "penpot"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Set brand palette",
+     "label": "Generate palette directions from the brand adjectives",
      "route": "agent",
-     "estimatedMinutes": 1,
      "extraOptionRefs": [
       {
-       "arenaId": "design-tools",
-       "productId": "figma"
+       "arenaId": "ai-assistants",
+       "productId": "chatgpt"
+      },
+      {
+       "arenaId": "ai-assistants",
+       "productId": "claude"
       }
-     ]
+     ],
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n2",
+     "label": "Pick the palette direction",
+     "route": "person",
+     "estimatedMinutes": 5
+    },
+    {
+     "id": "n3",
+     "label": "Check contrast and accessibility (WCAG)",
+     "route": "agent",
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n4",
+     "label": "Set the palette as design tokens in the design tool",
+     "route": "agent",
+     "vendorOptions": [
+      "figma",
+      "canva"
+     ],
+     "optionsArenaId": "design-tools",
+     "extraOptionArenas": [
+      "vibe-coding"
+     ],
+     "estimatedMinutes": 3
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
    "branding",
    "native"
   ],
-  "activeMinutes": 1,
-  "totalEstimatedMinutes": 1,
+  "activeMinutes": 12,
+  "totalEstimatedMinutes": 12,
   "hasAsyncSteps": false,
   "timeOrder": 10,
   "annoyance": 1,
@@ -10504,7 +11069,7 @@
   "complexity": "simple",
   "category": "domains",
   "supportLevel": "full",
-  "supportReason": "Domain and social-handle availability are public search APIs \u2014 fully agent-runnable.",
+  "supportReason": "Domain and social-handle availability are public search APIs — fully agent-runnable.",
   "vendors": [
    "name_com",
    "namecheap",
@@ -10515,27 +11080,55 @@
    "nodes": [
     {
      "id": "n1",
-     "label": "Search + check availability",
+     "label": "Check registrar availability across TLDs",
      "route": "agent",
      "vendor": "name_com",
-     "estimatedMinutes": 1,
      "vendorOptions": [
       "name_com",
       "namecheap",
       "porkbun",
       "cloudflare"
-     ]
+     ],
+     "functionCalls": [
+      {
+       "method": "POST /v4/domains:checkAvailability",
+       "type": "rest",
+       "description": "Check candidate domains across TLDs"
+      }
+     ],
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n2",
+     "label": "Check matching social handles",
+     "route": "agent",
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n3",
+     "label": "Shortlist candidates with pricing and renewal costs",
+     "route": "agent",
+     "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
    "domains",
    "vendor"
   ],
-  "activeMinutes": 1,
-  "totalEstimatedMinutes": 1,
+  "activeMinutes": 5,
+  "totalEstimatedMinutes": 5,
   "hasAsyncSteps": false,
   "timeOrder": 11,
   "annoyance": 1,
@@ -10551,7 +11144,7 @@
   "complexity": "complex",
   "category": "domains",
   "supportLevel": "full",
-  "supportReason": "Registrar, payment, and DNS APIs cover the whole purchase \u2014 quote, register, and provision run end to end.",
+  "supportReason": "Registrar, payment, and DNS APIs cover the whole purchase — quote, register, and provision run end to end.",
   "vendors": [
    "name_com",
    "namecheap",
@@ -10572,7 +11165,7 @@
       {
        "method": "stripe.checkout.sessions.create()",
        "type": "sdk",
-       "description": "Create the Checkout Session for the domain quote \u2014 a human approves and pays (spend gate)"
+       "description": "Create the Checkout Session for the domain quote — a human approves and pays (spend gate)"
       }
      ]
     },
@@ -10621,7 +11214,7 @@
  {
   "id": "site_001",
   "title": "Generate a website",
-  "description": "Generate and publish the company website with a vibe-coding agent \u2014 human-reviewed before it goes live.",
+  "description": "Generate and publish the company website with a vibe-coding agent — human-reviewed before it goes live.",
   "phase": "growth",
   "cadence": "once",
   "complexity": "very_complex",
@@ -10728,31 +11321,71 @@
   "complexity": "simple",
   "category": "hr",
   "supportLevel": "full",
-  "supportReason": "Member invites and access levels are workspace admin APIs \u2014 a one-call agent step.",
-  "vendors": [],
+  "supportReason": "Member invites and access levels are workspace admin APIs — a one-call agent step.",
+  "vendors": [
+   "slack"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Invite member + set access",
+     "label": "Send the workspace invite with the right access level",
      "route": "agent",
-     "estimatedMinutes": 1,
-     "optionsArenaId": "team-chat",
+     "vendor": "slack",
      "vendorOptions": [
       "slack"
-     ]
+     ],
+     "optionsArenaId": "team-chat",
+     "functionCalls": [
+      {
+       "method": "admin.users.invite",
+       "type": "rest",
+       "description": "Invite the member to the workspace"
+      }
+     ],
+     "estimatedMinutes": 1
+    },
+    {
+     "id": "n2",
+     "label": "Teammate accepts the invite and sets up their account",
+     "route": "person",
+     "async": true,
+     "estimatedMinutes": 5
+    },
+    {
+     "id": "n3",
+     "label": "Add them to the right channels and confirm access",
+     "route": "agent",
+     "vendor": "slack",
+     "functionCalls": [
+      {
+       "method": "conversations.invite",
+       "type": "rest",
+       "description": "Add the new member to their team channels"
+      }
+     ],
+     "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
    "team",
    "native"
   ],
-  "activeMinutes": 1,
-  "totalEstimatedMinutes": 1,
-  "hasAsyncSteps": false,
+  "activeMinutes": 3,
+  "totalEstimatedMinutes": 8,
+  "hasAsyncSteps": true,
   "timeOrder": 37,
   "annoyance": 1,
   "risk": 1,
@@ -10768,22 +11401,58 @@
   "category": "operations",
   "supportLevel": "full",
   "supportReason": "Credential exchange is a manual connect flow; once connected, MCP servers expose the vendor to agents.",
-  "vendors": [],
+  "vendors": [
+   "composio",
+   "smithery"
+  ],
   "dag": {
    "nodes": [
     {
      "id": "n1",
-     "label": "Connect vendor / add MCP server",
-     "route": "form",
-     "estimatedMinutes": 3,
-     "optionsArenaId": "mcp-infrastructure",
+     "label": "Pick the integration path (native integration or MCP server)",
+     "route": "person",
      "vendorOptions": [
       "composio",
       "smithery"
-     ]
+     ],
+     "optionsArenaId": "mcp-infrastructure",
+     "estimatedMinutes": 3
+    },
+    {
+     "id": "n2",
+     "label": "Authorize credentials (OAuth grant or API key exchange)",
+     "route": "form",
+     "riskLevel": "medium",
+     "estimatedMinutes": 3
+    },
+    {
+     "id": "n3",
+     "label": "Register the MCP server with the agent runtime",
+     "route": "agent",
+     "vendor": "composio",
+     "estimatedMinutes": 2
+    },
+    {
+     "id": "n4",
+     "label": "Run a smoke-test tool call and save the connection",
+     "route": "agent",
+     "estimatedMinutes": 2
     }
    ],
-   "edges": []
+   "edges": [
+    {
+     "from": "n1",
+     "to": "n2"
+    },
+    {
+     "from": "n2",
+     "to": "n3"
+    },
+    {
+     "from": "n3",
+     "to": "n4"
+    }
+   ]
   },
   "contextNeeded": [],
   "tags": [
@@ -10791,8 +11460,8 @@
    "mcp",
    "native"
   ],
-  "activeMinutes": 3,
-  "totalEstimatedMinutes": 3,
+  "activeMinutes": 10,
+  "totalEstimatedMinutes": 10,
   "hasAsyncSteps": false,
   "timeOrder": 35,
   "annoyance": 2,
@@ -12451,7 +13120,7 @@
  {
   "id": "fin_010",
   "title": "Annual budget & board approval",
-  "description": "Turn last year\u2019s actuals into next year\u2019s operating plan: pull the numbers, draft the model and headcount plan, negotiate the trade-offs with department leads, and take the budget to the board for a signed consent.",
+  "description": "Turn last year’s actuals into next year’s operating plan: pull the numbers, draft the model and headcount plan, negotiate the trade-offs with department leads, and take the budget to the board for a signed consent.",
   "phase": "finance",
   "cadence": "annual",
   "complexity": "moderate",
@@ -12465,7 +13134,7 @@
    "nodes": [
     {
      "id": "n1",
-     "label": "Pull the year\u2019s actuals and runway",
+     "label": "Pull the year’s actuals and runway",
      "route": "agent",
      "vendor": "quickbooks",
      "optionsArenaId": "accounting",
@@ -12582,7 +13251,7 @@
  {
   "id": "tax_010",
   "title": "Claim the R&D tax credit",
-  "description": "File for the federal research credit (Form 6765): scope the qualified research expenses, run the study, attach the form to the return, and elect the payroll-tax offset (Form 8974) so the credit pays out against payroll \u2014 worth up to $500k a year for pre-revenue startups.",
+  "description": "File for the federal research credit (Form 6765): scope the qualified research expenses, run the study, attach the form to the return, and elect the payroll-tax offset (Form 8974) so the credit pays out against payroll — worth up to $500k a year for pre-revenue startups.",
   "phase": "compliance",
   "cadence": "annual",
   "complexity": "complex",
@@ -12622,7 +13291,7 @@
       {
        "method": "GET /v1/companies/{company_id}/payrolls",
        "type": "rest",
-       "description": "Pull the year\u2019s payroll runs for the engineering QRE base"
+       "description": "Pull the year’s payroll runs for the engineering QRE base"
       }
      ]
     },
@@ -12714,7 +13383,7 @@
  {
   "id": "tax_011",
   "title": "Sales tax nexus & registration",
-  "description": "Once revenue crosses state thresholds you owe sales tax where your customers are: connect billing to a tax platform, run the nexus study, register with each state\u2019s department of revenue, turn on collection at checkout, and put the filings on autopilot.",
+  "description": "Once revenue crosses state thresholds you owe sales tax where your customers are: connect billing to a tax platform, run the nexus study, register with each state’s department of revenue, turn on collection at checkout, and put the filings on autopilot.",
   "phase": "compliance",
   "cadence": "event-driven",
   "complexity": "complex",
@@ -12764,7 +13433,7 @@
     },
     {
      "id": "n4",
-     "label": "Register with each state\u2019s department of revenue",
+     "label": "Register with each state’s department of revenue",
      "route": "form",
      "actionUrl": "https://www.streamlinedsalestax.org/",
      "actionLabel": "Streamlined Sales Tax registration",
@@ -12847,15 +13516,17 @@
  {
   "id": "comp_002",
   "title": "Complete SOC 2 Type II",
-  "description": "The report enterprise buyers actually ask for: after the Type I snapshot, run controls through a 3\u201312 month observation window with continuous evidence collection, sign the management assertion, sit the auditor\u2019s fieldwork, and publish the report to your trust center. Type I setup lives in Start SOC 2 Type I.",
+  "description": "The report enterprise buyers actually ask for: after the Type I snapshot, run controls through a 3–12 month observation window with continuous evidence collection, sign the management assertion, sit the auditor’s fieldwork, and publish the report to your trust center. Type I setup lives in Start SOC 2 Type I.",
   "phase": "compliance",
   "cadence": "annual",
   "complexity": "complex",
   "category": "compliance_certification",
   "supportLevel": "partial",
-  "supportReason": "Compliance platforms run the continuous monitoring and evidence collection through the window; the scoping, the signed management assertion, and the auditor\u2019s fieldwork stay human.",
+  "supportReason": "Compliance platforms run the continuous monitoring and evidence collection through the window; the scoping, the signed management assertion, and the auditor’s fieldwork stay human.",
   "vendors": [
-   "vanta"
+   "vanta",
+   "secureframe",
+   "oneleet"
   ],
   "dag": {
    "nodes": [
@@ -12870,11 +13541,16 @@
      "label": "Configure continuous control monitoring",
      "route": "agent",
      "vendor": "vanta",
-     "estimatedMinutes": 30
+     "estimatedMinutes": 30,
+     "vendorOptions": [
+      "vanta",
+      "secureframe",
+      "oneleet"
+     ]
     },
     {
      "id": "n3",
-     "label": "Observation window elapses (3\u201312 months)",
+     "label": "Observation window elapses (3–12 months)",
      "route": "person",
      "estimatedMinutes": 129600,
      "async": true
@@ -13231,7 +13907,7 @@
   "complexity": "moderate",
   "category": "product_reliability",
   "supportLevel": "partial",
-  "supportReason": "Status pages, monitors, and DNS are fully API-driven; the SLA\u2019s credit terms need counsel before they go into contracts.",
+  "supportReason": "Status pages, monitors, and DNS are fully API-driven; the SLA’s credit terms need counsel before they go into contracts.",
   "vendors": [
    "betterstack",
    "incident_io"
@@ -13367,7 +14043,7 @@
   "complexity": "complex",
   "category": "product_launch",
   "supportLevel": "partial",
-  "supportReason": "Build and submission tooling is scriptable end-to-end; Apple\u2019s enrollment identity checks and the review queue are the third party\u2019s clock, and rejection responses are judgment.",
+  "supportReason": "Build and submission tooling is scriptable end-to-end; Apple’s enrollment identity checks and the review queue are the third party’s clock, and rejection responses are judgment.",
   "vendors": [
    "fastlane",
    "expo"
@@ -13429,7 +14105,7 @@
     },
     {
      "id": "n5",
-     "label": "App review (1\u20133 days, rejections common)",
+     "label": "App review (1–3 days, rejections common)",
      "route": "person",
      "riskLevel": "medium",
      "estimatedMinutes": 2880,
@@ -13660,7 +14336,7 @@
   "complexity": "complex",
   "category": "hr_executive",
   "supportLevel": "manual_guide",
-  "supportReason": "Search, interviews, references, and the board\u2019s comp approval are human end-to-end; the agent preps the scorecard, comp benchmarks, and the grant paperwork around them.",
+  "supportReason": "Search, interviews, references, and the board’s comp approval are human end-to-end; the agent preps the scorecard, comp benchmarks, and the grant paperwork around them.",
   "vendors": [
    "carta",
    "docusign"
@@ -13794,7 +14470,7 @@
  {
   "id": "hr_011",
   "title": "Sponsor a work visa",
-  "description": "Keep the hire you can\u2019t legally employ yet: pick the visa strategy with immigration counsel (H-1B, O-1, TN), build the evidence binder, file the LCA with the DOL, sign and file the I-129 petition with USCIS, and wait out adjudication.",
+  "description": "Keep the hire you can’t legally employ yet: pick the visa strategy with immigration counsel (H-1B, O-1, TN), build the evidence binder, file the LCA with the DOL, sign and file the I-129 petition with USCIS, and wait out adjudication.",
   "phase": "hr",
   "cadence": "event-driven",
   "complexity": "complex",
@@ -14059,13 +14735,13 @@
  {
   "id": "hr_013",
   "title": "Hire abroad via an EOR",
-  "description": "Employ someone in a country where you have no entity: an employer-of-record hires them locally on your behalf \u2014 quote the country cost, generate the compliant contract, run the checks, and stand up local payroll and benefits. Contractors abroad live in Hire intl contractor; full foreign subsidiaries are a post-Series-B problem.",
+  "description": "Employ someone in a country where you have no entity: an employer-of-record hires them locally on your behalf — quote the country cost, generate the compliant contract, run the checks, and stand up local payroll and benefits. Contractors abroad live in Hire intl contractor; full foreign subsidiaries are a post-Series-B problem.",
   "phase": "hr",
   "cadence": "event-driven",
   "complexity": "moderate",
   "category": "hr_global",
   "supportLevel": "partial",
-  "supportReason": "EOR platforms quote, contract, and run country payroll through APIs; the country/cost decision and the candidate\u2019s employment signature stay human.",
+  "supportReason": "EOR platforms quote, contract, and run country payroll through APIs; the country/cost decision and the candidate’s employment signature stay human.",
   "vendors": [
    "deel",
    "rippling"
@@ -14182,9 +14858,11 @@
   "complexity": "moderate",
   "category": "it_security",
   "supportLevel": "partial",
-  "supportReason": "Policy configuration and compliance reporting run over the MDM\u2019s API; Apple Business Manager\u2019s business verification and per-device enrollment acceptance are manual.",
+  "supportReason": "Policy configuration and compliance reporting run over the MDM’s API; Apple Business Manager’s business verification and per-device enrollment acceptance are manual.",
   "vendors": [
-   "rippling"
+   "rippling",
+   "kandji",
+   "jamf"
   ],
   "dag": {
    "nodes": [
@@ -14218,7 +14896,7 @@
     },
     {
      "id": "n4",
-     "label": "Enroll the fleet\u2019s devices",
+     "label": "Enroll the fleet’s devices",
      "route": "person",
      "estimatedMinutes": 60
     },
@@ -14273,7 +14951,7 @@
  {
   "id": "ops_014",
   "title": "Lease an office",
-  "description": "From \u201cwe need a room\u201d to keys: size the space and budget, tour with a broker, negotiate the LOI, survive the lease review, sign (often with a guarantee), then wire the deposit, get the landlord a COI, and turn on internet and access.",
+  "description": "From “we need a room” to keys: size the space and budget, tour with a broker, negotiate the LOI, survive the lease review, sign (often with a guarantee), then wire the deposit, get the landlord a COI, and turn on internet and access.",
   "phase": "operations",
   "cadence": "event-driven",
   "complexity": "complex",
@@ -14436,7 +15114,7 @@
   "complexity": "moderate",
   "category": "compliance_sales",
   "supportLevel": "partial",
-  "supportReason": "Answer drafting from your policy corpus is highly automatable; the risky answers need a security reviewer and the customer\u2019s portal is manual form work.",
+  "supportReason": "Answer drafting from your policy corpus is highly automatable; the risky answers need a security reviewer and the customer’s portal is manual form work.",
   "vendors": [
    "vanta"
   ],
@@ -14488,7 +15166,7 @@
     },
     {
      "id": "n5",
-     "label": "Submit in the customer\u2019s portal",
+     "label": "Submit in the customer’s portal",
      "route": "form",
      "estimatedMinutes": 30
     },
@@ -14552,7 +15230,7 @@
   "complexity": "moderate",
   "category": "dev_tooling",
   "supportLevel": "full",
-  "supportReason": "This is the one process agents run on themselves end-to-end \u2014 audit, docs, skills, checks, and the proving fix are all agent work. Only the guardrail review is a team call.",
+  "supportReason": "This is the one process agents run on themselves end-to-end — audit, docs, skills, checks, and the proving fix are all agent work. Only the guardrail review is a team call.",
   "vendors": [
    "superpowers",
    "gstack",
@@ -14595,7 +15273,7 @@
       {
        "method": "claude plugin install superpowers",
        "type": "manual",
-       "description": "Install the skills pack into the repo\u2019s agent config"
+       "description": "Install the skills pack into the repo’s agent config"
       }
      ]
     },
@@ -14607,7 +15285,7 @@
     },
     {
      "id": "n5",
-     "label": "Connect MCP servers for the stack\u2019s vendors",
+     "label": "Connect MCP servers for the stack’s vendors",
      "route": "agent",
      "vendor": "composio",
      "optionsArenaId": "mcp-infrastructure",
