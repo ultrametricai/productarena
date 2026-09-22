@@ -31,8 +31,8 @@ It has grown past rankings into an operating map of the AI era:
 
 ![ProductArena](https://ultrametric.ai/productarena/opengraph-image)
 
-ProductArena is an evidence-based comparison site: evidence in, rankings out. For each of 60+
-product arenas (300+ products and growing) we crawl vendor docs, GitHub, and community sources,
+ProductArena is an evidence-based comparison site: evidence in, rankings out. For each of 80+
+product arenas (500+ products and growing) we crawl vendor docs, GitHub, and community sources,
 extract per-product evidence, and
 have an LLM judge every product against a shared set of user stories. The result is a
 leaderboard, a head-to-head battle log, a per-product story matrix, and — across every arena —
@@ -75,7 +75,7 @@ snapshot to build against.
 
 ![ProductArena rankings — homepage snapshot](docs/assets/rankings-snapshot.png)
 
-*Snapshot from September 6, 2026 (50 arenas, judge v3) — rankings move whenever new evidence lands, so treat every
+*Dated snapshot — rankings move whenever new evidence lands, so treat every
 number in this image as historical. The live table is at
 [ultrametric.ai/productarena](https://ultrametric.ai/productarena); machine-readable rankings
 are at `/data/<arena>/rankings.json` per arena.*

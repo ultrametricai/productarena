@@ -1,4 +1,5 @@
 import { battleSlug, leadingBattle, loadAll, loadCategories } from '@/lib/data'
+import { loadChains, loadProcesses, processSlug } from '@/lib/processes'
 import { provenanceLine } from '@/lib/provenance'
 import { REPO, SITE_URL as SITE } from '@/lib/site'
 
@@ -64,6 +65,19 @@ ${leadingBattleLinks}
 - [Most popular](${SITE}/rankings/popular): popularity measured fairly in segments (GitHub stars, weekly npm/PyPI installs, curated no-public-counter products) plus a 🔥 "hot right now" section with measured reasons; never blended into one number and never part of the PA Score.
 - [Most open](${SITE}/rankings/most-open): products ranked by evidence-graded openness (self-hosting, full export, open license, API parity).
 - [Best API](${SITE}/rankings/best-api): products ranked by API quality (machine-readable specs, sandboxes, versioning, interactive docs); untested APIs are unscored, never zero.
+
+## Processes (startup operations, step by step)
+
+${loadProcesses().length} founder operating processes — each mapped as a DAG of steps routed
+agent / manual form / human (legally-required signatures flagged), with evidence-ranked vendors
+per step, grounded per-vendor API calls, computer-use feasibility audits, and a simulated dry
+run. Index: [${SITE}/processes](${SITE}/processes). End-to-end playbooks
+(${loadChains().length} chains): [${SITE}/processes/chains](${SITE}/processes). Process
+rankings: most-automatable, best-covered, riskiest, most-annoying, growth-drivers under
+\`${SITE}/rankings/processes/\`. The full story↔step↔process graph is machine-readable at
+[${SITE}/data/graph.json](${SITE}/data/graph.json); per-process run manifests for executors are
+linked from every process page. Example:
+[${SITE}/processes/${processSlug(loadProcesses()[0].title)}](${SITE}/processes/${processSlug(loadProcesses()[0].title)}).
 
 ## Data API (JSON, no auth)
 

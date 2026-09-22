@@ -18,6 +18,8 @@ import type { WatchlistProduct } from '@/lib/watchlist'
 export const metadata: Metadata = {
   title: 'Watchlist — ProductArena',
   description: 'Products you starred across every arena, with current scores and 30-day trends. Saved to your account.',
+  // Session-gated content, same posture as /account and /processes/*/mine.
+  robots: { index: false, follow: false },
 }
 
 function buildWatchlistProducts(): WatchlistProduct[] {
