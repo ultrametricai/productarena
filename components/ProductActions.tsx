@@ -138,13 +138,8 @@ export default function ProductActions({
           </div>
         )}
 
-        {hasInstall && (
-          <div className="min-w-0">
-            <SectionLabel>Install</SectionLabel>
-            <InstallCommands product={product} />
-          </div>
-        )}
-
+        {/* Install moved out of this rail (founder 2026-09-23): it renders just under the
+            "Try it agentically" microterminal on the product page instead. */}
         {rivals.length > 0 && (
           <div>
             <SectionLabel>Compare head-to-head</SectionLabel>

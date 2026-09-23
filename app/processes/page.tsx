@@ -33,7 +33,7 @@ export default function ProcessesPage() {
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">Processes</h1>
         <p className="mx-auto mt-3 max-w-2xl text-zinc-400">
           Startup operations in the open — every process, the software that runs it, and the best
-          an agent can do today. Each step is routed honestly: agent-runnable via a recorded API
+          an agent can do today. Each step is routed: agent-runnable via a recorded API
           call, a manual form with no API path, or human-or-computer-use work — with the legally
           required signatures flagged as the true human floor. The gaps are the finding.
         </p>

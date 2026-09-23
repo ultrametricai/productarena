@@ -145,7 +145,7 @@ export default function Home() {
         <p className="max-w-2xl text-sm text-zinc-400">
           {processes.totalProcesses} founder processes mapped step-by-step — an agent can run{' '}
           <span className="font-mono text-emerald-300">{processes.agentStepPct}%</span> of the steps
-          today. Every step routed honestly (agent / manual form / human), every vendor ranked from
+          today. Every step routed (agent / manual form / human), every vendor ranked from
           judged evidence. Sort by automatability, timeline, regularity, annoyance, risk, or growth.
         </p>
       </section>

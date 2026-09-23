@@ -413,6 +413,7 @@ function NodeBlock({
           <StepCanonicalVendor
             info={vendorInfo}
             logo={hasLogo(vendorInfo.productId ?? vendorInfo.vendor)}
+            topRankedId={ranking?.vendors[0]?.productId ?? null}
             marketArenaId={node.optionsArenaId ?? vendorInfo.arenaId}
             lensKey={lensKey}
             checkStep={checkStep}

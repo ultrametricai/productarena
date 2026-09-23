@@ -36,7 +36,7 @@ export function generateMetadata(): Metadata {
   return {
     title: `Most automatable processes — all ${rows.length} ranked by agent ceiling — ProductArena`,
     description:
-      'Every founder process ranked by its current agent ceiling: the share of its steps an AI agent can run today. Derived from the judged process corpus, with legally-required signature steps counted honestly.',
+      'Every founder process ranked by its current agent ceiling: the share of its steps an AI agent can run today. Derived from the judged process corpus, with legally-required signature steps counted separately.',
   }
 }
 

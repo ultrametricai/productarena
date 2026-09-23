@@ -241,7 +241,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
           <h2 className="font-display leading-[1.1] mb-1 text-lg font-semibold">Pricing signals</h2>
           <p className="mb-3 max-w-2xl text-xs text-zinc-500">
             Extracted verbatim from each vendor&apos;s own pricing page — never converted, averaged, or
-            derived. Products whose page prints no unit price are recorded as unclear, honestly.
+            derived. Products whose page prints no unit price are recorded as unclear.
           </p>
           <div className="overflow-x-auto rounded-xl border border-zinc-800">
             <table className="w-full text-sm">
