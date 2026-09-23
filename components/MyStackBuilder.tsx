@@ -45,7 +45,7 @@ const KIND_CHIP_CLASSES: Record<RecommendationKind, string> = {
 const KIND_TOOLTIPS: Record<RecommendationKind, string> = {
   upgrade: 'Upgrade — a same-arena product scores materially higher than your pick',
   add: 'Add — an adjacent arena where your stack has nothing yet',
-  overlap: 'Possible overlap — two of your picks may cover the same job',
+  overlap: 'Overlap — picks of yours cover the same job; running several vendors here is often deliberate',
   group: 'Group — one vendor family could consolidate two of your slots',
   breakout: 'Break out — your pick trails specialists by a wide margin in this arena',
   migrate: 'Migrate — this pick’s vendor has announced it is shutting down',

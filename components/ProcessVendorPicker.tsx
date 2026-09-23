@@ -1,6 +1,7 @@
 'use client'
 
 import ProductLogoView from '@/components/ProductLogoView'
+import { isPicked, stackPicks } from '@/lib/myStack'
 import { useProcessLens } from '@/lib/processLens'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 
@@ -82,10 +83,10 @@ export default function ProcessVendorPicker({ steps, lensKey }: { steps: Process
       <div className="mt-2 space-y-1.5">
         {arenas.map((arena) => {
           const picked = lens.picks[arena.arenaId]
-          const stacked = stack[arena.arenaId]
-          // The reader's pick must always be visible, wherever it ranks.
+          const stacked = stackPicks(stack, arena.arenaId)
+          // The reader's picks must always be visible, wherever they rank.
           const visible = arena.vendors.slice(0, VENDORS_PER_ARENA)
-          for (const id of [picked, stacked]) {
+          for (const id of [picked, ...stacked]) {
             if (id && !visible.some((v) => v.productId === id)) {
               const extra = arena.vendors.find((v) => v.productId === id)
               if (extra) visible.push(extra)
@@ -98,7 +99,9 @@ export default function ProcessVendorPicker({ steps, lensKey }: { steps: Process
               </span>
               {visible.map((v) => {
                 const isLens = picked === v.productId
-                const isStack = !isLens && picked === undefined && stacked === v.productId
+                // With no explicit lens pick, EVERY stack pick in the arena wears "yours" —
+                // multi-vendor stacks are deliberate (lib/myStack.ts v2).
+                const isStack = !isLens && picked === undefined && isPicked(stack, arena.arenaId, v.productId)
                 const active = isLens || isStack
                 return (
                   <button

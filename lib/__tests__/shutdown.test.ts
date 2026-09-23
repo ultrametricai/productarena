@@ -155,14 +155,14 @@ describe('myStack shutdown handling', () => {
   })
 
   it('stackAdvice: shutdown products are excluded from leader/upgrade offers; a shutdown pick still resolves', () => {
-    const advice = stackAdvice({ arena: 'dying' }, [leader, mid, dying])
+    const advice = stackAdvice({ arena: ['dying'] }, [leader, mid, dying])
     expect(advice.picks).toHaveLength(1)
     expect(advice.picks[0].pick.id).toBe('dying')
     expect(advice.picks[0].leader.id).toBe('leader')
     expect(advice.picks[0].upgrades.map((u) => u.product.id)).not.toContain('dying')
 
     const deadLeader = catalogRow({ id: 'dead-lead', name: 'Dead Lead', aiEra: 95, rank: 1, shutdown: 'Closing.' })
-    const advice2 = stackAdvice({ arena: 'mid' }, [deadLeader, mid, leader])
+    const advice2 = stackAdvice({ arena: ['mid'] }, [deadLeader, mid, leader])
     expect(advice2.picks[0].leader.id).toBe('leader')
     expect(advice2.picks[0].upgrades.map((u) => u.product.id)).not.toContain('dead-lead')
   })
@@ -256,7 +256,7 @@ describe('pulley: tagged and preserved, never offered', () => {
       expect(row!.shutdown).toBe(true)
       expect(s.best.productId).not.toBe(PULLEY)
     }
-    const result = runProcessCheck(eqCheckSteps, { [EQ]: PULLEY })
+    const result = runProcessCheck(eqCheckSteps, { [EQ]: [PULLEY] })
     for (const s of result.steps) {
       expect(s.yours?.productId).toBe(PULLEY)
       expect(s.flagged, `${s.nodeId}: a shutdown pick is always flagged`).toBe(true)

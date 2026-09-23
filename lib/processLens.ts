@@ -14,8 +14,9 @@
 //   1. the explicit lens pick for one of the step's arenas — but ONLY when that vendor appears
 //      in the step's serialized vendor list for that arena and is not shutdown (lib/shutdown.ts
 //      founder rule: a shutdown vendor is never OFFERED, so the lens can never resolve to one);
-//   2. else the reader's account-stack pick (lib/processCheck.ts yoursForStep — which DOES let
-//      a shutdown pick resolve: the reader really runs it and needs to be told to migrate);
+//   2. else the best of the reader's account-stack picks (lib/processCheck.ts yoursForStep —
+//      with multiple picks per arena the highest-scoring covered one serves the step, and a
+//      shutdown pick DOES resolve: the reader really runs it and needs to be told to migrate);
 //   3. else null — the default/best view, exactly what the static page shows.
 //
 // The adaptation is WHO EXECUTES a step, never WHAT IS POSSIBLE: routes and agent ceilings are
@@ -34,8 +35,9 @@ import type { StackMap } from './myStack'
 import { yoursForStep, type CheckVendor, type ProcessCheckStep } from './processCheck'
 import { readParamAll, setParams } from './urlState'
 
-// One pick per arena — the same shape as the account stack's StackMap, deliberately: a lens is
-// a per-page, click-scoped override of the same "which vendor serves this arena" question.
+// ONE pick per arena — deliberately single even though the account stack (StackMap) now holds
+// multiple picks per arena: a lens is an explicit per-page VIEW choice ("show me this process
+// via X"), not an inventory of what the reader runs.
 export type LensMap = Record<string, string>
 
 export interface LensState {

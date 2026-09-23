@@ -1,5 +1,6 @@
 'use client'
 
+import { isPicked } from '@/lib/myStack'
 import { useProcessLens, type LensSource } from '@/lib/processLens'
 
 // One concrete call a vendor exposes for this step — from the evidence-grounded committed
@@ -86,9 +87,12 @@ export default function StepApiCalls({
   lensKey?: string
 }) {
   const { lens, stack } = useProcessLens(lensKey)
+  // Lens first; else the reader's best pick for this step — vendors arrive in the step's
+  // ranked order, so the first that is A pick (multi-vendor stacks, lib/myStack.ts isPicked)
+  // is the best-ranked one they run.
   const pick =
     vendors.find((v) => lens.picks[v.arenaId] === v.productId) ??
-    vendors.find((v) => stack[v.arenaId] === v.productId) ??
+    vendors.find((v) => isPicked(stack, v.arenaId, v.productId)) ??
     null
   const pickSource: LensSource | null =
     pick === null ? null : lens.picks[pick.arenaId] === pick.productId ? 'lens' : 'stack'

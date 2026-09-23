@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
 import { useMyStackMap } from '@/components/useMyStackMap'
+import { isPicked } from '@/lib/myStack'
 
 // Lean serialized leaderboard row for the client-side "you run X" banner — built server-side by
 // components/ProcessLeaderboard.tsx from the FULL (uncapped) processLeaderboard entries, so the
@@ -31,9 +32,13 @@ export default function ProcessYourVendor({
   mineHref: string
 }) {
   const stack = useMyStackMap()
-  // First match in leaderboard order = the reader's best-ranked pick for this process.
-  const yours = entries.find((e) => stack[e.arenaId] === e.productId)
+  // Entries are in leaderboard order, so the reader's picks fall out best-ranked first: the
+  // banner leads with the best, and honestly notes how many MORE of their vendors serve this
+  // process (multi-vendor stacks are deliberate — see lib/myStack.ts StackMap v2).
+  const mine = entries.filter((e) => isPicked(stack, e.arenaId, e.productId))
+  const yours = mine[0]
   if (!yours) return null
+  const moreMine = mine.length - 1
   const leader = entries[0]
   const isLeader = yours.rank === 1
   return (
@@ -50,6 +55,17 @@ export default function ProcessYourVendor({
       {!isLeader && leader && (
         <span className="text-zinc-400">
           (#1 is {leader.name} at <span className="font-mono tabular-nums">{leader.processScore.toFixed(0)}</span>)
+        </span>
+      )}
+      {moreMine > 0 && (
+        <span
+          className="text-zinc-400"
+          title={mine
+            .slice(1)
+            .map((m) => `${m.name} — #${m.rank}, ${m.stepsServed} step${m.stepsServed === 1 ? '' : 's'}`)
+            .join('; ')}
+        >
+          +{moreMine} more of your vendors serve{moreMine === 1 ? 's' : ''} this process
         </span>
       )}
       <Link

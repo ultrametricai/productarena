@@ -44,7 +44,8 @@ export default function AccountPage() {
       <section>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Your vendors</h2>
         <p className="mt-1 max-w-2xl text-sm text-zinc-400">
-          The software you actually run — one pick per arena. Every{' '}
+          The software you actually run — your picks per arena, several allowed (Mercury AND
+          Brex is a real stack). Every{' '}
           <span className="text-emerald-300">&ldquo;I&rsquo;m using this&rdquo;</span> click on a
           product page is recorded here, and everything here personalizes the{' '}
           <Link href="/processes" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">

@@ -29,7 +29,7 @@
 // our own HMAC-signed pa_session cookie, /auth/me, /auth/logout) — see the "Auth backend"
 // section below and docs/AUTH.md for setup — and the session-gated GET/PUT
 // /productarena/api/watchlist (per-account starred product ids in KV; "Watchlist API" section)
-// and GET/PUT /productarena/api/my-stack (per-account one-pick-per-arena stack map in KV;
+// and GET/PUT /productarena/api/my-stack (per-account picks-per-arena stack map in KV;
 // "My Stack API" section).
 import { LIVE_PROBES } from './live-probes.generated.js'
 
@@ -1967,39 +1967,56 @@ export async function handleWatchlist(request, env) {
 }
 
 // ---------------------------------------------------------------------------------------------
-// My Stack API: GET/PUT /productarena/api/my-stack — the logged-in reader's account stack, ONE
-// product pick per arena (client: lib/myStack.ts's account-stack half; UI: /my-stack "Your
-// stack" and the process pages' "Check my process"). Same posture as the Watchlist API above in
-// every particular — session gate, same-origin only (no CORS), KV storage, rate limit, tolerant
-// normalization:
+// My Stack API: GET/PUT /productarena/api/my-stack — the logged-in reader's account stack, an
+// ORDERED LIST of product picks per arena, first = primary (client: lib/myStack.ts's
+// account-stack half; UI: /my-stack + /account "Your stack" and the process pages' "Check my
+// process"). Same posture as the Watchlist API above in every particular — session gate,
+// same-origin only (no CORS), KV storage, rate limit, tolerant normalization:
 //
-//   GET                       → { ok, stack: { [arenaId]: productId } }
+//   GET                       → { ok, stack: { [arenaId]: productId[] } }
 //   PUT  { stack: {…} }       → { ok, stack } (normalized) — replaces the whole map; the client
 //                               always sends its full merged state, so PUT is idempotent.
 //
+// v1 → v2: values used to be a single productId string ("one pick per arena"). Both shapes are
+// accepted — from a PUT body and from stored KV — a bare string migrates to a one-element
+// array; normalized output is always v2 arrays (the same dual-shape contract as the client's
+// parseStackMap).
+//
 // Storage: one KV value per account under stack:<WorkOS user id> — the PA_WATCHLIST namespace
 // when bound, else PA_COMPARE_STATS (the stack: prefix can't collide with pair:/watchlist:/
-// tryrl: keys). Both keys and values must be slug-shaped and the map is capped; junk could only
-// ever waste bytes — the site resolves the map against its own judged catalog client-side.
+// tryrl: keys). Both keys and values must be slug-shaped and the map is capped (arenas AND
+// picks per arena); junk could only ever waste bytes — the site resolves the map against its
+// own judged catalog client-side.
 
 const STACK_KEY_PREFIX = 'stack:'
 const STACK_ID_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/ // same slug shape as watchlist/compare ids
 const STACK_MAX_ARENAS = 100
+const STACK_MAX_PICKS_PER_ARENA = 8 // mirrors lib/myStack.ts MAX_PICKS_PER_ARENA
 const STACK_RATE_LIMIT = { max: 120, windowMs: 5 * 60 * 1000 }
 const stackRateBuckets = new Map() // separate from the other buckets
 
-// null = not a plain object at all (a 400); otherwise the slug-validated, capped map. Junk
-// entries (non-string values, unslug-like keys/values) are dropped, not errors.
+// null = not a plain object at all (a 400); otherwise the slug-validated, capped map of arrays.
+// Junk entries (non-string/non-array values, unslug-like keys/values, dupes, over-cap picks)
+// are dropped, not errors; a v1 string value normalizes to [string].
 export function normalizeStackMap(raw) {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null
   const stack = {}
   let kept = 0
-  for (const [rawArena, rawProduct] of Object.entries(raw)) {
-    if (typeof rawProduct !== 'string') continue
+  for (const [rawArena, rawValue] of Object.entries(raw)) {
+    const list = typeof rawValue === 'string' ? [rawValue] : Array.isArray(rawValue) ? rawValue : null
+    if (list === null) continue
     const arenaId = rawArena.trim().toLowerCase()
-    const productId = rawProduct.trim().toLowerCase()
-    if (!STACK_ID_RE.test(arenaId) || !STACK_ID_RE.test(productId)) continue
-    stack[arenaId] = productId
+    if (!STACK_ID_RE.test(arenaId)) continue
+    const picks = []
+    for (const rawProduct of list) {
+      if (typeof rawProduct !== 'string') continue
+      const productId = rawProduct.trim().toLowerCase()
+      if (!STACK_ID_RE.test(productId) || picks.includes(productId)) continue
+      picks.push(productId)
+      if (picks.length >= STACK_MAX_PICKS_PER_ARENA) break
+    }
+    if (picks.length === 0) continue
+    stack[arenaId] = picks
     kept += 1
     if (kept >= STACK_MAX_ARENAS) break
   }
@@ -2044,7 +2061,7 @@ export async function handleMyStack(request, env) {
     return authJson(400, { error: 'JSON body required' })
   }
   const stack = normalizeStackMap(body?.stack)
-  if (stack === null) return authJson(400, { error: '"stack" must be an object of arenaId → productId strings' })
+  if (stack === null) return authJson(400, { error: '"stack" must be an object of arenaId → productId list (or single id)' })
   try {
     await kv.put(key, JSON.stringify(stack))
   } catch {

@@ -130,7 +130,7 @@ describe('lens + stack selection', () => {
   })
 
   it('a stack pick below the display cap still pins, tagged "yours" (uncapped checkStep row)', () => {
-    window.localStorage.setItem(STACK_KEY, serializeStackMap({ 'startup-banking': 'deep-bank' }))
+    window.localStorage.setItem(STACK_KEY, serializeStackMap({ 'startup-banking': ['deep-bank'] }))
     const { container } = render(row)
     expect(chipNames(container)[0]).toContain('Deep Bank')
     expect(container.textContent).toContain('yours')
@@ -138,6 +138,19 @@ describe('lens + stack selection', () => {
     fireEvent.click(within(container).getByTitle(/See this process via Best Bank/))
     expect(chipNames(container)[0]).toContain('Best Bank')
     expect(container.textContent).toContain('✓ via')
+  })
+
+  it('a multi-pick stack pins the BEST-scoring pick; the other picks keep a subtle "yours" tag', () => {
+    window.localStorage.setItem(
+      STACK_KEY,
+      serializeStackMap({ 'startup-banking': ['mid-bank', 'best-bank'] }),
+    )
+    const { container } = render(row)
+    // best-bank (90) beats mid-bank (71), whatever the stack order says.
+    expect(chipNames(container)[0]).toContain('Best Bank')
+    // Two "yours" markers: the pinned tag on best-bank plus the subtle tag on mid-bank.
+    const tags = [...container.querySelectorAll('span')].filter((s) => s.textContent === 'yours')
+    expect(tags).toHaveLength(2)
   })
 
   it('a lens pick with no judged evidence on this step shows the honest gap note, never a swap', () => {

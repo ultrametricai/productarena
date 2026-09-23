@@ -6,21 +6,25 @@ import ProductLogoView from '@/components/ProductLogoView'
 import ShutdownBadge from '@/components/ShutdownBadge'
 import { useMyStackMap } from '@/components/useMyStackMap'
 import {
+  MAX_PICKS_PER_ARENA,
   MY_STACK_KEY,
   parseStoredStack,
   stackAdvice,
   stackMapFromList,
+  stackPicks,
+  togglePick,
   writeStack,
   type MyStackProduct,
-  type StackMap,
 } from '@/lib/myStack'
 import { loginUrl, registrationUrl, useSession } from '@/lib/session'
 
-// The signed-in half of /my-stack (founder ask: "in signed-in mode, allow the user to define
-// their stack and get upgraded stack advice"): one product pick per arena, grouped by the
-// header's arena sections, saved to the account via lib/myStack.ts's account-stack store (the
-// exact watchlist localStorage+sync pattern). Anonymous readers get a sign-up prompt instead —
-// the free-form tool below (MyStackBuilder) stays open to everyone.
+// The signed-in half of /my-stack and /account (founder asks: "in signed-in mode, allow the
+// user to define their stack and get upgraded stack advice"; 2026-09-22: "allow multiple
+// vendors for functions" + "I want logos here"): the reader's vendors per arena — SEVERAL
+// allowed, first = primary — rendered as logo chips, grouped by the header's arena sections,
+// saved to the account via lib/myStack.ts's account-stack store (the exact watchlist
+// localStorage+sync pattern). Anonymous readers get a sign-up prompt instead — the free-form
+// tool below (MyStackBuilder) stays open to everyone.
 //
 // Advice: every number is the arena leaderboard's published PA / agent-ready score
 // (lib/myStack.ts stackAdvice), and every cited score links to the product's /score receipt
@@ -61,7 +65,8 @@ export default function YourStack({
   }, [products])
 
   // One-time seed from the free-form tool's device-local list ("prefilled from any existing
-  // device-local state"): only when the account stack is still empty, first pick per arena.
+  // device-local state"): only when the account stack is still empty; every pick joins its
+  // arena's list in order (first = primary).
   const seeded = useRef(false)
   useEffect(() => {
     if (session.state !== 'authenticated' || seeded.current) return
@@ -125,11 +130,11 @@ export default function YourStack({
     )
   }
 
-  function setPick(arenaId: string, productId: string) {
-    const next: StackMap = { ...stack }
-    if (productId === '') delete next[arenaId]
-    else next[arenaId] = productId
-    writeStack(next)
+  // Toggle membership (lib/myStack.ts togglePick): adding never removes the arena's other
+  // picks — the reader really runs several vendors per function.
+  function toggle(arenaId: string, productId: string) {
+    if (productId === '') return
+    writeStack(togglePick(stack, arenaId, productId))
   }
 
   const advice = stackAdvice(stack, products)
@@ -140,7 +145,8 @@ export default function YourStack({
       <div>
         <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Your stack</h2>
         <p className="mt-1 text-sm text-zinc-400">
-          One pick per arena, saved to your account — process pages can then run with your own
+          Your vendors per arena — several allowed, the first is your primary — saved to your
+          account; process pages can then run with your own
           vendors. {pickCount === 0 ? 'Nothing picked yet.' : `${pickCount} arena${pickCount === 1 ? '' : 's'} picked.`}
         </p>
       </div>
@@ -157,7 +163,7 @@ export default function YourStack({
         {sections.map((section) => {
           const arenas = section.arenaIds.filter((id) => byArena.has(id) && arenaMatches(id))
           if (arenas.length === 0) return null
-          const sectionPicks = section.arenaIds.filter((id) => stack[id] && byArena.has(id)).length
+          const sectionPicks = section.arenaIds.filter((id) => stackPicks(stack, id).length > 0 && byArena.has(id)).length
           return (
             <details
               key={section.name}
@@ -176,26 +182,64 @@ export default function YourStack({
               <div className="grid gap-x-6 gap-y-2 border-t border-zinc-800/60 px-4 py-3 sm:grid-cols-2">
                 {arenas.map((arenaId) => {
                   const entry = byArena.get(arenaId)!
+                  const picks = stackPicks(stack, arenaId)
+                  const picked = picks.flatMap((id) => {
+                    const r = entry.rows.find((row) => row.id === id)
+                    return r ? [r] : []
+                  })
+                  const addable = entry.rows.filter((r) => !picks.includes(r.id))
+                  const full = picks.length >= MAX_PICKS_PER_ARENA
                   return (
-                    <label key={arenaId} className="flex items-center justify-between gap-3 text-sm">
-                      <Link href={`/arena/${arenaId}`} className="min-w-0 truncate text-zinc-400 hover:text-emerald-300">
-                        {entry.arenaName}
-                      </Link>
-                      <select
-                        value={stack[arenaId] ?? ''}
-                        onChange={(e) => setPick(arenaId, e.target.value)}
-                        aria-label={`Your ${entry.arenaName} pick`}
-                        className="w-44 shrink-0 rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs text-zinc-200 focus:border-emerald-400/60 focus:outline-none"
-                      >
-                        <option value="">—</option>
-                        {entry.rows.map((r) => (
-                          <option key={r.id} value={r.id}>
-                            {r.name}
-                            {r.aiEra !== null ? ` (${r.aiEra.toFixed(0)})` : ''}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
+                    <div key={arenaId} className="space-y-1 text-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <Link href={`/arena/${arenaId}`} className="min-w-0 truncate text-zinc-400 hover:text-emerald-300">
+                          {entry.arenaName}
+                        </Link>
+                        {/* value is always '' — the select is an ADD affordance; picks render
+                            as removable logo chips below, several per arena. */}
+                        <select
+                          value=""
+                          onChange={(e) => toggle(arenaId, e.target.value)}
+                          disabled={full || addable.length === 0}
+                          aria-label={`Add a ${entry.arenaName} pick`}
+                          className="w-44 shrink-0 rounded-lg border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs text-zinc-200 focus:border-emerald-400/60 focus:outline-none disabled:opacity-50"
+                        >
+                          <option value="">{full ? `max ${MAX_PICKS_PER_ARENA} picks` : picks.length > 0 ? '+ add another' : '+ add vendor'}</option>
+                          {!full &&
+                            addable.map((r) => (
+                              <option key={r.id} value={r.id}>
+                                {r.name}
+                                {r.aiEra !== null ? ` (${r.aiEra.toFixed(0)})` : ''}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                      {picked.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {picked.map((r, i) => (
+                            <span
+                              key={r.id}
+                              className="flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 py-0.5 pl-1 pr-1.5 text-xs text-zinc-300"
+                              title={i === 0 && picked.length > 1 ? `${r.name} — your primary ${entry.arenaName} pick` : undefined}
+                            >
+                              <ProductLogoView product={{ id: r.id, name: r.name }} size={20} hasLogo={r.hasLogo} />
+                              <Link href={`/arena/${arenaId}/product/${r.id}`} className="hover:text-emerald-300">
+                                {r.name}
+                              </Link>
+                              <ShutdownBadge shutdown={r.shutdown} />
+                              <button
+                                type="button"
+                                onClick={() => toggle(arenaId, r.id)}
+                                aria-label={`Remove ${r.name} from your ${entry.arenaName} picks`}
+                                className="text-zinc-500 transition hover:text-red-400"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )
                 })}
               </div>
@@ -241,13 +285,33 @@ export default function YourStack({
                     score receipt
                   </Link>
                 </div>
+                {/* 2+ picks in one arena is deliberate multi-vendor — reported neutrally,
+                    never as an error. The header row carries the BEST pick; the others are
+                    named here with their logos. */}
+                {p.coPicks.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-xs text-zinc-400">
+                    <span>you run {p.coPicks.length + 1} vendors here — also:</span>
+                    {p.coPicks.map((cp) => (
+                      <span key={cp.id} className="flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900 py-0.5 pl-1 pr-1.5">
+                        <ProductLogoView product={{ id: cp.id, name: cp.name }} size={16} hasLogo={cp.hasLogo} />
+                        <Link href={`/arena/${cp.arenaId}/product/${cp.id}`} className="text-zinc-300 hover:text-emerald-300">
+                          {cp.name}
+                        </Link>
+                        {cp.aiEra !== null && (
+                          <span className="font-mono tabular-nums text-zinc-500">{cp.aiEra.toFixed(0)}</span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {/* Rule 0, ahead of any score-gap line: the vendor's own shutdown announcement
-                    outranks every delta. The migration target is the arena's best remaining
-                    (non-shutdown) product — the same leader stackAdvice already resolved. */}
-                {p.pick.shutdown && (
-                  <p className="mt-1.5 text-xs text-amber-300/90" title={p.pick.shutdown}>
-                    Shutting down — migrate: the vendor has announced this product is closing
-                    {p.leader.id !== p.pick.id ? (
+                    outranks every delta — for EVERY shutdown pick in the arena, not just the
+                    best one. The migration target is the arena's best remaining (non-shutdown)
+                    product — the same leader stackAdvice already resolved. */}
+                {p.shutdownPicks.map((sp) => (
+                  <p key={sp.id} className="mt-1.5 text-xs text-amber-300/90" title={sp.shutdown}>
+                    {sp.name} is shutting down — migrate: the vendor has announced this product is closing
+                    {p.leader.id !== sp.id ? (
                       <>
                         ; the {p.arenaName} leader among remaining products is{' '}
                         <Link href={`/arena/${p.leader.arenaId}/product/${p.leader.id}`} className="underline decoration-amber-400/40 hover:text-amber-200">
@@ -257,7 +321,7 @@ export default function YourStack({
                     ) : null}
                     .
                   </p>
-                )}
+                ))}
                 {p.pick.id === p.leader.id ? (
                   <p className="mt-1.5 text-xs text-emerald-300/90">Leads its arena — nothing above it to upgrade to.</p>
                 ) : (
