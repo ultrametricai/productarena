@@ -195,53 +195,9 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
 
       <ProcessVerdict ceiling={ceiling} tasks={[task]} />
 
-      {roles.length > 0 && (
-        <section>
-          <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">The market options</h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            Each role resolves against its arena&rsquo;s live leaderboard — the default is the
-            process&rsquo;s canonical vendor, alternatives ranked by agent-readiness.
-          </p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {roles.map((role) => (
-              <div key={role.arenaId} className="rounded-2xl border border-zinc-800 p-4">
-                <div className="flex items-baseline justify-between gap-2">
-                  <Link href={`/arena/${role.arenaId}`} className="text-sm font-medium hover:text-emerald-300">
-                    {role.arenaName} →
-                  </Link>
-                  {role.stepCount > 0 && (
-                    <span className="text-[11px] text-zinc-500">{role.stepCount} step{role.stepCount === 1 ? '' : 's'}</span>
-                  )}
-                </div>
-                <ul className="mt-2 space-y-1.5 text-sm">
-                  {role.alternatives.map((o) => (
-                    <li key={o.id} className="flex items-center justify-between gap-3">
-                      <Link
-                        href={`/arena/${role.arenaId}/product/${o.id}`}
-                        className={`inline-flex min-w-0 items-center gap-2 hover:text-emerald-300 ${o.id === role.defaultProductId ? 'font-medium text-zinc-100' : 'text-zinc-400'}`}
-                      >
-                        <ProductLogoView product={{ id: o.id, name: o.name }} size={18} hasLogo={hasLogo(o.id)} />
-                        <span className="truncate">{o.name}</span>
-                        {o.id === role.canonicalVendor && (
-                          <span className="ml-1.5 rounded-full border border-emerald-400/40 px-1.5 py-px text-[10px] uppercase tracking-wide text-emerald-300">
-                            default
-                          </span>
-                        )}
-                      </Link>
-                      <span className="shrink-0 font-mono text-xs tabular-nums text-zinc-500">
-                        {o.agentReady === null ? 'n/a' : (
-                          <><span className="text-emerald-400">{o.agentReady.toFixed(0)}</span>/100 agent-ready</>
-                        )}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
+      {/* "The market options" section removed (founder 2026-09-23): the "Who covers this
+          process best" leaderboard + per-step ranked rows already carry the market; the roles
+          data still feeds the simulator below. */}
       <ProcessSimulator steps={simSteps} roles={roles} />
 
       {/* Public, ungated — the manifest is just the published corpus reshaped for executors. */}

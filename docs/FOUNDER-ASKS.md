@@ -8,6 +8,16 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 
 | Ask | Status |
 |---|---|
+| Improvement run 1: mini horizontal DAG preview in "Who covers this process best" | in-lane (process-ux) |
+| Improvement run 2: don't show the step's top vendor twice (canonical chip hides when it's #1 in the ranked row) | in-flight (orchestrator) |
+| Improvement run 3: per-vendor evidence for "ranked for this step" — visible receipts per chip | in-lane (process-ux) |
+| Improvement run 4: remove "The market options" section from process pages | in-flight (orchestrator) |
+| Improvement run 5: remove "honestly/honest" wording from UI copy | in-flight (orchestrator) |
+| Improvement run 6a: /stacks "editorial" label → "AI judgement" | in-flight (orchestrator) |
+| Improvement run 6b: full-site evidence-driven review + repo currency check | queued |
+| Improvement run 7: Pulley (retired) still appears in some tables (e.g. homepage processes view) — exclude from active tables | in-flight (orchestrator) |
+| Improvement run 8: arena descriptions — one line each, rewritten/truncated, full width | in-lane (copy+account) |
+| Improvement run 9: /account split — Account + My vendors as separate pages with a standard left sidebar | in-lane (copy+account) |
 | Final-launch gap & depth audit ("find missing gaps, make sure we have the depth") | shipped 2026-09-22 — 5 waves: hygiene (sitemap/llms.txt/region flags/noindex/README); CI green again (side-by-side TS6 lint toolchain + Vercel pnpmfile fix) + judge-JSON flake root-caused + contest #52 answered (gusto 26.8→32.9) + runner artifacts cleared; process completeness (no empty vendor cells, 14 stub DAGs expanded, prompts fleet-wide 654/654 steps); depth burn-down (64 spikes: muse/motion/tilled/sift probes — sift #5→#3, floot #5→#3, honest declines kept; never-spiked 109→54); 4 new arenas (compliance-automation, applicant-tracking, domain-registrars, sso-identity — 38 process steps lit). Fleet: 89 arenas / 553 products / 31,575 verdicts / 119 processes / 933 probes. REMAINING founder clicks: CF AI-bot toggle, WorkOS redirect URI, landing PR #224; decisions: workspace-suites arena (34 steps/31 processes), poke spike + 54 queue entries continue via daily cron |
 | Vendor lens: click a vendor on a process/chain → view the DAG via it | shipped 2026-09-21 — lens > stack > default resolution, per-page persistence, "✓ via" pinning, honest "not covered by X" gaps, coverage banner; chains share one lens across sections; SSR byte-identical without a lens |
 | Product pages: processes they serve | shipped 2026-09-21 — reverse index (0.2s build, 1496 vendor×process appearances) from the same derivations as the process pages; 188 products gained the table, computer-use-only rows collapsed with counts; "serves N processes →" chip |

@@ -15,6 +15,7 @@ import FamilySection from '@/components/FamilySection'
 import { familyForProduct, loadFamilies } from '@/lib/families'
 import { storyProcessesForArena } from '@/lib/storyProcessGraph'
 import GeoMark from '@/components/GeoMark'
+import InstallCommands from '@/components/InstallCommands'
 import IntegrationChips, { chipTitle } from '@/components/IntegrationChips'
 import MomentumChip from '@/components/MomentumChip'
 import MomentumTrend from '@/components/MomentumTrend'
@@ -362,6 +363,17 @@ export default async function ProductPage({
       <FamilySection arenaId={category} productId={id} />
 
       <TryItSection category={category} productId={id} productName={product.name} stories={data.stories} />
+
+      {/* Founder 2026-09-23: the install commands live right under "Try it agentically" — try
+          it in the microterminal, then install it for real in one scroll. */}
+      {(product.install?.length ?? 0) > 0 && (
+        <div className="min-w-0">
+          <p className="text-[10px] uppercase tracking-widest text-zinc-500">Install</p>
+          <div className="mt-1.5">
+            <InstallCommands product={product} />
+          </div>
+        </div>
+      )}
 
       {/* Verified integrations, right after the family/trend block (founder: more useful than
           its old bottom-of-page slot) — each chip's tooltip quotes the evidence excerpt(s) the

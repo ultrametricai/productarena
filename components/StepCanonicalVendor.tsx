@@ -30,6 +30,7 @@ export default function StepCanonicalVendor({
   info,
   logo,
   marketArenaId,
+  topRankedId,
   lensKey,
   checkStep,
 }: {
@@ -39,6 +40,9 @@ export default function StepCanonicalVendor({
   /** The step's covering market arena (optionsArenaId, else the canonical vendor's own arena)
    *  — the fallback pick check for steps without a serialized checkStep row. */
   marketArenaId: string | null
+  /** The #1 product of the step's ranked row — when the canonical vendor IS the top-ranked
+   *  chip, the reference chip would show it twice (founder 2026-09-23), so it renders nothing. */
+  topRankedId?: string | null
   lensKey?: string
   checkStep?: ProcessCheckStep
 }) {
@@ -52,6 +56,9 @@ export default function StepCanonicalVendor({
     : marketArenaId !== null &&
       (lens.picks[marketArenaId] !== undefined || stackPicks(stack, marketArenaId).length > 0)
   if (covered) return null
+  // Founder 2026-09-23: never show the step's top vendor twice — the ranked row already leads
+  // with it.
+  if (topRankedId && info.productId === topRankedId) return null
 
   const body = (
     <>

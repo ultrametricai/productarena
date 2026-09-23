@@ -5,6 +5,7 @@ import "./globals.css";
 import AccountMenu from "@/components/AccountMenu";
 import InstantTooltip from "@/components/InstantTooltip";
 import ArenaMenu, { type ArenaMenuItem } from "@/components/ArenaMenu";
+import PostHogInit from "@/components/PostHogInit";
 import { GLOBAL_RANKINGS, PROCESS_RANKINGS } from "@/components/RankingsNav";
 import { loadArenaSections } from "@/lib/arenaSections";
 import CommandPalette from "@/components/CommandPalette";
@@ -246,6 +247,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 antialiased">
+        {/* PostHog analytics (founder 2026-09-23, company account) — no-ops unless
+            NEXT_PUBLIC_POSTHOG_KEY is set at build time; see components/PostHogInit.tsx. */}
+        <PostHogInit />
         {/* Keyboard/screen-reader escape hatch: the header carries ~30 tab stops (two dropdown
             menus, tool links, search) on every page. Visually hidden until focused. */}
         <a

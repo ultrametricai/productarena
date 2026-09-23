@@ -183,7 +183,7 @@ export default function PopularRankingPage() {
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           You can&rsquo;t rank GitHub stars against a closed SaaS product&rsquo;s adoption — they&rsquo;re different
-          instruments measuring different populations. So popularity here is three honestly-labeled segments that are
+          instruments measuring different populations. So popularity here is three clearly-labeled segments that are
           never blended into one number: {byStars.length} products with a tracked public repo ranked by stars,{' '}
           {byInstalls.length} ranked by weekly npm/PyPI installs, and {curated.length} clearly-popular products with no
           public counter at all — plus what&rsquo;s exploding in interest right now, each flag with its measured reason.

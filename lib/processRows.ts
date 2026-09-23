@@ -1,5 +1,7 @@
 import type { ProcessRow } from '@/components/ProcessesTable'
+import { loadCategory } from '@/lib/data'
 import { hasLogo } from '@/lib/logos'
+import { isShutdown } from '@/lib/shutdown'
 import { processIcon } from '@/lib/processIcons'
 import { crossArenaStepRankings, processLeaderboard, stepRanking } from '@/lib/processRankings'
 import {
@@ -80,12 +82,22 @@ export function buildProcessRows(): ProcessRowsBundle {
       growthImpact: t.growthImpact,
       // Curated vendors lead, then the cell tops up from the derived market to the cap — so
       // "Cut a release" shows github + sentry AND the ranked code-hosting field (gitlab…).
+      // Shutdown products never seed a vendor cell (founder 2026-09-23: Pulley, retired, was
+      // still showing in the processes view via curated task vendors).
       vendors: derivedVendorsFor(
         t,
-        [...new Set(t.vendors)].slice(0, VENDOR_CELL_CAP).map((v) => {
-          const id = vendorProductId(v)
-          return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
-        }),
+        [...new Set(t.vendors)]
+          .filter((v) => {
+            const arena = VENDOR_ARENA[v]
+            if (!arena) return true // untracked chips have no shutdown state
+            const p = loadCategory(arena).products.find((x) => x.id === vendorProductId(v))
+            return !p || !isShutdown(p)
+          })
+          .slice(0, VENDOR_CELL_CAP)
+          .map((v) => {
+            const id = vendorProductId(v)
+            return { id, label: vendorLabel(v), arena: VENDOR_ARENA[v] ?? null, hasLogo: hasLogo(id) }
+          }),
       ),
     }
   })

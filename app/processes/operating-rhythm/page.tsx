@@ -104,7 +104,7 @@ export default function OperatingRhythmPage() {
           The operating rhythm
         </h1>
         <p className="mt-3 max-w-3xl text-zinc-400">
-          A year of running a startup, honestly. Incorporation happens once — then the company is
+          A year of running a startup. Incorporation happens once — then the company is
           a set of loops: code ships daily, payroll runs and the books close monthly, the board
           meets quarterly, the franchise tax comes due every year, and a hire or a cancellation
           can fire off a process any afternoon. Same corpus as{' '}

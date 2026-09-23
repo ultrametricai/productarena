@@ -103,7 +103,7 @@ export default function ChangelogPage() {
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
         <p className="text-sm uppercase tracking-widest text-emerald-400">Changelog</p>
-        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">What changed, honestly</h1>
+        <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">What changed</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           Rank flips, PA Score moves of {SCORE_MOVE_THRESHOLD.toFixed(1)}+ points, new products, and new arenas —
           derived at build time from the committed score history, never hand-written. Scores only move when evidence

@@ -27,7 +27,7 @@ export default function StacksPage() {
           The best pairings for going agentic — picked by evidence, not vibes. Every scored slot
           below is the current #1 of its arena on the named metric, resolved live from the same
           rankings as the rest of the site; slots we can&rsquo;t score yet are labeled as
-          editorial picks.
+          AI judgement.
         </p>
         <p className="mt-4 flex flex-wrap items-center justify-center gap-2">
           <Link
@@ -70,7 +70,7 @@ export default function StacksPage() {
               <thead>
                 <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
                   <th scope="col" className="px-3 py-2 font-normal"><span title="The role this slot fills in the stack">Layer</span></th>
-                  <th scope="col" className="px-3 py-2 font-normal"><span title="The product filling this slot — scored picks resolve live from the arena leaderboard; editorial picks are labeled">Pick</span></th>
+                  <th scope="col" className="px-3 py-2 font-normal"><span title="The product filling this slot — scored picks resolve live from the arena leaderboard; unscored slots are labeled AI judgement">Pick</span></th>
                   <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell"><span title="The curators' one-line reason this slot exists">Why this pick</span></th>
                   <th scope="col" className="hidden px-3 py-2 font-normal sm:table-cell">
                     <span className="inline-flex items-center gap-1.5">
@@ -178,8 +178,8 @@ export default function StacksPage() {
                           </Link>
                         </span>
                       ) : (
-                        <span className="rounded-full border border-amber-800/60 px-2 py-0.5 text-[10px] uppercase tracking-wide text-amber-400/90">
-                          editorial
+                        <span className="rounded-full border border-amber-800/60 px-2 py-0.5 text-[10px] uppercase tracking-wide text-amber-400/90" title="No arena scores this slot yet — the pick is AI judgement over the market, not a judged ranking">
+                          AI judgement
                         </span>
                       )}
                     </td>
