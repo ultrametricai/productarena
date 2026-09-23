@@ -12,7 +12,7 @@ import { DECISION_STEP_RE, formatMinutes, gapWhy } from './processSim'
 export { formatMinutes, gapWhy }
 export type { Cadence, GapResolution, SimStep, StepRoute, SwapOption, VendorRole }
 
-// The founder-process corpus (data/processes.json): 119 real startup operating processes, each
+// The founder-process corpus (data/processes.json): 122 real startup operating processes, each
 // mapped as a DAG whose nodes are routed 'agent' (an agent can drive the step via a recorded
 // API/tool call), 'form' (manual form/portal work — no public API path), or 'person' (a human
 // or a computer-use agent does it: meetings, judgment, waiting on a third party — with
@@ -176,7 +176,7 @@ export type ProcessChain = z.infer<typeof ProcessChainSchema>
 // Display order for the corpus's phases — grouping on the index page follows the life of the
 // company, not the alphabet. Unknown phases (future corpus additions) sort last, alphabetically.
 export const PHASE_ORDER = [
-  'startup', 'formation', 'fundraising', 'legal', 'compliance', 'finance', 'hr',
+  'startup', 'formation', 'fundraising', 'vc', 'legal', 'compliance', 'finance', 'hr',
   'operations', 'product', 'software', 'sales', 'growth',
 ] as const
 
@@ -624,6 +624,8 @@ const VENDOR_LABELS: Record<string, string> = {
   google_cloud: 'Google Cloud',
   oracle_cloud: 'Oracle Cloud Infrastructure',
   azure: 'Microsoft Azure',
+  // 2026-09-23 VC-fund phase (title-case fallback misfires on this one).
+  angellist: 'AngelList',
 }
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives
@@ -712,6 +714,13 @@ export const VENDOR_SIGNUP_URL: Record<string, string> = {
   aws: 'https://aws.amazon.com/',
   google_cloud: 'https://cloud.google.com/',
   azure: 'https://azure.microsoft.com/',
+  // 2026-09-23 VC-fund phase (founder ask: "a process area for VC processes") — genuine
+  // fund-formation/fund-admin suppliers with no arena yet; every URL curl-verified 200
+  // before listing.
+  angellist: 'https://www.angellist.com/',
+  sydecar: 'https://sydecar.io/',
+  passthrough: 'https://www.passthrough.com/',
+  juniper_square: 'https://www.junipersquare.com/',
 }
 
 export function vendorLabel(vendor: string): string {
