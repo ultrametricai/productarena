@@ -24,7 +24,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Homepage title moves ABOVE the Companies\|Processes tabs | shipped 2026-09-23 |
 | Homepage 'Products' as 3rd mode tab, replacing the include-all-products checkbox (legacy ?all=1 honored) | shipped 2026-09-23 |
 | Evidence column at the end of the rankings tables (homepage mega-table + arena tables) → /score receipt | shipped 2026-09-23 |
-| Supabase into serverless-databases (developer databases), judged vs neon | in-lane (supabase-dbs) |
+| Supabase into serverless-databases (developer databases), judged vs neon | shipped 2026-09-23 — neon honestly #1 (56.1 vs 50.1, bands non-overlapping); /vs/neon-vs-supabase live |
 | Grok (xAI) missing from frontier-models | in-lane (grok-frontier) |
 | /processes route-dots legend ("coloring is just not known by the user") | shipped 2026-09-23 |
 | End-to-end playbooks rows clickable (whole-row link) | shipped 2026-09-23 |
@@ -35,6 +35,13 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | VC processes area (fund formation → close → capital calls → fees → book investment) | in-lane (vc-processes) |
 | Homepage arena-card logos too bunched — spacing opened up | shipped 2026-09-23 |
 | /ops access for any verified *@ultrametric.ai sign-in (WorkOS code = verification) | shipped 2026-09-23 |
+| Grouped-arenas pages with UI into individual arenas (/arenas/[section]) | shipped-next-deploy 2026-09-23 |
+| Main /arenas page — visual navigation of all arenas | shipped-next-deploy 2026-09-23 |
+| Deep-table homepage view: full width at xl + OSS/YC/MCP quick filters (?oss/?yc/?mcp) | shipped-next-deploy 2026-09-23 |
+| Arenas as a homepage tab next to Processes (grid moved out of companies mode) | shipped-next-deploy 2026-09-23 |
+| Keep deep-spiking until done | in-lane (depth ×3 running; sweeps A–L, M–Z, thin-arenas) |
+| 'All phases' toggle → 'All areas' | shipped-next-deploy 2026-09-23 |
+| Remove 'Startup processes, run by agents' heading on the homepage Processes tab | shipped-next-deploy 2026-09-23 |
 | Depth to 100%: never-spiked sweep A–L + M–Z, thin-arena depth wave (id-verification 18 → up) | in-lane (depth ×3) |
 | Private /ops coverage dashboard + vendor-news watcher | shipped 2026-09-23 (needs NEXT_PUBLIC_ADMIN_EMAILS env or pa-admin localStorage to view) |
 | Drop the 'commercial' tag on product pages — they're (almost) all commercial | shipped 2026-09-23 |
