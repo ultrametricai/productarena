@@ -9,6 +9,7 @@ import StepYourPick from '@/components/StepYourPick'
 import StepApiCalls from '@/components/StepApiCalls'
 import StepPromptBox from '@/components/StepPromptBox'
 import StepVendorRow, { type StepRowUntracked, type StepRowVendor } from '@/components/StepVendorRow'
+import { layerNodes, type DagEdge } from '@/lib/dagLayers'
 import { resolveGapStep } from '@/lib/gapClosers'
 import { humanStepAudit } from '@/lib/humanSteps'
 import { FEASIBILITY_META, showComputerUseChips } from '@/lib/humanStepsUi'
@@ -16,7 +17,7 @@ import type { ProcessCheckStep } from '@/lib/processCheck'
 import { hasLogo } from '@/lib/logos'
 import type { DagNode, VendorChipInfo } from '@/lib/processes'
 import { stepVendorOptions, vendorAlternatives, vendorChipInfo } from '@/lib/processes'
-import { crossArenaStepRankings, stepRanking, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
+import { crossArenaStepRankings, stepRanking, type StepCite, type StepRanking, type StepVendorScore } from '@/lib/processRankings'
 import { stepPromptFor } from '@/lib/stepPrompts'
 import { stepVendorCallsFor } from '@/lib/stepVendorCalls'
 
@@ -34,10 +35,10 @@ import { stepVendorCallsFor } from '@/lib/stepVendorCalls'
 // machinery). Non-agent steps with an agentic gap-closer (lib/gapClosers.ts, resolved at build
 // time against live arenas) keep their compact "⚡ agentic workaround" line inside the block.
 
-export interface DagEdge {
-  from: string
-  to: string
-}
+// Re-exported from the shared layout helper (lib/dagLayers.ts) so existing importers keep
+// working — the layering itself now lives there, shared with the mini strip
+// (components/ProcessDagStrip.tsx).
+export type { DagEdge }
 
 // One task's slice of a chained run — rendered as a labeled header block inside the same
 // continuous flow so a whole chain reads as one diagram.
@@ -91,45 +92,8 @@ const SIGNATURE_STYLE: { block: string; badge: string; label: string } = {
   label: '✍ signature — legally human',
 }
 
-// Kahn layering (same approach as the ai-docs dashboard's layoutDAG): each topological layer is
-// one row of the diagram; a layer with >1 node is genuine parallelism. Tasks without edges are
-// linear by node order. Nodes an edge cycle would strand are appended as their own rows.
-function layerNodes(nodes: DagNode[], edges?: DagEdge[]): DagNode[][] {
-  if (!edges || edges.length === 0) return nodes.map((n) => [n])
-  const byId = new Map(nodes.map((n) => [n.id, n]))
-  const order = new Map(nodes.map((n, i) => [n.id, i]))
-  const inDegree = new Map(nodes.map((n) => [n.id, 0]))
-  const children = new Map<string, string[]>(nodes.map((n) => [n.id, []]))
-  for (const e of edges) {
-    if (!byId.has(e.from) || !byId.has(e.to)) continue
-    inDegree.set(e.to, (inDegree.get(e.to) ?? 0) + 1)
-    children.get(e.from)?.push(e.to)
-  }
-  const layers: DagNode[][] = []
-  const seen = new Set<string>()
-  let frontier = nodes.filter((n) => (inDegree.get(n.id) ?? 0) === 0).map((n) => n.id)
-  while (frontier.length > 0) {
-    const layer: string[] = []
-    const next: string[] = []
-    for (const id of frontier) {
-      if (seen.has(id)) continue
-      seen.add(id)
-      layer.push(id)
-      for (const child of children.get(id) ?? []) {
-        const d = (inDegree.get(child) ?? 1) - 1
-        inDegree.set(child, d)
-        if (d <= 0) next.push(child)
-      }
-    }
-    if (layer.length > 0) {
-      layer.sort((a, b) => (order.get(a) ?? 0) - (order.get(b) ?? 0))
-      layers.push(layer.map((id) => byId.get(id)!))
-    }
-    frontier = next
-  }
-  for (const n of nodes) if (!seen.has(n.id)) layers.push([n])
-  return layers
-}
+// Kahn layering: lib/dagLayers.ts layerNodes — one topological layer per row of the diagram,
+// shared with the mini horizontal strip so both views always agree on the layout.
 
 // Vertical connector segment with an arrowhead — the spine joint between blocks. Fixed left
 // offset so every joint lines up down the whole diagram.
@@ -201,20 +165,48 @@ function VendorChip({ info }: { info: VendorChipInfo }) {
   )
 }
 
-// Compact one-line verdict trace for one vendor inside the "how these are ranked" expandable:
-// which mapped stories it delivers full / partial / not at all.
-function citeLine(v: StepVendorScore): string {
-  const titles = (kind: string) => v.cites.filter((c) => c.verdict === kind).map((c) => c.storyTitle)
-  const parts: string[] = []
-  const full = titles('full')
-  const partial = titles('partial')
-  const disputed = titles('disputed')
-  if (full.length > 0) parts.push(`full: ${full.join(' · ')}`)
-  if (partial.length > 0) parts.push(`partial: ${partial.join(' · ')}`)
-  if (disputed.length > 0) parts.push(`disputed: ${disputed.join(' · ')}`)
-  const rest = v.cites.length - full.length - partial.length - disputed.length
-  if (rest > 0) parts.push(`not delivered: ${rest}`)
-  return parts.join(' — ')
+// Per-story verdict trace for one vendor inside the "how these are ranked" expandable (founder
+// ask 2026-09-23: SEE the evidence per chip, and whether we actually checked the vendor for the
+// step). Each mapped story gets a verdict icon + its title LINKED to the vendor's product page
+// at the judged verdict row (StoryVerdictsTable's #story-<storyId> anchor) — strongest verdicts
+// first, and 'none'/'na' rendered per story too, so "we checked and it doesn't deliver" is
+// visibly different from "not checked". Exported for its unit test; server-rendered, no state.
+const CITE_META: Record<StepCite['verdict'], { icon: string; label: string; cls: string }> = {
+  full: { icon: '✓', label: 'full — the judged verdict says the vendor delivers this story', cls: 'text-emerald-400/90' },
+  partial: { icon: '◐', label: 'partial — delivers with gaps', cls: 'text-emerald-300/70' },
+  disputed: { icon: '~', label: 'disputed — the evidence disagrees', cls: 'text-amber-400/80' },
+  none: { icon: '✕', label: 'not delivered — judged, and the vendor does not deliver this story', cls: 'text-zinc-600' },
+  na: { icon: '·', label: 'n/a — not applicable to this vendor, excluded from the score', cls: 'text-zinc-700' },
+}
+
+const CITE_ORDER: ReadonlyArray<StepCite['verdict']> = ['full', 'partial', 'disputed', 'none', 'na']
+
+export function VendorCiteLine({ vendor }: { vendor: StepVendorScore }) {
+  const cites = [...vendor.cites].sort(
+    (a, b) => CITE_ORDER.indexOf(a.verdict) - CITE_ORDER.indexOf(b.verdict),
+  )
+  return (
+    <>
+      {cites.map((c, i) => {
+        const meta = CITE_META[c.verdict]
+        return (
+          <Fragment key={c.storyId}>
+            {i > 0 && <span className="text-zinc-700"> · </span>}
+            <span className="whitespace-nowrap">
+              <span aria-hidden className={meta.cls}>{meta.icon}</span>{' '}
+              <Link
+                href={`/arena/${vendor.arenaId}/product/${vendor.productId}#story-${c.storyId}`}
+                title={`${meta.label} · story weight ${c.weight} — open this judged verdict on ${vendor.name}'s product page`}
+                className="text-zinc-400 underline decoration-zinc-800 underline-offset-2 transition hover:text-emerald-300"
+              >
+                {c.storyTitle}
+              </Link>
+            </span>
+          </Fragment>
+        )
+      })}
+    </>
+  )
 }
 
 // The story-derived step ranking (founder ask: rank vendors per STEP from the stories they
@@ -317,7 +309,7 @@ function StepRankingRow({
                       {v.name}
                     </Link>{' '}
                     <span className="font-mono tabular-nums text-emerald-400/80">{v.score.toFixed(0)}</span>{' '}
-                    — {citeLine(v)}
+                    — <VendorCiteLine vendor={v} />
                   </li>
                 ))}
               </ul>
