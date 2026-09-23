@@ -136,4 +136,20 @@ export const probes: LocalProbe[] = [
     expect: /200 https:\/\/github\.com\/token2\/fido2-manage/,
     timeoutMs: 30_000,
   },
+  // Launch-audit wave 4 (2026-09-22): google-titan was claimed-docs-only. Titan keys ship no
+  // vendor CLI, SDK, or API of their own (fleet management goes through the Google Workspace
+  // Admin surface, a different product) — the honest keyless probes are the vendor's own spec
+  // page liveness and the recorded absence of any agent-docs index for the product.
+  {
+    // Google's own Titan Security Key product page (the canonical spec source — models,
+    // FIDO2/U2F support, NFC/USB variants) is live and served keylessly.
+    probeId: 'spec-page-live',
+    productId: 'google-titan',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', "curl -sL --max-time 20 'https://cloud.google.com/security/products/titan-security-key' | grep -o -m 1 'Titan Security Key'"],
+    displayCommand: "curl -sL 'https://cloud.google.com/security/products/titan-security-key' | grep -o -m 1 'Titan Security Key'",
+    expect: /Titan Security Key/,
+    timeoutMs: 30_000,
+  },
 ]

@@ -1,15 +1,17 @@
 {
-  "hash": "2065eabc6b77328fe481a0168a4f5831129370e1f272df874291022cbb6c8808",
+  "hash": "90742931d4f90ea1bbab0bf9e4c85989244950e48bc819139ee00eaafb0aa0aa",
   "verdict": {
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "LaunchDarkly's SDK architecture is documented and independently corroborated as a streaming (SSE) model where clients download all flags then receive real-time updates, with an optional self-hosted Relay Proxy for resiliency — this is the mechanism that lets a flag toggle (kill switch) propagate quickly to connected SDKs. Community commentary explicitly calls out 'centralized feature flag service via SSE with minimal latency' as a key benefit, though some users note occasional API/SDK timeout issues that are latency-adjacent concerns rather than a contradiction of the streaming design. Missing for 10: first-party documentation with explicit propagation-time benchmarks (e.g. 'seconds'), explicit 'kill switch' terminology/case study, and hands-on confirmation of polling fallback speed.",
+    "rationale": "LaunchDarkly's SDK architecture is documented and confirmed by hands-on users: SDKs download all flags on connect then receive live updates via a streaming (SSE) connection, and LaunchDarkly's own Relay Proxy exists specifically to keep this fast/resilient at scale (launchdarkly-docs-13, launchdarkly-docs-32, launchdarkly-comm-2, launchdarkly-comm-9). Targeting/flag toggling docs (launchdarkly-docs-1, launchdarkly-docs-19, launchdarkly-docs-31) support the on/off 'kill switch' use case, and community reports describe 'minimal latency' change propagation via SSE, corroborating the story.\nmissing for 10: explicit vendor-stated propagation SLA/latency numbers, an explicit 'kill switch' terminology/case study, and independent hands-on confirmation that toggling actually halts traffic within seconds (one community note flags occasional API/setting-lookup timeouts, a minor caveat).",
     "evidenceIds": [
-      "launchdarkly-comm-2",
-      "launchdarkly-comm-9",
       "launchdarkly-docs-13",
       "launchdarkly-docs-32",
+      "launchdarkly-docs-19",
+      "launchdarkly-docs-1",
+      "launchdarkly-comm-2",
+      "launchdarkly-comm-9",
       "launchdarkly-comm-5"
     ],
     "productId": "launchdarkly",

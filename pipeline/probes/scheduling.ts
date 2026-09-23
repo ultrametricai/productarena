@@ -107,4 +107,17 @@ export const probes: LocalProbe[] = [
       expect: /# Usemotion/,
       timeoutMs: 30_000,
     },
+    {
+      // Motion's documented REST API (docs.usemotion.com/api-reference) is live: a keyless GET
+      // to the tasks endpoint answers with a clean structured 401 — the API exists and
+      // enforces its documented X-API-Key auth. Added launch-audit wave 4 (2026-09-22).
+      probeId: 'api-keyless-401',
+      productId: 'motion',
+      storyIds: ['agentic-public-api'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -si --max-time 20 https://api.usemotion.com/v1/tasks | head -1; curl -s --max-time 20 https://api.usemotion.com/v1/tasks'],
+      displayCommand: 'curl -si https://api.usemotion.com/v1/tasks | head -1; curl -s https://api.usemotion.com/v1/tasks',
+      expect: /HTTP\/2 401[\s\S]*"message":"Unauthorized"/,
+      timeoutMs: 30_000,
+    },
 ]
