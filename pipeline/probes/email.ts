@@ -121,4 +121,42 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // The Gmail API publishes a keyless machine-readable discovery document — the full REST
+      // surface (methods, OAuth scopes) as JSON, no key required.
+      probeId: 'api-discovery-doc',
+      productId: 'gmail',
+      storyIds: ['api-machine-spec', 'agentic-public-api'],
+      bin: 'curl',
+      // The discovery doc's top-level key order varies between responses, so grep the whole
+      // document for its stable title instead of matching a byte prefix.
+      argv: ['sh', '-c', `curl -s --max-time 20 'https://gmail.googleapis.com/$discovery/rest?version=v1' | grep -o '"title": "Gmail API"' | head -1`],
+      displayCommand: `curl -s 'https://gmail.googleapis.com/$discovery/rest?version=v1' | grep -o '"title": "Gmail API"'`,
+      expect: /"title": "Gmail API"/,
+      timeoutMs: 30_000,
+    },
+    {
+      // A keyless call to the live API answers a structured JSON 401 naming the exact
+      // credential it wants — the endpoint is real and its errors are machine-readable.
+      probeId: 'api-auth-challenge',
+      productId: 'gmail',
+      storyIds: ['agentic-public-api', 'agentic-scoped-keys'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s --max-time 20 https://gmail.googleapis.com/gmail/v1/users/me/profile | head -c 200'],
+      displayCommand: 'curl -s https://gmail.googleapis.com/gmail/v1/users/me/profile | head -c 200',
+      expect: /"code": 401/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Deliberate negative: Gmail ships no llms.txt on its developer docs host — the API is
+      // deep but the agent-docs surface is Google's generic portal.
+      probeId: 'llms-txt-404',
+      productId: 'gmail',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -s -o /dev/null -w "HTTP %{http_code}" --max-time 20 https://developers.google.com/llms.txt'],
+      displayCommand: 'curl -s -o /dev/null -w "HTTP %{http_code}" https://developers.google.com/llms.txt',
+      expect: /HTTP 404/,
+      timeoutMs: 30_000,
+    },
 ]

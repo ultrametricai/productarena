@@ -541,6 +541,15 @@ export const VENDOR_ARENA: Record<string, string> = {
   google_cloud: 'cloud-platforms',
   azure: 'cloud-platforms',
   oracle_cloud: 'cloud-platforms',
+  // Launch-day email lane (founder 2026-09-23: "sendgrid, virtualpostmail, do an arena for
+  // mail"): growth_005's transactional-email steps and the qs_044 mailing-address chips
+  // graduate from the untracked allowlist; gmail is the email arena's scoped Google
+  // sub-product (google-workspace/sso-identity precedent).
+  sendgrid: 'email-apis',
+  gmail: 'email',
+  stable: 'virtual-mailboxes',
+  earth_class_mail: 'virtual-mailboxes',
+  virtualpostmail: 'virtual-mailboxes',
 }
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
