@@ -5,12 +5,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box hosts a live llms.txt file confirmed by direct probe (HTTP 200) plus documentation referencing it (box-docs-28), and this sits alongside a documented MCP server and agent-oriented guides, showing agents can be pointed at agent-native docs/endpoints. missing for 10: independent third-party confirmation that agents successfully consume the llms.txt content in practice, and no evidence of a machine-readable OpenAPI spec to complement it.",
+    "rationale": "Box hosts a live llms.txt at developer.box.com/llms.txt (confirmed by probe, HTTP 200) and separate agent-oriented docs like agent-configurator.md, plus documented MCP server and CLI access for agents to consume Box content. missing for 10: independent/third-party corroboration that agents actually consume this llms.txt successfully in practice, and no evidence of llms-full.txt or broader agent-doc index beyond the single file.",
     "evidenceIds": [
       "box-probe-1",
       "box-docs-28",
-      "box-docs-27",
-      "box-probe-3"
+      "box-docs-31",
+      "box-docs-32",
+      "box-docs-42",
+      "box-docs-27"
     ]
   },
   {
@@ -18,15 +20,15 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Box AI API/Box AI in the product provides Q&A, extraction, summarization, and metadata generation directly on content stored in Box (box-docs-9, box-docs-12, box-docs-13, box-docs-26), with enterprise permissions preserved and configurable underlying models (box-docs-16, box-docs-18). This directly delivers AI-generated insights/suggestions from user data within the product, backed by first-party docs though lacking independent hands-on validation. Missing for 10: independent/third-party corroboration of Box AI insight quality and no community evidence testing accuracy of the AI features.",
+    "confidence": "medium",
+    "rationale": "Box AI API and Hubs offer built-in AI-generated insights: asking questions, extracting metadata, summarizing files, and querying content with enterprise permissions intact (box-docs-9, box-docs-12, box-docs-13, box-docs-26, box-docs-33). This is first-party documented and directly embedded in the product rather than requiring external tooling. Missing for 10: independent/hands-on third-party validation of the AI insight quality and no community corroboration of these AI features specifically.",
     "evidenceIds": [
       "box-docs-9",
       "box-docs-12",
       "box-docs-13",
       "box-docs-26",
-      "box-docs-16",
-      "box-docs-18"
+      "box-docs-33",
+      "box-docs-16"
     ]
   },
   {
@@ -35,30 +37,35 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Box provides building blocks for background automation—webhooks and event feeds that fire on content changes (box-docs-7, box-docs-19, box-docs-22), an AI Extract feature that automatically pulls metadata when files land in a folder (box-docs-12), and an MCP server letting AI agents act on Box content (box-docs-11, box-docs-29). However, these require developers to wire together webhooks/events with custom logic; there's no documented no-code 'automation builder' or persistent autonomous agent runtime that a non-developer AI-native user could simply configure. Missing for 10: a first-class autonomous automation/workflow product (e.g., Relay-style rules engine) documented with agent-triggered actions, and independent evidence of it running unattended in production.",
+    "rationale": "Box provides building blocks (webhooks, event feeds, Box AI, MCP server, agent configurator) that could be composed into autonomous background automations, but there is no evidence of a native, first-party 'automation/workflow' engine that runs autonomously on triggers without external glue code (e.g. no Box Relay or scheduled-workflow docs in this pack). missing for 10: dedicated autonomous workflow/automation product (e.g. Box Relay) documentation, evidence of scheduled/triggered agent runs without external orchestration, and independent confirmation that such automations work reliably in production.",
     "evidenceIds": [
       "box-docs-7",
+      "box-docs-8",
       "box-docs-19",
-      "box-docs-12",
+      "box-docs-9",
       "box-docs-11",
-      "box-docs-29",
-      "box-docs-22"
+      "box-docs-27",
+      "box-docs-42",
+      "box-probe-3"
     ]
   },
   {
     "productId": "box",
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Box AI is a built-in assistant embedded in the product for asking questions, extracting metadata, summarizing, generating, and querying content with permissions intact (box-docs-9, box-docs-12, box-docs-13, box-docs-26, box-docs-30), directly matching the story of delegating tasks to an in-product AI assistant. Missing for 10: independent/hands-on user reports validating Box AI's assistant behavior and more detail on task delegation beyond summarize/extract/query use cases.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Box AI is a built-in assistant that lets users ask questions, extract metadata, summarize, and generate content directly within Box, with enterprise permissions intact, and configurable AI models via Box AI API — this is a first-party, in-product assistant rather than a third-party bolt-on. missing for 10: independent/hands-on user reports validating real-world quality and reliability of the built-in assistant beyond vendor docs.",
     "evidenceIds": [
       "box-docs-9",
       "box-docs-12",
       "box-docs-13",
+      "box-docs-15",
+      "box-docs-16",
+      "box-docs-18",
       "box-docs-26",
-      "box-docs-30",
-      "box-docs-15"
+      "box-docs-33",
+      "box-docs-42"
     ]
   },
   {
@@ -67,12 +74,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box's REST API (box-docs-1, box-docs-17) is fully token/OAuth-based and scriptable via curl, and a CLI is mentioned (box-docs-27), both of which support headless/automated use in CI pipelines. However, there is no explicit documentation of CI/CD integration patterns, service-account/machine-to-machine auth flows, or example pipeline configs. Missing for 10: dedicated CI/headless automation guide, service-account auth documentation, and independent corroboration of running Box API calls in automated pipelines.",
+    "rationale": "Box exposes a full REST API with OAuth token auth, curl-able endpoints, and SDKs, which supports headless/CI automation of file operations, metadata, webhooks, and events. However, evidence is mostly generic API docs rather than CI-specific guidance (no GitHub Actions examples, no documented service-account/CI auth flow beyond developer tokens, and one SDK repo note about deprecated version support raises maintenance concerns). missing for 10: CI-specific tutorials/examples, dedicated service-account or CI auth pattern, independent hands-on CI automation reports.",
     "evidenceIds": [
       "box-docs-1",
       "box-docs-17",
-      "box-docs-2",
-      "box-docs-27"
+      "box-docs-31",
+      "box-gh-1"
     ]
   },
   {
@@ -81,12 +88,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All MCP-related evidence describes Box exposing its own hosted MCP server (mcp.box.com) so external AI agents can call Box's tools — this is Box acting as an MCP server/provider, not Box acting as a client that plugs in and uses third-party MCP servers' tools. No evidence shows Box's AI agent or platform consuming external MCP servers as tool sources.",
+    "rationale": "All MCP-related evidence describes Box operating as a hosted MCP server (mcp.box.com) that external AI agents connect to in order to use Box's own tools — the reverse of this story, which asks whether Box itself can plug in external MCP servers to use their tools. No evidence shows Box's AI agents or platform acting as an MCP client consuming third-party MCP servers.",
     "evidenceIds": [
       "box-docs-11",
       "box-docs-23",
       "box-docs-27",
       "box-docs-29",
+      "box-docs-41",
       "box-probe-3"
     ]
   },
@@ -96,12 +104,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents an official hosted MCP server at https://mcp.box.com that lets AI agents search and use Box files over OAuth, corroborated across multiple docs and a dedicated probe confirming the guide page exists. Missing for 10: independent/hands-on third-party validation of the MCP server working in practice beyond vendor docs.",
+    "rationale": "Box documents a hosted official MCP server at https://mcp.box.com that lets AI agents search and use Box files over OAuth, corroborated by a dedicated docs page and a probe confirming the remote MCP server documentation exists. Missing for 10: independent/hands-on third-party verification of the MCP server's real-world reliability and broader community corroboration beyond vendor docs.",
     "evidenceIds": [
       "box-docs-11",
       "box-docs-23",
       "box-docs-27",
       "box-docs-29",
+      "box-docs-41",
       "box-probe-3"
     ]
   },
@@ -111,14 +120,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box AI API lets users ask questions, extract metadata, and summarize/query files in natural language (box-docs-9, box-docs-26), and the hosted Box MCP server lets AI agents/apps search and act on Box files via natural-language-driven agent tooling (box-docs-11, box-docs-23, box-docs-27, box-probe-3). This covers content Q&A and agent-mediated actions but not a native natural-language command interface for the full range of Box operations (uploads, sharing, permissions, workflow) and lacks independent hands-on confirmation. Missing for 10: evidence of broad natural-language control over all core Box actions (not just search/summarize), and independent/community validation of NL command reliability.",
+    "rationale": "Box AI API lets users ask questions, extract metadata, and summarize files in natural language (box-docs-9, box-docs-33), and Box Hubs let users 'get answers with Box AI' (box-docs-13), showing some natural-language interaction with content. However, evidence does not show broader natural-language command operation of the product itself (e.g., uploading, sharing, organizing, or managing collaborations via NL) — those remain API/SDK driven. Missing for 10: evidence of natural-language commands controlling core Box actions (uploads, sharing, permissions) rather than just Q&A/summarization, and independent hands-on confirmation of this NL interface working well.",
     "evidenceIds": [
       "box-docs-9",
-      "box-docs-26",
-      "box-docs-11",
-      "box-docs-23",
-      "box-docs-27",
-      "box-probe-3"
+      "box-docs-33",
+      "box-docs-13",
+      "box-docs-26"
     ]
   },
   {
@@ -138,16 +145,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Box provides an extensively documented public REST API (base URL, OAuth2 auth, endpoint examples via curl) covering files, uploads, search, metadata, webhooks, events, collaborations, and AI operations, plus a developer portal with guides and changelog, and even a probed llms.txt for AI-native discovery. Missing for 10: no discoverable machine-readable OpenAPI/swagger spec (404s on standard paths) and no independent third-party corroboration of API robustness beyond vendor docs.",
+    "rationale": "Box has a comprehensive, well-documented public REST API (base URL, OAuth, endpoints for uploads, search, metadata, webhooks, events, collaborations, shared links) with reference docs, developer tokens, and a working llms.txt discovery file, plus SDKs. This clearly enables an AI-native user to drive Box programmatically. Missing for 10: a discoverable OpenAPI/Swagger spec (probe found all candidate paths 404) and stronger independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "box-docs-1",
-      "box-docs-17",
       "box-docs-2",
       "box-docs-5",
       "box-docs-6",
       "box-docs-7",
       "box-docs-8",
-      "box-docs-9",
+      "box-docs-17",
       "box-probe-1",
       "box-probe-2"
     ]
@@ -158,14 +164,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Box's platform is built on OAuth 2.0 access tokens and role-based collaborations that define per-resource permissions, and the MCP server operates 'over OAuth' without exposing raw payloads, which together imply some capacity for restricting an agent's access. However, there is no explicit documentation of scoped/least-privilege API credentials (e.g., token scopes, downscoped tokens, or agent-specific permission tiers) — the evidence only shows generic OAuth tokens and collaboration roles, not a dedicated mechanism for issuing narrowly-scoped credentials to an AI agent. Missing for 10: explicit scope/permission parameters on token issuance, documented least-privilege token exchange, and independent confirmation that agents can be restricted to minimal necessary access.",
+    "rationale": "Box's API is built on OAuth 2.0 tokens (box-docs-1, box-docs-17) and the hosted MCP server explicitly gates agent access to files via OAuth rather than raw credentials (box-docs-11, box-docs-23, box-docs-29), and collaborations/roles let admins define per-user/group access levels (box-docs-4, box-docs-21, box-docs-37) which could underlie least-privilege agent access. However, there is no explicit documentation in this pack of a dedicated 'scoped/downscoped token' or service-account API purpose-built for issuing least-privilege credentials to an individual agent. Missing for 10: explicit token-downscoping/service-account API docs, granular scope-selection UI for agent credentials, and independent confirmation that agent tokens can be scoped narrower than full user OAuth grants.",
     "evidenceIds": [
       "box-docs-1",
-      "box-docs-4",
-      "box-docs-21",
       "box-docs-11",
       "box-docs-23",
-      "box-docs-27"
+      "box-docs-29",
+      "box-docs-4",
+      "box-docs-21",
+      "box-docs-37",
+      "box-docs-17"
     ]
   },
   {
@@ -174,12 +182,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box's developer docs reference API guides, reference endpoints, and an llms.txt mentioning SDKs for building against Box, and it ships an official MCP server for agentic access, but there is no direct evidence pack citation of named official SDKs (e.g., Python/Node/Java SDK repos) or SDK-specific docs/examples beyond the generic mention in llms.txt. missing for 10: explicit SDK documentation/links per language, independent corroboration of SDK quality/maintenance, code samples using an official SDK.",
+    "rationale": "Box's developer docs explicitly reference official SDKs (llms.txt overview lists 'guides, API reference, SDKs, and tutorials') and a GitHub repo for the box-typescript-sdk-gen exists, but the only concrete SDK evidence includes a deprecation notice ('won't receive new features, updates, bug fixes, or security patches'), raising questions about SDK maintenance/version churn. Missing for 10: docs/examples for other language SDKs (Python, Java, .NET), no independent hands-on confirmation of SDK quality or AI-agent-specific usage patterns.",
     "evidenceIds": [
       "box-probe-1",
-      "box-docs-1",
-      "box-docs-27",
-      "box-docs-29"
+      "box-gh-1"
     ]
   },
   {
@@ -188,11 +194,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Box provides well-documented V2 webhooks for monitoring content events (file downloads, uploads, etc.) with delivery to a chosen URL, plus a separate event feed API for real-time/historical event streaming — both directly enabling AI-native subscription to Box events. Missing for 10: no independent/hands-on corroboration of webhook reliability in practice.",
+    "rationale": "Box documents a well-developed webhooks system (V1/V2) letting apps register endpoints to receive notifications on file/folder events like downloads, plus a complementary events API for streaming/polling — clearly enabling event subscription for agentic workflows. missing for 10: independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "box-docs-7",
       "box-docs-22",
+      "box-docs-35",
       "box-docs-19",
+      "box-docs-39",
       "box-docs-8"
     ]
   },
@@ -202,13 +210,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box AI API is a first-party, documented surface for asking questions, extracting metadata, and summarizing files (box-docs-9, box-docs-12, box-docs-13, box-docs-26), integrated with enterprise permissions and available via Box Hubs and AI agent configs (box-docs-18). This goes beyond announcement into documented, usable API guides with changelog updates showing active shipping. Missing for 10: independent/hands-on validation of AI answer quality or accuracy, and any community corroboration of the AI features themselves (community evidence only covers sync/storage, not AI).",
+    "rationale": "Box AI API is well documented with dedicated first-party docs for asking questions, extracting metadata, and summarizing files (box-docs-9, box-docs-12, box-docs-26, box-docs-33), plus a visual agent configurator and model selection (box-docs-42, box-docs-18), indicating a shipped, documented surface rather than just an announcement. missing for 10: independent/hands-on third-party validation of Box AI's actual output quality and reliability, and clearer documentation of usage limits/pricing tiers for the AI features.",
     "evidenceIds": [
       "box-docs-9",
       "box-docs-12",
-      "box-docs-13",
+      "box-docs-26",
+      "box-docs-33",
       "box-docs-18",
-      "box-docs-26"
+      "box-docs-42"
     ]
   },
   {
@@ -230,9 +239,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows an API reference site (box-docs-1) but a direct probe for standard OpenAPI/Swagger spec locations returned 404s (box-probe-2), and no other citation mentions a downloadable machine-readable spec file (e.g., OpenAPI JSON/YAML). Without concrete evidence of a machine-readable spec being available, this axis is not shown to be delivered.",
+    "rationale": "The evidence pack shows explicit probe attempts for an OpenAPI/Swagger spec at Box's developer domain, and all candidate paths returned 404; no other citation shows a downloadable machine-readable API spec (only human-readable reference docs and an llms.txt overview).",
     "evidenceIds": [
       "box-probe-2",
+      "box-probe-1",
       "box-docs-1"
     ]
   },
@@ -242,20 +252,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item describes a Box sandbox/test environment isolated from production data; docs only reference the production base URL (api.box.com) and developer tokens for live accounts. Missing for 10: any mention of a sandbox tenant, test account, or non-production API environment for safe experimentation.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers Box's API, AI, MCP, and collaboration features in depth, but nowhere mentions a sandbox/test environment separate from production data — only a 'free developer account' and 'developer token' for testing against what appears to be the same production API (box-docs-31, box-docs-17). No dedicated sandbox tenant, test mode, or synthetic-data environment is documented.",
+    "evidenceIds": [
+      "box-docs-31",
+      "box-docs-17",
+      "box-docs-1"
+    ]
   },
   {
     "productId": "box",
     "storyId": "api-versioning-policy",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Box's API is versioned (base URL /2.0) and has a public changelog documenting updates like new AI models, but the evidence pack never shows an explicit, documented deprecation policy (e.g., sunset timelines, notice periods) for API versions. missing for 10: explicit deprecation/sunset policy documentation, versioning lifecycle guarantees, independent confirmation of long-term API stability.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Box's API is versioned (base URL /2.0) and has a public changelog tracking updates (box-docs-16, box-docs-18), and its SDK repo explicitly states old versions 'continue to work... but won't receive new features, updates, bug fixes, or security patches' (box-gh-1), implying some deprecation practice. However there's no dedicated, explicit deprecation-policy document, version-lifecycle timeline, or sunset-notice process cited. Missing for 10: a formal API versioning/deprecation policy page, explicit sunset timelines, and independent confirmation that deprecations are consistently communicated.",
     "evidenceIds": [
       "box-docs-1",
       "box-docs-16",
-      "box-docs-18"
+      "box-docs-18",
+      "box-gh-1"
     ]
   },
   {
@@ -264,28 +279,23 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents a dedicated Events API that lets applications subscribe to enterprise-wide user actions in real time or query historical event logs, effectively serving as an audit trail accessible via documented API (box-docs-8, box-docs-19). This supports SIEM-style export/integration use cases via API access with OAuth (box-docs-1). Missing for 10: no explicit mention of a native SIEM connector/integration or retention policy details, and no independent/hands-on confirmation of enterprise audit log completeness.",
+    "rationale": "Box documents an event feed/API (box-docs-8, box-docs-19, box-docs-39) allowing subscription to user or enterprise events, real-time or historical monitoring of actions across the enterprise, which is a documented audit-log/API-access mechanism security teams can use for SIEM export or auditing pipelines. Missing for 10: no explicit documentation of a native SIEM connector or third-party SIEM integration guide, and no independent/hands-on corroboration of enterprise event log completeness or retention.",
     "evidenceIds": [
       "box-docs-8",
       "box-docs-19",
-      "box-docs-1"
+      "box-docs-39"
     ]
   },
   {
     "productId": "box",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Box's REST API exposes per-item endpoints (search, metadata, collaborations, webhooks, chunked upload) that an AI agent could script in a loop to affect many items, and the MCP server/CLI expose these to agents, but the evidence pack contains no documentation of a native batch/bulk endpoint (e.g., bulk delete, bulk metadata update, multi-item transactions) — everything is framed as single-resource operations that must be automated by the caller. missing for 10: explicit batch/bulk API endpoints, documented rate-limit or throughput guidance for large-scale bulk jobs, and independent evidence of bulk workflows succeeding at scale.",
+    "rationale": "Box's docs mention metadata 'cascade policies' that apply metadata templates across all items in a folder in one operation (box-docs-38), which is a form of bulk operation, but there is no documented batch API for bulk create/move/copy/delete across arbitrary large sets of items, no bulk endpoint for search/collaboration changes, and no independent evidence of bulk automation performance at scale. Missing for 10: explicit batch/bulk REST endpoints for common operations, rate-limit guidance for bulk automation, and hands-on confirmation that bulk workflows work reliably for AI agents.",
     "evidenceIds": [
-      "box-docs-5",
-      "box-docs-6",
-      "box-docs-7",
-      "box-docs-19",
-      "box-docs-27",
-      "box-docs-29",
-      "box-probe-2"
+      "box-docs-38",
+      "box-docs-6"
     ]
   },
   {
@@ -294,12 +304,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Box provides webhooks and an events feed that let developers subscribe to file/folder events and trigger external endpoints (box-docs-7, box-docs-19, box-docs-22), which is the building block for event-triggered automation. However, there's no evidence of a native rules/workflow engine (e.g., Box Relay) where a user can declaratively define 'on event X do action Y' inside Box itself — automation requires building and hosting your own webhook receiver and logic. Missing for 10: a documented native rule-definition/workflow-automation feature, and any evidence of built-in conditional actions triggered without external code.",
+    "rationale": "Box provides webhooks and an event feed that can notify an external endpoint or subscriber when specific content events occur (uploads, downloads, etc.), which can serve as the trigger side of automation. However, there is no evidence of a native rules/actions engine (e.g., a workflow builder like 'if event X then action Y' within Box itself) — the pack only shows notification/subscription mechanisms that still require the user to build and host their own logic to act on events. Missing for 10: evidence of a built-in no-code rules/workflow engine (e.g., Box Relay) or documented automatic-action execution triggered by these events without external code.",
     "evidenceIds": [
       "box-docs-7",
-      "box-docs-19",
       "box-docs-22",
-      "box-docs-8"
+      "box-docs-35",
+      "box-docs-8",
+      "box-docs-19",
+      "box-docs-39"
     ]
   },
   {
@@ -308,7 +320,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Box's evidence covers webhooks, events, search, MCP, and AI features, but there is no mention of scheduling recurring jobs or workflows (e.g., cron-like triggers, scheduled automations) anywhere in the docs, community, or probes; Box's automation is entirely event/webhook-driven, not time-scheduled.",
+    "rationale": "Box's docs cover webhooks, events, AI, MCP, and file operations, but there is no evidence of a scheduler, cron-like trigger, or recurring workflow/job mechanism within Box itself; automation depends on external tools reacting to webhooks/events rather than Box scheduling recurring jobs natively.",
     "evidenceIds": []
   },
   {
@@ -316,22 +328,23 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Box provides webhooks, events, metadata, and AI features but there is no evidence of any versioning, review, or rollback mechanism specifically for 'automations' (e.g., workflow definitions, Box Relay flows, or agent configurations). File versioning is not mentioned at all in the pack, let alone automation-specific version control or rollback.",
+    "confidence": "high",
+    "rationale": "Box's evidence covers content management, AI features, MCP server, webhooks, and events, but there is no mention of versioning, reviewing, or rolling back automations/workflows (e.g., Box Relay or automation history) themselves — only file content operations like search, metadata, and AI extraction.",
     "evidenceIds": []
   },
   {
     "productId": "box",
     "storyId": "change-webhooks",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Box documents Webhooks (V2) that notify a chosen URL on content events like downloads, and a separate Events API for subscribing to user/enterprise actions in real time or via historical query — covering the core 'push notifications on change' story. However, the pack shows no documented details on payload signature verification or retry/backoff semantics, which the story explicitly calls for. missing for 10: webhook signature verification steps, retry/redelivery guarantees, and rate/ordering semantics.",
+    "rationale": "Box documents both a webhooks system (V1/V2, event-triggered notifications to a URL) and a separate real-time/historical events feed for subscribing to enterprise actions, which covers the core 'push notifications on content change' story. However, the evidence pack never spells out signature/verification mechanics (e.g., how to validate the webhook payload) or explicit retry/backoff semantics for failed delivery, which the story specifically calls for. missing for 10: documented webhook signature verification process, documented retry/backoff behavior on delivery failure, independent confirmation of these mechanics working in practice.",
     "evidenceIds": [
       "box-docs-7",
       "box-docs-22",
-      "box-docs-8",
-      "box-docs-19"
+      "box-docs-35",
+      "box-docs-19",
+      "box-docs-39"
     ]
   },
   {
@@ -340,11 +353,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents a dedicated full-text Search API (box-docs-5) distinct from prefix/filename lookups, explicitly described as full-text search over content, and metadata/filename search is corroborated by related guides on metadata and events. Missing for 10: independent hands-on developer confirmation of search quality/limits and detailed API parameter docs (query syntax, filters) beyond the guide summary.",
+    "rationale": "Box documents a full-text search API (box-docs-5) that goes beyond filename/prefix matching, explicitly finding content via full-text queries, and metadata is also queryable via metadata templates/instances/queries (box-docs-38), extending search capability to custom fields. missing for 10: no independent/hands-on corroboration of full-text search quality or coverage limits (e.g., which file types are indexed), and no detailed API reference snippet showing query parameters.",
     "evidenceIds": [
       "box-docs-5",
-      "box-docs-6",
-      "box-docs-1"
+      "box-docs-38",
+      "box-docs-6"
     ]
   },
   {
@@ -353,22 +366,23 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Box docs explicitly describe metadata templates that let apps define and store custom structured data on files/folders, and search guides confirm metadata is queryable via the API. This directly matches the story of files carrying schema via custom metadata/properties. Missing for 10: no independent/hands-on corroboration of metadata template creation/querying workflow, and no detail on metadata template versioning or cascading policies.",
+    "rationale": "Box's official docs describe metadata templates as first-class API objects allowing custom key-value data on files/folders, including instances, cascade policies, and queries — directly matching the story of files carrying a defined schema settable/queryable via API. Missing for 10: independent/hands-on developer corroboration beyond first-party docs, and detail on template versioning/edge cases.",
     "evidenceIds": [
       "box-docs-6",
-      "box-docs-5"
+      "box-docs-38"
     ]
   },
   {
     "productId": "box",
     "storyId": "delta-change-listing",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Box's Events API (box-docs-8, box-docs-19) is documented as a feed for subscribing to actions in an enterprise, supporting both real-time and historical stream queries — this is Box's cursor/delta mechanism (stream position based polling) rather than a full re-crawl. However, the evidence doesn't explicitly describe the cursor parameter/field name or confirm incremental-only payload behavior, and there's no independent/hands-on corroboration of efficient delta sync in practice. Missing for 10: explicit documentation of the stream_position cursor parameter and its 'changes since last call' semantics, and independent developer confirmation that it works efficiently at scale.",
+    "rationale": "Box's Events API is documented as a subscribable event feed that can be queried in real time or against historical records via stream types, which functions as the delta/cursor mechanism developers use instead of full re-crawls (box-docs-8, box-docs-19, box-docs-39). Missing for 10: explicit mention of 'stream_position' cursor parameter/token semantics, and independent/hands-on confirmation that the feed reliably captures only incremental changes without gaps.",
     "evidenceIds": [
       "box-docs-8",
-      "box-docs-19"
+      "box-docs-19",
+      "box-docs-39"
     ]
   },
   {
@@ -377,22 +391,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of Box's desktop client features like selective sync or on-demand/online-only files; all Box docs focus on the API/webhooks/AI, not the desktop sync app. Community evidence only describes an older Windows/Mac client as clunky, CPU-spiking, and lacking OS-level file-system hooks — not confirming modern selective-sync/on-demand capability.",
+    "rationale": "The evidence pack contains no vendor documentation describing desktop sync clients, selective sync, or on-demand/online-only files for Box. The only related evidence is community commentary describing the Box desktop client as clunky, CPU-intensive, and lacking a modern 'Default Sync Folder' model, with no mention of selective sync or on-demand files at all. Missing for 10: any documentation of macOS/Windows desktop clients, selective sync feature, on-demand/online-only file support, or independent confirmation these work.",
     "evidenceIds": [
       "box-comm-4",
       "box-comm-6",
-      "box-comm-7"
+      "box-comm-1"
     ]
   },
   {
     "productId": "box",
     "storyId": "esignature-integration",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Box Sign is a native e-signature product with a documented API (Box Sign brings the full Box Sign web app experience to your application through the API), directly satisfying the operations-lead need for signatures within the same content platform. missing for 10: independent/hands-on validation of Box Sign in production workflows and details on advanced signing features (templates, multi-party routing) beyond the brief doc mention.",
+    "rationale": "Box Sign is a native, first-party e-signature product with a full web app and API (send documents for signature, track through to completion), documented extensively and integrated with Box's content/permissions model. missing for 10: independent/hands-on validation beyond first-party docs.",
     "evidenceIds": [
-      "box-docs-10"
+      "box-docs-10",
+      "box-docs-34"
     ]
   },
   {
@@ -401,7 +416,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers file/folder-level sharing mechanisms (shared links, collaborations) but contains no evidence of org-level admin governance features such as domain allowlists, enterprise-wide external sharing restrictions, or admin console policy controls that an IT admin would configure centrally.",
+    "rationale": "The evidence only describes shared-link and collaboration API features (creating links, setting roles) rather than org-level admin governance such as domain allowlists, enterprise-wide external-sharing policies, or link restriction controls in an admin console. No citation describes IT-admin-level settings restricting external sharing.",
     "evidenceIds": []
   },
   {
@@ -410,12 +425,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box docs mention embeddable, secure previews with annotation (box-docs-14) and shared links for direct read-only access to files (box-docs-3, box-docs-20, box-docs-24), suggesting preview functionality is available via the API without client-side rendering. However, there's no explicit documentation of a dedicated thumbnail/preview API endpoint, no detail on supported file formats, and no independent/hands-on corroboration of preview quality or reliability. missing for 10: explicit preview/thumbnail API endpoint documentation, list of supported formats, independent verification of preview rendering quality.",
+    "rationale": "Box docs mention embeddable, expiring file previews with in-context annotation (box-docs-14), which supports the core story of API-driven previews without client-side rendering. However, there's no explicit documentation of a dedicated thumbnail-generation endpoint, supported format list, or preview API reference details, and no independent/hands-on corroboration of preview rendering fidelity. missing for 10: explicit thumbnail API endpoint docs, list of supported formats, independent verification of preview quality/reliability.",
     "evidenceIds": [
       "box-docs-14",
       "box-docs-3",
-      "box-docs-20",
-      "box-docs-24"
+      "box-docs-36"
     ]
   },
   {
@@ -424,7 +438,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of a versions API, listing/restoring file revisions, or documented retention windows anywhere in the docs, changelog, or probes. Without any citation addressing version history, this applicable files-api capability must be marked none. missing for 10: any documentation of GET /files/{id}/versions, version restore/promote endpoint, or retention policy documentation.",
+    "rationale": "The evidence pack contains no mention of file version history, listing/restoring revisions, or retention window documentation anywhere in the Box docs excerpts provided. While Box's actual API is known to support this, no citation here addresses versioning at all.",
     "evidenceIds": []
   },
   {
@@ -433,62 +447,62 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents a full REST API (base URL, OAuth token auth, curl example) with dedicated guides for chunked uploads, shared links, collaborations, search, metadata, webhooks, and events — covering upload/download/list/move/delete-style file operations over documented endpoints, not just a desktop client. Community evidence critiques the desktop client's sync/UX but does not contradict the REST API's existence or functionality. Missing for 10: no independent hands-on developer report confirming CRUD operations work smoothly, and no discoverable OpenAPI/swagger spec (404s on probe).",
+    "rationale": "Box's developer docs describe a full REST API (base URL, OAuth token auth, curl examples) plus dedicated guides for chunked uploads, shared links, collaborations, metadata, and events—covering the core file lifecycle operations. Missing for 10: explicit doc citations for list/move/delete endpoints (only upload/download-adjacent guides are quoted) and independent hands-on API test corroboration beyond docs.",
     "evidenceIds": [
       "box-docs-1",
       "box-docs-2",
-      "box-docs-3",
-      "box-docs-4",
-      "box-docs-5",
-      "box-docs-6",
-      "box-docs-7",
       "box-docs-17",
-      "box-probe-2"
+      "box-docs-31",
+      "box-docs-36",
+      "box-probe-1"
     ]
   },
   {
     "productId": "box",
     "storyId": "founder-data-room",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Box provides the core building blocks for a lightweight data room: shared links with view-only/download restrictions (box-docs-3, box-docs-20, box-docs-24), folder-level collaborations with granular role-based access for external parties (box-docs-4, box-docs-21), webhook/event tracking for access visibility (box-docs-7, box-docs-8, box-docs-19, box-docs-22), and community confirmation that selectively granting outside parties folder access works well in practice (box-comm-9). Secure expiring previews with annotation further support diligence workflows (box-docs-14). Missing for 10: no explicit documentation of a dedicated 'data room' template or granular per-link download-disable toggle, and no independent/hands-on validation of access-visibility dashboards specifically for diligence use cases.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Box's documented primitives cover the core data-room needs: shared links with configurable access levels for view-only sharing (box-docs-3, box-docs-36, box-docs-24), collaborations for granular folder-level access control (box-docs-4, box-docs-21, box-docs-37), webhooks specifically triggered on file downloads (box-docs-22), and an events/audit feed for access visibility (box-docs-8, box-docs-19, box-docs-39). Community evidence corroborates real-world use for selectively granting outside parties access to files/folders (box-comm-9), matching the diligence-sharing use case. Missing for 10: an explicit first-party 'data room' template/feature, documentation of disabling downloads specifically (vs. just notifying on download), and independent hands-on validation of the full workflow (folder org + view-only + download-block + audit) as a single cohesive experience.",
     "evidenceIds": [
       "box-docs-3",
+      "box-docs-36",
+      "box-docs-24",
       "box-docs-4",
-      "box-docs-20",
       "box-docs-21",
+      "box-docs-37",
       "box-docs-22",
+      "box-docs-8",
       "box-docs-19",
-      "box-docs-14",
       "box-comm-9"
     ]
   },
   {
     "productId": "box",
     "storyId": "generous-free-tier",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "disputed",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "Community evidence confirms Box has a free tier with concrete published limits (250MB max file size, 10GB monthly bandwidth) that uses the same client/API infrastructure as paid tiers, but there's no first-party Box documentation in the pack describing free-tier storage quota or confirming full API access parity for free accounts. missing for 10: official Box docs stating free-tier storage/bandwidth quotas, confirmation that free-tier accounts get full API/SDK access without restriction.",
+    "rationale": "There is a free developer account for API access (box-docs-31), but community evidence shows the free tier is quite limited — 250MB max file size and only 10GB monthly bandwidth (box-comm-2, box-comm-5), which is a concrete real-world constraint contradicting the idea of a generous, fully-functional free tier working identically to paid tiers. No published storage quota figure for the free tier appears in official docs. missing for 10: an official published free-tier storage quota page, confirmation that all API/client features work unrestricted on free tier, and resolution of the bandwidth/file-size caps reported by users.",
     "evidenceIds": [
+      "box-docs-31",
       "box-comm-2",
-      "box-comm-5",
-      "box-comm-10",
-      "box-docs-1",
-      "box-docs-17"
+      "box-comm-5"
     ]
   },
   {
     "productId": "box",
     "storyId": "granular-folder-permissions",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Box's collaborations API documents role-based access control at the file/folder level, akin to ACLs, and community feedback confirms selective granting of folder/file access to outside parties. However, the evidence never enumerates specific roles (viewer/commenter/editor/owner) or explains inheritance behavior between folders and files. Missing for 10: explicit documentation of the full role hierarchy and how permissions inherit/cascade from folder to file level.",
+    "rationale": "Box documents collaborations as role-based access control on files/folders (viewer/editor/owner-style roles), granting users/groups access with defined roles, and separately documents shared links with configurable access levels — covering folder/file-level permissioning. However, evidence does not explicitly enumerate the full role set (viewer/commenter/editor/owner) nor detail inheritance behavior (how folder-level roles propagate to subfolders/files) beyond general statements. Missing for 10: explicit documentation of the full role hierarchy/names, and explicit inheritance rules/override behavior for nested folders and files.",
     "evidenceIds": [
       "box-docs-4",
       "box-docs-21",
+      "box-docs-37",
+      "box-docs-3",
+      "box-docs-36",
       "box-comm-9"
     ]
   },
@@ -496,11 +510,12 @@
     "productId": "box",
     "storyId": "large-file-resumable-upload",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Box's documented Chunked Upload API explicitly addresses reliable large-file uploads via chunking parts, which supports resuming/retrying failed parts. Missing for 10: explicit documentation of resuming after a fully dropped connection/session persistence details, and independent/hands-on corroboration of resumability in practice.",
+    "rationale": "Box's docs explicitly describe a Chunked Upload API for reliably uploading large files by splitting into parts that are uploaded individually and then committed, which is the standard resumable/chunked pattern (box-docs-2, box-docs-40). Missing for 10: explicit documentation of resuming a session after a dropped connection (retry semantics, session expiry) and independent/hands-on corroboration of resumability in practice.",
     "evidenceIds": [
-      "box-docs-2"
+      "box-docs-2",
+      "box-docs-40"
     ]
   },
   {
@@ -508,13 +523,9 @@
     "storyId": "office-suite-editing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers Box's storage, sharing, collaboration permissions, search, metadata, AI extraction/summarization, e-signature, and MCP integration, but nothing documents real-time co-editing of docs/sheets/slides in the browser (no mention of Box Notes, Office 365/Google Docs integration, or simultaneous multi-user editing). The closest item is secure preview with annotation, which is not co-editing.",
-    "evidenceIds": [
-      "box-docs-14",
-      "box-docs-15",
-      "box-docs-25"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation of real-time co-editing of docs/sheets/slides (e.g., Box Notes, Office 365 Online, or Google Docs integration) — only vague marketing taglines like 'edit, and co-create content with AI' with no technical or feature-level detail, plus unrelated APIs for uploads, sharing, metadata, and AI extraction. No concrete evidence supports in-browser real-time collaborative editing.",
+    "evidenceIds": []
   },
   {
     "productId": "box",
@@ -522,7 +533,7 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Box's docs show broad API coverage mirroring most core UI features—uploads, sharing, collaborations, search, metadata, webhooks, events, e-signature, and AI—suggesting substantial API/UI parity (box-docs-2 through box-docs-10, box-docs-19-22). However, there's no explicit vendor claim of full UI-API parity, no independent verification, and no evidence covering admin-console-only settings or newer AI/agent features being fully API-exposed (openapi spec itself 404s, box-probe-2). Missing for 10: explicit parity statement, independent/hands-on confirmation, and coverage of admin/enterprise-console-specific capabilities via API.",
+    "rationale": "Box's developer docs show broad API coverage matching most UI capabilities: uploads, sharing, collaborations, search, metadata, webhooks, events, AI, e-signature, and even agent-oriented MCP/CLI access (box-docs-2 through box-docs-42). However, there is no explicit vendor claim of 1:1 UI/API parity, and the probe found no discoverable OpenAPI spec (box-probe-2), suggesting some friction in confirming complete parity. Missing for 10: explicit parity statement, independent verification that every UI action (e.g., admin console settings, retention policies) is API-accessible, and a working OpenAPI/schema reference.",
     "evidenceIds": [
       "box-docs-2",
       "box-docs-3",
@@ -533,6 +544,7 @@
       "box-docs-8",
       "box-docs-9",
       "box-docs-10",
+      "box-docs-38",
       "box-probe-2"
     ]
   },
@@ -556,7 +568,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Box is a closed, proprietary SaaS content platform; there is no evidence of open-sourced source code or open licensing, and this is a category error for a commercial cloud product rather than an open-source project.",
+    "rationale": "Box is a closed-source SaaS content management platform; there is no evidence of an open-license source code release, and this axis is a category error for such a proprietary cloud product (though SDKs are open source, the core product is not).",
     "evidenceIds": []
   },
   {
@@ -565,7 +577,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Box is a cloud SaaS content platform; self-hosting the core product is not offered or plausible for this category — it's a wrong-axis question, not a missing capability.",
+    "rationale": "Box is a cloud SaaS content platform with no self-hosted deployment option evidenced anywhere in the pack; self-hosting is not a category-appropriate axis for this kind of managed cloud service.",
     "evidenceIds": []
   },
   {
@@ -574,7 +586,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data residency, regional storage options, or geographic controls for where Box content is stored; all citations concern API usage, sharing, collaboration, AI features, and general product complaints unrelated to residency.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage selection, or geographic data controls for Box; all citations concern APIs, MCP, collaborations, and general product features unrelated to residency.",
     "evidenceIds": []
   },
   {
@@ -583,7 +595,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data opt-out or any data-usage-for-model-training policy; documentation focuses on Box AI features, security/permissions, and MCP integration but never states whether customer content is used to train AI models or how to prevent it.",
+    "rationale": "The evidence pack contains no mention of AI-training opt-out, data usage policies for model training, or explicit controls to prevent customer content from being used to train AI models. Box AI features (box-docs-9, box-docs-30) mention 'enterprise-grade security' generally but never address training-data usage rights.",
     "evidenceIds": []
   },
   {
@@ -591,8 +603,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Box's API, AI, MCP, sharing, and collaboration features but contains no mention of retention policies, legal holds, data deletion controls, or lifecycle management — capabilities that would be expected for an enterprise content platform's privacy posture. Since this axis clearly applies to a content management/storage product, the absence of any supporting evidence means it cannot be credited as full/partial.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of retention policies, legal holds, deletion APIs, or AI-data-deletion controls — only generic security/compliance marketing phrases (e.g. box-docs-15, box-docs-30) that don't address retention or deletion mechanics. Since Box is a content platform, this axis clearly applies, but no supporting evidence exists in the pack, so it defaults to none.",
     "evidenceIds": []
   },
   {
@@ -601,20 +613,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out settings for Box or its AI/MCP features; the pack covers APIs, collaboration, and product features but nothing about telemetry controls.",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out controls for AI-native usage; all citations concern APIs, MCP, storage features, or unrelated community feedback.",
     "evidenceIds": []
   },
   {
     "productId": "box",
     "storyId": "shared-links-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Box docs confirm shared links can be created via the API with visibility settings (e.g., 'open' shared link) [box-docs-3, box-docs-20, box-docs-24], but the evidence pack never explicitly documents setting a password, expiry date, or revoking a shared link through the API. missing for 10: explicit API documentation of password-protection, expiry-date settings, and revocation of shared links.",
+    "rationale": "Docs confirm shared links can be created via the API with configurable access levels/visibility (box-docs-3, box-docs-20, box-docs-36), but the evidence pack never explicitly documents password protection, expiry dates, or revocation of shared links via the API. missing for 10: explicit API fields/endpoints for password protection, expiry settings, and revocation of shared links.",
     "evidenceIds": [
       "box-docs-3",
       "box-docs-20",
-      "box-docs-24"
+      "box-docs-24",
+      "box-docs-36"
     ]
   },
   {
@@ -623,20 +636,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions a pricing page, storage quotas per plan, per-user pricing, or overage/cap behavior; only community mentions of free-tier file-size and bandwidth limits from an old HN thread, not an official pricing page.",
+    "rationale": "No evidence pack items reference a public pricing page with per-plan storage quotas, per-user prices, or overage/cap behavior; only scattered community mentions of free-tier limits (250MB file size, 10GB bandwidth) exist, which are not an official pricing page.",
     "evidenceIds": []
   },
   {
     "productId": "box",
     "storyId": "team-admin-api",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Box's content APIs (uploads, shared links, collaborations, search, metadata, webhooks, events, AI, e-signature, MCP) but contains no documentation of admin-specific endpoints for member/user provisioning or group management (e.g., Users API, Groups API, Enterprise admin console API) — only a generic /users/me call is shown, which is not an admin provisioning endpoint. Missing for 10: documented Users API for creating/deactivating accounts, Groups API for group membership management, and enterprise admin console API references for automation.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Box's developer docs confirm OAuth-based API access and a collaborations model for granting users/groups role-based access to content (box-docs-4, box-docs-21, box-docs-37), plus a base /users/me endpoint (box-docs-17), suggesting some administrative surface. However there is no explicit documentation of member/user provisioning endpoints, group creation/management, or dedicated admin-console/enterprise-settings API calls that an IT admin would need for automation. Missing for 10: dedicated user-provisioning API docs, group management endpoints, and enterprise/admin-console API reference.",
     "evidenceIds": [
-      "box-docs-17",
       "box-docs-4",
-      "box-docs-21"
+      "box-docs-21",
+      "box-docs-37",
+      "box-docs-17",
+      "box-docs-1"
     ]
   },
   {
@@ -645,7 +660,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "A live probe confirms Dropbox serves an llms.txt file (HTTP 200) with a short product description, so an agent can be pointed at it. However, the content is thin (a marketing blurb, not structured agent-oriented documentation), and other agent-doc formats (docs.md, OpenAPI) return 404, suggesting no broader agent-native documentation strategy. Missing for 10: richer/structured llms.txt content covering API capabilities, machine-readable docs (docs.md/OpenAPI) actually resolving, and independent confirmation that agents successfully consume it.",
+    "rationale": "A probe confirms https://www.dropbox.com/llms.txt returns HTTP 200 with actual content, and dropbox-docs-15 cites it, showing Dropbox does publish an llms.txt file an agent could be pointed at. However, the content appears to be brief marketing copy rather than deep agent-oriented API documentation, and attempts to find companion machine-readable docs (docs.md, OpenAPI spec) all 404'd. Missing for 10: richer llms.txt content covering API/developer docs, a markdown mirror of developer docs, and an OpenAPI/machine-readable spec for agents to consume.",
     "evidenceIds": [
       "dropbox-probe-1",
       "dropbox-docs-15",
@@ -656,16 +671,17 @@
   {
     "productId": "dropbox",
     "storyId": "agentic-ai-insights",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Dropbox Dash provides AI-generated summaries, document insights/answers, review assistance, and AI-based organization directly on user content, as documented across multiple first-party resource pages (summarizing files, getting AI answers, organizing with AI, reviewing documents, reading PDFs). This directly matches the story of AI-generated insights/suggestions from a user's own data inside the product. missing for 10: independent/hands-on corroboration of Dash's AI quality, and detail on how deeply these insights integrate into core Dropbox storage vs. being a separate Dash product.",
+    "rationale": "Dropbox Dash provides AI-generated summaries, answers, document review, and organization suggestions from users' files (dash.dropbox.com resources), directly matching the story. However, evidence is all first-party marketing/docs with no independent or hands-on corroboration, and one homepage claim ('AI is coming to Dropbox') suggests some AI features are still rolling out rather than fully mature across the core product. Missing for 10: independent/hands-on validation of AI insight quality, clarity on which AI features are GA vs upcoming, and detail on how deeply these are integrated into core Dropbox storage vs. the separate Dash product.",
     "evidenceIds": [
       "dropbox-docs-33",
       "dropbox-docs-34",
       "dropbox-docs-35",
       "dropbox-docs-36",
       "dropbox-docs-37",
+      "dropbox-docs-49",
       "dropbox-docs-11"
     ]
   },
@@ -674,31 +690,25 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Dropbox provides APIs, webhooks, and file sync/sharing features plus AI-assisted search/summarization in Dash, but there is no mention of user-configurable autonomous background automations (e.g., triggers/workflows that run independently without user-invoked API calls). Webhooks only notify external apps of changes; they are not an automation-building feature for end users.",
-    "evidenceIds": [
-      "dropbox-docs-4",
-      "dropbox-docs-28",
-      "dropbox-docs-33",
-      "dropbox-docs-34",
-      "dropbox-docs-38"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence shows Dropbox offers developer APIs, webhooks, and AI-assisted search/summarization within Dash, but nothing describes user-configurable autonomous background automations (e.g., triggers/workflows that run without manual invocation). Webhooks enable third-party developers to build automations, but that's not the same as Dropbox itself providing an automation-setup feature for end users.",
+    "evidenceIds": []
   },
   {
     "productId": "dropbox",
     "storyId": "agentic-builtin-assistant",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Dropbox Dash is documented as a built-in AI assistant that can summarize files, answer questions, and help organize/review documents, fitting the 'delegate tasks to built-in AI' story for basic knowledge-work tasks. However, evidence shows only query/summarization-style delegation, not autonomous multi-step task execution (e.g., no evidence of AI taking actions like moving, signing, or organizing files on its own), and there's no independent/hands-on corroboration of its agentic capability. Missing for 10: evidence of autonomous action-taking by the AI assistant, third-party/hands-on validation of Dash's task-delegation capabilities, and detail on scope/limits of its agentic behavior.",
+    "rationale": "Dropbox's Dash offers an AI assistant that summarizes documents, answers questions from files, and helps organize content, and Dropbox's homepage touts upcoming AI drafting/organization features, showing a built-in AI assistant for task delegation on file-related work. However, the evidence is limited to search/summarize/organize/answer use cases with no detail on broader agentic task execution (e.g., taking multi-step actions across apps) or independent hands-on validation of the assistant's reliability. Missing for 10: evidence of broader agentic task delegation beyond document Q&A/summarization, and independent/hands-on corroboration of Dash's AI assistant performance.",
     "evidenceIds": [
-      "dropbox-docs-11",
       "dropbox-docs-33",
       "dropbox-docs-34",
       "dropbox-docs-35",
       "dropbox-docs-36",
       "dropbox-docs-37",
-      "dropbox-docs-38"
+      "dropbox-docs-44",
+      "dropbox-docs-49"
     ]
   },
   {
@@ -707,15 +717,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Dropbox exposes a full REST API and SDKs (Python, JS, etc.) with OAuth-based auth that could be scripted into CI/automation pipelines for file operations and webhooks, but there is no explicit documentation of a headless/CI workflow, service-account or non-interactive auth pattern, or CLI tool designed for automation. missing for 10: explicit CI/automation guide, non-interactive/service-account auth flow, official CLI for scripting.",
+    "rationale": "Dropbox offers a documented Files API, webhooks, and SDKs (Python, JS, Java, etc.) that allow scripted, non-interactive automation of file operations, which could be run in CI pipelines. However, there is no explicit CI/headless-mode documentation, no service-account/headless OAuth guidance beyond generic OAuth docs, and no CI examples (e.g., GitHub Actions) provided in the evidence. Missing for 10: explicit CI/automation guides, headless authentication patterns for unattended scripts, and community/hands-on proof of running Dropbox SDKs in CI environments.",
     "evidenceIds": [
       "dropbox-docs-3",
       "dropbox-docs-4",
-      "dropbox-docs-19",
-      "dropbox-docs-28",
+      "dropbox-docs-27",
+      "dropbox-docs-22",
       "dropbox-gh-1",
-      "dropbox-gh-3",
-      "dropbox-docs-2"
+      "dropbox-docs-19",
+      "dropbox-docs-28"
     ]
   },
   {
@@ -724,7 +734,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Dropbox is a file storage/collaboration product, not an AI agent or assistant; the story asks whether it can consume MCP servers as a client to gain tool-use capability, which is a wrong axis for this product type—there's no evidence Dropbox itself acts as an AI agent that plugs into MCP servers.",
+    "rationale": "Dropbox is a cloud storage/collaboration product, not an AI agent or assistant that consumes MCP servers as tools; the evidence shows Dropbox exposing its own APIs/SDKs for others to integrate, but no client-side MCP consumption capability. This axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -733,13 +743,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official Dropbox MCP server; evidence only covers REST/SDK APIs, webhooks, and Dash AI features, with probes showing no OpenAPI/MCP endpoints.",
-    "evidenceIds": [
-      "dropbox-probe-2",
-      "dropbox-probe-3",
-      "dropbox-docs-1",
-      "dropbox-docs-11"
-    ]
+    "rationale": "Dropbox is not an AI agent itself, so this axis applies (as a service with an ecosystem, it could plausibly ship an official MCP server), but no evidence in the pack mentions MCP support, an MCP server, or any agent-connection protocol — only REST/SDK APIs, webhooks, and Dash AI features are documented.",
+    "evidenceIds": []
   },
   {
     "productId": "dropbox",
@@ -747,13 +752,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Dropbox Dash offers AI-driven natural-language querying — summarizing files, getting AI answers, organizing/reviewing documents — which lets users interact via NL for search/insight tasks, but there's no evidence of natural-language commands driving broader product actions (e.g., moving, sharing, or managing files) beyond Dash's search/summarize features. missing for 10: NL command execution for core file operations (upload, share, move, permissions), evidence of a conversational agent controlling Dropbox actions, independent corroboration of Dash's NL capabilities.",
+    "rationale": "Dropbox's Dash surfaces AI-powered natural-language search, Q&A, summarization, and file organization ('AI answers for busy teams', 'organize files with AI', 'review documents with AI'), letting users interact via natural language for information tasks. However there's no evidence of natural-language commands driving core file operations (move, share, delete, sign) as an agentic interface — those remain menu/API-driven. Missing for 10: NL-driven execution of file/folder actions (not just search/summarize), evidence of a conversational agent that can act on commands, and independent corroboration of Dash's NL capability in practice.",
     "evidenceIds": [
       "dropbox-docs-33",
       "dropbox-docs-34",
       "dropbox-docs-35",
       "dropbox-docs-36",
       "dropbox-docs-37",
+      "dropbox-docs-49",
       "dropbox-docs-11"
     ]
   },
@@ -763,8 +769,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows SDKs (Python, JS, Swift, etc.) and REST APIs, but no official CLI tool is mentioned anywhere in the evidence pack. Dropbox provides developer SDKs, not a command-line interface for AI-native workflows.",
-    "evidenceIds": []
+    "rationale": "Evidence shows SDKs (Python, JS, Swift, etc.) for building apps against Dropbox APIs, but no evidence of an official command-line interface (CLI) tool for interacting with Dropbox as an AI-native user. Missing for 10: any mention of a dedicated Dropbox CLI, its commands, or agentic/automation use via terminal.",
+    "evidenceIds": [
+      "dropbox-docs-2",
+      "dropbox-docs-22",
+      "dropbox-gh-3",
+      "dropbox-docs-29"
+    ]
   },
   {
     "productId": "dropbox",
@@ -772,17 +783,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Dropbox publishes a documented public API (DBX Platform) with Files API, webhooks, OAuth, and official SDKs in multiple languages, plus GitHub repos with working code samples — enabling programmatic, AI-agent-style access. Missing for 10: no OpenAPI/machine-readable spec found (404s on openapi.json/docs.md) and no independent third-party corroboration of API robustness beyond vendor docs/SDK repos.",
+    "rationale": "Dropbox has a well-documented public API (DBX Platform / Files API) with OAuth, webhooks, official SDKs in multiple languages, and community SDKs, plus GitHub repos confirming active SDK maintenance - clearly enabling programmatic/agentic access. missing for 10: no OpenAPI/machine-readable spec found (404s on probes) and no explicit AI-agent-specific API guidance.",
     "evidenceIds": [
       "dropbox-docs-1",
       "dropbox-docs-2",
       "dropbox-docs-3",
       "dropbox-docs-4",
-      "dropbox-gh-1",
       "dropbox-docs-19",
       "dropbox-docs-28",
       "dropbox-docs-29",
-      "dropbox-probe-2",
+      "dropbox-gh-1",
+      "dropbox-gh-3",
       "dropbox-probe-3"
     ]
   },
@@ -805,9 +816,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Dropbox provides official first-party SDKs across Swift, .NET, Java, JavaScript, Objective-C, and Python, with dedicated GitHub repos (dropbox-sdk-js, dropbox-sdk-python) showing real code usage, plus OAuth, webhooks, and file API documentation supporting programmatic/agentic integration. Missing for 10: no explicit AI-agent-specific SDK guidance (e.g., function-calling schemas, agent frameworks) and no independent hands-on developer corroboration beyond the vendor docs and repos.",
+    "rationale": "Dropbox provides official first-party SDKs in multiple languages (Swift, .NET, Java, JavaScript, Objective-C, Python), backed by public GitHub repos and API docs covering file operations, OAuth, and webhooks, giving developers a solid foundation to build custom (including AI-driven) integrations. Missing for 10: no evidence of an AI-agent-specific SDK/toolkit or independent third-party corroboration of SDK reliability/quality beyond Dropbox's own docs and repos.",
     "evidenceIds": [
       "dropbox-docs-2",
+      "dropbox-docs-27",
       "dropbox-gh-1",
       "dropbox-gh-2",
       "dropbox-gh-3",
@@ -823,27 +835,28 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Dropbox has a documented webhooks system for subscribing to file/folder change notifications, with dedicated API reference docs (dropbox-docs-28) and explicit description of receiving notifications for changes via webhooks (dropbox-docs-4). This is a well-established, first-party API feature usable by developers/AI agents to react to events. Missing for 10: independent/hands-on developer confirmation of webhook reliability and AI-agent-specific usage examples.",
+    "rationale": "Dropbox has documented webhooks that notify apps of changes in Dropbox, with dedicated API reference documentation for webhooks and SDK support across multiple languages. Missing for 10: independent/hands-on corroboration of webhook reliability and no explicit AI-agent framing for the webhook subscription flow.",
     "evidenceIds": [
       "dropbox-docs-4",
-      "dropbox-docs-28"
+      "dropbox-docs-28",
+      "dropbox-docs-2"
     ]
   },
   {
     "productId": "dropbox",
     "storyId": "ai-file-assistant",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Dropbox ships Dash, a first-party AI surface with documented capabilities to summarize files, answer questions about documents, review documents, and organize files with AI, plus plan pages advertising 'Edit PDFs and get signatures' and 'Integrate with leading AI tools.' These are documented product pages (not just an announcement), covering ask/summarize/extract use cases. Missing for 10: independent hands-on corroboration of Dash's AI quality/accuracy, and clearer detail on extraction capabilities beyond summarization/Q&A.",
+    "rationale": "Dropbox's Dash surface has documented, published how-to pages for asking AI questions of files, summarizing, reviewing and organizing content (dash.dropbox.com/resources/*), which is more than an announcement. However, the main marketing page still frames AI as 'coming to Dropbox' and the AI capability is bundled in a separate Dash product rather than deeply integrated into core storage/API docs, with no independent hands-on corroboration of quality or reliability. Missing for 10: independent/hands-on verification, technical API/developer docs for the AI features, and clearer evidence it's fully shipped (not partially rolled out) across the core product rather than just Dash.",
     "evidenceIds": [
       "dropbox-docs-33",
       "dropbox-docs-34",
       "dropbox-docs-35",
       "dropbox-docs-36",
       "dropbox-docs-37",
-      "dropbox-docs-11",
-      "dropbox-docs-38"
+      "dropbox-docs-49",
+      "dropbox-docs-11"
     ]
   },
   {
@@ -852,12 +865,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows static API reference pages (OAuth, webhooks, content-hash) and SDK code snippets on GitHub, but nothing indicates an interactive, runnable API console — probes even show no OpenAPI spec or interactive docs endpoint (404s for openapi.json/docs-md).",
+    "rationale": "Dropbox's developer docs describe SDKs, API reference pages (content-hash, webhooks, OAuth) and code snippets, but there is no evidence of an interactive API console or runnable/try-it examples embedded in the docs. Probes for OpenAPI/swagger specs and machine-readable docs all returned 404, further suggesting no interactive reference exists.",
     "evidenceIds": [
       "dropbox-docs-18",
       "dropbox-docs-19",
       "dropbox-docs-28",
-      "dropbox-gh-1",
       "dropbox-probe-2",
       "dropbox-probe-3"
     ]
@@ -867,8 +879,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Probes for OpenAPI/swagger specs all returned 404, and no documentation item references a downloadable machine-readable API spec; Dropbox only offers SDKs and HTTP API docs.",
+    "confidence": "medium",
+    "rationale": "Dropbox provides API reference docs and SDKs but no evidence of a downloadable OpenAPI/Swagger spec; probes for common OpenAPI endpoints (openapi.json, swagger.json, etc.) all returned 404.",
     "evidenceIds": [
       "dropbox-probe-2",
       "dropbox-probe-3"
@@ -889,7 +901,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Dropbox has an API platform with SDKs (v2 API) but nothing documents a versioning scheme, deprecation policy, or changelog/sunset timeline for the API; probes confirm no OpenAPI spec or machine-readable docs found. Missing for 10: documented API versioning scheme, explicit deprecation/sunset policy, changelog of breaking changes.",
+    "rationale": "Evidence shows Dropbox has an API (DBX Platform, V2 SDKs, OAuth, webhooks) but nothing about API versioning scheme or a documented deprecation policy; probes for OpenAPI spec and docs markdown returned 404s, suggesting no discoverable versioning/deprecation documentation.",
     "evidenceIds": [
       "dropbox-docs-1",
       "dropbox-docs-19",
@@ -902,8 +914,8 @@
     "storyId": "audit-log-events",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers Dropbox's file/sharing/eSignature APIs and SDKs but contains no mention of team event logs, admin audit logs, or SIEM export/integration capability, which is what this story requires.",
+    "confidence": "low",
+    "rationale": "The evidence pack covers Dropbox's Files API, sharing, eSignature, and AI search features, but contains no mention of team event logs, audit logs, admin activity logs, or SIEM export/integration capabilities. No documentation or API reference for audit trail access is cited.",
     "evidenceIds": []
   },
   {
@@ -926,12 +938,11 @@
     "storyId": "automation-rules-engine",
     "verdict": "partial",
     "quality": 3,
-    "confidence": "low",
-    "rationale": "Dropbox exposes a Webhooks API and Files API that let developers build event-triggered automation, but there is no evidence of a native, user-facing rules/automation engine (e.g., no-code 'if this happens, do that') for end users. missing for 10: native rule-builder UI, pre-built automation templates, AI-native trigger/action framework, evidence of non-developer usage.",
+    "confidence": "medium",
+    "rationale": "Dropbox exposes webhooks that notify external systems of file/folder changes, which developers can use to build custom automation, but there is no native rules engine or 'if this then that' automation UI for end users to define triggers/actions directly within Dropbox. missing for 10: a first-party no-code automation/rules builder, documented trigger-action templates, and evidence of AI-native event-driven workflows beyond raw webhook notifications.",
     "evidenceIds": [
       "dropbox-docs-4",
-      "dropbox-docs-28",
-      "dropbox-docs-3"
+      "dropbox-docs-28"
     ]
   },
   {
@@ -940,7 +951,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of scheduling, cron-like triggers, or recurring workflow automation in Dropbox's API, webhooks, or Dash offerings; webhooks only notify on changes reactively, not on a schedule.",
+    "rationale": "No evidence of Dropbox offering scheduling, recurring jobs, or workflow automation triggers—only webhooks for reactive change notifications and file/eSignature APIs are documented, with no cron-like or recurring job scheduling capability.",
     "evidenceIds": []
   },
   {
@@ -948,8 +959,8 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "na",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Dropbox is a file storage/collaboration and eSignature platform, not an automation-building tool with workflows/rules to version, review, or roll back; file version history (restore deleted files) is unrelated to 'automations' as described in this story. This axis is a category error for this product type.",
+    "confidence": "medium",
+    "rationale": "Dropbox is a file storage/collaboration platform, not an automation-building/workflow platform; it offers file versioning and restore, but there is no evidence of an 'automations' feature (rules/workflows) that could be versioned, reviewed, or rolled back. This axis targets automation/orchestration platforms and is a category mismatch for Dropbox's product type.",
     "evidenceIds": []
   },
   {
@@ -982,8 +993,8 @@
     "storyId": "custom-metadata-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Files API, sharing, webhooks, SDKs, and Dropbox Sign, but contains no mention of custom metadata/properties templates (e.g., an API to define and query structured schema metadata on files). Missing for 10: any documentation of a properties/templates API, endpoints for adding/querying custom metadata, or examples of schema-based file tagging.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Dropbox's Files API, webhooks, sharing, and SDKs, but contains no mention of custom metadata or properties templates (e.g., properties/template/add or file properties endpoints) that would let developers define and query custom schema on files.",
     "evidenceIds": []
   },
   {
@@ -1003,25 +1014,31 @@
   {
     "productId": "dropbox",
     "storyId": "desktop-sync-clients",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers Dropbox's developer APIs, sharing links, plans, and AI features, but contains no mention of the desktop client, selective sync, or on-demand/online-only files capability that this story specifically asks about. Only vague generic mentions of 'synced across devices' appear, with no documentation of the actual desktop client feature set.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence mentions general cross-device sync and saving hard-drive space (hinting at on-demand/online-only files) but never explicitly documents selective sync, Smart Sync/online-only file features, or macOS/Windows client parity. Missing for 10: explicit selective sync documentation, on-demand/online-only file feature docs, macOS/Windows client feature parity evidence, independent hands-on corroboration.",
+    "evidenceIds": [
+      "dropbox-docs-42",
+      "dropbox-docs-46",
+      "dropbox-docs-48",
+      "dropbox-docs-15"
+    ]
   },
   {
     "productId": "dropbox",
     "storyId": "esignature-integration",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Dropbox owns Dropbox Sign (formerly HelloSign), a native e-signature product with deep first-party integration into Dropbox storage — signed documents save automatically to Dropbox, signature requests can be sent directly from Dropbox, and plans list 'Edit PDFs and get signatures' as a built-in feature, plus a documented developer API for signature requests. Missing for 10: independent hands-on review confirming the in-app signing workflow quality.",
+    "rationale": "Dropbox ships native e-signature capability via Dropbox Sign (formerly HelloSign), first-party integrated into the core product ('sign documents—without leaving Dropbox', 'Edit PDFs and get signatures' on plans page, 'Automatically save signed documents to your preferred storage account') plus a documented developer API (sign.dropbox.com, hellosign.com/api, signatureRequestSend endpoint) for embedding e-signature workflows. This is a genuine native/first-party solution rather than a third-party bolt-on. Missing for 10: independent hands-on verification of the signing UX quality and enterprise-scale adoption evidence beyond marketing pages.",
     "evidenceIds": [
       "dropbox-docs-16",
       "dropbox-docs-17",
+      "dropbox-docs-45",
       "dropbox-docs-12",
-      "dropbox-docs-5",
-      "dropbox-docs-23"
+      "dropbox-docs-23",
+      "dropbox-docs-5"
     ]
   },
   {
@@ -1029,14 +1046,9 @@
     "storyId": "external-sharing-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence only covers individual-user sharing (editor/viewer permissions, invitations, links) but contains no documentation of org/team-admin-level controls such as domain allowlists, restricting external sharing at the team level, or link-restriction policies for admins.",
-    "evidenceIds": [
-      "dropbox-docs-9",
-      "dropbox-docs-24",
-      "dropbox-docs-31",
-      "dropbox-docs-32"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence covers general sharing (viewer/editor access, share links, password protection) but nothing about org-level admin controls such as domain allowlists, restricting external sharing, or link-sharing governance policies for IT admins.",
+    "evidenceIds": []
   },
   {
     "productId": "dropbox",
@@ -1044,7 +1056,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Dropbox's developer platform page explicitly lists 'previews' as one of the API-accessible features alongside storage, sharing, and search, implying a preview capability exists, but the evidence pack contains no detail on thumbnail generation, supported formats, or an embeddable preview endpoint/response schema. missing for 10: documentation of a specific thumbnails/get_preview API endpoint, supported file formats, and any developer confirmation of usage.",
+    "rationale": "Dropbox's developer platform page lists 'previews' as one of the features the DBX Platform provides alongside storage, sharing, and search, implying an API-driven preview/thumbnail capability, but no evidence pack item names specific endpoints (e.g., get_thumbnail/get_preview), supported formats, or embeddable preview usage. Missing for 10: documented thumbnail/preview API reference, supported file-format list, code samples showing preview retrieval without client-side rendering, and independent confirmation of this feature working.",
     "evidenceIds": [
       "dropbox-docs-1",
       "dropbox-docs-20"
@@ -1053,14 +1065,15 @@
   {
     "productId": "dropbox",
     "storyId": "file-revisions-history",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The evidence shows Dropbox has a general Files API (create/read/edit/move/delete) and plan-level 'restore deleted files' windows (180 days/1 year), but nothing documents a revisions-specific API (e.g., list_revisions/restore) or ties those retention windows to an API-addressable version history endpoint.",
+    "rationale": "Dropbox documents general Files API actions (create, read, edit, move, delete) and explicit retention windows for restoring deleted content (30/180/365 days depending on plan), which implies some revision/version retention capability, but no evidence pack item explicitly documents dedicated version-history endpoints (e.g., list_revisions/restore) or their API usage pattern for revisions specifically. missing for 10: explicit documentation of a revisions-listing endpoint, explicit documentation of a restore-specific-revision endpoint, and hands-on/independent confirmation that these work as described.",
     "evidenceIds": [
       "dropbox-docs-3",
       "dropbox-docs-14",
-      "dropbox-docs-25"
+      "dropbox-docs-25",
+      "dropbox-docs-47"
     ]
   },
   {
@@ -1069,15 +1082,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Dropbox documents a Files API with create/read/edit/move/delete operations over REST, plus SDKs (JS, Python, etc.) and webhooks, and the JS SDK GitHub example demonstrates listing folder contents via API calls (filesListFolder). This covers upload/download/list/move/delete as documented endpoints beyond the desktop client. Missing for 10: explicit upload/download code samples in evidence and independent third-party corroboration of full CRUD REST endpoint behavior beyond official docs.",
+    "rationale": "Dropbox's Files API documentation explicitly covers create, read, edit, move, and delete operations over REST endpoints, with official SDKs (JS, Python, etc.) and code samples (e.g. filesListFolder) demonstrating real API usage beyond the desktop client, plus webhooks and OAuth support. Missing for 10: independent third-party hands-on corroboration beyond vendor docs/SDK repos, and a live OpenAPI/spec probe (probe shows 404s for openapi.json/docs-md), so full documentation completeness can't be independently verified from evidence alone.",
     "evidenceIds": [
       "dropbox-docs-3",
-      "dropbox-docs-2",
       "dropbox-gh-1",
-      "dropbox-docs-28",
       "dropbox-docs-19",
+      "dropbox-docs-28",
       "dropbox-docs-22",
-      "dropbox-gh-3"
+      "dropbox-gh-3",
+      "dropbox-docs-21"
     ]
   },
   {
@@ -1103,7 +1116,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack includes plan/pricing pages (dropbox-docs-12,13,25,26) but none of them mention a free tier, its storage quota, or confirm that the same clients/API work under a free plan. No first-party doc or independent report substantiates a real free tier with published quota.",
+    "rationale": "No evidence pack item documents a free-tier storage quota (e.g., GB limit) or confirms that a free plan works with the same desktop/mobile clients and API as paid tiers; all plan-related citations (50GB/100GB transfer, restore-day tiers) reference paid plans only.",
     "evidenceIds": []
   },
   {
@@ -1125,11 +1138,9 @@
     "storyId": "large-file-resumable-upload",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains only a vague reference to 'uploading file data in a performant manner' (dropbox-docs-21) with no mention of chunked upload sessions, session start/append/finish endpoints, or resumability after a dropped connection. No documentation in the pack describes how uploads survive interruptions.",
-    "evidenceIds": [
-      "dropbox-docs-21"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation of a chunked or resumable upload-session API (e.g., start/append/finish endpoints) or any statement about resilience across dropped connections; the only tangential hit is a vague topic heading 'Uploading file data in a performant manner' with no detail on chunking or resumability.",
+    "evidenceIds": []
   },
   {
     "productId": "dropbox",
@@ -1137,8 +1148,14 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence pack shows Dropbox as file storage/sync/sharing platform with near-instant sync of file changes, but no documentation of real-time in-browser co-editing of docs/sheets/slides (no mention of Dropbox Paper, Office/Google Docs live co-authoring integration, or simultaneous multi-user editing).",
-    "evidenceIds": []
+    "rationale": "Evidence shows Dropbox provides file sync, sharing with editor/viewer permissions, and near-instant folder sync, but nothing about real-time in-browser co-editing of docs, sheets, or slides (native or via a documented integration like Google Docs/Office 365 co-authoring). Dropbox Paper or any live multi-user editing surface is never mentioned.",
+    "evidenceIds": [
+      "dropbox-docs-9",
+      "dropbox-docs-10",
+      "dropbox-docs-24",
+      "dropbox-docs-31",
+      "dropbox-docs-45"
+    ]
   },
   {
     "productId": "dropbox",
@@ -1187,7 +1204,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Dropbox is a SaaS cloud storage service with no self-hosted/open-source deployment option; self-hosting the core product is a category error for this product type, not a missing feature.",
+    "rationale": "Dropbox is a proprietary cloud SaaS product with no self-hosted deployment option; self-hosting the core product is a category error for this type of hosted service.",
     "evidenceIds": []
   },
   {
@@ -1196,7 +1213,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage selection, or geographic data controls for Dropbox; the pack covers file APIs, sharing, signatures, and AI features but nothing about choosing storage region.",
+    "rationale": "No evidence pack mentions data residency, regional storage options, or data location controls for Dropbox users/developers; the pack covers file APIs, sharing, eSignature, and AI features but nothing about choosing storage region. This is a fair question for a cloud storage product but is unaddressed in the evidence, so it's \"none\" rather than \"na\".",
     "evidenceIds": []
   },
   {
@@ -1205,7 +1222,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI-training data opt-out/consent controls, privacy policy statements about model training, or settings to exclude data from AI features like Dash; the Dash AI resources describe features but not data-use controls, and community items are unrelated security/privacy history, not about AI training opt-out.",
+    "rationale": "No evidence pack item addresses an AI-training opt-out or data-use control for AI models; Dropbox's AI features (Dash, summarization) are described but no policy/setting for preventing training use is documented.",
     "evidenceIds": []
   },
   {
@@ -1214,11 +1231,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Dropbox offers file deletion/restore windows (180 days or 1 year depending on plan) and a Files API to programmatically delete files, giving basic data retention/deletion control, but there is no evidence of AI-specific data retention policies, no controls over how data is used/retained by Dropbox's AI features (Dash, AI summarization), and no documentation on deletion of AI-derived data or opt-out of AI training. missing for 10: AI-specific retention/deletion policy docs, controls over data used by Dash/AI features, enterprise data governance/audit trail for deletion, independent verification of deletion behavior.",
+    "rationale": "Dropbox exposes file deletion via its Files API and offers configurable 'days to restore deleted files' windows (30/180/365 days) across plans, giving users some control over data retention/deletion at the storage layer. However, there is no evidence of AI-specific data-retention or deletion controls (e.g., opting out of AI training use, deleting data ingested by Dash AI features, or retention policies tied to AI processing). Missing for 10: AI-specific retention/deletion settings, documentation on how AI features (Dash, summarization) retain or purge processed data, and independent confirmation that deletion requests propagate through AI pipelines.",
     "evidenceIds": [
+      "dropbox-docs-3",
       "dropbox-docs-14",
       "dropbox-docs-25",
-      "dropbox-docs-3"
+      "dropbox-docs-47",
+      "dropbox-docs-33",
+      "dropbox-docs-49"
     ]
   },
   {
@@ -1227,7 +1247,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence of any telemetry opt-out or usage-tracking control mechanism in Dropbox's docs or community discussion; the evidence pack only covers unrelated product/API features and general privacy sentiment about the company.",
+    "rationale": "No evidence of any telemetry opt-out setting, privacy control, or usage-tracking toggle for AI-native workflows; community items discuss unrelated security incidents and PRISM concerns, not telemetry opt-out.",
     "evidenceIds": []
   },
   {
@@ -1250,16 +1270,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack references dropbox.com/plans multiple times but the actual snippets pulled from that page only mention unrelated feature bullets (file-transfer limits, deleted-file restore windows, PDF editing, AI integrations) — none state actual storage-quota sizes (e.g., 2TB/3TB), per-user monthly/annual pricing, or what happens when a user hits their storage cap. No evidence confirms the public page clearly publishes plan storage quotas, per-seat prices, or over-cap behavior.",
-    "evidenceIds": [
-      "dropbox-docs-12",
-      "dropbox-docs-13",
-      "dropbox-docs-14",
-      "dropbox-docs-25",
-      "dropbox-docs-26",
-      "dropbox-docs-39",
-      "dropbox-docs-42"
-    ]
+    "rationale": "Evidence confirms a plans page (dropbox.com/plans) with feature comparisons like transfer limits and deleted-file restore windows, but no citation states actual storage quota sizes (e.g., TB per plan) or per-user pricing figures, nor any explanation of what happens when a user hits their storage cap.",
+    "evidenceIds": []
   },
   {
     "productId": "dropbox",
@@ -1267,10 +1279,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence shows Dropbox has a Team API surface (listing team-accessible namespaces, OAuth scope customization) implying some admin/team automation capability, but there is no explicit documentation of member provisioning or group management endpoints for IT admins. missing for 10: dedicated member provisioning API docs, group management API docs, admin console automation endpoints, independent corroboration of Team API usage.",
+    "rationale": "Evidence only hints at team-level API surface (listing team-accessible namespaces, customizing OAuth scopes) but never documents explicit member-provisioning or group-management endpoints for IT admins. Missing for 10: dedicated Team/Admin API docs (e.g., team/members/add, groups/create endpoints), audit-log or admin-console API examples, and any independent confirmation of automation use by IT admins.",
     "evidenceIds": [
       "dropbox-docs-7",
-      "dropbox-docs-8"
+      "dropbox-docs-8",
+      "dropbox-docs-19"
     ]
   },
   {
@@ -1279,7 +1292,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probe evidence directly shows llms.txt returns 404 and no openapi/agent-oriented discovery docs are found; no evidence of any llms.txt or agent-oriented documentation entry point for Google Drive.",
+    "rationale": "A direct probe for llms.txt returned 404, and no evidence shows agent-oriented docs formatted for AI agents; only standard human-facing API docs exist.",
     "evidenceIds": [
       "google-drive-probe-1",
       "google-drive-probe-2"
@@ -1291,7 +1304,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only covers Drive's API for file management (upload, sharing, permissions, properties, push notifications) and mentions building third-party AI agent add-ons via ADK/Vertex, but no evidence shows Drive itself surfacing AI-generated insights or suggestions natively to users within the product.",
+    "rationale": "The evidence pack covers Drive's API for file storage, sharing, permissions, uploads, and building third-party integrations/agents, but contains no mention of native AI-generated insights or suggestions (e.g., Gemini-in-Drive summaries, smart recommendations) surfaced to users inside the product itself.",
     "evidenceIds": []
   },
   {
@@ -1300,14 +1313,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Drive exposes API primitives (push notifications/watch, file properties, list/query) that developers can use to build background automations, and docs mention building an AI agent add-on with ADK/Vertex AI Agent Engine and creating files from Form submissions, implying some automation capability. However there's no evidence of a native, user-facing way to configure autonomous background automations directly within Drive itself (e.g., no-code triggers, scheduled agents) — it relies on third-party developer work. Missing for 10: first-party no-code automation/agent builder, documented autonomous scheduling, and independent confirmation of AI agent add-ons actually running unattended.",
+    "rationale": "Drive's API supports building custom triggers via push notifications on file/folder changes and even building AI agent add-ons that integrate with ADK/Vertex AI Agent Engine, which developers could use to construct background automations, but there is no native, user-facing automation builder (e.g., no-code rules, scheduled agentic workflows) within Drive itself. missing for 10: evidence of a built-in automation/workflow feature for end users, evidence of autonomous scheduled agent execution without custom coding, independent confirmation of such automations working reliably.",
     "evidenceIds": [
+      "google-drive-docs-4",
       "google-drive-docs-9",
       "google-drive-docs-19",
-      "google-drive-docs-28",
-      "google-drive-docs-4",
-      "google-drive-docs-3",
-      "google-drive-docs-16"
+      "google-drive-docs-28"
     ]
   },
   {
@@ -1316,7 +1327,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only shows API/developer capabilities (uploads, permissions, properties, building custom agent add-ons via ADK/Vertex AI) but no built-in AI assistant inside Google Drive itself that a user can delegate tasks to. Missing for 10: any mention of a native in-product assistant (e.g., Gemini in Drive) accessible to end users, evidence of task delegation UI, or hands-on confirmation of such a feature.",
+    "rationale": "The evidence pack only covers Drive's developer API (uploads, permissions, push notifications, properties) and one item about building a custom AI agent add-on via ADK/Vertex AI Agent Engine—none of which describes a built-in assistant inside the Drive product that an end user can delegate tasks to (e.g., no mention of Gemini in Drive or an in-product assistant UI). Missing for 10: any documentation of a first-party built-in AI assistant, evidence of end-user task delegation within the Drive interface, and community/hands-on confirmation of such a feature.",
     "evidenceIds": [
       "google-drive-docs-4"
     ]
@@ -1325,15 +1336,13 @@
     "productId": "google-drive",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Google Drive exposes a full REST API (files, permissions, properties, push notifications, uploads) that can be scripted headlessly via service accounts in CI, and third-party CLI tools like rclone are cited as community workarounds for headless automation. However, there's no first-party CLI, no official CI/CD examples, and no llms.txt/OpenAPI spec discoverable (both probes 404), showing weak agent-native tooling support. missing for 10: official CLI for headless automation, first-party CI/CD documentation or examples, discoverable OpenAPI/llms.txt spec for agentic tooling, and independent confirmation of reliable headless/service-account automation at scale.",
+    "rationale": "The Drive REST API (files, permissions, uploads, push notifications, OAuth scopes) is fully programmatic and can be scripted/automated outside a UI, and community evidence confirms real headless use via the rclone CLI for backups and syncing. However, there's no first-party documentation of service-account setup, CI-specific quickstarts, or an official CLI for headless automation, and llms.txt/openapi probes returned 404s. Missing for 10: official CI/service-account docs, a first-party CLI, and independent corroboration of full CI pipeline usage.",
     "evidenceIds": [
       "google-drive-docs-5",
+      "google-drive-docs-34",
       "google-drive-docs-9",
-      "google-drive-docs-19",
-      "google-drive-docs-28",
-      "google-drive-docs-6",
       "google-drive-comm-5",
       "google-drive-comm-13",
       "google-drive-probe-1",
@@ -1346,7 +1355,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Google Drive is a storage/service product, not an AI agent client role, but the story specifically asks about plugging MCP servers INTO Drive so it can use their tools — this is a client-role capability that applies to agents, not to a SaaS storage product consuming external tool servers. Evidence only shows Drive's own API/add-on ecosystem (e.g., building agents that use Drive via ADK/Vertex AI), not Drive itself acting as an MCP client consuming external MCP servers, so this axis is a category error for this product type.",
+    "rationale": "Google Drive is a storage/service product, not an AI agent client; the story asks whether the product can plug in MCP servers to use their tools, which is a client-role capability. No evidence shows Google Drive itself acting as an MCP client consuming external tool servers—only its own API and add-on/agent-building capabilities are documented, which is a different axis (serving as an integration target, not consuming MCP tools).",
     "evidenceIds": []
   },
   {
@@ -1355,7 +1364,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Google Drive is a storage service, so an official MCP server is a plausible axis, but the evidence pack shows only the standard Drive REST API, upload/sharing/push-notification docs, and an ADK/Vertex AI agent add-on mention—no official MCP server is documented. Probes for llms.txt and OpenAPI endpoints also failed, further indicating no discoverable MCP integration.",
+    "rationale": "Google Drive is a SaaS product with a documented REST API, so an official MCP server is a fair axis, but the evidence pack contains no mention of an MCP server, only the standard Drive API/OAuth docs and an AI agent add-on for ADK/Vertex AI (not MCP). Probes for llms.txt/openapi also failed to surface any MCP-related capability.",
     "evidenceIds": [
       "google-drive-docs-4",
       "google-drive-docs-5",
@@ -1369,11 +1378,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Google Drive is a file storage/API product with no evidence of a natural-language command interface for end users; the docs describe REST API operations, sharing, uploads, and an ADK/Vertex AI agent add-on building block, but nothing shows an AI-native user directly operating Drive via natural-language commands. Probes for llms.txt and openapi discovery also failed, further indicating no native NL command surface.",
+    "rationale": "The evidence pack covers Drive's REST API, sharing, uploads, and add-on building blocks, but shows no natural-language command interface for end users (e.g., Gemini in Drive assistant) — the closest item is guidance for building a separate AI agent add-on (google-drive-docs-4), which is a developer SDK, not a shipped NL command capability. Missing for 10: evidence of a built-in conversational/NL command interface, first-party or hands-on examples of users issuing natural-language instructions to Drive, and any confirmation this ships to end users rather than just being buildable by developers.",
     "evidenceIds": [
-      "google-drive-docs-4",
-      "google-drive-probe-1",
-      "google-drive-probe-2"
+      "google-drive-docs-4"
     ]
   },
   {
@@ -1381,12 +1388,11 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an official Google Drive CLI; only the general Drive API/SDK docs are cited, and community mentions point to third-party tools like rclone rather than an official CLI.",
+    "confidence": "high",
+    "rationale": "No evidence of an official Google-provided CLI for Drive; only a third-party community tool (rclone) is mentioned, which is not vendor-supported. Missing for 10: any first-party CLI documentation, an official 'gdrive' or 'gcloud drive' command, or vendor announcement of an AI-native CLI tool.",
     "evidenceIds": [
       "google-drive-comm-5",
-      "google-drive-comm-13",
-      "google-drive-docs-5"
+      "google-drive-comm-13"
     ]
   },
   {
@@ -1395,14 +1401,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Google Drive ships a well-documented public REST API (v3) covering file CRUD, uploads, sharing/permissions, properties, search, and push notifications, with official reference docs and guides. Missing for 10: no discoverable llms.txt or standard OpenAPI spec (probe hits 404), and no independent hands-on developer corroboration of API robustness beyond vendor docs.",
+    "rationale": "Google Drive exposes a comprehensive, well-documented public REST API (v3) with detailed guides for uploads, sharing/permissions, search, custom properties, push notifications, and OAuth scoping, enabling programmatic control of nearly all Drive functionality. missing for 10: no discoverable llms.txt or standard OpenAPI spec file (probe 404s), and no independent hands-on developer corroboration of API robustness beyond first-party docs.",
     "evidenceIds": [
       "google-drive-docs-5",
       "google-drive-docs-6",
       "google-drive-docs-9",
       "google-drive-docs-10",
+      "google-drive-docs-11",
       "google-drive-docs-25",
-      "google-drive-docs-27",
+      "google-drive-docs-34",
+      "google-drive-docs-35",
       "google-drive-probe-1",
       "google-drive-probe-2"
     ]
@@ -1411,29 +1419,25 @@
     "productId": "google-drive",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Google Drive's OAuth model supports least-privilege scopes, notably the narrow 'drive.file' scope limiting access to only files created/opened by the app (docs-8), plus granular permission roles (docs-7, docs-25). However, there is no documentation specifically about issuing scoped credentials for an AI agent (e.g., agent-specific OAuth flows, service accounts, or workload identity federation tailored to agentic use), despite agent/ADK integration being mentioned generally (docs-4). missing for 10: agent-specific credential issuance workflow, documentation tying scoped OAuth to autonomous agent use cases, independent confirmation of least-privilege enforcement in agent contexts.",
+    "rationale": "Google Drive API documents OAuth scopes for authorization, including a narrow least-privilege scope ('See, edit, create, and delete only the specific Google Drive files you use with this app') alongside broader scopes, which lets a developer restrict an agent's access to only files it creates/opens. However, there's no agent-specific credential-issuance flow (e.g., short-lived tokens, service-account delegation tailored to AI agents, or per-agent key management UI) beyond generic OAuth scope configuration in the Cloud console. Missing for 10: agent-specific credential provisioning workflow, examples of issuing distinct scoped credentials per agent instance, and independent/hands-on confirmation that least-privilege scopes work reliably for agentic use cases.",
     "evidenceIds": [
-      "google-drive-docs-8",
-      "google-drive-docs-7",
-      "google-drive-docs-25",
-      "google-drive-docs-4"
+      "google-drive-docs-34",
+      "google-drive-docs-8"
     ]
   },
   {
     "productId": "google-drive",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Google Drive has a well-documented official REST API and developer docs covering uploads, sharing, permissions, properties, push notifications, and even AI agent add-on integration with ADK/Vertex AI (google-drive-docs-4,5,9,10,11), which supports building AI-native integrations. However, there's no evidence of modern AI-native SDK conventions like an llms.txt or discoverable OpenAPI spec (both probes 404), and no client-library-specific SDK documentation (e.g., Python/Node SDK for agents) is cited beyond generic REST API references. Missing for 10: llms.txt/AI-discoverable spec, dedicated official SDK packages beyond REST API docs, independent/hands-on developer corroboration of SDK ease-of-use.",
+    "rationale": "Google Drive exposes a well-documented REST API (auth scopes, uploads, permissions, push notifications, properties) and even guidance for building AI agent add-ons with ADK/Vertex AI Agent Engine, which supports building AI-native integrations. However, the evidence pack never cites official language-specific client libraries/SDK pages (e.g., Python, Node, Java SDKs) — only the raw REST reference — and probes show no llms.txt/openapi discovery files, indicating limited AI-native tooling support. Missing for 10: explicit official SDK/client-library documentation, machine-readable API spec (openapi.json/llms.txt), and independent developer confirmation of SDK quality.",
     "evidenceIds": [
       "google-drive-docs-4",
       "google-drive-docs-5",
-      "google-drive-docs-9",
-      "google-drive-docs-10",
-      "google-drive-docs-11",
+      "google-drive-docs-34",
       "google-drive-probe-1",
       "google-drive-probe-2"
     ]
@@ -1442,13 +1446,14 @@
     "productId": "google-drive",
     "storyId": "agentic-webhooks",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Google Drive's API supports webhook-style push notifications (watch channels) that notify a registered endpoint when a watched resource changes, letting an AI-native integration subscribe to file/change events instead of polling directly for content (google-drive-docs-9, docs-19, docs-28). However, the notifications only signal that a change occurred, requiring a follow-up Changes.list call to get details, and channels must be periodically renewed—both real-world caveats not addressed in the evidence as fully resolved for agentic use. missing for 10: independent/hands-on corroboration of using Drive push notifications as webhooks, and detail on payload richness/reliability for AI-agent event-driven workflows.",
+    "rationale": "Google Drive API supports push notifications/watch channels to monitor file/resource changes, which functions as a webhook-like subscription mechanism, but it requires polling the channel and periodic renewal rather than a full pub/sub webhook system with arbitrary event types. missing for 10: no true persistent webhook subscription API (only time-limited watch channels), no independent/hands-on corroboration of reliability, no documentation of granular event-type filtering comparable to native webhooks.",
     "evidenceIds": [
       "google-drive-docs-9",
       "google-drive-docs-19",
-      "google-drive-docs-28"
+      "google-drive-docs-28",
+      "google-drive-docs-35"
     ]
   },
   {
@@ -1457,11 +1462,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains only generic Drive API/sharing/upload docs and one mention of building a third-party AI agent add-on via ADK/Vertex AI Agent Engine — it never documents a first-party, shipped Drive AI surface (e.g., 'ask questions of a file', in-Drive summarization/extraction) that end users can use out of the box.",
+    "rationale": "The evidence pack documents Drive's API, sharing, uploads, properties, and third-party AI agent add-on building (via ADK/Vertex AI), but contains no documentation of a first-party AI surface within Drive itself (e.g., asking questions of files, summarizing, extracting) shipped by Google — only a mention of enabling third-party developers to build their own AI agent add-ons. Missing for 10: first-party documented Q&A/summarize/extract feature built into Drive, hands-on or docs evidence of such a surface actually shipping, and any community corroboration of using it.",
     "evidenceIds": [
-      "google-drive-docs-4",
-      "google-drive-docs-1",
-      "google-drive-docs-5"
+      "google-drive-docs-4"
     ]
   },
   {
@@ -1470,7 +1473,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a standard REST API reference page (google-drive-docs-5) and various guide docs, but nothing describes an interactive reference with runnable/try-it examples, and probes for openapi.json/llms.txt (machine-readable spec often powering such tools) returned 404s.",
+    "rationale": "There is a REST API reference (google-drive-docs-5, docs-29, docs-30, docs-35) but no evidence of an interactive reference with runnable/try-it examples, and explicit probes show no llms.txt or OpenAPI spec discoverable (google-drive-probe-1, google-drive-probe-2).",
     "evidenceIds": [
       "google-drive-docs-5",
       "google-drive-probe-1",
@@ -1496,7 +1499,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a sandbox/test environment for AI-native testing separate from production data; evidence covers file APIs, sharing, uploads, and community complaints, none addressing sandbox/test environments.",
+    "rationale": "No evidence of a sandbox/test environment for Drive API testing separate from production data; docs cover file operations, sharing, uploads, and auth scopes but nothing about a sandbox or test mode for developers to safely test without touching real user data.",
     "evidenceIds": []
   },
   {
@@ -1504,12 +1507,11 @@
     "storyId": "api-versioning-policy",
     "verdict": "partial",
     "quality": 3,
-    "confidence": "medium",
-    "rationale": "The Drive API reference shows a versioned endpoint (v3) confirming API versioning exists (google-drive-docs-5), but the evidence pack contains no documentation of a deprecation policy, sunset schedule, or changelog for API versions, and probes for llms.txt/openapi specs return 404s. missing for 10: documented deprecation/sunset policy, version lifecycle timeline, changelog or migration guide, independent confirmation of deprecation practices.",
+    "confidence": "low",
+    "rationale": "The API reference explicitly uses a version tag (v3), implying a versioned API surface, but the evidence pack contains no documentation of a deprecation policy, sunset timeline, or version migration guide. missing for 10: explicit deprecation policy page, version lifecycle/sunset dates, migration guidance between API versions.",
     "evidenceIds": [
       "google-drive-docs-5",
-      "google-drive-probe-1",
-      "google-drive-probe-2"
+      "google-drive-docs-29"
     ]
   },
   {
@@ -1517,8 +1519,8 @@
     "storyId": "audit-log-events",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Drive API features like uploads, sharing/permissions, push notifications, and file properties, but contains no mention of Workspace admin audit/event logs, Reports API, or SIEM export capabilities that a security engineer would need. missing for 10: Admin console audit log documentation, Reports API/Activity API references, SIEM export integration guides or partner docs.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Drive API features like file changes tracking (docs-9, docs-19, docs-28, docs-35) and push notifications for resource changes, but none of these documents Google Workspace admin audit logs, the Admin SDK Reports API, or any documented SIEM export mechanism for security/compliance auditing. No citation addresses team-level event/audit logging or admin console audit trail access.",
     "evidenceIds": []
   },
   {
@@ -1527,26 +1529,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly mention bulk modification of files, list method to retrieve all/some files, and batch-style workflows (e.g., populate spreadsheet with sharing info for audit, create files in bulk from form submissions), showing the Drive API supports programmatic bulk operations. However, there's no dedicated batch API endpoint documentation, no explicit rate-limit/performance guidance for large-scale bulk actions, and no independent/hands-on evidence confirming reliability at scale. Missing for 10: dedicated batch-request API documentation, evidence of bulk operation limits/performance, independent corroboration of bulk workflows succeeding at scale.",
+    "rationale": "Google Drive's developer docs explicitly list 'Modify files in bulk' and 'Populate a spreadsheet with file sharing info for audit' as supported use cases, and the API's `list` method can enumerate all files/folders for scripted bulk actions, backed by properties/metadata and push-notification APIs that ai-native automations could use to act across many items. However, the evidence is limited to short bullet mentions with no dedicated batch-endpoint documentation, code samples, or rate/quota guidance for large-scale bulk operations, and no independent/hands-on confirmation that bulk operations work reliably at scale. Missing for 10: detailed batch API documentation/examples, evidence of quota-safe large-scale bulk performance, and independent corroboration of bulk workflows succeeding in practice.",
     "evidenceIds": [
       "google-drive-docs-3",
       "google-drive-docs-17",
       "google-drive-docs-22",
       "google-drive-docs-10",
-      "google-drive-docs-26"
+      "google-drive-docs-26",
+      "google-drive-docs-11",
+      "google-drive-docs-27"
     ]
   },
   {
     "productId": "google-drive",
     "storyId": "automation-rules-engine",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Drive's API offers push notifications to watch for resource changes, which could underpin custom automation, but there is no evidence of a built-in rules/action engine (e.g., 'if file added then do X') accessible to end users without building custom integrations. missing for 10: native no-code rules/automation builder, documented trigger-action templates, evidence of AI-native rule definition beyond raw webhook API.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Google Drive itself has no native rules engine for user-defined triggers/actions, but its API exposes push notifications (watch changes) and the Changes resource that third-party tools (e.g., Apps Script, Zapier) can use to build automation. This shows event-detection primitives rather than a built-in rule-authoring UI for end users. missing for 10: a native no-code rule/trigger builder in Drive itself, documented end-to-end automation examples, and independent confirmation of reliability of these triggers.",
     "evidenceIds": [
       "google-drive-docs-9",
       "google-drive-docs-19",
-      "google-drive-docs-28"
+      "google-drive-docs-28",
+      "google-drive-docs-35"
     ]
   },
   {
@@ -1555,7 +1560,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Google Drive's API/docs cover file storage, sharing, uploads, push notifications, and triggers via Forms/Apps Script integrations, but there is no evidence of native scheduling of recurring jobs or workflows within Drive itself; that capability would need to be built externally (e.g., via Apps Script triggers, not documented here).",
+    "rationale": "Google Drive's API supports push notifications for change events and file/folder access, but there is no evidence of any scheduling mechanism for recurring jobs or workflows within Drive itself; scheduling would require external tools (e.g., Apps Script triggers, Cloud Scheduler) not documented here.",
     "evidenceIds": []
   },
   {
@@ -1573,11 +1578,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Google Drive API documents push notifications that fire when watched resources change (docs-9, docs-19, docs-28), confirming webhook-style change notifications exist. However, the evidence pack does not include documentation of verification mechanisms (e.g., channel token/signature checks) or retry/backoff semantics for delivery failures. missing for 10: documented verification steps (token/header validation), retry/backoff guarantees on notification delivery, and independent confirmation of reliability.",
+    "rationale": "Google Drive API documents push notifications and a Changes resource that let apps watch for and be notified of file changes (google-drive-docs-9,19,28,35), which covers the core webhook/change-notification story. However the evidence pack does not show documented verification (e.g., channel token/signature validation) or retry/backoff semantics for these notifications. missing for 10: explicit verification (signature/token check) details, retry/backoff semantics, independent corroboration of reliability.",
     "evidenceIds": [
       "google-drive-docs-9",
       "google-drive-docs-19",
-      "google-drive-docs-28"
+      "google-drive-docs-28",
+      "google-drive-docs-35"
     ]
   },
   {
@@ -1598,22 +1604,24 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Google Drive API explicitly documents custom file properties (key-value metadata, tags, IDs from other systems) that can be set via the API and queried through the files.list search interface using property queries. missing for 10: independent/hands-on developer corroboration of properties usage, and no explicit mention of a 'schema/template' validation layer beyond simple key-value pairs.",
+    "rationale": "Google Drive API's Properties resource lets developers set custom key-value metadata (tags, IDs, workflow info) on files and query/filter files via the API using these properties, directly matching the story; docs are detailed first-party API references. Missing for 10: independent/hands-on developer corroboration of properties usage and query syntax examples beyond docs.",
     "evidenceIds": [
       "google-drive-docs-11",
       "google-drive-docs-27",
-      "google-drive-docs-10",
-      "google-drive-docs-26"
+      "google-drive-docs-31",
+      "google-drive-docs-29",
+      "google-drive-docs-10"
     ]
   },
   {
     "productId": "google-drive",
     "storyId": "delta-change-listing",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm Drive API supports watching resources and receiving push notifications only when a resource changes, which implies a change-tracking mechanism rather than full re-crawl, but the evidence never explicitly describes the changes.list/startPageToken cursor/delta endpoint or its pagination semantics that developers would rely on for incremental sync. Missing for 10: explicit documentation of the Changes API's pageToken/startPageToken mechanism, examples of delta responses, and independent/hands-on confirmation of efficient incremental sync in practice.",
+    "rationale": "Google Drive API's Changes resource (google-drive-docs-35) combined with push notifications that let apps watch for and be notified of resource changes (google-drive-docs-9/19/28) is exactly the delta/cursor mechanism described in the story, letting a client fetch only what changed since last sync rather than re-crawling all files. Missing for 10: explicit mention of startPageToken/pageToken cursor semantics in the evidence pack, and independent/hands-on developer corroboration that delta sync works reliably in practice.",
     "evidenceIds": [
+      "google-drive-docs-35",
       "google-drive-docs-9",
       "google-drive-docs-19",
       "google-drive-docs-28"
@@ -1625,7 +1633,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The evidence pack contains no first-party documentation describing an official desktop client, selective sync, or on-demand/online-only file behavior — only community anecdote (comm-4) that Google's Mac sync client exists but is 'quite unreliable' and syncs files as placeholder URLs rather than downloaded content. This suggests the on-demand-files-like feature exists but underperforms, with no docs corroborating cross-platform (macOS/Windows) selective sync details. missing for 10: official docs on Drive for desktop, selective sync configuration, on-demand file behavior, Windows/macOS parity, independent verification of reliability.",
+    "rationale": "The evidence pack contains no first-party documentation of Google Drive's desktop client, selective sync, or on-demand file streaming — all cited docs are API/developer references. The only relevant signal is community feedback describing the desktop sync client as 'quite unreliable' on Mac, with 'synced' files sometimes being placeholder URLs rather than real content, which speaks to (partially working) online-only file behavior but with real reliability caveats. missing for 10: official desktop client docs, cross-platform (macOS/Windows) parity details, selective sync configuration, on-demand/online-only file documentation, and independent corroboration beyond one critical community report.",
     "evidenceIds": [
       "google-drive-comm-4"
     ]
@@ -1636,7 +1644,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a native e-signature product or documented first-party signing integration in Google Drive's evidence pack; the docs cover file upload, sharing, permissions, storage, and API features but never mention e-signature workflows or partnerships (e.g., DocuSign integration is not cited here).",
+    "rationale": "No evidence of a native e-signature feature in Google Drive or a documented first-party signing integration (e.g., Docs eSignature) is present in this evidence pack; the pack only covers file storage, sharing, API, and sync features.",
     "evidenceIds": []
   },
   {
@@ -1660,7 +1668,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers file upload, sharing, properties, push notifications, and search APIs, but contains no mention of the Files.export/thumbnailLink field, preview generation, or embeddable document preview endpoints that would let a developer fetch thumbnails/previews via API call without rendering them themselves.",
+    "rationale": "No evidence in the pack mentions thumbnails, preview generation, or embeddable document preview APIs; documentation excerpts cover uploads, sharing, permissions, metadata, and push notifications but nothing about thumbnailLink or preview endpoints.",
     "evidenceIds": []
   },
   {
@@ -1669,7 +1677,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers uploads, sharing/permissions, properties, push notifications, and file listing, but contains no mention of a revisions/versions API, listing or restoring file revisions, or documented retention windows for revision history.",
+    "rationale": "No evidence pack items mention the Drive API's Revisions resource, listing/restoring file revisions, or documented retention windows for revision history; only unrelated Files/Permissions/Changes/Properties APIs are covered.",
     "evidenceIds": []
   },
   {
@@ -1678,7 +1686,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Google Drive API docs explicitly document REST endpoints for upload (simple/multipart/resumable), list (files.list), sharing/permissions, and general CRUD operations including create/delete, with a full REST reference — clearly a documented API beyond the desktop client. Community evidence (rclone usage) corroborates real-world programmatic access to files. Missing for 10: no explicit doc citation for move/delete endpoints specifically or a machine-readable OpenAPI spec (probe found 404s), and no independent hands-on API test citation.",
+    "rationale": "Google Drive API v3 documentation covers upload (simple/multipart/resumable), list/search files, permissions/sharing (move via parent changes implied by files resource), file metadata, properties, changes/push notifications, and OAuth scopes — a comprehensive documented REST API distinct from the desktop client. missing for 10: no independent/community hands-on corroboration specifically confirming API usage (only third-party rclone tool usage in community evidence for sync, not API dev workflow), and no explicit delete/move endpoint citation though files resource implies full CRUD.",
     "evidenceIds": [
       "google-drive-docs-5",
       "google-drive-docs-6",
@@ -1687,10 +1695,10 @@
       "google-drive-docs-24",
       "google-drive-docs-10",
       "google-drive-docs-26",
-      "google-drive-docs-7",
+      "google-drive-docs-29",
       "google-drive-docs-25",
-      "google-drive-comm-5",
-      "google-drive-comm-13"
+      "google-drive-docs-35",
+      "google-drive-docs-34"
     ]
   },
   {
@@ -1699,12 +1707,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Drive docs confirm organized shared folders with inherited permissions, view/comment/edit-only sharing roles, and even a documented script to 'populate a spreadsheet with file sharing info for audit,' which supports the founder's diligence-room use case. However, the evidence pack never explicitly documents a download/print/copy-blocking toggle for viewers, nor a built-in access-visibility dashboard beyond the DIY audit script. missing for 10: explicit download-restriction control documentation, native audit/access-log UI (not just a custom script), and any independent/community confirmation that this data-room workflow works well in practice.",
+    "rationale": "Docs confirm shared folders with inherited permissions, per-file view/comment/edit sharing controls, and a documented pattern for auditing file-sharing info into a spreadsheet, which together approximate a lightweight data room with access visibility. However, there is no explicit evidence of native download/print/copy-disable toggles for viewers, link expiration, or a built-in audit/activity log dashboard purpose-built for diligence tracking. missing for 10: explicit download/print/copy restriction feature, link expiration controls, native audit-log/activity-visibility UI (beyond a custom script).",
     "evidenceIds": [
       "google-drive-docs-12",
       "google-drive-docs-13",
       "google-drive-docs-7",
       "google-drive-docs-25",
+      "google-drive-docs-3",
       "google-drive-docs-22",
       "google-drive-docs-20"
     ]
@@ -1715,7 +1724,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only cites paid Google One storage tiers (100GB, 2TB) and API documentation, but contains no citation confirming a free tier quota (e.g., the commonly known 15GB) or that the free tier works identically with the same API/clients as paid tiers. Community comments discuss paid pricing comparisons, not a free tier. Missing for 10: explicit free-tier storage quota documentation, confirmation that API/client parity exists for free accounts, and any first-party or community evidence describing the free plan specifically.",
+    "rationale": "The evidence pack only documents paid Google One storage tiers (100GB, 2TB) and their pricing/sharing terms, with no mention of a free storage tier, its quota, or confirmation that the free tier uses the identical API/clients as paid tiers. Community citations reference historical paid pricing comparisons, not a free tier. Since storage-pricing is clearly an applicable axis for a consumer cloud storage product, but no evidence substantiates the specific free-tier claim, this is 'none' rather than 'na'.",
     "evidenceIds": [
       "google-drive-docs-14",
       "google-drive-docs-15",
@@ -1726,16 +1735,16 @@
   {
     "productId": "google-drive",
     "storyId": "granular-folder-permissions",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs confirm role-based permissions (owner, organizer, fileOrganizer, writer, commenter, reader) applied at file/folder level via the permissions resource, plus explicit inheritance behavior ('Access you apply to a folder is inherited by all files within it') and share settings controlling edit/comment/view access. missing for 10: no independent/hands-on corroboration of inheritance edge cases (e.g. mixed permission overrides) and no dedicated admin-console documentation for org-wide inheritance policies.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm role types (owner/organizer/fileOrganizer/writer/commenter/reader) and folder-to-file inheritance ('Access you apply to a folder is inherited by all files within it'), plus permissions resources for files, folders, and shared drives. However, there's no dedicated IT-admin-focused documentation on inheritance edge cases (e.g., overrides, conflicting permissions, shared drive vs My Drive inheritance differences) or admin console-specific controls. missing for 10: admin console granular policy documentation, detailed inheritance override/conflict rules, independent/hands-on validation of inheritance behavior at scale.",
     "evidenceIds": [
       "google-drive-docs-7",
-      "google-drive-docs-25",
-      "google-drive-docs-12",
       "google-drive-docs-13",
-      "google-drive-docs-20"
+      "google-drive-docs-25",
+      "google-drive-docs-30",
+      "google-drive-docs-33"
     ]
   },
   {
@@ -1744,11 +1753,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Google Drive API docs explicitly document resumable upload sessions specifically recommended for large files and high chance of network interruption, alongside simple and multipart upload types. This directly matches the story's requirement for chunked/resumable uploads surviving dropped connections. Missing for 10: independent hands-on confirmation that resumable sessions survive real dropped connections, and no explicit documentation of chunk-size/retry mechanics beyond the guide summary.",
+    "rationale": "Google Drive API docs explicitly describe a resumable upload type (uploadType=resumable) intended for large files and for cases with high risk of network interruption, distinct from simple/multipart uploads. This directly matches the story's requirement for chunked/resumable uploads that survive dropped connections. Missing for 10: independent/hands-on developer confirmation that resumable sessions actually recover from dropped connections in practice (community evidence only discusses download reliability, not resumable upload sessions).",
     "evidenceIds": [
       "google-drive-docs-6",
       "google-drive-docs-18",
-      "google-drive-docs-23"
+      "google-drive-docs-23",
+      "google-drive-docs-32"
     ]
   },
   {
@@ -1768,17 +1778,17 @@
     "productId": "google-drive",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Google Drive's REST API covers most core UI actions—upload/download, create/organize files, sharing & permissions, search/listing, custom metadata, and change notifications—giving broad functional parity with the UI (google-drive-docs-5,7,9,10,11,20,25). However, there's no explicit vendor claim of full UI-API parity, and probes for machine-readable API discovery (llms.txt, openapi.json) both failed, suggesting some UI-only conveniences (e.g., OCR search integration, sharing UI nuances, storage/plan management) aren't clearly API-exposed. Missing for 10: explicit parity documentation, evidence for API access to OCR/search-within-scans, comments/collaboration UI features, and machine-readable spec discoverability.",
+    "rationale": "Google Drive API covers most core UI actions programmatically: file CRUD, uploads (simple/multipart/resumable), sharing/permissions, metadata/properties, search/list, change notifications, and even bulk operations and template-based creation. However, no evidence confirms full parity for every UI feature (e.g., OCR search shown in community use, comments/version history UI, admin/security console features, or discoverable machine-readable API spec — llms.txt and openapi.json both 404), so API-vs-UI completeness isn't fully verified. Missing for 10: confirmation of full feature parity (comments, activity/version UI, OCR), a discoverable OpenAPI/llms.txt spec, and independent hands-on validation that all UI actions map to API calls.",
     "evidenceIds": [
       "google-drive-docs-5",
-      "google-drive-docs-7",
+      "google-drive-docs-6",
       "google-drive-docs-9",
       "google-drive-docs-10",
       "google-drive-docs-11",
-      "google-drive-docs-20",
       "google-drive-docs-25",
+      "google-drive-docs-30",
       "google-drive-probe-1",
       "google-drive-probe-2"
     ]
@@ -1789,7 +1799,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Google Drive's API supports listing and downloading files (docs-10/26) and Google Docs can be exported to open formats, and community evidence confirms third-party tools like rclone can pull all content out of Drive and convert Google Docs to ODF (comm-5, comm-13). However, there is no first-party documentation in this pack of a native 'export everything' feature (e.g., Google Takeout) and no evidence of a one-click open-format bulk export within Drive itself. Missing for 10: first-party bulk-export/Takeout documentation, native open-format conversion guarantees, and independent verification that all data types (not just Docs) migrate cleanly.",
+    "rationale": "The Drive API supports listing and downloading all files (docs-10/26) and community evidence confirms third-party tools like rclone can pull entire Drive contents and export Google Docs to open ODF formats (comm-5, comm-13), showing data portability is achievable. However, there is no first-party, one-click 'export everything in open formats' feature documented in the evidence pack—only API primitives and reliance on external tooling. Missing for 10: official bulk-export/Takeout-style documentation, native open-format export guarantees for all file types, and independent confirmation of completeness/fidelity of such exports.",
     "evidenceIds": [
       "google-drive-comm-5",
       "google-drive-comm-13",
@@ -1803,7 +1813,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Google Drive is a closed-source proprietary cloud storage service; reading its source under an open license is not an applicable axis for this product category.",
+    "rationale": "Google Drive is a closed-source, proprietary SaaS product; source code availability under an open license is not a fair axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -1812,7 +1822,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Google Drive is a proprietary hosted SaaS cloud storage service with no self-hosted deployment option; self-hosting is a category error for this kind of product, not a missing feature.",
+    "rationale": "Google Drive is a proprietary hosted SaaS product with no self-hosted deployment option; self-hosting is a category error for this type of product, not a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1821,7 +1831,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage controls, or data location settings for Google Drive users or admins; only general storage/sharing/API docs are present.",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic control over where Google Drive data is stored; only general storage plans, sharing, and API features are documented.",
     "evidenceIds": []
   },
   {
@@ -1830,7 +1840,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items address AI training data usage or opt-out controls for Google Drive content; all evidence covers API features, storage plans, sharing permissions, and unrelated community complaints. Missing for 10: any documentation or statement on AI training data policy, opt-out settings, or privacy controls specific to AI model training.",
+    "rationale": "No evidence in the pack addresses AI-training data usage policies, opt-outs, or controls for Google Drive content; the docs cover API/sharing/storage features only, with no mention of AI-training data controls.",
     "evidenceIds": []
   },
   {
@@ -1839,11 +1849,9 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Drive API scopes explicitly allow apps to 'create and delete' files and manage permissions, giving users/developers programmatic control over deletion of their own data, but the evidence pack has no documentation on retention periods, bulk/automatic deletion policies, or AI-specific data-use/retention controls (e.g., opting out of AI training, data lifecycle policies). missing for 10: explicit retention policy docs, AI training data opt-out/deletion guarantees, audit trail for deletion, independent confirmation of deletion behavior.",
+    "rationale": "The Drive API docs mention an OAuth scope that lets apps 'create, and delete' files (docs-8), implying users/apps can delete data, but there is no documentation on retention policies, scheduled/automatic deletion, trash retention periods, or enterprise data-retention controls (e.g., Vault) for AI-native workflows. Missing for 10: explicit retention policy settings, data export/deletion compliance tooling, and admin-level retention controls beyond basic per-file delete permission.",
     "evidenceIds": [
-      "google-drive-docs-8",
-      "google-drive-docs-25",
-      "google-drive-docs-7"
+      "google-drive-docs-8"
     ]
   },
   {
@@ -1851,8 +1859,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items mention telemetry opt-out, usage tracking controls, or privacy settings for AI-native usage; the documentation focuses on API features, sharing, and storage plans, not data-collection controls.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Google Drive; documentation covers API, sharing, storage, and uploads but nothing on telemetry controls.",
     "evidenceIds": []
   },
   {
@@ -1861,12 +1869,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "The Drive API's permissions resource lets developers programmatically create and revoke sharing settings (type: user/group/domain/anyone, and roles like reader/writer) [google-drive-docs-7][google-drive-docs-25], satisfying the 'visibility' and revocation part of the story. However, there is no evidence of API support for password-protected links or expiry settings on shared links — Google Drive's sharing model in the docs only covers role/type-based permissions, not password or expiration.  missing for 10: password-protected link support via API, link expiry settings via API, any documentation or example showing these fields on the permissions resource.",
+    "rationale": "The Drive API exposes a `permissions` resource that can be created, listed, and deleted programmatically, letting developers set visibility (type: user/group/domain/anyone) and role (owner/writer/commenter/reader) — this covers the 'visibility' and 'revoke' parts of the story. However, the evidence pack contains no mention of password-protected links or expiry settings being settable via the API, both of which are common Drive API permission fields but unevidenced here. Missing for 10: documentation of password-protected sharing links, documentation of expirationTime/expiry settings on permissions, and any independent/community confirmation of these two features working via API.",
     "evidenceIds": [
       "google-drive-docs-7",
       "google-drive-docs-25",
-      "google-drive-docs-20",
-      "google-drive-docs-12"
+      "google-drive-docs-30",
+      "google-drive-docs-33"
     ]
   },
   {
@@ -1875,7 +1883,7 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Google publishes storage tiers and pricing on a public page (one.google.com/about/plans), e.g. 100GB and 2TB total storage across Photos/Drive/Gmail and sharing with up to 5 others, giving founders visible quotas and consumer pricing. However, missing for 10: explicit per-user Google Workspace (business) pricing tiers, and any documentation of what happens when a user hits the storage cap (blocked uploads, grace period, etc.) — none of the evidence addresses cap behavior.",
+    "rationale": "Google publishes a public plans page listing storage tiers (100GB, 2TB) and sharing options for up to 5 others, which covers per-plan storage quotas, but the evidence pack contains no explicit per-user dollar pricing figures nor any description of what happens when a user hits the storage cap (e.g., restrictions on new uploads/sync failures). missing for 10: explicit per-plan USD/user pricing figures, documentation of cap/overage behavior (what happens when storage is full).",
     "evidenceIds": [
       "google-drive-docs-14",
       "google-drive-docs-15",
@@ -1887,9 +1895,14 @@
     "storyId": "team-admin-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack only documents the Drive API for file/folder management, sharing permissions, uploads, and push notifications — none of it covers member provisioning, group management, or admin/directory endpoints (which would fall under Google Workspace Admin SDK, not referenced here).",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack only documents the Drive API for files, permissions/sharing at the file level, uploads, and change notifications — none of it covers organization-wide member provisioning, group management, or dedicated admin endpoints (e.g., Admin SDK Directory API) that an IT admin would use for automation. Nothing in the pack demonstrates user/group lifecycle management via API.",
+    "evidenceIds": [
+      "google-drive-docs-7",
+      "google-drive-docs-25",
+      "google-drive-docs-30",
+      "google-drive-docs-34"
+    ]
   },
   {
     "productId": "onedrive",
@@ -1897,7 +1910,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Probes explicitly confirm no llms.txt exists (404) and no machine-readable/agent-oriented docs endpoints were found; documentation is standard human-oriented Microsoft Learn pages with no llms.txt or agent-oriented docs artifact referenced anywhere.",
+    "rationale": "Probes explicitly show no llms.txt (404) and no agent-oriented markdown docs (404) at OneDrive/Graph documentation domains, and no evidence of any agent-oriented docs published elsewhere.",
     "evidenceIds": [
       "onedrive-probe-1",
       "onedrive-probe-2",
@@ -1910,7 +1923,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers file storage, sync, sharing, search, versioning, and Graph API access, but nowhere mentions AI-generated insights, Copilot integration, or suggestions surfaced within OneDrive itself. No feature described here generates AI analysis or recommendations from user data. Missing for 10: any mention of Copilot/AI summarization, content insights, smart suggestions, or similar AI-native features in OneDrive.",
+    "rationale": "Evidence pack covers file storage, sync, sharing, versioning, and Graph API capabilities, but contains no mention of AI-generated insights, Copilot integration, or suggestion features within OneDrive itself.",
     "evidenceIds": []
   },
   {
@@ -1932,7 +1945,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a built-in AI assistant (e.g., Copilot) within OneDrive to which tasks can be delegated; all evidence pack items cover file storage, sharing, sync, and Graph API capabilities, not an AI agent feature.",
+    "rationale": "Evidence pack covers OneDrive's sync, sharing, versioning, and Graph API features but contains no mention of a built-in AI assistant or agentic task delegation within OneDrive itself.",
     "evidenceIds": []
   },
   {
@@ -1941,12 +1954,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Microsoft Graph API for OneDrive exposes REST endpoints (driveItem access, upload sessions, delta query, search) that could be scripted headlessly in CI pipelines, and delta/change-notification APIs are inherently automation-oriented. However, there's no explicit documentation of a CLI, service-principal/app-only auth flow for CI, or any headless automation guide/example — missing for 10: dedicated CLI or headless tool, explicit CI/CD automation documentation, service-principal auth setup guidance, independent evidence of it being run in CI pipelines.",
+    "rationale": "Microsoft Graph exposes REST APIs for OneDrive (uploads, delta query, search, versioning) that could be scripted headlessly in CI/automation pipelines, but there's no first-party CLI, SDK, or CI-specific automation guidance in the evidence pack. missing for 10: dedicated CLI/automation tool, explicit CI/headless auth setup docs, independent confirmation of automated pipeline usage.",
     "evidenceIds": [
       "onedrive-docs-1",
-      "onedrive-docs-5",
       "onedrive-docs-6",
-      "onedrive-docs-7",
       "onedrive-docs-12",
       "onedrive-docs-18",
       "onedrive-docs-21"
@@ -1967,7 +1978,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an official MCP server for OneDrive or Microsoft Graph; the evidence pack only covers Graph API/SDK access, sync, sharing, and versioning features, with no mention of MCP or agent connectivity protocols.",
+    "rationale": "OneDrive is a storage/service product (not an agent itself), so an official MCP server axis applies, but the evidence pack contains no mention of any MCP server, official or otherwise—only Microsoft Graph REST API docs and community sync complaints.",
     "evidenceIds": []
   },
   {
@@ -1975,8 +1986,8 @@
     "storyId": "agentic-nl-commands",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers OneDrive's file storage, sync, sharing, and Graph API capabilities, but contains no mention of natural-language command interfaces, Copilot integration, or any AI-native/chat-based control of OneDrive functions.",
+    "confidence": "medium",
+    "rationale": "No evidence of any natural-language command interface, chat assistant, or NL-to-action capability for OneDrive itself; evidence covers Graph API, sync, sharing, and file management features, none of which are natural-language driven. Missing for 10: any Copilot/NL command integration, voice or chat-based file operations, documentation of natural-language querying or automation.",
     "evidenceIds": []
   },
   {
@@ -1984,8 +1995,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an official OneDrive CLI; the evidence pack only covers Microsoft Graph REST APIs, web/desktop client features, and sync behavior, with no mention of a command-line interface tool.",
+    "confidence": "low",
+    "rationale": "The evidence pack covers OneDrive's Graph API, sync client, and sharing features, but contains no mention of an official CLI tool for OneDrive; probes also failed to find any developer-facing CLI artifacts. No evidence of a CLI exists to judge full/partial delivery.",
     "evidenceIds": []
   },
   {
@@ -1994,7 +2005,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "OneDrive is comprehensively drivable via Microsoft Graph API, with documented endpoints for CRUD operations, upload sessions, search, sharing links, delta/change tracking, versioning, and thumbnails — a well-documented, public, RESTful API surface suitable for programmatic/agentic access. Missing for 10: no evidence of an official OpenAPI/Swagger spec being discoverable (probe returned 404s) and no explicit AI-agent-oriented SDK or MCP-style wrapper, which would round out the 'AI-native' framing.",
+    "rationale": "OneDrive is driven through the well-documented Microsoft Graph API, with first-party docs covering CRUD on driveItems, upload sessions for large files, delta query/change notifications for sync, search, versioning, thumbnails, and sharing links — a comprehensive, stable public API surface suitable for programmatic/agentic use. Missing for 10: a discoverable machine-readable OpenAPI/swagger spec (probes returned 404s) and independent/hands-on confirmation of AI agents actually driving OneDrive via this API.",
     "evidenceIds": [
       "onedrive-docs-1",
       "onedrive-docs-5",
@@ -2013,8 +2024,8 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers Microsoft Graph/OneDrive API capabilities (file access, sharing, delta queries, uploads) but no mention of scoped or least-privilege credential issuance for agents specifically—no reference to app-only permissions, consent scopes tailored for AI agents, or delegated least-privilege token issuance workflows tied to agent use cases.",
+    "confidence": "high",
+    "rationale": "No evidence of scoped/least-privilege API credential issuance for agents (e.g., app-only permissions, granular OAuth consent, or per-agent scoped tokens) is present; the evidence only covers Microsoft Graph API capabilities like file access, delta queries, and sharing links, with no mention of credential scoping for AI agents specifically.",
     "evidenceIds": []
   },
   {
@@ -2041,7 +2052,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Microsoft Graph (used for OneDrive) explicitly documents change notifications, i.e. webhook-style subscriptions that alert applications when a resource is created, updated, or deleted, which directly satisfies webhook subscription needs for AI-native automation. Missing for 10: OneDrive-specific webhook setup walkthrough, independent/hands-on developer confirmation, and details on subscription renewal/reliability at scale.",
+    "rationale": "Microsoft Graph (which underlies OneDrive) provides documented change notifications (webhooks) that alert applications when a resource like a driveItem is created, updated, or deleted, directly enabling webhook-based subscriptions for AI-native integrations. Delta query is also documented as a complementary polling-based alternative for change tracking. Missing for 10: no independent/hands-on corroboration of webhook reliability or latency, and no explicit OneDrive-specific (vs generic Graph) webhook setup walkthrough in the evidence.",
     "evidenceIds": [
       "onedrive-docs-7",
       "onedrive-docs-6",
@@ -2054,12 +2065,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers file sync, sharing, Graph API, versioning, and search, but contains no mention of any first-party AI surface for asking questions of files, summarizing, or extracting content (e.g., Copilot for OneDrive) — missing for 10: any documentation or shipped feature for AI-driven Q&A/summarization/extraction over OneDrive content.",
-    "evidenceIds": [
-      "onedrive-docs-1",
-      "onedrive-docs-14",
-      "onedrive-docs-20"
-    ]
+    "rationale": "Evidence covers OneDrive/Graph file storage, sync, sharing, versioning, and delta query APIs, but nothing documents a first-party AI surface for asking questions of files, summarizing, or extracting content from OneDrive contents (e.g., Copilot integration is not mentioned in this pack).",
+    "evidenceIds": []
   },
   {
     "productId": "onedrive",
@@ -2067,11 +2074,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows standard Microsoft Graph reference docs describing driveItem endpoints, but nothing indicates an interactive API reference with runnable/live examples (e.g., a Graph Explorer or embedded sandbox); probes for llms.txt, markdown docs, and OpenAPI specs all return 404, suggesting no machine-readable or interactive tooling is exposed here.",
+    "rationale": "Evidence shows only static Microsoft Graph API reference pages (e.g., driveItem methods) with no mention of an interactive console, 'try it' runnable examples, or a Graph Explorer-style tool; probes for openapi.json, llms.txt, and markdown docs all returned 404, indicating no machine-readable or interactive API surface was found. missing for 10: evidence of an interactive/runnable API console, OpenAPI spec, or Graph Explorer integration.",
     "evidenceIds": [
       "onedrive-docs-5",
-      "onedrive-docs-12",
-      "onedrive-docs-13",
+      "onedrive-docs-18",
       "onedrive-probe-1",
       "onedrive-probe-2",
       "onedrive-probe-3"
@@ -2083,11 +2089,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "OneDrive/Microsoft Graph exposes a REST API, so a machine-readable API spec is a fair ask, but the evidence pack shows explicit probe failures (404) for llms.txt, docs markdown, and all candidate OpenAPI/swagger endpoints, and no docs citation links to a downloadable OpenAPI spec.",
+    "rationale": "The evidence pack documents the Microsoft Graph REST API for OneDrive extensively but never surfaces a downloadable OpenAPI/Swagger spec, and explicit probes for openapi.json/swagger.json/llms.txt at Microsoft Learn all returned 404. No citation shows a machine-readable API spec being offered for OneDrive/Graph.",
     "evidenceIds": [
+      "onedrive-probe-3",
       "onedrive-probe-1",
-      "onedrive-probe-2",
-      "onedrive-probe-3"
+      "onedrive-probe-2"
     ]
   },
   {
@@ -2104,20 +2110,17 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows Microsoft Graph endpoints tagged with version strings like graph-rest-1.0, implying some versioning exists, but nothing in the pack documents an explicit deprecation policy, sunset timeline, or version lifecycle commitment for OneDrive/Graph APIs. missing for 10: explicit deprecation policy documentation, version lifecycle/sunset timelines, migration guidance between API versions.",
-    "evidenceIds": [
-      "onedrive-docs-5",
-      "onedrive-docs-23"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence shows Microsoft Graph API documentation for OneDrive endpoints (versions, delta queries, uploads) but no mention of API versioning scheme or a documented deprecation policy for these APIs; probes for OpenAPI spec/llms.txt also failed.",
+    "evidenceIds": []
   },
   {
     "productId": "onedrive",
     "storyId": "audit-log-events",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Graph API access, delta queries, change notifications, and version history for OneDrive files, but contains no documentation of audit/activity logs, admin audit log API, or SIEM export capability. Microsoft 365 does have a unified audit log in reality, but no such evidence is present in this pack.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers Graph API file operations, delta query/change notifications, versioning, and sharing, but contains no mention of dedicated audit/activity logs, Microsoft Purview audit log search, Office 365 Management Activity API, or any documented SIEM export path for OneDrive admin/security teams. Change notifications and delta query are file-sync mechanisms, not security audit trails, so they do not satisfy this story.",
     "evidenceIds": []
   },
   {
@@ -2154,7 +2157,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any scheduling/recurring workflow capability in OneDrive itself; the API docs cover file access, delta queries, change notifications, and sharing but nothing about cron-like recurring jobs or workflow scheduling. Automation of this kind would typically require Power Automate, which is not mentioned in the evidence pack.",
+    "rationale": "No evidence of scheduling recurring jobs/workflows within OneDrive; the API documented supports delta queries, change notifications, and file operations but nothing about scheduled/recurring automation jobs. This is an applicable axis for an AI-native automation story but the evidence pack shows no such capability.",
     "evidenceIds": []
   },
   {
@@ -2163,7 +2166,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OneDrive is a cloud file storage/sync service, not an automation-building or workflow platform; the evidence only covers file version history (e.g., onedrive-docs-8, onedrive-docs-23), not creation, review, or rollback of automations/workflows. This axis is a category error for OneDrive itself rather than an unmet capability.",
+    "rationale": "OneDrive is a file storage/sync service, not an automation/workflow platform; it has no concept of building, versioning, or rolling back 'automations' (e.g., flows, scripts, agent tasks). The evidence only covers file version history and delta/change-notification APIs for files, which is a different axis (file versioning) rather than automation lifecycle management, so this story is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2196,8 +2199,8 @@
     "storyId": "custom-metadata-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers OneDrive/Graph API basics (driveItem retrieval, delta query, versioning, search, upload sessions, sharing links) but contains no mention of custom metadata/properties templates or schema that can be set and queried via API. missing for 10: any documentation of custom properties, content-type/columns schema support, or API for setting/querying custom metadata on driveItems.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers OneDrive/Graph API for file access, sync, sharing, versioning, delta queries, and thumbnails, but contains no mention of custom metadata schemas, custom properties, content types, or a properties/fields API that developers could define and query. No documentation of schema extensions or custom metadata templates is present.",
     "evidenceIds": []
   },
   {
@@ -2235,7 +2238,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of e-signature capability, native signing, or a documented first-party integration (e.g., with Adobe Sign or a Microsoft signing service) within OneDrive — coverage is limited to file access, sync, sharing links, versioning, and Graph API operations.",
+    "rationale": "No evidence of a native e-signature feature or documented first-party e-signature integration in OneDrive; evidence covers sharing, coauthoring, versioning, sync, and APIs but nothing about signing documents.",
     "evidenceIds": []
   },
   {
@@ -2256,11 +2259,11 @@
     "storyId": "file-previews-thumbnails",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Microsoft Graph provides a dedicated driveItem thumbnails API (list-thumbnails) that returns thumbnail sets for common file formats via a single API call without the developer rendering them, plus a search API and driveItem model supporting content-workflow integration. missing for 10: no explicit documentation of embeddable full-document preview API (beyond thumbnails) and no independent/hands-on developer confirmation of preview fidelity across formats.",
+    "confidence": "medium",
+    "rationale": "OneDrive/Graph API exposes a dedicated thumbnails endpoint (driveItem list-thumbnails) and docs explicitly note rich thumbnails for hundreds of formats powered by Graph, meaning developers get previews via API call without rendering themselves. Missing for 10: explicit documentation of embeddable full-document preview endpoint details/size limits and independent hands-on confirmation of preview fidelity across formats.",
     "evidenceIds": [
       "onedrive-docs-15",
-      "onedrive-docs-5",
+      "onedrive-docs-28",
       "onedrive-docs-16"
     ]
   },
@@ -2270,11 +2273,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm driveItem versions can be listed via the Graph API and that retention/versioning behavior is configurable (per edit, per save, manual, or never), but no evidence cites a documented restore-version API endpoint or specific default retention windows/duration values. Missing for 10: explicit restore-via-API endpoint documentation, concrete retention window specifics (e.g., default number of versions or days retained), and independent confirmation that restore works reliably.",
+    "rationale": "OneDrive/Graph docs document listing file versions via driveItem-list-versions and describe configurable retention behavior (new version per edit, save, or manual), showing the axis is addressed. However, the evidence never shows a documented restore-version API endpoint, nor concrete retention window numbers (only qualitative 'can be configured').\nmissing for 10: explicit restore/revert-version API reference, quantified retention window documentation, independent confirmation of restore behavior.",
     "evidenceIds": [
       "onedrive-docs-8",
-      "onedrive-docs-23",
-      "onedrive-docs-5"
+      "onedrive-docs-23"
     ]
   },
   {
@@ -2283,15 +2285,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Microsoft Graph documents concrete REST endpoints for OneDrive files — driveItem addressing (drive/items/{id}, path-based), upload sessions and put-content for uploads, search/delta/list-versions/list-thumbnails for listing and change tracking — clearly showing a real programmatic files API beyond the desktop client. However the evidence pack never explicitly cites move or delete endpoints (e.g., PATCH parentReference or DELETE driveItem), leaving two of the five named operations unevidenced; community citations are all about desktop sync behavior and are irrelevant to the API story. Missing for 10: explicit move endpoint documentation, explicit delete endpoint documentation, and independent/hands-on developer corroboration of the full CRUD flow.",
+    "rationale": "Microsoft Graph docs clearly document a driveItem REST API with upload (put-content, createUploadSession), search/list (search, delta), versioning and sharing-link endpoints, confirming a documented API distinct from the desktop client, addressing files-api theme well for upload/list. However the evidence pack lacks explicit documentation citations for download, move, or delete endpoints, and no independent/hands-on developer corroboration of using the API for full CRUD lifecycle is present. Missing for 10: explicit download endpoint docs, explicit move endpoint docs, explicit delete endpoint docs, independent corroboration of API usage.",
     "evidenceIds": [
       "onedrive-docs-5",
       "onedrive-docs-12",
-      "onedrive-docs-18",
       "onedrive-docs-14",
+      "onedrive-docs-18",
       "onedrive-docs-21",
-      "onedrive-docs-15",
-      "onedrive-docs-23"
+      "onedrive-docs-23",
+      "onedrive-docs-13"
     ]
   },
   {
@@ -2300,15 +2302,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OneDrive docs show shared folders, external sharing, and createLink sharing-link creation (which supports view-only style links) plus version history and change tracking that could support activity visibility. However, there is no explicit documentation of a 'view-only'/no-download toggle or a dedicated access/audit-visibility report for diligence-style data rooms, and community threads focus on sync/reliability issues rather than data-room use. Missing for 10: explicit download-blocking controls on shared links, and dedicated access-log/audit visibility for shared folders.",
+    "rationale": "OneDrive/SharePoint docs confirm shared folders, external sharing, and creating shareable links (createLink) plus version history, which support a basic data-room-like setup [onedrive-docs-9][onedrive-docs-13][onedrive-docs-8]. However, the evidence pack never documents view-only link types, download-blocking controls, or an access-visibility/audit view for tracking who has viewed files — the specific diligence-room features the story asks for. Missing for 10: explicit view-only/no-download link settings, download prevention controls, and access/activity visibility reporting for shared folders.",
     "evidenceIds": [
       "onedrive-docs-9",
       "onedrive-docs-13",
       "onedrive-docs-19",
       "onedrive-docs-8",
-      "onedrive-docs-23",
-      "onedrive-docs-6",
-      "onedrive-docs-7"
+      "onedrive-docs-23"
     ]
   },
   {
@@ -2329,13 +2329,14 @@
     "productId": "onedrive",
     "storyId": "granular-folder-permissions",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence confirms OneDrive supports creating sharing links and external sharing, but there is no documentation in the pack detailing folder/file-level role granularity (viewer/commenter/editor/owner) or inheritance behavior between folders and files. Missing for 10: explicit permission-role hierarchy documentation, inheritance rules across folder/file levels, and commenter/owner role definitions.",
+    "rationale": "Evidence confirms sharing links and external sharing exist (createLink API, external sharing docs) but there is no documentation of distinct folder/file-level roles like viewer/commenter/editor/owner or how permission inheritance works across folder hierarchies. Missing for 10: explicit role/permission model documentation (viewer/commenter/editor/owner), inheritance behavior across nested folders/files, and any admin-facing permission management reference.",
     "evidenceIds": [
       "onedrive-docs-13",
-      "onedrive-docs-9",
-      "onedrive-docs-19"
+      "onedrive-docs-19",
+      "onedrive-docs-29",
+      "onedrive-docs-9"
     ]
   },
   {
@@ -2344,7 +2345,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Microsoft Graph documents a dedicated createUploadSession API that explicitly supports uploading large files in sequential ranged requests and resuming after a dropped connection, distinct from the simple <250MB put-content method. This directly matches the story's requirement of documented chunked/resumable uploads. Missing for 10: independent/hands-on developer corroboration of resumable behavior in practice, and details on session expiry/retry semantics.",
+    "rationale": "Microsoft Graph documents createUploadSession explicitly for chunked uploads that support resuming after a dropped connection, complementing the simple put-content path for smaller files. missing for 10: no independent/hands-on developer corroboration of resumable behavior in production and no documented guidance on retry/backoff or max chunk-size edge cases.",
     "evidenceIds": [
       "onedrive-docs-12",
       "onedrive-docs-18",
@@ -2357,11 +2358,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Microsoft's own docs explicitly state OneDrive enables real-time coauthoring in Word, Excel, and PowerPoint, directly matching the story of in-place co-editing in the browser/native apps. Community evidence discusses sync/backup pain points but does not concretely contradict co-authoring functionality itself. Missing for 10: independent hands-on verification of real-time co-editing quality/reliability specifically (vs. general sync complaints), and more detail on browser-based editing UX.",
+    "rationale": "OneDrive docs explicitly state real-time coauthoring in Word, Excel, and PowerPoint through the browser/native apps, directly matching the story. Community evidence largely concerns sync/backup pain points, not coauthoring failures, so it doesn't dispute this specific capability. Missing for 10: independent hands-on corroboration specifically of real-time co-editing UX quality and any edge-case limitations.",
     "evidenceIds": [
       "onedrive-docs-3",
-      "onedrive-docs-24",
-      "onedrive-docs-1"
+      "onedrive-docs-24"
     ]
   },
   {
@@ -2370,19 +2370,19 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Microsoft Graph exposes a broad set of OneDrive operations via API — file CRUD, upload sessions, sharing links, search, thumbnails, versioning, delta/change tracking — covering most core file-management actions available in the UI (onedrive-docs-5,12,13,14,15,18,21,23). However, several UI-only experiences (real-time coauthoring in Office apps, Files On-Demand explorer integration, 'always keep on this device' offline toggles) are OS/client-level features with no documented API equivalent, so parity is not complete. missing for 10: API-level equivalents for coauthoring UX, Files On-Demand/offline toggles, and any explicit vendor statement of full UI/API parity or independent verification of same.",
+    "rationale": "Microsoft Graph exposes a broad API surface for OneDrive covering file CRUD, upload sessions, sharing links, search, versioning, delta/change tracking, and thumbnails, which maps to most core UI actions. However, some UI-specific experiences like real-time coauthoring in Office apps and Files On-Demand offline toggling are not clearly exposed as equivalent API operations, and there's no independent verification (e.g., OpenAPI spec) confirming full API-UI parity. missing for 10: API equivalents for real-time coauthoring/Office app integration, Files On-Demand offline controls via API, independent/hands-on confirmation of full parity, machine-readable OpenAPI spec.",
     "evidenceIds": [
+      "onedrive-docs-1",
+      "onedrive-docs-3",
       "onedrive-docs-5",
+      "onedrive-docs-6",
       "onedrive-docs-12",
       "onedrive-docs-13",
       "onedrive-docs-14",
-      "onedrive-docs-15",
       "onedrive-docs-18",
       "onedrive-docs-21",
       "onedrive-docs-23",
-      "onedrive-docs-3",
-      "onedrive-docs-10",
-      "onedrive-docs-17"
+      "onedrive-probe-3"
     ]
   },
   {
@@ -2413,7 +2413,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OneDrive is a proprietary cloud SaaS service; self-hosting the core product is not offered or plausible for this product category, making this a category-error axis rather than a missing capability.",
+    "rationale": "OneDrive is a proprietary cloud SaaS service with no self-hosted/on-prem edition; self-hosting the core product is not an available deployment model for this product category, making this a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -2422,7 +2422,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data residency, regional storage selection, or multi-geo capabilities for OneDrive; all docs focus on sync, sharing, versioning, and API mechanics rather than storage location control.",
+    "rationale": "The evidence pack contains no mention of data residency, geographic storage selection, multi-geo capabilities, or region controls for OneDrive; all docs cover access, sharing, sync, and API mechanics rather than storage location choice. Community evidence focuses on sync/reliability complaints, not residency. missing for 10: any mention of multi-geo capabilities, tenant region selection, data residency commitments, or admin controls for storage location.",
     "evidenceIds": []
   },
   {
@@ -2430,8 +2430,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any privacy commitments related to AI model training for OneDrive content; all citations concern sync, sharing, versioning, and API features unrelated to this axis.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of AI training data usage, opt-out controls, or Microsoft's data-use policies for AI model training regarding OneDrive content; all citations concern sync, sharing, file APIs, and unrelated community complaints about sync/reliability issues.",
     "evidenceIds": []
   },
   {
@@ -2440,15 +2440,14 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Microsoft docs describe configurable version-history retention for OneDrive/SharePoint files (onedrive-docs-8, onedrive-docs-23) and Graph API support for tracking created/updated/deleted items (onedrive-docs-6, onedrive-docs-21), suggesting some retention/deletion control exists. However, multiple hands-on community reports describe files being deleted, reverted to old versions, or rendered unrecoverable without user intent, directly undermining the claim that users can reliably control retention/deletion (onedrive-comm-2, onedrive-comm-5, onedrive-comm-13). Missing for 10: explicit AI-native/API-level documentation of user-initiated deletion or retention policy controls, independent verification that these controls work reliably in practice, and reconciliation of the documented retention feature with reported data-loss incidents.",
+    "rationale": "Docs mention configurable version history/retention and delta/change-notification tracking of deletions (onedrive-docs-8, onedrive-docs-23, onedrive-docs-6), but there's no documented user-facing retention policy or deletion-control API tailored to an AI-native workflow, and multiple hands-on community reports describe files being unrecoverably deleted, silently reverted to old versions, or destroyed during sync with 'no way to recover' (onedrive-comm-5, onedrive-comm-13, onedrive-comm-16), directly contradicting reliable control over retention/deletion. missing for 10: explicit user/API-level retention & deletion controls, GDPR-style erasure support, and evidence these controls work reliably in practice.",
     "evidenceIds": [
       "onedrive-docs-8",
       "onedrive-docs-23",
       "onedrive-docs-6",
-      "onedrive-docs-21",
-      "onedrive-comm-2",
       "onedrive-comm-5",
-      "onedrive-comm-13"
+      "onedrive-comm-13",
+      "onedrive-comm-16"
     ]
   },
   {
@@ -2457,7 +2456,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention telemetry opt-out, usage tracking controls, or privacy settings specific to AI-native usage; all evidence covers file sync/sharing features or general reliability complaints unrelated to telemetry controls.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out controls for OneDrive; the docs cover file access, sharing, versioning, and APIs, while community items discuss sync/reliability complaints, not telemetry settings.",
     "evidenceIds": []
   },
   {
@@ -2466,10 +2465,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "The Graph API driveItem createLink endpoint is documented for creating sharing links programmatically, which covers the core 'create shared link via API' requirement, but the evidence pack never shows password or expiry parameters, nor a documented revoke/delete-permission call. Missing for 10: explicit documentation of password-protected links, expiration settings, and an API to revoke shared links.",
+    "rationale": "Microsoft Graph exposes a driveItem createLink API to programmatically create sharing links [onedrive-docs-13][onedrive-docs-19][onedrive-docs-29], and external sharing settings are documented [onedrive-docs-9], but the evidence pack never shows the specific parameters (password protection, expiry date, revoke/delete-link endpoint) needed to fulfill the full story. Missing for 10: documented password-protected link creation, expiration settings on links, and an API to revoke/delete a sharing link, plus any independent/hands-on confirmation these work as described.",
     "evidenceIds": [
       "onedrive-docs-13",
       "onedrive-docs-19",
+      "onedrive-docs-29",
       "onedrive-docs-9"
     ]
   },
@@ -2479,7 +2479,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack references OneDrive's pricing page, storage quotas per plan, per-user prices, or cap/overage behavior; all citations concern API docs, feature descriptions, and unrelated community complaints.",
+    "rationale": "No evidence in the pack shows a public pricing page with per-plan storage quotas, per-user prices, or cap behavior; all citations concern API/functionality docs or community complaints about default behavior, not pricing.",
     "evidenceIds": []
   },
   {
@@ -2487,8 +2487,8 @@
     "storyId": "team-admin-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers only file/drive-level Graph API operations (driveItem CRUD, delta, sharing links, versions) and none of it addresses member provisioning, group management, or tenant/admin endpoints for IT governance — those are handled by separate Microsoft Graph admin/Azure AD APIs not documented here.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Microsoft Graph APIs for files/drives (driveItem, delta query, sharing links, versions) but contains no documentation of admin-specific endpoints such as member/user provisioning, group management, or tenant admin governance APIs for OneDrive.",
     "evidenceIds": []
   }
 ]

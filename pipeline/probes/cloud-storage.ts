@@ -164,4 +164,28 @@ export const probes: LocalProbe[] = [
     expect: /Your request has been blocked/,
     timeoutMs: 30_000,
   },
+  {
+    // Honest negative: developers.google.com publishes no llms.txt (404) — recorded absence
+    // from the 2026-09-23 depth spike over the Drive docs surface.
+    probeId: 'docs-llms-txt-absent',
+    productId: 'google-drive',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -sL -o /dev/null -w "HTTP %{http_code}" --max-time 20 https://developers.google.com/llms.txt'],
+    displayCommand: 'curl -sL -o /dev/null -w "HTTP %{http_code}" https://developers.google.com/llms.txt',
+    expect: /HTTP 404/,
+    timeoutMs: 30_000,
+  },
+  {
+    // Honest negative: learn.microsoft.com publishes no llms.txt (404 after the locale
+    // redirect) — recorded absence from the 2026-09-23 depth spike over the Graph docs surface.
+    probeId: 'docs-llms-txt-absent',
+    productId: 'onedrive',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -sL -o /dev/null -w "HTTP %{http_code}" --max-time 20 https://learn.microsoft.com/llms.txt'],
+    displayCommand: 'curl -sL -o /dev/null -w "HTTP %{http_code}" https://learn.microsoft.com/llms.txt',
+    expect: /HTTP 404/,
+    timeoutMs: 30_000,
+  },
 ]
