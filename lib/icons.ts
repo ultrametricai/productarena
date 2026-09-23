@@ -135,6 +135,27 @@ const THEME_EXACT: Record<string, string> = {
   // puzzle-piece and 'computer-control' on the operations gear — both wrong concepts here)
   'messaging-surfaces': '💬',
   'computer-control': '🖥️',
+  // compliance-automation arena ('framework-coverage' would land on the AI sparkle and
+  // 'evidence-collection' on the laptop — both wrong concepts here)
+  'framework-coverage': '📋',
+  'evidence-collection': '📥',
+  'questionnaire-automation': '📝',
+  // applicant-tracking arena (careers-page/structured-interviews fall through to the tag
+  // fallback; offer-management lands on the operations gear)
+  'careers-page': '📣',
+  'structured-interviews': '📝',
+  'offer-management': '✍️',
+  // domain-registrars arena (registration-transfer falls through to the tag fallback)
+  'registration-transfer': '🌐',
+  // sso-identity arena (app-catalog would land on the commerce cart, scim-provisioning on the
+  // deploy rocket, device-trust on the compliance scales, lifecycle-automation on the campaign
+  // megaphone — all wrong concepts here)
+  'app-catalog': '🧩',
+  'scim-provisioning': '🔁',
+  'device-trust': '💻',
+  'directory-core': '📖',
+  'lifecycle-automation': '🔄',
+  'identity-observability': '📜',
   // game-engines arena
   'core-engine': '🎮',
   'editor-tooling': '🛠️',
@@ -253,6 +274,40 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'team-admin': 'shared and managed use — shared vaults, org policies, programmatic provisioning',
   // self-hosted-assistants arena
   'self-host-install': 'getting it running on your own machine — installers, Docker, updates, recovery',
+  // compliance-automation arena
+  'framework-coverage': 'the frameworks it can carry — SOC 2, ISO 27001, HIPAA, cross-framework mapping',
+  'evidence-collection': 'proof gathered by machine — integrations, automated evidence, custom pushes',
+  'continuous-monitoring': 'catching drift early — continuous control tests, alerts, device and vendor checks',
+  'audit-workflow': 'the audit itself — auditor access, auditor network, honest readiness',
+  'trust-center': 'showing your posture — hosted trust pages, report sharing, freshness',
+  'questionnaire-automation': 'security questionnaires answered — AI drafts from real controls, format coverage',
+  'risk-policy': 'the program behind the audit — risk register, policies, training',
+  'workforce-compliance': 'people as controls — onboarding/offboarding proof, access reviews',
+  // applicant-tracking arena
+  'pipeline-management': 'running the funnel — stages, candidate records, collaboration, approvals',
+  'careers-page': 'where candidates apply — hosted careers pages, job-board distribution, forms',
+  'interview-scheduling': 'getting interviews booked — self-scheduling, panels, interviewer prep',
+  'structured-interviews': 'judging candidates fairly — scorecards, interview plans, bias controls',
+  'sourcing-crm': 'filling the top of funnel — talent pools, sequences, referrals',
+  'offer-management': 'closing the hire — offer letters, e-signature, onboarding handoff',
+  'recruiting-analytics': 'seeing the funnel honestly — conversion, time-to-hire, exports',
+  'recruiting-ai': 'the AI layer — screening, interview notes, drafted outreach, safeguards',
+  // domain-registrars arena
+  'domain-search': 'finding the name — availability search and APIs, TLD breadth, premiums',
+  'registration-transfer': 'owning the name — registration APIs, transfers, renewals, bulk ops',
+  'dns-management': 'pointing the name — DNS hosting, record APIs, DNSSEC',
+  'whois-privacy': 'protecting the name — free WHOIS privacy, transfer/registry locks, account security',
+  'pricing-transparency': 'honest prices — published per-TLD lists, at-cost claims, pricing APIs',
+  'registrar-platform': 'the developer surface — sandboxes, API keys, bundled basics, host connect',
+  // sso-identity arena
+  'app-catalog': 'apps behind one login — SSO catalogs, custom SAML/OIDC, user portals',
+  'scim-provisioning': 'accounts that manage themselves — SCIM, instant deprovisioning, HRIS sync',
+  'mfa-policy': 'stronger sign-in — phishing-resistant MFA, adaptive policies, passwordless',
+  'device-trust': 'only healthy devices — posture checks in policy, device management',
+  'directory-core': 'the source of truth — users/groups APIs, group rules, legacy LDAP/RADIUS',
+  'lifecycle-automation': 'identity on autopilot — workflows, access certification, config as code',
+  'identity-observability': 'seeing every event — system logs, SIEM streaming, incident transparency',
+  'agent-identity': 'agents as identities — cross-app access, token vaulting, scoped agent credentials',
   'messaging-surfaces': 'where you talk to it — WhatsApp/Telegram/Discord channels, voice, native apps',
   'model-backends': 'the models behind it — multi-provider keys, local models, failover, cost visibility',
   'skills-plugins': 'extending it — skill registries, plugin authoring, ecosystem scale and safety',

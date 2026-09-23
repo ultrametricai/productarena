@@ -83,8 +83,10 @@ describe('manifestVendorOption', () => {
   })
 
   it('tracked vendors without a published MCP endpoint get a null endpoint, not an invented one', () => {
-    const opt = manifestVendorOption('gusto', DATA_DIR)
-    expect(opt.arena).toBe('payroll')
+    // (gusto graduated to a live endpoint when its official-MCP-server evidence landed —
+    // quickbooks is the current no-endpoint example.)
+    const opt = manifestVendorOption('quickbooks', DATA_DIR)
+    expect(opt.arena).toBe('accounting')
     expect(opt.mcpEndpoint).toBeNull()
   })
 })

@@ -503,6 +503,32 @@ export const VENDOR_ARENA: Record<string, string> = {
   // Workspace-user provisioning via SSO/SCIM (opp_007) — judged in auth-platforms.
   workos: 'auth-platforms',
   auth0: 'auth-platforms',
+  // 2026-09-22 wave-5: the compliance/ATS/registrar/IdP markets graduated from untracked
+  // chips to live arenas (launch-audit wave 5).
+  vanta: 'compliance-automation',
+  drata: 'compliance-automation',
+  secureframe: 'compliance-automation',
+  oneleet: 'compliance-automation',
+  sprinto: 'compliance-automation',
+  thoropass: 'compliance-automation',
+  lever: 'applicant-tracking',
+  greenhouse: 'applicant-tracking',
+  ashby: 'applicant-tracking',
+  workable: 'applicant-tracking',
+  recruitee: 'applicant-tracking',
+  namecheap: 'domain-registrars',
+  name_com: 'domain-registrars',
+  porkbun: 'domain-registrars',
+  // Cloudflare's registrar product competes here under its own scoped id — the edge platform
+  // keeps the bare `cloudflare` key (same family/sub-product precedent as stripe_billing).
+  cloudflare_registrar: 'domain-registrars',
+  godaddy: 'domain-registrars',
+  dynadot: 'domain-registrars',
+  okta: 'sso-identity',
+  jumpcloud: 'sso-identity',
+  microsoft_entra: 'sso-identity',
+  google_workspace: 'sso-identity',
+  rippling_it: 'sso-identity',
 }
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
@@ -566,6 +592,12 @@ const VENDOR_LABELS: Record<string, string> = {
   // 2026-09-22 wave-3 vendor-cell fill (title-case fallback misfires on these).
   virtualpostmail: 'VirtualPostMail',
   workos: 'WorkOS',
+  // 2026-09-22 wave-5 arenas (title-case fallback misfires on these).
+  jumpcloud: 'JumpCloud',
+  godaddy: 'GoDaddy',
+  cloudflare_registrar: 'Cloudflare Registrar',
+  microsoft_entra: 'Microsoft Entra ID',
+  rippling_it: 'Rippling IT',
 }
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives

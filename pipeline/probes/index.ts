@@ -79,6 +79,10 @@ import { probes as backendAsAService } from './backend-as-a-service'
 import { probes as edgePlatforms } from './edge-platforms'
 import { probes as productAnalytics } from './product-analytics'
 import { probes as frontierModels } from './frontier-models'
+import { probes as applicantTracking } from './applicant-tracking'
+import { probes as complianceAutomation } from './compliance-automation'
+import { probes as domainRegistrars } from './domain-registrars'
+import { probes as ssoIdentity } from './sso-identity'
 
 export type { LocalProbe } from './types'
 
@@ -153,4 +157,8 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'edge-platforms': edgePlatforms,
   'product-analytics': productAnalytics,
   'frontier-models': frontierModels,
+  'applicant-tracking': applicantTracking,
+  'compliance-automation': complianceAutomation,
+  'domain-registrars': domainRegistrars,
+  'sso-identity': ssoIdentity,
 }
