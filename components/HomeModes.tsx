@@ -10,29 +10,23 @@ import { readParam, setParams } from '@/lib/urlState'
 // device; readers who live in process land come back to it.
 //
 // Shareable URLs (founder 2026-09-21, lib/urlState.ts): ?view=processes reproduces the process
-// mode for whoever the link is sent to — the URL wins over the localStorage preference on first
-// load; clicking a tab updates both. The default (companies) never appears in the URL.
-const MODE_KEY = 'pa-home-mode'
+// mode for whoever the link is sent to. URL ONLY (founder 2026-09-23): restoring the device's
+// last mode from localStorage after hydration flashed companies→processes on every load for
+// process-mode readers — a pristine visit is now always companies with zero flicker, and the
+// one expected post-hydration flip is a shared ?view=processes link opening in the sender's view.
 type Mode = 'companies' | 'processes'
 
 export default function HomeModes({ companies, processes }: { companies: ReactNode; processes: ReactNode }) {
   const [mode, setMode] = useState<Mode>('companies')
-  /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM external
-     systems (URL, localStorage). The static HTML must render the default mode, so this cannot be
-     a useState initializer (hydration mismatch); it runs once and renders at most one extra pass. */
+  /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM the URL
+     (external system). The static HTML must render the default mode, so this cannot be a
+     useState initializer (hydration mismatch); it runs once and renders at most one extra pass. */
   useEffect(() => {
-    const fromUrl = readParam('view')
-    if (fromUrl === 'processes' || fromUrl === 'companies') {
-      setMode(fromUrl) // a shared link shows the sender's view, whatever this device prefers
-      return
-    }
-    const saved = localStorage.getItem(MODE_KEY)
-    if (saved === 'processes') setMode('processes')
+    if (readParam('view') === 'processes') setMode('processes')
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
   const pick = (m: Mode) => {
     setMode(m)
-    localStorage.setItem(MODE_KEY, m)
     setParams({ view: m === 'companies' ? null : m })
   }
   const tab = (m: Mode, label: string, title: string) => (
