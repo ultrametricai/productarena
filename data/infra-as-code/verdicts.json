@@ -1281,37 +1281,36 @@
     "productId": "pulumi",
     "storyId": "agent-authors-change",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Pulumi's Automation API and CLI allow headless plan generation (`pulumi preview --non-interactive --json`) with structured diff output that an agent can parse, and hands-on probes confirm this and the full apply loop work headlessly without Pulumi Cloud; the official MCP server (verified via handshake) lets AI assistants generate infrastructure code and run CLI commands, supporting an agent-authored-and-approved workflow. missing for 10: a single end-to-end demonstrated workflow tying MCP-based code authoring directly into the headless preview/approval loop, and independent (non-vendor) verification of that combined flow.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Pulumi provides the core pieces: an Automation API for headless, programmatic runs, `pulumi preview` for generating a diff without applying changes, and an official MCP server that lets AI assistants (Cursor, Claude Code, Claude Desktop) generate infrastructure code and interact with Pulumi Cloud stacks, with Neo able to execute changes autonomously. Together these support an agent authoring code, running a headless plan, and surfacing a diff for human approval. missing for 10: no first-party documented end-to-end example combining Automation API + preview output specifically surfaced through the MCP server for agent-driven approval workflows, and no independent/hands-on confirmation that this exact agent-plan-approve loop works in practice.",
     "evidenceIds": [
       "pulumi-docs-2",
       "pulumi-docs-8",
       "pulumi-docs-19",
       "pulumi-docs-26",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-probe-8",
-      "pulumi-docs-7",
-      "pulumi-docs-18"
+      "pulumi-docs-18",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-20"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agent-least-privilege-gates",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi provides the building blocks — Policy as Code guardrails (pulumi-docs-5/16), a preview/dry-run step that shows changes before they're applied (pulumi-docs-8/19, pulumi-probe-6), and an MCP server letting AI assistants query/generate/delegate infra changes (pulumi-docs-7/18/26, pulumi-probe-8) — but there is no documented mechanism tying an agent's MCP/CLI actions specifically to least-privilege scoped credentials or an explicit human-approval gate before 'pulumi up' executes for agent-initiated changes. Missing for 10: explicit least-privilege credential scoping for agent identities, a documented approval/review workflow gating agent-triggered applies, and evidence the MCP server itself is constrained from calling 'pulumi up' without human sign-off.",
+    "rationale": "Pulumi provides the building blocks for agent-safe workflows: preview (pulumi preview) as a no-op plan/review gate, CrossGuard policy-as-code guardrails, an MCP server for AI assistants, and Neo for agent-driven provisioning with 'enterprise controls'. However, there is no documented least-privilege credential scoping specific to agent execution, no explicit approval-gate workflow tying preview output to a required human sign-off before apply, and no independent evidence confirming these controls prevent unapproved changes in practice. missing for 10: least-privilege credential scoping for agents, explicit human-approval gate enforcement before apply, independent/hands-on verification that policy gates block agent-driven changes.",
     "evidenceIds": [
-      "pulumi-docs-5",
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-docs-7",
-      "pulumi-docs-18",
+      "pulumi-docs-5",
+      "pulumi-docs-16",
       "pulumi-docs-26",
-      "pulumi-probe-6",
-      "pulumi-probe-8"
+      "pulumi-docs-9",
+      "pulumi-docs-20",
+      "pulumi-docs-40"
     ]
   },
   {
@@ -1320,12 +1319,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A direct probe confirms Pulumi serves a working llms.txt at https://www.pulumi.com/llms.txt (HTTP 200) with a concise agent-oriented summary, and Pulumi also maintains extensive agent-oriented docs (MCP server docs, CLI docs) that AI assistants can be pointed at. missing for 10: independent/community confirmation that agents successfully consume llms.txt in practice, and a docs.md/markdown-flavored docs endpoint (which returned 404).",
+    "rationale": "A direct probe confirms Pulumi serves a working llms.txt at https://www.pulumi.com/llms.txt returning HTTP 200 with a project summary, and Pulumi also documents an official MCP server explicitly designed for AI assistants to consume Pulumi context/docs. Missing for 10: no evidence of broader agent-oriented docs pages (e.g. per-page .md endpoints, which probe shows 404) or independent confirmation of agents successfully using llms.txt in practice.",
     "evidenceIds": [
       "pulumi-probe-1",
       "pulumi-docs-7",
-      "pulumi-docs-26",
-      "pulumi-probe-4"
+      "pulumi-docs-26"
     ]
   },
   {
@@ -1334,13 +1332,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's 'Insights' policy features and Neo agent provide some AI-driven analysis of infrastructure (policy guardrails, plain-English task delegation), and the MCP server lets AI assistants query/search cloud resources, but there is no dedicated in-product 'insights/suggestions' dashboard shown generating proactive AI analysis of a user's own data beyond policy compliance and Neo's provisioning actions; one community report calls Pulumi's genAI documentation poor. missing for 10: concrete evidence of an in-product AI insights/dashboard analyzing existing resource data and generating proactive suggestions (not just policy enforcement or Neo's task execution), and independent corroboration of quality.",
+    "rationale": "Pulumi's Neo product and MCP server let AI query, search, and optimize Pulumi Cloud stack data and resources, and Neo explicitly 'optimizes' infrastructure based on your environment, which constitutes AI-generated insight/suggestion functionality tied to the product's own data. However, the evidence is mostly first-party marketing copy with no concrete examples of insight/suggestion output or independent corroboration of quality. Missing for 10: independent/hands-on evidence of Neo or the MCP server surfacing specific data-driven insights, detailed docs on suggestion types, and community validation of usefulness.",
     "evidenceIds": [
-      "pulumi-docs-5",
       "pulumi-docs-9",
       "pulumi-docs-20",
       "pulumi-docs-26",
-      "pulumi-comm-16"
+      "pulumi-docs-35",
+      "pulumi-docs-7"
     ]
   },
   {
@@ -1349,25 +1347,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi documents both an Automation API for embedding Pulumi programs into custom background services (pulumi-docs-2) and 'Neo', an agent described as autonomously provisioning, governing, and optimizing infrastructure from plain-English instructions (pulumi-docs-9, pulumi-docs-20), plus headless CLI runs confirmed via probe (pulumi-probe-6, pulumi-probe-7). However, Neo's autonomous background operation is only vendor marketing copy with no hands-on or independent verification, and Automation API requires the user to build their own scheduling/triggering layer rather than shipping a ready background-automation feature. Missing for 10: hands-on/independent evidence Neo (or another built-in scheduler) actually runs unattended in production, native trigger/schedule primitives beyond Automation API, and community corroboration of autonomous operation.",
+    "rationale": "Pulumi Neo is explicitly framed as an agentic automation that 'handles dependencies, executes changes, and monitors outcomes automatically' from plain-English requests, and the Automation API lets developers embed Pulumi's engine into background services that can create/update/destroy infrastructure programmatically without CLI interaction. These are first-party docs only, with Neo appearing to be an early/enterprise-controlled feature and Pulumi's general workflow still emphasizing preview/approval steps rather than fully unattended runs. Missing for 10: independent/hands-on validation of Neo running unattended in production, details on scheduling/triggers for autonomous runs, and clarity on how much human-in-the-loop review is required before changes are applied.",
     "evidenceIds": [
-      "pulumi-docs-2",
       "pulumi-docs-9",
       "pulumi-docs-20",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-35",
+      "pulumi-gh-4"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Pulumi ships 'Neo', a built-in AI agent described as taking plain-English infrastructure requests and autonomously handling dependencies, executing changes, and monitoring outcomes, and the MCP docs explicitly note tasks can be delegated to Neo. This directly matches the story of delegating tasks to an in-product AI assistant. Missing for 10: independent or hands-on verification of Neo's actual task execution/autonomy (only vendor docs), and detail on scope/guardrails of what Neo can do unsupervised.",
+    "rationale": "Pulumi ships a built-in AI assistant called Neo, described as provisioning, governing, and optimizing infrastructure from plain-English requests ('Tell Neo what you need in plain English. It handles dependencies, executes changes, and monitors outcomes automatically'), and docs note it works alongside external AI agents. This directly matches the story of delegating tasks to a built-in assistant. Missing for 10: independent/hands-on evidence validating Neo's real-world reliability and detail on scope/limits of autonomous execution, since all evidence is first-party marketing/docs.",
     "evidenceIds": [
       "pulumi-docs-9",
       "pulumi-docs-20",
+      "pulumi-docs-35",
       "pulumi-docs-26"
     ]
   },
@@ -1377,13 +1377,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's CLI supports non-interactive flags and JSON output for scripted use, plus an Automation API explicitly designed for running Pulumi programs without the CLI in orchestration/CI contexts; hands-on probes confirm `pulumi preview/up/destroy --non-interactive` work headlessly on a local backend without Pulumi Cloud, and VCS integrations (GitHub/GitLab/Azure DevOps) support CI pipelines. Missing for 10: no first-party CI-specific documentation (e.g., GitHub Actions workflow examples) or independent CI-pipeline case study in the evidence pack.",
+    "rationale": "Pulumi's CLI is explicitly designed for headless/CI usage (non-interactive commands, preview/up), and the Automation API is a first-party programmatic interface for embedding Pulumi programs into automation/CI pipelines without the CLI, plus documented VCS integrations (GitHub, GitLab, Azure DevOps) for CI workflows. This is a well-documented, core capability with clear first-party docs, though independent hands-on CI-specific corroboration is thin. Missing for 10: independent/community verification of CI pipeline usage specifics and edge-case reliability in headless mode.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-4",
       "pulumi-docs-12",
-      "pulumi-docs-19"
+      "pulumi-docs-8"
     ]
   },
   {
@@ -1392,15 +1393,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All Pulumi MCP evidence describes Pulumi acting as an MCP *server* (exposing its own tools to external AI assistants like Cursor, Claude Code, Windsurf) — the opposite direction from the story, which asks whether Pulumi itself can consume/plug in external MCP servers as a client. Even Pulumi Neo, the AI agent component, is only documented as executing infrastructure changes from plain-English prompts, with no evidence it can attach to third-party MCP servers to use their tools.",
+    "rationale": "Evidence only documents Pulumi's own MCP server (pulumi-docs-7, pulumi-docs-18, pulumi-docs-26) which lets external AI assistants like Claude/Cursor call Pulumi's tools — the opposite direction from this story, which asks whether Pulumi itself can consume/plug in external MCP servers to use their tools. No evidence shows Pulumi, Pulumi AI, or Neo acting as an MCP client connecting to third-party MCP servers.",
     "evidenceIds": [
       "pulumi-docs-7",
       "pulumi-docs-18",
       "pulumi-docs-26",
-      "pulumi-probe-4",
-      "pulumi-probe-8",
-      "pulumi-docs-9",
-      "pulumi-docs-20"
+      "pulumi-docs-35"
     ]
   },
   {
@@ -1409,61 +1407,61 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi ships an official, documented MCP server (@pulumi/mcp-server) that exposes Pulumi Cloud stacks/resources and CLI commands to AI assistants like Cursor, Claude Code/Desktop, and Windsurf, and a hands-on probe confirms it actually performs a JSON-RPC MCP handshake and responds correctly. Missing for 10: no independent third-party (non-Pulumi) review of the MCP server's real-world reliability/behavior beyond the single probe.",
+    "rationale": "Pulumi documents an official MCP server that lets AI assistants query Pulumi Cloud stacks/resources and generate infrastructure code, and explicitly lists compatibility with Cursor, Claude Code, Windsurf, and Claude Desktop. This is first-party documentation with a dedicated docs page and probe confirmation, though independent hands-on community corroboration of the MCP server specifically is absent. Missing for 10: independent/hands-on validation of the MCP server itself.",
     "evidenceIds": [
       "pulumi-docs-7",
       "pulumi-docs-18",
       "pulumi-docs-26",
-      "pulumi-probe-4",
-      "pulumi-probe-8"
+      "pulumi-docs-42",
+      "pulumi-probe-4"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi Neo is explicitly marketed to accept plain-English infrastructure requests ('Tell Neo what you need in plain English...') and the official MCP server, verified hands-on via JSON-RPC handshake, lets AI assistants translate natural-language prompts into Pulumi CLI/registry operations. However, Neo's NL capability is only vendor-claimed (no hands-on or community verification) and is a separate enterprise product, while the core Pulumi CLI itself remains code/command-driven, not NL-native. Missing for 10: independent or hands-on verification of Neo's natural-language handling, and evidence that natural-language control works without relying on Neo or an external AI coding assistant via MCP.",
+    "rationale": "Pulumi Neo explicitly supports natural-language infrastructure commands ('Tell Neo what you need in plain English... Give me a VPC with a subnet in every AZ'), and the MCP server lets AI assistants generate/manage infrastructure code and delegate to Neo, giving genuine NL operation paths. However this is a distinct product layer (Neo) rather than the core Pulumi CLI/engine, and there's no independent/hands-on evidence corroborating real-world reliability of these NL commands. Missing for 10: independent verification of Neo's natural-language accuracy, broader NL coverage beyond the MCP/Neo layer, and confirmation this isn't limited/preview functionality.",
     "evidenceIds": [
-      "pulumi-docs-9",
       "pulumi-docs-20",
+      "pulumi-docs-32",
       "pulumi-docs-26",
-      "pulumi-docs-18",
-      "pulumi-probe-8"
+      "pulumi-docs-30",
+      "pulumi-docs-35"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi ships an official CLI with documented commands (preview, up, import, destroy) and hands-on probes confirm it runs headlessly with structured JSON output an agent can parse, plus non-interactive/automated flags well suited to AI-native workflows. Missing for 10: no independent third-party review specifically praising the CLI's AI-native ergonomics beyond the vendor probes.",
+    "rationale": "Pulumi ships an official CLI (documented commands like pulumi preview, pulumi import, pulumi do) that is core to its IaC workflow, and it also integrates with AI-native tooling via an official MCP server and Automation API for programmatic/agentic use. missing for 10: independent hands-on verification of CLI's AI-native ergonomics and no dedicated 'AI CLI mode' benchmarking beyond docs.",
     "evidenceIds": [
       "pulumi-probe-5",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-docs-19",
-      "pulumi-docs-25"
+      "pulumi-docs-8",
+      "pulumi-docs-21",
+      "pulumi-docs-43",
+      "pulumi-docs-26",
+      "pulumi-docs-18",
+      "pulumi-docs-33"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Pulumi offers a documented Automation API (programmatic, language-based interface) and a verified MCP server (probed handshake works) plus a CLI with JSON output, giving AI-native users multiple programmatic ways to drive it. However, there is no true public REST/OpenAPI API (openapi.json/swagger endpoints all 404) and no llms.txt-driven docs-md endpoint, so 'documented public API' in the traditional sense is unconfirmed. missing for 10: a documented REST/OpenAPI-style public API, independent third-party corroboration of Automation API usage, and confirmation that MCP/Automation API cover full CRUD parity with the CLI.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Pulumi documents both the Automation API (a programmatic SDK for driving Pulumi programs without the CLI) and a Pulumi Cloud REST API callable from the CLI, giving AI-native users a documented public interface to drive infrastructure operations; it also has a first-party MCP server for AI assistants. missing for 10: a discoverable formal OpenAPI/swagger spec (probe found 404s at standard paths) and independent hands-on corroboration of API robustness.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-docs-7",
-      "pulumi-docs-26",
-      "pulumi-probe-3",
-      "pulumi-probe-4",
-      "pulumi-probe-8",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-44",
+      "pulumi-gh-4",
+      "pulumi-probe-3"
     ]
   },
   {
@@ -1472,24 +1470,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers Pulumi's MCP server for AI agent integration and CLI/API access broadly, but nothing describes issuing scoped or least-privilege API credentials/tokens specifically for an agent's use (e.g., token scoping, RBAC-limited service accounts, or credential minting for AI agents). This is a fair question for a cloud IaC platform with an API/token system, but no evidence supports it.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Pulumi ESC can act as an OIDC provider and Pulumi has a Cloud REST API, but nothing describes issuing scoped or least-privilege API credentials specifically for an AI agent's use (e.g., agent-specific token minting, permission scoping tied to MCP/Neo access). The MCP server and Neo docs describe what an agent can do, not how its credentials are constrained.",
+    "evidenceIds": [
+      "pulumi-docs-36",
+      "pulumi-docs-44",
+      "pulumi-docs-7",
+      "pulumi-docs-26"
+    ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi provides official SDKs across multiple mainstream languages (TypeScript, Python, Go, .NET, Java, YAML) with full provider surface area, plus an Automation API for programmatic use and a documented, hands-on-verified MCP server enabling AI assistants to interact with Pulumi programs. This is strongly corroborated by official docs and a live probe confirming the MCP server handshake works. Missing for 10: independent third-party (non-vendor) benchmarking of SDK completeness/parity across all languages, and no evidence of official SDKs in additional languages like Rust or Java-adjacent ecosystems beyond what's listed.",
+    "rationale": "Pulumi ships official SDKs across TypeScript, Python, Go, .NET, Java and YAML with full provider coverage, plus a first-party Automation API that exposes the engine as a programmatic SDK for embedding in custom (including AI-driven) tooling, and an official MCP server for AI assistants to interact with Pulumi resources. This directly satisfies an AI-native user's need to build against official, language-native SDKs rather than reverse-engineered wrappers. Missing for 10: independent/hands-on corroboration that all languages are truly 'equally capable' as claimed, and no dedicated AI/agent-specific SDK beyond Automation API + MCP.",
     "evidenceIds": [
       "pulumi-docs-1",
-      "pulumi-docs-2",
       "pulumi-docs-22",
+      "pulumi-docs-2",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-7",
       "pulumi-docs-26",
-      "pulumi-docs-18",
-      "pulumi-probe-4",
-      "pulumi-probe-8"
+      "pulumi-gh-4"
     ]
   },
   {
@@ -1498,23 +1502,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions webhooks or event subscriptions of any kind; Pulumi's AI-facing integrations documented are MCP server access and Automation API, not webhook-based event subscription. missing for 10: any documentation or mention of webhook support, event subscription APIs, or notification triggers.",
+    "rationale": "No evidence in the pack mentions webhooks or event subscription mechanisms for Pulumi; while Pulumi Cloud and REST API exist, nothing documents a webhook subscription feature. Applicable to a platform product like Pulumi Cloud, but unevidenced.",
     "evidenceIds": []
   },
   {
     "productId": "pulumi",
     "storyId": "ai-generate-iac",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Pulumi ships a first-party MCP server explicitly documented to let AI assistants 'generate infrastructure code' from Pulumi Cloud context, and Pulumi Neo lets users 'tell Neo what you need in plain English' to provision infrastructure — both built into the toolchain. A hands-on probe confirms the MCP server actually runs and responds to JSON-RPC handshakes, corroborating the vendor claim beyond just documentation. Missing for 10: independent/hands-on evidence of actual natural-language-to-IaC code generation quality (only the handshake, not code-gen output, was tested) and no third-party corroboration of Neo's real-world behavior.",
+    "rationale": "Pulumi's MCP server explicitly lets AI coding assistants (Cursor, Claude Code, Windsurf, Claude Desktop) 'generate infrastructure code' from natural language, and Neo lets users 'tell it what you need in plain English' (e.g., 'Give me a VPC with a subnet in every AZ') to provision infrastructure. This is native, first-party AI tooling built into the Pulumi ecosystem, not a third-party bolt-on. Missing for 10: independent/hands-on validation of code-generation quality (community commentary on Pulumi's genAI docs being weak suggests some real-world friction) and more detail on how generated code integrates back into the standard IaC workflow.",
     "evidenceIds": [
       "pulumi-docs-26",
       "pulumi-docs-20",
-      "pulumi-docs-9",
+      "pulumi-docs-32",
       "pulumi-docs-18",
-      "pulumi-probe-8",
-      "pulumi-probe-4"
+      "pulumi-docs-35",
+      "pulumi-comm-16"
     ]
   },
   {
@@ -1523,10 +1527,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; probes explicitly show no OpenAPI/Swagger spec (404s across candidate paths) and no mention of a live/sandboxed API explorer. Pulumi's docs describe language SDKs and CLI commands but not an interactive, runnable API reference.",
+    "rationale": "No evidence of an interactive API reference with runnable examples: probes for OpenAPI/Swagger specs all returned 404, and no docs describe a live/interactive API explorer. Pulumi's docs cover CLI commands, Automation API, and MCP server, but nothing about a runnable interactive API reference.",
     "evidenceIds": [
       "pulumi-probe-3",
-      "pulumi-docs-22"
+      "pulumi-docs-44"
     ]
   },
   {
@@ -1534,25 +1538,26 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "A direct probe for an OpenAPI/equivalent spec at all standard candidate paths returned 404 across the board, and no evidence pack item shows Pulumi publishing a downloadable machine-readable API spec; the llms.txt found is a marketing/context file, not an API spec.",
+    "confidence": "medium",
+    "rationale": "Pulumi Cloud exposes a REST API (pulumi-docs-44) which is a plausible candidate for a machine-readable spec, but direct probes for OpenAPI/swagger endpoints all returned 404 and no docs page offers a downloadable spec (pulumi-probe-3, pulumi-probe-2). No evidence of an official OpenAPI or equivalent machine-readable spec being published.",
     "evidenceIds": [
+      "pulumi-docs-44",
       "pulumi-probe-3",
-      "pulumi-probe-1"
+      "pulumi-probe-2"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's testing docs describe integration tests that 'deploy ephemeral infrastructure and run external tests against it' and preview command that makes 'no changes to the stack,' and probes confirm a full headless up/destroy loop against a local file backend without touching Pulumi Cloud or production state. This supports safe sandbox testing, but the evidence never explicitly describes stack-based prod/sandbox isolation or guardrails preventing accidental production impact from an AI agent.  Missing for 10: explicit multi-stack environment isolation guidance, agent-specific guardrails against touching prod stacks, and independent hands-on confirmation of safe sandboxing beyond the vendor-run probe.",
+    "rationale": "Pulumi's testing docs explicitly describe unit tests that mock all external calls and integration tests that deploy ephemeral infrastructure for testing, and `pulumi preview` lets you validate changes with no actual effect on stacks — all supporting a sandbox-like workflow without touching production. However, there's no explicit documentation of stack/environment isolation (e.g., separate dev/prod accounts) or dedicated 'sandbox' tooling, and no independent/hands-on confirmation of this workflow in practice.\n\nmissing for 10: explicit multi-stack/environment isolation guidance, independent corroboration of safe sandbox testing in real use.",
     "evidenceIds": [
       "pulumi-docs-3",
       "pulumi-docs-8",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-19",
+      "pulumi-docs-24"
     ]
   },
   {
@@ -1560,26 +1565,26 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item discusses API versioning or a documented deprecation policy for Pulumi's APIs (CLI, SDK, Automation API, or MCP server); the OpenAPI probe returned 404s and no changelog/versioning policy is cited. Community evidence even mentions Pulumi lagging on deprecated Azure resources with no fix, but this is unrelated to a documented deprecation policy for Pulumi's own APIs.",
-    "evidenceIds": [
-      "pulumi-probe-3",
-      "pulumi-comm-1"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence in the pack references API versioning practices, a version support policy, or a documented deprecation/EOL policy for Pulumi's SDKs, CLI, REST API, or Automation API — only general product/feature docs and community sentiment about deprecated Azure resources (unrelated to Pulumi's own API deprecation policy) are present.",
+    "evidenceIds": []
   },
   {
     "productId": "pulumi",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Pulumi supports bulk-oriented workflows: pulumi preview --import-file can generate an import covering every resource a program would create, the Automation API allows programmatic orchestration across many stacks or resources, and real-world usage reports deployments of 500+ resources at once. These give an AI agent, via CLI or MCP server, levers for bulk operations, but the docs never explicitly frame a bulk operation across many items workflow for AI agents, and the MCP server evidence only demonstrates single CLI command execution, not batch or bulk semantics. missing for 10: explicit bulk-operation API/CLI docs such as bulk import across many resources in one call or bulk stack updates framed for AI-agent consumption, and hands-on evidence of an agent performing such bulk ops via MCP",
+    "rationale": "Pulumi's real-language SDKs let users loop/iterate to define and manage many resources at once, and the Automation API explicitly exposes the full IaC engine programmatically to create/update/destroy infrastructure dynamically across many stacks (pulumi-docs-2, pulumi-docs-33, pulumi-docs-34, pulumi-gh-4). The MCP server and Neo further let AI agents query and act across all cloud resources/stacks in bulk (pulumi-docs-7, pulumi-docs-26, pulumi-docs-20), and a community report confirms real-world use of Automation API for infrastructure migrations at scale (pulumi-comm-20). Missing for 10: concrete documented examples/benchmarks of large-scale bulk operations (e.g., batch import across hundreds of resources) and independent hands-on validation of performance/reliability at scale.",
     "evidenceIds": [
-      "pulumi-docs-21",
       "pulumi-docs-2",
-      "pulumi-comm-7",
-      "pulumi-docs-26",
-      "pulumi-probe-8"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-1",
+      "pulumi-gh-4",
+      "pulumi-docs-7",
+      "pulumi-docs-20",
+      "pulumi-comm-20"
     ]
   },
   {
@@ -1587,13 +1592,9 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers Pulumi's languages, testing, state backends, policy-as-code guardrails, import, and MCP/Automation API integrations, but none of it describes a mechanism for defining rules that automatically trigger actions in response to events (e.g., webhooks, event-driven pipelines, or reactive automation). Policy as code (pulumi-docs-5/16) enforces guardrails during deployments rather than triggering actions on arbitrary events, and the Automation API (pulumi-docs-2) is for programmatic invocation, not event-driven rule execution.",
-    "evidenceIds": [
-      "pulumi-docs-2",
-      "pulumi-docs-5",
-      "pulumi-docs-16"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence of an event-driven rules/trigger engine in Pulumi; the product is IaC provisioning/state management, policy-as-code, and AI-assisted code generation, not an automation/event-trigger system. missing for 10: event trigger definitions, rule/condition engine, automatic action-on-event execution mechanism.",
+    "evidenceIds": []
   },
   {
     "productId": "pulumi",
@@ -1601,11 +1602,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Pulumi's evidence shows Automation API for programmatic runs, CLI commands, and Neo for AI-driven provisioning, but nothing describes built-in support for scheduling recurring jobs or workflows (e.g., cron-like triggers, scheduled drift detection, or workflow orchestration). Such a capability is plausible for an IaC/automation platform, so the axis applies, but no evidence confirms it.",
+    "rationale": "The evidence pack covers Pulumi's IaC language support, Automation API, testing, state backends, policy-as-code, import, MCP server, and Neo agent, but nowhere documents a native way to schedule recurring jobs or workflows (e.g., cron-based deployments, scheduled drift detection, or workflow scheduling). Automation API only exposes programmatic triggering, not scheduling itself, so no evidence supports this capability.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-docs-9",
-      "pulumi-docs-20"
+      "pulumi-docs-33",
+      "pulumi-docs-34"
     ]
   },
   {
@@ -1614,29 +1615,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's code-based IaC is inherently versionable via standard VCS (git integrations documented), and `pulumi preview`/`pulumi destroy`/state backends give rollback-like control validated hands-on via CLI probes; policy-as-code adds review guardrails. However there's no dedicated 'automation review' workflow, no built-in diff/approval UI beyond preview output, and community feedback flags documentation/complexity issues around dependency management that complicate confident rollback for AI-driven changes. missing for 10: a first-party automated review/approval gate for AI-initiated changes, explicit rollback command/semantics (vs. re-apply prior state), and independent verification of policy-as-code enforcement in practice.",
+    "rationale": "Pulumi stores infrastructure as versioned code with git/VCS integration, supports pre-apply review via `pulumi preview` and policy-as-code checks that surface in PR comments, giving strong version/review coverage. However, there is no explicit documentation of a rollback/undo mechanism for automations (e.g., reverting a stack update or automation run) beyond generic state backend persistence. Missing for 10: explicit rollback/undo command or workflow evidence, and confirmation this applies specifically to AI-driven automations rather than manual IaC changes.",
     "evidenceIds": [
-      "pulumi-docs-4",
-      "pulumi-docs-5",
-      "pulumi-docs-8",
       "pulumi-docs-12",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-comm-20",
-      "pulumi-comm-12"
+      "pulumi-docs-8",
+      "pulumi-docs-19",
+      "pulumi-docs-40",
+      "pulumi-docs-4",
+      "pulumi-docs-33",
+      "pulumi-docs-34"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "destroy-teardown",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Pulumi's `pulumi destroy` command is directly evidenced by a hands-on probe showing it exits 0 and cleanly tears down resources after an apply, running headlessly without cloud dependency, confirming the standard destroy workflow works as documented. missing for 10: no independent/community corroboration specifically discussing destroy behavior (only a first-party probe and docs).",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Pulumi's Automation API docs explicitly state it lets you 'create, update, configure, and destroy infrastructure dynamically,' confirming a first-class destroy/teardown operation alongside the preview (plan) workflow shown elsewhere in the docs. Missing for 10: dedicated CLI reference docs for `pulumi destroy` itself and independent/hands-on confirmation that teardown reliably removes all resources cleanly.",
     "evidenceIds": [
-      "pulumi-probe-7",
-      "pulumi-docs-4",
-      "pulumi-probe-5"
+      "pulumi-docs-34",
+      "pulumi-docs-8",
+      "pulumi-docs-19"
     ]
   },
   {
@@ -1645,27 +1645,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's `pulumi preview` command computes a diff between declared program state and actual live resources, and this was verified hands-on (JSON steps output) without requiring cloud backend. State-and-backends docs also confirm Pulumi tracks resource state to compare against real infrastructure. However, the evidence never explicitly documents a dedicated `pulumi refresh` command or scheduled/automated drift-detection workflows (e.g. CI drift alerts), which are the more complete drift-detection story. missing for 10: explicit refresh command docs, automated/scheduled drift detection, independent community confirmation of drift-detection accuracy.",
+    "rationale": "Pulumi's `pulumi preview` command compares the declared program state against actual cloud resources and reports differences without applying changes, which is the core drift-detection mechanism, and state backends (Pulumi Cloud or DIY) persist the state used for that comparison. However, the evidence never explicitly documents the dedicated `pulumi refresh` command or a drift-detection dashboard/alerting feature, so the story is only partially evidenced. Missing for 10: explicit mention of `pulumi refresh` for state reconciliation, dedicated drift-detection/alerting UI, and independent hands-on confirmation of drift detection accuracy.",
     "evidenceIds": [
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-docs-4"
+      "pulumi-docs-21",
+      "pulumi-docs-4",
+      "pulumi-docs-14"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "environment-config-stacks",
     "verdict": "full",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's core primitive of \"stacks\" is confirmed hands-on (pulumi stack init dev, pulumi preview/up/destroy per stack) and state/config is backend-scoped per stack (pulumi-docs-4/14/23, pulumi-probe-6/7), which is exactly the mechanism developers use to separate dev/staging/prod environments. Missing for 10: explicit documentation citation showing pulumi config set per-stack values and a documented dev→staging→prod promotion workflow, and no independent community confirmation specifically about multi-stack environment management.",
+    "rationale": "Pulumi's docs explicitly describe stacks and per-stack configuration as core concepts ('projects, stacks, config, secrets, and more') and a unified workflow for managing 'infrastructure, secrets, and configuration' across environments, which is the standard Pulumi mechanism for separating dev/staging/prod. However, the evidence pack lacks a direct doc citation walking through creating multiple stacks per environment (e.g., 'pulumi stack init dev') or config hierarchy details. missing for 10: explicit doc/example of multi-stack per-environment workflow (pulumi stack init/select), config inheritance across stacks, independent hands-on confirmation.",
     "evidenceIds": [
-      "pulumi-probe-6",
-      "pulumi-probe-7",
+      "pulumi-docs-39",
+      "pulumi-docs-29",
       "pulumi-docs-4",
-      "pulumi-docs-14",
-      "pulumi-docs-23"
+      "pulumi-docs-14"
     ]
   },
   {
@@ -1687,15 +1687,15 @@
   {
     "productId": "pulumi",
     "storyId": "headless-ci-apply",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms Pulumi CLI supports fully non-interactive plan/apply in CI: `pulumi preview --non-interactive --json` and `pulumi up --non-interactive --yes --skip-preview` both ran headlessly with approval flags (--yes) and produced machine-parseable output, per hands-on probes [pulumi-probe-6][pulumi-probe-7], with `pulumi preview` docs confirming plan-only dry-run behavior [pulumi-docs-8][pulumi-docs-19]. However, the pack contains no evidence of the specific 'saved plan artifact' workflow (e.g., generating and re-applying a persisted plan file) that the story calls out, only generic non-interactive preview/apply. Missing for 10: documentation or hands-on proof of saved-plan-artifact generation/application (e.g., --save-plan/--plan flags), and independent (non-vendor) confirmation of this exact CI pattern.",
+    "rationale": "Evidence shows `pulumi preview` and general CLI docs, but nothing about saved plan artifacts (e.g., --save-plan/--plan), non-interactive flags (--yes/--non-interactive), or approval-gate workflows for CI apply. Policy-in-PR-comments (pulumi-docs-40) is unrelated to plan-artifact based apply.",
     "evidenceIds": [
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-21",
+      "pulumi-docs-40"
     ]
   },
   {
@@ -1704,7 +1704,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi provides a documented `pulumi import` command that adopts existing resources into stack state and generates matching code in the target language, plus `pulumi preview --import-file` to bulk-generate import files for existing resources, directly matching the story. Docs explicitly describe this as core migration functionality for resources created manually or by other IaC tools. Missing for 10: independent/hands-on verification of the import workflow itself (only preview/apply loop was probed, not import).",
+    "rationale": "Pulumi has well-documented first-party import tooling: `pulumi import` adopts an existing cloud resource into stack state and auto-generates the corresponding program code to manage it, and `pulumi preview --import-file` can bulk-generate an import file/plan across many resources, explicitly framed as a migration path from other IaC tools or manual provisioning. Missing for 10: independent/hands-on community corroboration specifically of the import workflow's reliability (community evidence in the pack covers general sentiment, not import specifically).",
     "evidenceIds": [
       "pulumi-docs-6",
       "pulumi-docs-17",
@@ -1719,43 +1719,42 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi documents importing existing (e.g., Terraform-created) resources via `pulumi import` and `pulumi preview --import-file`, generating Pulumi code and adding resources to Pulumi state, and explicitly markets migration from Terraform/CloudFormation. However, this is resource-by-resource adoption of live infrastructure, not a direct conversion of Terraform HCL codebase or import of Terraform state files themselves — no evidence of a bulk Terraform-state-to-Pulumi-state converter or HCL-to-native-language transpiler tool. missing for 10: evidence of direct Terraform state file import/conversion, bulk/automated HCL-to-Pulumi code conversion tooling, and independent/hands-on confirmation of a full codebase migration success story.",
+    "rationale": "Pulumi documents native HCL/Terraform language support and 'pulumi import' for adopting existing resources into Pulumi state, plus a migration landing page explicitly mentioning Terraform migration. However, evidence does not show a direct import of Terraform *state* files (only resource-by-resource import against live cloud resources) and lacks hands-on/independent confirmation of a full Terraform-codebase migration workflow. missing for 10: direct Terraform state-file import mechanism, end-to-end case study/independent validation of migrating an existing Terraform codebase+state, detail on HCL program conversion fidelity.",
     "evidenceIds": [
       "pulumi-docs-6",
       "pulumi-docs-10",
       "pulumi-docs-17",
       "pulumi-docs-21",
-      "pulumi-docs-25"
+      "pulumi-docs-25",
+      "pulumi-docs-31",
+      "pulumi-docs-22"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "open-license-governance",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of Pulumi's license type (e.g., Apache 2.0), its governance model, or any foundation/neutral steward that would prevent unilateral relicensing — only GitHub repo links and generic self-hosting/backend docs. Given the well-known industry concern (post-Terraform BSL) that devops leads would want addressed, this axis clearly applies but no evidence in the pack speaks to license or governance guarantees.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Pulumi's docs assert it is an 'open source platform' (pulumi-docs-28) and GitHub hosts the core engine, but the evidence pack contains no details on the specific license (e.g., Apache 2.0 terms), no mention of a foundation or multi-vendor governance structure, and no explicit commitment against relicensing — governance appears to be single-vendor (Pulumi Corp) controlled. missing for 10: explicit license text/terms, open governance model (e.g., neutral foundation, multiple maintaining companies), any public commitment or history preventing relicensing.",
     "evidenceIds": [
-      "pulumi-gh-1",
-      "pulumi-gh-2",
-      "pulumi-docs-27"
+      "pulumi-docs-28",
+      "pulumi-gh-1"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi offers a scriptable CLI and Automation API for running programs without the console, and hands-on probes confirm headless preview/up/destroy and MCP server operation work fully outside the UI, but there is no evidence of a full REST/OpenAPI surface (probe found no openapi.json) or explicit documentation that Pulumi Cloud UI features like Insights, Policy dashboards, or Neo's console-only controls are all reachable programmatically. missing for 10: explicit API/CLI parity claim for Pulumi Cloud console features (Insights, Policy management, Neo dashboard), a discoverable OpenAPI/REST spec, and independent confirmation that no UI-only functionality exists.",
+    "rationale": "Pulumi exposes Automation API (full programmatic IaC control equivalent to CLI) and a Cloud REST API for calling from the CLI, plus Automation API described as exposing 'the full power of infrastructure as code' programmatically. However, the probe found no discoverable OpenAPI spec, and evidence doesn't confirm that all Pulumi Cloud UI features (e.g., team/org management, policy management dashboards, Neo delegation) are fully API-accessible versus CLI/UI-only. missing for 10: a published OpenAPI/full REST API reference confirming UI-parity, independent/hands-on confirmation that Cloud UI features (policy, org admin, Neo) are all reachable via API, and evidence of parity for non-Automation-API workflows.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-probe-8",
-      "pulumi-probe-3",
-      "pulumi-docs-9",
-      "pulumi-docs-5"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-44",
+      "pulumi-probe-3"
     ]
   },
   {
@@ -1764,45 +1763,42 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi code is written in standard, open programming languages (TS, Python, Go, etc.) rather than a proprietary DSL, and state can be stored in a self-managed 'DIY' backend (S3, Azure Blob, GCS) instead of Pulumi Cloud, giving a path to keep data in open formats and avoid full platform lock-in. However, community evidence notes Pulumi still 'calls into the mothership' for some functionality and there is no documented explicit bulk-export/migration tool for leaving the platform. Missing for 10: dedicated data-export/migration tooling to leave, clear documentation on state file/format portability guarantees, and independent verification that self-hosted deployments have no residual cloud dependency.",
+    "rationale": "Pulumi documents DIY state backends where users store state themselves in S3/Blob/GCS object stores they control, plus self-hosting options and an open-source core platform, all of which support data portability and avoiding lock-in. However there is no explicit documentation of a stack export/import command in an open data format (e.g. JSON state export) or guidance on fully extracting configuration/secrets to leave the platform. Missing for 10: explicit state/config export format documentation, dedicated 'leave the platform' migration guide, and independent verification that exported state is usable outside Pulumi Cloud.",
     "evidenceIds": [
       "pulumi-docs-4",
       "pulumi-docs-14",
       "pulumi-docs-23",
       "pulumi-docs-27",
-      "pulumi-comm-9",
-      "pulumi-gh-1"
+      "pulumi-docs-28"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "openness-open-license",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence confirms Pulumi's core CLI/SDK is published on GitHub (pulumi-gh-1, pulumi-gh-2), so an AI-native user could read source there, but the evidence pack never states an explicit open-source license, and Pulumi's cloud/state backend and Neo agent components are proprietary SaaS (pulumi-docs-4, pulumi-docs-9) rather than open source. missing for 10: explicit license text/statement, confirmation that all product components (not just core CLI/SDK) are open, independent confirmation of license terms.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Pulumi explicitly states it is 'an open source platform' and links to its public GitHub repository (pulumi/pulumi) with permissively-licensed IaC engine and SDKs, giving AI-native users source access to inspect and build from official docs. Missing for 10: explicit license name/text (e.g., Apache-2.0) in the evidence pack, and no independent corroboration that this openness extends beyond the core engine (Pulumi Cloud/Neo are proprietary services).",
     "evidenceIds": [
+      "pulumi-docs-28",
       "pulumi-gh-1",
       "pulumi-gh-2",
-      "pulumi-docs-4",
-      "pulumi-docs-9"
+      "pulumi-gh-3",
+      "pulumi-gh-4"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "openness-self-host",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi's core engine/CLI is open-source and can run fully locally without any cloud dependency — confirmed hands-on via probes showing `pulumi preview`/`up`/`destroy` running headlessly against a local file:// backend with PULUMI_CONFIG_PASSPHRASE for state encryption (pulumi-probe-6, pulumi-probe-7). Docs further describe a 'DIY backend' storing state in self-managed object storage (S3/Azure Blob/GCS) as an alternative to the hosted Pulumi Cloud (pulumi-docs-4, pulumi-docs-14, pulumi-docs-23), and the pricing page explicitly states 'Self-hosting available' for the broader service (pulumi-docs-27), corroborated by a community note that Pulumi's state service has a self-management option (pulumi-comm-19). missing for 10: detailed first-party documentation of deploying the full self-hosted Pulumi Cloud service (UI/API), and independent hands-on verification of that enterprise self-hosted deployment rather than just the DIY state-backend/local-CLI path.",
+    "rationale": "Pulumi's pricing page explicitly states 'Self-hosting available' and docs describe a DIY state backend (self-managed S3/Azure Blob/GCS) for state storage, suggesting self-hosting of the core service is possible. However, a hands-on community report explicitly states Pulumi 'only works by calling in to the mothership... you cannot build an airgapped infrastructure with it,' directly contradicting full self-hosting capability. Missing for 10: first-party documentation of a concrete self-hosted Pulumi Cloud/service deployment guide, and independent corroboration that a fully air-gapped self-hosted setup works in practice.",
     "evidenceIds": [
+      "pulumi-docs-27",
       "pulumi-docs-4",
       "pulumi-docs-14",
-      "pulumi-docs-23",
-      "pulumi-docs-27",
-      "pulumi-comm-19",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-comm-9"
     ]
   },
   {
@@ -1811,10 +1807,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi's Policy-as-Code product explicitly lets teams define guardrails in code and apply them consistently across resources managed by Pulumi, Terraform, CloudFormation, or created manually — directly addressing pre-apply compliance enforcement, and this integrates with the CLI's preview/apply workflow to block non-compliant changes before they take effect. Missing for 10: no independent/hands-on evidence of a policy pack actually blocking a non-compliant `pulumi up`, and no detail on CI/CD gating specifics beyond docs claims.",
+    "rationale": "Pulumi CrossGuard/Policy-as-Code lets teams define guardrails in code enforced across Pulumi, Terraform, CloudFormation, or manual resources, and blog evidence shows policy violations surfaced as PR comments/checks that gate changes; combined with `pulumi preview` for pre-apply validation, this directly supports blocking non-compliant changes before apply. Missing for 10: independent/hands-on confirmation of enforcement blocking (vs. warn-only) and detail on mandatory vs advisory policy packs in CI.",
     "evidenceIds": [
       "pulumi-docs-5",
       "pulumi-docs-16",
+      "pulumi-docs-40",
       "pulumi-docs-8",
       "pulumi-docs-19"
     ]
@@ -1825,12 +1822,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's `pulumi preview` command explicitly shows creates, updates, and destroys without applying any changes, and this was independently verified via hands-on probe producing structured JSON steps[] output that an agent/tool can consume. Docs and probe evidence corroborate this core plan-apply workflow works headlessly. Missing for 10: independent third-party review specifically praising/critiquing preview accuracy in production use (community evidence is about Pulumi generally, not preview diffing specifically).",
+    "rationale": "pulumi preview is a first-party documented command that shows creates/updates/destroys before any changes are applied, directly matching the story, and is well documented with clear semantics and even an import-file variant. Missing for 10: independent/hands-on corroboration specifically confirming preview accuracy in production use.",
     "evidenceIds": [
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-docs-21"
+      "pulumi-docs-21",
+      "pulumi-probe-5"
     ]
   },
   {
@@ -1839,7 +1836,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi lets users choose a self-managed 'DIY' state backend (AWS S3, Azure Blob Storage, Google Cloud Storage) or self-host, which effectively lets a user pick the storage region/provider for state data, and self-hosting is explicitly offered on the pricing page. However, there is no documented region-selection control for the default Pulumi Cloud managed backend itself, and no explicit data-residency/compliance documentation (e.g., EU-only region option) for AI-native workflows. Missing for 10: explicit region-selection UI/API for Pulumi Cloud's managed backend, documented data-residency guarantees or compliance certifications tied to region choice.",
+    "rationale": "Pulumi lets customers choose their own state-storage location via the DIY backend (self-managed S3/Azure Blob/GCS buckets in any region) and offers self-hosting of the Pulumi Cloud backend, giving some control over data residency. However, there is no documentation of region selection or residency guarantees within the managed Pulumi Cloud service itself, and no independent verification of residency compliance. Missing for 10: explicit Pulumi Cloud region/residency options, compliance certifications (e.g., GDPR/data-residency statements), and independent confirmation of self-hosted deployments meeting residency requirements.",
     "evidenceIds": [
       "pulumi-docs-4",
       "pulumi-docs-14",
@@ -1853,7 +1850,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulumi is an infrastructure-as-code/cloud provisioning tool, not an AI model provider or data-training relationship; there's no axis for 'training data opt-out' in this product category — none of the evidence pertains to AI training data usage policies.",
+    "rationale": "Pulumi is an infrastructure-as-code/cloud provisioning platform, not a consumer AI model or data-processing service where 'preventing data from being used for AI training' is a relevant privacy control; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1876,7 +1873,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of a telemetry/usage-tracking opt-out setting (e.g., an env var, CLI flag, or config option) for Pulumi CLI or MCP server; no documentation or community evidence addresses telemetry controls at all.",
+    "rationale": "No evidence in the pack addresses telemetry opt-out, usage tracking, or CLI privacy settings for Pulumi CLI/tooling; this is a fair question for an IaC/dev tool but no documentation or community evidence confirms an opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -1885,9 +1882,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's Automation API is explicitly documented as a programmatic interface for running Pulumi programs without the CLI, letting developers drive previews/deploys/destroys directly from application code, and this is corroborated by community mention of coding infra migrations via Automation. missing for 10: independent hands-on verification of the Automation API itself (the probes validate CLI/MCP headless flows but not an actual Automation API SDK call).",
+    "rationale": "Pulumi's Automation API is explicitly documented as a programmatic interface for running Pulumi programs (create/update/configure/destroy infrastructure) without the CLI, with independent corroboration from GitHub docs and community mentions of using automation for infra migrations. missing for 10: no third-party hands-on case study demonstrating a production app driving deployments purely via Automation API.",
     "evidenceIds": [
       "pulumi-docs-2",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-4",
       "pulumi-comm-20"
     ]
   },
@@ -1897,15 +1897,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's provider ecosystem is well documented with 300+ providers spanning AWS, Azure, GCP, Kubernetes, and SaaS offerings via the Pulumi Registry, corroborated by GitHub docs and confirmed hands-on via CLI probes deploying resources. Community evidence corroborates real-world multi-cloud usage (AWS, GCP, Azure, DigitalOcean) though some note documentation/provider lag issues for niche services. Missing for 10: independent quantification of SaaS-provider breadth beyond major clouds and no dispute-level evidence of provider gaps preventing broad usage.",
+    "rationale": "Pulumi's docs and GitHub README explicitly claim provisioning across AWS, Azure, GCP, Kubernetes, and 300+ providers via the Pulumi Registry, spanning all major clouds and SaaS platforms, with independent community corroboration of multi-cloud use (AWS, GCP, DigitalOcean, k8s). Missing for 10: no independent audit of the full provider count/coverage breadth beyond vendor claims.",
     "evidenceIds": [
       "pulumi-gh-2",
-      "pulumi-docs-22",
+      "pulumi-gh-3",
+      "pulumi-docs-28",
       "pulumi-comm-7",
       "pulumi-comm-15",
-      "pulumi-comm-3",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-comm-3"
     ]
   },
   {
@@ -1925,42 +1924,42 @@
   {
     "productId": "pulumi",
     "storyId": "reusable-modules",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Pulumi has a well-documented public Registry of providers/packages (referenced implicitly via 'Pulumi Registry providers' in pulumi-docs-1 and the MCP server description 'querying Pulumi Registry information' in pulumi-probe-8), and 300+ providers are consumable per pulumi-gh-2. However, the evidence pack lacks explicit documentation of a publishing workflow for developers to submit/publish their own reusable components/packages to the public Registry, versioning/discovery mechanics, or community corroboration of publishing experience. missing for 10: first-party docs on the publish/submission process for community packages, evidence of component/package authoring guides, independent/hands-on confirmation of publishing a package to the Registry.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence only briefly references 'Pulumi Registry providers' in the context of language support (pulumi-docs-1/22), but there is no documentation in the pack describing a public registry workflow for developers to publish their own reusable modules/components (e.g., Pulumi Packages, Component Resources publishing) nor a clear consume-from-registry story beyond first-party providers. Missing for 10: explicit registry publish workflow docs, package/component authoring & publishing guide, and any consumption example of third-party community modules.",
     "evidenceIds": [
       "pulumi-docs-1",
-      "pulumi-gh-2",
-      "pulumi-probe-8"
+      "pulumi-docs-22"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "secret-config-values",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "A hands-on probe confirms Pulumi encrypts stack secrets via PULUMI_CONFIG_PASSPHRASE and can run headlessly with encrypted state (pulumi-probe-7), which supports the ability to store sensitive config outside code. However, the evidence pack lacks first-party docs on the `pulumi config set --secret` workflow, secret providers (KMS/Vault), or log redaction behavior, and there is no independent confirmation of masking-in-CLI-output claims. Missing for 10: docs on secret config commands and secret providers, evidence of automatic log/output redaction, and independent (non-vendor) verification of secrets never leaking in logs.",
+    "rationale": "Pulumi advertises secrets/config management as a first-class, unified part of its workflow (\"Manage infrastructure, secrets, and configuration with a unified workflow across any cloud\", \"centralized secrets and governance\") and details projects/stacks/config/secrets in its docs, plus Pulumi ESC can act as an OIDC provider for secure secret retrieval. However the evidence pack lacks concrete mechanics (e.g., `pulumi config set --secret`, encryption-at-rest details, log redaction specifics) or independent corroboration. Missing for 10: detailed docs on encrypted config storage/log-masking behavior, and hands-on/community validation that secrets never leak in practice.",
     "evidenceIds": [
-      "pulumi-probe-7",
-      "pulumi-docs-4",
-      "pulumi-docs-14",
-      "pulumi-docs-23"
+      "pulumi-docs-29",
+      "pulumi-docs-39",
+      "pulumi-docs-41",
+      "pulumi-docs-36"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "state-encryption",
-    "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Pulumi documents encrypted state backends and hands-on probe evidence confirms secrets are encrypted using PULUMI_CONFIG_PASSPHRASE even on a local file backend, verifying secret values are not stored in plaintext. Missing for 10: explicit documentation of KMS/cloud secrets-provider options for encrypting the whole state, independent third-party verification of encryption strength, and clarity on whether non-secret resource properties are also encrypted at rest.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack describes Pulumi's state backends (Pulumi Cloud, DIY S3/Azure/GCS backends) and general secrets/config management, but no citation explicitly confirms that state values (e.g., resource outputs, credentials) are encrypted at rest or that secrets are automatically encrypted within the state file itself.",
     "evidenceIds": [
-      "pulumi-probe-7",
       "pulumi-docs-4",
       "pulumi-docs-14",
-      "pulumi-docs-23"
+      "pulumi-docs-23",
+      "pulumi-docs-29",
+      "pulumi-docs-41"
     ]
   },
   {
@@ -1969,30 +1968,33 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi's docs show related state-safety capabilities — `pulumi import`/adoption for bringing existing resources under management (pulumi-docs-6,17,25), and `pulumi preview` for safely previewing changes without applying them (pulumi-docs-8,19,21) — plus general state backend concepts (pulumi-docs-4,14,23). However, the evidence pack never cites the actual `pulumi state mv`, `pulumi state rename`, or `pulumi state delete` commands that platform engineers use specifically for refactoring (moving/renaming/removing resources in state), so the core of the story is only indirectly supported. missing for 10: explicit documentation/evidence of `pulumi state move`, `pulumi state rename`, and `pulumi state delete` commands, plus hands-on confirmation these work safely during refactors.",
+    "rationale": "Pulumi's docs confirm state is inspectable/modifiable via backends (Pulumi Cloud or DIY object stores) and that resources can be brought under management via `pulumi import`, with `pulumi preview` letting engineers safely see planned changes before applying them. However, the evidence pack contains no direct documentation of the specific `pulumi state move`, `rename`, or `delete` (remove) sub-commands that platform engineers would use during refactoring — only import/adoption and preview are evidenced. Missing for 10: explicit docs/citations for `pulumi state mv`, `pulumi state rename`, `pulumi state delete`, and any independent hands-on account of safely refactoring state with these commands.",
     "evidenceIds": [
+      "pulumi-docs-4",
+      "pulumi-docs-14",
+      "pulumi-docs-23",
       "pulumi-docs-6",
       "pulumi-docs-17",
       "pulumi-docs-25",
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-docs-21",
-      "pulumi-docs-4",
-      "pulumi-docs-14"
+      "pulumi-docs-21"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "structured-plan-output",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Pulumi's `pulumi preview --json` produces a structured JSON steps[] array (op, urn, etc.) that an agent can parse to reason about a proposed change, and this was independently verified hands-on in a local, non-interactive run without Pulumi Cloud. Documentation and CLI reference corroborate this as an officially supported flag. missing for 10: no independent third-party (non-vendor) documentation of agents actually consuming this JSON for reasoning, only a single hands-on probe.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Pulumi's Automation API exposes preview/plan results programmatically (not via CLI text output), letting external code — including an AI agent — get structured objects describing proposed changes, and `pulumi preview` is documented as showing the proposed changes without applying them. However, no evidence explicitly documents a `--json` output flag for `pulumi preview` or a formal JSON schema for plan diffs, so the machine-readable claim rests only on the Automation API's programmatic surface rather than a dedicated JSON plan artifact. missing for 10: explicit documentation of `pulumi preview --json` (or equivalent) output format, a published JSON schema for plan/diff results, and independent confirmation that agents successfully parse this output.",
     "evidenceIds": [
+      "pulumi-docs-2",
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-4"
     ]
   },
   {
@@ -2000,8 +2002,8 @@
     "storyId": "targeted-partial-apply",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions Pulumi's targeting/exclusion flags (e.g., `--target`, `--exclude`) for `pulumi preview`/`pulumi up`/`pulumi destroy`; the pack only covers preview mechanics, import, and state/backends without addressing resource-scoped plan/apply. missing for 10: documentation or hands-on proof of --target/--exclude (or equivalent) flags limiting a plan/apply to specific resources.",
+    "confidence": "medium",
+    "rationale": "The evidence pack documents `pulumi preview` and general plan/apply concepts but contains no mention of `--target`, `--target-dependents`, or `--exclude` flags (or any equivalent) that let a platform engineer scope a plan/apply to specific resources. This is a fair and applicable axis for an IaC CLI tool, but no supporting evidence is present in the pack.",
     "evidenceIds": []
   },
   {
@@ -2010,15 +2012,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi documents a dedicated testing framework with Unit Tests (mocked, no real cloud calls), Property Tests, and Integration Tests using standard language test frameworks, plus 'pulumi preview' to check changes without touching production and Automation API for programmatic test orchestration. This directly satisfies writing/running infra tests without touching production. Missing for 10: independent hands-on validation of the testing framework specifically (probes verify preview/up/destroy but not the unit-test mocking flow) and community commentary on test-writing experience.",
+    "rationale": "Pulumi's docs explicitly describe unit tests (fast, in-memory, mocked external calls, using standard test frameworks like Mocha/NUnit), property tests, and integration tests that deploy ephemeral infra separate from production, plus `pulumi preview` to validate changes without applying them. This directly matches the story of writing automated infra tests without touching production. Missing for 10: independent/hands-on corroboration of the testing workflow and more detail on property-test mechanics beyond docs.",
     "evidenceIds": [
       "pulumi-docs-3",
       "pulumi-docs-15",
       "pulumi-docs-24",
       "pulumi-docs-8",
-      "pulumi-docs-19",
-      "pulumi-docs-2",
-      "pulumi-probe-6"
+      "pulumi-docs-19"
     ]
   },
   {
@@ -2036,8 +2036,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no documentation of versioning/compatibility promises, deprecation policy, or upgrade guides between Pulumi CLI/SDK releases; the closest items (resource import/adoption docs) address migrating existing cloud resources into Pulumi, not release-to-release compatibility. Missing for 10: any semver/compatibility policy docs, breaking-change/deprecation notices, or dedicated upgrade guides between major versions.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains no documentation of versioning/compatibility guarantees, deprecation policy, or version-to-version upgrade guides for Pulumi CLI/SDKs/providers. General docs on languages, testing, state backends, import, and MCP server say nothing about release compatibility promises, and the only related community comment describes stale/deprecated provider support rather than a documented upgrade guide.",
+    "evidenceIds": [
+      "pulumi-comm-1"
+    ]
   },
   {
     "productId": "terraform",
