@@ -215,7 +215,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
       {/* lg (not md): with every sm/md column visible the table needs ~810px, so a 768–1023px
           viewport still gets the horizontal scroll container instead of page-level overflow. */}
       <div className="overflow-x-auto rounded-2xl border border-zinc-800 lg:overflow-x-visible">
-        <table className="w-full border-collapse text-sm">
+        <table className="w-full border-collapse text-[15px]">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
               <SortableTh col="name" current={column} direction={direction} onSort={handleSort}>
@@ -269,7 +269,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                         href={`/arena/${row.arenaId}/product/${row.productId}`}
                         className="flex min-w-0 items-center gap-2 hover:text-emerald-300"
                       >
-                        <ProductLogoView product={{ id: row.productId, name: row.name }} size={24} hasLogo={row.hasLogo} />
+                        <ProductLogoView product={{ id: row.productId, name: row.name }} size={30} hasLogo={row.hasLogo} />
                         <span className="min-w-0 truncate font-medium">{row.name}</span>
                       </Link>
                       {row.hotReason && <HotChip reason={row.hotReason} />}

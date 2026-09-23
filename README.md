@@ -50,18 +50,16 @@ Arena, product, and verdict counts above (and in the badge row) are regenerated 
 
 ## Try it in 10 seconds
 
-Nothing to install — the rankings are a public JSON API, agent-readable markdown, and a hosted
-MCP server:
+Nothing to install — the rankings are a public JSON API and agent-readable markdown:
 
 ```bash
 curl https://ultrametric.ai/productarena/data/ai-coding/rankings.json   # any arena, machine-readable
 curl https://ultrametric.ai/productarena/arena/ai-coding/llms.md        # same arena, markdown for agents
 ```
 
-Agents: point any HTTP-transport MCP client at
-**`https://ultrametric.ai/productarena/mcp`** (keyless, rate-limited — the URL doubles as its
-own setup page), or run the stdio server locally:
-`claude mcp add productarena -- npx -y productarena-mcp`.
+Agents: start from [`/llms.txt`](https://ultrametric.ai/productarena/llms.txt) — every arena and
+product has agent-readable markdown, and the data API needs no auth. (A first-party Ultrametric
+MCP server + API is coming; ProductArena itself is not offered over MCP or a CLI.)
 
 ## What's new
 
@@ -97,7 +95,7 @@ section covers both the quick issue path (via [/submit](https://ultrametric.ai/p
 and the PR path, plus how to make your product probe well (llms.txt, OpenAPI, remote MCP,
 `.md` docs mirrors) so the pipeline sees everything you've shipped.
 
-**I want to consume the data (curl or an agent via MCP):**
+**I want to consume the data (curl, or an agent reading /llms.txt):**
 
 ```bash
 curl https://ultrametric.ai/productarena/data/categories.json
@@ -105,20 +103,8 @@ curl https://ultrametric.ai/productarena/data/ai-coding/rankings.json
 curl https://ultrametric.ai/productarena/llms.txt          # index for agents
 ```
 
-Or wire it into an MCP client:
-
-```json
-{
-  "mcpServers": {
-    "productarena": {
-      "command": "node",
-      "args": ["/absolute/path/to/productarena/mcp/dist/index.js"]
-    }
-  }
-}
-```
-
-See [`mcp/README.md`](./mcp/README.md) for the full tool list and setup.
+(A first-party Ultrametric MCP server + API is coming; ProductArena itself is not offered over
+MCP or a CLI — the JSON data API and llms.txt/llms.md surfaces above are the supported ways in.)
 
 **I want to contest a verdict (I think a score is wrong):**
 
@@ -751,19 +737,9 @@ ProductArena is built to be read by agents, not just browsed by humans:
   the methodology below (evidence tiers, judging, scoring, PA Score weights, story provenance,
   re-judge stability, bias disclosure), linked from the header next to Arenas and from
   `/llms.txt`.
-- **MCP** — two [MCP](https://modelcontextprotocol.io) servers expose this same data as eight
-  tools (`list_arenas`, `get_rankings`, `get_product`, `get_verdict`, `search_products`,
-  `compare`, `get_stacks`, `top_products`): a hosted remote endpoint at
-  **[ultrametric.ai/productarena/mcp](https://ultrametric.ai/productarena/mcp)** (streamable
-  HTTP, keyless, rate-limited — served by `infra/cloudflare-proxy/worker.js`; opening the URL
-  in a browser shows the setup page) and the **`productarena-mcp`** npm package (stdio, `mcp/`
-  in this repo — `claude mcp add productarena -- npx -y productarena-mcp`). See
-  [`mcp/README.md`](./mcp/README.md) for full setup and client config.
-- **CLI** — the **`productarena`** npm package (`cli/` in this repo) puts the same data in the
-  terminal: `npx productarena rankings ai-coding`, `productarena pick payroll` (top pick,
-  runner-up, close-race flag), `compare`, `top --oss`, live-resolved `stacks`, and an
-  agent-readiness `scan`. Every command takes `--json` for scripts and agents — see
-  [`cli/README.md`](./cli/README.md).
+- **MCP / CLI** — retired as offerings (2026-09-23): ProductArena is not served over its own
+  MCP server or CLI; a first-party Ultrametric MCP + API is coming instead. The `mcp/` and
+  `cli/` workspaces remain in-repo for that successor work but are not published entry points.
 - **schema.org** — arena pages embed an `ItemList` of `SoftwareApplication` entries and product
   pages embed a `SoftwareApplication`, both with `additionalProperty` entries for our own
   metrics (`aiEra`, `score`, etc). No `aggregateRating` — we don't have star ratings, and faking

@@ -46,45 +46,63 @@ export default function ProcessesPage() {
           Common startup journeys — several processes run back to back as one walkthrough, each
           with a combined agent ceiling and its own start-to-finish simulator.
         </p>
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {chains.map((chain) => {
-            const cTasks = chainTasks(chain)
-            const ceiling = computeCeiling(cTasks.flatMap((t) => t.dag.nodes))
-            return (
-              <Link
-                key={chain.id}
-                href={`/processes/chains/${chain.id}`}
-                className="group rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/40"
-              >
-                <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="flex min-w-0 items-center gap-1.5 font-medium group-hover:text-emerald-300">
-                    <IconChip icon={chainIcon(chain.id)} title={`${chain.name} — end-to-end playbook`} />
-                    <span className="min-w-0 truncate">{chain.name}</span>
-                  </h3>
-                  <CeilingBar pct={ceiling.pct} className="shrink-0" />
-                </div>
-                <p className="mt-1 text-xs text-zinc-500">{chain.tagline}</p>
-                <ol className="mt-3 space-y-1.5">
-                  {cTasks.map((t, i) => (
-                    <li key={`${t.id}-${i}`} className="flex items-center gap-2 text-xs text-zinc-400">
-                      <span className="flex shrink-0 gap-0.5">
-                        {t.dag.nodes.map((n, j) => (
-                          <span
-                            key={j}
-                            aria-hidden
-                            className={`h-1.5 w-1.5 rounded-full ${n.legalSignature ? 'bg-violet-400/80' : ROUTE_DOT[n.route]}`}
-                          />
+        {/* Founder 2026-09-23: a table like the all-processes one below, not a card grid. */}
+        <div className="mt-4 overflow-x-auto rounded-2xl border border-zinc-800">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-zinc-800 text-left text-[10px] uppercase tracking-widest text-zinc-400">
+                <th scope="col" className="px-3 py-2 font-normal">Playbook</th>
+                <th scope="col" className="hidden px-3 py-2 font-normal md:table-cell">Processes</th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Combined steps across every process in the playbook">Steps</span></th>
+                <th scope="col" className="px-3 py-2 font-normal"><span title="Share of the playbook's steps an agent can run today">Agent ceiling</span></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-zinc-800/70">
+              {chains.map((chain) => {
+                const cTasks = chainTasks(chain)
+                const nodes = cTasks.flatMap((t) => t.dag.nodes)
+                const ceiling = computeCeiling(nodes)
+                return (
+                  <tr key={chain.id} className="transition hover:bg-zinc-900/50">
+                    <td className="max-w-[320px] px-3 py-2.5 align-top">
+                      <Link
+                        href={`/processes/chains/${chain.id}`}
+                        className="flex items-center gap-1.5 font-medium hover:text-emerald-300"
+                      >
+                        <IconChip icon={chainIcon(chain.id)} title={`${chain.name} — end-to-end playbook`} />
+                        <span className="min-w-0 truncate">{chain.name}</span>
+                      </Link>
+                      <p className="mt-0.5 text-xs text-zinc-500">{chain.tagline}</p>
+                    </td>
+                    <td className="hidden px-3 py-2.5 align-top md:table-cell">
+                      <span className="flex flex-wrap items-center gap-1 text-xs text-zinc-400">
+                        {cTasks.map((t, i) => (
+                          <IconChip key={`${t.id}-${i}`} icon={processIcon(t.id)} title={`${t.title} — ${t.phase} process`} />
                         ))}
+                        <span className="text-zinc-500">{cTasks.length}</span>
                       </span>
-                      <IconChip icon={processIcon(t.id)} title={`${t.title} — ${t.phase} process`} />
-                      <span className="min-w-0 truncate">{t.title}</span>
-                      {t.region === 'us' && <span aria-label="US-specific process" title="US-specific: this flow is written around US law and agencies (IRS, Delaware, state filings)" className="shrink-0 text-xs">🇺🇸</span>}
-                    </li>
-                  ))}
-                </ol>
-              </Link>
-            )
-          })}
+                    </td>
+                    <td className="px-3 py-2.5 align-top">
+                      <span className="flex items-center gap-1.5 whitespace-nowrap font-mono text-xs tabular-nums text-zinc-400">
+                        {nodes.length}
+                        <span aria-hidden className="flex shrink-0 gap-0.5">
+                          {nodes.slice(0, 24).map((n, j) => (
+                            <span
+                              key={j}
+                              className={`h-1.5 w-1.5 rounded-full ${n.legalSignature ? 'bg-violet-400/80' : ROUTE_DOT[n.route]}`}
+                            />
+                          ))}
+                        </span>
+                      </span>
+                    </td>
+                    <td className="px-3 py-2.5 align-top">
+                      <CeilingBar pct={ceiling.pct} />
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
       </section>
       <section className="space-y-3">

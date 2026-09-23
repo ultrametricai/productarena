@@ -54,7 +54,6 @@ export default function EverythingPage() {
         { href: '/compare', label: 'Compare', note: 'any products side by side' },
         { href: '/stacks/builder', label: 'Stack builder', note: 'compose your own stack' },
         { href: '/submit', label: 'Submit a product', note: 'agent-readiness quick scan' },
-        { href: '/mcp', label: 'MCP server', note: 'query rankings from any agent' },
         { href: '/mcp#cli', label: 'CLI', note: 'npx productarena' },
         { href: '/llms.txt', label: '/llms.txt', note: 'for agents' },
       ],
