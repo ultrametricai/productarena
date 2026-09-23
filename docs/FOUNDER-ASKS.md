@@ -41,6 +41,8 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Arenas as a homepage tab next to Processes (grid moved out of companies mode) | shipped-next-deploy 2026-09-23 |
 | Keep deep-spiking until done | in-lane (depth ×3 running; sweeps A–L, M–Z, thin-arenas) |
 | 'Virtual Startup' — simulated startup journey, branching starting decisions, synthetic data, timeline mode | in-lane (virtual-startup) |
+| Product-page Access/CLI-docs box info arch — top rail retired, doc chips inline in header secondary row | shipped-next-deploy 2026-09-23 |
+| Showcase caption ('docs · captured … · view live') removed — provenance moves to the image tooltip | shipped-next-deploy 2026-09-23 |
 | 'All phases' toggle → 'All areas' | shipped-next-deploy 2026-09-23 |
 | Remove 'Startup processes, run by agents' heading on the homepage Processes tab | shipped-next-deploy 2026-09-23 |
 | Homepage title + mode tabs aligned to the full-width left edge | superseded same-day — founder reverted the full-width table move entirely |

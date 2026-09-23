@@ -22,6 +22,7 @@ import MomentumTrend from '@/components/MomentumTrend'
 import OpportunitiesSection from '@/components/OpportunitiesSection'
 import OssPill from '@/components/OssPill'
 import ProductActions from '@/components/ProductActions'
+import ProductLinkChips from '@/components/ProductLinkChips'
 import PricingSignals from '@/components/PricingSignals'
 import ProductLogo from '@/components/ProductLogo'
 import ProductShowcase from '@/components/ProductShowcase'
@@ -291,6 +292,9 @@ export default async function ProductPage({
           <MomentumChip popularity={data.popularity[id]} />
           <MomentumTrend series={momentumSeries} />
           <SpikeDepthChip arenaId={category} productId={id} />
+          {/* Vendor doc links (app/API/CLI/MCP docs ↗) — inline here since the old top rail's
+              lone "Access" box read as an empty frame (founder 2026-09-23). */}
+          <ProductLinkChips product={product} variant="label" />
           {vendorResponseCount > 0 && (
             <a
               href="#story-verdicts"
@@ -339,9 +343,9 @@ export default async function ProductPage({
               carries it. */}        </div>
       </div>
 
-      {/* Founder 2026-09-15: only the human essentials above the fold (Access, Install,
-          Compare). Try/Flag/Badge/For agents/Data live in the bottom rail near the page end. */}
-      <ProductActions data={data} productId={id} variant="top" />
+      {/* Top actions rail retired (founder 2026-09-23: after Install and Compare moved out it
+          was one near-empty box holding only the Access chips) — those chips now sit inline in
+          the header's secondary row above. Try/Flag/Badge/For agents/Data keep the bottom rail. */}
 
       {/* Showcase (screenshots) above the microterminal — founder rule: show what the product
           looks like before the hands-on replay. */}

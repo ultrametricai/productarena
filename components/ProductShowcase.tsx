@@ -32,7 +32,13 @@ export default function ProductShowcase({ product }: { product: Product }) {
           const liveUrl = shot.kind === 'docs' && product.urls.docs ? product.urls.docs : product.urls.site
           return (
             <figure key={shot.kind} className="min-w-0">
-              <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="group block">
+              <a
+                href={liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`${product.name} ${KIND_LABEL[shot.kind]} — captured ${formatCaptured(shot.capturedAt)}; click to view live`}
+                className="group block"
+              >
                 <Image
                   src={withBase(shot.path)}
                   alt={`${product.name} ${KIND_LABEL[shot.kind]} screenshot`}
@@ -43,17 +49,9 @@ export default function ProductShowcase({ product }: { product: Product }) {
                   className="h-auto w-full rounded-xl border border-zinc-800 bg-zinc-900 transition group-hover:border-emerald-400/60"
                 />
               </a>
-              <figcaption className="mt-1.5 text-xs text-zinc-500">
-                {KIND_LABEL[shot.kind]} · captured {formatCaptured(shot.capturedAt)} ·{' '}
-                <a
-                  href={liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-emerald-400/80 transition hover:text-emerald-300"
-                >
-                  view live ↗
-                </a>
-              </figcaption>
+              {/* No visible caption (founder 2026-09-23: "text under Showcase can go") — the
+                  capture provenance stays honest via the image tooltip, and clicking the shot
+                  still opens the live page. */}
             </figure>
           )
         })}
