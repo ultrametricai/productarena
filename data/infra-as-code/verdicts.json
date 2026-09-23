@@ -4,12 +4,13 @@
     "storyId": "agent-authors-change",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Crossplane's CLI supports rendering/testing Compositions standalone (crossplane-docs-7) which could let an agent preview a change, but the probe explicitly found no headless local plan/preview loop — every real plan/apply requires a live Kubernetes cluster with Crossplane installed (crossplane-probe-2), unlike Terraform-style plan/diff tools. There's no documented diff-and-approve workflow tailored for agent-authored changes.\nmissing for 10: a genuine headless 'plan' command producing a diff against live state, documented agent/approval integration, evidence of an AI agent actually driving this workflow end-to-end.",
+    "confidence": "low",
+    "rationale": "Crossplane's CLI supports rendering/testing Compositions headlessly without a live cluster (crossplane-docs-7), which could serve as a plan-like preview step, and marketing material vaguely claims APIs are 'auditable, machine-readable' and actionable by 'AI systems' (crossplane-docs-16, crossplane-docs-29). However there is no documented workflow where an agent authors a change, generates a diff, and holds it for human approval before apply — Crossplane's core model is continuous reconciliation/drift-correction (crossplane-docs-18) rather than a gated plan/apply/approve loop like Terraform. missing for 10: explicit plan/diff output tooling for agent-authored changes, an approval gate before apply, and any hands-on or community evidence of this workflow being used in practice.",
     "evidenceIds": [
       "crossplane-docs-7",
-      "crossplane-probe-2",
-      "crossplane-docs-16"
+      "crossplane-docs-16",
+      "crossplane-docs-29",
+      "crossplane-docs-18"
     ]
   },
   {
@@ -18,10 +19,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Crossplane's RBAC-based control plane and 'developer only given permission to perform operations at the interface' model (comm-8, docs-17) support a least-privilege foundation, and its declarative API design is explicitly pitched as safe for AI systems to act on (docs-16), but there is no documented mechanism for agent-specific credential scoping, plan/approval review gates, or blocking unapproved applies before they take effect. missing for 10: explicit approval/review-gate workflow for AI-driven changes, agent-scoped least-privilege credential issuance, evidence of a 'plan preview' step analogous to Terraform plan, and independent validation that unauthorized changes are actually blocked.",
+    "rationale": "Crossplane exposes declarative, auditable APIs enforced via Kubernetes RBAC, and its marketing explicitly claims these APIs can be safely acted on by 'automation and AI systems,' which supports least-privilege access control at the API layer. However, there is no documented review-gate or approval workflow specific to AI agents (e.g., a plan/apply staging step, diff approval, or agent-scoped credential issuance) — the RBAC and declarative-API claims are generic platform-engineering primitives, not an agent-oriented guardrail feature. missing for 10: concrete agent-specific review/approval gate mechanism, documented least-privilege credential issuance workflow for agents, independent evidence of this being used to block unapproved AI-driven changes.",
     "evidenceIds": [
       "crossplane-docs-16",
       "crossplane-docs-17",
+      "crossplane-docs-29",
+      "crossplane-docs-30",
       "crossplane-comm-8"
     ]
   },
@@ -30,9 +33,11 @@
     "storyId": "agentic-agent-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an llms.txt file, agent-oriented documentation format, or any mention of AI-agent-consumable docs; docs-16 mentions AI systems acting on APIs but does not describe agent-oriented documentation discovery. missing for 10: llms.txt file or equivalent, agent-facing documentation format, any explicit reference to AI agents consuming docs directly.",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "No evidence of an llms.txt file, agent-oriented documentation format, or any specific docs designed for AI agent consumption; only general marketing mentions of AI systems acting on APIs, not documentation structured for agents to consume.",
+    "evidenceIds": [
+      "crossplane-docs-16"
+    ]
   },
   {
     "productId": "crossplane",
@@ -40,22 +45,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence only shows marketing language about exposing APIs that 'AI systems can safely act on' (crossplane-docs-16), which is about external agents calling Crossplane's API, not the product itself generating AI-driven insights or suggestions from data. No feature, dashboard, or docs describe AI-generated analysis, recommendations, or insights surfaced to users.",
-    "evidenceIds": [
-      "crossplane-docs-16"
-    ]
+    "rationale": "Crossplane is an infrastructure control-plane tool for provisioning resources declaratively; while docs mention APIs 'AI systems can safely act on,' there is no evidence of AI-generated insights, analytics, or suggestions surfaced from data within the product itself.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Crossplane's control plane continuously reconciles desired state and self-corrects drift autonomously (crossplane-docs-18), and its declarative APIs are explicitly framed as actionable by automation/AI systems (crossplane-docs-16), which supports background autonomous operation of infrastructure. However, there is no evidence of AI-native 'automations' or agentic workflows being set up specifically for AI systems, scheduled/triggered agent tasks, or any AI-specific orchestration features beyond generic drift-correction and declarative reconciliation. missing for 10: explicit AI-agent-triggered automation examples, scheduling/triggers for autonomous AI tasks, evidence of AI systems actually driving Crossplane resources end-to-end, independent hands-on validation of autonomous background operation.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crossplane's control-plane model is inherently autonomous background automation: declared resources are continuously reconciled and drift is auto-corrected without human intervention, and docs explicitly frame its declarative APIs as things 'automation and AI systems can safely act on'. However, evidence doesn't show a specific AI-agent workflow or independent confirmation of AI-driven autonomous setup — it's inferred from general control-loop/reconciliation behavior rather than an AI-specific feature.\nMissing for 10: explicit AI-agent tooling/integration story, independent/hands-on evidence of an AI system actually configuring and running autonomous Crossplane automations.",
     "evidenceIds": [
       "crossplane-docs-18",
       "crossplane-docs-16",
-      "crossplane-docs-17"
+      "crossplane-docs-29",
+      "crossplane-docs-21"
     ]
   },
   {
@@ -64,7 +68,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane infrastructure orchestration tool, not an AI assistant product; there is no built-in AI assistant persona for users to delegate tasks to. One doc line mentions APIs that 'AI systems can safely act on' but this refers to external systems calling Crossplane's APIs, not a built-in assistant feature — this is a category error for this axis.",
+    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-provisioning framework, not a product with an interactive built-in AI assistant persona; the evidence only discusses APIs being 'safely acted on' by AI systems (external agents calling its APIs), not a delegate-to-built-in-assistant feature. This axis is a category error for this type of product.",
     "evidenceIds": [
       "crossplane-docs-16"
     ]
@@ -72,17 +76,16 @@
   {
     "productId": "crossplane",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane is fundamentally a Kubernetes control-plane operator: everything is driven by declarative YAML/CRDs reconciled by controllers, which is inherently automatable via kubectl/GitOps pipelines (ArgoCD/Flux) as community evidence confirms, and the CLI itself is keyless and scriptable. However the probe shows every real operation requires a live Kubernetes cluster with Crossplane installed — there's no standalone local plan/apply loop like other CLI-first tools, meaning 'headless CI' usage requires provisioning/maintaining a cluster as a CI dependency rather than a lightweight headless binary. missing for 10: evidence of a documented CI-specific workflow/example (e.g. official GitHub Action or CI recipe), confirmation of non-interactive apply without cluster bootstrap overhead, and independent hands-on reports of running Crossplane in CI pipelines.",
+    "rationale": "Crossplane is inherently headless — a Kubernetes control plane and API rather than a UI-driven tool — and ships a CLI explicitly for testing/rendering Composition Functions without needing a live cluster and for building/pushing packages, both suited to CI pipelines. Community discussion also references using Crossplane within GitOps (Flux/ArgoCD) automation workflows, corroborating headless/CI usage. Missing for 10: no explicit first-party CI pipeline examples (e.g., GitHub Actions) or documented automation recipes showing `crossplane render` used in a CI job.",
     "evidenceIds": [
-      "crossplane-probe-2",
-      "crossplane-probe-1",
       "crossplane-docs-7",
+      "crossplane-docs-9",
+      "crossplane-probe-1",
       "crossplane-comm-9",
-      "crossplane-comm-10",
-      "crossplane-docs-18"
+      "crossplane-comm-10"
     ]
   },
   {
@@ -91,18 +94,16 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes-based infrastructure control plane, not an AI agent or assistant capable of consuming external tools; the evidence pack shows no agentic/LLM tool-use component that could plug in MCP servers to gain tool capabilities. The only AI-related mention (crossplane-docs-16) describes AI systems acting on Crossplane's APIs, the opposite direction of an MCP-client story, so this axis is a category error for this product type.",
-    "evidenceIds": [
-      "crossplane-docs-16"
-    ]
+    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-provisioning platform, not an AI agent or agent-facing tool host; plugging MCP servers into it so 'it can use their tools' is a category mismatch for this product type. No evidence shows it acting as an MCP client consuming external tool servers.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane framework, not an AI agent, so publishing an official MCP server is a plausible ecosystem capability, but no evidence in the pack mentions an MCP server, MCP integration, or agent connectivity of any kind—only marketing language about 'AI systems' acting on APIs, which is not an MCP server claim.",
+    "confidence": "medium",
+    "rationale": "Crossplane is an infrastructure control-plane, not an agent, so the axis of publishing an official MCP server for agents to connect via does apply (it's a platform/tool whose ecosystem could ship one), but no evidence in the pack mentions any MCP server, integration, or protocol support—only a marketing line about APIs being actionable by 'AI systems'. Missing for 10: any documented MCP server, endpoint, or first-party integration enabling agent connectivity.",
     "evidenceIds": [
       "crossplane-docs-16"
     ]
@@ -113,27 +114,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossplane's interface is entirely declarative YAML/Compositions plus a CLI for build/test/push workflows; the closest hit is marketing copy saying APIs can be 'acted on' by AI systems, but that describes external consumers, not natural-language command input into Crossplane itself. No documentation, CLI feature, or probe shows any natural-language command interface. Missing for 10: any NL command parser, chat/agent interface, or evidence of accepting free-text instructions instead of declarative manifests.",
+    "rationale": "Crossplane's interface is declarative YAML/Kubernetes APIs and a CLI for packages/composition testing; the evidence only claims APIs are 'machine-readable' and that AI systems can 'act on' them, not that a user can issue natural-language commands to operate Crossplane. No chatops, NL parser, or AI-assistant interface is documented or shown in community evidence.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-1",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
+      "crossplane-docs-29",
+      "crossplane-probe-1"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-official-cli",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane ships an official CLI (docs and hands-on probe confirm install via brew and working `crossplane version --client`) supporting building/testing/rendering Compositions and managing packages, but it is not framed or evidenced as an AI-native/agentic interface (no MCP integration, no agent-friendly output modes, no natural-language or automation-specific tooling beyond generic CLI usage). missing for 10: explicit AI-native design/marketing for the CLI itself, evidence of agent-friendly structured output or automation hooks, and independent corroboration beyond one hands-on probe.",
+    "rationale": "Crossplane ships a documented official CLI (docs.crossplane.io/cli/latest/) covering building/testing/rendering compositions, installing/updating/pushing packages, and troubleshooting resources — all scriptable and usable in automated/agentic pipelines. missing for 10: no explicit AI-agent-oriented CLI features (e.g., structured machine-readable output tailored for LLM agents) and no independent/hands-on corroboration of CLI usage in agentic workflows.",
     "evidenceIds": [
       "crossplane-docs-7",
       "crossplane-docs-8",
       "crossplane-docs-9",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
+      "crossplane-probe-1"
     ]
   },
   {
@@ -142,26 +141,26 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane explicitly documents that it exposes 'declarative APIs that humans, automation, and AI systems can safely act on' (docs-16), and its architecture is built on the Kubernetes API server extended via CRDs/Managed Resources (docs-3, docs-13, docs-20, docs-21), which forms a standard, machine-readable, documented API surface. This is reinforced by an official CLI (probe-1, probe-2) for interacting with the control plane programmatically. missing for 10: independent/hands-on evidence of an AI agent actually driving Crossplane via the API, and more detail on API schemas/authentication for agentic use beyond marketing copy.",
+    "rationale": "Crossplane explicitly documents that its declarative APIs (built on the Kubernetes API) are designed to be acted on by 'humans, automation, and AI systems' and are 'explicit, auditable, and machine-readable', plus it ships an official CLI for programmatic interaction with Compositions and Packages. Missing for 10: independent/hands-on evidence of an AI agent actually driving Crossplane via this API, and no explicit API reference/schema docs cited beyond marketing claims.",
     "evidenceIds": [
       "crossplane-docs-16",
+      "crossplane-docs-29",
       "crossplane-docs-21",
-      "crossplane-docs-3",
-      "crossplane-docs-13",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
+      "crossplane-docs-7",
+      "crossplane-probe-1"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Crossplane's own marketing claims it exposes 'declarative APIs that humans, automation, and AI systems can safely act on' and leverages Kubernetes RBAC for security, which implies a path to scoped, least-privilege access control for agentic consumers. However, there is no concrete documentation of an agent-specific credential-issuance mechanism (e.g., token minting, scoped API keys, or short-lived credentials tailored for AI agents) — it relies on generic Kubernetes RBAC rather than a purpose-built agent credentialing feature. Missing for 10: explicit agent-credential issuance workflow, scoping granularity examples, and independent verification that RBAC is actually used this way in practice.",
+    "rationale": "Crossplane inherits Kubernetes RBAC and markets itself as exposing declarative APIs 'humans, automation, and AI systems can safely act on,' which implies scoped access control is possible via standard k8s RBAC/ServiceAccounts, but there is no concrete documentation of an agent-specific credential-issuance mechanism or least-privilege workflow tailored to AI agents. Missing for 10: explicit agent-facing credential scoping feature, docs on issuing/rotating scoped tokens for agents, and any hands-on or community validation of this specific use case.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-17"
+      "crossplane-docs-17",
+      "crossplane-docs-30"
     ]
   },
   {
@@ -179,7 +178,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of an event/webhook subscription mechanism for AI agents or other consumers; Crossplane's model is Kubernetes-native reconciliation/drift-correction, not webhook-based event push. This is a fair capability to ask of an infrastructure control plane, but nothing in the evidence documents it.",
+    "rationale": "No evidence of any webhook subscription or event notification mechanism; Crossplane is a Kubernetes control-plane relying on reconciliation loops and drift correction, not documented event/webhook APIs for external subscribers.",
     "evidenceIds": []
   },
   {
@@ -188,7 +187,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Crossplane exposes declarative APIs that AI systems could act on, but there is no documented feature for generating infrastructure code from natural language within the Crossplane toolchain itself (CLI, docs, or otherwise).",
+    "rationale": "Evidence shows Crossplane exposes declarative APIs that AI systems could act on (crossplane-docs-16) and offers a CLI for testing/building compositions, but there is no evidence of built-in AI assistance that generates infrastructure code from natural language within the toolchain itself.",
     "evidenceIds": []
   },
   {
@@ -197,7 +196,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an interactive API reference with runnable examples exists in the pack; documentation is described only as static pages and CLI docs, with no mention of a live/interactive reference or embedded runnable code snippets.",
+    "rationale": "No evidence of an interactive API reference or runnable examples anywhere in the docs, CLI, or community sources; only static documentation pages and CLI usage descriptions are mentioned.",
     "evidenceIds": []
   },
   {
@@ -205,22 +204,19 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crossplane's CRD-based schemas (crossplane-docs-13) imply an OpenAPI-compatible structure inherent to Kubernetes, but the evidence pack contains no explicit documentation or feature describing a downloadable OpenAPI or machine-readable API spec for Crossplane's Composite Resources or Providers. Missing for 10: explicit docs on exporting/downloading OpenAPI schema, CLI or API endpoint for spec retrieval, and any community/hands-on confirmation of this capability.",
-    "evidenceIds": [
-      "crossplane-docs-13"
-    ]
+    "confidence": "low",
+    "rationale": "Marketing copy calls Crossplane's declarative APIs 'machine-readable' and 'auditable' (crossplane-docs-16, crossplane-docs-29), but no evidence describes an actual downloadable OpenAPI spec or schema export mechanism for Crossplane XRDs/CRDs.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Crossplane's CLI supports rendering/testing Composition Functions locally without needing a live Kubernetes cluster (crossplane-docs-7), which enables some local, production-safe testing. However, a probe shows that real plan/apply operations still require a running Kubernetes cluster with Crossplane installed, with no built-in local sandbox/preview loop for full resource provisioning — so isolating test workloads from production relies on the user provisioning a separate cluster/cloud account rather than a first-class sandbox feature. missing for 10: dedicated sandbox-mode or dry-run against real cloud providers, evidence of safe multi-tenant test isolation, and confirmation that render-only testing covers full MR/Composition behavior rather than just function outputs.",
+    "rationale": "Crossplane's CLI explicitly supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster running Crossplane,' which enables local testing isolated from any live/production control plane. However, this only covers Composition Function testing, not a full sandbox environment for managed resources, providers, or actual cloud state, and there's no dedicated 'sandbox mode' or safe-test-environment feature documented beyond this. Missing for 10: a documented full sandbox/staging environment for managed resources and providers, evidence of isolating actual cloud resource provisioning from production, and independent confirmation of safe non-production testing workflows.",
     "evidenceIds": [
-      "crossplane-docs-7",
-      "crossplane-probe-2"
+      "crossplane-docs-7"
     ]
   },
   {
@@ -228,18 +224,28 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "While Crossplane exposes CRD-based APIs and has a 'Composition Revisions' feature for managing changes, the evidence pack contains no documentation of a formal API versioning scheme or deprecation policy for its own APIs (e.g., CRD version graduation, deprecation timelines, migration guides). Missing for 10: explicit deprecation policy docs, CRD version stability guarantees, migration/upgrade guidance for deprecated APIs.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence shows Crossplane has versioned resources (Composition Revisions, feature-flagged alpha features, pre-release Helm channels) but no citation documents an explicit API versioning/deprecation policy (e.g., how long alpha/beta APIs are supported, migration guarantees). Missing for 10: a documented deprecation policy page, API version support timelines, and any independent confirmation that deprecations are predictable/safe for automated (AI) consumers.",
+    "evidenceIds": [
+      "crossplane-docs-15",
+      "crossplane-docs-19",
+      "crossplane-docs-25"
+    ]
   },
   {
     "productId": "crossplane",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence describes Crossplane's declarative APIs, Compositions, and controller-based reconciliation, but nothing in the pack documents or demonstrates bulk/batch operations across many resources at once (e.g., batch apply, multi-resource templating at scale, or AI-driven bulk actions).",
-    "evidenceIds": []
+    "rationale": "Crossplane's declarative, Kubernetes-native model (CRDs, GitOps workflows, Compositions) implies that many resources can be created/updated/deleted in bulk via standard kubectl/GitOps tooling, and docs mention machine-readable, automation-friendly APIs and drift correction. However, no evidence explicitly documents a bulk-operation feature or workflow (e.g., batch apply across many composite resources, bulk import, mass reconciliation) — missing for 10: explicit bulk-operation tooling/documentation, hands-on demonstration of operating on many resources simultaneously, and independent confirmation of scale behavior.",
+    "evidenceIds": [
+      "crossplane-docs-16",
+      "crossplane-docs-18",
+      "crossplane-docs-29",
+      "crossplane-comm-9",
+      "crossplane-comm-10"
+    ]
   },
   {
     "productId": "crossplane",
@@ -261,7 +267,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-orchestration tool, not a scheduler or workflow-automation engine for recurring jobs; its reconciliation loop continuously corrects drift rather than running scheduled/recurring tasks. This story is a category error for this product type.",
+    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-provisioning tool for managing declarative APIs and resources, not a workflow/job scheduler; scheduling recurring jobs or workflows is outside its product category.",
     "evidenceIds": []
   },
   {
@@ -284,25 +290,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack never documents a destroy/teardown operation or workflow for Crossplane; it covers install, packages, functions, and drift-correction, but the only deletion-related item (crossplane-docs-6) is about *protecting* providers from deletion, not enabling clean teardown. No CLI or docs evidence shows a 'crossplane destroy' or cascading delete guarantee for an environment. Missing for 10: any documentation of a destroy/delete command, cascading resource cleanup behavior, or a described teardown workflow.",
-    "evidenceIds": [
-      "crossplane-docs-6",
-      "crossplane-docs-9",
-      "crossplane-probe-2"
-    ]
+    "rationale": "The evidence pack documents installation, composition, packaging, and drift-correction features but contains no mention of a destroy/teardown operation or documentation on deleting/decommissioning provisioned resources or entire environments. Since Crossplane is an infrastructure-provisioning control plane, a clean teardown capability is a fair expectation, but nothing in the pack demonstrates it. missing for 10: any docs or community evidence on deleting/uninstalling managed resources or environments, confirmation that resource deletion cascades cleanly, and any CLI/kubectl-based teardown workflow.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "drift-detection",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Crossplane's control-plane model continuously reconciles declared desired state against actual cloud resources and self-corrects drift automatically, as documented directly ('If your software ever drifts from your desired state, the control plane automatically corrects the drift'). This is reinforced by its reconciliation-based architecture (managed resources, compositions) rather than one-off plan/apply. Missing for 10: independent hands-on verification/benchmarks of drift-detection behavior in production, and no detail on drift visibility/reporting tooling (e.g., diffing UI) beyond auto-correction.",
+    "confidence": "high",
+    "rationale": "Crossplane's control plane continuously reconciles managed resources against declared desired state and automatically corrects drift, as documented directly ('If your software ever drifts from your desired state, the control plane automatically corrects the drift'), and community commentary corroborates its active-controller reconciliation model versus static IaC tools. missing for 10: no explicit 'diff/plan' style drift report separate from auto-remediation, and no independent hands-on validation of drift detection behavior.",
     "evidenceIds": [
       "crossplane-docs-18",
-      "crossplane-docs-23",
-      "crossplane-docs-3",
-      "crossplane-comm-3"
+      "crossplane-comm-3",
+      "crossplane-docs-17"
     ]
   },
   {
@@ -324,11 +325,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Crossplane's core resource model (Compositions, XRDs) is YAML/CRD-based, but its Functions pipeline explicitly supports writing composition logic in general-purpose languages like Python and Go (as well as KCL), which brings type systems and IDE tooling into play (crossplane-docs-2, crossplane-docs-26). However, this applies only to the Function extension mechanism, not to defining the full infrastructure spec itself, and there's no evidence of dedicated SDKs, typed client libraries, or IDE integration for this workflow. missing for 10: dedicated general-purpose-language SDK for defining infra resources (not just functions), documented IDE/autocomplete support, type-safety examples, loop/programmatic composition examples, independent hands-on validation of this workflow.",
+    "rationale": "Crossplane's core resources (Providers, Compositions, Managed Resources) are defined declaratively in YAML, but its Composition Functions pipeline lets you write configuration logic in general-purpose languages like Python and Go (as well as KCL), which brings programmatic constructs into part of the workflow. This falls short of a full GPL-based IaC experience with native types, loops, and IDE support across the whole resource model as in tools like Pulumi/CDK.\nmissing for 10: evidence of typed SDKs for defining Crossplane resources natively in Go/Python/TypeScript with IDE autocomplete, evidence of loop/conditional constructs used to generate multiple resources, and independent hands-on confirmation of IDE tooling quality.",
     "evidenceIds": [
       "crossplane-docs-2",
-      "crossplane-docs-26",
-      "crossplane-docs-1"
+      "crossplane-docs-1",
+      "crossplane-docs-13"
     ]
   },
   {
@@ -337,10 +338,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossplane operates as a continuously-reconciling Kubernetes control plane rather than a plan/apply tool with saved plan artifacts and approval gates; the evidence pack contains no documentation of a CI-oriented plan/apply/approve workflow. The hands-on probe explicitly notes that unlike Terraform-style tools, 'every real plan/apply operation requires a running Kubernetes cluster... no local plan/preview loop exists,' confirming the absence of this capability.",
+    "rationale": "Crossplane's architecture is a continuously reconciling Kubernetes control plane, not a plan/apply CLI workflow; the only CI-adjacent tool evidenced is 'crossplane render' for testing compositions without a cluster, with no mention of saved plan artifacts, approval flags, or a non-interactive apply gate. This is an applicable axis for an infra-provisioning tool, but no evidence shows the plan/apply-with-approval CI pattern exists.",
     "evidenceIds": [
-      "crossplane-probe-2",
-      "crossplane-docs-7"
+      "crossplane-docs-7",
+      "crossplane-docs-8"
     ]
   },
   {
@@ -349,16 +350,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack shows a Crossplane feature for importing existing/unmanaged cloud resources or auto-generating matching Composition/Claim YAML; the docs cover installation, packages, and compositions but nothing about resource discovery or import tooling. missing for 10: an import/adopt command or workflow, generated MR/Composition code from existing infra, any docs or community reports of migrating pre-existing resources into Crossplane management.",
-    "evidenceIds": []
+    "rationale": "No evidence of an import/discovery feature that detects existing cloud resources and generates matching Crossplane configuration (e.g., no mention of 'crossplane import', resource discovery, or reverse-generation of Managed Resource YAML from live infra). The CLI docs cover building, testing, rendering, and packaging but nothing about importing pre-existing unmanaged cloud resources.",
+    "evidenceIds": [
+      "crossplane-docs-7",
+      "crossplane-docs-9",
+      "crossplane-probe-1"
+    ]
   },
   {
     "productId": "crossplane",
     "storyId": "migrate-from-terraform",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any Terraform-state import, HCL conversion, or migration tooling in Crossplane's docs, CLI, or community discussion; Crossplane uses an entirely different declarative Kubernetes-native model with no documented path to ingest existing Terraform codebases or state files.",
+    "confidence": "medium",
+    "rationale": "No evidence of any Terraform state/config import or migration tooling; Crossplane's docs and CLI reference only cover installation, packages, and Composition Functions, with no mention of importing Terraform HCL or tfstate. Community discussion contrasts Crossplane with Terraform but never describes a migration path.",
     "evidenceIds": []
   },
   {
@@ -366,8 +371,8 @@
     "storyId": "open-license-governance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of Crossplane's license (e.g., Apache 2.0) or its governance model (e.g., CNCF graduation, foundation stewardship) — nothing here addresses licensing-governance at all. missing for 10: license identification, governance/foundation structure, any statement on relicensing protection.",
+    "confidence": "low",
+    "rationale": "No evidence pack items mention Crossplane's license type, CNCF or other open-governance foundation status, or any relicensing commitments — the story applies to any infra/platform tool a devops-lead would adopt, but no licensing/governance evidence is present.",
     "evidenceIds": []
   },
   {
@@ -376,27 +381,25 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane is fundamentally a Kubernetes control-plane extension: all functionality (Providers, Compositions, Functions, Managed Resources) is exposed as declarative Kubernetes API objects (CRDs) manipulated via kubectl/API, with docs explicitly framing it as exposing 'declarative APIs that humans, automation, and AI systems can safely act on' and letting users 'design the APIs and abstractions' for their control planes — there is no separate UI gating capability. Missing for 10: no evidence pack mention of any Crossplane-native UI/console to explicitly confirm parity claims, and no independent/hands-on corroboration of full UI-API equivalence.",
+    "rationale": "Crossplane is fundamentally a Kubernetes-native control plane whose entire interaction model is the declarative API (CRDs/YAML) rather than a separate UI — docs explicitly describe exposing 'declarative APIs that humans, automation, and AI systems can safely act on' and building platforms via machine-readable, auditable APIs, meaning there is no UI-only capability gap by design. Missing for 10: explicit confirmation/comparison against any optional UI (e.g., Upbound console) showing full feature parity, and independent hands-on verification of API completeness.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-21",
-      "crossplane-docs-20",
-      "crossplane-docs-13",
-      "crossplane-docs-10"
+      "crossplane-docs-29",
+      "crossplane-docs-30",
+      "crossplane-docs-21"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Crossplane's resources (Compositions, Configurations, Managed Resources) are defined as plain YAML/KCL/etc. stored in Kubernetes, which is inherently portable and inspectable, and packages are designed to be portable across clusters (crossplane-docs-11, crossplane-docs-2). However there is no explicit documented 'export all data' feature or bulk-export/migration tool, and no evidence addressing exporting live state or leaving the platform cleanly. missing for 10: explicit data-export/backup tooling, documentation of exporting full state (not just config) in open formats, and any evidence of migration/exit workflow.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Crossplane's resources (Providers, Compositions, Configurations) are all defined as declarative Kubernetes YAML manifests, and community comments note this YAML is 'easy enough to commit to source control', implying data/config is inherently stored in an open, portable format rather than a proprietary export. However, there is no explicit documentation of an export command, data-migration tooling, or guarantee that all runtime state (not just config) can be extracted to leave the platform. missing for 10: explicit export/extraction feature or docs, confirmation that live resource state (not just desired-state YAML) is portable, and any migration guide for leaving Crossplane.",
     "evidenceIds": [
-      "crossplane-docs-2",
-      "crossplane-docs-11",
-      "crossplane-docs-13",
-      "crossplane-docs-15"
+      "crossplane-docs-29",
+      "crossplane-comm-10",
+      "crossplane-docs-13"
     ]
   },
   {
@@ -405,24 +408,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions Crossplane's source code license, GitHub repository, or open-source licensing terms (e.g., Apache 2.0) — the pack covers only product docs, community discussion, and CLI probes. Missing for 10: license file/declaration, repository link, any statement about open-source status or license type.",
+    "rationale": "The evidence pack contains no mention of Crossplane's source code, GitHub repository, or license terms — only feature/docs descriptions and community discussion of functionality, none addressing openness of the source. missing for 10: license statement, GitHub repo link, evidence of source availability.",
     "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Crossplane is an open-source Kubernetes control-plane extension that users install and run themselves via Helm on their own cluster, with full control over feature flags, package installation, and versions (docs-4, docs-5, docs-6, docs-19, docs-22, docs-25). The probe confirms hands-on that the CLI and control plane operate entirely against a self-managed Kubernetes cluster with no forced SaaS dependency (probe-2). Missing for 10: no explicit vendor statement contrasting self-hosting vs. any managed offering, and no independent write-up specifically about self-hosting experience at scale.",
+    "rationale": "Crossplane is an open-source project installable via Helm chart into any Kubernetes cluster (crossplane-docs-4, crossplane-docs-28), giving full self-hosted control over the core product, with configuration options like feature flags and pre-release channels (crossplane-docs-19, crossplane-docs-25). Missing for 10: no explicit dedicated 'self-hosting' guide or independent hands-on report confirming a fully self-hosted deployment experience beyond the standard install docs.",
     "evidenceIds": [
       "crossplane-docs-4",
-      "crossplane-docs-5",
-      "crossplane-docs-6",
+      "crossplane-docs-28",
       "crossplane-docs-19",
-      "crossplane-docs-22",
       "crossplane-docs-25",
-      "crossplane-probe-2"
+      "crossplane-docs-22"
     ]
   },
   {
@@ -431,18 +432,17 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Crossplane's control-plane architecture, RBAC, packages, and CLI tooling, but contains no mention of a policy-as-code engine (e.g., OPA/Gatekeeper/Kyverno integration, admission webhooks, or built-in policy checks) that blocks non-compliant infrastructure changes before apply. RBAC is referenced only as an access-control feature, not as a compliance gate.",
+    "rationale": "Crossplane's evidence covers RBAC, drift correction, and composition/testing tooling, but there is no mention of a policy-as-code engine (e.g., OPA/Gatekeeper/Kyverno integration, admission-time validation, or CI policy gates) that blocks non-compliant infrastructure changes before apply. Community comments reference 'enforcement' generally (crossplane-comm-10) but do not describe a pre-apply policy check mechanism.",
     "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "preview-before-apply",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossplane operates on a continuous-reconciliation model rather than an explicit plan/apply diff workflow; the CLI's `render` command only tests Composition Function output offline, and probe evidence explicitly states no local plan/preview loop exists — every real change requires a live cluster with the control plane reconciling live, not previewing creates/updates/destroys beforehand. missing for 10: any documented `crossplane plan`/diff command showing pending creates/updates/deletes, first-party guidance on previewing resource changes before applying, and independent confirmation of such a preview workflow.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Crossplane's CLI supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster' (crossplane-docs-7), which offers a limited local preview of composition output, but there is no documented feature that shows a full diff of creates/updates/destroys against live cluster state akin to a plan/apply workflow — Crossplane's model is continuous reconciliation (crossplane-docs-18) rather than plan-then-apply. missing for 10: explicit plan/diff output showing creates, updates, and destroys against live state; independent hands-on confirmation of this preview workflow.",
     "evidenceIds": [
-      "crossplane-probe-2",
       "crossplane-docs-7",
       "crossplane-docs-18"
     ]
@@ -462,7 +462,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is an infrastructure-orchestration control plane; it has no role in AI-model-training data usage or user-data privacy policies, so the axis of 'preventing data from being used to train AI models' does not apply to this category of product.",
+    "rationale": "Crossplane is an infrastructure-orchestration control plane for provisioning cloud resources via Kubernetes; it has no AI model training component or user data collection for model training, so 'preventing data from being used to train AI models' is a category error—wrong axis for this product type.",
     "evidenceIds": []
   },
   {
@@ -471,7 +471,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-orchestration tool, not a data-handling AI product that stores or retains user/conversational data. Data retention and deletion policy for AI-native privacy posture is a category error for this kind of infrastructure provisioning tool.",
+    "rationale": "Crossplane is an infrastructure control-plane/orchestration tool for provisioning cloud resources via Kubernetes, not a data-processing or AI service that stores/retains user data on behalf of an AI-native user. Data retention/deletion privacy controls are a category error for this type of product — it applies to SaaS/AI data processors, not an infrastructure orchestration framework.",
     "evidenceIds": []
   },
   {
@@ -489,12 +489,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Crossplane exposes Kubernetes-native declarative APIs and explicitly markets itself as something 'humans, automation, and AI systems can safely act on', implying resources can be created/managed programmatically (e.g., via the Kubernetes API) rather than only via CLI. However, the evidence pack never documents an SDK, client library, or concrete example of driving Crossplane from application code — it only shows CLI tooling and YAML-based composition, and the probe confirms all real plan/apply operations require a running cluster with no programmatic preview path shown. missing for 10: explicit SDK/client-library documentation, a hands-on example of application code creating/managing Crossplane resources, and confirmation that this workflow is idiomatic (not just theoretically possible via raw Kubernetes API).",
+    "rationale": "Crossplane resources are Kubernetes Custom Resources, and docs describe them as 'declarative APIs that humans, automation, and AI systems can safely act on' and 'machine-readable' (crossplane-docs-16, crossplane-docs-29), implying they can be created/managed via the Kubernetes API (and thus any client library) rather than only via a CLI. However, the evidence pack contains no explicit SDK, client library, or code example showing an application programmatically driving Crossplane deployments — installation and usage guidance is all Helm/kubectl-centric (crossplane-docs-4, crossplane-docs-28). Missing for 10: explicit documentation or example of a client library/SDK (Go, Python, etc.) driving Crossplane resources from app code, and independent confirmation of this workflow in practice.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-21",
-      "crossplane-probe-2",
-      "crossplane-docs-22"
+      "crossplane-docs-29",
+      "crossplane-docs-4",
+      "crossplane-docs-28"
     ]
   },
   {
@@ -541,8 +541,8 @@
     "storyId": "secret-config-values",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossplane orchestrates infrastructure via Kubernetes and secret/credential handling (e.g., Provider credentials, Kubernetes Secrets) is a plausible axis for such a control plane, but the evidence pack contains no mention of secrets management, credential injection, or log redaction mechanisms. missing for 10: any documentation or community evidence of secret injection, secure credential storage, or protection from log exposure.",
+    "confidence": "low",
+    "rationale": "Crossplane's evidence pack covers compositions, packages, providers, and CLI tooling but contains no mention of secrets management, sensitive configuration handling, or Kubernetes Secret injection into managed resources/compositions — no documentation or community evidence addresses how developers pass secrets without exposing them in code or logs.",
     "evidenceIds": []
   },
   {
@@ -550,8 +550,8 @@
     "storyId": "state-encryption",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of encryption at rest, state files, secrets handling, or etcd encryption for Crossplane's managed resource state. Crossplane stores its state as Kubernetes custom resources rather than flat state files, but no documentation here addresses how sensitive values are protected from plaintext exposure. missing for 10: any docs on etcd encryption, secret handling for provider credentials, or state-at-rest encryption guarantees.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of encryption at rest, secrets/credential handling, or protection of sensitive values in Crossplane's state (etcd-backed resource store). While the axis is fair to ask of any state-management tool, nothing in the docs or community evidence addresses this capability, so it cannot be credited as delivered.",
     "evidenceIds": []
   },
   {
@@ -560,12 +560,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Crossplane CLI features for troubleshooting and rendering Compositions/Managed Resources, but there is no documentation or community evidence of a safe state-inspection/modification workflow (e.g., moving, renaming, or removing resources from state) analogous to Terraform's state mv/rm/import commands. Refactoring-safety for live infrastructure state is a fair axis for any IaC/control-plane tool, so absence of evidence here yields 'none' rather than 'na'.",
-    "evidenceIds": [
-      "crossplane-docs-8",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
-    ]
+    "rationale": "The evidence pack documents Crossplane's declarative resource model, packaging, and CLI for rendering/troubleshooting compositions, but there is no mention of any state-management operations for safely moving, renaming, or removing resources during refactoring (the kind of import/export or 'state mv' functionality found in Terraform-like tools). Crossplane's live Kubernetes-object model could support this, but no evidence in the pack demonstrates such refactoring-safe state manipulation.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
@@ -573,48 +569,44 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossplane's model is continuous reconciliation (drift correction) rather than a discrete plan/apply workflow, and the probe evidence explicitly states no local plan/preview loop exists — every operation requires a live cluster. There is no documented JSON plan output or diff artifact an agent could parse.",
+    "rationale": "The evidence shows Crossplane has a CLI 'render' command for testing Compositions offline (crossplane-docs-7) and general claims about machine-readable, auditable APIs (crossplane-docs-29), but nothing describes a dedicated plan/diff step producing structured JSON output for agent consumption analogous to a Terraform-style plan. No documentation ties the render command's output format to JSON or to agent-parseable plan artifacts.",
     "evidenceIds": [
-      "crossplane-probe-2",
-      "crossplane-docs-18"
+      "crossplane-docs-7",
+      "crossplane-docs-29"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "targeted-partial-apply",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
+    "confidence": "high",
+    "rationale": "Crossplane operates as a continuous-reconciliation Kubernetes control plane rather than a plan/apply IaC tool; the evidence shows no plan/apply step, and targeting or excluding specific resources during a plan/apply run is a category concept from tools like Terraform, not applicable to Crossplane's controller-based model.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "crossplane",
+    "storyId": "unit-integration-tests",
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Crossplane's docs describe compositions, functions, and CLI rendering/troubleshooting, but nothing in the evidence shows a mechanism to target or exclude specific resources during a plan/apply-like operation; the probe explicitly notes there is no local plan/preview loop at all, only continuous reconciliation via a running cluster. missing for 10: any documented `--target`/`--exclude` style flag or resource-selection mechanism for plan or apply operations.",
+    "rationale": "Crossplane's official CLI explicitly supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster running Crossplane,' directly enabling test-without-production workflows for infrastructure code (crossplane-docs-7). However, the evidence pack lacks detail on test assertion frameworks, CI/CD integration examples, or independent hands-on confirmation of this testing workflow. missing for 10: assertion/test-framework documentation, CI pipeline examples, independent developer testimonials confirming the render/test workflow in practice.",
     "evidenceIds": [
-      "crossplane-probe-2",
       "crossplane-docs-7",
       "crossplane-docs-8"
     ]
   },
   {
     "productId": "crossplane",
-    "storyId": "unit-integration-tests",
-    "verdict": "disputed",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs claim the Crossplane CLI supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster running Crossplane' (crossplane-docs-7), which would let developers test infra code without touching production. However, a hands-on probe explicitly found that 'unlike other tools probed here every real plan/apply operation requires a running Kubernetes cluster with the Crossplane control plane installed — no local plan/preview loop exists' (crossplane-probe-2), directly contradicting the claim of a self-contained local testing workflow. Missing for 10: independent confirmation that `crossplane render` works fully offline for realistic compositions, CI/CD test-suite examples, and reconciliation of the docs/probe discrepancy.",
-    "evidenceIds": [
-      "crossplane-docs-7",
-      "crossplane-probe-2"
-    ]
-  },
-  {
-    "productId": "crossplane",
     "storyId": "validate-fmt",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The Crossplane CLI supports offline testing/rendering of Compositions without a cluster (crossplane-docs-7, crossplane-docs-8), which partially covers 'validate,' but there is no evidence of an auto-format command, and crossplane-probe-2 explicitly notes there is no local plan/preview loop — every real operation requires a live cluster, unlike a typical validate→format→plan workflow. missing for 10: dedicated auto-format tooling, an actual 'plan' equivalent step, and independent confirmation of the validate/render workflow's completeness.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "The Crossplane CLI documents rendering/testing Composition Functions offline without a cluster (crossplane-docs-7) and troubleshooting of Compositions/Composite Resources (crossplane-docs-8), which supports pre-apply validation, but there is no documented auto-format command or explicit 'validate' step comparable to `terraform fmt`/`validate`, and Crossplane has no 'plan' phase to validate before. missing for 10: dedicated config auto-formatter, explicit schema validation command, and any 'plan' equivalent to validate against.",
     "evidenceIds": [
       "crossplane-docs-7",
       "crossplane-docs-8",
-      "crossplane-probe-2"
+      "crossplane-probe-1"
     ]
   },
   {
@@ -623,7 +615,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows install/config docs, feature flags, and package management, but contains no explicit compatibility promises (e.g., API versioning policy) or dedicated upgrade/migration guides between Crossplane releases. This axis clearly applies to a platform like Crossplane, but no supporting evidence is present.",
+    "rationale": "The evidence pack covers Crossplane's features (compositions, packages, CLI, providers) but contains no mention of compatibility promises, versioning policy, deprecation timelines, or upgrade guides between releases. Missing for 10: documented API/version compatibility guarantees, deprecation policy, release notes/upgrade guide references, and any community or hands-on confirmation of upgrade smoothness.",
     "evidenceIds": []
   },
   {
