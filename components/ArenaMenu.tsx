@@ -38,6 +38,8 @@ export default function ArenaMenu({
   items,
   sections,
   title = "Arenas",
+  // Trigger icon (founder 2026-09-23: every top button wears a unique icon).
+  triggerIcon,
   hrefPrefix = "/arena",
   geo = false,
   searchable = false,
@@ -47,6 +49,7 @@ export default function ArenaMenu({
   /** Grouped list with small uppercase section headers (the Arenas menu). */
   sections?: ArenaMenuSection[];
   title?: string;
+  triggerIcon?: React.ReactNode;
   hrefPrefix?: string;
   /** Render a deterministic GeoMark (components/GeoMark.tsx) for items without an emoji icon —
       the Explore menu's concept-mark family, seeded by item id so each destination's mark is
@@ -116,6 +119,7 @@ export default function ArenaMenu({
         onClick={() => (open ? close() : setOpen(true))}
         className="flex cursor-pointer items-center gap-1 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
       >
+        {triggerIcon}
         {title}
         <span aria-hidden className={`text-zinc-500 transition-transform ${open ? "rotate-180" : ""}`}>
           ▾

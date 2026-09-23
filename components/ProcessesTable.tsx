@@ -307,9 +307,13 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
                       ),
                     )}
                     {r.vendors.length > 3 && (
-                      <span className="text-[10px] text-zinc-600" title={r.vendors.slice(3).map((v) => v.label).join(', ')}>
-                        +{r.vendors.length - 3}
-                      </span>
+                      <Link
+                        href={`/processes/${r.slug}`}
+                        className="text-[10px] text-zinc-500 transition hover:text-emerald-300"
+                        title={`${r.vendors.slice(3).map((v) => v.label).join(', ')} — see the full per-step rankings`}
+                      >
+                        +{r.vendors.length - 3} →
+                      </Link>
                     )}
                   </span>
                 </td>

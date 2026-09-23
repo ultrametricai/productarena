@@ -28,7 +28,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/pipeline`, lastModified: now },
     { url: `${SITE_URL}/llms.txt`, lastModified: now },
     { url: `${SITE_URL}/openapi.json`, lastModified: now },
-    { url: `${SITE_URL}/mcp`, lastModified: now },
     { url: `${SITE_URL}/proofs`, lastModified: now },
     { url: `${SITE_URL}/certified`, lastModified: now },
     { url: `${SITE_URL}/changelog`, lastModified: now },

@@ -2082,10 +2082,14 @@ export default {
     if (url.pathname === '/productarena/api/popular-compares') {
       return handlePopularCompares(request, env?.PA_COMPARE_STATS)
     }
-    if (url.pathname === '/productarena/mcp') {
-      const mcpResponse = await handleMcp(request)
-      if (mcpResponse) return mcpResponse
-      // plain GET falls through: the proxy below serves the site's /mcp page at this URL
+    // /productarena/mcp retired (founder 2026-09-23): ProductArena is not offered over its own
+    // MCP server — a first-party Ultrametric MCP + API is coming instead. JSON-RPC POSTs get an
+    // explicit 410 pointing at the data API; GETs fall through to the site's /mcp redirect page.
+    if (url.pathname === '/productarena/mcp' && request.method === 'POST') {
+      return new Response(
+        JSON.stringify({ error: 'gone', message: 'The ProductArena MCP server is retired. Use the JSON data API (https://ultrametric.ai/productarena/data/categories.json) or /llms.txt. A first-party Ultrametric MCP is coming.' }),
+        { status: 410, headers: { 'Content-Type': 'application/json' } },
+      )
     }
 
     // Compare popularity: count pair selections without ever delaying the page (see the
