@@ -233,6 +233,11 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
               <SortableTh col="claimsIntegrity" current={column} direction={direction} onSort={handleSort} className="hidden lg:table-cell">
                 <span title="Claims integrity /100 — how much of what the vendor claims held up when tested; click a score for the breakdown">Claims</span>
               </SortableTh>
+              {/* Founder 2026-09-23: an evidence column at the end — every ranking clicks
+                  through to the receipt that produced it (the product's /score page). */}
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
+                <span title="The evidence behind this ranking — click a row's ⚖ for the full receipt: every story, verdict, and cited evidence item">Evidence</span>
+              </SortableTh>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-800/70">
@@ -402,12 +407,22 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                       href={`/arena/${data.category.id}/product/${row.productId}#claims`}
                     />
                   </td>
+                  <td className="w-8 px-2 py-2 text-center">
+                    <Link
+                      href={`/arena/${data.category.id}/product/${row.productId}/score`}
+                      title={`The evidence behind ${product.name}'s ranking — every story, verdict, and cited evidence item, with the arithmetic`}
+                      aria-label={`Evidence behind ${product.name}'s ranking`}
+                      className="inline-block rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
+                    >
+                      ⚖
+                    </Link>
+                  </td>
                 </tr>
               )
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={pricing ? 13 : 12} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={pricing ? 14 : 13} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>

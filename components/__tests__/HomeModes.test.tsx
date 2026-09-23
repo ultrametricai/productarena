@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
-// HomeModes — the homepage companies/processes switch, now shareable (founder 2026-09-21):
-// ?view=processes reproduces the sender's mode. Load-bearing assertions, in the site-wide
+// HomeModes — the homepage companies/products/processes switch, shareable (founder 2026-09-21;
+// Products tab added 2026-09-23): ?view=products / ?view=processes reproduce the sender's mode.
+// Companies and Products share the same pane (the mode reaches MegaTable via HomeModeContext);
+// legacy ?all=1 links (the retired sub-products checkbox) resolve to products mode. Load-bearing assertions, in the site-wide
 // personalization contract's order:
 //   1. SSR-equivalence: the static HTML always renders the companies default — even when the
 //      URL carries ?view=processes — and hydrates with ZERO mismatches (the param is applied in
@@ -108,6 +110,21 @@ describe('URL ⇄ mode', () => {
     const { getByRole } = render(tree)
     fireEvent.click(getByRole('button', { name: /Companies/ }))
     expect(url()).toBe(PATH)
+  })
+
+  it('?view=products mounts with the Products tab pressed and the shared companies pane visible', () => {
+    setUrl('?view=products')
+    const { container, getByRole } = render(tree)
+    expect(visiblePane(container)).toBe('COMPANIES-PANE')
+    expect(getByRole('button', { name: /Products/ }).getAttribute('aria-pressed')).toBe('true')
+  })
+
+  it('legacy ?all=1 links resolve to products mode; clicking Products writes ?view=products and clears ?all', () => {
+    setUrl('?all=1')
+    const { getByRole } = render(tree)
+    expect(getByRole('button', { name: /Products/ }).getAttribute('aria-pressed')).toBe('true')
+    fireEvent.click(getByRole('button', { name: /Products/ }))
+    expect(url()).toBe(`${PATH}?view=products`)
   })
 
   it('patches, never rebuilds: co-mounted params survive a mode click', () => {

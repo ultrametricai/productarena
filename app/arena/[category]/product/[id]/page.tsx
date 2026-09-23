@@ -208,8 +208,8 @@ export default async function ProductPage({
               <ShutdownBadge shutdown={product.shutdown} source={product.shutdownSource} />
               <AiModeBadge data={data} productId={id} href={`#story-${AI_MODE_STORY_ID}`} />
             </div>
-            {/* The OssPill beside the name is the one open-source signal — repeating "open
-                source" here would say it twice, so the prose only ever adds "commercial".
+            {/* The OssPill beside the name is the one open-source signal (founder 2026-09-23:
+                no "commercial" tag — nearly everything is, so it said nothing).
                 Founder 2026-09-22: the company name is the way BACK to the company — its
                 family page when one exists (multi-product vendors), else the homepage table
                 filtered to the company (shareable ?q=). */}
@@ -225,7 +225,6 @@ export default async function ProductPage({
               >
                 {product.vendor}
               </Link>
-              {product.type === 'commercial' && ' · commercial'}
             </p>
           </div>
           <div className="ml-auto flex shrink-0 items-center gap-3">
@@ -270,7 +269,19 @@ export default async function ProductPage({
           <AgenticBadge kind="agent-ready" value={naDims.has('agentReady') ? null : entry.agentReady} untested={!naDims.has('agentReady') && isGroupUntested(data, id, 'agent-access')} href={naDims.has('agentReady') ? undefined : `/arena/${category}/product/${id}/score#agent-ready`} />
           <AgenticBadge kind="agentic-app" value={naDims.has('agenticApp') ? null : entry.agenticApp} untested={!naDims.has('agenticApp') && isGroupUntested(data, id, 'agentic-features')} href={naDims.has('agenticApp') ? undefined : `/arena/${category}/product/${id}/score#built-in-ai`} />
           <AgenticBadge kind="api-quality" value={naDims.has('apiQuality') ? null : entry.apiQuality} untested={!naDims.has('apiQuality') && isGroupUntested(data, id, 'api-quality')} href={naDims.has('apiQuality') ? undefined : `/arena/${category}/product/${id}/score#api-quality`} />
-          <AgentAccessGlyphs data={data} productId={id} size="md" />
+          {/* Founder 2026-09-23: when the api-quality pill above shows an actual score, the API
+              glyph is redundant — the score IS the tick. The glyph stays only when the pill has
+              no number to show (n/a arena, untested, or no judged score). MCP/CLI always render. */}
+          <AgentAccessGlyphs
+            data={data}
+            productId={id}
+            size="md"
+            omit={
+              !naDims.has('apiQuality') && !isGroupUntested(data, id, 'api-quality') && entry.apiQuality !== null
+                ? ['API']
+                : undefined
+            }
+          />
         </div>
         {/* SECONDARY row — adoption signals (registry data, never part of the PA Score) and the
             vendor-response chip. */}

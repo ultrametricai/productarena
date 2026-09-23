@@ -12,18 +12,23 @@ import type { CategoryData } from '@/lib/data-helpers'
 // pulling full CategoryData/verdicts into the client bundle — see that file's doc comment.
 // `size="md"` bumps the glyphs to text-sm for the product-page header's primary metrics row —
 // table callers keep the default text-xs so dense rows stay dense.
+// `omit` drops named columns for surfaces where a neighboring element already carries that
+// signal with more precision — the product-page header omits API whenever the api-quality
+// pill shows an actual score (founder 2026-09-23: the score IS the tick).
 export default function AgentAccessGlyphs({
   data,
   productId,
   size = 'sm',
+  omit,
 }: {
   data: CategoryData
   productId: string
   size?: 'sm' | 'md'
+  omit?: Array<(typeof ACCESS_COLUMNS)[number]['label']>
 }) {
   return (
     <div className={`flex items-center gap-3 font-mono ${size === 'md' ? 'text-sm' : 'text-xs'}`}>
-      {ACCESS_COLUMNS.map(({ label, storyIds }) => {
+      {ACCESS_COLUMNS.filter(({ label }) => !omit?.includes(label)).map(({ label, storyIds }) => {
         const verdict = bestAccessVerdict(data, productId, storyIds)
         const { char, className, title, storyId } = accessGlyphFor(label, verdict)
         return (

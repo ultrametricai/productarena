@@ -8,7 +8,7 @@
     "calls": []
   },
   "fund_005:n1:box": {
-    "hash": "9521aa3d0bfe7e5487751226eaac8f7a36187c5159b5e423649e61d227650b35",
+    "hash": "97879618de7054ee1043a8d62ece46137fb10cd7de65f12d210e4d586c8ef3e6",
     "calls": []
   },
   "fund_002:n2:dropbox": {
@@ -23,30 +23,30 @@
     ]
   },
   "fund_002:n2:box": {
-    "hash": "006cc8443c48a00f550f436a9877b2492c98bbb71d96789da5bf6894544bb149",
+    "hash": "cfa0032aad74e4deda003fce0b09a3989a5b41d059e1016eeab5fd1dbf92ffc1",
     "calls": [
       {
-        "method": "POST /2.0/files/content",
+        "method": "POST /2.0/files/{file_id}/versions",
         "type": "rest",
-        "description": "Upload new or updated diligence documents into the data room folder",
+        "description": "Upload updated diligence documents as new file versions to refresh the data room",
         "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "search_files",
+        "type": "mcp",
+        "description": "Agent searches Box data room content to locate outdated or missing diligence files",
+        "sourceUrl": "https://mcp.box.com/"
       },
       {
         "method": "GET /2.0/search",
         "type": "rest",
-        "description": "Search data room content to verify completeness during diligence refresh",
+        "description": "Query full-text search to find existing documents needing refresh in the data room",
         "sourceUrl": "https://developer.box.com/guides/search/"
-      },
-      {
-        "method": "POST /2.0/collaborations",
-        "type": "rest",
-        "description": "Grant or update investor access permissions to the refreshed data room",
-        "sourceUrl": "https://developer.box.com/guides/collaborations/"
       }
     ]
   },
   "legal_001:n6:box": {
-    "hash": "c184c39b31ec9ebaee2ae58cef5de0fdb16902b194a888c7ebe6365430e2a87a",
+    "hash": "3f9030ec14815fd6b9747db89b9886a480405c9812909a1087226a45c1f2671d",
     "calls": []
   },
   "legal_001:n6:dropbox": {
@@ -108,7 +108,7 @@
     "calls": []
   },
   "legal_003:n6:box": {
-    "hash": "4458f8a80f4ed45950cf2a290c91f32ede43261029dac01ce6cf2277d9cd9121",
+    "hash": "592f1cdc8af9b6be0402331267479a26517eb26dd2e6334eb56088d8b43c6d69",
     "calls": []
   },
   "legal_001:n6:onedrive": {
@@ -196,8 +196,15 @@
     ]
   },
   "tax_001:n5:box": {
-    "hash": "7014ca0b94cc2ff6ac8570ee1f5911e30141932381bf4478efcce6ffb6bf1230",
-    "calls": []
+    "hash": "d289f67cc5f29974ede23a8c42dfc9194d1c9e0b58e034cd87e527ae25c91fae",
+    "calls": [
+      {
+        "method": "POST /files/content",
+        "type": "rest",
+        "description": "Upload the franchise tax confirmation receipt file to Box",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      }
+    ]
   },
   "tax_001:n5:onedrive": {
     "hash": "52fc286b2c41b41bc8aa31263526a9d77aa317af0d8dedd566ef80ea6401e800",
@@ -253,7 +260,7 @@
     "calls": []
   },
   "qs_015:n1:box": {
-    "hash": "50734d02cb548f470a0d33cc569cc520da1f3ffb167f25df3bd04f99903e7ca5",
+    "hash": "c5c4894868d578876e10cfaee166ec09397566276091d84c6afc7814f10d91d4",
     "calls": []
   },
   "tax_002:n8:onedrive": {
@@ -284,12 +291,12 @@
     "calls": []
   },
   "tax_002:n8:box": {
-    "hash": "d6484bc910cc0c5312cc23f399b3ffd6ee3358558f5dd9ac6cba553f35b837ed",
+    "hash": "272e8d749461fc2ddcb1525449eed8704f8312e8c831db28b14f83cf60bf18cc",
     "calls": [
       {
-        "method": "POST /files/upload_sessions",
+        "method": "POST /chunked_uploads",
         "type": "rest",
-        "description": "Upload a copy of the filed tax return into Box storage for records via chunked upload session",
+        "description": "Upload the tax return file copy to Box for storage as a record",
         "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
       }
     ]
@@ -307,7 +314,7 @@
     "calls": []
   },
   "ops_004:n4:box": {
-    "hash": "91b60191734664cf3454bd2eb80d1f3e06db7b6708d68276498b5f57aa984402",
+    "hash": "80ab278e39e03b5464e1b5d8e588ebee712e38716c9c0af3c036e00e9553292d",
     "calls": []
   },
   "comp_011:n5:dropbox": {
@@ -402,7 +409,7 @@
     ]
   },
   "comp_011:n5:box": {
-    "hash": "e6c7a02990a326a52705c2d7f2377d5bc5bfd8988feb32c0563c13ebb757a977",
+    "hash": "c2f84845b2abebe36498eefe40f63abcadcf3c75257bbd8d06305a75a11c5801",
     "calls": []
   },
   "shutdown_001:n12:onedrive": {
@@ -429,19 +436,25 @@
     ]
   },
   "shutdown_001:n12:box": {
-    "hash": "93cd01c956284b99e97b5d2fe469db03b963d3017c405a24cc4f78826634eb94",
+    "hash": "777fce2732dad5ba2b7777cd71121892ae9e68cd1e0940f49559dc90d51cdd26",
     "calls": [
       {
-        "method": "PUT /files/upload_sessions/{upload_session_id}",
+        "method": "PUT /2.0/files/{file_id}/metadata/{scope}/{template_key}",
         "type": "rest",
-        "description": "Upload archived corporate record files in chunks for long-term storage",
-        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+        "description": "Attach retention/classification metadata to archived corporate record files",
+        "sourceUrl": "https://developer.box.com/guides/metadata/"
       },
       {
-        "method": "POST /metadata_templates/{scope}/{template_key}/instances",
+        "method": "GET /2.0/search",
         "type": "rest",
-        "description": "Attach retention metadata (e.g., record type, retention date) to archived files",
-        "sourceUrl": "https://developer.box.com/guides/metadata/"
+        "description": "Locate corporate records across the enterprise to be archived",
+        "sourceUrl": "https://developer.box.com/guides/search/"
+      },
+      {
+        "method": "POST /2.0/collaborations",
+        "type": "rest",
+        "description": "Restrict access permissions on archived record folders for retention compliance",
+        "sourceUrl": "https://developer.box.com/guides/collaborations/"
       }
     ]
   }

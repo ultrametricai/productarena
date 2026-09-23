@@ -30,12 +30,6 @@ export default function Home() {
   const companiesMode = (
     <div className="space-y-12">
       <section>
-        {/* The homepage IS the table — one visible title above the rank-by controls (founder
-            call, 2026-09-14), no further hero copy; the page title/description carry the
-            positioning for search/social, and /methodology carries the full story. */}
-        <h1 className="font-display mb-3 text-2xl font-bold leading-tight tracking-tight">
-          Companies, ranked for the AI era
-        </h1>
         {/* /everything is unlisted by founder call — no banner into it (route stays alive). */}
         <MegaTable rows={megaRows} arenas={arenaOptions} />
       </section>
@@ -161,5 +155,16 @@ export default function Home() {
     </div>
   )
 
-  return <HomeModes companies={companiesMode} processes={processesMode} />
+  return (
+    <div>
+      {/* The homepage IS the table — one visible title above the mode tabs (founder call
+          2026-09-14; founder 2026-09-23: retitled "Open rankings for the AI era" and moved
+          above Companies|Products|Processes), no further hero copy; the page title/description
+          carry the positioning for search/social, and /methodology carries the full story. */}
+      <h1 className="font-display mb-3 text-2xl font-bold leading-tight tracking-tight">
+        Open rankings for the AI era
+      </h1>
+      <HomeModes companies={companiesMode} processes={processesMode} />
+    </div>
+  )
 }
