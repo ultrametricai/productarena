@@ -87,4 +87,16 @@ export const probes: LocalProbe[] = [
       expect: /Authentication required[\s\S]*HTTP 401/,
       timeoutMs: 30_000,
     },
+    {
+      // Honest negative: www.firstbase.io publishes no llms.txt (404) — recorded absence from
+      // the 2026-09-23 depth spike.
+      probeId: 'site-llms-txt-absent',
+      productId: 'firstbase',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL -o /dev/null -w "HTTP %{http_code}" --max-time 20 https://www.firstbase.io/llms.txt'],
+      displayCommand: 'curl -sL -o /dev/null -w "HTTP %{http_code}" https://www.firstbase.io/llms.txt',
+      expect: /HTTP 404/,
+      timeoutMs: 30_000,
+    },
 ]

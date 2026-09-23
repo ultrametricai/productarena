@@ -4,12 +4,13 @@
     "storyId": "agent-authors-change",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Crossplane's CLI supports rendering/testing Compositions standalone (crossplane-docs-7) which could let an agent preview a change, but the probe explicitly found no headless local plan/preview loop — every real plan/apply requires a live Kubernetes cluster with Crossplane installed (crossplane-probe-2), unlike Terraform-style plan/diff tools. There's no documented diff-and-approve workflow tailored for agent-authored changes.\nmissing for 10: a genuine headless 'plan' command producing a diff against live state, documented agent/approval integration, evidence of an AI agent actually driving this workflow end-to-end.",
+    "confidence": "low",
+    "rationale": "Crossplane's CLI supports rendering/testing Compositions headlessly without a live cluster (crossplane-docs-7), which could serve as a plan-like preview step, and marketing material vaguely claims APIs are 'auditable, machine-readable' and actionable by 'AI systems' (crossplane-docs-16, crossplane-docs-29). However there is no documented workflow where an agent authors a change, generates a diff, and holds it for human approval before apply — Crossplane's core model is continuous reconciliation/drift-correction (crossplane-docs-18) rather than a gated plan/apply/approve loop like Terraform. missing for 10: explicit plan/diff output tooling for agent-authored changes, an approval gate before apply, and any hands-on or community evidence of this workflow being used in practice.",
     "evidenceIds": [
       "crossplane-docs-7",
-      "crossplane-probe-2",
-      "crossplane-docs-16"
+      "crossplane-docs-16",
+      "crossplane-docs-29",
+      "crossplane-docs-18"
     ]
   },
   {
@@ -18,10 +19,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Crossplane's RBAC-based control plane and 'developer only given permission to perform operations at the interface' model (comm-8, docs-17) support a least-privilege foundation, and its declarative API design is explicitly pitched as safe for AI systems to act on (docs-16), but there is no documented mechanism for agent-specific credential scoping, plan/approval review gates, or blocking unapproved applies before they take effect. missing for 10: explicit approval/review-gate workflow for AI-driven changes, agent-scoped least-privilege credential issuance, evidence of a 'plan preview' step analogous to Terraform plan, and independent validation that unauthorized changes are actually blocked.",
+    "rationale": "Crossplane exposes declarative, auditable APIs enforced via Kubernetes RBAC, and its marketing explicitly claims these APIs can be safely acted on by 'automation and AI systems,' which supports least-privilege access control at the API layer. However, there is no documented review-gate or approval workflow specific to AI agents (e.g., a plan/apply staging step, diff approval, or agent-scoped credential issuance) — the RBAC and declarative-API claims are generic platform-engineering primitives, not an agent-oriented guardrail feature. missing for 10: concrete agent-specific review/approval gate mechanism, documented least-privilege credential issuance workflow for agents, independent evidence of this being used to block unapproved AI-driven changes.",
     "evidenceIds": [
       "crossplane-docs-16",
       "crossplane-docs-17",
+      "crossplane-docs-29",
+      "crossplane-docs-30",
       "crossplane-comm-8"
     ]
   },
@@ -30,9 +33,11 @@
     "storyId": "agentic-agent-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an llms.txt file, agent-oriented documentation format, or any mention of AI-agent-consumable docs; docs-16 mentions AI systems acting on APIs but does not describe agent-oriented documentation discovery. missing for 10: llms.txt file or equivalent, agent-facing documentation format, any explicit reference to AI agents consuming docs directly.",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "No evidence of an llms.txt file, agent-oriented documentation format, or any specific docs designed for AI agent consumption; only general marketing mentions of AI systems acting on APIs, not documentation structured for agents to consume.",
+    "evidenceIds": [
+      "crossplane-docs-16"
+    ]
   },
   {
     "productId": "crossplane",
@@ -40,22 +45,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence only shows marketing language about exposing APIs that 'AI systems can safely act on' (crossplane-docs-16), which is about external agents calling Crossplane's API, not the product itself generating AI-driven insights or suggestions from data. No feature, dashboard, or docs describe AI-generated analysis, recommendations, or insights surfaced to users.",
-    "evidenceIds": [
-      "crossplane-docs-16"
-    ]
+    "rationale": "Crossplane is an infrastructure control-plane tool for provisioning resources declaratively; while docs mention APIs 'AI systems can safely act on,' there is no evidence of AI-generated insights, analytics, or suggestions surfaced from data within the product itself.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Crossplane's control plane continuously reconciles desired state and self-corrects drift autonomously (crossplane-docs-18), and its declarative APIs are explicitly framed as actionable by automation/AI systems (crossplane-docs-16), which supports background autonomous operation of infrastructure. However, there is no evidence of AI-native 'automations' or agentic workflows being set up specifically for AI systems, scheduled/triggered agent tasks, or any AI-specific orchestration features beyond generic drift-correction and declarative reconciliation. missing for 10: explicit AI-agent-triggered automation examples, scheduling/triggers for autonomous AI tasks, evidence of AI systems actually driving Crossplane resources end-to-end, independent hands-on validation of autonomous background operation.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Crossplane's control-plane model is inherently autonomous background automation: declared resources are continuously reconciled and drift is auto-corrected without human intervention, and docs explicitly frame its declarative APIs as things 'automation and AI systems can safely act on'. However, evidence doesn't show a specific AI-agent workflow or independent confirmation of AI-driven autonomous setup — it's inferred from general control-loop/reconciliation behavior rather than an AI-specific feature.\nMissing for 10: explicit AI-agent tooling/integration story, independent/hands-on evidence of an AI system actually configuring and running autonomous Crossplane automations.",
     "evidenceIds": [
       "crossplane-docs-18",
       "crossplane-docs-16",
-      "crossplane-docs-17"
+      "crossplane-docs-29",
+      "crossplane-docs-21"
     ]
   },
   {
@@ -64,7 +68,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane infrastructure orchestration tool, not an AI assistant product; there is no built-in AI assistant persona for users to delegate tasks to. One doc line mentions APIs that 'AI systems can safely act on' but this refers to external systems calling Crossplane's APIs, not a built-in assistant feature — this is a category error for this axis.",
+    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-provisioning framework, not a product with an interactive built-in AI assistant persona; the evidence only discusses APIs being 'safely acted on' by AI systems (external agents calling its APIs), not a delegate-to-built-in-assistant feature. This axis is a category error for this type of product.",
     "evidenceIds": [
       "crossplane-docs-16"
     ]
@@ -72,17 +76,16 @@
   {
     "productId": "crossplane",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane is fundamentally a Kubernetes control-plane operator: everything is driven by declarative YAML/CRDs reconciled by controllers, which is inherently automatable via kubectl/GitOps pipelines (ArgoCD/Flux) as community evidence confirms, and the CLI itself is keyless and scriptable. However the probe shows every real operation requires a live Kubernetes cluster with Crossplane installed — there's no standalone local plan/apply loop like other CLI-first tools, meaning 'headless CI' usage requires provisioning/maintaining a cluster as a CI dependency rather than a lightweight headless binary. missing for 10: evidence of a documented CI-specific workflow/example (e.g. official GitHub Action or CI recipe), confirmation of non-interactive apply without cluster bootstrap overhead, and independent hands-on reports of running Crossplane in CI pipelines.",
+    "rationale": "Crossplane is inherently headless — a Kubernetes control plane and API rather than a UI-driven tool — and ships a CLI explicitly for testing/rendering Composition Functions without needing a live cluster and for building/pushing packages, both suited to CI pipelines. Community discussion also references using Crossplane within GitOps (Flux/ArgoCD) automation workflows, corroborating headless/CI usage. Missing for 10: no explicit first-party CI pipeline examples (e.g., GitHub Actions) or documented automation recipes showing `crossplane render` used in a CI job.",
     "evidenceIds": [
-      "crossplane-probe-2",
-      "crossplane-probe-1",
       "crossplane-docs-7",
+      "crossplane-docs-9",
+      "crossplane-probe-1",
       "crossplane-comm-9",
-      "crossplane-comm-10",
-      "crossplane-docs-18"
+      "crossplane-comm-10"
     ]
   },
   {
@@ -91,18 +94,16 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes-based infrastructure control plane, not an AI agent or assistant capable of consuming external tools; the evidence pack shows no agentic/LLM tool-use component that could plug in MCP servers to gain tool capabilities. The only AI-related mention (crossplane-docs-16) describes AI systems acting on Crossplane's APIs, the opposite direction of an MCP-client story, so this axis is a category error for this product type.",
-    "evidenceIds": [
-      "crossplane-docs-16"
-    ]
+    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-provisioning platform, not an AI agent or agent-facing tool host; plugging MCP servers into it so 'it can use their tools' is a category mismatch for this product type. No evidence shows it acting as an MCP client consuming external tool servers.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-mcp-server",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane framework, not an AI agent, so publishing an official MCP server is a plausible ecosystem capability, but no evidence in the pack mentions an MCP server, MCP integration, or agent connectivity of any kind—only marketing language about 'AI systems' acting on APIs, which is not an MCP server claim.",
+    "confidence": "medium",
+    "rationale": "Crossplane is an infrastructure control-plane, not an agent, so the axis of publishing an official MCP server for agents to connect via does apply (it's a platform/tool whose ecosystem could ship one), but no evidence in the pack mentions any MCP server, integration, or protocol support—only a marketing line about APIs being actionable by 'AI systems'. Missing for 10: any documented MCP server, endpoint, or first-party integration enabling agent connectivity.",
     "evidenceIds": [
       "crossplane-docs-16"
     ]
@@ -113,27 +114,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossplane's interface is entirely declarative YAML/Compositions plus a CLI for build/test/push workflows; the closest hit is marketing copy saying APIs can be 'acted on' by AI systems, but that describes external consumers, not natural-language command input into Crossplane itself. No documentation, CLI feature, or probe shows any natural-language command interface. Missing for 10: any NL command parser, chat/agent interface, or evidence of accepting free-text instructions instead of declarative manifests.",
+    "rationale": "Crossplane's interface is declarative YAML/Kubernetes APIs and a CLI for packages/composition testing; the evidence only claims APIs are 'machine-readable' and that AI systems can 'act on' them, not that a user can issue natural-language commands to operate Crossplane. No chatops, NL parser, or AI-assistant interface is documented or shown in community evidence.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-1",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
+      "crossplane-docs-29",
+      "crossplane-probe-1"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-official-cli",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane ships an official CLI (docs and hands-on probe confirm install via brew and working `crossplane version --client`) supporting building/testing/rendering Compositions and managing packages, but it is not framed or evidenced as an AI-native/agentic interface (no MCP integration, no agent-friendly output modes, no natural-language or automation-specific tooling beyond generic CLI usage). missing for 10: explicit AI-native design/marketing for the CLI itself, evidence of agent-friendly structured output or automation hooks, and independent corroboration beyond one hands-on probe.",
+    "rationale": "Crossplane ships a documented official CLI (docs.crossplane.io/cli/latest/) covering building/testing/rendering compositions, installing/updating/pushing packages, and troubleshooting resources — all scriptable and usable in automated/agentic pipelines. missing for 10: no explicit AI-agent-oriented CLI features (e.g., structured machine-readable output tailored for LLM agents) and no independent/hands-on corroboration of CLI usage in agentic workflows.",
     "evidenceIds": [
       "crossplane-docs-7",
       "crossplane-docs-8",
       "crossplane-docs-9",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
+      "crossplane-probe-1"
     ]
   },
   {
@@ -142,26 +141,26 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane explicitly documents that it exposes 'declarative APIs that humans, automation, and AI systems can safely act on' (docs-16), and its architecture is built on the Kubernetes API server extended via CRDs/Managed Resources (docs-3, docs-13, docs-20, docs-21), which forms a standard, machine-readable, documented API surface. This is reinforced by an official CLI (probe-1, probe-2) for interacting with the control plane programmatically. missing for 10: independent/hands-on evidence of an AI agent actually driving Crossplane via the API, and more detail on API schemas/authentication for agentic use beyond marketing copy.",
+    "rationale": "Crossplane explicitly documents that its declarative APIs (built on the Kubernetes API) are designed to be acted on by 'humans, automation, and AI systems' and are 'explicit, auditable, and machine-readable', plus it ships an official CLI for programmatic interaction with Compositions and Packages. Missing for 10: independent/hands-on evidence of an AI agent actually driving Crossplane via this API, and no explicit API reference/schema docs cited beyond marketing claims.",
     "evidenceIds": [
       "crossplane-docs-16",
+      "crossplane-docs-29",
       "crossplane-docs-21",
-      "crossplane-docs-3",
-      "crossplane-docs-13",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
+      "crossplane-docs-7",
+      "crossplane-probe-1"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Crossplane's own marketing claims it exposes 'declarative APIs that humans, automation, and AI systems can safely act on' and leverages Kubernetes RBAC for security, which implies a path to scoped, least-privilege access control for agentic consumers. However, there is no concrete documentation of an agent-specific credential-issuance mechanism (e.g., token minting, scoped API keys, or short-lived credentials tailored for AI agents) — it relies on generic Kubernetes RBAC rather than a purpose-built agent credentialing feature. Missing for 10: explicit agent-credential issuance workflow, scoping granularity examples, and independent verification that RBAC is actually used this way in practice.",
+    "rationale": "Crossplane inherits Kubernetes RBAC and markets itself as exposing declarative APIs 'humans, automation, and AI systems can safely act on,' which implies scoped access control is possible via standard k8s RBAC/ServiceAccounts, but there is no concrete documentation of an agent-specific credential-issuance mechanism or least-privilege workflow tailored to AI agents. Missing for 10: explicit agent-facing credential scoping feature, docs on issuing/rotating scoped tokens for agents, and any hands-on or community validation of this specific use case.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-17"
+      "crossplane-docs-17",
+      "crossplane-docs-30"
     ]
   },
   {
@@ -179,7 +178,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of an event/webhook subscription mechanism for AI agents or other consumers; Crossplane's model is Kubernetes-native reconciliation/drift-correction, not webhook-based event push. This is a fair capability to ask of an infrastructure control plane, but nothing in the evidence documents it.",
+    "rationale": "No evidence of any webhook subscription or event notification mechanism; Crossplane is a Kubernetes control-plane relying on reconciliation loops and drift correction, not documented event/webhook APIs for external subscribers.",
     "evidenceIds": []
   },
   {
@@ -188,7 +187,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Crossplane exposes declarative APIs that AI systems could act on, but there is no documented feature for generating infrastructure code from natural language within the Crossplane toolchain itself (CLI, docs, or otherwise).",
+    "rationale": "Evidence shows Crossplane exposes declarative APIs that AI systems could act on (crossplane-docs-16) and offers a CLI for testing/building compositions, but there is no evidence of built-in AI assistance that generates infrastructure code from natural language within the toolchain itself.",
     "evidenceIds": []
   },
   {
@@ -197,7 +196,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an interactive API reference with runnable examples exists in the pack; documentation is described only as static pages and CLI docs, with no mention of a live/interactive reference or embedded runnable code snippets.",
+    "rationale": "No evidence of an interactive API reference or runnable examples anywhere in the docs, CLI, or community sources; only static documentation pages and CLI usage descriptions are mentioned.",
     "evidenceIds": []
   },
   {
@@ -205,22 +204,19 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Crossplane's CRD-based schemas (crossplane-docs-13) imply an OpenAPI-compatible structure inherent to Kubernetes, but the evidence pack contains no explicit documentation or feature describing a downloadable OpenAPI or machine-readable API spec for Crossplane's Composite Resources or Providers. Missing for 10: explicit docs on exporting/downloading OpenAPI schema, CLI or API endpoint for spec retrieval, and any community/hands-on confirmation of this capability.",
-    "evidenceIds": [
-      "crossplane-docs-13"
-    ]
+    "confidence": "low",
+    "rationale": "Marketing copy calls Crossplane's declarative APIs 'machine-readable' and 'auditable' (crossplane-docs-16, crossplane-docs-29), but no evidence describes an actual downloadable OpenAPI spec or schema export mechanism for Crossplane XRDs/CRDs.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Crossplane's CLI supports rendering/testing Composition Functions locally without needing a live Kubernetes cluster (crossplane-docs-7), which enables some local, production-safe testing. However, a probe shows that real plan/apply operations still require a running Kubernetes cluster with Crossplane installed, with no built-in local sandbox/preview loop for full resource provisioning — so isolating test workloads from production relies on the user provisioning a separate cluster/cloud account rather than a first-class sandbox feature. missing for 10: dedicated sandbox-mode or dry-run against real cloud providers, evidence of safe multi-tenant test isolation, and confirmation that render-only testing covers full MR/Composition behavior rather than just function outputs.",
+    "rationale": "Crossplane's CLI explicitly supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster running Crossplane,' which enables local testing isolated from any live/production control plane. However, this only covers Composition Function testing, not a full sandbox environment for managed resources, providers, or actual cloud state, and there's no dedicated 'sandbox mode' or safe-test-environment feature documented beyond this. Missing for 10: a documented full sandbox/staging environment for managed resources and providers, evidence of isolating actual cloud resource provisioning from production, and independent confirmation of safe non-production testing workflows.",
     "evidenceIds": [
-      "crossplane-docs-7",
-      "crossplane-probe-2"
+      "crossplane-docs-7"
     ]
   },
   {
@@ -228,18 +224,28 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "While Crossplane exposes CRD-based APIs and has a 'Composition Revisions' feature for managing changes, the evidence pack contains no documentation of a formal API versioning scheme or deprecation policy for its own APIs (e.g., CRD version graduation, deprecation timelines, migration guides). Missing for 10: explicit deprecation policy docs, CRD version stability guarantees, migration/upgrade guidance for deprecated APIs.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence shows Crossplane has versioned resources (Composition Revisions, feature-flagged alpha features, pre-release Helm channels) but no citation documents an explicit API versioning/deprecation policy (e.g., how long alpha/beta APIs are supported, migration guarantees). Missing for 10: a documented deprecation policy page, API version support timelines, and any independent confirmation that deprecations are predictable/safe for automated (AI) consumers.",
+    "evidenceIds": [
+      "crossplane-docs-15",
+      "crossplane-docs-19",
+      "crossplane-docs-25"
+    ]
   },
   {
     "productId": "crossplane",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence describes Crossplane's declarative APIs, Compositions, and controller-based reconciliation, but nothing in the pack documents or demonstrates bulk/batch operations across many resources at once (e.g., batch apply, multi-resource templating at scale, or AI-driven bulk actions).",
-    "evidenceIds": []
+    "rationale": "Crossplane's declarative, Kubernetes-native model (CRDs, GitOps workflows, Compositions) implies that many resources can be created/updated/deleted in bulk via standard kubectl/GitOps tooling, and docs mention machine-readable, automation-friendly APIs and drift correction. However, no evidence explicitly documents a bulk-operation feature or workflow (e.g., batch apply across many composite resources, bulk import, mass reconciliation) — missing for 10: explicit bulk-operation tooling/documentation, hands-on demonstration of operating on many resources simultaneously, and independent confirmation of scale behavior.",
+    "evidenceIds": [
+      "crossplane-docs-16",
+      "crossplane-docs-18",
+      "crossplane-docs-29",
+      "crossplane-comm-9",
+      "crossplane-comm-10"
+    ]
   },
   {
     "productId": "crossplane",
@@ -261,7 +267,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-orchestration tool, not a scheduler or workflow-automation engine for recurring jobs; its reconciliation loop continuously corrects drift rather than running scheduled/recurring tasks. This story is a category error for this product type.",
+    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-provisioning tool for managing declarative APIs and resources, not a workflow/job scheduler; scheduling recurring jobs or workflows is outside its product category.",
     "evidenceIds": []
   },
   {
@@ -284,25 +290,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack never documents a destroy/teardown operation or workflow for Crossplane; it covers install, packages, functions, and drift-correction, but the only deletion-related item (crossplane-docs-6) is about *protecting* providers from deletion, not enabling clean teardown. No CLI or docs evidence shows a 'crossplane destroy' or cascading delete guarantee for an environment. Missing for 10: any documentation of a destroy/delete command, cascading resource cleanup behavior, or a described teardown workflow.",
-    "evidenceIds": [
-      "crossplane-docs-6",
-      "crossplane-docs-9",
-      "crossplane-probe-2"
-    ]
+    "rationale": "The evidence pack documents installation, composition, packaging, and drift-correction features but contains no mention of a destroy/teardown operation or documentation on deleting/decommissioning provisioned resources or entire environments. Since Crossplane is an infrastructure-provisioning control plane, a clean teardown capability is a fair expectation, but nothing in the pack demonstrates it. missing for 10: any docs or community evidence on deleting/uninstalling managed resources or environments, confirmation that resource deletion cascades cleanly, and any CLI/kubectl-based teardown workflow.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "drift-detection",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Crossplane's control-plane model continuously reconciles declared desired state against actual cloud resources and self-corrects drift automatically, as documented directly ('If your software ever drifts from your desired state, the control plane automatically corrects the drift'). This is reinforced by its reconciliation-based architecture (managed resources, compositions) rather than one-off plan/apply. Missing for 10: independent hands-on verification/benchmarks of drift-detection behavior in production, and no detail on drift visibility/reporting tooling (e.g., diffing UI) beyond auto-correction.",
+    "confidence": "high",
+    "rationale": "Crossplane's control plane continuously reconciles managed resources against declared desired state and automatically corrects drift, as documented directly ('If your software ever drifts from your desired state, the control plane automatically corrects the drift'), and community commentary corroborates its active-controller reconciliation model versus static IaC tools. missing for 10: no explicit 'diff/plan' style drift report separate from auto-remediation, and no independent hands-on validation of drift detection behavior.",
     "evidenceIds": [
       "crossplane-docs-18",
-      "crossplane-docs-23",
-      "crossplane-docs-3",
-      "crossplane-comm-3"
+      "crossplane-comm-3",
+      "crossplane-docs-17"
     ]
   },
   {
@@ -324,11 +325,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Crossplane's core resource model (Compositions, XRDs) is YAML/CRD-based, but its Functions pipeline explicitly supports writing composition logic in general-purpose languages like Python and Go (as well as KCL), which brings type systems and IDE tooling into play (crossplane-docs-2, crossplane-docs-26). However, this applies only to the Function extension mechanism, not to defining the full infrastructure spec itself, and there's no evidence of dedicated SDKs, typed client libraries, or IDE integration for this workflow. missing for 10: dedicated general-purpose-language SDK for defining infra resources (not just functions), documented IDE/autocomplete support, type-safety examples, loop/programmatic composition examples, independent hands-on validation of this workflow.",
+    "rationale": "Crossplane's core resources (Providers, Compositions, Managed Resources) are defined declaratively in YAML, but its Composition Functions pipeline lets you write configuration logic in general-purpose languages like Python and Go (as well as KCL), which brings programmatic constructs into part of the workflow. This falls short of a full GPL-based IaC experience with native types, loops, and IDE support across the whole resource model as in tools like Pulumi/CDK.\nmissing for 10: evidence of typed SDKs for defining Crossplane resources natively in Go/Python/TypeScript with IDE autocomplete, evidence of loop/conditional constructs used to generate multiple resources, and independent hands-on confirmation of IDE tooling quality.",
     "evidenceIds": [
       "crossplane-docs-2",
-      "crossplane-docs-26",
-      "crossplane-docs-1"
+      "crossplane-docs-1",
+      "crossplane-docs-13"
     ]
   },
   {
@@ -337,10 +338,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossplane operates as a continuously-reconciling Kubernetes control plane rather than a plan/apply tool with saved plan artifacts and approval gates; the evidence pack contains no documentation of a CI-oriented plan/apply/approve workflow. The hands-on probe explicitly notes that unlike Terraform-style tools, 'every real plan/apply operation requires a running Kubernetes cluster... no local plan/preview loop exists,' confirming the absence of this capability.",
+    "rationale": "Crossplane's architecture is a continuously reconciling Kubernetes control plane, not a plan/apply CLI workflow; the only CI-adjacent tool evidenced is 'crossplane render' for testing compositions without a cluster, with no mention of saved plan artifacts, approval flags, or a non-interactive apply gate. This is an applicable axis for an infra-provisioning tool, but no evidence shows the plan/apply-with-approval CI pattern exists.",
     "evidenceIds": [
-      "crossplane-probe-2",
-      "crossplane-docs-7"
+      "crossplane-docs-7",
+      "crossplane-docs-8"
     ]
   },
   {
@@ -349,16 +350,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack shows a Crossplane feature for importing existing/unmanaged cloud resources or auto-generating matching Composition/Claim YAML; the docs cover installation, packages, and compositions but nothing about resource discovery or import tooling. missing for 10: an import/adopt command or workflow, generated MR/Composition code from existing infra, any docs or community reports of migrating pre-existing resources into Crossplane management.",
-    "evidenceIds": []
+    "rationale": "No evidence of an import/discovery feature that detects existing cloud resources and generates matching Crossplane configuration (e.g., no mention of 'crossplane import', resource discovery, or reverse-generation of Managed Resource YAML from live infra). The CLI docs cover building, testing, rendering, and packaging but nothing about importing pre-existing unmanaged cloud resources.",
+    "evidenceIds": [
+      "crossplane-docs-7",
+      "crossplane-docs-9",
+      "crossplane-probe-1"
+    ]
   },
   {
     "productId": "crossplane",
     "storyId": "migrate-from-terraform",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any Terraform-state import, HCL conversion, or migration tooling in Crossplane's docs, CLI, or community discussion; Crossplane uses an entirely different declarative Kubernetes-native model with no documented path to ingest existing Terraform codebases or state files.",
+    "confidence": "medium",
+    "rationale": "No evidence of any Terraform state/config import or migration tooling; Crossplane's docs and CLI reference only cover installation, packages, and Composition Functions, with no mention of importing Terraform HCL or tfstate. Community discussion contrasts Crossplane with Terraform but never describes a migration path.",
     "evidenceIds": []
   },
   {
@@ -366,8 +371,8 @@
     "storyId": "open-license-governance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of Crossplane's license (e.g., Apache 2.0) or its governance model (e.g., CNCF graduation, foundation stewardship) — nothing here addresses licensing-governance at all. missing for 10: license identification, governance/foundation structure, any statement on relicensing protection.",
+    "confidence": "low",
+    "rationale": "No evidence pack items mention Crossplane's license type, CNCF or other open-governance foundation status, or any relicensing commitments — the story applies to any infra/platform tool a devops-lead would adopt, but no licensing/governance evidence is present.",
     "evidenceIds": []
   },
   {
@@ -376,27 +381,25 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Crossplane is fundamentally a Kubernetes control-plane extension: all functionality (Providers, Compositions, Functions, Managed Resources) is exposed as declarative Kubernetes API objects (CRDs) manipulated via kubectl/API, with docs explicitly framing it as exposing 'declarative APIs that humans, automation, and AI systems can safely act on' and letting users 'design the APIs and abstractions' for their control planes — there is no separate UI gating capability. Missing for 10: no evidence pack mention of any Crossplane-native UI/console to explicitly confirm parity claims, and no independent/hands-on corroboration of full UI-API equivalence.",
+    "rationale": "Crossplane is fundamentally a Kubernetes-native control plane whose entire interaction model is the declarative API (CRDs/YAML) rather than a separate UI — docs explicitly describe exposing 'declarative APIs that humans, automation, and AI systems can safely act on' and building platforms via machine-readable, auditable APIs, meaning there is no UI-only capability gap by design. Missing for 10: explicit confirmation/comparison against any optional UI (e.g., Upbound console) showing full feature parity, and independent hands-on verification of API completeness.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-21",
-      "crossplane-docs-20",
-      "crossplane-docs-13",
-      "crossplane-docs-10"
+      "crossplane-docs-29",
+      "crossplane-docs-30",
+      "crossplane-docs-21"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Crossplane's resources (Compositions, Configurations, Managed Resources) are defined as plain YAML/KCL/etc. stored in Kubernetes, which is inherently portable and inspectable, and packages are designed to be portable across clusters (crossplane-docs-11, crossplane-docs-2). However there is no explicit documented 'export all data' feature or bulk-export/migration tool, and no evidence addressing exporting live state or leaving the platform cleanly. missing for 10: explicit data-export/backup tooling, documentation of exporting full state (not just config) in open formats, and any evidence of migration/exit workflow.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Crossplane's resources (Providers, Compositions, Configurations) are all defined as declarative Kubernetes YAML manifests, and community comments note this YAML is 'easy enough to commit to source control', implying data/config is inherently stored in an open, portable format rather than a proprietary export. However, there is no explicit documentation of an export command, data-migration tooling, or guarantee that all runtime state (not just config) can be extracted to leave the platform. missing for 10: explicit export/extraction feature or docs, confirmation that live resource state (not just desired-state YAML) is portable, and any migration guide for leaving Crossplane.",
     "evidenceIds": [
-      "crossplane-docs-2",
-      "crossplane-docs-11",
-      "crossplane-docs-13",
-      "crossplane-docs-15"
+      "crossplane-docs-29",
+      "crossplane-comm-10",
+      "crossplane-docs-13"
     ]
   },
   {
@@ -405,24 +408,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item mentions Crossplane's source code license, GitHub repository, or open-source licensing terms (e.g., Apache 2.0) — the pack covers only product docs, community discussion, and CLI probes. Missing for 10: license file/declaration, repository link, any statement about open-source status or license type.",
+    "rationale": "The evidence pack contains no mention of Crossplane's source code, GitHub repository, or license terms — only feature/docs descriptions and community discussion of functionality, none addressing openness of the source. missing for 10: license statement, GitHub repo link, evidence of source availability.",
     "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "openness-self-host",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Crossplane is an open-source Kubernetes control-plane extension that users install and run themselves via Helm on their own cluster, with full control over feature flags, package installation, and versions (docs-4, docs-5, docs-6, docs-19, docs-22, docs-25). The probe confirms hands-on that the CLI and control plane operate entirely against a self-managed Kubernetes cluster with no forced SaaS dependency (probe-2). Missing for 10: no explicit vendor statement contrasting self-hosting vs. any managed offering, and no independent write-up specifically about self-hosting experience at scale.",
+    "rationale": "Crossplane is an open-source project installable via Helm chart into any Kubernetes cluster (crossplane-docs-4, crossplane-docs-28), giving full self-hosted control over the core product, with configuration options like feature flags and pre-release channels (crossplane-docs-19, crossplane-docs-25). Missing for 10: no explicit dedicated 'self-hosting' guide or independent hands-on report confirming a fully self-hosted deployment experience beyond the standard install docs.",
     "evidenceIds": [
       "crossplane-docs-4",
-      "crossplane-docs-5",
-      "crossplane-docs-6",
+      "crossplane-docs-28",
       "crossplane-docs-19",
-      "crossplane-docs-22",
       "crossplane-docs-25",
-      "crossplane-probe-2"
+      "crossplane-docs-22"
     ]
   },
   {
@@ -431,18 +432,17 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Crossplane's control-plane architecture, RBAC, packages, and CLI tooling, but contains no mention of a policy-as-code engine (e.g., OPA/Gatekeeper/Kyverno integration, admission webhooks, or built-in policy checks) that blocks non-compliant infrastructure changes before apply. RBAC is referenced only as an access-control feature, not as a compliance gate.",
+    "rationale": "Crossplane's evidence covers RBAC, drift correction, and composition/testing tooling, but there is no mention of a policy-as-code engine (e.g., OPA/Gatekeeper/Kyverno integration, admission-time validation, or CI policy gates) that blocks non-compliant infrastructure changes before apply. Community comments reference 'enforcement' generally (crossplane-comm-10) but do not describe a pre-apply policy check mechanism.",
     "evidenceIds": []
   },
   {
     "productId": "crossplane",
     "storyId": "preview-before-apply",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossplane operates on a continuous-reconciliation model rather than an explicit plan/apply diff workflow; the CLI's `render` command only tests Composition Function output offline, and probe evidence explicitly states no local plan/preview loop exists — every real change requires a live cluster with the control plane reconciling live, not previewing creates/updates/destroys beforehand. missing for 10: any documented `crossplane plan`/diff command showing pending creates/updates/deletes, first-party guidance on previewing resource changes before applying, and independent confirmation of such a preview workflow.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Crossplane's CLI supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster' (crossplane-docs-7), which offers a limited local preview of composition output, but there is no documented feature that shows a full diff of creates/updates/destroys against live cluster state akin to a plan/apply workflow — Crossplane's model is continuous reconciliation (crossplane-docs-18) rather than plan-then-apply. missing for 10: explicit plan/diff output showing creates, updates, and destroys against live state; independent hands-on confirmation of this preview workflow.",
     "evidenceIds": [
-      "crossplane-probe-2",
       "crossplane-docs-7",
       "crossplane-docs-18"
     ]
@@ -462,7 +462,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is an infrastructure-orchestration control plane; it has no role in AI-model-training data usage or user-data privacy policies, so the axis of 'preventing data from being used to train AI models' does not apply to this category of product.",
+    "rationale": "Crossplane is an infrastructure-orchestration control plane for provisioning cloud resources via Kubernetes; it has no AI model training component or user data collection for model training, so 'preventing data from being used to train AI models' is a category error—wrong axis for this product type.",
     "evidenceIds": []
   },
   {
@@ -471,7 +471,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Crossplane is a Kubernetes control-plane/infrastructure-orchestration tool, not a data-handling AI product that stores or retains user/conversational data. Data retention and deletion policy for AI-native privacy posture is a category error for this kind of infrastructure provisioning tool.",
+    "rationale": "Crossplane is an infrastructure control-plane/orchestration tool for provisioning cloud resources via Kubernetes, not a data-processing or AI service that stores/retains user data on behalf of an AI-native user. Data retention/deletion privacy controls are a category error for this type of product — it applies to SaaS/AI data processors, not an infrastructure orchestration framework.",
     "evidenceIds": []
   },
   {
@@ -489,12 +489,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Crossplane exposes Kubernetes-native declarative APIs and explicitly markets itself as something 'humans, automation, and AI systems can safely act on', implying resources can be created/managed programmatically (e.g., via the Kubernetes API) rather than only via CLI. However, the evidence pack never documents an SDK, client library, or concrete example of driving Crossplane from application code — it only shows CLI tooling and YAML-based composition, and the probe confirms all real plan/apply operations require a running cluster with no programmatic preview path shown. missing for 10: explicit SDK/client-library documentation, a hands-on example of application code creating/managing Crossplane resources, and confirmation that this workflow is idiomatic (not just theoretically possible via raw Kubernetes API).",
+    "rationale": "Crossplane resources are Kubernetes Custom Resources, and docs describe them as 'declarative APIs that humans, automation, and AI systems can safely act on' and 'machine-readable' (crossplane-docs-16, crossplane-docs-29), implying they can be created/managed via the Kubernetes API (and thus any client library) rather than only via a CLI. However, the evidence pack contains no explicit SDK, client library, or code example showing an application programmatically driving Crossplane deployments — installation and usage guidance is all Helm/kubectl-centric (crossplane-docs-4, crossplane-docs-28). Missing for 10: explicit documentation or example of a client library/SDK (Go, Python, etc.) driving Crossplane resources from app code, and independent confirmation of this workflow in practice.",
     "evidenceIds": [
       "crossplane-docs-16",
-      "crossplane-docs-21",
-      "crossplane-probe-2",
-      "crossplane-docs-22"
+      "crossplane-docs-29",
+      "crossplane-docs-4",
+      "crossplane-docs-28"
     ]
   },
   {
@@ -541,8 +541,8 @@
     "storyId": "secret-config-values",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Crossplane orchestrates infrastructure via Kubernetes and secret/credential handling (e.g., Provider credentials, Kubernetes Secrets) is a plausible axis for such a control plane, but the evidence pack contains no mention of secrets management, credential injection, or log redaction mechanisms. missing for 10: any documentation or community evidence of secret injection, secure credential storage, or protection from log exposure.",
+    "confidence": "low",
+    "rationale": "Crossplane's evidence pack covers compositions, packages, providers, and CLI tooling but contains no mention of secrets management, sensitive configuration handling, or Kubernetes Secret injection into managed resources/compositions — no documentation or community evidence addresses how developers pass secrets without exposing them in code or logs.",
     "evidenceIds": []
   },
   {
@@ -550,8 +550,8 @@
     "storyId": "state-encryption",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of encryption at rest, state files, secrets handling, or etcd encryption for Crossplane's managed resource state. Crossplane stores its state as Kubernetes custom resources rather than flat state files, but no documentation here addresses how sensitive values are protected from plaintext exposure. missing for 10: any docs on etcd encryption, secret handling for provider credentials, or state-at-rest encryption guarantees.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of encryption at rest, secrets/credential handling, or protection of sensitive values in Crossplane's state (etcd-backed resource store). While the axis is fair to ask of any state-management tool, nothing in the docs or community evidence addresses this capability, so it cannot be credited as delivered.",
     "evidenceIds": []
   },
   {
@@ -560,12 +560,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows Crossplane CLI features for troubleshooting and rendering Compositions/Managed Resources, but there is no documentation or community evidence of a safe state-inspection/modification workflow (e.g., moving, renaming, or removing resources from state) analogous to Terraform's state mv/rm/import commands. Refactoring-safety for live infrastructure state is a fair axis for any IaC/control-plane tool, so absence of evidence here yields 'none' rather than 'na'.",
-    "evidenceIds": [
-      "crossplane-docs-8",
-      "crossplane-probe-1",
-      "crossplane-probe-2"
-    ]
+    "rationale": "The evidence pack documents Crossplane's declarative resource model, packaging, and CLI for rendering/troubleshooting compositions, but there is no mention of any state-management operations for safely moving, renaming, or removing resources during refactoring (the kind of import/export or 'state mv' functionality found in Terraform-like tools). Crossplane's live Kubernetes-object model could support this, but no evidence in the pack demonstrates such refactoring-safe state manipulation.",
+    "evidenceIds": []
   },
   {
     "productId": "crossplane",
@@ -573,48 +569,44 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Crossplane's model is continuous reconciliation (drift correction) rather than a discrete plan/apply workflow, and the probe evidence explicitly states no local plan/preview loop exists — every operation requires a live cluster. There is no documented JSON plan output or diff artifact an agent could parse.",
+    "rationale": "The evidence shows Crossplane has a CLI 'render' command for testing Compositions offline (crossplane-docs-7) and general claims about machine-readable, auditable APIs (crossplane-docs-29), but nothing describes a dedicated plan/diff step producing structured JSON output for agent consumption analogous to a Terraform-style plan. No documentation ties the render command's output format to JSON or to agent-parseable plan artifacts.",
     "evidenceIds": [
-      "crossplane-probe-2",
-      "crossplane-docs-18"
+      "crossplane-docs-7",
+      "crossplane-docs-29"
     ]
   },
   {
     "productId": "crossplane",
     "storyId": "targeted-partial-apply",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
+    "confidence": "high",
+    "rationale": "Crossplane operates as a continuous-reconciliation Kubernetes control plane rather than a plan/apply IaC tool; the evidence shows no plan/apply step, and targeting or excluding specific resources during a plan/apply run is a category concept from tools like Terraform, not applicable to Crossplane's controller-based model.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "crossplane",
+    "storyId": "unit-integration-tests",
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Crossplane's docs describe compositions, functions, and CLI rendering/troubleshooting, but nothing in the evidence shows a mechanism to target or exclude specific resources during a plan/apply-like operation; the probe explicitly notes there is no local plan/preview loop at all, only continuous reconciliation via a running cluster. missing for 10: any documented `--target`/`--exclude` style flag or resource-selection mechanism for plan or apply operations.",
+    "rationale": "Crossplane's official CLI explicitly supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster running Crossplane,' directly enabling test-without-production workflows for infrastructure code (crossplane-docs-7). However, the evidence pack lacks detail on test assertion frameworks, CI/CD integration examples, or independent hands-on confirmation of this testing workflow. missing for 10: assertion/test-framework documentation, CI pipeline examples, independent developer testimonials confirming the render/test workflow in practice.",
     "evidenceIds": [
-      "crossplane-probe-2",
       "crossplane-docs-7",
       "crossplane-docs-8"
     ]
   },
   {
     "productId": "crossplane",
-    "storyId": "unit-integration-tests",
-    "verdict": "disputed",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Docs claim the Crossplane CLI supports 'testing and rendering standalone Composition Functions without the need to access a Kubernetes cluster running Crossplane' (crossplane-docs-7), which would let developers test infra code without touching production. However, a hands-on probe explicitly found that 'unlike other tools probed here every real plan/apply operation requires a running Kubernetes cluster with the Crossplane control plane installed — no local plan/preview loop exists' (crossplane-probe-2), directly contradicting the claim of a self-contained local testing workflow. Missing for 10: independent confirmation that `crossplane render` works fully offline for realistic compositions, CI/CD test-suite examples, and reconciliation of the docs/probe discrepancy.",
-    "evidenceIds": [
-      "crossplane-docs-7",
-      "crossplane-probe-2"
-    ]
-  },
-  {
-    "productId": "crossplane",
     "storyId": "validate-fmt",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The Crossplane CLI supports offline testing/rendering of Compositions without a cluster (crossplane-docs-7, crossplane-docs-8), which partially covers 'validate,' but there is no evidence of an auto-format command, and crossplane-probe-2 explicitly notes there is no local plan/preview loop — every real operation requires a live cluster, unlike a typical validate→format→plan workflow. missing for 10: dedicated auto-format tooling, an actual 'plan' equivalent step, and independent confirmation of the validate/render workflow's completeness.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "The Crossplane CLI documents rendering/testing Composition Functions offline without a cluster (crossplane-docs-7) and troubleshooting of Compositions/Composite Resources (crossplane-docs-8), which supports pre-apply validation, but there is no documented auto-format command or explicit 'validate' step comparable to `terraform fmt`/`validate`, and Crossplane has no 'plan' phase to validate before. missing for 10: dedicated config auto-formatter, explicit schema validation command, and any 'plan' equivalent to validate against.",
     "evidenceIds": [
       "crossplane-docs-7",
       "crossplane-docs-8",
-      "crossplane-probe-2"
+      "crossplane-probe-1"
     ]
   },
   {
@@ -623,21 +615,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows install/config docs, feature flags, and package management, but contains no explicit compatibility promises (e.g., API versioning policy) or dedicated upgrade/migration guides between Crossplane releases. This axis clearly applies to a platform like Crossplane, but no supporting evidence is present.",
+    "rationale": "The evidence pack covers Crossplane's features (compositions, packages, CLI, providers) but contains no mention of compatibility promises, versioning policy, deprecation timelines, or upgrade guides between releases. Missing for 10: documented API/version compatibility guarantees, deprecation policy, release notes/upgrade guide references, and any community or hands-on confirmation of upgrade smoothness.",
     "evidenceIds": []
   },
   {
     "productId": "opentofu",
     "storyId": "agent-authors-change",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Hands-on probes confirm a full headless plan→apply loop: `tofu plan -detailed-exitcode -out=plan.out` runs non-interactively and signals changes, `tofu show -json` emits machine-readable diff output parseable by agent tooling, and `tofu apply plan.out` executes the saved plan for approval-gated apply. This directly matches the story of an agent authoring changes, planning headlessly, and presenting a diff for approval. missing for 10: no first-party agent/CI orchestration example or official docs showing an approval-gate workflow built around the JSON plan output, and no independent (non-vendor) corroboration beyond the probe run.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "OpenTofu's `tofu plan` (optionally saved with `-out=FILE`) and `tofu apply` commands natively support running a plan headlessly and applying only after separate approval, which maps directly to the story's core workflow, and speculative plans are explicitly documented for reviewing changes before merge/approval [opentofu-docs-3, opentofu-docs-4, opentofu-docs-21]. Missing for 10: explicit machine-readable/JSON diff output for programmatic agent consumption, any documented agent/AI integration or example, and independent corroboration that an AI agent has used this plan/apply flow end-to-end.",
     "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-docs-3",
+      "opentofu-docs-4",
       "opentofu-docs-21"
     ]
   },
@@ -646,15 +636,13 @@
     "storyId": "agent-least-privilege-gates",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "OpenTofu's plan/apply separation (saved plan files, machine-readable JSON output via `tofu show -json`, and exit codes) gives an agent a natural review gate where a human or policy layer can inspect a plan before `apply` executes it, as shown in probes -5/-6/-7 and docs-3/-4/-21. However, there is no evidence of built-in least-privilege credential scoping, RBAC, approval workflows, or a policy-as-code engine (Sentinel/OPA equivalent) enforcing that gate — the review step is only possible via external tooling, not something OpenTofu itself provides. Missing for 10: native policy-as-code/policy enforcement, credential scoping/RBAC features, and any documented approval-gate mechanism tied to identity or role.",
+    "confidence": "low",
+    "rationale": "OpenTofu's plan/apply workflow (speculative plans, plan files, -out for review before apply) gives a foundation for gated approval workflows, and state encryption adds credential/data protection, but there is no evidence of agent-specific least-privilege credential scoping, policy-as-code enforcement (e.g. Sentinel/OPA equivalent), or built-in approval/review gate mechanisms tailored to AI agents. missing for 10: agent-specific least-privilege credential issuance, native policy-as-code/OPA-style enforcement blocking unapproved changes, built-in human-in-the-loop approval gates, and any AI-agent integration documentation.",
     "evidenceIds": [
       "opentofu-docs-3",
       "opentofu-docs-4",
       "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
+      "opentofu-docs-9"
     ]
   },
   {
@@ -663,10 +651,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe of https://opentofu.org/llms.txt returned HTTP 404, and no other evidence pack items reference an llms.txt file or agent-oriented documentation format; the docs are standard human-facing pages only.",
+    "rationale": "Direct probes show no llms.txt (404) and no agent-oriented docs endpoints exist; evidence pack contains no mention of AI-agent-friendly documentation formats.",
     "evidenceIds": [
       "opentofu-probe-1",
-      "opentofu-probe-2"
+      "opentofu-probe-2",
+      "opentofu-probe-3"
     ]
   },
   {
@@ -681,15 +670,11 @@
   {
     "productId": "opentofu",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "OpenTofu's CLI is fully non-interactive/keyless and scriptable (headless plan→apply→destroy verified in probes), which is a prerequisite for wiring it into cron jobs or CI/CD pipelines for autonomous runs, but there is no evidence of any built-in scheduler, trigger, webhook, or agent runtime that autonomously initiates or manages background runs on its own. missing for 10: native scheduling/trigger mechanism, evidence of autonomous (not just headless) background operation, first-party automation/orchestration features beyond CLI scriptability.",
-    "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
-    ]
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "OpenTofu is an IaC provisioning tool run via CLI/CI pipelines, not an agentic automation platform; there is no concept of autonomous background agents in its product category, making this axis a category error rather than an unmet capability.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -697,22 +682,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine, not an agent or assistant product; it has no built-in AI assistant feature and this axis is a category error for its product type.",
+    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine, not a product with a conversational or agentic assistant UI; no evidence pack item mentions any built-in AI assistant, and this axis is a category error for an IaC tool rather than an unmet capability.",
     "evidenceIds": []
   },
   {
     "productId": "opentofu",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Hands-on probes confirm OpenTofu supports non-interactive, scriptable CI workflows: `-input=false`, `-auto-approve`, `-detailed-exitcode` for change detection, machine-readable JSON plan output via `tofu show -json`, and a full plan→apply→destroy loop with correct exit codes, all installable without a login/keys via brew — exactly what CI/agent automation needs. Missing for 10: no explicit vendor CI/CD integration guide (e.g., GitHub Actions/GitLab CI docs) or third-party CI pipeline examples in the evidence pack.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OpenTofu is a CLI-first IaC tool (tofu plan/apply/test/import) with scriptable workflows like -out=FILE to save a plan for later non-interactive execution, and it's described as a drop-in replacement for Terraform, which is commonly run in CI/CD pipelines. Missing for 10: explicit CI/CD integration documentation, non-interactive/auto-approve flag examples, and first-party CI pipeline templates or guides.",
     "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-docs-3",
-      "opentofu-docs-21"
+      "opentofu-docs-21",
+      "opentofu-docs-7",
+      "opentofu-docs-8",
+      "opentofu-docs-1",
+      "opentofu-probe-4"
     ]
   },
   {
@@ -721,7 +707,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine, not an agent or MCP client host; plugging MCP servers into it to give it tool access is a category mismatch — no evidence exists of MCP integration, and the product's role doesn't call for consuming MCP tools.",
+    "rationale": "OpenTofu is an infrastructure-as-code provisioning tool, not an AI agent or agent-facing platform; plugging MCP servers into it so it can 'use their tools' is a category error for this product type—there is no evidence of any AI/agent integration layer at all.",
     "evidenceIds": []
   },
   {
@@ -739,45 +725,45 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu's interface is HCL configuration plus a fixed CLI command set (plan, apply, test, import, etc.); nothing in the evidence pack shows any natural-language command interface, NL parsing, or AI-native control surface — llms.txt and other AI-discovery probes even returned 404s.",
+    "rationale": "OpenTofu is a CLI-driven IaC tool with commands like plan/apply/import/test, but there is no evidence of natural-language command support, an AI assistant, or NL-to-config translation; probes for llms.txt/openapi return 404s, indicating no AI-native interface layer.",
     "evidenceIds": [
       "opentofu-probe-1",
       "opentofu-probe-2",
-      "opentofu-probe-4",
-      "opentofu-docs-3"
+      "opentofu-probe-3",
+      "opentofu-docs-3",
+      "opentofu-docs-7"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 7,
     "confidence": "high",
-    "rationale": "OpenTofu ships an official, documented CLI (opentofu.org/docs/cli/) and hands-on probes confirm a full headless workflow — init, plan with machine-readable JSON output, auto-approved apply, and destroy — all scriptable without interactive input, which is exactly what an AI-native/agentic caller needs. It is also a drop-in Terraform replacement, so existing agent tooling built for Terraform's CLI works unchanged.\n\nmissing for 10: no first-party documentation specifically addressing AI-agent usage patterns or guardrails (e.g., rate limits, agent-specific auth flows) beyond generic CLI/JSON support.",
+    "rationale": "OpenTofu ships an official, extensively documented CLI (`tofu`) with commands like plan, apply, test, import, and flags for scripting/automation (-out, -exclude, etc.), confirmed by docs and a direct probe of the CLI docs page. This gives AI-native users a stable, scriptable interface for infrastructure automation. Missing for 10: no evidence of AI-specific tooling such as structured/JSON output flags, agent-oriented guides, or MCP-style integrations tailored for AI consumption.",
     "evidenceIds": [
       "opentofu-probe-4",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-docs-3",
+      "opentofu-docs-5",
+      "opentofu-docs-6",
+      "opentofu-docs-7",
+      "opentofu-docs-8",
       "opentofu-docs-21"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "OpenTofu is drivable programmatically via its CLI (headless plan/apply/destroy loop, machine-readable JSON plan output) as confirmed by hands-on probes, which supports AI-native agentic automation, but there is no documented public HTTP/REST/OpenAPI API — probes for llms.txt, docs-md, and openapi/swagger endpoints all 404. missing for 10: a documented public API (REST/OpenAPI/SDK) beyond the CLI, official llms.txt or machine-readable docs endpoint, and any first-party API reference for programmatic/agentic access.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "OpenTofu is driven via CLI commands (tofu plan/apply/test/import) rather than a documented public API, and explicit probes found no OpenAPI/swagger spec, no llms.txt, and no API documentation endpoint — only CLI docs exist.",
     "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-probe-1",
       "opentofu-probe-2",
       "opentofu-probe-3",
-      "opentofu-probe-4"
+      "opentofu-probe-4",
+      "opentofu-docs-3"
     ]
   },
   {
@@ -786,7 +772,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an IaC CLI/engine that consumes provider credentials but has no product surface for issuing or scoping its own API credentials to agents; this axis belongs to identity/credential-issuing platforms, not an infrastructure-as-code tool.",
+    "rationale": "OpenTofu is an IaC provisioning tool, not an identity/access-management or agent-orchestration platform; issuing scoped API credentials for agents is outside its product category and is instead a function of cloud providers or secret managers it might integrate with.",
     "evidenceIds": []
   },
   {
@@ -794,13 +780,12 @@
     "storyId": "agentic-sdks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows only CLI usage, JSON plan output, and website docs; there is no mention of any official SDK (Go, Python, REST, or agent-oriented) that AI-native developers could build against, and probes explicitly show llms.txt, docs-md, and OpenAPI endpoints returning 404. Missing for 10: any documented official SDK, API/OpenAPI spec, or programmatic library for AI agents to integrate with OpenTofu beyond the CLI.",
+    "confidence": "high",
+    "rationale": "No evidence of official SDKs (Go/Python/JS libraries) for programmatic/AI-native integration; evidence only covers CLI commands, docs, and providers/modules. Probes for llms.txt, OpenAPI specs also return 404, reinforcing absence of API/SDK surface for AI-native building.",
     "evidenceIds": [
       "opentofu-probe-1",
       "opentofu-probe-2",
-      "opentofu-probe-3",
-      "opentofu-probe-4"
+      "opentofu-probe-3"
     ]
   },
   {
@@ -809,7 +794,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an IaC CLI tool that operates via local/CI plan-apply workflows, not an event-driven or SaaS platform; webhook subscriptions are not a fit axis for this product category, and no evidence suggests such a feature exists or is planned.",
+    "rationale": "OpenTofu is an IaC provisioning tool (CLI-driven) with no event/webhook subscription system in its product surface; webhook subscriptions are not a fair capability for this category of tool, unlike SaaS platforms with event-driven integrations.",
     "evidenceIds": []
   },
   {
@@ -827,12 +812,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu's docs are static CLI command references (plan/apply/test/import) with no interactive API explorer or runnable-example sandbox; explicit probes confirm no OpenAPI/swagger spec and no llms.txt discoverability aid.",
+    "rationale": "OpenTofu offers standard CLI/docs but no evidence of an interactive API reference with runnable examples; probes confirm no OpenAPI/swagger spec and no llms.txt exist, indicating this capability is absent.",
     "evidenceIds": [
-      "opentofu-probe-3",
       "opentofu-probe-1",
-      "opentofu-docs-3",
-      "opentofu-docs-7"
+      "opentofu-probe-2",
+      "opentofu-probe-3"
     ]
   },
   {
@@ -841,11 +825,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Explicit probes confirm no OpenAPI/Swagger spec or llms.txt is available (404s at all candidate paths), and no evidence of any machine-readable API spec being offered.",
+    "rationale": "OpenTofu offers no OpenAPI/Swagger spec; probes for openapi.json, swagger.json, and related paths all returned 404, and there is no documented machine-readable API spec anywhere in the evidence.",
     "evidenceIds": [
-      "opentofu-probe-3",
-      "opentofu-probe-1",
-      "opentofu-probe-2"
+      "opentofu-probe-3"
     ]
   },
   {
@@ -854,13 +836,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenTofu's `tofu test` command explicitly creates real infrastructure to test configuration and then destroys it, and workspaces/variables allow separate dev/staging/prod environments (multi-environment support mentioned in docs), which supports sandbox-style testing without touching production if configured with separate state/backends. However, there is no dedicated built-in sandboxing feature, no first-party guidance on isolating a sandbox from production data specifically, and no mocking/dry-run-only testing mode beyond plan preview. missing for 10: dedicated sandbox/mock-infrastructure feature, explicit doc guidance on isolating prod vs sandbox state, independent verification of test-command safety in practice.",
+    "rationale": "OpenTofu's `tofu plan` provides speculative, non-applying previews and `tofu test` spins up real infrastructure for assertions and then destroys it, both of which let a user validate configuration changes without permanently altering production state. However, there is no explicit documentation of sandbox/workspace isolation, separate environment/account configuration, or AI-agent-specific sandboxing guarantees to prevent touching production data. Missing for 10: explicit workspace/environment isolation mechanisms, guidance on separating sandbox vs production state/backends, and any AI-specific sandbox tooling or guarantees.",
     "evidenceIds": [
-      "opentofu-docs-7",
-      "opentofu-docs-25",
-      "opentofu-docs-18",
       "opentofu-docs-3",
-      "opentofu-probe-5"
+      "opentofu-docs-4",
+      "opentofu-docs-7",
+      "opentofu-docs-25"
     ]
   },
   {
@@ -868,11 +849,13 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows OpenTofu has versioned CLI output formats (e.g., plan JSON format_version) but contains no documentation of a formal API/CLI deprecation policy or version-support guarantees; the axis is applicable to an IaC tool with a CLI/JSON interface, but no evidence supports a documented deprecation policy. Missing for 10: explicit deprecation policy docs, versioning/SLA guarantees, changelog of breaking changes.",
+    "confidence": "medium",
+    "rationale": "Evidence shows OpenTofu documents CLI commands and general backwards-compatibility promises but no versioned API surface (probes confirm no OpenAPI/swagger spec, no llms.txt) and no documented deprecation policy for any programmatic interface. missing for 10: a versioned API spec, an explicit deprecation policy document, and any AI-facing API access story.",
     "evidenceIds": [
-      "opentofu-probe-6",
-      "opentofu-probe-4"
+      "opentofu-probe-1",
+      "opentofu-probe-2",
+      "opentofu-probe-3",
+      "opentofu-docs-23"
     ]
   },
   {
@@ -881,7 +864,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu supports bulk-style operations via resource graph parallelization, for_each-driven dynamic provider/module generation, -exclude flag for scoping bulk plan/apply, and programmatic module version updates across many modules, which together enable acting on many items at once. However this is infrastructure-as-code bulk management, not an AI-native batch/agent API, and there's no evidence of a dedicated bulk API, batch job orchestration, or AI-specific tooling for mass operations. missing for 10: dedicated bulk/batch API or agent-facing interface for large-scale multi-item operations, independent hands-on evidence of bulk operations at scale, AI-native tooling specifically for orchestrating many items programmatically.",
+    "rationale": "OpenTofu supports bulk operations via for_each-driven dynamic provider/resource generation, graph-based parallelization of non-dependent resources, and -exclude flags to scope bulk applies/plans, which are relevant to an AI-native user automating many items at once. However, this is IaC-level bulk config generation, not an AI-agent-oriented batch/automation API, and there's no evidence of programmatic bulk orchestration tailored for AI agents. missing for 10: dedicated AI-agent bulk-operation API/interface, independent hands-on verification of large-scale bulk runs, and documentation specifically framing this for AI-native automation.",
     "evidenceIds": [
       "opentofu-gh-1",
       "opentofu-docs-10",
@@ -905,48 +888,48 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine for provisioning resources via plan/apply, not a workflow orchestrator or job scheduler; scheduling recurring jobs is outside its product category and not addressed anywhere in the evidence.",
+    "rationale": "OpenTofu is an IaC provisioning tool (plan/apply/destroy for infrastructure state) and has no concept of scheduling recurring jobs or workflows itself — that role belongs to external orchestrators (CI/CD, cron, Terraform Cloud-style schedulers). Scheduling recurring automation is a wrong axis for this product category.",
     "evidenceIds": []
   },
   {
     "productId": "opentofu",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu's state is plain text-based (HCL) which enables version control via git, and plan files (tofu plan -out) provide a preview/review mechanism, with tofu destroy/apply providing rollback-like operations, but there's no native built-in versioning, review workflow, or rollback/history feature beyond what git or external tools (e.g. Terraform Cloud-like state history) provide. missing for 10: no first-party state history/rollback mechanism, no built-in review/approval workflow beyond plan output, no independent evidence of an audit trail or diff-based rollback UI.",
+    "rationale": "OpenTofu supports review via `tofu plan` speculative plans and version control of infrastructure-as-code (docs-3, docs-4, docs-16), plus module/version pinning for consistency (docs-12) and state encryption for safe storage (docs-9). However there is no explicit rollback mechanism or documented workflow (e.g., a 'rollback' command or state-versioning restore process) beyond implied git-based reversion. missing for 10: explicit rollback/state-restore documentation, independent hands-on confirmation of rollback workflows.",
     "evidenceIds": [
-      "opentofu-docs-16",
       "opentofu-docs-3",
-      "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-7"
+      "opentofu-docs-4",
+      "opentofu-docs-16",
+      "opentofu-docs-12",
+      "opentofu-docs-9"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "destroy-teardown",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "OpenTofu docs explicitly describe destroy-mode planning that removes all remote objects leaving an empty state, and a hands-on probe confirms a full plan→apply→destroy loop exiting cleanly (exit 0). This directly matches the story of tearing down an environment cleanly. Missing for 10: independent (non-probe) third-party confirmation of destroy behavior at scale or with complex multi-resource environments.",
+    "rationale": "Docs explicitly document destroy mode via `tofu plan -destroy` (and implicitly `tofu apply -destroy`/`tofu destroy`), stating it creates a plan to destroy all remote objects leaving an empty state, and `tofu test` shows destroy being used automatically to tear down created infrastructure. Missing for 10: no dedicated `tofu destroy` command page cited and no independent hands-on report specifically validating a full environment teardown.",
     "evidenceIds": [
       "opentofu-docs-5",
-      "opentofu-probe-7"
+      "opentofu-docs-7",
+      "opentofu-docs-25"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "drift-detection",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "OpenTofu's `tofu plan` explicitly supports a refresh-only mode that updates state to reflect out-of-band changes without applying corrections, which is the canonical drift-detection workflow, and a hands-on probe confirms plan surfaces detected changes via -detailed-exitcode in a real run. Missing for 10: an explicit end-to-end hands-on test showing detection of an externally-modified resource (drift) specifically, and independent/community validation of drift detection accuracy.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OpenTofu's `tofu plan` explicitly detects drift by comparing declared config to real infrastructure, and `-refresh-only` mode is specifically designed to update state to match out-of-band changes, directly enabling drift detection as described. missing for 10: no independent/hands-on corroboration of drift detection specifically, and no dedicated drift-report/CI integration docs beyond the plan/refresh commands.",
     "evidenceIds": [
-      "opentofu-docs-6",
       "opentofu-docs-3",
-      "opentofu-probe-5",
-      "opentofu-probe-6"
+      "opentofu-docs-6",
+      "opentofu-docs-4"
     ]
   },
   {
@@ -954,12 +937,12 @@
     "storyId": "environment-config-stacks",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "OpenTofu's docs explicitly mention using for_each to build 'multi-environment setups (dev/staging/prod)' via provider configuration generation, showing the product can model separate environments, and its drop-in Terraform compatibility implies inherited workspace/state-separation mechanisms. However, there is no direct documentation or probe evidence of a dedicated `tofu workspace` command, backend workspace isolation, or a 'stacks' feature being exercised, so the core mechanism developers would use for per-environment config isn't concretely demonstrated. Missing for 10: explicit `tofu workspace` command docs, evidence of stacks/state isolation per environment, and hands-on proof of switching environments.",
+    "confidence": "low",
+    "rationale": "OpenTofu docs mention using dynamic provider configuration with for_each as 'perfect for multi-environment setups (dev/staging/prod)', implying per-environment config management, but there is no explicit documentation of OpenTofu's native `workspace` command or a dedicated 'stacks' feature for isolating dev/staging/prod state and configuration. Missing for 10: explicit workspace/state-isolation docs, dedicated stacks feature documentation, and independent confirmation of workspace-based environment separation.",
     "evidenceIds": [
       "opentofu-docs-18",
-      "opentofu-docs-1",
-      "opentofu-docs-14"
+      "opentofu-docs-27",
+      "opentofu-docs-11"
     ]
   },
   {
@@ -967,22 +950,24 @@
     "storyId": "gp-language-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "OpenTofu's evidence pack only shows HCL-based declarative configuration (for_each loops, dynamic provider blocks) rather than a general-purpose programming language with types and IDE support; there is no mention of a CDK-like SDK (e.g., TypeScript/Python bindings) that would satisfy this story.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "OpenTofu's configuration language is HCL, a declarative domain-specific language; while it supports for_each loops, there is no evidence of support for a general-purpose programming language (e.g., TypeScript/Python) with full type systems or first-class IDE tooling akin to CDK-style approaches.",
+    "evidenceIds": [
+      "opentofu-gh-2",
+      "opentofu-docs-11",
+      "opentofu-docs-18"
+    ]
   },
   {
     "productId": "opentofu",
     "storyId": "headless-ci-apply",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Docs describe saving plans with `-out=FILE` and applying them via `tofu apply plan.out`, and hands-on probes confirm a full non-interactive plan→apply→destroy loop using `-input=false -auto-approve -detailed-exitcode`, matching the CI approval-flag workflow described in the story. missing for 10: explicit CI/CD pipeline examples (e.g., GitHub Actions/GitLab CI snippets) showing artifact upload/download between plan and apply stages.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm the core CI-friendly workflow: `tofu plan -out=FILE` saves a plan artifact that can later be executed via `tofu apply FILE`, enabling non-interactive plan/apply separation. However, there is no explicit documentation of approval-flag mechanics (e.g., -auto-approve), CI pipeline integration examples, or a documented approval gating workflow in the evidence pack. missing for 10: explicit -auto-approve/approval-flag documentation, CI/CD pipeline integration examples, independent hands-on corroboration of the non-interactive workflow.",
     "evidenceIds": [
-      "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
+      "opentofu-docs-3",
+      "opentofu-docs-21"
     ]
   },
   {
@@ -1001,17 +986,15 @@
     "productId": "opentofu",
     "storyId": "migrate-from-terraform",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "OpenTofu explicitly positions itself as a drop-in, backwards-compatible replacement for Terraform, and community reports (including real client migrations and \"s/terraform/opentofu/g\") corroborate that existing Terraform configs and state can be migrated with minimal effort; hands-on probes confirm the CLI runs standard Terraform-style plan/apply/destroy workflows without modification. Missing for 10: an explicit first-party migration guide or documented state-file conversion/validation step (beyond general 'drop-in' claims), and independent verification of state-file compatibility across complex/large codebases.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "OpenTofu is explicitly positioned as a drop-in replacement for Terraform that preserves existing workflows, configurations, and (per community reports) requires only a simple substitution to migrate, with no rewrite of state or code needed. Community testimonials corroborate real-world migrations of existing Terraform codebases/clients to OpenTofu with minimal friction.  Missing for 10: an explicit first-party state-migration guide or version-compatibility matrix, and independent verification of large/complex state migrations beyond anecdotal HN comments.",
     "evidenceIds": [
       "opentofu-docs-1",
       "opentofu-docs-14",
       "opentofu-docs-23",
       "opentofu-comm-5",
-      "opentofu-comm-7",
-      "opentofu-probe-5",
-      "opentofu-probe-7"
+      "opentofu-comm-7"
     ]
   },
   {
@@ -1033,13 +1016,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is a CLI-based IaC tool with no product UI to compare against an API — its docs, probes, and community feedback describe CLI commands (plan/apply/test/import) and installation, not a UI/API parity story. This axis is a category error for a CLI-first tool rather than an applicable-but-failed capability.",
-    "evidenceIds": [
-      "opentofu-probe-4",
-      "opentofu-probe-5",
-      "opentofu-probe-7",
-      "opentofu-probe-3"
-    ]
+    "rationale": "OpenTofu is a CLI/IaC engine with no hosted web UI or product API surface to compare against; the UI/API parity question doesn't apply to this kind of tool.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -1047,25 +1025,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu's state and plan files are plain JSON/HCL (confirmed by the probed `tofu show -json` machine-readable output) and the project is governed as 'truly open source' under the Linux Foundation, meaning there is no proprietary lock-in and configs/state can be freely moved or forked. However, there is no explicit documentation of a dedicated 'export and leave' workflow, no discussion of migrating state to other tools, and no llms.txt/data-export interface (llms.txt 404, no OpenAPI) that would make this openness explicit for AI-native tooling. missing for 10: explicit data-export/portability docs, llms.txt or machine-readable manifest, third-party confirmation of migrating state out of OpenTofu.",
+    "rationale": "OpenTofu configs and state are plain-text HCL/JSON files stored locally or in backends, and state encryption is open/documented, meaning data isn't locked into a proprietary format and can be exported/migrated freely; it's also open-source and license info is on GitHub. However there's no explicit 'export all data' feature or documented data-portability workflow beyond the inherent openness of IaC files, and no evidence of a formal data-export/offboarding tool. missing for 10: explicit data-export tooling/documentation, independent confirmation of full data portability, and clear on-site licensing/export guidance (community notes license info is hard to find on the site).",
     "evidenceIds": [
+      "opentofu-docs-9",
+      "opentofu-docs-20",
       "opentofu-docs-26",
-      "opentofu-docs-23",
-      "opentofu-probe-6",
-      "opentofu-probe-1",
-      "opentofu-comm-5"
+      "opentofu-comm-3",
+      "opentofu-gh-2"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "openness-open-license",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "OpenTofu's source is publicly hosted on GitHub (opentofu-gh-1) and the manifesto explicitly commits to remaining 'Truly open source' now under the Linux Foundation (opentofu-docs-26); community discussion confirms the license is readily found in the GitHub repo even if not prominent on the marketing site (opentofu-comm-3). Missing for 10: explicit citation of the license text/name (e.g., MPL 2.0) and independent legal/audit confirmation beyond community mention.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OpenTofu's source is hosted publicly on GitHub (opentofu-gh-1, opentofu-gh-2) and the manifesto explicitly commits to it remaining 'Truly open source' under Linux Foundation governance (opentofu-docs-26, opentofu-docs-23). Community confirms the license is easily found in the GitHub repo, even if not surfaced on the marketing site (opentofu-comm-3). Missing for 10: explicit citation of the license name/text (e.g., MPL 2.0) in the evidence pack, and no independent legal/audit confirmation beyond community mention.",
     "evidenceIds": [
       "opentofu-gh-1",
+      "opentofu-gh-2",
       "opentofu-docs-26",
+      "opentofu-docs-23",
       "opentofu-comm-3"
     ]
   },
@@ -1075,13 +1055,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "OpenTofu is fully open-source (Linux Foundation governed), can be installed and run entirely on one's own infrastructure via multiple install methods, and probes confirm a fully local, keyless CLI workflow (init/plan/apply/destroy) with no SaaS dependency — this is inherently self-hostable since it's just a binary operating on local/backend state. missing for 10: no explicit vendor documentation section titled 'self-hosting' or dedicated guide addressing enterprise/air-gapped self-hosted deployment scenarios, and no independent hands-on report specifically validating self-hosted production use at scale.",
+    "rationale": "OpenTofu is a fully open-source, self-hostable CLI tool (Linux Foundation project) with wide install options and no vendor lock-in or SaaS dependency, making self-hosting the core product straightforward and central to its identity. Missing for 10: no explicit dedicated 'self-hosting guide' or containerized deployment docs, and no independent hands-on confirmation of self-hosting specifics beyond install docs.",
     "evidenceIds": [
       "opentofu-docs-2",
       "opentofu-docs-26",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
+      "opentofu-probe-4",
       "opentofu-docs-23"
     ]
   },
@@ -1090,13 +1068,9 @@
     "storyId": "policy-enforcement",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows OpenTofu's plan workflow and machine-readable plan JSON output (e.g., opentofu-probe-5, opentofu-probe-6) which could theoretically feed external policy engines, but there is no mention of any built-in or integrated policy-as-code framework (e.g., Sentinel, OPA/Conftest, Checkov) or documented workflow for blocking non-compliant applies. Missing for 10: any policy-as-code engine or gating mechanism, documentation of policy enforcement in CI/CD, and evidence that non-compliant plans are actually blocked before apply.",
-    "evidenceIds": [
-      "opentofu-docs-3",
-      "opentofu-probe-5",
-      "opentofu-probe-6"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack covers plan/apply/test/import/state-encryption features but contains no mention of policy-as-code, Sentinel/OPA integration, or any pre-apply compliance-check enforcement mechanism specific to OpenTofu.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -1104,15 +1078,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "OpenTofu's tofu plan command is explicitly documented to preview creates, updates, and destroys before applying, with dedicated destroy and refresh-only modes, and this was independently verified via a hands-on probe showing a real plan proposing a create, saved to a file, and later applied and destroyed successfully. Machine-readable plan JSON output further supports precise change previewing. missing for 10: independent third-party review of plan accuracy on complex multi-resource updates beyond the single-resource probe",
+    "rationale": "OpenTofu's `tofu plan` command is well documented to preview creates, updates, and destroys before applying, with additional modes (destroy, refresh-only) and the ability to save plans for later apply, directly matching the story. Community evidence corroborates it as a faithful Terraform-compatible workflow (plan/apply), reinforcing real-world usage. missing for 10: independent hands-on verification of plan output accuracy/detail beyond docs.",
     "evidenceIds": [
       "opentofu-docs-3",
+      "opentofu-docs-4",
       "opentofu-docs-5",
       "opentofu-docs-6",
       "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
+      "opentofu-comm-5"
     ]
   },
   {
@@ -1120,8 +1093,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "OpenTofu's evidence covers state encryption and backend usage but contains no documentation or claims about choosing a storage region/data-residency for state or configuration data. While backend configuration (e.g., S3) inherently involves region settings, none of the evidence addresses residency controls as a feature.",
+    "confidence": "low",
+    "rationale": "OpenTofu manages state via user-configured backends (S3, GCS, etc.) which inherently could support regional choice, so the axis is fair to ask, but the evidence pack contains no documentation about backend region/residency configuration or data-location controls — only generic encryption-at-rest claims (opentofu-docs-9, opentofu-docs-20).",
     "evidenceIds": []
   },
   {
@@ -1130,7 +1103,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code tool, not an AI model provider or data-processing service that trains models on user data; the axis of preventing training-data usage does not apply to this product category.",
+    "rationale": "OpenTofu is an infrastructure-as-code provisioning tool, not an AI model or AI service that trains on user data; preventing data use for AI training is not a relevant axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -1139,7 +1112,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is a local/self-hosted infrastructure-as-code CLI tool, not an AI service or SaaS platform that collects, stores, or retains user conversational/personal data. Data retention and deletion controls are not a meaningful axis for this product category — the evidence is entirely about state file encryption and Terraform-compatible plan/apply workflows, unrelated to retention/deletion policies for user data.",
+    "rationale": "OpenTofu is an infrastructure-as-code CLI tool, not an AI service or SaaS that ingests user data/conversations; 'data retention and deletion' privacy controls are not a relevant axis for this product category. State encryption at rest addresses data protection, not retention/deletion policy.",
     "evidenceIds": []
   },
   {
@@ -1148,7 +1121,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism for OpenTofu; the axis is plausible for a CLI tool but nothing documents it.",
+    "rationale": "No evidence in the pack discusses telemetry, usage tracking, or opt-out mechanisms for OpenTofu; the CLI/docs cover plan/apply/test/encryption but never mention analytics collection or a way to disable it.",
     "evidenceIds": []
   },
   {
@@ -1156,15 +1129,9 @@
     "storyId": "programmatic-deployments",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "All evidence describes CLI commands (`tofu plan`, `apply`, `show -json`) and JSON output that can be parsed by external scripts, but there is no official SDK, Go library, or API for embedding OpenTofu operations directly in application code, and probes explicitly show no OpenAPI/API endpoints exist. This means programmatic control still requires shelling out to the CLI rather than a first-class application-integration path.",
-    "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
-      "opentofu-probe-3",
-      "opentofu-docs-3"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence pack shows only CLI commands (plan, apply, test, import) and HCL configuration; there is no mention of an SDK, API, or library (e.g., a Go/embedding package like terraform-exec or CDK) for driving OpenTofu programmatically from application code.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -1199,7 +1166,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu's docs highlight a large public registry (23,600+ modules) and version-controlled module usage (opentofu-docs-13, opentofu-docs-24, opentofu-docs-12), confirming module consumption is core to the product. However, there is no direct evidence describing a publishing workflow for modules to the registry (e.g., versioning/publish CLI or registry submission process). missing for 10: explicit publish/versioning workflow documentation, independent confirmation of registry usability, and any hands-on evidence of publishing a module.",
+    "rationale": "OpenTofu's ecosystem messaging cites a large registry of 23,600+ modules and 3,900+ providers, implying consumption is well supported, and 'module version' management language ([opentofu-docs-12]) suggests standard module consumption patterns. However, there's no direct evidence in the pack of the actual public registry (OpenTofu Registry) mechanics, publishing workflow for module authors, or registry search/versioning UX, and community comments focus on migration ease rather than registry publishing experience. Missing for 10: documentation of the OpenTofu Registry itself, module publishing process/requirements, and independent verification of registry usability.",
     "evidenceIds": [
       "opentofu-docs-13",
       "opentofu-docs-24",
@@ -1212,7 +1179,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenTofu supports encrypting state and plan files at rest (including AES-GCM configuration) so secrets don't leak in stored state/plan artifacts, and it is Terraform-compatible with variable-based configuration that supports sensitive input passing patterns. However, there is no direct documentation on marking variables as sensitive to suppress console/log output, no evidence of secret-manager integrations, and community commentary raises unresolved concerns about safety of checked-in encrypted state. missing for 10: explicit sensitive-variable/log-redaction documentation, secrets-manager/vault integration evidence, independent verification that logs never expose secret values.",
+    "rationale": "OpenTofu docs confirm state/plan encryption at rest (AES-GCM) for local and backend storage, which prevents secrets from leaking via state files, but the pack lacks documentation on marking variables as `sensitive`, injecting secrets via environment variables, or redacting secrets from CLI/log output. missing for 10: sensitive variable marking/redaction in logs, secret injection via env vars or secret managers, independent verification of encryption robustness.",
     "evidenceIds": [
       "opentofu-docs-9",
       "opentofu-docs-19",
@@ -1250,15 +1217,13 @@
   {
     "productId": "opentofu",
     "storyId": "structured-plan-output",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Hands-on probe confirms `tofu show -json plan.out` emits machine-readable plan JSON (format_version 1.2) with planned_values, parseable by agent tooling, alongside documented plan/apply CLI workflow supporting `-out=FILE` for later JSON conversion. missing for 10: no independent third-party corroboration beyond the single probe run.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack documents `tofu plan`, `-out=FILE`, and various plan modes, but nowhere mentions a `-json` flag, `tofu show -json`, or any machine-readable plan output format that an agent could parse. Missing for 10: any documentation of JSON plan/output format, schema for machine consumption, or examples of programmatic plan parsing.",
     "evidenceIds": [
-      "opentofu-probe-6",
-      "opentofu-probe-5",
-      "opentofu-docs-21",
-      "opentofu-docs-3"
+      "opentofu-docs-3",
+      "opentofu-docs-21"
     ]
   },
   {
@@ -1267,12 +1232,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "OpenTofu explicitly documents the -exclude flag for excluding resources from operations, and -target flag support is implied by drop-in Terraform compatibility plus verified hands-on plan/apply workflows. missing for 10: explicit docs/example for the -target flag itself and independent community confirmation of targeted apply usage.",
+    "rationale": "OpenTofu documents a -exclude flag to selectively exclude resources during plan/apply, and Terraform-compatible -target functionality is implied via plan/apply commands consistent with drop-in replacement claims; -exclude is explicitly documented as first-party capability for targeted rollouts. missing for 10: explicit documentation/example of -target flag usage and independent hands-on validation of both flags together.",
     "evidenceIds": [
       "opentofu-docs-10",
       "opentofu-docs-3",
-      "opentofu-probe-5",
-      "opentofu-probe-7"
+      "opentofu-docs-14"
     ]
   },
   {
@@ -1295,7 +1259,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers plan, apply, test, import, and encryption commands but contains no mention of `tofu validate` or `tofu fmt` (or any auto-formatting/validation capability), so there is no evidence supporting this specific story despite the axis clearly applying to a Terraform-compatible IaC CLI. Missing for 10: any doc or probe evidence of a validate command, a fmt/auto-format command, or their integration into a pre-plan workflow.",
+    "rationale": "The evidence pack documents `tofu plan`, `tofu test`, and `tofu import` extensively, but contains no mention of `tofu validate` or `tofu fmt` (or any auto-formatting/config-validation capability) that a developer would use before running plan. Missing for 10: any documentation or reference to validate/format commands, corroborating usage examples, or community confirmation of these workflows.",
     "evidenceIds": []
   },
   {
@@ -1304,12 +1268,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenTofu publicly commits to backwards compatibility and positions itself as a drop-in replacement for Terraform, preserving existing configs/workflows, which implies a compatibility promise, but the evidence pack contains no explicit version-to-version upgrade guide documentation for OpenTofu releases themselves, and one community comment notes OpenTofu is 'already diverging from upstream,' raising uncertainty about long-term compatibility guarantees. missing for 10: dedicated upgrade-guide docs between OpenTofu minor/major releases, changelog/breaking-change policy evidence, independent confirmation of smooth upgrades across OpenTofu versions.",
+    "rationale": "OpenTofu documents broad compatibility promises (drop-in replacement for Terraform, backwards-compatible manifesto commitment, .tofu/.tf precedence rules for dual support) but the evidence pack contains no explicit version-to-version upgrade guide content for OpenTofu releases themselves. missing for 10: dedicated upgrade guides between OpenTofu minor/major releases, changelog-linked migration notes, independent confirmation that upgrades are smooth.",
     "evidenceIds": [
-      "opentofu-docs-23",
-      "opentofu-docs-14",
       "opentofu-docs-1",
-      "opentofu-comm-11",
+      "opentofu-docs-14",
+      "opentofu-docs-23",
+      "opentofu-docs-22",
       "opentofu-comm-5"
     ]
   },
@@ -1317,37 +1281,36 @@
     "productId": "pulumi",
     "storyId": "agent-authors-change",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Pulumi's Automation API and CLI allow headless plan generation (`pulumi preview --non-interactive --json`) with structured diff output that an agent can parse, and hands-on probes confirm this and the full apply loop work headlessly without Pulumi Cloud; the official MCP server (verified via handshake) lets AI assistants generate infrastructure code and run CLI commands, supporting an agent-authored-and-approved workflow. missing for 10: a single end-to-end demonstrated workflow tying MCP-based code authoring directly into the headless preview/approval loop, and independent (non-vendor) verification of that combined flow.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Pulumi provides the core pieces: an Automation API for headless, programmatic runs, `pulumi preview` for generating a diff without applying changes, and an official MCP server that lets AI assistants (Cursor, Claude Code, Claude Desktop) generate infrastructure code and interact with Pulumi Cloud stacks, with Neo able to execute changes autonomously. Together these support an agent authoring code, running a headless plan, and surfacing a diff for human approval. missing for 10: no first-party documented end-to-end example combining Automation API + preview output specifically surfaced through the MCP server for agent-driven approval workflows, and no independent/hands-on confirmation that this exact agent-plan-approve loop works in practice.",
     "evidenceIds": [
       "pulumi-docs-2",
       "pulumi-docs-8",
       "pulumi-docs-19",
       "pulumi-docs-26",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-probe-8",
-      "pulumi-docs-7",
-      "pulumi-docs-18"
+      "pulumi-docs-18",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-20"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agent-least-privilege-gates",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi provides the building blocks — Policy as Code guardrails (pulumi-docs-5/16), a preview/dry-run step that shows changes before they're applied (pulumi-docs-8/19, pulumi-probe-6), and an MCP server letting AI assistants query/generate/delegate infra changes (pulumi-docs-7/18/26, pulumi-probe-8) — but there is no documented mechanism tying an agent's MCP/CLI actions specifically to least-privilege scoped credentials or an explicit human-approval gate before 'pulumi up' executes for agent-initiated changes. Missing for 10: explicit least-privilege credential scoping for agent identities, a documented approval/review workflow gating agent-triggered applies, and evidence the MCP server itself is constrained from calling 'pulumi up' without human sign-off.",
+    "rationale": "Pulumi provides the building blocks for agent-safe workflows: preview (pulumi preview) as a no-op plan/review gate, CrossGuard policy-as-code guardrails, an MCP server for AI assistants, and Neo for agent-driven provisioning with 'enterprise controls'. However, there is no documented least-privilege credential scoping specific to agent execution, no explicit approval-gate workflow tying preview output to a required human sign-off before apply, and no independent evidence confirming these controls prevent unapproved changes in practice. missing for 10: least-privilege credential scoping for agents, explicit human-approval gate enforcement before apply, independent/hands-on verification that policy gates block agent-driven changes.",
     "evidenceIds": [
-      "pulumi-docs-5",
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-docs-7",
-      "pulumi-docs-18",
+      "pulumi-docs-5",
+      "pulumi-docs-16",
       "pulumi-docs-26",
-      "pulumi-probe-6",
-      "pulumi-probe-8"
+      "pulumi-docs-9",
+      "pulumi-docs-20",
+      "pulumi-docs-40"
     ]
   },
   {
@@ -1356,12 +1319,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A direct probe confirms Pulumi serves a working llms.txt at https://www.pulumi.com/llms.txt (HTTP 200) with a concise agent-oriented summary, and Pulumi also maintains extensive agent-oriented docs (MCP server docs, CLI docs) that AI assistants can be pointed at. missing for 10: independent/community confirmation that agents successfully consume llms.txt in practice, and a docs.md/markdown-flavored docs endpoint (which returned 404).",
+    "rationale": "A direct probe confirms Pulumi serves a working llms.txt at https://www.pulumi.com/llms.txt returning HTTP 200 with a project summary, and Pulumi also documents an official MCP server explicitly designed for AI assistants to consume Pulumi context/docs. Missing for 10: no evidence of broader agent-oriented docs pages (e.g. per-page .md endpoints, which probe shows 404) or independent confirmation of agents successfully using llms.txt in practice.",
     "evidenceIds": [
       "pulumi-probe-1",
       "pulumi-docs-7",
-      "pulumi-docs-26",
-      "pulumi-probe-4"
+      "pulumi-docs-26"
     ]
   },
   {
@@ -1370,13 +1332,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's 'Insights' policy features and Neo agent provide some AI-driven analysis of infrastructure (policy guardrails, plain-English task delegation), and the MCP server lets AI assistants query/search cloud resources, but there is no dedicated in-product 'insights/suggestions' dashboard shown generating proactive AI analysis of a user's own data beyond policy compliance and Neo's provisioning actions; one community report calls Pulumi's genAI documentation poor. missing for 10: concrete evidence of an in-product AI insights/dashboard analyzing existing resource data and generating proactive suggestions (not just policy enforcement or Neo's task execution), and independent corroboration of quality.",
+    "rationale": "Pulumi's Neo product and MCP server let AI query, search, and optimize Pulumi Cloud stack data and resources, and Neo explicitly 'optimizes' infrastructure based on your environment, which constitutes AI-generated insight/suggestion functionality tied to the product's own data. However, the evidence is mostly first-party marketing copy with no concrete examples of insight/suggestion output or independent corroboration of quality. Missing for 10: independent/hands-on evidence of Neo or the MCP server surfacing specific data-driven insights, detailed docs on suggestion types, and community validation of usefulness.",
     "evidenceIds": [
-      "pulumi-docs-5",
       "pulumi-docs-9",
       "pulumi-docs-20",
       "pulumi-docs-26",
-      "pulumi-comm-16"
+      "pulumi-docs-35",
+      "pulumi-docs-7"
     ]
   },
   {
@@ -1385,25 +1347,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi documents both an Automation API for embedding Pulumi programs into custom background services (pulumi-docs-2) and 'Neo', an agent described as autonomously provisioning, governing, and optimizing infrastructure from plain-English instructions (pulumi-docs-9, pulumi-docs-20), plus headless CLI runs confirmed via probe (pulumi-probe-6, pulumi-probe-7). However, Neo's autonomous background operation is only vendor marketing copy with no hands-on or independent verification, and Automation API requires the user to build their own scheduling/triggering layer rather than shipping a ready background-automation feature. Missing for 10: hands-on/independent evidence Neo (or another built-in scheduler) actually runs unattended in production, native trigger/schedule primitives beyond Automation API, and community corroboration of autonomous operation.",
+    "rationale": "Pulumi Neo is explicitly framed as an agentic automation that 'handles dependencies, executes changes, and monitors outcomes automatically' from plain-English requests, and the Automation API lets developers embed Pulumi's engine into background services that can create/update/destroy infrastructure programmatically without CLI interaction. These are first-party docs only, with Neo appearing to be an early/enterprise-controlled feature and Pulumi's general workflow still emphasizing preview/approval steps rather than fully unattended runs. Missing for 10: independent/hands-on validation of Neo running unattended in production, details on scheduling/triggers for autonomous runs, and clarity on how much human-in-the-loop review is required before changes are applied.",
     "evidenceIds": [
-      "pulumi-docs-2",
       "pulumi-docs-9",
       "pulumi-docs-20",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-35",
+      "pulumi-gh-4"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Pulumi ships 'Neo', a built-in AI agent described as taking plain-English infrastructure requests and autonomously handling dependencies, executing changes, and monitoring outcomes, and the MCP docs explicitly note tasks can be delegated to Neo. This directly matches the story of delegating tasks to an in-product AI assistant. Missing for 10: independent or hands-on verification of Neo's actual task execution/autonomy (only vendor docs), and detail on scope/guardrails of what Neo can do unsupervised.",
+    "rationale": "Pulumi ships a built-in AI assistant called Neo, described as provisioning, governing, and optimizing infrastructure from plain-English requests ('Tell Neo what you need in plain English. It handles dependencies, executes changes, and monitors outcomes automatically'), and docs note it works alongside external AI agents. This directly matches the story of delegating tasks to a built-in assistant. Missing for 10: independent/hands-on evidence validating Neo's real-world reliability and detail on scope/limits of autonomous execution, since all evidence is first-party marketing/docs.",
     "evidenceIds": [
       "pulumi-docs-9",
       "pulumi-docs-20",
+      "pulumi-docs-35",
       "pulumi-docs-26"
     ]
   },
@@ -1413,13 +1377,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's CLI supports non-interactive flags and JSON output for scripted use, plus an Automation API explicitly designed for running Pulumi programs without the CLI in orchestration/CI contexts; hands-on probes confirm `pulumi preview/up/destroy --non-interactive` work headlessly on a local backend without Pulumi Cloud, and VCS integrations (GitHub/GitLab/Azure DevOps) support CI pipelines. Missing for 10: no first-party CI-specific documentation (e.g., GitHub Actions workflow examples) or independent CI-pipeline case study in the evidence pack.",
+    "rationale": "Pulumi's CLI is explicitly designed for headless/CI usage (non-interactive commands, preview/up), and the Automation API is a first-party programmatic interface for embedding Pulumi programs into automation/CI pipelines without the CLI, plus documented VCS integrations (GitHub, GitLab, Azure DevOps) for CI workflows. This is a well-documented, core capability with clear first-party docs, though independent hands-on CI-specific corroboration is thin. Missing for 10: independent/community verification of CI pipeline usage specifics and edge-case reliability in headless mode.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-4",
       "pulumi-docs-12",
-      "pulumi-docs-19"
+      "pulumi-docs-8"
     ]
   },
   {
@@ -1428,15 +1393,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All Pulumi MCP evidence describes Pulumi acting as an MCP *server* (exposing its own tools to external AI assistants like Cursor, Claude Code, Windsurf) — the opposite direction from the story, which asks whether Pulumi itself can consume/plug in external MCP servers as a client. Even Pulumi Neo, the AI agent component, is only documented as executing infrastructure changes from plain-English prompts, with no evidence it can attach to third-party MCP servers to use their tools.",
+    "rationale": "Evidence only documents Pulumi's own MCP server (pulumi-docs-7, pulumi-docs-18, pulumi-docs-26) which lets external AI assistants like Claude/Cursor call Pulumi's tools — the opposite direction from this story, which asks whether Pulumi itself can consume/plug in external MCP servers to use their tools. No evidence shows Pulumi, Pulumi AI, or Neo acting as an MCP client connecting to third-party MCP servers.",
     "evidenceIds": [
       "pulumi-docs-7",
       "pulumi-docs-18",
       "pulumi-docs-26",
-      "pulumi-probe-4",
-      "pulumi-probe-8",
-      "pulumi-docs-9",
-      "pulumi-docs-20"
+      "pulumi-docs-35"
     ]
   },
   {
@@ -1445,61 +1407,61 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi ships an official, documented MCP server (@pulumi/mcp-server) that exposes Pulumi Cloud stacks/resources and CLI commands to AI assistants like Cursor, Claude Code/Desktop, and Windsurf, and a hands-on probe confirms it actually performs a JSON-RPC MCP handshake and responds correctly. Missing for 10: no independent third-party (non-Pulumi) review of the MCP server's real-world reliability/behavior beyond the single probe.",
+    "rationale": "Pulumi documents an official MCP server that lets AI assistants query Pulumi Cloud stacks/resources and generate infrastructure code, and explicitly lists compatibility with Cursor, Claude Code, Windsurf, and Claude Desktop. This is first-party documentation with a dedicated docs page and probe confirmation, though independent hands-on community corroboration of the MCP server specifically is absent. Missing for 10: independent/hands-on validation of the MCP server itself.",
     "evidenceIds": [
       "pulumi-docs-7",
       "pulumi-docs-18",
       "pulumi-docs-26",
-      "pulumi-probe-4",
-      "pulumi-probe-8"
+      "pulumi-docs-42",
+      "pulumi-probe-4"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi Neo is explicitly marketed to accept plain-English infrastructure requests ('Tell Neo what you need in plain English...') and the official MCP server, verified hands-on via JSON-RPC handshake, lets AI assistants translate natural-language prompts into Pulumi CLI/registry operations. However, Neo's NL capability is only vendor-claimed (no hands-on or community verification) and is a separate enterprise product, while the core Pulumi CLI itself remains code/command-driven, not NL-native. Missing for 10: independent or hands-on verification of Neo's natural-language handling, and evidence that natural-language control works without relying on Neo or an external AI coding assistant via MCP.",
+    "rationale": "Pulumi Neo explicitly supports natural-language infrastructure commands ('Tell Neo what you need in plain English... Give me a VPC with a subnet in every AZ'), and the MCP server lets AI assistants generate/manage infrastructure code and delegate to Neo, giving genuine NL operation paths. However this is a distinct product layer (Neo) rather than the core Pulumi CLI/engine, and there's no independent/hands-on evidence corroborating real-world reliability of these NL commands. Missing for 10: independent verification of Neo's natural-language accuracy, broader NL coverage beyond the MCP/Neo layer, and confirmation this isn't limited/preview functionality.",
     "evidenceIds": [
-      "pulumi-docs-9",
       "pulumi-docs-20",
+      "pulumi-docs-32",
       "pulumi-docs-26",
-      "pulumi-docs-18",
-      "pulumi-probe-8"
+      "pulumi-docs-30",
+      "pulumi-docs-35"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi ships an official CLI with documented commands (preview, up, import, destroy) and hands-on probes confirm it runs headlessly with structured JSON output an agent can parse, plus non-interactive/automated flags well suited to AI-native workflows. Missing for 10: no independent third-party review specifically praising the CLI's AI-native ergonomics beyond the vendor probes.",
+    "rationale": "Pulumi ships an official CLI (documented commands like pulumi preview, pulumi import, pulumi do) that is core to its IaC workflow, and it also integrates with AI-native tooling via an official MCP server and Automation API for programmatic/agentic use. missing for 10: independent hands-on verification of CLI's AI-native ergonomics and no dedicated 'AI CLI mode' benchmarking beyond docs.",
     "evidenceIds": [
       "pulumi-probe-5",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-docs-19",
-      "pulumi-docs-25"
+      "pulumi-docs-8",
+      "pulumi-docs-21",
+      "pulumi-docs-43",
+      "pulumi-docs-26",
+      "pulumi-docs-18",
+      "pulumi-docs-33"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Pulumi offers a documented Automation API (programmatic, language-based interface) and a verified MCP server (probed handshake works) plus a CLI with JSON output, giving AI-native users multiple programmatic ways to drive it. However, there is no true public REST/OpenAPI API (openapi.json/swagger endpoints all 404) and no llms.txt-driven docs-md endpoint, so 'documented public API' in the traditional sense is unconfirmed. missing for 10: a documented REST/OpenAPI-style public API, independent third-party corroboration of Automation API usage, and confirmation that MCP/Automation API cover full CRUD parity with the CLI.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Pulumi documents both the Automation API (a programmatic SDK for driving Pulumi programs without the CLI) and a Pulumi Cloud REST API callable from the CLI, giving AI-native users a documented public interface to drive infrastructure operations; it also has a first-party MCP server for AI assistants. missing for 10: a discoverable formal OpenAPI/swagger spec (probe found 404s at standard paths) and independent hands-on corroboration of API robustness.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-docs-7",
-      "pulumi-docs-26",
-      "pulumi-probe-3",
-      "pulumi-probe-4",
-      "pulumi-probe-8",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-44",
+      "pulumi-gh-4",
+      "pulumi-probe-3"
     ]
   },
   {
@@ -1508,24 +1470,30 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers Pulumi's MCP server for AI agent integration and CLI/API access broadly, but nothing describes issuing scoped or least-privilege API credentials/tokens specifically for an agent's use (e.g., token scoping, RBAC-limited service accounts, or credential minting for AI agents). This is a fair question for a cloud IaC platform with an API/token system, but no evidence supports it.",
-    "evidenceIds": []
+    "rationale": "Evidence shows Pulumi ESC can act as an OIDC provider and Pulumi has a Cloud REST API, but nothing describes issuing scoped or least-privilege API credentials specifically for an AI agent's use (e.g., agent-specific token minting, permission scoping tied to MCP/Neo access). The MCP server and Neo docs describe what an agent can do, not how its credentials are constrained.",
+    "evidenceIds": [
+      "pulumi-docs-36",
+      "pulumi-docs-44",
+      "pulumi-docs-7",
+      "pulumi-docs-26"
+    ]
   },
   {
     "productId": "pulumi",
     "storyId": "agentic-sdks",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi provides official SDKs across multiple mainstream languages (TypeScript, Python, Go, .NET, Java, YAML) with full provider surface area, plus an Automation API for programmatic use and a documented, hands-on-verified MCP server enabling AI assistants to interact with Pulumi programs. This is strongly corroborated by official docs and a live probe confirming the MCP server handshake works. Missing for 10: independent third-party (non-vendor) benchmarking of SDK completeness/parity across all languages, and no evidence of official SDKs in additional languages like Rust or Java-adjacent ecosystems beyond what's listed.",
+    "rationale": "Pulumi ships official SDKs across TypeScript, Python, Go, .NET, Java and YAML with full provider coverage, plus a first-party Automation API that exposes the engine as a programmatic SDK for embedding in custom (including AI-driven) tooling, and an official MCP server for AI assistants to interact with Pulumi resources. This directly satisfies an AI-native user's need to build against official, language-native SDKs rather than reverse-engineered wrappers. Missing for 10: independent/hands-on corroboration that all languages are truly 'equally capable' as claimed, and no dedicated AI/agent-specific SDK beyond Automation API + MCP.",
     "evidenceIds": [
       "pulumi-docs-1",
-      "pulumi-docs-2",
       "pulumi-docs-22",
+      "pulumi-docs-2",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-7",
       "pulumi-docs-26",
-      "pulumi-docs-18",
-      "pulumi-probe-4",
-      "pulumi-probe-8"
+      "pulumi-gh-4"
     ]
   },
   {
@@ -1534,23 +1502,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions webhooks or event subscriptions of any kind; Pulumi's AI-facing integrations documented are MCP server access and Automation API, not webhook-based event subscription. missing for 10: any documentation or mention of webhook support, event subscription APIs, or notification triggers.",
+    "rationale": "No evidence in the pack mentions webhooks or event subscription mechanisms for Pulumi; while Pulumi Cloud and REST API exist, nothing documents a webhook subscription feature. Applicable to a platform product like Pulumi Cloud, but unevidenced.",
     "evidenceIds": []
   },
   {
     "productId": "pulumi",
     "storyId": "ai-generate-iac",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Pulumi ships a first-party MCP server explicitly documented to let AI assistants 'generate infrastructure code' from Pulumi Cloud context, and Pulumi Neo lets users 'tell Neo what you need in plain English' to provision infrastructure — both built into the toolchain. A hands-on probe confirms the MCP server actually runs and responds to JSON-RPC handshakes, corroborating the vendor claim beyond just documentation. Missing for 10: independent/hands-on evidence of actual natural-language-to-IaC code generation quality (only the handshake, not code-gen output, was tested) and no third-party corroboration of Neo's real-world behavior.",
+    "rationale": "Pulumi's MCP server explicitly lets AI coding assistants (Cursor, Claude Code, Windsurf, Claude Desktop) 'generate infrastructure code' from natural language, and Neo lets users 'tell it what you need in plain English' (e.g., 'Give me a VPC with a subnet in every AZ') to provision infrastructure. This is native, first-party AI tooling built into the Pulumi ecosystem, not a third-party bolt-on. Missing for 10: independent/hands-on validation of code-generation quality (community commentary on Pulumi's genAI docs being weak suggests some real-world friction) and more detail on how generated code integrates back into the standard IaC workflow.",
     "evidenceIds": [
       "pulumi-docs-26",
       "pulumi-docs-20",
-      "pulumi-docs-9",
+      "pulumi-docs-32",
       "pulumi-docs-18",
-      "pulumi-probe-8",
-      "pulumi-probe-4"
+      "pulumi-docs-35",
+      "pulumi-comm-16"
     ]
   },
   {
@@ -1559,10 +1527,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference with runnable examples; probes explicitly show no OpenAPI/Swagger spec (404s across candidate paths) and no mention of a live/sandboxed API explorer. Pulumi's docs describe language SDKs and CLI commands but not an interactive, runnable API reference.",
+    "rationale": "No evidence of an interactive API reference with runnable examples: probes for OpenAPI/Swagger specs all returned 404, and no docs describe a live/interactive API explorer. Pulumi's docs cover CLI commands, Automation API, and MCP server, but nothing about a runnable interactive API reference.",
     "evidenceIds": [
       "pulumi-probe-3",
-      "pulumi-docs-22"
+      "pulumi-docs-44"
     ]
   },
   {
@@ -1570,25 +1538,26 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "A direct probe for an OpenAPI/equivalent spec at all standard candidate paths returned 404 across the board, and no evidence pack item shows Pulumi publishing a downloadable machine-readable API spec; the llms.txt found is a marketing/context file, not an API spec.",
+    "confidence": "medium",
+    "rationale": "Pulumi Cloud exposes a REST API (pulumi-docs-44) which is a plausible candidate for a machine-readable spec, but direct probes for OpenAPI/swagger endpoints all returned 404 and no docs page offers a downloadable spec (pulumi-probe-3, pulumi-probe-2). No evidence of an official OpenAPI or equivalent machine-readable spec being published.",
     "evidenceIds": [
+      "pulumi-docs-44",
       "pulumi-probe-3",
-      "pulumi-probe-1"
+      "pulumi-probe-2"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "api-sandbox",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's testing docs describe integration tests that 'deploy ephemeral infrastructure and run external tests against it' and preview command that makes 'no changes to the stack,' and probes confirm a full headless up/destroy loop against a local file backend without touching Pulumi Cloud or production state. This supports safe sandbox testing, but the evidence never explicitly describes stack-based prod/sandbox isolation or guardrails preventing accidental production impact from an AI agent.  Missing for 10: explicit multi-stack environment isolation guidance, agent-specific guardrails against touching prod stacks, and independent hands-on confirmation of safe sandboxing beyond the vendor-run probe.",
+    "rationale": "Pulumi's testing docs explicitly describe unit tests that mock all external calls and integration tests that deploy ephemeral infrastructure for testing, and `pulumi preview` lets you validate changes with no actual effect on stacks — all supporting a sandbox-like workflow without touching production. However, there's no explicit documentation of stack/environment isolation (e.g., separate dev/prod accounts) or dedicated 'sandbox' tooling, and no independent/hands-on confirmation of this workflow in practice.\n\nmissing for 10: explicit multi-stack/environment isolation guidance, independent corroboration of safe sandbox testing in real use.",
     "evidenceIds": [
       "pulumi-docs-3",
       "pulumi-docs-8",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-19",
+      "pulumi-docs-24"
     ]
   },
   {
@@ -1596,26 +1565,26 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item discusses API versioning or a documented deprecation policy for Pulumi's APIs (CLI, SDK, Automation API, or MCP server); the OpenAPI probe returned 404s and no changelog/versioning policy is cited. Community evidence even mentions Pulumi lagging on deprecated Azure resources with no fix, but this is unrelated to a documented deprecation policy for Pulumi's own APIs.",
-    "evidenceIds": [
-      "pulumi-probe-3",
-      "pulumi-comm-1"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence in the pack references API versioning practices, a version support policy, or a documented deprecation/EOL policy for Pulumi's SDKs, CLI, REST API, or Automation API — only general product/feature docs and community sentiment about deprecated Azure resources (unrelated to Pulumi's own API deprecation policy) are present.",
+    "evidenceIds": []
   },
   {
     "productId": "pulumi",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Pulumi supports bulk-oriented workflows: pulumi preview --import-file can generate an import covering every resource a program would create, the Automation API allows programmatic orchestration across many stacks or resources, and real-world usage reports deployments of 500+ resources at once. These give an AI agent, via CLI or MCP server, levers for bulk operations, but the docs never explicitly frame a bulk operation across many items workflow for AI agents, and the MCP server evidence only demonstrates single CLI command execution, not batch or bulk semantics. missing for 10: explicit bulk-operation API/CLI docs such as bulk import across many resources in one call or bulk stack updates framed for AI-agent consumption, and hands-on evidence of an agent performing such bulk ops via MCP",
+    "rationale": "Pulumi's real-language SDKs let users loop/iterate to define and manage many resources at once, and the Automation API explicitly exposes the full IaC engine programmatically to create/update/destroy infrastructure dynamically across many stacks (pulumi-docs-2, pulumi-docs-33, pulumi-docs-34, pulumi-gh-4). The MCP server and Neo further let AI agents query and act across all cloud resources/stacks in bulk (pulumi-docs-7, pulumi-docs-26, pulumi-docs-20), and a community report confirms real-world use of Automation API for infrastructure migrations at scale (pulumi-comm-20). Missing for 10: concrete documented examples/benchmarks of large-scale bulk operations (e.g., batch import across hundreds of resources) and independent hands-on validation of performance/reliability at scale.",
     "evidenceIds": [
-      "pulumi-docs-21",
       "pulumi-docs-2",
-      "pulumi-comm-7",
-      "pulumi-docs-26",
-      "pulumi-probe-8"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-1",
+      "pulumi-gh-4",
+      "pulumi-docs-7",
+      "pulumi-docs-20",
+      "pulumi-comm-20"
     ]
   },
   {
@@ -1623,13 +1592,9 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence covers Pulumi's languages, testing, state backends, policy-as-code guardrails, import, and MCP/Automation API integrations, but none of it describes a mechanism for defining rules that automatically trigger actions in response to events (e.g., webhooks, event-driven pipelines, or reactive automation). Policy as code (pulumi-docs-5/16) enforces guardrails during deployments rather than triggering actions on arbitrary events, and the Automation API (pulumi-docs-2) is for programmatic invocation, not event-driven rule execution.",
-    "evidenceIds": [
-      "pulumi-docs-2",
-      "pulumi-docs-5",
-      "pulumi-docs-16"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence of an event-driven rules/trigger engine in Pulumi; the product is IaC provisioning/state management, policy-as-code, and AI-assisted code generation, not an automation/event-trigger system. missing for 10: event trigger definitions, rule/condition engine, automatic action-on-event execution mechanism.",
+    "evidenceIds": []
   },
   {
     "productId": "pulumi",
@@ -1637,11 +1602,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Pulumi's evidence shows Automation API for programmatic runs, CLI commands, and Neo for AI-driven provisioning, but nothing describes built-in support for scheduling recurring jobs or workflows (e.g., cron-like triggers, scheduled drift detection, or workflow orchestration). Such a capability is plausible for an IaC/automation platform, so the axis applies, but no evidence confirms it.",
+    "rationale": "The evidence pack covers Pulumi's IaC language support, Automation API, testing, state backends, policy-as-code, import, MCP server, and Neo agent, but nowhere documents a native way to schedule recurring jobs or workflows (e.g., cron-based deployments, scheduled drift detection, or workflow scheduling). Automation API only exposes programmatic triggering, not scheduling itself, so no evidence supports this capability.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-docs-9",
-      "pulumi-docs-20"
+      "pulumi-docs-33",
+      "pulumi-docs-34"
     ]
   },
   {
@@ -1650,29 +1615,28 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's code-based IaC is inherently versionable via standard VCS (git integrations documented), and `pulumi preview`/`pulumi destroy`/state backends give rollback-like control validated hands-on via CLI probes; policy-as-code adds review guardrails. However there's no dedicated 'automation review' workflow, no built-in diff/approval UI beyond preview output, and community feedback flags documentation/complexity issues around dependency management that complicate confident rollback for AI-driven changes. missing for 10: a first-party automated review/approval gate for AI-initiated changes, explicit rollback command/semantics (vs. re-apply prior state), and independent verification of policy-as-code enforcement in practice.",
+    "rationale": "Pulumi stores infrastructure as versioned code with git/VCS integration, supports pre-apply review via `pulumi preview` and policy-as-code checks that surface in PR comments, giving strong version/review coverage. However, there is no explicit documentation of a rollback/undo mechanism for automations (e.g., reverting a stack update or automation run) beyond generic state backend persistence. Missing for 10: explicit rollback/undo command or workflow evidence, and confirmation this applies specifically to AI-driven automations rather than manual IaC changes.",
     "evidenceIds": [
-      "pulumi-docs-4",
-      "pulumi-docs-5",
-      "pulumi-docs-8",
       "pulumi-docs-12",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-comm-20",
-      "pulumi-comm-12"
+      "pulumi-docs-8",
+      "pulumi-docs-19",
+      "pulumi-docs-40",
+      "pulumi-docs-4",
+      "pulumi-docs-33",
+      "pulumi-docs-34"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "destroy-teardown",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Pulumi's `pulumi destroy` command is directly evidenced by a hands-on probe showing it exits 0 and cleanly tears down resources after an apply, running headlessly without cloud dependency, confirming the standard destroy workflow works as documented. missing for 10: no independent/community corroboration specifically discussing destroy behavior (only a first-party probe and docs).",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Pulumi's Automation API docs explicitly state it lets you 'create, update, configure, and destroy infrastructure dynamically,' confirming a first-class destroy/teardown operation alongside the preview (plan) workflow shown elsewhere in the docs. Missing for 10: dedicated CLI reference docs for `pulumi destroy` itself and independent/hands-on confirmation that teardown reliably removes all resources cleanly.",
     "evidenceIds": [
-      "pulumi-probe-7",
-      "pulumi-docs-4",
-      "pulumi-probe-5"
+      "pulumi-docs-34",
+      "pulumi-docs-8",
+      "pulumi-docs-19"
     ]
   },
   {
@@ -1681,27 +1645,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's `pulumi preview` command computes a diff between declared program state and actual live resources, and this was verified hands-on (JSON steps output) without requiring cloud backend. State-and-backends docs also confirm Pulumi tracks resource state to compare against real infrastructure. However, the evidence never explicitly documents a dedicated `pulumi refresh` command or scheduled/automated drift-detection workflows (e.g. CI drift alerts), which are the more complete drift-detection story. missing for 10: explicit refresh command docs, automated/scheduled drift detection, independent community confirmation of drift-detection accuracy.",
+    "rationale": "Pulumi's `pulumi preview` command compares the declared program state against actual cloud resources and reports differences without applying changes, which is the core drift-detection mechanism, and state backends (Pulumi Cloud or DIY) persist the state used for that comparison. However, the evidence never explicitly documents the dedicated `pulumi refresh` command or a drift-detection dashboard/alerting feature, so the story is only partially evidenced. Missing for 10: explicit mention of `pulumi refresh` for state reconciliation, dedicated drift-detection/alerting UI, and independent hands-on confirmation of drift detection accuracy.",
     "evidenceIds": [
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-docs-4"
+      "pulumi-docs-21",
+      "pulumi-docs-4",
+      "pulumi-docs-14"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "environment-config-stacks",
     "verdict": "full",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi's core primitive of \"stacks\" is confirmed hands-on (pulumi stack init dev, pulumi preview/up/destroy per stack) and state/config is backend-scoped per stack (pulumi-docs-4/14/23, pulumi-probe-6/7), which is exactly the mechanism developers use to separate dev/staging/prod environments. Missing for 10: explicit documentation citation showing pulumi config set per-stack values and a documented dev→staging→prod promotion workflow, and no independent community confirmation specifically about multi-stack environment management.",
+    "rationale": "Pulumi's docs explicitly describe stacks and per-stack configuration as core concepts ('projects, stacks, config, secrets, and more') and a unified workflow for managing 'infrastructure, secrets, and configuration' across environments, which is the standard Pulumi mechanism for separating dev/staging/prod. However, the evidence pack lacks a direct doc citation walking through creating multiple stacks per environment (e.g., 'pulumi stack init dev') or config hierarchy details. missing for 10: explicit doc/example of multi-stack per-environment workflow (pulumi stack init/select), config inheritance across stacks, independent hands-on confirmation.",
     "evidenceIds": [
-      "pulumi-probe-6",
-      "pulumi-probe-7",
+      "pulumi-docs-39",
+      "pulumi-docs-29",
       "pulumi-docs-4",
-      "pulumi-docs-14",
-      "pulumi-docs-23"
+      "pulumi-docs-14"
     ]
   },
   {
@@ -1723,15 +1687,15 @@
   {
     "productId": "pulumi",
     "storyId": "headless-ci-apply",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence confirms Pulumi CLI supports fully non-interactive plan/apply in CI: `pulumi preview --non-interactive --json` and `pulumi up --non-interactive --yes --skip-preview` both ran headlessly with approval flags (--yes) and produced machine-parseable output, per hands-on probes [pulumi-probe-6][pulumi-probe-7], with `pulumi preview` docs confirming plan-only dry-run behavior [pulumi-docs-8][pulumi-docs-19]. However, the pack contains no evidence of the specific 'saved plan artifact' workflow (e.g., generating and re-applying a persisted plan file) that the story calls out, only generic non-interactive preview/apply. Missing for 10: documentation or hands-on proof of saved-plan-artifact generation/application (e.g., --save-plan/--plan flags), and independent (non-vendor) confirmation of this exact CI pattern.",
+    "rationale": "Evidence shows `pulumi preview` and general CLI docs, but nothing about saved plan artifacts (e.g., --save-plan/--plan), non-interactive flags (--yes/--non-interactive), or approval-gate workflows for CI apply. Policy-in-PR-comments (pulumi-docs-40) is unrelated to plan-artifact based apply.",
     "evidenceIds": [
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-21",
+      "pulumi-docs-40"
     ]
   },
   {
@@ -1740,7 +1704,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi provides a documented `pulumi import` command that adopts existing resources into stack state and generates matching code in the target language, plus `pulumi preview --import-file` to bulk-generate import files for existing resources, directly matching the story. Docs explicitly describe this as core migration functionality for resources created manually or by other IaC tools. Missing for 10: independent/hands-on verification of the import workflow itself (only preview/apply loop was probed, not import).",
+    "rationale": "Pulumi has well-documented first-party import tooling: `pulumi import` adopts an existing cloud resource into stack state and auto-generates the corresponding program code to manage it, and `pulumi preview --import-file` can bulk-generate an import file/plan across many resources, explicitly framed as a migration path from other IaC tools or manual provisioning. Missing for 10: independent/hands-on community corroboration specifically of the import workflow's reliability (community evidence in the pack covers general sentiment, not import specifically).",
     "evidenceIds": [
       "pulumi-docs-6",
       "pulumi-docs-17",
@@ -1755,43 +1719,42 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi documents importing existing (e.g., Terraform-created) resources via `pulumi import` and `pulumi preview --import-file`, generating Pulumi code and adding resources to Pulumi state, and explicitly markets migration from Terraform/CloudFormation. However, this is resource-by-resource adoption of live infrastructure, not a direct conversion of Terraform HCL codebase or import of Terraform state files themselves — no evidence of a bulk Terraform-state-to-Pulumi-state converter or HCL-to-native-language transpiler tool. missing for 10: evidence of direct Terraform state file import/conversion, bulk/automated HCL-to-Pulumi code conversion tooling, and independent/hands-on confirmation of a full codebase migration success story.",
+    "rationale": "Pulumi documents native HCL/Terraform language support and 'pulumi import' for adopting existing resources into Pulumi state, plus a migration landing page explicitly mentioning Terraform migration. However, evidence does not show a direct import of Terraform *state* files (only resource-by-resource import against live cloud resources) and lacks hands-on/independent confirmation of a full Terraform-codebase migration workflow. missing for 10: direct Terraform state-file import mechanism, end-to-end case study/independent validation of migrating an existing Terraform codebase+state, detail on HCL program conversion fidelity.",
     "evidenceIds": [
       "pulumi-docs-6",
       "pulumi-docs-10",
       "pulumi-docs-17",
       "pulumi-docs-21",
-      "pulumi-docs-25"
+      "pulumi-docs-25",
+      "pulumi-docs-31",
+      "pulumi-docs-22"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "open-license-governance",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of Pulumi's license type (e.g., Apache 2.0), its governance model, or any foundation/neutral steward that would prevent unilateral relicensing — only GitHub repo links and generic self-hosting/backend docs. Given the well-known industry concern (post-Terraform BSL) that devops leads would want addressed, this axis clearly applies but no evidence in the pack speaks to license or governance guarantees.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Pulumi's docs assert it is an 'open source platform' (pulumi-docs-28) and GitHub hosts the core engine, but the evidence pack contains no details on the specific license (e.g., Apache 2.0 terms), no mention of a foundation or multi-vendor governance structure, and no explicit commitment against relicensing — governance appears to be single-vendor (Pulumi Corp) controlled. missing for 10: explicit license text/terms, open governance model (e.g., neutral foundation, multiple maintaining companies), any public commitment or history preventing relicensing.",
     "evidenceIds": [
-      "pulumi-gh-1",
-      "pulumi-gh-2",
-      "pulumi-docs-27"
+      "pulumi-docs-28",
+      "pulumi-gh-1"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Pulumi offers a scriptable CLI and Automation API for running programs without the console, and hands-on probes confirm headless preview/up/destroy and MCP server operation work fully outside the UI, but there is no evidence of a full REST/OpenAPI surface (probe found no openapi.json) or explicit documentation that Pulumi Cloud UI features like Insights, Policy dashboards, or Neo's console-only controls are all reachable programmatically. missing for 10: explicit API/CLI parity claim for Pulumi Cloud console features (Insights, Policy management, Neo dashboard), a discoverable OpenAPI/REST spec, and independent confirmation that no UI-only functionality exists.",
+    "rationale": "Pulumi exposes Automation API (full programmatic IaC control equivalent to CLI) and a Cloud REST API for calling from the CLI, plus Automation API described as exposing 'the full power of infrastructure as code' programmatically. However, the probe found no discoverable OpenAPI spec, and evidence doesn't confirm that all Pulumi Cloud UI features (e.g., team/org management, policy management dashboards, Neo delegation) are fully API-accessible versus CLI/UI-only. missing for 10: a published OpenAPI/full REST API reference confirming UI-parity, independent/hands-on confirmation that Cloud UI features (policy, org admin, Neo) are all reachable via API, and evidence of parity for non-Automation-API workflows.",
     "evidenceIds": [
       "pulumi-docs-2",
-      "pulumi-probe-6",
-      "pulumi-probe-7",
-      "pulumi-probe-8",
-      "pulumi-probe-3",
-      "pulumi-docs-9",
-      "pulumi-docs-5"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-docs-44",
+      "pulumi-probe-3"
     ]
   },
   {
@@ -1800,45 +1763,42 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi code is written in standard, open programming languages (TS, Python, Go, etc.) rather than a proprietary DSL, and state can be stored in a self-managed 'DIY' backend (S3, Azure Blob, GCS) instead of Pulumi Cloud, giving a path to keep data in open formats and avoid full platform lock-in. However, community evidence notes Pulumi still 'calls into the mothership' for some functionality and there is no documented explicit bulk-export/migration tool for leaving the platform. Missing for 10: dedicated data-export/migration tooling to leave, clear documentation on state file/format portability guarantees, and independent verification that self-hosted deployments have no residual cloud dependency.",
+    "rationale": "Pulumi documents DIY state backends where users store state themselves in S3/Blob/GCS object stores they control, plus self-hosting options and an open-source core platform, all of which support data portability and avoiding lock-in. However there is no explicit documentation of a stack export/import command in an open data format (e.g. JSON state export) or guidance on fully extracting configuration/secrets to leave the platform. Missing for 10: explicit state/config export format documentation, dedicated 'leave the platform' migration guide, and independent verification that exported state is usable outside Pulumi Cloud.",
     "evidenceIds": [
       "pulumi-docs-4",
       "pulumi-docs-14",
       "pulumi-docs-23",
       "pulumi-docs-27",
-      "pulumi-comm-9",
-      "pulumi-gh-1"
+      "pulumi-docs-28"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "openness-open-license",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence confirms Pulumi's core CLI/SDK is published on GitHub (pulumi-gh-1, pulumi-gh-2), so an AI-native user could read source there, but the evidence pack never states an explicit open-source license, and Pulumi's cloud/state backend and Neo agent components are proprietary SaaS (pulumi-docs-4, pulumi-docs-9) rather than open source. missing for 10: explicit license text/statement, confirmation that all product components (not just core CLI/SDK) are open, independent confirmation of license terms.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Pulumi explicitly states it is 'an open source platform' and links to its public GitHub repository (pulumi/pulumi) with permissively-licensed IaC engine and SDKs, giving AI-native users source access to inspect and build from official docs. Missing for 10: explicit license name/text (e.g., Apache-2.0) in the evidence pack, and no independent corroboration that this openness extends beyond the core engine (Pulumi Cloud/Neo are proprietary services).",
     "evidenceIds": [
+      "pulumi-docs-28",
       "pulumi-gh-1",
       "pulumi-gh-2",
-      "pulumi-docs-4",
-      "pulumi-docs-9"
+      "pulumi-gh-3",
+      "pulumi-gh-4"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "openness-self-host",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi's core engine/CLI is open-source and can run fully locally without any cloud dependency — confirmed hands-on via probes showing `pulumi preview`/`up`/`destroy` running headlessly against a local file:// backend with PULUMI_CONFIG_PASSPHRASE for state encryption (pulumi-probe-6, pulumi-probe-7). Docs further describe a 'DIY backend' storing state in self-managed object storage (S3/Azure Blob/GCS) as an alternative to the hosted Pulumi Cloud (pulumi-docs-4, pulumi-docs-14, pulumi-docs-23), and the pricing page explicitly states 'Self-hosting available' for the broader service (pulumi-docs-27), corroborated by a community note that Pulumi's state service has a self-management option (pulumi-comm-19). missing for 10: detailed first-party documentation of deploying the full self-hosted Pulumi Cloud service (UI/API), and independent hands-on verification of that enterprise self-hosted deployment rather than just the DIY state-backend/local-CLI path.",
+    "rationale": "Pulumi's pricing page explicitly states 'Self-hosting available' and docs describe a DIY state backend (self-managed S3/Azure Blob/GCS) for state storage, suggesting self-hosting of the core service is possible. However, a hands-on community report explicitly states Pulumi 'only works by calling in to the mothership... you cannot build an airgapped infrastructure with it,' directly contradicting full self-hosting capability. Missing for 10: first-party documentation of a concrete self-hosted Pulumi Cloud/service deployment guide, and independent corroboration that a fully air-gapped self-hosted setup works in practice.",
     "evidenceIds": [
+      "pulumi-docs-27",
       "pulumi-docs-4",
       "pulumi-docs-14",
-      "pulumi-docs-23",
-      "pulumi-docs-27",
-      "pulumi-comm-19",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-comm-9"
     ]
   },
   {
@@ -1847,10 +1807,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi's Policy-as-Code product explicitly lets teams define guardrails in code and apply them consistently across resources managed by Pulumi, Terraform, CloudFormation, or created manually — directly addressing pre-apply compliance enforcement, and this integrates with the CLI's preview/apply workflow to block non-compliant changes before they take effect. Missing for 10: no independent/hands-on evidence of a policy pack actually blocking a non-compliant `pulumi up`, and no detail on CI/CD gating specifics beyond docs claims.",
+    "rationale": "Pulumi CrossGuard/Policy-as-Code lets teams define guardrails in code enforced across Pulumi, Terraform, CloudFormation, or manual resources, and blog evidence shows policy violations surfaced as PR comments/checks that gate changes; combined with `pulumi preview` for pre-apply validation, this directly supports blocking non-compliant changes before apply. Missing for 10: independent/hands-on confirmation of enforcement blocking (vs. warn-only) and detail on mandatory vs advisory policy packs in CI.",
     "evidenceIds": [
       "pulumi-docs-5",
       "pulumi-docs-16",
+      "pulumi-docs-40",
       "pulumi-docs-8",
       "pulumi-docs-19"
     ]
@@ -1861,12 +1822,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's `pulumi preview` command explicitly shows creates, updates, and destroys without applying any changes, and this was independently verified via hands-on probe producing structured JSON steps[] output that an agent/tool can consume. Docs and probe evidence corroborate this core plan-apply workflow works headlessly. Missing for 10: independent third-party review specifically praising/critiquing preview accuracy in production use (community evidence is about Pulumi generally, not preview diffing specifically).",
+    "rationale": "pulumi preview is a first-party documented command that shows creates/updates/destroys before any changes are applied, directly matching the story, and is well documented with clear semantics and even an import-file variant. Missing for 10: independent/hands-on corroboration specifically confirming preview accuracy in production use.",
     "evidenceIds": [
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-docs-21"
+      "pulumi-docs-21",
+      "pulumi-probe-5"
     ]
   },
   {
@@ -1875,7 +1836,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi lets users choose a self-managed 'DIY' state backend (AWS S3, Azure Blob Storage, Google Cloud Storage) or self-host, which effectively lets a user pick the storage region/provider for state data, and self-hosting is explicitly offered on the pricing page. However, there is no documented region-selection control for the default Pulumi Cloud managed backend itself, and no explicit data-residency/compliance documentation (e.g., EU-only region option) for AI-native workflows. Missing for 10: explicit region-selection UI/API for Pulumi Cloud's managed backend, documented data-residency guarantees or compliance certifications tied to region choice.",
+    "rationale": "Pulumi lets customers choose their own state-storage location via the DIY backend (self-managed S3/Azure Blob/GCS buckets in any region) and offers self-hosting of the Pulumi Cloud backend, giving some control over data residency. However, there is no documentation of region selection or residency guarantees within the managed Pulumi Cloud service itself, and no independent verification of residency compliance. Missing for 10: explicit Pulumi Cloud region/residency options, compliance certifications (e.g., GDPR/data-residency statements), and independent confirmation of self-hosted deployments meeting residency requirements.",
     "evidenceIds": [
       "pulumi-docs-4",
       "pulumi-docs-14",
@@ -1889,7 +1850,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Pulumi is an infrastructure-as-code/cloud provisioning tool, not an AI model provider or data-training relationship; there's no axis for 'training data opt-out' in this product category — none of the evidence pertains to AI training data usage policies.",
+    "rationale": "Pulumi is an infrastructure-as-code/cloud provisioning platform, not a consumer AI model or data-processing service where 'preventing data from being used for AI training' is a relevant privacy control; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -1912,7 +1873,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of a telemetry/usage-tracking opt-out setting (e.g., an env var, CLI flag, or config option) for Pulumi CLI or MCP server; no documentation or community evidence addresses telemetry controls at all.",
+    "rationale": "No evidence in the pack addresses telemetry opt-out, usage tracking, or CLI privacy settings for Pulumi CLI/tooling; this is a fair question for an IaC/dev tool but no documentation or community evidence confirms an opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -1921,9 +1882,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's Automation API is explicitly documented as a programmatic interface for running Pulumi programs without the CLI, letting developers drive previews/deploys/destroys directly from application code, and this is corroborated by community mention of coding infra migrations via Automation. missing for 10: independent hands-on verification of the Automation API itself (the probes validate CLI/MCP headless flows but not an actual Automation API SDK call).",
+    "rationale": "Pulumi's Automation API is explicitly documented as a programmatic interface for running Pulumi programs (create/update/configure/destroy infrastructure) without the CLI, with independent corroboration from GitHub docs and community mentions of using automation for infra migrations. missing for 10: no third-party hands-on case study demonstrating a production app driving deployments purely via Automation API.",
     "evidenceIds": [
       "pulumi-docs-2",
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-4",
       "pulumi-comm-20"
     ]
   },
@@ -1933,15 +1897,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Pulumi's provider ecosystem is well documented with 300+ providers spanning AWS, Azure, GCP, Kubernetes, and SaaS offerings via the Pulumi Registry, corroborated by GitHub docs and confirmed hands-on via CLI probes deploying resources. Community evidence corroborates real-world multi-cloud usage (AWS, GCP, Azure, DigitalOcean) though some note documentation/provider lag issues for niche services. Missing for 10: independent quantification of SaaS-provider breadth beyond major clouds and no dispute-level evidence of provider gaps preventing broad usage.",
+    "rationale": "Pulumi's docs and GitHub README explicitly claim provisioning across AWS, Azure, GCP, Kubernetes, and 300+ providers via the Pulumi Registry, spanning all major clouds and SaaS platforms, with independent community corroboration of multi-cloud use (AWS, GCP, DigitalOcean, k8s). Missing for 10: no independent audit of the full provider count/coverage breadth beyond vendor claims.",
     "evidenceIds": [
       "pulumi-gh-2",
-      "pulumi-docs-22",
+      "pulumi-gh-3",
+      "pulumi-docs-28",
       "pulumi-comm-7",
       "pulumi-comm-15",
-      "pulumi-comm-3",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-comm-3"
     ]
   },
   {
@@ -1961,42 +1924,42 @@
   {
     "productId": "pulumi",
     "storyId": "reusable-modules",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Pulumi has a well-documented public Registry of providers/packages (referenced implicitly via 'Pulumi Registry providers' in pulumi-docs-1 and the MCP server description 'querying Pulumi Registry information' in pulumi-probe-8), and 300+ providers are consumable per pulumi-gh-2. However, the evidence pack lacks explicit documentation of a publishing workflow for developers to submit/publish their own reusable components/packages to the public Registry, versioning/discovery mechanics, or community corroboration of publishing experience. missing for 10: first-party docs on the publish/submission process for community packages, evidence of component/package authoring guides, independent/hands-on confirmation of publishing a package to the Registry.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence only briefly references 'Pulumi Registry providers' in the context of language support (pulumi-docs-1/22), but there is no documentation in the pack describing a public registry workflow for developers to publish their own reusable modules/components (e.g., Pulumi Packages, Component Resources publishing) nor a clear consume-from-registry story beyond first-party providers. Missing for 10: explicit registry publish workflow docs, package/component authoring & publishing guide, and any consumption example of third-party community modules.",
     "evidenceIds": [
       "pulumi-docs-1",
-      "pulumi-gh-2",
-      "pulumi-probe-8"
+      "pulumi-docs-22"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "secret-config-values",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "A hands-on probe confirms Pulumi encrypts stack secrets via PULUMI_CONFIG_PASSPHRASE and can run headlessly with encrypted state (pulumi-probe-7), which supports the ability to store sensitive config outside code. However, the evidence pack lacks first-party docs on the `pulumi config set --secret` workflow, secret providers (KMS/Vault), or log redaction behavior, and there is no independent confirmation of masking-in-CLI-output claims. Missing for 10: docs on secret config commands and secret providers, evidence of automatic log/output redaction, and independent (non-vendor) verification of secrets never leaking in logs.",
+    "rationale": "Pulumi advertises secrets/config management as a first-class, unified part of its workflow (\"Manage infrastructure, secrets, and configuration with a unified workflow across any cloud\", \"centralized secrets and governance\") and details projects/stacks/config/secrets in its docs, plus Pulumi ESC can act as an OIDC provider for secure secret retrieval. However the evidence pack lacks concrete mechanics (e.g., `pulumi config set --secret`, encryption-at-rest details, log redaction specifics) or independent corroboration. Missing for 10: detailed docs on encrypted config storage/log-masking behavior, and hands-on/community validation that secrets never leak in practice.",
     "evidenceIds": [
-      "pulumi-probe-7",
-      "pulumi-docs-4",
-      "pulumi-docs-14",
-      "pulumi-docs-23"
+      "pulumi-docs-29",
+      "pulumi-docs-39",
+      "pulumi-docs-41",
+      "pulumi-docs-36"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "state-encryption",
-    "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Pulumi documents encrypted state backends and hands-on probe evidence confirms secrets are encrypted using PULUMI_CONFIG_PASSPHRASE even on a local file backend, verifying secret values are not stored in plaintext. Missing for 10: explicit documentation of KMS/cloud secrets-provider options for encrypting the whole state, independent third-party verification of encryption strength, and clarity on whether non-secret resource properties are also encrypted at rest.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack describes Pulumi's state backends (Pulumi Cloud, DIY S3/Azure/GCS backends) and general secrets/config management, but no citation explicitly confirms that state values (e.g., resource outputs, credentials) are encrypted at rest or that secrets are automatically encrypted within the state file itself.",
     "evidenceIds": [
-      "pulumi-probe-7",
       "pulumi-docs-4",
       "pulumi-docs-14",
-      "pulumi-docs-23"
+      "pulumi-docs-23",
+      "pulumi-docs-29",
+      "pulumi-docs-41"
     ]
   },
   {
@@ -2005,30 +1968,33 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Pulumi's docs show related state-safety capabilities — `pulumi import`/adoption for bringing existing resources under management (pulumi-docs-6,17,25), and `pulumi preview` for safely previewing changes without applying them (pulumi-docs-8,19,21) — plus general state backend concepts (pulumi-docs-4,14,23). However, the evidence pack never cites the actual `pulumi state mv`, `pulumi state rename`, or `pulumi state delete` commands that platform engineers use specifically for refactoring (moving/renaming/removing resources in state), so the core of the story is only indirectly supported. missing for 10: explicit documentation/evidence of `pulumi state move`, `pulumi state rename`, and `pulumi state delete` commands, plus hands-on confirmation these work safely during refactors.",
+    "rationale": "Pulumi's docs confirm state is inspectable/modifiable via backends (Pulumi Cloud or DIY object stores) and that resources can be brought under management via `pulumi import`, with `pulumi preview` letting engineers safely see planned changes before applying them. However, the evidence pack contains no direct documentation of the specific `pulumi state move`, `rename`, or `delete` (remove) sub-commands that platform engineers would use during refactoring — only import/adoption and preview are evidenced. Missing for 10: explicit docs/citations for `pulumi state mv`, `pulumi state rename`, `pulumi state delete`, and any independent hands-on account of safely refactoring state with these commands.",
     "evidenceIds": [
+      "pulumi-docs-4",
+      "pulumi-docs-14",
+      "pulumi-docs-23",
       "pulumi-docs-6",
       "pulumi-docs-17",
       "pulumi-docs-25",
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-docs-21",
-      "pulumi-docs-4",
-      "pulumi-docs-14"
+      "pulumi-docs-21"
     ]
   },
   {
     "productId": "pulumi",
     "storyId": "structured-plan-output",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Pulumi's `pulumi preview --json` produces a structured JSON steps[] array (op, urn, etc.) that an agent can parse to reason about a proposed change, and this was independently verified hands-on in a local, non-interactive run without Pulumi Cloud. Documentation and CLI reference corroborate this as an officially supported flag. missing for 10: no independent third-party (non-vendor) documentation of agents actually consuming this JSON for reasoning, only a single hands-on probe.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Pulumi's Automation API exposes preview/plan results programmatically (not via CLI text output), letting external code — including an AI agent — get structured objects describing proposed changes, and `pulumi preview` is documented as showing the proposed changes without applying them. However, no evidence explicitly documents a `--json` output flag for `pulumi preview` or a formal JSON schema for plan diffs, so the machine-readable claim rests only on the Automation API's programmatic surface rather than a dedicated JSON plan artifact. missing for 10: explicit documentation of `pulumi preview --json` (or equivalent) output format, a published JSON schema for plan/diff results, and independent confirmation that agents successfully parse this output.",
     "evidenceIds": [
+      "pulumi-docs-2",
       "pulumi-docs-8",
       "pulumi-docs-19",
-      "pulumi-probe-6",
-      "pulumi-probe-7"
+      "pulumi-docs-33",
+      "pulumi-docs-34",
+      "pulumi-gh-4"
     ]
   },
   {
@@ -2036,8 +2002,8 @@
     "storyId": "targeted-partial-apply",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions Pulumi's targeting/exclusion flags (e.g., `--target`, `--exclude`) for `pulumi preview`/`pulumi up`/`pulumi destroy`; the pack only covers preview mechanics, import, and state/backends without addressing resource-scoped plan/apply. missing for 10: documentation or hands-on proof of --target/--exclude (or equivalent) flags limiting a plan/apply to specific resources.",
+    "confidence": "medium",
+    "rationale": "The evidence pack documents `pulumi preview` and general plan/apply concepts but contains no mention of `--target`, `--target-dependents`, or `--exclude` flags (or any equivalent) that let a platform engineer scope a plan/apply to specific resources. This is a fair and applicable axis for an IaC CLI tool, but no supporting evidence is present in the pack.",
     "evidenceIds": []
   },
   {
@@ -2046,15 +2012,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Pulumi documents a dedicated testing framework with Unit Tests (mocked, no real cloud calls), Property Tests, and Integration Tests using standard language test frameworks, plus 'pulumi preview' to check changes without touching production and Automation API for programmatic test orchestration. This directly satisfies writing/running infra tests without touching production. Missing for 10: independent hands-on validation of the testing framework specifically (probes verify preview/up/destroy but not the unit-test mocking flow) and community commentary on test-writing experience.",
+    "rationale": "Pulumi's docs explicitly describe unit tests (fast, in-memory, mocked external calls, using standard test frameworks like Mocha/NUnit), property tests, and integration tests that deploy ephemeral infra separate from production, plus `pulumi preview` to validate changes without applying them. This directly matches the story of writing automated infra tests without touching production. Missing for 10: independent/hands-on corroboration of the testing workflow and more detail on property-test mechanics beyond docs.",
     "evidenceIds": [
       "pulumi-docs-3",
       "pulumi-docs-15",
       "pulumi-docs-24",
       "pulumi-docs-8",
-      "pulumi-docs-19",
-      "pulumi-docs-2",
-      "pulumi-probe-6"
+      "pulumi-docs-19"
     ]
   },
   {
@@ -2072,8 +2036,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no documentation of versioning/compatibility promises, deprecation policy, or upgrade guides between Pulumi CLI/SDK releases; the closest items (resource import/adoption docs) address migrating existing cloud resources into Pulumi, not release-to-release compatibility. Missing for 10: any semver/compatibility policy docs, breaking-change/deprecation notices, or dedicated upgrade guides between major versions.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains no documentation of versioning/compatibility guarantees, deprecation policy, or version-to-version upgrade guides for Pulumi CLI/SDKs/providers. General docs on languages, testing, state backends, import, and MCP server say nothing about release compatibility promises, and the only related community comment describes stale/deprecated provider support rather than a documented upgrade guide.",
+    "evidenceIds": [
+      "pulumi-comm-1"
+    ]
   },
   {
     "productId": "terraform",
