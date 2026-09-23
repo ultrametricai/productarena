@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import MineLink from '@/components/MineLink'
 import ProductLogoView from '@/components/ProductLogoView'
 import { useMyStackMap } from '@/components/useMyStackMap'
 import { isPicked } from '@/lib/myStack'
@@ -68,12 +68,12 @@ export default function ProcessYourVendor({
           +{moreMine} more of your vendors serve{moreMine === 1 ? 's' : ''} this process
         </span>
       )}
-      <Link
-        href={mineHref}
+      <MineLink
+        mineHref={mineHref}
         className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200"
       >
         run it with your whole stack →
-      </Link>
+      </MineLink>
     </div>
   )
 }

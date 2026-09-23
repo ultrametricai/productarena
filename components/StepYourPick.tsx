@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import MineLink from '@/components/MineLink'
 import { useMyStackMap } from '@/components/useMyStackMap'
 import { STEP_UPGRADE_DELTA, yoursForStep, type ProcessCheckStep } from '@/lib/processCheck'
 
@@ -23,13 +23,13 @@ export default function StepYourPick({ step, mineHref }: { step: ProcessCheckSte
   if (!behind) return null
   return (
     <p className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[11px]">
-      <Link
-        href={mineHref}
+      <MineLink
+        mineHref={mineHref}
         title={`Your ${yours.arenaName} pick ${yours.name} is judged ${yours.score.toFixed(0)}/100 on the ${step.storyCount} stories mapped to this step; ${step.best.name} scores ${step.best.score.toFixed(0)}/100 — ${delta.toFixed(0)} points ahead. Run the whole process against your stack.`}
         className="text-amber-300/90 underline decoration-amber-400/40 underline-offset-2 transition hover:text-amber-200"
       >
         your {yours.name} trails here — best: {step.best.name} {step.best.score.toFixed(0)} (+{delta.toFixed(0)}) — check my process →
-      </Link>
+      </MineLink>
     </p>
   )
 }

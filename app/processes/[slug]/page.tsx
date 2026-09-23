@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import DoViaAfk from '@/components/DoViaAfk'
 import IconChip from '@/components/IconChip'
+import MineLink from '@/components/MineLink'
 import ProcessDag from '@/components/ProcessDag'
 import ProcessLeaderboard from '@/components/ProcessLeaderboard'
 import ProcessLensBanner from '@/components/ProcessLensBanner'
@@ -139,13 +140,15 @@ export default async function ProcessPage({ params }: { params: Promise<{ slug: 
           best, upgrade flags) lives at its own noindex route so this shared SEO page stays the
           one static version for everyone; the /mine page handles sign-up and stack setup. */}
       <p className="text-sm">
-        <Link
-          href={`/processes/${canonicalSlug}/mine`}
+        {/* Signed-out clicks route through sign-up with a deep link back to THIS process's
+            personalized run (founder 2026-09-23) — components/MineLink.tsx. */}
+        <MineLink
+          mineHref={mineHref}
           className="inline-block rounded-lg border border-emerald-400/60 px-3 py-1.5 text-xs font-medium text-emerald-300 transition hover:bg-emerald-400/10"
           title="Run this process with the vendors you actually use — sign up, set your stack once, and see your step scores vs the market's best"
         >
           Check my process — run it with your stack →
-        </Link>
+        </MineLink>
       </p>
 
       <section>
