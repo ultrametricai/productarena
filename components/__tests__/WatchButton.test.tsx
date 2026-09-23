@@ -8,6 +8,7 @@ import type { Session } from '@/lib/session'
 const sessionStub = vi.hoisted(() => ({ current: { state: 'loading' } as Session }))
 vi.mock('@/lib/session', () => ({
   useSession: () => sessionStub.current,
+  loginUrl: (returnTo: string) => `https://login.example/?to=${encodeURIComponent(returnTo)}`,
 }))
 
 import WatchButton from '@/components/WatchButton'
@@ -34,16 +35,25 @@ describe('WatchButton session gating', () => {
     stubLocalStorage()
   })
 
-  it('renders nothing while the session is loading', () => {
-    sessionStub.current = { state: 'loading' }
-    const { container } = render(<WatchButton productId="supabase" productName="Supabase" />)
-    expect(container.innerHTML).toBe('')
+  it('renders the star for anonymous readers; clicking records NOTHING and opens the sign-up modal (founder 2026-09-23)', () => {
+    sessionStub.current = { state: 'anonymous' }
+    render(<WatchButton productId="supabase" productName="Supabase" />)
+    const button = screen.getByRole('button', { name: /sign up or log in to record/i })
+    fireEvent.click(button)
+    expect(window.localStorage.getItem(WATCHLIST_KEY)).toBeNull()
+    expect(screen.getByText('Sign up or log in to record this')).toBeDefined()
+    fireEvent.click(screen.getByText('Not now'))
+    expect(window.localStorage.getItem(WATCHLIST_KEY)).toBeNull()
   })
 
-  it('renders nothing for anonymous readers — the open site is unchanged', () => {
-    sessionStub.current = { state: 'anonymous' }
-    const { container } = render(<WatchButton productId="supabase" productName="Supabase" />)
-    expect(container.innerHTML).toBe('')
+  it('a stashed anonymous star applies automatically once authenticated', () => {
+    window.sessionStorage?.setItem?.(
+      'pa-pending-action',
+      JSON.stringify({ kind: 'watch', productId: 'supabase' }),
+    )
+    sessionStub.current = { state: 'authenticated', email: 'founder@ultrametric.ai' }
+    render(<WatchButton productId="supabase" productName="Supabase" />)
+    expect(JSON.parse(window.localStorage.getItem(WATCHLIST_KEY) ?? '[]')).toEqual(['supabase'])
   })
 
   it('renders the star for authenticated readers and toggles localStorage', () => {

@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useSyncExternalStore } from 'react'
-import { useSession } from '@/lib/session'
+import { useEffect, useMemo, useSyncExternalStore } from 'react'
+import { takePendingAction, useSignupGate } from '@/components/SignupGate'
 import {
   parseWatchlist, readWatchlistRaw, subscribeWatchlist, toggleWatchlistId, writeWatchlist,
 } from '@/lib/watchlist'
@@ -13,9 +13,11 @@ import {
 // through one snapshot (the raw stored string), with '[]' as the server snapshot so static
 // HTML always hydrates from the unstarred state.
 //
-// Session gate (lib/session.ts): the star only renders for logged-in readers — anonymous
-// readers see the site exactly as before, no watchlist UI anywhere. Every call site keeps its
-// markup and just gets an empty render until whoami answers 'authenticated'.
+// Signup gate (founder 2026-09-23, components/SignupGate.tsx): the star renders for EVERYONE —
+// anonymous clicks open the "sign up or log in to record this" modal with a deep link back to
+// this page, and the stashed intent applies automatically on return. (Previously the star was
+// hidden for anonymous readers entirely; showing it and gating the write converts better and
+// sets expectations in the tooltip.)
 
 function getServerSnapshot(): string {
   return '[]'
@@ -38,27 +40,45 @@ export default function WatchButton({
   size?: 'sm' | 'md'
   className?: string
 }) {
-  // Hooks run unconditionally (rules of hooks); the session gate comes after.
   const ids = useWatchlist()
-  const session = useSession()
-  if (session.state !== 'authenticated') return null
+  const { requireAuth, modal, session } = useSignupGate()
   const watched = ids.includes(productId)
   const name = productName ?? productId
-  const label = watched
-    ? `Unwatch ${name} — remove from your watchlist`
-    : `Watch ${name} — add to your watchlist`
+
+  // Post-login return: apply the star the reader clicked before they were sent to sign up.
+  useEffect(() => {
+    if (session.state !== 'authenticated' || watched) return
+    if (takePendingAction({ kind: 'watch', productId })) {
+      writeWatchlist(toggleWatchlistId(parseWatchlist(readWatchlistRaw()), productId))
+    }
+  }, [session.state, productId, watched])
+
+  const label =
+    session.state === 'authenticated'
+      ? watched
+        ? `Unwatch ${name} — remove from your watchlist`
+        : `Watch ${name} — add to your watchlist`
+      : `Watch ${name} — sign up or log in to record it (you'll come straight back here)`
   return (
-    <button
-      type="button"
-      aria-pressed={watched}
-      onClick={() => writeWatchlist(toggleWatchlistId(parseWatchlist(readWatchlistRaw()), productId))}
-      title={label}
-      className={`shrink-0 leading-none transition ${size === 'sm' ? 'text-sm' : 'text-xl'} ${
-        watched ? 'text-emerald-400 hover:text-emerald-300' : 'text-zinc-500 hover:text-emerald-300'
-      } ${className}`}
-    >
-      <span aria-hidden>{watched ? '★' : '☆'}</span>
-      <span className="sr-only">{label}</span>
-    </button>
+    <>
+      <button
+        type="button"
+        aria-pressed={watched}
+        onClick={() =>
+          requireAuth(
+            () => writeWatchlist(toggleWatchlistId(parseWatchlist(readWatchlistRaw()), productId)),
+            { kind: 'watch', productId },
+          )
+        }
+        title={label}
+        className={`shrink-0 leading-none transition ${size === 'sm' ? 'text-sm' : 'text-xl'} ${
+          watched ? 'text-emerald-400 hover:text-emerald-300' : 'text-zinc-500 hover:text-emerald-300'
+        } ${className}`}
+      >
+        <span aria-hidden>{watched ? '★' : '☆'}</span>
+        <span className="sr-only">{label}</span>
+      </button>
+      {modal}
+    </>
   )
 }
