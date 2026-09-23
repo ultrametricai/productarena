@@ -83,25 +83,24 @@ describe('URL ⇄ mode', () => {
     expect(getByRole('button', { name: /Processes/ }).getAttribute('aria-pressed')).toBe('true')
   })
 
-  it('the URL wins over the localStorage preference on first load', () => {
+  it('a stale localStorage preference is IGNORED — no companies→processes flicker on pristine visits (founder 2026-09-23)', () => {
     window.localStorage.setItem('pa-home-mode', 'processes')
-    setUrl('?view=companies')
+    setUrl('')
     const { container } = render(tree)
     expect(visiblePane(container)).toBe('COMPANIES-PANE')
   })
 
-  it('an invalid ?view falls back to the localStorage preference silently', () => {
-    window.localStorage.setItem('pa-home-mode', 'processes')
+  it('an invalid ?view falls back to companies silently', () => {
     setUrl('?view=nonsense')
     const { container } = render(tree)
-    expect(visiblePane(container)).toBe('PROCESSES-PANE')
+    expect(visiblePane(container)).toBe('COMPANIES-PANE')
   })
 
-  it('clicking Processes writes ?view=processes AND the localStorage preference', () => {
+  it('clicking Processes writes ?view=processes (URL is the only mode store)', () => {
     const { getByRole } = render(tree)
     fireEvent.click(getByRole('button', { name: /Processes/ }))
     expect(url()).toBe(`${PATH}?view=processes`)
-    expect(window.localStorage.getItem('pa-home-mode')).toBe('processes')
+    expect(window.localStorage.getItem('pa-home-mode')).toBeNull()
   })
 
   it('clicking back to Companies (the default) removes the param — clean pristine URL', () => {
@@ -109,7 +108,6 @@ describe('URL ⇄ mode', () => {
     const { getByRole } = render(tree)
     fireEvent.click(getByRole('button', { name: /Companies/ }))
     expect(url()).toBe(PATH)
-    expect(window.localStorage.getItem('pa-home-mode')).toBe('companies')
   })
 
   it('patches, never rebuilds: co-mounted params survive a mode click', () => {
