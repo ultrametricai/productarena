@@ -23,9 +23,9 @@ const node = (over: Partial<DagNode>): DagNode => ({
 })
 
 describe('corpus', () => {
-  it('loads all 119 processes with unique, non-empty slugs', () => {
+  it('loads all 122 processes with unique, non-empty slugs', () => {
     const tasks = loadProcesses(DATA_DIR)
-    expect(tasks.length).toBe(119)
+    expect(tasks.length).toBe(122)
     const slugs = tasks.map((t) => processSlug(t.title))
     expect(new Set(slugs).size).toBe(tasks.length)
     for (const s of slugs) expect(s).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
@@ -291,6 +291,10 @@ describe('vendor -> arena mapping', () => {
       // honest unlinked chips: team wikis, company-email suites, transactional email senders.
       'confluence', 'slite', 'slab',
       'microsoft_365', 'zoho_mail',
+      // 2026-09-23 VC-fund phase (founder: "a process area for VC processes") — genuine
+      // fund-formation/sub-doc/fund-admin suppliers with no arena yet, shown as honest
+      // unlinked chips; signup URLs curl-verified 200 in lib/processes.ts.
+      'angellist', 'sydecar', 'passthrough', 'juniper_square',
     ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {
