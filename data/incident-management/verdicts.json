@@ -1526,29 +1526,30 @@
     "productId": "incident-io",
     "storyId": "agent-acks-escalates-api",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "incident.io ships both a documented REST API (full OpenAPI spec, api.incident.io) and an official hosted remote MCP server that lets AI assistants 'query incidents, analyze alerts, check who's on call, manage escalations, and run deep operational analysis' — covering escalation and much of incident lifecycle management without a dashboard. However, the MCP/API docs emphasize querying, escalating, and analysis; explicit end-to-end 'acknowledge' and 'resolve' actions via MCP tools are not directly named in the evidence, only implied by broader incident-management API coverage. Missing for 10: explicit documentation naming acknowledge/resolve as MCP tool actions, and independent hands-on confirmation that an agent can fully close the incident lifecycle via MCP alone.",
+    "rationale": "incident.io documents a full REST API (with OpenAPI spec) and ships an official remote MCP server explicitly described as letting AI assistants 'query incidents, analyze alerts, check who's on call, manage escalations, and run deep operational analysis' directly from AI tools, which covers much of the story's end-to-end no-dashboard automation. However, the evidence never explicitly confirms 'acknowledge' or 'resolve' incident actions via API/MCP (only escalation management and querying are named), and a probe found the OpenAPI JSON endpoint 404ing at expected locations, leaving the completeness of programmatic lifecycle control unconfirmed. Missing for 10: explicit documentation of acknowledge/resolve actions through the API or MCP, and a verifiable machine-readable API spec.",
     "evidenceIds": [
+      "incident-io-docs-10",
       "incident-io-docs-29",
       "incident-io-docs-40",
-      "incident-io-docs-47",
-      "incident-io-probe-rt-1",
-      "incident-io-probe-rt-2",
       "incident-io-docs-20",
-      "incident-io-docs-34"
+      "incident-io-docs-34",
+      "incident-io-probe-2",
+      "incident-io-probe-3"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "A direct runtime probe confirms `https://docs.incident.io/llms.txt` returns HTTP 200 with a structured index of 452+ help-center pages as markdown, and a further probe shows a companion llms.txt index covering 550+ API-reference pages, confirming agent-oriented docs are genuinely published and machine-readable. Missing for 10: independent/community confirmation that agents actually consume this successfully, and no evidence of an agents.md or similar beyond the llms.txt files.",
+    "rationale": "A direct probe confirms llms.txt is live at https://docs.incident.io/llms.txt returning HTTP 200 with structured links to docs content, and this is corroborated by extensive agent-oriented documentation (MCP server, API reference) that an agent could consume. Missing for 10: independent/community confirmation of an agent actually consuming llms.txt successfully in practice.",
     "evidenceIds": [
       "incident-io-probe-1",
-      "incident-io-probe-rt-2"
+      "incident-io-docs-20",
+      "incident-io-docs-86"
     ]
   },
   {
@@ -1557,34 +1558,35 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "incident.io ships multiple AI-generated insight/suggestion features directly inside the product: AI post-mortem drafting and inline review suggestions, suggested summaries, AI-drafted updates/follow-ups (Suggestions), Scribe call transcription, and Investigations which automatically gathers evidence and forms hypotheses to explain incidents, plus Insights analytics with period comparisons. These are documented in-product features, not just external agent access. Missing for 10: independent/hands-on corroboration beyond vendor docs, and more detail on Insights' AI-generated (vs. just statistical) analysis.",
+    "rationale": "incident.io ships multiple AI-generated insight features embedded directly in the product: AI-generated post-mortem drafts and review suggestions, suggested summaries, AI Suggestions that draft updates/summaries/follow-ups from incident activity, insights/analytics comparisons, and 'Investigations' which automatically gathers evidence, forms hypotheses, and surfaces root-cause findings across incident data. These are first-party documented in-product capabilities, not just an external chat interface. Missing for 10: independent/hands-on corroboration of accuracy or reliability of these AI insights beyond vendor docs.",
     "evidenceIds": [
       "incident-io-docs-6",
-      "incident-io-docs-11",
       "incident-io-docs-12",
       "incident-io-docs-14",
       "incident-io-docs-16",
       "incident-io-docs-31",
       "incident-io-docs-53",
-      "incident-io-docs-54",
-      "incident-io-docs-18",
-      "incident-io-docs-62"
+      "incident-io-docs-84",
+      "incident-io-docs-18"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "agentic-autonomous-automation",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "incident.io ships both a background-automation engine (Workflows, e.g. auto-publishing status pages on incident updates) and an explicitly autonomous AI agent (Investigations) that runs the moment an incident is declared, gathering evidence, forming hypotheses, and testing them without a human prompt — with dedicated trust-and-safety docs describing how it stays 'under your control' while operating autonomously. This directly matches the story of AI-native automations running unattended in the background.\n\nmissing for 10: independent/hands-on verification that Investigations or Workflows genuinely operate unattended in production (only vendor docs cited), and broader documentation of the general-purpose Workflows automation engine beyond the status-page example.",
+    "rationale": "incident.io ships genuine autonomous background automation: Workflows can auto-publish status updates and run actions on incident state changes (docs-9, docs-69), and the Investigations agent autonomously gathers evidence, forms hypotheses, and tests them across code/telemetry the moment an incident is declared, without a human prompting it (docs-14, docs-16, docs-23, docs-31, docs-56, docs-84, docs-90), with dedicated trust-and-safety controls for letting the AI agent act on live incidents (docs-17, docs-63). Missing for 10: independent/hands-on verification that Workflows/Investigations run unattended at scale, and more detail on user-configurable automation triggers beyond status pages/investigations.",
     "evidenceIds": [
+      "incident-io-docs-9",
       "incident-io-docs-14",
       "incident-io-docs-16",
-      "incident-io-docs-17",
       "incident-io-docs-23",
       "incident-io-docs-31",
-      "incident-io-docs-9",
+      "incident-io-docs-56",
+      "incident-io-docs-84",
+      "incident-io-docs-90",
+      "incident-io-docs-17",
       "incident-io-docs-63"
     ]
   },
@@ -1594,39 +1596,33 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "incident.io ships multiple built-in AI capabilities you can delegate to: Investigations (an agentic system that gathers evidence, forms and pressure-tests hypotheses to find root cause), Postmortem AI (drafts and redrafts postmortem sections), and Suggestions/Scribe (auto-drafting updates, summaries, follow-ups, and call transcription) — all native, not third-party bolt-ons. missing for 10: independent/hands-on validation of Investigations' accuracy and reliability, and clearer scope of what tasks can be fully delegated vs. only suggested.",
+    "rationale": "incident.io ships built-in AI agents (Investigations, Scribe, Suggestions/Summaries, post-mortem AI drafting) that users delegate incident-response tasks to directly within the product, e.g. investigating root cause across code/telemetry, drafting postmortems, and suggesting updates/follow-ups. These are native features, not just an MCP client integration. missing for 10: independent/hands-on validation of agent quality beyond vendor docs, and clearer detail on how a user explicitly 'delegates' vs. the agent auto-triggering.",
     "evidenceIds": [
-      "incident-io-docs-6",
       "incident-io-docs-14",
       "incident-io-docs-16",
       "incident-io-docs-23",
-      "incident-io-docs-31",
       "incident-io-docs-56",
-      "incident-io-docs-62",
+      "incident-io-docs-6",
       "incident-io-docs-12",
-      "incident-io-docs-54",
-      "incident-io-docs-11",
       "incident-io-docs-53",
-      "incident-io-docs-13",
-      "incident-io-docs-30",
-      "incident-io-docs-17",
-      "incident-io-docs-63"
+      "incident-io-docs-90",
+      "incident-io-docs-17"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "agentic-headless",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "incident.io exposes a full REST API (api.incident.io) with API-key auth and downloadable per-tag OpenAPI 3.0.3 specs, plus webhooks for event-driven integration and a Terraform provider for infra-as-code — all of which enable declaring/managing incidents and syncing data headlessly from CI/automation pipelines without a UI. Missing for 10: explicit CI/CD pipeline examples or official SDKs/CLI wrapper, and no independent hands-on report of running it in a CI job.",
+    "rationale": "incident.io exposes a full REST API with an OpenAPI 3.0 spec and API keys, plus webhooks, which allow scripted/CI-driven incident management (declaring incidents, syncing data, triggering workflows) without a UI. However, this is an API for a SaaS incident-management product, not a CLI or headless runtime meant for CI pipelines, and there's no evidence of a documented CLI, GitHub Action, or CI-specific integration pattern. Missing for 10: no CLI tool, no CI/CD-specific documentation or examples (e.g., GitHub Actions), no evidence of headless automation testing/sandbox mode.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-docs-1",
+      "incident-io-docs-46",
+      "incident-io-docs-86",
       "incident-io-docs-19",
-      "incident-io-docs-33",
-      "incident-io-probe-rt-2"
+      "incident-io-docs-33"
     ]
   },
   {
@@ -1634,48 +1630,46 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "All MCP-related evidence describes incident.io exposing its own data via a hosted MCP *server* so external AI assistants can query it (docs-10/29/40/47, probe-3, probe-rt-1) — this is the opposite direction from the story, which asks whether incident.io itself can plug in and use tools from external MCP servers. No evidence shows incident.io's AI features (e.g. Investigations) acting as an MCP client consuming third-party MCP servers' tools.",
+    "confidence": "high",
+    "rationale": "The evidence only documents incident.io acting as an MCP *server* (docs-10, docs-29, docs-40, docs-47, probe-3) — i.e., other AI assistants can connect to incident.io's data — not incident.io acting as an MCP *client* that lets users plug external MCP servers into its own agents (e.g., Investigations, Scribe) to extend their tool use. No evidence anywhere describes configuring or attaching third-party MCP servers into incident.io's AI features. missing for 10: any documentation of incident.io consuming/connecting to external MCP servers as a client, configuration UI or API for adding MCP servers to its agents.",
     "evidenceIds": [
       "incident-io-docs-10",
       "incident-io-docs-29",
       "incident-io-docs-40",
       "incident-io-docs-47",
-      "incident-io-probe-3",
-      "incident-io-probe-rt-1"
+      "incident-io-probe-3"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "incident.io documents a first-party remote MCP server (docs.incident.io/ai/remote-mcp) that lets any MCP-compatible AI assistant connect to query incidents, analyze alerts, check on-call, manage escalations, and run operational analysis, and a runtime probe confirms the hosted endpoint (mcp.incident.io/mcp) is live and speaks the MCP OAuth flow. This is strong first-party documentation plus independent runtime corroboration. Missing for 10: broader third-party/community hands-on reports of using the MCP server in production.",
+    "rationale": "incident.io documents an official remote MCP server that lets any MCP-compatible AI assistant connect directly to incident data—query incidents, analyze alerts, check on-call, manage escalations, and run operational analysis—corroborated by a direct docs probe confirming the page exists. missing for 10: independent/third-party hands-on confirmation of the MCP server working in practice, and details on setup/auth friction.",
     "evidenceIds": [
       "incident-io-docs-10",
       "incident-io-docs-29",
       "incident-io-docs-40",
       "incident-io-docs-47",
-      "incident-io-probe-3",
-      "incident-io-probe-rt-1"
+      "incident-io-probe-3"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "agentic-nl-commands",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "incident.io ships an official hosted MCP server that lets any AI assistant query incidents, analyze alerts, check on-call, manage escalations and run operational analysis via natural language, confirmed live by a runtime probe (OAuth-protected MCP endpoint) rather than just docs. This is complemented by AI Investigations (agentic root-cause analysis) and an 'update your status page using the agent' feature, showing natural-language/agentic control across incident workflows. Missing for 10: evidence of a native built-in chat/NL command interface inside the product itself (e.g., Slack bot parsing free-form commands) independent of MCP, and independent/hands-on user validation of MCP-driven command accuracy.",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "The official MCP server explicitly lets any connected AI assistant 'query incidents, analyze alerts, check who's on call, manage escalations, and run deep operational analysis' via natural language, and Investigations/Suggestions features let AI agents interpret and act on incident context automatically. However, this NL-command capability is mediated through external AI assistants connecting via MCP rather than a native in-product conversational command interface, and there's no hands-on/independent validation of actually issuing free-form NL commands. missing for 10: evidence of a native in-app NL command bar/chatbot, independent hands-on proof of MCP-driven command execution, and third-party confirmation beyond vendor docs.",
     "evidenceIds": [
-      "incident-io-docs-10",
       "incident-io-docs-29",
       "incident-io-docs-40",
       "incident-io-docs-47",
-      "incident-io-docs-67",
-      "incident-io-probe-3",
-      "incident-io-probe-rt-1"
+      "incident-io-docs-10",
+      "incident-io-docs-14",
+      "incident-io-docs-90",
+      "incident-io-probe-3"
     ]
   },
   {
@@ -1684,7 +1678,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions an official CLI tool; incident.io documents an API, MCP server, Terraform provider, and webhooks, but nothing describing a command-line interface product.",
+    "rationale": "No evidence anywhere in the pack of an official incident.io CLI tool; the product offers a REST API, webhooks, Terraform provider, and an MCP server, but no command-line interface is documented or mentioned.",
     "evidenceIds": []
   },
   {
@@ -1693,40 +1687,41 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "incident.io publishes a documented public REST API (api.incident.io) with API-key auth and downloadable OpenAPI specs (per-tag OpenAPI 3.0.3 JSON verified live), plus 550+ API-reference doc pages, enabling programmatic/agentic control of incidents, alerts, schedules, workflows etc. Missing for 10: a single consolidated OpenAPI root file (only per-tag specs found) and independent third-party developer testimonials on API robustness.",
+    "rationale": "incident.io documents a public REST API hosted at api.incident.io with API-key auth, a full API reference covering endpoints/auth/rate limits/error handling, and a downloadable OpenAPI 3.0 spec for client generation, plus webhooks for event-driven integration. This gives AI-native users a documented, programmatic surface to drive the product beyond just the MCP server. Missing for 10: independent/hands-on corroboration of the API in practice, and the OpenAPI spec probe returned 404s at common paths, suggesting the spec may not be trivially discoverable/self-hosted.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
       "incident-io-docs-46",
-      "incident-io-probe-rt-2",
-      "incident-io-probe-1"
+      "incident-io-docs-86",
+      "incident-io-docs-19",
+      "incident-io-probe-2"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "incident.io requires an API key for its REST API and its hosted remote MCP server implements an OAuth-based bearer-token flow (401 + WWW-Authenticate with resource_metadata), which implies some form of scoped/delegated authorization for agent access. However, there is no documentation of granular API key permission scopes, role-based key restrictions, or explicit least-privilege credential issuance tailored for AI agents. Missing for 10: documented API key scopes/permissions, explicit guidance on issuing narrowly-scoped credentials per agent, and confirmation that MCP OAuth tokens carry fine-grained least-privilege scopes rather than full account access.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The docs mention API keys are required (docs-20/46) and an MCP server exists (docs-10/29/47), but there is no evidence of scoped, least-privilege, or role-restricted API credentials/tokens specifically for agent use — no mention of permission scopes, granular API key roles, or agent-specific credential issuance.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-46",
-      "incident-io-probe-rt-1"
+      "incident-io-docs-10"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "agentic-sdks",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "incident.io exposes a full public REST API with an OpenAPI 3.0 spec (and per-tag machine-readable specs verified live) that developers can use to generate client libraries/SDKs, plus API-key auth docs, but there is no evidence of first-party, officially maintained SDK packages (e.g., published npm/pip/Go client libraries) distinct from the raw OpenAPI spec. missing for 10: explicit official SDK packages/libraries in named languages, versioned SDK release notes, or SDK-specific quickstart guides beyond 'generate your own client from OpenAPI'.",
+    "rationale": "Evidence shows a REST API, OpenAPI 3.0 spec download, webhooks, and an MCP server, but there is no mention of official client SDKs (e.g., Python, JS, Go libraries) that developers could build against; the OpenAPI spec is framed as something users can use to 'generate' their own clients rather than incident.io shipping first-party SDKs, and probe evidence even shows the hosted openapi.json endpoints returning 404.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-docs-46",
-      "incident-io-probe-rt-2"
+      "incident-io-docs-86",
+      "incident-io-probe-2"
     ]
   },
   {
@@ -1747,8 +1742,8 @@
     "storyId": "ai-drafted-postmortems",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "incident.io's postmortem-ai feature explicitly generates first drafts of postmortems with inline review suggestions and redraft options, timelines are auto-generated from key events with narrative additions, and follow-ups are tracked as a distinct actionable category — together covering timeline, contributing factors, and follow-ups ready for human review. Missing for 10: no explicit documentation showing contributing-factors analysis specifically named as an AI-drafted section, and no independent/hands-on corroboration of draft quality beyond vendor docs.",
+    "confidence": "medium",
+    "rationale": "incident.io explicitly documents AI-generated postmortem drafting with inline review suggestions and redraft capability (docs-6), backed by customizable timeline generation (docs-4/49), a dedicated follow-ups tracking model (docs-7/68), and postmortem completion tracking (docs-5), matching the story's timeline/contributing factors/follow-ups/human-review shape. Missing for 10: no explicit documentation confirming the AI draft auto-populates 'contributing factors' as a distinct labeled section, and no independent/hands-on corroboration of draft quality beyond vendor docs.",
     "evidenceIds": [
       "incident-io-docs-6",
       "incident-io-docs-4",
@@ -1779,17 +1774,18 @@
     "productId": "incident-io",
     "storyId": "ai-root-cause-investigation",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "incident.io's Investigations feature explicitly proactively gathers evidence the moment an incident is declared — correlating alert stack traces, similar past incidents, code changes, runbooks, and telemetry — and builds/tests hypotheses via a structured harness with adversarial pressure-testing before a human digs in. This directly matches the story's ask for AI-driven correlation of changes, telemetry, and past incidents ahead of human investigation. missing for 10: independent/hands-on validation of investigation accuracy and speed claims beyond vendor docs, and more detail on how 'similar past incidents' matching works technically.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "incident.io's \"Investigations\" feature is explicitly documented to auto-trigger the moment an incident is declared, gathering context from alerts/stack traces, similar past incidents, channel discussion, change events, runbooks, recent code changes, and telemetry, then forming and testing hypotheses before a human intervenes. This directly matches the story's requirements of correlating changes, telemetry, and past incidents proactively. Missing for 10: independent/hands-on third-party verification of investigation accuracy beyond vendor docs.",
     "evidenceIds": [
       "incident-io-docs-14",
       "incident-io-docs-16",
-      "incident-io-docs-23",
       "incident-io-docs-31",
       "incident-io-docs-56",
       "incident-io-docs-62",
-      "incident-io-docs-66"
+      "incident-io-docs-23",
+      "incident-io-docs-84",
+      "incident-io-docs-90"
     ]
   },
   {
@@ -1798,16 +1794,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe deduplication via dedup keys (no new alert created while original active) and alert grouping that combines related alerts into a single group for triage/escalation/incident attachment, directly matching the 'one incident pages one human' story; escalation paths also let rules suppress noise. Missing for 10: independent/hands-on corroboration of dedup/grouping effectiveness at scale beyond vendor docs.",
+    "rationale": "Docs explicitly describe deduplication keys that prevent duplicate alerts from creating new alert records while the original is active, and alert grouping that groups related alerts into a single alert group for triage/escalation/attachment to one incident — directly matching the story of one incident paging one human. This is backed by dedicated docs pages with concrete mechanics (dedup key logic, grouping behavior) rather than vague marketing. Missing for 10: independent/hands-on validation of dedup accuracy at scale and no detail on configurable grouping rules beyond the basics.",
     "evidenceIds": [
       "incident-io-docs-27",
-      "incident-io-docs-28",
-      "incident-io-docs-35",
       "incident-io-docs-36",
       "incident-io-docs-52",
       "incident-io-docs-73",
-      "incident-io-docs-25",
-      "incident-io-docs-50"
+      "incident-io-docs-28",
+      "incident-io-docs-35"
     ]
   },
   {
@@ -1816,20 +1810,21 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs show 40+ documented alert sources plus custom HTTP sources, alert grouping/deduplication, and escalation paths with rules based on priority/working hours to route to the right on-call team/schedule — directly matching the story's ingestion+condition-based routing requirement. Integration directory further corroborates specific monitoring tool sources (Datadog, Grafana, Honeycomb, New Relic, PagerDuty, Sentry). Missing for 10: independent/hands-on verification of routing-condition configuration in practice and more detail on custom condition/team-assignment logic beyond changelog snippets.",
+    "rationale": "Docs show 40+ documented alert sources (observability tool integrations like Datadog, Grafana, Honeycomb, New Relic, PagerDuty, Sentry) plus custom HTTP sources, alert grouping/deduplication, and escalation paths that route by team/service/priority/working hours to schedules and on-call responders, matching the SRE story closely. missing for 10: independent/hands-on verification of routing-condition accuracy at scale and deeper documentation on custom condition logic beyond priority/working-hours examples.",
     "evidenceIds": [
       "incident-io-docs-15",
       "incident-io-docs-21",
       "incident-io-docs-25",
-      "incident-io-docs-27",
-      "incident-io-docs-28",
       "incident-io-docs-50",
-      "incident-io-docs-75",
+      "incident-io-docs-77",
+      "incident-io-docs-79",
       "incident-io-intdir-3",
       "incident-io-intdir-4",
       "incident-io-intdir-5",
       "incident-io-intdir-6",
-      "incident-io-intdir-7"
+      "incident-io-intdir-7",
+      "incident-io-docs-27",
+      "incident-io-docs-35"
     ]
   },
   {
@@ -1838,26 +1833,27 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "incident.io publishes a documented API reference with an API key requirement and downloadable OpenAPI 3.0 specs (per-tag, confirmed live via probe), which is the foundation for an API reference, but there is no evidence of an interactive 'try it' console or runnable code examples within the docs. Missing for 10: explicit interactive try-it-out UI, runnable/executable code samples, and multi-language SDK snippets in the reference.",
+    "rationale": "Docs confirm an API reference with endpoint examples, auth details, and a downloadable OpenAPI 3.0 spec, but there is no evidence of an interactive/embedded 'try it' console or verifiably runnable examples, and a probe for the OpenAPI spec at standard paths returned 404s. missing for 10: confirmation of an interactive API console (e.g., Swagger/Redoc try-it-out), evidence of runnable code snippets, and successful public access to the OpenAPI spec.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
       "incident-io-docs-46",
-      "incident-io-probe-2",
-      "incident-io-probe-rt-2"
+      "incident-io-docs-86",
+      "incident-io-probe-2"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "api-machine-spec",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Docs explicitly state 'Download the full OpenAPI 3.0 spec' at the API reference introduction, and a runtime probe confirms machine-readable per-tag OpenAPI 3.0.3 JSON specs are downloadable keylessly (e.g. incidents-v2.json). Missing for 10: no evidence of a single consolidated full-spec file being probed directly (only per-tag files verified) and no independent third-party corroboration of spec quality/tooling generation.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state you can download the full OpenAPI 3.0 spec and provide an API reference with base URL and auth details, confirming a machine-readable spec is offered to developers/AI agents. However, a live probe of common OpenAPI file paths (openapi.json, swagger.json, etc.) returned 404s, so the exact download location wasn't independently verified. Missing for 10: independent verification of a working spec URL, and confirmation of spec completeness/versioning.",
     "evidenceIds": [
       "incident-io-docs-34",
+      "incident-io-docs-86",
       "incident-io-docs-20",
-      "incident-io-probe-rt-2"
+      "incident-io-probe-2"
     ]
   },
   {
@@ -1866,24 +1862,24 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Docs mention a 'test' incident type that lets users 'practice without affecting production' (docs-37), which is a lightweight sandbox-like mechanism within the core incident workflow, but there's no evidence of a dedicated sandbox environment, test API keys, or staging tenant for AI/MCP integrations or API testing separate from production data. Missing for 10: dedicated sandbox/staging environment for API or MCP testing, documented test API keys or environment flags, and any AI-native testing workflow beyond the single 'test incident' type.",
+    "rationale": "incident.io offers a built-in 'test' incident type explicitly meant to let users practice without affecting production (docs-37), which partially satisfies the sandboxing intent, but there is no evidence of a dedicated sandbox environment, staging API keys, or a test mode specifically for AI/MCP-driven agentic workflows. missing for 10: dedicated sandbox/staging environment for API or MCP usage, isolated test data set for AI agent experimentation, documentation confirming AI tooling (MCP server, Investigations) can run against non-production data.",
     "evidenceIds": [
       "incident-io-docs-37",
-      "incident-io-docs-10",
-      "incident-io-probe-3"
+      "incident-io-docs-47",
+      "incident-io-docs-10"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "api-versioning-policy",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "incident.io publishes a documented REST API with downloadable OpenAPI 3.0 specs (including versioned tags like 'incidents-v2') and an API-reference site, suggesting some versioning discipline, but there is no explicit deprecation-policy documentation, changelog for API breaking changes, or SLAs for version support lifecycle. missing for 10: explicit deprecation policy docs, version sunset timelines, migration guides between API versions.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The docs show incident.io has a REST API with an OpenAPI 3.0 spec, API key auth, and a reference site (docs-20, docs-34, docs-46, docs-86), but there is no mention anywhere of API versioning scheme or a documented deprecation policy for breaking changes. The probe even shows the openapi.json isn't reachable at standard paths, and no changelog entries discuss version deprecation.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-probe-rt-2",
+      "incident-io-docs-86",
       "incident-io-probe-2"
     ]
   },
@@ -1892,14 +1888,13 @@
     "storyId": "automation-bulk-operations",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "While incident.io exposes a REST API, OpenAPI specs, and an MCP server for querying incidents/alerts/on-call data, none of the evidence describes bulk/batch operations (e.g., bulk update, bulk close, batch endpoints, or MCP tools operating on many items at once) — all API/MCP references describe per-item query or single-action operations. This is a fair axis for a product with a full API and MCP surface, but no evidence shows bulk-operation support.",
+    "confidence": "low",
+    "rationale": "The evidence pack documents an API, MCP server, webhooks, and alert grouping/deduplication, but none of it describes bulk-edit, batch-update, or multi-item operations (e.g., bulk closing incidents, bulk updating follow-ups, batch API endpoints) that an AI-native user could invoke across many items at once. Alert grouping merely aggregates related alerts for single triage, not user-driven bulk actions.",
     "evidenceIds": [
+      "incident-io-docs-27",
+      "incident-io-docs-28",
       "incident-io-docs-20",
-      "incident-io-docs-34",
-      "incident-io-probe-rt-2",
-      "incident-io-docs-29",
-      "incident-io-docs-40"
+      "incident-io-docs-29"
     ]
   },
   {
@@ -1925,12 +1920,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "incident.io's Workflows feature (docs-9, docs-69) triggers actions on incident events, not on recurring time-based schedules, and on-call 'schedules' (docs-24, docs-71) are for rotation/paging rather than scheduling automation jobs; no evidence of cron-like recurring workflow triggers or an API/MCP mechanism to schedule recurring jobs.",
+    "rationale": "incident.io's Workflows feature is documented as event-triggered automation (e.g., auto-publishing status pages when an incident updates) rather than time-based recurring scheduling, and no evidence describes cron-like or recurring job scheduling capability for workflows.",
     "evidenceIds": [
       "incident-io-docs-9",
       "incident-io-docs-69",
-      "incident-io-docs-24",
-      "incident-io-docs-71"
+      "incident-io-docs-82"
     ]
   },
   {
@@ -1939,11 +1933,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack confirms incident.io has automations (Workflows, alert routing, status page automation) and even a Terraform provider for infra-as-code, but there is no documentation of versioning workflow/automation configs, a review process for changes, or a rollback mechanism to a prior automation state.",
+    "rationale": "incident.io has Workflows/automation features (status page auto-publish, workflows) and a Terraform provider for infra-as-code, but there is no evidence of built-in version history, review/approval flow, or rollback capability for automations themselves.",
     "evidenceIds": [
+      "incident-io-docs-1",
       "incident-io-docs-9",
-      "incident-io-docs-69",
-      "incident-io-docs-1"
+      "incident-io-docs-69"
     ]
   },
   {
@@ -1952,12 +1946,14 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The only calendar-feed evidence describes importing external iCal feeds (e.g., personal holidays/PTO) INTO incident.io's schedules, not exporting on-call shift schedules OUT to an engineer's personal calendar via a subscribable feed — the direction the story asks for. No documentation or probe evidence shows an outbound iCal/webcal feed URL for on-call shifts that engineers can subscribe to in their own calendar apps.",
+    "rationale": "The evidence pack only documents importing personal calendar/iCal feeds (holidays, PTO) INTO incident.io (e.g., incident-io-docs-26/43/51/72), not the reverse — exporting on-call shift schedules to a personal calendar feed so an engineer can see them in their own calendar app. No evidence pack item describes an outbound iCal/calendar feed for on-call shifts themselves.",
     "evidenceIds": [
       "incident-io-docs-26",
       "incident-io-docs-43",
       "incident-io-docs-51",
-      "incident-io-docs-72"
+      "incident-io-docs-72",
+      "incident-io-docs-15",
+      "incident-io-docs-24"
     ]
   },
   {
@@ -1981,29 +1977,35 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm escalation paths with priority/working-hours rules, schedules for on-call rotation, and routing alerts to escalation paths (docs-15, docs-25, docs-50), which supports the core multi-step escalation concept, but there is no explicit documentation of the specific mechanics described in the story — delay timers before advancing, multiple ordered steps, fallback responders, or repeat rounds until acknowledgment. missing for 10: explicit description of escalation timing/delay configuration, fallback responder tiers, and repeat/looping behavior until acknowledgment, plus independent hands-on corroboration.",
+    "rationale": "Docs confirm escalation paths with rules around priority/working hours to route pages to the right people (docs-25/50/78), plus schedules for on-call coverage (docs-24/71) and alert routing/escalation (docs-15/59). However, the evidence never explicitly describes multi-step delay/timeout logic, fallback responders, or repeat escalation rounds until acknowledgment — the core mechanics named in the story are only implied, not documented. missing for 10: explicit documentation of timed delay steps, fallback/backup responder tiers, and repeat-round escalation behavior until ack.",
     "evidenceIds": [
-      "incident-io-docs-15",
       "incident-io-docs-25",
       "incident-io-docs-50",
-      "incident-io-docs-59"
+      "incident-io-docs-78",
+      "incident-io-docs-24",
+      "incident-io-docs-71",
+      "incident-io-docs-15",
+      "incident-io-docs-59",
+      "incident-io-docs-79"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "followup-tracking",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "incident.io documents clear follow-up action creation/tracking (docs-7, docs-39, docs-61) and org-wide postmortem completion tracking via list views and policies (docs-5), but explicit native syncing of follow-ups to an issue tracker (e.g., Jira/Linear) is not documented — the closest evidence is a generic webhooks note that mentions 'keeping track of follow-ups' as a possible use case (docs-33/docs-45) plus a general API for building custom integrations (docs-20, docs-34). Missing for 10: a named native issue-tracker integration (Jira/Linear/Asana) for follow-ups, documentation of bidirectional sync/status updates, and any customer proof point of this specific sync working.",
+    "rationale": "incident.io has a dedicated follow-ups feature explicitly designed to capture and track post-incident actions to completion (docs-7, docs-68, docs-80), and documents exporting/syncing these follow-ups as issues in GitHub and GitLab with bidirectional change sync, plus Asana integration (intdir-1, intdir-2, docs-74), and changelog notes on ticket-incident sync (docs-88). This directly matches the engineering-leader story of tracking follow-ups to completion with issue-tracker sync. Missing for 10: independent/hands-on validation of sync reliability, and no evidence of Jira-specific sync (only GitHub/GitLab/Asana named).",
     "evidenceIds": [
-      "incident-io-docs-5",
       "incident-io-docs-7",
+      "incident-io-docs-68",
+      "incident-io-docs-80",
       "incident-io-docs-39",
       "incident-io-docs-61",
-      "incident-io-docs-33",
-      "incident-io-docs-45",
-      "incident-io-docs-20"
+      "incident-io-intdir-1",
+      "incident-io-intdir-2",
+      "incident-io-docs-74",
+      "incident-io-docs-88"
     ]
   },
   {
@@ -2012,15 +2014,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs confirm automatic timeline generation from key events (alerts, actions, chat) plus explicit editability/annotation with custom narrative or external events, directly matching the story. Multiple integration/alert-source docs and webhook support corroborate automatic capture of alerts and actions feeding the timeline. missing for 10: X, Y — no independent/hands-on account (beyond vendor docs) confirming edit workflow in practice, and no detail on exactly which chat decisions get auto-captured vs require manual annotation.",
+    "rationale": "Docs confirm automatic timeline generation from key events with full editability/annotation (add narrative or external events), plus alert dedup/grouping and integrations feeding into that timeline, and AI-generated summaries during incidents. Missing for 10: explicit documentation of chat/Slack decision capture verbatim into timeline and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "incident-io-docs-4",
       "incident-io-docs-38",
       "incident-io-docs-49",
-      "incident-io-docs-3",
-      "incident-io-docs-15",
-      "incident-io-docs-19",
-      "incident-io-docs-45"
+      "incident-io-docs-53",
+      "incident-io-docs-27",
+      "incident-io-docs-28"
     ]
   },
   {
@@ -2029,13 +2030,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly state incident.io offers 'public and private Status Pages' for customer communication, and status pages support automation/API/workflow publishing, implying some access control capability. However, no evidence details how access control works (e.g., audience-specific gating, SSO/SAML restriction, or separate employee-only vs customer-facing page configuration), so the specific 'engineering leader' control granularity is unconfirmed. Missing for 10: documentation of audience-based access rules, authentication/SSO gating for private pages, and multi-audience segmentation examples.",
+    "rationale": "incident.io explicitly markets 'public and private Status Pages' and pricing docs mention 'Private incidents and policies,' confirming a private status page capability exists alongside public ones. However, the evidence pack lacks detail on the specific access-control mechanisms (e.g., SSO/SAML gating, customer-specific vs employee-only audience segmentation) needed to fully confirm granular audience control. Missing for 10: documentation of authentication/access-control methods for private status pages, and evidence of distinct audience segmentation (customer vs internal-only pages).",
     "evidenceIds": [
       "incident-io-docs-22",
       "incident-io-docs-57",
-      "incident-io-docs-8",
-      "incident-io-docs-9",
-      "incident-io-docs-67"
+      "incident-io-docs-87"
     ]
   },
   {
@@ -2044,7 +2043,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Slack/Teams-based incident declaration, on-call schedules, escalation paths, and AI features, but contains no mention of a native mobile app for acknowledging, escalating, or resolving incidents from a phone. Mobile app support is a reasonable expectation for an on-call product, but no evidence confirms it exists.",
+    "rationale": "The evidence pack covers on-call scheduling, escalation paths, alerts, and workflow automation extensively, but there is no mention anywhere of a native mobile app for iOS/Android, nor any description of acknowledging/escalating/resolving from a phone. All interactions described are via Slack, Microsoft Teams, dashboard, or API/webhooks — no dedicated mobile app evidence exists.",
     "evidenceIds": []
   },
   {
@@ -2053,14 +2052,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "incident.io's on-call docs describe escalation paths, schedules, priority/working-hours routing rules, and alert sources, but none of the evidence specifies delivery via push, SMS, phone call, or email, nor per-channel notification preference settings for individual engineers.",
-    "evidenceIds": [
-      "incident-io-docs-15",
-      "incident-io-docs-25",
-      "incident-io-docs-50",
-      "incident-io-docs-42",
-      "incident-io-docs-24"
-    ]
+    "rationale": "While incident.io's on-call product covers alerts, escalation paths, and schedules, none of the evidence describes specific notification channels (push, SMS, phone call, email) or per-channel notification rules for on-call engineers. The docs mention routing by priority/working hours but never specify the actual delivery channels or user-configurable channel preferences.",
+    "evidenceIds": []
   },
   {
     "productId": "incident-io",
@@ -2079,50 +2072,55 @@
     "productId": "incident-io",
     "storyId": "on-call-schedules",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm core on-call scheduling: creating schedules with rotations and choosing on-call members, escalation paths with priority/working-hours rules, and calendar-feed imports for PTO/time-off (docs-15, docs-24, docs-42, docs-25, docs-50, docs-26, docs-43, docs-60). However, the evidence never explicitly mentions 'layers' as a schedule concept, multi-timezone handling within schedules, or round-robin rotation logic by name. missing for 10: explicit documentation of layered schedules, timezone-aware rotation configuration, and round-robin coverage patterns.",
+    "rationale": "Docs confirm building schedules with rotations, shadow schedules and follow-the-sun coverage, escalation paths with priority/working-hours rules, and calendar-feed import for holidays/time-off, indicating multi-team, timezone-aware coverage. However, there's no explicit documentation of 'layers' (multiple overlapping rotation layers) or 'round-robin' terminology as first-class configuration concepts, so full parity with the story's specific rotation vocabulary isn't evidenced. Missing for 10: explicit layered-schedule support, explicit round-robin assignment mechanics, and independent/hands-on validation of complex rotation setups.",
     "evidenceIds": [
-      "incident-io-docs-15",
       "incident-io-docs-24",
       "incident-io-docs-42",
+      "incident-io-docs-60",
+      "incident-io-docs-71",
+      "incident-io-docs-76",
       "incident-io-docs-25",
       "incident-io-docs-50",
+      "incident-io-docs-78",
       "incident-io-docs-26",
       "incident-io-docs-43",
-      "incident-io-docs-60"
+      "incident-io-docs-72"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "incident.io exposes a well-documented public API (api.incident.io) with a full OpenAPI 3.0 spec and per-tag machine-readable specs, plus webhooks and an MCP server that can query incidents, alerts, on-call, and escalations — strong evidence of broad API coverage. However, there is no explicit claim or evidence of full feature parity (e.g. Terraform provider is still being built resource-by-resource, and AI features like Investigations/Scribe/summaries aren't clearly exposed as API-manageable), so full UI-API parity isn't demonstrated. Missing for 10: explicit parity statement/documentation, API coverage for AI-driven features (investigations, scribe, suggestions), and confirmation Terraform/infra-as-code covers all resources.",
+    "rationale": "incident.io ships a documented REST API (api.incident.io) with an OpenAPI 3.0 spec, webhooks, and status-page/alert endpoints, plus an MCP server that lets AI tools query incidents, alerts, on-call and escalations — a solid but not exhaustive API surface. However, the evidence explicitly admits the Terraform/infra-as-code provider is still being built 'resource by resource,' implying API/IaC parity with the UI is incomplete, and there is no explicit claim or independent confirmation that literally every UI action (e.g., insights/analytics configuration, schedule building UI features) is exposed via the API. Missing for 10: an explicit UI/API parity statement, confirmed OpenAPI spec location (probe found the guessed paths 404), and evidence covering less-common UI features like insights toggles or schedule creation via API.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
+      "incident-io-docs-86",
+      "incident-io-docs-81",
+      "incident-io-docs-29",
+      "incident-io-docs-40",
       "incident-io-docs-19",
-      "incident-io-docs-33",
-      "incident-io-probe-rt-2",
       "incident-io-docs-1",
-      "incident-io-probe-3"
+      "incident-io-probe-2"
     ]
   },
   {
     "productId": "incident-io",
     "storyId": "openness-full-export",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "medium",
-    "rationale": "incident.io exposes a documented REST API with per-tag OpenAPI 3.0.3 specs (open, machine-readable format) and webhooks that can sync incidents, alerts, schedules, and follow-ups out to external tools like Asana/GitHub, giving a technical path to extract data. However, there is no documented bulk 'export all my data' feature, no data-portability/GDPR export tool, and no stated support for full account data dump or termination workflow.\n\nmissing for 10: a first-party bulk data export/portability feature, explicit open-format full export (e.g. CSV/JSON dump of all incidents/timelines), and any documentation addressing account closure/data takeout.",
+    "rationale": "The docs show an API and webhooks for syncing individual data types (follow-ups to Asana/GitHub, on-call data, etc.) but there is no documented bulk 'export all your data' or account-portability feature, and the probe shows the OpenAPI spec itself is not even reliably reachable (404s). No evidence of a comprehensive open-format data export enabling a user to fully leave the platform.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-probe-rt-2",
-      "incident-io-docs-19",
-      "incident-io-intdir-1"
+      "incident-io-docs-74",
+      "incident-io-intdir-1",
+      "incident-io-probe-2"
     ]
   },
   {
@@ -2131,7 +2129,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "incident.io is a closed-source commercial SaaS incident management platform; there is no evidence of an open-source repository or open license for its source code, and this axis is a category error for this kind of proprietary hosted product.",
+    "rationale": "incident.io is a closed-source SaaS incident management platform; there is no evidence or plausible expectation of an open-licensed source repository for the product itself, making this a category error rather than an unmet capability.",
     "evidenceIds": []
   },
   {
@@ -2140,7 +2138,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "incident.io is a hosted SaaS incident management platform with no evidence of any self-hosted/on-premise deployment option; the product category is a managed cloud service, so self-hosting the core product is a category mismatch rather than a missing feature.",
+    "rationale": "incident.io is a SaaS incident management platform with no evidence of a self-hostable core product; it's delivered as a hosted service via API/dashboard, so self-hosting is a category mismatch rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -2149,16 +2147,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes admins/teams building schedules, rotations, escalation paths, and importing holiday/PTO feeds, but nothing documents an on-call engineer self-service flow for taking an override, swapping a shift, or requesting coverage without admin involvement.",
+    "rationale": "The evidence covers building schedules, escalation paths, and importing calendar/PTO feeds, but nowhere mentions an on-call engineer being able to self-serve an override, shift swap, or coverage request without an admin editing the schedule. No docs reference an 'override' or 'swap' feature.",
     "evidenceIds": []
   },
   {
     "productId": "incident-io",
     "storyId": "postmortem-workflow",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show clear postmortem workflow pieces: timeline customization and narrative capture (docs-4/38/49), AI-assisted first-draft generation with inline review suggestions and redrafting (docs-6), follow-up action tracking (docs-7/39/61), and org-wide completion tracking via post-incident flow and policies (docs-5). However, there's no explicit mention of a postmortem 'template' system or a distinct publication/sign-off step, so the full templates→draft→review→publish pipeline isn't fully evidenced. Missing for 10: explicit template library/selection for postmortems, and a documented publication/approval step beyond 'policies' and 'completion tracking'.",
+    "rationale": "Docs show a customizable timeline (docs-4/38/49) that feeds into AI-drafted postmortems with inline review suggestions and redrafting (docs-6), plus follow-up tracking and org-wide postmortem completion tracking via list views and policies (docs-5, docs-7/39/68/80). However, there is no explicit documentation of a postmortem template system or a distinct 'publication' step for postmortems (publishing evidence only covers status pages, not postmortem docs). missing for 10: explicit postmortem template library/selection, explicit publication/sign-off workflow for postmortem documents, independent corroboration of the AI drafting quality.",
     "evidenceIds": [
       "incident-io-docs-4",
       "incident-io-docs-5",
@@ -2167,7 +2165,7 @@
       "incident-io-docs-38",
       "incident-io-docs-39",
       "incident-io-docs-49",
-      "incident-io-docs-61"
+      "incident-io-docs-80"
     ]
   },
   {
@@ -2176,7 +2174,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data region/residency options, data storage location, or geographic hosting controls for incident.io; nothing addresses this axis at all.",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or data storage location options for incident.io; the closest related item is a pricing mention of 'Private incidents and policies' which is unrelated to storage region choice. Missing for 10: any documentation of regional data storage options, residency guarantees, or EU/US hosting choices.",
     "evidenceIds": []
   },
   {
@@ -2185,7 +2183,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses an AI-training opt-out policy, data usage terms, or privacy controls related to model training; the evidence focuses on AI features (Investigations, Scribe, MCP) but never mentions data governance for training exclusion.",
+    "rationale": "No evidence in the pack addresses opting out of AI/model training on customer data, data-use policies for AI features, or any privacy controls specific to training data usage; the pack covers only incident management, AI features (summaries, investigations, MCP), and integrations.",
     "evidenceIds": []
   },
   {
@@ -2194,7 +2192,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers incident management, on-call, AI investigations, MCP/API access, and integrations, but nowhere addresses data retention policies, configurable deletion schedules, or data export/erasure controls for user or incident data. No documentation item mentions retention periods, deletion workflows, or privacy/data-lifecycle controls.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, data export/erasure workflows, or configurable retention windows for incident data, AI-generated content, or MCP interactions. The evidence covers incident management, on-call, integrations, and AI features but nothing on privacy/retention controls, so the applicable axis is unsupported.",
     "evidenceIds": []
   },
   {
@@ -2202,22 +2200,25 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention telemetry, usage tracking, analytics opt-out, or privacy controls for AI/telemetry data collection; the evidence covers incident management, on-call, AI features (MCP, investigations, summaries), and integrations but is silent on this axis.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack about telemetry/usage-tracking opt-out controls, privacy settings, or data collection toggles for incident.io's AI features (MCP, Investigations, Suggestions, Scribe) or the platform generally.",
     "evidenceIds": []
   },
   {
     "productId": "incident-io",
     "storyId": "public-status-page",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm hosted public and private Status Pages, workflow-driven auto-publishing from incident state, an agent that can update status pages, and an API to automate status page incidents and maintenance windows. However, the evidence pack contains no explicit mention of custom domain support or subscriber notification features, which are key parts of the story. Missing for 10: explicit documentation of custom domain hosting for status pages, subscriber/email-notification functionality, and independent/hands-on verification of these features.",
+    "rationale": "incident.io clearly offers hosted public/private status pages that can be automatically driven from incident state via Workflows and a Status Page API/automation (docs-22, docs-57, docs-8, docs-81, docs-9, docs-69, docs-82, docs-67), which covers the core 'incident-state-driven publishing' part of the story. However, the evidence pack contains no mention of custom domain support or subscriber notification features for status pages. missing for 10: custom domain hosting evidence, subscriber notification/email-SMS alerting evidence.",
     "evidenceIds": [
-      "incident-io-docs-8",
-      "incident-io-docs-9",
       "incident-io-docs-22",
       "incident-io-docs-57",
+      "incident-io-docs-8",
+      "incident-io-docs-81",
+      "incident-io-docs-9",
+      "incident-io-docs-69",
+      "incident-io-docs-82",
       "incident-io-docs-67"
     ]
   },
@@ -2225,14 +2226,14 @@
     "productId": "incident-io",
     "storyId": "reliability-analytics",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "incident.io's Insights product provides period-over-period comparisons and dashboards (docs-18/32/64), and its case study claims 'strengthened reliability company-wide' (docs-44), but the evidence pack lacks concrete detail on MTTA/MTTR trend tracking specifically, on-call health metrics, or incident load trending as named leadership-facing analytics — only generic 'Insights' mentions with period comparison toggles are documented. missing for 10: explicit MTTA/MTTR metric definitions and dashboards, on-call health scorecards, incident load/volume trend reporting, and independent validation that leaders use these to measure improvement over time.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "incident.io's docs reference an 'Insights' feature that lets users view data over Week/Month/Quarter periods and compare to previous periods, implying some trend analytics exist, but the evidence never names MTTA/MTTR, incident load, or on-call health metrics specifically, nor shows dashboards/reports demonstrating improvement tracking. Missing for 10: explicit mention of MTTA/MTTR metrics, on-call health scoring, incident load trend visualizations, and any hands-on or customer proof of using these analytics to show improvement over time.",
     "evidenceIds": [
       "incident-io-docs-18",
       "incident-io-docs-32",
       "incident-io-docs-64",
-      "incident-io-docs-44"
+      "incident-io-docs-85"
     ]
   },
   {
@@ -2241,19 +2242,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers incident declaration, timelines, follow-ups, on-call scheduling, and AI investigations, but nowhere mentions assignable incident roles (e.g., commander, comms lead) or structured task checklists during response. Missing for 10: any documentation of role assignment features, role definitions, or checklist/runbook task tracking during active incidents.",
+    "rationale": "The evidence pack covers incident declaration, timelines, follow-ups, on-call scheduling, and AI investigations, but nowhere mentions assignable incident roles (e.g., commander, comms lead) or in-incident task checklists for coordinating response. Missing for 10: any documentation of role assignment (commander/comms lead), role-based permissions, or structured task/checklist templates used during active incidents.",
     "evidenceIds": []
   },
   {
     "productId": "incident-io",
     "storyId": "runbook-automation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence only mentions 'runbooks' in passing as an input source that investigations reference (docs-31), and describes a separate 'Workflows' automation feature that can auto-publish status pages (docs-9), but there is no documentation tying runbook steps to automatic actions like creating channels, assigning tasks, or running diagnostics as the story describes. missing for 10: dedicated runbook-step automation, evidence of channel-creation/task-assignment/diagnostic triggers, any docs page specifically on runbook execution.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows incident.io references 'runbooks' as one of the context sources ingested by its Investigations feature, and separately shows Workflows can automate actions (e.g., auto-publishing status pages, assigning follow-up tasks), but there is no documentation of a distinct 'runbook' object whose steps trigger channel creation, task assignment, or diagnostics automatically. missing for 10: explicit runbook step definitions, automated channel creation tied to runbook triggers, task assignment automation via runbooks, diagnostics execution as a runbook step.",
     "evidenceIds": [
       "incident-io-docs-31",
-      "incident-io-docs-9"
+      "incident-io-docs-83",
+      "incident-io-docs-9",
+      "incident-io-docs-69",
+      "incident-io-docs-7",
+      "incident-io-docs-68"
     ]
   },
   {
@@ -2276,12 +2281,13 @@
     "productId": "incident-io",
     "storyId": "workflow-automation-engine",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "incident.io explicitly has a 'Workflows' engine that triggers automations on incident events (e.g., auto-publishing status page updates when an incident changes), confirming a condition-based automation engine exists, and follow-ups show related task automation constructs. However, the evidence pack lacks direct documentation of reminders or arbitrary field-change automations as workflow triggers, only the status-page publishing example is concretely evidenced. missing for 10: doc pages showing reminder workflows, field-update workflows, or a full workflow-builder overview with condition/trigger types beyond status-page publishing.",
+    "rationale": "The evidence confirms incident.io has a 'Workflows' feature that triggers actions on incident events (e.g., auto-publishing status pages when an incident is updated) and references a dedicated workflows getting-started doc, implying a condition-based automation engine. However, the pack lacks detail on core described capabilities like reminders, field-change automation, or conditional logic configuration — missing for 10: explicit workflow trigger/condition documentation, reminder automation examples, field-update automation examples, and independent hands-on corroboration.",
     "evidenceIds": [
       "incident-io-docs-9",
       "incident-io-docs-69",
+      "incident-io-docs-82",
       "incident-io-docs-7",
       "incident-io-docs-68"
     ]
@@ -2289,19 +2295,21 @@
   {
     "productId": "incident-io",
     "storyId": "workflow-tool-integrations",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs clearly show two-way integration with Slack and Microsoft Teams (declaring incidents, timeline updates) plus a generic webhook/API layer and 40+ alert-source integrations that could plumb in tools like Jira/GitHub/Zoom, and investigations pull in 'recent code changes' implying some code-host integration. However, no evidence explicitly names Jira, GitHub, or Zoom as first-class two-way integrations. Missing for 10: explicit Jira ticket sync, GitHub PR/commit linkage, Zoom call integration documentation, and independent confirmation these named tools sync state bidirectionally.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "incident.io documents two-way integrations across the named tools: Slack/Teams for declaring incidents and updates, GitHub/GitLab for connecting PRs and syncing follow-ups as Issues, Zoom/Teams for automatic call creation, Jira-style ticket sync (bidirectional incident/ticket updates), plus webhooks and a full REST API for custom bidirectional flows. Missing for 10: explicit named Jira integration details/dedicated doc page (only generic 'ticket' sync and integrations directory reference), and independent/hands-on verification beyond vendor docs of bidirectional sync reliability.",
     "evidenceIds": [
       "incident-io-docs-3",
       "incident-io-docs-48",
+      "incident-io-intdir-1",
+      "incident-io-intdir-2",
+      "incident-io-intdir-9",
+      "incident-io-docs-88",
       "incident-io-docs-19",
-      "incident-io-docs-33",
       "incident-io-docs-45",
-      "incident-io-docs-21",
-      "incident-io-docs-31",
-      "incident-io-docs-20"
+      "incident-io-docs-20",
+      "incident-io-docs-74"
     ]
   },
   {
