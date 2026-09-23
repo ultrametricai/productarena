@@ -15627,5 +15627,534 @@
     "totalEstimatedMinutes": 105,
     "hasAsyncSteps": false,
     "timeOrder": 72
+  },
+  {
+    "id": "vc_001",
+    "title": "Form a VC fund",
+    "description": "Stand up the venture fund's legal stack: the GP entity (a new LLC or a new series of the series LLC), the Delaware LP formation filing, the initial limited partnership agreement and GP operating agreement, the fund's EIN, and the fund bank account.",
+    "phase": "vc",
+    "cadence": "once",
+    "complexity": "complex",
+    "category": "vc_fund_ops",
+    "supportLevel": "partial",
+    "supportReason": "The agent drafts the LPA and the operating agreement and pre-fills every filing; the Delaware portal and the IRS EIN wizard have no API, and the GP's signatures on the fund documents are legally human.",
+    "vendors": [
+      "angellist",
+      "sydecar",
+      "mercury"
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Choose a fund formation platform or counsel",
+          "route": "person",
+          "vendorOptions": [
+            "angellist",
+            "sydecar"
+          ],
+          "estimatedMinutes": 30
+        },
+        {
+          "id": "n2",
+          "label": "Create the GP entity (a new LLC or a new series of the series LLC)",
+          "route": "form",
+          "actionUrl": "https://corp.delaware.gov/howtoform/",
+          "actionLabel": "Delaware Division of Corporations",
+          "vendorOptions": [
+            "angellist",
+            "sydecar",
+            "legalzoom"
+          ],
+          "riskLevel": "high",
+          "estimatedMinutes": 30,
+          "functionCalls": [
+            {
+              "method": "Delaware Division of Corporations filing",
+              "type": "manual",
+              "description": "File the GP LLC (or designate the new series) on the state portal or via the platform"
+            }
+          ]
+        },
+        {
+          "id": "n3",
+          "label": "Create the DE LP formation doc and file the Certificate of Limited Partnership",
+          "route": "form",
+          "actionUrl": "https://corp.delaware.gov/howtoform/",
+          "actionLabel": "Delaware Division of Corporations",
+          "vendorOptions": [
+            "angellist",
+            "sydecar"
+          ],
+          "riskLevel": "high",
+          "estimatedMinutes": 30,
+          "functionCalls": [
+            {
+              "method": "Delaware Division of Corporations filing",
+              "type": "manual",
+              "description": "File the fund's Certificate of Limited Partnership with Delaware"
+            }
+          ]
+        },
+        {
+          "id": "n3b",
+          "label": "Receive the stamped LP certificate",
+          "route": "person",
+          "estimatedMinutes": 2880,
+          "async": true,
+          "extraOptionArenas": [
+            "workflow-automation"
+          ]
+        },
+        {
+          "id": "n4",
+          "label": "Create the simple LPA (limited partnership agreement)",
+          "route": "agent",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 60,
+          "vendorOptions": [
+            "angellist",
+            "sydecar"
+          ],
+          "extraOptionRefs": [
+            {
+              "arenaId": "ai-assistants",
+              "productId": "chatgpt"
+            },
+            {
+              "arenaId": "ai-assistants",
+              "productId": "claude"
+            }
+          ]
+        },
+        {
+          "id": "n5",
+          "label": "Create the GP operating agreement",
+          "route": "agent",
+          "approvalRequired": true,
+          "riskLevel": "medium",
+          "estimatedMinutes": 45,
+          "extraOptionRefs": [
+            {
+              "arenaId": "ai-assistants",
+              "productId": "chatgpt"
+            },
+            {
+              "arenaId": "ai-assistants",
+              "productId": "claude"
+            }
+          ]
+        },
+        {
+          "id": "n5b",
+          "label": "GP signs the LPA and the operating agreement",
+          "route": "person",
+          "legalSignature": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 10
+        },
+        {
+          "id": "n6",
+          "label": "Apply for the fund's EIN",
+          "route": "form",
+          "actionUrl": "https://www.irs.gov/businesses/small-businesses-self-employed/get-an-employer-identification-number",
+          "actionLabel": "IRS EIN application",
+          "vendor": "irs",
+          "estimatedMinutes": 15,
+          "functionCalls": [
+            {
+              "method": "irs.ein.apply()",
+              "type": "manual",
+              "description": "The IRS SS-4 wizard has no API \u2014 the agent pre-fills, a human submits"
+            }
+          ]
+        },
+        {
+          "id": "n7",
+          "label": "Open the fund bank account",
+          "route": "form",
+          "optionsArenaId": "startup-banking",
+          "vendorOptions": [
+            "mercury",
+            "brex"
+          ],
+          "riskLevel": "medium",
+          "estimatedMinutes": 20
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n3b"
+        },
+        {
+          "from": "n3b",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        },
+        {
+          "from": "n5",
+          "to": "n5b"
+        },
+        {
+          "from": "n5b",
+          "to": "n6"
+        },
+        {
+          "from": "n6",
+          "to": "n7"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "fund name",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "GP entity structure (new LLC or a new series)",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "fund size, management fee, and carry terms",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "GP legal names and addresses",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "vc",
+      "fund-formation",
+      "legal"
+    ],
+    "activeMinutes": 240,
+    "totalEstimatedMinutes": 3120,
+    "hasAsyncSteps": true,
+    "region": "us",
+    "timeOrder": 120,
+    "annoyance": 4,
+    "risk": 5,
+    "growthImpact": 1
+  },
+  {
+    "id": "vc_002",
+    "title": "Close the fund",
+    "description": "Run the fund's closing: subscription documents out to the LPs, LP signatures collected, the amended & restated LPA executed with the final LP schedule, and the first and final close held.",
+    "phase": "vc",
+    "cadence": "once",
+    "complexity": "complex",
+    "category": "vc_fund_ops",
+    "supportLevel": "partial",
+    "supportReason": "The agent drafts the subscription documents and the A&R LPA and routes everything for e-signature; the LP and GP signatures are legally human, and the close itself is the GP's call.",
+    "vendors": [
+      "passthrough",
+      "docusign",
+      "angellist"
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Create the subscription documents",
+          "route": "agent",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 45,
+          "vendorOptions": [
+            "passthrough",
+            "angellist",
+            "sydecar"
+          ]
+        },
+        {
+          "id": "n2",
+          "label": "Send the subscription documents to the LPs for signature",
+          "route": "agent",
+          "vendor": "docusign",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 15,
+          "vendorOptions": [
+            "docusign",
+            "passthrough"
+          ],
+          "functionCalls": [
+            {
+              "method": "POST /v2.1/accounts/{accountId}/envelopes",
+              "type": "rest",
+              "description": "Send the subscription packet to each LP for signature"
+            }
+          ]
+        },
+        {
+          "id": "n3",
+          "label": "LPs sign the subscription documents",
+          "route": "person",
+          "legalSignature": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 2880,
+          "async": true
+        },
+        {
+          "id": "n4",
+          "label": "Create the A&R LPA (amended & restated, with the final LP schedule)",
+          "route": "agent",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 45,
+          "extraOptionRefs": [
+            {
+              "arenaId": "ai-assistants",
+              "productId": "chatgpt"
+            },
+            {
+              "arenaId": "ai-assistants",
+              "productId": "claude"
+            }
+          ]
+        },
+        {
+          "id": "n4b",
+          "label": "GP and LPs sign the A&R LPA",
+          "route": "person",
+          "legalSignature": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 1440,
+          "async": true
+        },
+        {
+          "id": "n5",
+          "label": "Hold the first and final close",
+          "route": "person",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 60
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n4b"
+        },
+        {
+          "from": "n4b",
+          "to": "n5"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "LP list with committed amounts",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "target close date",
+        "tier": "user_input",
+        "required": false
+      }
+    ],
+    "tags": [
+      "vc",
+      "fund-closing",
+      "legal"
+    ],
+    "activeMinutes": 165,
+    "totalEstimatedMinutes": 4485,
+    "hasAsyncSteps": true,
+    "region": "us",
+    "timeOrder": 121,
+    "annoyance": 5,
+    "risk": 5,
+    "growthImpact": 1
+  },
+  {
+    "id": "vc_003",
+    "title": "Run the fund back office",
+    "description": "The running fund's money loop: capital calls issued and the wires verified, the management fee charged, and each investment booked on the fund ledger.",
+    "phase": "vc",
+    "cadence": "quarterly",
+    "complexity": "moderate",
+    "category": "vc_fund_ops",
+    "supportLevel": "partial",
+    "supportReason": "The capital-call notices, wire checks, fee transfer, and ledger booking run over APIs with GP approval gates; the only human part is waiting on the LPs' wires.",
+    "vendors": [
+      "carta",
+      "mercury",
+      "angellist"
+    ],
+    "dag": {
+      "nodes": [
+        {
+          "id": "n1",
+          "label": "Issue a capital call notice to the LPs",
+          "route": "agent",
+          "vendor": "carta",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 30,
+          "vendorOptions": [
+            "carta",
+            "angellist",
+            "juniper_square",
+            "sydecar"
+          ],
+          "functionCalls": [
+            {
+              "method": "capitalCalls.create()",
+              "type": "sdk",
+              "description": "Draft the capital call notice against each LP's unfunded commitment"
+            }
+          ]
+        },
+        {
+          "id": "n2",
+          "label": "LPs send the capital call wires",
+          "route": "person",
+          "riskLevel": "medium",
+          "estimatedMinutes": 4320,
+          "async": true,
+          "extraOptionArenas": [
+            "workflow-automation"
+          ]
+        },
+        {
+          "id": "n3",
+          "label": "Verify the capital call wires received",
+          "route": "agent",
+          "vendor": "mercury",
+          "estimatedMinutes": 10,
+          "optionsArenaId": "startup-banking",
+          "vendorOptions": [
+            "mercury",
+            "brex"
+          ],
+          "functionCalls": [
+            {
+              "method": "GET /api/v1/accounts/{id}/transactions",
+              "type": "rest",
+              "description": "Match incoming wires against the capital call schedule"
+            }
+          ]
+        },
+        {
+          "id": "n4",
+          "label": "Charge the management fee",
+          "route": "agent",
+          "vendor": "mercury",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 10,
+          "functionCalls": [
+            {
+              "method": "POST /api/v1/accounts/{id}/wires",
+              "type": "rest",
+              "description": "Initiate the fee transfer from the fund to the management company (pending approval)"
+            }
+          ]
+        },
+        {
+          "id": "n5",
+          "label": "Book the investment on the fund ledger",
+          "route": "agent",
+          "vendor": "carta",
+          "approvalRequired": true,
+          "riskLevel": "high",
+          "estimatedMinutes": 20,
+          "vendorOptions": [
+            "carta",
+            "angellist",
+            "juniper_square"
+          ],
+          "functionCalls": [
+            {
+              "method": "investments.record()",
+              "type": "sdk",
+              "description": "Record the portfolio position and update the fund ledger"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "from": "n1",
+          "to": "n2"
+        },
+        {
+          "from": "n2",
+          "to": "n3"
+        },
+        {
+          "from": "n3",
+          "to": "n4"
+        },
+        {
+          "from": "n4",
+          "to": "n5"
+        }
+      ]
+    },
+    "contextNeeded": [
+      {
+        "tool": "user_input",
+        "query": "capital call amount and schedule",
+        "tier": "user_input",
+        "required": true
+      },
+      {
+        "tool": "user_input",
+        "query": "management fee terms",
+        "tier": "user_input",
+        "required": true
+      }
+    ],
+    "tags": [
+      "vc",
+      "fund-ops",
+      "finance"
+    ],
+    "activeMinutes": 70,
+    "totalEstimatedMinutes": 4390,
+    "hasAsyncSteps": true,
+    "timeOrder": 122,
+    "annoyance": 4,
+    "risk": 4,
+    "growthImpact": 1
   }
 ]
