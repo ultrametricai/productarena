@@ -1,14 +1,16 @@
 {
-  "hash": "38b8394be082f5bdef08fe5e265951515fc6b77a7e57222f182f6519ea308a8e",
+  "hash": "bb1d6cccbffe4c1e37aa2c8f1c217135b3e9cea893c7d05ff1ee740641f52b5e",
   "verdict": {
-    "verdict": "partial",
+    "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm a single API call creates an Issuing Card object and that sandbox-mode purchase simulation exists before going live, supporting the core lifecycle claim. However, the evidence pack never explicitly confirms that PAN, CVV, and expiry are returned/retrievable programmatically at issuance, nor does it document that moving from test to live mode requires no approval or sales process (Issuing often needs business verification). missing for 10: explicit API field/endpoint returning PAN+CVV+expiry, documentation of frictionless sandbox-to-live activation without account review.",
+    "rationale": "Docs confirm a Card-create API call and cardholder creation, plus sandbox simulation before going live (stripe-issuing-docs-1, stripe-issuing-docs-3, stripe-issuing-docs-10), but nothing in the evidence explicitly confirms PAN/CVV/expiry are returned synchronously in that same call. More importantly, community reports directly contradict the 'no sales cycle' claim: Issuing has historically been invitation-only, with users needing to email a Stripe employee and wait for approval batches before being allowed to go live (stripe-issuing-comm-5, stripe-issuing-comm-9), which is itself a sales/vetting gate. Missing for 10: explicit doc evidence that PAN/CVV/expiry are returned in the create response, and confirmation that the invitation gate has been removed for self-serve sandbox-to-live flow.",
     "evidenceIds": [
       "stripe-issuing-docs-1",
+      "stripe-issuing-docs-3",
       "stripe-issuing-docs-10",
-      "stripe-issuing-probe-2"
+      "stripe-issuing-comm-5",
+      "stripe-issuing-comm-9"
     ],
     "productId": "stripe-issuing",
     "storyId": "virtual-card-creation"
