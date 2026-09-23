@@ -180,16 +180,19 @@ export function processIcon(taskId: string): string {
 // ---------- Curated end-to-end playbooks (chains) ----------
 
 export const CHAIN_ICONS: Record<string, string> = {
+  'name-the-company': '💡', // same concept as brand_001 (the name idea)
   'company-launch': '🚀',
+  'raise-a-seed-round': '🌱', // same concept as fund_001 (the seed)
+  'ship-v1': '🚢', // same concept as sw_001 (ship it)
+  'launch-website': '🌐',
+  'launch-on-product-hunt': '😺', // the Product Hunt cat
+  'get-first-10-customers': '🧲', // pull the first customers in
+  'get-paid': '🤑',
   'first-hire': '🤝',
   'month-end-close': '📒',
-  'get-paid': '🤑',
-  'launch-website': '🌐',
-  'raise-a-seed-round': '🌱', // same concept as fund_001 (the seed)
-  'get-first-10-customers': '🧲', // pull the first customers in
-  'launch-on-product-hunt': '😺', // the Product Hunt cat
+  'tax-season': '📆', // same concept as qs_047 (the annual-filing calendar)
   'set-up-compliance': '🛡️', // same concept as comp_001 (SOC 2 shield)
-  'ship-v1': '🚢', // same concept as sw_001 (ship it)
+  'land-the-enterprise-deal': '🏰', // the enterprise castle, finally opened
   'go-fundraise-follow-on': '💰', // same concept as the fundraising phase
 }
 
