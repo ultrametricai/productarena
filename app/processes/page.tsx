@@ -119,7 +119,7 @@ export default function ProcessesPage() {
       <section className="mx-auto max-w-3xl text-center text-sm text-zinc-500">
         <p>
           Every mapped vendor traces to a live arena leaderboard — swap it for a rival on the
-          process page and the simulator stays honest about whose API was actually recorded.{' '}
+          process page and the simulator reports exactly whose API was actually recorded.{' '}
           <Link href="/" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
             See all rankings →
           </Link>

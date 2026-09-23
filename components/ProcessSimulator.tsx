@@ -73,7 +73,9 @@ export default function ProcessSimulator({
   return (
     <section className="rounded-2xl border border-zinc-800 p-4 sm:p-5">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="font-display text-lg font-semibold tracking-tight">Simulate this process</h2>
+        <h2 className="font-display text-lg font-semibold tracking-tight">
+          {multiTask ? 'Simulate this playbook' : 'Simulate this process'}
+        </h2>
         <span className="text-[11px] uppercase tracking-widest text-zinc-500">
           simulated dry run from the mapped process — no real calls are made
         </span>
