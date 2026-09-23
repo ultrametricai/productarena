@@ -105,6 +105,11 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   const [query, setQuery] = useState('')
   const [arenaId, setArenaId] = useState('all')
   const [showAll, setShowAll] = useState(false)
+  // Deep-table quick filters (founder 2026-09-23: "more powerful aspects of controlling the
+  // table rankings") — each is a URL-shareable toggle; off is the default and elided.
+  const [ossOnly, setOssOnly] = useState(false)
+  const [ycOnly, setYcOnly] = useState(false)
+  const [mcpOnly, setMcpOnly] = useState(false)
   // Founder 2026-09-16: companies by default — judged family sub-products (stripe-issuing,
   // adyen-for-platforms, …) hide so a company appears once. Founder 2026-09-23: the old
   // include-sub-products checkbox is now the homepage's Products tab — the mode arrives via
@@ -129,6 +134,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     setDirection(dir === 'asc' || dir === 'desc' ? dir : defaultDirectionFor(col))
     const arena = p.get('arena')
     if (arena !== null && arenas.some((a) => a.id === arena)) setArenaId(arena)
+    if (p.get('oss') === '1') setOssOnly(true)
+    if (p.get('yc') === '1') setYcOnly(true)
+    if (p.get('mcp') === '1') setMcpOnly(true)
     const q = p.get('q')
     if (q !== null && q !== '') setQuery(q)
     // Mount-only by design: the URL is the INITIAL view; after that the reader's clicks own it.
@@ -140,7 +148,15 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     () => (includeSubProducts ? rows : rows.filter((r) => !r.isFamilySubProduct && !r.isSecondaryArena)),
     [rows, includeSubProducts],
   )
-  const byArena = useMemo(() => filterMegaRowsByArena(companyRows, arenaId), [companyRows, arenaId])
+  const byArena = useMemo(() => {
+    let rows_ = filterMegaRowsByArena(companyRows, arenaId)
+    if (ossOnly) rows_ = rows_.filter((r) => r.type === 'oss')
+    if (ycOnly) rows_ = rows_.filter((r) => !!r.ycBatch)
+    // "has MCP" = a judged full (✓) or partial (~) MCP-server verdict — same glyphs as the
+    // Access column, so the filter and the column can never disagree.
+    if (mcpOnly) rows_ = rows_.filter((r) => r.access.MCP.char === '✓' || r.access.MCP.char === '~')
+    return rows_
+  }, [companyRows, arenaId, ossOnly, ycOnly, mcpOnly])
   // Rank is scoped to what's shown: global 1..N across all arenas by default, but 1..X within
   // the selected arena when one is chosen — a reader picking an arena wants that arena's
   // standings, not each product's position in the site-wide list.
@@ -194,6 +210,35 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
           setQuery(value)
           setParams({ q: value.trim() === '' ? null : value })
         }}
+        after={
+          <span className="flex items-center gap-1.5">
+            {(
+              [
+                { key: 'oss', label: 'OSS', on: ossOnly, set: setOssOnly, title: 'Only open-source products' },
+                { key: 'yc', label: 'YC', on: ycOnly, set: setYcOnly, title: 'Only Y Combinator companies' },
+                { key: 'mcp', label: 'MCP', on: mcpOnly, set: setMcpOnly, title: 'Only products with a judged MCP server (full ✓ or partial ~)' },
+              ] as const
+            ).map((f) => (
+              <button
+                key={f.key}
+                type="button"
+                title={f.title}
+                aria-pressed={f.on}
+                onClick={() => {
+                  f.set(!f.on)
+                  setParams({ [f.key]: f.on ? null : '1' })
+                }}
+                className={`rounded-full border px-2 py-0.5 font-mono text-[10px] transition ${
+                  f.on
+                    ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-300'
+                    : 'border-zinc-800 text-zinc-500 hover:border-emerald-400/40 hover:text-emerald-300'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </span>
+        }
       />
 
       {/* lg (not md): with every sm/md column visible the table needs ~810px, so a 768–1023px
