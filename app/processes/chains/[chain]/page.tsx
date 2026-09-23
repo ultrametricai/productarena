@@ -65,6 +65,22 @@ export default async function ChainPage({ params }: { params: Promise<{ chain: s
           {def.name}
         </h1>
         <p className="mt-3 max-w-2xl text-zinc-400">{def.tagline}</p>
+        {/* The route, up top: the playbook's processes in run order, each linking to its own
+            page — the reader sees the whole journey before the step-level detail below. */}
+        <ol className="mt-3 flex flex-wrap items-center gap-y-1.5 text-sm text-zinc-400">
+          {tasks.map((task, i) => (
+            <li key={`${task.id}-${i}`} className="flex items-center">
+              {i > 0 && <span aria-hidden className="mx-1.5 text-zinc-600">→</span>}
+              <Link
+                href={`/processes/${processSlug(task.title)}`}
+                className="flex items-center gap-1 hover:text-emerald-300"
+              >
+                <IconChip icon={processIcon(task.id)} title={`${task.title} — ${task.phase} process`} />
+                {task.title}
+              </Link>
+            </li>
+          ))}
+        </ol>
         <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
           {tasks.length} processes · {ceiling.totalSteps} steps end to end
           {/* Admin-only (session allowlist or the pa-admin localStorage switch) — renders nothing
