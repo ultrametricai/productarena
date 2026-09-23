@@ -621,15 +621,13 @@
   {
     "productId": "opentofu",
     "storyId": "agent-authors-change",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Hands-on probes confirm a full headless plan→apply loop: `tofu plan -detailed-exitcode -out=plan.out` runs non-interactively and signals changes, `tofu show -json` emits machine-readable diff output parseable by agent tooling, and `tofu apply plan.out` executes the saved plan for approval-gated apply. This directly matches the story of an agent authoring changes, planning headlessly, and presenting a diff for approval. missing for 10: no first-party agent/CI orchestration example or official docs showing an approval-gate workflow built around the JSON plan output, and no independent (non-vendor) corroboration beyond the probe run.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "OpenTofu's `tofu plan` (optionally saved with `-out=FILE`) and `tofu apply` commands natively support running a plan headlessly and applying only after separate approval, which maps directly to the story's core workflow, and speculative plans are explicitly documented for reviewing changes before merge/approval [opentofu-docs-3, opentofu-docs-4, opentofu-docs-21]. Missing for 10: explicit machine-readable/JSON diff output for programmatic agent consumption, any documented agent/AI integration or example, and independent corroboration that an AI agent has used this plan/apply flow end-to-end.",
     "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-docs-3",
+      "opentofu-docs-4",
       "opentofu-docs-21"
     ]
   },
@@ -638,15 +636,13 @@
     "storyId": "agent-least-privilege-gates",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "OpenTofu's plan/apply separation (saved plan files, machine-readable JSON output via `tofu show -json`, and exit codes) gives an agent a natural review gate where a human or policy layer can inspect a plan before `apply` executes it, as shown in probes -5/-6/-7 and docs-3/-4/-21. However, there is no evidence of built-in least-privilege credential scoping, RBAC, approval workflows, or a policy-as-code engine (Sentinel/OPA equivalent) enforcing that gate — the review step is only possible via external tooling, not something OpenTofu itself provides. Missing for 10: native policy-as-code/policy enforcement, credential scoping/RBAC features, and any documented approval-gate mechanism tied to identity or role.",
+    "confidence": "low",
+    "rationale": "OpenTofu's plan/apply workflow (speculative plans, plan files, -out for review before apply) gives a foundation for gated approval workflows, and state encryption adds credential/data protection, but there is no evidence of agent-specific least-privilege credential scoping, policy-as-code enforcement (e.g. Sentinel/OPA equivalent), or built-in approval/review gate mechanisms tailored to AI agents. missing for 10: agent-specific least-privilege credential issuance, native policy-as-code/OPA-style enforcement blocking unapproved changes, built-in human-in-the-loop approval gates, and any AI-agent integration documentation.",
     "evidenceIds": [
       "opentofu-docs-3",
       "opentofu-docs-4",
       "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
+      "opentofu-docs-9"
     ]
   },
   {
@@ -655,10 +651,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe of https://opentofu.org/llms.txt returned HTTP 404, and no other evidence pack items reference an llms.txt file or agent-oriented documentation format; the docs are standard human-facing pages only.",
+    "rationale": "Direct probes show no llms.txt (404) and no agent-oriented docs endpoints exist; evidence pack contains no mention of AI-agent-friendly documentation formats.",
     "evidenceIds": [
       "opentofu-probe-1",
-      "opentofu-probe-2"
+      "opentofu-probe-2",
+      "opentofu-probe-3"
     ]
   },
   {
@@ -673,15 +670,11 @@
   {
     "productId": "opentofu",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "OpenTofu's CLI is fully non-interactive/keyless and scriptable (headless plan→apply→destroy verified in probes), which is a prerequisite for wiring it into cron jobs or CI/CD pipelines for autonomous runs, but there is no evidence of any built-in scheduler, trigger, webhook, or agent runtime that autonomously initiates or manages background runs on its own. missing for 10: native scheduling/trigger mechanism, evidence of autonomous (not just headless) background operation, first-party automation/orchestration features beyond CLI scriptability.",
-    "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
-    ]
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "OpenTofu is an IaC provisioning tool run via CLI/CI pipelines, not an agentic automation platform; there is no concept of autonomous background agents in its product category, making this axis a category error rather than an unmet capability.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -689,22 +682,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine, not an agent or assistant product; it has no built-in AI assistant feature and this axis is a category error for its product type.",
+    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine, not a product with a conversational or agentic assistant UI; no evidence pack item mentions any built-in AI assistant, and this axis is a category error for an IaC tool rather than an unmet capability.",
     "evidenceIds": []
   },
   {
     "productId": "opentofu",
     "storyId": "agentic-headless",
     "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Hands-on probes confirm OpenTofu supports non-interactive, scriptable CI workflows: `-input=false`, `-auto-approve`, `-detailed-exitcode` for change detection, machine-readable JSON plan output via `tofu show -json`, and a full plan→apply→destroy loop with correct exit codes, all installable without a login/keys via brew — exactly what CI/agent automation needs. Missing for 10: no explicit vendor CI/CD integration guide (e.g., GitHub Actions/GitLab CI docs) or third-party CI pipeline examples in the evidence pack.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OpenTofu is a CLI-first IaC tool (tofu plan/apply/test/import) with scriptable workflows like -out=FILE to save a plan for later non-interactive execution, and it's described as a drop-in replacement for Terraform, which is commonly run in CI/CD pipelines. Missing for 10: explicit CI/CD integration documentation, non-interactive/auto-approve flag examples, and first-party CI pipeline templates or guides.",
     "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-docs-3",
-      "opentofu-docs-21"
+      "opentofu-docs-21",
+      "opentofu-docs-7",
+      "opentofu-docs-8",
+      "opentofu-docs-1",
+      "opentofu-probe-4"
     ]
   },
   {
@@ -713,7 +707,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine, not an agent or MCP client host; plugging MCP servers into it to give it tool access is a category mismatch — no evidence exists of MCP integration, and the product's role doesn't call for consuming MCP tools.",
+    "rationale": "OpenTofu is an infrastructure-as-code provisioning tool, not an AI agent or agent-facing platform; plugging MCP servers into it so it can 'use their tools' is a category error for this product type—there is no evidence of any AI/agent integration layer at all.",
     "evidenceIds": []
   },
   {
@@ -731,45 +725,45 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu's interface is HCL configuration plus a fixed CLI command set (plan, apply, test, import, etc.); nothing in the evidence pack shows any natural-language command interface, NL parsing, or AI-native control surface — llms.txt and other AI-discovery probes even returned 404s.",
+    "rationale": "OpenTofu is a CLI-driven IaC tool with commands like plan/apply/import/test, but there is no evidence of natural-language command support, an AI assistant, or NL-to-config translation; probes for llms.txt/openapi return 404s, indicating no AI-native interface layer.",
     "evidenceIds": [
       "opentofu-probe-1",
       "opentofu-probe-2",
-      "opentofu-probe-4",
-      "opentofu-docs-3"
+      "opentofu-probe-3",
+      "opentofu-docs-3",
+      "opentofu-docs-7"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "agentic-official-cli",
     "verdict": "full",
-    "quality": 9,
+    "quality": 7,
     "confidence": "high",
-    "rationale": "OpenTofu ships an official, documented CLI (opentofu.org/docs/cli/) and hands-on probes confirm a full headless workflow — init, plan with machine-readable JSON output, auto-approved apply, and destroy — all scriptable without interactive input, which is exactly what an AI-native/agentic caller needs. It is also a drop-in Terraform replacement, so existing agent tooling built for Terraform's CLI works unchanged.\n\nmissing for 10: no first-party documentation specifically addressing AI-agent usage patterns or guardrails (e.g., rate limits, agent-specific auth flows) beyond generic CLI/JSON support.",
+    "rationale": "OpenTofu ships an official, extensively documented CLI (`tofu`) with commands like plan, apply, test, import, and flags for scripting/automation (-out, -exclude, etc.), confirmed by docs and a direct probe of the CLI docs page. This gives AI-native users a stable, scriptable interface for infrastructure automation. Missing for 10: no evidence of AI-specific tooling such as structured/JSON output flags, agent-oriented guides, or MCP-style integrations tailored for AI consumption.",
     "evidenceIds": [
       "opentofu-probe-4",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-docs-3",
+      "opentofu-docs-5",
+      "opentofu-docs-6",
+      "opentofu-docs-7",
+      "opentofu-docs-8",
       "opentofu-docs-21"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "OpenTofu is drivable programmatically via its CLI (headless plan/apply/destroy loop, machine-readable JSON plan output) as confirmed by hands-on probes, which supports AI-native agentic automation, but there is no documented public HTTP/REST/OpenAPI API — probes for llms.txt, docs-md, and openapi/swagger endpoints all 404. missing for 10: a documented public API (REST/OpenAPI/SDK) beyond the CLI, official llms.txt or machine-readable docs endpoint, and any first-party API reference for programmatic/agentic access.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "OpenTofu is driven via CLI commands (tofu plan/apply/test/import) rather than a documented public API, and explicit probes found no OpenAPI/swagger spec, no llms.txt, and no API documentation endpoint — only CLI docs exist.",
     "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
       "opentofu-probe-1",
       "opentofu-probe-2",
       "opentofu-probe-3",
-      "opentofu-probe-4"
+      "opentofu-probe-4",
+      "opentofu-docs-3"
     ]
   },
   {
@@ -778,7 +772,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an IaC CLI/engine that consumes provider credentials but has no product surface for issuing or scoping its own API credentials to agents; this axis belongs to identity/credential-issuing platforms, not an infrastructure-as-code tool.",
+    "rationale": "OpenTofu is an IaC provisioning tool, not an identity/access-management or agent-orchestration platform; issuing scoped API credentials for agents is outside its product category and is instead a function of cloud providers or secret managers it might integrate with.",
     "evidenceIds": []
   },
   {
@@ -786,13 +780,12 @@
     "storyId": "agentic-sdks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows only CLI usage, JSON plan output, and website docs; there is no mention of any official SDK (Go, Python, REST, or agent-oriented) that AI-native developers could build against, and probes explicitly show llms.txt, docs-md, and OpenAPI endpoints returning 404. Missing for 10: any documented official SDK, API/OpenAPI spec, or programmatic library for AI agents to integrate with OpenTofu beyond the CLI.",
+    "confidence": "high",
+    "rationale": "No evidence of official SDKs (Go/Python/JS libraries) for programmatic/AI-native integration; evidence only covers CLI commands, docs, and providers/modules. Probes for llms.txt, OpenAPI specs also return 404, reinforcing absence of API/SDK surface for AI-native building.",
     "evidenceIds": [
       "opentofu-probe-1",
       "opentofu-probe-2",
-      "opentofu-probe-3",
-      "opentofu-probe-4"
+      "opentofu-probe-3"
     ]
   },
   {
@@ -801,7 +794,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an IaC CLI tool that operates via local/CI plan-apply workflows, not an event-driven or SaaS platform; webhook subscriptions are not a fit axis for this product category, and no evidence suggests such a feature exists or is planned.",
+    "rationale": "OpenTofu is an IaC provisioning tool (CLI-driven) with no event/webhook subscription system in its product surface; webhook subscriptions are not a fair capability for this category of tool, unlike SaaS platforms with event-driven integrations.",
     "evidenceIds": []
   },
   {
@@ -819,12 +812,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu's docs are static CLI command references (plan/apply/test/import) with no interactive API explorer or runnable-example sandbox; explicit probes confirm no OpenAPI/swagger spec and no llms.txt discoverability aid.",
+    "rationale": "OpenTofu offers standard CLI/docs but no evidence of an interactive API reference with runnable examples; probes confirm no OpenAPI/swagger spec and no llms.txt exist, indicating this capability is absent.",
     "evidenceIds": [
-      "opentofu-probe-3",
       "opentofu-probe-1",
-      "opentofu-docs-3",
-      "opentofu-docs-7"
+      "opentofu-probe-2",
+      "opentofu-probe-3"
     ]
   },
   {
@@ -833,11 +825,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Explicit probes confirm no OpenAPI/Swagger spec or llms.txt is available (404s at all candidate paths), and no evidence of any machine-readable API spec being offered.",
+    "rationale": "OpenTofu offers no OpenAPI/Swagger spec; probes for openapi.json, swagger.json, and related paths all returned 404, and there is no documented machine-readable API spec anywhere in the evidence.",
     "evidenceIds": [
-      "opentofu-probe-3",
-      "opentofu-probe-1",
-      "opentofu-probe-2"
+      "opentofu-probe-3"
     ]
   },
   {
@@ -846,13 +836,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenTofu's `tofu test` command explicitly creates real infrastructure to test configuration and then destroys it, and workspaces/variables allow separate dev/staging/prod environments (multi-environment support mentioned in docs), which supports sandbox-style testing without touching production if configured with separate state/backends. However, there is no dedicated built-in sandboxing feature, no first-party guidance on isolating a sandbox from production data specifically, and no mocking/dry-run-only testing mode beyond plan preview. missing for 10: dedicated sandbox/mock-infrastructure feature, explicit doc guidance on isolating prod vs sandbox state, independent verification of test-command safety in practice.",
+    "rationale": "OpenTofu's `tofu plan` provides speculative, non-applying previews and `tofu test` spins up real infrastructure for assertions and then destroys it, both of which let a user validate configuration changes without permanently altering production state. However, there is no explicit documentation of sandbox/workspace isolation, separate environment/account configuration, or AI-agent-specific sandboxing guarantees to prevent touching production data. Missing for 10: explicit workspace/environment isolation mechanisms, guidance on separating sandbox vs production state/backends, and any AI-specific sandbox tooling or guarantees.",
     "evidenceIds": [
-      "opentofu-docs-7",
-      "opentofu-docs-25",
-      "opentofu-docs-18",
       "opentofu-docs-3",
-      "opentofu-probe-5"
+      "opentofu-docs-4",
+      "opentofu-docs-7",
+      "opentofu-docs-25"
     ]
   },
   {
@@ -860,11 +849,13 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows OpenTofu has versioned CLI output formats (e.g., plan JSON format_version) but contains no documentation of a formal API/CLI deprecation policy or version-support guarantees; the axis is applicable to an IaC tool with a CLI/JSON interface, but no evidence supports a documented deprecation policy. Missing for 10: explicit deprecation policy docs, versioning/SLA guarantees, changelog of breaking changes.",
+    "confidence": "medium",
+    "rationale": "Evidence shows OpenTofu documents CLI commands and general backwards-compatibility promises but no versioned API surface (probes confirm no OpenAPI/swagger spec, no llms.txt) and no documented deprecation policy for any programmatic interface. missing for 10: a versioned API spec, an explicit deprecation policy document, and any AI-facing API access story.",
     "evidenceIds": [
-      "opentofu-probe-6",
-      "opentofu-probe-4"
+      "opentofu-probe-1",
+      "opentofu-probe-2",
+      "opentofu-probe-3",
+      "opentofu-docs-23"
     ]
   },
   {
@@ -873,7 +864,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu supports bulk-style operations via resource graph parallelization, for_each-driven dynamic provider/module generation, -exclude flag for scoping bulk plan/apply, and programmatic module version updates across many modules, which together enable acting on many items at once. However this is infrastructure-as-code bulk management, not an AI-native batch/agent API, and there's no evidence of a dedicated bulk API, batch job orchestration, or AI-specific tooling for mass operations. missing for 10: dedicated bulk/batch API or agent-facing interface for large-scale multi-item operations, independent hands-on evidence of bulk operations at scale, AI-native tooling specifically for orchestrating many items programmatically.",
+    "rationale": "OpenTofu supports bulk operations via for_each-driven dynamic provider/resource generation, graph-based parallelization of non-dependent resources, and -exclude flags to scope bulk applies/plans, which are relevant to an AI-native user automating many items at once. However, this is IaC-level bulk config generation, not an AI-agent-oriented batch/automation API, and there's no evidence of programmatic bulk orchestration tailored for AI agents. missing for 10: dedicated AI-agent bulk-operation API/interface, independent hands-on verification of large-scale bulk runs, and documentation specifically framing this for AI-native automation.",
     "evidenceIds": [
       "opentofu-gh-1",
       "opentofu-docs-10",
@@ -897,48 +888,48 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code CLI/engine for provisioning resources via plan/apply, not a workflow orchestrator or job scheduler; scheduling recurring jobs is outside its product category and not addressed anywhere in the evidence.",
+    "rationale": "OpenTofu is an IaC provisioning tool (plan/apply/destroy for infrastructure state) and has no concept of scheduling recurring jobs or workflows itself — that role belongs to external orchestrators (CI/CD, cron, Terraform Cloud-style schedulers). Scheduling recurring automation is a wrong axis for this product category.",
     "evidenceIds": []
   },
   {
     "productId": "opentofu",
     "storyId": "automation-versioned-workflows",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu's state is plain text-based (HCL) which enables version control via git, and plan files (tofu plan -out) provide a preview/review mechanism, with tofu destroy/apply providing rollback-like operations, but there's no native built-in versioning, review workflow, or rollback/history feature beyond what git or external tools (e.g. Terraform Cloud-like state history) provide. missing for 10: no first-party state history/rollback mechanism, no built-in review/approval workflow beyond plan output, no independent evidence of an audit trail or diff-based rollback UI.",
+    "rationale": "OpenTofu supports review via `tofu plan` speculative plans and version control of infrastructure-as-code (docs-3, docs-4, docs-16), plus module/version pinning for consistency (docs-12) and state encryption for safe storage (docs-9). However there is no explicit rollback mechanism or documented workflow (e.g., a 'rollback' command or state-versioning restore process) beyond implied git-based reversion. missing for 10: explicit rollback/state-restore documentation, independent hands-on confirmation of rollback workflows.",
     "evidenceIds": [
-      "opentofu-docs-16",
       "opentofu-docs-3",
-      "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-7"
+      "opentofu-docs-4",
+      "opentofu-docs-16",
+      "opentofu-docs-12",
+      "opentofu-docs-9"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "destroy-teardown",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "OpenTofu docs explicitly describe destroy-mode planning that removes all remote objects leaving an empty state, and a hands-on probe confirms a full plan→apply→destroy loop exiting cleanly (exit 0). This directly matches the story of tearing down an environment cleanly. Missing for 10: independent (non-probe) third-party confirmation of destroy behavior at scale or with complex multi-resource environments.",
+    "rationale": "Docs explicitly document destroy mode via `tofu plan -destroy` (and implicitly `tofu apply -destroy`/`tofu destroy`), stating it creates a plan to destroy all remote objects leaving an empty state, and `tofu test` shows destroy being used automatically to tear down created infrastructure. Missing for 10: no dedicated `tofu destroy` command page cited and no independent hands-on report specifically validating a full environment teardown.",
     "evidenceIds": [
       "opentofu-docs-5",
-      "opentofu-probe-7"
+      "opentofu-docs-7",
+      "opentofu-docs-25"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "drift-detection",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "OpenTofu's `tofu plan` explicitly supports a refresh-only mode that updates state to reflect out-of-band changes without applying corrections, which is the canonical drift-detection workflow, and a hands-on probe confirms plan surfaces detected changes via -detailed-exitcode in a real run. Missing for 10: an explicit end-to-end hands-on test showing detection of an externally-modified resource (drift) specifically, and independent/community validation of drift detection accuracy.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OpenTofu's `tofu plan` explicitly detects drift by comparing declared config to real infrastructure, and `-refresh-only` mode is specifically designed to update state to match out-of-band changes, directly enabling drift detection as described. missing for 10: no independent/hands-on corroboration of drift detection specifically, and no dedicated drift-report/CI integration docs beyond the plan/refresh commands.",
     "evidenceIds": [
-      "opentofu-docs-6",
       "opentofu-docs-3",
-      "opentofu-probe-5",
-      "opentofu-probe-6"
+      "opentofu-docs-6",
+      "opentofu-docs-4"
     ]
   },
   {
@@ -946,12 +937,12 @@
     "storyId": "environment-config-stacks",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "OpenTofu's docs explicitly mention using for_each to build 'multi-environment setups (dev/staging/prod)' via provider configuration generation, showing the product can model separate environments, and its drop-in Terraform compatibility implies inherited workspace/state-separation mechanisms. However, there is no direct documentation or probe evidence of a dedicated `tofu workspace` command, backend workspace isolation, or a 'stacks' feature being exercised, so the core mechanism developers would use for per-environment config isn't concretely demonstrated. Missing for 10: explicit `tofu workspace` command docs, evidence of stacks/state isolation per environment, and hands-on proof of switching environments.",
+    "confidence": "low",
+    "rationale": "OpenTofu docs mention using dynamic provider configuration with for_each as 'perfect for multi-environment setups (dev/staging/prod)', implying per-environment config management, but there is no explicit documentation of OpenTofu's native `workspace` command or a dedicated 'stacks' feature for isolating dev/staging/prod state and configuration. Missing for 10: explicit workspace/state-isolation docs, dedicated stacks feature documentation, and independent confirmation of workspace-based environment separation.",
     "evidenceIds": [
       "opentofu-docs-18",
-      "opentofu-docs-1",
-      "opentofu-docs-14"
+      "opentofu-docs-27",
+      "opentofu-docs-11"
     ]
   },
   {
@@ -959,22 +950,24 @@
     "storyId": "gp-language-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "OpenTofu's evidence pack only shows HCL-based declarative configuration (for_each loops, dynamic provider blocks) rather than a general-purpose programming language with types and IDE support; there is no mention of a CDK-like SDK (e.g., TypeScript/Python bindings) that would satisfy this story.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "OpenTofu's configuration language is HCL, a declarative domain-specific language; while it supports for_each loops, there is no evidence of support for a general-purpose programming language (e.g., TypeScript/Python) with full type systems or first-class IDE tooling akin to CDK-style approaches.",
+    "evidenceIds": [
+      "opentofu-gh-2",
+      "opentofu-docs-11",
+      "opentofu-docs-18"
+    ]
   },
   {
     "productId": "opentofu",
     "storyId": "headless-ci-apply",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Docs describe saving plans with `-out=FILE` and applying them via `tofu apply plan.out`, and hands-on probes confirm a full non-interactive plan→apply→destroy loop using `-input=false -auto-approve -detailed-exitcode`, matching the CI approval-flag workflow described in the story. missing for 10: explicit CI/CD pipeline examples (e.g., GitHub Actions/GitLab CI snippets) showing artifact upload/download between plan and apply stages.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm the core CI-friendly workflow: `tofu plan -out=FILE` saves a plan artifact that can later be executed via `tofu apply FILE`, enabling non-interactive plan/apply separation. However, there is no explicit documentation of approval-flag mechanics (e.g., -auto-approve), CI pipeline integration examples, or a documented approval gating workflow in the evidence pack. missing for 10: explicit -auto-approve/approval-flag documentation, CI/CD pipeline integration examples, independent hands-on corroboration of the non-interactive workflow.",
     "evidenceIds": [
-      "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
+      "opentofu-docs-3",
+      "opentofu-docs-21"
     ]
   },
   {
@@ -993,17 +986,15 @@
     "productId": "opentofu",
     "storyId": "migrate-from-terraform",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "OpenTofu explicitly positions itself as a drop-in, backwards-compatible replacement for Terraform, and community reports (including real client migrations and \"s/terraform/opentofu/g\") corroborate that existing Terraform configs and state can be migrated with minimal effort; hands-on probes confirm the CLI runs standard Terraform-style plan/apply/destroy workflows without modification. Missing for 10: an explicit first-party migration guide or documented state-file conversion/validation step (beyond general 'drop-in' claims), and independent verification of state-file compatibility across complex/large codebases.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "OpenTofu is explicitly positioned as a drop-in replacement for Terraform that preserves existing workflows, configurations, and (per community reports) requires only a simple substitution to migrate, with no rewrite of state or code needed. Community testimonials corroborate real-world migrations of existing Terraform codebases/clients to OpenTofu with minimal friction.  Missing for 10: an explicit first-party state-migration guide or version-compatibility matrix, and independent verification of large/complex state migrations beyond anecdotal HN comments.",
     "evidenceIds": [
       "opentofu-docs-1",
       "opentofu-docs-14",
       "opentofu-docs-23",
       "opentofu-comm-5",
-      "opentofu-comm-7",
-      "opentofu-probe-5",
-      "opentofu-probe-7"
+      "opentofu-comm-7"
     ]
   },
   {
@@ -1025,13 +1016,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is a CLI-based IaC tool with no product UI to compare against an API — its docs, probes, and community feedback describe CLI commands (plan/apply/test/import) and installation, not a UI/API parity story. This axis is a category error for a CLI-first tool rather than an applicable-but-failed capability.",
-    "evidenceIds": [
-      "opentofu-probe-4",
-      "opentofu-probe-5",
-      "opentofu-probe-7",
-      "opentofu-probe-3"
-    ]
+    "rationale": "OpenTofu is a CLI/IaC engine with no hosted web UI or product API surface to compare against; the UI/API parity question doesn't apply to this kind of tool.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -1039,25 +1025,27 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu's state and plan files are plain JSON/HCL (confirmed by the probed `tofu show -json` machine-readable output) and the project is governed as 'truly open source' under the Linux Foundation, meaning there is no proprietary lock-in and configs/state can be freely moved or forked. However, there is no explicit documentation of a dedicated 'export and leave' workflow, no discussion of migrating state to other tools, and no llms.txt/data-export interface (llms.txt 404, no OpenAPI) that would make this openness explicit for AI-native tooling. missing for 10: explicit data-export/portability docs, llms.txt or machine-readable manifest, third-party confirmation of migrating state out of OpenTofu.",
+    "rationale": "OpenTofu configs and state are plain-text HCL/JSON files stored locally or in backends, and state encryption is open/documented, meaning data isn't locked into a proprietary format and can be exported/migrated freely; it's also open-source and license info is on GitHub. However there's no explicit 'export all data' feature or documented data-portability workflow beyond the inherent openness of IaC files, and no evidence of a formal data-export/offboarding tool. missing for 10: explicit data-export tooling/documentation, independent confirmation of full data portability, and clear on-site licensing/export guidance (community notes license info is hard to find on the site).",
     "evidenceIds": [
+      "opentofu-docs-9",
+      "opentofu-docs-20",
       "opentofu-docs-26",
-      "opentofu-docs-23",
-      "opentofu-probe-6",
-      "opentofu-probe-1",
-      "opentofu-comm-5"
+      "opentofu-comm-3",
+      "opentofu-gh-2"
     ]
   },
   {
     "productId": "opentofu",
     "storyId": "openness-open-license",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "OpenTofu's source is publicly hosted on GitHub (opentofu-gh-1) and the manifesto explicitly commits to remaining 'Truly open source' now under the Linux Foundation (opentofu-docs-26); community discussion confirms the license is readily found in the GitHub repo even if not prominent on the marketing site (opentofu-comm-3). Missing for 10: explicit citation of the license text/name (e.g., MPL 2.0) and independent legal/audit confirmation beyond community mention.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OpenTofu's source is hosted publicly on GitHub (opentofu-gh-1, opentofu-gh-2) and the manifesto explicitly commits to it remaining 'Truly open source' under Linux Foundation governance (opentofu-docs-26, opentofu-docs-23). Community confirms the license is easily found in the GitHub repo, even if not surfaced on the marketing site (opentofu-comm-3). Missing for 10: explicit citation of the license name/text (e.g., MPL 2.0) in the evidence pack, and no independent legal/audit confirmation beyond community mention.",
     "evidenceIds": [
       "opentofu-gh-1",
+      "opentofu-gh-2",
       "opentofu-docs-26",
+      "opentofu-docs-23",
       "opentofu-comm-3"
     ]
   },
@@ -1067,13 +1055,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "OpenTofu is fully open-source (Linux Foundation governed), can be installed and run entirely on one's own infrastructure via multiple install methods, and probes confirm a fully local, keyless CLI workflow (init/plan/apply/destroy) with no SaaS dependency — this is inherently self-hostable since it's just a binary operating on local/backend state. missing for 10: no explicit vendor documentation section titled 'self-hosting' or dedicated guide addressing enterprise/air-gapped self-hosted deployment scenarios, and no independent hands-on report specifically validating self-hosted production use at scale.",
+    "rationale": "OpenTofu is a fully open-source, self-hostable CLI tool (Linux Foundation project) with wide install options and no vendor lock-in or SaaS dependency, making self-hosting the core product straightforward and central to its identity. Missing for 10: no explicit dedicated 'self-hosting guide' or containerized deployment docs, and no independent hands-on confirmation of self-hosting specifics beyond install docs.",
     "evidenceIds": [
       "opentofu-docs-2",
       "opentofu-docs-26",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
+      "opentofu-probe-4",
       "opentofu-docs-23"
     ]
   },
@@ -1082,13 +1068,9 @@
     "storyId": "policy-enforcement",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows OpenTofu's plan workflow and machine-readable plan JSON output (e.g., opentofu-probe-5, opentofu-probe-6) which could theoretically feed external policy engines, but there is no mention of any built-in or integrated policy-as-code framework (e.g., Sentinel, OPA/Conftest, Checkov) or documented workflow for blocking non-compliant applies. Missing for 10: any policy-as-code engine or gating mechanism, documentation of policy enforcement in CI/CD, and evidence that non-compliant plans are actually blocked before apply.",
-    "evidenceIds": [
-      "opentofu-docs-3",
-      "opentofu-probe-5",
-      "opentofu-probe-6"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack covers plan/apply/test/import/state-encryption features but contains no mention of policy-as-code, Sentinel/OPA integration, or any pre-apply compliance-check enforcement mechanism specific to OpenTofu.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -1096,15 +1078,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "OpenTofu's tofu plan command is explicitly documented to preview creates, updates, and destroys before applying, with dedicated destroy and refresh-only modes, and this was independently verified via a hands-on probe showing a real plan proposing a create, saved to a file, and later applied and destroyed successfully. Machine-readable plan JSON output further supports precise change previewing. missing for 10: independent third-party review of plan accuracy on complex multi-resource updates beyond the single-resource probe",
+    "rationale": "OpenTofu's `tofu plan` command is well documented to preview creates, updates, and destroys before applying, with additional modes (destroy, refresh-only) and the ability to save plans for later apply, directly matching the story. Community evidence corroborates it as a faithful Terraform-compatible workflow (plan/apply), reinforcing real-world usage. missing for 10: independent hands-on verification of plan output accuracy/detail beyond docs.",
     "evidenceIds": [
       "opentofu-docs-3",
+      "opentofu-docs-4",
       "opentofu-docs-5",
       "opentofu-docs-6",
       "opentofu-docs-21",
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7"
+      "opentofu-comm-5"
     ]
   },
   {
@@ -1112,8 +1093,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "OpenTofu's evidence covers state encryption and backend usage but contains no documentation or claims about choosing a storage region/data-residency for state or configuration data. While backend configuration (e.g., S3) inherently involves region settings, none of the evidence addresses residency controls as a feature.",
+    "confidence": "low",
+    "rationale": "OpenTofu manages state via user-configured backends (S3, GCS, etc.) which inherently could support regional choice, so the axis is fair to ask, but the evidence pack contains no documentation about backend region/residency configuration or data-location controls — only generic encryption-at-rest claims (opentofu-docs-9, opentofu-docs-20).",
     "evidenceIds": []
   },
   {
@@ -1122,7 +1103,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is an infrastructure-as-code tool, not an AI model provider or data-processing service that trains models on user data; the axis of preventing training-data usage does not apply to this product category.",
+    "rationale": "OpenTofu is an infrastructure-as-code provisioning tool, not an AI model or AI service that trains on user data; preventing data use for AI training is not a relevant axis for this product category.",
     "evidenceIds": []
   },
   {
@@ -1131,7 +1112,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "OpenTofu is a local/self-hosted infrastructure-as-code CLI tool, not an AI service or SaaS platform that collects, stores, or retains user conversational/personal data. Data retention and deletion controls are not a meaningful axis for this product category — the evidence is entirely about state file encryption and Terraform-compatible plan/apply workflows, unrelated to retention/deletion policies for user data.",
+    "rationale": "OpenTofu is an infrastructure-as-code CLI tool, not an AI service or SaaS that ingests user data/conversations; 'data retention and deletion' privacy controls are not a relevant axis for this product category. State encryption at rest addresses data protection, not retention/deletion policy.",
     "evidenceIds": []
   },
   {
@@ -1140,7 +1121,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism for OpenTofu; the axis is plausible for a CLI tool but nothing documents it.",
+    "rationale": "No evidence in the pack discusses telemetry, usage tracking, or opt-out mechanisms for OpenTofu; the CLI/docs cover plan/apply/test/encryption but never mention analytics collection or a way to disable it.",
     "evidenceIds": []
   },
   {
@@ -1148,15 +1129,9 @@
     "storyId": "programmatic-deployments",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "All evidence describes CLI commands (`tofu plan`, `apply`, `show -json`) and JSON output that can be parsed by external scripts, but there is no official SDK, Go library, or API for embedding OpenTofu operations directly in application code, and probes explicitly show no OpenAPI/API endpoints exist. This means programmatic control still requires shelling out to the CLI rather than a first-class application-integration path.",
-    "evidenceIds": [
-      "opentofu-probe-5",
-      "opentofu-probe-6",
-      "opentofu-probe-7",
-      "opentofu-probe-3",
-      "opentofu-docs-3"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence pack shows only CLI commands (plan, apply, test, import) and HCL configuration; there is no mention of an SDK, API, or library (e.g., a Go/embedding package like terraform-exec or CDK) for driving OpenTofu programmatically from application code.",
+    "evidenceIds": []
   },
   {
     "productId": "opentofu",
@@ -1191,7 +1166,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenTofu's docs highlight a large public registry (23,600+ modules) and version-controlled module usage (opentofu-docs-13, opentofu-docs-24, opentofu-docs-12), confirming module consumption is core to the product. However, there is no direct evidence describing a publishing workflow for modules to the registry (e.g., versioning/publish CLI or registry submission process). missing for 10: explicit publish/versioning workflow documentation, independent confirmation of registry usability, and any hands-on evidence of publishing a module.",
+    "rationale": "OpenTofu's ecosystem messaging cites a large registry of 23,600+ modules and 3,900+ providers, implying consumption is well supported, and 'module version' management language ([opentofu-docs-12]) suggests standard module consumption patterns. However, there's no direct evidence in the pack of the actual public registry (OpenTofu Registry) mechanics, publishing workflow for module authors, or registry search/versioning UX, and community comments focus on migration ease rather than registry publishing experience. Missing for 10: documentation of the OpenTofu Registry itself, module publishing process/requirements, and independent verification of registry usability.",
     "evidenceIds": [
       "opentofu-docs-13",
       "opentofu-docs-24",
@@ -1204,7 +1179,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenTofu supports encrypting state and plan files at rest (including AES-GCM configuration) so secrets don't leak in stored state/plan artifacts, and it is Terraform-compatible with variable-based configuration that supports sensitive input passing patterns. However, there is no direct documentation on marking variables as sensitive to suppress console/log output, no evidence of secret-manager integrations, and community commentary raises unresolved concerns about safety of checked-in encrypted state. missing for 10: explicit sensitive-variable/log-redaction documentation, secrets-manager/vault integration evidence, independent verification that logs never expose secret values.",
+    "rationale": "OpenTofu docs confirm state/plan encryption at rest (AES-GCM) for local and backend storage, which prevents secrets from leaking via state files, but the pack lacks documentation on marking variables as `sensitive`, injecting secrets via environment variables, or redacting secrets from CLI/log output. missing for 10: sensitive variable marking/redaction in logs, secret injection via env vars or secret managers, independent verification of encryption robustness.",
     "evidenceIds": [
       "opentofu-docs-9",
       "opentofu-docs-19",
@@ -1242,15 +1217,13 @@
   {
     "productId": "opentofu",
     "storyId": "structured-plan-output",
-    "verdict": "full",
-    "quality": 9,
-    "confidence": "high",
-    "rationale": "Hands-on probe confirms `tofu show -json plan.out` emits machine-readable plan JSON (format_version 1.2) with planned_values, parseable by agent tooling, alongside documented plan/apply CLI workflow supporting `-out=FILE` for later JSON conversion. missing for 10: no independent third-party corroboration beyond the single probe run.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack documents `tofu plan`, `-out=FILE`, and various plan modes, but nowhere mentions a `-json` flag, `tofu show -json`, or any machine-readable plan output format that an agent could parse. Missing for 10: any documentation of JSON plan/output format, schema for machine consumption, or examples of programmatic plan parsing.",
     "evidenceIds": [
-      "opentofu-probe-6",
-      "opentofu-probe-5",
-      "opentofu-docs-21",
-      "opentofu-docs-3"
+      "opentofu-docs-3",
+      "opentofu-docs-21"
     ]
   },
   {
@@ -1259,12 +1232,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "OpenTofu explicitly documents the -exclude flag for excluding resources from operations, and -target flag support is implied by drop-in Terraform compatibility plus verified hands-on plan/apply workflows. missing for 10: explicit docs/example for the -target flag itself and independent community confirmation of targeted apply usage.",
+    "rationale": "OpenTofu documents a -exclude flag to selectively exclude resources during plan/apply, and Terraform-compatible -target functionality is implied via plan/apply commands consistent with drop-in replacement claims; -exclude is explicitly documented as first-party capability for targeted rollouts. missing for 10: explicit documentation/example of -target flag usage and independent hands-on validation of both flags together.",
     "evidenceIds": [
       "opentofu-docs-10",
       "opentofu-docs-3",
-      "opentofu-probe-5",
-      "opentofu-probe-7"
+      "opentofu-docs-14"
     ]
   },
   {
@@ -1287,7 +1259,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers plan, apply, test, import, and encryption commands but contains no mention of `tofu validate` or `tofu fmt` (or any auto-formatting/validation capability), so there is no evidence supporting this specific story despite the axis clearly applying to a Terraform-compatible IaC CLI. Missing for 10: any doc or probe evidence of a validate command, a fmt/auto-format command, or their integration into a pre-plan workflow.",
+    "rationale": "The evidence pack documents `tofu plan`, `tofu test`, and `tofu import` extensively, but contains no mention of `tofu validate` or `tofu fmt` (or any auto-formatting/config-validation capability) that a developer would use before running plan. Missing for 10: any documentation or reference to validate/format commands, corroborating usage examples, or community confirmation of these workflows.",
     "evidenceIds": []
   },
   {
@@ -1296,12 +1268,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "OpenTofu publicly commits to backwards compatibility and positions itself as a drop-in replacement for Terraform, preserving existing configs/workflows, which implies a compatibility promise, but the evidence pack contains no explicit version-to-version upgrade guide documentation for OpenTofu releases themselves, and one community comment notes OpenTofu is 'already diverging from upstream,' raising uncertainty about long-term compatibility guarantees. missing for 10: dedicated upgrade-guide docs between OpenTofu minor/major releases, changelog/breaking-change policy evidence, independent confirmation of smooth upgrades across OpenTofu versions.",
+    "rationale": "OpenTofu documents broad compatibility promises (drop-in replacement for Terraform, backwards-compatible manifesto commitment, .tofu/.tf precedence rules for dual support) but the evidence pack contains no explicit version-to-version upgrade guide content for OpenTofu releases themselves. missing for 10: dedicated upgrade guides between OpenTofu minor/major releases, changelog-linked migration notes, independent confirmation that upgrades are smooth.",
     "evidenceIds": [
-      "opentofu-docs-23",
-      "opentofu-docs-14",
       "opentofu-docs-1",
-      "opentofu-comm-11",
+      "opentofu-docs-14",
+      "opentofu-docs-23",
+      "opentofu-docs-22",
       "opentofu-comm-5"
     ]
   },
