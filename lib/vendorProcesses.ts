@@ -43,6 +43,10 @@ export interface VendorProcessAppearance {
   // Its best judged story-derived step score in this process, across every score-bearing
   // appearance (function, extra, computer-use) — null for canonical/api-calls-only appearances.
   bestStepScore: number | null
+  /** The receipts (founder 2026-09-23: "add evidence… see why it came up"): the exact steps
+   *  this vendor serves with a judged score, best first — label, story-derived score, and the
+   *  mapped-story count behind it. Function + cross-arena appearances only (never computer-use). */
+  servedSteps: Array<{ label: string; score: number; storyCount: number }>
   // From processLeaderboard(task) when the vendor is an entry there: 1-based rank + the
   // coverage × step-quality process score. Null for vendors that only surface otherwise.
   leaderboardRank: number | null
@@ -53,6 +57,7 @@ interface Acc {
   kinds: Set<VendorProcessKind>
   functionStepsServed: number
   extraNodeIds: Set<string>
+  servedSteps: Array<{ label: string; score: number; storyCount: number }>
   bestStepScore: number | null
   leaderboardRank: number | null
   processScore: number | null
@@ -83,6 +88,7 @@ function buildIndex(dir: string): Map<string, VendorProcessAppearance[]> {
       kinds: new Set(),
       functionStepsServed: 0,
       extraNodeIds: new Set(),
+      servedSteps: [],
       bestStepScore: null,
       leaderboardRank: null,
       processScore: null,
@@ -106,7 +112,10 @@ function buildIndex(dir: string): Map<string, VendorProcessAppearance[]> {
       a.functionStepsServed = e.stepsServed
       a.leaderboardRank = i + 1
       a.processScore = e.processScore
-      for (const s of e.steps) seeScore(a, s.score)
+      for (const s of e.steps) {
+        seeScore(a, s.score)
+        a.servedSteps.push({ label: s.label, score: s.score, storyCount: s.storyCount })
+      }
     })
 
     for (const node of task.dag.nodes) {
@@ -117,6 +126,7 @@ function buildIndex(dir: string): Map<string, VendorProcessAppearance[]> {
           a.kinds.add('cross-arena')
           a.extraNodeIds.add(node.id)
           seeScore(a, v.score)
+          a.servedSteps.push({ label: node.label, score: v.score, storyCount: ranking.stories.length })
         }
       }
       // "Could attempt this manual step today" — a separate appearance kind, never coverage.
@@ -156,6 +166,7 @@ function buildIndex(dir: string): Map<string, VendorProcessAppearance[]> {
         stepsServed: a.functionStepsServed + a.extraNodeIds.size,
         rankableSteps: rankableOf.get(taskId) ?? 0,
         bestStepScore: a.bestStepScore,
+        servedSteps: [...a.servedSteps].sort((x, y) => y.score - x.score).slice(0, 6),
         leaderboardRank: a.leaderboardRank,
         processScore: a.processScore,
       })

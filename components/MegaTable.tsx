@@ -18,6 +18,7 @@ import EnterpriseBadge from '@/components/EnterpriseBadge'
 import YcBadge from '@/components/YcBadge'
 import { useSession } from '@/lib/session'
 import { readParams, setParams } from '@/lib/urlState'
+import arenaIcons from '@/data/arena-icons.json'
 import type { MegaTableArenaOption } from '@/lib/megaTable'
 import {
   DEFAULT_COLUMN,
@@ -280,6 +281,9 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                   </td>
                   <td className="hidden px-2 py-2 lg:table-cell">
                     <Link href={`/arena/${row.arenaId}`} className="text-zinc-400 hover:text-emerald-300">
+                      {(arenaIcons as Record<string, string>)[row.arenaId] && (
+                        <span aria-hidden className="mr-1">{(arenaIcons as Record<string, string>)[row.arenaId]}</span>
+                      )}
                       {row.arenaName}
                     </Link>
                   </td>

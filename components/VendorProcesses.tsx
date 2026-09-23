@@ -77,6 +77,35 @@ function AppearanceRows({ rows }: { rows: VendorProcessAppearance[] }) {
           </td>
           <td className="px-2 py-1.5 text-xs text-zinc-300">
             <span title={roleTitle(a)}>{roleText(a)}</span>
+            {/* The receipts (founder 2026-09-23): which exact steps this vendor serves, with the
+                story-derived score and mapped-story count behind each — click through to the
+                step blocks for the full verdict citations. */}
+            {a.servedSteps.length > 0 && (
+              <span className="mt-0.5 block text-[11px] text-zinc-500">
+                via:{' '}
+                {a.servedSteps.slice(0, 2).map((s, i) => (
+                  <span key={`${s.label}-${i}`}>
+                    {i > 0 && <span className="text-zinc-700"> · </span>}
+                    <Link
+                      href={`/processes/${a.slug}#steps`}
+                      title={`"${s.label}" — ${s.score.toFixed(0)}/100 from judged verdicts on the ${s.storyCount} stories mapped to this step; the citations are in the step block`}
+                      className="transition hover:text-emerald-300"
+                    >
+                      {s.label}{' '}
+                      <span className="font-mono tabular-nums text-emerald-400/70">{s.score.toFixed(0)}</span>
+                    </Link>
+                  </span>
+                ))}
+                {a.servedSteps.length > 2 && (
+                  <span
+                    className="text-zinc-600"
+                    title={a.servedSteps.slice(2).map((s) => `${s.label} (${s.score.toFixed(0)}/100)`).join('; ')}
+                  >
+                    {' '}+{a.servedSteps.length - 2}
+                  </span>
+                )}
+              </span>
+            )}
           </td>
           <td className="px-2 py-1.5 font-mono text-xs tabular-nums text-zinc-300">
             {a.bestStepScore === null ? (
