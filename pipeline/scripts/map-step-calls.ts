@@ -350,7 +350,7 @@ async function mapCell(t: CallTarget): Promise<RawCalls> {
     raw = await llmJson({
       schema: RawCallsSchema,
       system: SYSTEM,
-      prompt: callPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Correct it — at most ${MAX_CALLS_PER_VENDOR} calls, every sourceUrl copied exactly from the provided URLs, every method a real invocation. Return [] if nothing is genuinely grounded.`),
+      prompt: callPrompt(t, `\n\nYour previous answer violated a rule: ${violation}. Correct it — at most ${MAX_CALLS_PER_VENDOR} calls, every sourceUrl copied exactly from the provided URLs, every method a real invocation with NO annotations or parenthetical variants in the method string (put variant notes like "with attachments" in description), and no two calls sharing the same method — fold endpoint variants into one call. Return [] if nothing is genuinely grounded.`),
     })
     violation = validateCalls(raw, allowed)
   }

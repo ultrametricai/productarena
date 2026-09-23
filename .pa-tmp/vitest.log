@@ -2,173 +2,117 @@
   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
 Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
 
- RUN  v5.0.1 /Users/judegomila/Documents/GitHub/productarena/.claude/worktrees/agent-a571f3db9f0412041
+ RUN  v5.0.1 /Users/judegomila/Documents/GitHub/productarena/.claude/worktrees/agent-a7e47c9cd47f43ce7
 
- ❯ lib/__tests__/processRankings.test.ts (18 tests | 1 failed) 344ms
-   ❯ end-to-end: launch-website chain (founder ask: key other vendors for every move) (2)
-     × site generation lists ChatGPT (ai-assistants) and Framer/Figma/Canva (design-tools) beside the vibe-coding roster, each evidence-backed 9ms
- ❯ pipeline/__tests__/stepPrompts.test.ts (17 tests | 2 failed) 154ms
+ ❯ infra/cloudflare-proxy/__tests__/mcp-demo-call.test.ts (18 tests | 1 failed) 30ms
+   ❯ MCP_DEMO_CALLS curation invariants (2)
+     × every demo key is allowlisted (or the in-process self endpoint) with sane shapes 4ms
+ ❯ pipeline/__tests__/stepPrompts.test.ts (17 tests | 1 failed) 145ms
    ❯ data/step-prompts.json (6)
-     × uses the literal {{vendor}} placeholder exactly when the step has a vendor market 3ms
-     × quotes endpoints only from the step's grounded vendor calls (data/step-vendor-calls.json) 2ms
- ❯ lib/__tests__/search-matching.test.ts (18 tests | 1 failed) 10ms
-   ❯ search-aliases.json integrity (4)
-     × covers EVERY arena with 3-8 alias phrases 3ms
+     × loader smoke: stepPromptFor resolves committed entries and misses honestly 2ms
+ ❯ infra/cloudflare-proxy/__tests__/mcp-probe.test.ts (11 tests | 1 failed) 29ms
+   ❯ MCP_ENDPOINTS allowlist (2)
+     × stays in sync with the generated lib/mcpEndpoints.ts (regenerate + paste on drift) 3ms
 Not implemented: navigation to another Document
 $ tsx pipeline/cli.ts derive --category desktop-os
 
-⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
 
- FAIL  pipeline/__tests__/stepPrompts.test.ts > data/step-prompts.json > uses the literal {{vendor}} placeholder exactly when the step has a vendor market
-AssertionError: comp_001:n1 market=true: expected false to be true // Object.is equality
+ FAIL  pipeline/__tests__/stepPrompts.test.ts > data/step-prompts.json > loader smoke: stepPromptFor resolves committed entries and misses honestly
+AssertionError: expected 'You are helping me prepare to create …' to match /SendGrid/
 
-- Expected
-+ Received
+- Expected:
+/SendGrid/
 
-- true
-+ false
++ Received:
+"You are helping me prepare to create a {{vendor}} account for transactional email (password resets, receipts, notifications). Do not sign up, accept terms, or attach any payment method yourself — this requires a human officer's explicit approval before it happens.
 
- ❯ pipeline/__tests__/stepPrompts.test.ts:205:97
-    203|       const node = nodeByKey.get(`${e.taskId}:${e.nodeId}`)!
-    204|       const market = coveringArenaId(node) !== null
-    205|       expect(e.prompt.includes(VENDOR_PLACEHOLDER), `${e.taskId}:${e.n…
-       |                                                                                                 ^
-    206|     }
-    207|   })
+Please do the following preparatory work:
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+1. Ask me for: my company/legal name, the domain I'll send email from, my primary use cases (password resets, receipts, notifications, etc.), my app's programming language/framework, and the email address to use for account signup if not already known.
+2. Research {{vendor}}'s current free tier or trial terms — confirm whether it allows real deliveries to actual end users (not just sandbox/demo mode), and note any sending limits or verification requirements.
+3. Pull together {{vendor}}'s quickstart/integration guide for my stated language, and produce a condensed, copy-paste-ready setup checklist covering: account signup fields, email/domain verification steps, API key generation location, and the minimal code needed to send a first test email.
+4. Draft a short internal summary for the approver that states: which vendor is proposed, what tier/trial is being requested, what payment method commitment (if any) is implied, and what data/domain access {{vendor}} will need.
+5. Flag any terms-of-service or billing clauses that look unusual (e.g., auto-upgrade to paid, data retention policies) so the approver can review them.
 
- FAIL  pipeline/__tests__/stepPrompts.test.ts > data/step-prompts.json > quotes endpoints only from the step's grounded vendor calls (data/step-vendor-calls.json)
-AssertionError: hr_013:n2 quotes ungrounded endpoint "POST /rest/contracts": expected false to be true // Object.is equality
+Do not create the account, click any signup/submit buttons, or enter payment details — stop for human sign-off once the checklist and summary are ready.
 
-- Expected
-+ Received
+When done, report back with: (a) the vendor tier/trial details found, (b) the condensed quickstart checklist, (c) the draft approver summary, and (d) any flagged terms needing human attention."
 
-- true
-+ false
+ ❯ pipeline/__tests__/stepPrompts.test.ts:241:55
+    239|     const first = entries[0]
+    240|     expect(stepPromptFor(first.taskId, first.nodeId)).toEqual(first)
+    241|     expect(stepPromptFor('growth_005', 'n1')?.prompt).toMatch(/SendGri…
+       |                                                       ^
+    242|     expect(stepPromptFor('no_such_task', 'n1')).toBeNull()
+    243|   })
 
- ❯ pipeline/__tests__/stepPrompts.test.ts:217:11
-    215|           grounded.some((m) => m.includes(endpoint)),
-    216|           `${e.taskId}:${e.nodeId} quotes ungrounded endpoint "${endpo…
-    217|         ).toBe(true)
-       |           ^
-    218|       }
-    219|     }
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
-
- FAIL  lib/__tests__/processRankings.test.ts > end-to-end: launch-website chain (founder ask: key other vendors for every move) > site generation lists ChatGPT (ai-assistants) and Framer/Figma/Canva (design-tools) beside the vibe-coding roster, each evidence-backed
-Error: Snapshot `end-to-end: launch-website chain (founder ask: key other vendors for every move) > site generation lists ChatGPT (ai-assistants) and Framer/Figma/Canva (design-tools) beside the vibe-coding roster, each evidence-backed 1` mismatched
+ FAIL  infra/cloudflare-proxy/__tests__/mcp-demo-call.test.ts > MCP_DEMO_CALLS curation invariants > every demo key is allowlisted (or the in-process self endpoint) with sane shapes
+AssertionError: expected { …(87) } to deeply equal { …(88) }
 
 - Expected
 + Received
 
-@@ -3,12 +3,19 @@
-      "steps": [
-        {
-          "extras": [],
-          "label": "Check registrar availability across TLDs",
-          "nodeId": "n1",
--         "primary": null,
--       },
-+         "primary": [
-+           "name-com:52.4",
-+           "godaddy:48.8",
-+           "dynadot:44.2",
-+           "porkbun:43.1",
-+           "cloudflare-registrar:40.4",
-+           "namecheap:13.1",
-+         ],
-+       },
-        {
-          "extras": [],
-          "label": "Check matching social handles",
-          "nodeId": "n2",
-          "primary": null,
-@@ -41,11 +48,18 @@
-        },
-        {
-          "extras": [],
-          "label": "Register at Name.com",
-          "nodeId": "n2",
--         "primary": null,
-+         "primary": [
-+           "name-com:42.9",
-+           "cloudflare-registrar:42.4",
-+           "porkbun:34.2",
-+           "dynadot:32.1",
-+           "godaddy:31.6",
-+           "namecheap:8.5",
-+         ],
-        },
-        {
-          "extras": [],
-          "label": "Provision DNS/SSL (Cloudflare)",
-          "nodeId": "n3",
-@@ -130,17 +144,31 @@
-      "steps": [
-        {
-          "extras": [],
-          "label": "Search domain availability",
-          "nodeId": "n1",
--         "primary": null,
-+         "primary": [
-+           "name-com:52.4",
-+           "godaddy:48.8",
-+           "dynadot:44.2",
-+           "porkbun:43.1",
-+           "cloudflare-registrar:40.4",
-+           "namecheap:13.1",
-+         ],
-        },
-        {
-          "extras": [],
-          "label": "Register domain",
-          "nodeId": "n2",
--         "primary": null,
-+         "primary": [
-+           "porkbun:68.8",
-+           "name-com:58",
-+           "godaddy:48",
-+           "dynadot:38.4",
-+           "cloudflare-registrar:36",
-+           "namecheap:12",
-+         ],
-        },
-        {
-          "extras": [],
-          "label": "Transfer DNS to Cloudflare",
-          "nodeId": "n3",
+@@ -29,11 +29,10 @@
+    "document-extraction/llamaparse": "https://mcp.llamaindex.ai/mcp",
+    "document-extraction/reducto": "https://mcp.reducto.ai/mcp",
+    "domain-registrars/dynadot": "https://mcp.dynadot.com/mcp",
+    "edge-platforms/cloudflare": "https://mcp.cloudflare.com/mcp",
+    "edge-platforms/vercel": "https://mcp.vercel.com/",
+-   "email-apis/resend": "https://mcp.resend.com/mcp",
+    "email-marketing/bento": "https://mcp.bentonow.com/mcp",
+    "email-marketing/customer-io": "https://mcp.customer.io/mcp",
+    "email-marketing/loops": "https://mcp.loops.so/",
+    "email/agentmail": "https://mcp.agentmail.to/mcp",
+    "email/missive": "https://mcp.missiveapp.com/",
 
- ❯ lib/__tests__/processRankings.test.ts:380:22
-    378|     const publish = snapshot.find((t) => t.task === 'site_001')!.steps…
-    379|     expect(publish.extras.some((e) => e.arena === 'vibe-coding' && e.v…
-    380|     expect(snapshot).toMatchSnapshot()
-       |                      ^
-    381|   })
-    382|
+ ❯ infra/cloudflare-proxy/__tests__/mcp-demo-call.test.ts:107:27
+    105|     }
+    106|     // and both maps' shared source stays consistent with the site all…
+    107|     expect(MCP_ENDPOINTS).toEqual(SITE_ENDPOINTS)
+       |                           ^
+    108|   })
+    109| })
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
 
- FAIL  lib/__tests__/search-matching.test.ts > search-aliases.json integrity > covers EVERY arena with 3-8 alias phrases
-AssertionError: arena compliance-automation has 9 aliases (want 3-8): expected 9 to be less than or equal to 8
- ❯ lib/__tests__/search-matching.test.ts:64:87
-     62|       expect(aliases, `arena ${id} has no aliases`).toBeDefined()
-     63|       expect(aliases.length, `arena ${id} has ${aliases?.length} alias…
-     64|       expect(aliases.length, `arena ${id} has ${aliases?.length} alias…
-       |                                                                                       ^
-     65|     }
-     66|   })
+ FAIL  infra/cloudflare-proxy/__tests__/mcp-probe.test.ts > MCP_ENDPOINTS allowlist > stays in sync with the generated lib/mcpEndpoints.ts (regenerate + paste on drift)
+AssertionError: expected { …(87) } to deeply equal { …(88) }
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+- Expected
++ Received
+
+@@ -29,11 +29,10 @@
+    "document-extraction/llamaparse": "https://mcp.llamaindex.ai/mcp",
+    "document-extraction/reducto": "https://mcp.reducto.ai/mcp",
+    "domain-registrars/dynadot": "https://mcp.dynadot.com/mcp",
+    "edge-platforms/cloudflare": "https://mcp.cloudflare.com/mcp",
+    "edge-platforms/vercel": "https://mcp.vercel.com/",
+-   "email-apis/resend": "https://mcp.resend.com/mcp",
+    "email-marketing/bento": "https://mcp.bentonow.com/mcp",
+    "email-marketing/customer-io": "https://mcp.customer.io/mcp",
+    "email-marketing/loops": "https://mcp.loops.so/",
+    "email/agentmail": "https://mcp.agentmail.to/mcp",
+    "email/missive": "https://mcp.missiveapp.com/",
+
+ ❯ infra/cloudflare-proxy/__tests__/mcp-probe.test.ts:200:27
+    198| describe('MCP_ENDPOINTS allowlist', () => {
+    199|   it('stays in sync with the generated lib/mcpEndpoints.ts (regenerate…
+    200|     expect(MCP_ENDPOINTS).toEqual(SITE_ENDPOINTS)
+       |                           ^
+    201|   })
+    202|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
 
 
-  Snapshots  1 failed
- Test Files  3 failed | 155 passed (158)
-      Tests  4 failed | 1654 passed (1658)
-   Start at  17:04:46
-   Duration  28.63s (tests 55%, environment 19%, setup 13%, import 8%, transform 3%, worker 1%)
+ Test Files  3 failed | 156 passed (159)
+      Tests  3 failed | 1675 passed (1678)
+   Start at  12:57:18
+   Duration  27.53s (tests 54%, environment 20%, setup 14%, import 8%, transform 3%, worker 1%)
 
-    Isolate  158 workers spawned · ~132ms startup each (spawn + environment, per file)
-             at least ~10.29s faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  159 workers spawned · ~129ms startup each (spawn + environment, per file)
+             at least ~10.11s faster with isolate: false — reuses workers across files instead of one per file
 

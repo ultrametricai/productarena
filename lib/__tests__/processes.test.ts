@@ -265,14 +265,15 @@ describe('vendor -> arena mapping', () => {
     // Untracked options we still show honestly (no arena yet) — keep this list deliberate.
     // (legalzoom and mailchimp graduated to tracked when legal-ops/email-marketing shipped;
     // vanta/secureframe/oneleet, namecheap/name_com/porkbun graduated 2026-09-22 when the
-    // wave-5 compliance-automation and domain-registrars arenas shipped; dropbox/google_drive
-    // graduated 2026-09-23 when the launch-day cloud-storage arena shipped. google_sheets stays
-    // an honest chip: no spreadsheet arena exists and product-analytics' event-analytics
-    // stories don't apply to it.)
+    // wave-5 compliance-automation and domain-registrars arenas shipped; dropbox/google_drive,
+    // sendgrid, resend/postmark/mailgun, and stable/earth_class_mail/virtualpostmail graduated
+    // 2026-09-23 when the launch-day cloud-storage, email-apis, and virtual-mailboxes arenas
+    // shipped. google_sheets stays an honest chip: no spreadsheet arena exists and
+    // product-analytics' event-analytics stories don't apply to it.)
     const allowedUntracked = new Set([
       'doola', 'google_sheets', 'northwest',
       'termly', 'iubenda', 'producthunt', 'betalist', 'hackernews',
-      'ahrefs', 'semrush', 'google_search_console', 'apollo', 'sendgrid',
+      'ahrefs', 'semrush', 'google_search_console', 'apollo',
       // vendor_011 "Compare on evidence": our own surface, labeled '(ours)' — honest
       // affiliation, never passed off as an independently judged product.
       'productarena',
@@ -281,17 +282,15 @@ describe('vendor -> arena mapping', () => {
       // EOR/status-page/questionnaire vendors, and mobile build/submit tooling.
       'fondo', 'neo_tax', 'cobalt', 'guideline', 'human_interest',
       'kandji', 'jamf', 'remote', 'statuspage', 'conveyor', 'fastlane', 'expo',
-      // 2026-09-22 wave-3 vendor-cell fill — real suppliers with no arena yet (virtual-address
-      // providers, password managers, trademark watch services), every listed signup URL
-      // curl-verified 200 in lib/processes.ts.
-      'stable', 'earth_class_mail', 'virtualpostmail',
+      // 2026-09-22 wave-3 vendor-cell fill — real suppliers with no arena yet (password
+      // managers, trademark watch services), every listed signup URL curl-verified 200 in
+      // lib/processes.ts.
       'onepassword', 'bitwarden', 'dashlane',
       'markify', 'corsearch', 'harbor_compliance',
       // 2026-09-23 vendor-neutral first-step sweep — markets with no arena yet, shown as
       // honest unlinked chips: team wikis, company-email suites, transactional email senders.
       'confluence', 'slite', 'slab',
       'microsoft_365', 'zoho_mail',
-      'resend', 'postmark', 'mailgun',
     ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {

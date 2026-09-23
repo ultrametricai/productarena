@@ -158,72 +158,6 @@
     ]
   },
   {
-    "taskId": "comp_011",
-    "nodeId": "n5",
-    "arenaId": "cloud-storage",
-    "productId": "dropbox",
-    "calls": [
-      {
-        "method": "dbx.filesUpload(...)",
-        "type": "sdk",
-        "description": "Upload signed minutes file into the data room folder",
-        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
-      }
-    ]
-  },
-  {
-    "taskId": "comp_011",
-    "nodeId": "n5",
-    "arenaId": "cloud-storage",
-    "productId": "google-drive",
-    "calls": [
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=media",
-        "type": "rest",
-        "description": "Upload the signed minutes file into Drive as a new file",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      },
-      {
-        "method": "POST /drive/v3/files/{fileId}/permissions",
-        "type": "rest",
-        "description": "Grant data room access/roles to relevant parties for the filed minutes",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
-      },
-      {
-        "method": "PATCH /drive/v3/files/{fileId}",
-        "type": "rest",
-        "description": "Set custom properties (e.g. tags/IDs) on the filed minutes for metadata tracking",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
-      }
-    ]
-  },
-  {
-    "taskId": "comp_011",
-    "nodeId": "n5",
-    "arenaId": "cloud-storage",
-    "productId": "onedrive",
-    "calls": [
-      {
-        "method": "PUT /drive/items/{item-id}/content",
-        "type": "rest",
-        "description": "Upload the signed minutes file content into a OneDrive/data room folder",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
-      },
-      {
-        "method": "POST /drive/items/{item-id}/createUploadSession",
-        "type": "rest",
-        "description": "Create a resumable upload session for filing larger signed minutes documents",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
-      },
-      {
-        "method": "GET /drive/root:/path/to/file",
-        "type": "rest",
-        "description": "Locate the target data room folder/item by path before filing the minutes",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
-      }
-    ]
-  },
-  {
     "taskId": "comp_013",
     "nodeId": "n5",
     "arenaId": "project-management",
@@ -246,7 +180,7 @@
       {
         "method": "check_domain_availability",
         "type": "mcp",
-        "description": "Check a domain name's availability via the Dynadot MCP server",
+        "description": "Check a domain name availability via MCP tool",
         "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
@@ -363,6 +297,20 @@
     "taskId": "domain_002",
     "nodeId": "n2",
     "arenaId": "domain-registrars",
+    "productId": "dynadot",
+    "calls": [
+      {
+        "method": "register_domains",
+        "type": "mcp",
+        "description": "Register a domain on behalf of the user via Dynadot's MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n2",
+    "arenaId": "domain-registrars",
     "productId": "name-com",
     "calls": [
       {
@@ -414,10 +362,16 @@
     "productId": "airwallex",
     "calls": [
       {
-        "method": "POST /docs/payouts/batch-transfers/create-a-batch-transfer",
+        "method": "POST /api/v1/batch_transfers",
         "type": "rest",
-        "description": "Create a batch of transfers to multiple vendor beneficiaries as a single payment run",
+        "description": "Create a batch of transfers to multiple vendor/supplier beneficiaries as a single payment run",
         "sourceUrl": "https://www.airwallex.com/docs/payouts/batch-transfers/create-a-batch-transfer.md"
+      },
+      {
+        "method": "POST /api/v1/transfers",
+        "type": "rest",
+        "description": "Create an individual transfer to a supplier's bank account for an approved bill",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/transfers/create-a-transfer.md"
       }
     ]
   },
@@ -584,6 +538,34 @@
     ]
   },
   {
+    "taskId": "fin_003",
+    "nodeId": "n7",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap/api/",
+        "type": "rest",
+        "description": "Send batched JMAP method calls including EmailSubmission/set to send board report email",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_003",
+    "nodeId": "n7",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send board report email to recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
     "taskId": "form_001",
     "nodeId": "n4",
     "arenaId": "legal-ops",
@@ -627,6 +609,48 @@
   },
   {
     "taskId": "fund_001",
+    "nodeId": "n10",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send closing confirmation email from an agent inbox to investors",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n10",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap/api/",
+        "type": "rest",
+        "description": "Send closing confirmation email via JMAP EmailSubmission/set method call",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n10",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send closing confirmation email to investors",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
     "nodeId": "n3",
     "arenaId": "project-management",
     "productId": "clickup",
@@ -642,6 +666,34 @@
         "type": "rest",
         "description": "Create a view to organize and track investor pipeline stages",
         "sourceUrl": "https://developer.clickup.com/docs/views.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send drafted outreach email to recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "zero",
+    "calls": [
+      {
+        "method": "create_email_draft",
+        "type": "mcp",
+        "description": "Create email drafts for outreach",
+        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
       }
     ]
   },
@@ -730,98 +782,6 @@
         "type": "graphql",
         "description": "Retrieve cap table data for the company after recording SAFE",
         "sourceUrl": "https://docs.ledgy.com"
-      }
-    ]
-  },
-  {
-    "taskId": "fund_002",
-    "nodeId": "n2",
-    "arenaId": "cloud-storage",
-    "productId": "box",
-    "calls": [
-      {
-        "method": "POST /2.0/files/content",
-        "type": "rest",
-        "description": "Upload new or updated diligence documents into the data room folder",
-        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
-      },
-      {
-        "method": "GET /2.0/search",
-        "type": "rest",
-        "description": "Search data room content to verify completeness during diligence refresh",
-        "sourceUrl": "https://developer.box.com/guides/search/"
-      },
-      {
-        "method": "POST /2.0/collaborations",
-        "type": "rest",
-        "description": "Grant or update investor access permissions to the refreshed data room",
-        "sourceUrl": "https://developer.box.com/guides/collaborations/"
-      }
-    ]
-  },
-  {
-    "taskId": "fund_002",
-    "nodeId": "n2",
-    "arenaId": "cloud-storage",
-    "productId": "dropbox",
-    "calls": [
-      {
-        "method": "dbx.filesListFolder({ path: '' })",
-        "type": "sdk",
-        "description": "List current contents of the data room folder to refresh diligence materials",
-        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
-      }
-    ]
-  },
-  {
-    "taskId": "fund_002",
-    "nodeId": "n2",
-    "arenaId": "cloud-storage",
-    "productId": "google-drive",
-    "calls": [
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=media",
-        "type": "rest",
-        "description": "Upload new or updated diligence documents to the data room folder",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      },
-      {
-        "method": "GET /drive/v3/files",
-        "type": "rest",
-        "description": "List existing files/folders to identify stale or missing diligence materials",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
-      },
-      {
-        "method": "POST /drive/v3/files/{fileId}/permissions",
-        "type": "rest",
-        "description": "Update sharing permissions for investors accessing the refreshed data room",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
-      }
-    ]
-  },
-  {
-    "taskId": "fund_002",
-    "nodeId": "n2",
-    "arenaId": "cloud-storage",
-    "productId": "onedrive",
-    "calls": [
-      {
-        "method": "POST /drive/items/{item-id}/createUploadSession",
-        "type": "rest",
-        "description": "Upload or refresh large diligence documents in the data room folder via resumable upload session",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
-      },
-      {
-        "method": "GET /drive/root/delta",
-        "type": "rest",
-        "description": "Detect newly added, updated, or deleted files in the data room since last diligence check",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/delta-query-overview"
-      },
-      {
-        "method": "GET /drive/items/{item-id}/versions",
-        "type": "rest",
-        "description": "Review version history of data room documents to confirm latest updates for diligence",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-list-versions?view=graph-rest-1.0"
       }
     ]
   },
@@ -1038,6 +998,34 @@
     ]
   },
   {
+    "taskId": "fund_006",
+    "nodeId": "n6",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send email messages to SAFE holders notifying them of converted share counts",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_006",
+    "nodeId": "n6",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send email notifying each SAFE holder of their converted share count",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
     "taskId": "growth_001",
     "nodeId": "n1",
     "arenaId": "payments",
@@ -1143,6 +1131,48 @@
   },
   {
     "taskId": "growth_002",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send retention email from an AgentMail inbox",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap",
+        "type": "rest",
+        "description": "Submit methodCalls batch including EmailSubmission/set to send retention email via JMAP",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send retention email to customer's To/Cc/Bcc recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
     "nodeId": "n6",
     "arenaId": "payments",
     "productId": "paypal",
@@ -1197,6 +1227,20 @@
   },
   {
     "taskId": "growth_005",
+    "nodeId": "n2",
+    "arenaId": "email-apis",
+    "productId": "resend",
+    "calls": [
+      {
+        "method": "POST /domains/{domain_id}/verify",
+        "type": "rest",
+        "description": "Verify a sending domain's DKIM/SPF records to authenticate it",
+        "sourceUrl": "https://resend.com/docs/api-reference/domains/verify-domain.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
     "nodeId": "n3",
     "arenaId": "edge-platforms",
     "productId": "cloudflare",
@@ -1206,6 +1250,76 @@
         "type": "mcp",
         "description": "Invoke Cloudflare API endpoint (e.g. DNS record creation) via the MCP execute tool",
         "sourceUrl": "https://mcp.cloudflare.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n4",
+    "arenaId": "email-apis",
+    "productId": "postmark",
+    "calls": [
+      {
+        "method": "POST /templates",
+        "type": "rest",
+        "description": "Create, edit, list templates via API",
+        "sourceUrl": "https://postmarkapp.com/llms.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "mailgun",
+    "calls": [
+      {
+        "method": "POST /messages",
+        "type": "rest",
+        "description": "Send a test email via the domain messages endpoint to verify delivery",
+        "sourceUrl": "https://documentation.mailgun.com/docs/mailgun/api-reference/mg-auth.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "postmark",
+    "calls": [
+      {
+        "method": "POST /email",
+        "type": "rest",
+        "description": "Send a test email using the POSTMARK_API_TEST token to verify delivery without sending live email",
+        "sourceUrl": "https://postmarkapp.com/llms.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "resend",
+    "calls": [
+      {
+        "method": "POST /emails",
+        "type": "rest",
+        "description": "Send a test transactional email through the Resend Email API",
+        "sourceUrl": "https://resend.com/docs/api-reference/emails/send-email.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "sendgrid",
+    "calls": [
+      {
+        "method": "POST /v3/mail/send",
+        "type": "rest",
+        "description": "Send a test email via the Mail Send API, optionally using sandbox mode to validate without delivering",
+        "sourceUrl": "https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send"
       }
     ]
   },
@@ -1650,7 +1764,7 @@
       {
         "method": "GET /v1/companies/{company_id}/employees",
         "type": "rest",
-        "description": "Retrieve current employee roster to check for changes before running payroll",
+        "description": "Retrieve the current employee roster to check for changes before running payroll",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/api-fundamentals.md"
       }
     ]
@@ -1712,7 +1826,7 @@
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate inputs and determine payment timing/blockers for contractor payment schedule",
+        "description": "Validate contractor payment inputs and determine payment timing/blockers",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -1762,6 +1876,26 @@
         "type": "rest",
         "description": "Submit a candidate application via the careers site application form",
         "sourceUrl": "https://docs.recruitee.com/reference/candidates-post"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_005",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "POST /v1/companies/{company_id}/payrolls",
+        "type": "rest",
+        "description": "Create off-cycle payroll run to pay final wages and PTO payout",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/create-an-off-cycle-payroll.md"
+      },
+      {
+        "method": "GET /v1/companies/{company_uuid}/payrolls",
+        "type": "rest",
+        "description": "Retrieve unprocessed/upcoming payrolls to locate or confirm the off-cycle run",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       }
     ]
   },
@@ -1870,80 +2004,6 @@
     ]
   },
   {
-    "taskId": "legal_001",
-    "nodeId": "n6",
-    "arenaId": "cloud-storage",
-    "productId": "google-drive",
-    "calls": [
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=media",
-        "type": "rest",
-        "description": "Upload executed NDA file to Drive (simple upload)",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      },
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=resumable",
-        "type": "rest",
-        "description": "Resumable upload for larger executed NDA file",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      }
-    ]
-  },
-  {
-    "taskId": "legal_001",
-    "nodeId": "n6",
-    "arenaId": "cloud-storage",
-    "productId": "onedrive",
-    "calls": [
-      {
-        "method": "PUT /me/drive/items/{parent-id}:/{filename}:/content",
-        "type": "rest",
-        "description": "Upload executed NDA file content to OneDrive",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
-      },
-      {
-        "method": "POST /me/drive/items/{item-id}:/createUploadSession",
-        "type": "rest",
-        "description": "Create resumable upload session for larger executed NDA file",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
-      }
-    ]
-  },
-  {
-    "taskId": "legal_003",
-    "nodeId": "n6",
-    "arenaId": "cloud-storage",
-    "productId": "google-drive",
-    "calls": [
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=media",
-        "type": "rest",
-        "description": "Simple upload of a small executed/signed file into Drive",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      },
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=resumable",
-        "type": "rest",
-        "description": "Resumable upload of larger executed copies into Drive",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      }
-    ]
-  },
-  {
-    "taskId": "legal_003",
-    "nodeId": "n6",
-    "arenaId": "cloud-storage",
-    "productId": "onedrive",
-    "calls": [
-      {
-        "method": "PUT /drives/{drive-id}/items/{item-id}/content",
-        "type": "rest",
-        "description": "Upload executed IPIA copy content to a file in OneDrive",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
-      }
-    ]
-  },
-  {
     "taskId": "opp_001",
     "nodeId": "n2",
     "arenaId": "startup-banking",
@@ -2020,7 +2080,7 @@
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate contractor payment inputs and surface submission blockers (e.g. missing W-9/payment method) before payment",
+        "description": "Validate contractor payability and surface submission blockers before payment",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -2096,6 +2156,20 @@
     ]
   },
   {
+    "taskId": "opp_008",
+    "nodeId": "n2",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send the composed email from the company Gmail account",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
     "taskId": "opp_009",
     "nodeId": "n2",
     "arenaId": "project-management",
@@ -2150,15 +2224,9 @@
     "productId": "drata",
     "calls": [
       {
-        "method": "POST /v2/devices",
+        "method": "POST /openapi/reference/v2/tag/Devices/",
         "type": "rest",
-        "description": "Create or update a device record for a custom connection to feed device compliance data into Drata",
-        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Devices/"
-      },
-      {
-        "method": "GET /v2/devices/{id}/apps",
-        "type": "rest",
-        "description": "List installed apps for a device as part of compliance evidence",
+        "description": "Create or update device compliance data for custom connection, feeding evidence into SOC 2 controls",
         "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Devices/"
       }
     ]
@@ -2206,7 +2274,7 @@
       {
         "method": "check_domain_availability",
         "type": "mcp",
-        "description": "Check a domain name's availability",
+        "description": "Check whether a domain name is available via the Dynadot MCP server",
         "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
@@ -2274,7 +2342,7 @@
       {
         "method": "register_domain",
         "type": "mcp",
-        "description": "Register a domain via the Dynadot MCP server",
+        "description": "Register a domain via Dynadot's MCP server",
         "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
@@ -2848,6 +2916,62 @@
     ]
   },
   {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send announcement message from an inbox to the team",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap/api/",
+        "type": "rest",
+        "description": "Send email announcement via JMAP methodCalls (Email/set and EmailSubmission/set) in one HTTP request",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send the handbook announcement email to team recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "zero",
+    "calls": [
+      {
+        "method": "send_email",
+        "type": "mcp",
+        "description": "Create and send a new email to announce the handbook to the team",
+        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
+      }
+    ]
+  },
+  {
     "taskId": "scale_004",
     "nodeId": "n4",
     "arenaId": "team-chat",
@@ -2918,6 +3042,48 @@
         "type": "mcp",
         "description": "Query MRR and other revenue metrics via pre-built templates or SQL",
         "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n8",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send board deck email from agent's inbox to board members",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n8",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap",
+        "type": "rest",
+        "description": "Send methodCalls batch including Email/set to submit board deck email via JMAP",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n8",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send board deck email to board members via To/Cc/Bcc",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
       }
     ]
   },
@@ -3062,6 +3228,34 @@
     ]
   },
   {
+    "taskId": "scale_011",
+    "nodeId": "n2",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send security questionnaire email to vendor recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_011",
+    "nodeId": "n2",
+    "arenaId": "email",
+    "productId": "zero",
+    "calls": [
+      {
+        "method": "send_email",
+        "type": "mcp",
+        "description": "Send security questionnaire emails to vendors",
+        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
+      }
+    ]
+  },
+  {
     "taskId": "scale_012",
     "nodeId": "n5",
     "arenaId": "team-chat",
@@ -3125,92 +3319,6 @@
   },
   {
     "taskId": "shutdown_001",
-    "nodeId": "n12",
-    "arenaId": "cloud-storage",
-    "productId": "box",
-    "calls": [
-      {
-        "method": "PUT /files/upload_sessions/{upload_session_id}",
-        "type": "rest",
-        "description": "Upload archived corporate record files in chunks for long-term storage",
-        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
-      },
-      {
-        "method": "POST /metadata_templates/{scope}/{template_key}/instances",
-        "type": "rest",
-        "description": "Attach retention metadata (e.g., record type, retention date) to archived files",
-        "sourceUrl": "https://developer.box.com/guides/metadata/"
-      }
-    ]
-  },
-  {
-    "taskId": "shutdown_001",
-    "nodeId": "n12",
-    "arenaId": "cloud-storage",
-    "productId": "dropbox",
-    "calls": [
-      {
-        "method": "dbx.filesListFolder({ path: '' })",
-        "type": "sdk",
-        "description": "List files/folders to identify corporate records for archival",
-        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
-      }
-    ]
-  },
-  {
-    "taskId": "shutdown_001",
-    "nodeId": "n12",
-    "arenaId": "cloud-storage",
-    "productId": "google-drive",
-    "calls": [
-      {
-        "method": "POST /upload/drive/v3/files",
-        "type": "rest",
-        "description": "Upload corporate records as files into Drive for archival storage",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      },
-      {
-        "method": "GET /drive/v3/files",
-        "type": "rest",
-        "description": "List/search files to compile records for archiving",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
-      },
-      {
-        "method": "POST /drive/v3/files/{fileId}/permissions",
-        "type": "rest",
-        "description": "Set retention access permissions on archived record folders",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
-      }
-    ]
-  },
-  {
-    "taskId": "shutdown_001",
-    "nodeId": "n12",
-    "arenaId": "cloud-storage",
-    "productId": "onedrive",
-    "calls": [
-      {
-        "method": "PUT /drive/items/{item-id}",
-        "type": "rest",
-        "description": "Upload/create a driveItem to archive a corporate record",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
-      },
-      {
-        "method": "POST /drive/items/{item-id}/createUploadSession",
-        "type": "rest",
-        "description": "Create resumable upload session to archive large corporate record files",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
-      },
-      {
-        "method": "GET /drive/root/search(q='{query}')",
-        "type": "rest",
-        "description": "Search archived items to verify retention of corporate records",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-search?view=graph-rest-1.0"
-      }
-    ]
-  },
-  {
-    "taskId": "shutdown_001",
     "nodeId": "n3",
     "arenaId": "payroll",
     "productId": "gusto",
@@ -3218,7 +3326,7 @@
       {
         "method": "GET /v1/companies/{company_uuid}/payrolls",
         "type": "rest",
-        "description": "Retrieve upcoming/off-cycle payrolls for the company to process final run",
+        "description": "Retrieve upcoming/off-cycle payrolls for the company before running final payroll",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       },
       {
@@ -3486,6 +3594,20 @@
         "type": "rest",
         "description": "Update page content blocks to write or revise the spec text",
         "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "asana",
+    "calls": [
+      {
+        "method": "POST /tasks",
+        "type": "rest",
+        "description": "Create a new task via the Asana API to track the feature",
+        "sourceUrl": "https://developers.asana.com"
       }
     ]
   },
@@ -3765,26 +3887,6 @@
     "taskId": "sw_010",
     "nodeId": "n5",
     "arenaId": "mcp-infrastructure",
-    "productId": "composio",
-    "calls": [
-      {
-        "method": "composio.sessions.create({ mcp: true })",
-        "type": "sdk",
-        "description": "Creates a Composio session with MCP enabled, exposing its hosted MCP server for agent tool access",
-        "sourceUrl": "https://docs.composio.dev/docs/sessions-via-mcp"
-      },
-      {
-        "method": "COMPOSIO_REMOTE_WORKBENCH",
-        "type": "mcp",
-        "description": "Meta-tool exposed via the shared Composio MCP server for running remote sandboxed operations",
-        "sourceUrl": "https://docs.composio.dev/docs/composio-connect"
-      }
-    ]
-  },
-  {
-    "taskId": "sw_010",
-    "nodeId": "n5",
-    "arenaId": "mcp-infrastructure",
     "productId": "smithery",
     "calls": [
       {
@@ -3834,124 +3936,44 @@
     ]
   },
   {
-    "taskId": "tax_001",
-    "nodeId": "n5",
-    "arenaId": "cloud-storage",
-    "productId": "dropbox",
+    "taskId": "tax_002",
+    "nodeId": "n3",
+    "arenaId": "email",
+    "productId": "agentmail",
     "calls": [
       {
-        "method": "dbx.filesUpload({ path, contents })",
-        "type": "sdk",
-        "description": "Upload the confirmation receipt file to Dropbox storage",
-        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
-      }
-    ]
-  },
-  {
-    "taskId": "tax_001",
-    "nodeId": "n5",
-    "arenaId": "cloud-storage",
-    "productId": "google-drive",
-    "calls": [
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
         "type": "rest",
-        "description": "Upload the franchise tax confirmation receipt file to Drive",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      }
-    ]
-  },
-  {
-    "taskId": "tax_001",
-    "nodeId": "n5",
-    "arenaId": "cloud-storage",
-    "productId": "onedrive",
-    "calls": [
-      {
-        "method": "PUT /drive/items/{item-id}/content",
-        "type": "rest",
-        "description": "Upload confirmation receipt file content to OneDrive",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+        "description": "Send financial package with attachments to CPA from agent inbox",
+        "sourceUrl": "https://docs.agentmail.to/attachments.md"
       }
     ]
   },
   {
     "taskId": "tax_002",
-    "nodeId": "n8",
-    "arenaId": "cloud-storage",
-    "productId": "box",
+    "nodeId": "n3",
+    "arenaId": "email",
+    "productId": "fastmail",
     "calls": [
       {
-        "method": "POST /files/upload_sessions",
+        "method": "POST /jmap",
         "type": "rest",
-        "description": "Upload a copy of the filed tax return into Box storage for records via chunked upload session",
-        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+        "description": "Submit a JMAP methodCalls request (e.g. Email/set) to send the financial email to the CPA",
+        "sourceUrl": "https://jmap.io"
       }
     ]
   },
   {
     "taskId": "tax_002",
-    "nodeId": "n8",
-    "arenaId": "cloud-storage",
-    "productId": "dropbox",
+    "nodeId": "n3",
+    "arenaId": "email",
+    "productId": "gmail",
     "calls": [
       {
-        "method": "dbx.filesListFolder({ path: '' })",
-        "type": "sdk",
-        "description": "Lists files/folders to locate or verify stored copy of filed tax return records",
-        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
-      }
-    ]
-  },
-  {
-    "taskId": "tax_002",
-    "nodeId": "n8",
-    "arenaId": "cloud-storage",
-    "productId": "google-drive",
-    "calls": [
-      {
-        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
         "type": "rest",
-        "description": "Upload the filed tax return copy to Drive for recordkeeping",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
-      },
-      {
-        "method": "GET /drive/v3/files",
-        "type": "rest",
-        "description": "List/search Drive files to locate or verify the stored tax return copy",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
-      },
-      {
-        "method": "POST /drive/v3/files/{fileId}/permissions",
-        "type": "rest",
-        "description": "Set sharing permissions on the stored tax return file for records access",
-        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
-      }
-    ]
-  },
-  {
-    "taskId": "tax_002",
-    "nodeId": "n8",
-    "arenaId": "cloud-storage",
-    "productId": "onedrive",
-    "calls": [
-      {
-        "method": "PUT /drive/items/{item-id}/content",
-        "type": "rest",
-        "description": "Upload the tax return file copy into OneDrive for recordkeeping",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
-      },
-      {
-        "method": "POST /drive/items/{item-id}/createUploadSession",
-        "type": "rest",
-        "description": "Resumable upload of larger filed return document copies to OneDrive",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
-      },
-      {
-        "method": "GET /drive/root:/path/to/file",
-        "type": "rest",
-        "description": "Retrieve the stored file copy by path for verification in records",
-        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
+        "description": "Send financial package email to CPA",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
       }
     ]
   },
@@ -3964,7 +3986,7 @@
       {
         "method": "GET /v1/companies/{company_uuid}/payrolls",
         "type": "rest",
-        "description": "Retrieve company payroll runs to extract wage data for QRE calculation",
+        "description": "Retrieve company payroll runs to gather QRE payroll data",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       }
     ]
@@ -4018,8 +4040,22 @@
       {
         "method": "composio.mcp.create(name=\"my-gmail-server\", toolkits=[{\"toolkit\": \"gmail\", \"auth_config\": \"ac_xyz123\"}], allowed_tools=[\"GMAIL_FETCH_EMAILS\", \"GMAIL_SEND_EMAIL\"])",
         "type": "sdk",
-        "description": "Create a hosted MCP server registered with specified toolkits and tools for the agent runtime",
+        "description": "Create a hosted MCP server registered with allowed toolkits/tools for the agent runtime",
         "sourceUrl": "https://docs.composio.dev/docs/single-toolkit-mcp.md"
+      }
+    ]
+  },
+  {
+    "taskId": "vendor_010",
+    "nodeId": "n3",
+    "arenaId": "mcp-infrastructure",
+    "productId": "gram",
+    "calls": [
+      {
+        "method": "gram install",
+        "type": "cli",
+        "description": "Install toolsets as MCP servers into AI agent runtimes",
+        "sourceUrl": "https://www.speakeasy.com/docs/ai-control-plane/reference/command-line"
       }
     ]
   },
