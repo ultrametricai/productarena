@@ -529,6 +529,18 @@ export const VENDOR_ARENA: Record<string, string> = {
   microsoft_entra: 'sso-identity',
   google_workspace: 'sso-identity',
   rippling_it: 'sso-identity',
+  // 2026-09-23 launch day: the file-storage and hyperscaler markets graduated from untracked
+  // chips to live arenas (founder: "get the 'not yet judged' judged — dropbox etc.").
+  // google_drive/onedrive are product-scoped sub-products of the google/microsoft families
+  // (google-workspace/microsoft-entra precedent).
+  dropbox: 'cloud-storage',
+  google_drive: 'cloud-storage',
+  box: 'cloud-storage',
+  onedrive: 'cloud-storage',
+  aws: 'cloud-platforms',
+  google_cloud: 'cloud-platforms',
+  azure: 'cloud-platforms',
+  oracle_cloud: 'cloud-platforms',
 }
 
 // Vendor keys whose judged product id differs beyond snake_case → kebab-case normalization.
@@ -598,6 +610,11 @@ const VENDOR_LABELS: Record<string, string> = {
   cloudflare_registrar: 'Cloudflare Registrar',
   microsoft_entra: 'Microsoft Entra ID',
   rippling_it: 'Rippling IT',
+  // 2026-09-23 launch-day arenas (title-case fallback misfires on these).
+  onedrive: 'Microsoft OneDrive',
+  google_cloud: 'Google Cloud',
+  oracle_cloud: 'Oracle Cloud Infrastructure',
+  azure: 'Microsoft Azure',
 }
 
 // The vendor's own start-here page (signup / product start), for steps whose action lives
@@ -676,6 +693,16 @@ export const VENDOR_SIGNUP_URL: Record<string, string> = {
   markify: 'https://www.markify.com/',
   corsearch: 'https://corsearch.com/',
   harbor_compliance: 'https://www.harborcompliance.com/',
+  // 2026-09-23 launch-day arenas — every URL curl-verified 200 before listing.
+  // (oracle.com/cloud serves 403 to non-browser clients, so oracle_cloud's chip deliberately
+  // carries no signup link — no unverifiable URL is fabricated.)
+  dropbox: 'https://www.dropbox.com/',
+  google_drive: 'https://workspace.google.com/products/drive/',
+  box: 'https://www.box.com/',
+  onedrive: 'https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage',
+  aws: 'https://aws.amazon.com/',
+  google_cloud: 'https://cloud.google.com/',
+  azure: 'https://azure.microsoft.com/',
 }
 
 export function vendorLabel(vendor: string): string {

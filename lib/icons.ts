@@ -161,6 +161,15 @@ const THEME_EXACT: Record<string, string> = {
   'editor-tooling': '🛠️',
   'asset-pipeline': '🧱',
   'platform-export': '🚀',
+  // cloud-storage arena ('storage-pricing' would land on the data drum before the pricing
+  // dollar; 'sync-webhooks' reads better as the sync loop than the drum)
+  'storage-pricing': '💲',
+  'sync-webhooks': '🔁',
+  // cloud-platforms arena ('iac-surface' falls through to the tag fallback; 'identity-access'
+  // would land on the laptop; 'core-platform' on the API plug — IAM keys and compute fit)
+  'iac-surface': '🏗️',
+  'identity-access': '🔑',
+  'core-platform': '🖥️',
   // frontier-models arena ('capability-surface' would land on the generic surfaces puzzle
   // piece; the rest are new vocabulary)
   'capability-surface': '🧠',
@@ -308,6 +317,21 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'lifecycle-automation': 'identity on autopilot — workflows, access certification, config as code',
   'identity-observability': 'seeing every event — system logs, SIEM streaming, incident transparency',
   'agent-identity': 'agents as identities — cross-app access, token vaulting, scoped agent credentials',
+  // cloud-storage arena
+  'files-api': 'files as an API — upload/download endpoints, resumable sessions, revision history',
+  'sync-webhooks': 'staying in sync — delta/cursor listing, change webhooks, desktop clients',
+  'sharing-permissions': 'who can see what — programmable shared links, granular roles, external-sharing governance',
+  'search-metadata': 'finding and tagging files — content search APIs, custom metadata schemas',
+  'content-workflows': 'work happening on the files — previews, e-signature, co-editing, AI over content',
+  'admin-governance': 'running the team tenant — member/group admin APIs, audit-log access',
+  'storage-pricing': 'what the gigabytes cost — published quotas, per-user prices, free tiers',
+  // cloud-platforms arena
+  'iac-surface': 'infrastructure as code — first-party IaC, official Terraform providers, import/drift',
+  'identity-access': 'who and what gets in — fine-grained IAM, short-lived workload credentials, agent scoping',
+  'cost-controls': 'keeping the bill sane — budgets and alerts, cost APIs and exports, published pricing',
+  'core-platform': 'the compute basics — managed Kubernetes, serverless, databases, regions',
+  'platform-docs': 'docs at platform scale — consistent service references, status and incident transparency',
+  'ai-platform': 'AI as a platform service — managed inference, agent runtimes',
   'messaging-surfaces': 'where you talk to it — WhatsApp/Telegram/Discord channels, voice, native apps',
   'model-backends': 'the models behind it — multi-provider keys, local models, failover, cost visibility',
   'skills-plugins': 'extending it — skill registries, plugin authoring, ecosystem scale and safety',

@@ -262,6 +262,7 @@ export const MCP_ENDPOINTS = {
   'billing-subscriptions/revenuecat': 'https://mcp.revenuecat.ai/mcp',
   'billing-subscriptions/stripe-billing': 'https://mcp.stripe.com/',
   'card-issuing/stripe-issuing': 'https://mcp.stripe.com/',
+  'cloud-storage/box': 'https://mcp.box.com/',
   'customer-data-platforms/rudderstack': 'https://mcp.rudderstack.com/mcp',
   'design-tools/canva': 'https://mcp.canva.com/mcp',
   'design-tools/figma': 'https://mcp.figma.com/mcp',
