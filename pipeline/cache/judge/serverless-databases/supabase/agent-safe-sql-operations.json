@@ -1,16 +1,16 @@
 {
-  "hash": "b71d5baa6429793138762939735e9da739a17926ce7151914d3e4f8b4733b232",
+  "hash": "e68150605bdf1fe849aff675ed6f807b82b78468233b41663eb242e1bfee7188",
   "verdict": {
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Supabase ships an official MCP server whose tools let agents query/manage the database and even scopes access via RLS when Auth is added (supabase-docs-1, supabase-docs-45), and Supabase's own engineers describe adding a read-only-by-default mode for MCP tools as a specific mitigation (supabase-comm-2) — showing the read/destructive distinction is a real, if reactive, design goal. However, a concrete documented exploit (supabase-comm-1) shows an attacker used a prompt-injection attack via the MCP integration to make an agent read a sensitive table by leveraging service_role access that bypassed RLS, and Supabase's own engineer acknowledged prompt injection remains unsolved even with guardrails (supabase-comm-2), directly contradicting the 'safely delegate' promise for destructive/sensitive operations. Missing for 10: independent verification that scoped read-only/destructive tool separation is enforced by default and cannot be bypassed, and evidence the fix fully closed the RLS-bypass vector.",
+    "rationale": "Supabase's MCP server and BYO-MCP docs describe scoped tool access tied to RLS/service-role permissions (supabase-docs-1, supabase-docs-2, supabase-docs-45), and community reporting confirms Supabase added a read-only-by-default mode plus anti-injection safeguards for the MCP server (supabase-comm-2). However, a concrete hands-on exploit report shows an attacker was able to use prompt injection via the MCP server to have an agent bypass RLS through service_role access and exfiltrate a sensitive table (supabase-comm-1), directly contradicting the 'safely delegate' framing even after mitigations were applied. missing for 10: first-party documentation of a formal read-only vs destructive tool distinction/permission schema, and independent confirmation that the exploit is now fully closed.",
     "evidenceIds": [
       "supabase-docs-1",
+      "supabase-docs-2",
       "supabase-docs-45",
       "supabase-comm-1",
-      "supabase-comm-2",
-      "supabase-probe-4"
+      "supabase-comm-2"
     ],
     "productId": "supabase",
     "storyId": "agent-safe-sql-operations"
