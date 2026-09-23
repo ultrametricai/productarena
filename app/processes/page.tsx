@@ -125,6 +125,19 @@ export default function ProcessesPage() {
             </tbody>
           </table>
         </div>
+        {/* Virtual Startup (founder ask 2026-09-23) — the playbooks composed into one seeded,
+            decision-driven journey with clearly-labeled synthetic artifacts. */}
+        <Link
+          href="/virtual-startup"
+          className="mt-4 flex flex-wrap items-baseline gap-x-2 gap-y-1 rounded-2xl border border-zinc-800 p-4 transition hover:border-emerald-400/50 hover:bg-emerald-400/5"
+        >
+          <span className="font-medium text-zinc-200">🐣 Virtual Startup</span>
+          <span className="text-sm text-zinc-400">
+            pick the starting decisions — entity, team, funding, business model — and watch a
+            simulated company run these real playbooks day by day
+          </span>
+          <span className="text-sm text-emerald-400">→</span>
+        </Link>
       </section>
       <section className="space-y-3">
         <div>
