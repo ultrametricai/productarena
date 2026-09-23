@@ -7,7 +7,7 @@
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-89-34d399)](https://ultrametric.ai/productarena)
 [![products](https://img.shields.io/badge/products-553-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-31575-34d399)](https://ultrametric.ai/productarena/methodology)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-31583-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **89 arenas, 553 products, 31,575 judged verdicts.**
+As of the last full pipeline run: **89 arenas, 553 products, 31,583 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by

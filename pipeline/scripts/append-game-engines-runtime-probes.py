@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-# One-shot helper for the game-engines arena bring-up (2026-09-15): appends probe-tier
-# evidence items distilled from the recorded runtime probes in data/game-engines/proofs/
-# (see pipeline/probes/game-engines.ts — all 19 recorded probes passed, three deliberate
-# negatives) plus the MCP-landscape facts verified live the same day via keyless GitHub/npm
-# API calls (official vs community attribution matters — the founder asked for agenticness
-# measured honestly). Run AFTER `pnpm pipeline probe --category game-engines` — that stage
-# wholesale-replaces probe-tier evidence and would wipe these items.
+# Helper for the game-engines arena (bring-up 2026-09-15, accuracy wave 2026-09-23): upserts
+# probe-tier evidence items distilled from the recorded runtime probes in
+# data/game-engines/proofs/ (see pipeline/probes/game-engines.ts) plus MCP/CLI-landscape facts
+# verified live via keyless GitHub/npm/UPM API calls (official vs community attribution
+# matters — the founder asked for agenticness measured honestly). The 2026-09-23 wave added
+# Unity's first-party CLI (`unity mcp` / `unity eval`, the announced replacement for the
+# deprecated in-editor MCP server), Unity's keyless UPM registry, Epic's new-but-flaky
+# llms.txt files, and Godot's built-in LSP counterweight. Run AFTER
+# `pnpm pipeline probe --category game-engines` — that stage wholesale-replaces probe-tier
+# evidence and would wipe these items.
 import datetime
 import json
 
@@ -34,6 +37,20 @@ ITEMS = {
             'excerpt': "PROBE runtime (recorded 2026-09-15): Unity Hub installs keylessly from Homebrew (cask unity-hub 3.21.2, 'Management tool for Unity') — the entry point to the editor whose -batchmode/-nographics CLI is documented for headless CI builds.",
             'fetchedAt': NOW,
         },
+        {
+            'id': 'unity-probe-rt-4',
+            'tier': 'probe',
+            'url': 'https://docs.unity.com/en-us/unity-cli',
+            'excerpt': "PROBE runtime (recorded 2026-09-23): Unity now ships a first-party standalone CLI (experimental) with a public keyless install script — `curl -fsSL https://unity.com/install.sh | bash` serves '# Unity CLI Installer' (verified live) — plus Homebrew/deb/rpm/MSIX distribution for headless CI workers, structured JSON/TSV output and documented exit codes. Its docs section serves its own llms.txt ('# Unity command-line interface (CLI)'). Docs state the in-editor MCP server (com.unity.ai.assistant) is DEPRECATED in favor of this CLI: `unity mcp` is the CLI's own fully-supported MCP server mode, and `unity <command>`/`unity eval` drive the Editor directly without MCP ('faster and use fewer tokens than MCP. Use these commands if your agent can run shell commands').",
+            'fetchedAt': NOW,
+        },
+        {
+            'id': 'unity-probe-rt-5',
+            'tier': 'probe',
+            'url': 'https://packages.unity.com/com.unity.ai.assistant',
+            'excerpt': "PROBE runtime (recorded 2026-09-23): Unity's UPM registry answers keyless JSON — packages.unity.com/com.unity.ai.assistant resolves the in-editor AI Assistant package (latest 2.20.0-pre.1, the package that ships Unity's official MCP server bridge and AI gateway integration), and packages.unity.com/com.unity.ai.inference resolves Sentis, 'a neural network inference library' for on-device ML in games. docs.unity.com also serves a site-wide llms.txt index ('# Unity Documentation').",
+            'fetchedAt': NOW,
+        },
     ],
     'godot': [
         {
@@ -55,6 +72,13 @@ ITEMS = {
             'tier': 'probe',
             'url': 'https://godotengine.org/',
             'excerpt': "PROBE runtime negative (recorded 2026-09-15): godotengine.org serves no llms.txt (HTTP 404; docs.godotengine.org 404 as well) and docs pages have no .md mirrors. No official MCP exists (GitHub search `mcp org:godotengine` → 0 results); the community scene is large but fragmented — Coding-Solo/godot-mcp (5,698 stars) idle since 2026-04-16, hi-godot/godot-ai (2,437 stars) actively pushed 2026-09-15, three more repos at 600-800 stars.",
+            'fetchedAt': NOW,
+        },
+        {
+            'id': 'godot-probe-rt-4',
+            'tier': 'probe',
+            'url': 'https://godotengine.org/asset-library/api/asset?filter=mcp',
+            'excerpt': "PROBE runtime (recorded 2026-09-23): MCP landscape re-verified — still no official Godot MCP (GitHub search `mcp org:godotengine` → 0 results; the keyless Asset Library API search for 'mcp' returns an empty result set, so the community MCP servers live only on GitHub, outside Godot's own distribution channel). Coding-Solo/godot-mcp now 5,803 stars but still idle since 2026-04-16. Counterweight verified in official docs: Godot ships a BUILT-IN GDScript language server (LSP) any external editor or agent tooling can attach to, and godotengine/godot-vscode-plugin (official org, 2,130 stars, pushed 2026-09-10) is its first-party LSP client.",
             'fetchedAt': NOW,
         },
     ],
@@ -133,10 +157,20 @@ ITEMS = {
     ],
     'unreal': [
         {
+            # 2026-09-23 correction: the original 2026-09-15 recording said "no llms.txt
+            # exists" — that is no longer true (see unreal-probe-rt-2), so the claim was
+            # removed from this item rather than left standing. Everything else re-verified.
             'id': 'unreal-probe-rt-1',
             'tier': 'probe',
             'url': 'https://github.com/EpicGames/UnrealEngine',
-            'excerpt': "PROBE runtime negative (recorded 2026-09-15): Unreal is the least machine-readable presence of the eight — api.github.com/repos/EpicGames/UnrealEngine answers {\"message\": \"Not Found\"} keylessly (source access is EULA/account-gated), unrealengine.com/epicgames.com/fab.com return HTTP 403 to all non-browser clients, no llms.txt exists, and appending .md to dev.epicgames.com docs URLs serves the HTML SPA shell, not markdown. No official Epic MCP (GitHub search `mcp org:EpicGames` → 0 results); the most-starred community MCP (chongdashu/unreal-mcp, 2,080 stars) has been unmaintained since 2025-04. Counterweight: the Python editor-scripting docs and UAT/automation CLI docs on dev.epicgames.com/documentation ARE fetchable keylessly.",
+            'excerpt': "PROBE runtime negative (recorded 2026-09-15, revised 2026-09-23): Unreal is the least machine-readable presence of the eight — api.github.com/repos/EpicGames/UnrealEngine answers {\"message\": \"Not Found\"} keylessly (source access is EULA/account-gated), unrealengine.com/epicgames.com/fab.com return HTTP 403 to most non-browser clients, and appending .md to dev.epicgames.com docs URLs serves the HTML SPA shell, not markdown. No official Epic MCP (GitHub search `mcp org:EpicGames` → 0 results, re-verified 2026-09-23); the most-starred community MCP (chongdashu/unreal-mcp, 2,084 stars) has been unmaintained since 2025-04, and kvick-games/UnrealMCP (612 stars) since 2025-06. Counterweight: the Python editor-scripting docs, Remote Control API references, and UAT/automation CLI docs on dev.epicgames.com/documentation ARE fetchable keylessly.",
+            'fetchedAt': NOW,
+        },
+        {
+            'id': 'unreal-probe-rt-2',
+            'tier': 'probe',
+            'url': 'https://www.unrealengine.com/llms.txt',
+            'excerpt': "PROBE runtime (recorded 2026-09-23): Epic now serves llms.txt on BOTH www.unrealengine.com ('# Unreal Engine — Epic Games' real-time 3D creation tool...') and dev.epicgames.com ('# Epic Developer Community'), verified live. Caveat recorded honestly: Epic's CDN intermittently WAF-challenges non-browser clients — identical back-to-back requests alternate between the llms.txt content and an HTTP 403 challenge page (curl, node fetch, and python urllib all affected), so the surface exists but is unreliable for agents without a browser-grade client.",
             'fetchedAt': NOW,
         },
     ],
@@ -148,13 +182,23 @@ def main() -> None:
         path = f'data/game-engines/evidence/{pid}.json'
         with open(path) as f:
             evidence = json.load(f)
-        have = {e['id'] for e in evidence}
-        added = [i for i in items if i['id'] not in have]
-        evidence.extend(added)
+        # Upsert by id (2026-09-23): re-appending is not enough once a recorded fact needs a
+        # dated correction (unreal-probe-rt-1's "no llms.txt exists" stopped being true), so an
+        # existing item whose excerpt drifted from this script is rewritten in place — same id,
+        # citations stay resolvable, the correction is visible in the excerpt itself.
+        by_id = {e['id']: e for e in evidence}
+        added = updated = 0
+        for item in items:
+            if item['id'] not in by_id:
+                evidence.append(item)
+                added += 1
+            elif by_id[item['id']]['excerpt'] != item['excerpt']:
+                by_id[item['id']].update({k: v for k, v in item.items() if k != 'fetchedAt'})
+                updated += 1
         with open(path, 'w') as f:
             json.dump(evidence, f, indent=2, ensure_ascii=False)
             f.write('\n')
-        print(f'{pid}: +{len(added)} probe runtime items')
+        print(f'{pid}: +{added} probe runtime items, {updated} revised')
 
 
 if __name__ == '__main__':
