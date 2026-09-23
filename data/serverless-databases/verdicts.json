@@ -603,10 +603,10 @@
   {
     "productId": "clickhouse",
     "storyId": "privacy-no-training",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "ClickHouse is a database/analytics engine, not an AI model provider or a service that trains models on user data; there is no evidence of any AI-training opt-out setting or policy in the pack, and this axis is a category mismatch for a database product rather than a gap it fails to fill.",
+    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
     "evidenceIds": []
   },
   {
@@ -2937,10 +2937,10 @@
   {
     "productId": "planetscale",
     "storyId": "privacy-no-training",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "PlanetScale is a database infrastructure platform, not an AI model provider or AI product that trains models on user data; 'prevent data from being used to train AI models' is not a fair axis for this kind of product — no evidence pack item even addresses AI training use of customer data.",
+    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
     "evidenceIds": []
   },
   {
@@ -3067,6 +3067,792 @@
     "confidence": "high",
     "rationale": "No evidence anywhere in the pack mentions vector data types, embeddings, or similarity search functionality in PlanetScale (MySQL or Postgres offerings); the pack covers branching, backups, scaling, MCP/CLI tooling, and pricing but nothing about vector storage/search.",
     "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agent-provisions-database",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Supabase documents and runtime-probes confirm each piece of this workflow — CLI can init/start projects and run keylessly (supabase-docs-5/32, supabase-probe-rt-1), the Management API supports programmatic project/org management (supabase-docs-28), migrations apply schema via CLI (supabase-docs-25), and the hosted MCP server (live per supabase-probe-rt-2) lets an agent query the database and manage migrations without the dashboard (supabase-docs-1, supabase-docs-2, supabase-docs-4). However, no single first-party walkthrough stitches create→connection-string→schema→query into one dashboard-free flow, and community reports flag real friction in the migration story ('local development & database migration story is Supabase's biggest weakness... I hate having to do migrations live in prod' and dashboard-editing being discouraged but common) plus MCP prompt-injection risk acknowledged by Supabase engineers. Missing for 10: a documented single end-to-end example combining all four steps, and resolution of community-reported migration/dashboard friction.",
+    "evidenceIds": [
+      "supabase-docs-5",
+      "supabase-docs-28",
+      "supabase-docs-25",
+      "supabase-docs-1",
+      "supabase-docs-2",
+      "supabase-docs-4",
+      "supabase-probe-rt-1",
+      "supabase-probe-rt-2",
+      "supabase-comm-5",
+      "supabase-comm-6",
+      "supabase-comm-1",
+      "supabase-comm-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agent-safe-sql-operations",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase's MCP server and BYO-MCP docs describe scoped tool access tied to RLS/service-role permissions (supabase-docs-1, supabase-docs-2, supabase-docs-45), and community reporting confirms Supabase added a read-only-by-default mode plus anti-injection safeguards for the MCP server (supabase-comm-2). However, a concrete hands-on exploit report shows an attacker was able to use prompt injection via the MCP server to have an agent bypass RLS through service_role access and exfiltrate a sensitive table (supabase-comm-1), directly contradicting the 'safely delegate' framing even after mitigations were applied. missing for 10: first-party documentation of a formal read-only vs destructive tool distinction/permission schema, and independent confirmation that the exploit is now fully closed.",
+    "evidenceIds": [
+      "supabase-docs-1",
+      "supabase-docs-2",
+      "supabase-docs-45",
+      "supabase-comm-1",
+      "supabase-comm-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A live probe confirms https://supabase.com/llms.txt returns HTTP 200 with a link to the full documentation file, and a separate probe confirms a machine-discoverable agent-skills index at /.well-known/agent-skills/index.json that lists skills across Database, Auth, Functions, Realtime, Storage, Vectors, Cron, and Queues — directly matching the 'point an agent at llms.txt or agent-oriented docs' story. This is reinforced by first-party docs on AI tools, plugins, and agent skills (supabase-docs-2, -3, -19) and the skills CLI installer (supabase-docs-44). Missing for 10: the per-page docs.md endpoint returned 404 (not all doc pages have markdown mirrors) and there's no independent/community report of an agent actually consuming llms.txt in practice.",
+    "evidenceIds": [
+      "supabase-probe-1",
+      "supabase-probe-rt-3",
+      "supabase-docs-3",
+      "supabase-docs-44",
+      "supabase-docs-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Supabase ships an AI Assistant integrated into the Dashboard that provides context-aware support and automates repetitive database management tasks (docs-19, docs-41), and its MCP server/agent-skills let external AI assistants query and reason about project data on the user's behalf (docs-1, docs-2). However, this is more 'AI assists with database ops' than deep 'AI-generated insights/suggestions from your data' (e.g., no evidence of analytics-style insight generation, anomaly detection, or proactive data-driven suggestions beyond advisors which are deterministic rule checks, not AI-generated). missing for 10: evidence of AI generating analytical insights/trends from stored data, first-party proof of insight quality, independent hands-on validation of the AI Assistant's suggestions.",
+    "evidenceIds": [
+      "supabase-docs-19",
+      "supabase-docs-41",
+      "supabase-docs-1",
+      "supabase-docs-2",
+      "supabase-docs-16"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Supabase provides the building blocks for background automation — Cron for scheduled Postgres jobs, Queues (pgmq) for durable async processing, Database Webhooks to trigger external systems on events, and Edge Functions for serverless execution — which an AI-native developer can wire together to run autonomous background tasks, and the MCP server/agent-skills catalog lets an AI agent discover and invoke these primitives. However, this is composable infrastructure rather than a turnkey 'set up an autonomous agent automation' feature; there's no first-party orchestration layer for agent-triggered recurring workflows, and no independent evidence of an AI agent successfully running unattended background automations end-to-end. Missing for 10: a dedicated AI-agent automation/orchestration feature (not just generic Cron/Queues/Webhooks primitives), and independent/hands-on evidence of autonomous background agent runs.",
+    "evidenceIds": [
+      "supabase-docs-9",
+      "supabase-docs-10",
+      "supabase-docs-8",
+      "supabase-docs-29",
+      "supabase-docs-2",
+      "supabase-probe-rt-3",
+      "supabase-docs-4"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Supabase ships a built-in AI Assistant integrated directly into the Dashboard that can automate repetitive database management tasks with context-aware support, fitting the 'delegate tasks to a built-in assistant' story. missing for 10: independent hands-on evidence of the Assistant's task delegation in practice, and detail on the scope/limits of what it can autonomously execute versus suggest.",
+    "evidenceIds": [
+      "supabase-docs-19",
+      "supabase-docs-41"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase's CLI (`supabase init`/`start`), REST/GraphQL/Management APIs, and Docker-based self-hosting are all headless, non-interactive, and scriptable, and the runtime probe confirms the CLI runs keylessly via npx with no login — well suited to CI pipelines; migrations are explicitly designed to be captured in version control and run via CI rather than the dashboard, and branching supports per-PR automated environments. missing for 10: no first-party example of a CI pipeline config (e.g., GitHub Actions) running supabase CLI/migrations end-to-end, and community evidence shows friction around CI-driven migrations being an ideal not fully realized (dashboard-driven edits still common), which caps the score.",
+    "evidenceIds": [
+      "supabase-docs-5",
+      "supabase-docs-25",
+      "supabase-docs-26",
+      "supabase-docs-28",
+      "supabase-docs-37",
+      "supabase-probe-rt-1",
+      "supabase-comm-6",
+      "supabase-comm-7"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence describes Supabase's own official MCP server that external AI assistants (Claude, Cursor, Copilot) connect to, and guidance for building MCP servers on Supabase infrastructure — this is the reverse direction (Supabase as server, not as client). There is no evidence that Supabase's AI Assistant or dashboard itself can plug in external MCP servers and consume their tools, so the client-side capability described in this story is unevidenced.",
+    "evidenceIds": [
+      "supabase-docs-1",
+      "supabase-docs-2",
+      "supabase-docs-4",
+      "supabase-docs-19",
+      "supabase-docs-41"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Supabase ships and documents an official MCP server (docs and hosted endpoint), with runtime probes confirming the live hosted MCP endpoint at mcp.supabase.com speaks the MCP OAuth flow, plus official agent skills bundles and BYO MCP guides. Community discussion raises security concerns (prompt injection risk) but does not dispute that the MCP server exists and functions as documented. Missing for 10: independent hands-on confirmation of successful agent task completion via the MCP server beyond the security incident discussion.",
+    "evidenceIds": [
+      "supabase-docs-1",
+      "supabase-docs-4",
+      "supabase-probe-4",
+      "supabase-probe-rt-2",
+      "supabase-probe-rt-3",
+      "supabase-comm-1",
+      "supabase-comm-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-nl-commands",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase ships an official MCP server, AI Assistant in the dashboard, and discoverable agent-skills catalog, allowing natural-language operation of database, auth, functions, storage, etc. via AI assistants; runtime probes confirm the MCP endpoint and skills index are live and functioning. missing for 10: independent hands-on validation that complex multi-step natural-language commands work reliably end-to-end, and community evidence raises unresolved prompt-injection/security concerns around MCP tool use that add caveats to trustworthiness.",
+    "evidenceIds": [
+      "supabase-docs-1",
+      "supabase-docs-2",
+      "supabase-docs-3",
+      "supabase-docs-19",
+      "supabase-docs-41",
+      "supabase-probe-rt-2",
+      "supabase-probe-rt-3",
+      "supabase-comm-1",
+      "supabase-comm-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Supabase ships an official CLI (verified runtime: `npx -y supabase --version` works keylessly) documented extensively for local dev, migrations, and project management, and it is explicitly integrated into AI-native workflows (bundled with MCP server, agent skills discoverable via well-known endpoint, and installable via CLI commands like `npx skills add supabase/agent-skills`). missing for 10: no independent/third-party review specifically praising the CLI's AI-native ergonomics beyond Supabase's own docs.",
+    "evidenceIds": [
+      "supabase-docs-5",
+      "supabase-docs-25",
+      "supabase-docs-32",
+      "supabase-probe-5",
+      "supabase-probe-rt-1",
+      "supabase-docs-44",
+      "supabase-probe-rt-3",
+      "supabase-docs-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Supabase exposes a documented public REST Management API (supabase-docs-28), an OpenAPI spec confirmed live via probe (supabase-probe-3), a CLI for scripted/agentic workflows (supabase-docs-5/32, supabase-probe-rt-1), and an official MCP server (supabase-docs-1, supabase-probe-4, supabase-probe-rt-2) plus machine-discoverable agent-skills catalog (supabase-probe-rt-3) — all giving AI agents multiple documented, verified ways to drive the product programmatically. Missing for 10: no independent third-party benchmark of the Management API itself being used by agents beyond Supabase's own MCP/CLI tooling.",
+    "evidenceIds": [
+      "supabase-docs-28",
+      "supabase-probe-3",
+      "supabase-docs-5",
+      "supabase-docs-32",
+      "supabase-probe-rt-1",
+      "supabase-docs-1",
+      "supabase-probe-4",
+      "supabase-probe-rt-2",
+      "supabase-probe-rt-3"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase supports least-privilege agent access via Postgres Row Level Security (RLS) and, for custom MCP servers, wiring Auth so that 'every tool call runs as that user under RLS policies' (docs-45, docs-7). Community evidence also shows the official MCP server added a read-only mode as a mitigation after a security researcher demonstrated that the default service_role connection bypassed RLS and leaked data via a prompt-injection attack (comm-1, comm-2), showing scoping exists but was not secure-by-default and remains an active risk area. Missing for 10: first-party docs on issuing per-agent scoped API keys/tokens (e.g., personal access token scoping, project-level MCP permission granularity) and independent confirmation that the read-only/RLS mitigations fully prevent privilege escalation.",
+    "evidenceIds": [
+      "supabase-docs-45",
+      "supabase-docs-7",
+      "supabase-comm-1",
+      "supabase-comm-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-sdks",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows Supabase auto-generates type-safe REST/GraphQL APIs from the database schema and supports connecting from frontend, backend, and serverless contexts, which implies SDK-style access, but no evidence pack item explicitly documents official client SDK libraries (e.g., supabase-js, supabase-py) or their AI-agent usage patterns. Missing for 10: explicit official SDK documentation/reference, language coverage, and any AI-native usage guidance tied specifically to SDKs (as opposed to REST/GraphQL/API reference).",
+    "evidenceIds": [
+      "supabase-docs-20",
+      "supabase-docs-27",
+      "supabase-docs-28",
+      "supabase-docs-42"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "agentic-webhooks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase Database Webhooks let users subscribe to table events and send real-time data to external systems, directly enabling event-driven/agentic workflows; this is well documented as a first-party feature. Missing for 10: independent hands-on verification of webhook reliability/latency and explicit AI-agent-specific webhook integration examples.",
+    "evidenceIds": [
+      "supabase-docs-8"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "analytical-queries",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Supabase is built on vanilla Postgres with read replicas, full-text search, and pgvector, but there is no evidence of any columnar/OLAP engine, materialized-view acceleration, or analytics-specific query optimization that would make heavy aggregations over large tables dashboard-fast without exporting to a warehouse. No mention of clickhouse-style analytics, columnar storage, or benchmarks for large-table aggregation performance.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack shows Supabase has an OpenAPI spec (supabase-probe-3) and auto-generated type-safe APIs (supabase-docs-27, supabase-docs-28), but nothing describes an interactive API reference page with runnable/executable examples that an AI-native user could explore. Missing for 10: any documentation or screenshot of an interactive docs UI, evidence of 'try it' or runnable code snippets, and confirmation this reference is agent/AI accessible.",
+    "evidenceIds": [
+      "supabase-probe-3",
+      "supabase-docs-27",
+      "supabase-docs-28"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "api-machine-spec",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "A live, machine-readable OpenAPI spec is directly confirmed by probe evidence at supabase.com/openapi.json returning HTTP 200 with an 'openapi' key, and Supabase also exposes an llms.txt for machine-readable docs discovery. missing for 10: no independent/community corroboration specifically of the OpenAPI spec's completeness or usage.",
+    "evidenceIds": [
+      "supabase-probe-3",
+      "supabase-probe-1"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "api-sandbox",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase explicitly supports local development (CLI init/start), database branching that creates isolated preview environments 'without affecting your production setup', and self-hosting via Docker — all giving AI-native users a sandbox to test against without touching production data. This is corroborated by a Supabase CEO comment pushing users toward branching/migrations rather than direct prod dashboard edits (supabase-comm-7), reinforcing that this is a real, actively promoted workflow. Missing for 10: independent hands-on validation that branching preserves realistic data/schema parity, and no direct AI-native example of an agent operating specifically within a Supabase branch/sandbox rather than production.",
+    "evidenceIds": [
+      "supabase-docs-5",
+      "supabase-docs-25",
+      "supabase-docs-26",
+      "supabase-docs-36",
+      "supabase-docs-6",
+      "supabase-docs-37",
+      "supabase-comm-7"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence shows Supabase auto-generates REST/GraphQL APIs and exposes an openapi.json and a Management API, but nothing in the pack documents API versioning semantics or a deprecation policy for these APIs. Missing for 10: any docs page on API versioning strategy, breaking-change policy, or deprecation timelines/notices.",
+    "evidenceIds": [
+      "supabase-docs-27",
+      "supabase-docs-28",
+      "supabase-docs-42",
+      "supabase-probe-3"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "automated-backups",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Supabase docs confirm automatic daily backups for paid plans (supabase-docs-11), but there's no documented UI/API for viewing or configuring the backup schedule, nor any described self-serve restore workflow in the evidence pack. Independent reporting (Val Town/HN) found Supabase's nightly pg_dump-based backups were taking the database fully offline every night due to write contention, which the CEO confirmed and said would prompt a move to PITR — a concrete hands-on contradiction of reliable, invisible automatic backups. Missing for 10: documented schedule visibility/configuration UI, a documented self-serve restore flow, and confirmation the offline-backup issue has been resolved.",
+    "evidenceIds": [
+      "supabase-docs-11",
+      "supabase-comm-4"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase's MCP server lets an AI agent run arbitrary SQL against the Postgres database (supabase-docs-1, supabase-probe-rt-2), and Postgres itself naturally supports bulk UPDATE/DELETE/INSERT across many rows, plus Queues and Cron for batch/background job processing (supabase-docs-9, supabase-docs-10). However, there is no explicit documentation of a dedicated bulk-operations API, batch endpoint, or agent-specific guidance for operating across many items at once — the capability is inferred from generic SQL access rather than a first-class documented feature. Missing for 10: explicit bulk/batch API or agent-skill documentation calling out multi-item operations, and any hands-on evidence of an agent actually performing large bulk operations via MCP.",
+    "evidenceIds": [
+      "supabase-docs-1",
+      "supabase-docs-2",
+      "supabase-docs-9",
+      "supabase-docs-10",
+      "supabase-probe-rt-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Supabase supports event-driven automation via Database Webhooks (trigger on table events), Postgres Cron for scheduled jobs, and Queues for durable message processing, which together let an AI-native user define rule-like triggers for actions on events. However, these are general-purpose Postgres/platform features rather than an AI-native 'rules engine' with natural-language or agent-defined trigger-action semantics — the AI angle is limited to using MCP/agents to configure these primitives, not a dedicated automation-rules interface. missing for 10: a first-party AI-native rules/automation UI or API (e.g., natural-language trigger-action builder), documentation showing an agent autonomously creating/managing webhook or cron rules end-to-end, and independent hands-on validation of AI-driven automation setup.",
+    "evidenceIds": [
+      "supabase-docs-8",
+      "supabase-docs-9",
+      "supabase-docs-10",
+      "supabase-docs-2",
+      "supabase-probe-rt-3"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase Cron provides native Postgres cron-syntax scheduling of recurring jobs with monitoring of runs, and Supabase Queues offers a durable message queue for building recurring/async workflows; both are exposed to AI agents via the discoverable agent-skills catalog covering Cron and Queues, and the MCP server lets agents manage these programmatically. Missing for 10: no hands-on/independent evidence of an AI agent actually creating a scheduled cron job end-to-end, and no explicit workflow-orchestration layer beyond cron+queues.",
+    "evidenceIds": [
+      "supabase-docs-9",
+      "supabase-docs-10",
+      "supabase-probe-rt-3",
+      "supabase-docs-2"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase supports versioning database schema changes via migrations (stored in version control) and branching for reviewing changes before merging to production, plus automatic backups for rollback of data — these give partial coverage of 'version, review, and roll back' for schema/automation changes made via CLI or AI assistant. However there is no dedicated feature for versioning/reviewing/rolling back specific AI-driven automation runs (e.g., cron jobs, edge function deployments, webhook triggers) as discrete units, and community feedback flags migrations/branching as still immature ('biggest weakness', dashboard encourages live prod edits) and no audit/undo tool for agent actions is documented. Missing for 10: a unified automation-run history/audit log tied to AI actions, one-click revert for individual automations (cron/webhooks/functions), and independent confirmation the branching/migration workflow reliably supports rollback of AI-initiated changes.",
+    "evidenceIds": [
+      "supabase-docs-25",
+      "supabase-docs-26",
+      "supabase-docs-36",
+      "supabase-docs-11",
+      "supabase-comm-5",
+      "supabase-comm-6",
+      "supabase-comm-7"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "autoscaling-under-load",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of automatic compute autoscaling; it covers read replicas for load balancing, backups, migrations, and other features but nothing about compute instances scaling up/down automatically without manual resize. Missing for 10: any documentation or claim of autoscaling compute, resize automation, or downtime-free scaling events.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "branch-reset-restore",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence confirms Supabase branching creates preview environments from production (supabase-docs-26, supabase-docs-36), but nothing in the pack describes resetting a branch to its parent's state or restoring a branch to an earlier point without rebuilding from a dump. Missing for 10: any documentation of a branch-reset/restore command or workflow, evidence of point-in-time restore applied to branches, or community confirmation this works as described.",
+    "evidenceIds": [
+      "supabase-docs-26",
+      "supabase-docs-36"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "builtin-connection-pooling",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack only vaguely references 'several ways to connect to your Postgres database' (supabase-docs-20) without any mention of a built-in connection pooler, Supavisor, PgBouncer, or handling concurrent connections at scale. No documentation, community, or probe evidence substantiates pooling capability for platform engineers.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "ci-preview-branches",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Supabase docs explicitly describe a Branching feature that creates isolated preview environments 'for each pull request' and can be managed via the CLI and Management API, enabling programmatic creation/teardown from CI. Community threads confirm Supabase was actively building this as 'Preview Databases' to move users off manual dashboard edits toward CI-driven workflows. Missing for 10: a concrete CI/CD (e.g., GitHub Actions) integration example and confirmation of automatic teardown on PR close.",
+    "evidenceIds": [
+      "supabase-docs-26",
+      "supabase-docs-36",
+      "supabase-docs-28",
+      "supabase-docs-5",
+      "supabase-comm-7",
+      "supabase-comm-6"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "cli-daily-workflow",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm a CLI-driven create/start flow (`supabase init`, `supabase start`) and CLI-based local migrations, and runtime probes verify the CLI works keylessly, but there's no explicit documentation of a CLI 'shell into' or dedicated inspect/query command distinct from the dashboard's Table Editor or SQL editor. Community reports (supabase-comm-5, supabase-comm-6, supabase-comm-7) describe local dev/migration workflows as Supabase's 'biggest weakness' and note the CEO himself discouraging dashboard-only editing while pushing migrations, implying the CLI-only loop is not yet frictionless in practice. Missing for 10: documented CLI subcommand for opening a psql/db shell, a dedicated 'inspect' command (e.g., schema/query inspection via CLI alone), and independent confirmation that developers complete their daily loop without touching the dashboard.",
+    "evidenceIds": [
+      "supabase-docs-5",
+      "supabase-docs-25",
+      "supabase-docs-32",
+      "supabase-probe-5",
+      "supabase-probe-rt-1",
+      "supabase-comm-5",
+      "supabase-comm-6",
+      "supabase-comm-7"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "database-branching",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase docs confirm a branching feature that spins off isolated preview environments per PR for testing schema/config changes without affecting production (supabase-docs-26, supabase-docs-36), which is the core of the story. However, the evidence never explicitly states that branches include a true copy-on-write clone of production *data* (as opposed to schema + seed data), and community commentary suggests the local dev/migration story was historically Supabase's weakest area, with the CEO himself noting 'Preview Databases' (i.e., full production-data branching) were still being built out, not yet delivered as a mature production-data-copy feature (supabase-comm-5, supabase-comm-6, supabase-comm-7). missing for 10: explicit documentation/proof that branches clone actual production data (not just schema/seed), and independent hands-on confirmation that branch creation is 'instant' and production-shaped.",
+    "evidenceIds": [
+      "supabase-docs-26",
+      "supabase-docs-36",
+      "supabase-comm-5",
+      "supabase-comm-6",
+      "supabase-comm-7"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "engine-compatibility",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase is built directly on Postgres and exposes native Postgres capabilities rather than an abstraction layer: real extensions like pgvector and pg_graphql, native RLS, Postgres-native Cron and Queues (via pgmq), and direct Postgres connection strings for any client. This is corroborated by community discussion of RLS being genuine Postgres RLS (with real learning curve) rather than a simplified proxy. Missing for 10: independent benchmarks/case studies confirming drop-in compatibility for existing Postgres apps/tooling, and no MySQL/SQLite dialect support is claimed or relevant (Supabase is Postgres-only).",
+    "evidenceIds": [
+      "supabase-docs-7",
+      "supabase-docs-12",
+      "supabase-docs-22",
+      "supabase-docs-9",
+      "supabase-docs-10",
+      "supabase-docs-20",
+      "supabase-comm-8"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "fleet-per-agent-databases",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Supabase offers a Management API to manage projects/organizations programmatically (docs-28), a CLI to spin up local projects (docs-5/32), and branching that creates isolated preview-environment databases per PR (docs-26/36) — all of which support programmatic creation of isolated database environments. However, each Supabase project/branch is a full hosted Postgres instance, and there is no evidence of cost efficiency or architecture suited to spinning up thousands of lightweight per-agent/per-tenant databases; the branching feature is documented for PR-based previews, not massive fleets, and community threads (e.g. supabase-comm-5/6) flag friction with migrations/dashboard workflows at scale rather than confirming thousands-scale support. Missing for 10: evidence of per-database cost/pricing at scale, documented support for spinning up thousands of isolated DBs, and any case study of fleet-scale programmatic provisioning.",
+    "evidenceIds": [
+      "supabase-docs-26",
+      "supabase-docs-36",
+      "supabase-docs-28",
+      "supabase-docs-5",
+      "supabase-docs-32",
+      "supabase-comm-5",
+      "supabase-comm-6"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "free-tier-depth",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of Supabase's free tier limits, quotas, or usability for prototyping — only unrelated documentation on MCP, CLI, self-hosting, and platform features. No pricing-plan evidence exists to support or contradict this story.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "global-low-latency",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase lets developers choose project region at creation (data residency/region selection) and offers Read Replicas explicitly for improving latency and load balancing across regions, plus Edge Functions distributed globally close to users. This directly supports placing data/replicas near users for low read latency worldwide. Missing for 10: no independent/hands-on corroboration of actual multi-region replica latency performance, and no detail on write-latency tradeoffs or replica region selection UI.",
+    "evidenceIds": [
+      "supabase-docs-21",
+      "supabase-docs-39",
+      "supabase-docs-23",
+      "supabase-docs-29"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "import-existing-database",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase publishes a documented migration guide covering imports from Postgres, Firebase, Auth0, Heroku, RDS, Neon, etc. (supabase-docs-24, supabase-docs-38), giving a concrete path to bring an existing production database in. However, the docs pack contains no specifics on minimizing downtime (e.g., logical replication/cutover strategy) and community feedback explicitly calls out migration/local-dev workflow as 'Supabase's biggest weakness' with live prod migrations being painful (supabase-comm-5, supabase-comm-6), indicating the path is not smooth or low-downtime in practice. Missing for 10: explicit downtime-minimization guidance (replication/cutover steps), first-party case studies of low-downtime imports, and resolution of the community-reported migration pain points.",
+    "evidenceIds": [
+      "supabase-docs-24",
+      "supabase-docs-38",
+      "supabase-comm-5",
+      "supabase-comm-6"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "instant-provisioning",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs and probes confirm `supabase init`/`supabase start` (and hosted project creation via API/dashboard) spin up a ready-to-use Postgres project instantly with no capacity planning, plus a management API for programmatic project creation. missing for 10: independent hands-on confirmation of the hosted (non-local) provisioning speed, and more detail on API-driven project creation beyond docs references.",
+    "evidenceIds": [
+      "supabase-docs-5",
+      "supabase-docs-32",
+      "supabase-docs-28",
+      "supabase-probe-5",
+      "supabase-probe-rt-1"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "local-keyless-engine",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase CLI supports `supabase init`/`supabase start` to run the full stack locally via Docker Compose without any account, and this was verified keylessly at runtime (npx supabase --version worked with no login). Local dev supports migrations and version control, enabling offline/CI workflows. missing for 10: no explicit CI pipeline example/docs excerpt showing supabase start used inside a CI job, and no independent third-party corroboration of full offline parity with hosted engine.",
+    "evidenceIds": [
+      "supabase-docs-5",
+      "supabase-docs-6",
+      "supabase-docs-25",
+      "supabase-docs-37",
+      "supabase-probe-rt-1"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Supabase exposes a Management API for programmatic project/org control, a REST/GraphQL API auto-generated from the schema, an official CLI, and MCP server/agent-skills for AI-driven database, migration, and function management — covering most core operations achievable via the Dashboard UI. However, some Dashboard-only surfaces (Advisors, Logs viewer, AI Assistant, certain platform settings/backups management) are not clearly exposed as equivalent API/MCP operations, and community evidence shows the CLI/migration flow is considered clunkier than dashboard-driven workflows, with even Supabase's CEO discouraging dashboard edits in favor of migrations — implying gaps in parity rather than a fully symmetric API/UI experience. missing for 10: API/MCP parity evidence for Advisors, Logs, AI Assistant, and backup management; independent confirmation that all dashboard actions have scriptable equivalents.",
+    "evidenceIds": [
+      "supabase-docs-1",
+      "supabase-docs-2",
+      "supabase-docs-4",
+      "supabase-docs-16",
+      "supabase-docs-17",
+      "supabase-docs-19",
+      "supabase-docs-28",
+      "supabase-docs-27",
+      "supabase-docs-42",
+      "supabase-probe-4",
+      "supabase-probe-5",
+      "supabase-probe-rt-2",
+      "supabase-probe-rt-3",
+      "supabase-comm-5",
+      "supabase-comm-6",
+      "supabase-comm-7"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "openness-full-export",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Supabase is built on Postgres and exposes standard export paths (pg_dump-based backups, migrations in version control, self-hosting via Docker Compose, REST/GraphQL APIs, CLI), which together enable data portability and self-hosting rather than lock-in. However, there is no explicit first-party 'export all your data' feature or documented full-account data export tool, and community evidence flags real friction with backups (pg_dump causing downtime) and migrations being a weak point. missing for 10: an explicit bulk/one-click data export feature or documented data-portability guarantee, independent confirmation of a clean full export+exit workflow, and resolution of the backup/migration pain points raised by users.",
+    "evidenceIds": [
+      "supabase-docs-6",
+      "supabase-docs-37",
+      "supabase-docs-11",
+      "supabase-docs-25",
+      "supabase-docs-24",
+      "supabase-docs-38",
+      "supabase-docs-28",
+      "supabase-comm-4",
+      "supabase-comm-5"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack describes self-hosting via Docker Compose (supabase-docs-6, supabase-docs-37) but never states that Supabase's source code is published under an open license or links to a public repository with license terms; no GitHub reference or license text appears anywhere in the pack. Missing for 10: explicit statement of open-source license (e.g., Apache 2.0), link to public source repository, evidence of license file/terms.",
+    "evidenceIds": [
+      "supabase-docs-6",
+      "supabase-docs-37"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "openness-self-host",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase explicitly documents self-hosting the core product via Docker Compose within your own infrastructure, and community discussion corroborates real-world self-hosting usage/tradeoffs. Missing for 10: independent hands-on verification of feature parity between self-hosted and cloud versions, and more detail on self-hosted AI-tooling integration specifics.",
+    "evidenceIds": [
+      "supabase-docs-6",
+      "supabase-docs-37"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "orm-framework-compat",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows generic Postgres connection docs (supabase-docs-20) and CLI-based migration guides (supabase-docs-25, supabase-docs-32), but contains no documented guides or mentions of Prisma, Drizzle, Django, or Rails integration, which the story specifically requires.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "point-in-time-recovery",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Supabase documents daily backups for Pro/Team/Enterprise plans (supabase-docs-11) and a branching feature for creating isolated preview/test environments off production (supabase-docs-26, supabase-docs-36), but the evidence pack never documents true point-in-time recovery (restoring to an arbitrary timestamp within a retention window) or branching a database from a specific point in time to recover from bad writes — branching here is framed as a dev/test tool, not a recovery mechanism. A historical community report even notes backups relied on pg_dump with the CEO saying they'd 'investigate moving users to PITR' (supabase-comm-4), suggesting PITR was not the default recovery model at that time. missing for 10: explicit PITR documentation, ability to branch/restore to an arbitrary timestamp, retention-window guarantees, and confirmation that branching can be used specifically for bad-write recovery rather than just feature development.",
+    "evidenceIds": [
+      "supabase-docs-11",
+      "supabase-docs-26",
+      "supabase-docs-36",
+      "supabase-comm-4"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "privacy-data-residency",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Supabase docs explicitly state that project region selection determines where primary data is stored, and that customers with data residency requirements should choose a specific region — directly addressing region/residency choice. missing for 10: no evidence of granular multi-region replication controls or independent third-party audit confirming residency guarantees are enforced end-to-end (e.g., backups, logs also staying in-region).",
+    "evidenceIds": [
+      "supabase-docs-23"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no policy statements, DPA clauses, or documentation about whether Supabase uses customer data (including data touched by its AI Assistant or MCP integrations) to train AI models, nor any opt-out mechanism for such training. Data residency (regions) and RLS/access control are covered, but none of that addresses AI-training data usage specifically.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "privacy-retention-controls",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Supabase offers indirect levers relevant to retention/deletion — self-hosting lets you fully control data lifecycle on your own infra, region selection addresses data residency, and automated backups touch on retention — but there is no explicit documentation of a user-facing data retention policy, backup retention configuration, or a documented project/account/data deletion workflow. Missing for 10: explicit data retention period controls, documented account/project/data deletion API or process, and GDPR-style right-to-erasure documentation.",
+    "evidenceIds": [
+      "supabase-docs-6",
+      "supabase-docs-37",
+      "supabase-docs-23",
+      "supabase-docs-11"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Supabase CLI, dashboard, or platform; the evidence covers AI tooling, database features, and self-hosting but never mentions analytics/telemetry collection or an opt-out mechanism.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "query-insights",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Supabase Advisors provide deterministic checks for missing indexes and misconfigured RLS policies directly in the platform, and Logs let platform-engineers inspect service events, covering part of the story. However, there's no clear evidence of a dedicated 'slow queries' view or broader performance metrics dashboard (e.g., query timing, latency graphs) beyond Advisors and Logs. missing for 10: a unified insights/performance dashboard showing slow query timing and aggregate performance metrics, independent verification of the Advisors' accuracy/usefulness.",
+    "evidenceIds": [
+      "supabase-docs-16",
+      "supabase-docs-17"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "replicas-failover",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase clearly documents Read Replicas as a feature for load balancing, latency, and redundancy (supabase-docs-21/39), and documents daily backups (supabase-docs-11), but the evidence pack contains no explicit documentation of automated failover behavior (e.g., promoting a replica to primary) or SLA/uptime guarantees, and community evidence shows a real operational reliability gap where nightly pg_dump backups took the database fully offline due to write contention (supabase-comm-4), undercutting confidence in documented HA robustness. Missing for 10: explicit failover/promotion mechanics documentation, HA SLA details, and independent verification that failover works as described.",
+    "evidenceIds": [
+      "supabase-docs-21",
+      "supabase-docs-39",
+      "supabase-docs-11",
+      "supabase-comm-4"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "safe-schema-changes",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Supabase docs describe branch-and-merge workflows (branching creates isolated preview environments per PR, CLI-based migration files under version control) as the intended safe path for schema changes [supabase-docs-25][supabase-docs-26][supabase-docs-36]. However, hands-on community reports directly contradict the safety/maturity of this workflow: users call local dev/migrations 'Supabase's biggest weakness,' report having to run migrations live in prod, and even Supabase's own CEO publicly discourages dashboard-driven prod edits and admits Preview Databases (to enforce migration-only changes) were still being built [supabase-comm-5][supabase-comm-6][supabase-comm-7]. This is a concrete documented gap between the vendor's branch/merge story and real-world practice, not mere skepticism. Missing for 10: independent verification that branching/merge requests reliably prevent locking or breaking prod today, and confirmation that Preview Databases enforcement has shipped.",
+    "evidenceIds": [
+      "supabase-docs-25",
+      "supabase-docs-26",
+      "supabase-docs-36",
+      "supabase-comm-5",
+      "supabase-comm-6",
+      "supabase-comm-7"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "scale-to-zero-idle",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of free-tier project pausing, scale-to-zero compute, or cost-free idle prototypes — only backups, replicas, branching, and other unrelated database features. This is a fair axis for a serverless Postgres platform, but nothing in the pack documents it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "serverless-edge-driver",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Supabase docs acknowledge connecting to Postgres 'whether your code runs in the frontend, in a persistent backend, or in a serverless function' (supabase-docs-20), implying support for serverless/edge query patterns, but there is no evidence pack detail naming a specific official HTTP/WebSocket driver optimized for short-lived connections (e.g., a serverless Postgres client or pooler-specific driver) or its usage from edge functions. Missing for 10: explicit documentation of an official HTTP/WebSocket query driver, connection-pooling details for short-lived serverless connections, and independent confirmation of its use in edge/serverless contexts.",
+    "evidenceIds": [
+      "supabase-docs-20"
+    ]
+  },
+  {
+    "productId": "supabase",
+    "storyId": "spend-caps-alerts",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of spend caps, budget alerts, billing limits, or usage-based cost controls anywhere in Supabase's docs or community discussion — only unrelated platform features (backups, RLS, logs, advisors, etc.). Since Supabase is a usage-billed hosted platform, this axis clearly applies, but no evidence supports the capability.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "transparent-usage-pricing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no pricing pages, per-unit rate cards, or cost calculators for compute, storage, or traffic—only technical docs, MCP/AI tooling, and community discussions unrelated to pricing.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "supabase",
+    "storyId": "vector-embeddings",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Supabase documents pgvector as a native Postgres extension for storing embeddings and vector similarity search directly within the database, avoiding a separate vector DB, and this is further corroborated by the agent-skills catalog explicitly covering 'Vectors' as a first-class capability. missing for 10: independent hands-on benchmark or community validation of pgvector performance/scale at production levels.",
+    "evidenceIds": [
+      "supabase-docs-22",
+      "supabase-probe-rt-3"
+    ]
   },
   {
     "productId": "turso",
