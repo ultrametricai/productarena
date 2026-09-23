@@ -171,6 +171,24 @@ const THEME_EXACT: Record<string, string> = {
   'developer-onboarding': '🚀',
   'safety-usage-policy': '🛡️',
   'ecosystem-availability': '🌐',
+  // email-apis arena ('send-api' would land on the generic api plug and 'deliverability'
+  // has no keyword rule at all)
+  'send-api': '📤',
+  'deliverability': '📬',
+  'templates-content': '📝',
+  'events-webhooks': '🪝',
+  'inbound-mail': '📥',
+  'developer-experience': '🛠️',
+  'sending-scale': '📈',
+  // virtual-mailboxes arena (physical mail vocabulary is new)
+  'address-setup': '📍',
+  'mail-scanning': '📠',
+  'forwarding-shipping': '📦',
+  'check-deposit': '🏦',
+  'business-services': '🏢',
+  'integrations-access': '🧩',
+  'plans-locations': '🗺️',
+  'trust-reliability': '🛡️',
 }
 
 // Emoji for a story theme id — every live theme in data/*/stories.json must resolve to a
@@ -333,6 +351,23 @@ const THEME_DESCRIPTIONS: Record<string, string> = {
   'developer-onboarding': 'zero to first call — self-serve keys, quickstarts, cookbooks, drop-in compatibility',
   'safety-usage-policy': 'the rules of use — usage policies, published safety evaluations, guardrail tooling',
   'ecosystem-availability': 'where else it lives — cloud and gateway distribution, coding-agent integrations, community scale',
+  // email-apis arena
+  'send-api': 'the core send — single and batch endpoints, idempotent retries, scheduled delivery',
+  'deliverability': 'reaching the inbox — guided SPF/DKIM/DMARC, reputation insight, suppressions, dedicated IPs',
+  'templates-content': 'the message itself — template APIs, merge-field personalization, email-as-code',
+  'events-webhooks': 'what happened to the email — delivery webhooks, signed payloads, per-message event history',
+  'inbound-mail': 'receiving email — MX-to-webhook parsing and routing rules',
+  'developer-experience': 'zero to first email — quickstarts, sandbox test modes, SMTP fallback',
+  'sending-scale': 'growing past one app — subaccount isolation, documented throughput and rate limits',
+  // virtual-mailboxes arena
+  'address-setup': 'becoming addressable — real street addresses, the USPS 1583 flow, proof banks accept',
+  'mail-scanning': 'paper to pixels — open-and-scan turnaround, OCR, retention and shredding controls',
+  'forwarding-shipping': 'moving the physical thing — forwarding rules, package acceptance and consolidation',
+  'check-deposit': 'mail that is money — check deposit service and published deposit terms',
+  'business-services': 'beyond the mailbox — registered agent, formation tie-ins, compliance-mail flagging',
+  'integrations-access': 'mail as data — public APIs for mail items, new-mail webhooks, bulk scan export',
+  'plans-locations': 'what it costs where — transparent per-item pricing and location network breadth',
+  'trust-reliability': 'who touches your mail — facility security, scan protection, human support',
 }
 
 // Honest fallback for an arena-specific niche theme no bespoke line covers.

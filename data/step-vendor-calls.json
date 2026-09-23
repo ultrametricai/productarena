@@ -180,8 +180,8 @@
       {
         "method": "check_domain_availability",
         "type": "mcp",
-        "description": "Check domain name availability via AI assistant using MCP",
-        "sourceUrl": "https://www.dynadot.com/domain/mcp"
+        "description": "Check a domain name availability via MCP tool",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
   },
@@ -297,6 +297,20 @@
     "taskId": "domain_002",
     "nodeId": "n2",
     "arenaId": "domain-registrars",
+    "productId": "dynadot",
+    "calls": [
+      {
+        "method": "register_domains",
+        "type": "mcp",
+        "description": "Register a domain on behalf of the user via Dynadot's MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n2",
+    "arenaId": "domain-registrars",
     "productId": "name-com",
     "calls": [
       {
@@ -348,16 +362,16 @@
     "productId": "airwallex",
     "calls": [
       {
-        "method": "POST /api/v1/transfers/create",
+        "method": "POST /api/v1/batch_transfers",
         "type": "rest",
-        "description": "Create a transfer to pay a vendor bill",
-        "sourceUrl": "https://www.airwallex.com/docs/payouts/transfers/create-a-transfer.md"
+        "description": "Create a batch of transfers to multiple vendor/supplier beneficiaries as a single payment run",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/batch-transfers/create-a-batch-transfer.md"
       },
       {
-        "method": "POST /api/v1/batch_transfers/create",
+        "method": "POST /api/v1/transfers",
         "type": "rest",
-        "description": "Create a batch transfer to pay multiple approved bills in one run",
-        "sourceUrl": "https://www.airwallex.com/docs/payouts/batch-transfers/create-a-batch-transfer.md"
+        "description": "Create an individual transfer to a supplier's bank account for an approved bill",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/transfers/create-a-transfer.md"
       }
     ]
   },
@@ -524,6 +538,34 @@
     ]
   },
   {
+    "taskId": "fin_003",
+    "nodeId": "n7",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap/api/",
+        "type": "rest",
+        "description": "Send batched JMAP method calls including EmailSubmission/set to send board report email",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_003",
+    "nodeId": "n7",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send board report email to recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
     "taskId": "form_001",
     "nodeId": "n4",
     "arenaId": "legal-ops",
@@ -567,6 +609,48 @@
   },
   {
     "taskId": "fund_001",
+    "nodeId": "n10",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send closing confirmation email from an agent inbox to investors",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n10",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap/api/",
+        "type": "rest",
+        "description": "Send closing confirmation email via JMAP EmailSubmission/set method call",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n10",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send closing confirmation email to investors",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
     "nodeId": "n3",
     "arenaId": "project-management",
     "productId": "clickup",
@@ -582,6 +666,34 @@
         "type": "rest",
         "description": "Create a view to organize and track investor pipeline stages",
         "sourceUrl": "https://developer.clickup.com/docs/views.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send drafted outreach email to recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "zero",
+    "calls": [
+      {
+        "method": "create_email_draft",
+        "type": "mcp",
+        "description": "Create email drafts for outreach",
+        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
       }
     ]
   },
@@ -886,6 +998,34 @@
     ]
   },
   {
+    "taskId": "fund_006",
+    "nodeId": "n6",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send email messages to SAFE holders notifying them of converted share counts",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_006",
+    "nodeId": "n6",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send email notifying each SAFE holder of their converted share count",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
     "taskId": "growth_001",
     "nodeId": "n1",
     "arenaId": "payments",
@@ -991,6 +1131,48 @@
   },
   {
     "taskId": "growth_002",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send retention email from an AgentMail inbox",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap",
+        "type": "rest",
+        "description": "Submit methodCalls batch including EmailSubmission/set to send retention email via JMAP",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
+    "nodeId": "n4",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send retention email to customer's To/Cc/Bcc recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_002",
     "nodeId": "n6",
     "arenaId": "payments",
     "productId": "paypal",
@@ -1045,6 +1227,20 @@
   },
   {
     "taskId": "growth_005",
+    "nodeId": "n2",
+    "arenaId": "email-apis",
+    "productId": "resend",
+    "calls": [
+      {
+        "method": "POST /domains/{domain_id}/verify",
+        "type": "rest",
+        "description": "Verify a sending domain's DKIM/SPF records to authenticate it",
+        "sourceUrl": "https://resend.com/docs/api-reference/domains/verify-domain.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
     "nodeId": "n3",
     "arenaId": "edge-platforms",
     "productId": "cloudflare",
@@ -1054,6 +1250,76 @@
         "type": "mcp",
         "description": "Invoke Cloudflare API endpoint (e.g. DNS record creation) via the MCP execute tool",
         "sourceUrl": "https://mcp.cloudflare.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n4",
+    "arenaId": "email-apis",
+    "productId": "postmark",
+    "calls": [
+      {
+        "method": "POST /templates",
+        "type": "rest",
+        "description": "Create, edit, list templates via API",
+        "sourceUrl": "https://postmarkapp.com/llms.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "mailgun",
+    "calls": [
+      {
+        "method": "POST /messages",
+        "type": "rest",
+        "description": "Send a test email via the domain messages endpoint to verify delivery",
+        "sourceUrl": "https://documentation.mailgun.com/docs/mailgun/api-reference/mg-auth.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "postmark",
+    "calls": [
+      {
+        "method": "POST /email",
+        "type": "rest",
+        "description": "Send a test email using the POSTMARK_API_TEST token to verify delivery without sending live email",
+        "sourceUrl": "https://postmarkapp.com/llms.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "resend",
+    "calls": [
+      {
+        "method": "POST /emails",
+        "type": "rest",
+        "description": "Send a test transactional email through the Resend Email API",
+        "sourceUrl": "https://resend.com/docs/api-reference/emails/send-email.md"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_005",
+    "nodeId": "n5",
+    "arenaId": "email-apis",
+    "productId": "sendgrid",
+    "calls": [
+      {
+        "method": "POST /v3/mail/send",
+        "type": "rest",
+        "description": "Send a test email via the Mail Send API, optionally using sandbox mode to validate without delivering",
+        "sourceUrl": "https://www.twilio.com/docs/sendgrid/api-reference/mail-send/mail-send"
       }
     ]
   },
@@ -1498,7 +1764,7 @@
       {
         "method": "GET /v1/companies/{company_id}/employees",
         "type": "rest",
-        "description": "Retrieve employee roster with pagination to check for changes",
+        "description": "Retrieve the current employee roster to check for changes before running payroll",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/api-fundamentals.md"
       }
     ]
@@ -1610,6 +1876,26 @@
         "type": "rest",
         "description": "Submit a candidate application via the careers site application form",
         "sourceUrl": "https://docs.recruitee.com/reference/candidates-post"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_005",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "POST /v1/companies/{company_id}/payrolls",
+        "type": "rest",
+        "description": "Create off-cycle payroll run to pay final wages and PTO payout",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/create-an-off-cycle-payroll.md"
+      },
+      {
+        "method": "GET /v1/companies/{company_uuid}/payrolls",
+        "type": "rest",
+        "description": "Retrieve unprocessed/upcoming payrolls to locate or confirm the off-cycle run",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       }
     ]
   },
@@ -1794,7 +2080,7 @@
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate inputs and surface submission blockers preventing contractor payment",
+        "description": "Validate contractor payability and surface submission blockers before payment",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -1873,19 +2159,13 @@
     "taskId": "opp_008",
     "nodeId": "n2",
     "arenaId": "email",
-    "productId": "zero",
+    "productId": "gmail",
     "calls": [
       {
-        "method": "create_and_send_email",
-        "type": "mcp",
-        "description": "Create and send a new email from the connected account",
-        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
-      },
-      {
-        "method": "send_existing_draft",
-        "type": "mcp",
-        "description": "Send an existing drafted email after approval",
-        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send the composed email from the company Gmail account",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
       }
     ]
   },
@@ -1938,6 +2218,20 @@
     ]
   },
   {
+    "taskId": "ops_013",
+    "nodeId": "n5",
+    "arenaId": "compliance-automation",
+    "productId": "drata",
+    "calls": [
+      {
+        "method": "POST /openapi/reference/v2/tag/Devices/",
+        "type": "rest",
+        "description": "Create or update device compliance data for custom connection, feeding evidence into SOC 2 controls",
+        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Devices/"
+      }
+    ]
+  },
+  {
     "taskId": "prod_002",
     "nodeId": "n5",
     "arenaId": "edge-platforms",
@@ -1980,8 +2274,8 @@
       {
         "method": "check_domain_availability",
         "type": "mcp",
-        "description": "Check a domain name availability via Dynadot MCP",
-        "sourceUrl": "https://www.dynadot.com/domain/mcp"
+        "description": "Check whether a domain name is available via the Dynadot MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
   },
@@ -2036,6 +2330,20 @@
         "type": "mcp",
         "description": "Check if a domain is available via the Porkbun MCP server",
         "sourceUrl": "https://porkbun.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n2",
+    "arenaId": "domain-registrars",
+    "productId": "dynadot",
+    "calls": [
+      {
+        "method": "register_domain",
+        "type": "mcp",
+        "description": "Register a domain via Dynadot's MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
   },
@@ -2160,20 +2468,6 @@
         "type": "graphql",
         "description": "Create a tracker issue for a follow-up action",
         "sourceUrl": "https://linear.app/developers/graphql.md"
-      }
-    ]
-  },
-  {
-    "taskId": "prod_011",
-    "nodeId": "n2",
-    "arenaId": "incident-management",
-    "productId": "betterstack",
-    "calls": [
-      {
-        "method": "POST /api/v2/monitors",
-        "type": "rest",
-        "description": "Create an uptime monitor via Better Stack's Uptime API",
-        "sourceUrl": "https://betterstack.com/docs/uptime/api/getting-started-with-uptime-api/"
       }
     ]
   },
@@ -2622,6 +2916,62 @@
     ]
   },
   {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send announcement message from an inbox to the team",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap/api/",
+        "type": "rest",
+        "description": "Send email announcement via JMAP methodCalls (Email/set and EmailSubmission/set) in one HTTP request",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send the handbook announcement email to team recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_003",
+    "nodeId": "n5",
+    "arenaId": "email",
+    "productId": "zero",
+    "calls": [
+      {
+        "method": "send_email",
+        "type": "mcp",
+        "description": "Create and send a new email to announce the handbook to the team",
+        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
+      }
+    ]
+  },
+  {
     "taskId": "scale_004",
     "nodeId": "n4",
     "arenaId": "team-chat",
@@ -2692,6 +3042,48 @@
         "type": "mcp",
         "description": "Query MRR and other revenue metrics via pre-built templates or SQL",
         "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n8",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send board deck email from agent's inbox to board members",
+        "sourceUrl": "https://docs.agentmail.to/messages.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n8",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap",
+        "type": "rest",
+        "description": "Send methodCalls batch including Email/set to submit board deck email via JMAP",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_005",
+    "nodeId": "n8",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send board deck email to board members via To/Cc/Bcc",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
       }
     ]
   },
@@ -2836,6 +3228,34 @@
     ]
   },
   {
+    "taskId": "scale_011",
+    "nodeId": "n2",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send security questionnaire email to vendor recipients",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_011",
+    "nodeId": "n2",
+    "arenaId": "email",
+    "productId": "zero",
+    "calls": [
+      {
+        "method": "send_email",
+        "type": "mcp",
+        "description": "Send security questionnaire emails to vendors",
+        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
+      }
+    ]
+  },
+  {
     "taskId": "scale_012",
     "nodeId": "n5",
     "arenaId": "team-chat",
@@ -2904,15 +3324,15 @@
     "productId": "gusto",
     "calls": [
       {
-        "method": "GET /v1/companies/{company_uuid}/payrolls?processing_statuses=unprocessed",
+        "method": "GET /v1/companies/{company_uuid}/payrolls",
         "type": "rest",
-        "description": "Retrieve unprocessed/upcoming payrolls to identify and run the final payroll",
+        "description": "Retrieve upcoming/off-cycle payrolls for the company before running final payroll",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       },
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate final contractor termination payments before submission",
+        "description": "Validate and preview final contractor payments before submission",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -3174,6 +3594,20 @@
         "type": "rest",
         "description": "Update page content blocks to write or revise the spec text",
         "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "asana",
+    "calls": [
+      {
+        "method": "POST /tasks",
+        "type": "rest",
+        "description": "Create a new task via the Asana API to track the feature",
+        "sourceUrl": "https://developers.asana.com"
       }
     ]
   },
@@ -3453,40 +3887,6 @@
     "taskId": "sw_010",
     "nodeId": "n5",
     "arenaId": "mcp-infrastructure",
-    "productId": "composio",
-    "calls": [
-      {
-        "method": "composio.sessions.create(user_id=\"user_123\", mcp=True)",
-        "type": "sdk",
-        "description": "Create an agent session with MCP enabled, exposing a hosted MCP server for connected tools",
-        "sourceUrl": "https://docs.composio.dev/docs/sessions-via-mcp"
-      },
-      {
-        "method": "POST /mcp",
-        "type": "rest",
-        "description": "Initialize connection to Composio's shared hosted MCP endpoint for MCP-compatible clients",
-        "sourceUrl": "https://connect.composio.dev/mcp"
-      }
-    ]
-  },
-  {
-    "taskId": "sw_010",
-    "nodeId": "n5",
-    "arenaId": "mcp-infrastructure",
-    "productId": "glama",
-    "calls": [
-      {
-        "method": "GET /api/mcp/v1/servers",
-        "type": "rest",
-        "description": "List/search MCP servers in Glama's registry to discover vendor connectors to connect",
-        "sourceUrl": "https://glama.ai/api/mcp/v1/servers?first=3"
-      }
-    ]
-  },
-  {
-    "taskId": "sw_010",
-    "nodeId": "n5",
-    "arenaId": "mcp-infrastructure",
     "productId": "smithery",
     "calls": [
       {
@@ -3536,6 +3936,48 @@
     ]
   },
   {
+    "taskId": "tax_002",
+    "nodeId": "n3",
+    "arenaId": "email",
+    "productId": "agentmail",
+    "calls": [
+      {
+        "method": "POST /v1/inboxes/{inbox_id}/messages/send",
+        "type": "rest",
+        "description": "Send financial package with attachments to CPA from agent inbox",
+        "sourceUrl": "https://docs.agentmail.to/attachments.md"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n3",
+    "arenaId": "email",
+    "productId": "fastmail",
+    "calls": [
+      {
+        "method": "POST /jmap",
+        "type": "rest",
+        "description": "Submit a JMAP methodCalls request (e.g. Email/set) to send the financial email to the CPA",
+        "sourceUrl": "https://jmap.io"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n3",
+    "arenaId": "email",
+    "productId": "gmail",
+    "calls": [
+      {
+        "method": "POST /gmail/v1/users/{userId}/messages/send",
+        "type": "rest",
+        "description": "Send financial package email to CPA",
+        "sourceUrl": "https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send"
+      }
+    ]
+  },
+  {
     "taskId": "tax_010",
     "nodeId": "n2",
     "arenaId": "payroll",
@@ -3544,7 +3986,7 @@
       {
         "method": "GET /v1/companies/{company_uuid}/payrolls",
         "type": "rest",
-        "description": "Retrieve payroll runs for the company to derive QRE payroll base",
+        "description": "Retrieve company payroll runs to gather QRE payroll data",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       }
     ]
@@ -3596,10 +4038,24 @@
     "productId": "composio",
     "calls": [
       {
-        "method": "POST /mcp",
-        "type": "rest",
-        "description": "Initialize connection to Composio's hosted MCP endpoint to register the server with an agent runtime",
-        "sourceUrl": "https://connect.composio.dev/mcp"
+        "method": "composio.mcp.create(name=\"my-gmail-server\", toolkits=[{\"toolkit\": \"gmail\", \"auth_config\": \"ac_xyz123\"}], allowed_tools=[\"GMAIL_FETCH_EMAILS\", \"GMAIL_SEND_EMAIL\"])",
+        "type": "sdk",
+        "description": "Create a hosted MCP server registered with allowed toolkits/tools for the agent runtime",
+        "sourceUrl": "https://docs.composio.dev/docs/single-toolkit-mcp.md"
+      }
+    ]
+  },
+  {
+    "taskId": "vendor_010",
+    "nodeId": "n3",
+    "arenaId": "mcp-infrastructure",
+    "productId": "gram",
+    "calls": [
+      {
+        "method": "gram install",
+        "type": "cli",
+        "description": "Install toolsets as MCP servers into AI agent runtimes",
+        "sourceUrl": "https://www.speakeasy.com/docs/ai-control-plane/reference/command-line"
       }
     ]
   },
