@@ -233,15 +233,8 @@ export default async function ProductPage({
             <ImUsing arenaId={category} productId={id} productName={product.name} />
             {tryable ? (
               <>
-                {/* Vendor link stays, demoted to plain domain text — trying beats bouncing. */}
-                <a
-                  href={product.urls.site}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="shrink-0 font-mono text-sm text-zinc-400 underline decoration-zinc-700 underline-offset-2 transition hover:text-emerald-300"
-                >
-                  {new URL(product.urls.site).hostname.replace(/^www\./, '')} ↗
-                </a>
+                {/* Founder 2026-09-23: the right-side domain link is gone — the Access chips
+                    below carry the site link, and the header stays focused on Try it. */}
                 <a
                   href="#try-it"
                   className="shrink-0 rounded-lg bg-emerald-400 px-4 py-2 text-sm font-semibold text-zinc-950 transition hover:bg-emerald-300"
@@ -328,16 +321,8 @@ export default async function ProductPage({
           {/* One small chip only (the header is crowded): jumps to the processes section below.
               Rendered only when judged step-serving appearances exist — never for
               computer-use-only vendors. */}
-          {processesServed > 0 && (
-            <a
-              href="#processes"
-              title={`${product.name} has a judged step score in ${processesServed} founder operating ${processesServed === 1 ? 'process' : 'processes'} — see the table below.`}
-              className="inline-flex items-center gap-1 rounded-full border border-zinc-800 px-2.5 py-0.5 text-xs text-zinc-400 transition hover:border-emerald-400/60 hover:text-emerald-300"
-            >
-              serves {processesServed} {processesServed === 1 ? 'process' : 'processes'} →
-            </a>
-          )}
-        </div>
+          {/* "serves N processes →" chip removed (founder 2026-09-23) — the full table below
+              carries it. */}        </div>
       </div>
 
       {/* Founder 2026-09-15: only the human essentials above the fold (Access, Install,

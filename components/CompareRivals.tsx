@@ -3,7 +3,7 @@ import AgentAccessGlyphs from '@/components/AgentAccessGlyphs'
 import GeoMark from '@/components/GeoMark'
 import ProductLogo from '@/components/ProductLogo'
 import ShutdownBadge from '@/components/ShutdownBadge'
-import { compareRivalsFor, type CompareRivalRow } from '@/lib/compareRivals'
+import { compareRivalsFor, vsSlugFor, type CompareRivalRow } from '@/lib/compareRivals'
 import type { CategoryData } from '@/lib/data-helpers'
 
 // Server component: "How it compares" — the founder ask (2026-09-22): a product page shows a
@@ -211,6 +211,30 @@ export default function CompareRivals({ data, productId }: { data: CategoryData;
             ))}
           </tbody>
         </table>
+      </div>
+      {/* Founder 2026-09-23: the head-to-head links live under this table (moved from the top
+          actions rail) — every same-arena rival's /vs page plus the alternatives directory. */}
+      <div className="mt-3 text-xs">
+        <p className="text-[10px] uppercase tracking-widest text-zinc-500">Compare head-to-head</p>
+        <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1.5">
+          {data.products
+            .filter((p) => p.id !== productId)
+            .map((rival) => (
+              <Link
+                key={rival.id}
+                href={`/vs/${vsSlugFor(data, productId, rival.id)}`}
+                className="inline-flex items-center gap-1.5 text-zinc-400 transition hover:text-emerald-300"
+              >
+                <ProductLogo product={rival} size={16} />
+                vs {rival.name}
+              </Link>
+            ))}
+        </div>
+        <p className="mt-1.5">
+          <Link href={`/alternatives/${productId}`} className="text-zinc-400 hover:text-emerald-300">
+            Alternatives to {data.products.find((p) => p.id === productId)?.name ?? productId} →
+          </Link>
+        </p>
       </div>
       <div className="mt-2 text-xs">
         <Link

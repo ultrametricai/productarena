@@ -140,26 +140,8 @@ export default function ProductActions({
 
         {/* Install moved out of this rail (founder 2026-09-23): it renders just under the
             "Try it agentically" microterminal on the product page instead. */}
-        {rivals.length > 0 && (
-          <div>
-            <SectionLabel>Compare head-to-head</SectionLabel>
-            <div className="flex flex-wrap gap-x-3 gap-y-1.5">
-              {/* Founder 2026-09-15: rival logos on the vs links — same small-logo treatment as
-                  the arena cards' overlapping-logo strips. */}
-              {rivals.map((rival) => (
-                <Link key={rival.id} href={`/vs/${slugFor(rival.id)}`} className={`inline-flex items-center gap-1.5 ${linkClass}`}>
-                  <ProductLogo product={rival} size={16} />
-                  vs {rival.name}
-                </Link>
-              ))}
-            </div>
-            <p className="mt-1.5">
-              <Link href={`/alternatives/${productId}`} className={linkClass}>
-                Alternatives to {product.name} →
-              </Link>
-            </p>
-          </div>
-        )}
+        {/* Compare head-to-head moved (founder 2026-09-23): it renders under the "How it
+            compares" table via components/CompareRivals.tsx's compareLinks footer. */}
       </div>
     </div>
   )

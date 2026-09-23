@@ -100,3 +100,11 @@ export function compareRivalsFor(data: CategoryData, productId: string, rivalCou
   }
   return [...self, ...rivals]
 }
+
+// The /vs slug for self-vs-rival, ordered by each product's position in data.products (the
+// ordering rankings.battles uses) so the link resolves whether or not a stored battle exists.
+export function vsSlugFor(data: CategoryData, selfId: string, rivalId: string): string {
+  const idx = (pid: string) => data.products.findIndex((p) => p.id === pid)
+  const [a, b] = idx(selfId) <= idx(rivalId) ? [selfId, rivalId] : [rivalId, selfId]
+  return battleSlug(a, b)
+}
