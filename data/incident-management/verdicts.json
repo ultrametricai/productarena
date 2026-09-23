@@ -3109,14 +3109,17 @@
     "productId": "rootly",
     "storyId": "agent-acks-escalates-api",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Rootly documents a full incident-management API (create incidents, timeline, retrospectives) and a hosted MCP server that lets AI clients query incidents, on-call schedules, and 'take action' with a large set of write-enabled tools (135 write paths per runtime probe), which strongly implies end-to-end incident handling without a dashboard. However, no evidence explicitly names 'acknowledge', 'escalate', or 'resolve' as documented API/MCP actions, leaving the exact scope of automatable lifecycle actions unconfirmed. Missing for 10: explicit doc/example showing ack/escalate/resolve calls via API or MCP tool names, and independent confirmation of successful end-to-end agent-driven resolution.",
+    "rationale": "Rootly documents an official MCP server and REST API that can create incidents, query on-call/escalation data, and 'take action' from IDEs like Cursor/Claude Code (rootly-docs-22/31/33/44), plus API key roles scoped to 'On-Call and Incident Response' (rootly-docs-49) and incident creation via API (rootly-docs-11). However, the evidence never explicitly enumerates acknowledge/escalate/resolve as discrete MCP tools or API endpoints, and the openapi probe returned 404s, leaving the full incident-lifecycle claim only implied rather than concretely documented end-to-end. Missing for 10: explicit API/MCP documentation of acknowledge, escalate, and resolve actions, a working OpenAPI/schema reference, and independent/hands-on confirmation that an agent can run the full loop without dashboard involvement.",
     "evidenceIds": [
       "rootly-docs-11",
       "rootly-docs-22",
+      "rootly-docs-31",
+      "rootly-docs-33",
       "rootly-docs-44",
-      "rootly-probe-rt-2",
+      "rootly-docs-49",
+      "rootly-probe-2",
       "rootly-probe-3"
     ]
   },
@@ -3126,26 +3129,29 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Rootly serves a live llms.txt file (HTTP 200) with a structured summary of the product, directly confirming an AI-native agent can be pointed at agent-oriented docs; this complements its documented MCP server for agentic tool use. Missing for 10: no independent/community confirmation that agents successfully consume llms.txt in practice.",
+    "rationale": "Direct probe confirms llms.txt is live at docs.rootly.com/llms.txt with a machine-readable summary of the product, and the docs site is structured with per-topic .md files (e.g. help-and-documentation.md, mcp-server.md) that agents can fetch directly. Missing for 10: independent third-party confirmation that an agent successfully consumed llms.txt in practice.",
     "evidenceIds": [
       "rootly-probe-1",
-      "rootly-docs-22",
-      "rootly-probe-3"
+      "rootly-docs-3",
+      "rootly-docs-44"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "agentic-ai-insights",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Rootly ships AI Summaries that auto-generate incident retrospectives and summaries from timeline/Slack/transcript data, plus an in-app 'Ask Rootly AI' chat for querying incident data in natural language and MCP-based similar-incident detection (TF-IDF). These are first-party documented AI-insight features embedded directly in the product. Missing for 10: independent/hands-on verification of output quality and no community corroboration of these specific AI features (community comments focus on pricing/workflow, not AI insights).",
+    "rationale": "Rootly ships multiple in-product AI features that generate insights/suggestions directly from incident data: AI Summaries auto-drafted from metadata/timeline/Slack/transcripts, Ask Rootly AI chat grounded in live incident context, AI blocks in retrospectives, Related Incidents matching via TF-IDF, and AI SRE that investigates alerts and proposes diagnoses using connectors like AWS/Atlassian. These are well documented across many first-party doc pages and cover summarization, Q&A, root-cause suggestions, and cross-incident pattern insight generation natively inside the product.\nMissing for 10: independent/hands-on validation of AI output quality or accuracy, and any user reviews specifically praising/critiquing these AI insight features.",
     "evidenceIds": [
       "rootly-docs-20",
       "rootly-docs-21",
-      "rootly-docs-23",
-      "rootly-docs-30",
-      "rootly-docs-48"
+      "rootly-docs-53",
+      "rootly-docs-54",
+      "rootly-docs-57",
+      "rootly-docs-59",
+      "rootly-docs-60",
+      "rootly-docs-58"
     ]
   },
   {
@@ -3154,45 +3160,50 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Rootly's Workflows are explicitly documented as an 'automation engine' that runs structured actions automatically based on trigger events and run conditions, with 152 available action types spanning Slack, Jira, on-call, AI, and incident ops — enabling background automations like auto-creating channels, notifying stakeholders, filing tickets, and starting retros without manual intervention. missing for 10: independent/hands-on evidence confirming autonomous background execution in practice, and clearer detail on trigger types (e.g., scheduled/webhook triggers) beyond docs summaries.",
+    "rationale": "Rootly's Workflows engine is explicitly described as 'Rootly's automation engine' that runs structured actions automatically based on trigger events, run conditions, and actions, with 152 documented action types spanning Slack, Jira, on-call, AI, and incident operations, enabling background automations like auto-creating channels, notifying stakeholders, filing tickets, and starting retros 'the same way every time' without manual intervention. This is reinforced by AI SRE, which autonomously investigates alerts/incidents and produces diagnoses, and MCP server access letting AI agents take action programmatically. Missing for 10: independent/hands-on verification that workflows reliably run unattended at scale, and no case studies quantifying autonomous automation outcomes beyond vendor docs.",
     "evidenceIds": [
       "rootly-docs-16",
       "rootly-docs-17",
       "rootly-docs-29",
       "rootly-docs-34",
       "rootly-docs-41",
-      "rootly-docs-45"
+      "rootly-docs-60",
+      "rootly-docs-44"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Rootly ships a built-in AI assistant ('Rootly AI in Web') embedded in the incident page for natural-language Q&A and an automated AI Summaries feature (/rootly summary) that drafts incident data — evidence of a built-in assistant exists. However, the documented 'take action' capability (query incidents, run actions) is explicitly scoped to external MCP-compatible clients (Cursor, Claude Code, etc.), not the in-product assistant itself, so true task delegation within the product's own UI is unproven. Missing for 10: documented examples of the built-in web AI assistant executing actions/workflows (not just answering questions), and independent/hands-on confirmation of task delegation via the in-app assistant.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rootly ships a built-in conversational AI assistant (Rootly AI) accessible in web app, Slack (/rootly summary, Q&A), and mobile, capable of answering questions, generating summaries/retrospective drafts, finding related incidents, and taking action via connectors (AWS, Atlassian) — a clear delegate-to-assistant experience. missing for 10: independent/hands-on third-party validation of the AI assistant's task delegation quality (community evidence largely covers pricing/Slack-centric complaints, not the AI assistant itself).",
     "evidenceIds": [
-      "rootly-docs-20",
       "rootly-docs-21",
       "rootly-docs-30",
       "rootly-docs-47",
-      "rootly-docs-48",
-      "rootly-docs-22"
+      "rootly-docs-53",
+      "rootly-docs-54",
+      "rootly-docs-56",
+      "rootly-docs-60",
+      "rootly-docs-62",
+      "rootly-docs-58",
+      "rootly-docs-59"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Rootly's REST API supports creating/managing incidents from CI/CD pipelines and external automation systems (rootly-docs-11, rootly-docs-24), and the API key/token flow enables headless, non-interactive use, including via the MCP server which can run keylessly until gated by an API token (rootly-probe-rt-2). However, there's no dedicated CLI tool, no CI-specific integration guide/examples (e.g., GitHub Actions snippet), and no evidence of a documented headless batch/automation mode beyond API calls. missing for 10: dedicated CLI for CI pipelines, explicit CI/CD integration examples or GitHub Actions templates, and independent confirmation of headless automation use in production CI environments.",
+    "rationale": "Rootly's API explicitly supports creating and managing incidents from CI/CD pipelines and external automation systems, with API key generation and a workflows automation engine that runs actions on trigger events — this is direct headless/CI automation support. Missing for 10: a dedicated CLI tool, CI-specific tutorials/examples, and independent hands-on corroboration of CI usage.",
     "evidenceIds": [
       "rootly-docs-11",
       "rootly-docs-24",
-      "rootly-docs-49",
-      "rootly-probe-rt-2",
-      "rootly-probe-rt-1"
+      "rootly-docs-16",
+      "rootly-docs-29",
+      "rootly-docs-49"
     ]
   },
   {
@@ -3200,46 +3211,46 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "All evidence describes Rootly exposing its own MCP server so external AI tools (Cursor, Claude Code, etc.) can consume Rootly's data/actions — this is the reverse direction of the story, which asks whether a user can plug external MCP servers INTO Rootly so its own AI features (e.g. Rootly AI chat, workflows) can use their tools. No evidence shows Rootly acting as an MCP client or supporting external MCP server configuration.",
+    "confidence": "medium",
+    "rationale": "All MCP-related evidence describes Rootly shipping its own MCP server so external AI clients (Cursor, Claude Code, etc.) can consume Rootly's tools — the opposite direction from this story, which asks whether Rootly itself can plug in external MCP servers to use their tools. Rootly's AI connectors (Atlassian, AWS) are proprietary integrations, not MCP-based, and there is no evidence Rootly acts as an MCP client.",
     "evidenceIds": [
       "rootly-docs-22",
       "rootly-docs-44",
-      "rootly-probe-3",
-      "rootly-probe-rt-1",
-      "rootly-probe-rt-2"
+      "rootly-docs-58",
+      "rootly-docs-59",
+      "rootly-probe-3"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "agentic-mcp-server",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Rootly ships an official documented MCP server (docs.rootly.com/integrations/mcp-server) exposing incident data/tools to MCP-compatible clients like Cursor, Windsurf, Claude Code, Gemini CLI, and this is corroborated by a live runtime probe showing the hosted remote MCP endpoint responding with proper OAuth flow and a PyPI-installable server package starting with 124 tools. Missing for 10: independent third-party hands-on review of the MCP server's tool quality beyond vendor docs/probes.",
+    "rationale": "Rootly is a SaaS incident-management platform (not itself an agent), and its docs explicitly describe an official Rootly MCP Server implementing the Model Context Protocol, exposing incident data and actions as tools usable from Cursor, Windsurf, Claude Code, Gemini CLI, or any MCP-compatible client. This is corroborated by a direct probe confirming the documented MCP server page. Missing for 10: independent hands-on third-party validation of the MCP server working in practice, and details on authentication/setup robustness beyond docs.",
     "evidenceIds": [
       "rootly-docs-22",
       "rootly-docs-44",
-      "rootly-probe-3",
-      "rootly-probe-rt-1",
-      "rootly-probe-rt-2"
+      "rootly-docs-23",
+      "rootly-probe-3"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Rootly ships an in-app AI chat ('Ask Rootly AI') for natural-language queries on incidents, a Slack slash command (/rootly summary) and, notably, an official MCP server that lets users query incidents, check on-call schedules, and take actions using natural language from AI-native environments like Cursor, Claude Code, and Gemini CLI. Runtime probes confirm the MCP server is live and functioning (401/auth-gated as expected), corroborating the documented capability.\n\nmissing for 10: independent/hands-on evidence of natural-language command quality/accuracy, broader third-party review of the AI chat or MCP NL experience beyond first-party docs.",
+    "rationale": "Rootly documents multiple natural-language interfaces: an in-app AI chat for querying incidents (rootly-docs-21, rootly-docs-53), a conversational Slack AI agent that executes actions from plain-English instructions like 'Page the security team, and convert this to a private incident' (rootly-docs-56), a mobile conversational AI agent (rootly-docs-62), and an MCP server letting users query incidents, on-call schedules, and take action via natural language from Cursor, Claude Code, etc. (rootly-docs-22, rootly-docs-31, rootly-docs-33, rootly-docs-44). This spans web, Slack, mobile, and IDE/agent surfaces. Missing for 10: independent/hands-on user reports confirming these NL commands work reliably in production, and no evidence of broader freeform NL command coverage beyond the documented examples.",
     "evidenceIds": [
       "rootly-docs-21",
+      "rootly-docs-53",
+      "rootly-docs-56",
+      "rootly-docs-62",
       "rootly-docs-22",
-      "rootly-docs-30",
-      "rootly-docs-44",
-      "rootly-probe-3",
-      "rootly-probe-rt-1",
-      "rootly-probe-rt-2"
+      "rootly-docs-31",
+      "rootly-docs-33",
+      "rootly-docs-44"
     ]
   },
   {
@@ -3247,8 +3258,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows an API, MCP server, and Slack slash-commands, but no official CLI tool is documented anywhere in the pack. missing for 10: any mention of a dedicated Rootly CLI, its install method, or command reference.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions an official CLI for Rootly; the product offers an API, MCP server, and Slack/Teams integrations, but no CLI tool is documented or referenced.",
     "evidenceIds": []
   },
   {
@@ -3256,17 +3267,13 @@
     "storyId": "agentic-public-api",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Rootly documents a public REST API for creating/managing incidents programmatically (rootly-docs-11), an API key generation/auth flow with scoped roles (rootly-docs-24, rootly-docs-49), and a public status-page JSON API (rootly-docs-19), giving AI-native users multiple documented ways to drive the product programmatically; this is reinforced by a documented MCP server exposing incident data/actions as callable tools for AI agents (rootly-docs-44, rootly-probe-3, rootly-probe-rt-1/2). Missing for 10: a discoverable OpenAPI/swagger spec (probe found only 404s at standard OpenAPI paths) and independent third-party corroboration of API robustness beyond vendor docs.",
+    "confidence": "medium",
+    "rationale": "Rootly documents a public API (creating incidents via API, API key generation with scoped roles) plus a status page public JSON API, indicating programmatic control is a first-class, documented capability. missing for 10: no discoverable OpenAPI/swagger spec (probe found only 404s) and no independent/hands-on corroboration of API usage beyond docs.",
     "evidenceIds": [
       "rootly-docs-11",
       "rootly-docs-24",
       "rootly-docs-49",
       "rootly-docs-19",
-      "rootly-docs-44",
-      "rootly-probe-3",
-      "rootly-probe-rt-1",
-      "rootly-probe-rt-2",
       "rootly-probe-2"
     ]
   },
@@ -3276,12 +3283,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Rootly documents generating API keys (rootly-docs-24) that are assigned a role ('On-Call and Incident Response') at creation (rootly-docs-49), and the official MCP server requires a distinct ROOTLY_API_TOKEN credential for agent access (rootly-probe-rt-2). This shows some notion of scoped credentials for machine/agent use, but there's no evidence of fine-grained least-privilege controls (e.g., read-only vs write, per-resource/team scoping) — indeed the MCP server logs show 135 write-capable tools enabled by default, suggesting broad rather than minimal privilege. Missing for 10: documented ability to restrict API keys to specific resources/teams, read-only or write-limited key types, and independent confirmation that scoping actually limits agent capability in practice.",
+    "rationale": "Rootly documents API key generation and notes that 'Global API Keys are assigned an On-Call and Incident Response role when they're generated,' showing some role-based scoping exists for API credentials that could be used by an agent (rootly-docs-24, rootly-docs-49). However, there's no evidence of granular, per-agent least-privilege scoping (e.g., custom permission sets, resource-level restrictions, or multiple distinct scoped roles) beyond this single fixed role. Missing for 10: documentation of customizable/fine-grained permission scopes, ability to issue distinct scoped keys per agent/task, and any audit or revocation controls specific to agent credentials.",
     "evidenceIds": [
       "rootly-docs-24",
-      "rootly-docs-49",
-      "rootly-probe-rt-2",
-      "rootly-docs-44"
+      "rootly-docs-49"
     ]
   },
   {
@@ -3290,7 +3295,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Rootly offers a REST API with API-key auth (rootly-docs-11, rootly-docs-24, rootly-docs-49) and an MCP server for agentic tool use, but there is no mention anywhere of official client SDKs (e.g., Python/JS/Go libraries) for developers to build against — the OpenAPI spec probe even returned 404s (rootly-probe-2), suggesting no formal SDK generation pipeline is publicly documented.",
+    "rationale": "Evidence shows a REST API (docs-11, docs-24, docs-49) and an MCP server for agent tooling (docs-22/31/33/44, probe-3), but there is no mention anywhere of official client SDKs (e.g., Python, JS, Ruby libraries) for developers to build against, and a probe for an OpenAPI spec returned 404s (rootly-probe-2), suggesting no formal SDK-generation artifact either.",
     "evidenceIds": [
       "rootly-docs-11",
       "rootly-docs-24",
@@ -3304,7 +3309,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack never mentions webhook subscriptions for events (e.g., incident created/updated) that an AI agent could subscribe to; it only covers inbound alert ingestion, workflows, and the MCP server for pull-based querying, not outbound webhook event subscriptions. Missing for 10: any documentation of a webhook subscription/registration mechanism, event payload schema, or signing/verification for outbound webhooks.",
+    "rationale": "The evidence pack covers Rootly's API for creating incidents, workflow automation triggers, and MCP server for AI agents, but contains no mention of outbound webhooks for subscribing to Rootly events. This is a plausible axis for an incident management platform, so absence of evidence means 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -3312,48 +3317,50 @@
     "storyId": "ai-drafted-postmortems",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Rootly's retrospectives feature auto-drafts Summary, Impact, Root Cause, Mitigation, Resolution, and Curated Timeline sections directly from incident data, Slack channel, and bridge-call transcripts, with real-time collaborative editing for human review — directly matching the story's ask for AI-drafted postmortems ready for review. missing for 10: explicit mention of 'follow-ups/action items' as a drafted postmortem section (action items are referenced only in AI Summaries, not explicitly tied to the retrospective draft), and independent/hands-on corroboration beyond vendor docs.",
+    "confidence": "high",
+    "rationale": "Rootly's retrospectives feature explicitly auto-drafts postmortem sections (Summary, Impact, Root Cause, Mitigation, Resolution, Curated Timeline) from incident data, Slack, and call transcripts, and AI blocks draft sections like 'What Happened' or 'Contributing Factors' directly from incident context, with follow-ups tracked via action items and a real-time collaborative editor for human review. This covers timeline, contributing factors, and follow-ups generation with human-editable review workflow. Missing for 10: independent/hands-on verification of draft quality and no explicit community corroboration of the postmortem-drafting feature specifically.",
     "evidenceIds": [
       "rootly-docs-13",
       "rootly-docs-27",
-      "rootly-docs-14",
-      "rootly-docs-15",
-      "rootly-docs-28",
-      "rootly-docs-42",
+      "rootly-docs-54",
       "rootly-docs-12",
-      "rootly-docs-20"
+      "rootly-docs-40",
+      "rootly-docs-51",
+      "rootly-docs-28",
+      "rootly-docs-15"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "ai-incident-summaries",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Rootly's AI Summaries feature explicitly drafts live summaries from incident metadata, alerts, timeline, Slack messages and meeting transcripts, triggerable via a slash command mid-incident and delivered privately to responders (rootly-docs-20, -30, -47, -48). Retrospective drafting further auto-generates Summary/Impact/Root Cause/Timeline sections from Slack channel and bridge-call transcripts (rootly-docs-13, -27), covering the 'scribed call notes' and 'drafted updates' parts of the story. Missing for 10: independent/hands-on verification of summary/transcript quality, and no dedicated real-time call-transcription product page distinct from retrospective drafting.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rootly documents live AI-generated summaries (AI Summaries drafting from timeline, alerts, Slack, transcripts; /rootly summary command), automatically drafted retrospective sections (Summary, Impact, Root Cause, etc.) from Slack channel and bridge-call transcripts, AI blocks that draft retro sections in-editor, and Meeting Scribe which joins the bridge automatically to produce a live, searchable, speaker-labeled record — directly matching live summaries, drafted updates, and scribed call notes. missing for 10: independent/hands-on verification of accuracy and real-time latency of these AI features beyond vendor docs.",
     "evidenceIds": [
       "rootly-docs-20",
       "rootly-docs-30",
-      "rootly-docs-47",
-      "rootly-docs-48",
       "rootly-docs-13",
-      "rootly-docs-27"
+      "rootly-docs-54",
+      "rootly-docs-55",
+      "rootly-docs-52",
+      "rootly-docs-48"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "ai-root-cause-investigation",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Rootly's AI features (AI Summaries, Ask Rootly AI, and the MCP `find_related_incidents` tool using TF-IDF similarity) can surface similar past incidents and draft a Root Cause section from incident data, timeline, and transcripts, giving partial coverage of the 'similar past incidents' and root-cause narrative pieces. However, these are user-triggered (slash command, chat query, or explicit MCP tool call) rather than an autonomous investigator that proactively correlates code/infra changes and live telemetry before a human asks. Missing for 10: evidence of automatic/unprompted change-correlation, telemetry ingestion and analysis, and a proactive (not command-triggered) investigation workflow.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Rootly AI SRE explicitly investigates active alerts/incidents, 'tests likely causes against live evidence' and produces a reviewable diagnosis with next steps, correlating telemetry via AWS/CloudWatch connectors and matching against past incidents via find_related_incidents/TF-IDF similarity and Rootly AI's related-incidents matching — all before human intervention. Missing for 10: independent hands-on validation of the AI SRE's diagnostic accuracy and no third-party benchmark of correlation quality.",
     "evidenceIds": [
-      "rootly-docs-13",
-      "rootly-docs-20",
+      "rootly-docs-60",
+      "rootly-docs-57",
+      "rootly-docs-59",
       "rootly-docs-23",
-      "rootly-docs-21",
-      "rootly-docs-30"
+      "rootly-docs-58",
+      "rootly-docs-53"
     ]
   },
   {
@@ -3396,7 +3403,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Rootly documents an API reference page and API-key generation (rootly-docs-24, rootly-docs-49) but there's no evidence of an interactive, runnable-example explorer — probes for standard OpenAPI/Swagger specs at docs.rootly.com all returned 404 (rootly-probe-2), and no docs mention a 'try it out' console or embedded runnable code samples.",
+    "rationale": "Evidence shows only a basic API reference page (key generation, roles) with no mention of an interactive console, try-it-out feature, or runnable code examples; a probe for OpenAPI/Swagger specs returned 404s across all checked paths, suggesting no interactive API reference is exposed.",
     "evidenceIds": [
       "rootly-docs-24",
       "rootly-docs-49",
@@ -3408,12 +3415,11 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Rootly has a documented REST API and API-key system (rootly-docs-24, rootly-docs-49), but an explicit probe for a machine-readable OpenAPI/Swagger spec at all standard paths (openapi.json, swagger.json, etc.) returned 404 on every candidate (rootly-probe-2), and no other evidence pack item shows a downloadable spec file.",
+    "confidence": "medium",
+    "rationale": "Rootly has an API reference and API key generation docs, but explicit probes for OpenAPI/Swagger spec files at standard locations all returned 404, and no evidence pack item shows a downloadable machine-readable spec.",
     "evidenceIds": [
-      "rootly-probe-2",
       "rootly-docs-24",
-      "rootly-docs-49"
+      "rootly-probe-2"
     ]
   },
   {
@@ -3421,8 +3427,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack of a sandbox/staging environment, test mode, or data isolation feature for Rootly or its MCP server; in fact the MCP server evidence shows write-enabled tools (135 write paths) operating against live data with no mention of a non-production mode.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions a sandbox, test/staging environment, or any mechanism to try Rootly's AI/agentic features against non-production data; all docs describe live incident/on-call operations and MCP server actions against real data. This is an applicable axis for an AI-native/agentic tool (buyers would reasonably ask about safe testing), but nothing in the evidence supports it. Missing for 10: any mention of a sandbox mode, test environment, dry-run/simulation capability, or demo/staging data separate from production.",
     "evidenceIds": []
   },
   {
@@ -3431,11 +3437,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is evidence of an API with key generation (rootly-docs-24, rootly-docs-49) and an incident-creation API (rootly-docs-11), but no documentation of API versioning, version headers, or a deprecation policy anywhere in the pack; probes show no OpenAPI spec discoverable (rootly-probe-2). Missing for 10: any mention of API version numbers, backward-compatibility guarantees, or a published deprecation/sunset policy.",
+    "rationale": "There is an API reference and API key generation docs, but no evidence of API versioning scheme or a documented deprecation policy; probes for OpenAPI spec all 404'd. Missing for 10: versioning scheme documentation, deprecation policy/changelog for API, evidence of stable version support windows.",
     "evidenceIds": [
       "rootly-docs-24",
       "rootly-docs-49",
-      "rootly-docs-11",
       "rootly-probe-2"
     ]
   },
@@ -3445,13 +3450,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Rootly's docs describe workflows, an API, and an MCP server for automating individual incident/alert actions, but nothing describes bulk operations (e.g., batch-updating or resolving many incidents/alerts/schedules in one call). Workflow triggers and API creation are per-incident/event, not a documented multi-item batch operation feature.",
-    "evidenceIds": [
-      "rootly-docs-16",
-      "rootly-docs-17",
-      "rootly-docs-11",
-      "rootly-docs-44"
-    ]
+    "rationale": "Rootly's docs describe API access, an automation/workflow engine, and an MCP server for querying and acting on individual incidents, but nothing in the evidence pack describes bulk or batch operations (e.g., bulk update/close of many incidents or alerts at once). The axis applies to an API-driven incident platform, but no evidence confirms bulk-item support.",
+    "evidenceIds": []
   },
   {
     "productId": "rootly",
@@ -3459,14 +3459,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Rootly's Workflows engine is explicitly documented as its automation engine, running structured actions automatically based on trigger events, run conditions, and actions, with 152 distinct workflow action types across Slack, Jira, on-call, AI, and incident operations. This directly satisfies rule-based automatic triggering on events, reinforced by alert routing rules and escalation policies that also apply condition-based automated behavior. Missing for 10: independent/hands-on verification of workflow rule configuration in practice and more detail on conditional logic complexity beyond docs summaries.",
+    "rationale": "Rootly's Workflows engine is explicitly documented as an automation system defined by trigger events, run conditions, and actions, with a reference of 152 action types spanning Slack, Jira, on-call, AI, and incident ops (rootly-docs-16,17,29,41), plus rule-based Alert Routing (rootly-docs-10) and escalation policies (rootly-docs-39) that trigger actions on incoming events. This matches the story of defining rules that fire actions automatically on events. Missing for 10: independent/hands-on validation of workflow reliability at scale, and explicit documentation of AI-agent-initiated or LLM-driven rule creation rather than just AI actions within workflows.",
     "evidenceIds": [
       "rootly-docs-16",
       "rootly-docs-17",
       "rootly-docs-29",
       "rootly-docs-41",
       "rootly-docs-10",
-      "rootly-docs-34"
+      "rootly-docs-39"
     ]
   },
   {
@@ -3475,13 +3475,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Rootly's Workflows are described as an automation engine triggered by incident-related events and conditions (docs-16, docs-29, docs-41), but there is no evidence of a scheduling/cron-style trigger or recurring-job capability for workflows — 'schedules' in the docs refer only to on-call rotation schedules (docs-6, docs-26), not automation scheduling. Missing for 10: any documented scheduled/cron trigger type in the workflow trigger-events list, recurring workflow execution examples, or API/UI support for time-based recurring automation.",
+    "rationale": "Rootly's Workflows engine (docs-16/29/41) runs on 'trigger events, run conditions, actions' but no evidence describes a time-based/cron-style recurring schedule trigger for workflows; on-call 'schedules' (docs-6/26) refer to rotation staffing, not job scheduling. Missing for 10: any documentation of a scheduled/recurring workflow trigger or cron-like automation feature.",
     "evidenceIds": [
       "rootly-docs-16",
       "rootly-docs-29",
       "rootly-docs-41",
-      "rootly-docs-6",
-      "rootly-docs-26"
+      "rootly-docs-17"
     ]
   },
   {
@@ -3489,14 +3488,9 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Rootly's workflow automation engine is documented in detail (triggers, conditions, 152 action types) but nothing in the evidence pack describes version history, diff/review workflows, or rollback capability for automations. Missing for 10: any mention of workflow versioning, change review/approval process, or rollback/revert mechanism for automations.",
-    "evidenceIds": [
-      "rootly-docs-16",
-      "rootly-docs-17",
-      "rootly-docs-29",
-      "rootly-docs-41"
-    ]
+    "confidence": "high",
+    "rationale": "Rootly's Workflows (docs-16, docs-29, docs-41) are the automation engine, but nothing in the evidence describes version history, change review/approval, or rollback capabilities for workflows/automations. This is a fair capability to ask about for an automation engine, so absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": []
   },
   {
     "productId": "rootly",
@@ -3504,12 +3498,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Rootly's on-call schedules, rotations, escalation policies, and even a mobile app, but nowhere mentions a calendar feed (iCal/ICS export) for syncing on-call shifts to a personal calendar. This is a standard capability for on-call scheduling tools and its absence here means no evidence supports it.",
-    "evidenceIds": [
-      "rootly-docs-6",
-      "rootly-docs-26",
-      "rootly-docs-43"
-    ]
+    "rationale": "The evidence covers schedules, rotations, overrides, and escalation policies but never mentions a personal calendar feed/ICS export for syncing on-call shifts to an external calendar. Missing for 10: any documentation of iCal/ICS feed, Google/Outlook calendar sync, or calendar subscription URL for on-call schedules.",
+    "evidenceIds": []
   },
   {
     "productId": "rootly",
@@ -3517,14 +3507,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe declaring/running/resolving incidents from Slack, Google Chat, or Teams, with automated channel creation, escalation-policy/role assignment, and stakeholder updates (rootly-docs-1, rootly-docs-34, rootly-docs-45, rootly-docs-7, rootly-docs-39). No community evidence concretely contradicts the chat-declare workflow itself (general skepticism in rootly-comm-7 is about PD parity, not a functional failure). Missing for 10: independent hands-on confirmation of the actual Slack/Teams declare flow and any real-world walkthrough beyond vendor docs.",
+    "rationale": "Docs clearly describe declaring/running/resolving incidents from Slack, Google Chat, and Teams, with automatic channel creation, role assignment, and updates via workflows (e.g., rootly-docs-1, 34, 45) and in-channel AI summaries (rootly-docs-30/47). Community evidence (rootly-comm-1) confirms real-world adoption without contradicting the chat-declare flow. Missing for 10: independent hands-on confirmation of the exact chat-declare UX and parity details for Teams/Google Chat beyond doc claims.",
     "evidenceIds": [
       "rootly-docs-1",
       "rootly-docs-34",
       "rootly-docs-45",
-      "rootly-docs-7",
-      "rootly-docs-39",
-      "rootly-docs-6"
+      "rootly-docs-30",
+      "rootly-docs-47",
+      "rootly-comm-1"
     ]
   },
   {
@@ -3532,12 +3522,13 @@
     "storyId": "escalation-policies",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Rootly's docs explicitly describe escalation policies with multi-step targets, time delays, and round robin to ensure alerts get acknowledged, directly matching the story's requirements for delays, fallback responders, and repeat rounds until acknowledgment (rootly-docs-39, rootly-docs-7). Missing for 10: independent hands-on validation of escalation behavior in practice and more detail on repeat-round/fallback mechanics beyond the doc summary.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly describe escalation policies with multi-step targets, time delays, round robin, and fallback to ensure alerts get acknowledged and acted on (rootly-docs-39), plus the general definition of escalation policies determining notification steps and what happens if unacknowledged (rootly-docs-7). There's a community comment skeptical that Rootly's on-call solves 'hard problems' (rootly-comm-7), but this is general skepticism, not a concrete failure of escalation mechanics, so it doesn't dispute the documented capability. missing for 10: independent/hands-on verification that repeat escalation rounds and fallback responders work in practice beyond docs.",
     "evidenceIds": [
-      "rootly-docs-39",
       "rootly-docs-7",
-      "rootly-docs-5"
+      "rootly-docs-39",
+      "rootly-docs-2",
+      "rootly-docs-32"
     ]
   },
   {
@@ -3546,11 +3537,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Rootly's workflow automation supports Jira actions and can 'file tickets' as part of incident response automation, and AI summaries reference 'action items' captured during incidents, implying some link to follow-up tracking and ticket sync. However, there is no explicit documentation of a dedicated action-item/follow-up tracking system with completion status or two-way sync guarantees to an issue tracker. Missing for 10: a dedicated action-items/follow-up-tracking feature description, explicit two-way sync/status update with Jira or other trackers, and any evidence (docs or community) that follow-ups are tracked to completion rather than just ticket creation.",
+    "rationale": "Rootly's workflow engine includes a Jira action category and automations that can 'file tickets,' and AI summaries reference 'action items' as part of incident data, suggesting follow-up items can be pushed to an issue tracker. However there is no explicit documentation of a dedicated follow-up/action-item tracking view, no evidence of bi-directional status sync (e.g., ticket closed → item marked done), and no confirmation beyond Jira for other trackers. missing for 10: dedicated action-item/follow-up tracking module, documented two-way sync of ticket status back into Rootly, and evidence covering trackers beyond Jira.",
     "evidenceIds": [
       "rootly-docs-17",
       "rootly-docs-34",
-      "rootly-docs-20"
+      "rootly-docs-20",
+      "rootly-docs-58"
     ]
   },
   {
@@ -3559,15 +3551,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe the incident timeline as the 'authoritative record of what happened during an incident,' auto-populated from alerts, actions, Slack, and bridge-call data, and retrospectives support real-time collaborative editing/annotation via a rich text editor with live incident data. This covers automatic capture (alerts/actions/chat) plus post-hoc editing/annotation as described in the story. Missing for 10: independent/hands-on verification of timeline auto-capture accuracy and explicit UI evidence of inline timeline editing (only retrospective editing is directly documented).",
+    "rationale": "Docs explicitly describe an automatic incident timeline that aggregates updates from people, systems, automations, and communication channels into a chronological narrative (rootly-docs-12, rootly-docs-40, rootly-docs-50), and retrospectives/AI features draft sections like 'Curated Timeline' from Slack and bridge-call data (rootly-docs-13, rootly-docs-27), with a rich-text collaborative editor supporting annotation and editing post-hoc (rootly-docs-15, rootly-docs-28, rootly-docs-51). Missing for 10: independent/hands-on verification that the timeline capture is fully automatic and accurate in practice, and no explicit detail on granular manual annotation/editing controls beyond the retrospective editor.",
     "evidenceIds": [
       "rootly-docs-12",
       "rootly-docs-40",
+      "rootly-docs-50",
       "rootly-docs-13",
       "rootly-docs-27",
-      "rootly-docs-28",
       "rootly-docs-15",
-      "rootly-docs-42"
+      "rootly-docs-28",
+      "rootly-docs-51",
+      "rootly-docs-55"
     ]
   },
   {
@@ -3576,23 +3570,23 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly state Rootly offers both public and private status pages, and describe status pages as communicating health info to both internal stakeholders and external customers, directly matching the story's core ask. However, there's no detail on granular access-control mechanisms (e.g., password protection, audience segmentation between customer-specific vs employee-only groups, SSO-gated access), so the depth of access control is unclear. missing for 10: documentation of specific access-control mechanisms (password/SSO gating, audience segmentation rules), independent/hands-on confirmation of private page functionality.",
+    "rationale": "Docs confirm Rootly offers both public and private status pages ('two types of status pages available: public status pages and private status pages') aimed at internal stakeholders vs external customers, which directly supports the story. However, there is no evidence detailing granular access control mechanisms (e.g., SSO/role-based restriction, audience-specific authentication) for private pages beyond the existence of the private page type. Missing for 10: documentation on access-control mechanisms (SSO, password protection, audience segmentation), independent/hands-on confirmation of private page usage.",
     "evidenceIds": [
       "rootly-docs-46",
       "rootly-docs-38",
-      "rootly-docs-18",
-      "rootly-docs-19"
+      "rootly-docs-18"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "mobile-oncall-app",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Docs confirm a native iOS/Android mobile app exists for on-call use (rootly-docs-43), but there is no detail confirming that acknowledge, escalate, and resolve actions are all available from the app, nor any hands-on/community validation of the mobile experience. missing for 10: documented list of mobile app actions (ack/escalate/resolve), UI/UX detail, independent user reviews of the app's reliability at odd hours.",
+    "rationale": "Docs confirm a native Rootly mobile app for iOS and Android with on-call features, an Incident Summary card, and a conversational AI agent for any incident the user can access, implying some in-app incident actions are possible. However, no evidence explicitly confirms acknowledge/escalate/resolve actions are available in the mobile app, nor is there any hands-on/community corroboration of mobile on-call workflows at odd hours. Missing for 10: explicit documentation of ack/escalate/resolve buttons in the mobile app, and independent user reports of using the mobile app for on-call response.",
     "evidenceIds": [
-      "rootly-docs-43"
+      "rootly-docs-43",
+      "rootly-docs-62"
     ]
   },
   {
@@ -3601,9 +3595,8 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Rootly docs confirm push-style alerts via its mobile app and phone-call paging via Live Call Routing, plus escalation policies with multi-step targets and delays, but there is no explicit documentation of SMS or email as notification channels, nor of user-configurable per-channel notification rules (e.g., 'push first, then SMS, then call'). missing for 10: SMS channel support, email channel support, explicit per-channel notification-rule configuration UI/API.",
+    "rationale": "Rootly documents phone-based paging (live call routing) and a mobile app (implying push), plus escalation policies with multi-step targets and time delays, but the evidence never explicitly confirms SMS or email as notification channels, nor detailed per-channel notification-rule configuration. Missing for 10: explicit SMS channel support, explicit email notification channel, and documentation of per-channel customization rules.",
     "evidenceIds": [
-      "rootly-docs-5",
       "rootly-docs-8",
       "rootly-docs-35",
       "rootly-docs-39",
@@ -3616,11 +3609,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes generic alert routing, deduplication, and a 'unified routing layer that works across all alert sources' but never names or documents specific setup for Datadog, Grafana, Prometheus, CloudWatch, or Sentry integrations. Without concrete first-party docs pointing to these specific observability tools, the story's requirement for named, documented integrations is unmet.",
+    "rationale": "The evidence describes generic alert routing/deduplication for 'monitoring tools' and 'alert sources,' plus an AWS/CloudWatch AI connector for read-only investigation, but nowhere names or documents Datadog, Grafana, Prometheus, or Sentry integrations with setup instructions. Without named, documented first-party connectors for these specific observability tools, there's no evidence this story is fulfilled.",
     "evidenceIds": [
       "rootly-docs-9",
       "rootly-docs-10",
-      "rootly-docs-37"
+      "rootly-docs-37",
+      "rootly-docs-59"
     ]
   },
   {
@@ -3642,17 +3636,15 @@
     "productId": "rootly",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Rootly documents a REST API for creating/managing incidents, API keys with scoped roles, a status-page public API, and an MCP server exposing 124 tools including 135 write paths for incidents, on-call, and alerts — indicating broad but not explicitly confirmed full parity with the UI. No official OpenAPI spec was discoverable (404s across candidate paths), and there's no explicit vendor claim that 100% of UI functionality (e.g., retrospectives editing, workflow builder, status page configuration) is API-accessible. Missing for 10: a published complete OpenAPI/API reference, explicit UI-API parity statement, and independent confirmation of full functional coverage beyond incidents/on-call/alerts.",
+    "rationale": "Rootly documents API support for creating incidents and managing API keys with role-based scopes (rootly-docs-11, rootly-docs-24, rootly-docs-49), showing some UI actions are API-accessible, and status pages expose a public JSON API (rootly-docs-19). However, there's no evidence of API parity for major UI features like workflows configuration, retrospectives, escalation policies, or on-call schedule management, and a probe for a public OpenAPI/swagger spec returned 404s across all candidate paths, undermining confidence in comprehensive API coverage. missing for 10: documented API parity for workflows, retrospectives, schedules/escalation policy CRUD, a discoverable OpenAPI spec, and independent confirmation that API and UI capabilities fully match.",
     "evidenceIds": [
       "rootly-docs-11",
-      "rootly-docs-19",
       "rootly-docs-24",
       "rootly-docs-49",
-      "rootly-docs-44",
-      "rootly-probe-2",
-      "rootly-probe-rt-2"
+      "rootly-docs-19",
+      "rootly-probe-2"
     ]
   },
   {
@@ -3661,13 +3653,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Rootly's docs describe an API for creating/reading incident data and migration guides for importing from Opsgenie/PagerDuty, but there is no documented bulk data-export feature, open-format export of schedules/incidents/retrospectives, or account-portability/'leave the platform' capability. The API (rootly-docs-11, rootly-docs-24) hints at programmatic access but is not evidenced as a full data-export mechanism.",
+    "rationale": "Rootly documents an API for creating/querying incidents and migration guides for importing data from PagerDuty/Opsgenie, but there is no documented bulk data-export feature, open-format export, or explicit data-portability/exit capability for users to take their data and leave.",
     "evidenceIds": [
       "rootly-docs-11",
       "rootly-docs-24",
       "rootly-docs-3",
-      "rootly-docs-4",
-      "rootly-docs-19"
+      "rootly-docs-4"
     ]
   },
   {
@@ -3676,7 +3667,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Rootly is a closed, commercial SaaS incident-management platform; no evidence indicates its core product source is published under an open license (only an MCP server client integration exists on GitHub, not the product itself). No open-source license, repo, or source availability for the core platform is mentioned anywhere in the evidence pack.",
+    "rationale": "Rootly is a closed commercial SaaS incident management platform; no evidence of any open-source license or public source repository for the core product. No mention of source availability anywhere in docs, changelog, or community discussion.",
     "evidenceIds": []
   },
   {
@@ -3707,7 +3698,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Rootly's retrospectives docs show a real workflow: multiple selectable process templates routed by severity/type/team (rootly-docs-14), auto-drafted sections (Summary, Impact, Root Cause, Mitigation, Resolution, Curated Timeline) generated from the authoritative incident timeline/Slack/transcripts (rootly-docs-12, rootly-docs-13, rootly-docs-27, rootly-docs-40), collaborative real-time editing for review by multiple authors (rootly-docs-15, rootly-docs-28, rootly-docs-42), and publication via status pages/communication channels (rootly-docs-18, rootly-docs-38, rootly-docs-45). This covers templates → draft-from-timeline → review → publish end-to-end. Missing for 10: independent/hands-on confirmation of the postmortem workflow specifically (community evidence is about on-call/pricing, not retrospectives) and explicit detail on an approval/sign-off publication step.",
+    "rationale": "Rootly documents templates/multiple retrospective processes routed by severity (rootly-docs-14), auto-drafted sections (Summary, Impact, Root Cause, Mitigation, Resolution, Curated Timeline) from timeline/Slack/transcripts (rootly-docs-13, rootly-docs-27, rootly-docs-54), a collaborative rich-text editor for review (rootly-docs-15, rootly-docs-28, rootly-docs-51), and an authoritative incident timeline feeding drafts (rootly-docs-12, rootly-docs-40, rootly-docs-50). Publication/sign-off flow specifics and independent hands-on validation of the postmortem workflow are thin. Missing for 10: independent/hands-on corroboration of the review-to-publication step, and more detail on approval/sign-off mechanics.",
     "evidenceIds": [
       "rootly-docs-12",
       "rootly-docs-13",
@@ -3715,9 +3706,10 @@
       "rootly-docs-15",
       "rootly-docs-27",
       "rootly-docs-28",
-      "rootly-docs-42",
-      "rootly-docs-38",
-      "rootly-docs-45"
+      "rootly-docs-40",
+      "rootly-docs-50",
+      "rootly-docs-51",
+      "rootly-docs-54"
     ]
   },
   {
@@ -3725,8 +3717,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or compliance/data-location controls for Rootly. The docs cover incidents, on-call, workflows, retrospectives, and MCP integrations but never mention region selection or data residency guarantees. missing for 10: any mention of data residency/region selection, compliance certifications (e.g., SOC2/GDPR data localization), or configurable storage location.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic data controls for Rootly; the docs cover incident management, on-call, AI features, and integrations but nothing about choosing storage region.",
     "evidenceIds": []
   },
   {
@@ -3735,7 +3727,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any privacy policy statement about model training; Rootly's docs focus on incident management, on-call, and AI features (summaries, MCP) but never mention data-training exclusion or opt-out mechanisms. missing for 10: any privacy policy or documentation stating customer data is excluded from AI model training, opt-out settings, or data processing agreements addressing this concern.",
+    "rationale": "No evidence in the pack addresses data usage for AI model training, opt-outs, or privacy/data-retention controls for AI features; only feature descriptions of AI capabilities (summaries, chat, connectors) are present. Missing for 10: any privacy policy statement, opt-out mechanism, or documentation on training-data usage.",
     "evidenceIds": []
   },
   {
@@ -3743,8 +3735,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items discuss data retention policies, data deletion controls, or export/purge mechanisms for AI-native users; the docs cover incident management, on-call, workflows, MCP server, and AI summaries but nothing about controlling retention or deletion of data. Missing for 10: any documentation of retention settings, deletion/purge APIs, data export controls, or privacy configuration options.",
+    "confidence": "medium",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or privacy/data-lifecycle settings for AI features or incident data; documentation covers incident management, on-call, AI summaries and MCP integration but never mentions retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -3753,7 +3745,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings, privacy controls, or data collection disclosures for Rootly; the docs focus entirely on incident management, on-call, and AI features. Missing for 10: any privacy policy or settings documentation on telemetry collection, any opt-out mechanism, or usage-tracking disclosure.",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or any opt-out mechanism for Rootly's product; the docs and community items cover incident management features, AI tooling, and integrations but nothing on data collection controls.",
     "evidenceIds": []
   },
   {
@@ -3762,7 +3754,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm hosted public status pages with custom domains (public JSON API served on the custom domain) and quick setup, distinguishing public vs private status pages for external customers. However, there is no explicit documentation of subscriber notification features (email/SMS/webhook subscriptions) or an explicit description of how incident state automatically drives status page updates beyond general platform integration. missing for 10: subscriber notification mechanics, explicit incident-to-status-page state sync documentation, independent/hands-on confirmation of custom domain setup.",
+    "rationale": "Docs confirm hosted public status pages with custom domain support and a public JSON API (docs-18, docs-19, docs-38, docs-46), and status pages are tied to incident state per Rootly's incident platform. However, there is no explicit evidence of subscriber notification functionality (email/SMS alerts to status page subscribers). missing for 10: subscriber notification feature documentation, independent/hands-on confirmation of custom domain setup and notification delivery.",
     "evidenceIds": [
       "rootly-docs-18",
       "rootly-docs-19",
@@ -3776,36 +3768,38 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers incident response, on-call scheduling, retrospectives, workflows, and AI summaries, but contains no mention of MTTA/MTTR trend dashboards, incident-load analytics, or on-call health reporting features that an engineering leader could use to track improvement over time. This is a fair ask for an incident management platform, but no documentation, screenshots, or community evidence support it.",
+    "rationale": "The evidence pack covers incident response, on-call, workflows, retrospectives, AI features, and status pages, but contains no mention of analytics dashboards, MTTA/MTTR trend reporting, incident load metrics, or on-call health scoring. This is a fair and applicable axis for an incident management platform, but no evidence shows Rootly delivers it.",
     "evidenceIds": []
   },
   {
     "productId": "rootly",
     "storyId": "roles-tasks-response",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers incident timelines, workflows, escalation policies, and automated actions like channel creation and stakeholder updates, but nowhere explicitly describes assigning defined incident roles (e.g., commander, comms lead) or maintaining task checklists during an incident. missing for 10: explicit role assignment (commander/comms lead) documentation, task checklist feature, evidence of role-based coordination during response.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Rootly's incident pages reference 'roles' as an incident attribute (rootly-docs-53) and offer automation/workflows that create channels, update stakeholders, and file tickets consistently (rootly-docs-34, rootly-docs-16/29/41), which supports coordinated response, but the evidence never explicitly documents defined role types like Incident Commander/Comms Lead or a task checklist feature for responders to track under pressure. Missing for 10: explicit incident commander/comms-lead role definitions and assignment workflow, and a dedicated task/checklist feature with completion tracking during an active incident.",
     "evidenceIds": [
+      "rootly-docs-53",
       "rootly-docs-34",
-      "rootly-docs-14",
-      "rootly-docs-16"
+      "rootly-docs-16",
+      "rootly-docs-41"
     ]
   },
   {
     "productId": "rootly",
     "storyId": "runbook-automation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Rootly's 'Workflows' engine is described as an automation system that runs structured actions automatically based on trigger events, run conditions, and actions — including creating incident channels, filing tickets, and updating stakeholders (rootly-docs-16, rootly-docs-17, rootly-docs-29, rootly-docs-34, rootly-docs-45). This closely maps to runbook-style automation attached to incidents, but the evidence never uses the term 'runbook' as a distinct attachable object, and doesn't explicitly show task assignment or diagnostic-running steps as workflow actions. Missing for 10: explicit runbook/incident attachment terminology, evidence of task-assignment actions, evidence of diagnostic-running actions, and independent/hands-on corroboration of workflow automation actually firing.",
+    "rationale": "Rootly's 'Workflows' engine matches the runbook-automation story closely: workflows trigger automatically on incident events and execute structured actions like creating Slack/Teams channels, notifying stakeholders, filing tickets, and starting retros (docs-16/17/29/34/41/45), and AI SRE/AWS connectors provide automated diagnostics during incidents (docs-59/60). Missing for 10: explicit 'runbook' terminology/attachment concept (Rootly frames this as 'Workflows' not runbooks), explicit task-assignment action documentation, and independent hands-on confirmation that automated diagnostics run reliably in production.",
     "evidenceIds": [
       "rootly-docs-16",
       "rootly-docs-17",
       "rootly-docs-29",
       "rootly-docs-34",
       "rootly-docs-45",
-      "rootly-docs-41"
+      "rootly-docs-59",
+      "rootly-docs-60"
     ]
   },
   {
@@ -3832,14 +3826,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Rootly's Workflows engine is explicitly documented as a condition-based automation system with trigger events, run conditions, and actions (rootly-docs-16/29/41), used to update fields, send reminders, create channels, update stakeholders, file tickets, and start retros automatically on incident events (rootly-docs-34, rootly-docs-45). A 152-action reference (rootly-docs-17) shows breadth across Slack, Jira, on-call, and incident-ops actions, directly matching the 'updates, reminders, field changes' toil-automation story. Missing for 10: independent hands-on validation of the workflow engine specifically (community evidence only discusses general product value, not workflow conditions in depth) and no detailed walkthrough of condition-branching logic beyond docs.",
+    "rationale": "Rootly's Workflows engine explicitly runs structured actions automatically based on trigger events and run conditions (e.g., field changes, incident status), covering updates, reminders, and field changes with 152 documented action types across categories like Slack, Jira, on-call, and incident ops. This directly matches the SRE automation-runbooks story of condition-based toil reduction triggered by incident events. Missing for 10: independent/hands-on validation of the condition engine's reliability at scale, and community commentary questioning whether it's more than 'glorified Slack workflows' tempers confidence slightly.",
     "evidenceIds": [
       "rootly-docs-16",
       "rootly-docs-17",
       "rootly-docs-29",
-      "rootly-docs-34",
       "rootly-docs-41",
-      "rootly-docs-45"
+      "rootly-docs-34",
+      "rootly-comm-4"
     ]
   },
   {
@@ -3848,14 +3842,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show strong two-way integration with Slack, Microsoft Teams, and Google Chat (declare/resolve incidents from chat, create incident channels, /rootly summary commands) and a workflow action reference explicitly grouped by categories including Jira, alongside bidirectional automation (tickets filed, channels created, stakeholders updated). However, GitHub is never named as an integration, and Zoom is only implied via generic 'bridge-call transcripts'/'meeting transcripts' rather than a documented explicit Zoom integration. Missing for 10: explicit GitHub integration/state-sync evidence, explicit named Zoom integration (beyond generic call/meeting transcript mentions), and independent/hands-on confirmation that Jira ticket state actually syncs bidirectionally.",
+    "rationale": "Rootly shows strong, concrete two-way integration evidence for Slack, Microsoft Teams (declare/manage incidents, workflow actions to create channels), and Jira/Confluence (OAuth connector letting Rootly AI look up Jira issues and Confluence docs, workflow action reference including Jira). Workflows engine and API further support ticket filing and automation with these tools. However, the story also names Zoom and GitHub, and the evidence pack contains no mention of a Zoom integration or GitHub state-sync (only 'bridge-call transcripts' generically, not tied to Zoom specifically, and no GitHub ticketing/PR linkage documented). Missing for 10: explicit Zoom integration (calls/transcripts) documentation, explicit GitHub issue/PR bidirectional sync evidence, independent confirmation beyond vendor docs.",
     "evidenceIds": [
       "rootly-docs-1",
-      "rootly-docs-17",
-      "rootly-docs-34",
       "rootly-docs-45",
-      "rootly-docs-13",
-      "rootly-docs-30"
+      "rootly-docs-58",
+      "rootly-docs-17",
+      "rootly-docs-34"
     ]
   }
 ]
