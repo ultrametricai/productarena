@@ -11,10 +11,13 @@ import type {
   NewsCoverage,
 } from '@/lib/opsCoverage'
 
-// The /ops coverage dashboard body — ADMIN-GATED exactly like components/DoViaAfk.tsx (the
-// precedent): a WorkOS session email on NEXT_PUBLIC_ADMIN_EMAILS, or the founder's local
-// `localStorage.setItem('pa-admin', '1')` switch, read client-side with a `false` server
-// snapshot. Non-admins get literally NOTHING rendered — no hidden markup below the shell note.
+// The /ops coverage dashboard body — ADMIN-GATED like components/DoViaAfk.tsx (the precedent):
+// a WorkOS session email on NEXT_PUBLIC_ADMIN_EMAILS, ANY verified @ultrametric.ai session
+// (founder 2026-09-23: "signed in with *@ultrametric.ai and verified by code" — WorkOS login IS
+// the code verification, so an authenticated session email is a verified email), or the
+// founder's local `localStorage.setItem('pa-admin', '1')` switch, read client-side with a
+// `false` server snapshot. Non-staff get literally NOTHING rendered — no hidden markup below
+// the shell note.
 //
 // The gate is about FOCUS, not secrecy: every number in the serialized props is an aggregate of
 // data/ files that copy-data.mjs already serves world-readable (spike-queue.json, vendor-news
@@ -36,6 +39,12 @@ function subscribeAdminFlag(callback: () => void): () => void {
 }
 
 const getServerAdminFlag = () => false
+
+// Pure so the gate is unit-testable: a verified company address. WorkOS only issues a session
+// after its email code check, so session.email carries a VERIFIED address by construction.
+export function isCompanyEmail(email: string | undefined): boolean {
+  return !!email && /@ultrametric\.ai$/i.test(email.trim())
+}
 
 export interface OpsData {
   depth: DepthCoverage
@@ -87,7 +96,8 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
   }, [data.news.items])
 
   const emailAdmin =
-    session.state === 'authenticated' && isAdminEmail(session.email, process.env.NEXT_PUBLIC_ADMIN_EMAILS)
+    session.state === 'authenticated' &&
+    (isAdminEmail(session.email, process.env.NEXT_PUBLIC_ADMIN_EMAILS) || isCompanyEmail(session.email))
   if (!emailAdmin && !localFlag) return null
 
   const { depth, arenaCoverage, cron, news } = data

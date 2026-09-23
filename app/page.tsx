@@ -48,7 +48,8 @@ export default function Home() {
                 href={`/arena/${data.category.id}`}
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
-                <div className="flex -space-x-3">
+                {/* Founder 2026-09-23: logos were too bunched (-space-x-3 overlap) — breathe. */}
+                <div className="flex gap-1.5">
                   {data.products.slice(0, 5).map((p) => (
                     <div key={p.id} className="rounded-lg ring-2 ring-zinc-950">
                       <ProductLogo product={p} size={28} />

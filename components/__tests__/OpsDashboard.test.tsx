@@ -109,4 +109,23 @@ describe('OpsDashboard admin gating', () => {
     render(<OpsDashboard data={DATA} />)
     expect(await screen.findByRole('heading', { name: /Coverage & engines/ })).toBeTruthy()
   })
+
+  it('renders for ANY verified @ultrametric.ai session, no allowlist needed (founder 2026-09-23)', async () => {
+    vi.stubEnv('NEXT_PUBLIC_ADMIN_EMAILS', '')
+    sessionStub.current = { state: 'authenticated', email: 'Staff@Ultrametric.AI' }
+    render(<OpsDashboard data={DATA} />)
+    expect(await screen.findByRole('heading', { name: /Coverage & engines/ })).toBeTruthy()
+  })
+
+  it('the company-domain rule matches the domain only — lookalikes stay out', async () => {
+    vi.stubEnv('NEXT_PUBLIC_ADMIN_EMAILS', '')
+    sessionStub.current = { state: 'authenticated', email: 'attacker@notultrametric.ai.evil.com' }
+    const { container } = render(<OpsDashboard data={DATA} />)
+    await act(async () => {})
+    expect(container.innerHTML).toBe('')
+    sessionStub.current = { state: 'authenticated', email: 'x@ultrametric.ai.evil.com' }
+    const second = render(<OpsDashboard data={DATA} />)
+    await act(async () => {})
+    expect(second.container.innerHTML).toBe('')
+  })
 })

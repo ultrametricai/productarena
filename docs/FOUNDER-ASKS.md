@@ -31,6 +31,9 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Arenas button LEFT of Processes in the top nav | shipped-next-deploy 2026-09-23 |
 | Rank-by presets on the same line as the filter | shipped-next-deploy 2026-09-23 |
 | Vendor-page spike-depth flag (deep/surface, evidence-count-grounded, rule in tooltip) | shipped-next-deploy 2026-09-23 |
+| VC processes area (fund formation → close → capital calls → fees → book investment) | in-lane (vc-processes) |
+| Homepage arena-card logos too bunched — spacing opened up | shipped-next-deploy 2026-09-23 |
+| /ops access for any verified *@ultrametric.ai sign-in (WorkOS code = verification) | shipped-next-deploy 2026-09-23 |
 | Depth to 100%: never-spiked sweep A–L + M–Z, thin-arena depth wave (id-verification 18 → up) | in-lane (depth ×3) |
 | Private /ops coverage dashboard + vendor-news watcher | shipped 2026-09-23 (needs NEXT_PUBLIC_ADMIN_EMAILS env or pa-admin localStorage to view) |
 | Drop the 'commercial' tag on product pages — they're (almost) all commercial | shipped 2026-09-23 |
