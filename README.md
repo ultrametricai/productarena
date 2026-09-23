@@ -6,8 +6,8 @@
 [![site](https://img.shields.io/badge/site-ultrametric.ai%2Fproductarena-000000)](https://ultrametric.ai/productarena)
 <!-- stat-badges:start -->
 [![arenas](https://img.shields.io/badge/arenas-93-34d399)](https://ultrametric.ai/productarena)
-[![products](https://img.shields.io/badge/products-572-34d399)](https://ultrametric.ai/productarena/everything)
-[![judged verdicts](https://img.shields.io/badge/judged_verdicts-32537-34d399)](https://ultrametric.ai/productarena/methodology)
+[![products](https://img.shields.io/badge/products-573-34d399)](https://ultrametric.ai/productarena/everything)
+[![judged verdicts](https://img.shields.io/badge/judged_verdicts-32598-34d399)](https://ultrametric.ai/productarena/methodology)
 <!-- stat-badges:end -->
 [![license](https://img.shields.io/badge/license-source--available-555555)](./LICENSE)
 [![data license](https://img.shields.io/badge/data-quotable_with_attribution-555555)](./DATA-LICENSE)
@@ -42,7 +42,7 @@ cited evidence, not opinion.
 Live site: https://ultrametric.ai/productarena
 
 <!-- stats:start -->
-As of the last full pipeline run: **93 arenas, 572 products, 32,537 judged verdicts.**
+As of the last full pipeline run: **93 arenas, 573 products, 32,598 judged verdicts.**
 <!-- stats:end -->
 
 Arena, product, and verdict counts above (and in the badge row) are regenerated from data/ by
@@ -218,7 +218,7 @@ cite the evidence URL and quote the relevant excerpt so a maintainer can verify 
 | Stablecoin Payments (`stablecoin-payments`) | stripe-crypto, circle, bvnk, coinbase-payments, moonpay, paxos |
 | Email Marketing (`email-marketing`) | loops, customer-io, klaviyo, mailchimp, kit, bento |
 | Self-Hosted AI Assistants (`self-hosted-assistants`) | openclaw, open-webui, librechat, anythingllm, khoj, lobe-chat |
-| Frontier Models (`frontier-models`) | jev, claude, gpt, gemini, llama, deepseek, mistral |
+| Frontier Models (`frontier-models`) | jev, claude, gpt, gemini, llama, deepseek, mistral, grok |
 | Compliance Automation (`compliance-automation`) | vanta, drata, secureframe, oneleet, sprinto, thoropass |
 | Applicant Tracking (`applicant-tracking`) | greenhouse, lever, ashby, workable, recruitee |
 | Domain Registrars (`domain-registrars`) | porkbun, name-com, cloudflare-registrar, godaddy, dynadot, namecheap |
