@@ -2603,15 +2603,16 @@
     "productId": "ironclad",
     "storyId": "agent-drafts-routes-nda",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Ironclad's Public API supports creating records from templates, launching workflows, and retrieving/interacting with workflows and contract data (ironclad-docs-2,5,13,23), which could technically support an agent drafting and routing an NDA end-to-end. However there is no evidence of an official MCP server, no explicit NDA-drafting example, and the docs note that approval/signature policies are handled by the platform rather than fully exposed for programmatic completion (ironclad-docs-15). Missing for 10: official MCP server, concrete NDA-draft-to-signature API walkthrough, independent confirmation of full automation without manual signature steps.",
+    "rationale": "Ironclad's API clearly supports launching contract workflows from templates, tracking through approval/signature, and webhooks for status updates (docs-5, docs-13, docs-23, docs-38, docs-46), which covers the 'route for signature end-to-end via API' half of the story. However there is no evidence of an MCP server, and no documented API endpoint for AI-driven drafting of contract text (the 'Ironclad AI' page is marketing copy, not an API spec) — an agent would have to rely on generic template/record APIs rather than a documented drafting capability. missing for 10: MCP server, documented AI-drafting endpoint/API for generating NDA text.",
     "evidenceIds": [
-      "ironclad-docs-2",
       "ironclad-docs-5",
       "ironclad-docs-13",
-      "ironclad-docs-15",
       "ironclad-docs-23",
+      "ironclad-docs-38",
+      "ironclad-docs-46",
+      "ironclad-docs-24",
       "ironclad-probe-3"
     ]
   },
@@ -2634,14 +2635,15 @@
     "storyId": "agent-monitors-renewals",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Ironclad exposes a Records API, Workflows API, and webhooks that could let an external agent poll contract data or receive event notifications and then trigger workflow actions via the API, which is the raw plumbing needed for automated renewal/deadline monitoring. However, there is no explicit documentation of a renewal-date or deadline field/endpoint, no webhook event specifically for upcoming expirations, and no mention of an agent-oriented monitoring pattern. Missing for 10: explicit renewal/deadline tracking endpoints or webhook events, documented example of automated pre-lapse action, independent/hands-on confirmation that this workflow works in practice.",
+    "confidence": "medium",
+    "rationale": "Ironclad's Records/Workflows APIs and webhooks (docs-2, docs-4, docs-13, docs-30) let an external system read contract data, trigger workflows, and receive event notifications, which could be used to build renewal/deadline monitoring and automated action. However, there is no explicit documentation of renewal-date fields, expiration alerts, or a dedicated deadline-monitoring webhook event—an agent would have to infer/construct this from generic record and workflow data. Missing for 10: explicit renewal/expiration tracking fields or webhook event types, and any first-party example of an agent acting on approaching deadlines.",
     "evidenceIds": [
       "ironclad-docs-2",
       "ironclad-docs-4",
       "ironclad-docs-13",
-      "ironclad-docs-20",
-      "ironclad-docs-15"
+      "ironclad-docs-30",
+      "ironclad-docs-39",
+      "ironclad-docs-20"
     ]
   },
   {
@@ -2661,12 +2663,13 @@
     "productId": "ironclad",
     "storyId": "agentic-ai-insights",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Ironclad has a dedicated 'Ironclad AI' product page marketed as 'A New Era of Contract Intelligence,' implying AI-driven insights over contract data, but the evidence pack contains only page titles/taglines with no detail on what specific insights, suggestions, or analytics are actually generated or how a user interacts with them. Missing for 10: concrete feature descriptions (e.g., risk analysis, clause suggestions, obligation extraction), first-party documentation of AI capabilities, and independent/hands-on corroboration of the AI features working as described.",
+    "rationale": "Ironclad has a dedicated 'Ironclad AI' product page positioned as 'contract intelligence,' and docs explicitly note that Workflow APIs can be used to run AI-driven analysis on contract data and 'surface these insights to your users.' However, the evidence is limited to marketing taglines and a single API doc snippet, with no detail on specific AI-generated insight features (e.g., risk scoring, clause analysis) or independent/hands-on corroboration of these AI capabilities in the product itself. Missing for 10: concrete first-party documentation of specific AI insight features (obligation tracking, risk flags, summarization), and independent/hands-on validation that AI insights actually surface in the UI.",
     "evidenceIds": [
-      "ironclad-docs-12",
-      "ironclad-docs-24"
+      "ironclad-docs-39",
+      "ironclad-docs-24",
+      "ironclad-docs-12"
     ]
   },
   {
@@ -2675,42 +2678,45 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Ironclad's API and webhooks allow workflows to be triggered and events to fire automatically in the background (e.g., launching workflows via API, webhooks posting on contract events, integrations that can 'automatically block or push forward approvals'), which supports building autonomous automations. However, this requires custom integration/dev work rather than a native no-code 'set up an automation' feature aimed at AI-native users, and there's no evidence of an agent-oriented automation builder or scheduler. Missing for 10: a first-party no-code automation/agent builder, evidence of AI-driven autonomous triggers, and independent confirmation these automations run reliably unattended.",
+    "rationale": "Ironclad offers webhooks, APIs to trigger/launch workflows, and integration patterns (e.g., linking to procurement systems) that can be orchestrated into background automations, but this requires external glue code/middleware rather than a native 'autonomous agent' or scheduled automation builder within Ironclad itself. missing for 10: a first-party autonomous agent/scheduler feature, evidence of AI-driven decision loops running unattended, and independent confirmation of such automations working in production.",
     "evidenceIds": [
       "ironclad-docs-4",
       "ironclad-docs-5",
       "ironclad-docs-20",
-      "ironclad-docs-15",
-      "ironclad-docs-8"
+      "ironclad-docs-39",
+      "ironclad-docs-40",
+      "ironclad-docs-30"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 2,
+    "verdict": "none",
+    "quality": 0,
     "confidence": "low",
-    "rationale": "Ironclad has a dedicated 'Ironclad AI' product page referencing 'contract intelligence,' suggesting some built-in AI capability, but the evidence pack contains only marketing taglines with no detail on what tasks can be delegated to an assistant, how it's invoked, or its scope. Missing for 10: description of assistant task delegation, concrete feature list, hands-on or independent corroboration of AI assistant functionality.",
+    "rationale": "The evidence only shows marketing page titles for 'Ironclad AI' (e.g., 'A New Era of Contract Intelligence') and API-level references to 'AI-driven analysis' via Workflow APIs, but nothing describes a built-in assistant that a user can converse with or delegate tasks to inside the product UI.",
     "evidenceIds": [
       "ironclad-docs-12",
-      "ironclad-docs-24"
+      "ironclad-docs-24",
+      "ironclad-docs-39"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Ironclad exposes a REST API with OAuth bearer tokens, webhooks, and endpoints to launch workflows, trigger exports, and manage records — all of which can be scripted/automated without the UI, supporting headless-style automation. However there is no CLI, no explicit CI/CD integration examples, and workflow launch still requires a pre-published design from the in-app Workflow Designer, limiting full headless autonomy. Missing for 10: dedicated CLI or SDK for CI pipelines, explicit CI/CD examples, and evidence that workflow publishing itself can be done headlessly.",
+    "rationale": "Ironclad exposes a full REST/OAuth API (including machine-to-machine Client Credentials Grant) that lets workflows, records, and documents be created, launched, and bulk-launched without any UI, plus webhooks for event-driven automation — this is functionally 'headless' automation suitable for CI/scripted pipelines. However, there is no explicit CLI, no CI/CD (e.g. GitHub Actions) integration guide, and no independent evidence of it being run inside a CI pipeline. Missing for 10: dedicated CLI or CI/CD integration docs, independent hands-on confirmation of CI usage, explicit 'headless mode' framing.",
     "evidenceIds": [
-      "ironclad-docs-1",
       "ironclad-docs-3",
+      "ironclad-docs-26",
+      "ironclad-docs-37",
+      "ironclad-docs-38",
+      "ironclad-docs-13",
       "ironclad-docs-4",
-      "ironclad-docs-5",
-      "ironclad-docs-7",
-      "ironclad-docs-8",
-      "ironclad-docs-13"
+      "ironclad-docs-15",
+      "ironclad-docs-20"
     ]
   },
   {
@@ -2719,12 +2725,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a contract lifecycle management SaaS product, not an AI agent client; there is no mention of MCP server integration in any evidence, and the product's own AI features are not framed as an agent capable of consuming external MCP tools. This axis applies to agent-type products or platforms with an MCP ecosystem story, but no such angle exists here — the evidence only covers REST/webhook APIs and OAuth for traditional integrations.",
-    "evidenceIds": [
-      "ironclad-docs-1",
-      "ironclad-docs-15",
-      "ironclad-docs-20"
-    ]
+    "rationale": "Ironclad is a contract lifecycle management SaaS with a REST API/webhooks, not an AI agent or assistant that consumes MCP servers as tools; the story asks about the product's own agentic tool-consumption capability, which is a wrong axis for this kind of platform product. No evidence suggests Ironclad itself functions as an MCP client.",
+    "evidenceIds": []
   },
   {
     "productId": "ironclad",
@@ -2732,26 +2734,17 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is not an AI agent itself, so publishing an official MCP server is a plausible, applicable axis, but no evidence pack item mentions MCP at all—only REST API, webhooks, and OAuth are documented.",
-    "evidenceIds": [
-      "ironclad-docs-1",
-      "ironclad-docs-2",
-      "ironclad-docs-3",
-      "ironclad-probe-3"
-    ]
+    "rationale": "Ironclad is a CLM SaaS platform with a REST API and webhooks, but there is no evidence of an official MCP server or any MCP-related integration in its documentation or probes; the axis applies (a SaaS platform could plausibly ship one) but no such capability is evidenced.",
+    "evidenceIds": []
   },
   {
     "productId": "ironclad",
     "storyId": "agentic-nl-commands",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Ironclad offers APIs, webhooks, and a no-code workflow builder, but nothing indicates a natural-language command interface for operating the product; the 'Ironclad AI' page is only a marketing teaser with no described NL capability.",
-    "evidenceIds": [
-      "ironclad-docs-12",
-      "ironclad-docs-24",
-      "ironclad-docs-1"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence shows Ironclad's AI features (Ironclad AI) and no-code builders, plus a rich developer API, but nothing indicates a natural-language command interface for operating the product (e.g., chat-based control, NL-to-action assistant). No evidence of AI-native command capability is present.",
+    "evidenceIds": []
   },
   {
     "productId": "ironclad",
@@ -2766,29 +2759,34 @@
     "productId": "ironclad",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Ironclad ships a documented public REST API (Records, Workflows, Records) with OAuth2 authentication, webhooks, and detailed guides for launching workflows, exports, and embedding clickwraps, clearly enabling programmatic/agentic control of contracting processes. missing for 10: no discoverable OpenAPI/Swagger spec (all candidate paths 404), and no independent/hands-on developer corroboration beyond first-party docs.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Ironclad publishes an extensive, well-documented public REST API (Records, Workflows, Webhooks, Clickwrap, BYOSP) with OAuth 2.0 authentication, client registration, and detailed reference docs, confirmed by probe fetches (llms.txt, docs.md) showing live developer documentation. Missing for 10: a discoverable machine-readable OpenAPI/Swagger spec (probe found only 404s) and independent third-party hands-on corroboration of API usage.",
     "evidenceIds": [
       "ironclad-docs-1",
       "ironclad-docs-2",
-      "ironclad-docs-3",
-      "ironclad-docs-4",
       "ironclad-docs-13",
-      "ironclad-docs-20",
-      "ironclad-docs-21",
+      "ironclad-docs-3",
+      "ironclad-docs-25",
+      "ironclad-docs-26",
+      "ironclad-docs-4",
+      "ironclad-probe-1",
+      "ironclad-probe-2",
       "ironclad-probe-3"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Ironclad's docs confirm OAuth 2.0 bearer token authentication for its API, but there is no evidence of scoped or least-privilege credential issuance (e.g., configurable permission scopes, role-based API keys, or agent-specific credential grants). The axis applies since an API platform could plausibly offer this, but no supporting evidence exists.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Ironclad documents OAuth 2.0 Client Credentials Grant and per-client-app registration for API bearer tokens, which provides basic credential issuance per integration, but there is no evidence of granular OAuth scopes, role-based restrictions, or any agent-specific least-privilege token model — the API add-on appears to be enabled/disabled wholesale rather than scoped. Missing for 10: documented scope/permission granularity, agent-specific credential guidance, and any least-privilege configuration options beyond basic OAuth client registration.",
     "evidenceIds": [
-      "ironclad-docs-3"
+      "ironclad-docs-3",
+      "ironclad-docs-25",
+      "ironclad-docs-26",
+      "ironclad-docs-44"
     ]
   },
   {
@@ -2797,12 +2795,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Ironclad documents a REST API (Records, Workflows, webhooks, OAuth2) but the evidence pack contains no mention of official SDKs or client libraries in any language, and an OpenAPI spec probe returned 404s across all standard paths.",
+    "rationale": "Ironclad documents a rich REST API, OAuth, webhooks, and API reference guides, but nothing in the evidence pack mentions official client SDKs/libraries (e.g., Python, JS, Java packages) for developers to build against—only raw API endpoints and integration guides are shown.",
     "evidenceIds": [
       "ironclad-docs-1",
-      "ironclad-docs-2",
       "ironclad-docs-3",
       "ironclad-docs-13",
+      "ironclad-docs-25",
       "ironclad-probe-3"
     ]
   },
@@ -2810,11 +2808,21 @@
     "productId": "ironclad",
     "storyId": "agentic-webhooks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Ironclad's developer docs explicitly document webhooks that POST to a user-specified URL when events occur, directly supporting event subscription. Missing for 10: details on event types/filtering, payload schema, retry/security (signature verification) documentation, and independent/hands-on confirmation of reliability.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Ironclad has a comprehensive, well-documented webhooks system: creating, listing, retrieving, updating, and deleting webhooks for specified events via API, plus signature verification, multiple authentication methods, and automatic deactivation monitoring for failing webhooks. This directly satisfies event-driven subscription needs for AI-native integrations. Missing for 10: independent/hands-on developer corroboration beyond first-party docs.",
     "evidenceIds": [
-      "ironclad-docs-4"
+      "ironclad-docs-4",
+      "ironclad-docs-27",
+      "ironclad-docs-28",
+      "ironclad-docs-29",
+      "ironclad-docs-30",
+      "ironclad-docs-31",
+      "ironclad-docs-32",
+      "ironclad-docs-33",
+      "ironclad-docs-34",
+      "ironclad-docs-35",
+      "ironclad-docs-45"
     ]
   },
   {
@@ -2823,7 +2831,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a contract lifecycle management platform (creation, signing, storage, workflows) — it has no relationship to filing state annual reports or franchise taxes, which is a registered-agent/compliance-filing function outside its product category.",
+    "rationale": "Ironclad is a contract lifecycle management (CLM) platform for creating, signing, and storing contracts—not a registered agent or business compliance filing service. Annual reports and franchise tax filings are entirely outside its product category.",
     "evidenceIds": []
   },
   {
@@ -2832,12 +2840,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Ironclad publishes a standard API reference (getting-started, authentication, webhooks, workflows) but nothing in the evidence indicates an interactive console or runnable code examples; a probe for an OpenAPI/Swagger spec (which typically powers interactive 'try it' consoles) returned 404 on all candidate paths, suggesting no such tooling exists.",
+    "rationale": "Ironclad has extensive static API reference documentation (endpoints, webhooks, OAuth) but no evidence of an interactive reference with runnable/try-it examples; explicit probes for OpenAPI/Swagger specs returned 404 across all checked paths, suggesting no such interactive tooling exists.",
     "evidenceIds": [
+      "ironclad-probe-3",
       "ironclad-docs-2",
-      "ironclad-docs-3",
-      "ironclad-docs-4",
-      "ironclad-probe-3"
+      "ironclad-docs-13"
     ]
   },
   {
@@ -2845,8 +2852,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Ironclad has extensive API documentation (Records, Workflows, Webhooks) but a direct probe of common OpenAPI spec locations returned 404 for all candidates, and no evidence pack item shows a downloadable machine-readable spec file. missing for 10: an actual OpenAPI/Swagger JSON or YAML file accessible for download, any documented endpoint serving the spec.",
+    "confidence": "high",
+    "rationale": "Ironclad has an extensive REST API with docs, but explicit probing for OpenAPI/Swagger specs at all standard paths returned 404s, and no other evidence indicates a downloadable machine-readable spec is available.",
     "evidenceIds": [
       "ironclad-probe-3"
     ]
@@ -2857,7 +2864,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a sandbox/test environment, staging API, or separate test credentials distinct from production data; the docs cover OAuth, webhooks, and API objects but never mention a sandbox mode.",
+    "rationale": "No evidence of a sandbox/test environment, staging instance, or test-mode API credentials distinct from production in Ironclad's documentation; the API/OAuth docs describe only live authentication and workflow/contract operations against real data.",
     "evidenceIds": []
   },
   {
@@ -2866,12 +2873,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a documented REST API (Records, Workflows, Webhooks) but no mention of API versioning scheme or a documented deprecation policy anywhere in the docs pack, and OpenAPI spec probes all 404. missing for 10: explicit API version numbering, changelog/release notes, deprecation policy or sunset timeline documentation.",
-    "evidenceIds": [
-      "ironclad-docs-2",
-      "ironclad-docs-13",
-      "ironclad-probe-3"
-    ]
+    "rationale": "Evidence shows extensive API documentation (auth, webhooks, workflows) but no mention of API versioning scheme or a documented deprecation policy anywhere in the docs pack, and OpenAPI spec probes returned 404s with no version indicators found.",
+    "evidenceIds": []
   },
   {
     "productId": "ironclad",
@@ -2879,25 +2882,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Ironclad is a CLM/e-signature platform where a tamper-evident audit trail and completion certificate would be a natural expected capability, but the evidence pack contains no mention of audit trails, certificates of completion, or tamper-evidence for signed documents—only generic pages about signing, storing, and API access.",
-    "evidenceIds": [
-      "ironclad-docs-10",
-      "ironclad-docs-19",
-      "ironclad-docs-11"
-    ]
+    "rationale": "While Ironclad's docs cover API access to workflows, signatures, and storage, none of the evidence mentions a tamper-evident audit trail or a completion certificate artifact for signed documents. This axis clearly applies to an e-signature/CLM platform, but no supporting documentation or community evidence confirms this specific capability.",
+    "evidenceIds": []
   },
   {
     "productId": "ironclad",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Ironclad's Records/Workflows APIs allow retrieving, creating, and updating records/workflows programmatically, which enables scripted bulk operations across many contracts/records, and data-export jobs support bulk data retrieval. However, there is no explicit documentation of a native bulk/batch endpoint, rate-limit guidance for bulk calls, or first-party bulk-operation UI/API designed for AI-native agents. Missing for 10: dedicated bulk/batch API endpoints, documented pagination/batching best practices for large-scale operations, and independent evidence of successful bulk automation at scale.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Ironclad documents explicit bulk operations support, notably a dedicated guide on 'how to bulk launch workflows using our REST API' plus broader Records/Workflows APIs for retrieving, creating, and updating items and export jobs for large data pulls. However, evidence doesn't show bulk operations across other entity types (e.g., bulk record updates, bulk document retrieval) or rate-limit/throughput guidance for large-scale automation. missing for 10: documented bulk endpoints beyond workflow launch, rate limits/pagination guidance for bulk data operations, independent hands-on confirmation of bulk performance at scale.",
     "evidenceIds": [
-      "ironclad-docs-2",
+      "ironclad-docs-37",
       "ironclad-docs-13",
       "ironclad-docs-7",
-      "ironclad-docs-23"
+      "ironclad-docs-2"
     ]
   },
   {
@@ -2906,11 +2905,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Ironclad supports webhooks to trigger outbound notifications on events and an API/Workflows API to programmatically launch or update workflows, plus integrations that can block/push forward approvals automatically — this gives event-driven automation. However there's no evidence of a native rules engine where AI-native users can define arbitrary conditional 'if event then action' automations without building custom integration code. Missing for 10: a first-class rules/automation builder, documented trigger-condition-action configuration UI, and independent confirmation of automated rule execution in practice.",
+    "rationale": "Ironclad provides webhooks that fire on contract/workflow events and APIs to launch workflows, query data, and even automatically block/advance approvals, effectively enabling event-driven automation (e.g., contract event → webhook → external system action) as shown in the sync-with-procurement and decision-automation guides. However, this requires developers to build custom webhook receivers/middleware rather than offering a native no-code 'if event then action' rule engine, and there's no independent/hands-on evidence confirming reliability of this automation in practice. Missing for 10: a built-in no-code rules/trigger UI (vs API+webhook plumbing) and independent corroboration of automated event-action flows working reliably.",
     "evidenceIds": [
       "ironclad-docs-4",
-      "ironclad-docs-13",
       "ironclad-docs-20",
+      "ironclad-docs-30",
+      "ironclad-docs-39",
+      "ironclad-docs-40",
       "ironclad-docs-5"
     ]
   },
@@ -2919,9 +2920,14 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Ironclad's API/webhooks allow event-driven and on-demand workflow triggering, but there is no evidence of a scheduler or recurring-job/cron capability for workflows or exports.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Ironclad's docs cover on-demand workflow launches, bulk launches, and event-driven webhooks, but there is no evidence of any cron-like scheduler or recurring/periodic job capability for AI-native automation.",
+    "evidenceIds": [
+      "ironclad-docs-5",
+      "ironclad-docs-37",
+      "ironclad-docs-4",
+      "ironclad-docs-30"
+    ]
   },
   {
     "productId": "ironclad",
@@ -2929,37 +2935,40 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Ironclad's docs mention publishing workflows via Workflow Designer and admin access, but there is no evidence of version history, review/approval flow for automation changes, or rollback capability for workflows/integrations themselves.",
+    "rationale": "Ironclad's docs describe creating and publishing workflows in Workflow Designer, but there is no evidence of version history, review/approval flows for automations themselves, or the ability to roll back a workflow to a prior version. Missing for 10: version history for workflows, rollback/revert mechanism, and any review/approval process specific to automation changes.",
     "evidenceIds": [
       "ironclad-docs-8",
-      "ironclad-docs-16"
+      "ironclad-docs-16",
+      "ironclad-docs-38"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "board-consents",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Ironclad is a general contract lifecycle management platform with workflow builders, e-signature, and approval routing that could be used to create and route a board consent/resolution document for approval, but there is no specific evidence of board-consent/resolution templates, cap-table/equity-fundraising features, or governance-specific workflows tailored to legal-ops board approvals. missing for 10: evidence of board consent/resolution-specific templates or workflows, evidence of equity-fundraising or governance use cases, and independent validation that Ironclad is used for board approvals specifically rather than generic contracts.",
+    "rationale": "Ironclad provides generic contract creation (no-code builder), approval workflows, and e-signature collection (docs-9,10,38) that could technically be used to draft and route a board consent/resolution document for approval and signature, but there is no evidence of board-consent/resolution templates, cap-table or equity-specific workflows, or any legal-ops-specific corporate governance feature. missing for 10: board consent/resolution templates, equity-fundraising-specific workflow examples, evidence of actual customer use for corporate governance documents.",
     "evidenceIds": [
       "ironclad-docs-9",
       "ironclad-docs-10",
-      "ironclad-docs-5",
-      "ironclad-docs-8"
+      "ironclad-docs-38",
+      "ironclad-docs-5"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "bulk-send-envelopes",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Ironclad's Workflow API can launch individual contract workflows and clickwraps can be embedded, but there is no documentation or feature reference to a bulk-send capability (sending one document to many recipients simultaneously). Missing for 10: any mention of bulk-send, mail-merge-style multi-recipient dispatch, or batch signature request tooling.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Ironclad provides a documented bulk-launch-workflow API for sending workflows (including signature requests) to many recipients via REST, plus a UI 'Start Workflow' path and signature embedding, directly supporting bulk-send of the same document to many recipients. missing for 10: independent/hands-on confirmation of bulk-send at scale and details on recipient-list handling limits.",
     "evidenceIds": [
-      "ironclad-docs-5",
-      "ironclad-docs-13",
-      "ironclad-docs-16"
+      "ironclad-docs-37",
+      "ironclad-docs-38",
+      "ironclad-docs-46",
+      "ironclad-docs-10",
+      "ironclad-docs-36"
     ]
   },
   {
@@ -2967,73 +2976,75 @@
     "storyId": "compliance-calendar",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Ironclad's evidence covers contract creation, signing, storage, workflows, and API/webhooks, but there is no mention of a compliance/filing deadline calendar or reminder system for legal-ops filing obligations.",
+    "confidence": "medium",
+    "rationale": "Ironclad is a contract lifecycle management platform, and tracking key dates/renewals is a plausible CLM feature, but the evidence pack contains no mention of a compliance calendar, filing-deadline tracking, or automated reminder notifications — only generic API/workflow/webhook documentation and contract creation/signing product pages.",
     "evidenceIds": []
   },
   {
     "productId": "ironclad",
     "storyId": "contract-approval-workflows",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Ironclad's docs describe Workflow Designer for building and publishing approval workflows, launching workflows via API/UI, and explicitly reference 'approval and signature policies' being enforced by the platform (docs-8, docs-15, docs-16, docs-20), directly matching the story of routing contracts through configurable approval steps before signature. Missing for 10: independent/hands-on verification of the approval-workflow configuration UI and no detailed walkthrough of multi-stage approval logic beyond brief doc mentions.",
+    "rationale": "Ironclad's Workflow Designer and Workflow APIs support configurable, publishable approval workflows that gate contracts prior to signature, with integrations able to 'automatically block or push forward approvals' and launch workflows via API/UI. Core capability is well-documented across multiple first-party docs, but missing for 10: independent/hands-on verification of approval-routing specifically (community evidence covers other aspects, not workflow approvals) and no detail on approval-step configuration UI beyond admin-controlled Workflow Designer.",
     "evidenceIds": [
+      "ironclad-docs-5",
       "ironclad-docs-8",
       "ironclad-docs-15",
       "ironclad-docs-16",
       "ironclad-docs-20",
-      "ironclad-docs-5"
+      "ironclad-docs-38"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "contract-draft-negotiate",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Ironclad's docs show core CLM capabilities relevant to the story—no-code contract creation, workflow designer for approvals, APIs to update contract language and control the process, and structured storage/signing—supporting a controlled workflow model instead of email attachments. However, the pack lacks explicit evidence of a redlining/track-changes or counterparty negotiation feature, and community citations are thin/tangential rather than corroborating negotiation workflows in practice. Missing for 10: explicit redline/version-comparison feature documentation, first-hand or independent evidence of negotiation collaboration replacing email attachments.",
+    "rationale": "Ironclad's product pages and workflow APIs describe a structured contract lifecycle—no-code contract creation, Workflow Designer/launch APIs, storage, and signing—replacing ad hoc email-based contract handling with a controlled platform workflow (ironclad-docs-9, ironclad-docs-11, ironclad-docs-16, ironclad-docs-38). Missing for 10: explicit documentation of redlining/mark-up and multi-party negotiation collaboration features (track changes, version comparison) and independent hands-on evidence of the negotiation experience specifically.",
     "evidenceIds": [
       "ironclad-docs-9",
-      "ironclad-docs-12",
-      "ironclad-docs-15",
-      "ironclad-docs-20",
-      "ironclad-docs-21",
+      "ironclad-docs-11",
+      "ironclad-docs-16",
+      "ironclad-docs-38",
       "ironclad-docs-8",
-      "ironclad-docs-16"
+      "ironclad-docs-40"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "contract-repository-search",
-    "verdict": "full",
+    "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Ironclad's marketing and developer docs explicitly describe a 'Store Contracts Securely, Find Them Easily' repository and a Records API for retrieving/updating structured contract metadata, plus an 'Ironclad AI'/Contract Intelligence product implying key-term extraction. Missing for 10: detailed documentation of specific extracted fields/metadata schema, search functionality specifics, and independent/hands-on corroboration of extraction accuracy.",
+    "rationale": "Ironclad's product pages explicitly market a searchable contract repository ('Store Contracts Securely, Find Them Easily') and an AI/contract-intelligence layer for metadata extraction, plus Records/Workflows APIs for retrieving stored contract data. However, evidence is mostly marketing copy and API reference stubs rather than detailed documentation of search functionality, metadata/key-term extraction specifics, or independent validation of repository search quality. Missing for 10: hands-on/independent evidence of search and key-term extraction accuracy, detailed docs on metadata schema/extraction fields, and third-party corroboration of repository usability.",
     "evidenceIds": [
       "ironclad-docs-11",
       "ironclad-docs-18",
-      "ironclad-docs-12",
       "ironclad-docs-24",
+      "ironclad-docs-12",
       "ironclad-docs-2",
-      "ironclad-docs-15"
+      "ironclad-docs-39"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "document-generation-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Ironclad's developer docs describe a documented API (Workflows API to launch workflows, Records API to create/retrieve contract data, template IDs obtainable via API, webhooks for events) that supports generating, populating, and sending contracts programmatically. However, launching workflows still requires a pre-published Workflow Designer template (admin-gated, no-code step) rather than fully programmatic document creation, and there's no independent/hands-on developer corroboration of the API in practice, nor a discoverable OpenAPI spec (probe found only 404s). Missing for 10: independent developer testimonials of using the API end-to-end, a public OpenAPI/swagger spec, and evidence of fully code-driven document creation without the Workflow Designer dependency.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Ironclad's developer docs provide a documented Workflows API for launching/populating contract workflows (including template IDs and bulk launch), Records API, OAuth2 authentication, and webhook support for event-driven automation, covering the full generate-populate-send lifecycle programmatically. missing for 10: no publicly discoverable OpenAPI/swagger spec (404s on probe), and no independent developer hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "ironclad-docs-2",
+      "ironclad-docs-3",
       "ironclad-docs-5",
-      "ironclad-docs-8",
       "ironclad-docs-13",
-      "ironclad-docs-16",
       "ironclad-docs-23",
+      "ironclad-docs-37",
+      "ironclad-docs-38",
       "ironclad-docs-4",
+      "ironclad-probe-2",
       "ironclad-probe-3"
     ]
   },
@@ -3043,33 +3054,36 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a contract lifecycle management platform focused on creating, signing, and storing contracts—it has no incorporation or EIN registration functionality, which is a wrong-axis capability for this product category.",
+    "rationale": "Ironclad is a contract lifecycle management (CLM) platform focused on contract creation, signing, storage, and workflow automation—not a business incorporation or company formation service. Obtaining a federal EIN is entirely outside its product category and is a category error, not a missing feature.",
     "evidenceIds": []
   },
   {
     "productId": "ironclad",
     "storyId": "embedded-signing",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Ironclad provides documented Clickwrap Workflow embedding via iframe for signing/agreement flows directly on a developer's own page. Missing for 10: independent hands-on confirmation of the embedding working in production, and broader coverage beyond clickwrap (e.g., full contract e-signature embedding) is not detailed.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Ironclad's docs explicitly cover embedding the signature experience via iframe (embed-acceptance-via-ironclad-signature.md) and embedding clickwrap in one's own page, plus a Bring Your Own Signature Provider option for full customization of the signing flow. missing for 10: independent/hands-on corroboration of embedded signing working in production, and more detail on styling/customization limits of the embed.",
     "evidenceIds": [
+      "ironclad-docs-36",
       "ironclad-docs-6",
       "ironclad-docs-14",
-      "ironclad-docs-22"
+      "ironclad-docs-22",
+      "ironclad-docs-41",
+      "ironclad-docs-42"
     ]
   },
   {
     "productId": "ironclad",
     "storyId": "equity-hiring-paperwork",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Ironclad is a general-purpose CLM platform with no-code contract creation, workflows, and e-signature that could technically be configured to handle offer letters or NDAs (ironclad-docs-9, ironclad-docs-10, ironclad-comm-6 mentions using it for contractor onboarding), but there is no evidence of purpose-built templates, workflows, or integrations for hiring/equity paperwork specifically, especially option grants which typically require cap-table integration. Missing for 10: dedicated HR/equity templates, option grant or cap-table integration evidence, and any case study showing legal-ops running full hiring paperwork through Ironclad.",
+    "rationale": "Ironclad's no-code contract builder, workflow designer, and templated workflows (ironclad-docs-9, ironclad-docs-16, ironclad-docs-38) show it can generate and route any type of contract, which could technically include offer letters, IP agreements, or option grants, and community evidence confirms it is used for contractor/employee paperwork (ironclad-comm-6). However, no evidence specifically names offer letters, confidentiality/IP agreements, or equity/option grant templates as supported document types. missing for 10: explicit templates or docs for offer letters, IP/confidentiality agreements, and option grant paperwork; case studies showing legal-ops teams running equity/hiring paperwork through Ironclad.",
     "evidenceIds": [
       "ironclad-docs-9",
-      "ironclad-docs-10",
-      "ironclad-docs-13",
+      "ironclad-docs-16",
+      "ironclad-docs-38",
       "ironclad-comm-6"
     ]
   },
@@ -3096,7 +3110,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a contract lifecycle management (CLM) platform for drafting, signing, and managing contracts/workflows, not a Delaware incorporation or company-formation service — filing articles of incorporation, generating bylaws, and initial board consent packages is outside its product category.",
+    "rationale": "Ironclad is a contract lifecycle management (CLM) platform for creating, signing, and storing contracts—not a company incorporation service; Delaware entity filing, bylaws, and board approvals are entirely outside its product category.",
     "evidenceIds": []
   },
   {
@@ -3119,17 +3133,16 @@
     "productId": "ironclad",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Ironclad exposes a broad API (Records, Workflows, Webhooks, Data Exports, launching published workflows) letting AI-native users read/write core contract data and trigger processes, but design-time actions like building/publishing workflows and templates are explicitly UI/no-code-builder only ('See your internal company admin for access to Workflow Designer'), and no public OpenAPI spec was found (probe returned 404s for all standard spec paths), indicating incomplete machine-discoverable parity with the UI. missing for 10: API-driven workflow/template design and publishing, a public OpenAPI/schema for full endpoint discovery, and independent confirmation that all UI actions (e.g., clickwrap embedding config, template creation) are API-accessible.",
+    "rationale": "Ironclad exposes broad API surface (Records, Workflows, Webhooks, Templates, Data Exports, BYOSP) letting technical users read/write contract data and trigger/launch workflows programmatically, and docs explicitly note webhook creation is possible via both UI and API. However, core authoring tasks like designing workflows in Workflow Designer and building contracts in the No-Code Builder are documented as UI-only steps that must be completed before the API can launch/interact with them, showing real parity gaps rather than full UI/API equivalence. Missing for 10: API support for workflow design/authoring itself, no-code contract builder equivalence via API, and independent/hands-on confirmation of full feature parity.",
     "evidenceIds": [
-      "ironclad-docs-2",
-      "ironclad-docs-13",
       "ironclad-docs-8",
       "ironclad-docs-16",
+      "ironclad-docs-45",
       "ironclad-docs-9",
-      "ironclad-docs-7",
-      "ironclad-probe-3"
+      "ironclad-docs-13",
+      "ironclad-docs-38"
     ]
   },
   {
@@ -3152,7 +3165,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a closed-source commercial SaaS contract management platform; there is no evidence of, nor plausible category expectation for, an open-licensed source code release.",
+    "rationale": "Ironclad is a closed-source SaaS contract management platform; there is no source code to read under any license, and the evidence only covers API/webhook docs and product marketing, not source availability. This axis is a category error for a proprietary SaaS product.",
     "evidenceIds": []
   },
   {
@@ -3161,7 +3174,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a SaaS contract lifecycle management platform with no on-premise/self-hosted deployment option evidenced; it is delivered exclusively as a cloud service accessed via API/webhooks. Self-hosting the 'core product' is not a plausible axis for this SaaS category.",
+    "rationale": "Ironclad is a SaaS contract lifecycle management platform with no evidence of any self-hosted/on-premise deployment option; self-hosting is not a plausible axis for this type of cloud-only SaaS product.",
     "evidenceIds": []
   },
   {
@@ -3170,7 +3183,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a contract lifecycle management platform for enterprises, not an incorporation/formation service; it has no offering for founder stock purchase agreements, IP assignment, or 83(b) elections as part of company setup — this axis belongs to incorporation-specific products (e.g., Stripe Atlas, Clerky, Firstbase), not general contract management software.",
+    "rationale": "Ironclad is a contract lifecycle management/CLM platform for enterprise contracting workflows, not an incorporation or founder-formation service; post-incorporation setup tasks like stock purchases, IP assignment, and 83(b) elections are entirely outside its product category — this is a wrong-axis question for this product type.",
     "evidenceIds": []
   },
   {
@@ -3179,7 +3192,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic hosting controls for Ironclad; the docs focus on API, workflows, and contract management only. Missing for 10: any mention of region selection, data residency guarantees, or geo-specific hosting infrastructure.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or data location controls for Ironclad; documentation focuses on API/workflow/webhook functionality with no mention of region selection or residency guarantees.",
     "evidenceIds": []
   },
   {
@@ -3188,7 +3201,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or data privacy policies regarding model training; the pack only covers API/product features and unrelated community feedback.",
+    "rationale": "No evidence in the pack addresses AI training data opt-out, data usage policies for AI models, or any privacy controls related to model training; all evidence concerns API/webhook/workflow functionality unrelated to this axis.",
     "evidenceIds": []
   },
   {
@@ -3197,7 +3210,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers API/webhook/workflow documentation and data export jobs, but contains no mention of data retention policies, deletion controls, or AI-training data opt-outs. This is a fair axis for any SaaS handling contract data, so absence of evidence means 'none' rather than 'na'.",
+    "rationale": "The evidence pack covers Ironclad's API, webhooks, workflows, and signature features but contains no documentation about data retention policies, deletion controls, or privacy/data governance settings for AI-native users. Missing for 10: any mention of retention policy configuration, data deletion APIs/endpoints, right-to-be-forgotten support, or data lifecycle management documentation.",
     "evidenceIds": []
   },
   {
@@ -3206,7 +3219,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or an opt-out mechanism for AI-native or any users; documentation focuses on API, workflows, and contract features.",
+    "rationale": "No evidence in the pack addresses telemetry, usage tracking, or opt-out controls for Ironclad's product or API; all evidence concerns contract workflow features, API integration, and unrelated community discussion.",
     "evidenceIds": []
   },
   {
@@ -3215,7 +3228,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Ironclad is a contract lifecycle management platform; registered agent services and receiving service of process are a completely different regulated business function unrelated to CLM's scope.",
+    "rationale": "Ironclad is a contract lifecycle management platform, not a registered agent service; acting as a registered agent and receiving service of process is entirely outside its product category.",
     "evidenceIds": []
   },
   {
@@ -3223,11 +3236,12 @@
     "storyId": "renewal-obligation-tracking",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers Ironclad's contract creation, storage, signing, workflows, and API/webhooks, but nowhere mentions renewal tracking, expiration dates, obligation management, or automatic alerts—core to this story. Missing for 10: any documentation of renewal/expiration tracking, obligation management, or alerting/notification features.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Ironclad's API, webhooks, workflow launching, signing, and storage capabilities, but contains no mention of contract renewal/expiration tracking, obligation management, or automatic alerting features for legal-ops users. While webhooks generically could theoretically be wired to notify on events, none of the docs cite a renewal/expiration/obligation-tracking feature or alert system.",
     "evidenceIds": [
       "ironclad-docs-11",
       "ironclad-docs-18",
+      "ironclad-docs-30",
       "ironclad-docs-4"
     ]
   },
@@ -3250,14 +3264,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Ironclad markets a dedicated 'Sign Contracts' capability and documents a Workflow Designer/Workflows API that lets processes 'follow approval and signature policies,' implying routing across multiple parties, and workflows can be launched via API for automation. However, the pack lacks concrete detail on multi-recipient routing order, legally-binding signature specifics, or independent verification of the e-signature flow working end-to-end. Missing for 10: explicit documentation of multi-recipient signing order/routing configuration, legal-binding compliance details (e.g., ESIGN/UETA), and independent/hands-on confirmation of the signature flow.",
+    "rationale": "Ironclad offers a documented signature product ('Contract Signing Has Never Been Easier'), workflow launch APIs, and BYOSP routing to custom signature providers, indicating support for launching multi-recipient e-signature workflows with routing logic. However, evidence lacks explicit documentation of multi-recipient routing/sequencing configuration (e.g., signing order, parallel vs sequential routing) or founder-friendly UI walkthroughs for this specific flow. missing for 10: explicit docs on multi-signer routing/sequencing UI or API parameters, independent hands-on confirmation of e-signature routing across multiple recipients.",
     "evidenceIds": [
       "ironclad-docs-10",
       "ironclad-docs-19",
-      "ironclad-docs-15",
-      "ironclad-docs-13",
-      "ironclad-docs-5",
-      "ironclad-docs-16"
+      "ironclad-docs-38",
+      "ironclad-docs-41",
+      "ironclad-docs-43",
+      "ironclad-docs-36"
     ]
   },
   {
@@ -3266,10 +3280,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions signer identity verification methods such as SMS, ID check, or knowledge-based authentication for e-signature; the docs cover contract signing generally but not these verification tiers.",
+    "rationale": "The evidence covers Ironclad's e-signature/BYOSP, webhooks, and API capabilities but contains no mention of enhanced signer identity verification methods like SMS one-time passcodes, government ID verification, or knowledge-based authentication for signers. This is a reasonable axis for an e-signature/CLM product, but no evidence shows it delivers this capability.",
     "evidenceIds": [
       "ironclad-docs-10",
-      "ironclad-docs-19"
+      "ironclad-docs-41",
+      "ironclad-docs-36"
     ]
   },
   {
@@ -3277,12 +3292,9 @@
     "storyId": "signing-order-reminders",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only shows generic e-signature and workflow/API pages but no mention of configuring signing order, automatic reminders, or expiration settings on signature requests. Missing for 10: any documentation of signing order configuration, reminder scheduling, or expiration/timeout settings for signature requests.",
-    "evidenceIds": [
-      "ironclad-docs-10",
-      "ironclad-docs-19"
-    ]
+    "confidence": "medium",
+    "rationale": "Evidence covers Ironclad's signature product broadly (embedding, BYOSP, workflow launch) but contains no mention of configuring signing order, automatic reminders, or expiration dates on signature requests.",
+    "evidenceIds": []
   },
   {
     "productId": "legalzoom",
