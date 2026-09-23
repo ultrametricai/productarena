@@ -227,4 +227,46 @@ export const probes: LocalProbe[] = [
       expect: /oauth-protected-resource/,
       timeoutMs: 30_000,
     },
+    {
+      // Official Supabase CLI: version prints keylessly (bare semver on stdout). Same probe as
+      // the backend-as-a-service module — supabase's second arena membership (founder ask
+      // 2026-09-23: judged against neon in serverless-databases).
+      probeId: 'cli-version',
+      productId: 'supabase',
+      storyIds: ['agentic-official-cli'],
+      bin: 'npx',
+      argv: ['npx', '-y', 'supabase', '--version'],
+      displayCommand: 'npx -y supabase --version',
+      expect: /\d+\.\d+\.\d+/,
+      timeoutMs: 120_000,
+    },
+    {
+      // Hosted Supabase MCP server answers keylessly with its OAuth challenge (RFC 9728
+      // metadata pointer) — verified live 2026-09-23.
+      probeId: 'mcp-remote-handshake',
+      productId: 'supabase',
+      storyIds: ['agentic-mcp-server', 'agent-provisions-database'],
+      bin: 'curl',
+      argv: [
+        'curl', '-s', '-i', '--max-time', '20', '-X', 'POST', 'https://mcp.supabase.com/mcp',
+        '-H', 'Content-Type: application/json',
+        '-H', 'Accept: application/json, text/event-stream',
+        '-d', CURL_MCP_INIT,
+      ],
+      displayCommand: `curl -si -X POST https://mcp.supabase.com/mcp -H 'Content-Type: application/json' -d '<jsonrpc initialize>'`,
+      expect: /oauth-protected-resource/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Machine-discoverable agent-skills catalog at a well-known URL (agentskills.io discovery
+      // spec), keyless — the index `npx skills add supabase/agent-skills` consumes.
+      probeId: 'agent-skills-wellknown',
+      productId: 'supabase',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['curl', '-s', '--max-time', '20', 'https://supabase.com/.well-known/agent-skills/index.json'],
+      displayCommand: 'curl -s https://supabase.com/.well-known/agent-skills/index.json',
+      expect: /schemas\.agentskills\.io\/discovery/,
+      timeoutMs: 30_000,
+    },
 ]
