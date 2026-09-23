@@ -11,6 +11,7 @@ import type { Session } from '@/lib/session'
 const sessionStub = vi.hoisted(() => ({ current: { state: 'anonymous' } as Session }))
 vi.mock('@/lib/session', () => ({
   useSession: () => sessionStub.current,
+  loginUrl: (returnTo: string) => `https://login.example/?to=${encodeURIComponent(returnTo)}`,
 }))
 
 import ImUsing from '@/components/ImUsing'
@@ -35,7 +36,9 @@ const mercury = <ImUsing arenaId="startup-banking" productId="mercury" productNa
 describe('ImUsing — multi-pick membership toggle', () => {
   beforeEach(() => {
     stubLocalStorage()
-    sessionStub.current = { state: 'anonymous' }
+    // Write-path tests run signed-in — the 2026-09-23 signup gate blocks anonymous writes
+    // (covered by its own test below).
+    sessionStub.current = { state: 'authenticated' }
   })
 
   it('a click adds the product to the arena picks; a second click removes it (empty arena key deleted)', () => {
@@ -78,5 +81,32 @@ describe('ImUsing — multi-pick membership toggle', () => {
     window.localStorage.setItem(STACK_KEY, '{"startup-banking":"mercury"}')
     const { getByRole } = render(mercury)
     expect(getByRole('button').textContent).toBe("✓ I'm using this")
+  })
+})
+
+describe('ImUsing — signup gate (founder 2026-09-23)', () => {
+  beforeEach(() => {
+    stubLocalStorage()
+    sessionStub.current = { state: 'anonymous' }
+  })
+
+  it('an anonymous click records NOTHING and opens the sign-up modal instead', () => {
+    const { getByRole, getByText } = render(mercury)
+    fireEvent.click(getByRole('button', { name: "I'm using this" }))
+    expect(parseStackMap(readStackRaw())).toEqual({})
+    expect(getByText('Sign up or log in to record this')).toBeDefined()
+    // The login CTA deep-links back; "Not now" dismisses without writing.
+    fireEvent.click(getByText('Not now'))
+    expect(parseStackMap(readStackRaw())).toEqual({})
+  })
+
+  it('the stashed intent applies automatically once the session turns authenticated', () => {
+    window.sessionStorage?.setItem?.(
+      'pa-pending-action',
+      JSON.stringify({ kind: 'im-using', arenaId: 'startup-banking', productId: 'mercury' }),
+    )
+    sessionStub.current = { state: 'authenticated' }
+    render(mercury)
+    expect(parseStackMap(readStackRaw())).toEqual({ 'startup-banking': ['mercury'] })
   })
 })
