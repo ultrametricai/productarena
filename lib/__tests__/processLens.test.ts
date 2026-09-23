@@ -72,13 +72,13 @@ describe('parseLensState / serializeLensState', () => {
 
 describe('resolveStepVendor — lens > stack > null', () => {
   it('an explicit lens pick beats the stack pick', () => {
-    const r = resolveStepVendor(step({}), { 'startup-banking': 'mid-bank' }, { 'startup-banking': 'my-bank' })
+    const r = resolveStepVendor(step({}), { 'startup-banking': 'mid-bank' }, { 'startup-banking': ['my-bank'] })
     expect(r).toMatchObject({ source: 'lens', vendor: { productId: 'mid-bank', score: 71 } })
   })
 
   it('a lens vendor not in the step vendor list falls through to the stack, then to null', () => {
     const s = step({})
-    const viaStack = resolveStepVendor(s, { 'startup-banking': 'ghost-bank' }, { 'startup-banking': 'my-bank' })
+    const viaStack = resolveStepVendor(s, { 'startup-banking': 'ghost-bank' }, { 'startup-banking': ['my-bank'] })
     expect(viaStack).toMatchObject({ source: 'stack', vendor: { productId: 'my-bank' } })
     expect(resolveStepVendor(s, { 'startup-banking': 'ghost-bank' }, {})).toBeNull()
     expect(resolveStepVendor(s, {}, {})).toBeNull()
@@ -100,11 +100,19 @@ describe('resolveStepVendor — lens > stack > null', () => {
     const s = step({})
     // Lens → shutdown: falls through (to stack when present, else null) — never offered.
     expect(resolveStepVendor(s, { 'startup-banking': 'dead-bank' }, {})).toBeNull()
-    const fallthrough = resolveStepVendor(s, { 'startup-banking': 'dead-bank' }, { 'startup-banking': 'my-bank' })
+    const fallthrough = resolveStepVendor(s, { 'startup-banking': 'dead-bank' }, { 'startup-banking': ['my-bank'] })
     expect(fallthrough).toMatchObject({ source: 'stack', vendor: { productId: 'my-bank' } })
     // Stack → shutdown: resolves (the reader really runs it; the check tells them to migrate).
-    const stackShutdown = resolveStepVendor(s, {}, { 'startup-banking': 'dead-bank' })
+    const stackShutdown = resolveStepVendor(s, {}, { 'startup-banking': ['dead-bank'] })
     expect(stackShutdown).toMatchObject({ source: 'stack', vendor: { productId: 'dead-bank', shutdown: true } })
+  })
+
+  it('a multi-pick stack resolves to the BEST covered pick (yoursForStep semantics)', () => {
+    const r = resolveStepVendor(step({}), {}, { 'startup-banking': ['my-bank', 'mid-bank'] })
+    expect(r).toMatchObject({ source: 'stack', vendor: { productId: 'mid-bank', score: 71 } })
+    // The lens (an explicit single view choice) still beats every stack pick.
+    const viaLens = resolveStepVendor(step({}), { 'startup-banking': 'my-bank' }, { 'startup-banking': ['my-bank', 'mid-bank'] })
+    expect(viaLens).toMatchObject({ source: 'lens', vendor: { productId: 'my-bank' } })
   })
 })
 
@@ -152,7 +160,7 @@ describe('lensProcessSummary — processLeaderboard normalization, client-safe',
     const summary = lensProcessSummary(
       steps,
       { 'startup-banking': 'mid-bank' },
-      { 'startup-banking': 'my-bank' }, // shadowed by the lens on every step
+      { 'startup-banking': ['my-bank'] }, // shadowed by the lens on every step
     )
     expect(summary.served).toBe(3)
     expect(summary.vendors).toEqual([{ productId: 'mid-bank', name: 'Mid Bank', source: 'lens' }])

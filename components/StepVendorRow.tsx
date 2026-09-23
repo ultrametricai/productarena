@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import ProductLogoView from '@/components/ProductLogoView'
+import { isPicked } from '@/lib/myStack'
 import type { ProcessCheckStep } from '@/lib/processCheck'
 import { lensGapFor, useProcessLens, type LensSource } from '@/lib/processLens'
 
@@ -74,12 +75,16 @@ function VendorChipButton({
   vendor,
   rank,
   selected,
+  alsoYours,
   onSelect,
   onClear,
 }: {
   vendor: StepRowVendor
   rank: number | null
   selected: LensSource | null
+  /** An UNPINNED chip that is still one of the reader's stack picks (multi-vendor stacks) —
+   *  wears a subtle "yours" tag so every vendor they run stays recognizable. */
+  alsoYours: boolean
   onSelect: () => void
   onClear: () => void
 }) {
@@ -96,6 +101,14 @@ function VendorChipButton({
       >
         <ProductLogoView product={{ id: vendor.productId, name: vendor.name }} size={28} hasLogo={vendor.hasLogo} />
         {selected && <SelectedTag source={selected} />}
+        {!selected && alsoYours && (
+          <span
+            className="rounded bg-zinc-800 px-1 py-px text-[9px] font-semibold text-zinc-400"
+            title={'Also one of your "I\'m using" picks — your best-scoring pick is pinned first'}
+          >
+            yours
+          </span>
+        )}
         <span className="truncate">{vendor.name}</span>
         {vendor.cross && (
           <span className="rounded bg-zinc-800 px-1 py-px text-[9px] uppercase tracking-wide text-zinc-500">
@@ -177,13 +190,16 @@ export default function StepVendorRow({
   const hasExtras = vendors.some((v) => v.cross)
 
   // Resolve who executes this step: lens > stack > null (lib/processLens.ts). Extras-only
-  // steps have no checkStep — match against the displayed chips with the same precedence.
+  // steps have no checkStep — match against the displayed chips with the same precedence,
+  // taking the BEST-SCORING of the reader's picks (multi-vendor stacks, lib/myStack.ts v2).
   const resolved = checkStep
     ? resolveFor(checkStep)
     : (() => {
         const viaLens = vendors.find((v) => lens.picks[v.arenaId] === v.productId)
         if (viaLens) return { vendor: { ...viaLens, hasLogo: viaLens.hasLogo }, source: 'lens' as const }
-        const viaStack = vendors.find((v) => stack[v.arenaId] === v.productId)
+        const viaStack = vendors
+          .filter((v) => isPicked(stack, v.arenaId, v.productId))
+          .sort((a, b) => b.score - a.score)[0]
         return viaStack ? { vendor: { ...viaStack, hasLogo: viaStack.hasLogo }, source: 'stack' as const } : null
       })()
 
@@ -212,9 +228,16 @@ export default function StepVendorRow({
         }
     : null
   const rest = pinnedIndex >= 0 ? vendors.filter((_, i) => i !== pinnedIndex) : vendors
-  const ordered: Array<{ vendor: StepRowVendor; rank: number | null; selected: LensSource | null }> = [
-    ...(pinned ? [{ vendor: pinned, rank: pinnedIndex >= 0 ? pinnedIndex + 1 : null, selected: resolved!.source }] : []),
-    ...rest.map((v) => ({ vendor: v, rank: vendors.indexOf(v) + 1, selected: null })),
+  const ordered: Array<{ vendor: StepRowVendor; rank: number | null; selected: LensSource | null; alsoYours: boolean }> = [
+    ...(pinned ? [{ vendor: pinned, rank: pinnedIndex >= 0 ? pinnedIndex + 1 : null, selected: resolved!.source, alsoYours: false }] : []),
+    // Unpinned chips the reader ALSO runs keep a subtle "yours" tag — the best-scoring pick
+    // pins first, the rest of a multi-vendor stack stays visible as theirs.
+    ...rest.map((v) => ({
+      vendor: v,
+      rank: vendors.indexOf(v) + 1,
+      selected: null,
+      alsoYours: isPicked(stack, v.arenaId, v.productId),
+    })),
   ]
 
   // The honest coverage gap: a clicked vendor with NO judged evidence on this step's mapped
@@ -238,6 +261,7 @@ export default function StepVendorRow({
           vendor={e.vendor}
           rank={e.rank}
           selected={e.selected}
+          alsoYours={e.alsoYours}
           onSelect={() => setPick(e.vendor.arenaId, e.vendor.productId, e.vendor.name)}
           onClear={() => setPick(e.vendor.arenaId, null)}
         />

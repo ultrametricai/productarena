@@ -51,12 +51,37 @@ describe('yoursForStep', () => {
         },
       ],
     })
-    expect(yoursForStep(s, { 'startup-banking': 'my-bank' })?.productId).toBe('my-bank')
+    expect(yoursForStep(s, { 'startup-banking': ['my-bank'] })?.productId).toBe('my-bank')
     // No covering-arena pick — the extra arena serves the step.
-    expect(yoursForStep(s, { 'ai-assistants': 'chatgpt' })?.arenaId).toBe('ai-assistants')
+    expect(yoursForStep(s, { 'ai-assistants': ['chatgpt'] })?.arenaId).toBe('ai-assistants')
     // A pick with no judged step evidence (not in the vendor list) does not cover the step.
-    expect(yoursForStep(s, { 'startup-banking': 'ghost-bank' })).toBeNull()
+    expect(yoursForStep(s, { 'startup-banking': ['ghost-bank'] })).toBeNull()
     expect(yoursForStep(s, {})).toBeNull()
+  })
+
+  it('multi-pick arena: the HIGHEST-SCORING covered pick is yours, whatever the stack order', () => {
+    const s = step({})
+    // The 2nd pick (mid-bank, 71) outscores the 1st (my-bank, 60) on this step.
+    expect(yoursForStep(s, { 'startup-banking': ['my-bank', 'mid-bank'] })?.productId).toBe('mid-bank')
+    // An uncovered pick alongside a covered one — the covered one serves the step.
+    expect(yoursForStep(s, { 'startup-banking': ['ghost-bank', 'my-bank'] })?.productId).toBe('my-bank')
+  })
+
+  it('arena order still wins over score: a covering-arena pick beats a higher-scoring extra-arena pick', () => {
+    const s = step({
+      arenas: [
+        ...step({}).arenas,
+        {
+          arenaId: 'ai-assistants',
+          arenaName: 'AI assistants',
+          kind: 'extra',
+          vendors: [{ productId: 'chatgpt', name: 'ChatGPT', score: 99 }],
+        },
+      ],
+    })
+    expect(
+      yoursForStep(s, { 'startup-banking': ['my-bank'], 'ai-assistants': ['chatgpt'] })?.productId,
+    ).toBe('my-bank')
   })
 })
 
@@ -80,7 +105,7 @@ describe('runProcessCheck', () => {
         best: { productId: 'best-bank', name: 'Best Bank', score: 72, arenaId: 'startup-banking' },
       }), // Δ12 ≤ 15 → not flagged
     ]
-    const result = runProcessCheck(steps, { 'startup-banking': 'my-bank' })
+    const result = runProcessCheck(steps, { 'startup-banking': ['my-bank'] })
     expect(result.steps.map((s) => s.flagged)).toEqual([true, false])
     expect(result.steps[0].delta).toBe(30)
     expect(result.flaggedSteps).toBe(1)
@@ -99,7 +124,7 @@ describe('runProcessCheck', () => {
         best: { productId: 'gusto', name: 'Gusto', score: 80, arenaId: 'payroll' },
       }),
     ]
-    const result = runProcessCheck(steps, { 'startup-banking': 'best-bank' })
+    const result = runProcessCheck(steps, { 'startup-banking': ['best-bank'] })
     expect(result.rankableSteps).toBe(3)
     expect(result.coveredSteps).toBe(2)
     expect(result.flaggedSteps).toBe(0)
@@ -153,7 +178,7 @@ describe('buildProcessCheckSteps — deterministic recompute against committed d
     const banking = steps.filter((s) => s.arenas[0].arenaId === 'startup-banking')
     expect(banking.length).toBeGreaterThan(0)
     for (const s of banking) {
-      expect(yoursForStep(s, { 'startup-banking': 'mercury' })?.productId).toBe('mercury')
+      expect(yoursForStep(s, { 'startup-banking': ['mercury'] })?.productId).toBe('mercury')
     }
   })
 })

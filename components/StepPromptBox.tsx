@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { isPicked } from '@/lib/myStack'
 import { useProcessLens } from '@/lib/processLens'
 
 // Copy-pasteable agent prompt for one process step (founder pilot 2026-09-21: "generate prompts
@@ -27,7 +28,9 @@ export default function StepPromptBox({
   const { lens, stack } = useProcessLens(lensKey)
   const [copied, setCopied] = useState(false)
   const viaLens = vendors.find((v) => lens.picks[v.arenaId] === v.productId)
-  const yours = viaLens ?? vendors.find((v) => stack[v.arenaId] === v.productId)
+  // vendors arrive in the step's ranked order, so the first that is A pick (multi-vendor
+  // stacks, lib/myStack.ts isPicked) is the best-ranked vendor the reader runs.
+  const yours = viaLens ?? vendors.find((v) => isPicked(stack, v.arenaId, v.productId))
   const vendorName = yours?.name ?? vendors[0]?.name ?? 'your vendor'
   const resolved = prompt.replaceAll('{{vendor}}', vendorName)
 

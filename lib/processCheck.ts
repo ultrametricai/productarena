@@ -4,6 +4,8 @@
 // builder that reads the committed step→story mapping and judged verdicts lives in
 // lib/processCheckData.ts; this file must stay free of node builtins.
 //
+import { stackPicks, type StackMap } from './myStack'
+
 // Honesty contract (inherited from lib/processRankings.ts): every step score here is the
 // story-derived weightedPercent the process page already publishes — never recomputed, never
 // invented — and every flagged gap names the numbers and links to the pages where the judged
@@ -83,23 +85,28 @@ const round1 = (n: number) => Math.round(n * 10) / 10
 // Resolve which of the reader's picks serves one step: arenas are tried in serialized order
 // (covering arena first, then extras), and a pick counts only when it appears in that arena's
 // judged vendor list for THIS step — a pick with no applicable verdict on the mapped stories
-// (or one filtered by the extra-arena evidence gate) does not cover the step.
+// (or one filtered by the extra-arena evidence gate) does not cover the step. With multiple
+// picks per arena (StackMap v2), the FIRST arena where any pick covers the step wins (arena
+// order preserved: covering arena first), and within it the HIGHEST-SCORING covered pick is
+// "yours" — the best of the reader's real vendors for this context.
 export function yoursForStep(
   step: ProcessCheckStep,
-  stack: Record<string, string>,
+  stack: StackMap,
 ): (CheckVendor & { arenaId: string; arenaName: string }) | null {
   for (const arena of step.arenas) {
-    const pickId = stack[arena.arenaId]
-    if (!pickId) continue
-    const vendor = arena.vendors.find((v) => v.productId === pickId)
-    if (vendor) return { ...vendor, arenaId: arena.arenaId, arenaName: arena.arenaName }
+    let best: CheckVendor | null = null
+    for (const pickId of stackPicks(stack, arena.arenaId)) {
+      const vendor = arena.vendors.find((v) => v.productId === pickId)
+      if (vendor && (best === null || vendor.score > best.score)) best = vendor
+    }
+    if (best) return { ...best, arenaId: arena.arenaId, arenaName: arena.arenaName }
   }
   return null
 }
 
 export function runProcessCheck(
   steps: ProcessCheckStep[],
-  stack: Record<string, string>,
+  stack: StackMap,
 ): ProcessCheckResult {
   const results: StepCheckResult[] = steps.map((step) => {
     const yours = yoursForStep(step, stack)

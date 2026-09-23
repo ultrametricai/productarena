@@ -201,7 +201,7 @@ describe('recommend — ADD', () => {
 })
 
 describe('recommend — OVERLAP', () => {
-  it('flags two picks in the same arena as possible overlap, never as a removal command', () => {
+  it('reports two picks in the same arena neutrally ("you run N vendors here"), never as an error or removal command', () => {
     const rows = [
       product({ id: 'a1', name: 'Alpha', aiEra: 80, rank: 1 }),
       product({ id: 'a2', name: 'Beta', aiEra: 75, rank: 2 }),
@@ -209,8 +209,9 @@ describe('recommend — OVERLAP', () => {
     const { recommendations } = recommend(['a1', 'a2'], inputs(rows))
     expect(recommendations).toHaveLength(1)
     expect(recommendations[0].kind).toBe('overlap')
-    expect(recommendations[0].reason).toContain('possible overlap')
-    expect(recommendations[0].reason).not.toMatch(/remove/i)
+    expect(recommendations[0].reason).toContain('You run 2 vendors in the Payments arena')
+    expect(recommendations[0].reason).toContain('often deliberate')
+    expect(recommendations[0].reason).not.toMatch(/remove|redundant|error/i)
   })
 
   it('flags a pick whose arena another pick already covers via cross-listing at an equal-or-better score', () => {

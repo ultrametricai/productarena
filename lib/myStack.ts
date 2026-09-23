@@ -10,8 +10,9 @@
 //   - Every recommendation is one sentence WITH the numbers it rests on, plus links to the
 //     product pages where the evidence lives. No number here is ever invented — every score is
 //     the same leaderboard value the arenas publish.
-//   - Overlap recs say "possible overlap", never "remove X" — two products in one arena can be
-//     a deliberate choice (regions, teams, migration in flight).
+//   - Overlap recs never say "remove X": same-arena co-picks read neutrally as "you run N
+//     vendors here" (a deliberate choice — regions, teams, migration in flight — is common),
+//     and cross-arena coverage stays a "possible overlap" question.
 //   - A score gap where either side's confidence grade is D (lib/confidence.ts: a substantial
 //     share of the score rests on no evidence) is NOT actionable — upgrade/break-out recs are
 //     suppressed rather than recommending on footing we've said is thin.
@@ -292,13 +293,15 @@ function overlapRecs(picks: MyStackProduct[], products: MyStackProduct[]): Recom
     list.push(p)
     byPickArena.set(p.arenaId, list)
   }
+  // 2+ picks in one arena is a real signal — a deliberate multi-vendor setup (regions, teams,
+  // migration in flight) — so it reads neutrally as "you run N vendors here", never as an error.
   for (const [, group] of [...byPickArena.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
     if (group.length < 2) continue
     const names = group.map((p) => `${p.name} (${p.aiEra !== null ? score(p.aiEra) : 'unscored'})`)
     out.push({
       kind: 'overlap',
       reason:
-        `${names.join(' and ')} both sit in the ${group[0].arenaName} arena — possible overlap; keeping both can be deliberate, but one may be redundant.`,
+        `You run ${group.length} vendors in the ${group[0].arenaName} arena — ${names.join(' and ')}; often deliberate (regions, teams, a migration in flight), worth a look only if the split isn't intentional.`,
       links: group.map(linkTo),
       impact: round1(OVERLAP_BASE * arenaWeight(group[0].fieldSize)),
     })
@@ -448,28 +451,38 @@ export function parseStoredStack(raw: string | null): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// The ACCOUNT stack — one pick per arena, synced to the logged-in account
+// The ACCOUNT stack — the reader's picks per arena, synced to the logged-in account
 // ---------------------------------------------------------------------------
 //
 // Founder ask: "in signed-in mode, allow the user to define their stack and get upgraded stack
-// advice" — and run process pages against it. Distinct from the free-form tool above (a flat
-// id list in ?s=/localStorage): this is a MAP { arenaId: productId }, exactly one pick per
-// arena, only ids the catalog actually judges in that arena. It follows lib/watchlist.ts
-// verbatim: localStorage is the source the UI reads (instant, offline-safe); for logged-in
-// readers it syncs to the worker's session-gated GET/PUT /productarena/api/my-stack
+// advice" — and run process pages against it; plus (2026-09-22) "allow multiple vendors for
+// functions": readers really run several products in one arena (Mercury AND Brex, Slack AND
+// Discord). Distinct from the free-form tool above (a flat id list in ?s=/localStorage): this
+// is a MAP { arenaId: productId[] } — an ORDERED list of picks per arena, first = primary —
+// only ids the catalog actually judges in that arena. It follows lib/watchlist.ts verbatim:
+// localStorage is the source the UI reads (instant, offline-safe); for logged-in readers it
+// syncs to the worker's session-gated GET/PUT /productarena/api/my-stack
 // (infra/cloudflare-proxy/worker.js "My Stack API", KV key stack:<user id>). Anonymous
 // readers, worker-less origins, and any network failure just leave the stack device-local.
+//
+// v1 → v2: the store used to hold exactly ONE pick per arena ({ arenaId: productId }).
+// parseStackMap accepts BOTH shapes — from localStorage AND from the KV payload — migrating a
+// bare string to a one-element array losslessly; serialization always writes v2 arrays.
 
-export type StackMap = Record<string, string>
+export type StackMap = Record<string, string[]>
 
 export const STACK_KEY = 'pa-account-stack'
 export const STACK_API = '/productarena/api/my-stack'
 // Same-tab change event — localStorage's 'storage' event only fires in OTHER tabs.
 export const STACK_EVENT = 'pa-account-stack-change'
 export const MAX_STACK_ARENAS = 100
+// Picks per arena cap — mirrored by the worker's normalizeStackMap (same posture as its caps).
+export const MAX_PICKS_PER_ARENA = 8
 
-// Tolerant parse: anything that isn't a plain object of non-empty string → non-empty string
-// degrades entry-wise (junk values dropped) or wholesale (not an object → {}), never a crash.
+// Tolerant parse over BOTH shapes: a v1 string value migrates to [string]; a v2 array keeps
+// its order (dupes/junk members dropped, capped at MAX_PICKS_PER_ARENA; an emptied arena is
+// dropped). Anything else degrades entry-wise (junk values dropped) or wholesale (not an
+// object → {}), never a crash.
 export function parseStackMap(raw: string | null): StackMap {
   if (!raw) return {}
   let parsed: unknown
@@ -480,25 +493,69 @@ export function parseStackMap(raw: string | null): StackMap {
   }
   if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return {}
   const out: StackMap = {}
-  for (const [arenaId, productId] of Object.entries(parsed)) {
-    if (arenaId === '' || typeof productId !== 'string' || productId === '') continue
-    out[arenaId] = productId
+  for (const [arenaId, value] of Object.entries(parsed)) {
+    if (arenaId === '') continue
+    const list = typeof value === 'string' ? [value] : Array.isArray(value) ? value : null
+    if (list === null) continue
+    const picks: string[] = []
+    for (const id of list) {
+      if (typeof id !== 'string' || id === '' || picks.includes(id)) continue
+      picks.push(id)
+      if (picks.length >= MAX_PICKS_PER_ARENA) break
+    }
+    if (picks.length === 0) continue
+    out[arenaId] = picks
     if (Object.keys(out).length >= MAX_STACK_ARENAS) break
   }
   return out
 }
 
-// Canonical serialization (sorted keys) so equality checks and useSyncExternalStore snapshots
-// are stable regardless of insertion order.
+// Canonical serialization (sorted keys, always v2 array values) so equality checks and
+// useSyncExternalStore snapshots are stable regardless of insertion order. Pick ORDER within
+// an arena is meaningful (first = primary) and preserved.
 export function serializeStackMap(stack: StackMap): string {
   return JSON.stringify(Object.fromEntries(Object.entries(stack).sort(([a], [b]) => a.localeCompare(b))))
 }
 
-// First-sync merge. Unlike the watchlist's union (a set can keep both sides), a map must pick
-// ONE product per arena: the ACCOUNT value wins a conflict (it is the cross-device source of
-// truth), and arenas only the device knows about are kept. Nothing is ever dropped outright —
-// clearing a pick only propagates through an explicit write while synced, so a stale device
-// can't silently erase the account stack.
+// ---- pick helpers (client-safe, pure) ----
+
+/** The ordered picks for one arena — [] when the arena has none. */
+export function stackPicks(stack: StackMap, arenaId: string): string[] {
+  return stack[arenaId] ?? []
+}
+
+/** "Is this A pick" — the v2 replacement for every stack[arenaId] === productId equality. */
+export function isPicked(stack: StackMap, arenaId: string, productId: string): boolean {
+  return stackPicks(stack, arenaId).includes(productId)
+}
+
+/** Toggle membership: adds to the END of the arena's picks (or removes; removing the last pick
+ *  deletes the key). Returns a NEW map — the input is never mutated. Adding beyond
+ *  MAX_PICKS_PER_ARENA is a no-op (returns the input map unchanged). */
+export function togglePick(stack: StackMap, arenaId: string, productId: string): StackMap {
+  const picks = stackPicks(stack, arenaId)
+  if (picks.includes(productId)) {
+    const remaining = picks.filter((id) => id !== productId)
+    const next = { ...stack }
+    if (remaining.length === 0) delete next[arenaId]
+    else next[arenaId] = remaining
+    return next
+  }
+  if (picks.length >= MAX_PICKS_PER_ARENA) return stack
+  return { ...stack, [arenaId]: [...picks, productId] }
+}
+
+/** The arena's primary (first) pick — null when the arena has none. */
+export function primaryPick(stack: StackMap, arenaId: string): string | null {
+  return stackPicks(stack, arenaId)[0] ?? null
+}
+
+// First-sync merge. Unlike the watchlist's union (a set can keep both sides), the map merges
+// per ARENA: the ACCOUNT's pick list wins a conflict wholesale (it is the cross-device source
+// of truth — order within an arena is meaningful, so lists are never unioned), and arenas only
+// the device knows about are kept. Nothing is ever dropped outright — clearing a pick only
+// propagates through an explicit write while synced, so a stale device can't silently erase
+// the account stack.
 export function mergeStackMaps(server: StackMap, local: StackMap): StackMap {
   return { ...local, ...server }
 }
@@ -597,13 +654,22 @@ export interface StackUpgradeCandidate {
 export interface StackPickAdvice {
   arenaId: string
   arenaName: string
+  /** The BEST of the reader's picks in this arena (highest PA Score; unscored last) — upgrade
+   *  advice compares THIS pick vs the leader; the others are coPicks. */
   pick: MyStackProduct
+  /** The reader's OTHER picks in this arena, stack order preserved. 1+ entries means a
+   *  deliberate multi-vendor setup ("you run N vendors here") — a signal, not an error. */
+  coPicks: MyStackProduct[]
+  /** Every pick in this arena whose vendor announced a shutdown (best pick included) — each
+   *  needs MIGRATE advice regardless of any score gap. */
+  shutdownPicks: MyStackProduct[]
   /** The arena's PA-Score leader (rank 1 among scored rows) — the pick itself when it leads. */
   leader: MyStackProduct
   /** Leader − pick on each score, one decimal; null when either side is unscored. */
   paDelta: number | null
   agentReadyDelta: number | null
-  /** Up to STACK_UPGRADE_CANDIDATES products scoring strictly above the pick, best first. */
+  /** Up to STACK_UPGRADE_CANDIDATES products scoring strictly above the pick, best first —
+   *  never another of the reader's own picks (running it already isn't an upgrade). */
   upgrades: StackUpgradeCandidate[]
 }
 
@@ -620,10 +686,13 @@ const round1Adv = (n: number) => Math.round(n * 10) / 10
 const delta = (a: number | null, b: number | null): number | null =>
   a === null || b === null ? null : round1Adv(a - b)
 
-// Resolve the account stack against the catalog and compare each pick with its arena
+// Resolve the account stack against the catalog and compare each arena's picks with its
 // leaderboard. Invalid entries (unknown arena, product not judged in that arena) are dropped
 // silently — the store only ever holds judged picks, but a stale device may lag the catalog.
-// Advice order follows the catalog's arena order (the site's canonical ordering).
+// Advice order follows the catalog's arena order (the site's canonical ordering). With multiple
+// picks in one arena, the picks are a SET: upgrade advice compares the BEST pick vs the leader
+// (2+ picks = deliberate multi-vendor — reported neutrally via coPicks, never as an error),
+// and every shutdown pick surfaces in shutdownPicks for migrate-first advice.
 export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackAdvice {
   const byArena = new Map<string, MyStackProduct[]>()
   for (const p of products) {
@@ -634,20 +703,30 @@ export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackA
 
   const picks: StackPickAdvice[] = []
   for (const [arenaId, field] of byArena) {
-    const productId = stack[arenaId]
-    if (!productId) continue
-    const pick = field.find((p) => p.id === productId)
-    if (!pick) continue // not judged in this arena (stale pick) — nothing honest to say
+    const pickIds = stackPicks(stack, arenaId)
+    if (pickIds.length === 0) continue
+    const resolved = pickIds.flatMap((id) => {
+      const p = field.find((row) => row.id === id)
+      return p ? [p] : [] // not judged in this arena (stale pick) — nothing honest to say
+    })
+    if (resolved.length === 0) continue
+    // Best pick: highest PA Score (unscored sort last), rank breaking ties — the one the
+    // upgrade math runs against; the rest are coPicks in stack order.
+    const pick = [...resolved].sort(
+      (a, b) => (b.aiEra ?? -1) - (a.aiEra ?? -1) || a.rank - b.rank,
+    )[0]
+    const coPicks = resolved.filter((p) => p.id !== pick.id)
+    const pickIdSet = new Set(resolved.map((p) => p.id))
     // Leader and upgrade candidates are OFFERS — shutdown products never appear
     // (lib/shutdown.ts); a shutdown PICK still resolves, and the UI surfaces its
-    // "shutting down — migrate" line off pick.shutdown.
+    // "shutting down — migrate" line off shutdownPicks.
     const scored = field.filter((p) => p.aiEra !== null && !isShutdown(p)).sort((a, b) => a.rank - b.rank)
     const leader = scored[0] ?? pick
     const upgrades: StackUpgradeCandidate[] =
       pick.aiEra === null
         ? []
         : scored
-            .filter((p) => p.id !== pick.id && (p.aiEra as number) > (pick.aiEra as number))
+            .filter((p) => !pickIdSet.has(p.id) && (p.aiEra as number) > (pick.aiEra as number))
             .sort((a, b) => (b.aiEra as number) - (a.aiEra as number) || a.rank - b.rank)
             .slice(0, STACK_UPGRADE_CANDIDATES)
             .map((product) => ({
@@ -659,6 +738,8 @@ export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackA
       arenaId,
       arenaName: pick.arenaName,
       pick,
+      coPicks,
+      shutdownPicks: resolved.filter((p) => isShutdown(p)),
       leader,
       paDelta: delta(leader.aiEra, pick.aiEra),
       agentReadyDelta: delta(leader.agentReady, pick.agentReady),
@@ -676,13 +757,15 @@ export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackA
   }
 }
 
-// Seed the one-per-arena account stack from the free-form tool's device-local list (the
-// "prefilled from any existing device-local state" contract): each list id resolves to its
-// canonical arena row; the FIRST pick per arena wins, later same-arena picks are skipped.
+// Seed the account stack from the free-form tool's device-local list (the "prefilled from any
+// existing device-local state" contract): each list id resolves to its canonical arena row and
+// joins that arena's pick list in list order (first = primary), capped per arena.
 export function stackMapFromList(ids: string[], products: MyStackProduct[]): StackMap {
   const out: StackMap = {}
   for (const pick of resolvePicks(ids, products)) {
-    if (!(pick.arenaId in out)) out[pick.arenaId] = pick.id
+    const picks = out[pick.arenaId] ?? []
+    if (picks.includes(pick.id) || picks.length >= MAX_PICKS_PER_ARENA) continue
+    out[pick.arenaId] = [...picks, pick.id]
   }
   return out
 }
