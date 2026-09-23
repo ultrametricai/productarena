@@ -80,6 +80,8 @@ const NAV_LABELS: Record<string, string> = {
   "agent-skills": "Skills",
   "data-warehouses": "Warehouses",
   "email": "Email",
+  "email-apis": "Email APIs",
+  "virtual-mailboxes": "Virtual mail",
   "incident-management": "Incidents",
   "docs-platforms": "Docs",
   "data-pipelines": "Pipelines",

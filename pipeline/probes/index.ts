@@ -83,6 +83,8 @@ import { probes as applicantTracking } from './applicant-tracking'
 import { probes as complianceAutomation } from './compliance-automation'
 import { probes as domainRegistrars } from './domain-registrars'
 import { probes as ssoIdentity } from './sso-identity'
+import { probes as emailApis } from './email-apis'
+import { probes as virtualMailboxes } from './virtual-mailboxes'
 
 export type { LocalProbe } from './types'
 
@@ -161,4 +163,6 @@ export const LOCAL_PROBES: Record<string, LocalProbe[]> = {
   'compliance-automation': complianceAutomation,
   'domain-registrars': domainRegistrars,
   'sso-identity': ssoIdentity,
+  'email-apis': emailApis,
+  'virtual-mailboxes': virtualMailboxes,
 }

@@ -238,7 +238,9 @@ describe('data/step-prompts.json', () => {
   it('loader smoke: stepPromptFor resolves committed entries and misses honestly', () => {
     const first = entries[0]
     expect(stepPromptFor(first.taskId, first.nodeId)).toEqual(first)
-    expect(stepPromptFor('growth_005', 'n1')?.prompt).toMatch(/SendGrid/)
+    // growth_005 graduated to a covered market (optionsArenaId email-apis, 2026-09-23), so its
+    // prompts carry the {{vendor}} placeholder instead of a hard-coded SendGrid.
+    expect(stepPromptFor('growth_005', 'n1')?.prompt).toMatch(/\{\{vendor\}\}/)
     expect(stepPromptFor('no_such_task', 'n1')).toBeNull()
   })
 })

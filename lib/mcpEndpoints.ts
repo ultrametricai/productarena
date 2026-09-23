@@ -36,6 +36,7 @@ export const MCP_ENDPOINTS: Record<string, string> = {
   'domain-registrars/dynadot': 'https://mcp.dynadot.com/mcp',
   'edge-platforms/cloudflare': 'https://mcp.cloudflare.com/mcp',
   'edge-platforms/vercel': 'https://mcp.vercel.com/',
+  'email-apis/resend': 'https://mcp.resend.com/mcp',
   'email-marketing/bento': 'https://mcp.bentonow.com/mcp',
   'email-marketing/customer-io': 'https://mcp.customer.io/mcp',
   'email-marketing/loops': 'https://mcp.loops.so/',
