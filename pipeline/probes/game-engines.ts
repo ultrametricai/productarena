@@ -7,7 +7,16 @@ import type { LocalProbe } from './types'
 // unity-hub), PlayCanvas's OFFICIAL editor MCP server on npm, Godot's keyless Asset Library
 // API, and honest negatives — godotengine.org serves no llms.txt, and EpicGames/UnrealEngine
 // 404s keylessly (source access is EULA/auth-gated), the least machine-readable presence of
-// the eight. MCP context verified live: Unity's official MCP ships inside com.unity.ai.assistant
+// the eight.
+//
+// 2026-09-23 accuracy wave additions: Unity's experimental first-party CLI (docs.unity.com/
+// en-us/unity-cli — its own llms.txt, a public install.sh, and `unity mcp` as the announced
+// replacement for the deprecated in-editor MCP server), Unity's keyless UPM registry API
+// (packages.unity.com serves package JSON for com.unity.ai.assistant and com.unity.ai.inference).
+// Unreal's llms.txt on www.unrealengine.com was verified live but Epic's CDN challenge makes it
+// too flaky to probe on a schedule — see the dated NOTE above the unreal probes.
+//
+// MCP context verified live: Unity's official MCP ships inside com.unity.ai.assistant
 // (docs-only, no public repo/package — so no keyless handshake exists to record); Godot and
 // Unreal have community-only MCPs; Phaser's MCP rides its hosted Game Agent. All keyless,
 // read-only.
@@ -33,6 +42,52 @@ export const probes: LocalProbe[] = [
     displayCommand: 'brew info --json=v2 unity-hub | grep desc',
     expect: /Management tool for Unity/,
     timeoutMs: 60_000,
+  },
+  {
+    // Unity's first-party CLI docs serve their own llms.txt (docs.unity.com section index).
+    probeId: 'cli-docs-llms-txt',
+    productId: 'unity',
+    storyIds: ['agentic-agent-docs', 'agentic-official-cli'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://docs.unity.com/en-us/unity-cli/llms.txt | head -4'],
+    displayCommand: 'curl -s https://docs.unity.com/en-us/unity-cli/llms.txt | head -4',
+    expect: /# Unity command-line interface \(CLI\)/,
+    timeoutMs: 30_000,
+  },
+  {
+    // The Unity CLI installs keylessly from a public first-party install script — the binary
+    // whose `unity mcp` mode is Unity's announced replacement for the in-editor MCP server.
+    probeId: 'cli-install-script',
+    productId: 'unity',
+    storyIds: ['agentic-official-cli', 'headless-cli-builds'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -sL --max-time 20 https://unity.com/install.sh | head -3'],
+    displayCommand: 'curl -sL https://unity.com/install.sh | head -3',
+    expect: /Unity CLI Installer/,
+    timeoutMs: 30_000,
+  },
+  {
+    // Unity's UPM registry exposes keyless package JSON — the AI Assistant package that ships
+    // Unity's official (now CLI-superseded) MCP server resolves publicly.
+    probeId: 'upm-registry-ai-assistant',
+    productId: 'unity',
+    storyIds: ['agentic-mcp-server', 'official-ai-copilot'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://packages.unity.com/com.unity.ai.assistant | head -c 120'],
+    displayCommand: 'curl -s https://packages.unity.com/com.unity.ai.assistant | head -c 120',
+    expect: /"name":"com\.unity\.ai\.assistant"/,
+    timeoutMs: 30_000,
+  },
+  {
+    // Same registry, the Sentis inference package — Unity's official on-device ML runtime.
+    probeId: 'upm-registry-ai-inference',
+    productId: 'unity',
+    storyIds: ['runtime-ml-inference'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://packages.unity.com/com.unity.ai.inference | grep -o "neural network inference" | head -1'],
+    displayCommand: 'curl -s https://packages.unity.com/com.unity.ai.inference | grep -o "neural network inference"',
+    expect: /neural network inference/,
+    timeoutMs: 30_000,
   },
   {
     // Godot installs keylessly from Homebrew — the binary that runs `godot --headless`.
@@ -183,14 +238,15 @@ export const probes: LocalProbe[] = [
     timeoutMs: 60_000,
   },
   {
-    // PlayCanvas docs llms.txt (with a 2 MB llms-full.txt behind it).
+    // PlayCanvas docs llms.txt (with a 2 MB llms-full.txt behind it). Heading changed from
+    // '# PlayCanvas Developer Documentation' to '# PlayCanvas' upstream (observed 2026-09-23).
     probeId: 'docs-llms-txt',
     productId: 'playcanvas',
     storyIds: ['agentic-agent-docs'],
     bin: 'curl',
     argv: ['sh', '-c', 'curl -s --max-time 20 https://developer.playcanvas.com/llms.txt | head -6'],
     displayCommand: 'curl -s https://developer.playcanvas.com/llms.txt | head -6',
-    expect: /# PlayCanvas Developer Documentation/,
+    expect: /# PlayCanvas/,
     timeoutMs: 30_000,
   },
   {
@@ -216,6 +272,13 @@ export const probes: LocalProbe[] = [
     expect: /# Phaser Examples Index/,
     timeoutMs: 30_000,
   },
+  // NOTE (2026-09-23): www.unrealengine.com and dev.epicgames.com DO serve llms.txt files
+  // ('# Unreal Engine' / '# Epic Developer Community'), but Epic's CDN intermittently
+  // TLS/WAF-challenges non-browser clients (the same request alternates 200/403 across
+  // back-to-back runs, whatever the client — curl, node fetch, python urllib). Too flaky
+  // for a standing recorded probe (the api.github.com rationale below), so the fact is
+  // recorded as a dated probe-tier evidence item in
+  // pipeline/scripts/append-game-engines-runtime-probes.py instead.
   {
     // Honest negative: Unreal's source repo is EULA/auth-gated (raw README 404s keylessly)
     // and unrealengine.com 403s every non-browser client, its license page included.
