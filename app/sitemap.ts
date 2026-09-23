@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { loadArenaSections } from '@/lib/arenaSections'
 import { battleSlug, loadAll } from '@/lib/data'
 import { collectGlobalStories } from '@/lib/globalStories'
 import { loadChains, loadProcesses, processSlug } from '@/lib/processes'
@@ -22,6 +23,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // (unlisted by founder call — the route stays alive for old links but isn't advertised).
   const entries: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: now },
+    { url: `${SITE_URL}/arenas`, lastModified: now },
+    ...loadArenaSections().map((s) => ({ url: `${SITE_URL}/arenas/${s.id}`, lastModified: now })),
     { url: `${SITE_URL}/methodology`, lastModified: now },
     { url: `${SITE_URL}/terms`, lastModified: now },
     { url: `${SITE_URL}/privacy`, lastModified: now },

@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import AiEraBadge from '@/components/AiEraBadge'
+import ArenasDirectory from '@/components/ArenasDirectory'
 import HomeModes from '@/components/HomeModes'
-import IconChip from '@/components/IconChip'
 import MegaTable from '@/components/MegaTable'
 import ProcessesTable from '@/components/ProcessesTable'
 import ProductLogo from '@/components/ProductLogo'
-import arenaIcons from '@/data/arena-icons.json'
 import { battleSlug, leadingBattle, loadAll } from '@/lib/data'
 import { buildMegaTableArenaOptions, buildMegaTableRows } from '@/lib/megaTable'
 import { buildProcessRows } from '@/lib/processRows'
@@ -29,63 +27,12 @@ export default function Home() {
   // toggle persists per device (components/HomeModes.tsx).
   const companiesMode = (
     <div className="space-y-12">
-      <section>
+      {/* Deep-table view (founder 2026-09-23): the ranking table breaks out of the max-w-7xl
+          shell at xl and uses the full page width — margin trick rather than w-screen so the
+          scrollbar never causes horizontal overflow. */}
+      <section className="xl:mx-[calc(50%-50vw+1.25rem)]">
         {/* /everything is unlisted by founder call — no banner into it (route stays alive). */}
         <MegaTable rows={megaRows} arenas={arenaOptions} />
-      </section>
-
-      <section>
-        <h2 className="font-display leading-[1.1] text-xl font-semibold tracking-tight">Arenas</h2>
-        <p className="mt-1 text-sm text-zinc-500">Pick an arena to see the full head-to-head leaderboard.</p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((data) => {
-            const { leaderboard } = data.rankings
-            const leaderEntry = leaderboard[0]
-            const leader = data.products.find((p) => p.id === leaderEntry.productId)!
-            return (
-              <Link
-                key={data.category.id}
-                href={`/arena/${data.category.id}`}
-                className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
-              >
-                {/* Founder 2026-09-23: logos were too bunched (-space-x-3 overlap) — breathe. */}
-                <div className="flex gap-1.5">
-                  {data.products.slice(0, 5).map((p) => (
-                    <div key={p.id} className="rounded-lg ring-2 ring-zinc-950">
-                      <ProductLogo product={p} size={28} />
-                    </div>
-                  ))}
-                </div>
-                <h3 className="font-display leading-[1.1] mt-3 flex items-center gap-1.5 text-base font-semibold group-hover:text-emerald-300">
-                  <IconChip
-                    icon={(arenaIcons as Record<string, string>)[data.category.id] ?? ''}
-                    title={`${data.category.name} arena`}
-                  />
-                  {data.category.name}
-                </h3>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score leader</p>
-                    <p className="truncate text-sm font-medium">{leader.name}</p>
-                  </div>
-                  <AiEraBadge value={leaderEntry.aiEra} size="sm" />
-                </div>
-              </Link>
-            )
-          })}
-          {/* Founder 2026-09-15: the grid ends with a quiet "+" card — anyone can suggest the
-              arena we're missing via a prefilled GitHub issue. */}
-          <a
-            href="https://github.com/ultrametricai/productarena/issues/new?title=%5Barena%5D%20Suggest%20a%20new%20arena%3A%20%3Cname%3E&labels=arena-suggestion&body=%23%23%20Arena%20name%0A%0A%23%23%20Products%20that%20compete%20in%20it%20(4%2B)%0A%0A-%20%0A-%20%0A-%20%0A-%20%0A%0A%23%23%20Why%20it%20matters%20in%20the%20AI%20era%0A"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Suggest a new arena — opens a prefilled GitHub issue"
-            className="group flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-800 p-4 text-zinc-500 transition hover:border-emerald-400/60 hover:text-emerald-300"
-          >
-            <span aria-hidden className="text-3xl font-light leading-none">+</span>
-            <span className="text-sm font-medium">Suggest an arena</span>
-          </a>
-        </div>
       </section>
 
       <section>
@@ -165,7 +112,28 @@ export default function Home() {
       <h1 className="font-display mb-3 text-2xl font-bold leading-tight tracking-tight">
         Open rankings for the AI era
       </h1>
-      <HomeModes companies={companiesMode} processes={processesMode} />
+      <HomeModes
+        companies={companiesMode}
+        processes={processesMode}
+        arenas={
+          <div className="space-y-6">
+            <ArenasDirectory headingLevel="h3" />
+            <p className="text-sm">
+              <Link href="/arenas" className="text-emerald-400 underline decoration-emerald-400/40 hover:text-emerald-300">
+                The full Arenas page →
+              </Link>{' '}
+              <a
+                href="https://github.com/ultrametricai/productarena/issues/new?title=%5Barena%5D%20Suggest%20a%20new%20arena%3A%20%3Cname%3E&labels=arena-suggestion&body=%23%23%20Arena%20name%0A%0A%23%23%20Products%20that%20compete%20in%20it%20(4%2B)%0A%0A-%20%0A-%20%0A-%20%0A-%20%0A%0A%23%23%20Why%20it%20matters%20in%20the%20AI%20era%0A"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-3 text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300"
+              >
+                Suggest an arena ↗
+              </a>
+            </p>
+          </div>
+        }
+      />
     </div>
   )
 }
