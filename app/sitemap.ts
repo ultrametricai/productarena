@@ -93,9 +93,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entries.push({ url: `${SITE_URL}/global/${story.id}`, lastModified: now })
   }
 
-  // Founder processes + curated chains (see lib/processes.ts and app/processes/*).
+  // Founder processes + curated chains (see lib/processes.ts and app/processes/*), plus the
+  // decision-driven Virtual Startup journey over the same corpus (app/virtual-startup).
   entries.push({ url: `${SITE_URL}/processes`, lastModified: now })
   entries.push({ url: `${SITE_URL}/processes/operating-rhythm`, lastModified: now })
+  entries.push({ url: `${SITE_URL}/virtual-startup`, lastModified: now })
   for (const task of loadProcesses()) {
     entries.push({ url: `${SITE_URL}/processes/${processSlug(task.title)}`, lastModified: now })
   }
