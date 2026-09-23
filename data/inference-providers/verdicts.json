@@ -4031,12 +4031,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Together AI publishes a working llms.txt (HTTP 200) with a documentation index, per-page .md docs, and even a live MCP server for docs lookup, all independently confirmed via probes plus first-party docs on agent-skills. missing for 10: no independent third-party report of an agent actually consuming llms.txt successfully in practice.",
+    "rationale": "Probes confirm a working llms.txt index (HTTP 200) and machine-readable .md doc pages, and Together also ships a docs MCP server plus agent skills explicitly designed to make coding agents 'Together-AI-aware' via live documentation lookup. Missing for 10: independent third-party confirmation that agents actually consume llms.txt successfully in practice.",
     "evidenceIds": [
       "together-ai-probe-1",
       "together-ai-probe-2",
-      "together-ai-probe-rt-3",
+      "together-ai-probe-4",
       "together-ai-docs-12",
+      "together-ai-docs-20",
       "together-ai-docs-30"
     ]
   },
@@ -4046,7 +4047,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Together AI is an inference/training infrastructure API platform; it does not host 'your data' inside a product surface with dashboards or analytics from which it generates insights and suggestions — that role belongs to end-user applications built on top of it, not to Together AI itself.",
+    "rationale": "Together AI is an inference/training API platform, not an end-user product that stores 'my data' and surfaces in-product insights or suggestions — that capability belongs to products built on top of Together AI, not to Together AI itself.",
     "evidenceIds": []
   },
   {
@@ -4054,18 +4055,26 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Together AI is an inference/training API platform; it offers building blocks like async batch jobs and function-calling/agentic loops (together-ai-docs-3, together-ai-docs-9) but no evidence of a scheduling, trigger, or persistent background-automation system that lets a user 'set up' autonomous automations. Missing for 10: any documented scheduler/trigger mechanism, persistent agent runtime, or automation dashboard.",
+    "evidenceIds": [
+      "together-ai-docs-3",
+      "together-ai-docs-9"
+    ]
   },
   {
     "productId": "together-ai",
     "storyId": "agentic-builtin-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Together AI is an inference/training API platform; evidence shows agent-skills and an MCP server that make *external* coding agents aware of Together AI's docs/SDK, not a built-in assistant embedded inside Together AI's own console/product that a user can delegate tasks to. No evidence of any first-party assistant UI or delegation feature within the platform itself.",
+    "evidenceIds": [
+      "together-ai-docs-12",
+      "together-ai-docs-19",
+      "together-ai-docs-20",
+      "together-ai-docs-30"
+    ]
   },
   {
     "productId": "together-ai",
@@ -4073,15 +4082,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Together AI is an API/SDK-first inference platform with OpenAI-compatible REST endpoints, official server-side SDKs (TypeScript/Python), batch inference, streaming via SSE, and structured/function-calling outputs — all natively usable in headless CI/automation pipelines without any UI dependency. Live probes confirm the API and status endpoints are reachable programmatically. missing for 10: no explicit CI/CD example or GitHub Actions template in evidence, no documented CLI exit-code/scripting conventions, and no independent case study of a CI pipeline using Together AI headlessly.",
+    "rationale": "Together AI is an API-first platform with REST/SDK access (TypeScript client, OpenAI-compatible API), batch inference, fine-tuning via API/CLI, and dedicated endpoints with autoscaling — all of which are inherently usable headlessly in CI/automation pipelines without any UI dependency. Function calling and agentic multi-step tool use further support automation workflows. Missing for 10: explicit CI/CD pipeline examples (e.g., GitHub Actions integration), documented non-interactive CLI auth/config for scripted environments, and independent hands-on confirmation of headless CI usage.",
     "evidenceIds": [
       "together-ai-docs-1",
-      "together-ai-docs-2",
-      "together-ai-docs-3",
-      "together-ai-gh-1",
       "together-ai-gh-2",
-      "together-ai-probe-rt-1",
-      "together-ai-docs-21"
+      "together-ai-docs-3",
+      "together-ai-docs-17",
+      "together-ai-docs-25",
+      "together-ai-docs-9",
+      "together-ai-docs-34"
     ]
   },
   {
@@ -4090,32 +4099,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence only shows Together AI publishing its own MCP server (docs lookup) for coding agents to consume — i.e., Together acting as an MCP *server*, not as a client that lets users plug external MCP servers into it. There's no documentation or probe showing Together's platform/API can connect to and use tools from user-supplied MCP servers, despite having function/tool-calling APIs. missing for 10: any evidence of MCP-client support (configuring/connecting external MCP servers within Together's product), integration of MCP tool results into its agentic function-calling flow.",
+    "rationale": "Together AI documents publishing its own MCP server so external coding agents can query its docs, and supports function/tool calling for building agent loops, but there is no evidence that Together AI itself can consume/plug in external MCP servers to use their tools — the direction of integration shown is the reverse of the story.",
     "evidenceIds": [
       "together-ai-docs-12",
-      "together-ai-docs-19",
       "together-ai-docs-20",
       "together-ai-docs-30",
-      "together-ai-probe-4",
-      "together-ai-probe-rt-3",
       "together-ai-docs-9",
-      "together-ai-docs-16"
+      "together-ai-docs-8"
     ]
   },
   {
     "productId": "together-ai",
     "storyId": "agentic-mcp-server",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Together AI documents an official Docs MCP server that gives agents live access to documentation, and a live probe confirms the MCP endpoint at docs.together.ai/mcp responds correctly to an initialize call with proper protocol capabilities. This is corroborated by both first-party docs and independent hands-on verification. Missing for 10: broader coverage beyond docs lookup (e.g., an MCP server exposing inference/model-management actions rather than just documentation retrieval), and no community discussion confirming real-world agent integration experiences.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Together AI documents an official 'Docs MCP server' that gives coding agents live access to its documentation site, alongside agent 'skills' for correct SDK usage — a genuine first-party MCP server an agent can connect to. However, this MCP server is scoped narrowly to docs lookup rather than exposing broader platform capabilities (inference, fine-tuning, dedicated endpoints) as MCP tools. Missing for 10: evidence of a broader MCP server surface beyond docs lookup, and independent/hands-on confirmation of the MCP server working in practice.",
     "evidenceIds": [
       "together-ai-docs-12",
       "together-ai-docs-19",
       "together-ai-docs-20",
       "together-ai-docs-30",
-      "together-ai-probe-4",
-      "together-ai-probe-rt-3"
+      "together-ai-probe-4"
     ]
   },
   {
@@ -4124,7 +4129,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Together AI is an inference/training API platform operated via REST API, SDKs, CLI, and console — the evidence shows structured commands (API calls, CLI syntax like 'tg beta endpoints deploy...') rather than any natural-language command interface for operating the platform itself. The agent-skills/MCP docs only help external coding agents write correct Together AI code, not let a user operate Together AI's own product surface via natural language.",
+    "rationale": "Together AI is an API/inference platform operated via SDK calls, CLI, and console; there is no evidence of a natural-language interface for operating the platform itself (e.g., chat-driven deployment/management). Agent-skills and MCP docs-server help coding agents write correct Together AI code, but that is not the same as operating Together AI via NL commands.",
     "evidenceIds": []
   },
   {
@@ -4143,14 +4148,16 @@
     "productId": "together-ai",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Together AI exposes an OpenAI-compatible REST API with official SDKs (TypeScript/JS), documented endpoints for chat, batch, fine-tuning, dedicated deployment, and a live, publicly reachable models endpoint confirmed by probe; docs are extensive and public. Missing for 10: a discoverable formal OpenAPI/swagger spec (probe found all candidate paths 404).",
+    "rationale": "Together AI ships a well-documented public REST API (OpenAI-compatible) covering chat, function calling, structured outputs, batch, fine-tuning, dedicated endpoints, images/video, and has official SDKs (TypeScript) plus streaming support, all clearly aimed at programmatic/agentic use. missing for 10: no discoverable OpenAPI/swagger spec (probe found all candidate paths 404) and no independent third-party review specifically validating API robustness/completeness beyond docs and SDK repo.",
     "evidenceIds": [
       "together-ai-docs-1",
-      "together-ai-docs-2",
+      "together-ai-docs-8",
+      "together-ai-docs-9",
+      "together-ai-docs-21",
       "together-ai-gh-2",
-      "together-ai-probe-rt-1",
+      "together-ai-gh-1",
       "together-ai-probe-3"
     ]
   },
@@ -4159,8 +4166,8 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of scoped or least-privilege API key issuance (e.g., per-project keys, role/permission scoping, or restricted-scope tokens for agents); docs only mention a single API key used for authentication, with no mention of scoping controls.",
+    "confidence": "high",
+    "rationale": "No evidence of scoped or least-privilege API key creation (e.g., per-agent permission scopes, read-only vs write keys, resource-limited credentials) anywhere in the docs pack; only generic mention of using 'the API key' as a single credential. This is a fair axis for an API/inference platform to support, but nothing in the evidence shows scoped credential issuance.",
     "evidenceIds": [
       "together-ai-docs-1"
     ]
@@ -4171,15 +4178,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Together AI provides an official TypeScript/JavaScript SDK (github repo) and OpenAI-compatible API/SDK usage, with docs covering chat, structured outputs, function calling, streaming, fine-tuning, and dedicated deployment all launchable via API/SDK. This directly supports AI-native, agentic development against official SDKs, including agent loop patterns and tool calling. Missing for 10: independent hands-on developer reviews specifically praising SDK quality/completeness, and no official Python SDK repo cited in evidence pack.",
+    "rationale": "Together AI ships official SDKs (e.g. together-typescript on GitHub, plus Python SDK implied by API/CLI docs), with OpenAI-compatible API, streaming SSE support, function calling, structured outputs, and fine-tuning/deployment all accessible via SDK per docs. GitHub repo confirms first-party TypeScript client with documented usage. Missing for 10: independent hands-on developer reviews specifically praising SDK ergonomics, and no explicit mention of an official Python SDK repo in evidence pack.",
     "evidenceIds": [
       "together-ai-gh-1",
       "together-ai-gh-2",
       "together-ai-docs-1",
       "together-ai-docs-8",
       "together-ai-docs-9",
-      "together-ai-docs-17",
-      "together-ai-docs-7"
+      "together-ai-docs-17"
     ]
   },
   {
@@ -4188,7 +4194,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of webhook subscription support anywhere in the docs, SDKs, or probes; Together AI offers SSE streaming and a docs MCP server, but nothing about webhook event subscriptions for async notifications (e.g., fine-tune job completion, batch job status).",
+    "rationale": "No evidence of any webhook subscription mechanism for events (e.g., fine-tuning job completion, batch job status); the docs cover inference, fine-tuning, dedicated endpoints, and agent skills but never mention webhooks or event callbacks.",
     "evidenceIds": []
   },
   {
@@ -4197,7 +4203,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows extensive prose documentation (guides, overview pages) but no reference to an interactive API reference or runnable/try-it-now code examples; a direct probe for OpenAPI/Swagger specs at standard paths returned 404 for all candidates, indicating no interactive spec-driven reference was found. No community or hands-on evidence confirms a runnable API console exists.",
+    "rationale": "The evidence shows extensive static documentation (endpoints, SDKs, guides) and llms.txt/docs-md files for LLM consumption, but no interactive API reference (e.g., Swagger/OpenAPI UI with 'try it' runnable examples) — in fact a direct probe for openapi.json/swagger.json returned 404 on all candidate paths, indicating no discoverable interactive reference.",
     "evidenceIds": [
       "together-ai-probe-3",
       "together-ai-probe-1",
@@ -4210,9 +4216,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Active probing for standard OpenAPI/swagger spec locations (openapi.json, swagger.json, etc.) all returned 404, and no docs page in the pack references a downloadable OpenAPI/machine-readable spec for the Together API.",
+    "rationale": "Together AI exposes a REST/OpenAI-compatible API and SDKs, but a direct probe for a machine-readable OpenAPI spec at common paths (openapi.json, swagger.json, etc.) returned 404 everywhere, and no docs page links to a downloadable spec.",
     "evidenceIds": [
-      "together-ai-probe-3"
+      "together-ai-probe-3",
+      "together-ai-docs-1"
     ]
   },
   {
@@ -4221,9 +4228,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a dedicated sandbox/staging environment; the only related mention is a test account with trial credit on the same production API, not an isolated sandbox for testing without touching production data.",
+    "rationale": "No evidence of a dedicated sandbox/staging environment isolated from production data; the closest hints are a serverless free-credit test account (together-ai-comm-3) and prototyping-then-scaling guidance (together-ai-docs-26), neither of which describes an actual sandbox that isolates test activity from production data. missing for 10: dedicated sandbox/staging mode, test API keys separate from production, documentation of data isolation guarantees.",
     "evidenceIds": [
-      "together-ai-comm-3"
+      "together-ai-comm-3",
+      "together-ai-docs-26"
     ]
   },
   {
@@ -4232,8 +4240,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows a documented, OpenAI-compatible REST API (with a /v1/ endpoint) but contains no mention of a versioning scheme or a documented deprecation policy for API changes. Absence of evidence for this applicable capability means it cannot be credited as delivered.",
-    "evidenceIds": []
+    "rationale": "No evidence pack item mentions API versioning scheme (e.g., v1/v2 endpoints) or a documented deprecation policy for models/APIs; the OpenAPI spec probe even returned 404s, and no docs reference deprecation timelines or version support windows. missing for 10: versioned API documentation, explicit deprecation policy, model/version sunset timelines.",
+    "evidenceIds": [
+      "together-ai-probe-3"
+    ]
   },
   {
     "productId": "together-ai",
@@ -4241,11 +4251,11 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Together AI offers an asynchronous Batch API explicitly designed for bulk workloads across many items at once, at up to 50% lower cost than synchronous calls, alongside dedicated endpoints and fine-tuning pipelines that can process large datasets end-to-end. missing for 10: no documented batch size/throughput limits, no independent/hands-on report validating batch job behavior at scale, and no detail on input format flexibility for large item counts.",
+    "rationale": "Together AI documents a dedicated asynchronous batch API for running bulk inference workloads at lower cost, directly enabling bulk operations across many items (e.g., many prompts) in one job. Combined with per-token pricing on 100+ models and no provisioning latency, this supports scaling bulk requests, though details on max batch size, job monitoring, and independent hands-on validation are absent. Missing for 10: independent/hands-on verification of batch job scale and reliability, documentation on batch size limits and error handling for large-scale bulk runs.",
     "evidenceIds": [
       "together-ai-docs-3",
-      "together-ai-docs-23",
-      "together-ai-docs-28"
+      "together-ai-docs-2",
+      "together-ai-docs-14"
     ]
   },
   {
@@ -4263,12 +4273,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Together AI documents async batch workloads, fine-tuning jobs, and dedicated endpoints, but nowhere in the evidence is there a scheduler, cron-like trigger, or recurring-job/workflow orchestration mechanism; jobs appear to be triggered manually via API/CLI/console rather than on a recurring schedule.",
-    "evidenceIds": [
-      "together-ai-docs-3",
-      "together-ai-docs-17",
-      "together-ai-docs-28"
-    ]
+    "rationale": "The evidence shows batch inference, fine-tuning, and dedicated endpoints, but nothing about scheduling recurring jobs or workflows (e.g., cron-like triggers, recurring batch runs, or workflow orchestration) — this is a plausible capability for an inference/training platform but no evidence supports it.",
+    "evidenceIds": []
   },
   {
     "productId": "together-ai",
@@ -4276,18 +4282,18 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Together AI is an inference/training API platform, not an automation/workflow builder; there is no concept of user-created 'automations' to version, review, or roll back in this evidence pack.",
+    "rationale": "Together AI is an inference/fine-tuning API platform, not an automation/workflow builder; there is no concept of 'automations' to version, review, or roll back in the evidence pack. This story applies to workflow/automation tools, not to a model inference and hosting service.",
     "evidenceIds": []
   },
   {
     "productId": "together-ai",
     "storyId": "availability-sla",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a public status page and various product docs, but nothing states an actual uptime/availability SLA percentage or enterprise contractual guarantee. Absence of evidence for this applicable capability yields none.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only relevant evidence is a mention that provisioned-throughput customers get a 'commitment to throughput and reliability targets' for a fixed term — a vague gesture toward an SLA-like guarantee, but no explicit uptime percentage, enterprise SLA document, or remedy/credit terms are documented. missing for 10: numeric uptime % commitment, formal enterprise SLA page/contract terms, breach remedies/credits, status-page or historical SLA-adherence reporting.",
     "evidenceIds": [
-      "together-ai-probe-rt-2"
+      "together-ai-docs-41"
     ]
   },
   {
@@ -4295,29 +4301,27 @@
     "storyId": "batch-discounted-jobs",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Together AI has documented batch inference at up to 50% lower cost than real-time serverless pricing, directly matching the story's requirement for asynchronous jobs at a documented discount [together-ai-docs-3]. missing for 10: independent/hands-on corroboration of actual batch job submission and discount realization beyond the docs page, and more detail on submission workflow/API specifics.",
+    "confidence": "high",
+    "rationale": "Together AI documents a dedicated async batch inference product with an explicit discount claim ('Run asynchronous batch workloads at up to 50% lower cost') separate from serverless real-time per-token pricing. This directly matches the story's request for documented async batch discount pricing. Missing for 10: independent/hands-on corroboration of the discount in practice and more detail on job submission/monitoring workflow beyond the overview snippet.",
     "evidenceIds": [
-      "together-ai-docs-3"
+      "together-ai-docs-3",
+      "together-ai-docs-2"
     ]
   },
   {
     "productId": "together-ai",
     "storyId": "coding-agent-integrations",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Together AI documents first-party agent-skills and an MCP server specifically for coding agent integration (docs-agent-skills, docs-12/19/20/24/29/30), confirmed live via probe (probe-4, probe-rt-3), plus OpenAI-compatible base URL swap for framework compatibility (docs-1) and function/tool-calling docs for agentic workflows (docs-8/9). Missing for 10: independent hands-on reports specifically validating the agent-skills/MCP integration with popular frameworks like LangChain or Claude Code.",
+    "rationale": "Together AI documents OpenAI-compatible endpoints for easy integration, ready-made agent skills teaching coding agents Together-specific patterns, and a first-party MCP server for live docs lookup directly in the editor, plus agentic function-calling docs for building agent loops. Missing for 10: independent/hands-on corroboration of the agent-skills/MCP integration working in practice with specific frameworks (e.g., LangChain, AutoGPT).",
     "evidenceIds": [
       "together-ai-docs-1",
       "together-ai-docs-12",
       "together-ai-docs-19",
       "together-ai-docs-20",
-      "together-ai-docs-30",
-      "together-ai-docs-8",
       "together-ai-docs-9",
-      "together-ai-probe-4",
-      "together-ai-probe-rt-3"
+      "together-ai-probe-4"
     ]
   },
   {
@@ -4326,22 +4330,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack shows Together AI hosts 100+ open-source models and supports fine-tuning/dedicated deployment, but there is no evidence—first-party or independent—about the speed or process of adding newly released open-weight models to the catalog. missing for 10: any documentation or community report on time-to-availability for new model releases, changelog/release-notes evidence, or comparison of catalog freshness versus competitors.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows Together AI hosts 100+ open-source models and supports deploying various model IDs (e.g., docs-2, docs-25), but there is no evidence about the speed or process by which newly released open-weight models are added to the platform after their public release. No documentation, changelog, or community report addresses time-to-availability for new model releases. missing for 10: any statement on release-to-availability turnaround, changelog/announcement of rapid model additions, or evidence of day-one support for new open-weight model launches.",
+    "evidenceIds": [
+      "together-ai-docs-2",
+      "together-ai-docs-25"
+    ]
   },
   {
     "productId": "together-ai",
     "storyId": "dedicated-endpoints-autoscale",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs explicitly describe Dedicated Model Inference (DMI) for serving models on reserved/isolated hardware distinct from the shared serverless pool, with no hard rate limits, and a dedicated scaling doc showing configurable autoscaling via replica limits, plus deployment of fine-tuned or custom models via CLI. This directly matches the story's requirements of dedicated GPU capacity, autoscaling, and isolation from shared serverless traffic. Missing for 10: independent/hands-on verification of autoscaling behavior in production and concrete GPU-type/SLA details beyond docs.",
+    "confidence": "medium",
+    "rationale": "Together AI's Dedicated Model Inference (DMI) explicitly offers reserved hardware isolated from the shared serverless pool, with no hard rate limits, and autoscaling configured via min/max replica counts based on a chosen metric. This directly matches the story of isolating traffic on dedicated capacity with autoscaling. missing for 10: independent/hands-on corroboration of autoscaling behavior in production, and detail on GPU type selection/SLA specifics beyond docs.",
     "evidenceIds": [
       "together-ai-docs-4",
       "together-ai-docs-10",
-      "together-ai-docs-18",
-      "together-ai-docs-25",
-      "together-ai-docs-31"
+      "together-ai-docs-31",
+      "together-ai-docs-34",
+      "together-ai-docs-26"
     ]
   },
   {
@@ -4361,12 +4368,13 @@
     "storyId": "drop-in-provider-switch",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs explicitly state OpenAI-compatibility requires only changing API key and base URL, meaning agents/tools written against the standard chat-completions API can point at Together with no provider-specific code changes; the live /v1/models endpoint confirms OpenAI-style REST shape. This directly supports switching to/away from Together mid-workflow with minimal friction. Missing for 10: independent third-party confirmation of drop-in swap behavior (e.g., a framework's changelog showing zero-code-change provider swap) and explicit mention of streaming/tool-call parity with OpenAI's spec beyond docs.",
+    "confidence": "medium",
+    "rationale": "Docs explicitly confirm OpenAI-compatibility: switching to Together requires only changing the API key and base URL, meaning existing chat-completions code (including function/tool calling, which agent frameworks rely on) works unmodified. This directly supports mid-workflow provider switching without provider-specific rewrites. Missing for 10: independent/hands-on confirmation of drop-in compatibility across real agent frameworks (e.g. LangChain/AutoGen) and no explicit mention of full parameter parity across all endpoints.",
     "evidenceIds": [
       "together-ai-docs-1",
-      "together-ai-docs-26",
-      "together-ai-probe-rt-1"
+      "together-ai-docs-8",
+      "together-ai-docs-9",
+      "together-ai-docs-26"
     ]
   },
   {
@@ -4375,38 +4383,41 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm a unified API that includes embeddings alongside chat/image/audio (together-ai-docs-21), supporting retrieval pipelines without a separate embeddings vendor. However, no evidence in the pack documents a dedicated rerank endpoint or reranking models, so the reranking half of the story is unsupported. Missing for 10: dedicated rerank API/model documentation, embeddings model list/dimensions, and independent confirmation of embeddings quality/usage in RAG pipelines.",
+    "rationale": "Together AI's serverless API explicitly supports embeddings alongside chat, image, and audio through one API, letting developers generate embeddings without a second vendor, but the evidence pack contains no mention of a reranking endpoint or reranker models, which is a core part of the story. missing for 10: documented rerank API/model, rerank pricing or usage examples, independent confirmation of rerank quality.",
     "evidenceIds": [
-      "together-ai-docs-21"
+      "together-ai-docs-21",
+      "together-ai-docs-2"
     ]
   },
   {
     "productId": "together-ai",
     "storyId": "fine-tune-and-serve",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Docs clearly describe fine-tuning (LoRA or full) on supported base models via console/API/CLI, with Together AI handling the full lifecycle including data upload, training, hosting, and inference on a dedicated endpoint, and dedicated endpoints explicitly support deploying fine-tuned models. This is a first-party documented end-to-end workflow with concrete CLI examples. Missing for 10: independent/hands-on confirmation from a third party that a fine-tune-then-serve workflow works as described.",
+    "rationale": "Docs clearly describe fine-tuning supported base models via LoRA or full fine-tuning, launched via console/API/CLI, with Together AI handling the full lifecycle including hosting and inference on a dedicated endpoint (same platform), and dedicated-endpoint docs explicitly list 'Fine-tuned models: Deploy a model you fine-tuned from a supported base model.' Missing for 10: independent/hands-on corroboration of the end-to-end fine-tune-then-serve workflow and concrete benchmarks/success reports from third parties.",
     "evidenceIds": [
       "together-ai-docs-5",
       "together-ai-docs-11",
       "together-ai-docs-17",
       "together-ai-docs-18",
       "together-ai-docs-23",
-      "together-ai-docs-28"
+      "together-ai-docs-28",
+      "together-ai-docs-32"
     ]
   },
   {
     "productId": "together-ai",
     "storyId": "low-latency-serving",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Together AI's docs claim strong speed characteristics — 'no provisioning latency' for serverless, DMI offering 'better performance' and 'no hard rate limits', dynamic rate limits based on live capacity, streaming SSE support, and automatic prompt caching to speed repeated prefills — all directly supporting fast TTFT and high throughput [together-ai-docs-2][together-ai-docs-31][together-ai-docs-14][together-ai-gh-1][together-ai-docs-13]. However, an independent hands-on comparison explicitly disputes this, stating Together AI was 'at the bottom of the pile' for large-scale deployment speed/pricing versus competitors like Cerebras, DeepInfra, and Hyperbolic [together-ai-comm-5], while another community post gives a positive but vaguer 'good speed' impression [together-ai-comm-4] — a genuine mixed/contradicted signal rather than mere skepticism. Missing for 10: independent benchmarks (TTFT/tokens-per-second numbers) confirming or refuting the vendor's latency claims, and resolution of the conflicting community reports.",
+    "rationale": "Docs describe serverless inference with 'no provisioning latency,' dedicated hardware offering 'better performance' and no rate limits, provisioned-throughput SLAs, prompt caching to cut latency, and SDK-level streaming (SSE) support — all directly relevant to TTFT/throughput. However there are no quantified latency/throughput benchmarks and community sentiment is mixed (one HN comment praises speed, another ranks Together at 'the bottom of the pile' vs Cerebras/DeepInfra/Hyperbolic for large-scale deployment), so this is not best-in-class corroborated performance. Missing for 10: independent latency/throughput benchmarks, resolution of the conflicting community performance ranking, and hands-on TTFT measurements.",
     "evidenceIds": [
       "together-ai-docs-2",
+      "together-ai-docs-4",
       "together-ai-docs-31",
-      "together-ai-docs-14",
+      "together-ai-docs-41",
       "together-ai-docs-13",
       "together-ai-gh-1",
       "together-ai-comm-4",
@@ -4419,11 +4430,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains only vague qualitative claims ('no provisioning latency', 'Better performance' for dedicated endpoints) and subjective community remarks ('good speed') but no published tokens-per-second figures, latency benchmarks, or load-testing methodology/guides that would let an ml-engineer verify speed claims.",
+    "rationale": "The evidence pack contains only vague performance language ('no provisioning latency', 'better performance', dynamic rate limits) but no published tokens-per-second/latency benchmark numbers, no benchmark suite, and no load-testing guide. Community comments mention subjective 'good speed' or comparisons unfavorable to competitors, but neither side references a concrete published benchmark artifact.",
     "evidenceIds": [
       "together-ai-docs-2",
       "together-ai-docs-31",
-      "together-ai-comm-4"
+      "together-ai-docs-14",
+      "together-ai-comm-4",
+      "together-ai-comm-5"
     ]
   },
   {
@@ -4432,19 +4445,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions a deprecation policy, sunset schedule, or advance-notice commitment for retiring hosted models; docs cover serverless/dedicated inference, fine-tuning, and agent tooling but nothing about model lifecycle/deprecation notices.",
+    "rationale": "No evidence pack item mentions a deprecation policy, model retirement notice period, or sunset process for hosted models; docs cover inference features, fine-tuning, and dedicated endpoints but nothing about model lifecycle/removal notices.",
     "evidenceIds": []
   },
   {
     "productId": "together-ai",
     "storyId": "models-endpoint-discovery",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Together AI exposes an OpenAI-compatible /v1/models endpoint confirmed live via probe (returns 401 without key, meaning it exists and speaks JSON, per together-ai-probe-rt-1), and docs confirm OpenAI-compatibility for base URL/API key swaps (together-ai-docs-1) enabling programmatic catalog enumeration. missing for 10: a dedicated docs page explicitly documenting the /v1/models endpoint schema/response format, and independent hands-on confirmation of a successful authenticated call listing the full catalog.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence shows general OpenAI-compatibility (implying a client library swap) and API docs for chat/completions/fine-tuning/etc., but nothing explicitly documents a GET /v1/models endpoint or model-catalog enumeration API; the openapi/spec probe returned 404s. missing for 10: explicit documentation of a /v1/models (or equivalent) endpoint, example request/response for listing models, and confirmation it's part of the public API surface.",
     "evidenceIds": [
-      "together-ai-probe-rt-1",
-      "together-ai-docs-1"
+      "together-ai-docs-1",
+      "together-ai-probe-3"
     ]
   },
   {
@@ -4453,11 +4466,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Together AI's docs explicitly state you can 'Call chat, image, audio, embedding, and more through one API' on the serverless platform, indicating multimodal model support beyond text chat on the same platform [together-ai-docs-21]. This is corroborated by the broader serverless/dedicated inference docs describing a unified API/base URL approach [together-ai-docs-1, together-ai-docs-2]. Missing for 10: no independent hands-on report or example code specifically calling vision/audio/image-generation endpoints, and no detailed model list confirming breadth of non-text modalities.",
+    "rationale": "Docs explicitly state the platform lets developers 'call chat, image, audio, embedding, and more through one API' and detail dedicated image generation/editing (Kontext, FLUX.2) and video generation endpoints, confirming multimodal access beyond text chat on the same platform. Missing for 10: explicit documentation of a vision (image-understanding) chat endpoint and independent/hands-on corroboration of these multimodal calls working in practice.",
     "evidenceIds": [
       "together-ai-docs-21",
-      "together-ai-docs-2",
-      "together-ai-docs-1"
+      "together-ai-docs-37",
+      "together-ai-docs-38",
+      "together-ai-docs-39"
     ]
   },
   {
@@ -4466,13 +4480,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm serverless endpoints serving '100+ open-source models' with per-token pricing, no provisioning latency, and OpenAI-compatible API for easy model switching, and community evidence corroborates real-world use of Llama-family models on the platform. However, the evidence pack never explicitly enumerates Qwen, DeepSeek, or GPT-OSS by name, so full breadth across all cited model families isn't directly confirmed. Missing for 10: explicit documentation naming Qwen/DeepSeek/GPT-OSS as catalog entries, and independent verification of catalog breadth beyond the generic '100+ models' claim.",
+    "rationale": "Docs confirm serverless endpoints hosting 100+ open-source models with per-token pricing, no provisioning latency, and OpenAI-compatible API, plus prototyping-to-dedicated-hardware continuity, supporting a broad open-weight catalog. However no evidence explicitly enumerates specific family names (Llama, Qwen, DeepSeek, GPT-OSS) beyond a single example model ID (gemma) in a CLI snippet, and community sentiment is mixed on overall platform standing versus rivals. missing for 10: explicit model-family list/coverage table naming Llama/Qwen/DeepSeek/GPT-OSS, independent hands-on confirmation of catalog breadth.",
     "evidenceIds": [
       "together-ai-docs-2",
-      "together-ai-docs-1",
+      "together-ai-docs-21",
       "together-ai-docs-26",
-      "together-ai-comm-2",
-      "together-ai-probe-rt-1"
+      "together-ai-docs-25",
+      "together-ai-comm-3",
+      "together-ai-comm-4"
     ]
   },
   {
@@ -4481,26 +4496,27 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly state you can point an existing client at Together by changing only the API key and base URL, and the API is OpenAI-compatible with a live /v1/models endpoint confirmed via probe. missing for 10: independent developer testimonial specifically confirming drop-in OpenAI SDK compatibility (community evidence covers pricing/UX but not this specific mechanic), and no explicit code snippet shown in evidence.",
+    "rationale": "First-party docs explicitly state OpenAI SDK compatibility requiring only base URL and API key change, and this is corroborated by the broader inference docs and TS client library. Missing for 10: independent hands-on developer confirmation/tutorial showing a working drop-in swap and any caveats about parameter/feature parity gaps.",
     "evidenceIds": [
       "together-ai-docs-1",
-      "together-ai-probe-rt-1",
-      "together-ai-docs-26"
+      "together-ai-gh-2"
     ]
   },
   {
     "productId": "together-ai",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show broad API/CLI/SDK coverage mirroring UI actions—fine-tuning can be launched 'from the console, through the API/SDK, or with the CLI', dedicated endpoints can be deployed via CLI (tg beta endpoints deploy), and inference, batch, and cluster provisioning are all API-accessible—suggesting strong UI/API parity for core workflows. However, there's no explicit documentation enumerating full parity (e.g., billing, account/org management, usage dashboards) or confirming every UI-only feature has an API equivalent, and no OpenAPI spec was found (probe shows all openapi.json paths 404), making completeness hard to verify. Missing for 10: an explicit parity statement or API coverage for account/billing/admin functions, and a published OpenAPI spec confirming full API surface.",
+    "rationale": "Together AI is API-first: fine-tuning can be launched via console, API/SDK, or CLI, dedicated endpoints can be deployed via CLI, and the API covers chat, image, video, audio, embeddings, structured outputs, function calling, batch, and logprobs — suggesting broad parity with the console UI. However, there is no explicit vendor statement guaranteeing full UI/API feature parity, and a probe found no public OpenAPI spec, leaving some ambiguity about completeness. Missing for 10: explicit parity documentation, a discoverable OpenAPI/swagger spec, and independent confirmation that every console action (e.g., billing/account settings) is API-accessible.",
     "evidenceIds": [
       "together-ai-docs-17",
       "together-ai-docs-25",
-      "together-ai-docs-23",
-      "together-ai-docs-6",
+      "together-ai-docs-21",
+      "together-ai-docs-37",
+      "together-ai-docs-39",
       "together-ai-docs-3",
+      "together-ai-docs-4",
       "together-ai-probe-3"
     ]
   },
@@ -4510,7 +4526,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers inference, fine-tuning, dedicated endpoints, and agent tooling, but contains no mention of a data export feature, downloadable account data, or a documented way to retrieve fine-tuning datasets/model weights in open formats and leave the platform. This is a fair question for a hosted AI platform that stores prompts, fine-tuning data, and trained models, so absence of evidence means 'none' rather than 'na'.",
+    "rationale": "No evidence describes a data export feature, account data portability, or open-format export of user data (fine-tuning datasets, usage logs, etc.); documentation covers inference, fine-tuning, and deployment but not data portability/exit.",
     "evidenceIds": []
   },
   {
@@ -4518,9 +4534,12 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers Together AI's hosted inference, fine-tuning, and dedicated endpoint features, and its client SDKs (e.g., together-typescript) are open on GitHub, but there is no evidence that Together AI's core platform/product source is released under an open license—only that it serves open-source models to customers.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence only shows open-source client SDKs (e.g., together-typescript) for calling the API, not the core Together AI platform/product source code being released under an open license; no docs or GitHub evidence indicate the inference/training platform itself is open-sourced.",
+    "evidenceIds": [
+      "together-ai-gh-1",
+      "together-ai-gh-2"
+    ]
   },
   {
     "productId": "together-ai",
@@ -4528,7 +4547,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Together AI is a hosted inference/fine-tuning cloud service, not open-source software distributed for self-hosting; nothing in the evidence describes deploying the core Together platform on one's own infrastructure. Self-hosting is a category error for this SaaS-style product.",
+    "rationale": "Together AI is a hosted inference/training cloud service, not open-source software distributed for self-hosting; the evidence pack shows only API/SDK/serverless/dedicated-hosting offerings, none of which describe running the core platform on one's own infrastructure. Self-hosting is a category error for this kind of SaaS inference platform.",
     "evidenceIds": []
   },
   {
@@ -4537,8 +4556,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic control over where data/models are hosted; only privacy policy criticism unrelated to residency is present. Missing for 10: any documentation of region selection, data residency guarantees, or geo-specific hosting options.",
-    "evidenceIds": []
+    "rationale": "No evidence in the pack of any data residency/region selection controls; the only privacy-related evidence is community criticism of Together AI's broad data collection policy, which does not address regional storage choice. Missing for full/partial: any docs mention of region selection, data residency options, or compliance certifications tied to location.",
+    "evidenceIds": [
+      "together-ai-comm-1"
+    ]
   },
   {
     "productId": "together-ai",
@@ -4546,7 +4567,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No first-party documentation describes an opt-out, data-retention control, or 'no training on your data' policy; the only relevant evidence is a community report describing Together AI's privacy policy as broad/vague, allowing data use 'for other purposes,' which points toward the opposite of a training-opt-out guarantee.",
+    "rationale": "No documentation in the evidence pack describes an opt-out, zero-retention, or 'do not train' setting for Together AI; the only relevant evidence is community criticism that Together's privacy policy allows broad use of prompts and personal data 'for other purposes,' suggesting the opposite of a training-opt-out guarantee.",
     "evidenceIds": [
       "together-ai-comm-1",
       "together-ai-comm-2"
@@ -4558,7 +4579,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item documents user-facing data retention or deletion controls (e.g., API/dashboard settings to delete stored prompts or data). The only relevant community evidence (together-ai-comm-1) actually raises concerns that Together AI's privacy policy allows broad data collection with vague retention/usage language, which is the opposite of demonstrating retention/deletion controls.",
+    "rationale": "The evidence pack contains no documentation of data retention settings, deletion controls, or data lifecycle management for user prompts/data; instead, community reporting describes Together AI's privacy policy as collecting broad personal data (prompts, IPs, contact info) with vague usage language, which is the opposite of what this story requires.",
     "evidenceIds": [
       "together-ai-comm-1"
     ]
@@ -4569,10 +4590,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No documentation or feature reference describes a telemetry/usage-tracking opt-out mechanism; the only related evidence is a community critique noting Together AI's privacy policy broadly collects prompts, IPs, and contact info with vague 'other purposes' language and no opt-out mentioned, reinforcing the absence of this capability.",
+    "rationale": "No documentation or evidence describes a telemetry/usage-tracking opt-out mechanism for Together AI; the only related evidence is a community critique of its privacy policy collecting broad data with vague usage terms, which does not address opt-out controls.",
     "evidenceIds": [
-      "together-ai-comm-1",
-      "together-ai-comm-2"
+      "together-ai-comm-1"
     ]
   },
   {
@@ -4594,13 +4614,14 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Together AI's docs clearly support fine-tuning (LoRA or full) and deploying the resulting fine-tuned models to dedicated inference endpoints, covering the LoRA-adapter serving use case end-to-end (data upload, training, hosting, inference). However, there's no evidence of uploading externally-trained/custom weights not produced via Together's own fine-tuning pipeline (e.g., bringing your own checkpoint from another framework).\n\nmissing for 10: evidence of uploading externally-trained custom weights/checkpoints (not produced by Together's fine-tuning), and independent/hands-on confirmation of this workflow.",
+    "rationale": "Together AI supports LoRA and full fine-tuning on its platform and lets ml-engineers deploy their fine-tuned model (including LoRA adapters) to a dedicated endpoint via console, API, SDK, or CLI [together-ai-docs-11][together-ai-docs-17][together-ai-docs-18][together-ai-docs-32]. However, the evidence describes fine-tuning within Together's own pipeline (data upload → training → hosting) rather than explicit support for uploading externally pre-trained custom weights/adapters not produced via Together's fine-tuning job. Missing for 10: explicit documentation of uploading externally-trained model weights/LoRA adapters (not generated through Together's own fine-tuning job) and independent confirmation this works in practice.",
     "evidenceIds": [
       "together-ai-docs-11",
+      "together-ai-docs-17",
       "together-ai-docs-18",
       "together-ai-docs-23",
       "together-ai-docs-28",
-      "together-ai-docs-17"
+      "together-ai-docs-32"
     ]
   },
   {
@@ -4609,19 +4630,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of spending caps, budget alerts, or usage-based cutoffs; docs mention rate limits (dynamic, based on capacity/usage) and pricing structures but nothing about setting a spend ceiling or receiving alerts to prevent runaway bills.",
-    "evidenceIds": []
+    "rationale": "No evidence of spending caps, budget alerts, or usage-based billing limits; only dynamic rate limits based on capacity/usage are documented, which throttle throughput but do not cap spend or alert on budget.",
+    "evidenceIds": [
+      "together-ai-docs-14"
+    ]
   },
   {
     "productId": "together-ai",
     "storyId": "status-page-uptime",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "A live public status page at status.together.ai returns HTTP 200 and shows service status ('operational'), confirming a real status dashboard exists that a founder could check before committing production traffic. Missing for 10: no evidence of detailed incident history/postmortems or uptime SLA history visible in the pack, so depth of incident history can't be fully confirmed.",
-    "evidenceIds": [
-      "together-ai-probe-rt-2"
-    ]
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "No evidence in the pack of a public status page, uptime history, or incident log for Together AI; only docs on features, SDKs, and unrelated community pricing/privacy discussion.",
+    "evidenceIds": []
   },
   {
     "productId": "together-ai",
@@ -4641,13 +4662,12 @@
     "storyId": "structured-outputs-json-schema",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Together AI's docs explicitly describe structured outputs where supported models return JSON conforming to a supplied schema, avoiding retries/fragile parsing, alongside function/tool calling and multi-step agentic tool call chaining. This directly matches the story's request for JSON-schema-enforced structured outputs; missing for 10: no independent/hands-on validation of schema-conformance reliability or grammar-based constraints beyond JSON schema.",
+    "confidence": "medium",
+    "rationale": "Together AI docs explicitly state supported models can return JSON conforming to any supplied schema, avoiding retries/fragile parsing, plus a dedicated structured-outputs doc and complementary function/tool-calling support for structured arguments. Missing for 10: no independent/hands-on corroboration of reliability, and no detail on grammar-based constrained decoding beyond JSON schema.",
     "evidenceIds": [
       "together-ai-docs-7",
       "together-ai-docs-8",
-      "together-ai-docs-9",
-      "together-ai-docs-16"
+      "together-ai-docs-36"
     ]
   },
   {
@@ -4656,26 +4676,25 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Together AI documents native function/tool calling with explicit support for multi-step (chained) and multi-turn agentic tool use, positioned as the foundation for agent loops (together-ai-docs-8,9,15,16). However, there is no independent/hands-on evidence confirming reliability of parallel tool calls or that it avoids breakage across open models in practice — only first-party docs. missing for 10: independent benchmarks or community reports on parallel tool-call accuracy, explicit parallel tool-calling documentation, and hands-on verification that agent loops don't break on open models.",
+    "rationale": "Together AI's docs describe structured function/tool calling, with explicit support for multi-step (chaining calls in one response) and multi-turn agent loops, plus structured JSON output docs suggest reliable parsing. However, the evidence never explicitly confirms parallel tool calls, and there is no independent/hands-on evidence validating that tool-calling stays faithful across open models in production agent loops. missing for 10: explicit parallel tool-call support documentation, independent/hands-on validation of reliability across multiple open models.",
     "evidenceIds": [
       "together-ai-docs-8",
       "together-ai-docs-9",
-      "together-ai-docs-15",
-      "together-ai-docs-16"
+      "together-ai-docs-16",
+      "together-ai-docs-7"
     ]
   },
   {
     "productId": "together-ai",
     "storyId": "transparent-token-pricing",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs advertise \"per-token pricing\" for 100+ serverless models and community evidence confirms self-serve signup with visible per-token cost (e.g. \"$0.0001/1K tokens\", $25 trial credit) with no sales contact required. However, no evidence pack item directly shows a public pricing page enumerating rates for every hosted model, and the live models API requires an API key to enumerate the catalog. Missing for 10: a documented public pricing page/table covering all models, independent confirmation that all model prices (not just examples) are visible pre-signup.",
+    "rationale": "Docs confirm a per-token, self-serve pricing model for serverless inference (\"Call 100+ open-source models with per-token pricing\"), and community reports (e.g., a specific $0.0001/1K token price and sign-up with $25 credit) show founders can access and test real prices without contacting sales. Missing for 10: an explicit public pricing page listing every model's rate and confirmation that all hosted models (not just serverless) have visible per-token prices.",
     "evidenceIds": [
       "together-ai-docs-2",
       "together-ai-comm-3",
-      "together-ai-comm-4",
-      "together-ai-probe-rt-1"
+      "together-ai-comm-4"
     ]
   }
 ]
