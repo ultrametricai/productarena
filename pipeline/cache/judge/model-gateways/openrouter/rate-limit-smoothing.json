@@ -1,17 +1,18 @@
 {
-  "hash": "f2adcb036a5070fca1e06f8f9d31ad36b3d84236afc8265473fae009931c7171",
+  "hash": "35f7084412ac95cb906e135839fb3790c9adede106076386ab5efdc502c4026a",
   "verdict": {
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "OpenRouter's default load balancing across providers and automatic model/provider fallbacks (docs-3,4,19) inherently smooths provider-side rate limits, and its key-management API (docs-8) plus BYOK (docs-9,24,32) let engineers create/distribute multiple keys with per-key limits (echoed by comm-12). But there is no explicit documentation of client-side request queuing or throttling, or of deliberately spreading traffic across multiple OpenRouter keys for load smoothing — the evidence covers provider-side resilience, not key-pool traffic shaping. Missing for 10: explicit queuing/throttling mechanism, documented multi-key load-balancing pattern, independent confirmation of rate-limit smoothing at scale.",
+    "rationale": "OpenRouter's model-fallback and load-balancing routing explicitly handles provider rate-limits by trying other providers/models automatically (docs-3, docs-19, docs-38, docs-4), and its key-management API lets engineers programmatically create/rotate/distribute keys (docs-8), while BYOK gives direct control over provider-side rate limits (docs-9/24/32). However there is no explicit documented request-queuing or client-side throttling mechanism, and 'spreading traffic across keys' is only supported via generic key-management APIs rather than a built-in load-balancing-across-keys feature. missing for 10: explicit request queuing/throttling controls, native multi-key traffic distribution feature, independent verification that key rotation smooths rate limits in practice.",
     "evidenceIds": [
       "openrouter-docs-3",
+      "openrouter-docs-19",
+      "openrouter-docs-38",
       "openrouter-docs-4",
       "openrouter-docs-8",
       "openrouter-docs-9",
-      "openrouter-docs-19",
-      "openrouter-comm-12"
+      "openrouter-docs-24"
     ],
     "productId": "openrouter",
     "storyId": "rate-limit-smoothing"

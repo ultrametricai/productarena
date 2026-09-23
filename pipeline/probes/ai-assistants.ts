@@ -72,6 +72,47 @@ export const probes: LocalProbe[] = [
     expect: /api\/v1\/inbound\/api-message[\s\S]*[Mm][Cc][Pp] [Ss]erver/,
     timeoutMs: 60_000,
   },
+  // Launch-audit wave 4 (2026-09-22): muse and gemini were claimed-docs-only — zero probe-tier
+  // evidence. Neither ships a keyless developer surface; the honest probes are absence proofs
+  // (the yubikey docs-llms-txt-absent pattern): recorded reality, negative results included.
+  {
+    // Muse (Meta's personal agent) auth-walls its entire non-marketing surface: /llms.txt and
+    // /openapi.json both answer keyless fetches with HTTP 401 — no published agent docs, no
+    // public API spec. The 401 (not 404) shows the origin is live and deliberately gated.
+    probeId: 'llms-openapi-authwalled',
+    productId: 'muse',
+    storyIds: ['agentic-agent-docs', 'agentic-public-api'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 -o /dev/null -w "llms.txt HTTP %{http_code}\\n" https://muse.ai/llms.txt; curl -s --max-time 20 -o /dev/null -w "openapi.json HTTP %{http_code}\\n" https://muse.ai/openapi.json'],
+    displayCommand: 'curl -s -o /dev/null -w "llms.txt HTTP %{http_code}" https://muse.ai/llms.txt; curl -s -o /dev/null -w "openapi.json HTTP %{http_code}" https://muse.ai/openapi.json',
+    expect: /llms\.txt HTTP 401[\s\S]*openapi\.json HTTP 401/,
+    timeoutMs: 60_000,
+  },
+  {
+    // Muse publishes no MCP discovery surface: the .well-known server card 404s, and the
+    // api.muse.ai origin (which answers in JSON, so it exists) exposes no keyless routes.
+    probeId: 'mcp-discovery-absent',
+    productId: 'muse',
+    storyIds: ['agentic-mcp-server'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 -o /dev/null -w "server-card HTTP %{http_code}\\n" https://muse.ai/.well-known/mcp/server-card.json; curl -si --max-time 20 https://api.muse.ai/v1/ping | grep -i -m 2 -E "^HTTP|content-type"'],
+    displayCommand: 'curl -s -o /dev/null -w "server-card HTTP %{http_code}" https://muse.ai/.well-known/mcp/server-card.json; curl -si https://api.muse.ai/v1/ping | grep -iE "^HTTP|content-type"',
+    expect: /server-card HTTP 404[\s\S]*HTTP\/2 404[\s\S]*application\/json/i,
+    timeoutMs: 60_000,
+  },
+  {
+    // The Gemini consumer app publishes neither an llms.txt nor an MCP server card on its own
+    // origin — clean 404s, recorded as the absence proof for the assistant's agent surface
+    // (the developer API lives in the separate frontier-models/gemini product, not this app).
+    probeId: 'llms-mcp-absent',
+    productId: 'gemini',
+    storyIds: ['agentic-agent-docs', 'agentic-mcp-server'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 -o /dev/null -w "llms.txt HTTP %{http_code}\\n" https://gemini.google.com/llms.txt; curl -s --max-time 20 -o /dev/null -w "server-card HTTP %{http_code}\\n" https://gemini.google.com/.well-known/mcp/server-card.json'],
+    displayCommand: 'curl -s -o /dev/null -w "llms.txt HTTP %{http_code}" https://gemini.google.com/llms.txt; curl -s -o /dev/null -w "server-card HTTP %{http_code}" https://gemini.google.com/.well-known/mcp/server-card.json',
+    expect: /llms\.txt HTTP 404[\s\S]*server-card HTTP 404/,
+    timeoutMs: 60_000,
+  },
   {
     // docs.trymartin.com publishes an llms.txt index covering all 16 doc pages — the
     // agent-discovery surface for Martin's docs, fetched keylessly.

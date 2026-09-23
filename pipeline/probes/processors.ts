@@ -44,6 +44,49 @@ export const probes: LocalProbe[] = [
     expect: /enable JavaScript to run this app/,
     timeoutMs: 30_000,
   },
+  // Launch-audit wave 4 (2026-09-22): the two claimed-docs-only parts get the same honest
+  // treatment as the rest of the module — spec-page liveness where the vendor serves keyless
+  // fetchers, and the recorded bot-wall finding where it refuses them.
+  {
+    // Intel ARK spec page for the Core Ultra 7 258V answers keyless curls and names the part
+    // (same check as the 285K's ark-spec-page-live).
+    probeId: 'ark-spec-page-live',
+    productId: 'intel-core-ultra-7-258v',
+    storyIds: ['published-spec-sheet'],
+    bin: 'curl',
+    argv: ['sh', '-c', `curl -sL --max-time 20 'https://www.intel.com/content/www/us/en/products/sku/240957/intel-core-ultra-7-processor-258v-12m-cache-up-to-4-80-ghz/specifications.html' | grep -o '258V' | head -1`],
+    displayCommand: `curl -sL 'https://www.intel.com/…/sku/240957/…/specifications.html' | grep -o '258V' | head -1  # Intel ARK spec sheet, live and keyless`,
+    expect: /258V/,
+    timeoutMs: 30_000,
+  },
+  {
+    // intel.com publishes a real llms.txt (text/plain, quarterly-maintained per its own
+    // header) whose Products index links the Core Ultra series pages — vendor-published
+    // agent-discovery docs covering this part's family, fetched keylessly.
+    probeId: 'site-llms-txt',
+    productId: 'intel-core-ultra-7-258v',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', "curl -s --max-time 20 https://www.intel.com/llms.txt | grep -i -m 2 'core-ultra'"],
+    displayCommand: "curl -s https://www.intel.com/llms.txt | grep -i 'core-ultra'",
+    expect: /products\/details\/processors\/core-ultra/,
+    timeoutMs: 30_000,
+  },
+  {
+    // The spec-transparency finding for the 9950X3D, recorded as-is (the qualcomm
+    // spec-page-js-shell pattern): www.amd.com's bot wall resets keyless non-browser fetches
+    // of the part's spec page at the HTTP/2 layer — no spec sheet is served to agents. (The
+    // page does render for real browsers; ryzenai.docs.amd.com shows AMD can exempt dev
+    // surfaces from the wall when it wants to.)
+    probeId: 'spec-page-bot-wall',
+    productId: 'amd-ryzen-9-9950x3d',
+    storyIds: ['published-spec-sheet'],
+    bin: 'curl',
+    argv: ['sh', '-c', `curl -sSL --max-time 20 'https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-9-9950x3d.html' 2>&1 | head -1`],
+    displayCommand: `curl -sSL 'https://www.amd.com/…/amd-ryzen-9-9950x3d.html' 2>&1 | head -1  # the vendor bot wall refuses keyless fetchers — the finding IS the transparency gap`,
+    expect: /curl: \(\d+\)|INTERNAL_ERROR|HTTP\/2 40[13]/,
+    timeoutMs: 30_000,
+  },
   {
     // The Ryzen AI SDK docs — the developer surface the Strix Halo NPU story stands on — are
     // live and keyless (ryzenai.docs.amd.com is NOT behind the www.amd.com bot wall).

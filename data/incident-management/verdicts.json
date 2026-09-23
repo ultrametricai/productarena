@@ -3,18 +3,17 @@
     "productId": "betterstack",
     "storyId": "agent-acks-escalates-api",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Better Stack offers a documented Uptime API (token-authenticated, verified live via runtime probe) and an MCP server for querying telemetry/logs/metrics, plus a Slack-native AI SRE agent that can investigate and act on incidents, giving agents multiple non-dashboard paths to interact with incidents. However, evidence shows acknowledge/escalate/resolve actions are documented primarily via Slack, phone-tap, and dashboard UI (docs-3, docs-11, docs-19, docs-38), not explicitly via the MCP or REST API, so full end-to-end incident lifecycle control (create+ack+escalate+resolve) purely through API/MCP without any dashboard/Slack UI step is not directly documented. missing for 10: explicit API/MCP endpoints or docs for acknowledging/escalating/resolving incidents programmatically, and confirmation that MCP tool calls (not just Slack chat) can perform these actions end-to-end.",
+    "rationale": "Better Stack documents a general Uptime API with bearer-token auth capable of 'managing anything' (including presumably incidents) and a dedicated MCP server plus AI SRE agent that can be invoked from Slack/Teams/LLM workflows to investigate incidents, draft postmortems, and open tickets/PRs. However, the evidence never shows a documented API/MCP endpoint or agent action that explicitly acknowledges, escalates, or resolves an incident end-to-end — acknowledgment examples given are dashboard/Slack/phone/mobile-tap based, not agentic API/MCP calls. Missing for 10: explicit API/MCP endpoints for incident acknowledge/escalate/resolve, and confirmation the AI SRE agent itself performs these lifecycle actions rather than just investigation/reporting.",
     "evidenceIds": [
-      "betterstack-docs-1",
-      "betterstack-docs-22",
-      "betterstack-docs-23",
-      "betterstack-docs-32",
-      "betterstack-docs-3",
       "betterstack-docs-15",
       "betterstack-docs-45",
-      "betterstack-probe-rt-1"
+      "betterstack-docs-1",
+      "betterstack-docs-41",
+      "betterstack-docs-32",
+      "betterstack-docs-55",
+      "betterstack-docs-23"
     ]
   },
   {
@@ -35,14 +34,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Better Stack's AI SRE feature explicitly offers natural-language querying of logs/charts, AI-generated post-mortems, AI-based incident fix suggestions with linked GitHub PRs, and AI-driven Linear ticket suggestions — directly matching the story of getting AI-generated insights from data. Missing for 10: independent/hands-on verification of these AI features' quality, and detail on what data sources power the natural-language insight generation beyond marketing copy.",
+    "rationale": "Better Stack's AI SRE feature lets users query logs/metrics via natural language and get AI-generated suggestions like automated post-mortems, PR fix suggestions, and Linear ticket suggestions based on incident data. This directly matches the story of getting AI-generated insights from data inside the product. missing for 10: independent/hands-on validation of insight quality, and detail on how deeply these suggestions integrate beyond incident/SRE use cases (e.g., broader analytics insights).",
     "evidenceIds": [
-      "betterstack-docs-10",
-      "betterstack-docs-9",
       "betterstack-docs-8",
+      "betterstack-docs-9",
+      "betterstack-docs-10",
+      "betterstack-docs-23",
       "betterstack-docs-33",
-      "betterstack-docs-54",
-      "betterstack-docs-23"
+      "betterstack-docs-54"
     ]
   },
   {
@@ -70,32 +69,30 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Better Stack ships a built-in 'AI SRE' agent that investigates incidents, answers natural-language queries about logs/charts, drafts post-mortems, opens GitHub PRs and Linear tickets, and can be invoked directly from Slack/Teams by tagging @betterstack — this is a genuine in-product AI assistant users can delegate SRE tasks to, not just an external MCP integration. Missing for 10: independent/hands-on verification of the AI SRE's actual task outcomes and reliability, since all evidence is vendor-authored marketing/docs.",
+    "rationale": "Better Stack ships an AI SRE agent that can be delegated tasks like investigating incidents, answering natural-language queries about logs/metrics, drafting post-mortems, suggesting fixes as GitHub PRs, and creating Linear tickets, callable from Slack, Teams, or Claude Code via MCP. missing for 10: independent/hands-on verification of the AI SRE's task delegation beyond vendor marketing copy, and detail on the range/reliability of tasks it can autonomously complete.",
     "evidenceIds": [
-      "betterstack-docs-23",
-      "betterstack-docs-10",
-      "betterstack-docs-32",
-      "betterstack-docs-55",
-      "betterstack-docs-8",
       "betterstack-docs-9",
+      "betterstack-docs-10",
+      "betterstack-docs-22",
+      "betterstack-docs-23",
+      "betterstack-docs-32",
       "betterstack-docs-33",
-      "betterstack-docs-54"
+      "betterstack-docs-54",
+      "betterstack-docs-55",
+      "betterstack-docs-8"
     ]
   },
   {
     "productId": "betterstack",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Better Stack exposes a documented, token-authenticated REST API (confirmed live via runtime probe returning 401 on unauthenticated request) that could be scripted in CI for monitor/incident management, and it offers an MCP server for LLM workflow integration. However, there is no evidence of a CLI tool, headless automation examples, CI/CD pipeline integration guides, or non-interactive batch usage patterns specifically for automation contexts. missing for 10: CLI or SDK for scripting, documented CI/CD integration examples, headless/non-interactive automation workflows beyond the generic API and MCP mentions.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Better Stack exposes a token-based REST API (Bearer auth, global and team-scoped tokens) that could be scripted into CI pipelines, but there is no explicit documentation, CLI tool, or example showing headless/CI usage, pipeline integration, or automation-specific workflows. missing for 10: CLI/headless mode documentation, CI/CD integration examples, explicit automation-in-pipeline guidance.",
     "evidenceIds": [
       "betterstack-docs-15",
       "betterstack-docs-45",
-      "betterstack-docs-51",
-      "betterstack-probe-rt-1",
-      "betterstack-docs-41",
-      "betterstack-docs-1"
+      "betterstack-docs-51"
     ]
   },
   {
@@ -104,11 +101,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Better Stack ships its own MCP server so other agents (e.g. Claude Code) can call its tools, but there is no evidence that Better Stack itself can consume/plug in external MCP servers to use their tools — the AI SRE agent is described only as accessible via Slack, Teams, or LLM workflows, not as an MCP client that ingests other servers' tools.",
+    "rationale": "Evidence only shows Better Stack exposing its own MCP server so external LLM tools can call it (docs-1, docs-41, docs-42), not that Better Stack itself can ingest or plug in third-party MCP servers to extend its AI SRE agent's tool set. No documentation describes configuring external MCP servers within Better Stack.",
     "evidenceIds": [
       "betterstack-docs-1",
-      "betterstack-docs-22",
-      "betterstack-docs-32",
       "betterstack-docs-41",
       "betterstack-docs-42"
     ]
@@ -150,24 +145,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers a REST API, MCP server, and Slack/Teams integrations, but there is no mention of an official CLI tool anywhere in the docs or probes.",
+    "rationale": "No evidence anywhere in the pack of an official Better Stack CLI tool; evidence covers API tokens, MCP server, and dashboard features but not a CLI. missing for 10: any mention of a CLI tool, its installation, commands, or documentation.",
     "evidenceIds": []
   },
   {
     "productId": "betterstack",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Better Stack documents a public API (global and team-scoped tokens, Bearer auth) with a getting-started guide, and a runtime probe confirms the Uptime API endpoint is live and correctly auth-gated, matching docs. It also offers an MCP server for LLM integration, directly supporting AI-native/agentic use. Missing for 10: a full OpenAPI/swagger spec discoverable at standard paths (probe found 404s) and broader API coverage documentation beyond Uptime.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Better Stack documents a public Uptime API with token-based auth (global and team-scoped tokens, Bearer header) in its docs, showing a genuine documented API surface for programmatic control. However, probes found no discoverable OpenAPI/Swagger spec and no llms.txt, and evidence doesn't show broader API coverage beyond Uptime resources (e.g., logs/incidents API details). Missing for 10: machine-readable API spec (OpenAPI), broader documented endpoint coverage across all product areas, and independent corroboration of API completeness.",
     "evidenceIds": [
       "betterstack-docs-15",
       "betterstack-docs-45",
       "betterstack-docs-51",
-      "betterstack-probe-rt-1",
-      "betterstack-docs-41",
-      "betterstack-docs-22",
-      "betterstack-probe-3"
+      "betterstack-probe-3",
+      "betterstack-probe-1"
     ]
   },
   {
@@ -176,12 +169,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Better Stack's API docs describe only two token tiers — a 'global' token valid across all teams and resources, and a team-scoped Uptime token — which offers coarse scoping but no evidence of fine-grained, per-agent or read/write-limited least-privilege credentials tailored for AI agents. Missing for 10: documented scopes/permissions (read-only, resource-specific), agent-specific credential issuance, expiring/rotatable tokens, and any MCP-server-specific auth scoping despite the product advertising an MCP server for LLM workflows.",
+    "rationale": "Better Stack docs mention only two token tiers — a global API token valid across all teams and a team-scoped Uptime API token (betterstack-docs-15, betterstack-docs-51) — which provides coarse-grained scoping but no evidence of fine-grained, per-resource, or agent-specific least-privilege credential issuance. Missing for 10: granular permission/action scopes, read-only vs write distinctions, agent-specific credential creation flows, and any independent confirmation of least-privilege enforcement.",
     "evidenceIds": [
       "betterstack-docs-15",
       "betterstack-docs-51",
-      "betterstack-docs-45",
-      "betterstack-docs-41"
+      "betterstack-docs-45"
     ]
   },
   {
@@ -190,11 +182,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a documented REST API with bearer-token auth and an MCP server for LLM integration, but there is no mention of official client SDKs (e.g., Python, Node, Go libraries) for developers to build against.",
+    "rationale": "Evidence shows a REST API with bearer-token auth and an MCP server for LLM integration, but there is no mention of any official language SDKs (Python, Node, etc.) for building against Better Stack programmatically, and probes for OpenAPI specs returned 404s.",
     "evidenceIds": [
       "betterstack-docs-15",
       "betterstack-docs-45",
-      "betterstack-probe-rt-1",
+      "betterstack-docs-51",
       "betterstack-probe-3"
     ]
   },
@@ -203,15 +195,9 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Better Stack’s evidence pack covers Slack/Teams/email/SMS alerting, an API with bearer-token auth, and an MCP server for LLM workflows, but nowhere mentions webhooks as a subscription mechanism for events (incidents, monitor status changes, etc.). Since webhook support is a standard, plausible capability for a monitoring/incident platform, its absence from all docs and probes means this axis is unmet rather than inapplicable.",
-    "evidenceIds": [
-      "betterstack-docs-15",
-      "betterstack-docs-45",
-      "betterstack-docs-51",
-      "betterstack-probe-rt-1",
-      "betterstack-docs-48"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack covers Slack, email, SMS, voice, MS Teams, and MCP integrations for incidents/alerts, but no citation anywhere mentions webhooks or a webhook subscription mechanism for events. Since Better Stack is a monitoring/alerting platform, webhook support would be a plausible feature, but none is evidenced here.",
+    "evidenceIds": []
   },
   {
     "productId": "betterstack",
@@ -232,7 +218,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Better Stack's AI SRE agent investigates incidents via Slack and produces an automated post-mortem based on the incident timeline and Slack conversation, and can answer natural-language queries for logs/charts — but this is largely post-incident summarization plus Q&A, not live status update drafting or call-note scribing during the incident itself. Missing for 10: evidence of real-time drafted stakeholder updates while the incident is live, and any call/voice transcription or scribing feature.",
+    "rationale": "Better Stack's AI SRE agent investigates incidents in Slack and can answer natural-language queries for logs/charts, and it auto-generates a post-mortem from the incident timeline and Slack conversation — reducing some manual writing. However, the story specifically wants live, in-the-moment summaries and call-note scribing while the incident is unfolding, and the evidence only shows post-incident post-mortem generation and investigative Q&A, not real-time drafted status updates or call transcription. Missing for 10: evidence of live/real-time incident summary drafting during an active call, evidence of call-note scribing (voice/transcript capture), and evidence of automatically drafted customer-facing updates as the incident progresses.",
     "evidenceIds": [
       "betterstack-docs-9",
       "betterstack-docs-23",
@@ -264,12 +250,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers escalation policies, on-call scheduling, and notification cascades, but there is no mention of alert deduplication or incident grouping logic. In fact, docs-19/docs-53 describe '30 incidents created at the same time' with bulk one-tap acknowledgment as the mitigation — implying duplicates still spawn separate incidents rather than being merged into a single paged incident. No evidence of true dedup/grouping into one incident exists.",
+    "rationale": "Evidence covers escalation policies, on-call notification order, and bulk-acknowledgment of multiple simultaneous incidents (e.g., 'stop your phone from ringing' after tapping once), but nothing describes deduplication or grouping of related alerts into a single incident before paging. The '30 incidents created at the same time' example actually implies incidents are NOT merged into one, just acknowledged in bulk.",
     "evidenceIds": [
       "betterstack-docs-19",
       "betterstack-docs-53",
       "betterstack-docs-39",
       "betterstack-docs-52",
+      "betterstack-docs-13",
       "betterstack-docs-20"
     ]
   },
@@ -277,19 +264,19 @@
     "productId": "betterstack",
     "storyId": "alert-ingest-routing",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Better Stack documents ingestion from third-party monitoring/observability sources (Datadog, New Relic, Grafana, Prometheus, Zabbix, cloud providers) plus its own monitors, and provides escalation policies that route alerts to on-call teams based on custom rules (time, team availability, incident origin), with schedules, overrides, and multi-channel notification confirmed by docs and a live API probe. missing for 10: independent/third-party confirmation of routing accuracy at scale and more detail on condition-based routing logic beyond escalation policy docs.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Better Stack documents integrations with major monitoring tools (Datadog, New Relic, Grafana, Prometheus, Zabbix, cloud providers) and lets teams build custom escalation policies that define who is alerted and in what order based on time, team availability, and incident origin, with on-call schedules and API tokens for programmatic control. This directly matches ingestion-plus-routing for SREs, though the evidence is first-party docs only. Missing for 10: independent/hands-on verification of routing behavior, and explicit documentation of generic webhook/API ingestion from arbitrary/custom monitoring sources beyond the named integrations.",
     "evidenceIds": [
-      "betterstack-docs-13",
-      "betterstack-docs-20",
       "betterstack-docs-27",
       "betterstack-docs-28",
-      "betterstack-docs-39",
+      "betterstack-docs-20",
       "betterstack-docs-40",
-      "betterstack-docs-12",
-      "betterstack-docs-46",
-      "betterstack-probe-rt-1"
+      "betterstack-docs-13",
+      "betterstack-docs-39",
+      "betterstack-docs-52",
+      "betterstack-docs-15",
+      "betterstack-docs-45"
     ]
   },
   {
@@ -298,12 +285,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Better Stack has documented REST APIs (Uptime API with bearer token auth) but there is no evidence of an interactive API reference with runnable/try-it examples — OpenAPI/Swagger endpoint probes all returned 404, and no docs mention an interactive console or code sandbox.",
+    "rationale": "There is no evidence of an interactive API reference with runnable examples; the openapi probe found no OpenAPI spec (404s on all candidates), and while API tokens/auth are documented (docs-15, docs-45, docs-51), no interactive/try-it-out console or runnable code examples are shown.",
     "evidenceIds": [
+      "betterstack-probe-3",
       "betterstack-docs-15",
       "betterstack-docs-45",
-      "betterstack-docs-51",
-      "betterstack-probe-3"
+      "betterstack-docs-51"
     ]
   },
   {
@@ -312,12 +299,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Better Stack has a documented REST API (Uptime API with bearer-token auth) confirmed live via runtime probe, so a machine-readable spec is a fair expectation, but explicit probes for OpenAPI/Swagger files at all standard paths returned 404 and no docs mention an OpenAPI spec or downloadable schema.",
+    "rationale": "Better Stack has a documented Uptime API with token-based auth, but the explicit probe for OpenAPI/swagger spec files at standard paths all returned 404, and no evidence pack item shows a downloadable machine-readable spec.",
     "evidenceIds": [
       "betterstack-probe-3",
       "betterstack-docs-15",
       "betterstack-docs-45",
-      "betterstack-probe-rt-1"
+      "betterstack-docs-51"
     ]
   },
   {
@@ -326,7 +313,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Better Stack is an observability/incident-management/status-page platform, not a coding agent or dev tool with a sandbox-vs-production testing mode for AI-native usage; no evidence pack item discusses sandbox environments for testing separate from production data. This is a category mismatch rather than a missing feature.",
+    "rationale": "Better Stack is an observability/incident-management/status-page platform, not a development or testing tool with sandbox environments for staging code against fake data; the evidence pack contains nothing about sandbox/staging environments, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -334,13 +321,12 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack shows Better Stack has a documented, auth-gated Uptime API (bearer token, live endpoint) but contains no mention of API versioning scheme or any deprecation policy. Since this is a fair question for a SaaS product with a public API, absence of evidence means the story is not delivered.",
+    "confidence": "medium",
+    "rationale": "There is evidence of an API (bearer token auth, global/team-scoped tokens) but nothing about API versioning schemes or a documented deprecation policy; OpenAPI spec probes all returned 404s, suggesting no formal machine-readable API contract. Missing for 10: versioning scheme documentation, deprecation policy/changelog, OpenAPI spec availability.",
     "evidenceIds": [
       "betterstack-docs-15",
       "betterstack-docs-45",
       "betterstack-docs-51",
-      "betterstack-probe-rt-1",
       "betterstack-probe-3"
     ]
   },
@@ -383,12 +369,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Better Stack only monitors external CRON jobs and serverless workers for failures (docs-6, docs-16) and manages recurring on-call schedules for incident escalation (docs-12, docs-24, docs-46) — none of this is a mechanism for an AI-native user to define or schedule their own recurring automated jobs/workflows within the platform. No evidence of a workflow/job scheduling engine, automation triggers, or recurring task creation exists in the pack.",
+    "rationale": "Better Stack only monitors existing CRON jobs/serverless workers and alerts if they fail (docs-6, docs-16), and lets teams build recurring on-call schedules for people (docs-12, docs-46, docs-57) — neither is evidence of the product itself scheduling or executing recurring jobs/workflows for a user. No feature is shown for creating/triggering scheduled automation jobs or AI workflows on a recurring basis.",
     "evidenceIds": [
       "betterstack-docs-6",
       "betterstack-docs-16",
       "betterstack-docs-12",
-      "betterstack-docs-24"
+      "betterstack-docs-46"
     ]
   },
   {
@@ -418,15 +404,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Better Stack documents creating, acknowledging, and resolving incidents directly from Slack, plus a Slack-native AI SRE agent invoked by tagging @betterstack, and escalation policies define on-call roles/order. Teams support is mentioned only for alert delivery, not for declaring/running incidents, and there's no explicit evidence of automatic incident-channel creation or full role/update automation in Teams. missing for 10: explicit incident channel auto-creation, Teams-side full incident declare/manage parity, independent hands-on confirmation.",
+    "rationale": "Better Stack lets you create, acknowledge, and resolve incidents directly from Slack (docs-3) and receive incident alerts in Slack (docs-48), with the AI SRE agent callable from Slack or MS Teams (docs-32, docs-55). However, there's no evidence of automatic dedicated incident channel creation or role assignment within chat — only escalation policies/on-call notification (docs-39, docs-52) which is a separate mechanism. Missing for 10: explicit channel-creation-per-incident feature, role assignment inside the chat flow, and Teams-side incident declaration parity (Teams is only mentioned for alerts/AI SRE, not incident declaration).",
     "evidenceIds": [
       "betterstack-docs-3",
       "betterstack-docs-48",
-      "betterstack-docs-55",
       "betterstack-docs-32",
-      "betterstack-docs-29",
-      "betterstack-docs-13",
-      "betterstack-docs-40"
+      "betterstack-docs-55",
+      "betterstack-docs-39"
     ]
   },
   {
@@ -435,14 +419,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly describe escalation policies as custom rulesets defining who is alerted and in what order, continuing until acknowledged, with real examples (on-call person notified first, escalates to whole team after 3 minutes if unacknowledged), configurable complex rules based on time/team availability/incident origin, multi-region schedules, and phone/press-1 acknowledgment flows. Missing for 10: no independent/hands-on third-party corroboration of escalation behavior beyond vendor docs.",
+    "rationale": "Docs explicitly describe escalation policies as custom rules defining who is alerted and in what order, continuing until acknowledged, with time-based escalation (e.g., on-call person notified first, escalates to whole team after 3 minutes if unacknowledged) and support for complex rules based on time, team availability, and incident origin, plus multi-timezone schedules for coverage. Missing for 10: explicit documentation of 'fallback responders' terminology or repeat/looping rounds beyond one escalation step, and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "betterstack-docs-13",
       "betterstack-docs-20",
-      "betterstack-docs-28",
       "betterstack-docs-39",
       "betterstack-docs-52",
-      "betterstack-docs-11",
+      "betterstack-docs-28",
+      "betterstack-docs-40",
+      "betterstack-docs-12",
       "betterstack-docs-46"
     ]
   },
@@ -452,12 +437,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Better Stack's AI SRE creates Linear tickets and GitHub PRs from incidents/downtime, and generates automated post-mortems from the incident timeline, which supports the 'sync to issue tracker' half of the story. However, there's no evidence of a mechanism to track these follow-up items to completion (e.g., status sync back from Linear/GitHub, completion dashboards, or reporting on outstanding action items across incidents).\n\nmissing for 10: tracking/closure verification of follow-up action items, broader issue-tracker support beyond Linear/GitHub, reporting on completion rates across incidents.",
+    "rationale": "Better Stack supports creating Linear tickets automatically from incidents/downtime with AI-based suggestions and generating automated post-mortems from incident timelines, which covers part of the 'sync to issue tracker' need. However, there's no evidence of a dedicated follow-up/action-item tracking mechanism inside Better Stack that tracks items to completion, nor support for issue trackers beyond Linear (e.g., Jira, GitHub Issues) for this action-tracking purpose. Missing for 10: broader issue-tracker integrations (Jira, GitHub Issues, etc.) for follow-ups, an explicit action-item/task tracking-to-completion feature, and independent evidence of this workflow in practice.",
     "evidenceIds": [
+      "betterstack-docs-9",
       "betterstack-docs-33",
-      "betterstack-docs-54",
-      "betterstack-docs-8",
-      "betterstack-docs-9"
+      "betterstack-docs-54"
     ]
   },
   {
@@ -465,14 +449,13 @@
     "storyId": "incident-timeline",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Better Stack automatically builds an incident timeline that includes alerts, on-call actions (ack/escalate), and Slack chat, and uses it to generate an automated post-mortem (docs-3, docs-9, docs-38, docs-23). However, there is no evidence describing the ability to manually edit or annotate the timeline after the fact. missing for 10: explicit editing/annotation UI or API for the incident timeline, evidence of manual timeline entry additions, independent confirmation of timeline accuracy/completeness.",
+    "confidence": "medium",
+    "rationale": "Better Stack's AI SRE clearly captures incident timelines automatically (alerts, Slack chat, and generates an automated post-mortem from the incident timeline and Slack per docs-9), and incidents can be acknowledged/resolved directly from Slack (docs-3), showing action capture too. However, there is no evidence of a post-incident editing or annotation feature for the timeline itself. Missing for 10: explicit documentation of editing/annotating the captured timeline after the fact, and any UI/workflow for manual annotation.",
     "evidenceIds": [
       "betterstack-docs-9",
-      "betterstack-docs-3",
-      "betterstack-docs-38",
       "betterstack-docs-23",
-      "betterstack-docs-39"
+      "betterstack-docs-3",
+      "betterstack-docs-22"
     ]
   },
   {
@@ -495,13 +478,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows on-call alerting via phone call (press 1 to acknowledge), push notifications, and single-tap acknowledgment of multiple incidents, implying a mobile app exists for at least acknowledging incidents. However, there is no explicit documentation of escalating or resolving incidents from the mobile app, only acknowledgment is described. Missing for 10: explicit mobile app screenshots/docs showing escalate and resolve actions, confirmation of full incident management (not just ack) from the phone interface, and any independent user reports of the mobile app experience at odd hours.",
+    "rationale": "Evidence shows phone-based acknowledgment ('press 1 to acknowledge' via a call), push notifications as an alert channel, and 'single tap' acknowledgment of multiple simultaneous incidents which implies a mobile app exists, plus escalation policies that page in order. However, there is no explicit documentation of a dedicated mobile app supporting escalate and resolve actions (only acknowledge is directly evidenced), and no app-store or hands-on mobile UX confirmation. Missing for 10: explicit mobile app description/screenshots, evidence of resolving and escalating (not just acknowledging) from the phone, and independent corroboration of the mobile experience.",
     "evidenceIds": [
       "betterstack-docs-11",
       "betterstack-docs-19",
       "betterstack-docs-29",
       "betterstack-docs-53",
-      "betterstack-docs-39"
+      "betterstack-docs-39",
+      "betterstack-docs-13"
     ]
   },
   {
@@ -539,22 +523,18 @@
   {
     "productId": "betterstack",
     "storyId": "on-call-schedules",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Better Stack's docs show clear on-call scheduling primitives: multiple time-zone-based schedules for 24/7 coverage (betterstack-docs-12/46), standard rotation templates to pre-fill on-call calendars (betterstack-docs-24), overrides and cover requests (betterstack-docs-17/18), calendar integration (betterstack-docs-25/49), and escalation policies defining alert order (betterstack-docs-13/20/40/39/52). However, there is no explicit mention of 'layers' (multi-layer scheduling) or 'round-robin' rotation logic as distinct configurable concepts—only generic 'standard rotation schedules' are cited. Missing for 10: explicit layered scheduling support, explicit round-robin rotation mechanics, and independent/hands-on verification of complex rotation setups.",
+    "rationale": "Docs show dedicated on-call scheduling with rotation templates, time-zone-based multi-schedule setups for 24/7 coverage, overrides, and escalation policies tied to schedules (betterstack-docs-12/24/28/46/49/57). This covers rotations, time zones, and round-robin-style pre-fill, matching how distributed teams work.  missing for 10: explicit documentation of 'layers' terminology/multi-layer scheduling and independent/hands-on validation of complex schedule configuration beyond vendor docs.",
     "evidenceIds": [
       "betterstack-docs-12",
-      "betterstack-docs-46",
       "betterstack-docs-24",
-      "betterstack-docs-17",
-      "betterstack-docs-18",
-      "betterstack-docs-25",
+      "betterstack-docs-28",
+      "betterstack-docs-46",
       "betterstack-docs-49",
-      "betterstack-docs-13",
-      "betterstack-docs-20",
-      "betterstack-docs-39",
-      "betterstack-docs-52"
+      "betterstack-docs-57",
+      "betterstack-docs-18"
     ]
   },
   {
@@ -563,28 +543,26 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Better Stack documents an Uptime API with global and team-scoped tokens explicitly described as usable 'for managing anything within Better Stack,' and a runtime probe confirms the API is live and properly auth-gated. However, there's no OpenAPI/swagger spec, no llms.txt, and no explicit evidence that incident management, status pages, or AI-SRE features are fully API-accessible beyond Uptime resources. Missing for 10: comprehensive API reference/OpenAPI spec, explicit API parity claims for non-Uptime features (incident management, status pages, on-call scheduling), and independent verification of full UI-to-API parity.",
+    "rationale": "Better Stack documents a global API token described as valid for \"managing anything within Better Stack\" and provides Uptime-specific API docs with bearer-token auth, suggesting broad API coverage, but there is no explicit claim or evidence of full UI/API parity, and probes show no discoverable OpenAPI spec (404s on all candidate paths), making it hard to verify completeness. Missing for 10: an explicit API-vs-UI parity statement, a full OpenAPI/API reference covering all UI features (incidents, status pages, on-call, AI SRE), and independent confirmation that all UI actions are API-accessible.",
     "evidenceIds": [
       "betterstack-docs-15",
       "betterstack-docs-45",
       "betterstack-docs-51",
-      "betterstack-probe-rt-1",
-      "betterstack-probe-3",
-      "betterstack-probe-1"
+      "betterstack-probe-3"
     ]
   },
   {
     "productId": "betterstack",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows Better Stack offers APIs for managing monitors/incidents (e.g., Uptime API with bearer tokens) but nothing about bulk exporting logs, metrics, traces, or incident history in open formats, nor any stated data-portability policy for users who want to leave the platform. No docs, blog, or community evidence address full data export or open-format portability.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Better Stack offers API access to manage resources (docs-15, docs-45, docs-51) and mentions a 'flexible data export' for team performance reporting (docs-56), suggesting some data portability, but there is no evidence of comprehensive export of all logs/metrics/traces/incidents in open, portable formats or documentation of an account-wide export/leave workflow. Missing for 10: dedicated bulk data export documentation covering all data types (logs, metrics, traces, monitors, incidents), explicit open-format guarantees, and any account deletion/data portability workflow.",
     "evidenceIds": [
+      "betterstack-docs-56",
       "betterstack-docs-15",
       "betterstack-docs-45",
-      "betterstack-docs-51",
-      "betterstack-probe-rt-1"
+      "betterstack-docs-51"
     ]
   },
   {
@@ -593,7 +571,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Better Stack is a closed-source SaaS observability/incident management platform; there is no evidence of an open-source license for its core product source. Reading source under an open license is a category mismatch for this type of hosted commercial SaaS, so the axis does not apply.",
+    "rationale": "Better Stack is a closed commercial SaaS observability/incident-management platform, not an open-source project; reading its source code under an open license is not a fair axis for this kind of product, and no evidence suggests it publishes source code under any license.",
     "evidenceIds": []
   },
   {
@@ -637,8 +615,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for Better Stack; the evidence covers monitoring, incident management, and AI-SRE features only. This is an applicable axis for a SaaS platform storing customer telemetry data, so absence of evidence yields 'none'.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or compliance/data-location controls for Better Stack; the pack covers monitoring, incident management, AI-SRE, and status page features but nothing about where data is stored.",
     "evidenceIds": []
   },
   {
@@ -647,7 +625,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of AI training data opt-out, data usage policies for model training, or any privacy controls specific to preventing AI training on customer data. Better Stack's evidence is focused on monitoring, incident management, and AI SRE features, with no documentation addressing this specific privacy-posture axis.",
+    "rationale": "No evidence in the pack addresses AI training data opt-out or any explicit policy preventing customer data from being used to train AI models; the evidence covers monitoring, incident management, and AI-SRE features unrelated to this privacy control.",
     "evidenceIds": []
   },
   {
@@ -655,8 +633,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers uptime monitoring, incident management, status pages, and AI SRE features but contains no documentation about data retention policies, configurable retention periods, or data deletion controls for logs/metrics/telemetry data. No mention of GDPR/data deletion tooling, retention settings, or export/delete APIs specific to user data. missing for 10: retention period configuration, data deletion/export controls, documentation on how long logs/metrics/traces are stored or how to purge them.",
+    "confidence": "high",
+    "rationale": "No evidence describes data retention controls, deletion policies, or user-facing controls for managing how long telemetry/log/incident data is kept or how to delete it. The evidence pack covers monitoring, incident management, status pages, and AI-SRE features but nothing about data retention/deletion settings.",
     "evidenceIds": []
   },
   {
@@ -664,8 +642,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses telemetry opt-out or usage-tracking controls for Better Stack itself; all citations describe monitoring/incident/AI-SRE features rather than privacy or telemetry settings.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for Better Stack itself; all citations concern its monitoring/incident/AI-SRE product features, not privacy controls over the vendor's own data collection.",
     "evidenceIds": []
   },
   {
@@ -689,11 +667,13 @@
   {
     "productId": "betterstack",
     "storyId": "reliability-analytics",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers incident creation, acknowledgment, escalation policies, on-call scheduling, and status pages, but contains no mention of MTTA/MTTR trend reporting, incident load analytics, or on-call health dashboards that would let a leader track improvement over time. This is a fair capability to expect from an incident/on-call platform, but no evidence shows it exists. Missing for 10: MTTA/MTTR trend metrics, incident load/volume analytics, on-call health/burnout reporting, any historical dashboard or exportable reliability report.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Better Stack references 'robust one-click reporting on your team's performance with a flexible data export' (docs-56), which implies some incident/on-call analytics capability, but there is no explicit mention of MTTA/MTTR trend dashboards, incident load charts, or on-call health scoring anywhere in the evidence pack. missing for 10: explicit MTTA/MTTR metrics, incident load trend visualizations, on-call health/burnout analytics, and any independent corroboration of the reporting feature's depth.",
+    "evidenceIds": [
+      "betterstack-docs-56"
+    ]
   },
   {
     "productId": "betterstack",
@@ -701,12 +681,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Better Stack's incident management docs cover escalation policies, on-call scheduling, acknowledgment, and Slack/Teams integration, but nothing describes assigning structured incident roles (commander, comms lead) or task checklists for coordinated response. Escalation policies define notification order, not role-based incident command structure.",
+    "rationale": "Evidence covers on-call scheduling, escalation policies, acknowledgment, Slack integration, and AI SRE investigation, but nothing describes assigning structured incident roles (commander, comms lead) or step-by-step task checklists during an incident. Escalation policies define alert order, not role-based incident command structure.",
     "evidenceIds": [
       "betterstack-docs-13",
       "betterstack-docs-20",
-      "betterstack-docs-28",
-      "betterstack-docs-39"
+      "betterstack-docs-39",
+      "betterstack-docs-3"
     ]
   },
   {
@@ -783,44 +763,43 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "FireHydrant ships a documented REST API described as able to do 'anything you can do on the FireHydrant UI' (docs-21, docs-48) and has a confirmed official MCP server that completes a full keyless handshake and advertises tools/prompts capabilities (docs-49, probe-3, probe-rt-1), enabling agent-driven incident workflows without a dashboard. However, the evidence never enumerates the specific MCP tool set (e.g., explicit 'acknowledge alert', 'escalate', 'resolve incident' endpoints/tools), so full end-to-end coverage of acknowledge→escalate→resolve purely via API/MCP is inferred rather than directly documented. Missing for 10: explicit MCP tool list showing acknowledge/escalate/resolve actions, and a hands-on example of an agent completing a full incident lifecycle via API/MCP.",
+    "rationale": "FireHydrant offers a documented full REST API ('anything you can do on the UI' including defining incidents, configuring integrations) plus an official MCP server, and Signals/Alerts support acknowledgment and escalation via policies/schedules — giving an agent plausible end-to-end programmatic paths to acknowledge, escalate, and resolve. However, there is no evidence detailing specific API/MCP endpoints for acknowledging alerts or resolving incidents step-by-step, nor any hands-on account of an agent performing this end-to-end without dashboard involvement. missing for 10: explicit API/MCP endpoint documentation for acknowledge/escalate/resolve actions, independent or hands-on verification of an agent completing the full loop without UI.",
     "evidenceIds": [
       "firehydrant-docs-21",
+      "firehydrant-docs-33",
       "firehydrant-docs-48",
-      "firehydrant-docs-49",
-      "firehydrant-probe-3",
-      "firehydrant-probe-rt-1",
       "firehydrant-docs-4",
-      "firehydrant-docs-5"
+      "firehydrant-docs-34",
+      "firehydrant-probe-3",
+      "firehydrant-docs-59"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "A probe confirms FireHydrant hosts a live llms.txt at docs.firehydrant.com/llms.txt returning HTTP 200 with structured documentation content, directly satisfying the ability to point an agent at agent-oriented docs. This is corroborated by an official MCP server that also exposes tool schemas for agent consumption. Missing for 10: no independent third-party report of an agent actually consuming llms.txt successfully, and no explicit docs page describing llms.txt as an intentional agent-facing feature.",
+    "rationale": "A direct probe confirms llms.txt is live and served (HTTP 200) at docs.firehydrant.com/llms.txt with structured documentation content, and there's also an official MCP server for agent integration. Missing for 10: independent third-party confirmation of an agent actually consuming llms.txt in practice.",
     "evidenceIds": [
       "firehydrant-probe-1",
-      "firehydrant-probe-3",
-      "firehydrant-probe-rt-1"
+      "firehydrant-docs-49"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "agentic-ai-insights",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "FireHydrant ships multiple AI-generated insight features inside the product: AI-generated incident summaries created automatically on declaration, AI-drafted retrospectives that produce timelines/impacts/lessons-learned, and a Copilot that proactively compares ongoing incidents to past ones and suggests actions in Command Center/Slack. Missing for 10: independent/hands-on validation of output quality and no detail on the underlying model or accuracy benchmarks.",
+    "rationale": "FireHydrant ships AI-generated incident summaries, AI-drafted retrospectives, and an AI Copilot that proactively surfaces suggestions by comparing incidents in Command Center and Slack, all documented first-party features analyzing incident data. Missing for 10: independent/hands-on validation of AI suggestion quality and broader coverage beyond incident-specific insights (e.g., cross-product analytics AI).",
     "evidenceIds": [
       "firehydrant-docs-11",
       "firehydrant-docs-13",
       "firehydrant-docs-30",
       "firehydrant-docs-35",
-      "firehydrant-docs-45",
-      "firehydrant-docs-52"
+      "firehydrant-docs-52",
+      "firehydrant-docs-63"
     ]
   },
   {
@@ -829,16 +808,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "FireHydrant's Runbooks are explicitly described as an automation engine that runs workflows of steps/actions automatically based on conditions (e.g., default runbook auto-attaches to every incident, auto-assigns roles, auto-creates Slack channels/Jira tickets), and Signals/Alert Rules auto-route events into alerts and incidents without human intervention — this is genuine autonomous background automation. However, these are reactive/triggered automations tied to incident events rather than fully agentic, self-initiating background processes, and there's no evidence of scheduled/proactive AI-driven automation beyond incident-triggered workflows. Missing for 10: evidence of autonomous scheduling or proactive (non-incident-triggered) automation, independent/hands-on confirmation that Runbooks run reliably unattended, and detail on how failures/edge-cases in autonomous execution are handled.",
+    "rationale": "FireHydrant's Runbooks are described as an automation engine that triggers automatically on incident conditions (e.g., role assignment, task lists, webhooks, ticket creation) without manual intervention, and Signals/Alert Rules can auto-route and auto-create incidents from events, both running autonomously in the background once configured. However, these are reactive/incident-triggered automations rather than general-purpose scheduled or agentic background automations, and there's no evidence of AI-driven autonomous decision-making within these automations. missing for 10: evidence of AI-agent-driven or freely schedulable background automations (not just incident-triggered runbooks), independent/hands-on validation of autonomous execution reliability.",
     "evidenceIds": [
       "firehydrant-docs-43",
+      "firehydrant-docs-60",
       "firehydrant-docs-28",
-      "firehydrant-docs-7",
-      "firehydrant-docs-41",
-      "firehydrant-docs-5",
       "firehydrant-docs-42",
-      "firehydrant-docs-2",
-      "firehydrant-docs-24"
+      "firehydrant-docs-71",
+      "firehydrant-docs-68"
     ]
   },
   {
@@ -847,28 +824,29 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "FireHydrant ships several AI-powered features—AI incident summaries, AI-drafted retrospectives ('Draft with AI'), and a 'Copilot' that proactively suggests related incidents in Command Center/Slack—which act as an embedded AI assistant for specific incident-management tasks. However, these are narrow, feature-specific AI actions (summarization, drafting, suggestions) rather than a general-purpose assistant to which a user can freely delegate open-ended tasks. Missing for 10: evidence of a conversational/chat-based assistant interface, ability to delegate arbitrary multi-step tasks beyond the predefined AI features, and independent user reports confirming assistant reliability.",
+    "rationale": "FireHydrant ships several built-in AI features — AI-generated incident summaries, an AI 'Copilot' that proactively surfaces suggestions, AI-drafted retrospectives, and an AI meeting 'Scribe' that transcribes/captures incident bridge discussions — which function as task-specific AI assistance embedded in the product. However, these are fixed, single-purpose AI features (summarize, draft, transcribe, suggest) rather than a general-purpose conversational assistant to which a user can delegate arbitrary tasks. Missing for 10: evidence of a general chat-style AI assistant that accepts open-ended task delegation (e.g., 'create this runbook', 'investigate this alert') beyond the fixed summary/draft/transcription features, and independent/hands-on corroboration of these AI capabilities.",
     "evidenceIds": [
       "firehydrant-docs-11",
       "firehydrant-docs-13",
       "firehydrant-docs-30",
-      "firehydrant-docs-35",
-      "firehydrant-docs-52"
+      "firehydrant-docs-64",
+      "firehydrant-docs-35"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "FireHydrant exposes a full REST API with token-based auth for configuring integrations, incidents, and webhooks, plus an official MCP server that supports headless/CI-style automation. However, this is an incident-management platform, not a CI-runnable tool itself — there's no evidence of a CLI, Docker image, or documented CI pipeline usage pattern. Missing for 10: dedicated CLI for automation, explicit CI/CD pipeline examples or integrations (e.g., GitHub Actions), and independent confirmation of headless API/MCP use in production automation workflows.",
+    "rationale": "FireHydrant ships fhcli, a command-line tool explicitly documented for submitting events from CI/orchestration systems (Jenkins builds, Docker image creation, deploy events), plus a full REST API with token-based API keys and webhooks that let you drive incidents, runbooks, and alerts headlessly without the UI. This directly satisfies running the product in automated/CI pipelines. Missing for 10: independent/hands-on confirmation of fhcli in real CI pipelines and more detail on CLI command coverage beyond deploy/event tracking.",
     "evidenceIds": [
+      "firehydrant-docs-70",
       "firehydrant-docs-21",
+      "firehydrant-docs-18",
       "firehydrant-docs-48",
-      "firehydrant-docs-33",
-      "firehydrant-docs-49",
-      "firehydrant-probe-rt-1"
+      "firehydrant-docs-68",
+      "firehydrant-docs-69"
     ]
   },
   {
@@ -876,12 +854,11 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows FireHydrant ships an official MCP server so external AI agents can call FireHydrant's tools (docs-49, probe-3, probe-rt-1), but this is the reverse (server) role — there is no evidence FireHydrant itself can plug in third-party MCP servers to consume their tools within its own AI features (Copilot, AI summaries, retrospectives). Missing for 10: any documentation of FireHydrant acting as an MCP client, configuration for adding external MCP servers, or AI features that invoke external MCP tools.",
+    "confidence": "high",
+    "rationale": "Evidence only shows FireHydrant exposes its own official MCP server (firehydrant-mcp) so other AI agents can call FireHydrant's tools — this is the reverse of the story, which asks whether FireHydrant itself can plug in and consume external MCP servers. No evidence indicates FireHydrant acts as an MCP client capable of using tools from other MCP servers.",
     "evidenceIds": [
       "firehydrant-docs-49",
-      "firehydrant-probe-3",
-      "firehydrant-probe-rt-1"
+      "firehydrant-probe-3"
     ]
   },
   {
@@ -889,36 +866,36 @@
     "storyId": "agentic-mcp-server",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "FireHydrant maintains an official MCP server (firehydrant/firehydrant-mcp) confirmed via docs reference and a runtime probe showing a successful stdio initialize handshake advertising tools/prompts capabilities. Missing for 10: independent third-party adoption reports or richer documentation of tool coverage beyond the handshake confirmation.",
+    "confidence": "medium",
+    "rationale": "FireHydrant publishes an official MCP server (firehydrant/firehydrant-mcp) confirmed by both a docs citation and an independent probe, directly matching the story. Missing for 10: no independent/community hands-on report of using the MCP server with an agent, and no first-party docs page detailing setup/config beyond the GitHub repo.",
     "evidenceIds": [
       "firehydrant-docs-49",
-      "firehydrant-probe-3",
-      "firehydrant-probe-rt-1"
+      "firehydrant-probe-3"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "FireHydrant ships an official MCP server (confirmed via live handshake exposing tools and prompts) that would let AI agents issue natural-language-driven commands against the platform, and Slack integration (/fh) offers some command-style interaction, but there's no evidence of a native in-app NL/chat interface for direct human natural-language operation—AI features documented are mostly summarization/drafting rather than command execution. Missing for 10: documented list of MCP tool commands, evidence of a native conversational command interface within the FireHydrant UI itself, and independent hands-on confirmation of NL command execution.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "FireHydrant ships an official MCP server (firehydrant-mcp) that would let an AI agent/assistant translate natural-language requests into FireHydrant API actions, and it has slash-commands (`/fh`) in Slack for structured actions, but these are structured commands rather than a documented natural-language command interface, and there's no evidence of a chat-based NL command feature within the product itself. missing for 10: direct product UI/chat support for free-form natural-language commands, evidence of MCP server actually being used for NL-driven actions, independent confirmation of MCP server functioning as intended.",
     "evidenceIds": [
       "firehydrant-docs-49",
-      "firehydrant-probe-rt-1",
-      "firehydrant-docs-8",
-      "firehydrant-docs-30"
+      "firehydrant-probe-3",
+      "firehydrant-docs-8"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "agentic-official-cli",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item references an official FireHydrant CLI tool; only an API (docs-18/21/48), an MCP server (docs-49, probe-3), and web/Slack integrations are documented. The axis is plausible for a platform like this, but absence of any CLI documentation means it is not evidenced.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "low",
+    "rationale": "FireHydrant ships an official CLI (`fhcli`) documented for submitting CI/CD events like deploy statuses and Docker image builds, which is a genuine first-party command-line tool. However, evidence shows it's narrowly scoped to CI/orchestration reporting rather than broad agentic/AI-native interaction with the platform, and there's no independent or hands-on corroboration of its capabilities. Missing for 10: broader CLI functionality beyond CI event submission, independent/community validation of the CLI in practice, and evidence of AI-native workflow support via the CLI.",
+    "evidenceIds": [
+      "firehydrant-docs-70"
+    ]
   },
   {
     "productId": "firehydrant",
@@ -926,15 +903,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "FireHydrant documents a full public REST API with token-based key auth ('anything you can do on the FireHydrant UI'), and API key management docs describe permission scoping, plus an official MCP server exists and was verified to run a full handshake, further supporting programmatic/agentic access. missing for 10: a publicly discoverable OpenAPI/swagger spec (all probed paths 404'd) and independent third-party corroboration of API robustness.",
+    "rationale": "FireHydrant documents a public API with token-based API key auth that can perform anything doable in the UI (configure integrations, define incidents, set up webhooks), plus a CLI (fhcli) and webhook support for CI/orchestration integration. This is a documented, first-party API reference used for driving the product programmatically. Missing for 10: an accessible machine-readable OpenAPI spec (openapi probe returned 404s) and independent third-party corroboration of API robustness/rate limits.",
     "evidenceIds": [
       "firehydrant-docs-21",
       "firehydrant-docs-18",
       "firehydrant-docs-33",
       "firehydrant-docs-48",
-      "firehydrant-probe-2",
-      "firehydrant-probe-3",
-      "firehydrant-probe-rt-1"
+      "firehydrant-docs-70",
+      "firehydrant-docs-68",
+      "firehydrant-probe-2"
     ]
   },
   {
@@ -943,11 +920,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "FireHydrant's docs describe API keys but explicitly state they grant Owner permissions by default with no mention of scoped or least-privilege roles for API keys or agent credentials (firehydrant-docs-33, firehydrant-docs-18, firehydrant-docs-48). No evidence of a mechanism to issue restricted-scope tokens specifically for AI agents.",
+    "rationale": "FireHydrant's docs describe only a single API key mechanism that by default grants full 'Owner permissions' (acting like any other user) rather than any scoped or least-privilege role for agents; there is no evidence of granular API key scopes, restricted roles, or agent-specific credential issuance. missing for 10: any documentation of scoped/role-restricted API keys, per-agent credential scoping, or least-privilege token issuance.",
     "evidenceIds": [
-      "firehydrant-docs-33",
       "firehydrant-docs-18",
-      "firehydrant-docs-48"
+      "firehydrant-docs-33",
+      "firehydrant-docs-48",
+      "firehydrant-docs-66"
     ]
   },
   {
@@ -956,23 +934,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a general REST API (docs-21, docs-48, docs-18, docs-33) and an official MCP server (docs-49), but there is no mention of official client SDKs (e.g., Python, JS, Go libraries) for developers to build against, and probes for an OpenAPI spec (firehydrant-probe-2) all returned 404s, suggesting no generated SDK tooling. Missing for 10: any documented official SDK/library in a specific language, package registry listings, or SDK usage examples.",
+    "rationale": "Evidence shows a REST API, API keys, webhooks, and a CLI tool (fhcli) for CI/CD integration, plus an official MCP server, but there is no mention of official language SDKs (e.g., Python, JS, Go client libraries) for developers to build against. missing for 10: evidence of official SDKs, SDK documentation/repos, or language-specific client libraries.",
     "evidenceIds": [
       "firehydrant-docs-21",
       "firehydrant-docs-48",
-      "firehydrant-docs-33",
+      "firehydrant-docs-70",
       "firehydrant-probe-2"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "agentic-webhooks",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The only evidence is a single line noting the FireHydrant API can be used to \"set up webhooks--anything you can do on the FireHydrant UI,\" implying webhook subscription is possible, but there's no dedicated documentation on webhook event types, payload structure, or subscription management shown in the pack. Missing for 10: dedicated webhooks documentation, list of subscribable event types, payload schema, and any hands-on/independent confirmation that webhook subscriptions work as described.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "FireHydrant documents webhook creation for internal events, generic webhook event sources for ingesting external events, and webhook alert targets for sending alerts to external destinations, directly supporting event subscription via webhooks. missing for 10: independent/hands-on corroboration of webhook reliability and richer detail on subscription/event-type filtering options.",
     "evidenceIds": [
-      "firehydrant-docs-21"
+      "firehydrant-docs-68",
+      "firehydrant-docs-69",
+      "firehydrant-docs-72",
+      "firehydrant-docs-71"
     ]
   },
   {
@@ -981,28 +962,30 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "FireHydrant's AI-Drafted Retrospectives feature explicitly generates a comprehensive draft from the incident record including timelines, impacts, contributing-factor-style analysis, and preliminary Lessons Learned, triggered via a 'Draft with AI' button per retrospective question, clearly positioned for human review/editing. This directly matches the story's ask for AI-drafted postmortems with timeline/contributing factors/follow-ups ready for human review. Missing for 10: no independent/hands-on verification of output quality or explicit mention of 'follow-ups' as a distinct drafted section (only 'Lessons Learned' and impacts are named).",
+    "rationale": "FireHydrant's AI-Drafted Retrospectives feature explicitly generates a comprehensive postmortem draft from the incident record — including structured overview, timelines, impacts, and preliminary Lessons Learned (follow-ups) — via a 'Draft with AI' action tied to retrospective templates, clearly positioned for human review/editing afterward. missing for 10: independent/hands-on verification of draft quality and no explicit mention of 'contributing factors' as a distinct field beyond lessons learned.",
     "evidenceIds": [
       "firehydrant-docs-13",
       "firehydrant-docs-35",
       "firehydrant-docs-45",
-      "firehydrant-docs-9"
+      "firehydrant-docs-9",
+      "firehydrant-docs-14"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "ai-incident-summaries",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "FireHydrant offers AI-generated incident summaries at declaration, AI-drafted retrospectives, and Zoom chat capture during calls, which cover live summaries and scribed call notes; however 'drafted updates' (e.g., AI-written status page/stakeholder updates during the incident) are not evidenced, and coverage is Slack/Zoom-centric with no mention of other call platforms or fully autonomous update drafting during the incident lifecycle. missing for 10: evidence of AI-drafted live status/stakeholder updates during an active incident, support for scribing calls outside Zoom, and independent/hands-on validation of accuracy of these AI features.",
+    "rationale": "FireHydrant offers AI-generated incident summaries created as soon as an incident is declared (docs-11, docs-52), AI-drafted retrospectives that produce structured timelines and lessons learned (docs-13, docs-35, docs-45), and an AI Scribe that joins meetings/Zoom to capture call notes and chat insights (docs-29, docs-64). This directly matches the story's live summaries, drafted updates, and scribed call notes. missing for 10: independent/hands-on verification of these AI features' accuracy in production incidents, and clearer evidence of real-time 'live' updating (vs. point-in-time generation) during an active incident.",
     "evidenceIds": [
       "firehydrant-docs-11",
-      "firehydrant-docs-12",
+      "firehydrant-docs-13",
       "firehydrant-docs-29",
-      "firehydrant-docs-30",
       "firehydrant-docs-35",
-      "firehydrant-docs-52"
+      "firehydrant-docs-45",
+      "firehydrant-docs-52",
+      "firehydrant-docs-64"
     ]
   },
   {
@@ -1011,25 +994,26 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "FireHydrant's AI Copilot proactively compares ongoing incidents to similar past incidents and surfaces suggestions in Command Center/Slack (firehydrant-docs-30), and AI-generated summaries appear as soon as an incident is declared (firehydrant-docs-52), giving some 'before a human asks' correlation. However, there's no documented evidence of correlating code/config changes or live telemetry data as part of this investigative process — it's limited to incident-text similarity and summarization, not a full root-cause 'investigator' pulling from deploys/metrics. Missing for 10: evidence of correlating infrastructure/code changes, telemetry/metrics ingestion into the AI analysis, and an autonomous 'investigation' output beyond summaries and incident-similarity suggestions.",
+    "rationale": "FireHydrant's Copilot proactively compares ongoing incidents to past incidents and surfaces suggestions in Command Center/Slack, and AI-generated summaries are created automatically at incident declaration without a human prompt, aligning with the 'digs in before asked' framing. However there is no evidence of correlating deployment/change data or telemetry streams as part of this proactive analysis. Missing for 10: explicit correlation of code/infra changes, explicit telemetry (metrics/logs) ingestion and correlation by the AI investigator, and independent validation of the Copilot's proactive-suggestion quality.",
     "evidenceIds": [
       "firehydrant-docs-30",
-      "firehydrant-docs-52",
       "firehydrant-docs-11",
-      "firehydrant-docs-35"
+      "firehydrant-docs-52",
+      "firehydrant-docs-13"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "alert-dedup-grouping",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes Alert Rules turning events into Alerts and routing them via Escalation Policies/Schedules, and an Alerting Analytics page showing how many alerts turn into incidents, but nothing describes deduplication or grouping of duplicate/related alerts into a single incident so only one person is paged. Missing for 10: explicit alert deduplication/grouping logic, evidence of noise reduction, and any documentation of merging correlated alerts into one incident.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "FireHydrant's Signals pipeline turns matched events into Alerts via Alert Rules, Escalation Policies and On-Call Schedules, and Alerting Analytics tracks how alerts turn into incidents — implying some level of event-to-alert consolidation, but there is no explicit documentation of deduplication logic (e.g., merging duplicate/related alerts into a single alert or incident) to prevent alert storms. missing for 10: explicit dedup/grouping algorithm documentation, evidence of merging duplicate alerts, and independent/hands-on confirmation that one incident results from many correlated alerts.",
     "evidenceIds": [
-      "firehydrant-docs-5",
-      "firehydrant-docs-27",
       "firehydrant-docs-42",
+      "firehydrant-docs-58",
+      "firehydrant-docs-59",
+      "firehydrant-docs-27",
       "firehydrant-docs-34"
     ]
   },
@@ -1038,18 +1022,20 @@
     "storyId": "alert-ingest-routing",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "FireHydrant's Signals feature documents ingesting alerts from any monitoring tool via Alert Rules (with CEL-based conditions/backtesting), routing to teams through Escalation Policies and On-Call Schedules, with multi-platform notifications and a migrator from PagerDuty/Opsgenie confirming this is a documented, mature ingestion+routing pipeline. Missing for 10: independent/hands-on validation of routing accuracy at scale and broader detail on the full catalog of supported monitoring source integrations beyond generic claims.",
+    "confidence": "medium",
+    "rationale": "FireHydrant documents ingesting alerts from monitoring tools via Signals (webhooks, generic webhook event source, alerting/monitoring integrations), defining Alert Rules with CEL-based conditions that route matched events to teams via Escalation Policies and On-Call Schedules, with backtesting and analytics on alert flow. This directly covers documented ingestion sources plus condition-based routing to teams. Missing for 10: independent/hands-on verification of routing accuracy or breadth of supported monitoring-tool integrations beyond docs claims.",
     "evidenceIds": [
       "firehydrant-docs-5",
       "firehydrant-docs-42",
+      "firehydrant-docs-58",
       "firehydrant-docs-4",
+      "firehydrant-docs-3",
+      "firehydrant-docs-25",
       "firehydrant-docs-34",
-      "firehydrant-docs-6",
+      "firehydrant-docs-69",
+      "firehydrant-docs-72",
       "firehydrant-docs-26",
-      "firehydrant-docs-40",
-      "firehydrant-docs-22",
-      "firehydrant-docs-24"
+      "firehydrant-docs-27"
     ]
   },
   {
@@ -1058,10 +1044,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "FireHydrant documents a REST API and API keys but there's no evidence of an interactive API reference with runnable examples; a probe explicitly found no OpenAPI/Swagger spec exposed (all candidate paths 404), suggesting no interactive API explorer exists.",
+    "rationale": "FireHydrant has an API reference page (firehydrant-docs-21) but there is no evidence of an interactive, runnable-example explorer; probes for openapi/swagger specs all returned 404 (firehydrant-probe-2), and no docs mention 'try it' or code-execution features. Missing for 10: evidence of an interactive API console, runnable code samples, or a published OpenAPI/Swagger spec.",
     "evidenceIds": [
       "firehydrant-docs-21",
-      "firehydrant-docs-18",
       "firehydrant-probe-2"
     ]
   },
@@ -1071,10 +1056,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "FireHydrant has an API reference (docs-21, docs-48) but explicit probes for standard OpenAPI spec locations (openapi.json, swagger.json, etc.) all returned 404, and no evidence of a downloadable machine-readable spec anywhere else in the pack.",
+    "rationale": "The evidence shows an API reference (firehydrant-docs-21/48/66) but no vendor claim of a downloadable OpenAPI/Swagger spec, and the probe explicitly checked common OpenAPI/Swagger paths on the docs site and got 404s for all of them (firehydrant-probe-2), indicating no machine-readable spec is exposed for download.",
     "evidenceIds": [
-      "firehydrant-probe-2",
-      "firehydrant-docs-21"
+      "firehydrant-docs-21",
+      "firehydrant-probe-2"
     ]
   },
   {
@@ -1083,7 +1068,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "FireHydrant is an incident-management platform; no evidence describes a sandbox/staging environment, test mode, or data isolation feature for testing workflows without touching production data. The MCP server evidence covers agent connectivity, not sandbox testing. Missing for 10: any mention of a sandbox/test environment, non-production API mode, or data segregation guarantees.",
+    "rationale": "FireHydrant is an incident management platform; no evidence describes a sandbox environment, test mode, or staging/non-production API mode for AI-native testing separate from production data. This is an applicable axis (a SaaS platform with an API could offer a sandbox), but no evidence supports it. Missing for 10: any mention of sandbox/test environment, staging API keys, or a documented safe-testing mode.",
     "evidenceIds": []
   },
   {
@@ -1092,10 +1077,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "There is a documented REST API (docs-18, docs-21, docs-48) and even a probe attempt for an OpenAPI spec, but that probe returned 404s for all candidate OpenAPI/versioning endpoints, and no evidence anywhere mentions API versioning scheme or a deprecation policy. Missing for 10: any documentation of API version numbers, a changelog, or a stated deprecation/EOL policy for the API.",
+    "rationale": "The evidence shows a FireHydrant API and reference docs (firehydrant-docs-21, -48) but nothing about API versioning scheme or a documented deprecation policy; the openapi.json probe even 404s across all candidate paths, suggesting no discoverable machine-readable API spec. No mention of version numbers, changelogs, or deprecation timelines anywhere in the pack.",
     "evidenceIds": [
       "firehydrant-docs-21",
-      "firehydrant-docs-18",
+      "firehydrant-docs-48",
       "firehydrant-probe-2"
     ]
   },
@@ -1116,17 +1101,18 @@
     "productId": "firehydrant",
     "storyId": "automation-rules-engine",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "high",
-    "rationale": "FireHydrant's Signals Alert Rules use CEL queries to match events and automatically route them into Alerts via Escalation Policies/On-Call Schedules, with a backtest tool to validate rule matches, and Runbooks serve as a full automation engine that triggers workflow steps based on specified conditions. This directly satisfies rule-based, event-triggered automation across both alerting and incident workflows. missing for 10: independent/hands-on validation of rule complexity or edge cases, and clearer detail on conditional branching logic within Runbooks beyond default templates",
+    "rationale": "FireHydrant's Signals Alert Rules use CEL-based conditions to match Events and automatically turn them into Alerts routed via Escalation Policies/On-Call Schedules, and Runbooks act as an automation engine that evaluates conditions to trigger workflows of actions (Slack channels, Jira tickets, webhooks, etc.) on incident events. This is a clear rules-trigger-actions automation system, though it's not explicitly framed as 'AI-native' rule authoring (e.g., no natural-language rule creation or AI-suggested triggers). missing for 10: AI-assisted/natural-language rule creation, independent hands-on validation of automation reliability, and evidence of AI agents themselves defining rules via API/MCP.",
     "evidenceIds": [
       "firehydrant-docs-5",
       "firehydrant-docs-42",
-      "firehydrant-docs-6",
-      "firehydrant-docs-26",
       "firehydrant-docs-43",
-      "firehydrant-docs-24",
-      "firehydrant-docs-34"
+      "firehydrant-docs-58",
+      "firehydrant-docs-60",
+      "firehydrant-docs-26",
+      "firehydrant-docs-71",
+      "firehydrant-docs-72"
     ]
   },
   {
@@ -1135,8 +1121,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "FireHydrant's 'Schedules' feature (docs-3, 25, 39) is for on-call rotation staffing, not recurring automated job/workflow execution, and Runbooks (docs-43) are event/condition-triggered automation rather than time-based recurring jobs. No evidence shows a cron-like or interval-based scheduler for workflows.",
-    "evidenceIds": []
+    "rationale": "FireHydrant's automation is built around event-triggered Runbooks (triggered on incident declaration or alert conditions) and On-Call Schedules (staffing rotations), not scheduled/cron-style recurring execution of jobs or workflows; no evidence shows a way to run a Runbook or workflow on a time-based recurring schedule. Missing for 10: any documented cron/timer-based trigger for Runbooks or workflows, scheduled automation API/UI, or recurring job execution beyond on-call rotation staffing.",
+    "evidenceIds": [
+      "firehydrant-docs-43",
+      "firehydrant-docs-60",
+      "firehydrant-docs-25",
+      "firehydrant-docs-39"
+    ]
   },
   {
     "productId": "firehydrant",
@@ -1144,11 +1135,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "FireHydrant's Runbooks are its automation engine, and audit logs track 'Runbook modifications' for audit purposes, but there is no documented capability to version, review-approve changes, or roll back a Runbook/automation to a prior state. missing for 10: version history UI for Runbooks, diff/review workflow before automation changes go live, and an explicit rollback/restore mechanism.",
+    "rationale": "Evidence shows Runbooks (FireHydrant's automation engine) and audit logs that record 'Runbook modifications' for review purposes, but there is no evidence of version history, diffing, or the ability to roll back an automation to a prior version — audit logs only provide an event trail, not versioning/rollback controls.",
     "evidenceIds": [
       "firehydrant-docs-19",
       "firehydrant-docs-43",
-      "firehydrant-docs-54"
+      "firehydrant-docs-67"
     ]
   },
   {
@@ -1157,90 +1148,90 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents FireHydrant's Signals on-call schedules, rotations, and escalation policies, but nowhere mentions an iCal/calendar feed or personal calendar subscription for on-call shifts. Since on-call calendar sync is a standard, plausible capability for an on-call scheduling product, its absence in the evidence means the axis applies but is unsupported.",
+    "rationale": "FireHydrant's docs describe on-call schedules, rotations, and escalation policies (e.g., firehydrant-docs-3, -25, -39, -57) but no evidence anywhere in the pack mentions a personal calendar feed (iCal/ICS) export for on-call shifts.",
     "evidenceIds": [
       "firehydrant-docs-3",
       "firehydrant-docs-25",
       "firehydrant-docs-39",
-      "firehydrant-docs-34"
+      "firehydrant-docs-57"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "declare-incident-chat",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show strong Slack-native incident declaration: automatic incident Slack channels (docs-2), default Runbook assigning Commander role (docs-7, docs-28, docs-41), Slack slash-command control (docs-8), and AI-generated incident summaries posted to Slack usable by anyone in the workspace (docs-11, docs-12, docs-44, docs-52). However, all evidence is Slack-specific; there is no mention of Microsoft Teams support for declaring incidents, creating channels, or assigning roles, and 'multi-platform notifications' (docs-34) refers to alerting, not chat-based incident declaration. Missing for 10: explicit Teams incident-declaration support, Teams channel/role automation, and any hands-on/independent confirmation of the chat-first workflow.",
+    "rationale": "FireHydrant's docs show strong Slack-based incident declaration: auto-created incident Slack channels, a default Runbook that assigns the Commander role, `/fh` slash commands to run Runbooks and post updates that populate the incident's status page (firehydrant-docs-2, -7, -8, -28, -41, -65). However, evidence never mentions Microsoft Teams support for declaring/running incidents — all chat-ops evidence is Slack-only. Missing for 10: explicit Microsoft Teams incident-declaration/chatops support, independent hands-on confirmation of the Slack flow.",
     "evidenceIds": [
       "firehydrant-docs-2",
       "firehydrant-docs-7",
       "firehydrant-docs-8",
-      "firehydrant-docs-11",
-      "firehydrant-docs-12",
       "firehydrant-docs-28",
       "firehydrant-docs-41",
-      "firehydrant-docs-44",
-      "firehydrant-docs-52",
-      "firehydrant-docs-34"
+      "firehydrant-docs-65"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "escalation-policies",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "FireHydrant's Signals product explicitly ships escalation policies that route alert notifications to on-call team members or individuals, with direct user/Slack notification options (docs-4, docs-34, docs-40). However, the evidence never details the specific mechanics of multi-step delays, fallback responders, or repeated escalation rounds until acknowledgment that the story asks about.\n\nmissing for 10: explicit documentation of configurable delay timers between escalation steps, fallback/backup responder chains, and repeat-round behavior on non-acknowledgment.",
+    "rationale": "FireHydrant's Signals product documents escalation policies that route notifications through on-call schedules, individuals, direct users, or Slack channels (docs-4, docs-34, docs-40, docs-57), and its Alert Rules/backtest tooling shows alerts routed to the 'relevant party' via these policies. However, the evidence never explicitly describes multi-step delay timers, automatic fallback to secondary responders, or repeat escalation rounds until acknowledgment — the specific step/delay/repeat mechanics from the story are not documented. missing for 10: explicit documentation of timed delay steps, fallback/secondary responder chains, and repeat-until-acknowledged looping behavior; independent/hands-on confirmation of escalation behavior.",
     "evidenceIds": [
       "firehydrant-docs-4",
       "firehydrant-docs-34",
       "firehydrant-docs-40",
-      "firehydrant-docs-25"
+      "firehydrant-docs-57",
+      "firehydrant-docs-58",
+      "firehydrant-docs-42"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "followup-tracking",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "FireHydrant's Runbooks can automate creating Jira tickets and include an 'Add Task List' step, implying some ability to generate and sync follow-up items to an issue tracker, but the evidence never describes a dedicated action-item/follow-up tracking feature with completion status or reporting back from Jira. Missing for 10: explicit follow-up/action-item tracking UI, completion status sync from Jira back to FireHydrant, and any analytics on follow-up closure rates.",
+    "rationale": "Docs mention automating creation of Jira tickets during incidents and retrospectives capturing 'Lessons Learned,' implying some follow-up action creation and sync, but there's no explicit documentation of a dedicated 'follow-up items' feature with completion tracking or dashboards to ensure items are closed out. missing for 10: dedicated follow-up/action-item tracking feature, explicit Jira two-way sync/status updates, evidence of completion tracking or reporting on open follow-ups.",
     "evidenceIds": [
       "firehydrant-docs-2",
-      "firehydrant-docs-41",
-      "firehydrant-docs-43",
-      "firehydrant-docs-9"
+      "firehydrant-docs-9",
+      "firehydrant-docs-61"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "incident-timeline",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "FireHydrant automatically creates incidents from alerts, runs Runbooks/automation, and captures Zoom/Slack chat insights via AI (docs-24, docs-29, docs-30, docs-43), and AI-drafted retrospectives generate timelines and summaries (docs-35, docs-45) which implies some automatic timeline construction. However, there is no explicit documentation of a unified, editable incident timeline UI where SREs can annotate or edit captured events after the fact — the evidence shows summary/retrospective generation and audit logs (docs-19, docs-54) but not a dedicated timeline edit/annotate feature. Missing for 10: explicit documentation of a dedicated incident timeline view, evidence of manual editing/annotation of auto-captured timeline entries, and independent/hands-on confirmation that alerts+actions+chat are merged into one editable record.",
+    "rationale": "FireHydrant's docs show automatic capture of chat updates via internal status pages (`/fh update` and Command Center posts), AI Scribe transcription of incident-bridge discussions/decisions, and audit logs tracking runbook/incident events, all of which feed the incident record. Retrospectives support collaborative editing and AI-drafted timelines that can be revised afterward, satisfying the 'edit or annotate' requirement. missing for 10: explicit product documentation of a unified 'incident timeline' view (as opposed to separate status page/audit log/retrospective components) and independent hands-on confirmation of editing captured timeline entries.",
     "evidenceIds": [
-      "firehydrant-docs-24",
-      "firehydrant-docs-29",
-      "firehydrant-docs-30",
-      "firehydrant-docs-35",
-      "firehydrant-docs-45",
+      "firehydrant-docs-65",
+      "firehydrant-docs-64",
       "firehydrant-docs-19",
-      "firehydrant-docs-54"
+      "firehydrant-docs-61",
+      "firehydrant-docs-45",
+      "firehydrant-docs-13"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "internal-private-status",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "FireHydrant offers internal status pages (org-only) and external status pages, but its own docs state internal status pages 'do not require auth or a FireHydrant license to view' — indicating no granular access control layer for customer-specific vs employee-only audiences. There is no evidence of role-based or audience-segmented private status pages beyond the binary internal/external split.",
+    "rationale": "FireHydrant does offer 'internal status pages' scoped to internal team only, and separate external status pages, but its docs explicitly state internal pages 'do not require auth' and are 'meant for the internal team only and require no setup' — i.e., there's no documented access-control/authentication layer for restricting these pages to specific customer or employee audiences, which is the core of this story. Missing for 10: documented audience-based access control (e.g., SSO-gated or role-based viewer permissions) on internal/private status pages, ability to scope a page to a specific customer segment, and any evidence of granular audience restriction beyond public-vs-internal.",
     "evidenceIds": [
       "firehydrant-docs-15",
+      "firehydrant-docs-36",
+      "firehydrant-docs-46",
       "firehydrant-docs-47",
-      "firehydrant-docs-16"
+      "firehydrant-docs-65",
+      "firehydrant-docs-31",
+      "firehydrant-docs-37"
     ]
   },
   {
@@ -1248,8 +1239,8 @@
     "storyId": "mobile-oncall-app",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers on-call schedules, escalation policies, Slack/API integrations, and AI summaries, but contains no mention of a native mobile app for acknowledging, escalating, or resolving incidents. Mobile app support is a fair axis for an incident-management/on-call platform, but no evidence confirms FireHydrant ships one.",
+    "confidence": "high",
+    "rationale": "Evidence covers on-call schedules, escalation policies, Slack/Signals alerting, and Slack-based interactions (/fh commands), but there is no mention anywhere of a native mobile app for iOS/Android, nor any description of acknowledging/escalating/resolving incidents from a phone. Missing for 10: mobile app existence, mobile-specific acknowledge/escalate/resolve flows, any app store listing or mobile UI documentation.",
     "evidenceIds": []
   },
   {
@@ -1268,13 +1259,15 @@
   {
     "productId": "firehydrant",
     "storyId": "observability-integrations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only shows generic claims like alerting from 'any monitoring tool' or 'alerting and monitoring integrations' without naming Datadog, Grafana, Prometheus, CloudWatch, or Sentry, and no documented setup guides for any of these specific tools appear in the pack. Missing for 10: named integration pages/setup docs for Datadog, Grafana, Prometheus, CloudWatch, and Sentry.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "FireHydrant documents generic support for ingesting events from 'any monitoring tool' and generic alerting/monitoring integrations plus a webhook-based generic event source and a migrator for PagerDuty/Opsgenie, but the evidence pack contains no named, documented setup guides for Datadog, Grafana, Prometheus, CloudWatch, or Sentry specifically. Missing for 10: named first-party integration docs/setup guides for each of Datadog, Grafana, Prometheus, CloudWatch, and Sentry, and any independent confirmation these integrations work as advertised.",
     "evidenceIds": [
       "firehydrant-docs-1",
-      "firehydrant-docs-24"
+      "firehydrant-docs-24",
+      "firehydrant-docs-69",
+      "firehydrant-docs-22"
     ]
   },
   {
@@ -1283,13 +1276,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "FireHydrant's Signals product documents on-call Schedules built from Rotations tied to teams, plus Escalation Policies for notifying via schedules or individuals, and multi-platform notifications — the core building blocks an SRE needs. However, the evidence never explicitly mentions layered/multi-tier rotations, time zone handling, or round-robin coverage patterns by name, so it's unclear whether these specific nuanced scheduling patterns are supported as described. Missing for 10: explicit documentation of scheduling layers, time zone-aware rotations, and round-robin distribution logic, plus independent/hands-on confirmation of these specifics.",
+    "rationale": "FireHydrant's Signals product documents on-call schedules built from rotations tied to teams, with escalation policies routing notifications to individuals or schedules [firehydrant-docs-3][firehydrant-docs-25][firehydrant-docs-39][firehydrant-docs-57][firehydrant-docs-34]. However, the evidence never explicitly addresses timezone handling, multi-layer scheduling, or round-robin distribution logic, so the story's specifics beyond basic rotations/escalation are unconfirmed. Missing for 10: explicit documentation of time zone support, 'layers' concept, round-robin coverage mechanics, and independent/hands-on corroboration of real-world scheduling flexibility.",
     "evidenceIds": [
+      "firehydrant-docs-3",
       "firehydrant-docs-25",
       "firehydrant-docs-39",
-      "firehydrant-docs-3",
-      "firehydrant-docs-4",
+      "firehydrant-docs-57",
       "firehydrant-docs-34",
+      "firehydrant-docs-4",
       "firehydrant-docs-40"
     ]
   },
@@ -1312,9 +1306,13 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "There is no evidence of a bulk data export feature or open-format export/portability tool for FireHydrant; the API (docs-18,21,48) allows programmatic access but no documented full-data export/leave capability is described.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence shows a general-purpose API (docs-21, docs-48, docs-66) that could theoretically be used to pull data out, but there is no documentation of a bulk/full data export feature, open-format export (CSV/JSON dumps), or data-portability/account-closure tooling. This axis applies to any SaaS platform, but no dedicated export-and-leave capability is evidenced.",
+    "evidenceIds": [
+      "firehydrant-docs-21",
+      "firehydrant-docs-48",
+      "firehydrant-docs-66"
+    ]
   },
   {
     "productId": "firehydrant",
@@ -1322,8 +1320,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "FireHydrant is a closed, commercial SaaS incident-management platform; no evidence indicates its core product source is available under any open license. The GitHub repo found is only the separate MCP server client tool, not the product itself, so it doesn't establish open licensing of the platform.",
-    "evidenceIds": []
+    "rationale": "FireHydrant is a closed-source SaaS incident management platform; the evidence pack shows only an official MCP server repo (a small client tool) as open source, not the core product. No evidence of the platform's source code being available under an open license.",
+    "evidenceIds": [
+      "firehydrant-docs-49",
+      "firehydrant-probe-3"
+    ]
   },
   {
     "productId": "firehydrant",
@@ -1331,7 +1332,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "FireHydrant is a SaaS incident management platform with no evidence of a self-hostable core product; all evidence describes a hosted service with API, SSO, and MCP integrations rather than deployable software. Self-hosting is not a plausible axis for this SaaS-only offering, so this is a category mismatch rather than a missing feature.",
+    "rationale": "FireHydrant is a SaaS incident management platform with no evidence of a self-hostable/on-prem deployment option; it's built and offered exclusively as a hosted cloud service, making self-hosting a wrong-axis question for this product category.",
     "evidenceIds": []
   },
   {
@@ -1340,27 +1341,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "FireHydrant's Signals product documents creating schedules, rotations, and escalation policies (docs-3, docs-25, docs-39, docs-34), but no evidence describes an on-call engineer independently taking an override, swapping a shift, or requesting coverage without admin involvement.",
-    "evidenceIds": [
-      "firehydrant-docs-3",
-      "firehydrant-docs-25",
-      "firehydrant-docs-39",
-      "firehydrant-docs-34"
-    ]
+    "rationale": "FireHydrant's Signals docs describe admins creating on-call schedules and rotations (firehydrant-docs-3, firehydrant-docs-25, firehydrant-docs-39) but there is no evidence of an on-call engineer being able to self-serve an override, swap a shift, or request coverage without an admin rebuilding the schedule.",
+    "evidenceIds": []
   },
   {
     "productId": "firehydrant",
     "storyId": "postmortem-workflow",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "FireHydrant's docs show a real postmortem workflow: standardized templates for post-incident reviews (firehydrant-docs-9), AI-drafted retrospectives generated from the incident's timeline (firehydrant-docs-13, firehydrant-docs-35, firehydrant-docs-45), and live collaborative review (multiple viewers, cursors) on retrospective documents (firehydrant-docs-10). However, there is no explicit documentation of a distinct 'publication' step (e.g., sharing/exporting the finished retrospective externally or to stakeholders) beyond internal collaboration. Missing for 10: explicit publish/export/sharing step for finished retrospectives, and independent/hands-on corroboration of the end-to-end workflow.",
+    "rationale": "FireHydrant documents templates for retrospectives (docs-9), AI-drafted retrospectives that pull from incident timeline data (docs-13, docs-35, docs-45), collaborative review/editing including permissions and live cursors for Enterprise (docs-10, docs-62, docs-61), and publication via internal/external status pages (docs-15, docs-16, docs-36). This covers the full lifecycle: template → draft from timeline → review → publish. Missing for 10: independent/hands-on corroboration of the postmortem workflow in practice (community evidence is mostly about unrelated topics), and no detail on approval/sign-off steps before formal publication.",
     "evidenceIds": [
       "firehydrant-docs-9",
-      "firehydrant-docs-10",
       "firehydrant-docs-13",
       "firehydrant-docs-35",
-      "firehydrant-docs-45"
+      "firehydrant-docs-45",
+      "firehydrant-docs-10",
+      "firehydrant-docs-61",
+      "firehydrant-docs-62",
+      "firehydrant-docs-15",
+      "firehydrant-docs-16",
+      "firehydrant-docs-36"
     ]
   },
   {
@@ -1368,8 +1369,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack items mention data residency, regional storage options, or geographic data controls for FireHydrant; this is an applicable axis for a SaaS incident-management platform but no documentation addresses it.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack mentions data residency, region selection, or data storage location controls for FireHydrant; the axis applies since incident management SaaS platforms commonly offer data-residency choices for enterprise/compliance customers, but nothing here documents such a capability.",
     "evidenceIds": []
   },
   {
@@ -1378,7 +1379,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "FireHydrant's AI security practices docs mention tenant-level control over which AI features are enabled, implying some data-governance control, but there is no explicit statement that customer data is excluded from model training. Missing for 10: an explicit no-training-on-customer-data policy, opt-out mechanism specific to model training, and independent verification of this claim.",
+    "rationale": "FireHydrant's AI security practices page mentions tenant-level control over whether AI is enabled and for which features, implying some opt-out capability, but no evidence explicitly confirms a policy preventing customer data from being used to train AI models. missing for 10: explicit training-data opt-out statement, third-party/independent confirmation of data-use policy, details on how AI feature toggles affect data retention/training.",
     "evidenceIds": [
       "firehydrant-docs-14"
     ]
@@ -1388,8 +1389,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack has one line about controlling whether AI is available per tenant/feature (firehydrant-docs-14), but nothing about data retention policies, deletion of incident data, AI-generated content, or logs. No documentation of retention periods, deletion controls, or data lifecycle management is present, so this AI-native privacy-posture story is unsupported.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data retention periods, deletion controls, or data lifecycle management for FireHydrant. The closest item (docs-14) only covers toggling AI feature availability per tenant, not retention/deletion of data.",
     "evidenceIds": []
   },
   {
@@ -1398,23 +1399,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item discusses telemetry, usage tracking, or opt-out controls for FireHydrant itself (docs focus on AI feature toggles, SSO, audit logs, etc.). This is a fair question for a SaaS incident management platform, so absence of evidence yields 'none'. Missing for 10: any documentation of telemetry/usage-data collection practices, an opt-out mechanism, or privacy settings addressing tracking.",
+    "rationale": "No evidence pack item addresses telemetry opt-out or usage tracking controls for AI-native users; only AI tenant feature toggles (docs-14) and audit logs are mentioned, neither of which is about opting out of telemetry/usage tracking.",
     "evidenceIds": []
   },
   {
     "productId": "firehydrant",
     "storyId": "public-status-page",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm FireHydrant offers external, FireHydrant-hosted status pages (in addition to Atlassian-hosted) driven from incident state, distinct from internal ephemeral status pages. However, the evidence never mentions custom domain support or subscriber notification functionality for these external pages. Missing for 10: custom domain configuration, subscriber/notification mechanics, and any independent confirmation of hosted page setup.",
+    "rationale": "Docs confirm FireHydrant offers external, hosted status pages (Atlassian and FireHydrant-hosted) alongside internal ephemeral status pages driven from incident state, but the evidence never mentions custom domain support or subscriber notification features for the hosted page. missing for 10: custom domain configuration details, subscriber/notification opt-in mechanics, independent/hands-on confirmation of the hosted page experience.",
     "evidenceIds": [
       "firehydrant-docs-16",
       "firehydrant-docs-31",
       "firehydrant-docs-37",
       "firehydrant-docs-47",
       "firehydrant-docs-53",
-      "firehydrant-docs-36"
+      "firehydrant-docs-36",
+      "firehydrant-docs-46",
+      "firehydrant-docs-65"
     ]
   },
   {
@@ -1423,13 +1426,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "FireHydrant's Analytics page explicitly provides MTTx (MTTA/MTTR) metrics with grouping/filtering by team, service, severity, etc., letting leaders see overall health and trends, and a separate Alerting Analytics page tracks alert-to-incident conversion and acknowledgment rates relevant to on-call health. Missing for 10: independent/hands-on validation of the analytics UI, and no explicit dedicated 'on-call health' dashboard beyond alerting analytics and schedules.",
+    "rationale": "FireHydrant has a dedicated MTTx Analytics page that groups/filters incident metrics by team, service, severity, etc. to show overall health, plus an Alerting Analytics page tracking alert-to-incident conversion and acknowledgment rates, which together give leaders MTTA/MTTR trend and incident-load visibility. Missing for 10: no explicit documentation of dedicated on-call health/burnout metrics, no independent/analyst validation of the analytics dashboards' accuracy, and no customer testimonial confirming leaders actually use it to track improvement over time.",
     "evidenceIds": [
       "firehydrant-docs-17",
+      "firehydrant-docs-27",
       "firehydrant-docs-32",
-      "firehydrant-docs-38",
       "firehydrant-docs-56",
-      "firehydrant-docs-27"
+      "firehydrant-docs-38"
     ]
   },
   {
@@ -1438,13 +1441,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "FireHydrant's default Runbook explicitly assigns a Commander role and attaches a task list on incident creation, with Runbooks acting as a customizable automation/checklist engine tied to teams and product areas, and Signals/escalation policies route comms to the right responders. Missing for 10: no explicit documented 'comms lead' named role (only Commander is default-named) and no independent/hands-on case study confirming role-based coordination in live incidents.",
+    "rationale": "FireHydrant's default Runbook explicitly assigns the Commander role and adds a Task List on incident creation, with Escalation Policies/Schedules routing comms responsibilities and Slack integration for coordination. Missing for 10: no explicit named 'comms lead' role documentation or independent case study confirming role/task workflows hold up under real incident pressure.",
     "evidenceIds": [
       "firehydrant-docs-7",
       "firehydrant-docs-41",
-      "firehydrant-docs-28",
       "firehydrant-docs-43",
-      "firehydrant-docs-51",
+      "firehydrant-docs-28",
+      "firehydrant-docs-60",
       "firehydrant-docs-8"
     ]
   },
@@ -1454,29 +1457,32 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs describe Runbooks as FireHydrant's automation engine that attach to incidents (default Runbook auto-attaches to every incident) and execute steps like assigning roles, creating Slack channels/Jira tickets, task lists, and running diagnostics-type actions, with triggers via Slack (/fh) and API. This directly matches the SRE story of runbooks attaching to incidents and auto-triggering steps. Missing for 10: independent/hands-on verification of runbook execution reliability and broader diagnostic-step examples beyond docs.",
+    "rationale": "FireHydrant's Runbooks are explicitly documented as the automation engine that attach to incidents (including a Default Runbook auto-attached to every incident) and execute steps like assigning roles, creating Slack channels/Jira tickets, adding task lists, and sending webhooks to trigger diagnostics/rollbacks — all triggering automatically when incidents are declared based on evaluated conditions. Missing for 10: independent/hands-on verification of runbook automation reliability beyond vendor docs, and no explicit named 'diagnostics' step type (only inferred via webhook/integration steps).",
     "evidenceIds": [
       "firehydrant-docs-43",
       "firehydrant-docs-28",
-      "firehydrant-docs-7",
+      "firehydrant-docs-60",
       "firehydrant-docs-41",
+      "firehydrant-docs-7",
       "firehydrant-docs-2",
-      "firehydrant-docs-8",
-      "firehydrant-docs-51"
+      "firehydrant-docs-71",
+      "firehydrant-docs-8"
     ]
   },
   {
     "productId": "firehydrant",
     "storyId": "stakeholder-comms",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "FireHydrant's internal status pages give stakeholders a no-login, no-license view of structured incident summaries without joining the incident channel/war room, and external status pages extend this further, which directly serves the 'update stakeholders without joining' need. However, the evidence never describes a subscribe/notify mechanism (e.g., email/SMS alerts on status changes) for stakeholders, only that pages exist to view. Missing for 10: explicit subscription/notification feature for internal status page updates, and independent/hands-on validation of stakeholder usage.",
+    "rationale": "FireHydrant's internal status pages give stakeholders a no-login view of structured incident updates (posted via Slack `/fh update` or Command Center) without joining the incident channel/bridge, and external status pages extend this further (firehydrant-docs-15, firehydrant-docs-36, firehydrant-docs-65, firehydrant-docs-16). However, the evidence never describes a subscribe/notify mechanism (e.g., email/SMS/RSS subscription) for stakeholders to get pushed updates rather than having to check the page. Missing for 10: explicit subscription/notification feature for status page followers, and independent confirmation that non-technical stakeholders actually use this to stay out of the war room.",
     "evidenceIds": [
       "firehydrant-docs-15",
-      "firehydrant-docs-16",
       "firehydrant-docs-36",
       "firehydrant-docs-46",
+      "firehydrant-docs-65",
+      "firehydrant-docs-16",
+      "firehydrant-docs-31",
       "firehydrant-docs-47"
     ]
   },
@@ -1484,17 +1490,17 @@
     "productId": "firehydrant",
     "storyId": "workflow-automation-engine",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "FireHydrant's Runbooks are explicitly documented as a condition-based automation engine that defines workflows of steps/actions triggered by incident events (role assignment, task lists, Slack/Jira automation, reminders), with default runbooks auto-attached to every incident and manual/automatic triggering options. Alert Rules similarly use conditional matching (CEL queries) to route events into incidents/escalations, reinforcing the condition-based automation theme.\n\nmissing for 10: independent/hands-on validation of runbook conditional logic in production use, and detail on field-update/reminder step types beyond role assignment and task lists.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "FireHydrant's Runbooks are explicitly described as a condition-based automation engine that triggers on incident events, evaluating conditions to decide whether to fire, and can perform tasks like role assignment, task list creation, Slack/Jira actions, webhooks to internal systems, and status/field updates, directly matching the SRE automation-runbooks story. missing for 10: independent/hands-on validation of runbook reliability at scale and deeper detail on reminder-type conditional triggers beyond incident declaration/resolution.",
     "evidenceIds": [
       "firehydrant-docs-43",
+      "firehydrant-docs-60",
       "firehydrant-docs-7",
       "firehydrant-docs-41",
       "firehydrant-docs-28",
+      "firehydrant-docs-71",
       "firehydrant-docs-8",
-      "firehydrant-docs-5",
-      "firehydrant-docs-42",
       "firehydrant-docs-2"
     ]
   },
@@ -1502,16 +1508,17 @@
     "productId": "firehydrant",
     "storyId": "workflow-tool-integrations",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show strong two-way integration evidence for Slack (incident channels, /fh runbook commands, AI summaries usable without FH account), Jira (auto-created tickets), and Zoom (chat insights, meeting bridges), plus a general API/webhook layer for building custom integrations. However, GitHub and Microsoft Teams are never explicitly named as integrations — only generic 'multi-platform notifications' is mentioned — so state-flow for those specific tools is unevidenced. Missing for 10: explicit GitHub integration details, explicit Teams integration details, and independent/hands-on confirmation of bidirectional sync beyond FireHydrant's own docs.",
+    "rationale": "FireHydrant docs show concrete integrations with Slack (incident channels, slash commands, AI summaries available to non-users, notifications), Jira (auto-created tickets), and Zoom (meeting bridges, AI-captured chat insights, Scribe transcription), plus generic webhooks/API for custom bidirectional sync to any external system. However, Microsoft Teams and GitHub are never explicitly named in the evidence, and no example shows state flowing back from these tools (e.g., Jira ticket status syncing back into FireHydrant) beyond outbound automation. Missing for 10: explicit GitHub integration evidence, explicit Teams integration evidence, and documented two-way state sync (not just push automation) for Jira/Slack.",
     "evidenceIds": [
       "firehydrant-docs-2",
       "firehydrant-docs-8",
       "firehydrant-docs-12",
       "firehydrant-docs-29",
-      "firehydrant-docs-34",
+      "firehydrant-docs-64",
       "firehydrant-docs-40",
+      "firehydrant-docs-68",
       "firehydrant-docs-21"
     ]
   },
@@ -1549,21 +1556,19 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "incident.io ships multiple native AI-insight features directly in-product: Investigations auto-generates root-cause hypotheses from alerts, code, telemetry and past incidents (docs-14,16,23,31,56,62,66), Suggestions/summaries auto-draft incident updates and follow-ups (docs-12,53,54), and Insights dashboards offer trend/period comparisons (docs-18,32,64). Missing for 10: independent/hands-on validation of insight quality and no customer testimonial specifically praising the AI insights (only general company adoption quotes exist).",
+    "confidence": "high",
+    "rationale": "incident.io ships multiple AI-generated insight/suggestion features directly inside the product: AI post-mortem drafting and inline review suggestions, suggested summaries, AI-drafted updates/follow-ups (Suggestions), Scribe call transcription, and Investigations which automatically gathers evidence and forms hypotheses to explain incidents, plus Insights analytics with period comparisons. These are documented in-product features, not just external agent access. Missing for 10: independent/hands-on corroboration beyond vendor docs, and more detail on Insights' AI-generated (vs. just statistical) analysis.",
     "evidenceIds": [
+      "incident-io-docs-6",
+      "incident-io-docs-11",
+      "incident-io-docs-12",
       "incident-io-docs-14",
       "incident-io-docs-16",
-      "incident-io-docs-23",
       "incident-io-docs-31",
-      "incident-io-docs-56",
-      "incident-io-docs-62",
-      "incident-io-docs-66",
-      "incident-io-docs-12",
       "incident-io-docs-53",
       "incident-io-docs-54",
       "incident-io-docs-18",
-      "incident-io-docs-32"
+      "incident-io-docs-62"
     ]
   },
   {
@@ -1589,15 +1594,23 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "incident.io ships several built-in AI capabilities users can delegate to: Investigations (an agentic, purpose-built harness that gathers evidence, forms/tests hypotheses, and even runs an adversarial agent to pressure-test findings), AI-assisted postmortem drafting/redrafting, and Suggestions which auto-drafts incident updates, summaries and follow-up actions. These are first-party product features distinct from the separate MCP client-connection story. Missing for 10: independent/hands-on user reports validating real-world reliability of these AI features beyond first-party docs.",
+    "rationale": "incident.io ships multiple built-in AI capabilities you can delegate to: Investigations (an agentic system that gathers evidence, forms and pressure-tests hypotheses to find root cause), Postmortem AI (drafts and redrafts postmortem sections), and Suggestions/Scribe (auto-drafting updates, summaries, follow-ups, and call transcription) — all native, not third-party bolt-ons. missing for 10: independent/hands-on validation of Investigations' accuracy and reliability, and clearer scope of what tasks can be fully delegated vs. only suggested.",
     "evidenceIds": [
+      "incident-io-docs-6",
       "incident-io-docs-14",
       "incident-io-docs-16",
       "incident-io-docs-23",
       "incident-io-docs-31",
-      "incident-io-docs-6",
+      "incident-io-docs-56",
+      "incident-io-docs-62",
       "incident-io-docs-12",
-      "incident-io-docs-54"
+      "incident-io-docs-54",
+      "incident-io-docs-11",
+      "incident-io-docs-53",
+      "incident-io-docs-13",
+      "incident-io-docs-30",
+      "incident-io-docs-17",
+      "incident-io-docs-63"
     ]
   },
   {
@@ -1622,7 +1635,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All MCP evidence describes incident.io publishing its own remote MCP server so external AI assistants can query incident.io's data — the reverse of what this story asks (the product itself consuming/plugging in third-party MCP servers to gain their tools). No evidence shows incident.io's AI features (e.g. Investigations) can connect out to external MCP servers to use their tools.",
+    "rationale": "All MCP-related evidence describes incident.io exposing its own data via a hosted MCP *server* so external AI assistants can query it (docs-10/29/40/47, probe-3, probe-rt-1) — this is the opposite direction from the story, which asks whether incident.io itself can plug in and use tools from external MCP servers. No evidence shows incident.io's AI features (e.g. Investigations) acting as an MCP client consuming third-party MCP servers' tools.",
     "evidenceIds": [
       "incident-io-docs-10",
       "incident-io-docs-29",
@@ -1638,7 +1651,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "incident.io documents and hosts an official remote MCP server (docs.incident.io/ai/remote-mcp) allowing any MCP-compatible AI assistant to connect and query incidents, alerts, on-call, and analytics; a live runtime probe confirms the hosted mcp.incident.io/mcp endpoint is real and enforces OAuth auth, corroborating the docs beyond marketing claims. Missing for 10: independent third-party (non-vendor) hands-on report of successfully using the MCP server in production.",
+    "rationale": "incident.io documents a first-party remote MCP server (docs.incident.io/ai/remote-mcp) that lets any MCP-compatible AI assistant connect to query incidents, analyze alerts, check on-call, manage escalations, and run operational analysis, and a runtime probe confirms the hosted endpoint (mcp.incident.io/mcp) is live and speaks the MCP OAuth flow. This is strong first-party documentation plus independent runtime corroboration. Missing for 10: broader third-party/community hands-on reports of using the MCP server in production.",
     "evidenceIds": [
       "incident-io-docs-10",
       "incident-io-docs-29",
@@ -1670,8 +1683,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an official CLI tool for incident.io; the product offers a REST API, OpenAPI specs, and MCP server, but no dedicated CLI is documented anywhere in the evidence pack. Missing for 10: any mention of an incident.io CLI binary/package, its installation, or command-line usage documentation.",
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions an official CLI tool; incident.io documents an API, MCP server, Terraform provider, and webhooks, but nothing describing a command-line interface product.",
     "evidenceIds": []
   },
   {
@@ -1695,12 +1708,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "incident.io's hosted MCP server (used by AI agents) requires OAuth with a documented protected-resource metadata endpoint, implying some token-scoping mechanism, and the general API requires an API key. However, there is no documentation of configurable least-privilege scopes/roles for API keys or MCP tokens (e.g. read-only vs. write, per-resource permissions) that a user could explicitly issue to an agent. missing for 10: explicit API-key permission/scope configuration UI or docs, role-based least-privilege key issuance, confirmation that MCP OAuth tokens can be scoped down per-agent.",
+    "rationale": "incident.io requires an API key for its REST API and its hosted remote MCP server implements an OAuth-based bearer-token flow (401 + WWW-Authenticate with resource_metadata), which implies some form of scoped/delegated authorization for agent access. However, there is no documentation of granular API key permission scopes, role-based key restrictions, or explicit least-privilege credential issuance tailored for AI agents. Missing for 10: documented API key scopes/permissions, explicit guidance on issuing narrowly-scoped credentials per agent, and confirmation that MCP OAuth tokens carry fine-grained least-privilege scopes rather than full account access.",
     "evidenceIds": [
-      "incident-io-probe-rt-1",
       "incident-io-docs-20",
       "incident-io-docs-46",
-      "incident-io-docs-10"
+      "incident-io-probe-rt-1"
     ]
   },
   {
@@ -1735,21 +1747,15 @@
     "storyId": "ai-drafted-postmortems",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Docs explicitly describe AI generating first drafts of postmortems, inline review suggestions, and redrafting sections (incident-io-docs-6), plus customizable timelines (docs-4/49), follow-ups tracked separately (docs-7/39/61), and AI summaries/suggestions drawing on incident activity (docs-11/12/53/54) — together covering timeline, contributing factors via investigations (docs-14/31), and follow-ups feeding into a human-reviewable draft. Missing for 10: no independent/hands-on account of the postmortem draft quality or explicit confirmation that 'contributing factors' section specifically is auto-populated, and no third-party review of the AI drafting feature itself.",
+    "confidence": "high",
+    "rationale": "incident.io's postmortem-ai feature explicitly generates first drafts of postmortems with inline review suggestions and redraft options, timelines are auto-generated from key events with narrative additions, and follow-ups are tracked as a distinct actionable category — together covering timeline, contributing factors, and follow-ups ready for human review. Missing for 10: no explicit documentation showing contributing-factors analysis specifically named as an AI-drafted section, and no independent/hands-on corroboration of draft quality beyond vendor docs.",
     "evidenceIds": [
       "incident-io-docs-6",
       "incident-io-docs-4",
       "incident-io-docs-49",
       "incident-io-docs-7",
-      "incident-io-docs-39",
-      "incident-io-docs-61",
-      "incident-io-docs-11",
-      "incident-io-docs-12",
-      "incident-io-docs-53",
-      "incident-io-docs-54",
-      "incident-io-docs-14",
-      "incident-io-docs-31"
+      "incident-io-docs-68",
+      "incident-io-docs-5"
     ]
   },
   {
@@ -1758,16 +1764,15 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "incident.io documents AI Suggestions that auto-draft updates, summaries, and follow-up actions from incident activity, AI-generated suggested summaries for responders, and Scribe which transcribes/scribes incident calls — directly matching the story's live summaries, drafted updates, and call scribing. Missing for 10: independent/hands-on evidence validating real-world accuracy or adoption of these AI drafting features, and no first-party detail on latency/quality of live summary generation during actual calls.",
+    "rationale": "Docs explicitly describe three of the story's core capabilities: AI-suggested summaries during incidents (docs-11/41/53/70), AI 'Suggestions' that auto-draft updates and follow-up actions (docs-12/54), and Scribe, which transcribes/scribes incident calls (docs-13/30/55). Together these map directly onto 'live summaries, drafted updates, and scribed call notes.' Missing for 10: independent/hands-on evidence validating Scribe's note quality or summary accuracy in real incidents, and richer documentation of the live/real-time nature of summary generation beyond brief doc snippets.",
     "evidenceIds": [
       "incident-io-docs-11",
       "incident-io-docs-12",
       "incident-io-docs-13",
-      "incident-io-docs-41",
+      "incident-io-docs-30",
       "incident-io-docs-53",
       "incident-io-docs-54",
-      "incident-io-docs-55",
-      "incident-io-docs-30"
+      "incident-io-docs-55"
     ]
   },
   {
@@ -1793,13 +1798,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs directly document deduplication by key (dedup key prevents duplicate alerts while one remains active) and alert grouping (related alerts grouped into one alert group for single triage/escalation/incident attach), which together deliver exactly the story of not paging fifty times for one issue. Missing for 10: independent/hands-on validation of grouping accuracy at scale and configurability details beyond docs (e.g., custom grouping rules) aren't detailed.",
+    "rationale": "Docs explicitly describe deduplication via dedup keys (no new alert created while original active) and alert grouping that combines related alerts into a single group for triage/escalation/incident attachment, directly matching the 'one incident pages one human' story; escalation paths also let rules suppress noise. Missing for 10: independent/hands-on corroboration of dedup/grouping effectiveness at scale beyond vendor docs.",
     "evidenceIds": [
       "incident-io-docs-27",
+      "incident-io-docs-28",
+      "incident-io-docs-35",
       "incident-io-docs-36",
       "incident-io-docs-52",
-      "incident-io-docs-28",
-      "incident-io-docs-35"
+      "incident-io-docs-73",
+      "incident-io-docs-25",
+      "incident-io-docs-50"
     ]
   },
   {
@@ -1808,16 +1816,20 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "incident.io documents 40+ pre-built alert sources plus custom HTTP sources, and describes escalation paths with configurable rules by priority and working hours, schedules, alert grouping and deduplication — directly matching the SRE story of documented ingestion and condition-based routing. Missing for 10: independent/hands-on verification of the routing conditions in practice and a public catalog of all 40+ sources beyond the marketing claim.",
+    "rationale": "Docs show 40+ documented alert sources plus custom HTTP sources, alert grouping/deduplication, and escalation paths with rules based on priority/working hours to route to the right on-call team/schedule — directly matching the story's ingestion+condition-based routing requirement. Integration directory further corroborates specific monitoring tool sources (Datadog, Grafana, Honeycomb, New Relic, PagerDuty, Sentry). Missing for 10: independent/hands-on verification of routing-condition configuration in practice and more detail on custom condition/team-assignment logic beyond changelog snippets.",
     "evidenceIds": [
       "incident-io-docs-15",
       "incident-io-docs-21",
       "incident-io-docs-25",
       "incident-io-docs-27",
       "incident-io-docs-28",
-      "incident-io-docs-35",
       "incident-io-docs-50",
-      "incident-io-docs-59"
+      "incident-io-docs-75",
+      "incident-io-intdir-3",
+      "incident-io-intdir-4",
+      "incident-io-intdir-5",
+      "incident-io-intdir-6",
+      "incident-io-intdir-7"
     ]
   },
   {
@@ -1825,13 +1837,14 @@
     "storyId": "api-interactive-docs",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "incident.io documents a public API reference with an OpenAPI 3.0 spec (downloadable, and confirmed live per-tag specs at runtime), which is the foundation for an interactive reference, but no evidence describes a 'try it out' console or runnable code examples within the docs themselves. missing for 10: explicit interactive/try-it-out UI in the API reference, runnable code samples, confirmation of live request execution from the docs site.",
+    "confidence": "medium",
+    "rationale": "incident.io publishes a documented API reference with an API key requirement and downloadable OpenAPI 3.0 specs (per-tag, confirmed live via probe), which is the foundation for an API reference, but there is no evidence of an interactive 'try it' console or runnable code examples within the docs. Missing for 10: explicit interactive try-it-out UI, runnable/executable code samples, and multi-language SDK snippets in the reference.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-probe-rt-2",
-      "incident-io-probe-2"
+      "incident-io-docs-46",
+      "incident-io-probe-2",
+      "incident-io-probe-rt-2"
     ]
   },
   {
@@ -1840,11 +1853,10 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "The API reference docs explicitly offer to 'Download the full OpenAPI 3.0 spec' and a runtime probe confirms machine-readable, keylessly-downloadable per-tag OpenAPI 3.0.3 specs (e.g. incidents-v2.json) are live and parseable. Missing for 10: a single consolidated full-spec file was not directly verified (only per-tag files), and no independent third-party corroboration beyond the probe.",
+    "rationale": "Docs explicitly state 'Download the full OpenAPI 3.0 spec' at the API reference introduction, and a runtime probe confirms machine-readable per-tag OpenAPI 3.0.3 JSON specs are downloadable keylessly (e.g. incidents-v2.json). Missing for 10: no evidence of a single consolidated full-spec file being probed directly (only per-tag files verified) and no independent third-party corroboration of spec quality/tooling generation.",
     "evidenceIds": [
-      "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-docs-46",
+      "incident-io-docs-20",
       "incident-io-probe-rt-2"
     ]
   },
@@ -1881,13 +1893,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows a REST API, webhooks, and an MCP server for querying incidents/alerts/on-call data, but nothing describes bulk/batch operations (e.g., updating many incidents, alerts, or schedules in one call) that an AI agent could invoke at scale. Alert grouping/deduplication reduce duplicate alerts automatically but are not user- or agent-driven bulk actions across arbitrary item sets.",
+    "rationale": "While incident.io exposes a REST API, OpenAPI specs, and an MCP server for querying incidents/alerts/on-call data, none of the evidence describes bulk/batch operations (e.g., bulk update, bulk close, batch endpoints, or MCP tools operating on many items at once) — all API/MCP references describe per-item query or single-action operations. This is a fair axis for a product with a full API and MCP surface, but no evidence shows bulk-operation support.",
     "evidenceIds": [
       "incident-io-docs-20",
-      "incident-io-docs-29",
-      "incident-io-docs-40",
+      "incident-io-docs-34",
       "incident-io-probe-rt-2",
-      "incident-io-docs-35"
+      "incident-io-docs-29",
+      "incident-io-docs-40"
     ]
   },
   {
@@ -1913,11 +1925,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "incident.io's Workflows feature (docs-9) is event-triggered (e.g., publish to status page when an incident updates) and on-call 'Schedules' (docs-24, docs-42) refer to rotation calendars, not recurring automation jobs. No evidence describes cron-style or time-based recurring workflow scheduling that an AI-native user could configure via API, MCP, or workflow builder.",
+    "rationale": "incident.io's Workflows feature (docs-9, docs-69) triggers actions on incident events, not on recurring time-based schedules, and on-call 'schedules' (docs-24, docs-71) are for rotation/paging rather than scheduling automation jobs; no evidence of cron-like recurring workflow triggers or an API/MCP mechanism to schedule recurring jobs.",
     "evidenceIds": [
       "incident-io-docs-9",
+      "incident-io-docs-69",
       "incident-io-docs-24",
-      "incident-io-docs-42"
+      "incident-io-docs-71"
     ]
   },
   {
@@ -1926,8 +1939,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "incident.io ships Workflows/automation features and even an in-progress Terraform provider for infra-as-code, but nothing in the evidence describes version history, diff/review, or rollback capabilities specifically for automations/workflows — the Terraform mention only covers general infra config, not workflow versioning or revert. Missing for 10: workflow version history, change review/diff UI, and a rollback mechanism for automations.",
+    "rationale": "The evidence pack confirms incident.io has automations (Workflows, alert routing, status page automation) and even a Terraform provider for infra-as-code, but there is no documentation of versioning workflow/automation configs, a review process for changes, or a rollback mechanism to a prior automation state.",
     "evidenceIds": [
+      "incident-io-docs-9",
+      "incident-io-docs-69",
       "incident-io-docs-1"
     ]
   },
@@ -1937,11 +1952,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The docs describe calendar feeds only for importing personal holidays/PTO into incident.io, not for exporting an engineer's on-call shifts as a subscribable feed to their personal calendar. No evidence pack item shows an outbound iCal/webcal feed of on-call schedules for personal calendar apps.",
+    "rationale": "The only calendar-feed evidence describes importing external iCal feeds (e.g., personal holidays/PTO) INTO incident.io's schedules, not exporting on-call shift schedules OUT to an engineer's personal calendar via a subscribable feed — the direction the story asks for. No documentation or probe evidence shows an outbound iCal/webcal feed URL for on-call shifts that engineers can subscribe to in their own calendar apps.",
     "evidenceIds": [
       "incident-io-docs-26",
       "incident-io-docs-43",
-      "incident-io-docs-51"
+      "incident-io-docs-51",
+      "incident-io-docs-72"
     ]
   },
   {
@@ -1965,13 +1981,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm escalation paths with priority/working-hours rules, on-call schedules, and routing alerts to escalation paths ([incident-io-docs-25],[incident-io-docs-50],[incident-io-docs-15],[incident-io-docs-24]), which implies multi-step escalation. However, the evidence never explicitly describes the specific mechanics the story asks about — configurable delay timers between steps, fallback responder chains, or repeat/looping rounds until acknowledgment. Missing for 10: explicit documentation of delay-based escalation steps, fallback responder configuration, and repeat-round behavior on non-acknowledgment.",
+    "rationale": "Docs confirm escalation paths with priority/working-hours rules, schedules for on-call rotation, and routing alerts to escalation paths (docs-15, docs-25, docs-50), which supports the core multi-step escalation concept, but there is no explicit documentation of the specific mechanics described in the story — delay timers before advancing, multiple ordered steps, fallback responders, or repeat rounds until acknowledgment. missing for 10: explicit description of escalation timing/delay configuration, fallback responder tiers, and repeat/looping behavior until acknowledgment, plus independent hands-on corroboration.",
     "evidenceIds": [
+      "incident-io-docs-15",
       "incident-io-docs-25",
       "incident-io-docs-50",
-      "incident-io-docs-15",
-      "incident-io-docs-24",
-      "incident-io-docs-42"
+      "incident-io-docs-59"
     ]
   },
   {
@@ -1997,14 +2012,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs confirm automatic timeline generation from key events (alerts, actions, chat) with full manual editing/annotation support, including adding custom narrative or external-system events (incident-io-docs-4, docs-38, docs-49). Alert/on-call integration and chat-based incident declaration (Slack/Teams) further support that timeline events originate from these sources automatically. Missing for 10: independent hands-on verification of exactly which event types (alerts vs chat decisions) populate automatically versus require manual entry, and no third-party review confirming the editing UX in practice.",
+    "rationale": "Docs confirm automatic timeline generation from key events (alerts, actions, chat) plus explicit editability/annotation with custom narrative or external events, directly matching the story. Multiple integration/alert-source docs and webhook support corroborate automatic capture of alerts and actions feeding the timeline. missing for 10: X, Y — no independent/hands-on account (beyond vendor docs) confirming edit workflow in practice, and no detail on exactly which chat decisions get auto-captured vs require manual annotation.",
     "evidenceIds": [
       "incident-io-docs-4",
       "incident-io-docs-38",
       "incident-io-docs-49",
       "incident-io-docs-3",
-      "incident-io-docs-48",
-      "incident-io-docs-15"
+      "incident-io-docs-15",
+      "incident-io-docs-19",
+      "incident-io-docs-45"
     ]
   },
   {
@@ -2013,11 +2029,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs explicitly confirm both public and private Status Pages exist ('public and private Status Pages') and status-page automation/API features, but no evidence details how access control is scoped (e.g., customer-only vs employee-only audiences, SSO/auth mechanisms) for private pages. missing for 10: explicit documentation of audience-based access control, authentication method for private pages, and independent confirmation of enterprise-grade access segmentation.",
+    "rationale": "Docs explicitly state incident.io offers 'public and private Status Pages' for customer communication, and status pages support automation/API/workflow publishing, implying some access control capability. However, no evidence details how access control works (e.g., audience-specific gating, SSO/SAML restriction, or separate employee-only vs customer-facing page configuration), so the specific 'engineering leader' control granularity is unconfirmed. Missing for 10: documentation of audience-based access rules, authentication/SSO gating for private pages, and multi-audience segmentation examples.",
     "evidenceIds": [
       "incident-io-docs-22",
       "incident-io-docs-57",
-      "incident-io-docs-8"
+      "incident-io-docs-8",
+      "incident-io-docs-9",
+      "incident-io-docs-67"
     ]
   },
   {
@@ -2026,12 +2044,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows incident.io operates through Slack/Teams, web dashboard, escalation paths, and on-call schedules, but contains no mention of a dedicated mobile app for acknowledging, escalating, or resolving incidents from a phone. Mobile app capability is a reasonable expectation for an on-call/incident management product, so the axis applies, but nothing in the evidence confirms it exists.",
-    "evidenceIds": [
-      "incident-io-docs-15",
-      "incident-io-docs-25",
-      "incident-io-docs-3"
-    ]
+    "rationale": "The evidence pack covers Slack/Teams-based incident declaration, on-call schedules, escalation paths, and AI features, but contains no mention of a native mobile app for acknowledging, escalating, or resolving incidents from a phone. Mobile app support is a reasonable expectation for an on-call product, but no evidence confirms it exists.",
+    "evidenceIds": []
   },
   {
     "productId": "incident-io",
@@ -2039,13 +2053,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers on-call schedules, escalation paths (priority/working-hours rules), and alert sources, but nothing in the pack describes per-engineer notification channel preferences (push, SMS, phone call, email) for how a page reaches an individual on-call responder. Escalation-path docs (docs-25/50) discuss routing rules to people/teams, not personal channel selection.",
+    "rationale": "incident.io's on-call docs describe escalation paths, schedules, priority/working-hours routing rules, and alert sources, but none of the evidence specifies delivery via push, SMS, phone call, or email, nor per-channel notification preference settings for individual engineers.",
     "evidenceIds": [
       "incident-io-docs-15",
       "incident-io-docs-25",
       "incident-io-docs-50",
-      "incident-io-docs-24",
-      "incident-io-docs-42"
+      "incident-io-docs-42",
+      "incident-io-docs-24"
     ]
   },
   {
@@ -2085,14 +2099,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "incident.io documents a public REST API (api.incident.io) with per-tag OpenAPI 3.0.3 specs covering incidents, alerts, on-call/schedules, status pages, and webhooks, plus an MCP server that lets AI tools query incidents, alerts, on-call and escalations — evidence of broad, structured API coverage across most core UI functions. However, there is no explicit vendor claim or independent confirmation of full UI/API parity, and newer AI-native features like Investigations, AI summaries/suggestions, and Scribe are described only as UI/product capabilities without documented API/programmatic equivalents. Missing for 10: an explicit parity statement or docs, API coverage confirmation for Investigations/AI-suggestion features, and independent/hands-on verification that every UI action has an API equivalent.",
+    "rationale": "incident.io exposes a well-documented public API (api.incident.io) with a full OpenAPI 3.0 spec and per-tag machine-readable specs, plus webhooks and an MCP server that can query incidents, alerts, on-call, and escalations — strong evidence of broad API coverage. However, there is no explicit claim or evidence of full feature parity (e.g. Terraform provider is still being built resource-by-resource, and AI features like Investigations/Scribe/summaries aren't clearly exposed as API-manageable), so full UI-API parity isn't demonstrated. Missing for 10: explicit parity statement/documentation, API coverage for AI-driven features (investigations, scribe, suggestions), and confirmation Terraform/infra-as-code covers all resources.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-probe-rt-2",
-      "incident-io-docs-8",
       "incident-io-docs-19",
-      "incident-io-docs-40",
+      "incident-io-docs-33",
+      "incident-io-probe-rt-2",
+      "incident-io-docs-1",
       "incident-io-probe-3"
     ]
   },
@@ -2102,14 +2116,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "incident.io exposes a documented REST API (OpenAPI 3.0 spec, per-tag JSON specs) and webhooks that could be used to pull out incidents, alerts, schedules, etc., giving a technical path to extract data, but there is no explicit 'export all your data' feature, bulk-export tool, or documented open-format full-account export/offboarding process. missing for 10: a dedicated data-export/backup feature, documentation of export formats (CSV/JSON dumps), and any account-closure/data-portability guarantee.",
+    "rationale": "incident.io exposes a documented REST API with per-tag OpenAPI 3.0.3 specs (open, machine-readable format) and webhooks that can sync incidents, alerts, schedules, and follow-ups out to external tools like Asana/GitHub, giving a technical path to extract data. However, there is no documented bulk 'export all my data' feature, no data-portability/GDPR export tool, and no stated support for full account data dump or termination workflow.\n\nmissing for 10: a first-party bulk data export/portability feature, explicit open-format full export (e.g. CSV/JSON dump of all incidents/timelines), and any documentation addressing account closure/data takeout.",
     "evidenceIds": [
       "incident-io-docs-20",
       "incident-io-docs-34",
-      "incident-io-docs-46",
       "incident-io-probe-rt-2",
       "incident-io-docs-19",
-      "incident-io-docs-45"
+      "incident-io-intdir-1"
     ]
   },
   {
@@ -2118,7 +2131,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "incident.io is a closed commercial SaaS incident-management product; there is no evidence of an open-source license or public source repository, and this is not the kind of product where source-code openness is a standard offering. Providing an API/OpenAPI spec or MCP server is not the same as source availability, so the axis is a category mismatch rather than a gap.",
+    "rationale": "incident.io is a closed-source commercial SaaS incident management platform; there is no evidence of an open-source repository or open license for its source code, and this axis is a category error for this kind of proprietary hosted product.",
     "evidenceIds": []
   },
   {
@@ -2127,7 +2140,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "incident.io is a SaaS incident management platform with no evidence of a self-hostable core product; self-hosting is not an axis that applies to this hosted SaaS category.",
+    "rationale": "incident.io is a hosted SaaS incident management platform with no evidence of any self-hosted/on-premise deployment option; the product category is a managed cloud service, so self-hosting the core product is a category mismatch rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -2136,16 +2149,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs describe schedule creation, rotations, escalation paths, and importing calendar/PTO feeds, but none of the evidence mentions an on-call engineer being able to self-service an override, swap a shift, or request coverage without admin intervention. This is a fair axis for an on-call scheduling product, so absence of evidence yields 'none'.",
-    "evidenceIds": [
-      "incident-io-docs-24",
-      "incident-io-docs-25",
-      "incident-io-docs-26",
-      "incident-io-docs-42",
-      "incident-io-docs-50",
-      "incident-io-docs-51",
-      "incident-io-docs-60"
-    ]
+    "rationale": "The evidence describes admins/teams building schedules, rotations, escalation paths, and importing holiday/PTO feeds, but nothing documents an on-call engineer self-service flow for taking an override, swapping a shift, or requesting coverage without admin involvement.",
+    "evidenceIds": []
   },
   {
     "productId": "incident-io",
@@ -2171,7 +2176,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic data location controls anywhere in incident.io's docs, changelog, or API references; this is an applicable privacy-posture axis for a SaaS platform handling incident/customer data, but no proof of a data-residency feature exists.",
+    "rationale": "No evidence in the pack mentions data region/residency options, data storage location, or geographic hosting controls for incident.io; nothing addresses this axis at all.",
     "evidenceIds": []
   },
   {
@@ -2180,7 +2185,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses any data usage, AI training opt-out, or privacy policy commitments regarding customer/incident data being used to train AI models; the docs cover AI features (Investigations, Suggestions, Scribe, MCP) but never mention data-training exclusion or opt-out controls.",
+    "rationale": "No evidence pack item addresses an AI-training opt-out policy, data usage terms, or privacy controls related to model training; the evidence focuses on AI features (Investigations, Scribe, MCP) but never mentions data governance for training exclusion.",
     "evidenceIds": []
   },
   {
@@ -2188,8 +2193,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or data lifecycle management for AI-native users; docs cover incidents, on-call, AI investigations, MCP, and API but nothing about retention/deletion settings.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers incident management, on-call, AI investigations, MCP/API access, and integrations, but nowhere addresses data retention policies, configurable deletion schedules, or data export/erasure controls for user or incident data. No documentation item mentions retention periods, deletion workflows, or privacy/data-lifecycle controls.",
     "evidenceIds": []
   },
   {
@@ -2198,7 +2203,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses telemetry/usage-tracking opt-out settings or a privacy control for AI-native users; the docs cover incident management, on-call, investigations, and MCP but nothing about disabling analytics/tracking.",
+    "rationale": "No evidence pack items mention telemetry, usage tracking, analytics opt-out, or privacy controls for AI/telemetry data collection; the evidence covers incident management, on-call, AI features (MCP, investigations, summaries), and integrations but is silent on this axis.",
     "evidenceIds": []
   },
   {
@@ -2273,13 +2278,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "incident.io documents Workflows that trigger automated actions on incident events (e.g. auto-publishing status page updates, follow-up creation, webhooks for event-driven automation), which supports condition-based automation of toil like updates and field changes. However, the evidence pack lacks a dedicated 'Workflows' engine page detailing conditions/triggers/actions configuration in depth — only auto-publishing and adjacent features are directly cited. Missing for 10: a first-party doc explicitly describing the workflow engine's condition-based trigger/action model (e.g. 'when X happens, do Y' rules beyond status-page publishing), evidence of reminders/field-change automation specifically, and independent/hands-on confirmation of workflow reliability.",
+    "rationale": "incident.io explicitly has a 'Workflows' engine that triggers automations on incident events (e.g., auto-publishing status page updates when an incident changes), confirming a condition-based automation engine exists, and follow-ups show related task automation constructs. However, the evidence pack lacks direct documentation of reminders or arbitrary field-change automations as workflow triggers, only the status-page publishing example is concretely evidenced. missing for 10: doc pages showing reminder workflows, field-update workflows, or a full workflow-builder overview with condition/trigger types beyond status-page publishing.",
     "evidenceIds": [
       "incident-io-docs-9",
+      "incident-io-docs-69",
       "incident-io-docs-7",
-      "incident-io-docs-19",
-      "incident-io-docs-33",
-      "incident-io-docs-45"
+      "incident-io-docs-68"
     ]
   },
   {
@@ -2306,17 +2310,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PagerDuty ships an official local and hosted remote MCP server (verified live via runtime probe requiring only API-token/OAuth auth, no dashboard) plus a documented REST/Events API that lets integrations trigger, acknowledge, and resolve incidents, with escalation policies automating assignment without human/dashboard intervention. Independent probes confirm both the MCP endpoint and Events API v2 are functioning, self-describing endpoints, corroborating vendor docs claims. Missing for 10: explicit API/MCP documentation of an 'escalate' action being callable directly (escalation is largely policy-driven rather than an explicit agent-triggered API call), and no independent hands-on account of an agent performing the full ack→escalate→resolve loop end to end.",
+    "rationale": "PagerDuty ships both a documented REST API with explicit trigger/acknowledge/resolve and escalation endpoints (docs-21, docs-32, docs-39) and an official MCP server (local and hosted) confirmed live via runtime probe with OAuth/token auth (docs-1, docs-14, docs-34, probe-2, probe-rt-1), enabling an agent to manage the full incident lifecycle without a dashboard. missing for 10: independent hands-on validation that an agent using MCP can complete a full ack→escalate→resolve workflow end-to-end (only API-level and connectivity evidence, no full agentic workflow case study).",
     "evidenceIds": [
       "pagerduty-docs-1",
       "pagerduty-docs-14",
-      "pagerduty-docs-34",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1",
       "pagerduty-docs-21",
       "pagerduty-docs-32",
-      "pagerduty-docs-37",
-      "pagerduty-docs-39"
+      "pagerduty-docs-34",
+      "pagerduty-docs-39",
+      "pagerduty-probe-2",
+      "pagerduty-probe-rt-1"
     ]
   },
   {
@@ -2325,13 +2328,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A live probe confirms PagerDuty serves an actual llms.txt at support.pagerduty.com/llms.txt (HTTP 200) with structured knowledge-base content, and PagerDuty separately documents an official MCP server (local and hosted, verified live via runtime probe) enabling agent-native integration. Missing for 10: llms.txt coverage of developer/API docs specifically (only support KB confirmed) and independent hands-on confirmation that agents parse it effectively.",
+    "rationale": "A live probe confirms PagerDuty serves a genuine llms.txt file (HTTP 200 with structured knowledge-base content) at support.pagerduty.com/llms.txt, directly matching the story, and this is complemented by developer docs and a runtime-verified MCP server for agent-oriented access. Missing for 10: no evidence the llms.txt is comprehensive/linked from primary docs nav or independent community confirmation of agents successfully using it.",
     "evidenceIds": [
       "pagerduty-probe-1",
       "pagerduty-probe-2",
       "pagerduty-probe-rt-1",
-      "pagerduty-docs-14",
-      "pagerduty-docs-34"
+      "pagerduty-docs-14"
     ]
   },
   {
@@ -2406,14 +2408,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All MCP-related evidence describes PagerDuty publishing its own MCP server (server role) so external AI clients can call PagerDuty's tools (pagerduty-docs-1, pagerduty-docs-14, pagerduty-docs-34, pagerduty-probe-2, pagerduty-probe-rt-1) — there is no evidence that PagerDuty itself, or its agentic features like PagerDuty Advance/SRE Agent, can act as an MCP client and plug in external MCP servers to use their tools. Since PagerDuty is a SaaS platform with agentic AI capabilities, this client-side capability is a fair question, but no evidence supports it.",
-    "evidenceIds": [
-      "pagerduty-docs-1",
-      "pagerduty-docs-14",
-      "pagerduty-docs-34",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1"
-    ]
+    "rationale": "All MCP-related evidence (docs-1, docs-14, docs-34, probe-2, probe-rt-1) describes PagerDuty as an official MCP *server* that external MCP-enabled clients can connect to — the opposite direction from this story, which asks whether a user can plug external MCP servers into PagerDuty so its own AI features (e.g., PagerDuty Advance, SRE Agent) can consume their tools. No evidence shows PagerDuty acting as an MCP client or supporting configuration of third-party MCP servers as tool sources.",
+    "evidenceIds": []
   },
   {
     "productId": "pagerduty",
@@ -2421,7 +2417,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PagerDuty ships an official documented MCP server (both local GitHub package and hosted remote endpoint at mcp.pagerduty.com), confirmed live via runtime probe returning expected OAuth/Bearer auth challenge, matching official docs. missing for 10: independent third-party hands-on review of the MCP server's tool coverage beyond vendor docs.",
+    "rationale": "PagerDuty ships an official MCP server (GitHub repo pagerduty-mcp-server, developer docs page) providing tools to interact with PagerDuty directly from MCP-enabled clients, and a runtime probe confirms a live hosted remote MCP endpoint at mcp.pagerduty.com requiring proper auth, corroborating the docs. Missing for 10: independent third-party hands-on review of the MCP server in production use beyond the vendor's own runtime probe.",
     "evidenceIds": [
       "pagerduty-docs-1",
       "pagerduty-docs-14",
@@ -2452,8 +2448,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents PagerDuty's REST API, Events API, webhooks, and an official MCP server, but no official CLI tool for AI-native workflows is mentioned anywhere in the docs or community sources.",
+    "confidence": "high",
+    "rationale": "Evidence documents an official MCP server, REST/Events APIs, and webhooks, but no official CLI tool is mentioned anywhere in the pack, so this applicable axis is unaddressed.",
     "evidenceIds": []
   },
   {
@@ -2462,17 +2458,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PagerDuty publishes a well-documented REST API, Events API v2, V3 webhooks, and an official MCP server, all confirmed live via runtime probes (401 auth challenge on MCP endpoint, structured validation errors on Events API), demonstrating genuine programmatic access beyond marketing claims. missing for 10: independent third-party developer testimonials specifically praising API completeness/documentation quality beyond PagerDuty's own docs.",
+    "rationale": "PagerDuty has a well-documented public REST API and Events API v2 with versioning, plus V3 webhooks, allowing AI-native agents/systems to programmatically create, trigger, acknowledge, and resolve incidents and manage configuration; runtime probes confirm these endpoints are live and functioning as documented. missing for 10: independent hands-on developer testimonials specifically validating AI-agent-driven API usage beyond vendor docs and probes.",
     "evidenceIds": [
       "pagerduty-docs-31",
       "pagerduty-docs-32",
       "pagerduty-docs-33",
       "pagerduty-docs-39",
       "pagerduty-docs-44",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1",
+      "pagerduty-docs-48",
       "pagerduty-probe-rt-2",
-      "pagerduty-docs-14"
+      "pagerduty-probe-1"
     ]
   },
   {
@@ -2481,13 +2476,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "PagerDuty's official MCP server and REST API require API-token or OAuth authentication (pagerduty-probe-rt-1, pagerduty-docs-32/39/44), which implies some credential-based access control an agent could use, but the evidence never describes granular scopes, roles, or least-privilege permission tiers specifically for AI-agent credentials. Missing for 10: explicit documentation of scoped/role-based API keys or OAuth scopes for agent use, any read-only vs write-restricted key options, and confirmation these can be issued distinctly per-agent.",
+    "rationale": "PagerDuty's REST API and MCP server both require an API token/OAuth bearer credential for authentication (pagerduty-probe-rt-1, pagerduty-docs-32), implying some capability to issue distinct API tokens per integration/agent, but there is no documentation describing scoped, role-based, or least-privilege API key/token permissions (e.g., read-only vs write scopes) specifically for AI agents. missing for 10: explicit docs on restricted/scoped API key permissions, agent-specific credential scoping, and any least-privilege guidance for AI/agent integrations.",
     "evidenceIds": [
       "pagerduty-probe-rt-1",
       "pagerduty-docs-32",
-      "pagerduty-docs-39",
-      "pagerduty-docs-44",
-      "pagerduty-probe-2"
+      "pagerduty-docs-34"
     ]
   },
   {
@@ -2558,15 +2551,14 @@
     "storyId": "ai-root-cause-investigation",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "PagerDuty Advance and the SRE Agent are marketed as agentic AI that 'handles incidents and fixes' and Intelligent Alert Grouping/AIOps use ML to reduce noise, suggesting some proactive investigative capability, but the evidence never describes the agent correlating changes, telemetry, and similar past incidents into a probable-cause narrative before a human asks. Post-Incident Review's Scribe Agent builds narratives, but only after/during incident lifecycle, not as a proactive pre-emptive root-cause investigator. Missing for 10: concrete description of autonomous correlation of deploy/change events + telemetry + historical incident similarity, and evidence of it surfacing findings unprompted.",
+    "confidence": "medium",
+    "rationale": "PagerDuty Advance/SRE Agent and Intelligent Alert Grouping show AI agents handling incidents, summarizing information, and reducing noise via ML, suggesting some proactive AI investigation, but there is no explicit documentation that the AI correlates code/config changes, telemetry, and similar past incidents to surface a probable root cause autonomously before a human asks. missing for 10: explicit description of automated root-cause correlation across changes/telemetry/historical incidents, and independent verification that this happens proactively without human prompting.",
     "evidenceIds": [
       "pagerduty-docs-11",
       "pagerduty-docs-26",
       "pagerduty-docs-27",
-      "pagerduty-docs-23",
       "pagerduty-docs-18",
-      "pagerduty-docs-25"
+      "pagerduty-docs-23"
     ]
   },
   {
@@ -2575,14 +2567,14 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PagerDuty documents native dedup via `dedup_key` on Events API integrations, Event Orchestration to automatically deduplicate/suppress alerts, and Intelligent Alert Grouping using ML to consolidate related alerts into a single actionable incident specifically to reduce alert noise for SREs; escalation policies then notify a single target at a time until acknowledged, matching 'one incident pages one human.' Runtime probe confirms the Events API is live and enforces routing/event fields, corroborating the dedup mechanism is real and functioning. Missing for 10: independent/hands-on evidence quantifying grouping accuracy or false-negative rates beyond vendor claims.",
+    "rationale": "PagerDuty documents both dedup_key-based deduplication on Events API and ML-based Intelligent Alert Grouping that consolidates related alerts into a single actionable incident, plus Event Orchestration for automated dedup/suppression and escalation policies ensuring single-target notification — directly matching the story. Missing for 10: independent hands-on validation of alert-grouping accuracy/noise reduction claims beyond vendor docs.",
     "evidenceIds": [
       "pagerduty-docs-3",
       "pagerduty-docs-4",
       "pagerduty-docs-25",
       "pagerduty-docs-43",
       "pagerduty-docs-37",
-      "pagerduty-probe-rt-2"
+      "pagerduty-docs-18"
     ]
   },
   {
@@ -2591,15 +2583,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PagerDuty documents Events API v2 as a reliable, self-describing ingestion endpoint for monitoring alerts (confirmed live via runtime probe), plus Event Orchestration for condition-based routing/deduplication and Escalation Policies to route to the right team/individual per configurable rules. This directly matches the story of documented ingestion sources routed by defined conditions to the correct team.  missing for 10: independent hands-on validation of complex routing/orchestration setups (community evidence only covers general escalation behavior and unrelated API versioning friction, not routing-condition failures).",
+    "rationale": "PagerDuty documents ingestion via Events API v2 and 750+ monitoring integrations, with dedup/orchestration rules and escalation policies/schedules that let SREs define routing conditions to the right team (docs-31,37,43,50). Community feedback corroborates escalation working well in practice (comm-1) though notes some friction with identity/config setup (comm-4) unrelated to core routing logic. Missing for 10: independent large-scale validation of complex condition-based routing accuracy and resolution of the noted API versioning confusion (comm-6).",
     "evidenceIds": [
       "pagerduty-docs-31",
-      "pagerduty-docs-43",
-      "pagerduty-docs-7",
       "pagerduty-docs-37",
-      "pagerduty-docs-21",
-      "pagerduty-probe-rt-2",
-      "pagerduty-comm-1"
+      "pagerduty-docs-43",
+      "pagerduty-docs-50",
+      "pagerduty-docs-13",
+      "pagerduty-comm-1",
+      "pagerduty-comm-4"
     ]
   },
   {
@@ -2608,12 +2600,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows PagerDuty publishes REST/Events API overviews and developer docs (e.g. pagerduty-docs-31/32/33/39), but nothing describes an interactive API reference with runnable/try-it examples akin to a Swagger/OpenAPI explorer or code sandbox. This is a fair axis for a product with a public developer API, so absence of evidence yields 'none' rather than 'na'.",
-    "evidenceIds": [
-      "pagerduty-docs-31",
-      "pagerduty-docs-32",
-      "pagerduty-docs-39"
-    ]
+    "rationale": "Evidence describes REST/Events API documentation, webhooks, and an MCP server, but nothing indicates an interactive API reference with runnable/try-it examples (e.g., a Swagger/OpenAPI console). No hands-on or docs evidence of this capability was found.",
+    "evidenceIds": []
   },
   {
     "productId": "pagerduty",
@@ -2621,7 +2609,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents PagerDuty's REST API, Events API v2, and webhooks overviews, but none of the citations mention an OpenAPI/Swagger spec or any downloadable machine-readable API definition file. Missing for 10: explicit OpenAPI/Swagger spec file or reference, developer portal spec download link, schema versioning info.",
+    "rationale": "The evidence pack documents PagerDuty's REST API, Events API v2, webhooks, and MCP server extensively, but nowhere mentions an OpenAPI/Swagger spec file or a downloadable machine-readable API specification. Missing for 10: explicit reference to an OpenAPI/Swagger document or spec download link, any confirmation of spec format/version, and independent verification that such a spec exists and is usable.",
     "evidenceIds": []
   },
   {
@@ -2629,8 +2617,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item mentions a sandbox/test environment, staging account, or test mode for safely trying PagerDuty's API/MCP tooling without affecting production incidents, escalations, or notifications; the closest analogues (MCP server, REST/Events API docs) describe only live production interactions.",
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions a sandbox, test environment, or non-production account/tenant for safely testing PagerDuty integrations or MCP/agent workflows; all API, MCP, and webhook documentation refers to live production accounts. missing for 10: any documented sandbox/test account, staging environment, or mock API mode for AI-native testing.",
     "evidenceIds": []
   },
   {
@@ -2670,17 +2658,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PagerDuty's Incident Workflows and Event Orchestration explicitly support configurable 'if-this-then-that' triggers/actions on incidents and events (auto-trigger for P1/P2, dedup/suppress alerts, escalation policies notifying on-call chains), and this automation is exposed via Events API, REST API, webhooks, and an official MCP server for AI-agent integration. Community evidence corroborates escalation policies working reliably in practice (comm-1), though some report friction with configuration and API versioning (comm-4, comm-6). Missing for 10: independent hands-on validation specifically of Incident Workflow/Orchestration rule automation (vs. just escalation) and confirmation that AI agents can programmatically define these rules via MCP rather than just fetch/manage data.",
+    "rationale": "PagerDuty supports rule-based automation via Event Orchestration (auto-deduplicate/suppress alerts, routing rules), Incident Workflows with explicit 'if-this-then-that' trigger/action logic (e.g., auto-trigger workflows for P1/P2 incidents), and escalation policies that automatically assign/escalate based on conditions, all exposed via REST/Events APIs and webhooks for programmatic/AI-driven configuration. missing for 10: independent hands-on validation of workflow automation reliability at scale, and clearer documentation on natural-language/AI-authored rule creation rather than UI/API-based configuration.",
     "evidenceIds": [
       "pagerduty-docs-8",
       "pagerduty-docs-22",
       "pagerduty-docs-28",
+      "pagerduty-docs-35",
       "pagerduty-docs-42",
       "pagerduty-docs-43",
+      "pagerduty-docs-7",
       "pagerduty-docs-37",
       "pagerduty-docs-31",
-      "pagerduty-comm-1",
-      "pagerduty-probe-rt-1",
+      "pagerduty-docs-33",
       "pagerduty-probe-rt-2"
     ]
   },
@@ -2690,13 +2679,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "PagerDuty's automation features (Incident Workflows, escalation policies) are event-triggered by incident conditions, not time-based recurring job/workflow scheduling; the on-call 'Schedules' evidence (pagerduty-docs-12) covers staff rotation, not scheduled automation jobs. No evidence shows a mechanism for an AI-native user to schedule recurring automated workflows via API or MCP.",
+    "rationale": "PagerDuty offers on-call schedules (recurring staff rotations) and event-triggered Incident Workflows, but neither is a mechanism for scheduling recurring automated jobs/workflows in the AI-native sense (e.g., cron-like recurring workflow execution); no evidence describes time-based recurring workflow scheduling.",
     "evidenceIds": [
-      "pagerduty-docs-8",
       "pagerduty-docs-12",
-      "pagerduty-docs-22",
-      "pagerduty-docs-28",
-      "pagerduty-docs-35",
+      "pagerduty-docs-8",
       "pagerduty-docs-42"
     ]
   },
@@ -2705,22 +2691,24 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "PagerDuty documents building automations (Incident Workflows, Event Orchestration, escalation policies) but no evidence pack item describes versioning, change history, review workflows, or rollback capability for these automations. The axis clearly applies since PagerDuty offers configurable automation objects, but no supporting evidence exists for version control or rollback.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "PagerDuty documents Incident Workflows, Event Orchestration, and escalation policies as automation mechanisms, but there is no evidence of version history, change review, or rollback functionality for these automations anywhere in the pack.",
+    "evidenceIds": [
+      "pagerduty-docs-8",
+      "pagerduty-docs-22",
+      "pagerduty-docs-28",
+      "pagerduty-docs-35",
+      "pagerduty-docs-42"
+    ]
   },
   {
     "productId": "pagerduty",
     "storyId": "calendar-sync-oncall",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers schedules, escalation policies, and mobile app notifications but contains no mention of an iCal/calendar feed or personal calendar sync capability for on-call shifts.",
-    "evidenceIds": [
-      "pagerduty-docs-12",
-      "pagerduty-docs-7",
-      "pagerduty-docs-5"
-    ]
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions an iCal/calendar feed export or personal calendar sync for on-call schedules; docs on schedules (pagerduty-docs-12) only describe coverage mapping and notification, not calendar feed integration.",
+    "evidenceIds": []
   },
   {
     "productId": "pagerduty",
@@ -2728,7 +2716,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "PagerDuty's own marketing states you can 'manage incidents and coordinate response from Slack' (pagerduty-docs-2), and Post-Incident Reviews integrate with Slack data (pagerduty-docs-23/38), indicating some Slack tie-in, but there is no documented capability for declaring an incident directly from a Slack/Teams command with automatic channel creation, role assignment, and status updates. Missing for 10: explicit ChatOps slash-command/incident-declaration workflow docs, Teams support, evidence of auto-created channels and role assignment from chat, and any independent confirmation of this specific flow.",
+    "rationale": "Only a single generic marketing line claims incident management 'from Slack,' with no documentation of Teams support, automatic channel creation, role assignment, or update posting via chat commands. Related items about Slack data feeding Post-Incident Reviews don't address declaring/running an incident from chat itself. Missing for 10: explicit Teams integration, chat slash-command/declare workflow details, automatic channel/role creation evidence, and any hands-on or community confirmation of this specific chat-driven flow.",
     "evidenceIds": [
       "pagerduty-docs-2",
       "pagerduty-docs-23",
@@ -2741,11 +2729,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe escalation policies that notify a single target until acknowledged, with multi-level steps connecting to schedules and users, and incidents escalating per the policy automatically; a first-hand community report confirms it works as designed in practice (notify app, then call after a delay if unacknowledged). missing for 10: no explicit documentation of repeating the full escalation cycle multiple times or granular fallback-responder configuration details beyond general escalation-level language.",
+    "rationale": "PagerDuty's docs explicitly describe escalation policies notifying a single target at a time until acknowledged, connecting services to users/schedules, and incidents escalating per policy — directly matching the delays/fallback-responder story. Community hands-on testimony corroborates the escalation behavior in practice (app notification, then call after a no-ack window). Missing for 10: explicit documentation of 'repeat rounds' (looping back through the full policy again if still unacknowledged) and independent verification of fallback timing configurability beyond anecdote.",
     "evidenceIds": [
       "pagerduty-docs-7",
       "pagerduty-docs-37",
       "pagerduty-docs-13",
+      "pagerduty-docs-49",
       "pagerduty-docs-12",
       "pagerduty-comm-1"
     ]
@@ -2756,13 +2745,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Post-Incident Reviews explicitly state they 'coordinate preventative follow-up actions' and integrate with incident lifecycle data (docs-36, docs-38, docs-23), showing PagerDuty tracks follow-up items generated from postmortems. However, no evidence documents a native or documented sync of these action items into an external issue tracker (Jira, Linear, etc.) or shows tracking-to-completion status/reporting; REST API/webhooks (docs-32, docs-33) could technically enable such integration but this is not demonstrated for follow-up actions specifically. Missing for 10: explicit issue-tracker sync documentation for post-incident follow-up items, evidence of completion-status tracking/reporting on these actions.",
+    "rationale": "PagerDuty's Post-Incident Reviews explicitly promise to 'coordinate preventative follow-up actions' as part of incident learning (docs-36, docs-38), and PagerDuty offers 750+ integrations plus a REST API/webhooks that could sync data to external tools (docs-50, docs-32, docs-39). However, there is no explicit documentation of a dedicated issue-tracker (e.g., Jira) sync for follow-up action items or of tracking those actions to completion/closure. Missing for 10: explicit issue-tracker (Jira/Asana) integration for follow-up items, a documented completion-tracking workflow for action items, and independent/hands-on confirmation that follow-ups are actually synced and closed out.",
     "evidenceIds": [
       "pagerduty-docs-36",
       "pagerduty-docs-38",
-      "pagerduty-docs-23",
+      "pagerduty-docs-50",
       "pagerduty-docs-32",
-      "pagerduty-docs-33"
+      "pagerduty-docs-39"
     ]
   },
   {
@@ -2784,8 +2773,8 @@
     "storyId": "internal-private-status",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "PagerDuty Status Pages are documented as a general capability for real-time operational updates, but no evidence describes private/internal-only pages, audience-specific access control, or separate customer vs employee-only views.",
+    "confidence": "medium",
+    "rationale": "PagerDuty's Status Pages docs describe visual, real-time incident status communication and mention doing so 'securely,' but no evidence describes private/internal status pages, audience segmentation, or access control for customer-specific vs. employee-only viewers.",
     "evidenceIds": [
       "pagerduty-docs-10",
       "pagerduty-docs-17",
@@ -2841,14 +2830,13 @@
     "storyId": "on-call-schedules",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm schedules exist to map coverage needs (pagerduty-docs-12) and escalation policies connect services to users/schedules (pagerduty-docs-7/37), but no evidence explicitly documents layers, rotations, round-robin coverage, or time-zone handling within schedules, and community feedback flags 'clunky calendar overrides' (pagerduty-comm-4) as a friction point. Missing for 10: explicit documentation of schedule layers, rotation types, round-robin distribution, and time-zone-aware scheduling, plus hands-on confirmation these work smoothly.",
+    "confidence": "medium",
+    "rationale": "PagerDuty's docs confirm on-call scheduling exists (schedule-basics doc on mapping coverage needs, escalation policies connecting to schedules) but the evidence pack never explicitly documents rotation layers, time-zone handling, or round-robin coverage mechanics that the story specifically asks about. Missing for 10: explicit documentation of multi-layer schedules, time-zone-aware rotations, round-robin assignment logic, and independent/hands-on confirmation that these work as advertised.",
     "evidenceIds": [
       "pagerduty-docs-12",
       "pagerduty-docs-7",
       "pagerduty-docs-37",
-      "pagerduty-comm-4",
-      "pagerduty-comm-1"
+      "pagerduty-docs-49"
     ]
   },
   {
@@ -2891,7 +2879,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "PagerDuty is a closed-source SaaS incident management platform; its core product is not open-licensed source code. The MCP server client is a separate small open-source tool, but the product itself is not open-source, so 'reading the product's source' is a category error for this SaaS platform.",
+    "rationale": "PagerDuty is a closed-source SaaS incident management platform; the source code of the core product is not published under an open license. The MCP server being open source on GitHub is a separate integration tool, not the product's source itself, and no evidence claims the core platform is open-licensed — this axis is a category error for a proprietary SaaS product.",
     "evidenceIds": []
   },
   {
@@ -2900,7 +2888,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "PagerDuty is a SaaS incident-management platform with no self-hosted/on-prem deployment option evidenced anywhere; the product is inherently a cloud service, making self-hosting a category error rather than a missing feature.",
+    "rationale": "PagerDuty is a SaaS incident-management platform with no evidence of an on-premises/self-hosted deployment option; self-hosting the core product is not a plausible axis for this category of hosted cloud service, so this is a category mismatch rather than a missing capability.",
     "evidenceIds": []
   },
   {
@@ -2922,7 +2910,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "PagerDuty's Post-Incident Reviews (formerly Jeli PIR) integrate with the incident lifecycle and Slack data, and the PagerDuty Advance Scribe Agent helps 'build chronological incident narratives' and 'coordinate preventative follow-up actions,' which covers timeline-based drafting and some learning workflow. However, there is no explicit documentation of templates, a distinct review/approval step, or a publication mechanism for postmortems. missing for 10: named postmortem templates, explicit review/approval workflow, publication/sharing step, and independent corroboration of the drafting experience.",
+    "rationale": "PagerDuty's Post-Incident Reviews feature (formerly Jeli) explicitly builds chronological incident narratives from the incident lifecycle and Slack data via the Scribe Agent, and helps coordinate follow-up actions — covering part of the 'draft from timeline' and learning-loop story. However, there is no evidence of a template library, an explicit review/approval step, or a publication mechanism for postmortems. Missing for 10: named template support, explicit review workflow, and a documented publication/sharing step for finished postmortems.",
     "evidenceIds": [
       "pagerduty-docs-9",
       "pagerduty-docs-16",
@@ -2937,7 +2925,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional data storage, or the ability to choose where account/data is hosted for PagerDuty. Missing for 10: any mention of regional data centers, EU/US data residency options, or configurable data-storage location.",
+    "rationale": "No evidence in the pack addresses data residency, regional data storage options, or geographic control over data location for PagerDuty; the evidence is entirely about incident management features, MCP servers, and APIs.",
     "evidenceIds": []
   },
   {
@@ -2946,7 +2934,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses AI training data usage, opt-out controls, or any privacy policy statement about model training on customer data; PagerDuty Advance and MCP references describe AI features, not data-training privacy controls.",
+    "rationale": "No evidence in the pack addresses AI-training data opt-out or a privacy policy statement regarding use of customer data for model training; the evidence only covers product features (incidents, alerting, MCP, APIs) unrelated to this privacy control.",
     "evidenceIds": []
   },
   {
@@ -2955,7 +2943,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers MCP server access, incident workflows, alert grouping, and AI features (PagerDuty Advance), but contains no documentation on data retention policies, deletion controls, or data lifecycle management for AI-native users. Missing for 10: any retention policy documentation, data deletion/export mechanisms, or configurable retention windows relevant to AI-ingested incident data.",
+    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy/data lifecycle management features for PagerDuty; all citations focus on incident management, escalation, MCP server, and API functionality with no mention of data retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -2964,7 +2952,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for PagerDuty or its AI features (MCP server, Advance); this is an applicable privacy-posture axis for an AI-native user but no documentation or community evidence confirms such a control exists. Missing for 10: any privacy policy or settings page describing telemetry collection and an opt-out mechanism.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for AI-native or MCP usage; all citations concern incident management features, APIs, or unrelated community sentiment.",
     "evidenceIds": []
   },
   {
@@ -2972,8 +2960,8 @@
     "storyId": "public-status-page",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "PagerDuty ships a dedicated Status Pages product that is explicitly driven from incident state and lets teams communicate real-time operational updates without leaving PagerDuty (pagerduty-docs-10, pagerduty-docs-17, pagerduty-docs-24). However, the evidence never confirms custom-domain hosting or subscriber notification/opt-in mechanics for the status page. Missing for 10: explicit documentation of custom domain support, subscriber sign-up/notification delivery, and any independent/hands-on confirmation of these specific features.",
+    "confidence": "low",
+    "rationale": "PagerDuty explicitly ships a Status Pages product tied to incident state, described as giving real-time operational updates as a single source of truth (docs-10, docs-17, docs-24, docs-29), which is the core ask. However, the evidence never confirms specifics like custom domain support or subscriber notification/subscription mechanics for the hosted page. Missing for 10: explicit documentation of custom domain configuration, subscriber email/SMS notification features, and independent/hands-on confirmation of these specifics.",
     "evidenceIds": [
       "pagerduty-docs-10",
       "pagerduty-docs-17",
@@ -3034,14 +3022,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "PagerDuty Status Pages give stakeholders visual, real-time updates on incident status 'without context switching to other tools,' and Incident Workflows/Post-Incident Reviews can push structured summaries, all without requiring war-room participation. However, the evidence never explicitly confirms a subscription/notification mechanism for external stakeholders or a dedicated 'structured update' template feature. Missing for 10: explicit subscribe/follow functionality for status pages, dedicated stakeholder-update templates, and independent confirmation that non-responders actually use this instead of joining incident channels.",
+    "rationale": "PagerDuty Status Pages are documented to give stakeholders real-time, visual updates on incident resolution without needing to join the incident channel or war room, positioning PagerDuty as the single source of truth for operational updates (pagerduty-docs-10, pagerduty-docs-17, pagerduty-docs-24, pagerduty-docs-29). However, the evidence never describes an explicit stakeholder 'subscribe' mechanism (e.g., email/SMS opt-in) or a structured update template/cadence for internal audiences, so the story is only partly evidenced. Missing for 10: explicit subscription workflow for stakeholders, structured update format/cadence details, and independent confirmation that non-responders actually use this instead of joining incident channels.",
     "evidenceIds": [
       "pagerduty-docs-10",
       "pagerduty-docs-17",
       "pagerduty-docs-24",
-      "pagerduty-docs-29",
-      "pagerduty-docs-8",
-      "pagerduty-docs-9"
+      "pagerduty-docs-29"
     ]
   },
   {

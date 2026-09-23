@@ -1,21 +1,19 @@
 {
-  "hash": "4d04add1c1b2142340d9d9d0d07e7ac29cfa96951bd61c566be0a3f33847eb58",
+  "hash": "ddaf83f7b92bd83ad0fb84fbc4faf08c482522caf408f81befd40f47cb03a7b2",
   "verdict": {
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "AI Gateway provides rate limiting (fixed/sliding, request-per-time-window) and fallback/retry to alternate providers/models, which helps smooth provider limits and errors, and dynamic routing can enforce per-user/team quotas. However, there is no explicit documentation of key rotation/spreading traffic across multiple API keys for the same provider, nor of a request queuing mechanism (rate limiting appears to reject/throttle rather than queue). missing for 10: explicit multi-key load balancing/rotation across provider keys, documented request queuing behavior (vs. simple throttling/rejection), independent evidence of this working at scale.",
+    "rationale": "AI Gateway supports rate limiting (fixed/sliding, per-request-count thresholds) and fallback/retry across providers or models, which helps mitigate rate-limit errors by rerouting traffic, and dynamic routing can enforce quotas per user/team. However, there is no explicit documented feature for spreading requests across multiple API keys for the same provider or for queuing throttled requests instead of failing/rerouting — the evidence shows rate limiting blocks/limits traffic and fallbacks switch providers, not key-rotation or request queuing. missing for 10: multi-key rotation/load-balancing across provider keys, explicit request queuing (vs. hard rate-limit cutoff or fallback), and independent evidence of this pattern working in production.",
     "evidenceIds": [
       "cloudflare-ai-gateway-docs-5",
       "cloudflare-ai-gateway-docs-6",
       "cloudflare-ai-gateway-docs-19",
-      "cloudflare-ai-gateway-docs-30",
       "cloudflare-ai-gateway-docs-7",
       "cloudflare-ai-gateway-docs-8",
       "cloudflare-ai-gateway-docs-20",
-      "cloudflare-ai-gateway-docs-33",
       "cloudflare-ai-gateway-docs-13",
-      "cloudflare-ai-gateway-docs-32"
+      "cloudflare-ai-gateway-docs-33"
     ],
     "productId": "cloudflare-ai-gateway",
     "storyId": "rate-limit-smoothing"

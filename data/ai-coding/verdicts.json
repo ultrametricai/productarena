@@ -12218,9 +12218,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms Slate's docs site serves a valid llms.txt at the root with links to actual docs pages, directly satisfying the ability to point an agent at agent-oriented docs. Missing for 10: no independent/community confirmation that agents successfully consume this llms.txt in practice, and no broader agent-oriented doc format beyond the single file.",
+    "rationale": "A probe confirms llms.txt is live and returns 200 with a structured docs index, directly enabling an agent to be pointed at agent-oriented documentation. missing for 10: no independent/community confirmation that agents actually consume this llms.txt successfully in practice, and no evidence of additional agent-oriented formats (e.g. OpenAPI, which probes show is absent).",
     "evidenceIds": [
-      "random-labs-probe-1"
+      "random-labs-probe-1",
+      "random-labs-probe-2"
     ]
   },
   {
@@ -12240,13 +12241,14 @@
     "productId": "random-labs",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Slate supports background subagents, parallel task orchestration, and built-in workflows like goal/deep-research that run while the user keeps interacting, which shows some autonomous background execution. However, this is task-level parallelism within an active session, not scheduled or trigger-based automations that run independently of user presence. missing for 10: evidence of scheduled/cron-like automations, persistent background jobs surviving session end, or trigger-based (event-driven) autonomous runs without an active user session.",
+    "rationale": "Docs show agents can run in the background while the user keeps working, spinning up multiple subagents in parallel and tracking them via inline cards (docs-12, docs-13, docs-30), and built-in 'programs' like goal/deep-research act as autonomous workflows (docs-14). However, there's no evidence of scheduling, triggers, or unattended automation that runs without an active session/user present—everything described is user-initiated within a live session. Missing for 10: scheduled/triggered automation setup, persistent execution outside an active session, and independent confirmation that background agents complete tasks reliably.",
     "evidenceIds": [
       "random-labs-docs-12",
       "random-labs-docs-13",
-      "random-labs-docs-14"
+      "random-labs-docs-14",
+      "random-labs-docs-30"
     ]
   },
   {
@@ -12255,14 +12257,14 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Slate is a CLI-based AI assistant where users delegate whole tasks (e.g., 'review architecture and write ARCH.md') and it spins up parallel subagents, orchestration programs like goal/deep-research, and long multi-hour sessions per first-party docs. Community evidence (comm-1/2/3) raises skepticism about output quality/novelty but does not contradict the core delegation mechanism itself. Missing for 10: independent hands-on validation that delegated multi-agent tasks reliably complete as advertised.",
+    "rationale": "Slate is a built-in AI assistant/agent (CLI-based) that users delegate coding and research tasks to directly, with orchestration of subagents, built-in programs like goal/deep-research, and automatic model selection. Missing for 10: independent hands-on verification of delegation quality (community evidence raises skepticism about output quality rather than confirming the delegation mechanism works well), and no detailed walkthrough of a full delegated task lifecycle.",
     "evidenceIds": [
+      "random-labs-docs-1",
       "random-labs-docs-3",
-      "random-labs-docs-6",
       "random-labs-docs-12",
       "random-labs-docs-13",
       "random-labs-docs-14",
-      "random-labs-comm-2"
+      "random-labs-docs-6"
     ]
   },
   {
@@ -12271,11 +12273,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The docs describe Slate as an interactive terminal agent (onboarding, slash commands, hotkeys, subagent cards) with a permission-bypass flag (--dangerously-skip-permissions/--yolo), but there is no mention of a headless mode, non-interactive CLI flags, exit-code/scriptable output, or CI integration examples. Missing for 10: documented headless/non-interactive invocation, CI pipeline examples, scriptable output format, and any evidence of automation use outside the interactive TUI.",
+    "rationale": "Slate's docs describe an interactive TUI (sessions, hotkeys, `/sessions`, `/workspace`, orchestration cards) and a `--dangerously-skip-permissions` flag for bypassing prompts, but nothing indicates a headless/non-interactive execution mode, CI integration, or scriptable exit-code output suitable for automation pipelines. Missing for 10: documented headless/print mode, CI usage examples, exit-code/stdout automation support, any mention of running without the TUI.",
     "evidenceIds": [
-      "random-labs-docs-22",
       "random-labs-docs-4",
-      "random-labs-docs-7"
+      "random-labs-docs-22",
+      "random-labs-docs-7",
+      "random-labs-docs-24"
     ]
   },
   {
@@ -12283,8 +12286,8 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack mentions MCP servers or integrating external tool providers into Slate; the docs cover skills, permissions, orchestration, and CLI usage but never MCP support. Missing for 10: any documentation or claim about connecting/plugging in MCP servers, configuring MCP tool sources, or using MCP-provided tools.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions MCP servers or any mechanism for plugging in external tool servers; docs cover skills, permissions, models, orchestration, but nothing about MCP integration.",
     "evidenceIds": []
   },
   {
@@ -12293,22 +12296,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is itself a coding agent (CLI-based, with sessions, subagents, skills); serving as an MCP server for other agents to connect to is a different product role. No evidence shows Slate exposing an official MCP server endpoint, so the axis does not apply per the agent-role exception.",
+    "rationale": "Slate is itself a coding agent (CLI tool), so serving as an official MCP server for other agents is a different product role — this axis is na for agent-role products unless evidence shows Slate itself runs as an MCP server, which the evidence pack does not show.",
     "evidenceIds": []
   },
   {
     "productId": "random-labs",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs show Slate is driven primarily via natural-language prompts (e.g. the quickstart example 'Please review the architecture of my entire codebase...') alongside slash-commands, shell escapes, and file references, indicating natural-language is the core interaction mode for an AI-native agent CLI. Missing for 10: independent/hands-on confirmation that complex natural-language commands are reliably parsed and executed as intended (community evidence only discusses code-porting quality, not NL command usage itself).",
+    "rationale": "Slate's core interface is a natural-language chat/TUI where users type instructions like \"Please review the architecture of my entire codebase...\" and it plans/executes across tools, models, and sessions (docs-6, docs-2, docs-13). This is documented as the primary operating mode alongside slash-commands and shortcuts, confirming natural-language control is fully supported. Missing for 10: independent/hands-on verification that NL commands reliably produce correct results (community evidence only critiques output quality on a specific porting task, not the NL-interaction mechanism itself).",
     "evidenceIds": [
       "random-labs-docs-6",
-      "random-labs-docs-9",
-      "random-labs-docs-10",
-      "random-labs-docs-7",
-      "random-labs-docs-14"
+      "random-labs-docs-2",
+      "random-labs-docs-13",
+      "random-labs-docs-25",
+      "random-labs-docs-29"
     ]
   },
   {
@@ -12317,11 +12320,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Slate is delivered as an official CLI (npm-installed, terminal-based) with rich first-party docs covering install, sessions, hotkeys, shell execution, and configuration — squarely matching the 'official CLI' story for an AI-native user. Missing for 10: independent/hands-on corroboration of the CLI experience itself (community evidence found only relates to unrelated porting-quality claims, not CLI usage).",
+    "rationale": "Slate ships an official CLI installable via npm (`npm i -g @randomlabs/slate`), with a full TUI featuring commands, hotkeys, session management, and agentic orchestration features documented extensively — this is inherently an AI-native CLI product. Missing for 10: independent hands-on verification of CLI usage/reliability beyond first-party docs.",
     "evidenceIds": [
       "random-labs-docs-4",
       "random-labs-docs-7",
-      "random-labs-docs-8",
       "random-labs-docs-9",
       "random-labs-docs-24",
       "random-labs-probe-3"
@@ -12333,10 +12335,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is documented as a CLI/terminal agent with configuration, skills, and hotkeys, but there is no evidence of a documented public API for programmatic/agentic access—the OpenAPI probe returned 404 across all candidate paths and no SDK or REST/API docs are mentioned anywhere in the pack.",
+    "rationale": "Slate is a CLI/TUI agentic coding tool with configuration files, skills, and hotkeys, but there is no evidence of a documented public API (REST/SDK) for programmatic control—probes for OpenAPI/swagger specs all returned 404 and no API docs are listed in the docs index.",
     "evidenceIds": [
       "random-labs-probe-2",
-      "random-labs-probe-1"
+      "random-labs-probe-1",
+      "random-labs-probe-3"
     ]
   },
   {
@@ -12345,10 +12348,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a coding-agent CLI; its evidence only covers permission settings (allow/ask/deny) for tool actions, not issuance of scoped/least-privilege API credentials or tokens for agents. No mention of credential/token scoping, API key generation, or IAM-style access control.",
+    "rationale": "Slate's docs cover permission modes (allow/ask/deny) for agent actions, but there is no evidence of issuing scoped or least-privilege API credentials/tokens for agents—no API key management, credential scoping, or auth token system is documented.",
     "evidenceIds": [
       "random-labs-docs-20",
-      "random-labs-docs-22"
+      "random-labs-docs-31"
     ]
   },
   {
@@ -12356,8 +12359,8 @@
     "storyId": "agentic-sdks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Slate's CLI, skills, configuration, and orchestration features but contains no mention of an official SDK (Python/TypeScript/etc.) for building applications on top of Slate, and the OpenAPI probe returned 404s across all candidate paths. Missing for 10: any documented SDK package, API reference, or programmatic interface for building against Slate.",
+    "confidence": "high",
+    "rationale": "Evidence only covers Slate's CLI/TUI usage, configuration, and orchestration features; there is no mention of an official SDK or programmatic API for developers to build against, and probes for OpenAPI/swagger endpoints returned 404s, indicating no such SDK is documented.",
     "evidenceIds": [
       "random-labs-probe-2",
       "random-labs-docs-4"
@@ -12378,11 +12381,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Slate's docs describe parallel subagent orchestration within a live session (background agents you keep talking to, spin up more agents to parallelize tasks) but there is no evidence of scheduling, event/webhook triggers, or persistent always-on agents that run autonomously outside an active session to maintain/fix software over time.",
+    "rationale": "Evidence shows Slate supports parallel in-session subagent orchestration and long multi-hour sessions, but there is no mention of scheduling, cron-like triggers, webhooks, or an always-on background daemon that autonomously runs maintenance tasks outside an active session. Missing for 10: schedule/trigger configuration, autonomous unattended operation, evidence of persistent background execution beyond a live session.",
     "evidenceIds": [
       "random-labs-docs-12",
       "random-labs-docs-13",
-      "random-labs-docs-14"
+      "random-labs-docs-2"
     ]
   },
   {
@@ -12391,7 +12394,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a CLI coding agent, not an API/service product with its own API reference; the probe explicitly found no OpenAPI spec, confirming this axis is a category mismatch rather than a missing feature.",
+    "rationale": "Slate is a CLI-based coding agent tool, not an API/SaaS product with a reference; there is no OpenAPI spec (404s on all probes) and no interactive API reference is a relevant concept for this product category.",
     "evidenceIds": [
       "random-labs-probe-2"
     ]
@@ -12402,10 +12405,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack mentions API key authentication as an alternative to account login; onboarding docs only describe choosing a model source (ChatGPT/Codex, SuperGrok, or Slate credits subscription), not API-key auth. No mention of an API key mechanism anywhere, and the openapi probe returned 404s, giving no indication of an API-key based auth path.",
+    "rationale": "Docs describe onboarding via ChatGPT/Codex/SuperGrok subscription or Slate credits, but there is no mention of an API key authentication option as an alternative to account login. missing for 10: any documentation of API key generation/use, mention of env var like SLATE_API_KEY, or CLI flag for key-based auth.",
     "evidenceIds": [
       "random-labs-docs-5",
-      "random-labs-probe-2"
+      "random-labs-docs-27"
     ]
   },
   {
@@ -12414,7 +12417,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate's docs site was directly probed for an OpenAPI/swagger spec at standard locations and all returned 404, and no documentation anywhere mentions a machine-readable API spec for AI-native consumption.",
+    "rationale": "Explicit probes for OpenAPI/swagger endpoints on Slate's docs domain all returned 404, and no documentation mentions a machine-readable API spec; Slate's docs focus entirely on CLI/TUI usage rather than an API surface.",
     "evidenceIds": [
       "random-labs-probe-2"
     ]
@@ -12425,7 +12428,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a coding agent CLI tool, not a service with a sandbox/production data separation model; there's no evidence of a hosted environment with production data that would need a sandbox testing mode. This axis is a category error for this kind of local developer tool.",
+    "rationale": "Slate is a CLI coding agent tool, not a service with production data/environments of its own; sandboxed test-vs-production separation is not a fair axis for this kind of product's evidence pack, which covers agent orchestration, sessions, and permissions rather than data environments.",
     "evidenceIds": []
   },
   {
@@ -12434,7 +12437,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a CLI coding agent product; no evidence of any versioned public API, API reference, or deprecation policy documentation exists—openapi probes returned 404 and no docs mention API versioning or deprecation. Absence of evidence for this applicable axis (a product could plausibly document API stability) yields 'none'.",
+    "rationale": "Slate is a CLI-based coding agent product; there is no evidence of a public API at all, let alone versioning or a deprecation policy — probes show no OpenAPI spec exists. This is an applicable axis (any AI-native tool could document API stability), but no evidence supports it.",
     "evidenceIds": [
       "random-labs-probe-2"
     ]
@@ -12444,12 +12447,12 @@
     "storyId": "architecture-navigation",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "medium",
-    "rationale": "The quickstart example explicitly shows Slate producing an ARCH.md architecture review of an entire codebase with improvement suggestions, directly supporting codebase-understanding use cases, and @filename references plus workspace management help navigate a repo. However there's no dedicated codebase-mapping/search feature (e.g., symbol index, dependency graph) documented beyond this one example, and no independent evidence confirming quality of such architecture summaries. missing for 10: dedicated code-navigation/search tooling, independent validation of architecture-summary accuracy, more than a single example of codebase-understanding workflow.",
+    "confidence": "low",
+    "rationale": "The quickstart example prompt shows Slate can be asked to review a codebase's architecture and produce an ARCH.md summarizing structure and improvement opportunities, which directly supports codebase-understanding use cases. However, there is no deeper documentation of codebase indexing, dependency mapping, or navigation features beyond this single example, and no independent/hands-on corroboration of how well this works in practice. Missing for 10: dedicated codebase-mapping/search features, independent verification that the ARCH.md output is accurate/useful, and broader documentation beyond one quickstart prompt.",
     "evidenceIds": [
       "random-labs-docs-6",
-      "random-labs-docs-10",
-      "random-labs-docs-11"
+      "random-labs-docs-15",
+      "random-labs-docs-17"
     ]
   },
   {
@@ -12458,7 +12461,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions git operations like staging, committing, branching, or opening pull requests; documentation covers sessions, orchestration, skills, permissions, and CLI setup but not any git/PR workflow. Absence of evidence for this applicable capability means the verdict is none.",
+    "rationale": "No evidence pack items mention git operations like staging changes, writing commit messages, creating branches, or opening pull requests; docs cover shell execution, sessions, skills, permissions, and orchestration but not git/PR workflows.",
     "evidenceIds": []
   },
   {
@@ -12487,12 +12490,13 @@
   {
     "productId": "random-labs",
     "storyId": "automatic-model-routing",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly claim Slate 'automatically selects the right model for the job' and also allow developers to set preferred default models per slot via `/models` or `slate.json`, suggesting a hybrid automatic+manual approach relevant to pricing/limits tradeoffs. However, there's no detail on the selection logic, cost-awareness, or independent verification that auto-selection actually optimizes for task/price. Missing for 10: independent hands-on confirmation of auto-selection quality, explanation of selection criteria (cost vs capability), and evidence of pricing-limit awareness in model choice.",
+    "rationale": "Docs explicitly state Slate automatically selects the right model per task, with a concrete example of routing planning/search/execution across different models (Claude, GLM, Codex) without user intervention, and also allow manual override of default models per slot if desired. This directly matches the story's pricing-limits theme of avoiding manual model selection overhead. Missing for 10: independent/hands-on verification that automatic routing works well in practice, and no detail on how routing decisions interact with cost/credit consumption.",
     "evidenceIds": [
       "random-labs-docs-1",
+      "random-labs-docs-25",
       "random-labs-docs-21"
     ]
   },
@@ -12502,12 +12506,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs describe running many agents in parallel and orchestrating multiple tasks simultaneously (grid of subagent cards, spinning up more agents to parallelize work), which supports bulk-style operations across many items. However, there's no independent corroboration of this working at scale and no detail on failure handling, limits, or item-level bulk operations (e.g., bulk file edits/refactors) beyond task orchestration. Missing for 10: independent/hands-on verification of large-scale parallel task execution, concrete examples of bulk item processing (files/records), and failure/error handling details at scale.",
+    "rationale": "Slate's docs describe orchestrating multiple subagents in parallel, showing them as a grid of cards and allowing users to 'spin up more agents to parallelize work across several tasks at once,' which supports bulk-style operations across many items/tasks. However, there's no explicit example of true bulk operations (e.g., batch file edits, mass refactors) and no independent/hands-on evidence corroborating this orchestration works well at scale — community commentary raises skepticism about output quality on a related porting task. Missing for 10: concrete bulk-operation examples (e.g., editing/processing many files/items in one command), and independent verification that parallel orchestration scales reliably.",
     "evidenceIds": [
       "random-labs-docs-3",
       "random-labs-docs-12",
       "random-labs-docs-13",
-      "random-labs-docs-14"
+      "random-labs-docs-26"
     ]
   },
   {
@@ -12528,11 +12532,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a coding-agent CLI with orchestration/parallel-agent features and sessions, but nothing in the evidence describes scheduling recurring jobs or workflows (e.g., cron-like triggers, timed recurring runs). Orchestration docs cover on-demand parallelization, not recurrence.",
+    "rationale": "Slate is a CLI/TUI coding agent focused on interactive sessions, orchestration of parallel subagents, and workflows, but nothing in the evidence pack describes any scheduling, cron-like, or recurring-job/trigger mechanism to run workflows on a timer or repeated schedule. Sessions, queuing (Tab), and steering are all interactive/manual, not scheduled automation.",
     "evidenceIds": [
-      "random-labs-docs-12",
+      "random-labs-docs-7",
+      "random-labs-docs-8",
       "random-labs-docs-13",
-      "random-labs-docs-14"
+      "random-labs-docs-14",
+      "random-labs-docs-29"
     ]
   },
   {
@@ -12540,27 +12546,23 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows session management (/sessions, /workspace) and built-in 'programs' like goal/deep-research, but nothing about versioning automations, reviewing history of changes, or rolling back to prior states of an automation/workflow. Missing for 10: any documentation of version history, diffing, or rollback mechanisms for automations/workflows.",
-    "evidenceIds": [
-      "random-labs-docs-7",
-      "random-labs-docs-11",
-      "random-labs-docs-14"
-    ]
+    "confidence": "high",
+    "rationale": "Slate is a CLI coding agent with session management, permissions, and orchestration features, but there is no evidence of versioning, reviewing, or rolling back automations themselves (e.g., workflow version history, diff/undo of automation configs). Sessions and workspace management are not equivalent to automation versioning/rollback.",
+    "evidenceIds": []
   },
   {
     "productId": "random-labs",
     "storyId": "autonomous-end-to-end-feature-delivery",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Slate's docs claim orchestration of parallel background subagents and being 'one of the few agents capable of performing integration tests manually,' suggesting it could build and test a feature autonomously, but no docs mention a 'demo' output or cloud-hosted execution environment. Community hands-on critique of an actual Slate-produced port directly contradicts the build/test claim: reviewers found the work excluded tests/examples and provided no verifiable repo, undermining confidence that Slate reliably builds+tests end-to-end for review. Missing for 10: evidence of cloud/remote execution infra, an explicit demo-generation feature, and independent confirmation that test suites are actually run and pass.",
+    "confidence": "low",
+    "rationale": "Docs show Slate can run multiple subagents in parallel/background, perform integration tests, and work across long sessions, which covers 'build and test' autonomously, but there is no evidence of a cloud-hosted execution environment or of any built-in 'demo' artifact (preview links, recorded runs, etc.) for reviewer consumption. missing for 10: evidence of cloud-hosted (vs local CLI) agent execution, an explicit demo/preview generation feature, and end-to-end review workflow beyond background task running.",
     "evidenceIds": [
       "random-labs-docs-12",
       "random-labs-docs-13",
       "random-labs-docs-16",
-      "random-labs-comm-1",
-      "random-labs-comm-2"
+      "random-labs-docs-2",
+      "random-labs-docs-30"
     ]
   },
   {
@@ -12569,12 +12571,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Slate's docs describe subagents running 'in the background' locally while you keep chatting and orchestration/parallelization of tasks, but there is no mention of an isolated cloud environment, remote execution sandbox, or delegation to a hosted service — everything described appears to run within the local CLI session. This axis is applicable to coding agent tools generally, but no evidence supports a cloud-isolated background execution capability for Slate.",
+    "rationale": "Slate documents background subagents that run in parallel while you keep working (random-labs-docs-13, random-labs-docs-12, random-labs-docs-30), but this is local CLI-orchestrated background execution, not delegation to an isolated cloud environment — no evidence pack item mentions cloud sandboxes, remote isolated workspaces, or hosted execution infrastructure. Missing for 10: any mention of a cloud/remote execution environment, isolation/sandboxing guarantees, or ability to close the laptop and have tasks continue running remotely.",
     "evidenceIds": [
       "random-labs-docs-12",
       "random-labs-docs-13",
-      "random-labs-docs-2",
-      "random-labs-docs-3"
+      "random-labs-docs-30"
     ]
   },
   {
@@ -12583,9 +12584,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Slate's configuration docs describe a permission system where each permission key maps to allow/ask/deny actions or fine-grained pattern objects, which supports controlling what tools/actions the agent can perform, and a `--yolo` flag exists to bypass these prompts entirely. However there's no explicit documentation of controlling specific external integrations (e.g., MCP servers, API connectors) or org/team-level lockdown for an engineering lead specifically. Missing for 10: explicit external-integration/MCP allowlist docs, engineering-lead/team-level enforcement (vs individual config), and independent verification that permission enforcement can't be trivially bypassed.",
+    "rationale": "Docs show a permissions system where each action/tool key maps to allow/ask/deny (or fine-grained pattern objects), letting a lead control which actions require approval, plus a bypass flag for skipping prompts entirely. However, there is no explicit mention of controlling external tool/integration access specifically (e.g., MCP servers, third-party APIs) versus general command/file actions, and no independent verification of this control working as intended. Missing for 10: explicit external-tool/integration allowlisting docs, enterprise/org-level policy enforcement, independent/hands-on confirmation of permission controls.",
     "evidenceIds": [
       "random-labs-docs-20",
+      "random-labs-docs-31",
       "random-labs-docs-22"
     ]
   },
@@ -12595,11 +12597,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs show session management within Slate (e.g. `/sessions` to switch sessions, `Ctrl+X N` for new session) but only describe local session switching, not any cloud sync or cross-device/browser continuation mechanism. Slate appears to be a terminal-only CLI tool with no mention of a browser interface or account-based sync for resuming tasks elsewhere.",
+    "rationale": "Slate's docs describe local session management (`/sessions`, `/workspace`, hotkeys for new sessions) but there is no evidence of cloud sync or cross-device/browser continuation of a task. Missing for 10: any mention of cloud-hosted sessions, account-based sync, or a browser/companion app that lets a session resume on a different machine.",
     "evidenceIds": [
       "random-labs-docs-7",
-      "random-labs-docs-24",
-      "random-labs-docs-4"
+      "random-labs-docs-11",
+      "random-labs-docs-24"
     ]
   },
   {
@@ -12608,11 +12610,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Docs describe session switching (/sessions), long multi-hour session support, and diagnostic context attachment, but there is no evidence of automatic cross-session memory building or recall — sessions appear to be manually selected/switched contexts, not an automatic memory system. Missing for higher verdict: any documentation of persistent memory storage, automatic recall of past codebase context, or memory summarization across sessions.",
+    "rationale": "Evidence shows session management (`/sessions`, long multi-hour sessions) but no mention of any automatic memory-building or cross-session recall mechanism (e.g., memory files, persistent context summaries). Missing for 10: any documentation of automatic memory capture, memory storage format, or recall behavior across separate sessions.",
     "evidenceIds": [
       "random-labs-docs-2",
       "random-labs-docs-7",
-      "random-labs-docs-23"
+      "random-labs-docs-24"
     ]
   },
   {
@@ -12621,7 +12623,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Slate has a documented Skills system: markdown instruction packages that give the agent domain-specific knowledge/behavior, with example skill definitions and compatibility with Claude Code's `.claude/skills/` format, letting developers equip the agent with custom specialized capabilities. Missing for 10: independent/hands-on verification that custom skills work as documented, and more detail on skill authoring/discovery beyond the single example.",
+    "rationale": "Slate has documented \"Skills\" (markdown instruction packages giving domain-specific knowledge/behavior), with example skill definitions and even Claude Code (.claude/skills/) compatibility, directly matching the custom-skills story. Missing for 10: independent/hands-on validation of skill authoring workflow and no evidence of a skill marketplace/sharing ecosystem beyond first-party docs.",
     "evidenceIds": [
       "random-labs-docs-17",
       "random-labs-docs-18",
@@ -12631,15 +12633,15 @@
   {
     "productId": "random-labs",
     "storyId": "desktop-visual-diff-review",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Slate is documented as a terminal/CLI tool (npm install, terminal-background onboarding, hotkeys, `/sessions` switching, subagent grid) with no mention of a desktop GUI or visual diff review; session switching is terminal-based, not side-by-side desktop windows. Missing for 10: any evidence of a desktop application, a visual diff viewer, or GUI-based side-by-side session comparison.",
+    "rationale": "Docs show strong support for running multiple sessions/agents in parallel (grid of subagent cards, /sessions switching, double-click to jump between agent sessions), but there is no mention anywhere of a visual diff viewer or GUI diff review — Slate is presented as a terminal/TUI tool (npm-installed, hotkeys, slash commands) rather than a graphical desktop app with diff visualization. missing for 10: visual diff review UI, confirmation this runs as a true desktop GUI app rather than terminal TUI, independent corroboration of side-by-side session usability.",
     "evidenceIds": [
-      "random-labs-docs-4",
-      "random-labs-docs-5",
       "random-labs-docs-7",
       "random-labs-docs-12",
+      "random-labs-docs-13",
+      "random-labs-docs-30",
       "random-labs-docs-24"
     ]
   },
@@ -12649,20 +12651,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of SSO/SAML/OIDC enterprise identity integration or cloud-platform authentication for compliance; onboarding only mentions choosing a model source (ChatGPT/Codex, SuperGrok, or Slate credits), not enterprise identity federation.",
+    "rationale": "No evidence of SSO/SAML/OIDC enterprise identity or cloud IAM integration; onboarding only references personal ChatGPT/Codex/SuperGrok subscriptions or Slate credits, not enterprise identity providers.",
     "evidenceIds": [
-      "random-labs-docs-5"
+      "random-labs-docs-5",
+      "random-labs-docs-27"
     ]
   },
   {
     "productId": "random-labs",
     "storyId": "existing-subscription-auth",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly state onboarding lets you choose your model source as your existing ChatGPT/Codex subscription or SuperGrok subscription (in addition to Slate credits), directly matching the story of signing in with an existing subscription plan to use the agent. Missing for 10: independent/hands-on confirmation that subscription sign-in actually works end-to-end and any detail on limitations of that mode vs credits.",
+    "rationale": "Docs explicitly state onboarding lets users choose their model source as an existing ChatGPT/Codex subscription or SuperGrok subscription (in addition to Slate credits), meaning developers can sign in with an existing subscription rather than pay separately for Slate. Missing for 10: no independent/hands-on confirmation that subscription sign-in works smoothly in practice, and no detail on any limitations of subscription-based usage vs credits.",
     "evidenceIds": [
-      "random-labs-docs-5"
+      "random-labs-docs-5",
+      "random-labs-docs-27"
     ]
   },
   {
@@ -12671,7 +12675,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the docs pack mentions integrations with Jira, Slack, Google Drive, or any workflow tools/MCP connectors; the docs focus on CLI usage, sessions, skills, and permissions with no mention of external tool connectivity.",
+    "rationale": "No evidence of any integration with Jira, Slack, Google Drive, or similar workflow tools; docs cover CLI usage, sessions, skills, permissions, and orchestration but never mention external SaaS/workflow connectors. Missing for 10: any mention of Jira/Slack/Google Drive integrations, MCP or plugin ecosystem for third-party tools, or connectors extending context from external services.",
     "evidenceIds": []
   },
   {
@@ -12680,9 +12684,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs show onboarding lets users choose a model source including an existing ChatGPT/Codex or SuperGrok subscription instead of managing API keys, implying account-based auth is supported, but there's no explicit mention of a free tier or of signing in with a personal Slate account for free credits without a paid subscription. Missing for 10: explicit free-tier account sign-in flow, confirmation that 'Slate credits' option requires no payment, and any account-based (not subscription-based) login mechanism.",
+    "rationale": "Docs show onboarding lets you choose a model source such as your existing ChatGPT/Codex or SuperGrok subscription instead of managing API keys, which supports sign-in-with-account convenience, but there is no explicit mention of a 'free tier' being granted via personal account login. missing for 10: explicit free-tier/no-cost access confirmation, details on how account sign-in works (OAuth flow), independent confirmation that no API key is ever required.",
     "evidenceIds": [
-      "random-labs-docs-5"
+      "random-labs-docs-5",
+      "random-labs-docs-27"
     ]
   },
   {
@@ -12705,8 +12710,13 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a terminal/CLI-based agentic coding assistant that operates via chat sessions, orchestration, and shell commands, not an IDE-integrated editor extension providing inline completions or next-edit suggestions as the user types. This story targets an IDE-autocomplete category error for Slate's product type.",
-    "evidenceIds": []
+    "rationale": "Slate is a terminal/TUI-based agentic coding assistant operating via chat sessions, slash-commands, and orchestration—not an editor-integrated extension that offers inline ghost-text completions or next-edit suggestions as a user types. This interaction model (inline-as-you-type completion) is a different product category (IDE autocomplete plugin) than what Slate's docs describe.",
+    "evidenceIds": [
+      "random-labs-docs-4",
+      "random-labs-docs-7",
+      "random-labs-docs-9",
+      "random-labs-docs-12"
+    ]
   },
   {
     "productId": "random-labs",
@@ -12714,7 +12724,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Slate's session management, orchestration, skills, and permissions but contains no mention of issue-tracker integration (e.g., GitHub issues) or automated pull-request creation/submission. Without evidence of ingesting a tracked issue and producing a PR end-to-end, this capability is unshown.",
+    "rationale": "The evidence describes Slate's general agentic coding capabilities (orchestration, sessions, skills, permissions) but nothing about ingesting a tracked issue (e.g., GitHub issue) or automatically opening/completing a pull request end-to-end.",
     "evidenceIds": []
   },
   {
@@ -12723,7 +12733,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a terminal/CLI-based coding agent (npm-installed CLI, terminal UI, hotkeys), with no evidence of a JetBrains IDE plugin, interactive diff viewer inside an IDE, or IDE-based context sharing. This story targets IDE-native integration, which is a different product surface than Slate's terminal-first design.",
+    "rationale": "Slate is a terminal/TUI-based CLI agent (npm install, TUI hotkeys, session management), not a JetBrains IDE plugin; there is no evidence of any IDE integration, let alone a JetBrains-specific interactive diff viewer or code-sharing UI. This story targets a distinct product category (IDE plugin) that Slate does not occupy.",
     "evidenceIds": [
       "random-labs-docs-4",
       "random-labs-docs-24",
@@ -12736,7 +12746,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions license compliance checks, public-code/OSS matching, or provenance references for AI-suggested code; the docs cover orchestration, skills, permissions, and CLI usage but nothing about code provenance/license scanning.",
+    "rationale": "No evidence in the pack mentions license compliance checking, public-code/match detection, or provenance references for AI-suggested code; documentation covers orchestration, sessions, skills, and permissions but nothing about license/code-matching review features. Missing for 10: any mention of license scanning, code provenance/match detection, or related review-safety tooling.",
     "evidenceIds": []
   },
   {
@@ -12745,7 +12755,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions debugging live running applications, attaching to running processes, browser/runtime debugging, or any live-app inspection capability; Slate's docs focus on codebase review, shell commands, orchestration, and skills, none of which address live debugging.",
+    "rationale": "Slate's evidence covers CLI setup, orchestration, skills, permissions, and workspace management, but nothing describes debugging a live running web application (e.g., attaching to a browser, inspecting runtime state, DevTools/debugger integration). No evidence of live-app debugging capability exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -12753,15 +12763,13 @@
     "storyId": "local-terminal-agent",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Slate ships as a global npm CLI (`npm i -g @randomlabs/slate`) that runs interactively in the terminal, with documented terminal-native features like hotkeys, shell command execution (`!`), file references (`@filename`), session management (`/sessions`), and configuration via `slate.json` — all consistent with a locally-run terminal coding agent. Missing for 10: independent hands-on confirmation of local terminal usage (community evidence only discusses porting-quality skepticism, not terminal operation itself) and no evidence of offline/non-terminal fallback limitations.",
+    "confidence": "high",
+    "rationale": "Docs show Slate is installed via npm globally and run as a terminal TUI (hotkeys, `!` shell execution, `/sessions`, quickstart CLI usage), clearly supporting local terminal-based agent operation. missing for 10: independent/hands-on confirmation of local terminal usage beyond first-party docs.",
     "evidenceIds": [
       "random-labs-docs-4",
       "random-labs-docs-5",
       "random-labs-docs-7",
-      "random-labs-docs-8",
       "random-labs-docs-9",
-      "random-labs-docs-10",
       "random-labs-docs-24",
       "random-labs-probe-3"
     ]
@@ -12795,13 +12803,15 @@
   {
     "productId": "random-labs",
     "storyId": "multi-model-selection",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs confirm model source can be chosen at onboarding (ChatGPT/Codex, SuperGrok, or Slate credits) and that default models per 'slot' can be set via `/models` or slate.json, showing multi-provider flexibility. However, this is framed around subscription/credit sources rather than a clear list of many independent model providers, and there's no independent/hands-on verification of switching providers mid-session. missing for 10: independent corroboration of provider switching, a full list of supported model providers, and confirmation this works reliably in practice.",
+    "rationale": "Docs explicitly describe choosing a model source at onboarding (ChatGPT/Codex, SuperGrok, or Slate credits) and setting preferred default models per slot via the `/models` dialog or `slate.json`, directly matching the story of picking an underlying provider/model. Missing for 10: independent/hands-on confirmation that switching providers works in practice beyond first-party docs.",
     "evidenceIds": [
       "random-labs-docs-5",
-      "random-labs-docs-21"
+      "random-labs-docs-21",
+      "random-labs-docs-27",
+      "random-labs-docs-25"
     ]
   },
   {
@@ -12810,7 +12820,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any integration with GitHub, GitLab, Linear, or Slack for triggering agent tasks; Slate's documentation covers CLI usage, sessions, skills, and configuration but nothing about ecosystem/platform triggers.",
+    "rationale": "No evidence Slate integrates with GitHub, GitLab, Linear, or Slack to trigger agent tasks; the docs describe a terminal/TUI-based agent tool with skills, sessions, and orchestration but no mention of external issue-tracker or chat integrations.",
     "evidenceIds": []
   },
   {
@@ -12819,13 +12829,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence describes Slate as a terminal-based CLI agent for coding sessions, orchestration, skills, and permissions, but nothing in the docs or community evidence mentions accepting sketches, images, or PDF designs as input to generate an app. missing for 10: any mention of image/sketch/PDF input, multimodal design-to-code capability, or UI mockup ingestion.",
-    "evidenceIds": [
-      "random-labs-docs-4",
-      "random-labs-docs-6",
-      "random-labs-docs-17",
-      "random-labs-docs-18"
-    ]
+    "rationale": "Slate is a CLI-based coding agent focused on text-based sessions, orchestration, and codebase tasks; there is no mention anywhere in the docs or community evidence of image/sketch/PDF design input or generating apps from visual designs.",
+    "evidenceIds": []
   },
   {
     "productId": "random-labs",
@@ -12833,7 +12838,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Slate's docs show it operates via natural-language prompts, executes shell commands (`!`), references files (`@filename`), and can run integration tests and review codebase architecture in NL form, which implies it could be used for debugging and troubleshooting queries. However there is no explicit example, workflow, or documentation section dedicated to debugging/troubleshooting via natural language, and community evidence is skeptical/unrelated to this specific capability. Missing for 10: explicit debugging-focused examples or docs, independent verification that NL-based debugging works well, dedicated troubleshooting workflow beyond generic agent capabilities.",
+    "rationale": "Slate is a terminal coding agent with natural-language interaction, shell execution (`!`), file references (`@filename`), and claims of running integration tests manually, all of which support NL-driven troubleshooting, but no docs or examples explicitly show a debugging workflow (e.g., 'find why this test fails') or independent verification of debugging success. Missing for 10: explicit debugging-specific example/transcript, independent hands-on confirmation that NL debugging actually resolves issues.",
     "evidenceIds": [
       "random-labs-docs-9",
       "random-labs-docs-10",
@@ -12862,11 +12867,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any public API for Slate — the openapi.json/swagger.json probes returned 404s and no docs reference programmatic endpoints; Slate is documented purely as a CLI/terminal agent with slash-commands, hotkeys, and config files, not an API-driven product with UI/API parity.",
+    "rationale": "Slate is a terminal/TUI coding agent with no evidence of a public API; OpenAPI/swagger probes all returned 404 and no docs mention an API for programmatic parity with the TUI. Missing for 10: any documented API, SDK, or evidence that UI-only features (orchestration, skills, session management) are exposed programmatically.",
     "evidenceIds": [
-      "random-labs-probe-2",
-      "random-labs-probe-3",
-      "random-labs-docs-4"
+      "random-labs-probe-2"
     ]
   },
   {
@@ -12874,8 +12877,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the docs or elsewhere describes any data export functionality, open-format export, or data portability mechanism for Slate. Sessions, workspace history, and configurations appear stored locally but no documented export/leave path is mentioned. Missing for 10: any documentation of export commands, data format specifications, or account/data portability guarantees.",
+    "confidence": "low",
+    "rationale": "No evidence about data export, open format export, or account/data portability features anywhere in the docs or community coverage; sessions/config are mentioned but nothing about exporting user data in open formats. Missing for 10: any data export feature, open-format export documentation, account/data deletion or portability mechanism.",
     "evidenceIds": []
   },
   {
@@ -12884,7 +12887,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an open-source license or public source repository for Slate; the CLI is distributed via npm install with no mention of source availability. missing for 10: open-source license declaration, public source repo link, license file/OSS registry evidence.",
+    "rationale": "No evidence of Slate's source code being open or under any open license; installation is via npm package and there's no mention of a public repository or license file. missing for 10: any open-source license reference, public repo link, license file, or statement about source availability.",
     "evidenceIds": []
   },
   {
@@ -12892,11 +12895,12 @@
     "storyId": "openness-self-host",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the docs of Slate being open-source or offering a self-hosted deployment option; it's installed via npm as a CLI that connects to model subscriptions/credits, implying a hosted/service model rather than self-hostable core infrastructure. Missing for 10: any mention of self-hosting instructions, open-source repo, or on-prem deployment option.",
+    "confidence": "medium",
+    "rationale": "Slate appears to be a CLI/TUI agent that relies on external model subscriptions (ChatGPT/Codex, SuperGrok, or Slate credits) rather than a self-hostable core product; no evidence of an open-source repo, self-hosted server component, or on-prem deployment option is provided.",
     "evidenceIds": [
-      "random-labs-docs-4",
-      "random-labs-docs-5"
+      "random-labs-docs-5",
+      "random-labs-docs-27",
+      "random-labs-docs-4"
     ]
   },
   {
@@ -12905,13 +12909,13 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs describe genuine parallel agent orchestration (grid of subagent cards, spinning up more agents while others run in background) and explicitly support multi-hour sessions, matching much of the story. However, evidence only confirms 'multi-hour' not multi-day autonomy, and community commentary raises skepticism about output quality/novelty without directly refuting the parallel-agent mechanics themselves. Missing for 10: confirmation of multi-day unattended runs, independent hands-on validation of fleet-scale parallel task completion.",
+    "rationale": "Docs describe spinning up multiple subagents that run in parallel while the user keeps working, shown as a grid of inline cards, and sessions spanning multiple hours — directly supporting fleets of parallel autonomous agents. However, evidence stops at 'multi-hour' sessions with no documented or independent confirmation of agents running unattended for days, and no hands-on corroboration of the orchestration feature working at scale. missing for 10: independent/hands-on validation of parallel fleets, explicit evidence of multi-day autonomous runs.",
     "evidenceIds": [
-      "random-labs-docs-2",
-      "random-labs-docs-3",
       "random-labs-docs-12",
       "random-labs-docs-13",
-      "random-labs-comm-3"
+      "random-labs-docs-2",
+      "random-labs-docs-3",
+      "random-labs-docs-26"
     ]
   },
   {
@@ -12920,11 +12924,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Slate's orchestration docs show multiple subagents running in parallel as a grid of cards while the user keeps working, directly supporting parallel task execution (docs-12, docs-13). However, there's no explicit documentation of a compare/diff view or a 'choose winning attempt' workflow for reconciling multiple parallel results into one choice. Missing for 10: explicit comparison/selection UI or workflow for multiple attempts of the same task, and independent/hands-on confirmation of this specific use case.",
+    "rationale": "Slate's orchestration feature lets users spin up multiple agents in parallel (shown as a grid of subagent cards) and double-click into any card to review that agent's full session, which supports running parallel tasks and inspecting individual results. However, there's no documented workflow for running multiple *attempts* of the same task and explicitly comparing/choosing among them — the docs describe parallelizing distinct tasks, not attempt comparison/selection. Missing for 10: explicit multi-attempt-of-same-task support, a comparison/diff UI across attempts, and independent hands-on confirmation of this workflow.",
     "evidenceIds": [
       "random-labs-docs-12",
       "random-labs-docs-13",
-      "random-labs-docs-14"
+      "random-labs-docs-30",
+      "random-labs-docs-26"
     ]
   },
   {
@@ -12932,12 +12937,9 @@
     "storyId": "partner-agent-app-integration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Slate is a coding CLI agent focused on subagents, skills, sessions, and model orchestration; there is no evidence of an ecosystem for integrating third-party partner-built agent apps (e.g., a marketplace, app store, or partner integration framework). Skills compatibility with Claude Code is mentioned but that is file-format compatibility, not partner app integration.",
-    "evidenceIds": [
-      "random-labs-docs-17",
-      "random-labs-docs-19"
-    ]
+    "confidence": "high",
+    "rationale": "Slate is a coding-agent CLI/TUI focused on model orchestration, sessions, and skills; there is no evidence of a partner/marketplace ecosystem for third-party agent apps, nor any integration mechanism for external agent-built apps into workflows. Missing for 10: any partner app directory, third-party agent integration API, or marketplace documentation.",
+    "evidenceIds": []
   },
   {
     "productId": "random-labs",
@@ -12945,7 +12947,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm Slate 'respects agent rules' in a defined precedence order and supports Skills (markdown instruction packages, including Claude Code-compatible `.claude/skills/` paths), which cover project-level conventions/instructions, but there's no explicit example of a single top-level 'instructions file' analogous to AGENTS.md/CLAUDE.md being demonstrated end-to-end. missing for 10: explicit naming/format of the project instructions file, a worked example showing the agent following custom conventions from it, and independent/community confirmation it works as documented.",
+    "rationale": "Docs state Slate 'by default respects agent rules in the following order,' implying support for a project-level instructions file that sets coding standards/conventions, and its Skills system (markdown instruction packages, .claude/skills/ compatibility) reinforces this. However, the pack does not show the actual file name, precedence order, or example content of such a rules file, nor independent confirmation it works as described. Missing for 10: concrete example/name of the instructions file, full precedence list, and hands-on verification that the agent actually follows it.",
     "evidenceIds": [
       "random-labs-docs-15",
       "random-labs-docs-17",
@@ -12969,7 +12971,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Slate is a CLI coding agent tool; the evidence pack contains no mention of data residency, region selection, or storage location controls. Missing for 10: any documentation of data residency options, regional storage configuration, or compliance controls.",
+    "rationale": "No evidence in the pack discusses data residency, region selection, or storage location controls; Slate's docs focus on CLI usage, orchestration, and model configuration but never mention where data is stored.",
     "evidenceIds": []
   },
   {
@@ -12978,7 +12980,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data-training opt-out, privacy policy, or any control over model training use; the documentation covers CLI usage, orchestration, and skills but nothing about data privacy posture. Missing for 10: any privacy policy statement, opt-out settings, or data usage terms regarding AI training.",
+    "rationale": "No evidence in the pack addresses data-training opt-out, privacy policy, or any control over whether user data is used to train AI models; documentation covers only CLI usage, orchestration, and configuration features unrelated to this axis.",
     "evidenceIds": []
   },
   {
@@ -12987,7 +12989,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items mention data retention policies, deletion controls, or privacy settings for user data/sessions; docs cover workspace management and permissions but not data retention/deletion. Missing for 10: any documentation of data retention periods, deletion mechanisms, or export/erase controls.",
+    "rationale": "No evidence pack items discuss data retention policies, deletion controls, or privacy/data lifecycle management for Slate; the docs focus on CLI usage, sessions, orchestration, and permissions rather than data storage or deletion controls. Missing for 10: any mention of data retention policy, user-initiated deletion/export, or privacy controls over stored session data.",
     "evidenceIds": []
   },
   {
@@ -12996,10 +12998,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics, or an opt-out setting anywhere in Slate's docs or community coverage; the closest item (diagnostic attachment on bug reports) doesn't address general telemetry opt-out. Missing for 10: any mention of telemetry collection, a privacy policy, or a documented opt-out flag/setting.",
-    "evidenceIds": [
-      "random-labs-docs-23"
-    ]
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, analytics, or an opt-out setting for Slate; docs cover onboarding, commands, permissions, and troubleshooting but never data collection policy.",
+    "evidenceIds": []
   },
   {
     "productId": "random-labs",
@@ -13007,11 +13007,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Slate's docs describe a local CLI agent (npm install, terminal sessions, permissions, skills, orchestration) but contain no mention of provisioning or configuring a reproducible cloud environment, dependency setup, or devcontainer-style configuration for a repository. This is a fair capability to ask of an autonomous coding agent, but no evidence shows Slate supports it.",
+    "rationale": "Slate's docs describe a local CLI/TUI agent with workspace management, agent rules, and skills, but there is no evidence of any cloud-hosted execution environment, dependency provisioning, or reproducible setup-script configuration for a repository. This capability is plausible for an autonomous coding agent category, but no evidence supports it here.",
     "evidenceIds": [
-      "random-labs-docs-4",
+      "random-labs-docs-11",
       "random-labs-docs-15",
-      "random-labs-docs-20"
+      "random-labs-docs-17"
     ]
   },
   {
@@ -13034,10 +13034,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows a permission system (allow/ask/deny actions) and a --yolo flag to bypass prompts, but there is no mention of sandboxed execution, containerization, or network isolation for the agent's code/tool interactions. missing for 10: any documentation of sandbox/container execution, network isolation controls, or filesystem confinement mechanisms.",
+    "rationale": "The evidence pack shows a permission system (allow/ask/deny prompts, --yolo bypass) but no mention of sandboxed execution, containerization, or network/filesystem isolation for the agent's code and tool interactions.",
     "evidenceIds": [
       "random-labs-docs-20",
-      "random-labs-docs-22"
+      "random-labs-docs-22",
+      "random-labs-docs-31"
     ]
   },
   {
@@ -13045,12 +13046,10 @@
     "storyId": "shared-knowledge-workspace",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Slate is a CLI coding agent focused on individual sessions, workspaces (local directories), skills, and orchestration of subagents—there is no evidence of a shared team workspace or collaborative source-of-truth feature built from docs and repos. The 'workspace' concept here refers to local directory management (/workspace), not a shared team hub.",
+    "confidence": "medium",
+    "rationale": "Slate's docs describe a per-user `/workspace` manager for adding/removing local directories the agent can access, but there is no evidence of a shared, multi-user workspace, team-wide knowledge base, or 'source of truth' aggregation feature for an engineering team. Missing for 10: any mention of team/shared workspaces, multi-user access controls, or docs+repo aggregation as a collaborative source of truth.",
     "evidenceIds": [
-      "random-labs-docs-11",
-      "random-labs-docs-15",
-      "random-labs-docs-17"
+      "random-labs-docs-11"
     ]
   },
   {
@@ -13058,12 +13057,12 @@
     "storyId": "terminal-scripting-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence shows Slate is a CLI-based interactive agent (npm install, onboarding, in-session commands like /sessions, !, @filename) but nowhere documents a non-interactive/headless mode, flags for scripted execution, or CI/automation usage; --dangerously-skip-permissions bypasses prompts but is not shown as enabling scripted/non-interactive invocation. Missing for 10: documentation of a non-interactive/print/exec mode, exit-code or piping behavior, or any CI/scripting examples.",
+    "confidence": "medium",
+    "rationale": "The docs describe Slate as an interactive TUI agent (sessions, hotkeys, `/commands`, inline cards) and mention a `--dangerously-skip-permissions`/`--yolo` flag for bypassing prompts, but there is no documented non-interactive/headless mode, scripting flag (e.g., a `-p`/print mode), or CI/automation usage example that would let a developer invoke Slate in scripts.",
     "evidenceIds": [
-      "random-labs-docs-4",
       "random-labs-docs-22",
-      "random-labs-probe-3"
+      "random-labs-docs-4",
+      "random-labs-docs-7"
     ]
   },
   {
@@ -13071,8 +13070,8 @@
     "storyId": "training-data-opt-out",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses data usage, training opt-out, or privacy policy for prompts/code submitted to Slate or its model providers.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses data usage, training opt-out, or privacy policy controls for code/prompt data; the docs cover CLI usage, orchestration, skills, and configuration but nothing on AI training data opt-out.",
     "evidenceIds": []
   },
   {
@@ -13081,13 +13080,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe first-class multi-session/multi-agent workspace features: `/sessions` to switch sessions, `/workspace` manager, new-session hotkey, and orchestration showing a grid of inline subagent cards while continuing to chat, queue tasks, or spin up more parallel agents — directly matching the engineering-lead's need to manage multiple concurrent agent sessions from one place. Missing for 10: independent/hands-on verification of this workspace at scale and any lead-specific team-management features beyond individual session switching.",
+    "rationale": "Slate's docs describe orchestrating multiple agents as a grid of inline subagent cards, switching sessions via `/sessions`, jumping into any agent's session by double-click, and spinning up more agents to parallelize work while continuing to interact with Slate — directly matching unified multi-session management for a lead. missing for 10: independent/hands-on corroboration of multi-session orchestration at scale beyond vendor docs.",
     "evidenceIds": [
       "random-labs-docs-7",
-      "random-labs-docs-11",
       "random-labs-docs-12",
       "random-labs-docs-13",
-      "random-labs-docs-24"
+      "random-labs-docs-30",
+      "random-labs-docs-24",
+      "random-labs-docs-11"
     ]
   },
   {
@@ -13096,7 +13096,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions security vulnerability detection, explanations, or automatic fixes; documentation covers session management, orchestration, skills, and configuration but nothing about security review or vulnerability remediation. Missing for 10: any mention of vulnerability scanning, security explanations, or auto-fix capability.",
+    "rationale": "No evidence describes security vulnerability scanning, contextual security explanations, or automated vulnerability fixes; Slate's docs focus on general coding agent orchestration, sessions, and permissions rather than security review features.",
     "evidenceIds": []
   }
 ]
