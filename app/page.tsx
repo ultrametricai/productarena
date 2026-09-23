@@ -103,11 +103,9 @@ export default function Home() {
   )
 
   return (
-    // Deep-table homepage (founder 2026-09-23): the WHOLE page breaks out of the max-w-7xl
-    // shell at xl — title, mode tabs, and every pane share the full-width left edge ("move
-    // the title/tabs across to the left side"). Margin trick, not w-screen, so the scrollbar
-    // never causes horizontal overflow.
-    <div className="xl:mx-[calc(50%-50vw+1.25rem)]">
+    // Founder 2026-09-23 (reverting same-day full-width experiment): the homepage stays inside
+    // the standard max-w-7xl shell — no xl breakout on the table or the title/tabs.
+    <div>
       {/* The homepage IS the table — one visible title above the mode tabs (founder call
           2026-09-14; founder 2026-09-23: retitled "Open rankings for the AI era" and moved
           above Companies|Products|Processes), no further hero copy; the page title/description

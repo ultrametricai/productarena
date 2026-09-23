@@ -37,12 +37,13 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | /ops access for any verified *@ultrametric.ai sign-in (WorkOS code = verification) | shipped 2026-09-23 |
 | Grouped-arenas pages with UI into individual arenas (/arenas/[section]) | shipped-next-deploy 2026-09-23 |
 | Main /arenas page — visual navigation of all arenas | shipped-next-deploy 2026-09-23 |
-| Deep-table homepage view: full width at xl + OSS/YC/MCP quick filters (?oss/?yc/?mcp) | shipped-next-deploy 2026-09-23 |
+| Deep-table homepage: OSS/YC/MCP quick filters (?oss/?yc/?mcp) shipped; full-width move reverted same day by founder ask | shipped 2026-09-23 |
 | Arenas as a homepage tab next to Processes (grid moved out of companies mode) | shipped-next-deploy 2026-09-23 |
 | Keep deep-spiking until done | in-lane (depth ×3 running; sweeps A–L, M–Z, thin-arenas) |
+| 'Virtual Startup' — simulated startup journey, branching starting decisions, synthetic data, timeline mode | in-lane (virtual-startup) |
 | 'All phases' toggle → 'All areas' | shipped-next-deploy 2026-09-23 |
 | Remove 'Startup processes, run by agents' heading on the homepage Processes tab | shipped-next-deploy 2026-09-23 |
-| Homepage title + mode tabs aligned to the full-width left edge (whole page breaks out at xl) | shipped-next-deploy 2026-09-23 |
+| Homepage title + mode tabs aligned to the full-width left edge | superseded same-day — founder reverted the full-width table move entirely |
 | Depth to 100%: never-spiked sweep A–L + M–Z, thin-arena depth wave (id-verification 18 → up) | in-lane (depth ×3) |
 | Private /ops coverage dashboard + vendor-news watcher | shipped 2026-09-23 (needs NEXT_PUBLIC_ADMIN_EMAILS env or pa-admin localStorage to view) |
 | Drop the 'commercial' tag on product pages — they're (almost) all commercial | shipped 2026-09-23 |
