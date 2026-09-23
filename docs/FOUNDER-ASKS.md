@@ -39,7 +39,7 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Main /arenas page — visual navigation of all arenas | shipped-next-deploy 2026-09-23 |
 | Deep-table homepage: OSS/YC/MCP quick filters (?oss/?yc/?mcp) shipped; full-width move reverted same day by founder ask | shipped 2026-09-23 |
 | Arenas as a homepage tab next to Processes (grid moved out of companies mode) | shipped-next-deploy 2026-09-23 |
-| Keep deep-spiking until done | in-lane (depth ×3 running; sweeps A–L, M–Z, thin-arenas) |
+| Keep deep-spiking until done | A–L sweep shipped 2026-09-23 (25 products, +281 evidence, probes 1005); M–Z + thin-arenas still in-lane |
 | 'Virtual Startup' — simulated startup journey, branching starting decisions, synthetic data, timeline mode | shipped-next-deploy 2026-09-23 — /virtual-startup: 16 decision combos over real chains, seeded synthetic artifacts all SIMULATED-chipped, day timeline from corpus estimates |
 | Product-page Access/CLI-docs box info arch — top rail retired, doc chips inline in header secondary row | shipped-next-deploy 2026-09-23 |
 | Showcase caption ('docs · captured … · view live') removed — provenance moves to the image tooltip | shipped-next-deploy 2026-09-23 |
