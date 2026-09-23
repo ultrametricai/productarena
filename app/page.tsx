@@ -81,9 +81,8 @@ export default function Home() {
   const processesMode = (
     <div className="space-y-8">
       <section>
-        <h2 className="font-display mb-1 text-2xl font-bold leading-tight tracking-tight">
-          Startup processes, run by agents
-        </h2>
+        {/* Founder 2026-09-23: no "Startup processes, run by agents" heading here — the h1 above
+            the tabs is the only title; this pane opens straight with the numbers. */}
         <p className="max-w-2xl text-sm text-zinc-400">
           {processes.totalProcesses} founder processes mapped step-by-step — an agent can run{' '}
           <span className="font-mono text-emerald-300">{processes.agentStepPct}%</span> of the steps

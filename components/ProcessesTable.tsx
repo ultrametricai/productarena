@@ -230,7 +230,8 @@ export default function ProcessesTable({ rows, phases }: { rows: ProcessRow[]; p
           onChange: changePhase,
           ariaLabel: 'Filter by phase',
           options: [
-            { value: 'all', label: 'All phases' },
+            // Founder 2026-09-23: reads "areas" to users, not the internal "phases" term.
+            { value: 'all', label: 'All areas' },
             ...phases.map((p) => ({ value: p, label: `${phaseIcon(p)} ${p}`.trim() })),
           ],
         }}
