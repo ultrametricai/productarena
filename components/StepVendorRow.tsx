@@ -91,7 +91,7 @@ function VendorChipButton({
   const title =
     rank === null
       ? `${vendor.name} — your resolved vendor for this step · ${vendor.score.toFixed(0)}/100 from judged verdicts on the mapped ${vendor.arenaName} stories — open the judged product page`
-      : `${vendor.name} — #${rank} for this step · ${vendor.score.toFixed(0)}/100 from judged verdicts on ${vendor.citesTotal} mapped ${vendor.arenaName} stories (${vendor.citesFull} full, ${vendor.citesPartial} partial) — expand "how these are ranked" for the full trace, or open the judged product page`
+      : `${vendor.name} — #${rank} for this step · ${vendor.score.toFixed(0)}/100 from judged verdicts on ${vendor.citesTotal} mapped ${vendor.arenaName} stories (${vendor.citesFull} full, ${vendor.citesPartial} partial) — click "how these are ranked" below for the per-story citations, or open the judged product page`
   return (
     <span className="inline-flex min-w-0 items-center gap-0.5">
       <Link
