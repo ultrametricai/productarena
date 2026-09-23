@@ -16,6 +16,7 @@ export const PHASE_ICONS: Record<string, { icon: string; blurb: string }> = {
   startup: { icon: '🐣', blurb: 'validating the idea and forming the founding team' },
   formation: { icon: '🏛️', blurb: 'incorporating and standing up the company' },
   fundraising: { icon: '💰', blurb: 'raising money and managing equity' },
+  vc: { icon: '🦄', blurb: 'forming, closing, and running a venture fund' },
   legal: { icon: '⚖️', blurb: 'contracts, IP, and legal paperwork' },
   compliance: { icon: '📋', blurb: 'filings, taxes, and staying compliant' },
   finance: { icon: '💸', blurb: 'banking, accounting, and money movement' },
@@ -61,6 +62,10 @@ export const PROCESS_ICONS: Record<string, string> = {
   fund_005: '📁', // Set up a data room (the diligence folder)
   fund_004: '🎟️', // Issue stock options
   fund_006: '🔀', // Convert SAFEs at the priced round (notes become preferred stock)
+  // VC fund (founder ask 2026-09-23: "a process area for VC processes")
+  vc_001: '🫙', // Form a VC fund (the vehicle, stood up and ready to fill)
+  vc_002: '🍾', // Close the fund (the first-and-final close)
+  vc_003: '🏧', // Run the fund back office (capital calls, fees, bookings — the money machine)
   qs_051: '🥧', // Set up cap table (ownership pie)
   qs_052: '🥧', // Update cap table
   qs_053: '🥧', // Audit cap table
@@ -191,6 +196,7 @@ export const CHAIN_ICONS: Record<string, string> = {
   'set-up-compliance': '🛡️', // same concept as comp_001 (SOC 2 shield)
   'ship-v1': '🚢', // same concept as sw_001 (ship it)
   'go-fundraise-follow-on': '💰', // same concept as the fundraising phase
+  'launch-a-vc-fund': '🦄', // same concept as the vc phase
 }
 
 export function chainIcon(chainId: string): string {
