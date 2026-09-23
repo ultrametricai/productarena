@@ -30,7 +30,7 @@ export default function Home() {
       {/* Deep-table view (founder 2026-09-23): the ranking table breaks out of the max-w-7xl
           shell at xl and uses the full page width — margin trick rather than w-screen so the
           scrollbar never causes horizontal overflow. */}
-      <section className="xl:mx-[calc(50%-50vw+1.25rem)]">
+      <section>
         {/* /everything is unlisted by founder call — no banner into it (route stays alive). */}
         <MegaTable rows={megaRows} arenas={arenaOptions} />
       </section>
@@ -103,7 +103,11 @@ export default function Home() {
   )
 
   return (
-    <div>
+    // Deep-table homepage (founder 2026-09-23): the WHOLE page breaks out of the max-w-7xl
+    // shell at xl — title, mode tabs, and every pane share the full-width left edge ("move
+    // the title/tabs across to the left side"). Margin trick, not w-screen, so the scrollbar
+    // never causes horizontal overflow.
+    <div className="xl:mx-[calc(50%-50vw+1.25rem)]">
       {/* The homepage IS the table — one visible title above the mode tabs (founder call
           2026-09-14; founder 2026-09-23: retitled "Open rankings for the AI era" and moved
           above Companies|Products|Processes), no further hero copy; the page title/description
