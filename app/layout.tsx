@@ -103,6 +103,8 @@ const NAV_LABELS: Record<string, string> = {
   "applicant-tracking": "ATS",
   "domain-registrars": "Registrars",
   "sso-identity": "SSO / IdP",
+  "cloud-storage": "Cloud storage",
+  "cloud-platforms": "Clouds",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

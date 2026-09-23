@@ -31,6 +31,8 @@ const CATEGORIES = [
   'billing-subscriptions',
   'browser-agents',
   'card-issuing',
+  'cloud-platforms',
+  'cloud-storage',
   'code-hosting',
   'compliance-automation',
   'crm',

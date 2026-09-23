@@ -158,6 +158,72 @@
     ]
   },
   {
+    "taskId": "comp_011",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesUpload(...)",
+        "type": "sdk",
+        "description": "Upload signed minutes file into the data room folder",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Upload the signed minutes file into Drive as a new file",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Grant data room access/roles to relevant parties for the filed minutes",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      },
+      {
+        "method": "PATCH /drive/v3/files/{fileId}",
+        "type": "rest",
+        "description": "Set custom properties (e.g. tags/IDs) on the filed minutes for metadata tracking",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload the signed minutes file content into a OneDrive/data room folder",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Create a resumable upload session for filing larger signed minutes documents",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root:/path/to/file",
+        "type": "rest",
+        "description": "Locate the target data room folder/item by path before filing the minutes",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
     "taskId": "comp_013",
     "nodeId": "n5",
     "arenaId": "project-management",
@@ -180,8 +246,8 @@
       {
         "method": "check_domain_availability",
         "type": "mcp",
-        "description": "Check domain name availability via AI assistant using MCP",
-        "sourceUrl": "https://www.dynadot.com/domain/mcp"
+        "description": "Check a domain name's availability via the Dynadot MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
   },
@@ -348,15 +414,9 @@
     "productId": "airwallex",
     "calls": [
       {
-        "method": "POST /api/v1/transfers/create",
+        "method": "POST /docs/payouts/batch-transfers/create-a-batch-transfer",
         "type": "rest",
-        "description": "Create a transfer to pay a vendor bill",
-        "sourceUrl": "https://www.airwallex.com/docs/payouts/transfers/create-a-transfer.md"
-      },
-      {
-        "method": "POST /api/v1/batch_transfers/create",
-        "type": "rest",
-        "description": "Create a batch transfer to pay multiple approved bills in one run",
+        "description": "Create a batch of transfers to multiple vendor beneficiaries as a single payment run",
         "sourceUrl": "https://www.airwallex.com/docs/payouts/batch-transfers/create-a-batch-transfer.md"
       }
     ]
@@ -670,6 +730,98 @@
         "type": "graphql",
         "description": "Retrieve cap table data for the company after recording SAFE",
         "sourceUrl": "https://docs.ledgy.com"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "box",
+    "calls": [
+      {
+        "method": "POST /2.0/files/content",
+        "type": "rest",
+        "description": "Upload new or updated diligence documents into the data room folder",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "GET /2.0/search",
+        "type": "rest",
+        "description": "Search data room content to verify completeness during diligence refresh",
+        "sourceUrl": "https://developer.box.com/guides/search/"
+      },
+      {
+        "method": "POST /2.0/collaborations",
+        "type": "rest",
+        "description": "Grant or update investor access permissions to the refreshed data room",
+        "sourceUrl": "https://developer.box.com/guides/collaborations/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({ path: '' })",
+        "type": "sdk",
+        "description": "List current contents of the data room folder to refresh diligence materials",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Upload new or updated diligence documents to the data room folder",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List existing files/folders to identify stale or missing diligence materials",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Update sharing permissions for investors accessing the refreshed data room",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Upload or refresh large diligence documents in the data room folder via resumable upload session",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root/delta",
+        "type": "rest",
+        "description": "Detect newly added, updated, or deleted files in the data room since last diligence check",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/delta-query-overview"
+      },
+      {
+        "method": "GET /drive/items/{item-id}/versions",
+        "type": "rest",
+        "description": "Review version history of data room documents to confirm latest updates for diligence",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-list-versions?view=graph-rest-1.0"
       }
     ]
   },
@@ -1498,7 +1650,7 @@
       {
         "method": "GET /v1/companies/{company_id}/employees",
         "type": "rest",
-        "description": "Retrieve employee roster with pagination to check for changes",
+        "description": "Retrieve current employee roster to check for changes before running payroll",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/api-fundamentals.md"
       }
     ]
@@ -1560,7 +1712,7 @@
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate contractor payment inputs and determine payment timing/blockers",
+        "description": "Validate inputs and determine payment timing/blockers for contractor payment schedule",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -1718,6 +1870,80 @@
     ]
   },
   {
+    "taskId": "legal_001",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Upload executed NDA file to Drive (simple upload)",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Resumable upload for larger executed NDA file",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_001",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /me/drive/items/{parent-id}:/{filename}:/content",
+        "type": "rest",
+        "description": "Upload executed NDA file content to OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /me/drive/items/{item-id}:/createUploadSession",
+        "type": "rest",
+        "description": "Create resumable upload session for larger executed NDA file",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_003",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Simple upload of a small executed/signed file into Drive",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Resumable upload of larger executed copies into Drive",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_003",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drives/{drive-id}/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload executed IPIA copy content to a file in OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
     "taskId": "opp_001",
     "nodeId": "n2",
     "arenaId": "startup-banking",
@@ -1794,7 +2020,7 @@
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate inputs and surface submission blockers preventing contractor payment",
+        "description": "Validate contractor payment inputs and surface submission blockers (e.g. missing W-9/payment method) before payment",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -1870,26 +2096,6 @@
     ]
   },
   {
-    "taskId": "opp_008",
-    "nodeId": "n2",
-    "arenaId": "email",
-    "productId": "zero",
-    "calls": [
-      {
-        "method": "create_and_send_email",
-        "type": "mcp",
-        "description": "Create and send a new email from the connected account",
-        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
-      },
-      {
-        "method": "send_existing_draft",
-        "type": "mcp",
-        "description": "Send an existing drafted email after approval",
-        "sourceUrl": "https://raw.githubusercontent.com/Mail-0/Zero/staging/MCP.md"
-      }
-    ]
-  },
-  {
     "taskId": "opp_009",
     "nodeId": "n2",
     "arenaId": "project-management",
@@ -1938,6 +2144,26 @@
     ]
   },
   {
+    "taskId": "ops_013",
+    "nodeId": "n5",
+    "arenaId": "compliance-automation",
+    "productId": "drata",
+    "calls": [
+      {
+        "method": "POST /v2/devices",
+        "type": "rest",
+        "description": "Create or update a device record for a custom connection to feed device compliance data into Drata",
+        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Devices/"
+      },
+      {
+        "method": "GET /v2/devices/{id}/apps",
+        "type": "rest",
+        "description": "List installed apps for a device as part of compliance evidence",
+        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Devices/"
+      }
+    ]
+  },
+  {
     "taskId": "prod_002",
     "nodeId": "n5",
     "arenaId": "edge-platforms",
@@ -1980,8 +2206,8 @@
       {
         "method": "check_domain_availability",
         "type": "mcp",
-        "description": "Check a domain name availability via Dynadot MCP",
-        "sourceUrl": "https://www.dynadot.com/domain/mcp"
+        "description": "Check a domain name's availability",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
   },
@@ -2036,6 +2262,20 @@
         "type": "mcp",
         "description": "Check if a domain is available via the Porkbun MCP server",
         "sourceUrl": "https://porkbun.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n2",
+    "arenaId": "domain-registrars",
+    "productId": "dynadot",
+    "calls": [
+      {
+        "method": "register_domain",
+        "type": "mcp",
+        "description": "Register a domain via the Dynadot MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
       }
     ]
   },
@@ -2160,20 +2400,6 @@
         "type": "graphql",
         "description": "Create a tracker issue for a follow-up action",
         "sourceUrl": "https://linear.app/developers/graphql.md"
-      }
-    ]
-  },
-  {
-    "taskId": "prod_011",
-    "nodeId": "n2",
-    "arenaId": "incident-management",
-    "productId": "betterstack",
-    "calls": [
-      {
-        "method": "POST /api/v2/monitors",
-        "type": "rest",
-        "description": "Create an uptime monitor via Better Stack's Uptime API",
-        "sourceUrl": "https://betterstack.com/docs/uptime/api/getting-started-with-uptime-api/"
       }
     ]
   },
@@ -2899,20 +3125,106 @@
   },
   {
     "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "box",
+    "calls": [
+      {
+        "method": "PUT /files/upload_sessions/{upload_session_id}",
+        "type": "rest",
+        "description": "Upload archived corporate record files in chunks for long-term storage",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "POST /metadata_templates/{scope}/{template_key}/instances",
+        "type": "rest",
+        "description": "Attach retention metadata (e.g., record type, retention date) to archived files",
+        "sourceUrl": "https://developer.box.com/guides/metadata/"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({ path: '' })",
+        "type": "sdk",
+        "description": "List files/folders to identify corporate records for archival",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files",
+        "type": "rest",
+        "description": "Upload corporate records as files into Drive for archival storage",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List/search files to compile records for archiving",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Set retention access permissions on archived record folders",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}",
+        "type": "rest",
+        "description": "Upload/create a driveItem to archive a corporate record",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Create resumable upload session to archive large corporate record files",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root/search(q='{query}')",
+        "type": "rest",
+        "description": "Search archived items to verify retention of corporate records",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-search?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
     "nodeId": "n3",
     "arenaId": "payroll",
     "productId": "gusto",
     "calls": [
       {
-        "method": "GET /v1/companies/{company_uuid}/payrolls?processing_statuses=unprocessed",
+        "method": "GET /v1/companies/{company_uuid}/payrolls",
         "type": "rest",
-        "description": "Retrieve unprocessed/upcoming payrolls to identify and run the final payroll",
+        "description": "Retrieve upcoming/off-cycle payrolls for the company to process final run",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       },
       {
         "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
         "type": "rest",
-        "description": "Validate final contractor termination payments before submission",
+        "description": "Validate and preview final contractor payments before submission",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
@@ -3456,30 +3768,16 @@
     "productId": "composio",
     "calls": [
       {
-        "method": "composio.sessions.create(user_id=\"user_123\", mcp=True)",
+        "method": "composio.sessions.create({ mcp: true })",
         "type": "sdk",
-        "description": "Create an agent session with MCP enabled, exposing a hosted MCP server for connected tools",
+        "description": "Creates a Composio session with MCP enabled, exposing its hosted MCP server for agent tool access",
         "sourceUrl": "https://docs.composio.dev/docs/sessions-via-mcp"
       },
       {
-        "method": "POST /mcp",
-        "type": "rest",
-        "description": "Initialize connection to Composio's shared hosted MCP endpoint for MCP-compatible clients",
-        "sourceUrl": "https://connect.composio.dev/mcp"
-      }
-    ]
-  },
-  {
-    "taskId": "sw_010",
-    "nodeId": "n5",
-    "arenaId": "mcp-infrastructure",
-    "productId": "glama",
-    "calls": [
-      {
-        "method": "GET /api/mcp/v1/servers",
-        "type": "rest",
-        "description": "List/search MCP servers in Glama's registry to discover vendor connectors to connect",
-        "sourceUrl": "https://glama.ai/api/mcp/v1/servers?first=3"
+        "method": "COMPOSIO_REMOTE_WORKBENCH",
+        "type": "mcp",
+        "description": "Meta-tool exposed via the shared Composio MCP server for running remote sandboxed operations",
+        "sourceUrl": "https://docs.composio.dev/docs/composio-connect"
       }
     ]
   },
@@ -3536,6 +3834,128 @@
     ]
   },
   {
+    "taskId": "tax_001",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesUpload({ path, contents })",
+        "type": "sdk",
+        "description": "Upload the confirmation receipt file to Dropbox storage",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_001",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Upload the franchise tax confirmation receipt file to Drive",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_001",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload confirmation receipt file content to OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "box",
+    "calls": [
+      {
+        "method": "POST /files/upload_sessions",
+        "type": "rest",
+        "description": "Upload a copy of the filed tax return into Box storage for records via chunked upload session",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({ path: '' })",
+        "type": "sdk",
+        "description": "Lists files/folders to locate or verify stored copy of filed tax return records",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Upload the filed tax return copy to Drive for recordkeeping",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List/search Drive files to locate or verify the stored tax return copy",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Set sharing permissions on the stored tax return file for records access",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload the tax return file copy into OneDrive for recordkeeping",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Resumable upload of larger filed return document copies to OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root:/path/to/file",
+        "type": "rest",
+        "description": "Retrieve the stored file copy by path for verification in records",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
     "taskId": "tax_010",
     "nodeId": "n2",
     "arenaId": "payroll",
@@ -3544,7 +3964,7 @@
       {
         "method": "GET /v1/companies/{company_uuid}/payrolls",
         "type": "rest",
-        "description": "Retrieve payroll runs for the company to derive QRE payroll base",
+        "description": "Retrieve company payroll runs to extract wage data for QRE calculation",
         "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
       }
     ]
@@ -3596,10 +4016,10 @@
     "productId": "composio",
     "calls": [
       {
-        "method": "POST /mcp",
-        "type": "rest",
-        "description": "Initialize connection to Composio's hosted MCP endpoint to register the server with an agent runtime",
-        "sourceUrl": "https://connect.composio.dev/mcp"
+        "method": "composio.mcp.create(name=\"my-gmail-server\", toolkits=[{\"toolkit\": \"gmail\", \"auth_config\": \"ac_xyz123\"}], allowed_tools=[\"GMAIL_FETCH_EMAILS\", \"GMAIL_SEND_EMAIL\"])",
+        "type": "sdk",
+        "description": "Create a hosted MCP server registered with specified toolkits and tools for the agent runtime",
+        "sourceUrl": "https://docs.composio.dev/docs/single-toolkit-mcp.md"
       }
     ]
   },
