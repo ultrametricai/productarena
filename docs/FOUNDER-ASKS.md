@@ -25,6 +25,12 @@ The orchestrator updates this file at every merge; anything `open` for >1 sessio
 | Evidence column at the end of the rankings tables (homepage mega-table + arena tables) → /score receipt | shipped 2026-09-23 |
 | Supabase into serverless-databases (developer databases), judged vs neon | in-lane (supabase-dbs) |
 | Grok (xAI) missing from frontier-models | in-lane (grok-frontier) |
+| /processes route-dots legend ("coloring is just not known by the user") | shipped-next-deploy 2026-09-23 |
+| End-to-end playbooks rows clickable (whole-row link) | shipped-next-deploy 2026-09-23 |
+| Playbooks review — "super super good and well figured out" | in-lane (playbooks-quality) |
+| Arenas button LEFT of Processes in the top nav | shipped-next-deploy 2026-09-23 |
+| Rank-by presets on the same line as the filter | shipped-next-deploy 2026-09-23 |
+| Vendor-page spike-depth flag (deep/surface, evidence-count-grounded, rule in tooltip) | shipped-next-deploy 2026-09-23 |
 | Depth to 100%: never-spiked sweep A–L + M–Z, thin-arena depth wave (id-verification 18 → up) | in-lane (depth ×3) |
 | Private /ops coverage dashboard + vendor-news watcher | shipped 2026-09-23 (needs NEXT_PUBLIC_ADMIN_EMAILS env or pa-admin localStorage to view) |
 | Drop the 'commercial' tag on product pages — they're (almost) all commercial | shipped 2026-09-23 |

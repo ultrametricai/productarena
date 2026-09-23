@@ -46,22 +46,22 @@ export default function TableControls<C extends string>({
   // Extra inline content at the end of the controls row (e.g. the arena table's legend link).
   after?: ReactNode
 }) {
+  // Founder 2026-09-23: one line — rank-by presets left, scope + filter pushed right; narrow
+  // viewports wrap naturally.
   return (
-    <>
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs uppercase tracking-widest text-zinc-500">Rank by</span>
-        {presets.map((p) => (
-          <button
-            key={p.col}
-            type="button"
-            onClick={() => onPreset(p.col)}
-            className={presetButtonClass(activeColumn === p.col && presetActive)}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-      <div className="flex flex-nowrap items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-xs uppercase tracking-widest text-zinc-500">Rank by</span>
+      {presets.map((p) => (
+        <button
+          key={p.col}
+          type="button"
+          onClick={() => onPreset(p.col)}
+          className={presetButtonClass(activeColumn === p.col && presetActive)}
+        >
+          {p.label}
+        </button>
+      ))}
+      <div className="ml-auto flex flex-nowrap items-center gap-2">
         {scope && (
           <span className="relative inline-flex">
             <select
@@ -92,6 +92,6 @@ export default function TableControls<C extends string>({
         {/* Founder 2026-09-15: no "?" beside the filter — the methodology link in the footer and
             the column tooltips carry the definitions; the chip was visual noise. */}
       </div>
-    </>
+    </div>
   )
 }

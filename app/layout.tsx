@@ -292,6 +292,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 Processes, Compare), GitHub, and search. One menu for all secondary destinations
                 instead of the old Rankings + Lenses dropdowns + a Methodology link. */}
             <nav className="flex flex-wrap items-center gap-2 text-sm text-zinc-400 sm:gap-3">
+              {/* Founder 2026-09-23: Arenas sits LEFT of Processes. */}
+              <ArenaMenu sections={arenaMenuSections} searchable triggerIcon={<GeoMark seed="arenas" title="Arenas — every judged market" size={13} className="hidden text-zinc-500 sm:inline-flex" />} />
               <Link
                 href="/processes"
                 className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
@@ -299,7 +301,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <GeoMark seed="processes" title="Processes — end-to-end workflows across products" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Processes
               </Link>
-              <ArenaMenu sections={arenaMenuSections} searchable triggerIcon={<GeoMark seed="arenas" title="Arenas — every judged market" size={13} className="hidden text-zinc-500 sm:inline-flex" />} />
               {/* geo: every Explore destination wears its deterministic concept mark
                   (components/GeoMark.tsx), the same mark it wears on its own page header. */}
               {/* Founder 2026-09-21: the ranking entries come in TWO labeled groups so it's

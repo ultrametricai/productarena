@@ -29,6 +29,7 @@ import ProofsSection from '@/components/ProofsSection'
 import ScoreBar from '@/components/ScoreBar'
 import ScoreTrend from '@/components/ScoreTrend'
 import SloUptimeLine from '@/components/SloUptimeLine'
+import SpikeDepthChip from '@/components/SpikeDepthChip'
 import StoryMap from '@/components/StoryMap'
 import StoryVerdictsTable from '@/components/StoryVerdictsTable'
 import ThemeIcon from '@/components/ThemeIcon'
@@ -283,11 +284,13 @@ export default async function ProductPage({
             }
           />
         </div>
-        {/* SECONDARY row — adoption signals (registry data, never part of the PA Score) and the
+        {/* SECONDARY row — adoption signals (registry data, never part of the PA Score), the
+            evidence-depth flag (how hard we've looked, founder 2026-09-23), and the
             vendor-response chip. */}
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
           <MomentumChip popularity={data.popularity[id]} />
           <MomentumTrend series={momentumSeries} />
+          <SpikeDepthChip arenaId={category} productId={id} />
           {vendorResponseCount > 0 && (
             <a
               href="#story-verdicts"

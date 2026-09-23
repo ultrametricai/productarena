@@ -46,6 +46,22 @@ export default function ProcessesPage() {
           Common startup journeys — several processes run back to back as one walkthrough, each
           with a combined agent ceiling and its own start-to-finish simulator.
         </p>
+        {/* Founder 2026-09-23: "this dots coloring is just not known by the user" — a visible
+            legend for the per-step route dots, matching ROUTE_DOT + the legalSignature violet. */}
+        <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-zinc-500">
+          <span className="flex items-center gap-1.5" title="An agent can run this step today via a recorded API/MCP/CLI path">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> agent-runnable
+          </span>
+          <span className="flex items-center gap-1.5" title="A form or portal a human fills in — no agent path recorded yet">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-amber-400" /> manual form
+          </span>
+          <span className="flex items-center gap-1.5" title="A human decision or approval — deliberately not automated">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-sky-400/80" /> human decision
+          </span>
+          <span className="flex items-center gap-1.5" title="Requires a legally binding signature — always stays with a person">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-violet-400/80" /> legal signature
+          </span>
+        </p>
         {/* Founder 2026-09-23: a table like the all-processes one below, not a card grid. */}
         <div className="mt-4 overflow-x-auto rounded-2xl border border-zinc-800">
           <table className="w-full border-collapse text-sm">
@@ -62,12 +78,14 @@ export default function ProcessesPage() {
                 const cTasks = chainTasks(chain)
                 const nodes = cTasks.flatMap((t) => t.dag.nodes)
                 const ceiling = computeCeiling(nodes)
+                // Whole-row click (founder 2026-09-23): the title Link stretches over the row
+                // via the after:inset-0 overlay — tr is the containing block.
                 return (
-                  <tr key={chain.id} className="transition hover:bg-zinc-900/50">
+                  <tr key={chain.id} className="relative transition hover:bg-zinc-900/50">
                     <td className="max-w-[320px] px-3 py-2.5 align-top">
                       <Link
                         href={`/processes/chains/${chain.id}`}
-                        className="flex items-center gap-1.5 font-medium hover:text-emerald-300"
+                        className="flex items-center gap-1.5 font-medium hover:text-emerald-300 after:absolute after:inset-0 after:content-['']"
                       >
                         <IconChip icon={chainIcon(chain.id)} title={`${chain.name} — end-to-end playbook`} />
                         <span className="min-w-0 truncate">{chain.name}</span>
@@ -75,7 +93,7 @@ export default function ProcessesPage() {
                       <p className="mt-0.5 text-xs text-zinc-500">{chain.tagline}</p>
                     </td>
                     <td className="hidden px-3 py-2.5 align-top md:table-cell">
-                      <span className="flex flex-wrap items-center gap-1 text-xs text-zinc-400">
+                      <span className="relative z-10 flex flex-wrap items-center gap-1 text-xs text-zinc-400">
                         {cTasks.map((t, i) => (
                           <IconChip key={`${t.id}-${i}`} icon={processIcon(t.id)} title={`${t.title} — ${t.phase} process`} />
                         ))}
@@ -85,10 +103,13 @@ export default function ProcessesPage() {
                     <td className="px-3 py-2.5 align-top">
                       <span className="flex items-center gap-1.5 whitespace-nowrap font-mono text-xs tabular-nums text-zinc-400">
                         {nodes.length}
-                        <span aria-hidden className="flex shrink-0 gap-0.5">
+                        {/* relative z-10: keep the dots' hover titles above the row's
+                            stretched-link overlay. */}
+                        <span className="relative z-10 flex shrink-0 gap-0.5">
                           {nodes.slice(0, 24).map((n, j) => (
                             <span
                               key={j}
+                              title={`${n.label} — ${n.legalSignature ? 'legal signature (stays with a person)' : n.route === 'agent' ? 'agent-runnable' : n.route === 'form' ? 'manual form' : 'human decision'}`}
                               className={`h-1.5 w-1.5 rounded-full ${n.legalSignature ? 'bg-violet-400/80' : ROUTE_DOT[n.route]}`}
                             />
                           ))}
