@@ -85,6 +85,29 @@ describe('corpus', () => {
     }
   })
 
+  it('vendor-neutral openers: no tracked vendor is named in a process\'s FIRST step label', () => {
+    // Founder 2026-09-23: "processes don't start with just one supplier — the first step is to
+    // SELECT a supplier on almost all of these." The opener names the FUNCTION ("create an
+    // account with your compliance platform"), the market row offers the suppliers, and the
+    // old vendor stays as node.vendor (the canonical call target) — never in the label.
+    // Same phrase logic as the title test above, applied to node[0] of every task.
+    const vendorPhrases = Object.keys(VENDOR_ARENA)
+      .map((v) => v.replace(/_/g, ' '))
+      .filter((p) => p.length > 3)
+    for (const t of loadProcesses(DATA_DIR)) {
+      const first = t.dag.nodes[0]
+      const label = first.label.toLowerCase()
+      const words = new Set(label.split(/[^a-z0-9]+/))
+      for (const phrase of vendorPhrases) {
+        const named = phrase.includes(' ') ? label.includes(phrase) : words.has(phrase)
+        expect(
+          named,
+          `${t.id}/${first.id} "${first.label}" names vendor "${phrase}" — first steps are vendor-neutral (the market row is the selection surface; keep the vendor as node.vendor)`,
+        ).toBe(false)
+      }
+    }
+  })
+
   it('every step actionUrl is https and labeled, and every signup URL is https', () => {
     for (const t of loadProcesses(DATA_DIR)) {
       for (const n of t.dag.nodes) {
@@ -261,6 +284,11 @@ describe('vendor -> arena mapping', () => {
       'stable', 'earth_class_mail', 'virtualpostmail',
       'onepassword', 'bitwarden', 'dashlane',
       'markify', 'corsearch', 'harbor_compliance',
+      // 2026-09-23 vendor-neutral first-step sweep — markets with no arena yet, shown as
+      // honest unlinked chips: team wikis, company-email suites, transactional email senders.
+      'confluence', 'slite', 'slab',
+      'microsoft_365', 'zoho_mail',
+      'resend', 'postmark', 'mailgun',
     ])
     for (const task of loadProcesses(DATA_DIR)) {
       for (const n of task.dag.nodes) {

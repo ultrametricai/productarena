@@ -447,62 +447,56 @@
     ]
   },
   "domain_002:n1:polar": {
-    "hash": "d89f1b9981e0fc51193e47651171b5dbe57391ffecbe840d8c66a300ec6fbcb3",
+    "hash": "1bbc770feedcfbf7f4723f29391961c0a860f99fe28c484c26d4b39f172b32d6",
     "calls": []
   },
   "domain_002:n1:stripe": {
-    "hash": "e1ffc65dbb40128a1d4c1a13a6e2f5eb1a33c8459ad236e978abb517d5bebe3a",
+    "hash": "ba4d5345f75ffb8b76c42bb889bb589507933152d57ab5ea599966393bddea9f",
     "calls": [
       {
         "method": "stripe_api_write",
         "type": "mcp",
-        "description": "Create the Checkout Session for the domain quote via Stripe's generic write tool",
-        "sourceUrl": "https://mcp.stripe.com/"
+        "description": "Create the Checkout Session for the domain purchase quote via generic write tool",
+        "sourceUrl": "https://docs.stripe.com/mcp.md"
       },
       {
-        "method": "stripe sandbox create --help",
-        "type": "cli",
-        "description": "Provision a sandbox with API keys to test the checkout flow",
-        "sourceUrl": "https://docs.stripe.com/sandboxes.md"
+        "method": "POST /v1/checkout/sessions",
+        "type": "rest",
+        "description": "Create a Stripe Checkout Session presenting the domain price for customer approval and payment",
+        "sourceUrl": "https://docs.stripe.com/payments/checkout.md"
       }
     ]
   },
   "domain_002:n1:paypal": {
-    "hash": "2b87b5b3caf68c960956c4ab9c13c01947575ecbedbae8b8e89d3e8e828c0ea2",
+    "hash": "8aa453ec2b89e3380ce64617a4393aae8c4ecfdba9f14f1010a2b7e55da974a6",
     "calls": [
       {
         "method": "create_order",
         "type": "mcp",
-        "description": "Create a PayPal order for the domain purchase quote",
+        "description": "Create the PayPal order representing the domain purchase quote",
         "sourceUrl": "https://mcp.paypal.com/mcp"
       },
       {
         "method": "pay_order",
         "type": "mcp",
-        "description": "Capture payment on the created order to complete checkout",
+        "description": "Execute payment to complete checkout for the created order",
         "sourceUrl": "https://mcp.paypal.com/mcp"
-      },
-      {
-        "method": "POST /v2/checkout/orders",
-        "type": "rest",
-        "description": "Create a checkout order via PayPal's Orders v2 REST API",
-        "sourceUrl": "https://raw.githubusercontent.com/paypal/paypal-rest-api-specifications/HEAD/README.md"
       }
     ]
   },
   "domain_002:n1:paddle": {
-    "hash": "21162c3d7a255b9372bf3c0943f4758127a922902fc2a854c6a7332f85096788",
+    "hash": "3c54268235300d7d4a57df282ece40e278b9f4b4b5a1991d9a6b3f260f6e447e",
     "calls": [
       {
         "method": "POST /transactions",
         "type": "rest",
-        "description": "Create a transaction representing the domain quote for checkout",
+        "description": "Create a transaction representing the domain purchase quote for checkout",
         "sourceUrl": "https://developer.paddle.com/build/transactions/create-transaction.md"
       },
       {
         "method": "execute",
         "type": "mcp",
-        "description": "Run a chained API call (e.g., create transaction/checkout) via the Paddle MCP codemode tool",
+        "description": "Chain Paddle API calls (e.g., create transaction/checkout) via the MCP codemode execute tool",
         "sourceUrl": "https://mcp.paddle.com/mcp"
       }
     ]
