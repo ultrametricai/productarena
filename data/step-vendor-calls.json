@@ -158,6 +158,72 @@
     ]
   },
   {
+    "taskId": "comp_011",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesUpload(...)",
+        "type": "sdk",
+        "description": "Upload signed minutes file into the data room folder",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Upload the signed minutes file into Drive as a new file",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Grant data room access/roles to relevant parties for the filed minutes",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      },
+      {
+        "method": "PATCH /drive/v3/files/{fileId}",
+        "type": "rest",
+        "description": "Set custom properties (e.g. tags/IDs) on the filed minutes for metadata tracking",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/properties"
+      }
+    ]
+  },
+  {
+    "taskId": "comp_011",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload the signed minutes file content into a OneDrive/data room folder",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Create a resumable upload session for filing larger signed minutes documents",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root:/path/to/file",
+        "type": "rest",
+        "description": "Locate the target data room folder/item by path before filing the minutes",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
     "taskId": "comp_013",
     "nodeId": "n5",
     "arenaId": "project-management",
@@ -172,16 +238,124 @@
     ]
   },
   {
-    "taskId": "domain_002",
-    "nodeId": "n2",
+    "taskId": "domain_001",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
+    "productId": "dynadot",
+    "calls": [
+      {
+        "method": "check_domain_availability",
+        "type": "mcp",
+        "description": "Check a domain name's availability via the Dynadot MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_001",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
+    "productId": "godaddy",
+    "calls": [
+      {
+        "method": "GET /v3/domains/check-availability?domain={domain}",
+        "type": "rest",
+        "description": "Check whether a specific domain name is available for registration",
+        "sourceUrl": "https://developer.godaddy.com/en"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_001",
+    "nodeId": "n1",
     "arenaId": "domain-registrars",
     "productId": "name-com",
     "calls": [
       {
-        "method": "POST /api/v1/domains",
+        "method": "POST /v1/domains:checkAvailability",
         "type": "rest",
-        "description": "Registers a new domain, effectively purchasing it under the account",
-        "sourceUrl": "https://docs.name.com/api/v1/reference/domains/create-domain.md"
+        "description": "Checks whether up to 50 domain names are purchasable and returns pricing for each result",
+        "sourceUrl": "https://docs.name.com/api/v1/reference/domains/check-availability.md"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_001",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
+    "productId": "porkbun",
+    "calls": [
+      {
+        "method": "check_domain",
+        "type": "mcp",
+        "description": "Check domain availability and pricing across TLDs via MCP server",
+        "sourceUrl": "https://porkbun.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "paddle",
+    "calls": [
+      {
+        "method": "POST /transactions",
+        "type": "rest",
+        "description": "Create a transaction representing the domain quote for checkout",
+        "sourceUrl": "https://developer.paddle.com/build/transactions/create-transaction.md"
+      },
+      {
+        "method": "execute",
+        "type": "mcp",
+        "description": "Run a chained API call (e.g., create transaction/checkout) via the Paddle MCP codemode tool",
+        "sourceUrl": "https://mcp.paddle.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "paypal",
+    "calls": [
+      {
+        "method": "create_order",
+        "type": "mcp",
+        "description": "Create a PayPal order for the domain purchase quote",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      },
+      {
+        "method": "pay_order",
+        "type": "mcp",
+        "description": "Capture payment on the created order to complete checkout",
+        "sourceUrl": "https://mcp.paypal.com/mcp"
+      },
+      {
+        "method": "POST /v2/checkout/orders",
+        "type": "rest",
+        "description": "Create a checkout order via PayPal's Orders v2 REST API",
+        "sourceUrl": "https://raw.githubusercontent.com/paypal/paypal-rest-api-specifications/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "domain_002",
+    "nodeId": "n1",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_api_write",
+        "type": "mcp",
+        "description": "Create the Checkout Session for the domain quote via Stripe's generic write tool",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe sandbox create --help",
+        "type": "cli",
+        "description": "Provision a sandbox with API keys to test the checkout flow",
+        "sourceUrl": "https://docs.stripe.com/sandboxes.md"
       }
     ]
   },
@@ -189,13 +363,13 @@
     "taskId": "domain_002",
     "nodeId": "n2",
     "arenaId": "domain-registrars",
-    "productId": "porkbun",
+    "productId": "name-com",
     "calls": [
       {
-        "method": "POST /api/json/v3/domain/create",
+        "method": "POST /v1/domains",
         "type": "rest",
-        "description": "Register and pay for a domain via Porkbun's REST API",
-        "sourceUrl": "https://porkbun.com/api/json/v3/documentation"
+        "description": "Registers a new domain under the account to complete signup/checkout",
+        "sourceUrl": "https://docs.name.com/api/v1/reference/domains/create-domain.md"
       }
     ]
   },
@@ -208,22 +382,70 @@
       {
         "method": "execute",
         "type": "mcp",
-        "description": "Invoke a Cloudflare API endpoint (e.g. DNS record creation or SSL settings) via the Code Mode MCP server's execute tool",
+        "description": "Invoke Cloudflare API endpoints (e.g. DNS record creation, SSL settings) via the Code Mode MCP server",
         "sourceUrl": "https://mcp.cloudflare.com/mcp"
       }
     ]
   },
   {
-    "taskId": "fin_002",
-    "nodeId": "n1",
+    "taskId": "fin_001",
+    "nodeId": "n2",
     "arenaId": "startup-banking",
-    "productId": "brex",
+    "productId": "ramp",
     "calls": [
       {
-        "method": "review_banking_transactions",
-        "type": "mcp",
-        "description": "Retrieve banking transactions via Brex MCP server for close",
-        "sourceUrl": "https://developer.brex.com/docs/mcp.md"
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "List Ramp business bank accounts and their balances",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Retrieve daily available balance history for an account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_001",
+    "nodeId": "n3",
+    "arenaId": "startup-banking",
+    "productId": "airwallex",
+    "calls": [
+      {
+        "method": "POST /docs/payouts/batch-transfers/create-a-batch-transfer",
+        "type": "rest",
+        "description": "Create a batch of transfers to multiple vendor beneficiaries as a single payment run",
+        "sourceUrl": "https://www.airwallex.com/docs/payouts/batch-transfers/create-a-batch-transfer.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_001",
+    "nodeId": "n6",
+    "arenaId": "team-chat",
+    "productId": "discord",
+    "calls": [
+      {
+        "method": "POST /webhooks/{webhook.id}/{webhook.token}",
+        "type": "rest",
+        "description": "Post the payment summary message to the team channel via webhook",
+        "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_001",
+    "nodeId": "n6",
+    "arenaId": "team-chat",
+    "productId": "slack",
+    "calls": [
+      {
+        "method": "chat.postMessage()",
+        "type": "sdk",
+        "description": "Post the payment run summary to a channel",
+        "sourceUrl": "https://docs.slack.dev/reference/methods/chat.postMessage"
       }
     ]
   },
@@ -236,8 +458,8 @@
       {
         "method": "GET /api/v1/account/{accountId}/transactions",
         "type": "rest",
-        "description": "List all transactions for a bank account",
-        "sourceUrl": "https://docs.mercury.com"
+        "description": "List transactions for an account",
+        "sourceUrl": "https://docs.mercury.com/reference"
       }
     ]
   },
@@ -250,34 +472,14 @@
       {
         "method": "GET /developer/v1/banking/syncable-transactions",
         "type": "rest",
-        "description": "Pull banking transactions available to sync to an accounting provider",
+        "description": "Retrieve banking transactions available to sync to an accounting provider for bookkeeping close",
         "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
       },
       {
         "method": "GET /developer/v1/banking/accounts",
         "type": "rest",
-        "description": "List bank accounts holding the business's cash position",
+        "description": "List cash accounts whose transactions need to be pulled for reconciliation",
         "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
-      },
-      {
-        "method": "ramp transactions list --agent",
-        "type": "cli",
-        "description": "List transactions via the Ramp CLI for agent consumption",
-        "sourceUrl": "https://raw.githubusercontent.com/ramp-public/ramp-cli/HEAD/README.md"
-      }
-    ]
-  },
-  {
-    "taskId": "fin_002",
-    "nodeId": "n2",
-    "arenaId": "accounting",
-    "productId": "zoho-books",
-    "calls": [
-      {
-        "method": "POST /v3/banktransactions/{transaction_id}/categorize",
-        "type": "rest",
-        "description": "Categorize an uncategorized bank transaction",
-        "sourceUrl": "https://www.zoho.com/books/api/v3/bank-transactions/"
       }
     ]
   },
@@ -322,6 +524,66 @@
     ]
   },
   {
+    "taskId": "fin_003",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Returns bank accounts (checking, investment, managed portfolio) held by the business",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Returns daily available balance history for a given bank account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_003",
+    "nodeId": "n2",
+    "arenaId": "payments",
+    "productId": "stripe",
+    "calls": [
+      {
+        "method": "stripe_analytics",
+        "type": "mcp",
+        "description": "Query MRR/revenue metrics or run financial report templates for board reporting",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_report",
+        "type": "mcp",
+        "description": "Generate downloadable financial reports (balance, payouts, revenue recognition) for the board report",
+        "sourceUrl": "https://mcp.stripe.com/"
+      },
+      {
+        "method": "stripe_api_read",
+        "type": "mcp",
+        "description": "Read raw balance/charges data via any Stripe GET API method to pull revenue figures",
+        "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "fin_003",
+    "nodeId": "n5",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new Notion page for the board report draft",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
     "taskId": "form_001",
     "nodeId": "n4",
     "arenaId": "legal-ops",
@@ -360,6 +622,206 @@
         "type": "rest",
         "description": "Create a new state sales tax registration for tracking and filing",
         "sourceUrl": "https://docs.trykintsugi.com/reference/create-registration"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n3",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /task",
+        "type": "rest",
+        "description": "Create tasks in ClickUp to track individual investors in the pipeline",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      },
+      {
+        "method": "POST /view",
+        "type": "rest",
+        "description": "Create a view to organize and track investor pipeline stages",
+        "sourceUrl": "https://developer.clickup.com/docs/views.md"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n6",
+    "arenaId": "legal-ops",
+    "productId": "beglaubigt",
+    "calls": [
+      {
+        "method": "POST /notarization",
+        "type": "rest",
+        "description": "Create a notarization request to send SAFE document for signature",
+        "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n7",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /api/v1/account/{accountId}/transactions",
+        "type": "rest",
+        "description": "List account transactions to confirm incoming SAFE wire transfers have posted",
+        "sourceUrl": "https://docs.mercury.com"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n7",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Check daily balance movement on the checking account for incoming wire deposits",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "List banking transactions (including incoming wires) available on the account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Retrieve the business's checking accounts to locate the account receiving the wire",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n8",
+    "arenaId": "equity-management",
+    "productId": "carta",
+    "calls": [
+      {
+        "method": "GET /v1alpha1/issuers/{issuer_id}/capitalization-table",
+        "type": "rest",
+        "description": "Retrieve issuer's capitalization table by share class to view updated ownership",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-get-capitalization-table/"
+      },
+      {
+        "method": "GET /v1alpha1/issuers/{issuer_id}/stakeholders",
+        "type": "rest",
+        "description": "List stakeholders on the cap table after a SAFE issuance",
+        "sourceUrl": "https://docs.carta.com/api-platform/reference/v-1-alpha-1-issuers-list-stakeholders/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_001",
+    "nodeId": "n8",
+    "arenaId": "equity-management",
+    "productId": "ledgy",
+    "calls": [
+      {
+        "method": "query companyCaptable(...)",
+        "type": "graphql",
+        "description": "Retrieve cap table data for the company after recording SAFE",
+        "sourceUrl": "https://docs.ledgy.com"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "box",
+    "calls": [
+      {
+        "method": "POST /2.0/files/content",
+        "type": "rest",
+        "description": "Upload new or updated diligence documents into the data room folder",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "GET /2.0/search",
+        "type": "rest",
+        "description": "Search data room content to verify completeness during diligence refresh",
+        "sourceUrl": "https://developer.box.com/guides/search/"
+      },
+      {
+        "method": "POST /2.0/collaborations",
+        "type": "rest",
+        "description": "Grant or update investor access permissions to the refreshed data room",
+        "sourceUrl": "https://developer.box.com/guides/collaborations/"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({ path: '' })",
+        "type": "sdk",
+        "description": "List current contents of the data room folder to refresh diligence materials",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Upload new or updated diligence documents to the data room folder",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List existing files/folders to identify stale or missing diligence materials",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Update sharing permissions for investors accessing the refreshed data room",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      }
+    ]
+  },
+  {
+    "taskId": "fund_002",
+    "nodeId": "n2",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Upload or refresh large diligence documents in the data room folder via resumable upload session",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root/delta",
+        "type": "rest",
+        "description": "Detect newly added, updated, or deleted files in the data room since last diligence check",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/delta-query-overview"
+      },
+      {
+        "method": "GET /drive/items/{item-id}/versions",
+        "type": "rest",
+        "description": "Review version history of data room documents to confirm latest updates for diligence",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-list-versions?view=graph-rest-1.0"
       }
     ]
   },
@@ -870,6 +1332,46 @@
     ]
   },
   {
+    "taskId": "growth_012",
+    "nodeId": "n1",
+    "arenaId": "crm",
+    "productId": "hubspot",
+    "calls": [
+      {
+        "method": "POST /crm/v3/objects/contacts",
+        "type": "rest",
+        "description": "Create target contact records for the sequence list",
+        "sourceUrl": "https://developers.hubspot.com/docs/guides/api/crm/objects/contacts"
+      }
+    ]
+  },
+  {
+    "taskId": "growth_012",
+    "nodeId": "n5",
+    "arenaId": "scheduling",
+    "productId": "cal-com",
+    "calls": [
+      {
+        "method": "POST /v2/bookings",
+        "type": "rest",
+        "description": "Create a booking for a responder using an event type slug and username",
+        "sourceUrl": "https://cal.com/docs/api-reference/v2/bookings/create-a-booking.md"
+      },
+      {
+        "method": "create_booking",
+        "type": "mcp",
+        "description": "Schedule a meeting with a responder via MCP-compatible agent client",
+        "sourceUrl": "https://mcp.cal.com/mcp"
+      },
+      {
+        "method": "POST /v2/bookings/{bookingUid}/reschedule",
+        "type": "rest",
+        "description": "Reschedule a booking if the responder needs a new time",
+        "sourceUrl": "https://cal.com/docs/api-reference/v2/bookings/reschedule-a-booking.md"
+      }
+    ]
+  },
+  {
     "taskId": "growth_013",
     "nodeId": "n3",
     "arenaId": "email-marketing",
@@ -1140,30 +1642,78 @@
     ]
   },
   {
-    "taskId": "hr_001",
-    "nodeId": "n4",
+    "taskId": "hr_002",
+    "nodeId": "n1",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "GET /v1/companies/{company_id}/employees",
+        "type": "rest",
+        "description": "Retrieve current employee roster to check for changes before running payroll",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/api-fundamentals.md"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_002",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "PUT /v1/time_off_requests/{time_off_request_uuid}/decline",
+        "type": "rest",
+        "description": "Decline a pending or approved time off request",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/reference/put-v1-time_off-requests-time_off_request_uuid-decline.md"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_002",
+    "nodeId": "n5",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "Retrieve banking transactions to verify the payroll debit occurred",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Check daily available balance change to confirm debit posted",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_003",
+    "nodeId": "n2",
     "arenaId": "payroll",
     "productId": "deel",
     "calls": [
       {
         "method": "POST /rest/contracts",
         "type": "rest",
-        "description": "Create a contractor/employee contract in Deel",
+        "description": "Create a contractor contract/agreement",
         "sourceUrl": "https://developer.deel.com/home"
       }
     ]
   },
   {
-    "taskId": "hr_001",
-    "nodeId": "n9",
-    "arenaId": "team-chat",
-    "productId": "buzz",
+    "taskId": "hr_003",
+    "nodeId": "n5",
+    "arenaId": "payroll",
+    "productId": "gusto",
     "calls": [
       {
-        "method": "buzz-admin add-member",
-        "type": "cli",
-        "description": "Enrolls an agent/member identity into Buzz by publishing a membership event",
-        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-acp/README.md"
+        "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
+        "type": "rest",
+        "description": "Validate inputs and determine payment timing/blockers for contractor payment schedule",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
   },
@@ -1230,6 +1780,82 @@
     ]
   },
   {
+    "taskId": "hr_012",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "discord",
+    "calls": [
+      {
+        "method": "POST /api/webhooks/{webhook.id}/{webhook.token}",
+        "type": "rest",
+        "description": "Post enrollment announcement message to a team channel via webhook",
+        "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_012",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "slack",
+    "calls": [
+      {
+        "method": "send_message",
+        "type": "mcp",
+        "description": "Send enrollment announcement message to a channel",
+        "sourceUrl": "https://docs.slack.dev/ai/slack-mcp-server/"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_012",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "zulip",
+    "calls": [
+      {
+        "method": "POST /messages",
+        "type": "rest",
+        "description": "Send a message announcing 401(k) enrollment to a channel/topic",
+        "sourceUrl": "https://zulip.com/api/"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_013",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "deel",
+    "calls": [
+      {
+        "method": "POST /rest/contracts",
+        "type": "rest",
+        "description": "Create a contract (used to draft the locally compliant employment contract)",
+        "sourceUrl": "https://developer.deel.com/home"
+      },
+      {
+        "method": "calculateEorVersusEntityHiringCosts",
+        "type": "mcp",
+        "description": "Generate cost quote comparing EOR hiring options",
+        "sourceUrl": "https://developer.deel.com/mcp/reference/tools-reference.md"
+      }
+    ]
+  },
+  {
+    "taskId": "hr_013",
+    "nodeId": "n6",
+    "arenaId": "sso-identity",
+    "productId": "google-workspace",
+    "calls": [
+      {
+        "method": "GET /admin/directory/v1/users",
+        "type": "rest",
+        "description": "List/retrieve user accounts in domain to check or provision access",
+        "sourceUrl": "https://developers.google.com/workspace/admin/directory/reference/rest/v1/users/list"
+      }
+    ]
+  },
+  {
     "taskId": "legal_001",
     "nodeId": "n4",
     "arenaId": "legal-ops",
@@ -1240,6 +1866,80 @@
         "type": "rest",
         "description": "Create a notarization request with AI-detected signature fields for signers",
         "sourceUrl": "https://docs.beglaubigt.de/notarization/post"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_001",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Upload executed NDA file to Drive (simple upload)",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Resumable upload for larger executed NDA file",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_001",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /me/drive/items/{parent-id}:/{filename}:/content",
+        "type": "rest",
+        "description": "Upload executed NDA file content to OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /me/drive/items/{item-id}:/createUploadSession",
+        "type": "rest",
+        "description": "Create resumable upload session for larger executed NDA file",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_003",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=media",
+        "type": "rest",
+        "description": "Simple upload of a small executed/signed file into Drive",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Resumable upload of larger executed copies into Drive",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      }
+    ]
+  },
+  {
+    "taskId": "legal_003",
+    "nodeId": "n6",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drives/{drive-id}/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload executed IPIA copy content to a file in OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
       }
     ]
   },
@@ -1294,6 +1994,34 @@
         "type": "cli",
         "description": "List transactions in JSON to confirm payment status for reconciliation",
         "sourceUrl": "https://raw.githubusercontent.com/ramp-public/ramp-cli/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "opp_002",
+    "nodeId": "n1",
+    "arenaId": "payroll",
+    "productId": "deel",
+    "calls": [
+      {
+        "method": "POST /rest/contracts",
+        "type": "rest",
+        "description": "Create a contractor contract in Deel payroll",
+        "sourceUrl": "https://developer.deel.com/home"
+      }
+    ]
+  },
+  {
+    "taskId": "opp_002",
+    "nodeId": "n3",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
+        "type": "rest",
+        "description": "Validate contractor payment inputs and surface submission blockers (e.g. missing W-9/payment method) before payment",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
       }
     ]
   },
@@ -1368,6 +2096,20 @@
     ]
   },
   {
+    "taskId": "opp_009",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "linear",
+    "calls": [
+      {
+        "method": "mutation IssueCreate(...)",
+        "type": "graphql",
+        "description": "Create the issue in Linear's tracker",
+        "sourceUrl": "https://linear.app/developers/graphql.md"
+      }
+    ]
+  },
+  {
     "taskId": "ops_001",
     "nodeId": "n2",
     "arenaId": "team-chat",
@@ -1398,6 +2140,26 @@
         "type": "rest",
         "description": "Create a database to structure repeatable process templates",
         "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "ops_013",
+    "nodeId": "n5",
+    "arenaId": "compliance-automation",
+    "productId": "drata",
+    "calls": [
+      {
+        "method": "POST /v2/devices",
+        "type": "rest",
+        "description": "Create or update a device record for a custom connection to feed device compliance data into Drata",
+        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Devices/"
+      },
+      {
+        "method": "GET /v2/devices/{id}/apps",
+        "type": "rest",
+        "description": "List installed apps for a device as part of compliance evidence",
+        "sourceUrl": "https://developers.drata.com/openapi/reference/v2/tag/Devices/"
       }
     ]
   },
@@ -1436,6 +2198,122 @@
     ]
   },
   {
+    "taskId": "prod_003",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
+    "productId": "dynadot",
+    "calls": [
+      {
+        "method": "check_domain_availability",
+        "type": "mcp",
+        "description": "Check a domain name's availability",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
+    "productId": "godaddy",
+    "calls": [
+      {
+        "method": "GET /v3/domains/check-availability?domain={domain}",
+        "type": "rest",
+        "description": "Check whether a specific domain name is available for registration",
+        "sourceUrl": "https://developer.godaddy.com/en"
+      },
+      {
+        "method": "gddy domain search",
+        "type": "cli",
+        "description": "Search for available domain names via authenticated CLI session",
+        "sourceUrl": "https://developer.godaddy.com/en/docs/api-users/cli/agent-skill"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
+    "productId": "name-com",
+    "calls": [
+      {
+        "method": "POST /v1/domains:checkAvailability",
+        "type": "rest",
+        "description": "Checks whether up to 50 domain names are purchasable and returns pricing",
+        "sourceUrl": "https://docs.name.com/api/v1/reference/domains/check-availability.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n1",
+    "arenaId": "domain-registrars",
+    "productId": "porkbun",
+    "calls": [
+      {
+        "method": "POST /v3/domain/checkDomain/{domain}",
+        "type": "rest",
+        "description": "Check domain availability and pricing across TLDs",
+        "sourceUrl": "https://porkbun.com/api/json/v3/documentation"
+      },
+      {
+        "method": "check_domain_availability",
+        "type": "mcp",
+        "description": "Check if a domain is available via the Porkbun MCP server",
+        "sourceUrl": "https://porkbun.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n2",
+    "arenaId": "domain-registrars",
+    "productId": "dynadot",
+    "calls": [
+      {
+        "method": "register_domain",
+        "type": "mcp",
+        "description": "Register a domain via the Dynadot MCP server",
+        "sourceUrl": "https://mcp.dynadot.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n2",
+    "arenaId": "domain-registrars",
+    "productId": "name-com",
+    "calls": [
+      {
+        "method": "POST /api/v1/domains",
+        "type": "rest",
+        "description": "Registers a new domain under the account",
+        "sourceUrl": "https://docs.name.com/api/v1/reference/domains/create-domain.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_003",
+    "nodeId": "n4",
+    "arenaId": "edge-platforms",
+    "productId": "cloudflare",
+    "calls": [
+      {
+        "method": "search",
+        "type": "mcp",
+        "description": "Search the Cloudflare API surface for the DNS records endpoint",
+        "sourceUrl": "https://mcp.cloudflare.com/mcp"
+      },
+      {
+        "method": "execute",
+        "type": "mcp",
+        "description": "Execute the discovered DNS create-record API call against the zone",
+        "sourceUrl": "https://mcp.cloudflare.com/mcp"
+      }
+    ]
+  },
+  {
     "taskId": "prod_005",
     "nodeId": "n4",
     "arenaId": "product-analytics",
@@ -1446,6 +2324,102 @@
         "type": "mcp",
         "description": "Create a new dashboard with text cards and reports",
         "sourceUrl": "https://docs.mixpanel.com/docs/mcp.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_010",
+    "nodeId": "n1",
+    "arenaId": "incident-management",
+    "productId": "rootly",
+    "calls": [
+      {
+        "method": "find_related_incidents",
+        "type": "mcp",
+        "description": "Find similar past incidents to help reconstruct timeline context",
+        "sourceUrl": "https://mcp.rootly.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_010",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /task",
+        "type": "rest",
+        "description": "Create a task to hold the blameless postmortem draft content",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      },
+      {
+        "method": "POST /task/{task_id}/comment",
+        "type": "rest",
+        "description": "Add drafted postmortem write-up as a comment on the incident task",
+        "sourceUrl": "https://developer.clickup.com/docs/comments.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_010",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page in Notion to draft the blameless postmortem document",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_010",
+    "nodeId": "n4",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /api/v2/list/{list_id}/task",
+        "type": "rest",
+        "description": "Create a task in ClickUp to file a follow-up action from the postmortem",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_010",
+    "nodeId": "n4",
+    "arenaId": "project-management",
+    "productId": "linear",
+    "calls": [
+      {
+        "method": "mutation IssueCreate(...)",
+        "type": "graphql",
+        "description": "Create a tracker issue for a follow-up action",
+        "sourceUrl": "https://linear.app/developers/graphql.md"
+      }
+    ]
+  },
+  {
+    "taskId": "prod_011",
+    "nodeId": "n3",
+    "arenaId": "edge-platforms",
+    "productId": "cloudflare",
+    "calls": [
+      {
+        "method": "wrangler deploy",
+        "type": "cli",
+        "description": "Deploy the Worker (status page) to Cloudflare's edge network",
+        "sourceUrl": "https://developers.cloudflare.com/workers/wrangler/commands/"
+      },
+      {
+        "method": "execute",
+        "type": "mcp",
+        "description": "Invoke Cloudflare API (e.g. DNS record creation) to route the domain to the deployed Worker",
+        "sourceUrl": "https://mcp.cloudflare.com/mcp"
       }
     ]
   },
@@ -1574,6 +2548,142 @@
         "type": "mcp",
         "description": "Read account/payout data to confirm payout schedule",
         "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_023",
+    "nodeId": "n3",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "ramp applications",
+        "type": "cli",
+        "description": "Pre-fill and submit the Ramp account application (company details, EIN, founders) on behalf of a new business",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/applications.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_023",
+    "nodeId": "n4",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Retrieve the business's bank/checking accounts to confirm the feed is connected",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/syncable-transactions",
+        "type": "rest",
+        "description": "Pull banking transactions available to sync into the accounting/books provider",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "ramp accounting",
+        "type": "cli",
+        "description": "Manage the accounting integration connecting the bank feed to the books via the Ramp CLI",
+        "sourceUrl": "https://raw.githubusercontent.com/ramp-public/ramp-cli/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /api/v1/accounts",
+        "type": "rest",
+        "description": "Pull account-level balances via Mercury's REST API",
+        "sourceUrl": "https://mercury.com/api"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n1",
+    "arenaId": "startup-banking",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "GET /developer/v1/banking/accounts",
+        "type": "rest",
+        "description": "Fetch the business's cash accounts and current balances",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      },
+      {
+        "method": "GET /developer/v1/banking/accounts/{account_id}/balance-history",
+        "type": "rest",
+        "description": "Fetch daily available balance history for an account",
+        "sourceUrl": "https://docs.ramp.com/llms-guides/banking.txt"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "expense-management",
+    "productId": "brex",
+    "calls": [
+      {
+        "method": "GET /transactions",
+        "type": "rest",
+        "description": "List Brex card/account transactions to analyze monthly spend",
+        "sourceUrl": "https://developer.brex.com/openapi/transactions_api.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "expense-management",
+    "productId": "navan",
+    "calls": [
+      {
+        "method": "analyze_spend_data",
+        "type": "mcp",
+        "description": "Query expenses and break down costs by department, vendor, or category to analyze monthly spend",
+        "sourceUrl": "https://mcp.navan.com/mcp"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "expense-management",
+    "productId": "ramp",
+    "calls": [
+      {
+        "method": "ramp transactions list --agent",
+        "type": "cli",
+        "description": "List transactions via Ramp CLI to analyze monthly spend",
+        "sourceUrl": "https://raw.githubusercontent.com/ramp-public/ramp-cli/HEAD/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "qs_050",
+    "nodeId": "n2",
+    "arenaId": "startup-banking",
+    "productId": "mercury",
+    "calls": [
+      {
+        "method": "GET /transactions",
+        "type": "rest",
+        "description": "List transactions to analyze monthly spend",
+        "sourceUrl": "https://docs.mercury.com"
+      },
+      {
+        "method": "mercury run mercury-analyze-spend",
+        "type": "cli",
+        "description": "Run the Mercury CLI skill that analyzes spend",
+        "sourceUrl": "https://github.com/MercuryTechnologies/mercury-skills"
       }
     ]
   },
@@ -1738,6 +2848,20 @@
     ]
   },
   {
+    "taskId": "scale_004",
+    "nodeId": "n4",
+    "arenaId": "team-chat",
+    "productId": "discord",
+    "calls": [
+      {
+        "method": "POST /webhooks/{webhook.id}/{webhook.token}",
+        "type": "rest",
+        "description": "Post expense notification messages into a Discord channel via webhook",
+        "sourceUrl": "https://docs.discord.com/developers/resources/webhook"
+      }
+    ]
+  },
+  {
     "taskId": "scale_005",
     "nodeId": "n1",
     "arenaId": "startup-banking",
@@ -1794,6 +2918,34 @@
         "type": "mcp",
         "description": "Query MRR and other revenue metrics via pre-built templates or SQL",
         "sourceUrl": "https://mcp.stripe.com/"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_006",
+    "nodeId": "n5",
+    "arenaId": "team-chat",
+    "productId": "buzz",
+    "calls": [
+      {
+        "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
+        "type": "cli",
+        "description": "Create a new team channel via Buzz CLI",
+        "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
+      }
+    ]
+  },
+  {
+    "taskId": "scale_006",
+    "nodeId": "n6",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page in Notion to document the process",
+        "sourceUrl": "https://developers.notion.com"
       }
     ]
   },
@@ -1890,7 +3042,7 @@
       {
         "method": "buzz channels create --name \"my-channel\" --type stream --visibility open",
         "type": "cli",
-        "description": "Create the incident chat channel",
+        "description": "Create an incident channel via the buzz-cli",
         "sourceUrl": "https://raw.githubusercontent.com/block/buzz/main/crates/buzz-cli/README.md"
       }
     ]
@@ -1906,48 +3058,6 @@
         "type": "rest",
         "description": "Create a new page (post-mortem template) in a workspace",
         "sourceUrl": "https://developers.notion.com"
-      }
-    ]
-  },
-  {
-    "taskId": "scale_010",
-    "nodeId": "n2",
-    "arenaId": "customer-data-platforms",
-    "productId": "hightouch",
-    "calls": [
-      {
-        "method": "POST /v1/sources",
-        "type": "rest",
-        "description": "Configure a CDP event source via Hightouch's REST API for resources like sources",
-        "sourceUrl": "https://hightouch.com/docs/developer-tools/api-guide"
-      }
-    ]
-  },
-  {
-    "taskId": "scale_010",
-    "nodeId": "n2",
-    "arenaId": "customer-data-platforms",
-    "productId": "segment",
-    "calls": [
-      {
-        "method": "POST /sources",
-        "type": "rest",
-        "description": "Create a new event source (CDP data collection point) in a Segment workspace",
-        "sourceUrl": "https://segment.com/docs/api/public-api/"
-      }
-    ]
-  },
-  {
-    "taskId": "scale_010",
-    "nodeId": "n4",
-    "arenaId": "customer-data-platforms",
-    "productId": "jitsu",
-    "calls": [
-      {
-        "method": "ctx.getWarehouse(...)",
-        "type": "sdk",
-        "description": "Query the connected data warehouse from within a Jitsu function",
-        "sourceUrl": "https://jitsu.com/docs/functions/"
       }
     ]
   },
@@ -2014,6 +3124,304 @@
     ]
   },
   {
+    "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "box",
+    "calls": [
+      {
+        "method": "PUT /files/upload_sessions/{upload_session_id}",
+        "type": "rest",
+        "description": "Upload archived corporate record files in chunks for long-term storage",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      },
+      {
+        "method": "POST /metadata_templates/{scope}/{template_key}/instances",
+        "type": "rest",
+        "description": "Attach retention metadata (e.g., record type, retention date) to archived files",
+        "sourceUrl": "https://developer.box.com/guides/metadata/"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({ path: '' })",
+        "type": "sdk",
+        "description": "List files/folders to identify corporate records for archival",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files",
+        "type": "rest",
+        "description": "Upload corporate records as files into Drive for archival storage",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List/search files to compile records for archiving",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Set retention access permissions on archived record folders",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n12",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}",
+        "type": "rest",
+        "description": "Upload/create a driveItem to archive a corporate record",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Create resumable upload session to archive large corporate record files",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root/search(q='{query}')",
+        "type": "rest",
+        "description": "Search archived items to verify retention of corporate records",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-search?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "shutdown_001",
+    "nodeId": "n3",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "GET /v1/companies/{company_uuid}/payrolls",
+        "type": "rest",
+        "description": "Retrieve upcoming/off-cycle payrolls for the company to process final run",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
+      },
+      {
+        "method": "POST /v1/companies/{company_id}/contractor_payment_groups/preview",
+        "type": "rest",
+        "description": "Validate and preview final contractor payments before submission",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/process-contractor-payments.md"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n1",
+    "arenaId": "vibe-coding",
+    "productId": "v0",
+    "calls": [
+      {
+        "method": "v0.chats.create(...)",
+        "type": "sdk",
+        "description": "Creates a new chat that generates a website from a prompt message",
+        "sourceUrl": "https://github.com/vercel/v0-sdk"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n2",
+    "arenaId": "edge-platforms",
+    "productId": "cloudflare",
+    "calls": [
+      {
+        "method": "wrangler deploy",
+        "type": "cli",
+        "description": "Deploy Worker to Cloudflare's global edge network, publishing the site",
+        "sourceUrl": "https://developers.cloudflare.com/workers/wrangler/commands/"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n2",
+    "arenaId": "edge-platforms",
+    "productId": "netlify",
+    "calls": [
+      {
+        "method": "netlify deploy --allow-anonymous",
+        "type": "cli",
+        "description": "Deploy site build to Netlify's edge CDN with SSL",
+        "sourceUrl": "https://netlify.com"
+      }
+    ]
+  },
+  {
+    "taskId": "site_001",
+    "nodeId": "n2",
+    "arenaId": "edge-platforms",
+    "productId": "render",
+    "calls": [
+      {
+        "method": "trigger_deploy",
+        "type": "mcp",
+        "description": "Kick off a new deploy of an existing service via Render MCP server",
+        "sourceUrl": "https://render.com/changelog/trigger-service-deploys-with-the-render-mcp-server.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n1",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /api/v2/list/{list_id}/task",
+        "type": "rest",
+        "description": "Create a task to capture the problem hypothesis and target customer",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n1",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page to document the problem hypothesis and target customer",
+        "sourceUrl": "https://developers.notion.com"
+      },
+      {
+        "method": "create_pages",
+        "type": "mcp",
+        "description": "Create a page via MCP to capture the hypothesis and target customer",
+        "sourceUrl": "https://developers.notion.com/guides/mcp/overview.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n3",
+    "arenaId": "product-analytics",
+    "productId": "amplitude",
+    "calls": [
+      {
+        "method": "POST /2/httpapi",
+        "type": "rest",
+        "description": "Send signup and event data directly from server to Amplitude's HTTP V2 endpoint",
+        "sourceUrl": "https://amplitude.com/docs/apis"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n3",
+    "arenaId": "product-analytics",
+    "productId": "plausible",
+    "calls": [
+      {
+        "method": "POST /api/event",
+        "type": "rest",
+        "description": "Record a custom signup event via the Events API for signup analytics tracking",
+        "sourceUrl": "https://plausible.io/docs/events-api"
+      },
+      {
+        "method": "POST /api/v2/query",
+        "type": "rest",
+        "description": "Query signup event stats to validate signup funnel performance",
+        "sourceUrl": "https://plausible.io/docs/stats-api"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n3",
+    "arenaId": "product-analytics",
+    "productId": "posthog",
+    "calls": [
+      {
+        "method": "npx @posthog/wizard@latest --signup --email you@example.com --region us",
+        "type": "cli",
+        "description": "Agentic wizard signs up for PostHog, provisions a project, and wires up SDK instrumentation in one command",
+        "sourceUrl": "https://posthog.com/docs/ai-engineering/wizard-signup.md"
+      },
+      {
+        "method": "npx -y @posthog/wizard@latest",
+        "type": "cli",
+        "description": "AI wizard scans the codebase and writes signup/event capture instrumentation using PostHog SDKs",
+        "sourceUrl": "https://posthog.com/docs/ai-engineering/ai-wizard.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "amplitude",
+    "calls": [
+      {
+        "method": "GET /2/export",
+        "type": "rest",
+        "description": "Export project event data for offline analysis of signup behavior",
+        "sourceUrl": "https://amplitude.com/docs/apis"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "mixpanel",
+    "calls": [
+      {
+        "method": "GET /api/2.0/export",
+        "type": "rest",
+        "description": "Pull raw signup event data for analysis of drop-off and conversion patterns",
+        "sourceUrl": "https://docs.mixpanel.com/reference/raw-event-export.md"
+      },
+      {
+        "method": "GET /engage",
+        "type": "rest",
+        "description": "Export user profile data to correlate signups with interview cohort segments",
+        "sourceUrl": "https://docs.mixpanel.com/docs/export-methods.md"
+      }
+    ]
+  },
+  {
+    "taskId": "startup_001",
+    "nodeId": "n5",
+    "arenaId": "product-analytics",
+    "productId": "plausible",
+    "calls": [
+      {
+        "method": "GET /api/v1/stats/aggregate",
+        "type": "rest",
+        "description": "Retrieve aggregated signup/visitor stats for analysis",
+        "sourceUrl": "https://plausible.io/docs/stats-api"
+      }
+    ]
+  },
+  {
     "taskId": "startup_002",
     "nodeId": "n2",
     "arenaId": "legal-ops",
@@ -2062,6 +3470,136 @@
     ]
   },
   {
+    "taskId": "sw_001",
+    "nodeId": "n1",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page (e.g., a spec document) in a Notion workspace or database",
+        "sourceUrl": "https://developers.notion.com"
+      },
+      {
+        "method": "PATCH /v1/blocks/{block_id}",
+        "type": "rest",
+        "description": "Update page content blocks to write or revise the spec text",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "clickup",
+    "calls": [
+      {
+        "method": "POST /task",
+        "type": "rest",
+        "description": "Create a ClickUp task to track the feature work",
+        "sourceUrl": "https://developer.clickup.com/docs/tasks.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "linear",
+    "calls": [
+      {
+        "method": "mutation IssueCreate(...)",
+        "type": "graphql",
+        "description": "Creates a new Linear issue to track the feature work",
+        "sourceUrl": "https://linear.app/developers/graphql.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n2",
+    "arenaId": "project-management",
+    "productId": "notion",
+    "calls": [
+      {
+        "method": "POST /v1/pages",
+        "type": "rest",
+        "description": "Create a new page (tracking issue) in a Notion database",
+        "sourceUrl": "https://developers.notion.com"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n3",
+    "arenaId": "ai-coding",
+    "productId": "cursor",
+    "calls": [
+      {
+        "method": "Agent.create(...)",
+        "type": "sdk",
+        "description": "Invokes Cursor's agent (local or cloud runtime) from code to implement the feature per spec",
+        "sourceUrl": "https://cursor.com/docs/sdk/typescript.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n5",
+    "arenaId": "ai-code-review",
+    "productId": "greptile",
+    "calls": [
+      {
+        "method": "greptile review",
+        "type": "cli",
+        "description": "Run a review of the feature branch diff from the terminal",
+        "sourceUrl": "https://www.greptile.com/cli"
+      },
+      {
+        "method": "greptile onboard",
+        "type": "cli",
+        "description": "Set up Greptile org, connect repo, and enable code review from terminal",
+        "sourceUrl": "https://www.greptile.com/docs/code-review/cli-onboarding"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n8",
+    "arenaId": "error-tracking",
+    "productId": "honeybadger",
+    "calls": [
+      {
+        "method": "POST /v1/deploys",
+        "type": "rest",
+        "description": "Notify Honeybadger that a deploy occurred to correlate errors with the new release",
+        "sourceUrl": "https://docs.honeybadger.io/api/reporting-deployments/"
+      },
+      {
+        "method": "honeybadger deploy",
+        "type": "cli",
+        "description": "Record a deployment from CI/CD so post-deploy errors can be tracked and auto-resolved",
+        "sourceUrl": "https://docs.honeybadger.io/lib/ruby/gem-reference/cli/"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_001",
+    "nodeId": "n8",
+    "arenaId": "error-tracking",
+    "productId": "rollbar",
+    "calls": [
+      {
+        "method": "GET /api/1/reports/error/{env}",
+        "type": "rest",
+        "description": "List error/critical items filtered to production environment to verify no new errors after deploy",
+        "sourceUrl": "https://docs.rollbar.com/reference/list-all-items"
+      }
+    ]
+  },
+  {
     "taskId": "sw_002",
     "nodeId": "n4",
     "arenaId": "error-tracking",
@@ -2104,6 +3642,334 @@
     ]
   },
   {
+    "taskId": "sw_010",
+    "nodeId": "n1",
+    "arenaId": "ai-coding",
+    "productId": "aider",
+    "calls": [
+      {
+        "method": "aider /map",
+        "type": "cli",
+        "description": "Print the current repository map to audit code structure",
+        "sourceUrl": "https://aider.chat/docs/usage/commands.html"
+      },
+      {
+        "method": "aider /test <test-command>",
+        "type": "cli",
+        "description": "Run the project's test command and surface failures",
+        "sourceUrl": "https://aider.chat/docs/usage/lint-test.html"
+      },
+      {
+        "method": "aider /run <command>",
+        "type": "cli",
+        "description": "Run a build or other repo command and share output with aider",
+        "sourceUrl": "https://aider.chat/docs/usage/lint-test.html"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n3",
+    "arenaId": "agent-skills",
+    "productId": "anthropic-skills",
+    "calls": [
+      {
+        "method": "plugin marketplace add anthropics/skills",
+        "type": "cli",
+        "description": "Register the skills repository as a plugin marketplace",
+        "sourceUrl": "https://github.com/anthropics/skills"
+      },
+      {
+        "method": "plugin install document-skills@anthropic-agent-skills",
+        "type": "cli",
+        "description": "Install document-skills plugin pack into repo's agent config",
+        "sourceUrl": "https://github.com/anthropics/skills"
+      },
+      {
+        "method": "plugin install example-skills@anthropic-agent-skills",
+        "type": "cli",
+        "description": "Install example-skills plugin pack into repo's agent config",
+        "sourceUrl": "https://github.com/anthropics/skills"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n3",
+    "arenaId": "agent-skills",
+    "productId": "codex-plugins",
+    "calls": [
+      {
+        "method": "skill-installer linear",
+        "type": "cli",
+        "description": "Install a curated skill into the local Codex setup",
+        "sourceUrl": "https://learn.chatgpt.com/docs/build-skills.md"
+      },
+      {
+        "method": "codex plugin marketplace add",
+        "type": "cli",
+        "description": "Add a marketplace source to install plugins from",
+        "sourceUrl": "https://developers.openai.com/plugins/build/plugins.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n3",
+    "arenaId": "agent-skills",
+    "productId": "mattpocock-skills",
+    "calls": [
+      {
+        "method": "claude plugins install mattpocock-skills",
+        "type": "cli",
+        "description": "Install the skills pack as a read-only, always-current bundle via Claude Code's marketplace",
+        "sourceUrl": "https://raw.githubusercontent.com/mattpocock/skills/HEAD/.agents/adr/0002-ship-as-a-claude-code-plugin.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n3",
+    "arenaId": "agent-skills",
+    "productId": "skills-cli",
+    "calls": [
+      {
+        "method": "npx skills add vercel-labs/agent-skills -a claude-code -a opencode",
+        "type": "cli",
+        "description": "Install agent-skills stack into repo for target agents",
+        "sourceUrl": "https://github.com/vercel-labs/skills"
+      },
+      {
+        "method": "skills experimental_install",
+        "type": "cli",
+        "description": "Restore skills from skills-lock.json",
+        "sourceUrl": "https://raw.githubusercontent.com/vercel-labs/skills/HEAD/AGENTS.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n3",
+    "arenaId": "agent-skills",
+    "productId": "superpowers",
+    "calls": [
+      {
+        "method": "devin plugins install obra/superpowers",
+        "type": "cli",
+        "description": "Install the Superpowers skills pack via Devin CLI plugin manager",
+        "sourceUrl": "https://raw.githubusercontent.com/obra/superpowers/HEAD/RELEASE-NOTES.md"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n5",
+    "arenaId": "mcp-infrastructure",
+    "productId": "composio",
+    "calls": [
+      {
+        "method": "composio.sessions.create({ mcp: true })",
+        "type": "sdk",
+        "description": "Creates a Composio session with MCP enabled, exposing its hosted MCP server for agent tool access",
+        "sourceUrl": "https://docs.composio.dev/docs/sessions-via-mcp"
+      },
+      {
+        "method": "COMPOSIO_REMOTE_WORKBENCH",
+        "type": "mcp",
+        "description": "Meta-tool exposed via the shared Composio MCP server for running remote sandboxed operations",
+        "sourceUrl": "https://docs.composio.dev/docs/composio-connect"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n5",
+    "arenaId": "mcp-infrastructure",
+    "productId": "smithery",
+    "calls": [
+      {
+        "method": "GET /servers",
+        "type": "rest",
+        "description": "Search Smithery registry for MCP servers keylessly",
+        "sourceUrl": "https://registry.smithery.ai/servers?pageSize=3"
+      },
+      {
+        "method": "smithery mcp add <url>",
+        "type": "cli",
+        "description": "Add an MCP server connection to the stack",
+        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
+      },
+      {
+        "method": "smithery mcp search [term]",
+        "type": "cli",
+        "description": "Search the Smithery registry for a vendor's MCP server",
+        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
+      }
+    ]
+  },
+  {
+    "taskId": "sw_010",
+    "nodeId": "n6",
+    "arenaId": "ai-coding",
+    "productId": "cursor",
+    "calls": [
+      {
+        "method": "POST /v1/agents",
+        "type": "rest",
+        "description": "Create a cloud agent to implement and ship a fix in the repo, with PR targeting",
+        "sourceUrl": "https://cursor.com/docs/cloud-agent/api/endpoints.md"
+      },
+      {
+        "method": "agent -p \"Your prompt here\" --model gpt-5",
+        "type": "cli",
+        "description": "Run the Cursor CLI agent non-interactively in CI to make and ship a small fix",
+        "sourceUrl": "https://cursor.com/docs/cli/github-actions.md"
+      },
+      {
+        "method": "Agent.create(...)",
+        "type": "sdk",
+        "description": "Programmatically launch the agent from TypeScript to execute an end-to-end fix",
+        "sourceUrl": "https://cursor.com/docs/sdk/typescript.md"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_001",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesUpload({ path, contents })",
+        "type": "sdk",
+        "description": "Upload the confirmation receipt file to Dropbox storage",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_001",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Upload the franchise tax confirmation receipt file to Drive",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_001",
+    "nodeId": "n5",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload confirmation receipt file content to OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "box",
+    "calls": [
+      {
+        "method": "POST /files/upload_sessions",
+        "type": "rest",
+        "description": "Upload a copy of the filed tax return into Box storage for records via chunked upload session",
+        "sourceUrl": "https://developer.box.com/guides/uploads/chunked/"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "dropbox",
+    "calls": [
+      {
+        "method": "dbx.filesListFolder({ path: '' })",
+        "type": "sdk",
+        "description": "Lists files/folders to locate or verify stored copy of filed tax return records",
+        "sourceUrl": "https://github.com/dropbox/dropbox-sdk-js"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "google-drive",
+    "calls": [
+      {
+        "method": "POST /upload/drive/v3/files?uploadType=resumable",
+        "type": "rest",
+        "description": "Upload the filed tax return copy to Drive for recordkeeping",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-uploads"
+      },
+      {
+        "method": "GET /drive/v3/files",
+        "type": "rest",
+        "description": "List/search Drive files to locate or verify the stored tax return copy",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/search-files"
+      },
+      {
+        "method": "POST /drive/v3/files/{fileId}/permissions",
+        "type": "rest",
+        "description": "Set sharing permissions on the stored tax return file for records access",
+        "sourceUrl": "https://developers.google.com/workspace/drive/api/guides/manage-sharing"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_002",
+    "nodeId": "n8",
+    "arenaId": "cloud-storage",
+    "productId": "onedrive",
+    "calls": [
+      {
+        "method": "PUT /drive/items/{item-id}/content",
+        "type": "rest",
+        "description": "Upload the tax return file copy into OneDrive for recordkeeping",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-put-content?view=graph-rest-1.0"
+      },
+      {
+        "method": "POST /drive/items/{item-id}/createUploadSession",
+        "type": "rest",
+        "description": "Resumable upload of larger filed return document copies to OneDrive",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0"
+      },
+      {
+        "method": "GET /drive/root:/path/to/file",
+        "type": "rest",
+        "description": "Retrieve the stored file copy by path for verification in records",
+        "sourceUrl": "https://learn.microsoft.com/en-us/graph/api/resources/driveitem?view=graph-rest-1.0"
+      }
+    ]
+  },
+  {
+    "taskId": "tax_010",
+    "nodeId": "n2",
+    "arenaId": "payroll",
+    "productId": "gusto",
+    "calls": [
+      {
+        "method": "GET /v1/companies/{company_uuid}/payrolls",
+        "type": "rest",
+        "description": "Retrieve company payroll runs to extract wage data for QRE calculation",
+        "sourceUrl": "https://docs.gusto.com/embedded-payroll/docs/complete-a-regular-payroll.md"
+      }
+    ]
+  },
+  {
     "taskId": "tax_011",
     "nodeId": "n2",
     "arenaId": "tax-automation",
@@ -2120,6 +3986,54 @@
         "type": "rest",
         "description": "Calculate sales tax on synced billing transactions",
         "sourceUrl": "https://docs.trykintsugi.com/docs/api-guides/sales-tax-calculations"
+      }
+    ]
+  },
+  {
+    "taskId": "vendor_010",
+    "nodeId": "n1",
+    "arenaId": "mcp-infrastructure",
+    "productId": "smithery",
+    "calls": [
+      {
+        "method": "smithery mcp search [term]",
+        "type": "cli",
+        "description": "Search the Smithery registry for available MCP servers or integrations",
+        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
+      },
+      {
+        "method": "smithery mcp add <url>",
+        "type": "cli",
+        "description": "Add an MCP server connection, choosing the integration path for connecting a vendor",
+        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
+      }
+    ]
+  },
+  {
+    "taskId": "vendor_010",
+    "nodeId": "n3",
+    "arenaId": "mcp-infrastructure",
+    "productId": "composio",
+    "calls": [
+      {
+        "method": "composio.mcp.create(name=\"my-gmail-server\", toolkits=[{\"toolkit\": \"gmail\", \"auth_config\": \"ac_xyz123\"}], allowed_tools=[\"GMAIL_FETCH_EMAILS\", \"GMAIL_SEND_EMAIL\"])",
+        "type": "sdk",
+        "description": "Create a hosted MCP server registered with specified toolkits and tools for the agent runtime",
+        "sourceUrl": "https://docs.composio.dev/docs/single-toolkit-mcp.md"
+      }
+    ]
+  },
+  {
+    "taskId": "vendor_010",
+    "nodeId": "n3",
+    "arenaId": "mcp-infrastructure",
+    "productId": "smithery",
+    "calls": [
+      {
+        "method": "smithery mcp add <url>",
+        "type": "cli",
+        "description": "Register an MCP server connection with the agent runtime",
+        "sourceUrl": "https://github.com/arcadeai-labs/smithery-cli"
       }
     ]
   },
