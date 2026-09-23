@@ -82,58 +82,16 @@ describe('Microterminal live tiers', () => {
     expect(await screen.findByText(/keyless handshake OK — 3 tools live/)).toBeTruthy()
   })
 
-  it('an auth-gated result offers the BYO-key form but no run-call or sandbox buttons', async () => {
+
+
+
+  it('auth-gated results offer NO key form (founder 2026-09-23: never take keys here) — the MCP client config is the route', async () => {
     stubFetch([authGated])
     renderLive()
     runHandshake()
-
-    expect(await screen.findByText(/verified reachable, auth-gated/)).toBeTruthy()
-    expect(screen.queryByRole('button', { name: /run a real call/ })).toBeNull()
-    expect(screen.queryByRole('button', { name: /use our sandbox account/ })).toBeNull()
-    expect(screen.getByRole('button', { name: /have a key\? test it with your own credentials/ })).toBeTruthy()
-  })
-
-  it('the BYO key is sent per-run in the request body, never rendered, never persisted', async () => {
-    const secret = 'sk_test_supersecretvalue123'
-    const { sent } = stubFetch([
-      authGated,
-      { ...keylessOk, auth: 'byo-key' },
-    ])
-    const { container } = renderLive()
-    runHandshake()
-
-    fireEvent.click(await screen.findByRole('button', { name: /have a key\?/ }))
-    // the security promise is stated next to the input
-    expect(screen.getByText(/never logged, never stored/)).toBeTruthy()
-    const input = screen.getByLabelText<HTMLInputElement>(/API key or token for Stripe/)
-    expect(input.type).toBe('password')
-    fireEvent.change(input, { target: { value: secret } })
-    fireEvent.click(screen.getByRole('button', { name: /run with my key/ }))
-
-    await waitFor(() => expect(sent).toHaveLength(2))
-    expect(sent[1]).toEqual({ arena: 'payments', product: 'stripe', token: secret })
-    expect(await screen.findByText(/authenticated handshake OK \(your key\)/)).toBeTruthy()
-    // memory-only: the credential never appears in markup or any storage
-    expect(container.innerHTML).not.toContain(secret)
-    expect(window.localStorage?.length ?? 0).toBe(0)
-  })
-
-  it('after a keyed handshake succeeds, the demo call carries the same key', async () => {
-    const secret = 'sk_live_reused_for_the_call'
-    const { sent } = stubFetch([
-      authGated,
-      { ...keylessOk, auth: 'byo-key' },
-      { ok: true, auth: 'byo-key', reachable: true, handshake: true, call: { tool: 'search_docs', label: 'search the docs', ok: true, resultText: 'ok' } },
-    ])
-    renderLive()
-    runHandshake()
-    fireEvent.click(await screen.findByRole('button', { name: /have a key\?/ }))
-    fireEvent.change(screen.getByLabelText(/API key or token/), { target: { value: secret } })
-    fireEvent.click(screen.getByRole('button', { name: /run with my key/ }))
-
-    fireEvent.click(await screen.findByRole('button', { name: /run a real call/ }))
-    await waitFor(() => expect(sent).toHaveLength(3))
-    expect(sent[2]).toEqual({ arena: 'payments', product: 'stripe', action: 'call', token: secret })
+    expect(await screen.findAllByText(/auth/i)).toBeTruthy()
+    expect(screen.queryByRole('button', { name: /have a key/i })).toBeNull()
+    expect(screen.queryByLabelText(/API key or token/)).toBeNull()
   })
 
   it('shows the sandbox-account option only when the worker advertises a provisioned credential', async () => {
@@ -194,17 +152,4 @@ describe('Microterminal live tiers', () => {
     expect(screen.getByText(/recorded session — replayed, not live/)).toBeTruthy()
   })
 
-  it('a rejected credential is badged as a rejection, not as absence of a server', async () => {
-    stubFetch([
-      authGated,
-      { ...authGated, auth: 'byo-key' },
-    ])
-    renderLive()
-    runHandshake()
-    fireEvent.click(await screen.findByRole('button', { name: /have a key\?/ }))
-    fireEvent.change(screen.getByLabelText(/API key or token/), { target: { value: 'bad-key' } })
-    fireEvent.click(screen.getByRole('button', { name: /run with my key/ }))
-
-    expect(await screen.findByText(/credential rejected — the server is live but did not accept it/)).toBeTruthy()
-  })
 })

@@ -69,8 +69,6 @@ export default function Microterminal({
   const [shown, setShown] = useState(0) // how many chars are visible
   const [liveBusy, setLiveBusy] = useState(false)
   const [liveResult, setLiveResult] = useState<McpProbeResult | null>(null) // last completed probe
-  const [keyDraft, setKeyDraft] = useState('') // BYO key — memory only, never persisted
-  const [showKeyForm, setShowKeyForm] = useState(false)
   const [liveRanIds, setLiveRanIds] = useState<Set<string>>(new Set()) // stories whose terminal currently shows a live re-run
   const startRef = useRef(0)
   const skippedRef = useRef(false)
@@ -400,58 +398,11 @@ export default function Microterminal({
                 ▶ use our sandbox account
               </button>
             )}
-            {authGated && (
-              <button
-                type="button"
-                onClick={() => setShowKeyForm((v) => !v)}
-                className="rounded border border-zinc-700 px-2 py-1 text-[11px] text-zinc-400 transition hover:border-emerald-400 hover:text-emerald-300"
-              >
-                {showKeyForm ? 'hide key form' : 'have a key? test it with your own credentials'}
-              </button>
-            )}
           </div>
 
-          {/* BYO-key form — the credential lives in this tab's memory only. */}
-          {authGated && showKeyForm && (
-            <form
-              className="space-y-1.5"
-              onSubmit={(e) => {
-                e.preventDefault()
-                if (keyDraft.trim()) runProbe({ token: keyDraft.trim() })
-              }}
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <input
-                  type="password"
-                  autoComplete="off"
-                  value={keyDraft}
-                  onChange={(e) => setKeyDraft(e.target.value)}
-                  placeholder="paste an API key or token"
-                  aria-label={`API key or token for ${productName}`}
-                  className="min-w-0 flex-1 rounded border border-zinc-700 bg-zinc-950 px-2 py-1 font-mono text-[11px] text-zinc-200 placeholder:text-zinc-600 focus:border-emerald-400 focus:outline-none"
-                />
-                <button type="submit" disabled={liveBusy || !keyDraft.trim()} className={actionButton}>
-                  ▶ run with my key
-                </button>
-              </div>
-              <p className="text-[11px] text-zinc-500">
-                Your key stays in this tab&rsquo;s memory and goes vendor-ward through our proxy once per run —
-                never logged, never stored, scrubbed from every response (that&rsquo;s{' '}
-                <a
-                  href="https://github.com/ultrametricai/productarena/blob/main/infra/cloudflare-proxy/worker.js"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-emerald-300 underline decoration-emerald-300/40 hover:decoration-emerald-300"
-                >
-                  auditable worker code
-                </a>
-                , not a promise). Prefer a scoped, revocable, or test-mode credential anyway.
-                Note: some vendors&rsquo; MCP servers only accept OAuth sign-in, not API keys — if yours is
-                rejected, the copy-paste client config below is the reliable route.
-              </p>
-            </form>
-          )}
-
+          {/* BYO-key form removed (founder 2026-09-23): "it is dangerous to take their keys
+              right here." The copy-paste MCP client config below is the supported route for
+              authenticated testing — the reader's own client runs the vendor's auth. */}
           {/* Take-it-with-you config: once a probe completes against a live server (auth wall or
               keyless handshake alike), hand them the endpoint as a copy-paste MCP client config —
               their own client runs the vendor's OAuth sign-in, which is exactly the step our
