@@ -2284,16 +2284,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Keycloak is designed exactly for this: developers register their app as a realm/client, and Keycloak issues OAuth2/OIDC tokens (with discovery, introspection, revocation, dynamic client registration, client credentials for machine clients) so third-party clients can authenticate against the developer's own Keycloak-backed app, effectively 'Sign in with my app'. Missing for 10: independent hands-on case study of a developer specifically building a public-facing 'Sign in with X' third-party integration, and clearer docs on scoping/consent screens for external clients.",
+    "rationale": "Keycloak lets a developer register their own application as an OAuth/OIDC client, issue tokens via standard endpoints (authorization, token, introspection, revocation, dynamic client registration), and supports client-credentials/service-account flows so the app itself can act as an OAuth provider issuing tokens to third-party clients. Realms, client registration, well-known config, and token endpoints are all documented with concrete steps. missing for 10: no independent/hands-on corroboration specifically about acting as a third-party-facing provider (vs. securing one's own app), and no explicit walkthrough of onboarding external third-party clients as consumers.",
     "evidenceIds": [
       "keycloak-docs-3",
       "keycloak-docs-4",
-      "keycloak-docs-20",
+      "keycloak-docs-23",
+      "keycloak-docs-38",
       "keycloak-docs-39",
-      "keycloak-docs-52",
-      "keycloak-docs-53",
+      "keycloak-docs-50",
       "kc-supp-client-credentials",
-      "keycloak-docs-23"
+      "keycloak-docs-52",
+      "keycloak-docs-53"
     ]
   },
   {
@@ -2317,7 +2318,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Direct probes show no llms.txt (404), no markdown docs endpoint, and no OpenAPI/agent-oriented docs endpoint; only standard human-facing documentation exists.",
+    "rationale": "Direct probes show no llms.txt (404) and no agent-oriented docs.md (404), and no OpenAPI/agent-discoverable spec found; no evidence of any AI-agent-oriented documentation format.",
     "evidenceIds": [
       "keycloak-probe-1",
       "keycloak-probe-2",
@@ -2330,7 +2331,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Keycloak is an identity and access management server (authentication, SSO, authorization); it has no concept of user data analytics or AI-generated insights/suggestions. This axis is a category error for an IAM product, not a missing feature.",
+    "rationale": "Keycloak is an identity and access management server; there is no evidence of any AI-generated insights, analytics, or suggestions feature, and this capability is outside the product's category (IAM/SSO), not something a buyer would compare it on.",
     "evidenceIds": []
   },
   {
@@ -2339,7 +2340,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Keycloak is an identity and access management server, not an automation/agent platform; setting up autonomous background automations is outside its product category (wrong axis), even though it exposes APIs that other automation tools could call.",
+    "rationale": "Keycloak is an identity and access management server, not an automation/orchestration platform; the story of setting up autonomous background automations is a category error for this product type — its evidence is entirely about auth protocols, admin consoles, federation, and client management, none of which relate to running background automations.",
     "evidenceIds": []
   },
   {
@@ -2354,21 +2355,20 @@
   {
     "productId": "keycloak",
     "storyId": "agentic-headless",
-    "verdict": "disputed",
-    "quality": 4,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Keycloak documents strong headless/CI primitives: running from a container image with `start-dev` (keycloak-docs-2, keycloak-docs-45), an Operator for declarative management (keycloak-docs-43, keycloak-docs-54), the kcadm.sh Admin CLI and REST API for scripted administration (kc-supp-kcadm), realm import/export as JSON (keycloak-docs-10), and health REST endpoints for readiness checks (keycloak-docs-17) — all standard building blocks for CI automation. However, hands-on community reports concretely contradict smooth CI/IaC usage: configuration is stored in the database rather than files, making it hard to manage via yaml/configmaps or test changes before production (keycloak-comm-19), the Admin API is described as inconsistent and hard to keep idempotent for Ansible-driven automation (keycloak-comm-13), and one operator explicitly states Keycloak 'doesn't play well with infrastructure-as-code ideas' and is best treated as a 'pet' not 'cattle' (keycloak-comm-3). Missing for 10: first-party CI/CD pipeline examples or GitHub Actions templates, evidence of clean idempotent automation workflows, and resolution of the documented IaC friction.",
+    "rationale": "Keycloak ships strong headless-automation primitives: it can be started fully via Docker/container images with env-var bootstrap (keycloak-docs-2, keycloak-docs-45), has a scriptable Admin CLI (kcadm.sh) and REST Admin API for realm/user/client management (kc-supp-kcadm, keycloak-docs-6), supports realm import/export as JSON for declarative setup (keycloak-docs-10, keycloak-docs-76), and exposes health endpoints for readiness checks useful in CI pipelines (keycloak-docs-17). However, community reports describe real friction running it headlessly in automated/IaC pipelines: it 'doesn't play well with infrastructure-as-code ideas' (keycloak-comm-3), the Admin API is 'inconsistent' making idempotent automation hard (keycloak-comm-13), and configuration lives in the database rather than files, blocking config-as-code testing before production (keycloak-comm-19). Missing for 10: first-party CI/automation guide or GitHub Actions example, evidence of clean idempotent scripted provisioning, and resolution of the documented IaC friction.",
     "evidenceIds": [
       "keycloak-docs-2",
       "keycloak-docs-45",
-      "keycloak-docs-43",
-      "keycloak-docs-54",
       "kc-supp-kcadm",
       "keycloak-docs-10",
+      "keycloak-docs-76",
       "keycloak-docs-17",
-      "keycloak-comm-19",
+      "keycloak-comm-3",
       "keycloak-comm-13",
-      "keycloak-comm-3"
+      "keycloak-comm-19"
     ]
   },
   {
@@ -2377,7 +2377,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Keycloak is an identity and access management server, not an AI agent or assistant; the story asks about plugging MCP servers into a product so it can use tools, which is an agentic client capability wholly outside Keycloak's category as an IAM/SSO platform.",
+    "rationale": "Keycloak is an identity and access management server (IAM/SSO), not an AI agent or assistant that consumes tools; plugging MCP servers in for tool-use is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -2386,12 +2386,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Keycloak is an identity/access management server; no evidence of an official MCP server for connecting AI agents, and probes for llms.txt/openapi endpoints returned 404. Since Keycloak is not itself an AI agent but a platform/service, this axis applies, and absence of evidence means 'none'.",
-    "evidenceIds": [
-      "keycloak-probe-1",
-      "keycloak-probe-2",
-      "keycloak-probe-3"
-    ]
+    "rationale": "Keycloak is an IAM platform, not an agent, so an official MCP server is a plausible axis (per the rule for SaaS/platform products), but no evidence pack item mentions MCP, agent connectivity, or any AI-agent integration at all — only standard OIDC/SAML/REST APIs are documented.",
+    "evidenceIds": []
   },
   {
     "productId": "keycloak",
@@ -2420,7 +2416,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Keycloak documents an Admin REST API and a full set of OIDC/OAuth2 protocol endpoints (well-known config, token introspection/revocation, dynamic client registration, device grant), plus the kcadm CLI and SCIM endpoints for scripted/agentic driving of the product. Community reports confirm the API is used in real automation (Ansible) though one report notes inconsistency/idempotency friction, a minor caveat rather than a failure.  missing for 10: a discoverable OpenAPI/Swagger spec (probe shows 404s) and stronger independent corroboration of full API completeness.",
+    "rationale": "Keycloak documents a full Admin REST API, OIDC/OAuth2 endpoints (well-known config, token introspection/revocation, dynamic client registration, device grant, client-credentials grant for machine-to-machine access), and a scriptable Admin CLI (kcadm.sh), all of which let any client—including an AI agent—drive the product programmatically without a UI. Community reports (e.g. keycloak-comm-13) note the API can be inconsistent/hard to keep idempotent in practice, and probes show no discoverable OpenAPI/llms.txt machine-readable spec at expected paths. Missing for 10: a published machine-readable OpenAPI/swagger spec or llms.txt for automated discovery, and independent confirmation of API consistency for automated/idempotent use.",
     "evidenceIds": [
       "keycloak-docs-6",
       "keycloak-docs-23",
@@ -2429,9 +2425,10 @@
       "keycloak-docs-52",
       "keycloak-docs-53",
       "kc-supp-kcadm",
-      "kc-supp-scim",
       "kc-supp-client-credentials",
-      "keycloak-comm-13"
+      "keycloak-comm-13",
+      "keycloak-probe-1",
+      "keycloak-probe-3"
     ]
   },
   {
@@ -2454,12 +2451,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers Keycloak's REST APIs, OIDC endpoints, admin CLI (kcadm), and protocol standards, but nothing documents official client SDKs/libraries for developers (let alone AI-native/agentic use) — and probes confirm no machine-readable API spec (openapi.json 404) or llms.txt is exposed. Missing for 10: any mention of official SDKs (Java, Node, Python, etc.), agent/AI-specific integration libraries, or programmatic SDK documentation.",
+    "rationale": "The evidence pack documents Keycloak's REST APIs, OIDC/SAML protocol endpoints, and Admin CLI (kcadm.sh), but contains no mention of official client SDKs or language-specific libraries for building applications or agents against Keycloak. Probes for docs/OpenAPI artifacts also return 404s, further indicating no discoverable SDK or machine-readable API spec.",
     "evidenceIds": [
       "keycloak-docs-6",
       "keycloak-docs-23",
       "kc-supp-kcadm",
-      "keycloak-probe-1",
       "keycloak-probe-2",
       "keycloak-probe-3"
     ]
@@ -2470,7 +2466,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions webhooks or an event-subscription mechanism for external systems; Keycloak's admin/account consoles, REST APIs, and SPI extensibility are documented, but nothing indicates a webhook subscription feature for events like login, user creation, etc. missing for 10: any documentation of webhook config, event listener SPI exposed as webhooks, or third-party corroboration of webhook support.",
+    "rationale": "The evidence pack contains no mention of webhooks or event subscription mechanisms for Keycloak; while Keycloak conceptually could support this via an event listener SPI, no such capability is documented in the provided evidence.",
     "evidenceIds": []
   },
   {
@@ -2479,9 +2475,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a link to 'Documentation for the Administration RESTful API' (keycloak-docs-6) with no mention of an interactive, runnable API explorer; probes for OpenAPI/Swagger specs and machine-readable docs all returned 404s, indicating no interactive API reference is exposed.",
+    "rationale": "Keycloak documents an Admin REST API (keycloak-docs-6, keycloak-docs-37) but there is no evidence of an interactive, runnable API reference (e.g., Swagger/OpenAPI UI with try-it-out); probes explicitly found no openapi.json/swagger.json endpoints and no llms.txt or docs-in-markdown for AI consumption.",
     "evidenceIds": [
       "keycloak-docs-6",
+      "keycloak-docs-37",
       "keycloak-probe-3",
       "keycloak-probe-1",
       "keycloak-probe-2"
@@ -2522,10 +2519,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence documents Keycloak's Admin REST API and OIDC endpoints exist, but nothing describes API versioning schemes or a documented deprecation policy; one community comment even calls the API 'inconsistent' for automation purposes. Missing for 10: any documentation of API version numbers, backward-compatibility guarantees, or a formal deprecation/sunset policy.",
+    "rationale": "Evidence confirms Keycloak exposes an Admin REST API and OIDC/SAML protocol endpoints, but nothing in the pack documents API versioning scheme or a formal deprecation policy; probes for OpenAPI/llms.txt specs return 404s, and community feedback even calls the API 'inconsistent' for idempotent management (keycloak-comm-13). No first-party or independent evidence of a documented versioning/deprecation policy exists.",
     "evidenceIds": [
       "keycloak-docs-6",
-      "keycloak-docs-23",
+      "keycloak-probe-3",
       "keycloak-comm-13"
     ]
   },
@@ -2534,8 +2531,8 @@
     "storyId": "audit-logs-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack contains no mention of audit logging, event listeners, admin event tracking, tamper-evidence, or SIEM export/streaming capabilities—only general docs on protocols, admin console, federation, and community sentiment. Audit-log export to SIEM is a fair expectation for an IAM platform, so this is 'none' rather than 'na', but nothing in the pack substantiates it.",
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no mention of Keycloak's event/audit logging system, event listener SPI, syslog/SIEM export, or any tamper-evident logging mechanism — only a passing reference to brute-force lockout events, which is unrelated to audit trail export. This axis clearly applies to an IAM/SSO product, but no evidence supports the capability.",
     "evidenceIds": []
   },
   {
@@ -2544,7 +2541,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of webhooks, event streams, or an event listener SPI for auth events (sign-ups, sign-ins, user changes); it only covers OIDC/SAML protocols, admin console, REST API, and federation topics. Missing for 10: any documentation of webhook/event-stream subscription mechanism, event listener SPI, or third-party event-forwarding examples.",
+    "rationale": "The evidence pack contains no mention of webhooks, event listener SPIs, or event streaming for auth events (sign-ups, sign-ins, user changes) despite Keycloak being a real identity provider where this axis clearly applies. No docs, community reports, or probes reference this capability at all.",
     "evidenceIds": []
   },
   {
@@ -2553,10 +2550,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Keycloak exposes an Admin REST API and the kcadm CLI for scripting operations across realms, users, roles, and clients, plus realm import/export as JSON, which together enable programmatic/bulk administration. However, there's no documented dedicated bulk-operation endpoint, and community feedback notes the API is inconsistent and hard to use idempotently for automation (keycloak-comm-13), undercutting reliability for large-scale scripted changes. Missing for 10: explicit bulk/batch API documentation, first-party examples of bulk user/client management, and independent confirmation that automation at scale works smoothly.",
+    "rationale": "Keycloak exposes a full Admin REST API and ships the kcadm.sh Admin CLI for scripted management of realms, users, roles, and clients, plus JSON import/export of realms — all of which let an automation/AI agent script operations across many items rather than click through the UI. However, there is no documented dedicated 'bulk operation' endpoint (e.g., batch user creation/deletion in one call), and community experience notes the Admin API is 'inconsistent' and hard to keep idempotent when driving it via automation (Ansible), suggesting friction for large-scale programmatic bulk changes. Missing for 10: explicit bulk/batch API endpoints, first-party bulk-operation tooling or examples, and independent confirmation that large-scale scripted bulk operations work smoothly.",
     "evidenceIds": [
-      "kc-supp-kcadm",
       "keycloak-docs-6",
+      "kc-supp-kcadm",
       "keycloak-docs-10",
       "keycloak-comm-13"
     ]
@@ -2579,7 +2576,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Keycloak is an identity and access management server; scheduling recurring jobs or workflows is not part of its product category, which centers on authentication, authorization, and identity federation.",
+    "rationale": "Keycloak is an identity and access management server; scheduling recurring jobs/workflows is not part of its product category (no job scheduler or workflow engine is offered). This is a wrong-axis question for an IAM product.",
     "evidenceIds": []
   },
   {
@@ -2588,7 +2585,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Keycloak is an identity/access-management server, not an automation-building platform; it has no concept of 'automations' to version, review, or roll back (only realm JSON import/export, which is unrelated to automation workflows). This axis is a category mismatch for an IAM product.",
+    "rationale": "Keycloak is an identity and access management server, not a workflow/automation platform; it has no concept of 'automations' to version, review, or roll back. Realm import/export (JSON) and kcadm scripting exist for admin config management but do not constitute an automation-authoring feature with version history and rollback, so this axis is a category mismatch rather than a gap.",
     "evidenceIds": []
   },
   {
@@ -2597,12 +2594,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Keycloak documents built-in brute-force detection with temporary and permanent account lockout events (kc-supp-brute-force), and CVE-2023-6927 evidence shows security issues (redirect URI validation) are patched, not indicating brute-force protection failure. Standard OIDC/OAuth flows plus WebAuthn/passkey support (kc-supp-passkeys) further harden auth flows against credential-based attacks. Missing for 10: no explicit bot-detection/CAPTCHA feature documentation, no independent third-party testing or benchmark of brute-force protection effectiveness against real attacks.",
+    "rationale": "Keycloak's Server Administration Guide explicitly documents built-in brute-force protection with temporary/permanent account lockout on repeated login failures, addressing credential stuffing/brute-force on auth flows; this is a documented, first-party security feature distinct from generic authentication docs. missing for 10: X, Y — no explicit bot/CAPTCHA detection evidence, and no independent/hands-on validation of the brute-force protection's effectiveness in production.",
     "evidenceIds": [
       "kc-supp-brute-force",
-      "kc-supp-passkeys",
       "keycloak-docs-13",
-      "keycloak-comm-7"
+      "kc-supp-passkeys"
     ]
   },
   {
@@ -2611,25 +2607,26 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Keycloak documents realm import/export as JSON files (keycloak-docs-10), which is the standard mechanism for bulk user migration, and the Admin CLI/REST API (kc-supp-kcadm) can further script user data extraction and loading. However, the evidence pack never explicitly confirms that password hashes are preserved/portable in this export-import flow, nor is there any hands-on or community confirmation of successful password-hash migration to/from Keycloak. Missing for 10: explicit documentation of password hash format/algorithm compatibility during import, worked example of exporting and re-importing credentials, and independent/community verification that this round-trip works without lock-in issues.",
+    "rationale": "Docs confirm realm-level JSON import/export (which includes users) and an Admin CLI/REST API (kcadm) for scripted bulk operations, giving a plausible mechanism for lock-in-free migration, but no evidence explicitly documents importing password hashes (algorithm, iterations) or a dedicated bulk user-import format/tool. missing for 10: explicit password-hash import documentation, dedicated bulk user-migration guide/tool, and independent/hands-on confirmation of successful round-trip migration.",
     "evidenceIds": [
       "keycloak-docs-10",
-      "kc-supp-kcadm"
+      "kc-supp-kcadm",
+      "keycloak-docs-71"
     ]
   },
   {
     "productId": "keycloak",
     "storyId": "deployment-data-control",
     "verdict": "full",
-    "quality": 9,
+    "quality": 8,
     "confidence": "high",
-    "rationale": "Keycloak is explicitly self-hosted (Docker/container image, Operator install) and lets operators run their own production database (e.g., switch to PostgreSQL) and realm data entirely under their control, with no mandatory SaaS dependency; community reports corroborate years of stable self-hosted production use. missing for 10: no explicit first-party statement on data residency/air-gapped deployment guarantees beyond generic self-hosting instructions.",
+    "rationale": "Keycloak is fully self-hostable via Docker/container images, Kubernetes Operator, or bare distribution, with explicit guidance to run it on your own production database (e.g., PostgreSQL) rather than a vendor-managed store, giving security engineers full control over deployment location and data residency. Community reports corroborate long-running, stable self-hosted production deployments for years. Missing for 10: independent third-party audit of data residency/isolation guarantees, and more detail on air-gapped/offline deployment support beyond container/operator docs.",
     "evidenceIds": [
       "keycloak-docs-2",
-      "keycloak-docs-27",
       "keycloak-docs-45",
       "keycloak-docs-54",
       "keycloak-docs-59",
+      "keycloak-docs-75",
       "keycloak-comm-5",
       "keycloak-comm-10",
       "keycloak-comm-14"
@@ -2654,12 +2651,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows only generic OIDC/SAML protocol support and endpoints (well-known config, introspection, revocation) but no mention of a first-party Next.js SDK, edge middleware, or session verification at the edge; Keycloak's client adapters for specific frameworks are not referenced anywhere in the pack.",
+    "rationale": "Keycloak is an IdP/auth server offering standard OIDC endpoints and generic client registration, but the evidence pack shows no first-party Next.js/edge middleware SDKs or framework-specific session-verification middleware; only generic OIDC well-known endpoints and admin console client setup are documented. missing for 10: first-party Next.js SDK/middleware, edge session verification support, any framework-specific integration guides.",
     "evidenceIds": [
       "keycloak-docs-4",
       "keycloak-docs-23",
       "keycloak-docs-38",
-      "keycloak-docs-40"
+      "keycloak-docs-74"
     ]
   },
   {
@@ -2683,13 +2680,17 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Keycloak's Authorization Services documentation explicitly describes resource-level, policy-based fine-grained authorization beyond RBAC, using resources, scopes, and policies evaluated via UMA permission tickets — going well past simple role checks (kc-supp-authz-services, keycloak-docs-49, keycloak-docs-24, keycloak-docs-37). This is well-documented first-party capability with a dedicated guide, and community evidence corroborates general production stability though doesn't specifically validate this subsystem in depth. Missing for 10: independent/hands-on community validation specifically of the fine-grained authorization services feature (relationship-based policies, custom policy scripts) rather than general product reviews.",
+    "rationale": "Keycloak explicitly documents dedicated Authorization Services with resource-level, policy-based authorization (resources, scopes, policies, permission tickets via UMA) that go beyond simple RBAC, plus role-based, attribute-based, and other policy types, all manageable from admin console/API. Missing for 10: independent hands-on corroboration of the fine-grained authorization services specifically (community evidence discusses other Keycloak aspects but not this feature).",
     "evidenceIds": [
-      "kc-supp-authz-services",
-      "keycloak-docs-49",
+      "keycloak-docs-12",
       "keycloak-docs-24",
-      "keycloak-docs-37",
-      "keycloak-docs-12"
+      "keycloak-docs-49",
+      "keycloak-docs-61",
+      "kc-supp-authz-services",
+      "keycloak-docs-70",
+      "keycloak-docs-72",
+      "keycloak-docs-73",
+      "keycloak-docs-37"
     ]
   },
   {
@@ -2698,14 +2699,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Keycloak's user federation SPI lets teams implement a custom provider for existing user stores (e.g., a legacy password database), which is the standard technique used to migrate users without forcing resets, and identity brokering/account linking also support gradual migration. However, there is no vendor-maintained migration guide or tooling specifically targeting competing auth providers (Auth0, Okta, Firebase, etc.) in the evidence pack. Missing for 10: explicit vendor migration guides/tooling for specific competitor providers, documented password-hash-preserving import workflow, and case studies of password-reset-free migrations.",
+    "rationale": "Keycloak's user federation (custom providers for existing user stores) and identity brokering/social login allow users to keep authenticating against an external system while migrating, which is the technical mechanism needed to avoid forced password resets, but there is no vendor-maintained guide or tooling specifically targeted at migrating off competing auth providers (e.g., Auth0, Okta) documented in the evidence. missing for 10: dedicated migration guide/tooling for competitor auth providers, documented password-hash import support, case studies of password-reset-free migrations.",
     "evidenceIds": [
-      "keycloak-docs-47",
-      "keycloak-docs-8",
       "keycloak-docs-9",
+      "keycloak-docs-46",
+      "keycloak-docs-47",
       "kc-supp-federation",
       "kc-supp-social-brokering",
-      "keycloak-docs-10"
+      "keycloak-docs-25"
     ]
   },
   {
@@ -2714,12 +2715,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents OAuth2/OIDC flows, device authorization grant, client credentials, and fine-grained authorization services, but nowhere mentions CIBA (Client-Initiated Backchannel Authentication) or any mechanism for out-of-band human approval tied to a specific agent-initiated transaction. Device grant is a different flow (device-initiated, browser-based user authorization) rather than a backend-initiated async approval-of-transaction pattern.",
-    "evidenceIds": [
-      "kc-supp-device-grant",
-      "kc-supp-client-credentials",
-      "kc-supp-authz-services"
-    ]
+    "rationale": "The evidence pack documents OIDC/OAuth flows, device authorization grant, client credentials, and fine-grained authorization services, but contains no mention of CIBA (Client Initiated Backchannel Authentication) or any asynchronous out-of-band human-approval flow for agent-initiated transactions. Device authorization grant is a different flow (for input-constrained devices polling for a code) and is not evidence of CIBA-style push approval.",
+    "evidenceIds": []
   },
   {
     "productId": "keycloak",
@@ -2791,13 +2788,13 @@
     "productId": "keycloak",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Keycloak documents realm import/export as JSON, giving admins a way to extract configuration and user data in an open format, and being self-hosted/open-source avoids vendor lock-in. However, there is no documented end-user-facing 'export my data' feature for individual account holders (only admin console/CLI export), and no mention of exporting in other open standards (e.g., CSV, SCIM bulk export) beyond JSON realm dumps. Missing for 10: end-user self-service data export UI, broader open-format support, and independent confirmation of export completeness/fidelity.",
+    "rationale": "Keycloak documents realm-level export/import in JSON (an open format) and export/import of authorization configuration, giving admins a way to extract configuration and user data in a non-proprietary format, but there is no evidence of an end-user self-service 'export my data and leave' feature akin to GDPR data portability in the Account Console. missing for 10: end-user-initiated personal data export, documentation of full data completeness/interoperability guarantees, independent confirmation that exported JSON captures all user data.",
     "evidenceIds": [
       "keycloak-docs-10",
-      "keycloak-docs-11",
-      "kc-supp-kcadm"
+      "keycloak-docs-71",
+      "keycloak-docs-51"
     ]
   },
   {
@@ -2806,7 +2803,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains extensive product documentation and community commentary but no citation identifies an open-source license (e.g., Apache 2.0), a public source repository, or any statement about being able to read Keycloak's source code. Missing for 10: explicit license statement, link to source repository (e.g., GitHub), any confirmation of open licensing terms.",
+    "rationale": "The evidence pack contains no mention of Keycloak's source code repository, license terms, or any statement enabling users to read its source code — all citations are docs/getting-started/community sentiment unrelated to source licensing. Absence of evidence for this applicable axis yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -2815,17 +2812,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Keycloak ships docker images and a documented self-host quickstart (docker run with KC_BOOTSTRAP_ADMIN_*), operator install, production DB setup, and reverse-proxy/clustering guides, and multiple community users confirm years of stable self-hosted production use. Missing for 10: independent benchmark/security audit beyond anecdotal community reports and no first-party statement addressing high resource usage some users report.",
+    "rationale": "Keycloak is fully open source and self-hostable, with first-party Docker run instructions, container/Operator/Kubernetes install guides, and long-running community reports of production self-hosting for years. Minor caveat: some operational friction reported (resource usage, clustering complexity) but these are operational trade-offs, not evidence self-hosting doesn't work — missing for 10: independent benchmark of resource footprint or scaling at large scale beyond anecdotal reports.",
     "evidenceIds": [
       "keycloak-docs-2",
       "keycloak-docs-27",
       "keycloak-docs-45",
       "keycloak-docs-54",
+      "keycloak-docs-75",
       "keycloak-docs-59",
-      "keycloak-docs-18",
       "keycloak-comm-5",
       "keycloak-comm-10",
-      "keycloak-comm-11",
       "keycloak-comm-14"
     ]
   },
@@ -2862,7 +2858,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Keycloak's admin docs explicitly document WebAuthn and a dedicated Passkeys section (conditional UI/autofill, modal UI, passkey mediation, loginless WebAuthn), showing first-class passwordless/passkey support. However, there is no evidence of built-in magic-link or email OTP sign-in as first-class methods—these are not mentioned anywhere in the pack. Missing for 10: documentation of magic-link authentication, native email OTP flow, and independent/hands-on confirmation of passkey UX.",
+    "rationale": "Keycloak's admin guide explicitly documents WebAuthn/passkey support as first-class sign-in options, including passwordless 'LoginLess WebAuthn', Conditional UI/autofill passkeys, Modal UI, and Passkey Mediation, giving strong first-party evidence for passkey/WebAuthn sign-in. However, there is no evidence in the pack of magic-link or email-OTP sign-in flows being offered as alternatives — only TOTP-based two-factor mentions and account console 2FA setup appear. Missing for 10: documented magic-link authentication flow, documented email-OTP as a sign-in method, and independent/hands-on confirmation that passkey flows work in practice.",
     "evidenceIds": [
       "kc-supp-passkeys",
       "keycloak-docs-13",
@@ -2873,35 +2869,34 @@
     "productId": "keycloak",
     "storyId": "prebuilt-auth-ui",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Keycloak ships hosted, production-ready login/registration/forgot-password/account-management pages out of the box (keycloak-docs-3, -27, -28, -32, -33, -13, -51) and supports full UI customization via its theming system (keycloak-docs-7, -26, -41) and self-registration/profile/2FA management through the Account Console (keycloak-docs-13, -48, -51). This directly covers sign-in, sign-up, and profile management via hosted pages/customizable themes.\n\nMissing for 10: independent/hands-on evidence validating ease of theme customization in practice, and no mention of embeddable prebuilt UI component libraries (e.g., React/Vue widgets) beyond server-rendered hosted pages — the story leans on hosted pages more than 'components' but that gap in evidence keeps quality below top marks.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Keycloak ships hosted login/registration/account-management pages out of the box (getting-started flow, self-registration, forgot password, account console for profile/2FA management) plus themeable customization for look-and-feel, covering sign-in, sign-up, and profile management end to end. missing for 10: independent/hands-on evidence of theme customization workflow in practice, and no evidence of embeddable prebuilt UI components (e.g., React/JS widgets) beyond hosted pages and theme templates.",
     "evidenceIds": [
-      "keycloak-docs-3",
       "keycloak-docs-7",
       "keycloak-docs-13",
-      "keycloak-docs-26",
-      "keycloak-docs-27",
-      "keycloak-docs-28",
       "keycloak-docs-32",
       "keycloak-docs-33",
+      "keycloak-docs-51",
       "keycloak-docs-41",
-      "keycloak-docs-48",
-      "keycloak-docs-50",
-      "keycloak-docs-51"
+      "keycloak-docs-58",
+      "keycloak-docs-67",
+      "kc-supp-passkeys"
     ]
   },
   {
     "productId": "keycloak",
     "storyId": "privacy-data-residency",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Keycloak is self-hosted software that can be run via Docker/container images against a database the operator chooses (e.g., PostgreSQL), which inherently lets an operator pick the physical region/infrastructure for data storage. However, there is no explicit documentation addressing data residency, region selection, or compliance controls as a named feature. Missing for 10: explicit residency/region documentation, multi-region deployment guidance, data localization/compliance statements.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Keycloak is self-hosted, open-source software that can be deployed to any datacenter, cloud region, or on-prem environment (docker run, Kubernetes/OpenShift Operator, PostgreSQL backend), which inherently gives operators full control over where identity data physically resides. However, there is no explicit documentation or feature addressing data residency/region selection as a first-class concept (e.g., multi-region replication, region-pinning, compliance certifications for specific jurisdictions). Missing for 10: explicit residency/region documentation, data locality guarantees, compliance mapping (e.g., GDPR region controls), and any first-party guidance on residency configuration beyond generic self-hosting.",
     "evidenceIds": [
       "keycloak-docs-2",
       "keycloak-docs-45",
-      "keycloak-docs-59"
+      "keycloak-docs-54",
+      "keycloak-docs-59",
+      "keycloak-docs-75"
     ]
   },
   {
@@ -2910,7 +2905,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Keycloak is an identity and access management server; it has no relationship to AI model training data usage or opting out of AI training, so this axis is a category error for this product type.",
+    "rationale": "Keycloak is an identity/access-management server, not an AI model or data-consuming AI product; controlling whether personal data trains AI models is outside its product category (wrong axis).",
     "evidenceIds": []
   },
   {
@@ -2933,7 +2928,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry collection or an opt-out mechanism for Keycloak; the only related item (keycloak-docs-44) describes self-hosted operational metrics for monitoring, not vendor usage tracking. Since telemetry opt-out is a plausible question for any self-hosted server software, and no evidence supports or denies it, this is 'none' rather than 'na'.",
+    "rationale": "No evidence in the pack describes any telemetry or usage-tracking mechanism in Keycloak, nor any opt-out configuration; the metrics endpoint mentioned (keycloak-docs-44) is for operators monitoring their own self-hosted instance, not vendor telemetry collection. Since Keycloak is self-hosted software where telemetry/opt-out is a plausible axis to ask about, absence of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -2942,15 +2937,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Keycloak's docs explicitly describe role-based authorization plus fine-grained/UMA-based authorization services managed centrally via the admin console and REST API (keycloak-docs-24, keycloak-docs-49, kc-supp-authz-services), and its OIDC layer issues signed access tokens that carry these claims, validated via introspection endpoints (keycloak-docs-38, keycloak-docs-40, keycloak-docs-52). This matches standard Keycloak behavior where realm/client roles are embedded in JWT access tokens for downstream authorization checks. Missing for 10: an explicit first-party quote showing role claims embedded in the JWT payload, and independent/hands-on confirmation of token-based enforcement in production.",
+    "rationale": "Keycloak documents role-based access control, fine-grained authorization policies managed centrally, and roles/claims surfaced via OIDC tokens (access tokens, introspection endpoint) for authorization checks, corroborated by community reports of long-term production use for SSO/authorization across services. missing for 10: explicit first-party documentation of role claims appearing inside JWT token payloads, and independent hands-on verification of token-based role enforcement in a real integration.",
     "evidenceIds": [
-      "keycloak-docs-24",
       "keycloak-docs-49",
-      "keycloak-docs-38",
+      "keycloak-docs-61",
+      "keycloak-docs-70",
+      "kc-supp-authz-services",
       "keycloak-docs-40",
       "keycloak-docs-52",
-      "kc-supp-authz-services",
-      "keycloak-docs-4"
+      "keycloak-docs-23",
+      "keycloak-comm-16",
+      "keycloak-comm-10"
     ]
   },
   {
@@ -2959,9 +2956,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Keycloak's Server Administration Guide documents built-in SCIM support for managing users and groups per realm, including enabling SCIM, obtaining the SCIM API base URL, and setting up a service account client — directly matching the story's sync mechanism. However, evidence is first-party docs only with no independent/hands-on corroboration that deprovisioning in the source IdP actually propagates through SCIM to revoke app access, and no detail on directionality (Keycloak as SCIM client vs server) or deprovisioning semantics. Missing for 10: independent corroboration of real-world SCIM deprovisioning flow, clarity on SCIM client vs server mode, and details on how revocation cascades to relying-party access.",
+    "rationale": "Keycloak documents built-in SCIM endpoints per realm for managing users/groups (enabling SCIM, service account client setup) which supports directory-driven user/group sync ([kc-supp-scim]), and it also supports LDAP/AD federation and IdP brokering for directory integration ([keycloak-docs-8], [kc-supp-federation]). However, the evidence never explicitly describes an end-to-end deprovisioning-on-delete flow or shows independent/hands-on confirmation that SCIM-driven removal actually revokes app sessions/access. Missing for 10: explicit deprovisioning behavior documentation, independent/hands-on validation of SCIM sync working with a real customer directory, and details on real-time propagation of revocation to connected apps.",
     "evidenceIds": [
-      "kc-supp-scim"
+      "kc-supp-scim",
+      "kc-supp-federation",
+      "keycloak-docs-8",
+      "keycloak-docs-9"
     ]
   },
   {
@@ -2970,13 +2970,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Keycloak supports OAuth2 client-credentials grant for machine-to-machine service accounts (distinct non-human identities), fine-grained authorization services to scope permissions per client, and a token revocation endpoint that can immediately revoke access/refresh tokens — the core building blocks needed to give each agent its own least-privilege, revocable identity. However, this requires assembling generic OAuth2 primitives (service accounts + authz policies + revocation endpoint) rather than a purpose-built 'agent identity' feature, and there is no evidence of agent-specific provisioning at scale or hands-on confirmation that revocation is truly instant in practice. Missing for 10: dedicated agent/non-human-identity lifecycle tooling, evidence of bulk/scaled machine-identity issuance, and independent confirmation of revocation latency/behavior.",
+    "rationale": "Keycloak supports OAuth2 client_credentials grant for service accounts (machine-to-machine identity distinct from user credentials), fine-grained authorization policies to scope permissions narrowly, and a token revocation endpoint for instant revocation, which together map well onto giving an agent its own least-privilege identity. However, none of the evidence specifically frames this for AI agents, and there's no documentation on agent-specific workflows, dynamic per-agent provisioning at scale, or short-lived credential rotation tailored to autonomous agents. missing for 10: agent-specific identity provisioning docs, evidence of scoped/ephemeral credential issuance workflows for machine identities, independent validation that revocation is truly instant in production, and any AI-agent-specific guidance or case studies.",
     "evidenceIds": [
       "kc-supp-client-credentials",
       "kc-supp-authz-services",
       "keycloak-docs-53",
       "keycloak-docs-24",
-      "keycloak-docs-20"
+      "keycloak-docs-39"
     ]
   },
   {
@@ -3037,15 +3037,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Keycloak provides the underlying OAuth2/OIDC building blocks that such a flow would need — identity brokering to link user accounts with third-party IdPs (keycloak-docs-25, keycloak-docs-46, kc-supp-social-brokering), client-credentials/service-account flows for machine access (kc-supp-client-credentials), a device grant suited to limited-input clients (kc-supp-device-grant), and token introspection/revocation for short-lived token lifecycle management (keycloak-docs-52, keycloak-docs-53). However, none of the evidence documents an explicit 'token vault' or RFC 8693 token-exchange feature for retrieving/exchanging stored third-party IdP tokens on behalf of a user for downstream API calls, nor any agent-specific consent UX. Missing for 10: explicit token exchange/RFC8693 support docs, documented retrieval of brokered IdP access tokens for calling third-party APIs, and agent/tool-specific delegated-consent flow documentation.",
+    "rationale": "Keycloak provides core OAuth2/OIDC primitives that could underpin an agent token-vault pattern—identity brokering to link/store external IdP accounts, client-credentials and device-authorization grants for delegated/service access, and token introspection/revocation for short-lived token management—but no evidence describes an actual token-exchange (RFC 8693) flow, explicit third-party API token vault, or user-consent UX built for AI agent tool calls. missing for 10: explicit token-exchange/on-behalf-of delegation flow, documented token vault for third-party API credentials, agent-specific consent UI or scoping, independent confirmation of this pattern in production use.",
     "evidenceIds": [
-      "keycloak-docs-25",
-      "keycloak-docs-46",
       "kc-supp-social-brokering",
       "kc-supp-client-credentials",
       "kc-supp-device-grant",
       "keycloak-docs-52",
-      "keycloak-docs-53"
+      "keycloak-docs-53",
+      "kc-supp-authz-services"
     ]
   },
   {
