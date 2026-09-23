@@ -5,12 +5,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box hosts a live llms.txt file confirmed by direct probe (HTTP 200) plus documentation referencing it (box-docs-28), and this sits alongside a documented MCP server and agent-oriented guides, showing agents can be pointed at agent-native docs/endpoints. missing for 10: independent third-party confirmation that agents successfully consume the llms.txt content in practice, and no evidence of a machine-readable OpenAPI spec to complement it.",
+    "rationale": "Box hosts a live llms.txt at developer.box.com/llms.txt (confirmed by probe, HTTP 200) and separate agent-oriented docs like agent-configurator.md, plus documented MCP server and CLI access for agents to consume Box content. missing for 10: independent/third-party corroboration that agents actually consume this llms.txt successfully in practice, and no evidence of llms-full.txt or broader agent-doc index beyond the single file.",
     "evidenceIds": [
       "box-probe-1",
       "box-docs-28",
-      "box-docs-27",
-      "box-probe-3"
+      "box-docs-31",
+      "box-docs-32",
+      "box-docs-42",
+      "box-docs-27"
     ]
   },
   {
@@ -18,15 +20,15 @@
     "storyId": "agentic-ai-insights",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Box AI API/Box AI in the product provides Q&A, extraction, summarization, and metadata generation directly on content stored in Box (box-docs-9, box-docs-12, box-docs-13, box-docs-26), with enterprise permissions preserved and configurable underlying models (box-docs-16, box-docs-18). This directly delivers AI-generated insights/suggestions from user data within the product, backed by first-party docs though lacking independent hands-on validation. Missing for 10: independent/third-party corroboration of Box AI insight quality and no community evidence testing accuracy of the AI features.",
+    "confidence": "medium",
+    "rationale": "Box AI API and Hubs offer built-in AI-generated insights: asking questions, extracting metadata, summarizing files, and querying content with enterprise permissions intact (box-docs-9, box-docs-12, box-docs-13, box-docs-26, box-docs-33). This is first-party documented and directly embedded in the product rather than requiring external tooling. Missing for 10: independent/hands-on third-party validation of the AI insight quality and no community corroboration of these AI features specifically.",
     "evidenceIds": [
       "box-docs-9",
       "box-docs-12",
       "box-docs-13",
       "box-docs-26",
-      "box-docs-16",
-      "box-docs-18"
+      "box-docs-33",
+      "box-docs-16"
     ]
   },
   {
@@ -35,30 +37,35 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Box provides building blocks for background automation—webhooks and event feeds that fire on content changes (box-docs-7, box-docs-19, box-docs-22), an AI Extract feature that automatically pulls metadata when files land in a folder (box-docs-12), and an MCP server letting AI agents act on Box content (box-docs-11, box-docs-29). However, these require developers to wire together webhooks/events with custom logic; there's no documented no-code 'automation builder' or persistent autonomous agent runtime that a non-developer AI-native user could simply configure. Missing for 10: a first-class autonomous automation/workflow product (e.g., Relay-style rules engine) documented with agent-triggered actions, and independent evidence of it running unattended in production.",
+    "rationale": "Box provides building blocks (webhooks, event feeds, Box AI, MCP server, agent configurator) that could be composed into autonomous background automations, but there is no evidence of a native, first-party 'automation/workflow' engine that runs autonomously on triggers without external glue code (e.g. no Box Relay or scheduled-workflow docs in this pack). missing for 10: dedicated autonomous workflow/automation product (e.g. Box Relay) documentation, evidence of scheduled/triggered agent runs without external orchestration, and independent confirmation that such automations work reliably in production.",
     "evidenceIds": [
       "box-docs-7",
+      "box-docs-8",
       "box-docs-19",
-      "box-docs-12",
+      "box-docs-9",
       "box-docs-11",
-      "box-docs-29",
-      "box-docs-22"
+      "box-docs-27",
+      "box-docs-42",
+      "box-probe-3"
     ]
   },
   {
     "productId": "box",
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Box AI is a built-in assistant embedded in the product for asking questions, extracting metadata, summarizing, generating, and querying content with permissions intact (box-docs-9, box-docs-12, box-docs-13, box-docs-26, box-docs-30), directly matching the story of delegating tasks to an in-product AI assistant. Missing for 10: independent/hands-on user reports validating Box AI's assistant behavior and more detail on task delegation beyond summarize/extract/query use cases.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Box AI is a built-in assistant that lets users ask questions, extract metadata, summarize, and generate content directly within Box, with enterprise permissions intact, and configurable AI models via Box AI API — this is a first-party, in-product assistant rather than a third-party bolt-on. missing for 10: independent/hands-on user reports validating real-world quality and reliability of the built-in assistant beyond vendor docs.",
     "evidenceIds": [
       "box-docs-9",
       "box-docs-12",
       "box-docs-13",
+      "box-docs-15",
+      "box-docs-16",
+      "box-docs-18",
       "box-docs-26",
-      "box-docs-30",
-      "box-docs-15"
+      "box-docs-33",
+      "box-docs-42"
     ]
   },
   {
@@ -67,12 +74,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box's REST API (box-docs-1, box-docs-17) is fully token/OAuth-based and scriptable via curl, and a CLI is mentioned (box-docs-27), both of which support headless/automated use in CI pipelines. However, there is no explicit documentation of CI/CD integration patterns, service-account/machine-to-machine auth flows, or example pipeline configs. Missing for 10: dedicated CI/headless automation guide, service-account auth documentation, and independent corroboration of running Box API calls in automated pipelines.",
+    "rationale": "Box exposes a full REST API with OAuth token auth, curl-able endpoints, and SDKs, which supports headless/CI automation of file operations, metadata, webhooks, and events. However, evidence is mostly generic API docs rather than CI-specific guidance (no GitHub Actions examples, no documented service-account/CI auth flow beyond developer tokens, and one SDK repo note about deprecated version support raises maintenance concerns). missing for 10: CI-specific tutorials/examples, dedicated service-account or CI auth pattern, independent hands-on CI automation reports.",
     "evidenceIds": [
       "box-docs-1",
       "box-docs-17",
-      "box-docs-2",
-      "box-docs-27"
+      "box-docs-31",
+      "box-gh-1"
     ]
   },
   {
@@ -81,12 +88,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All MCP-related evidence describes Box exposing its own hosted MCP server (mcp.box.com) so external AI agents can call Box's tools — this is Box acting as an MCP server/provider, not Box acting as a client that plugs in and uses third-party MCP servers' tools. No evidence shows Box's AI agent or platform consuming external MCP servers as tool sources.",
+    "rationale": "All MCP-related evidence describes Box operating as a hosted MCP server (mcp.box.com) that external AI agents connect to in order to use Box's own tools — the reverse of this story, which asks whether Box itself can plug in external MCP servers to use their tools. No evidence shows Box's AI agents or platform acting as an MCP client consuming third-party MCP servers.",
     "evidenceIds": [
       "box-docs-11",
       "box-docs-23",
       "box-docs-27",
       "box-docs-29",
+      "box-docs-41",
       "box-probe-3"
     ]
   },
@@ -96,12 +104,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents an official hosted MCP server at https://mcp.box.com that lets AI agents search and use Box files over OAuth, corroborated across multiple docs and a dedicated probe confirming the guide page exists. Missing for 10: independent/hands-on third-party validation of the MCP server working in practice beyond vendor docs.",
+    "rationale": "Box documents a hosted official MCP server at https://mcp.box.com that lets AI agents search and use Box files over OAuth, corroborated by a dedicated docs page and a probe confirming the remote MCP server documentation exists. Missing for 10: independent/hands-on third-party verification of the MCP server's real-world reliability and broader community corroboration beyond vendor docs.",
     "evidenceIds": [
       "box-docs-11",
       "box-docs-23",
       "box-docs-27",
       "box-docs-29",
+      "box-docs-41",
       "box-probe-3"
     ]
   },
@@ -111,14 +120,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box AI API lets users ask questions, extract metadata, and summarize/query files in natural language (box-docs-9, box-docs-26), and the hosted Box MCP server lets AI agents/apps search and act on Box files via natural-language-driven agent tooling (box-docs-11, box-docs-23, box-docs-27, box-probe-3). This covers content Q&A and agent-mediated actions but not a native natural-language command interface for the full range of Box operations (uploads, sharing, permissions, workflow) and lacks independent hands-on confirmation. Missing for 10: evidence of broad natural-language control over all core Box actions (not just search/summarize), and independent/community validation of NL command reliability.",
+    "rationale": "Box AI API lets users ask questions, extract metadata, and summarize files in natural language (box-docs-9, box-docs-33), and Box Hubs let users 'get answers with Box AI' (box-docs-13), showing some natural-language interaction with content. However, evidence does not show broader natural-language command operation of the product itself (e.g., uploading, sharing, organizing, or managing collaborations via NL) — those remain API/SDK driven. Missing for 10: evidence of natural-language commands controlling core Box actions (uploads, sharing, permissions) rather than just Q&A/summarization, and independent hands-on confirmation of this NL interface working well.",
     "evidenceIds": [
       "box-docs-9",
-      "box-docs-26",
-      "box-docs-11",
-      "box-docs-23",
-      "box-docs-27",
-      "box-probe-3"
+      "box-docs-33",
+      "box-docs-13",
+      "box-docs-26"
     ]
   },
   {
@@ -138,16 +145,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Box provides an extensively documented public REST API (base URL, OAuth2 auth, endpoint examples via curl) covering files, uploads, search, metadata, webhooks, events, collaborations, and AI operations, plus a developer portal with guides and changelog, and even a probed llms.txt for AI-native discovery. Missing for 10: no discoverable machine-readable OpenAPI/swagger spec (404s on standard paths) and no independent third-party corroboration of API robustness beyond vendor docs.",
+    "rationale": "Box has a comprehensive, well-documented public REST API (base URL, OAuth, endpoints for uploads, search, metadata, webhooks, events, collaborations, shared links) with reference docs, developer tokens, and a working llms.txt discovery file, plus SDKs. This clearly enables an AI-native user to drive Box programmatically. Missing for 10: a discoverable OpenAPI/Swagger spec (probe found all candidate paths 404) and stronger independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "box-docs-1",
-      "box-docs-17",
       "box-docs-2",
       "box-docs-5",
       "box-docs-6",
       "box-docs-7",
       "box-docs-8",
-      "box-docs-9",
+      "box-docs-17",
       "box-probe-1",
       "box-probe-2"
     ]
@@ -158,14 +164,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Box's platform is built on OAuth 2.0 access tokens and role-based collaborations that define per-resource permissions, and the MCP server operates 'over OAuth' without exposing raw payloads, which together imply some capacity for restricting an agent's access. However, there is no explicit documentation of scoped/least-privilege API credentials (e.g., token scopes, downscoped tokens, or agent-specific permission tiers) — the evidence only shows generic OAuth tokens and collaboration roles, not a dedicated mechanism for issuing narrowly-scoped credentials to an AI agent. Missing for 10: explicit scope/permission parameters on token issuance, documented least-privilege token exchange, and independent confirmation that agents can be restricted to minimal necessary access.",
+    "rationale": "Box's API is built on OAuth 2.0 tokens (box-docs-1, box-docs-17) and the hosted MCP server explicitly gates agent access to files via OAuth rather than raw credentials (box-docs-11, box-docs-23, box-docs-29), and collaborations/roles let admins define per-user/group access levels (box-docs-4, box-docs-21, box-docs-37) which could underlie least-privilege agent access. However, there is no explicit documentation in this pack of a dedicated 'scoped/downscoped token' or service-account API purpose-built for issuing least-privilege credentials to an individual agent. Missing for 10: explicit token-downscoping/service-account API docs, granular scope-selection UI for agent credentials, and independent confirmation that agent tokens can be scoped narrower than full user OAuth grants.",
     "evidenceIds": [
       "box-docs-1",
-      "box-docs-4",
-      "box-docs-21",
       "box-docs-11",
       "box-docs-23",
-      "box-docs-27"
+      "box-docs-29",
+      "box-docs-4",
+      "box-docs-21",
+      "box-docs-37",
+      "box-docs-17"
     ]
   },
   {
@@ -174,12 +182,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box's developer docs reference API guides, reference endpoints, and an llms.txt mentioning SDKs for building against Box, and it ships an official MCP server for agentic access, but there is no direct evidence pack citation of named official SDKs (e.g., Python/Node/Java SDK repos) or SDK-specific docs/examples beyond the generic mention in llms.txt. missing for 10: explicit SDK documentation/links per language, independent corroboration of SDK quality/maintenance, code samples using an official SDK.",
+    "rationale": "Box's developer docs explicitly reference official SDKs (llms.txt overview lists 'guides, API reference, SDKs, and tutorials') and a GitHub repo for the box-typescript-sdk-gen exists, but the only concrete SDK evidence includes a deprecation notice ('won't receive new features, updates, bug fixes, or security patches'), raising questions about SDK maintenance/version churn. Missing for 10: docs/examples for other language SDKs (Python, Java, .NET), no independent hands-on confirmation of SDK quality or AI-agent-specific usage patterns.",
     "evidenceIds": [
       "box-probe-1",
-      "box-docs-1",
-      "box-docs-27",
-      "box-docs-29"
+      "box-gh-1"
     ]
   },
   {
@@ -188,11 +194,13 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Box provides well-documented V2 webhooks for monitoring content events (file downloads, uploads, etc.) with delivery to a chosen URL, plus a separate event feed API for real-time/historical event streaming — both directly enabling AI-native subscription to Box events. Missing for 10: no independent/hands-on corroboration of webhook reliability in practice.",
+    "rationale": "Box documents a well-developed webhooks system (V1/V2) letting apps register endpoints to receive notifications on file/folder events like downloads, plus a complementary events API for streaming/polling — clearly enabling event subscription for agentic workflows. missing for 10: independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "box-docs-7",
       "box-docs-22",
+      "box-docs-35",
       "box-docs-19",
+      "box-docs-39",
       "box-docs-8"
     ]
   },
@@ -202,13 +210,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box AI API is a first-party, documented surface for asking questions, extracting metadata, and summarizing files (box-docs-9, box-docs-12, box-docs-13, box-docs-26), integrated with enterprise permissions and available via Box Hubs and AI agent configs (box-docs-18). This goes beyond announcement into documented, usable API guides with changelog updates showing active shipping. Missing for 10: independent/hands-on validation of AI answer quality or accuracy, and any community corroboration of the AI features themselves (community evidence only covers sync/storage, not AI).",
+    "rationale": "Box AI API is well documented with dedicated first-party docs for asking questions, extracting metadata, and summarizing files (box-docs-9, box-docs-12, box-docs-26, box-docs-33), plus a visual agent configurator and model selection (box-docs-42, box-docs-18), indicating a shipped, documented surface rather than just an announcement. missing for 10: independent/hands-on third-party validation of Box AI's actual output quality and reliability, and clearer documentation of usage limits/pricing tiers for the AI features.",
     "evidenceIds": [
       "box-docs-9",
       "box-docs-12",
-      "box-docs-13",
+      "box-docs-26",
+      "box-docs-33",
       "box-docs-18",
-      "box-docs-26"
+      "box-docs-42"
     ]
   },
   {
@@ -230,9 +239,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows an API reference site (box-docs-1) but a direct probe for standard OpenAPI/Swagger spec locations returned 404s (box-probe-2), and no other citation mentions a downloadable machine-readable spec file (e.g., OpenAPI JSON/YAML). Without concrete evidence of a machine-readable spec being available, this axis is not shown to be delivered.",
+    "rationale": "The evidence pack shows explicit probe attempts for an OpenAPI/Swagger spec at Box's developer domain, and all candidate paths returned 404; no other citation shows a downloadable machine-readable API spec (only human-readable reference docs and an llms.txt overview).",
     "evidenceIds": [
       "box-probe-2",
+      "box-probe-1",
       "box-docs-1"
     ]
   },
@@ -242,20 +252,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item describes a Box sandbox/test environment isolated from production data; docs only reference the production base URL (api.box.com) and developer tokens for live accounts. Missing for 10: any mention of a sandbox tenant, test account, or non-production API environment for safe experimentation.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers Box's API, AI, MCP, and collaboration features in depth, but nowhere mentions a sandbox/test environment separate from production data — only a 'free developer account' and 'developer token' for testing against what appears to be the same production API (box-docs-31, box-docs-17). No dedicated sandbox tenant, test mode, or synthetic-data environment is documented.",
+    "evidenceIds": [
+      "box-docs-31",
+      "box-docs-17",
+      "box-docs-1"
+    ]
   },
   {
     "productId": "box",
     "storyId": "api-versioning-policy",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Box's API is versioned (base URL /2.0) and has a public changelog documenting updates like new AI models, but the evidence pack never shows an explicit, documented deprecation policy (e.g., sunset timelines, notice periods) for API versions. missing for 10: explicit deprecation/sunset policy documentation, versioning lifecycle guarantees, independent confirmation of long-term API stability.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Box's API is versioned (base URL /2.0) and has a public changelog tracking updates (box-docs-16, box-docs-18), and its SDK repo explicitly states old versions 'continue to work... but won't receive new features, updates, bug fixes, or security patches' (box-gh-1), implying some deprecation practice. However there's no dedicated, explicit deprecation-policy document, version-lifecycle timeline, or sunset-notice process cited. Missing for 10: a formal API versioning/deprecation policy page, explicit sunset timelines, and independent confirmation that deprecations are consistently communicated.",
     "evidenceIds": [
       "box-docs-1",
       "box-docs-16",
-      "box-docs-18"
+      "box-docs-18",
+      "box-gh-1"
     ]
   },
   {
@@ -264,28 +279,23 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents a dedicated Events API that lets applications subscribe to enterprise-wide user actions in real time or query historical event logs, effectively serving as an audit trail accessible via documented API (box-docs-8, box-docs-19). This supports SIEM-style export/integration use cases via API access with OAuth (box-docs-1). Missing for 10: no explicit mention of a native SIEM connector/integration or retention policy details, and no independent/hands-on confirmation of enterprise audit log completeness.",
+    "rationale": "Box documents an event feed/API (box-docs-8, box-docs-19, box-docs-39) allowing subscription to user or enterprise events, real-time or historical monitoring of actions across the enterprise, which is a documented audit-log/API-access mechanism security teams can use for SIEM export or auditing pipelines. Missing for 10: no explicit documentation of a native SIEM connector or third-party SIEM integration guide, and no independent/hands-on corroboration of enterprise event log completeness or retention.",
     "evidenceIds": [
       "box-docs-8",
       "box-docs-19",
-      "box-docs-1"
+      "box-docs-39"
     ]
   },
   {
     "productId": "box",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Box's REST API exposes per-item endpoints (search, metadata, collaborations, webhooks, chunked upload) that an AI agent could script in a loop to affect many items, and the MCP server/CLI expose these to agents, but the evidence pack contains no documentation of a native batch/bulk endpoint (e.g., bulk delete, bulk metadata update, multi-item transactions) — everything is framed as single-resource operations that must be automated by the caller. missing for 10: explicit batch/bulk API endpoints, documented rate-limit or throughput guidance for large-scale bulk jobs, and independent evidence of bulk workflows succeeding at scale.",
+    "rationale": "Box's docs mention metadata 'cascade policies' that apply metadata templates across all items in a folder in one operation (box-docs-38), which is a form of bulk operation, but there is no documented batch API for bulk create/move/copy/delete across arbitrary large sets of items, no bulk endpoint for search/collaboration changes, and no independent evidence of bulk automation performance at scale. Missing for 10: explicit batch/bulk REST endpoints for common operations, rate-limit guidance for bulk automation, and hands-on confirmation that bulk workflows work reliably for AI agents.",
     "evidenceIds": [
-      "box-docs-5",
-      "box-docs-6",
-      "box-docs-7",
-      "box-docs-19",
-      "box-docs-27",
-      "box-docs-29",
-      "box-probe-2"
+      "box-docs-38",
+      "box-docs-6"
     ]
   },
   {
@@ -294,12 +304,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Box provides webhooks and an events feed that let developers subscribe to file/folder events and trigger external endpoints (box-docs-7, box-docs-19, box-docs-22), which is the building block for event-triggered automation. However, there's no evidence of a native rules/workflow engine (e.g., Box Relay) where a user can declaratively define 'on event X do action Y' inside Box itself — automation requires building and hosting your own webhook receiver and logic. Missing for 10: a documented native rule-definition/workflow-automation feature, and any evidence of built-in conditional actions triggered without external code.",
+    "rationale": "Box provides webhooks and an event feed that can notify an external endpoint or subscriber when specific content events occur (uploads, downloads, etc.), which can serve as the trigger side of automation. However, there is no evidence of a native rules/actions engine (e.g., a workflow builder like 'if event X then action Y' within Box itself) — the pack only shows notification/subscription mechanisms that still require the user to build and host their own logic to act on events. Missing for 10: evidence of a built-in no-code rules/workflow engine (e.g., Box Relay) or documented automatic-action execution triggered by these events without external code.",
     "evidenceIds": [
       "box-docs-7",
-      "box-docs-19",
       "box-docs-22",
-      "box-docs-8"
+      "box-docs-35",
+      "box-docs-8",
+      "box-docs-19",
+      "box-docs-39"
     ]
   },
   {
@@ -308,7 +320,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Box's evidence covers webhooks, events, search, MCP, and AI features, but there is no mention of scheduling recurring jobs or workflows (e.g., cron-like triggers, scheduled automations) anywhere in the docs, community, or probes; Box's automation is entirely event/webhook-driven, not time-scheduled.",
+    "rationale": "Box's docs cover webhooks, events, AI, MCP, and file operations, but there is no evidence of a scheduler, cron-like trigger, or recurring workflow/job mechanism within Box itself; automation depends on external tools reacting to webhooks/events rather than Box scheduling recurring jobs natively.",
     "evidenceIds": []
   },
   {
@@ -316,22 +328,23 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Box provides webhooks, events, metadata, and AI features but there is no evidence of any versioning, review, or rollback mechanism specifically for 'automations' (e.g., workflow definitions, Box Relay flows, or agent configurations). File versioning is not mentioned at all in the pack, let alone automation-specific version control or rollback.",
+    "confidence": "high",
+    "rationale": "Box's evidence covers content management, AI features, MCP server, webhooks, and events, but there is no mention of versioning, reviewing, or rolling back automations/workflows (e.g., Box Relay or automation history) themselves — only file content operations like search, metadata, and AI extraction.",
     "evidenceIds": []
   },
   {
     "productId": "box",
     "storyId": "change-webhooks",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Box documents Webhooks (V2) that notify a chosen URL on content events like downloads, and a separate Events API for subscribing to user/enterprise actions in real time or via historical query — covering the core 'push notifications on change' story. However, the pack shows no documented details on payload signature verification or retry/backoff semantics, which the story explicitly calls for. missing for 10: webhook signature verification steps, retry/redelivery guarantees, and rate/ordering semantics.",
+    "rationale": "Box documents both a webhooks system (V1/V2, event-triggered notifications to a URL) and a separate real-time/historical events feed for subscribing to enterprise actions, which covers the core 'push notifications on content change' story. However, the evidence pack never spells out signature/verification mechanics (e.g., how to validate the webhook payload) or explicit retry/backoff semantics for failed delivery, which the story specifically calls for. missing for 10: documented webhook signature verification process, documented retry/backoff behavior on delivery failure, independent confirmation of these mechanics working in practice.",
     "evidenceIds": [
       "box-docs-7",
       "box-docs-22",
-      "box-docs-8",
-      "box-docs-19"
+      "box-docs-35",
+      "box-docs-19",
+      "box-docs-39"
     ]
   },
   {
@@ -340,11 +353,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents a dedicated full-text Search API (box-docs-5) distinct from prefix/filename lookups, explicitly described as full-text search over content, and metadata/filename search is corroborated by related guides on metadata and events. Missing for 10: independent hands-on developer confirmation of search quality/limits and detailed API parameter docs (query syntax, filters) beyond the guide summary.",
+    "rationale": "Box documents a full-text search API (box-docs-5) that goes beyond filename/prefix matching, explicitly finding content via full-text queries, and metadata is also queryable via metadata templates/instances/queries (box-docs-38), extending search capability to custom fields. missing for 10: no independent/hands-on corroboration of full-text search quality or coverage limits (e.g., which file types are indexed), and no detailed API reference snippet showing query parameters.",
     "evidenceIds": [
       "box-docs-5",
-      "box-docs-6",
-      "box-docs-1"
+      "box-docs-38",
+      "box-docs-6"
     ]
   },
   {
@@ -353,22 +366,23 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Box docs explicitly describe metadata templates that let apps define and store custom structured data on files/folders, and search guides confirm metadata is queryable via the API. This directly matches the story of files carrying schema via custom metadata/properties. Missing for 10: no independent/hands-on corroboration of metadata template creation/querying workflow, and no detail on metadata template versioning or cascading policies.",
+    "rationale": "Box's official docs describe metadata templates as first-class API objects allowing custom key-value data on files/folders, including instances, cascade policies, and queries — directly matching the story of files carrying a defined schema settable/queryable via API. Missing for 10: independent/hands-on developer corroboration beyond first-party docs, and detail on template versioning/edge cases.",
     "evidenceIds": [
       "box-docs-6",
-      "box-docs-5"
+      "box-docs-38"
     ]
   },
   {
     "productId": "box",
     "storyId": "delta-change-listing",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Box's Events API (box-docs-8, box-docs-19) is documented as a feed for subscribing to actions in an enterprise, supporting both real-time and historical stream queries — this is Box's cursor/delta mechanism (stream position based polling) rather than a full re-crawl. However, the evidence doesn't explicitly describe the cursor parameter/field name or confirm incremental-only payload behavior, and there's no independent/hands-on corroboration of efficient delta sync in practice. Missing for 10: explicit documentation of the stream_position cursor parameter and its 'changes since last call' semantics, and independent developer confirmation that it works efficiently at scale.",
+    "rationale": "Box's Events API is documented as a subscribable event feed that can be queried in real time or against historical records via stream types, which functions as the delta/cursor mechanism developers use instead of full re-crawls (box-docs-8, box-docs-19, box-docs-39). Missing for 10: explicit mention of 'stream_position' cursor parameter/token semantics, and independent/hands-on confirmation that the feed reliably captures only incremental changes without gaps.",
     "evidenceIds": [
       "box-docs-8",
-      "box-docs-19"
+      "box-docs-19",
+      "box-docs-39"
     ]
   },
   {
@@ -377,22 +391,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no documentation of Box's desktop client features like selective sync or on-demand/online-only files; all Box docs focus on the API/webhooks/AI, not the desktop sync app. Community evidence only describes an older Windows/Mac client as clunky, CPU-spiking, and lacking OS-level file-system hooks — not confirming modern selective-sync/on-demand capability.",
+    "rationale": "The evidence pack contains no vendor documentation describing desktop sync clients, selective sync, or on-demand/online-only files for Box. The only related evidence is community commentary describing the Box desktop client as clunky, CPU-intensive, and lacking a modern 'Default Sync Folder' model, with no mention of selective sync or on-demand files at all. Missing for 10: any documentation of macOS/Windows desktop clients, selective sync feature, on-demand/online-only file support, or independent confirmation these work.",
     "evidenceIds": [
       "box-comm-4",
       "box-comm-6",
-      "box-comm-7"
+      "box-comm-1"
     ]
   },
   {
     "productId": "box",
     "storyId": "esignature-integration",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Box Sign is a native e-signature product with a documented API (Box Sign brings the full Box Sign web app experience to your application through the API), directly satisfying the operations-lead need for signatures within the same content platform. missing for 10: independent/hands-on validation of Box Sign in production workflows and details on advanced signing features (templates, multi-party routing) beyond the brief doc mention.",
+    "rationale": "Box Sign is a native, first-party e-signature product with a full web app and API (send documents for signature, track through to completion), documented extensively and integrated with Box's content/permissions model. missing for 10: independent/hands-on validation beyond first-party docs.",
     "evidenceIds": [
-      "box-docs-10"
+      "box-docs-10",
+      "box-docs-34"
     ]
   },
   {
@@ -401,7 +416,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers file/folder-level sharing mechanisms (shared links, collaborations) but contains no evidence of org-level admin governance features such as domain allowlists, enterprise-wide external sharing restrictions, or admin console policy controls that an IT admin would configure centrally.",
+    "rationale": "The evidence only describes shared-link and collaboration API features (creating links, setting roles) rather than org-level admin governance such as domain allowlists, enterprise-wide external-sharing policies, or link restriction controls in an admin console. No citation describes IT-admin-level settings restricting external sharing.",
     "evidenceIds": []
   },
   {
@@ -410,12 +425,11 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Box docs mention embeddable, secure previews with annotation (box-docs-14) and shared links for direct read-only access to files (box-docs-3, box-docs-20, box-docs-24), suggesting preview functionality is available via the API without client-side rendering. However, there's no explicit documentation of a dedicated thumbnail/preview API endpoint, no detail on supported file formats, and no independent/hands-on corroboration of preview quality or reliability. missing for 10: explicit preview/thumbnail API endpoint documentation, list of supported formats, independent verification of preview rendering quality.",
+    "rationale": "Box docs mention embeddable, expiring file previews with in-context annotation (box-docs-14), which supports the core story of API-driven previews without client-side rendering. However, there's no explicit documentation of a dedicated thumbnail-generation endpoint, supported format list, or preview API reference details, and no independent/hands-on corroboration of preview rendering fidelity. missing for 10: explicit thumbnail API endpoint docs, list of supported formats, independent verification of preview quality/reliability.",
     "evidenceIds": [
       "box-docs-14",
       "box-docs-3",
-      "box-docs-20",
-      "box-docs-24"
+      "box-docs-36"
     ]
   },
   {
@@ -424,7 +438,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no mention of a versions API, listing/restoring file revisions, or documented retention windows anywhere in the docs, changelog, or probes. Without any citation addressing version history, this applicable files-api capability must be marked none. missing for 10: any documentation of GET /files/{id}/versions, version restore/promote endpoint, or retention policy documentation.",
+    "rationale": "The evidence pack contains no mention of file version history, listing/restoring revisions, or retention window documentation anywhere in the Box docs excerpts provided. While Box's actual API is known to support this, no citation here addresses versioning at all.",
     "evidenceIds": []
   },
   {
@@ -433,62 +447,62 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Box documents a full REST API (base URL, OAuth token auth, curl example) with dedicated guides for chunked uploads, shared links, collaborations, search, metadata, webhooks, and events — covering upload/download/list/move/delete-style file operations over documented endpoints, not just a desktop client. Community evidence critiques the desktop client's sync/UX but does not contradict the REST API's existence or functionality. Missing for 10: no independent hands-on developer report confirming CRUD operations work smoothly, and no discoverable OpenAPI/swagger spec (404s on probe).",
+    "rationale": "Box's developer docs describe a full REST API (base URL, OAuth token auth, curl examples) plus dedicated guides for chunked uploads, shared links, collaborations, metadata, and events—covering the core file lifecycle operations. Missing for 10: explicit doc citations for list/move/delete endpoints (only upload/download-adjacent guides are quoted) and independent hands-on API test corroboration beyond docs.",
     "evidenceIds": [
       "box-docs-1",
       "box-docs-2",
-      "box-docs-3",
-      "box-docs-4",
-      "box-docs-5",
-      "box-docs-6",
-      "box-docs-7",
       "box-docs-17",
-      "box-probe-2"
+      "box-docs-31",
+      "box-docs-36",
+      "box-probe-1"
     ]
   },
   {
     "productId": "box",
     "storyId": "founder-data-room",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Box provides the core building blocks for a lightweight data room: shared links with view-only/download restrictions (box-docs-3, box-docs-20, box-docs-24), folder-level collaborations with granular role-based access for external parties (box-docs-4, box-docs-21), webhook/event tracking for access visibility (box-docs-7, box-docs-8, box-docs-19, box-docs-22), and community confirmation that selectively granting outside parties folder access works well in practice (box-comm-9). Secure expiring previews with annotation further support diligence workflows (box-docs-14). Missing for 10: no explicit documentation of a dedicated 'data room' template or granular per-link download-disable toggle, and no independent/hands-on validation of access-visibility dashboards specifically for diligence use cases.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Box's documented primitives cover the core data-room needs: shared links with configurable access levels for view-only sharing (box-docs-3, box-docs-36, box-docs-24), collaborations for granular folder-level access control (box-docs-4, box-docs-21, box-docs-37), webhooks specifically triggered on file downloads (box-docs-22), and an events/audit feed for access visibility (box-docs-8, box-docs-19, box-docs-39). Community evidence corroborates real-world use for selectively granting outside parties access to files/folders (box-comm-9), matching the diligence-sharing use case. Missing for 10: an explicit first-party 'data room' template/feature, documentation of disabling downloads specifically (vs. just notifying on download), and independent hands-on validation of the full workflow (folder org + view-only + download-block + audit) as a single cohesive experience.",
     "evidenceIds": [
       "box-docs-3",
+      "box-docs-36",
+      "box-docs-24",
       "box-docs-4",
-      "box-docs-20",
       "box-docs-21",
+      "box-docs-37",
       "box-docs-22",
+      "box-docs-8",
       "box-docs-19",
-      "box-docs-14",
       "box-comm-9"
     ]
   },
   {
     "productId": "box",
     "storyId": "generous-free-tier",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "disputed",
+    "quality": 3,
     "confidence": "medium",
-    "rationale": "Community evidence confirms Box has a free tier with concrete published limits (250MB max file size, 10GB monthly bandwidth) that uses the same client/API infrastructure as paid tiers, but there's no first-party Box documentation in the pack describing free-tier storage quota or confirming full API access parity for free accounts. missing for 10: official Box docs stating free-tier storage/bandwidth quotas, confirmation that free-tier accounts get full API/SDK access without restriction.",
+    "rationale": "There is a free developer account for API access (box-docs-31), but community evidence shows the free tier is quite limited — 250MB max file size and only 10GB monthly bandwidth (box-comm-2, box-comm-5), which is a concrete real-world constraint contradicting the idea of a generous, fully-functional free tier working identically to paid tiers. No published storage quota figure for the free tier appears in official docs. missing for 10: an official published free-tier storage quota page, confirmation that all API/client features work unrestricted on free tier, and resolution of the bandwidth/file-size caps reported by users.",
     "evidenceIds": [
+      "box-docs-31",
       "box-comm-2",
-      "box-comm-5",
-      "box-comm-10",
-      "box-docs-1",
-      "box-docs-17"
+      "box-comm-5"
     ]
   },
   {
     "productId": "box",
     "storyId": "granular-folder-permissions",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Box's collaborations API documents role-based access control at the file/folder level, akin to ACLs, and community feedback confirms selective granting of folder/file access to outside parties. However, the evidence never enumerates specific roles (viewer/commenter/editor/owner) or explains inheritance behavior between folders and files. Missing for 10: explicit documentation of the full role hierarchy and how permissions inherit/cascade from folder to file level.",
+    "rationale": "Box documents collaborations as role-based access control on files/folders (viewer/editor/owner-style roles), granting users/groups access with defined roles, and separately documents shared links with configurable access levels — covering folder/file-level permissioning. However, evidence does not explicitly enumerate the full role set (viewer/commenter/editor/owner) nor detail inheritance behavior (how folder-level roles propagate to subfolders/files) beyond general statements. Missing for 10: explicit documentation of the full role hierarchy/names, and explicit inheritance rules/override behavior for nested folders and files.",
     "evidenceIds": [
       "box-docs-4",
       "box-docs-21",
+      "box-docs-37",
+      "box-docs-3",
+      "box-docs-36",
       "box-comm-9"
     ]
   },
@@ -496,11 +510,12 @@
     "productId": "box",
     "storyId": "large-file-resumable-upload",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Box's documented Chunked Upload API explicitly addresses reliable large-file uploads via chunking parts, which supports resuming/retrying failed parts. Missing for 10: explicit documentation of resuming after a fully dropped connection/session persistence details, and independent/hands-on corroboration of resumability in practice.",
+    "rationale": "Box's docs explicitly describe a Chunked Upload API for reliably uploading large files by splitting into parts that are uploaded individually and then committed, which is the standard resumable/chunked pattern (box-docs-2, box-docs-40). Missing for 10: explicit documentation of resuming a session after a dropped connection (retry semantics, session expiry) and independent/hands-on corroboration of resumability in practice.",
     "evidenceIds": [
-      "box-docs-2"
+      "box-docs-2",
+      "box-docs-40"
     ]
   },
   {
@@ -508,13 +523,9 @@
     "storyId": "office-suite-editing",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers Box's storage, sharing, collaboration permissions, search, metadata, AI extraction/summarization, e-signature, and MCP integration, but nothing documents real-time co-editing of docs/sheets/slides in the browser (no mention of Box Notes, Office 365/Google Docs integration, or simultaneous multi-user editing). The closest item is secure preview with annotation, which is not co-editing.",
-    "evidenceIds": [
-      "box-docs-14",
-      "box-docs-15",
-      "box-docs-25"
-    ]
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation of real-time co-editing of docs/sheets/slides (e.g., Box Notes, Office 365 Online, or Google Docs integration) — only vague marketing taglines like 'edit, and co-create content with AI' with no technical or feature-level detail, plus unrelated APIs for uploads, sharing, metadata, and AI extraction. No concrete evidence supports in-browser real-time collaborative editing.",
+    "evidenceIds": []
   },
   {
     "productId": "box",
@@ -522,7 +533,7 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Box's docs show broad API coverage mirroring most core UI features—uploads, sharing, collaborations, search, metadata, webhooks, events, e-signature, and AI—suggesting substantial API/UI parity (box-docs-2 through box-docs-10, box-docs-19-22). However, there's no explicit vendor claim of full UI-API parity, no independent verification, and no evidence covering admin-console-only settings or newer AI/agent features being fully API-exposed (openapi spec itself 404s, box-probe-2). Missing for 10: explicit parity statement, independent/hands-on confirmation, and coverage of admin/enterprise-console-specific capabilities via API.",
+    "rationale": "Box's developer docs show broad API coverage matching most UI capabilities: uploads, sharing, collaborations, search, metadata, webhooks, events, AI, e-signature, and even agent-oriented MCP/CLI access (box-docs-2 through box-docs-42). However, there is no explicit vendor claim of 1:1 UI/API parity, and the probe found no discoverable OpenAPI spec (box-probe-2), suggesting some friction in confirming complete parity. Missing for 10: explicit parity statement, independent verification that every UI action (e.g., admin console settings, retention policies) is API-accessible, and a working OpenAPI/schema reference.",
     "evidenceIds": [
       "box-docs-2",
       "box-docs-3",
@@ -533,6 +544,7 @@
       "box-docs-8",
       "box-docs-9",
       "box-docs-10",
+      "box-docs-38",
       "box-probe-2"
     ]
   },
@@ -556,7 +568,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Box is a closed, proprietary SaaS content platform; there is no evidence of open-sourced source code or open licensing, and this is a category error for a commercial cloud product rather than an open-source project.",
+    "rationale": "Box is a closed-source SaaS content management platform; there is no evidence of an open-license source code release, and this axis is a category error for such a proprietary cloud product (though SDKs are open source, the core product is not).",
     "evidenceIds": []
   },
   {
@@ -565,7 +577,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Box is a cloud SaaS content platform; self-hosting the core product is not offered or plausible for this category — it's a wrong-axis question, not a missing capability.",
+    "rationale": "Box is a cloud SaaS content platform with no self-hosted deployment option evidenced anywhere in the pack; self-hosting is not a category-appropriate axis for this kind of managed cloud service.",
     "evidenceIds": []
   },
   {
@@ -574,7 +586,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of data residency, regional storage options, or geographic controls for where Box content is stored; all citations concern API usage, sharing, collaboration, AI features, and general product complaints unrelated to residency.",
+    "rationale": "No evidence in the pack addresses data residency, regional storage selection, or geographic data controls for Box; all citations concern APIs, MCP, collaborations, and general product features unrelated to residency.",
     "evidenceIds": []
   },
   {
@@ -583,7 +595,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI training data opt-out or any data-usage-for-model-training policy; documentation focuses on Box AI features, security/permissions, and MCP integration but never states whether customer content is used to train AI models or how to prevent it.",
+    "rationale": "The evidence pack contains no mention of AI-training opt-out, data usage policies for model training, or explicit controls to prevent customer content from being used to train AI models. Box AI features (box-docs-9, box-docs-30) mention 'enterprise-grade security' generally but never address training-data usage rights.",
     "evidenceIds": []
   },
   {
@@ -591,8 +603,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Box's API, AI, MCP, sharing, and collaboration features but contains no mention of retention policies, legal holds, data deletion controls, or lifecycle management — capabilities that would be expected for an enterprise content platform's privacy posture. Since this axis clearly applies to a content management/storage product, the absence of any supporting evidence means it cannot be credited as full/partial.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of retention policies, legal holds, deletion APIs, or AI-data-deletion controls — only generic security/compliance marketing phrases (e.g. box-docs-15, box-docs-30) that don't address retention or deletion mechanics. Since Box is a content platform, this axis clearly applies, but no supporting evidence exists in the pack, so it defaults to none.",
     "evidenceIds": []
   },
   {
@@ -601,20 +613,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out settings for Box or its AI/MCP features; the pack covers APIs, collaboration, and product features but nothing about telemetry controls.",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out controls for AI-native usage; all citations concern APIs, MCP, storage features, or unrelated community feedback.",
     "evidenceIds": []
   },
   {
     "productId": "box",
     "storyId": "shared-links-api",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Box docs confirm shared links can be created via the API with visibility settings (e.g., 'open' shared link) [box-docs-3, box-docs-20, box-docs-24], but the evidence pack never explicitly documents setting a password, expiry date, or revoking a shared link through the API. missing for 10: explicit API documentation of password-protection, expiry-date settings, and revocation of shared links.",
+    "rationale": "Docs confirm shared links can be created via the API with configurable access levels/visibility (box-docs-3, box-docs-20, box-docs-36), but the evidence pack never explicitly documents password protection, expiry dates, or revocation of shared links via the API. missing for 10: explicit API fields/endpoints for password protection, expiry settings, and revocation of shared links.",
     "evidenceIds": [
       "box-docs-3",
       "box-docs-20",
-      "box-docs-24"
+      "box-docs-24",
+      "box-docs-36"
     ]
   },
   {
@@ -623,20 +636,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions a pricing page, storage quotas per plan, per-user pricing, or overage/cap behavior; only community mentions of free-tier file-size and bandwidth limits from an old HN thread, not an official pricing page.",
+    "rationale": "No evidence pack items reference a public pricing page with per-plan storage quotas, per-user prices, or overage/cap behavior; only scattered community mentions of free-tier limits (250MB file size, 10GB bandwidth) exist, which are not an official pricing page.",
     "evidenceIds": []
   },
   {
     "productId": "box",
     "storyId": "team-admin-api",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers Box's content APIs (uploads, shared links, collaborations, search, metadata, webhooks, events, AI, e-signature, MCP) but contains no documentation of admin-specific endpoints for member/user provisioning or group management (e.g., Users API, Groups API, Enterprise admin console API) — only a generic /users/me call is shown, which is not an admin provisioning endpoint. Missing for 10: documented Users API for creating/deactivating accounts, Groups API for group membership management, and enterprise admin console API references for automation.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Box's developer docs confirm OAuth-based API access and a collaborations model for granting users/groups role-based access to content (box-docs-4, box-docs-21, box-docs-37), plus a base /users/me endpoint (box-docs-17), suggesting some administrative surface. However there is no explicit documentation of member/user provisioning endpoints, group creation/management, or dedicated admin-console/enterprise-settings API calls that an IT admin would need for automation. Missing for 10: dedicated user-provisioning API docs, group management endpoints, and enterprise/admin-console API reference.",
     "evidenceIds": [
-      "box-docs-17",
       "box-docs-4",
-      "box-docs-21"
+      "box-docs-21",
+      "box-docs-37",
+      "box-docs-17",
+      "box-docs-1"
     ]
   },
   {
