@@ -4,6 +4,7 @@ import CeilingBar from '@/components/CeilingBar'
 import ComputerUseChips from '@/components/ComputerUseChips'
 import IconChip from '@/components/IconChip'
 import ProductLogoView from '@/components/ProductLogoView'
+import StepCanonicalVendor from '@/components/StepCanonicalVendor'
 import StepYourPick from '@/components/StepYourPick'
 import StepApiCalls from '@/components/StepApiCalls'
 import StepPromptBox from '@/components/StepPromptBox'
@@ -383,6 +384,13 @@ function NodeBlock({
     ...(ranking?.vendors ?? []).map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name })),
     ...extras.flatMap((r) => r.vendors.map((v) => ({ productId: v.productId, arenaId: v.arenaId, name: v.name }))),
   ]
+  // Does this step surface a MARKET (a ranked row or a "via:" roster)? Then the canonical
+  // vendor is only the market's reference vendor, not "the" vendor: it demotes to an
+  // "e.g."-prefixed chip until the reader picks a supplier, and disappears once a lens/stack
+  // pick covers the step (components/StepCanonicalVendor.tsx — founder 2026-09-23: "processes
+  // don't start with just one supplier"). Vendor-locked steps (IRS, Delaware portal…) have no
+  // market and keep the full-strength chip.
+  const hasMarket = ranking !== null || extras.length > 0 || options.length > 0
 
   return (
     <div className={`min-w-0 rounded-lg border p-3 ${style.block}`}>
@@ -401,7 +409,17 @@ function NodeBlock({
       </div>
 
       <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-[11px]">
-        {vendorInfo && <VendorChip info={vendorInfo} />}
+        {vendorInfo && (hasMarket ? (
+          <StepCanonicalVendor
+            info={vendorInfo}
+            logo={hasLogo(vendorInfo.productId ?? vendorInfo.vendor)}
+            marketArenaId={node.optionsArenaId ?? vendorInfo.arenaId}
+            lensKey={lensKey}
+            checkStep={checkStep}
+          />
+        ) : (
+          <VendorChip info={vendorInfo} />
+        ))}
         {node.approvalRequired && (
           <span
             className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[10px] font-semibold text-amber-300"
