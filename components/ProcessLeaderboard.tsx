@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ProcessDagStrip from '@/components/ProcessDagStrip'
 import ProcessYourVendor from '@/components/ProcessYourVendor'
 import ProductLogoView from '@/components/ProductLogoView'
 import { hasLogo } from '@/lib/logos'
@@ -37,6 +38,11 @@ export default function ProcessLeaderboard({ task, mineHref }: { task: ProcessTa
         over the {lb.rankableSteps} rankable of {lb.totalSteps} steps. Expand a row for the
         per-step trail; the verdict citations behind each step score are in the diagram below.
       </p>
+
+      {/* The process at a glance (founder 2026-09-23): the SAME Kahn layers as the full vertical
+          diagram, compressed to a horizontal dot strip — scan the shape, then click through to
+          #steps. Process pages only: this component never renders on chain pages. */}
+      <ProcessDagStrip nodes={task.dag.nodes} edges={task.dag.edges} />
 
       {/* Client-side "you run X" banner (founder 2026-09-21): hydrates in only for readers whose
           "I'm using" stack matches a covering arena — built from the FULL entry list so the
