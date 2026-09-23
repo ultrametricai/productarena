@@ -10,8 +10,10 @@ import type { LocalProbe } from './types'
 // llms.txt — recorded negative), Meta's open weights resolve on the keyless Hugging Face API
 // (llama.com has no llms.txt — recorded negative), DeepSeek's weights resolve on HF while its
 // /llms.txt serves the Docusaurus HTML shell rather than an agent index (recorded as the
-// honest soft-404 it is), and Mistral serves llms.txt + SDKs + HF weights. All keyless,
-// read-only.
+// honest soft-404 it is), Mistral serves llms.txt + SDKs + HF weights, and xAI's Grok line
+// serves a docs.x.ai llms.txt index with .md mirrors, an auth-gated api.x.ai endpoint (keyless
+// GET returns a structured unauthenticated:no-credentials error — proof the endpoint is live),
+// and the official xai-sdk on PyPI. All keyless, read-only.
 export const probes: LocalProbe[] = [
   {
     // docs.typesafe.ai serves a full llms.txt docs index with .md mirrors for every page.
@@ -269,6 +271,52 @@ export const probes: LocalProbe[] = [
     argv: ['sh', '-c', `curl -s --max-time 20 'https://huggingface.co/api/models?author=mistralai&limit=1' | head -c 120`],
     displayCommand: `curl -s 'https://huggingface.co/api/models?author=mistralai&limit=1'`,
     expect: /"id":"mistralai\//,
+    timeoutMs: 30_000,
+  },
+  {
+    // docs.x.ai serves a full llms.txt docs index with .md mirrors for every page.
+    probeId: 'docs-llms-txt',
+    productId: 'grok',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.x.ai/llms.txt | head -2'],
+    displayCommand: 'curl -s https://docs.x.ai/llms.txt | head -2',
+    expect: /# SpaceXAI API Documentation/,
+    timeoutMs: 30_000,
+  },
+  {
+    // Every docs page mirrors to Markdown at the .md URL — here the models catalog, which
+    // carries the public per-token price table and per-model context windows.
+    probeId: 'docs-md-mirror',
+    productId: 'grok',
+    storyIds: ['agentic-agent-docs', 'transparent-token-pricing'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.x.ai/developers/models.md | head -12'],
+    displayCommand: 'curl -s https://docs.x.ai/developers/models.md | head -12',
+    expect: /\| grok-4/,
+    timeoutMs: 30_000,
+  },
+  {
+    // The xAI API endpoint is live and auth-gated: a keyless GET /v1/models returns xAI's
+    // structured unauthenticated:no-credentials JSON, not a WAF page.
+    probeId: 'api-auth-gate',
+    productId: 'grok',
+    storyIds: ['agentic-public-api', 'models-endpoint-discovery'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -s --max-time 20 https://api.x.ai/v1/models | head -c 200'],
+    displayCommand: 'curl -s https://api.x.ai/v1/models',
+    expect: /unauthenticated:no-credentials/,
+    timeoutMs: 30_000,
+  },
+  {
+    // The official Python SDK resolves on PyPI (Apache-2.0).
+    probeId: 'pypi-version',
+    productId: 'grok',
+    storyIds: ['agentic-sdks'],
+    bin: 'curl',
+    argv: ['sh', '-c', `curl -s --max-time 20 https://pypi.org/pypi/xai-sdk/json | grep -o '"name": *"xai-sdk"' | head -1`],
+    displayCommand: `curl -s https://pypi.org/pypi/xai-sdk/json | grep '"name"'`,
+    expect: /"name": ?"xai-sdk"/,
     timeoutMs: 30_000,
   },
 ]
