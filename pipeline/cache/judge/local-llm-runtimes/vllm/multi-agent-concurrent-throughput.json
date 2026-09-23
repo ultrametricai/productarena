@@ -1,13 +1,14 @@
 {
-  "hash": "83114b3441d401ec840faed59c4906a0a1a760d184e044d2840409139021c93f",
+  "hash": "1ea6dfcc1bcb0555d42c9a92f270422d3d5b39e7d2227fc13c593e669a76653e",
   "verdict": {
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "vLLM's continuous batching and PagedAttention (vllm-docs-2, vllm-docs-3) are designed to keep throughput efficient as multiple concurrent requests arrive, and community commentary confirms these are the core mechanisms that matter for concurrent-load performance (vllm-comm-3, vllm-comm-4). However, there is no evidence of explicit 'reserved dedicated capacity' guarantees, per-session/agent QoS controls, or admission control to keep throughput steady under contention—only general dynamic batching/memory-management claims. Missing for 10: documented capacity-reservation/QoS mechanisms, benchmarks showing steady throughput specifically under multi-agent concurrent load, and independent verification of stability guarantees.",
+    "confidence": "medium",
+    "rationale": "vLLM's continuous batching, PagedAttention memory management, and advanced scheduling (vllm-docs-2, vllm-docs-3, vllm-docs-16) are designed to keep GPU utilization and throughput high under concurrent request load, and community reports (vllm-comm-3, vllm-comm-4) corroborate that batching/kv-cache management is central to sustaining performance with multiple simultaneous requests. However, the story implies dedicated per-agent/session capacity reservation or isolation guarantees, and there is no evidence of admission control, per-tenant quotas, or reserved-capacity scheduling — vLLM's approach is dynamic/shared batching that maximizes aggregate throughput rather than guaranteeing steady throughput per individual concurrent session. Missing for 10: explicit capacity reservation/isolation mechanisms, per-session/tenant guarantees, and independent benchmarks showing steady per-agent throughput under concurrency.",
     "evidenceIds": [
       "vllm-docs-2",
       "vllm-docs-3",
+      "vllm-docs-16",
       "vllm-comm-3",
       "vllm-comm-4"
     ],

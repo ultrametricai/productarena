@@ -172,4 +172,17 @@ export const probes: LocalProbe[] = [
     expect: /tilled-account/,
     timeoutMs: 30_000,
   },
+  {
+    // Honest negative (launch-audit wave 4, 2026-09-22): Tilled publishes no llms.txt — the
+    // site origin 308-redirects to www where it 404s, and docs.tilled.com answers unknown
+    // paths with 500s (no agent-oriented docs index on either origin).
+    probeId: 'site-llms-txt-absent',
+    productId: 'tilled',
+    storyIds: ['agentic-agent-docs'],
+    bin: 'curl',
+    argv: ['sh', '-c', 'curl -sL --max-time 20 -o /dev/null -w "HTTP %{http_code}" https://tilled.com/llms.txt'],
+    displayCommand: 'curl -sL -o /dev/null -w "HTTP %{http_code}" https://tilled.com/llms.txt',
+    expect: /HTTP 404/,
+    timeoutMs: 30_000,
+  },
 ]

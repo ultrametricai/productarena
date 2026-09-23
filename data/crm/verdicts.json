@@ -750,15 +750,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "HubSpot's REST API supports creating contact records (POST /crm/v3/objects/contacts) and companies/custom objects can be created and updated via the same object APIs, and the official MCP server explicitly grants 'read and write access to your HubSpot CRM data — contacts, deals, engagements, and more' to any MCP-compatible agent, so the create+enrich portions of the story are documented. However, there is no evidence of an owner-assignment field/endpoint being called out, nor any end-to-end example showing an agent orchestrating create→enrich→assign-owner in one flow. Missing for 10: explicit owner-assignment API/MCP action, a documented end-to-end lead-enrichment workflow example, and independent/hands-on confirmation of the MCP server performing writes successfully.",
+    "rationale": "HubSpot provides both REST APIs (contacts creation via POST /crm/v3/objects/contacts, custom objects API) and an official MCP server giving 'secure read and write access to your HubSpot CRM data — contacts, deals, engagements, and more,' which supports agent-driven record creation and enrichment. However, the evidence never explicitly documents a companies-object API/endpoint or an owner-assignment endpoint/property, and there's no example or workflow showing an agent chaining create+enrich+assign-owner end-to-end. missing for 10: explicit company-object API/owner-assignment endpoint documentation, a demonstrated end-to-end enrichment workflow via API or MCP, and independent/hands-on confirmation of an agent performing this full sequence.",
     "evidenceIds": [
       "hubspot-docs-31",
-      "hubspot-docs-5",
+      "hubspot-docs-17",
       "hubspot-docs-30",
       "hubspot-docs-40",
-      "hubspot-docs-17",
-      "hubspot-docs-18",
-      "hubspot-docs-32",
+      "hubspot-docs-61",
       "hubspot-probe-4"
     ]
   },
@@ -768,14 +766,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "HubSpot's official MCP server explicitly grants read access to contacts, deals, and engagements, and its CRM APIs (contacts, custom objects, account info) plus connected-email logging supply the underlying data (open deals, emails, history) needed for such a brief; this directly supports an AI-native agent pulling account context via MCP or API before a meeting. However, there's no documented end-to-end 'account brief' workflow or example, no explicit deals/engagements API doc cited, and no independent/hands-on evidence the MCP server actually performs this compilation reliably. Missing for 10: a demonstrated brief-generation example, explicit deals/engagements endpoint docs, and third-party corroboration of MCP data-pull quality.",
+    "rationale": "HubSpot's official MCP server explicitly grants MCP-compatible agents read/write access to CRM data including contacts, deals, and engagements, and the REST API supports fetching contacts/custom objects/deals data, which together are the building blocks needed to assemble an account brief (open deals, history) before a meeting. However, there's no explicit documented example of a 'recent emails' retrieval via the MCP/API for a brief workflow, nor any end-to-end demonstration of compiling such a report. Missing for 10: a concrete documented workflow/example showing an agent pulling recent emails plus deals/history into a single pre-meeting brief, and independent/hands-on validation of this exact use case.",
     "evidenceIds": [
       "hubspot-docs-5",
       "hubspot-docs-30",
       "hubspot-docs-40",
       "hubspot-docs-2",
-      "hubspot-docs-13",
-      "hubspot-docs-57",
+      "hubspot-docs-17",
+      "hubspot-docs-31",
       "hubspot-probe-4"
     ]
   },
@@ -801,12 +799,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "HubSpot's docs explicitly state that agents can 'Fetch the complete documentation index at: https://developers.hubspot.com/docs/llms.txt' and that any doc page can be turned into markdown by appending .md (corroborated by real evidence sources that are themselves .md URLs, e.g. hubspot-docs-47, hubspot-docs-57). However, independent probes found the top-level https://developers.hubspot.com/llms.txt and https://developers.hubspot.com/docs.md both return 404, raising doubt about the accessibility/discoverability of the claimed agent-oriented entry points at the paths most agents would guess. Missing for 10: a probe confirming the specific /docs/llms.txt path actually resolves, and clearer top-level discoverability (root llms.txt) rather than only nested doc-page .md conversion.",
+    "rationale": "HubSpot's developer docs explicitly reference an llms.txt index ('Fetch the complete documentation index at: https://developers.hubspot.com/docs/llms.txt') and confirm markdown-appendable pages ('Append .md to any documentation page URL'), and many citations in this pack are themselves .md doc URLs that were successfully used as sources, showing the agent-readable docs pattern works in practice. However, independent probes hitting the most obvious top-level paths (https://developers.hubspot.com/llms.txt and /docs.md) returned 404, so there's no clean confirmation the exact claimed llms.txt path resolves, leaving some doubt about full reliability of the mechanism. Missing for 10: a probe confirming the actual /docs/llms.txt endpoint returns 200, and no independent hands-on report of an agent successfully consuming it end-to-end.",
     "evidenceIds": [
       "hubspot-supp-openapi-spec",
+      "hubspot-docs-57",
+      "hubspot-docs-63",
       "hubspot-probe-1",
-      "hubspot-probe-2",
-      "hubspot-docs-57"
+      "hubspot-probe-2"
     ]
   },
   {
@@ -815,7 +814,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "HubSpot's Breeze AI features (docs-35/50: describe a report in plain language and it builds it from your data; docs-14/22/23: prospecting agent watches accounts for buying signals and drafts follow-ups; docs-56: AI agents built on CRM data giving contextual insights) directly deliver AI-generated insights/suggestions surfaced inside the product. Missing for 10: independent/hands-on validation of insight quality (only vendor docs, no user reports confirming these AI features work well), and detail on breadth/accuracy of the suggestions across all data types.",
+    "rationale": "HubSpot ships Breeze AI features that generate insights directly from CRM data, e.g. natural-language report building ('describe the report you need in plain language, and HubSpot will build it from your actual data'), AI agents that surface buying signals and suggest next steps ('Prospecting agent watches accounts for signals... smart deal progression keeps deals moving after every call, with next steps handled for them'), and automatic CRM update/follow-up draft suggestions after meetings. These are first-party product docs describing in-product AI-generated insights/suggestions, not just API/agent connectivity. Missing for 10: independent/hands-on verification of insight quality and no third-party review confirming these Breeze features work as advertised in practice.",
     "evidenceIds": [
       "hubspot-docs-35",
       "hubspot-docs-50",
@@ -831,14 +830,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "HubSpot ships native Workflows automation that runs processes autonomously on CRM triggers, plus AI agents (e.g., the Prospecting agent) explicitly described as watching accounts for signals and reaching out automatically, and smart deal progression handling next steps without user action — all clearly background/autonomous behaviors. Webhooks and the CRM API further support event-driven automation an AI-native user could wire up. Missing for 10: independent/hands-on verification that these agents run reliably unattended over time, and deeper docs on scheduling/trigger configuration for developer-built autonomous flows.",
+    "rationale": "HubSpot's Workflows feature lets users automate processes to run in the background (hubspot-docs-12/45), and its Breeze AI agents explicitly operate autonomously — e.g., the prospecting agent 'watches accounts for signals... and reaches out automatically' and smart deal progression 'keeps deals moving after every call' (hubspot-docs-14/22/56). Missing for 10: independent/hands-on verification of true unattended autonomy (one doc notes agents still require user approval of updates, hubspot-docs-23), and no detail on scheduling/trigger granularity or failure handling for long-running automations.",
     "evidenceIds": [
       "hubspot-docs-12",
-      "hubspot-docs-45",
       "hubspot-docs-14",
       "hubspot-docs-22",
       "hubspot-docs-23",
-      "hubspot-docs-4",
       "hubspot-docs-56"
     ]
   },
@@ -881,13 +878,15 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows HubSpot exposing its own MCP servers (CRM MCP server, Developer MCP server) so external AI tools/agents can call HubSpot — this is HubSpot acting as the MCP server, not as a client that lets a user plug third-party MCP servers into HubSpot's own AI features (e.g., Breeze agents) to gain new tools. No evidence describes HubSpot's agents consuming or connecting to external MCP servers.",
+    "rationale": "All MCP evidence describes HubSpot exposing its own MCP servers (CRM data server and Developer Platform server) for external AI tools/agents to consume — the opposite direction from this story, which asks whether HubSpot itself can plug in and use external MCP servers' tools. No evidence shows HubSpot's Breeze agents or platform acting as an MCP client that connects to third-party MCP servers.",
     "evidenceIds": [
       "hubspot-docs-5",
       "hubspot-docs-6",
-      "hubspot-docs-24",
-      "hubspot-probe-4",
-      "hubspot-docs-56"
+      "hubspot-docs-30",
+      "hubspot-docs-40",
+      "hubspot-docs-61",
+      "hubspot-docs-62",
+      "hubspot-probe-4"
     ]
   },
   {
@@ -914,14 +913,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "HubSpot documents natural-language interaction in specific areas — Breeze Assistant lets users 'describe the report you need in plain language' to build dashboards, and Breeze AI agents handle prospecting/deal-progression tasks with natural-language-driven automation. The official MCP server additionally lets any MCP-compatible AI agent read/write CRM data, enabling natural-language-driven operation via external agents. However, this is scattered across specific features (reporting, prospecting) rather than a unified natural-language command layer for the whole CRM, and there's no first-party chat/command interface spanning all core CRM operations. Missing for 10: a comprehensive in-product NL command interface covering most CRM actions (not just reporting/prospecting), and independent/hands-on evidence validating these NL features work as claimed.",
+    "rationale": "HubSpot ships several natural-language interaction surfaces — Breeze Assistant lets users 'describe the report you need in plain language' and 'plan a full campaign from a single goal, in one session,' and the official MCP server lets any MCP-compatible AI agent read/write CRM data, effectively enabling NL-driven operation through connected AI tools. However these are discrete features (reporting, campaign planning, prospecting agent) rather than a unified NL command layer covering the whole product, and there's no independent/hands-on evidence validating reliability of these NL features. Missing for 10: evidence of a general-purpose NL command interface spanning all core workflows, and independent corroboration of the NL features actually working as described.",
     "evidenceIds": [
       "hubspot-docs-35",
       "hubspot-docs-50",
+      "hubspot-docs-15",
       "hubspot-docs-56",
-      "hubspot-docs-14",
-      "hubspot-docs-22",
-      "hubspot-docs-23",
       "hubspot-docs-30",
       "hubspot-docs-40",
       "hubspot-docs-61"
@@ -949,19 +946,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "HubSpot publishes an extensive, versioned public REST API (CRM objects, contacts, custom objects, webhooks, account info) with CLI tooling, OpenAPI specs inline per endpoint, and a documented deprecation/versioning policy, all clearly aimed at programmatic/agentic access (hubspot-docs-2,3,4,31,57,63, hubspot-supp-api-versioning, hubspot-supp-deprecation-policy, hubspot-supp-openapi-spec). Probes hitting guessed root-level paths (llms.txt, openapi.json) 404'd, but the actual docs confirm an agent-readable llms.txt under /docs and inline OpenAPI specs, so this is a minor path-discovery issue rather than a real gap. Missing for 10: independent/third-party corroboration of API robustness and no confirmation the root-level llms.txt/openapi.json discovery paths work as some agents might expect.",
+    "rationale": "HubSpot publishes an extensive, well-documented REST API (CRM objects, contacts, custom objects, webhooks, account info) with CLI tooling, date-based versioning, a deprecation policy, and machine-readable OpenAPI specs per endpoint plus llms.txt-style markdown docs, giving AI-native users a documented way to drive the product programmatically. Probes show the root-level llms.txt/openapi.json shortcuts 404, meaning discovery isn't as frictionless as top-level files would suggest, though per-endpoint OpenAPI specs and .md docs are confirmed. missing for 10: a single consolidated machine-readable spec/llms.txt at the root, and independent (non-vendor) developer confirmation of API robustness in production use.",
     "evidenceIds": [
       "hubspot-docs-2",
-      "hubspot-docs-3",
-      "hubspot-docs-4",
       "hubspot-docs-31",
-      "hubspot-docs-57",
-      "hubspot-docs-63",
+      "hubspot-docs-4",
       "hubspot-supp-api-versioning",
       "hubspot-supp-deprecation-policy",
       "hubspot-supp-openapi-spec",
       "hubspot-probe-1",
-      "hubspot-probe-2"
+      "hubspot-probe-3"
     ]
   },
   {
@@ -970,11 +964,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents HubSpot's general API, CLI, and MCP server (with 'secure read and write access') but contains no mention of scoped/least-privilege API keys, OAuth scopes, or granular permission tokens specifically issuable to an AI agent. 'Granular reporting permissions' (hubspot-docs-51/65) refers to dashboard viewing, not API credential scoping.",
+    "rationale": "The evidence pack shows generic account authorization (e.g., 'Authorize your HubSpot account') and OAuth-style app connection flows, but nothing about issuing scoped or least-privilege API credentials/tokens (e.g., per-scope private app tokens) specifically for an AI agent's use. Test/sandbox accounts and MCP 'secure read/write access' are mentioned but do not describe credential scoping controls.",
     "evidenceIds": [
-      "hubspot-docs-30",
-      "hubspot-docs-51",
-      "hubspot-docs-65"
+      "hubspot-docs-1",
+      "hubspot-docs-47",
+      "hubspot-docs-5"
     ]
   },
   {
@@ -1048,13 +1042,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "HubSpot documents a date-based API versioning scheme (e.g. /crm/2026-09/) with predictable release cadence and continued support of prior versions until end-of-life, plus a maintained sunsetted/deprecated APIs table with migration targets and changelog-based advance notice, and machine-readable OpenAPI specs per endpoint. Some probes (llms.txt, docs.md, generic openapi.json) 404'd, suggesting the agent-readable surface isn't as universally exposed as claimed. Missing for 10: independent/community corroboration of the deprecation policy actually being honored in practice, and confirmation that the llms.txt/agent-friendly endpoints work as documented rather than 404ing.",
+    "rationale": "HubSpot documents a date-based API versioning scheme (e.g. /crm/2026-09/) with defined migration windows, maintains a public 'Sunsetted and deprecated APIs' table with dates and migration targets, and commits to announcing changes via its Developer Changelog with ample notice; endpoint pages also publish machine-readable OpenAPI specs. Missing for 10: independent/community corroboration that the deprecation policy is reliably honored in practice, and consistent llms.txt/OpenAPI discovery (root-level probes 404'd).",
     "evidenceIds": [
       "hubspot-supp-api-versioning",
       "hubspot-supp-deprecation-policy",
       "hubspot-supp-openapi-spec",
       "hubspot-probe-1",
-      "hubspot-probe-2"
+      "hubspot-probe-3"
     ]
   },
   {
@@ -1063,8 +1057,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers CRM data storage, deduplication, import/export, workflows, and AI agents for prospecting/reporting, but contains no mention of automatic enrichment of contact/company records with third-party firmographic or contact data. Absence of evidence for this applicable CRM capability yields 'none'.",
-    "evidenceIds": []
+    "rationale": "The evidence covers HubSpot's CRM data model, dedup, import, and workflow automation, but nowhere documents an automatic firmographic/contact data enrichment feature (e.g., appending company size, industry, or contact details from third-party data sources). hubspot-comm-4 only vaguely references improving CRM data quality without describing an enrichment capability.",
+    "evidenceIds": [
+      "hubspot-comm-4",
+      "hubspot-docs-10",
+      "hubspot-docs-20"
+    ]
   },
   {
     "productId": "hubspot",
@@ -1072,15 +1070,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "HubSpot documents bulk-oriented capabilities: batch retrieval of custom object records, bulk import of multiple objects (companies, deals, activities) with associations, and automatic/manual deduplication across large record sets, plus workflows to automate processes at scale. However, the evidence pack doesn't show explicit batch create/update/delete endpoints for core objects like contacts or deals (only single-record POST is shown), nor any AI-native bulk operation via MCP/agent tooling beyond single-item CRUD examples. Missing for 10: explicit batch API documentation for contacts/deals/tickets, evidence of MCP or AI agent performing multi-item bulk actions, and independent confirmation of bulk operation reliability at scale.",
+    "rationale": "HubSpot's platform APIs support batch operations (custom objects can be retrieved/updated in batches, bulk import for multiple objects, workflows to automate processes at scale) and the MCP server gives AI agents read/write CRM access, implying bulk actions are technically reachable. However, no evidence explicitly confirms the MCP server or AI agent tools expose batch/bulk endpoints (as opposed to single-record CRUD), so the AI-native bulk-operation pathway is only inferred, not directly documented. Missing for 10: explicit documentation that the MCP server or Breeze AI agents can invoke batch/bulk CRM operations (not just single-object create/update), and independent confirmation of bulk performance/reliability at scale.",
     "evidenceIds": [
       "hubspot-docs-3",
       "hubspot-docs-8",
       "hubspot-docs-38",
-      "hubspot-docs-10",
-      "hubspot-docs-11",
       "hubspot-docs-12",
-      "hubspot-docs-40"
+      "hubspot-docs-40",
+      "hubspot-docs-30"
     ]
   },
   {
@@ -1089,7 +1086,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "HubSpot's Workflows feature explicitly lets users create automated rules that trigger actions on events (contact property changes, form submissions, deal stage changes, etc.), and this is compounded by webhook subscriptions for real-time event-driven automation via API, plus AI agents (prospecting agent, deal progression) that act automatically on signals. missing for 10: no explicit documentation tying natural-language/AI-native rule authoring directly to workflow triggers, and no independent/hands-on verification of workflow automation depth beyond vendor docs.",
+    "rationale": "HubSpot Workflows let users define trigger-based automation rules (e.g., on contact/deal property changes, events) that automatically execute actions like emails, CRM updates, task creation, and enrollment in sequences, and this is reinforced by webhook event subscriptions and AI agents that act automatically on signals. Missing for 10: independent/hands-on verification of workflow trigger complexity and any AI-native (natural-language rule authoring) specifics beyond marketing copy.",
     "evidenceIds": [
       "hubspot-docs-12",
       "hubspot-docs-45",
@@ -1105,12 +1102,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "HubSpot's native Workflows feature ('Create workflows in HubSpot to automate your processes') supports building automated, recurring business processes, which is the closest evidence to scheduled/recurring jobs, but the evidence pack gives no detail on cron-like scheduling, re-enrollment intervals, or how an AI-native/agentic user would programmatically create or manage such recurring workflows via API/MCP. Missing for 10: documentation on recurring/scheduled triggers within Workflows, API or MCP-server support for creating/managing workflows programmatically, and independent confirmation of AI-driven workflow automation.",
+    "rationale": "HubSpot's Workflows feature is documented as a way to \"automate your processes,\" which is the platform's native automation-depth capability, and the same workflows engine underlies scheduled/recurring enrollments in practice. However, the evidence pack only offers a generic one-line mention of workflow creation with no detail on recurring triggers, cron-like scheduling, or job orchestration for AI-native use cases. missing for 10: explicit documentation of scheduled/recurring workflow triggers, API/MCP support for programmatically scheduling recurring jobs, and independent confirmation of this capability.",
     "evidenceIds": [
       "hubspot-docs-12",
-      "hubspot-docs-45",
-      "hubspot-docs-30",
-      "hubspot-docs-5"
+      "hubspot-docs-45"
     ]
   },
   {
@@ -1119,7 +1114,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows workflow creation (hubspot-docs-12/45) and API-level date-based versioning (hubspot-supp-api-versioning) but nothing about version history, review, or rollback of built automations/workflows themselves.",
+    "rationale": "The evidence shows HubSpot can create workflows (hubspot-docs-12/45) and describes API date-versioning (hubspot-supp-api-versioning) for endpoints, but there is no mention of versioning, review, or rollback capabilities for workflows/automations themselves (e.g., workflow history, revision comparison, undo). Missing for 10: workflow version history UI, diff/review of automation changes, rollback/restore of prior automation versions.",
     "evidenceIds": [
       "hubspot-docs-12",
       "hubspot-docs-45",
@@ -1132,13 +1127,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows CRUD and batch operations for contacts/custom objects, plus a webhooks journal API for real-time and historical event subscription (a change-detection mechanism), supporting bidirectional sync at scale. However, no evidence cites documented rate limits, and there's no explicit mention of 'upsert' semantics (e.g., idProperty-based upsert) in the API docs provided. Missing for 10: documented rate-limit numbers/headers, explicit upsert endpoint documentation, and independent/hands-on confirmation of scale performance.",
+    "rationale": "HubSpot's CRM API supports creating/managing contacts and custom objects individually or in batches, syncing data between systems, and its webhooks journal API provides real-time event subscription (a change-detection mechanism); API versioning and deprecation policies are also documented. However, no evidence explicitly documents rate limits (numeric caps, throttling) or upsert-specific endpoints/semantics, which are core parts of the story.  Missing for 10: explicit rate-limit documentation, explicit upsert endpoint/behavior documentation, independent/hands-on validation of sync at scale.",
     "evidenceIds": [
+      "hubspot-docs-2",
       "hubspot-docs-3",
       "hubspot-docs-4",
-      "hubspot-docs-17",
       "hubspot-docs-18",
-      "hubspot-docs-32"
+      "hubspot-supp-api-versioning",
+      "hubspot-supp-deprecation-policy",
+      "hubspot-supp-openapi-spec"
     ]
   },
   {
@@ -1147,7 +1144,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers email inbox connection, contacts/deals APIs, imports, and reporting, but contains no mention of calendar sync or meetings appearing on contact/deal timelines. This is a plausible and common CRM capability, but no supporting evidence exists in the pack.",
+    "rationale": "The evidence pack only documents connecting an individual work email inbox to log emails/replies (hubspot-docs-13/21/46/54) and general CRM/contact sync APIs; there is no mention of calendar sync or meetings appearing on contact/deal timelines anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -1172,13 +1169,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "HubSpot documents import tools for multiple objects (companies, deals, activities, associations), self-service transfer/audit-and-sync for new customers, and automatic/manual deduplication using email/domain or record IDs, which together support migrating records and relationships from another CRM. However, evidence does not confirm preservation of 'owners' (rep/user assignment mapping) during migration, nor explicit historical activity/timeline preservation beyond basic activities import, and there's no independent/hands-on account confirming migration fidelity. missing for 10: evidence of owner/user mapping during import, confirmation of full historical timeline/audit trail preservation, and independent verification of migration outcomes.",
+    "rationale": "HubSpot documents self-service data transfer/audit tools for new customers, bulk import of multiple object types (companies, deals, activities/calls/meetings) with associations, and automatic plus manual deduplication by email/domain/record ID, covering the core migration path of bringing records and history. Missing for 10: explicit documentation of owner-mapping/reassignment during import, preservation of full historical audit trails/timestamps from the source CRM, and independent case-study evidence confirming successful cross-CRM migrations.",
     "evidenceIds": [
       "hubspot-docs-8",
       "hubspot-docs-9",
+      "hubspot-docs-27",
       "hubspot-docs-10",
       "hubspot-docs-11",
-      "hubspot-docs-27",
       "hubspot-docs-38"
     ]
   },
@@ -1188,7 +1185,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack lacks any documentation of ops-user self-service custom property/field creation on CRM records or of building filtered, sorted, shared list/table views without going through a developer or admin project — coverage is limited to custom objects via the developer API, reporting dashboards, and permissions, none of which address this specific ops workflow.",
+    "rationale": "Evidence covers custom objects via API, reporting dashboards, and workflows, but nothing addresses ops users self-serving custom fields/properties or building filtered, sorted, shared views without an admin project — the closest analogs (custom objects API, reporting permissions) require developer or admin-level access, not ops self-service.",
     "evidenceIds": []
   },
   {
@@ -1226,14 +1223,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "HubSpot documents connecting an inbox to send one-to-one emails and sequence emails directly from the CRM (hubspot-docs-13/21/46/54), plus a dedicated sequences tool for sending targeted, timed multi-step outreach (hubspot-docs-37/44/52) and workflow automation for broader processes (hubspot-docs-12/45), all native to the CRM ops experience. missing for 10: no hands-on/independent verification of the sequences UX or deliverability, and no detail on template management specifics.",
+    "rationale": "HubSpot's docs directly cover this story: connect an inbox to send one-to-one templated emails from the CRM and 'send sequences emails' (hubspot-docs-13/21/46/54), plus a dedicated sequences tool to 'send a series of targeted, timed' emails (hubspot-docs-37/44/52). This is native first-party CRM functionality, not third-party bolt-on. missing for 10: no independent/hands-on corroboration of sequence creation workflow, and no detail on template management UI specifics.",
     "evidenceIds": [
       "hubspot-docs-13",
       "hubspot-docs-21",
       "hubspot-docs-37",
       "hubspot-docs-44",
+      "hubspot-docs-46",
       "hubspot-docs-52",
-      "hubspot-docs-12"
+      "hubspot-docs-54"
     ]
   },
   {
@@ -1272,7 +1270,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers HubSpot's CRM APIs, CLI, MCP servers, import tools, and reporting, but contains no mention of an app marketplace or prebuilt one-click integrations for Slack, support desks, marketing tools, or data warehouses — the specific capability this story asks about. Since this is a plausible and expected capability for a CRM platform, absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "The evidence pack covers HubSpot's APIs, CLI, webhooks, MCP servers, and CRM data features, but contains no mention of an app marketplace or prebuilt one-click integrations (e.g., Slack, support desk, marketing, data warehouse) that ops users could install. Since HubSpot is a SaaS platform for which an app marketplace is plausible, the axis applies, but no evidence documents such a marketplace or its featured integrations.",
     "evidenceIds": []
   },
   {
@@ -1281,7 +1279,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains nothing about HubSpot's deal/ticket pipeline configuration, multiple pipelines, or custom stage sets — it covers CRM objects, MCP servers, imports, dedup, workflows, and reporting but never pipeline-management features. Since this axis clearly applies to a CRM/ops product, absence of evidence yields 'none'.",
+    "rationale": "The evidence pack contains no mention of deal/ticket pipelines, pipeline stages, or the ability to configure multiple pipelines for different products or sales motions—only adjacent CRM features like custom objects, workflows, imports, and reporting. Pipeline configuration is a core, expected CRM capability, so its total absence from the evidence means this story is unsupported.",
     "evidenceIds": []
   },
   {
@@ -1290,22 +1288,20 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "HubSpot exposes extensive CRUD APIs (contacts, custom objects, workflows, imports, dedup) with OpenAPI specs and versioning, and even an MCP server for CRM read/write, suggesting broad API parity with UI actions. However, many UI-surfaced features (AI-generated reports via Breeze Assistant, prospecting agent, sequences UI, plain-language report builder) are not shown to have direct API equivalents, and probes show no llms.txt/docs.md/openapi.json at the root, indicating some agent-discovery gaps. missing for 10: API coverage confirmation for AI/reporting/sequence features shown only as UI capabilities, independent verification of full UI-API parity, working llms.txt/root OpenAPI discovery endpoints.",
+    "rationale": "HubSpot exposes a broad, well-documented REST API (CRM objects, contacts, custom objects, account info, webhooks) with OpenAPI specs and date-based versioning, and even an MCP server for programmatic CRM access, showing strong parity with UI CRUD operations. However, several UI-surfaced features (AI report-builder in plain language, Breeze AI agents, sequences, workflows builder, deduplication UI) are not shown to have equivalent API endpoints, and the probes show llms.txt/docs.md/openapi.json root discovery endpoints 404, undercutting claims of full agent-readable API parity. missing for 10: API coverage evidence for AI/Breeze agent features, workflows/sequences programmatic equivalents, and working root-level machine-readable discovery endpoints (llms.txt/openapi.json returned 404 in probes).",
     "evidenceIds": [
       "hubspot-docs-2",
       "hubspot-docs-3",
-      "hubspot-docs-8",
-      "hubspot-docs-12",
       "hubspot-docs-31",
-      "hubspot-docs-32",
+      "hubspot-docs-57",
       "hubspot-supp-openapi-spec",
       "hubspot-supp-api-versioning",
-      "hubspot-docs-35",
-      "hubspot-docs-50",
+      "hubspot-docs-4",
       "hubspot-probe-1",
       "hubspot-probe-2",
       "hubspot-probe-3",
-      "hubspot-docs-40"
+      "hubspot-docs-5",
+      "hubspot-docs-6"
     ]
   },
   {
@@ -1314,11 +1310,13 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "HubSpot's docs mention APIs to retrieve contacts and custom object records (e.g., GET requests) which could be used to pull data out, but there is no explicit documentation of a full data-export feature, bulk export tool, or guarantee of open/portable formats (e.g., CSV/JSON export for all objects) — the cited import/export docs focus almost entirely on importing, not exporting. Missing for 10: dedicated 'export all data' feature docs, explicit open-format (CSV/JSON) export guarantees, and evidence of exporting non-CRM objects (workflows, sequences, reports) for a full data migration/exit.",
+    "rationale": "HubSpot's public APIs let you retrieve contacts, custom objects, and account details (GET endpoints, OpenAPI specs), which technically enables pulling your data out programmatically, but the evidence pack contains no dedicated 'export all your data' feature, no CSV/JSON bulk-export documentation, and only import (not export) tooling is described in the knowledge base. Missing for 10: an official bulk data-export tool/guide, confirmation of open-format exports (CSV/JSON) for full account data, and any documentation addressing account closure/data portability guarantees.",
     "evidenceIds": [
-      "hubspot-docs-31",
+      "hubspot-docs-2",
       "hubspot-docs-3",
-      "hubspot-docs-38",
+      "hubspot-docs-31",
+      "hubspot-docs-57",
+      "hubspot-docs-63",
       "hubspot-docs-8"
     ]
   },
@@ -1328,7 +1326,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "HubSpot is a closed-source proprietary SaaS CRM platform; there is no evidence of an open-license source code repository, and reading source code under an open license is not a fair expectation for this kind of product category.",
+    "rationale": "HubSpot is a closed-source, proprietary SaaS CRM platform; no evidence pertains to publishing its source code under any license. This axis applies to open-source software projects, not a commercial SaaS product like HubSpot.",
     "evidenceIds": []
   },
   {
@@ -1345,8 +1343,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The only relevant evidence is that HubSpot's account API can report a data hosting location, but there is no evidence a user can choose or select their storage region for compliance/residency purposes.",
+    "confidence": "medium",
+    "rationale": "Evidence only shows that an account-info API can retrieve the current 'data hosting location' (hubspot-docs-63), not that a user can choose or select their data region/residency; no docs describe region selection, data residency options, or EU/US hosting choices for AI-native workflows.",
     "evidenceIds": [
       "hubspot-docs-63"
     ]
@@ -1356,8 +1354,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses AI-training data opt-out or any privacy control preventing customer data from being used to train AI models; the evidence covers CRM features, APIs, MCP servers, and reporting but nothing about AI-training consent/data usage controls.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI training data opt-out, data usage policies for model training, or privacy controls related to AI training; the evidence covers CRM features, APIs, MCP servers, and reporting but not this privacy-posture capability.",
     "evidenceIds": []
   },
   {
@@ -1365,8 +1363,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, GDPR/CCPA data deletion tools, or configurable retention settings for AI-native usage; nothing describes how a user can delete or control retention of data used by HubSpot's AI features or CRM data generally.",
+    "confidence": "low",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, GDPR/CCPA data subject requests, or configurable retention periods within HubSpot; the pack covers CRM objects, APIs, MCP servers, and marketing features but is silent on retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -1375,7 +1373,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for HubSpot or its AI/CLI/MCP tools; nothing about privacy controls, data collection disclosures, or opt-out mechanisms is documented. missing for 10: any mention of telemetry collection, opt-out settings, or privacy controls for AI features/CLI/MCP usage.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings, privacy controls, or data collection disclosures for HubSpot's AI or CLI tools; the evidence pack is entirely about CRM features, APIs, MCP servers, and product marketing.",
     "evidenceIds": []
   },
   {
@@ -1402,15 +1400,17 @@
   {
     "productId": "hubspot",
     "storyId": "revenue-forecasting",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack shows generic sales reporting/dashboards (pre-built reports, custom dashboards, deal-related analytics) but nothing documents a dedicated pipeline forecasting feature that combines deal value, stage probability, and close dates into a revenue forecast. Without that specific capability being evidenced, this applicable CRM axis is unsupported.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "HubSpot's sales reporting and dashboard docs (pre-built sales reports, custom reporting dashboards, rep performance/coaching insights) imply pipeline-based reporting, but the evidence pack never explicitly mentions a forecasting tool, deal stage probability, or close-date-based revenue projection. Missing for 10: explicit forecast/deal-probability feature docs, close-date roll-up forecasting, and any hands-on or independent confirmation of forecast accuracy.",
     "evidenceIds": [
+      "hubspot-docs-34",
       "hubspot-docs-36",
       "hubspot-docs-43",
       "hubspot-docs-49",
-      "hubspot-docs-59"
+      "hubspot-docs-66",
+      "hubspot-docs-68"
     ]
   },
   {
@@ -1435,14 +1435,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "HubSpot docs confirm connecting an individual work email (Gmail/Outlook) to log replies and send emails from the CRM, and automatic deduplication by email address helps route logged emails to the right contact records. However, evidence doesn't explicitly confirm true two-way sync behavior details (e.g., sync settings, filtering, conflict handling) or explicitly name Gmail/Outlook as the connected providers. missing for 10: explicit mention of Gmail/Outlook as supported providers, details on two-way sync configuration/filters, and independent/hands-on verification of reliable auto-logging to correct records.",
+    "rationale": "HubSpot docs describe connecting an individual work email inbox to send emails, log replies to the CRM automatically, and support sequences (hubspot-docs-13/21/46/54), which matches the core ask of two-way sync and auto-logging to records. However, the evidence never names Gmail/Outlook specifically or details bidirectional sync mechanics, and there's no independent/hands-on corroboration of reliability. Missing for 10: explicit Gmail/Outlook naming, detail on true two-way sync (not just one-way logging), and independent verification of correct-record matching.",
     "evidenceIds": [
       "hubspot-docs-13",
       "hubspot-docs-21",
       "hubspot-docs-46",
-      "hubspot-docs-54",
-      "hubspot-docs-10",
-      "hubspot-docs-20"
+      "hubspot-docs-54"
     ]
   },
   {
@@ -1450,8 +1448,8 @@
     "storyId": "visual-pipeline-stages",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack contains no mention of a visual deal pipeline, customizable stages, or drag-and-drop functionality anywhere in the docs, community, or probe items; only generic CRM/AI deal-progression references (e.g., hubspot-docs-14, hubspot-docs-22) exist without describing the pipeline UI itself. Missing for 10: explicit documentation of the visual pipeline board, stage customization, and drag-and-drop deal movement.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack describes HubSpot's deal pipeline UI, customizable stages, or drag-and-drop functionality — citations only cover CRM APIs, custom objects, workflows, reporting, and MCP integrations, none of which address the visual pipeline board itself.",
     "evidenceIds": []
   },
   {
@@ -1460,14 +1458,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "HubSpot's Workflows product (hubspot-docs-12/45) is explicitly documented as a trigger-based automation builder, and complementary docs confirm the CRM record model (contacts, custom objects, deals) that workflows act on, task creation, and notification/email capabilities (sequences, connected inbox) that workflows commonly trigger. Missing for 10: no deep documentation excerpt showing the specific workflow trigger/action UI (task creation, internal notifications) beyond the generic 'create workflows' page, and no independent hands-on review confirming reliability at scale.",
+    "rationale": "HubSpot's Workflows product explicitly supports building trigger-based automations ('Create workflows in HubSpot to automate your processes') that update CRM records, and the platform's broader capabilities (contact/custom object creation via API, deduplication, task/notification-related CRM actions) corroborate that workflows can update records and trigger actions. Missing for 10: no explicit documentation snippet detailing task-creation or notification-sending actions within a workflow, and no independent/hands-on account of building such a workflow.",
     "evidenceIds": [
       "hubspot-docs-12",
       "hubspot-docs-45",
       "hubspot-docs-2",
-      "hubspot-docs-8",
-      "hubspot-docs-13",
-      "hubspot-docs-37"
+      "hubspot-docs-10"
     ]
   },
   {

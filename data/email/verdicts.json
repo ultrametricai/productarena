@@ -3454,31 +3454,30 @@
     "productId": "zero",
     "storyId": "agent-email-end-to-end",
     "verdict": "full",
-    "quality": 8,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Zero documents an official MCP server (MCP.md, verified by probe) enabling agents like Claude to read threads, ask questions about mailbox content, compose with AI assistance, and create/send drafts and new emails, plus manage labels — covering triage, drafting, and sending end to end via Better Auth session token auth. missing for 10: no hands-on third-party report of an external agent (Claude/ChatGPT) actually completing a full read-triage-send workflow, and OAuth support is still 'coming soon' rather than shipped.",
+    "rationale": "Zero ships a documented MCP server (MCP.md) exposing tools to read threads, search/filter mail, ask questions about mailbox content, compose with AI assistance, create/send drafts, and delete/label emails — covering the full read-triage-draft-send loop for any MCP-capable agent like Claude. Connection is documented via Better Auth session token, with OAuth explicitly marked 'coming soon'. Missing for 10: independent/hands-on confirmation that an external agent (Claude/ChatGPT) actually completes the full workflow end-to-end, and OAuth (a more agent-friendly auth flow) is not yet shipped.",
     "evidenceIds": [
-      "zero-docs-4",
-      "zero-docs-5",
-      "zero-docs-9",
       "zero-docs-11",
       "zero-docs-14",
+      "zero-docs-17",
       "zero-docs-8",
       "zero-probe-1",
-      "zero-probe-rt-1"
+      "zero-docs-5",
+      "zero-docs-9"
     ]
   },
   {
     "productId": "zero",
     "storyId": "agentic-agent-docs",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "The repo ships an AGENT.md (agent-configuration doc) and a detailed MCP.md describing the MCP server's tool surface, both of which are exactly the kind of machine/agent-oriented documentation an AI agent could be pointed at; this was confirmed by a hands-on probe of the actual repo tree. However there is no evidence of a dedicated llms.txt file or any explicit guidance framing these docs as an 'agent-readable spec' in the llms.txt convention. Missing for 10: an actual llms.txt file, first-party statement that docs are structured for LLM consumption, and independent confirmation an agent successfully parsed these docs.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Zero ships an MCP.md file describing its MCP server tools (email search, compose, labels, etc.), which is agent-facing documentation an AI agent could be pointed at to learn available actions, but there's no dedicated llms.txt file or explicit agent-context doc standard, and no evidence of independent agent consumption of it. missing for 10: an actual llms.txt file, evidence of an agent successfully using MCP.md as context, and any documentation framed specifically for LLM consumption rather than as a developer-facing MCP spec.",
     "evidenceIds": [
-      "zero-probe-rt-1",
-      "zero-probe-1",
+      "zero-docs-1",
       "zero-docs-8",
+      "zero-probe-1",
       "zero-docs-14"
     ]
   },
@@ -3486,15 +3485,15 @@
     "productId": "zero",
     "storyId": "agentic-ai-insights",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Zero documents AI features that generate insights from mailbox data: composing emails with AI assistance, answering questions about mailbox content and specific threads, and summarizing/chatting with inbox content, corroborated by founder description of AI-powered summarization and chat-with-inbox in community coverage. missing for 10: independent hands-on verification of insight quality/accuracy and no broader third-party review confirming these AI features work reliably in practice.",
+    "rationale": "Zero's MCP docs explicitly list AI features that generate insights from user data: 'Ask questions about mailbox content', 'Ask questions about specific email threads', 'Compose emails with AI assistance', and web search augmentation via Perplexity. Community evidence corroborates this, describing Zero as an AI email client that auto-categorizes, summarizes threads, drafts replies, and lets users 'chat with their inbox.' Missing for 10: independent hands-on evaluation of insight accuracy/usefulness and more detail on proactive suggestion features beyond Q&A and summarization.",
     "evidenceIds": [
       "zero-docs-5",
       "zero-docs-9",
       "zero-docs-14",
-      "zero-comm-1",
-      "zero-probe-rt-1"
+      "zero-docs-7",
+      "zero-comm-1"
     ]
   },
   {
@@ -3503,7 +3502,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows an MCP server exposing on-demand email tools (search, compose, label, delete) that an AI client can call interactively, but nothing shows Zero itself scheduling or running autonomous background automations/triggers/workflows without a user or agent actively invoking them.",
+    "rationale": "Zero exposes an MCP server with tools for composing, searching, and labeling email that an AI agent can call, but there is no evidence of scheduled/triggered workflows or background automations that run autonomously without a user or agent actively invoking them in real time.",
     "evidenceIds": []
   },
   {
@@ -3511,15 +3510,15 @@
     "storyId": "agentic-builtin-assistant",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Zero ships a built-in AI assistant that can compose emails, answer questions about threads/mailbox, and perform web search (Perplexity), confirmed both in docs (MCP.md) and independent community description of it as an 'AI-powered email client' that summarizes, drafts, and lets users chat with their inbox. Missing for 10: broader independent hands-on verification beyond a single HN comment, and clearer distinction between MCP-exposed tools vs. in-app assistant UX.",
+    "confidence": "high",
+    "rationale": "Zero ships a built-in AI assistant that can compose emails, answer questions about mailbox/thread content, perform web search, and manage labels/search per its own MCP.md docs, and this is independently corroborated by a founder/community description of it as an AI email client that summarizes, drafts, and lets users 'chat with their inbox.' Missing for 10: deeper hands-on verification of assistant quality/reliability beyond one community comment and confirmation the OAuth-based access path (still 'coming soon') doesn't limit availability.",
     "evidenceIds": [
       "zero-docs-4",
       "zero-docs-5",
       "zero-docs-9",
       "zero-docs-14",
       "zero-comm-1",
-      "zero-probe-rt-1"
+      "zero-probe-1"
     ]
   },
   {
@@ -3537,12 +3536,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "All evidence describes Zero exposing its own email/label/compose tools via an official 'ZeroMCP' server for other AI agents to consume — i.e., Zero acting as an MCP server/provider, not as a client that plugs in external MCP servers to use their tools. There is no documentation of Zero itself connecting to third-party MCP servers to extend its own toolset.",
+    "rationale": "All evidence describes Zero exposing its own MCP server (ZeroMCP) so external AI agents can call Zero's email tools — the reverse direction from this story, which asks whether a user can plug external MCP servers into Zero so Zero can consume their tools. No evidence shows Zero acting as an MCP client that connects to and uses third-party MCP servers.",
     "evidenceIds": [
+      "zero-docs-1",
       "zero-docs-8",
-      "zero-probe-1",
-      "zero-probe-rt-1",
-      "zero-docs-14"
+      "zero-probe-1"
     ]
   },
   {
@@ -3551,13 +3549,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Zero ships a documented, named 'Zero MCP' server (MCP.md) exposing concrete tools (email CRUD, labels, AI compose, mailbox Q&A, web search) with an authentication method (Better Auth session token, OAuth coming soon), confirmed by an independent runtime probe finding the file in the actual repo. Missing for 10: independent hands-on verification that a third-party agent successfully connects and uses the server end-to-end, and OAuth is still unimplemented.",
+    "rationale": "Zero ships an official MCP server (ZeroMCP) documented in MCP.md with connection methods (Better Auth session token, with OAuth coming soon) and a rich set of exposed tools (email CRUD, search, labels, AI-assisted composition, thread Q&A, web search), directly matching the story of connecting an agent via an official MCP server. Missing for 10: independent/hands-on community corroboration that external agents have successfully connected via ZeroMCP, and OAuth support is still 'coming soon' rather than complete.",
     "evidenceIds": [
+      "zero-docs-1",
       "zero-docs-8",
       "zero-docs-11",
       "zero-docs-14",
-      "zero-probe-1",
-      "zero-probe-rt-1"
+      "zero-probe-1"
     ]
   },
   {
@@ -3591,16 +3589,15 @@
   {
     "productId": "zero",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 8,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Zero ships a documented MCP server (ZeroMCP) exposing a public, structured API for emails, labels, AI compose, mailbox Q&A, and web search, with authentication documented via Better Auth session tokens (OAuth coming soon), corroborated by a runtime probe confirming the real MCP.md and AGENT.md files in the repo. missing for 10: independent third-party usage/testing of the MCP API beyond first-party docs and a single runtime probe, and full OAuth support (currently listed as coming soon).",
+    "rationale": "Zero documents a ZeroMCP server exposing email actions (labels, search, compose, delete, drafts, web search via Perplexity) with auth via session token/OAuth, giving AI-native users a documented API surface. However this is an MCP interface, not a general public REST/GraphQL API, and there's no independent/hands-on confirmation it works as documented. missing for 10: a general-purpose public API (REST/GraphQL) beyond MCP, independent verification of MCP functionality, and rate-limit/auth details beyond session token.",
     "evidenceIds": [
       "zero-docs-8",
       "zero-docs-11",
       "zero-docs-14",
-      "zero-probe-1",
-      "zero-probe-rt-1"
+      "zero-probe-1"
     ]
   },
   {
@@ -3609,26 +3606,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero's MCP server documents authentication via a Better Auth session token (or future OAuth), but there is no evidence of scoped or least-privilege credential issuance, permission granularity, or agent-specific token scoping — auth appears to be a single session-level token granting full account access. Missing for 10: any documentation of scopes/permissions models, per-agent credential minting, or restricted-access tokens for agents.",
+    "rationale": "Evidence shows Zero exposes an MCP server with auth via Better Auth session tokens or OAuth, but there is no mention of scoped/least-privilege credential issuance, permission granularity, or API key scoping for agents — auth appears to grant full account access rather than restricted scopes.",
     "evidenceIds": [
-      "zero-docs-8",
-      "zero-probe-rt-1"
+      "zero-docs-8"
     ]
   },
   {
     "productId": "zero",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Zero doesn't publish a traditional language SDK, but it does document an official 'ZeroMCP' server (MCP.md) with concrete tool endpoints (email CRUD, labels, AI compose, mailbox Q&A) plus AGENT.md agent-configuration docs, giving AI-native developers a documented, official programmatic interface to build against, corroborated by a runtime probe confirming these files exist in the live repo. Missing for 10: an actual client SDK/library (Python/JS package), auth beyond a session token (OAuth marked 'coming soon'), and independent third-party developer usage reports.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Zero documents an official MCP server (ZeroMCP) with tool endpoints for email management, which developers/agents can build against, but there is no evidence of a traditional SDK (client libraries in Python/JS/TS, API reference, package registry entry) — only generic 'developer-friendly' marketing claims and the MCP protocol docs. missing for 10: dedicated SDK packages/libraries, API reference docs beyond MCP tool list, independent developer corroboration of building against it.",
     "evidenceIds": [
-      "zero-docs-1",
       "zero-docs-8",
       "zero-docs-11",
+      "zero-docs-17",
       "zero-probe-1",
-      "zero-probe-rt-1",
-      "zero-gh-7"
+      "zero-gh-10"
     ]
   },
   {
@@ -3636,8 +3631,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers Zero's MCP server (tool-calling actions like search, compose, label management) but nowhere mentions webhooks, event subscriptions, or push notifications for external systems to react to inbox events.",
+    "confidence": "low",
+    "rationale": "Evidence shows Zero has an MCP server exposing email actions, but nothing describes a webhook subscription mechanism for outbound event notifications; no docs mention webhooks or event push capability.",
     "evidenceIds": []
   },
   {
@@ -3646,7 +3641,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Zero's MCP docs and founder description confirm AI drafts replies ('Compose emails with AI assistance', 'drafts replies') as a core feature, but no evidence describes voice/tone personalization or learning the user's writing style. Missing for 10: documentation of voice/tone matching or personalization mechanism, and independent hands-on verification that drafts read as the user's own voice rather than generic AI text.",
+    "rationale": "Docs and community reports confirm AI-assisted compose/reply drafting (\"Compose emails with AI assistance\", founder description of AI that \"drafts replies\") but there is no evidence the drafts adapt to the user's own voice/tone or learn from their writing style — it reads as generic AI drafting rather than personalized voice-matching. missing for 10: evidence of voice/tone personalization or learning from user's writing style, hands-on examples showing drafts matching the user's tone.",
     "evidenceIds": [
       "zero-docs-4",
       "zero-docs-14",
@@ -3657,15 +3652,14 @@
     "productId": "zero",
     "storyId": "ai-inbox-answers",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Zero's MCP server explicitly supports asking questions about mailbox content and specific email threads, plus AI compose, search, and labels, and community commentary confirms an AI-powered 'chat with your inbox' experience. However, evidence doesn't show cross-inbox/whole-calendar synthesis, calendar integration, or 'who said what / what's outstanding' style grounded multi-thread reasoning — the documented Q&A appears scoped to mailbox/thread level rather than full inbox+calendar grounding. missing for 10: calendar integration/awareness, evidence of synthesizing across the entire inbox (not just single threads), independent hands-on verification of grounded multi-source answers.",
+    "rationale": "Zero's MCP docs and founder description confirm the assistant can answer questions about mailbox content and specific threads, i.e., 'chat with your inbox' (zero-docs-9, zero-docs-14, zero-comm-1), satisfying the email-Q&A part of the story. However, there is no evidence of any calendar integration or calendar-grounded answers anywhere in the evidence pack, so the 'whole inbox and calendar' scope is only half delivered. Missing for 10: calendar data access/integration, cross-thread synthesis of 'what's outstanding' across the whole inbox (only single-thread Q&A is documented), and independent hands-on verification of answer groundedness.",
     "evidenceIds": [
-      "zero-docs-5",
       "zero-docs-9",
       "zero-docs-14",
       "zero-comm-1",
-      "zero-probe-rt-1"
+      "zero-docs-5"
     ]
   },
   {
@@ -3674,14 +3668,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Community and docs evidence show Zero markets itself as an AI-powered inbox that auto-categorizes emails, and its MCP server exposes tools to modify/create labels, filter/search by label, and answer questions about threads/mailbox content, giving a steerable interface for AI actions. However, there's no explicit documentation of automatic prioritization/surfacing of 'what needs attention' or an audit log of AI triage decisions beyond the generic MCP action list. Missing for 10: dedicated 'needs attention' surfacing/prioritization feature, explicit audit trail or history of AI-taken triage actions, and independent hands-on verification of auto-labeling accuracy.",
+    "rationale": "MCP docs show AI can modify/create labels, categorize via custom labels, and answer questions about threads, and a founder's community post explicitly states Zero 'auto-categorizes, summarizes threads, drafts replies' — matching much of the triage story. However there's no explicit evidence of automatic surfacing of 'what needs attention' as a distinct feature, nor documented audit/steering controls beyond manual label editing via MCP tools. missing for 10: dedicated priority/attention-surfacing feature, explicit user-facing controls to steer/override AI triage decisions, and an audit trail of AI actions.",
     "evidenceIds": [
-      "zero-comm-1",
       "zero-docs-1",
       "zero-docs-3",
       "zero-docs-6",
       "zero-docs-9",
-      "zero-probe-rt-1"
+      "zero-comm-1"
     ]
   },
   {
@@ -3698,8 +3691,8 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "confidence": "medium",
+    "rationale": "Evidence shows Zero's MCP.md documents its MCP tool set (email actions, labels, search) but nowhere is there mention of a downloadable OpenAPI spec or other machine-readable API schema for developers; the MCP protocol description is markdown, not a formal spec file.",
     "evidenceIds": []
   },
   {
@@ -3707,8 +3700,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Zero is an AI email client whose evidence covers MCP tools for real mailbox operations (send/delete/label emails) and self-hosting, but nothing describes a sandbox, test/staging mode, or mock data environment isolated from production email accounts.",
+    "confidence": "high",
+    "rationale": "No evidence of a sandbox/test environment separate from production data; Zero's docs focus on MCP email actions, self-hosting, and dev setup (Drizzle Studio), but nothing indicates a sandboxed testing mode for AI agents to safely try actions without touching real mailbox data.",
     "evidenceIds": []
   },
   {
@@ -3717,7 +3710,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence describes Zero's MCP server capabilities and self-hosting, but no documentation anywhere mentions API versioning, version numbers, or a deprecation policy for its MCP/API surface. missing for 10: any mention of API versioning scheme, changelog/deprecation policy, or backward-compatibility guarantees.",
+    "rationale": "No evidence of API versioning scheme or documented deprecation policy anywhere in the pack; MCP.md lists tool capabilities but no version numbers, changelog, or deprecation guarantees.",
     "evidenceIds": []
   },
   {
@@ -3726,20 +3719,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero is a personal AI-powered email client with unified inbox, labels, and MCP tooling, but no evidence anywhere in the pack describes team features like assigning conversations to teammates or configuring routing/ownership rules — capabilities relevant for shared team inboxes. This is a fair axis for an email client, but no evidence supports it, so it's 'none' rather than 'na'.",
+    "rationale": "No evidence of assigning conversations to teammates or mail-routing rules; Zero appears to be an individual-focused AI email client with labels, search, and MCP tooling but nothing about team ownership or routing rules.",
     "evidenceIds": []
   },
   {
     "productId": "zero",
     "storyId": "automation-bulk-operations",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Zero's MCP server exposes email actions like 'Bulk delete emails' and 'Bulk archive emails' explicitly labeled as bulk operations, plus label/search operations that could apply across many items. However, evidence does not specify limits, batch size, or confirm bulk semantics beyond these two named actions, nor is there hands-on confirmation of bulk behavior at scale. missing for 10: independent/hands-on verification of bulk operations at scale, documentation of batch limits or performance, evidence of bulk operations beyond delete/archive (e.g., bulk label/move/send).",
+    "rationale": "Zero's MCP tool docs explicitly list 'Bulk delete emails' and 'Bulk archive emails' as supported operations, directly matching the bulk-operations story, and additional MCP endpoints (delete, list, label management) support batch-style automation over many items. missing for 10: independent/hands-on verification that bulk operations work reliably at scale, and no detail on limits or performance for large batches.",
     "evidenceIds": [
       "zero-docs-2",
       "zero-docs-11",
-      "zero-probe-rt-1"
+      "zero-docs-13",
+      "zero-probe-1"
     ]
   },
   {
@@ -3748,12 +3742,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Zero as an AI email client with MCP tool actions (search, compose, label, etc.) but no documented rule-based automation engine that triggers actions on events (e.g., 'when email arrives from X, do Y'). All actions appear to be user- or agent-invoked rather than event-triggered automation. Missing for full credit: any documented trigger/condition/action rules engine or scheduled/event-based automation feature.",
+    "rationale": "The evidence shows Zero exposes an MCP server with tools (labeling, search, compose, delete) that an AI agent can invoke on request, but there is no mention of a rules/trigger engine letting users define 'when X happens, do Y' automations that fire without explicit agent invocation. No roadmap or docs item describes conditional automation or event-based triggers.",
     "evidenceIds": [
       "zero-docs-1",
       "zero-docs-11",
       "zero-docs-14",
-      "zero-probe-rt-1"
+      "zero-docs-15",
+      "zero-docs-18"
     ]
   },
   {
@@ -3762,7 +3757,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero is an AI email client with MCP tools for email actions (labels, search, compose, AI Q&A) but no evidence of scheduling recurring jobs or workflows/automation triggers.",
+    "rationale": "Zero is an email client with an MCP server exposing email actions (compose, search, label, etc.), but no evidence of scheduling recurring jobs or automated workflows anywhere in docs, roadmap, or community sources.",
     "evidenceIds": []
   },
   {
@@ -3771,7 +3766,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero is an AI email client, not an automation/workflow-building product with versionable automations; the versioning/rollback story is a category mismatch (wrong axis).",
+    "rationale": "Zero is an AI email client, not an automation/workflow builder; there is no concept of versioning, reviewing, or rolling back automations in its evidence pack — this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3812,7 +3807,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero connects to providers like Gmail/Outlook for unified inbox access, but no evidence describes any import/migration tool for bulk historical mail or contacts from an old provider/client — no mention of mbox/EML import, contact list import, or migration wizard.",
+    "rationale": "Evidence shows Zero connects to providers like Gmail/Outlook (unified inbox) but there is no mention of any import tool for mail history/contacts from an old provider, migration wizard, or contact import feature.",
     "evidenceIds": []
   },
   {
@@ -3834,7 +3829,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers email management, MCP AI features, and self-hosting, but nothing describes internal side-threads with comments/@mentions for team discussion of emails without forwarding.",
+    "rationale": "No evidence of internal side-threads, comments, or @mentions on emails; evidence only covers MCP tools (labels, search, compose, drafts), self-hosting, and unified inbox features. Nothing addresses team-collaboration commenting/mention functionality beside a message.",
     "evidenceIds": []
   },
   {
@@ -3855,19 +3850,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero is an AI-powered unified email client with labels, search, and MCP integrations, but nothing in the evidence pack describes email alias generation or masked/burner address creation to hide a user's real address from sign-ups or strangers.",
+    "rationale": "No evidence in the pack mentions email aliases, masked/burner addresses, or any mechanism to hide a user's real address from senders or sign-ups; Zero's features focus on unified inbox, labels, AI compose/search, and self-hosting. Missing for 10: alias/masking feature docs, per-signup address generation, or any privacy-address-hiding capability.",
     "evidenceIds": []
   },
   {
     "productId": "zero",
     "storyId": "multi-account-unified",
-    "verdict": "disputed",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Zero's marketing repeatedly claims a 'Unified Inbox' connecting Gmail, Outlook, 'and more,' but the only hands-on/community description of the actual product (zero-comm-1) says it 'works on top of Gmail' and is in public beta, suggesting multi-provider (Microsoft 365, IMAP) support isn't yet realized in practice — no IMAP mention anywhere in the pack. Missing for 10: explicit IMAP support, confirmed working Microsoft 365/Outlook connection, and independent verification that multiple accounts can be worked from one place simultaneously.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "GitHub README repeatedly claims a 'Unified Inbox' connecting Gmail, Outlook, and more, and setup docs detail Google OAuth for Gmail integration, but there is no concrete evidence of Microsoft 365 or IMAP account connection beyond the generic marketing bullet, and a founder's own HN description says the product 'works on top of Gmail' in public beta, suggesting other providers are not yet fully realized. Missing for 10: documented IMAP support, Microsoft 365/Outlook OAuth setup instructions, and independent confirmation that multiple provider accounts can be worked simultaneously from one inbox.",
     "evidenceIds": [
       "zero-gh-1",
+      "zero-gh-9",
       "zero-gh-13",
+      "zero-gh-17",
       "zero-comm-1"
     ]
   },
@@ -3877,7 +3874,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions offline mode, local caching, or sync-on-reconnect; Zero appears to be a web-based email client requiring live connection to providers/AI services, with no offline-capability documentation.",
+    "rationale": "No evidence pack item mentions offline access, local caching, or offline-to-online sync; all evidence covers unified inbox, AI/MCP features, self-hosting, and UI customization. This is a web-based email client with no documented offline mode.",
     "evidenceIds": []
   },
   {
@@ -3886,11 +3883,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Zero connects to providers like Gmail/Outlook and offers self-hosting and an MCP server for AI actions, but nothing in the pack mentions IMAP/JMAP/SMTP protocol access or standards-based mail export for portability — the core of this switcher story is unaddressed.",
+    "rationale": "Evidence shows Zero connects to existing providers (Gmail, Outlook) via OAuth and offers self-hosting, but nothing in the pack documents IMAP/JMAP/SMTP protocol access or a standards-based export feature for user mail data — the MCP docs focus on AI-driven mailbox actions, not portability/export tooling.",
     "evidenceIds": [
       "zero-gh-1",
-      "zero-gh-13",
       "zero-gh-2",
+      "zero-gh-17",
       "zero-docs-15"
     ]
   },
@@ -3900,18 +3897,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Zero's MCP server exposes many core email actions (search, send, draft, delete, labels, AI compose, thread Q&A) that mirror UI functionality, giving strong API-parity for mail operations. However missing for 10: no evidence of API parity for UI-specific settings like customizable keyboard shortcuts, UI theming/customization, unified inbox provider management, or account/connection setup via API — these remain UI-only per docs, and there's no independent confirmation the MCP surface is fully comprehensive versus a curated subset.",
+    "rationale": "Zero ships a documented MCP server (zero-docs-1..17) exposing a broad set of email actions—labels, search, compose, drafts, send, delete, thread Q&A, web search—that mirror many core UI actions, and zero-probe-1 confirms this is an official first-party API surface. However there's no evidence of full parity: settings/account management, unified inbox provider configuration, and UI customization features are not exposed via the API, and no independent test confirms 1:1 coverage of all UI capabilities. Missing for 10: API coverage of account/provider settings, confirmation of complete feature parity beyond email actions, and independent hands-on validation of MCP completeness.",
     "evidenceIds": [
+      "zero-docs-1",
+      "zero-docs-2",
+      "zero-docs-3",
       "zero-docs-4",
-      "zero-docs-5",
-      "zero-docs-6",
-      "zero-docs-9",
       "zero-docs-11",
-      "zero-docs-13",
       "zero-docs-14",
-      "zero-probe-rt-1",
-      "zero-docs-10",
-      "zero-gh-3"
+      "zero-probe-1"
     ]
   },
   {
@@ -3920,12 +3914,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Zero is self-hostable, open-source, and doesn't sell user data, plus a Drizzle Studio DB viewer for self-hosters, but there is no documented data-export feature (e.g., mbox/EML export, takeout tool) letting a user extract all their mail data in an open format and leave the service.",
+    "rationale": "Evidence shows self-hosting, open-source code, and DB access via Drizzle Studio for developers, but nothing documents a user-facing data export feature in open formats (e.g., mbox/eml export or account portability tool). Missing for 10: an explicit export-all-data feature, documentation of open/interoperable export formats, and evidence of a straightforward 'leave with your data' workflow for end users.",
     "evidenceIds": [
       "zero-gh-8",
       "zero-gh-13",
-      "zero-gh-15",
-      "zero-docs-16"
+      "zero-docs-16",
+      "zero-gh-15"
     ]
   },
   {
@@ -3933,14 +3927,13 @@
     "storyId": "openness-open-license",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Zero's source is publicly hosted on GitHub (Mail-0/Zero) with a full contributing guide, self-hosting instructions, and a verified runtime probe confirming a real, clonable source tree with Docker configs for self-hosting — consistent with an open-source project freely readable by AI-native users. Missing for 10: explicit citation of the license file/name (e.g. MIT/AGPL) to confirm licensing terms.",
+    "confidence": "high",
+    "rationale": "Zero is explicitly described as open-source with self-hosting freedom, hosted publicly on GitHub (Mail-0/Zero repo), giving AI-native users direct access to read its source. missing for 10: explicit mention of the specific open-source license name/terms, and independent confirmation of license permissiveness.",
     "evidenceIds": [
       "zero-gh-2",
       "zero-gh-8",
       "zero-gh-13",
-      "zero-docs-16",
-      "zero-probe-rt-1"
+      "zero-gh-16"
     ]
   },
   {
@@ -3948,32 +3941,31 @@
     "storyId": "openness-self-host",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Multiple GitHub and docs citations explicitly advertise 'Self-Hosting Freedom' and describe running your own email app, and a runtime probe confirms a real self-hostable source tree with docker-compose files for self-hosting deployment. Missing for 10: independent hands-on report of a completed self-host deployment beyond the repo/docker-compose evidence, and more detailed self-host setup documentation.",
+    "confidence": "medium",
+    "rationale": "Multiple GitHub README claims explicitly describe 'Self-Hosting Freedom' and that Zero 'gives users the power to self-host their own email app,' framing it as an open-source, self-hostable product with a contributing/dev setup (Drizzle Studio, pnpm scripts). Missing for 10: independent hands-on confirmation of a successful self-host deployment and detailed self-hosting setup docs beyond the roadmap mention.",
     "evidenceIds": [
       "zero-gh-2",
       "zero-gh-6",
       "zero-gh-8",
-      "zero-gh-11",
       "zero-gh-13",
+      "zero-gh-16",
       "zero-docs-15",
-      "zero-probe-rt-1"
+      "zero-docs-16"
     ]
   },
   {
     "productId": "zero",
     "storyId": "privacy-data-residency",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Zero's self-hosting capability (own infra, own database via docker-compose) lets a user effectively choose where their data lives, and it claims not to track/collect/sell data, but there is no explicit region/residency selection feature or documented multi-region hosted offering. missing for 10: explicit region/residency selection UI or hosted multi-region options, documentation on data locality guarantees for the hosted SaaS version, independent confirmation of self-host deployment satisfying residency requirements.",
+    "rationale": "Zero doesn't offer an explicit region/residency selection feature, but its self-hosting capability (zero-gh-2, zero-gh-6, zero-gh-8, zero-gh-13, zero-gh-16) lets users deploy the app on infrastructure of their choosing, which indirectly gives control over data location, and it claims not to track/sell user data (zero-gh-15). missing for 10: explicit data-residency/region selection controls, documented data storage locations for hosted/cloud version, and independent confirmation of self-hosted deployments achieving residency compliance.",
     "evidenceIds": [
       "zero-gh-2",
       "zero-gh-6",
       "zero-gh-8",
-      "zero-gh-11",
-      "zero-docs-15",
       "zero-gh-13",
+      "zero-gh-16",
       "zero-gh-15"
     ]
   },
@@ -3981,13 +3973,13 @@
     "productId": "zero",
     "storyId": "privacy-no-training",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Zero states it does not track, collect, or sell user data, and self-hosting is available which would let users fully control data flow, implying no AI training on user data. However, there is no explicit statement or policy about AI-model training exclusion (e.g., no clause addressing whether email content sent to AI features like compose/summarize is used for model training). missing for 10: explicit AI-training opt-out/data-use policy, third-party AI provider data-handling terms, independent verification of the no-training claim.",
+    "rationale": "Zero states broadly that it 'does not track, collect, or sell your data in any way' and offers self-hosting, which implies user control over data, but there is no explicit documentation addressing AI model training opt-out or any AI-training-specific privacy policy. Missing for 10: explicit AI-training data usage policy/opt-out toggle, third-party LLM data handling disclosure, independent verification of the no-tracking claim.",
     "evidenceIds": [
       "zero-gh-15",
-      "zero-gh-8",
-      "zero-gh-13"
+      "zero-gh-2",
+      "zero-gh-16"
     ]
   },
   {
@@ -3995,14 +3987,15 @@
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Zero claims a no-tracking/no-sell data policy and supports self-hosting (giving users full control over their own data and deletion since they own the infrastructure), plus MCP tools include explicit 'delete emails' actions. However, there's no documented data retention policy, no explicit account/data deletion workflow or export tooling described, and no independent verification of the no-tracking claim. missing for 10: documented retention/export/deletion policy for hosted use, independent audit of data practices, explicit account-deletion or right-to-be-forgotten flow.",
+    "confidence": "medium",
+    "rationale": "Zero's self-hosting model (zero-gh-2/6/8/13/16) and its claim that it 'does not track, collect, or sell your data' (zero-gh-15) give users structural control over where data lives and imply deletion is fully within their control, and MCP tools expose explicit email/label delete operations (zero-docs-2, zero-docs-11, zero-docs-13, zero-docs-17). However there is no explicit documentation of a data-retention policy, account/data export or deletion workflow, or GDPR-style controls for the hosted version. Missing for 10: documented retention policy/settings, explicit account-level data deletion process, and independent confirmation of the no-data-collection claim.",
     "evidenceIds": [
       "zero-gh-15",
+      "zero-gh-2",
       "zero-gh-8",
-      "zero-gh-13",
-      "zero-docs-11",
-      "zero-docs-2"
+      "zero-docs-2",
+      "zero-docs-13",
+      "zero-docs-17"
     ]
   },
   {
@@ -4011,12 +4004,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Zero's GitHub page states it 'does not track, collect, or sell your data in any way,' and self-hosting support (Docker compose files, self-hosting docs) lets AI-native users run their own instance with no vendor telemetry at all. However there is no explicit telemetry settings/opt-out toggle documented, no privacy policy detail, and no independent verification of the no-tracking claim. Missing for 10: explicit telemetry opt-out control/setting, detailed privacy policy, and independent/hands-on confirmation of the no-tracking claim.",
+    "rationale": "The GitHub README states Zero \"does not track, collect, or sell your data in any way,\" implying no telemetry exists to opt out of, and self-hosting (zero-gh-2/6/8) gives users full control over any data flows. However, there is no explicit settings/toggle documentation for telemetry opt-out, no mention of what analytics (if any) run in hosted mode, and no independent verification of the no-tracking claim. Missing for 10: explicit telemetry/analytics settings documentation, third-party or hands-on confirmation of the no-tracking claim, and details on hosted-vs-self-hosted data collection differences.",
     "evidenceIds": [
       "zero-gh-15",
       "zero-gh-2",
-      "zero-gh-6",
-      "zero-probe-rt-1"
+      "zero-gh-8"
     ]
   },
   {
@@ -4025,7 +4017,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions read receipts, open tracking, or notifications about when recipients open emails; the MCP/docs only cover sending, drafting, labeling, and searching emails.",
+    "rationale": "No evidence anywhere in the pack mentions read receipts, open tracking, or notifications about recipient email opens; the feature list covers labels, search, compose, drafts, and MCP tools but nothing about tracking opens.",
     "evidenceIds": []
   },
   {
@@ -4034,11 +4026,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions scheduled send or undo-send functionality; MCP docs list send/draft/delete but nothing about delayed sending or a grace-window recall.",
-    "evidenceIds": [
-      "zero-docs-11",
-      "zero-docs-12"
-    ]
+    "rationale": "No evidence anywhere in the pack mentions scheduled sending or an undo-send grace window; MCP docs list send/draft/delete capabilities but nothing about delayed delivery or send-cancellation windows.",
+    "evidenceIds": []
   },
   {
     "productId": "zero",
@@ -4046,13 +4035,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Zero is explicitly open-source and self-hostable, with GitHub docs stating 'Self-Hosting Freedom – Run your own email app with ease' and a probe confirming a real, keyless-cloneable source tree with docker-compose files for self-hosting the full mail pipeline (DB, prod services). This gives a switcher genuine control over their own instance rather than relying on a hosted SaaS. Missing for 10: detailed self-hosting setup/migration docs (e.g. IMAP/SMTP backend specifics), independent hands-on reports of a completed self-hosted deployment, and confirmation of full mailbox portability beyond Gmail/Outlook OAuth integration.",
+    "rationale": "Zero explicitly markets itself as an open-source, self-hostable email app that integrates with external providers like Gmail, giving switchers control over the mail pipeline (zero-gh-2, zero-gh-6, zero-gh-8, zero-gh-13, zero-gh-16), and ROADMAP.md lists ongoing self-hosting capabilities work (zero-docs-15). Missing for 10: independent hands-on verification of a full self-hosting deployment/setup guide and confirmation that the mail pipeline (not just the client) can be fully run under one's own control rather than depending on third-party provider APIs.",
     "evidenceIds": [
       "zero-gh-2",
       "zero-gh-6",
       "zero-gh-8",
       "zero-gh-13",
-      "zero-probe-rt-1",
+      "zero-gh-16",
       "zero-docs-15"
     ]
   },
@@ -4062,7 +4051,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero is an email client with AI/MCP features for composing, searching, and managing emails, but no evidence in the pack mentions calendar integration, availability sharing, or inserting bookable meeting times into emails.",
+    "rationale": "Zero is an email client with no evidence of calendar/scheduling features—no mention of availability sharing, booking links, or calendar integration anywhere in the docs or MCP tool list. missing for 10: any calendar integration, availability sharing, or bookable meeting time insertion feature.",
     "evidenceIds": []
   },
   {
@@ -4071,11 +4060,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Zero is positioned as a personal AI-powered unified inbox for individual users (Gmail/Outlook accounts), with no evidence of shared inboxes, team channels, or shared conversation state across multiple users; features described are individual email management, MCP tooling, and self-hosting, not multi-user collaboration.",
-    "evidenceIds": [
-      "zero-gh-1",
-      "zero-comm-1"
-    ]
+    "rationale": "Zero is positioned as a personal AI email client with unified inbox and self-hosting features, but no evidence mentions shared inboxes, shared accounts, team channels, or multi-user shared conversation state.",
+    "evidenceIds": []
   },
   {
     "productId": "zero",
@@ -4083,7 +4069,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions saved snippets, canned responses, or templates with variables/attachments; the docs describe AI-assisted composing, MCP tools, labels, and self-hosting but nothing about a snippet/template insertion feature.",
+    "rationale": "No evidence of saved snippets/templates with variables or attachments; Zero's docs mention AI-assisted compose and draft creation but nothing about reusable templates or snippet insertion.",
     "evidenceIds": []
   },
   {
@@ -4092,7 +4078,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions snooze, follow-up reminders, or resurfacing threads after no reply; the documented features cover labels, search, compose, AI Q&A, and self-hosting only.",
+    "rationale": "No evidence anywhere in the pack mentions snoozing conversations or setting follow-up reminders; the feature list (labels, search, compose, MCP tools, self-hosting) has no mention of this triage capability.",
     "evidenceIds": []
   },
   {
@@ -4115,7 +4101,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Only a general privacy claim ('Zero does not track, collect, or sell your data in any way') is evidenced, with no mention of read-pixel/tracking-pixel blocking specifically or a detailed data-handling policy. missing for 10: explicit read-receipt/tracking-pixel blocking feature, documentation of default-on behavior, a privacy policy detailing mail data handling, and independent confirmation of the no-tracking claim.",
+    "rationale": "Zero's GitHub README states it 'does not track, collect, or sell your data in any way,' offering a general privacy transparency claim, but there is no evidence of a specific feature that blocks senders' tracking/read pixels by default. missing for 10: explicit tracking-pixel/read-receipt blocking feature, detailed data-handling documentation beyond a single tagline.",
     "evidenceIds": [
       "zero-gh-15"
     ]
