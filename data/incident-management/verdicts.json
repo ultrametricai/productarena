@@ -2317,17 +2317,15 @@
     "storyId": "agent-acks-escalates-api",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "PagerDuty ships both a documented REST API with explicit trigger/acknowledge/resolve and escalation endpoints (docs-21, docs-32, docs-39) and an official MCP server (local and hosted) confirmed live via runtime probe with OAuth/token auth (docs-1, docs-14, docs-34, probe-2, probe-rt-1), enabling an agent to manage the full incident lifecycle without a dashboard. missing for 10: independent hands-on validation that an agent using MCP can complete a full ack→escalate→resolve workflow end-to-end (only API-level and connectivity evidence, no full agentic workflow case study).",
+    "confidence": "medium",
+    "rationale": "PagerDuty ships an official MCP server (pagerduty-mcp-server) plus a documented REST/Events API that explicitly supports triggering, acknowledging, and resolving incidents programmatically, and escalation is automated via escalation policies — enabling agent-driven incident handling without a dashboard. Evidence includes first-party docs for MCP setup with Claude/Cursor/VS Code and API endpoints for the full incident lifecycle. Missing for 10: independent/hands-on verification that an agent can complete a full incident lifecycle purely via MCP/API without any UI fallback, and no third-party corroboration of the MCP server's reliability in production.",
     "evidenceIds": [
-      "pagerduty-docs-1",
       "pagerduty-docs-14",
       "pagerduty-docs-21",
       "pagerduty-docs-32",
-      "pagerduty-docs-34",
-      "pagerduty-docs-39",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1"
+      "pagerduty-docs-49",
+      "pagerduty-docs-54",
+      "pagerduty-probe-2"
     ]
   },
   {
@@ -2336,78 +2334,84 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A live probe confirms PagerDuty serves a genuine llms.txt file (HTTP 200 with structured knowledge-base content) at support.pagerduty.com/llms.txt, directly matching the story, and this is complemented by developer docs and a runtime-verified MCP server for agent-oriented access. Missing for 10: no evidence the llms.txt is comprehensive/linked from primary docs nav or independent community confirmation of agents successfully using it.",
+    "rationale": "A direct probe confirms PagerDuty serves a live llms.txt file with structured knowledge-base documentation (HTTP 200), which is exactly the artifact an AI agent would target, and this is corroborated by extensive agent-oriented developer docs (official MCP server, REST/Events APIs) supporting agentic consumption. Missing for 10: independent/third-party confirmation that an agent has successfully parsed and acted on the llms.txt file, and evidence of additional agent-oriented doc formats beyond the single llms.txt endpoint.",
     "evidenceIds": [
       "pagerduty-probe-1",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1",
-      "pagerduty-docs-14"
+      "pagerduty-docs-54",
+      "pagerduty-docs-34"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-ai-insights",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "PagerDuty Advance and its components (Scribe Agent for post-incident reviews, SRE Agent, Intelligent Alert Grouping via ML, AIOps insights claiming 91% alert reduction) provide AI-generated insights and suggestions embedded in the product, going beyond mere automation. However, evidence is largely first-party marketing copy with no independent/hands-on validation of insight quality, and community feedback is silent on these newer AI features (mostly discussing core paging/escalation). Missing for 10: independent verification of AI-generated insight quality, concrete examples of suggestions surfaced in-product, and community corroboration of the AI/Advance features specifically.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PagerDuty Advance embeds generative and agentic AI across the product, including the Insights Agent which 'delivers proactive recommendations and on-demand conversational insights based on your Incidents, Services, and Teams analytics,' plus AI-generated Post-Incident Reviews, Intelligent Alert Grouping via ML, and AI Orchestrations that 'automatically analyze historical events and incidents and surface recommended rules.' These are first-party documented, in-product AI insight/suggestion features, not just chat add-ons. missing for 10: independent/hands-on user corroboration of these specific AI insight features (community evidence pack predates these AI features and doesn't address them), and more detail on accuracy/quality of the generated insights.",
     "evidenceIds": [
-      "pagerduty-docs-11",
+      "pagerduty-docs-59",
+      "pagerduty-docs-61",
       "pagerduty-docs-26",
-      "pagerduty-docs-27",
-      "pagerduty-docs-23",
-      "pagerduty-docs-38",
-      "pagerduty-docs-18",
+      "pagerduty-docs-62",
+      "pagerduty-docs-11",
       "pagerduty-docs-4"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "PagerDuty provides multiple background-automation mechanisms that run without manual triggering: Incident Workflows auto-fire on conditions (e.g., all P1/P2 incidents), Escalation Policies auto-escalate, Event Orchestration auto-dedupes/suppresses alerts, and PagerDuty Advance/SRE Agent is explicitly marketed as an agentic AI that 'handles incidents and fixes' autonomously while a human 'steps in when it matters.' This directly matches the ask of autonomous background automation. Missing for 10: independent/hands-on validation that the SRE Agent or Advance features actually operate unattended in production (community evidence is about legacy escalation/paging behavior, not the newer agentic AI layer), and no user testimonials confirming trust in fully autonomous incident resolution.",
+    "rationale": "PagerDuty documents multiple autonomous background automation capabilities: Incident Workflows with configurable 'if-this-then-that' triggers that fire automatically on incident conditions, AI Orchestrations that auto-analyze events and recommend/apply noise-reduction rules, and PagerDuty Advance agents (SRE Agent, Shift Agent, Scribe Agent, Insights Agent) that autonomously troubleshoot, coordinate schedule changes, transcribe meetings, and surface insights without manual intervention. This directly matches the AI-native 'autonomous background automation' story with rich first-party documentation across many independent features. Missing for 10: independent/hands-on corroboration of these newer agentic AI features actually running unattended in production (community evidence only covers older escalation/API complaints, not the agentic capabilities).",
     "evidenceIds": [
       "pagerduty-docs-8",
       "pagerduty-docs-22",
       "pagerduty-docs-26",
       "pagerduty-docs-27",
-      "pagerduty-docs-11",
-      "pagerduty-docs-43",
-      "pagerduty-comm-1"
+      "pagerduty-docs-42",
+      "pagerduty-docs-58",
+      "pagerduty-docs-60",
+      "pagerduty-docs-61",
+      "pagerduty-docs-67"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "PagerDuty Advance embeds agentic AI directly in the product — the SRE Agent handles incidents/fixes and the Scribe Agent assists Post-Incident Reviews, both described as built-in assistants a user can delegate tasks to. However, this is marketing/first-party documentation only, with no independent or hands-on confirmation of how well delegation actually works in practice. Missing for 10: independent/hands-on validation of the SRE Agent or Scribe Agent in real use, and clarity on availability/tier restrictions for PagerDuty Advance.",
+    "rationale": "PagerDuty Advance ships multiple built-in, task-delegatable AI agents embedded in the product — SRE Agent (troubleshoots/fixes incidents, configurable Skills, GitHub/Sentry connectors), Scribe Agent (joins calls, transcribes, generates PIRs), Shift Agent (handles schedule conflicts autonomously), and Insights Agent (conversational analytics) — going beyond a simple chatbot to actual task delegation within the product UI/workflow. Missing for 10: independent or hands-on user reports validating these agents in practice (all evidence is vendor documentation) and no community commentary specifically confirming real-world delegation experience.",
     "evidenceIds": [
       "pagerduty-docs-11",
       "pagerduty-docs-26",
       "pagerduty-docs-27",
-      "pagerduty-docs-23",
-      "pagerduty-docs-38"
+      "pagerduty-docs-56",
+      "pagerduty-docs-57",
+      "pagerduty-docs-58",
+      "pagerduty-docs-59",
+      "pagerduty-docs-60",
+      "pagerduty-docs-67",
+      "pagerduty-docs-68",
+      "pagerduty-docs-63"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-headless",
-    "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "PagerDuty exposes a fully headless REST API, async Events API v2, webhooks, and Incident Workflows, all confirmed live via runtime probes (400/401 structured responses), enabling CI/automation pipelines to trigger, manage, and orchestrate incidents without any UI. missing for 10: no first-party CLI tool explicitly marketed for CI pipelines, and no independent case study of running PagerDuty automation fully headless in a CI system.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "PagerDuty's REST API, Events API v2, and webhooks are documented as programmatic, asynchronous interfaces that let external systems (including CI pipelines) trigger, deduplicate, and manage incidents without a UI, and the MCP server further exposes account operations to automated clients. However, there is no dedicated CLI tool, no explicit CI/CD pipeline integration guide, and no first-party 'headless automation' framing for AI-native workflows. missing for 10: a documented CLI or CI-specific automation guide, explicit non-interactive/headless mode framing, independent hands-on confirmation of API-only automated workflows.",
     "evidenceIds": [
       "pagerduty-docs-31",
       "pagerduty-docs-32",
       "pagerduty-docs-33",
       "pagerduty-docs-39",
-      "pagerduty-docs-8",
-      "pagerduty-probe-rt-2",
-      "pagerduty-probe-rt-1"
+      "pagerduty-docs-53",
+      "pagerduty-docs-54",
+      "pagerduty-probe-2"
     ]
   },
   {
@@ -2415,9 +2419,17 @@
     "storyId": "agentic-mcp-client",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "All MCP-related evidence (docs-1, docs-14, docs-34, probe-2, probe-rt-1) describes PagerDuty as an official MCP *server* that external MCP-enabled clients can connect to — the opposite direction from this story, which asks whether a user can plug external MCP servers into PagerDuty so its own AI features (e.g., PagerDuty Advance, SRE Agent) can consume their tools. No evidence shows PagerDuty acting as an MCP client or supporting configuration of third-party MCP servers as tool sources.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "All evidence describes PagerDuty exposing an official MCP server (docs-1, docs-14, docs-34, docs-54, probe-2) so external AI clients can call PagerDuty's tools, and its SRE/Scribe/Shift agents use specific proprietary connectors (GitHub, Sentry) — the opposite direction from the story, which asks whether a user can plug arbitrary MCP servers INTO PagerDuty so its agents can consume their tools. No evidence shows PagerDuty acting as an MCP client or accepting third-party MCP servers.",
+    "evidenceIds": [
+      "pagerduty-docs-1",
+      "pagerduty-docs-14",
+      "pagerduty-docs-34",
+      "pagerduty-docs-54",
+      "pagerduty-docs-56",
+      "pagerduty-docs-68",
+      "pagerduty-probe-2"
+    ]
   },
   {
     "productId": "pagerduty",
@@ -2425,30 +2437,30 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PagerDuty ships an official MCP server (GitHub repo pagerduty-mcp-server, developer docs page) providing tools to interact with PagerDuty directly from MCP-enabled clients, and a runtime probe confirms a live hosted remote MCP endpoint at mcp.pagerduty.com requiring proper auth, corroborating the docs. Missing for 10: independent third-party hands-on review of the MCP server in production use beyond the vendor's own runtime probe.",
+    "rationale": "PagerDuty ships an official, documented MCP server (GitHub repo, developer docs, and support docs) that lets MCP-enabled clients like Claude Desktop, Cursor, and VS Code securely interact with a PagerDuty account (fetch/manage incidents, on-call info, etc.). This is first-party, clearly documented, and referenced across multiple sources including a dedicated developer docs page. Missing for 10: independent/hands-on community corroboration of the MCP server working in practice.",
     "evidenceIds": [
       "pagerduty-docs-1",
       "pagerduty-docs-14",
       "pagerduty-docs-34",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1"
+      "pagerduty-docs-54",
+      "pagerduty-probe-2"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "PagerDuty ships an official local and hosted MCP server (verified live via probe returning correct auth challenge) that exposes PagerDuty's incident/on-call tools to any MCP-enabled client, letting AI-native users issue natural-language commands (e.g., via Slack, IDE, or LLM assistants) to trigger/ack/resolve incidents and manage on-call data. This is reinforced by PagerDuty Advance and SRE Agent messaging around agentic/generative AI operating the platform. Missing for 10: no first-party native chat/NL interface within the PagerDuty product itself (reliant on external MCP clients) and no independent hands-on account of a user issuing NL commands end-to-end.",
+    "rationale": "PagerDuty ships an official MCP server enabling AI assistants (Claude Desktop, Cursor, VS Code) to interact with and manage a PagerDuty account via natural-language commands, plus an Anthropic Claude Connector and PagerDuty Advance/SRE Agent conversational capabilities for incidents and insights. This directly satisfies natural-language operation for AI-native users, well documented across first-party sources.  Missing for 10: independent/hands-on evidence confirming real-world reliability of NL command execution via MCP, and no third-party review validating the experience.",
     "evidenceIds": [
-      "pagerduty-docs-1",
       "pagerduty-docs-14",
+      "pagerduty-docs-54",
       "pagerduty-docs-34",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1",
+      "pagerduty-intdir-1",
       "pagerduty-docs-27",
-      "pagerduty-docs-26"
+      "pagerduty-docs-11",
+      "pagerduty-probe-2"
     ]
   },
   {
@@ -2457,7 +2469,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence documents an official MCP server, REST/Events APIs, and webhooks, but no official CLI tool is mentioned anywhere in the pack, so this applicable axis is unaddressed.",
+    "rationale": "The evidence pack extensively documents PagerDuty's MCP server, REST/Events APIs, and webhooks, but contains no mention of an official command-line interface (CLI) tool for interacting with PagerDuty. No CLI is documented anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -2466,7 +2478,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PagerDuty has a well-documented public REST API and Events API v2 with versioning, plus V3 webhooks, allowing AI-native agents/systems to programmatically create, trigger, acknowledge, and resolve incidents and manage configuration; runtime probes confirm these endpoints are live and functioning as documented. missing for 10: independent hands-on developer testimonials specifically validating AI-agent-driven API usage beyond vendor docs and probes.",
+    "rationale": "PagerDuty documents a well-established REST API, Events API v2, webhooks (v2/v3), and API versioning headers, all with dedicated developer docs describing how to manage users, incidents, schedules, and workflows programmatically. There is also independent community usage confirming third-party integration with the Events API. missing for 10: independent hands-on developer testimonial specifically validating the REST/Events API robustness (only vendor docs cited).",
     "evidenceIds": [
       "pagerduty-docs-31",
       "pagerduty-docs-32",
@@ -2474,99 +2486,103 @@
       "pagerduty-docs-39",
       "pagerduty-docs-44",
       "pagerduty-docs-48",
-      "pagerduty-probe-rt-2",
-      "pagerduty-probe-1"
+      "pagerduty-comm-6"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "PagerDuty's REST API and MCP server both require an API token/OAuth bearer credential for authentication (pagerduty-probe-rt-1, pagerduty-docs-32), implying some capability to issue distinct API tokens per integration/agent, but there is no documentation describing scoped, role-based, or least-privilege API key/token permissions (e.g., read-only vs write scopes) specifically for AI agents. missing for 10: explicit docs on restricted/scoped API key permissions, agent-specific credential scoping, and any least-privilege guidance for AI/agent integrations.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "While PagerDuty offers a REST API, Events API, and an official MCP server for AI agents (pagerduty-docs-14, pagerduty-docs-34, pagerduty-docs-54), none of the evidence describes scoped or least-privilege API key/token issuance specifically for agent use — no mention of granular permission scopes, read-only vs. write tokens, or role-based credential restriction for AI/agent integrations.",
     "evidenceIds": [
-      "pagerduty-probe-rt-1",
-      "pagerduty-docs-32",
-      "pagerduty-docs-34"
+      "pagerduty-docs-14",
+      "pagerduty-docs-34",
+      "pagerduty-docs-54",
+      "pagerduty-docs-32"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-sdks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "PagerDuty provides multiple official developer surfaces — REST API, Events API v2, v3 webhooks, and an official (and now hosted/remote, OAuth-protected) MCP server — all documented on developer.pagerduty.com and confirmed live via runtime probes, which is exactly the kind of programmatic surface an AI-native builder would target. Missing for 10: explicit named official client-library SDKs in multiple languages (e.g., Python/Node SDK packages) beyond the REST/Events APIs, and independent hands-on developer corroboration of SDK ergonomics.",
+    "rationale": "PagerDuty provides extensive developer-facing interfaces (REST API, Events API v2, webhooks, and an official MCP server) that AI-native builders can integrate against, but the evidence never names dedicated language-specific 'official SDKs' (e.g., Python/Node/Java client libraries) — only raw API/webhook/MCP documentation. missing for 10: explicit official SDK packages/libraries, language-specific client SDK docs, independent developer corroboration of SDK usage.",
     "evidenceIds": [
       "pagerduty-docs-32",
       "pagerduty-docs-31",
-      "pagerduty-docs-33",
-      "pagerduty-docs-34",
+      "pagerduty-docs-39",
+      "pagerduty-docs-54",
       "pagerduty-probe-2",
-      "pagerduty-probe-rt-1",
-      "pagerduty-probe-rt-2",
-      "pagerduty-docs-39"
+      "pagerduty-docs-34"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "agentic-webhooks",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "PagerDuty's developer docs describe V3 webhooks as a first-class subscription mechanism for incident/priority/responder change events, and the Events API v2 (confirmed live via runtime probe) provides the complementary ingestion side, giving AI-native integrators a documented way to subscribe to and consume PagerDuty events. Missing for 10: independent/hands-on confirmation of webhook subscription setup and payload handling, and no direct linkage of webhooks specifically to AI-agent workflows.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PagerDuty provides documented webhook subscriptions (V3 webhooks) that deliver HTTP callbacks for significant account events, configurable via webhook subscriptions with event types, plus REST API access to manage these programmatically — directly enabling an AI-native consumer to subscribe to events via webhooks. This is well documented in first-party developer docs. Missing for 10: independent/hands-on corroboration of webhook reliability or AI-agent-specific webhook consumption patterns.",
     "evidenceIds": [
       "pagerduty-docs-33",
       "pagerduty-docs-40",
-      "pagerduty-docs-31",
-      "pagerduty-probe-rt-2"
+      "pagerduty-docs-47",
+      "pagerduty-docs-53",
+      "pagerduty-docs-55"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "ai-drafted-postmortems",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "PagerDuty's Post-Incident Reviews feature explicitly integrates with the PagerDuty Advance Scribe Agent to auto-build chronological incident narratives, uncover systemic patterns, and coordinate preventative follow-up actions — matching the AI-drafted timeline/contributing-factors/follow-ups story closely. Missing for 10: explicit documentation of 'human review' framing/draft-approval workflow, explicit mention of 'contributing factors' as a distinct output field, and any independent/hands-on confirmation of the Scribe Agent's output quality.",
+    "rationale": "PagerDuty's Post-Incident Reviews feature explicitly includes AI-generated PIRs (now GA) that integrate incident lifecycle data, Slack, and the Scribe Agent to build chronological incident narratives, uncover systemic patterns (contributing factors), and coordinate preventative follow-up actions — closely matching the story's timeline/contributing factors/follow-ups structure, with teams starting PIRs from the incident detail page for review. Missing for 10: independent/hands-on corroboration of AI PIR draft quality and explicit description of the human-review/edit workflow before finalization.",
     "evidenceIds": [
-      "pagerduty-docs-9",
       "pagerduty-docs-23",
       "pagerduty-docs-36",
       "pagerduty-docs-38",
-      "pagerduty-docs-11",
-      "pagerduty-docs-26"
+      "pagerduty-docs-57",
+      "pagerduty-docs-62",
+      "pagerduty-docs-63"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "ai-incident-summaries",
-    "verdict": "partial",
-    "quality": 7,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "PagerDuty Advance's generative AI explicitly summarizes incidents and the Scribe Agent builds chronological incident narratives from Slack/incident data, directly matching 'AI writes the incident as it happens' and 'scribed call notes' (pagerduty-docs-23, pagerduty-docs-26, pagerduty-docs-38). However, the Scribe Agent is documented as tied to Post-Incident Reviews (after resolution) rather than clearly live/real-time during the call, and there's no explicit evidence of AI auto-drafting status-page updates in real time. Missing for 10: clear documentation that summaries/notes are generated live during an active incident (not just post-incident), and evidence of AI-drafted stakeholder updates during the incident itself.",
+    "rationale": "PagerDuty Advance's Scribe Agent explicitly transcribes incident calls in real time and feeds those transcripts plus Slack data into Post-Incident Reviews to auto-build chronological narratives, and AI-generated PIRs are now GA, directly matching 'live summaries, drafted updates, scribed call notes.' Missing for 10: independent/hands-on validation of transcription accuracy and update-drafting quality beyond first-party docs.",
     "evidenceIds": [
+      "pagerduty-docs-57",
+      "pagerduty-docs-63",
       "pagerduty-docs-23",
-      "pagerduty-docs-26",
+      "pagerduty-docs-36",
       "pagerduty-docs-38",
+      "pagerduty-docs-62",
+      "pagerduty-docs-26",
       "pagerduty-docs-11",
-      "pagerduty-docs-27"
+      "pagerduty-docs-59"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "ai-root-cause-investigation",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "PagerDuty Advance/SRE Agent and Intelligent Alert Grouping show AI agents handling incidents, summarizing information, and reducing noise via ML, suggesting some proactive AI investigation, but there is no explicit documentation that the AI correlates code/config changes, telemetry, and similar past incidents to surface a probable root cause autonomously before a human asks. missing for 10: explicit description of automated root-cause correlation across changes/telemetry/historical incidents, and independent verification that this happens proactively without human prompting.",
+    "rationale": "PagerDuty's SRE Agent and Insights Agent perform some proactive investigative work — deducing next steps by analyzing GitHub code and Sentry logs, surfacing recommended rules from historical events/incidents, and delivering proactive recommendations from analytics — which aligns with autonomous correlation of changes/telemetry before human involvement. However, there's no direct documented evidence of a unified 'AI investigator' that explicitly correlates code changes, live telemetry, AND similar past incidents together into a single probable-cause narrative proactively, ahead of human request. missing for 10: explicit evidence of cross-source correlation (code changes + telemetry + historical incident similarity) combined into one probable-cause report, independent/hands-on validation of this proactive investigation actually happening unprompted, and confirmation of accuracy/reliability from real users.",
     "evidenceIds": [
-      "pagerduty-docs-11",
-      "pagerduty-docs-26",
-      "pagerduty-docs-27",
-      "pagerduty-docs-18",
-      "pagerduty-docs-23"
+      "pagerduty-docs-56",
+      "pagerduty-docs-60",
+      "pagerduty-docs-61",
+      "pagerduty-docs-59",
+      "pagerduty-docs-68",
+      "pagerduty-docs-26"
     ]
   },
   {
@@ -2575,14 +2591,15 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "PagerDuty documents both dedup_key-based deduplication on Events API and ML-based Intelligent Alert Grouping that consolidates related alerts into a single actionable incident, plus Event Orchestration for automated dedup/suppression and escalation policies ensuring single-target notification — directly matching the story. Missing for 10: independent hands-on validation of alert-grouping accuracy/noise reduction claims beyond vendor docs.",
+    "rationale": "PagerDuty documents multiple layers of deduplication/grouping: dedup_key matching for Events API integrations, Event Orchestration to automatically deduplicate/suppress alerts, and Intelligent Alert Grouping using ML to consolidate related alerts into a single actionable incident specifically to reduce noise for SREs, plus escalation policies ensuring a single incident notifies one target at a time. Community evidence corroborates escalation working well in practice. Missing for 10: independent hands-on validation of the ML alert-grouping accuracy/noise reduction claims (only vendor-stated 91% reduction figure, no third-party benchmark).",
     "evidenceIds": [
       "pagerduty-docs-3",
       "pagerduty-docs-4",
       "pagerduty-docs-25",
       "pagerduty-docs-43",
       "pagerduty-docs-37",
-      "pagerduty-docs-18"
+      "pagerduty-docs-18",
+      "pagerduty-comm-1"
     ]
   },
   {
@@ -2591,15 +2608,21 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PagerDuty documents ingestion via Events API v2 and 750+ monitoring integrations, with dedup/orchestration rules and escalation policies/schedules that let SREs define routing conditions to the right team (docs-31,37,43,50). Community feedback corroborates escalation working well in practice (comm-1) though notes some friction with identity/config setup (comm-4) unrelated to core routing logic. Missing for 10: independent large-scale validation of complex condition-based routing accuracy and resolution of the noted API versioning confusion (comm-6).",
+    "rationale": "PagerDuty documents Events API v2/REST API/webhooks as documented ingestion sources for monitoring tools (docs-31,46,52,39), plus 750+ integrations (docs-50), and routing/escalation via escalation policies and schedules that connect services to specific responders based on defined rules (docs-7,37,12,13,49). Event Orchestration and alert grouping further support condition-based routing (docs-43,25). Community evidence corroborates escalation behavior working as documented (pagerduty-comm-1), though some friction was reported with API versioning (pagerduty-comm-6) which is a minor caveat rather than a contradiction of the core routing/escalation capability. Missing for 10: independent hands-on validation of the exact condition-based routing UI/logic beyond docs, and no evidence addressing scale/reliability of routing under complex multi-team conditions.",
     "evidenceIds": [
       "pagerduty-docs-31",
-      "pagerduty-docs-37",
-      "pagerduty-docs-43",
+      "pagerduty-docs-46",
+      "pagerduty-docs-52",
       "pagerduty-docs-50",
+      "pagerduty-docs-7",
+      "pagerduty-docs-37",
+      "pagerduty-docs-12",
       "pagerduty-docs-13",
+      "pagerduty-docs-49",
+      "pagerduty-docs-43",
+      "pagerduty-docs-25",
       "pagerduty-comm-1",
-      "pagerduty-comm-4"
+      "pagerduty-comm-6"
     ]
   },
   {
@@ -2608,8 +2631,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence describes REST/Events API documentation, webhooks, and an MCP server, but nothing indicates an interactive API reference with runnable/try-it examples (e.g., a Swagger/OpenAPI console). No hands-on or docs evidence of this capability was found.",
-    "evidenceIds": []
+    "rationale": "Evidence documents PagerDuty's REST API, Events API, and webhooks via developer-docs markdown files, but nothing describes an interactive API reference/console with runnable ('try it now') examples—no mention of Swagger/OpenAPI explorer, Postman collection, or in-browser code execution.",
+    "evidenceIds": [
+      "pagerduty-docs-32",
+      "pagerduty-docs-39",
+      "pagerduty-docs-48"
+    ]
   },
   {
     "productId": "pagerduty",
@@ -2617,7 +2644,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents PagerDuty's REST API, Events API v2, webhooks, and MCP server extensively, but nowhere mentions an OpenAPI/Swagger spec file or a downloadable machine-readable API specification. Missing for 10: explicit reference to an OpenAPI/Swagger document or spec download link, any confirmation of spec format/version, and independent verification that such a spec exists and is usable.",
+    "rationale": "The evidence pack describes PagerDuty's REST API, Events API v2, webhooks, and MCP server extensively, but nowhere mentions a downloadable OpenAPI/Swagger specification or any machine-readable API schema file. Absence of evidence for this applicable capability means it cannot be credited as delivered.",
     "evidenceIds": []
   },
   {
@@ -2625,8 +2652,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions a sandbox, test environment, or non-production account/tenant for safely testing PagerDuty integrations or MCP/agent workflows; all API, MCP, and webhook documentation refers to live production accounts. missing for 10: any documented sandbox/test account, staging environment, or mock API mode for AI-native testing.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions a sandbox environment, test mode, or non-production account for AI/agentic testing; PagerDuty offers trial accounts and MCP server access to real accounts but nothing about isolating test data from production. missing for 10: sandbox/test environment documentation, evidence of non-production API/testing mode, any mention of isolating AI-agent test runs from live incident data.",
     "evidenceIds": []
   },
   {
@@ -2635,12 +2662,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "PagerDuty's developer docs show clear API versioning (REST API, Events API v2, webhooks v3) with dedicated overview pages, and probes confirm live, self-describing endpoints — but no evidence pack item states an explicit deprecation policy or sunset timeline for older versions. A dated community report also describes real confusion around distinguishing v1 vs v2 event API keys and an unhelpful support response, undercutting confidence that versioning transitions are cleanly documented in practice. Missing for 10: an explicit published deprecation/sunset policy document, and independent confirmation that version transitions are smooth rather than confusing.",
+    "rationale": "PagerDuty's developer docs show clear API versioning mechanics (REST API version header, Events API v2 vs v1, V3 webhooks) confirming multiple versioned endpoints, but no explicit documented deprecation policy or sunset timeline is cited. A community report also notes confusion distinguishing Events API v1 vs v2 keys, suggesting versioning transitions aren't always smooth. missing for 10: explicit deprecation-policy documentation, evidence of version sunset timelines, and confirmation the versioning confusion has been resolved.",
     "evidenceIds": [
       "pagerduty-docs-31",
       "pagerduty-docs-32",
       "pagerduty-docs-33",
-      "pagerduty-docs-40",
+      "pagerduty-docs-48",
       "pagerduty-comm-6"
     ]
   },
@@ -2649,15 +2676,14 @@
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "PagerDuty exposes a REST API and MCP server that could be scripted to act on many items, and it explicitly supports bulk CSV user import, but there is no documented dedicated bulk-operations endpoint (e.g., bulk acknowledge/resolve many incidents in one call) or MCP tool description for batch actions across incidents/services. Missing for 10: explicit bulk incident/alert operation API or MCP tool documentation, and any hands-on evidence of performing large-scale bulk actions via AI-native tooling.",
+    "confidence": "medium",
+    "rationale": "PagerDuty's REST API, MCP server, and CSV user import suggest some bulk-capable operations, but there is no explicit documentation of an AI-native bulk operation interface (e.g., batch-triggering/resolving many incidents or bulk-editing many objects in one call) beyond generic API/CRUD references. missing for 10: explicit bulk-operation endpoints or documented batch actions across many items, AI-native bulk-operation examples, independent confirmation of bulk throughput/limits.",
     "evidenceIds": [
-      "pagerduty-docs-20",
       "pagerduty-docs-32",
       "pagerduty-docs-39",
-      "pagerduty-docs-44",
+      "pagerduty-docs-20",
       "pagerduty-docs-34",
-      "pagerduty-probe-rt-1"
+      "pagerduty-probe-2"
     ]
   },
   {
@@ -2666,19 +2692,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PagerDuty supports rule-based automation via Event Orchestration (auto-deduplicate/suppress alerts, routing rules), Incident Workflows with explicit 'if-this-then-that' trigger/action logic (e.g., auto-trigger workflows for P1/P2 incidents), and escalation policies that automatically assign/escalate based on conditions, all exposed via REST/Events APIs and webhooks for programmatic/AI-driven configuration. missing for 10: independent hands-on validation of workflow automation reliability at scale, and clearer documentation on natural-language/AI-authored rule creation rather than UI/API-based configuration.",
+    "rationale": "PagerDuty offers robust rule-based automation: Event Orchestration/Rules with if-this-then-that logic, Incident Workflows that auto-trigger on conditions (e.g., all P1/P2 incidents), escalation policies, alert deduplication/suppression, and AI-driven orchestration recommendations, all configurable to trigger actions automatically on events. Missing for 10: independent hands-on verification of complex rule-chaining reliability at scale and more detail on failure/edge-case handling of automated rules.",
     "evidenceIds": [
-      "pagerduty-docs-8",
       "pagerduty-docs-22",
       "pagerduty-docs-28",
       "pagerduty-docs-35",
       "pagerduty-docs-42",
       "pagerduty-docs-43",
-      "pagerduty-docs-7",
+      "pagerduty-docs-61",
       "pagerduty-docs-37",
-      "pagerduty-docs-31",
-      "pagerduty-docs-33",
-      "pagerduty-probe-rt-2"
+      "pagerduty-docs-13"
     ]
   },
   {
@@ -2687,27 +2710,17 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "PagerDuty offers on-call schedules (recurring staff rotations) and event-triggered Incident Workflows, but neither is a mechanism for scheduling recurring automated jobs/workflows in the AI-native sense (e.g., cron-like recurring workflow execution); no evidence describes time-based recurring workflow scheduling.",
-    "evidenceIds": [
-      "pagerduty-docs-12",
-      "pagerduty-docs-8",
-      "pagerduty-docs-42"
-    ]
+    "rationale": "Evidence shows PagerDuty's Incident Workflows are event-triggered (on incident creation) and on-call Schedules are for notification rotations, not for scheduling recurring automated jobs or workflows in an AI-native/cron-like sense; no MCP or API documentation shows time-based recurring workflow scheduling.",
+    "evidenceIds": []
   },
   {
     "productId": "pagerduty",
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "PagerDuty documents Incident Workflows, Event Orchestration, and escalation policies as automation mechanisms, but there is no evidence of version history, change review, or rollback functionality for these automations anywhere in the pack.",
-    "evidenceIds": [
-      "pagerduty-docs-8",
-      "pagerduty-docs-22",
-      "pagerduty-docs-28",
-      "pagerduty-docs-35",
-      "pagerduty-docs-42"
-    ]
+    "confidence": "medium",
+    "rationale": "PagerDuty documents automation features like Incident Workflows and Event Orchestration, but no evidence describes version history, change review, or rollback capabilities for these automations. The only 'versioning' evidence found (docs-48) refers to REST API version headers, not automation configuration versioning.",
+    "evidenceIds": []
   },
   {
     "productId": "pagerduty",
@@ -2715,18 +2728,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item mentions an iCal/calendar feed export or personal calendar sync for on-call schedules; docs on schedules (pagerduty-docs-12) only describe coverage mapping and notification, not calendar feed integration.",
-    "evidenceIds": []
+    "rationale": "The evidence pack covers PagerDuty schedules, escalation policies, and on-call readiness reports, but contains no mention of an iCal/calendar feed or any personal calendar sync capability for on-call shifts. Missing for 10: any documentation of an exportable calendar feed URL, iCal/ICS integration, or calendar sync setup instructions.",
+    "evidenceIds": [
+      "pagerduty-docs-12",
+      "pagerduty-docs-7",
+      "pagerduty-docs-6"
+    ]
   },
   {
     "productId": "pagerduty",
     "storyId": "declare-incident-chat",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Only a single generic marketing line claims incident management 'from Slack,' with no documentation of Teams support, automatic channel creation, role assignment, or update posting via chat commands. Related items about Slack data feeding Post-Incident Reviews don't address declaring/running an incident from chat itself. Missing for 10: explicit Teams integration, chat slash-command/declare workflow details, automatic channel/role creation evidence, and any hands-on or community confirmation of this specific chat-driven flow.",
+    "rationale": "PagerDuty docs claim general Slack-based incident management ('Manage incidents and coordinate response from Slack') and Slack integration for starting Post-Incident Reviews, implying some chat-native workflow, but there is no explicit description of declaring an incident via a Slack/Teams command, auto-creating a dedicated incident channel, assigning roles, or posting structured updates — and Teams support is not evidenced at all. missing for 10: explicit docs on Slack/Teams slash-command incident declaration, automatic channel creation, role assignment, and Teams-specific chat support.",
     "evidenceIds": [
       "pagerduty-docs-2",
+      "pagerduty-docs-62",
       "pagerduty-docs-23",
       "pagerduty-docs-38"
     ]
@@ -2737,13 +2755,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "PagerDuty's docs explicitly describe escalation policies notifying a single target at a time until acknowledged, connecting services to users/schedules, and incidents escalating per policy — directly matching the delays/fallback-responder story. Community hands-on testimony corroborates the escalation behavior in practice (app notification, then call after a no-ack window). Missing for 10: explicit documentation of 'repeat rounds' (looping back through the full policy again if still unacknowledged) and independent verification of fallback timing configurability beyond anecdote.",
+    "rationale": "PagerDuty's escalation policies are documented to notify targets sequentially until acknowledged, tied to schedules and fallback responders (docs-7, docs-37, docs-12, docs-13, docs-49), and community hands-on report confirms real-world behavior (app then phone call escalation) (pagerduty-comm-1). Missing for 10: explicit documentation of configurable delay timers and multi-round repeat escalation cycles beyond the single-target wording.",
     "evidenceIds": [
       "pagerduty-docs-7",
       "pagerduty-docs-37",
+      "pagerduty-docs-12",
       "pagerduty-docs-13",
       "pagerduty-docs-49",
-      "pagerduty-docs-12",
       "pagerduty-comm-1"
     ]
   },
@@ -2753,27 +2771,30 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "PagerDuty's Post-Incident Reviews explicitly promise to 'coordinate preventative follow-up actions' as part of incident learning (docs-36, docs-38), and PagerDuty offers 750+ integrations plus a REST API/webhooks that could sync data to external tools (docs-50, docs-32, docs-39). However, there is no explicit documentation of a dedicated issue-tracker (e.g., Jira) sync for follow-up action items or of tracking those actions to completion/closure. Missing for 10: explicit issue-tracker (Jira/Asana) integration for follow-up items, a documented completion-tracking workflow for action items, and independent/hands-on confirmation that follow-ups are actually synced and closed out.",
+    "rationale": "Post-Incident Reviews explicitly 'coordinate preventative follow-up actions' and integrate with incident lifecycle and Slack data (docs-36, docs-38), showing follow-up tracking is a native capability. However, there is no concrete evidence of a documented sync mechanism that pushes these follow-up items into an external issue tracker (e.g., Jira, GitHub Issues) — only a generic claim of '750+ platform integrations' (docs-50) without specifics on follow-up-action sync. Missing for 10: explicit documentation of two-way sync between PIR follow-up items and an issue tracker, and confirmation that completion status flows back to PagerDuty.",
     "evidenceIds": [
       "pagerduty-docs-36",
       "pagerduty-docs-38",
       "pagerduty-docs-50",
-      "pagerduty-docs-32",
-      "pagerduty-docs-39"
+      "pagerduty-docs-9"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "incident-timeline",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "PagerDuty's Post-Incident Reviews integrate with the incident lifecycle and Slack data (via the Scribe Agent) to automatically build 'chronological incident narratives,' which is evidence of automated timeline capture of alerts/actions/chat, and PIRs function as editable review documents. However, there's no explicit evidence of a dedicated incident timeline UI feature, nor documentation confirming that responders can directly edit or annotate the captured timeline entries after the fact. Missing for 10: explicit incident timeline/log feature docs, confirmation of manual editing/annotation of timeline entries, and independent corroboration of automatic chat-decision capture accuracy.",
+    "rationale": "PagerDuty documents an implicit incident timeline (triggered/acknowledged/escalated events, dashboard view) plus a Scribe Agent that transcribes incident calls in real time and Post-Incident Reviews that integrate incident lifecycle events, Slack chat data, and Scribe transcripts into a 'chronological incident narrative' that teams can build/annotate after the fact from the incident page or Slack. This covers alerts, actions, and chat decisions being captured and later turned into an editable report, but there is no explicit doc describing a single unified, directly-editable incident timeline UI (only the PIR narrative and dashboard views), and no independent/hands-on confirmation of how faithfully chat decisions are captured. Missing for 10: explicit documentation of an inline, directly editable/annotatable incident timeline (not just a separate PIR document), and independent verification of chat-capture fidelity.",
     "evidenceIds": [
+      "pagerduty-docs-49",
+      "pagerduty-docs-66",
       "pagerduty-docs-23",
       "pagerduty-docs-36",
       "pagerduty-docs-38",
-      "pagerduty-docs-9"
+      "pagerduty-docs-57",
+      "pagerduty-docs-63",
+      "pagerduty-docs-62"
     ]
   },
   {
@@ -2782,7 +2803,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "PagerDuty's Status Pages docs describe visual, real-time incident status communication and mention doing so 'securely,' but no evidence describes private/internal status pages, audience segmentation, or access control for customer-specific vs. employee-only viewers.",
+    "rationale": "PagerDuty's Status Pages docs describe general real-time operational status communication and 'secure' updates, but none of the evidence mentions private/internal status pages, audience-specific access control, or separate customer-facing vs. employee-only page configurations. Missing for 10: any documentation of access-controlled or audience-segmented status pages, authentication/permission settings for private pages, or customer-specific vs internal page distinctions.",
     "evidenceIds": [
       "pagerduty-docs-10",
       "pagerduty-docs-17",
@@ -2807,44 +2828,46 @@
     "productId": "pagerduty",
     "storyId": "multichannel-paging",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "PagerDuty's docs confirm on-call notification rules and readiness reports tied to responder notification configurations, mobile app for push, and escalation policies with schedules controlling who is notified; a hands-on account also confirms app-then-phone-call escalation in practice. However, no evidence explicitly enumerates SMS, phone call, and email as configurable per-channel notification rule options together, so full breadth of channel choice isn't directly documented in this pack. Missing for 10: explicit documentation naming SMS/email/push/phone as selectable channels with per-channel ordering, and independent confirmation of all four channel types working.",
+    "rationale": "Evidence confirms configurable notification rules and escalation (schedules, escalation policies, REST API control over 'how they're notified') and a community report describing PagerDuty's actual multi-channel behavior (app push first, then phone call if unacknowledged), supporting the core capability. However, no evidence pack item explicitly documents SMS or email as distinct notification channels, nor shows the granular per-channel rule-configuration UI. Missing for 10: explicit documentation naming all four channels (push, SMS, phone, email) and detailed per-channel rule configuration screens/API fields.",
     "evidenceIds": [
-      "pagerduty-docs-6",
       "pagerduty-docs-12",
+      "pagerduty-docs-39",
+      "pagerduty-docs-44",
+      "pagerduty-docs-51",
+      "pagerduty-docs-6",
       "pagerduty-docs-5",
-      "pagerduty-docs-30",
       "pagerduty-comm-1"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "observability-integrations",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack documents generic integration mechanisms (Events API v2, REST API, webhooks, service integrations) but never names or links documented setup guides for the specific tools cited in the story—Datadog, Grafana, Prometheus, CloudWatch, or Sentry—so there is no evidence of first-party, per-tool documented integrations for this observability stack.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "PagerDuty documents a broad integration ecosystem (750+ platform integrations, Events API v2 ingesting from 'monitoring tools and other systems like code repositories, observability platforms') and explicitly names a first-party SRE Agent connector for Sentry, but the evidence pack contains no specific, documented setup pages for Datadog, Grafana, Prometheus, or CloudWatch — only generic ecosystem claims and one named observability tool. missing for 10: documented setup guides for Datadog, Grafana, Prometheus, and CloudWatch integrations specifically named in the story.",
     "evidenceIds": [
-      "pagerduty-docs-3",
-      "pagerduty-docs-31",
-      "pagerduty-docs-32",
-      "pagerduty-docs-33",
-      "pagerduty-docs-43"
+      "pagerduty-docs-50",
+      "pagerduty-docs-52",
+      "pagerduty-docs-68",
+      "pagerduty-docs-46"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "on-call-schedules",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "PagerDuty's docs confirm on-call scheduling exists (schedule-basics doc on mapping coverage needs, escalation policies connecting to schedules) but the evidence pack never explicitly documents rotation layers, time-zone handling, or round-robin coverage mechanics that the story specifically asks about. Missing for 10: explicit documentation of multi-layer schedules, time-zone-aware rotations, round-robin assignment logic, and independent/hands-on confirmation that these work as advertised.",
+    "rationale": "Docs confirm core on-call building blocks — schedules that map coverage needs, escalation policies linking services to schedules, and identifying who is on call and when (pagerduty-docs-12, pagerduty-docs-7, pagerduty-docs-44) — plus a Shift Agent that monitors calendars and coordinates schedule changes (pagerduty-docs-58). However, no evidence explicitly documents rotation layers, time-zone handling, or round-robin coverage patterns as named features. missing for 10: explicit documentation of schedule layers, time-zone-aware rotations, and round-robin distribution logic.",
     "evidenceIds": [
       "pagerduty-docs-12",
       "pagerduty-docs-7",
       "pagerduty-docs-37",
-      "pagerduty-docs-49"
+      "pagerduty-docs-44",
+      "pagerduty-docs-58"
     ]
   },
   {
@@ -2853,17 +2876,15 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "PagerDuty documents a broad REST API for configuration/user/workflow management, an Events API v2, V3 webhooks, and an official MCP server (with a live hosted endpoint) letting AI clients trigger/manage incidents, confirming strong API-driven parity with UI actions. However, no evidence explicitly confirms 100% feature parity between API and UI, and community comments note at least one case (OIDC/Azure AD SSO config) requiring manual support intervention outside normal UI/API self-service, suggesting some settings aren't fully API/UI accessible. Missing for 10: an explicit parity statement or audit showing all UI functions are API-exposed, and independent verification beyond vendor docs.",
+    "rationale": "PagerDuty's REST API and Events API docs explicitly cover most administrative and operational actions available in the UI—user/team management, escalation policies, workflows, incident creation/resolution, on-call schedules—and the official MCP server further exposes account data/actions to AI clients (pagerduty-docs-32,39,44,51,54,34). However, there is no explicit vendor claim of full UI/API parity, and community feedback notes real API friction (confusing v1/v2 Events API key handling, some settings requiring manual support intervention rather than API/UI access) (pagerduty-comm-6, pagerduty-comm-4), suggesting some UI-only workflows still exist. missing for 10: an explicit statement of complete UI-to-API feature parity, and confirmation that all UI-configurable settings (e.g., OIDC/SSO nuances) are also API-configurable.",
     "evidenceIds": [
       "pagerduty-docs-32",
       "pagerduty-docs-39",
       "pagerduty-docs-44",
-      "pagerduty-docs-31",
-      "pagerduty-docs-33",
+      "pagerduty-docs-51",
+      "pagerduty-docs-54",
       "pagerduty-docs-34",
-      "pagerduty-probe-2",
-      "pagerduty-probe-rt-1",
-      "pagerduty-probe-rt-2",
+      "pagerduty-comm-6",
       "pagerduty-comm-4"
     ]
   },
@@ -2896,19 +2917,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "PagerDuty is a SaaS incident-management platform with no evidence of an on-premises/self-hosted deployment option; self-hosting the core product is not a plausible axis for this category of hosted cloud service, so this is a category mismatch rather than a missing capability.",
+    "rationale": "PagerDuty is a SaaS incident management platform with no self-hosted deployment option evidenced or plausible; self-hosting the 'core product' is a category error for this type of hosted service, not a missing feature.",
     "evidenceIds": []
   },
   {
     "productId": "pagerduty",
     "storyId": "overrides-swaps",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "PagerDuty's schedule docs describe mapping coverage needs (docs-12) and escalation policies tied to schedules (docs-7), and a community comment confirms that calendar overrides exist in the product (comm-4), but no evidence details a self-service flow for taking an override, swapping a shift, or requesting coverage without admin involvement — the same community comment actually calls overrides 'clunky,' undercutting a smooth self-service experience. Missing for 10: first-party docs on override/shift-swap UI or API, evidence of coverage-request workflow, and confirmation these actions require no admin intervention.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "PagerDuty's schedule and escalation-policy docs indicate coverage rules exist (pagerduty-docs-12, pagerduty-docs-7), and the AI 'Shift Agent' explicitly automates shift-swap/coverage requests ('monitors calendars, detects potential conflicts, identifies qualified replacements, and coordinates schedule changes without manual intervention') (pagerduty-docs-58). Community evidence confirms manual calendar overrides exist in the product but are described as 'clunky' (pagerduty-comm-4), suggesting the self-service experience has real friction rather than being seamless. Missing for 10: explicit first-party documentation of an on-call engineer self-service override/swap UI flow, confirmation that no admin intervention is ever required, and independent hands-on validation that the process works smoothly.",
     "evidenceIds": [
       "pagerduty-docs-12",
       "pagerduty-docs-7",
+      "pagerduty-docs-58",
       "pagerduty-comm-4"
     ]
   },
@@ -2916,15 +2938,17 @@
     "productId": "pagerduty",
     "storyId": "postmortem-workflow",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "PagerDuty's Post-Incident Reviews feature (formerly Jeli) explicitly builds chronological incident narratives from the incident lifecycle and Slack data via the Scribe Agent, and helps coordinate follow-up actions — covering part of the 'draft from timeline' and learning-loop story. However, there is no evidence of a template library, an explicit review/approval step, or a publication mechanism for postmortems. Missing for 10: named template support, explicit review workflow, and a documented publication/sharing step for finished postmortems.",
+    "rationale": "PagerDuty's Post-Incident Reviews (PIRs) directly support this workflow: PIRs integrate with the incident lifecycle and Slack data, and the Scribe Agent can join incident calls to transcribe and build chronological narratives, with AI-generated PIRs now GA and startable from the incident detail page or Slack — covering drafting-from-timeline and some review flow. Missing for 10: explicit documentation of postmortem templates, a formal review/approval step before publication, and evidence of publishing PIRs to a wider audience/stakeholder page.",
     "evidenceIds": [
       "pagerduty-docs-9",
-      "pagerduty-docs-16",
       "pagerduty-docs-23",
       "pagerduty-docs-36",
-      "pagerduty-docs-38"
+      "pagerduty-docs-38",
+      "pagerduty-docs-57",
+      "pagerduty-docs-62",
+      "pagerduty-docs-63"
     ]
   },
   {
@@ -2933,7 +2957,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses data residency, regional data storage options, or geographic control over data location for PagerDuty; the evidence is entirely about incident management features, MCP servers, and APIs.",
+    "rationale": "No evidence in the pack addresses data residency, regional data storage options, or any control over where account data is hosted; all evidence covers incident management, integrations, and AI agent features.",
     "evidenceIds": []
   },
   {
@@ -2942,7 +2966,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses AI-training data opt-out or a privacy policy statement regarding use of customer data for model training; the evidence only covers product features (incidents, alerting, MCP, APIs) unrelated to this privacy control.",
+    "rationale": "No evidence pack item addresses AI-model training data usage, opt-out controls, or any privacy policy statement about excluding customer data from AI training — this is an applicable axis for a SaaS product handling customer data but PagerDuty's evidence is silent on it.",
     "evidenceIds": []
   },
   {
@@ -2950,8 +2974,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or privacy/data lifecycle management features for PagerDuty; all citations focus on incident management, escalation, MCP server, and API functionality with no mention of data retention/deletion controls.",
+    "confidence": "low",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, or user/data lifecycle management settings for AI-native or general users; the pack covers incident management, MCP tools, and AI agents but nothing about controlling data retention/deletion.",
     "evidenceIds": []
   },
   {
@@ -2960,7 +2984,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for AI-native or MCP usage; all citations concern incident management features, APIs, or unrelated community sentiment.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for PagerDuty or its MCP server/AI features; nothing documents a privacy control of this kind.",
     "evidenceIds": []
   },
   {
@@ -2968,8 +2992,8 @@
     "storyId": "public-status-page",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "PagerDuty explicitly ships a Status Pages product tied to incident state, described as giving real-time operational updates as a single source of truth (docs-10, docs-17, docs-24, docs-29), which is the core ask. However, the evidence never confirms specifics like custom domain support or subscriber notification/subscription mechanics for the hosted page. Missing for 10: explicit documentation of custom domain configuration, subscriber email/SMS notification features, and independent/hands-on confirmation of these specifics.",
+    "confidence": "medium",
+    "rationale": "PagerDuty explicitly ships a 'Status Pages' feature described as giving 'visual, real-time insights into an organization's operations, and the status of incident resolution,' driven by incident state, letting teams 'proactively and securely communicate real-time operational updates' as a single source of truth — confirming the core hosted-status-page-driven-by-incidents capability. However, the evidence never mentions custom domain support or subscriber notification mechanisms (email/SMS subscriptions) for the status page. Missing for 10: explicit documentation of custom domain configuration, subscriber notification/opt-in flow, and any independent/hands-on confirmation these work as described.",
     "evidenceIds": [
       "pagerduty-docs-10",
       "pagerduty-docs-17",
@@ -2981,15 +3005,15 @@
     "productId": "pagerduty",
     "storyId": "reliability-analytics",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "PagerDuty documents On-Call Readiness Reports (responder notification health) and Post-Incident Reviews (systemic pattern uncovering), which touch parts of 'on-call health' and post-incident learning, but no evidence explicitly describes MTTA/MTTR trend dashboards or incident-load analytics over time for leadership reporting. Missing for 10: explicit MTTA/MTTR trend reporting, incident load/volume analytics dashboards, and any leadership-facing 'are we improving' trend view.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "PagerDuty documents On-Call Readiness Reports (notification config health) and an 'Insights Agent' that gives 'proactive recommendations and on-demand conversational insights based on your Incidents, Services, and Teams analytics,' plus AI Orchestrations that 'analyze historical events and incidents and surface recommended rules that reduce noise, improve MTTR' — these point toward reliability/on-call health analytics, but no doc explicitly describes MTTA/MTTR trend dashboards or incident-load trend reporting for leaders. Missing for 10: explicit MTTA/MTTR trend visualization, incident load over time reporting, and independent/hands-on validation that these analytics reliably show improvement.",
     "evidenceIds": [
       "pagerduty-docs-6",
       "pagerduty-docs-15",
       "pagerduty-docs-30",
-      "pagerduty-docs-9",
-      "pagerduty-docs-36"
+      "pagerduty-docs-59",
+      "pagerduty-docs-61"
     ]
   },
   {
@@ -2997,31 +3021,35 @@
     "storyId": "roles-tasks-response",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "PagerDuty's Incident Workflows and Escalation Policies show automated, rule-based assignment and orchestration of incident response tasks, which speaks to coordinated response, but no evidence explicitly describes named incident roles like 'commander' or 'comms lead' or human-facing task checklists for responders. missing for 10: explicit incident commander/communications lead role definitions, structured task checklists per role, and any hands-on validation that these roles function as intended under pressure.",
-    "evidenceIds": [
-      "pagerduty-docs-8",
-      "pagerduty-docs-22",
-      "pagerduty-docs-28",
-      "pagerduty-docs-37",
-      "pagerduty-docs-42"
-    ]
-  },
-  {
-    "productId": "pagerduty",
-    "storyId": "runbook-automation",
-    "verdict": "partial",
-    "quality": 7,
     "confidence": "medium",
-    "rationale": "PagerDuty's Incident Workflows explicitly support automated, triggerable 'if-this-then-that' responses attached to incidents (e.g., auto-trigger for P1/P2 incidents), which functionally matches the runbook-automation story, and Advance/agentic features add AI-driven remediation. However, the evidence never uses the term 'runbook' nor cites concrete step examples like auto-creating chat channels or running diagnostics scripts as named actions. Missing for 10: explicit runbook terminology, named step types (channel creation, task assignment, diagnostics execution), and independent/hands-on confirmation of these specific triggered actions.",
+    "rationale": "PagerDuty provides escalation policies, incident workflows with configurable trigger/action logic, and on-call schedules that structure who gets notified and can automate response steps, which loosely supports coordinated response. However, the evidence never mentions explicit incident-commander/comms-lead role designations or built-in task checklists for responders during an incident. Missing for 10: dedicated incident role assignment (commander, comms lead), structured task/checklist templates tied to incidents, and independent confirmation these role/checklist features work as advertised.",
     "evidenceIds": [
+      "pagerduty-docs-7",
       "pagerduty-docs-8",
       "pagerduty-docs-22",
       "pagerduty-docs-28",
       "pagerduty-docs-35",
       "pagerduty-docs-42",
-      "pagerduty-docs-11",
-      "pagerduty-docs-26"
+      "pagerduty-docs-13"
+    ]
+  },
+  {
+    "productId": "pagerduty",
+    "storyId": "runbook-automation",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PagerDuty's Incident Workflows explicitly attach automated 'if-this-then-that' response steps to incidents (e.g., auto-triggering on P1/P2), and its Advance suite adds SRE Agent for diagnostics/remediation, Scribe Agent for meeting/task capture, and Shift Agent for coordination, closely matching the runbook-attach-and-auto-trigger story; escalation policies also automate assignment. Missing for 10: no independent/hands-on evidence confirming reliability of automatic channel-creation or task-assignment steps in practice, and community evidence is silent on this specific automation workflow.",
+    "evidenceIds": [
+      "pagerduty-docs-8",
+      "pagerduty-docs-22",
+      "pagerduty-docs-42",
+      "pagerduty-docs-60",
+      "pagerduty-docs-57",
+      "pagerduty-docs-58",
+      "pagerduty-docs-67",
+      "pagerduty-docs-7",
+      "pagerduty-docs-37"
     ]
   },
   {
@@ -3030,28 +3058,31 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "PagerDuty Status Pages are documented to give stakeholders real-time, visual updates on incident resolution without needing to join the incident channel or war room, positioning PagerDuty as the single source of truth for operational updates (pagerduty-docs-10, pagerduty-docs-17, pagerduty-docs-24, pagerduty-docs-29). However, the evidence never describes an explicit stakeholder 'subscribe' mechanism (e.g., email/SMS opt-in) or a structured update template/cadence for internal audiences, so the story is only partly evidenced. Missing for 10: explicit subscription workflow for stakeholders, structured update format/cadence details, and independent confirmation that non-responders actually use this instead of joining incident channels.",
+    "rationale": "PagerDuty's Status Pages are documented as giving stakeholders 'real-time insights into...the status of incident resolution' and letting users 'proactively and securely communicate real-time operational updates without context switching to other tools,' which matches giving non-responders visibility without joining the incident channel/war room. Post-Incident Reviews and Incident Workflows also support structured updates to teams. However, the evidence never explicitly confirms a subscribe/opt-in mechanism for stakeholders, nor is there independent/hands-on corroboration of stakeholders actually using status pages this way. Missing for 10: explicit subscription/notification mechanism for external stakeholders, and independent verification that non-technical stakeholders use this without war-room access.",
     "evidenceIds": [
       "pagerduty-docs-10",
       "pagerduty-docs-17",
       "pagerduty-docs-24",
-      "pagerduty-docs-29"
+      "pagerduty-docs-29",
+      "pagerduty-docs-8",
+      "pagerduty-docs-9"
     ]
   },
   {
     "productId": "pagerduty",
     "storyId": "workflow-automation-engine",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "PagerDuty Incident Workflows are explicitly documented as a condition-based automation engine using 'if-this-then-that' logic that triggers automated actions (e.g., field changes, notifications, reminders) based on incident event conditions like P1/P2 severity. Escalation policies and event orchestration further automate incident-response toil (assignment, deduplication, escalation) without manual intervention. Missing for 10: independent/hands-on corroboration of Incident Workflows specifically (community evidence discusses escalation and paging generally but not the workflow engine), and detailed examples of field-change/reminder automation beyond marketing-style docs.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "PagerDuty's Incident Workflows deliver exactly this: condition-based 'if-this-then-that' automation triggered by incident events (e.g., auto-trigger on P1/P2), with actions like status updates, reminders, and field changes, plus AI Orchestrations to auto-generate rules. Escalation policies and event orchestration further automate toil around alert handling. missing for 10: independent/hands-on validation of workflow reliability at scale, and more detail on the breadth of available workflow actions beyond examples given.",
     "evidenceIds": [
       "pagerduty-docs-8",
       "pagerduty-docs-22",
       "pagerduty-docs-28",
       "pagerduty-docs-35",
       "pagerduty-docs-42",
-      "pagerduty-docs-13",
+      "pagerduty-docs-61",
+      "pagerduty-docs-7",
       "pagerduty-docs-37"
     ]
   },
@@ -3059,17 +3090,19 @@
     "productId": "pagerduty",
     "storyId": "workflow-tool-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "PagerDuty documents strong two-way integration infrastructure (REST API, Events API, V3 webhooks, MCP server) and explicitly calls out Slack integration for incident response and Post-Incident Reviews pulling in Slack data, but the evidence pack never names Jira, Teams, Zoom, or GitHub as specific bidirectional integrations — only Slack is concretely evidenced. Missing for 10: explicit documented integrations/state-sync with Jira, Microsoft Teams, Zoom, and GitHub specifically, plus confirmation these flow both ways rather than just PagerDuty→tool notifications.",
+    "rationale": "PagerDuty documents strong bidirectional integration for Slack (incident management, PIRs initiated from Slack) and GitHub (SRE Agent analyzing code), plus generic webhooks/REST API/Events API infrastructure and a claim of '750+ platform integrations,' but Jira, Microsoft Teams, and Zoom are never named explicitly with concrete two-way state-sync details — only a conference-bridge reference for Scribe Agent hints at Zoom-like tooling. Missing for 10: explicit Jira integration docs, explicit Microsoft Teams integration docs, explicit Zoom integration docs, and confirmation that state truly flows both ways (not just PagerDuty-initiated) for each named tool.",
     "evidenceIds": [
       "pagerduty-docs-2",
       "pagerduty-docs-23",
       "pagerduty-docs-38",
-      "pagerduty-docs-32",
+      "pagerduty-docs-56",
+      "pagerduty-docs-62",
+      "pagerduty-docs-63",
       "pagerduty-docs-33",
-      "pagerduty-docs-40",
-      "pagerduty-docs-34"
+      "pagerduty-docs-53",
+      "pagerduty-docs-50"
     ]
   },
   {
