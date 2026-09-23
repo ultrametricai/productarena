@@ -265,9 +265,12 @@ describe('vendor -> arena mapping', () => {
     // Untracked options we still show honestly (no arena yet) — keep this list deliberate.
     // (legalzoom and mailchimp graduated to tracked when legal-ops/email-marketing shipped;
     // vanta/secureframe/oneleet, namecheap/name_com/porkbun graduated 2026-09-22 when the
-    // wave-5 compliance-automation and domain-registrars arenas shipped.)
+    // wave-5 compliance-automation and domain-registrars arenas shipped; dropbox/google_drive
+    // graduated 2026-09-23 when the launch-day cloud-storage arena shipped. google_sheets stays
+    // an honest chip: no spreadsheet arena exists and product-analytics' event-analytics
+    // stories don't apply to it.)
     const allowedUntracked = new Set([
-      'doola', 'google_sheets', 'google_drive', 'dropbox', 'northwest',
+      'doola', 'google_sheets', 'northwest',
       'termly', 'iubenda', 'producthunt', 'betalist', 'hackernews',
       'ahrefs', 'semrush', 'google_search_console', 'apollo', 'sendgrid',
       // vendor_011 "Compare on evidence": our own surface, labeled '(ours)' — honest
@@ -464,10 +467,13 @@ describe('derived step options (optionsArenaId)', () => {
   })
 
   it('steps without an optionsArenaId keep their curated options exactly (coverage gaps stay frozen)', () => {
-    const storage = loadProcesses(DATA_DIR)
-      .find((t) => t.id === 'qs_015')!.dag.nodes.find((n) => n.id === 'n1')!
-    expect(storage.optionsArenaId).toBeUndefined()
-    expect(stepVendorOptions(storage, DATA_DIR).map((c) => c.vendor)).toEqual(storage.vendorOptions)
+    // (qs_015/n1 — the previous example — graduated to a derived cloud-storage roster when the
+    // launch-day arena shipped; comp_011/n2's minutes-template step stays deliberately curated:
+    // its function is a document template, not storage hosting.)
+    const template = loadProcesses(DATA_DIR)
+      .find((t) => t.id === 'comp_011')!.dag.nodes.find((n) => n.id === 'n2')!
+    expect(template.optionsArenaId).toBeUndefined()
+    expect(stepVendorOptions(template, DATA_DIR).map((c) => c.vendor)).toEqual(template.vendorOptions)
   })
 })
 

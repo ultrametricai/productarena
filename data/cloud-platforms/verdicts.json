@@ -1,0 +1,2559 @@
+[
+  {
+    "productId": "aws",
+    "storyId": "agent-credential-scoping",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "AWS documents the core mechanism for exactly this story: IAM roles/STS assume-role issue temporary session credentials with no long-term keys (aws-docs-12, aws-docs-46), permissions boundaries and identity/resource policies can narrowly scope what a role can do (aws-docs-11, aws-docs-28), and OIDC/IdP federation extends this to external non-human callers (aws-docs-13, aws-docs-29, aws-docs-47). AWS also explicitly targets AI agents with Bedrock AgentCore, which 'helps you handle the authentication and access control' when an agent must call multiple tools/APIs in a turn, built on this same security model (aws-docs-24, aws-docs-35, aws-docs-45). Missing for 10: an explicit, agent-specific worked example showing least-privilege session-policy scoping/escalation prevention end-to-end, and independent/hands-on corroboration beyond AWS's own docs.",
+    "evidenceIds": [
+      "aws-docs-12",
+      "aws-docs-46",
+      "aws-docs-11",
+      "aws-docs-28",
+      "aws-docs-13",
+      "aws-docs-29",
+      "aws-docs-47",
+      "aws-docs-24",
+      "aws-docs-35",
+      "aws-docs-45"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agent-runtime-services",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "AWS ships Bedrock AgentCore, a documented end-to-end managed platform for building, deploying, and running agents at scale — with runtime, identity/auth handling, observability/tracing ('see what steps your agent took'), and support for any framework (LangChain, OpenAI Agents SDK, Claude Agent SDK, Strands SDK) and any model, plus Bedrock itself providing model access. This is first-party documented infrastructure, not just a vision post. Missing for 10: independent/hands-on third-party validation of AgentCore in production and more granular docs on orchestration internals beyond marketing pages.",
+    "evidenceIds": [
+      "aws-docs-22",
+      "aws-docs-23",
+      "aws-docs-24",
+      "aws-docs-33",
+      "aws-docs-34",
+      "aws-docs-35",
+      "aws-docs-44",
+      "aws-docs-45",
+      "aws-docs-25"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-agent-docs",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "AWS docs are confirmed to serve an llms.txt file (HTTP 200) with structured content for agent/LLM consumption, and additional service-specific llms.txt files exist (e.g., Resource Groups). This directly satisfies the story of pointing an agent at llms.txt. missing for 10: no independent/community corroboration that agents actually consume this file successfully, and no broader agent-oriented docs framework beyond the single llms.txt endpoint.",
+    "evidenceIds": [
+      "aws-probe-1",
+      "aws-docs-36",
+      "aws-docs-49"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "AWS offers Bedrock/AgentCore for building generative-AI agents on your own data (aws-docs-25, aws-docs-33, aws-docs-44) and Cost Explorer/Budgets for combining data into 'cost insights' dashboards (aws-docs-16, aws-docs-17), but these require developers to build and wire up the AI capability rather than AWS surfacing AI-generated insights natively inside its console/products for an end user. missing for 10: evidence of built-in, ready-to-use AI insight features (e.g., anomaly detection, recommendations) surfaced directly in AWS console products without custom development, and independent corroboration that such insights work well in practice.",
+    "evidenceIds": [
+      "aws-docs-25",
+      "aws-docs-33",
+      "aws-docs-44",
+      "aws-docs-16",
+      "aws-docs-17"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AWS's Bedrock AgentCore is explicitly positioned as a platform for deploying and running AI agents in production that call tools/APIs autonomously, with built-in auth handling and step-by-step observability, and it supports major agent frameworks (LangChain, OpenAI Agents SDK, etc.). Combined with general automation infrastructure (CLI scripting, CloudFormation/CDK for provisioning), this supports building autonomous background automations, but the evidence lacks concrete scheduling/triggering mechanisms (e.g., EventBridge cron, Lambda triggers) or a hands-on example of an agent actually running unattended in the background over time. Missing for 10: evidence of scheduling/trigger primitives for autonomous runs, and independent/hands-on confirmation that AgentCore-deployed agents run reliably unattended.",
+    "evidenceIds": [
+      "aws-docs-22",
+      "aws-docs-23",
+      "aws-docs-24",
+      "aws-docs-33",
+      "aws-docs-34",
+      "aws-docs-35",
+      "aws-docs-1",
+      "aws-docs-6"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence describes Bedrock/AgentCore as a platform for developers to build and deploy their own AI agents, and CLI/CDK tooling for automation—none of this is a built-in AI assistant inside AWS that an end user can delegate tasks to (e.g., no mention of Amazon Q or a console-embedded assistant). Since AWS could plausibly ship such a built-in assistant, this is an applicable axis with no supporting evidence.",
+    "evidenceIds": [
+      "aws-docs-22",
+      "aws-docs-33",
+      "aws-docs-44",
+      "aws-docs-45"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "AWS CLI is explicitly designed for scripting/automation ('download and configure... automate them through scripts'), supports credential-based non-interactive auth, and integrates with CI via OIDC roles (e.g., GitHub Actions) for headless operation without stored secrets. CloudFormation/CDK further enable fully headless infra automation. Missing for 10: no direct first-party CI/CD product docs (e.g., CodePipeline specifics) or independent case study of AWS CLI in CI pipelines.",
+    "evidenceIds": [
+      "aws-docs-1",
+      "aws-docs-13",
+      "aws-docs-12",
+      "aws-docs-6",
+      "aws-docs-26",
+      "aws-probe-5"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-mcp-client",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AWS's Bedrock AgentCore docs explicitly describe agents calling MCP servers as tools alongside APIs and Lambda functions, with AgentCore handling the auth/access control for those connections — showing AWS-built agents can plug in and use MCP server tools. However, this is a single high-level mention rather than detailed first-party documentation on configuring/registering MCP servers, and there's no independent hands-on corroboration of the workflow. Missing for 10: detailed setup/config docs for attaching MCP servers to an agent, and independent/community confirmation of the integration working in practice.",
+    "evidenceIds": [
+      "aws-docs-35",
+      "aws-docs-22",
+      "aws-docs-24"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-mcp-server",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AWS Labs publishes an official open-source MCP server repo (awslabs/mcp) confirmed by both docs and probe, and AgentCore docs mention agents calling MCP servers with AWS handling auth, showing the capability exists. However, the evidence pack lacks detailed setup documentation, list of supported services/tools, or independent/hands-on corroboration of using it. Missing for 10: in-depth official docs on configuring/using the MCP server, coverage of which AWS services it exposes, and independent verification of real-world use.",
+    "evidenceIds": [
+      "aws-docs-50",
+      "aws-probe-4",
+      "aws-docs-35",
+      "aws-docs-24"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-nl-commands",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows AWS operated via CLI commands, IaC (CloudFormation/CDK), and console — all requiring structured syntax or code, not natural-language commands. Bedrock/AgentCore evidence is about building AI agents as a product feature, not about letting a user control AWS itself via natural language. No mention of a natural-language interface (e.g., Amazon Q or NL-driven CLI) for operating AWS resources.",
+    "evidenceIds": [
+      "aws-docs-1",
+      "aws-docs-2",
+      "aws-docs-3",
+      "aws-docs-6",
+      "aws-docs-8",
+      "aws-docs-42"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "AWS ships a well-documented official CLI (aws-docs-1 through aws-docs-5, aws-docs-42, aws-probe-5) that covers virtually all AWS services and supports scripting/automation, which is core to agentic/AI-native workflows; it also has official MCP servers (aws-docs-50, aws-probe-4) enabling agent tool use. missing for 10: no explicit AI-native design docs for the CLI itself (e.g., structured output for LLM agents, agent-specific CLI features) and no independent hands-on review confirming AI-native usability of the CLI.",
+    "evidenceIds": [
+      "aws-docs-1",
+      "aws-docs-2",
+      "aws-docs-3",
+      "aws-docs-4",
+      "aws-docs-5",
+      "aws-docs-42",
+      "aws-probe-5",
+      "aws-docs-50",
+      "aws-probe-4"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "AWS exposes a comprehensive, well-documented public API surface (AWS CLI, SDKs, CloudFormation, CDK) plus IAM-based programmatic auth (roles, OIDC, temporary credentials) allowing full driving of the product without a human UI, and there's an llms.txt structured docs endpoint confirming machine-readability. Missing for 10: no discoverable OpenAPI/swagger spec was found (404s on standard paths), so full machine-readable API schema discovery is not directly evidenced.",
+    "evidenceIds": [
+      "aws-docs-1",
+      "aws-docs-2",
+      "aws-docs-42",
+      "aws-docs-10",
+      "aws-docs-12",
+      "aws-docs-13",
+      "aws-probe-1",
+      "aws-probe-5",
+      "aws-docs-26"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "AWS IAM provides granular JSON policies, roles with temporary least-privilege credentials, permission boundaries, and OIDC federation for external agents/apps (e.g., GitHub Actions), all directly enabling scoped, temporary API credentials rather than long-lived broad keys. AgentCore explicitly builds on this to handle authentication/access control for AI agents calling APIs, MCP servers, and Lambda functions with per-call authorization. missing for 10: no independent/hands-on evidence confirming ease of scoping credentials specifically for agent workflows in practice.",
+    "evidenceIds": [
+      "aws-docs-10",
+      "aws-docs-11",
+      "aws-docs-12",
+      "aws-docs-13",
+      "aws-docs-28",
+      "aws-docs-29",
+      "aws-docs-46",
+      "aws-docs-47",
+      "aws-docs-24",
+      "aws-docs-35"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "AWS provides extensive official SDK support for AI-native development, including Bedrock AgentCore explicitly supporting LangChain, OpenAI Agents SDK, Claude Agent SDK, Strands SDK, and custom frameworks, plus CDK SDKs across TypeScript, Python, Java, C#, Go for infra-as-code, and official CLI tooling. This directly targets AI-native/agentic builders with production-grade SDKs and deployment paths across any model/framework. Missing for 10: independent hands-on developer corroboration of SDK quality/agent framework integration beyond AWS's own docs.",
+    "evidenceIds": [
+      "aws-docs-22",
+      "aws-docs-33",
+      "aws-docs-34",
+      "aws-docs-45",
+      "aws-docs-8",
+      "aws-docs-26",
+      "aws-probe-5"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "agentic-webhooks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AWS is a broad cloud platform where event-driven services (e.g., EventBridge, SNS) could plausibly support webhook-style subscriptions, so the axis applies, but the evidence pack contains no mention of EventBridge, SNS, webhook endpoints, or any HTTP callback subscription mechanism.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows AWS has CLI docs, SDK guides, and structured llms.txt documentation, but explicit probes for OpenAPI/Swagger specs returned 404s and there is no mention of an interactive API reference with runnable/executable examples (e.g., a built-in API explorer or sandbox). Missing for 10: evidence of an interactive API console, live runnable code snippets, or a discoverable OpenAPI/Swagger spec for exploration.",
+    "evidenceIds": [
+      "aws-probe-3",
+      "aws-probe-2",
+      "aws-probe-1"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows an explicit probe for OpenAPI/swagger specs at AWS docs endpoints returning 404 for all candidate paths, and no other item documents a downloadable OpenAPI or equivalent machine-readable API spec (llms.txt is a documentation index, not an API spec). No AWS API Gateway/SDK spec files, api-models repo, or similar are cited in this evidence pack.",
+    "evidenceIds": [
+      "aws-probe-3",
+      "aws-probe-2",
+      "aws-probe-1"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "AWS provides generic building blocks that can be used to create an isolated test environment separate from production — Free Tier accounts explicitly pitched for 'building and breaking things' without charges (aws-docs-18, aws-docs-30), and CloudFormation stacks that can be created and deleted cleanly (aws-docs-6, aws-docs-7) plus IAM roles/policies for access isolation (aws-docs-10, aws-docs-12). However there is no dedicated 'sandbox environment' product or AI-native testing feature documented. missing for 10: a named sandbox/staging environment product, explicit guidance on isolating test vs production data, and any AI-agent-specific sandbox testing workflow.",
+    "evidenceIds": [
+      "aws-docs-18",
+      "aws-docs-30",
+      "aws-docs-6",
+      "aws-docs-7",
+      "aws-docs-10",
+      "aws-docs-12"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no documentation of AWS API versioning schemes or a deprecation policy for APIs/SDKs; nothing addresses version stability or lifecycle guarantees for AI-native programmatic use. missing for 10: documented API versioning scheme, deprecation policy pages, SDK/API lifecycle guarantees.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "automation-bulk-operations",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "AWS provides multiple mechanisms for bulk operations across resources: the CLI can script and automate actions across many AWS services (aws-docs-1, aws-docs-42), CloudFormation/CDK let you provision, update, or delete entire stacks of many resources in one action (aws-docs-6, aws-docs-7, aws-docs-26), and Resource Groups let you organize and act on tagged collections of resources (aws-docs-36, aws-docs-49). An official MCP server (aws-docs-50) further enables AI agents to invoke these bulk-capable APIs programmatically. Missing for 10: explicit documentation of batch/bulk API endpoints (e.g., batch operations limits, parallel execution semantics) and hands-on evidence of an AI agent actually performing large-scale bulk operations via these tools.",
+    "evidenceIds": [
+      "aws-docs-1",
+      "aws-docs-6",
+      "aws-docs-7",
+      "aws-docs-26",
+      "aws-docs-36",
+      "aws-docs-49",
+      "aws-docs-50"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "AWS documents rule-based automatic actions in the cost domain (e.g., AWS Budgets can auto-apply an IAM policy denying further provisioning when a threshold is hit, and budget alerts trigger on actual/forecasted spend), which is a concrete instance of 'define rules that trigger actions on events.' However the evidence pack contains no mention of AWS's core event-driven automation services (EventBridge, CloudWatch Alarms/Events, Lambda triggers, Step Functions) that would be the primary way an AI-native user builds general automatic action-on-event rules. missing for 10: EventBridge/CloudWatch event-rule automation, Lambda-triggered actions, broader general-purpose rule engine evidence beyond cost budgets.",
+    "evidenceIds": [
+      "aws-docs-14",
+      "aws-docs-15",
+      "aws-docs-48"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack covers AWS CLI, CloudFormation, CDK, IAM, cost management, and Bedrock AgentCore, but contains no mention of scheduling services like EventBridge Scheduler, CloudWatch Events, Step Functions, or cron-based Lambda triggers that would support recurring jobs/workflows for an AI-native user. No citation addresses this capability at all.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AWS supports versioning/rollback of infrastructure automations via CloudFormation stacks (create/update/delete, rollback on failure) and CDK's code-based infrastructure definitions stored in version control, plus CLI history tracking. However, there's no dedicated review/approval workflow or diff-based review UI evidenced, and no AI-native automation-specific versioning (e.g., for agent workflows) beyond generic infra-as-code tooling. missing for 10: evidence of built-in review/approval workflows for changes, rollback support specifically for AI agent automations/AgentCore workflows, and a unified changelog/diff view across automation types.",
+    "evidenceIds": [
+      "aws-docs-6",
+      "aws-docs-7",
+      "aws-docs-8",
+      "aws-docs-26",
+      "aws-docs-27",
+      "aws-docs-5"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "cost-api-exports",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AWS documents a Cost Explorer API for programmatically querying cost and usage data (aws-docs-16) and AWS Budgets for tracking/alerting on costs (aws-docs-14, aws-docs-48), satisfying the 'queryable via API' part of the story. However, the pack has no explicit documentation of scheduled cost/usage exports (e.g., Cost and Usage Reports to S3) or resource-level granularity in the exported/queried data, and community evidence highlights billing opacity/confusion (aws-comm-1, aws-comm-3) rather than confirming granular exports. missing for 10: explicit scheduled export mechanism (e.g., CUR) with resource-level tagging/granularity, independent confirmation that Cost Explorer API returns resource-level detail.",
+    "evidenceIds": [
+      "aws-docs-16",
+      "aws-docs-14",
+      "aws-docs-48",
+      "aws-comm-1",
+      "aws-comm-3"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "first-party-iac",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "AWS ships both a template-based IaC surface (CloudFormation, with stack creation/provisioning and deletion semantics) and a typed, multi-language CDK framework that compiles to CloudFormation stacks, directly matching the 'templates plus typed CDK-style framework' story. Evidence documents stack creation and deletion behavior but does not explicitly detail rollback-on-failure semantics or drift detection. missing for 10: explicit rollback/failure-handling documentation, independent/hands-on corroboration of CDK's state management in production use.",
+    "evidenceIds": [
+      "aws-docs-6",
+      "aws-docs-7",
+      "aws-docs-8",
+      "aws-docs-9",
+      "aws-docs-26",
+      "aws-docs-27"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "free-tier-credits",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AWS documents a concrete free-tier structure ($100 credits immediately, up to $100 more, $200 total over 6 months) and claims 'You won't be charged unless you convert to a Paid plan' (aws-docs-18, aws-docs-19, aws-docs-30, aws-docs-43), which nominally satisfies the story's ask for spelled-out limits/expiry. However, independent hands-on reports directly contradict the 'no surprise bills' framing: users describe being charged unexpectedly for months despite believing they'd turned everything off, and needing to escalate to support to find hidden charges (aws-comm-1, aws-comm-3). This is a concrete, documented counter-example to the vendor's 'no charges, no surprise bills' claim, not mere skepticism. Missing for 10: a fully transparent, universally-scoped free tier without exceptions, and corroboration that the credit expiry/limits are reliably enforced without stray billable resources.",
+    "evidenceIds": [
+      "aws-docs-18",
+      "aws-docs-19",
+      "aws-docs-30",
+      "aws-docs-43",
+      "aws-comm-1",
+      "aws-comm-3"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "iac-import-existing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack covers CloudFormation stack creation/deletion, CDK, IAM, and CLI basics, but contains no mention of importing existing resources into CloudFormation/CDK or of drift detection/remediation workflows. Without evidence of an import or drift-detection capability, this axis cannot be credited as delivered.",
+    "evidenceIds": [
+      "aws-docs-6",
+      "aws-docs-7",
+      "aws-docs-26",
+      "aws-docs-27"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "iam-least-privilege",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AWS docs confirm IAM supports JSON policies with multiple types (identity-based, resource-based, VPC endpoint, permissions boundaries), attaching policies to identities or resources, and using roles/OIDC federation for temporary, scoped credentials — all core building blocks of least privilege. However the evidence pack does not explicitly document IAM policy 'condition' keys, ARN-level resource scoping examples, or the formal policy evaluation logic (explicit deny > allow, evaluation order across policy types) that a security engineer would need to verify least-privilege enforcement. missing for 10: explicit condition-key documentation, resource ARN scoping examples, documented policy evaluation algorithm.",
+    "evidenceIds": [
+      "aws-docs-10",
+      "aws-docs-11",
+      "aws-docs-12",
+      "aws-docs-13",
+      "aws-docs-28",
+      "aws-docs-29",
+      "aws-docs-46",
+      "aws-docs-47",
+      "aws-docs-15"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "managed-ai-inference",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Amazon Bedrock is documented as a managed inference platform offering access to hundreds of frontier and open foundation models with evaluation tools, and AgentCore extends this to agent-building with any framework/model, indicating a first-party API-driven model service. Missing for 10: independent/hands-on validation of the Bedrock API's breadth and reliability, and explicit documentation of API rate limits, model versioning, or SLAs.",
+    "evidenceIds": [
+      "aws-docs-25",
+      "aws-docs-33",
+      "aws-docs-44",
+      "aws-docs-22",
+      "aws-docs-34",
+      "aws-docs-45"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "managed-databases",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The pack only confirms RDS exists as a generic tagline ('Set up, operate, and scale a relational database in the cloud') with no documentation shown for automated backups, Multi-AZ/HA options, or maintenance windows. missing for 10: docs on automated backup/retention, Multi-AZ or read-replica HA options, and maintenance window scheduling/notifications.",
+    "evidenceIds": [
+      "aws-docs-40"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "managed-kubernetes",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains nothing about Amazon EKS or any managed Kubernetes service, upgrade policy, or Kubernetes autoscaling; it covers CLI, CDK, IAM, cost management, Bedrock, and general AWS services. Since AWS is a general cloud platform, offering a managed Kubernetes service is a plausible and expected axis, so absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "openness-api-parity",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "AWS explicitly documents that the CLI/API provides functionality equivalent to the browser-based Management Console (aws-docs-42), backed by comprehensive IAM, CDK, CloudFormation, Cost Explorer, and Budgets APIs that mirror console capabilities, plus an official CLI and MCP servers for programmatic/agentic access (aws-docs-1, aws-docs-50, aws-probe-4, aws-probe-5). Missing for 10: independent hands-on verification confirming true 1:1 parity for every niche console feature, and no explicit public API spec (OpenAPI) was found (aws-probe-3).",
+    "evidenceIds": [
+      "aws-docs-42",
+      "aws-docs-1",
+      "aws-docs-2",
+      "aws-docs-16",
+      "aws-docs-50",
+      "aws-probe-4",
+      "aws-probe-5",
+      "aws-probe-3"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows AWS CLI, CloudFormation/CDK, and S3 as means to manage infrastructure and data, but none of it documents a facility for exporting all account data in open, portable formats or a supported migration/exit path. Community comments even raise concerns about AWS's complexity and possible lock-in friction (aws-comm-11), reinforcing the absence of a documented data-portability/export feature.",
+    "evidenceIds": [
+      "aws-comm-11"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "openness-open-license",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "AWS as a cloud platform is proprietary and its core service source is not published, but AWS does open-source certain developer tooling — the CDK is explicitly documented as 'an open-source software development framework' and AWS publishes open-source MCP servers on GitHub (awslabs/mcp) and an open-source CLI. This only covers peripheral tooling, not the core AWS service source. Missing for 10: evidence of the core AWS platform/service source code being published under an open license, and explicit license text/repo for CDK or CLI.",
+    "evidenceIds": [
+      "aws-docs-26",
+      "aws-docs-50",
+      "aws-probe-4",
+      "aws-probe-5"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "AWS is a cloud service provider offering hosted infrastructure and managed services, not a software product with a self-hostable core; the entire value proposition is AWS-hosted infrastructure, so 'self-hosting the core product' is a category error for this type of product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "pricing-calculator-transparency",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "AWS explicitly documents an official pricing calculator (calculator.aws) and cost-estimation/management tooling (Cost Explorer API, AWS Budgets, Free Tier credit details), giving founders a way to estimate costs before committing. However, the evidence pack lacks direct citations of per-service public pricing pages (e.g., EC2/S3 pricing pages) themselves, and multiple community reports describe real difficulty predicting/understanding actual charges despite published pricing, tempering confidence that estimates map cleanly to real bills. Missing for 10: direct evidence of per-service pricing pages, and stronger corroboration that calculator estimates match real-world billing outcomes.",
+    "evidenceIds": [
+      "aws-docs-51",
+      "aws-docs-18",
+      "aws-docs-19",
+      "aws-docs-30",
+      "aws-docs-43",
+      "aws-docs-14",
+      "aws-docs-16",
+      "aws-comm-2",
+      "aws-comm-3"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation or community evidence about AWS region selection, data residency controls, or compliance certifications tied to specific geographies — only tangential mentions of us-east-1 outages. Even though AWS is known for multi-region infrastructure, absence of evidence for this capability in the provided pack means it cannot be credited as delivered.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "AWS is a broad cloud platform, so an AI-native data-training opt-out policy is a plausible axis (e.g., for Bedrock model training on customer data), but the evidence pack contains no documentation or statements about AWS/Bedrock's data-training policies or opt-out controls. Missing for 10: explicit policy statement on whether customer data is used to train foundation models, and any opt-out/configuration mechanism.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "privacy-retention-controls",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "AWS docs show generic resource lifecycle control—CloudFormation lets you delete a stack and all its resources, IAM lets you restrict who can access/delete data, and Resource Groups let you organize resources for management—which gives AI-native users some technical means to control retention/deletion of underlying cloud data. However, there is no evidence of AI-specific data retention/deletion policies (e.g., Bedrock model training opt-outs, conversation/log retention controls, or a dedicated privacy dashboard for AI workloads). missing for 10: explicit AI/ML data-retention policy docs (e.g., Bedrock data usage/opt-out), a unified deletion/retention control panel for AI data, independent verification of these controls in practice.",
+    "evidenceIds": [
+      "aws-docs-7",
+      "aws-docs-10",
+      "aws-docs-36"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out mechanisms for AWS or its AI-native tooling (e.g., Bedrock, CLI, CDK); the pack covers pricing, IAM, CLI features, and outages but nothing about telemetry data collection or opt-out settings.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "quickstart-to-deploy",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AWS documents multiple official getting-started tutorials (Amplify React app, generative AI app, website hosting) and a 'six onboarding tasks' guide for beginners, plus a documented CLI install path, showing genuine zero-to-running-service quickstarts exist. However, the evidence pack never shows actual step-by-step exact commands or an explicit 'under an hour' time commitment, so the core promise of the story is only partially substantiated. Missing for 10: verbatim exact-command walkthroughs, explicit time-to-first-deploy claims, and independent confirmation that a beginner actually completes a quickstart in under an hour.",
+    "evidenceIds": [
+      "aws-docs-20",
+      "aws-docs-21",
+      "aws-docs-31",
+      "aws-docs-32",
+      "aws-probe-5"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "regions-footprint",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no citation of AWS's published region list or per-region service availability matrix (e.g., the Regional Services List or Global Infrastructure pages). Community items only mention us-east-1 being a single point of failure during outages, which does not demonstrate a checkable region/service availability reference.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "sandbox-isolated-accounts",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "AWS docs show building blocks that support isolation-style guardrails — IAM roles/policies/permissions boundaries for restricting scope, IAM role assumption for temporary least-privilege credentials, and Budgets that can auto-apply a deny policy to stop further provisioning — plus a Free Tier account for safe experimentation. However, none of the evidence directly documents AWS Organizations, Organizational Units, Control Tower guardrails, or sandbox-account patterns that the story specifically asks about (multi-account/project isolation for experiments vs prod). missing for 10: AWS Organizations/OU docs, Control Tower guardrails, dedicated sandbox-account pattern documentation, independent corroboration that these prevent prod impact.",
+    "evidenceIds": [
+      "aws-docs-10",
+      "aws-docs-11",
+      "aws-docs-12",
+      "aws-docs-14",
+      "aws-docs-15",
+      "aws-docs-18",
+      "aws-docs-30"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "serverless-functions",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "AWS clearly offers serverless compute (Lambda) as signaled by the tagline 'Run code without thinking about servers,' confirming the product category applies, but the evidence pack contains no documentation of triggers, concurrency/payload limits, or cold-start behavior — the specifics the story asks for. missing for 10: documented event triggers, execution/memory/timeout limits, cold-start latency behavior, and any independent corroboration of these specifics.",
+    "evidenceIds": [
+      "aws-docs-39"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "service-reference-coverage",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Evidence shows reference documentation exists broadly across many AWS services—compute, storage, database, NoSQL, IAM, CLI, CloudFormation, CDK, Cost Explorer, Bedrock—via docs.aws.amazon.com and a structured llms.txt index (aws-docs-36 to aws-docs-42, aws-probe-1), suggesting wide per-service doc coverage rather than only flagship services. However, there's no evidence assessing actual consistency/quality parity of API/CLI reference docs between major and minor/niche services, no OpenAPI spec found (aws-probe-3 returns 404s), and community comments note AWS's documentation/naming can be confusing (aws-comm-10, aws-comm-11) though this doesn't concretely dispute reference-doc coverage. Missing for 10: direct evidence comparing doc depth/format consistency across obscure vs flagship services, machine-readable API spec coverage, and independent corroboration that lesser-used services have equally thorough references.",
+    "evidenceIds": [
+      "aws-docs-36",
+      "aws-docs-37",
+      "aws-docs-38",
+      "aws-docs-39",
+      "aws-docs-40",
+      "aws-docs-41",
+      "aws-probe-1",
+      "aws-probe-3",
+      "aws-comm-10",
+      "aws-comm-11"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "spend-budgets-alerts",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "AWS documents Budgets with actual/forecasted spend alerts and even auto-denial policies, plus a Cost Explorer API for programmatic tracking, which are configurable from day one. However, hands-on community reports describe genuine difficulty catching small stray charges even after believing they'd shut resources down, requiring support escalation to diagnose — contradicting the 'bill cannot silently explode' framing in practice. Missing for 10: explicit documented AWS Cost Anomaly Detection service (not cited here), and independent corroboration that budgets/alerts reliably catch surprises before they occur.",
+    "evidenceIds": [
+      "aws-docs-14",
+      "aws-docs-15",
+      "aws-docs-48",
+      "aws-docs-16",
+      "aws-comm-1",
+      "aws-comm-3"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "status-incident-transparency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "There is no first-party AWS documentation in the evidence pack describing a public status/health dashboard with per-service history or formal post-incident reports (no aws-docs citation covers this). The only mentions come from community complaints (aws-comm-6/7/8/12/13/14) describing multi-service us-east-1 outages while status.aws.amazon.com stayed all-green, i.e. no evidence of the transparency artifact this story asks for. Missing for 10: official docs describing a status page, its per-service granularity, historical incident log, and published post-incident/root-cause reports.",
+    "evidenceIds": [
+      "aws-comm-6",
+      "aws-comm-7",
+      "aws-comm-8",
+      "aws-comm-12",
+      "aws-comm-13",
+      "aws-comm-14"
+    ]
+  },
+  {
+    "productId": "aws",
+    "storyId": "terraform-provider-quality",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers AWS CLI, CloudFormation, CDK, IAM, cost management, and Bedrock/AgentCore, but contains no mention of an official Terraform or OpenTofu provider, its release cadence, or maintenance status. Missing for 10: any reference to a HashiCorp/AWS-maintained Terraform provider, its release history, or coverage claims.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "aws",
+    "storyId": "workload-identity-federation",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "AWS docs explicitly describe OIDC federation for external CI systems like GitHub Actions connecting to AWS without long-lived keys (aws-docs-13), IAM roles providing only temporary security credentials with no password/access keys (aws-docs-12, aws-docs-46), and AWS's own recommendation to use identity federation over long-term IAM users (aws-docs-47, aws-docs-29). This covers the core CI/workload identity federation → short-lived credential story end to end via IAM identity providers and role assumption.\n\nmissing for 10: a concrete step-by-step end-to-end tutorial/example (e.g., a GitHub Actions OIDC setup walkthrough) and independent/hands-on corroboration that the flow works as documented.",
+    "evidenceIds": [
+      "aws-docs-12",
+      "aws-docs-13",
+      "aws-docs-29",
+      "aws-docs-46",
+      "aws-docs-47"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agent-credential-scoping",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Azure documents general fine-grained RBAC and Managed Identities that eliminate credential management (azure-docs-10, azure-docs-11, azure-docs-12), which are generic building blocks that could underpin scoped, non-escalating credentials for an agent, but none of the evidence documents an agent-specific pattern (e.g., short-lived scoped tokens issued to an AI agent, workload identity federation for agents, or explicit non-escalation guarantees). Missing for 10: agent-specific credential-issuance docs, explicit temporary/short-lived token scoping guidance, documented non-escalation guarantees tailored to AI agents.",
+    "evidenceIds": [
+      "azure-docs-10",
+      "azure-docs-11",
+      "azure-docs-12"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agent-runtime-services",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack covers Azure CLI, IaC tools (Bicep/ARM/Terraform), RBAC, cost management, and pricing/status pages, but contains no mention of a first-party managed agent runtime or orchestration service (e.g., an Azure AI Foundry Agent Service) being shipped or documented. The MCP reference (azure-probe-4) is a tool-server integration, not an agent runtime/orchestration home. Missing for 10: any documented first-party agent runtime, orchestration engine, agent lifecycle management, or hosted agent service with docs/APIs.",
+    "evidenceIds": [
+      "azure-probe-4"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-agent-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Direct probes show no llms.txt or agent-oriented docs format exists: llms.txt returns 404, markdown-doc variant returns 404, and no OpenAPI spec found at expected locations. No other evidence pack item shows an agent-discoverable docs entry point.",
+    "evidenceIds": [
+      "azure-probe-1",
+      "azure-probe-2",
+      "azure-probe-3"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Only a single thin mention of 'Azure Copilot' generating Terraform configurations shows any AI-generated suggestion capability; there's no evidence of broader in-product AI insights drawn from a user's actual data (e.g., cost anomalies, security posture, performance recommendations) and no independent corroboration. missing for 10: documentation of Azure Copilot/Advisor analyzing user data to produce insights, coverage across services (cost, security, monitoring), and independent/hands-on validation of these AI features.",
+    "evidenceIds": [
+      "azure-docs-19"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Azure CLI, IaC tools (Bicep/ARM/Terraform), RBAC, managed identities, and cost management, but contains no documentation of serverless/scheduled automation services (e.g., Azure Functions timers, Logic Apps, Azure Automation runbooks) that would let an AI-native user set up autonomous background automations. The only mention of Azure Functions is a negative community complaint about log access pain, not a description of the automation capability itself, so there is no first-party claim to judge as delivered or disputed.",
+    "evidenceIds": [
+      "azure-comm-9"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "There is a single thin mention of 'Azure Copilot' generating Terraform configurations, implying a built-in AI assistant can perform delegated infrastructure tasks, but the evidence pack provides no further detail on scope, capabilities, or user experience of this assistant. Missing for 10: documentation of Copilot's full task range, first-party product pages describing the assistant, and independent/hands-on corroboration of its use.",
+    "evidenceIds": [
+      "azure-docs-19"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Azure CLI is cross-platform, scriptable, installable in Docker/headless environments, supports non-interactive output parsing (--query/JMESPath), and Azure also exposes REST APIs explicitly recommended for unattended/CI/DevOps automation with service-principal/managed-identity auth (no interactive login needed). IaC tools (Bicep, ARM, Terraform) further support fully automated, non-interactive provisioning in CI pipelines. Missing for 10: no explicit CI/CD pipeline examples (e.g., GitHub Actions/Azure Pipelines snippets) or independent hands-on confirmation of headless CI usage.",
+    "evidenceIds": [
+      "azure-docs-1",
+      "azure-docs-2",
+      "azure-docs-28",
+      "azure-gh-2",
+      "azure-docs-4",
+      "azure-docs-23",
+      "azure-docs-12",
+      "azure-docs-6",
+      "azure-docs-8"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack only shows Azure publishing its own MCP server (microsoft/mcp) for others to consume, which is the server-provider role, not evidence that Azure itself can act as an MCP client plugging in external MCP servers to use their tools. No documentation or hands-on report shows an Azure feature (e.g., Copilot, AI Foundry agents) consuming third-party MCP servers.",
+    "evidenceIds": [
+      "azure-probe-4"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-mcp-server",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Evidence confirms Microsoft publishes an official MCP server (github.com/microsoft/mcp) that would let AI agents connect to Azure resources, satisfying the core ask. However, the pack contains no first-party documentation detail on setup, supported tools/capabilities, or independent hands-on corroboration of the MCP server working. missing for 10: first-party docs describing MCP server capabilities/setup, independent or hands-on verification of the connection working.",
+    "evidenceIds": [
+      "azure-probe-4"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows Azure Copilot can generate Terraform/IaC configurations from natural-language prompts (azure-docs-19) and that Microsoft ships an official MCP server (azure-probe-4) that could let AI agents issue natural-language-driven operations against Azure, but the bulk of the operational surface (CLI, ARM/Bicep, REST APIs) is scripted/declarative rather than natural-language driven. Missing for 10: dedicated documentation of a conversational/natural-language interface across core Azure resource management (not just Terraform generation), hands-on or independent verification that NL commands reliably operate Azure services, and clarity on scope/maturity of the MCP server for full agentic control.",
+    "evidenceIds": [
+      "azure-docs-19",
+      "azure-probe-4",
+      "azure-docs-1"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Azure ships a well-documented, cross-platform official CLI (azure-cli) with scripting support, tab-completion, JMESPath output querying, and container/Cloud Shell availability, and community input confirms most Azure tasks can be done via CLI. missing for 10: no evidence of AI-agent-specific CLI features (e.g., agent-friendly structured output modes beyond JMESPath, or CLI extensions tailored for autonomous agents) and no independent hands-on benchmark of CLI reliability for automation.",
+    "evidenceIds": [
+      "azure-docs-1",
+      "azure-docs-2",
+      "azure-gh-1",
+      "azure-gh-2",
+      "azure-probe-5",
+      "azure-comm-15"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Azure exposes a well-documented public REST API with client libraries, unattended/script-friendly auth via Entra ID, and a full-featured CLI with scriptable/query output (JMESPath), all of which let an AI-native agent drive the platform programmatically; an official MCP server further extends agent integration. Missing for 10: a discoverable machine-readable spec (llms.txt/openapi.json returned 404 in probes) and independent hands-on confirmation of automated API-driven workflows beyond docs.",
+    "evidenceIds": [
+      "azure-docs-4",
+      "azure-docs-5",
+      "azure-docs-23",
+      "azure-docs-1",
+      "azure-gh-2",
+      "azure-probe-4",
+      "azure-probe-5",
+      "azure-probe-1",
+      "azure-probe-3"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Azure RBAC provides fine-grained, least-privilege role assignment (azure-docs-10, azure-docs-11), and Managed Identities/Entra ID app registration let an application (including an agent) obtain scoped tokens without embedding long-lived credentials (azure-docs-12, azure-docs-23). This gives the building blocks for scoped API credentials, but nothing in the pack is agent-specific (e.g., no documented workflow for provisioning an 'AI agent' identity, custom-scoped service principal creation steps, or credential expiry/rotation guidance tailored to autonomous agents), and there is no independent/hands-on corroboration of this flow. Missing for 10: agent-specific credential issuance guidance, custom role/scope creation walkthrough, independent verification of least-privilege setup for AI workloads.",
+    "evidenceIds": [
+      "azure-docs-10",
+      "azure-docs-11",
+      "azure-docs-12",
+      "azure-docs-23"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-sdks",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Docs confirm Azure REST APIs have client libraries providing a 'native interface' and describe app registration for secured REST requests, implying official SDKs exist, but the pack never names specific language SDKs, shows install/quickstart snippets, or offers independent corroboration of SDK quality. missing for 10: named SDK repos/languages (e.g. Python, .NET, Java, JS), code quickstarts, versioning/release cadence info, and hands-on developer corroboration.",
+    "evidenceIds": [
+      "azure-docs-5",
+      "azure-docs-23",
+      "azure-docs-4"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "agentic-webhooks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of Azure Event Grid, webhooks, or any event subscription mechanism; nothing here documents a way to subscribe to events via webhooks. Since this is a plausible capability for a cloud platform, absence of evidence yields 'none' rather than 'na'.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Azure REST API and CLI documentation exist, but nothing describes an interactive API reference with runnable/try-it examples; probes explicitly show 404s for openapi.json/swagger.json and llms.txt, indicating no discoverable interactive spec.",
+    "evidenceIds": [
+      "azure-docs-4",
+      "azure-docs-5",
+      "azure-probe-1",
+      "azure-probe-2",
+      "azure-probe-3"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows only REST API documentation and client libraries, with no mention of a downloadable OpenAPI/Swagger spec; direct probes for openapi.json/swagger.json at Microsoft Learn all returned 404, and no alternate machine-readable spec location is cited.",
+    "evidenceIds": [
+      "azure-docs-4",
+      "azure-docs-5",
+      "azure-docs-23",
+      "azure-probe-3"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "api-sandbox",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Azure CLI, IaC tools (Bicep/ARM/Terraform), RBAC, cost management, and status pages, but contains no mention of a dedicated sandbox/test environment, dev/test subscription, or isolated non-production testing capability for AI-native workflows. Missing for 10: any documentation of a sandbox subscription, dev/test environment, or synthetic-data testing tier isolated from production.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack has no documentation of API versioning schemes or a formal deprecation policy for Azure REST APIs/SDKs — only general REST API usage and client library mentions are present, with no version lifecycle or deprecation guarantees cited.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "automation-bulk-operations",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Azure CLI, REST APIs, and IaC tools (ARM templates, Bicep, Terraform) all support scripting and declarative deployment across many resources at once, and JMESPath querying/tab-completion supports programmatic bulk workflows (azure-docs-1, azure-gh-2, azure-docs-6, azure-docs-7, azure-docs-8). Cost Management APIs also allow multidimensional bulk queries across resources (azure-docs-22).\n\nmissing for 10: explicit documentation of a dedicated bulk-operation/batch API or CLI subcommand for acting on many items in one call, and independent hands-on evidence confirming large-scale bulk operations work smoothly in practice.",
+    "evidenceIds": [
+      "azure-docs-1",
+      "azure-gh-2",
+      "azure-docs-6",
+      "azure-docs-7",
+      "azure-docs-8",
+      "azure-docs-22",
+      "azure-docs-4"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only relevant evidence is cost-based alerting, where users configure rules on actual/forecasted spend that trigger notifications — a narrow instance of event-condition-action automation. There's no evidence pack mention of Azure's broader event-driven automation services (e.g., Event Grid, Logic Apps, Azure Automation, Monitor alert action groups) that would let an AI-native user define general-purpose rules triggering arbitrary actions on events. Missing for 10: evidence of Event Grid/Logic Apps/Azure Automation or Monitor action-group rule definitions, documentation of custom event sources and multi-step automated actions, and independent corroboration of this automation working in practice.",
+    "evidenceIds": [
+      "azure-docs-13",
+      "azure-docs-18",
+      "azure-docs-31"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack covers Azure CLI, IaC tools (Bicep, ARM, Terraform), RBAC, cost management, and status monitoring, but contains no mention of any scheduling mechanism such as Logic Apps, Azure Automation runbooks, Azure Functions timer triggers, or Data Factory pipelines that would let an AI-native user schedule recurring jobs or workflows. Since the axis clearly applies to a cloud platform like Azure but no supporting evidence exists in the pack, this must be judged 'none'.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows Azure supports declarative IaC (Bicep, ARM templates, Terraform) which could theoretically be versioned in git, but there is no documentation of deployment history, rollback mechanisms, review/approval workflows, or version control integration specific to automations. Missing for 10: deployment history/rollback API or docs, PR-based review workflow support, explicit versioning guidance for automations.",
+    "evidenceIds": [
+      "azure-docs-6",
+      "azure-docs-7",
+      "azure-docs-21"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "cost-api-exports",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Azure documents a dedicated Cost Management REST API that supports multidimensional queries, custom filters/expressions for consumption data, and budget/alert automation (azure-docs-22, azure-docs-30, azure-docs-14, azure-docs-13), which goes beyond a dashboard screenshot and is queryable programmatically. However, the evidence pack never explicitly describes scheduled/recurring cost exports or confirms resource-level (vs. subscription/resource-group) granularity in exports, so the story is only partially substantiated. Missing for 10: explicit documentation of scheduled export configuration (e.g. daily/weekly export to storage) and confirmation of resource-level granularity in exported data, plus independent/hands-on corroboration that the API delivers this detail in practice.",
+    "evidenceIds": [
+      "azure-docs-22",
+      "azure-docs-30",
+      "azure-docs-14",
+      "azure-docs-13"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "first-party-iac",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Azure ships strong declarative IaC (ARM templates, Bicep DSL) and documented Terraform support/export as first-party-adjacent tooling, satisfying the 'templates' half of the story. However, there is no evidence of a typed CDK-style programming framework (like AWS CDK) for Azure, and no documentation cited on state file management or deployment rollback semantics for these tools. Missing for 10: a first-party typed CDK-style framework, and documented state/rollback semantics for deployments.",
+    "evidenceIds": [
+      "azure-docs-6",
+      "azure-docs-7",
+      "azure-docs-21",
+      "azure-docs-8",
+      "azure-docs-9",
+      "azure-docs-19"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "free-tier-credits",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence confirms Azure publishes a free account offer and a free-services page (azure-docs-16/17/24/25) plus a pricing calculator, but the evidence pack contains no detail on the actual free-tier limits, credit amounts, or expiry terms — just page titles/URLs. Missing for 10: documented $-amount of startup credit, duration/expiry of free trial, specific service quotas for 'always free' tier, and any independent corroboration that these terms are clear/accurate.",
+    "evidenceIds": [
+      "azure-docs-16",
+      "azure-docs-17",
+      "azure-docs-24",
+      "azure-docs-25",
+      "azure-docs-15"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "iac-import-existing",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Azure docs explicitly cover exporting existing resources to Terraform HCL and generating Terraform configs via Azure Copilot, which supports a brownfield/import workflow rather than greenfield-only IaC. However, there's no documented drift-detection workflow, and no equivalent import tooling is evidenced for Bicep/ARM templates. Missing for 10: explicit drift-detection/reconciliation docs, ARM/Bicep import workflow evidence, independent hands-on confirmation of the export-to-HCL flow.",
+    "evidenceIds": [
+      "azure-docs-9",
+      "azure-docs-19",
+      "azure-docs-8",
+      "azure-docs-6",
+      "azure-docs-21"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "iam-least-privilege",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Azure RBAC docs confirm fine-grained, resource-level access management (assign different roles per resource type/user) and managed identities for credential-free access, which is core least-privilege infrastructure. However, the evidence pack never mentions Azure ABAC conditions, detailed scope hierarchy (management group/subscription/resource group/resource), or documented policy evaluation logic (deny vs allow precedence), leaving the story's specific requirements only partially covered. Missing for 10: condition-based (ABAC) policy examples, explicit resource-level scoping documentation, and documented policy evaluation order/precedence, plus independent/hands-on corroboration.",
+    "evidenceIds": [
+      "azure-docs-10",
+      "azure-docs-11",
+      "azure-docs-12"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "managed-ai-inference",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of Azure AI Foundry/Azure OpenAI Service, model catalogs, or any first-party managed inference API for frontier or open models; all citations concern Azure CLI, IaC tools, RBAC, cost management, and outage discussions unrelated to model hosting.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "managed-databases",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no documentation or first-party material about Azure's managed relational database offerings (e.g., Azure SQL Database, Azure Database for PostgreSQL/MySQL), nor any mention of automated backups, HA options, or maintenance windows. The only related evidence (azure-comm-13) is a community pricing complaint about 'managed pg', which does not substantiate the capability itself.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "managed-kubernetes",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no documentation or mention of Azure Kubernetes Service (AKS), its upgrade policy, or autoscaling capabilities — only a passing community comment about running k8s clusters and cost, which does not address the managed service, upgrade policy, or autoscaling. missing for 10: AKS product documentation, upgrade policy details, cluster autoscaler documentation, node pool autoscaling docs, first-party or independent corroboration of managed K8s features.",
+    "evidenceIds": [
+      "azure-comm-13"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "openness-api-parity",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Azure's control plane is built on Azure Resource Manager, exposed via REST APIs (azure-docs-4/5/23), with CLI, SDKs, ARM templates, Bicep, and Terraform all layered on that same API (azure-docs-6/7/8/9/21), and a community comment confirms 'almost everything can be done via command line' (azure-comm-15). Cost management, RBAC, and identity are also API-accessible (azure-docs-10/12/13/14/22).\nmissing for 10: an explicit vendor statement guaranteeing 100% UI/API parity, and independent verification that no portal-only features exist.",
+    "evidenceIds": [
+      "azure-docs-4",
+      "azure-docs-5",
+      "azure-docs-6",
+      "azure-docs-7",
+      "azure-docs-8",
+      "azure-docs-9",
+      "azure-docs-21",
+      "azure-docs-10",
+      "azure-docs-12",
+      "azure-docs-22",
+      "azure-comm-15",
+      "azure-probe-5"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "openness-full-export",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Azure documents infrastructure export paths (Terraform 'export resources to HCL', ARM/Bicep declarative templates, REST APIs and CLI for programmatic access) which support exporting resource configurations in open/declarative formats, but there is no evidence of a comprehensive data-export or account-portability tool covering actual data stored in Azure services (Blob, SQL, Cosmos DB, etc.) in open formats for a full platform exit. Missing for 10: dedicated data-export/migration tooling for stored data (not just infra config), documented data portability guarantees, and independent confirmation that a user can fully extract all data and leave without lock-in friction.",
+    "evidenceIds": [
+      "azure-docs-9",
+      "azure-docs-8",
+      "azure-docs-6",
+      "azure-docs-21",
+      "azure-docs-4",
+      "azure-docs-5"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "openness-open-license",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Azure the core cloud platform is closed-source, but its CLI tool is hosted on GitHub (azure-gh-1, azure-gh-2), implying at least some Azure tooling is open source under a public license. This is far from the full product's source being open. missing for 10: evidence of Azure's core services/source code being open-licensed, any explicit license statement, and broader ecosystem transparency beyond the CLI repo.",
+    "evidenceIds": [
+      "azure-gh-1",
+      "azure-gh-2"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Azure is a proprietary hyperscale cloud platform; self-hosting the core product on one's own infrastructure is a category error for this kind of service, not an applicable openness axis.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "pricing-calculator-transparency",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Azure publishes an official pricing calculator (azure-docs-15), free account/pay-as-you-go pricing page (azure-docs-16/24), and free services page (azure-docs-17/25), all publicly accessible before signup, letting a founder estimate a stack's cost. Community feedback (azure-comm-16, azure-comm-13) notes pricing can feel opaque or surprising in practice, but the core published pricing pages and calculator exist and are documented. Missing for 10: independent hands-on confirmation that calculator estimates match actual bills, and per-service pricing page citations beyond the calculator/free-tier links.",
+    "evidenceIds": [
+      "azure-docs-15",
+      "azure-docs-16",
+      "azure-docs-17",
+      "azure-docs-24",
+      "azure-docs-25",
+      "azure-comm-16"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of Azure regions, data residency, geo-selection during resource deployment, or compliance/sovereignty controls; it covers CLI, IaC tools, RBAC, cost management, and community sentiment but nothing about choosing storage location. missing for 10: any docs on region selection, data residency guarantees, sovereign cloud options, or region-scoping in deployment tools.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of AI training data opt-out, data usage policies for AI model training, or privacy controls specific to AI training on Azure customer data; all evidence covers CLI, IaC tools, RBAC, cost management, and general community sentiment.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no mention of data retention policies, data deletion controls, or privacy/compliance tooling specific to AI-native usage; it covers CLI, IaC, RBAC, cost management, and outage/support sentiment instead. missing for 10: data retention configuration docs, data deletion/purge APIs or workflows, AI-service-specific data handling/retention policy documentation, compliance certifications tied to deletion guarantees.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for Azure CLI, Azure services, or any developer tooling; the evidence covers CLI features, IaC tools, RBAC, cost management, and community sentiment, none of which touch privacy/telemetry settings.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "quickstart-to-deploy",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows CLI install instructions (e.g., brew install azure-cli) and general docs links, but no concrete quickstart tutorial with exact end-to-end commands taking a developer from zero to a running service within an hour. Community feedback (azure-comm-20) even describes onboarding as 'insane how complicated', undercutting a smooth first-deploy claim. missing for 10: a specific quickstart doc with full command sequence, evidence of time-to-deploy, and independent confirmation of a fast first deployment experience.",
+    "evidenceIds": [
+      "azure-docs-3",
+      "azure-docs-2",
+      "azure-docs-26",
+      "azure-comm-20"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "regions-footprint",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack includes status/outage pages and cost/pricing tools but contains no mention of a published Azure region list or a per-region service availability checker that an operations lead could consult before committing. Missing for 10: any citation of the Azure regions page, products-by-region matrix, or region-availability documentation.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "azure",
+    "storyId": "sandbox-isolated-accounts",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows guardrail-related primitives — Azure RBAC for fine-grained access control, managed identities, and cost budgets/alerts — but nothing documenting subscription/management-group isolation, landing zones, or dedicated sandbox/org-unit patterns that would let developers experiment without risking production. Missing for 10: documented management groups/subscription isolation patterns, sandbox/dev-test environment guidance, landing zone architecture, and any explicit prod-vs-experiment separation guardrails.",
+    "evidenceIds": [
+      "azure-docs-10",
+      "azure-docs-11",
+      "azure-docs-12",
+      "azure-docs-13"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "serverless-functions",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no first-party documentation of Azure Functions or serverless container triggers, limits, or cold-start behavior; the only mention of Azure Functions is a negative community anecdote about log access (azure-comm-9), which doesn't establish the documented capability itself.",
+    "evidenceIds": [
+      "azure-comm-9"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "service-reference-coverage",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Evidence shows Azure maintains extensive reference documentation across many domains—CLI (azure-docs-1/2/3), REST API (azure-docs-4/5/23), IaC tools like Bicep/ARM/Terraform (azure-docs-6/7/8/21), RBAC (azure-docs-10/11), and Cost Management APIs (azure-docs-14/22/30)—all hosted consistently on learn.microsoft.com, suggesting a shared docs infrastructure spanning many services, not just flagship ones. However, there's no direct evidence comparing doc depth/consistency for lesser-used or niche services versus flagship ones, and community threads focus on portal UX, pricing, and support rather than confirming reference-doc parity across services. Missing for 10: explicit coverage/consistency data for non-flagship or niche services, and independent developer commentary specifically praising or criticizing docs consistency (rather than UI/pricing/support).",
+    "evidenceIds": [
+      "azure-docs-1",
+      "azure-docs-4",
+      "azure-docs-5",
+      "azure-docs-6",
+      "azure-docs-8",
+      "azure-docs-10",
+      "azure-docs-14",
+      "azure-docs-22",
+      "azure-probe-5"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "spend-budgets-alerts",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Azure documents budgets and cost/forecast-based alerts configurable via Cost Management (azure-docs-13) plus APIs for multidimensional cost/usage analysis (azure-docs-14, azure-docs-22, azure-docs-30), giving founders day-one spend controls. However, the pack contains no explicit documentation of automated anomaly detection on spend, and community comments describe surprise/opaque billing experiences (azure-comm-16, azure-comm-18) suggesting real-world friction with cost visibility. Missing for 10: explicit anomaly-detection feature docs, and independent confirmation that budget alerts reliably prevent bill surprises.",
+    "evidenceIds": [
+      "azure-docs-13",
+      "azure-docs-14",
+      "azure-docs-22",
+      "azure-docs-30",
+      "azure-comm-16",
+      "azure-comm-18"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "status-incident-transparency",
+    "verdict": "disputed",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Azure does provide a public status page (azure.status.microsoft) showing current health and stating 'no active events,' but there is no evidence of per-service historical uptime data or detailed post-incident reports, and community hands-on reports directly contradict the page's reliability — during a real outage affecting production systems and SSO/Identity services, users found the status page 'never red' and 'absolutely useless,' with links pointing to the down portal itself. missing for 10: per-service historical uptime records, published post-incident report (PIR) archive, evidence the status page accurately reflects real-time outages.",
+    "evidenceIds": [
+      "azure-docs-18",
+      "azure-docs-31",
+      "azure-comm-1",
+      "azure-comm-2",
+      "azure-comm-3",
+      "azure-comm-17"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "terraform-provider-quality",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Microsoft publishes substantial official docs on using Terraform with Azure, including guidance to provision resources, export existing resources to HCL, and even generate Terraform via Azure Copilot, indicating real vendor investment in the IaC surface. However, there is no evidence pack detail on the provider's release cadence, GitHub maintenance activity, or explicit vendor-maintained status, and a community report describes friction with Microsoft being slow to update required Terraform versions for compatibility, suggesting some real-world lag. Missing for 10: explicit provider release/changelog evidence, first-party statement of vendor maintenance, and independent corroboration of active, frequent releases.",
+    "evidenceIds": [
+      "azure-docs-8",
+      "azure-docs-9",
+      "azure-docs-19",
+      "azure-comm-12"
+    ]
+  },
+  {
+    "productId": "azure",
+    "storyId": "workload-identity-federation",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The pack shows Azure has managed identities that let applications obtain Entra tokens without managing credentials (azure-docs-12) and RBAC for fine-grained access (azure-docs-10/11), which is directly relevant to eliminating long-lived credentials, but there is no documentation in the pack specifically covering OIDC/workload identity federation for CI pipelines (e.g., GitHub Actions to Azure) or short-lived credential issuance end-to-end for CI/service workflows. missing for 10: explicit workload identity federation/OIDC docs for CI systems, end-to-end setup guide, and independent verification that short-lived tokens are actually issued to CI.",
+    "evidenceIds": [
+      "azure-docs-12",
+      "azure-docs-10",
+      "azure-docs-23"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agent-credential-scoping",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Google Cloud documents Workload Identity Federation for granting workloads temporary, key-less federated access to resources, and IAM docs describe fine-grained permission scoping — both of which are the building blocks for giving an agent a narrowly-scoped, non-escalating credential. However, none of the evidence ties these mechanisms specifically to AI agents or documents an explicit pattern (e.g., short-lived token issuance, escalation-prevention guardrails) for agentic workloads. Missing for 10: agent-specific credential-scoping guides, explicit anti-escalation controls, and hands-on validation that WIF/IAM patterns are used this way in practice for AI agents.",
+    "evidenceIds": [
+      "google-cloud-docs-8",
+      "google-cloud-docs-7",
+      "google-cloud-docs-27"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agent-runtime-services",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Google Cloud documents Vertex AI as a platform explicitly for building, scaling, and governing 'enterprise grade AI agents' and 'agentic systems at global scale,' plus first-party MCP tooling (Cloud Run MCP server, genai-toolbox) for connecting agents to cloud resources — this is more than a blog vision, it's shipped, named product surface. However, the evidence pack lacks detail on the actual runtime/orchestration mechanics (e.g., Agent Engine, session/state management, deployment lifecycle, multi-agent orchestration specifics), so the 'managed home' claim is only thinly substantiated. Missing for 10: documented agent runtime architecture/session management, orchestration framework details, and independent hands-on confirmation that agents can be deployed and run end-to-end on the platform.",
+    "evidenceIds": [
+      "google-cloud-docs-15",
+      "google-cloud-docs-29",
+      "google-cloud-docs-16",
+      "google-cloud-gh-1",
+      "google-cloud-gh-3",
+      "google-cloud-docs-28"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-agent-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "There is no evidence Google Cloud publishes an llms.txt file or agent-oriented documentation entry point that an AI agent could be pointed at; evidence covers MCP servers, CLI, and API docs but not a llms.txt-style discoverable doc format. Missing for 10: any llms.txt file, agent-readable doc index, or equivalent machine-consumable documentation manifest.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-ai-insights",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence only shows Vertex AI as infrastructure for customers to build their own AI/agentic systems, not Google Cloud itself surfacing AI-generated insights or suggestions about the user's own data inside its console (e.g., no evidence of Active Assist, Duet AI recommendations, or similar built-in insight features). No documentation or community report describes a native 'AI tells you something about your data' experience within the product.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Google Cloud positions Vertex AI as a platform for building 'powerful agentic systems at global scale' and enterprise-grade AI agents, and provides APIs/MCP servers (Cloud Run MCP, genai-toolbox) that let agents interact with cloud resources and databases, implying support for autonomous agent workflows. However, the evidence pack lacks concrete detail on scheduling/triggering mechanisms (e.g., Cloud Scheduler, event triggers, Agent Engine runtime) that would demonstrate automations actually running unattended in the background. Missing for 10: explicit documentation of background/scheduled execution or agent runtime persistence, independent/hands-on confirmation of autonomous operation.",
+    "evidenceIds": [
+      "google-cloud-docs-15",
+      "google-cloud-docs-29",
+      "google-cloud-docs-4",
+      "google-cloud-gh-1",
+      "google-cloud-docs-16"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Vertex AI as a platform for building agentic AI systems and various MCP servers that let external AI agents call into Google Cloud resources, but neither is a built-in assistant embedded in the Google Cloud console/product that users can delegate their own tasks to. No mention of a Gemini-in-console style assistant or similar in-product delegation feature appears in the pack, so this applicable axis is unsupported by evidence.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Google Cloud ships the gcloud CLI (scriptable, non-interactive, widely used in CI pipelines) plus REST APIs and client libraries for automation, and supports headless auth via service accounts/Workload Identity Federation for CI use. missing for 10: explicit CI-specific documentation/examples (e.g., GitHub Actions, GitLab CI integration guides) and independent confirmation of headless CI usage patterns.",
+    "evidenceIds": [
+      "google-cloud-docs-1",
+      "google-cloud-docs-2",
+      "google-cloud-docs-25",
+      "google-cloud-docs-4",
+      "google-cloud-docs-8",
+      "google-cloud-probe-2"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence describes Google Cloud shipping MCP servers (Cloud Run MCP, MCP Toolbox for Databases) that let external AI agents/clients (Gemini CLI, Claude Code, etc.) call Google Cloud's tools — this is Google Cloud acting as an MCP server, not as an MCP client consuming external MCP servers' tools. Given Google Cloud's agentic offerings (Vertex AI) this axis is plausible, but there is no evidence of Google Cloud itself connecting to and using third-party MCP servers' tools.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-mcp-server",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Google Cloud ships multiple official MCP servers—Cloud Run's documented MCP server for operating on Cloud Run resources, a separate Cloud Run deployment MCP server, and the googleapis/genai-toolbox MCP server for connecting AI agents/IDEs to databases—explicitly designed to let MCP clients (Gemini CLI, Claude Code, Codex, etc.) connect to Google Cloud resources. Missing for 10: independent hands-on validation of these servers' reliability/completeness and a single unified 'official' MCP entry point rather than several product-specific servers.",
+    "evidenceIds": [
+      "google-cloud-docs-16",
+      "google-cloud-docs-28",
+      "google-cloud-gh-1",
+      "google-cloud-gh-2",
+      "google-cloud-gh-3",
+      "google-cloud-probe-1"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Google Cloud ships official MCP servers (e.g., for Cloud Run and via the genai-toolbox for databases) that let AI agents/MCP clients such as Gemini CLI or Claude Code operate specific services with natural-language commands, showing real agentic/NL control for those surfaces. However this is limited to a few services (Cloud Run, databases) rather than the whole platform, and there's no evidence of a native NL command interface across the broader console or gcloud CLI itself. Missing for 10: platform-wide natural-language control (not just Cloud Run/DB via MCP), first-party assistant for general resource management, and independent hands-on validation of these MCP servers.",
+    "evidenceIds": [
+      "google-cloud-docs-16",
+      "google-cloud-docs-28",
+      "google-cloud-gh-1",
+      "google-cloud-gh-2",
+      "google-cloud-gh-3",
+      "google-cloud-probe-1"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Google Cloud ships an official, well-documented CLI (gcloud) with install/quickstart docs, a full command reference, and interactive install scripts, making it a mature tool for automating and scripting Google Cloud workflows—well suited to AI-native/agentic usage. Missing for 10: no explicit mention of AI-native features within the CLI itself (e.g., natural-language command generation) beyond general automation support.",
+    "evidenceIds": [
+      "google-cloud-docs-1",
+      "google-cloud-docs-2",
+      "google-cloud-docs-3",
+      "google-cloud-docs-25",
+      "google-cloud-probe-2"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Google Cloud publishes extensive REST API documentation, client libraries in popular languages, and a full gcloud CLI built on those APIs, giving AI-native users multiple documented, programmatic ways to drive the product. Missing for 10: independent third-party corroboration of API completeness/stability beyond Google's own docs.",
+    "evidenceIds": [
+      "google-cloud-docs-4",
+      "google-cloud-docs-20",
+      "google-cloud-docs-2",
+      "google-cloud-docs-25",
+      "google-cloud-probe-2"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Google Cloud's IAM lets admins define fine-grained roles and permissions, and Workload Identity Federation lets external workloads (including agent-like processes) access GCP resources via federated, short-lived credentials instead of long-lived service account keys — both directly support scoped, least-privilege credential issuance. However, none of the evidence specifically addresses issuing credentials scoped to an 'agent' persona (e.g., agent-specific API key restrictions, IAM Conditions, or short-lived OAuth token flows for AI agents), and there's no independent corroboration of this being used in agentic workflows. Missing for 10: agent-specific scoped-credential workflow docs, IAM Conditions/short-lived token examples, and independent/hands-on validation.",
+    "evidenceIds": [
+      "google-cloud-docs-7",
+      "google-cloud-docs-8",
+      "google-cloud-docs-27"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Google Cloud provides official client libraries/SDKs and REST APIs across popular languages (docs-4, docs-20), an official CLI (gcloud), and Vertex AI SDKs geared toward building agentic systems (docs-15, docs-29). Missing for 10: independent/hands-on developer corroboration of SDK quality/reliability and more explicit listing of per-language SDK repos.",
+    "evidenceIds": [
+      "google-cloud-docs-4",
+      "google-cloud-docs-20",
+      "google-cloud-docs-15",
+      "google-cloud-docs-29",
+      "google-cloud-docs-2",
+      "google-cloud-docs-25"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "agentic-webhooks",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows Google Cloud has event-driven mechanisms like Pub/Sub-based budget notifications and near-real-time push sync via customer-managed functions relaying change events, which are webhook-like patterns, but there is no direct documentation of a general-purpose webhook subscription API for AI-native consumption. missing for 10: explicit webhook subscription API/docs, examples of AI agents consuming these events, first-party 'subscribe via webhook' guide.",
+    "evidenceIds": [
+      "google-cloud-docs-21",
+      "google-cloud-docs-19",
+      "google-cloud-docs-9"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions an interactive API reference or runnable/try-it-now examples for Google Cloud APIs; docs only describe static REST/client-library usage and CLI reference pages. Missing for 10: any interactive API explorer, try-it console, or runnable code samples embedded in docs.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack shows Google Cloud APIs are usable via REST/client libraries and mentions API hub governance across clouds, but no citation documents a downloadable OpenAPI (or Discovery Document) spec for Google Cloud APIs. Missing for 10: explicit reference to Google API Discovery Service or OpenAPI spec files, any documented download endpoint or example spec.",
+    "evidenceIds": [
+      "google-cloud-docs-4",
+      "google-cloud-docs-20",
+      "google-cloud-docs-18",
+      "google-cloud-docs-32"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "api-sandbox",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Google Cloud supports safe experimentation via separate GCP projects, free-tier credits for building proofs of concept without incurring production charges, and Infrastructure Manager preview deployments that show infrastructure changes before they're applied. However, there is no explicit sandbox environment product or AI-native testing harness described that isolates test data from production for agentic workflows. Missing for 10: a dedicated sandbox/staging environment feature explicitly marketed for AI-native agent testing, and evidence of data isolation guarantees between sandbox and production.",
+    "evidenceIds": [
+      "google-cloud-docs-6",
+      "google-cloud-docs-12",
+      "google-cloud-docs-30",
+      "google-cloud-docs-31"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "api-versioning-policy",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers gcloud CLI, APIs, IAM, billing, MCP servers, and status pages, but no citation documents API versioning policies or a deprecation policy for Google Cloud APIs.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "gcloud CLI and Cloud APIs/client libraries enable scripting and automating actions across many resources (docs-2, docs-4, docs-20, docs-25), which supports bulk-style automation for AI-native/programmatic users, but no evidence explicitly documents batch/bulk endpoints, multi-resource filters, or bulk-specific tooling. missing for 10: explicit bulk/batch API or CLI flags (e.g. batch operations, multi-resource filter+apply patterns), independent hands-on confirmation of bulk workflows at scale.",
+    "evidenceIds": [
+      "google-cloud-docs-2",
+      "google-cloud-docs-4",
+      "google-cloud-docs-20",
+      "google-cloud-docs-25"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The pack shows a thin signal of rule-based automation: budget alerts can publish to Pub/Sub topics to trigger downstream actions when spending thresholds are crossed. There is no evidence of broader event-driven automation offerings like Eventarc, Cloud Functions triggers, Cloud Scheduler, or Workflows, which would be the core of this capability on a cloud platform. Missing for 10: documentation of a general-purpose event/rules engine (e.g., Eventarc, Cloud Functions event triggers, Workflows), independent corroboration of automated action execution, and detail on rule definition beyond budget thresholds.",
+    "evidenceIds": [
+      "google-cloud-docs-21",
+      "google-cloud-docs-9",
+      "google-cloud-docs-26"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers gcloud CLI, IAM, Terraform-based infra management, billing APIs, and MCP servers for databases/Cloud Run, but contains no mention of Cloud Scheduler, Cloud Workflows, Composer, or any cron/recurring-job scheduling capability. Without evidence of a scheduling/orchestration service for recurring jobs, the story is unsupported.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Infrastructure Manager offers declarative Terraform-based configuration with preview deployments to review changes before applying (docs-5, docs-6), which touches on review-before-apply, but there is no documented versioning system or explicit rollback capability for automations/workflows themselves. Missing for 10: explicit version history/audit trail for automations, a documented rollback mechanism, and evidence tied to AI-native workflow automation rather than generic infra-as-code.",
+    "evidenceIds": [
+      "google-cloud-docs-5",
+      "google-cloud-docs-6"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "cost-api-exports",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Google Cloud documents a programmatic Billing API for managing billing/costs (google-cloud-docs-10) and a Budget API for tracking spend against budgets with alerts (google-cloud-docs-9, google-cloud-docs-21, google-cloud-docs-26), satisfying the 'queryable via API' part of the story. However, the evidence pack contains no explicit documentation of scheduled cost exports (e.g., BigQuery billing export) or resource-level granularity in the cost data. Missing for 10: documented scheduled export mechanism, explicit resource-level line-item granularity, and independent/hands-on confirmation of export usage.",
+    "evidenceIds": [
+      "google-cloud-docs-10",
+      "google-cloud-docs-9",
+      "google-cloud-docs-21",
+      "google-cloud-docs-26"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "first-party-iac",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Google Cloud offers Infrastructure Manager, a first-party managed Terraform service with declarative config and preview deployments before apply, which covers templates and some state/rollback semantics (docs-5, docs-6). However there is no evidence of a typed CDK-style programming framework (like AWS CDK) for Google Cloud in this pack, and rollback/state-locking semantics are only thinly described via 'preview deployments'. Missing for 10: a documented typed CDK-style SDK/framework, detailed state file management and rollback guarantees, and independent corroboration of these semantics.",
+    "evidenceIds": [
+      "google-cloud-docs-5",
+      "google-cloud-docs-6"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "free-tier-credits",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Google Cloud documents a $300 free credit for new customers plus always-free usage tiers for select products (google-cloud-docs-12/13/22/30/31), but the evidence never spells out credit expiry (e.g., 90-day window) or the specific per-product limits, leaving the 'limits and expiry spelled out' part of the story unmet. Independent hands-on reports concretely contradict the 'starting is free/safe' framing—accounts suspended with no warning over billing-card issues, and a surprise $30k egress bill cited as killing a startup—showing the free-start experience is not as risk-free as the docs imply. Missing for 10: explicit expiry dates/limits documentation and resolution of the contradicting billing-suspension reports.",
+    "evidenceIds": [
+      "google-cloud-docs-12",
+      "google-cloud-docs-13",
+      "google-cloud-docs-22",
+      "google-cloud-docs-30",
+      "google-cloud-docs-31",
+      "google-cloud-comm-1",
+      "google-cloud-comm-4",
+      "google-cloud-comm-5"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "iac-import-existing",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence only covers Infrastructure Manager's declarative Terraform definition and preview-before-apply capability, but nothing documents importing pre-existing GCP resources into Terraform state or a drift-detection/remediation workflow for already-provisioned infrastructure. Since this is a fair and applicable question for a major cloud platform with an IaC surface, but no import/drift-specific documentation appears in the pack, it must be scored as no evidence of delivery.",
+    "evidenceIds": [
+      "google-cloud-docs-5",
+      "google-cloud-docs-6"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "iam-least-privilege",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence confirms IAM's core purpose (\"who can do what on which resource\") and mentions Workload Identity Federation for identity-based access, but there is no documentation in the pack about IAM Conditions (attribute-based conditional bindings), resource-level scoping mechanics, or how policy evaluation order/inheritance works across the resource hierarchy. Missing for 10: IAM Conditions syntax/examples, resource-level policy scoping details, documented policy evaluation/inheritance logic, and any independent corroboration of these features working as described.",
+    "evidenceIds": [
+      "google-cloud-docs-7",
+      "google-cloud-docs-8",
+      "google-cloud-docs-27"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "managed-ai-inference",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Google Cloud's Vertex AI is referenced as a platform for building agentic systems and enterprise-grade AI agents, implying managed model access, but the evidence pack lacks concrete documentation of the inference API surface, model catalog (frontier vs open models), or endpoint/SDK usage details. Missing for 10: explicit API reference docs for Vertex AI model inference, mention of specific frontier/open model support (e.g., Gemini, Llama), and client library/code examples for calling hosted models.",
+    "evidenceIds": [
+      "google-cloud-docs-15",
+      "google-cloud-docs-29"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "managed-databases",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no first-party documentation of Cloud SQL, AlloyDB, or Cloud Spanner features such as automated backups, HA configurations, or maintenance windows — the only reference to a managed relational database is a passing community mention of 'CloudSQL databases' in an outage complaint (google-cloud-comm-14), which does not describe any of the story's specific capabilities. Missing for 10: docs on automated backups, HA/failover options, and documented maintenance windows for any managed relational database offering.",
+    "evidenceIds": [
+      "google-cloud-comm-14"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "managed-kubernetes",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no documentation of GKE (Google Kubernetes Engine) upgrade policy or autoscaling features; the only Kubernetes-related mention is a negative community comment about clusters disappearing, which does not describe capability. Missing for 10: GKE product docs, upgrade channel/policy documentation, cluster autoscaler documentation, node auto-provisioning details.",
+    "evidenceIds": [
+      "google-cloud-comm-14"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "openness-api-parity",
+    "verdict": "partial",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Google Cloud documents extensive API/REST coverage plus client libraries and a full-featured gcloud CLI that itself wraps the APIs, strongly suggesting API-UI parity for core resource management (compute, IAM, billing, Terraform-based infra). However, the evidence pack doesn't confirm 100% parity across every console feature (e.g., some newer console-only UX like API hub dashboards or personalized health views aren't shown to have full API equivalents), and there's no independent audit confirming no UI-only gaps. missing for 10: explicit confirmation that every console feature has an API/CLI equivalent, independent verification of full parity, coverage of edge-case console-only settings.",
+    "evidenceIds": [
+      "google-cloud-docs-2",
+      "google-cloud-docs-4",
+      "google-cloud-docs-20",
+      "google-cloud-docs-25",
+      "google-cloud-docs-10",
+      "google-cloud-docs-9",
+      "google-cloud-probe-2"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "openness-full-export",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers CLI/API access, IAM, billing, MCP tooling, and incident history, but contains no documentation of a data-export feature, open-format export tooling, or migration/exit capability for user data stored in Google Cloud services. Cloud data portability is a fair axis to ask about, but nothing here demonstrates it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Google Cloud is a proprietary managed cloud platform; there is no evidence of the core product's source being available under an open license. Some ancillary tools (e.g., genai-toolbox) are open source on GitHub, but the platform itself is closed-source, so this axis applies but is not met. Missing for 10: any evidence of Google Cloud's core platform source code being published under an open-source license.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Google Cloud is a managed cloud platform, not software that can be self-hosted by design; the axis is a category error for this product type.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "pricing-calculator-transparency",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Google Cloud publishes an official pricing calculator (google-cloud-docs-14) plus free tier/credit details (google-cloud-docs-12,13,30,31) and per-service pricing pages are implied by the broader docs ecosystem; billing/budget docs (google-cloud-docs-9,26) further support cost estimation before committing. Missing for 10: explicit citation of individual per-service pricing pages (e.g., Compute Engine pricing page) rather than just the calculator and free-tier pages.",
+    "evidenceIds": [
+      "google-cloud-docs-14",
+      "google-cloud-docs-12",
+      "google-cloud-docs-13",
+      "google-cloud-docs-30",
+      "google-cloud-docs-31",
+      "google-cloud-docs-9",
+      "google-cloud-docs-26"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "privacy-data-residency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation about Google Cloud regions, data residency controls, or resource location settings; nothing addresses how a user could choose where data is stored. Missing for 10: docs on region selection, data residency/sovereignty controls, resource location policies, and any independent confirmation of regional data storage guarantees.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI training data usage policies, opt-out controls, or data governance commitments for AI model training; the pack covers CLI, IAM, billing, MCP tooling, and reliability/support anecdotes, none of which speak to this axis. Missing for 10: any documentation of AI training opt-out settings, data usage policies for Vertex AI/Gemini, or contractual guarantees against using customer data for model training.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack covers CLI, IAM, billing, MCP servers, and community complaints about support/outages, but contains no documentation about data retention policies, deletion controls, or privacy/data lifecycle management for AI-native workflows.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for gcloud CLI or Google Cloud tools; nothing documents a privacy/telemetry toggle.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "quickstart-to-deploy",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Google Cloud provides official CLI install quickstarts (gcloud install, curl-based install) and API/client library docs, which support getting started, but there's no evidence pack item showing a single end-to-end quickstart with exact commands taking a developer from zero to a running deployed service in under an hour. Evidence is limited to CLI setup and API reference pages rather than a concrete 'deploy a service' walkthrough. missing for 10: a documented end-to-end quickstart tutorial with exact deploy commands, timing/benchmark claims, and independent corroboration that it works within an hour.",
+    "evidenceIds": [
+      "google-cloud-docs-1",
+      "google-cloud-docs-3",
+      "google-cloud-docs-2",
+      "google-cloud-docs-4"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "regions-footprint",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence pack contains no documentation of a published region list or per-region service availability matrix (e.g., cloud.google.com/about/locations or product availability tables); only status/incident pages (docs-17, docs-23) which address uptime, not region/service selection for planning. Missing for 10: a region catalog page, a per-service region availability matrix, and any documented tool/API to query which services are available in which region before deployment.",
+    "evidenceIds": [
+      "google-cloud-docs-17",
+      "google-cloud-docs-23"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "sandbox-isolated-accounts",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack only mentions generic IAM overview docs (who can do what on which resource) but contains no documentation of GCP's project/folder/org hierarchy, sandbox environments, or Organization Policy guardrails that would let a developer isolate experiments from prod. Missing for 10: docs on resource hierarchy (orgs/folders/projects), sandbox project patterns, Organization Policy constraints, and any hands-on corroboration of isolation working as a guardrail.",
+    "evidenceIds": [
+      "google-cloud-docs-7",
+      "google-cloud-docs-27"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "serverless-functions",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no documentation of Cloud Functions or Cloud Run specifics such as triggers, concurrency/memory limits, or cold-start behavior — only tangential references to a Cloud Run MCP server for deployment automation (google-cloud-docs-16, google-cloud-docs-28), which does not address the serverless triggers/limits/cold-start story. Absence of evidence for this applicable capability yields none, not na.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "service-reference-coverage",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Evidence shows a real gcloud CLI reference and REST/client-library API docs with cross-links to per-service references (IAM, billing, Cloud Run MCP, Vertex AI), suggesting a consistent doc pattern across many services, but the pack does not demonstrate uniform reference-doc quality/completeness for the long tail of lesser-used services. missing for 10: independent verification that non-flagship/niche services have equally complete reference docs, no evidence of documentation consistency audits or comparison across dozens of less popular APIs, and community commentary here focuses on support/outages rather than doc quality.",
+    "evidenceIds": [
+      "google-cloud-docs-2",
+      "google-cloud-docs-25",
+      "google-cloud-docs-4",
+      "google-cloud-docs-20",
+      "google-cloud-docs-7",
+      "google-cloud-docs-10",
+      "google-cloud-docs-16",
+      "google-cloud-probe-2"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "spend-budgets-alerts",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Google Cloud documents budgets and budget alerts (via Pub/Sub) and a billing API for programmatic cost control, configurable early via the $300 free-credit period [google-cloud-docs-9,26,21,10,22]. However, real-world community reports directly contradict the 'cannot silently explode' promise: a surprise $30k egress bill after following GCP's own storage advice, a $5k committed-use-discount typo with no undo, and production suspensions triggered by billing/fraud issues with no advance warning [google-cloud-comm-4,5,8,1]. There is also no documented anomaly-detection feature in the evidence pack, only manual budget thresholds. Missing for 10: explicit anomaly-detection docs, and evidence the budget/alert system actually prevented the cited surprise-bill incidents.",
+    "evidenceIds": [
+      "google-cloud-docs-9",
+      "google-cloud-docs-26",
+      "google-cloud-docs-21",
+      "google-cloud-docs-10",
+      "google-cloud-docs-22",
+      "google-cloud-comm-4",
+      "google-cloud-comm-5",
+      "google-cloud-comm-8",
+      "google-cloud-comm-1"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "status-incident-transparency",
+    "verdict": "disputed",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Google Cloud does maintain a public status page with per-service status and a 'Personalized Service Health' feature for incident details (google-cloud-docs-17, docs-23), which is the claimed capability. However, multiple independent community reports concretely contradict its reliability as an outage-transparency surface: the status page reportedly showed all-green 'Available' markers during active outages, incident acknowledgment was delayed by ~35min-1hr, and in one case the status-page infrastructure itself was hosted on the affected GCP systems, delaying incident reporting (google-cloud-comm-12, comm-13, comm-16, comm-18). Missing for 10: verifiable per-service historical uptime logs, published post-incident reports (postmortems) in the evidence, and any rebuttal/fix evidence showing these accuracy issues were resolved.",
+    "evidenceIds": [
+      "google-cloud-docs-17",
+      "google-cloud-docs-23",
+      "google-cloud-comm-12",
+      "google-cloud-comm-13",
+      "google-cloud-comm-16",
+      "google-cloud-comm-18"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "terraform-provider-quality",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence only shows Google's Infrastructure Manager service is built around declaratively defining infrastructure 'using Terraform' and offering preview deployments, implying Terraform integration, but there is no explicit mention of the terraform-provider-google itself, its release cadence, or breadth of resource coverage across core GCP services.  missing for 10: explicit confirmation of a vendor-maintained Terraform/OpenTofu provider, its release frequency, and coverage of core services.",
+    "evidenceIds": [
+      "google-cloud-docs-5",
+      "google-cloud-docs-6"
+    ]
+  },
+  {
+    "productId": "google-cloud",
+    "storyId": "workload-identity-federation",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Google Cloud documents Workload Identity Federation as the recommended way to give external workloads (including CI/CD) access to GCP resources using federated identities instead of long-lived service account keys, directly matching the story's core claim. However, the evidence pack lacks end-to-end documentation of specific CI integrations (e.g., GitHub Actions OIDC setup steps), token lifetime details, or independent corroboration that this is enforced/adopted in practice. missing for 10: step-by-step CI provider integration guides (GitHub Actions/GitLab), explicit short-lived token TTL details, and independent hands-on verification of the OIDC flow working end to end.",
+    "evidenceIds": [
+      "google-cloud-docs-8"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agent-credential-scoping",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows only generic IAM policies, identity domains, and CLI token-based authentication (docs-9, docs-17, docs-22) — none of which document a specific pattern for issuing AI agents temporary, narrowly-scoped, non-escalatable credentials. No mention of instance/resource principals, dynamic groups, or agent-specific credential leashing guidance appears in the pack.",
+    "evidenceIds": [
+      "oracle-cloud-docs-9",
+      "oracle-cloud-docs-17",
+      "oracle-cloud-docs-22"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agent-runtime-services",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Evidence shows OCI has a 'Select AI Agent Framework' with team-sharing across database schemas, indicating some first-party agent orchestration capability exists — but this is a single release-note mention, not a documented, dedicated agent runtime/orchestration service with architecture, APIs, or deployment guides comparable to a full 'AI agent home'. Missing for 10: dedicated agent runtime service docs, agent deployment/hosting details, tool/orchestration APIs, lifecycle management guidance, and independent corroboration of production use.",
+    "evidenceIds": [
+      "oracle-cloud-docs-16",
+      "oracle-cloud-docs-15"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-agent-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Direct probes show no llms.txt (404) and no markdown-friendly docs endpoint (404), and no OpenAPI spec discoverable; no evidence of any agent-oriented documentation format for pointing an AI agent at.",
+    "evidenceIds": [
+      "oracle-cloud-probe-1",
+      "oracle-cloud-probe-2",
+      "oracle-cloud-probe-3"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-ai-insights",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "OCI's Select AI and Generative AI services (agent frameworks, model imports) suggest AI-driven data querying/insights capability exists, but evidence is limited to sparse release-note mentions rather than detailed documentation of insight generation from user data. Missing for 10: dedicated documentation describing how Select AI surfaces insights/suggestions from a user's own data, and independent/hands-on corroboration of this capability in use.",
+    "evidenceIds": [
+      "oracle-cloud-docs-15",
+      "oracle-cloud-docs-16",
+      "oracle-cloud-docs-26"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "OCI's docs mention a Select AI Agent Framework where agent teams can be defined and shared to run tasks, hinting at autonomous background agent execution, but there's no direct evidence of a scheduling/automation service (e.g., OCI Functions, Events, Resource Scheduler) or details on how these agents run unattended in production. Missing for 10: dedicated docs on background job scheduling/triggers, first-party examples of autonomous agent execution, and independent corroboration of these automations working reliably.",
+    "evidenceIds": [
+      "oracle-cloud-docs-16",
+      "oracle-cloud-docs-6"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "The evidence mentions Select AI / Select AI Agent Framework for building agent teams inside the database and Select AI for Java SDK, but nothing shows a built-in AI assistant embedded in the OCI console/product itself to which a user can delegate general cloud-management tasks. No evidence of an assistant like AWS Q or similar interactive delegate agent in the OCI UI.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-headless",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "OCI offers a full-featured CLI and REST APIs/SDKs plus a Terraform provider, all of which support headless/CI automation, and community evidence confirms real-world CI usage (Jenkins CI on OCI instances) working reliably via SSH/API. Missing for 10: no explicit CI/CD pipeline integration docs (e.g., GitHub Actions, dedicated CI examples) or first-party automation-specific guidance beyond CLI/SDK/Terraform.",
+    "evidenceIds": [
+      "oracle-cloud-docs-1",
+      "oracle-cloud-docs-5",
+      "oracle-cloud-docs-6",
+      "oracle-cloud-docs-17",
+      "oracle-cloud-comm-9"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-mcp-client",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "OCI includes AI/agent capabilities (e.g., 'Select AI Agent Framework') making the MCP-client question fair for this product, but the evidence pack shows no capability for OCI or its agent framework to consume/plug in external MCP servers as tools — the only MCP-related evidence (oracle/mcp GitHub repo) documents OCI exposing an MCP server, not consuming one.",
+    "evidenceIds": [
+      "oracle-cloud-docs-16",
+      "oracle-cloud-probe-4"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-mcp-server",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "A probe indicates an official OCI MCP server repository exists (github.com/oracle/mcp), which would let an AI agent connect via MCP, but there is no first-party documentation, setup guide, or independent confirmation detailing its capabilities or maturity — other probes for docs/OpenAPI endpoints came back 404. Missing for 10: official Oracle docs describing the MCP server's tools/setup, independent hands-on verification, and details on scope/maturity of the integration.",
+    "evidenceIds": [
+      "oracle-cloud-probe-4"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-nl-commands",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "OCI ships an official MCP server (oracle/mcp) which could let AI agents translate natural-language requests into OCI API/CLI calls, and OCI's Select AI Agent Framework shows some agentic tooling, but there is no direct documentation of a natural-language command interface for operating OCI resources (e.g., a chat-driven console or NL-to-CLI translator) — the CLI and SDKs described are purely programmatic/scripted, not NL-driven. missing for 10: documented natural-language command capability for infrastructure operations, first-party examples of NL→action mapping, and independent confirmation of MCP server usage for OCI resource management.",
+    "evidenceIds": [
+      "oracle-cloud-probe-4",
+      "oracle-cloud-docs-15",
+      "oracle-cloud-docs-16",
+      "oracle-cloud-probe-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-official-cli",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "OCI ships an official CLI with full parity to Console functionality, cross-platform install support, token-based auth, and Cloud Shell pre-configuration, well documented across multiple doc pages. missing for 10: no independent/hands-on community corroboration specifically of the CLI (community evidence focuses on VM/billing experiences, not CLI usage), and no explicit AI-native/agentic workflow examples for the CLI itself.",
+    "evidenceIds": [
+      "oracle-cloud-docs-1",
+      "oracle-cloud-docs-2",
+      "oracle-cloud-docs-3",
+      "oracle-cloud-docs-17",
+      "oracle-cloud-docs-18",
+      "oracle-cloud-probe-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-public-api",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "OCI documents a comprehensive REST API (HTTPS request/response based), with SDKs, a CLI, Terraform provider, and even an official MCP server, giving AI-native users multiple documented programmatic access paths. Missing for 10: a discoverable OpenAPI/Swagger spec (probes for openapi.json/llms.txt returned 404) and independent hands-on corroboration of API-driven automation.",
+    "evidenceIds": [
+      "oracle-cloud-docs-5",
+      "oracle-cloud-docs-1",
+      "oracle-cloud-docs-4",
+      "oracle-cloud-docs-19",
+      "oracle-cloud-docs-20",
+      "oracle-cloud-probe-4",
+      "oracle-cloud-probe-5",
+      "oracle-cloud-probe-3"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-scoped-keys",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "OCI's general IAM system supports policy-based, least-privilege access control and token-based authentication without static keypairs (oracle-cloud-docs-22, oracle-cloud-docs-17, oracle-cloud-docs-9), which could in principle be used to scope credentials for an automated agent. However, there is no documentation specifically addressing issuing scoped credentials for an AI agent or non-human/service-account workload identity. Missing for 10: explicit agent/service-account credential scoping mechanism (e.g. dynamic groups/instance principals), documentation tying IAM policies to AI-agent use cases, and any hands-on/community confirmation of this workflow.",
+    "evidenceIds": [
+      "oracle-cloud-docs-22",
+      "oracle-cloud-docs-17",
+      "oracle-cloud-docs-9"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-sdks",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Oracle documents official SDKs across multiple languages with code samples, docs, and REST API backing, explicitly for building apps that integrate with OCI services, plus a stable API deprecation policy (12-month notice). Missing for 10: independent/hands-on developer corroboration of SDK quality and AI-specific SDK usage patterns beyond docs.",
+    "evidenceIds": [
+      "oracle-cloud-docs-4",
+      "oracle-cloud-docs-19",
+      "oracle-cloud-docs-28",
+      "oracle-cloud-docs-5",
+      "oracle-cloud-docs-20"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "agentic-webhooks",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions webhooks, event subscriptions, or a notifications/events service that AI-native users could subscribe to; the pack covers CLI, SDKs, Terraform, IAM, billing, and free tier topics only. missing for 10: any mention of OCI Events service, Notifications service, or webhook subscription mechanism for event-driven integration.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "api-interactive-docs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence of an interactive API reference with runnable examples; probes for llms.txt, markdown docs, and OpenAPI spec all returned 404, and docs only describe REST API concepts and SDK/CLI usage without interactive/try-it tooling.",
+    "evidenceIds": [
+      "oracle-cloud-probe-1",
+      "oracle-cloud-probe-2",
+      "oracle-cloud-probe-3",
+      "oracle-cloud-docs-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "api-machine-spec",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Docs confirm OCI APIs are REST-based and describe CLI/SDKs, but there is no evidence of a downloadable machine-readable OpenAPI/Swagger spec; direct probes for common OpenAPI paths (openapi.json, swagger.json, .well-known/openapi.json) all returned 404.",
+    "evidenceIds": [
+      "oracle-cloud-docs-5",
+      "oracle-cloud-probe-3"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "api-sandbox",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack covers OCI's CLI, SDKs, Terraform provider, IAM, billing, and free tier offerings, but nothing describes a dedicated sandbox/staging environment isolated from production data for testing (e.g., a test tenancy, dry-run mode, or agent test harness). The Free Tier/Trial credits (oracle-cloud-docs-10/11/12) are about cost, not an isolated sandbox for agentic testing, and community evidence even highlights risk to production resources (oracle-cloud-comm-11) rather than confirming isolation. missing for 10: no documented sandbox/staging tenancy or dry-run testing mode for AI-native/agentic workflows, no evidence of production-data isolation guarantees.",
+    "evidenceIds": [
+      "oracle-cloud-docs-10",
+      "oracle-cloud-docs-11",
+      "oracle-cloud-docs-12",
+      "oracle-cloud-comm-11"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "api-versioning-policy",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Oracle documents that OCI APIs are versioned REST APIs and explicitly commits to a 12-month advance notice policy before removing or changing an existing API a customer has deployed, which is a clear documented deprecation policy. Missing for 10: no independent/community corroboration of adherence to this policy and no detail on API versioning scheme (e.g., v1/v2 URI conventions) beyond the deprecation notice.",
+    "evidenceIds": [
+      "oracle-cloud-docs-20",
+      "oracle-cloud-docs-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "automation-bulk-operations",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "OCI provides a CLI and REST API/SDKs that could technically be scripted for bulk operations across resources, but there's no direct evidence of batch/bulk-specific commands, bulk endpoints, or documented bulk-operation workflows for AI-native automation. missing for 10: explicit bulk/batch API operations, CLI bulk commands (e.g., bulk delete/tag/update), and any AI-native automation examples or independent confirmation of bulk-scale usage.",
+    "evidenceIds": [
+      "oracle-cloud-docs-1",
+      "oracle-cloud-docs-5",
+      "oracle-cloud-probe-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "automation-rules-engine",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only evidence resembling event-triggered automation is OCI Budgets, which lets you set spend thresholds that trigger alert notifications — a narrow, single example of rule-based triggering. There's no evidence of a general-purpose events/rules engine (e.g., OCI Events, Notifications, Functions triggers) that lets users define arbitrary event-condition-action rules. Missing for 10: documentation of a dedicated events/rules service, examples of custom trigger conditions, and evidence of broader action types beyond budget alerts.",
+    "evidenceIds": [
+      "oracle-cloud-docs-8",
+      "oracle-cloud-docs-21"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "automation-scheduled-jobs",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no documentation of any OCI scheduling service (e.g., cron-like jobs, scheduled workflows, or recurring automation triggers) for AI-native or general use; only CLI, SDK, Terraform, IAM, budgets, and free-tier details are covered.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "automation-versioned-workflows",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "OCI's Terraform provider and Resource Manager support importing/migrating Terraform state files, which implies some infrastructure-as-code state management, but there's no direct documentation of automation versioning, change review/approval workflows, or explicit rollback mechanisms for OCI automations. missing for 10: evidence of Resource Manager job history/plan review, version history for automations, explicit rollback capability, and any independent confirmation of these workflows.",
+    "evidenceIds": [
+      "oracle-cloud-docs-6",
+      "oracle-cloud-docs-7"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "cost-api-exports",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "Evidence shows only budget alerts/soft limits (docs-8/21) and generic API/CLI capability, but nothing about a billing/cost usage API, cost export reports, or resource-level granular cost data queryable via API or scheduled export.",
+    "evidenceIds": [
+      "oracle-cloud-docs-8",
+      "oracle-cloud-docs-21",
+      "oracle-cloud-docs-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "first-party-iac",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "OCI documents a first-party Terraform provider and Resource Manager service with state import/migration (oracle-cloud-docs-6, oracle-cloud-docs-7), giving a template-based IaC surface, but there is no evidence of a typed CDK-style programming framework (e.g., an OCI CDK) or documented rollback semantics beyond state-file import guidance. missing for 10: typed CDK-style SDK for IaC, explicit rollback/drift-recovery documentation, independent corroboration of state management reliability.",
+    "evidenceIds": [
+      "oracle-cloud-docs-6",
+      "oracle-cloud-docs-7"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "free-tier-credits",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Oracle's docs clearly spell out a $300/30-day Free Trial and an Always Free tier that 'never expires,' with resources surviving upgrade to paid (oracle-cloud-docs-10/11/24/29/12). However, hands-on community reports concretely contradict the 'always free, no hidden limits' framing: accounts have been reclaimed after 7 days of low utilization, banned for bandwidth/CPU overuse, and required a CPU-spiking cronjob workaround to avoid shutdown—none of which are spelled out in the published terms (oracle-cloud-comm-1, oracle-cloud-comm-3, oracle-cloud-comm-4, oracle-cloud-comm-5). Missing for 10: an official published document detailing the exact idle/utilization thresholds that trigger reclamation or bans, and reconciliation of the 'never expires' claim with real enforcement practices.",
+    "evidenceIds": [
+      "oracle-cloud-docs-10",
+      "oracle-cloud-docs-11",
+      "oracle-cloud-docs-24",
+      "oracle-cloud-docs-29",
+      "oracle-cloud-docs-12",
+      "oracle-cloud-comm-1",
+      "oracle-cloud-comm-3",
+      "oracle-cloud-comm-4",
+      "oracle-cloud-comm-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "iac-import-existing",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Oracle documents an import job to migrate existing Terraform state files into Resource Manager, showing some support for bringing pre-existing infrastructure under IaC management. However, there is no documentation of granular resource-level import (e.g., terraform import for individual resources not yet in any state), no mention of drift detection/reconciliation workflows, and no discussion of resource discovery tooling for greenfield-to-brownfield migration. Missing for 10: resource-level import workflow docs, drift detection/remediation guidance, resource discovery tooling evidence, independent corroboration of import success.",
+    "evidenceIds": [
+      "oracle-cloud-docs-6",
+      "oracle-cloud-docs-7"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "iam-least-privilege",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence confirms OCI has an IAM policy system governing resource access and identity domains, but nothing in the pack documents fine-grained conditions, resource-level scoping syntax, or policy evaluation order/logic. Missing for 10: policy condition syntax examples, resource-level scoping documentation, explicit policy evaluation order documentation, independent corroboration of least-privilege enforcement in practice.",
+    "evidenceIds": [
+      "oracle-cloud-docs-22",
+      "oracle-cloud-docs-9",
+      "oracle-cloud-docs-23"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "managed-ai-inference",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only evidence of a managed inference offering is a single release note mentioning that a new model (zai-org/GLM-5.3) can be imported into 'OCI Generative AI' in a specific region, confirming OCI has a first-party managed inference service, but there is no documentation of its API, model catalog breadth (frontier vs open models), or usage patterns. Missing for 10: OCI Generative AI API reference/docs, list of supported frontier/open models, pricing/quota details, and independent corroboration of the service's capabilities.",
+    "evidenceIds": [
+      "oracle-cloud-docs-26"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "managed-databases",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence pack items mention Oracle's managed database offerings (e.g., Autonomous Database, MySQL Database Service) with automated backups, HA configurations, or maintenance windows; all citations concern CLI/SDK/IAM/billing/free-tier topics unrelated to managed relational database services.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "managed-kubernetes",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of Oracle Kubernetes Engine (OKE) or any managed Kubernetes offering, upgrade policy, or cluster autoscaling; it only covers CLI, SDKs, Terraform, IAM, billing, and free tier. The axis clearly applies to a major cloud platform, but no supporting evidence is present, and one community note even suggests OCI capacity/autoscaling limitations generally. missing for 10: any documentation of OKE service, its Kubernetes version upgrade policy, and cluster/node autoscaling features.",
+    "evidenceIds": [
+      "oracle-cloud-comm-12"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "openness-api-parity",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "OCI documents REST APIs, a CLI that provides \"the same core functionality as the Console, plus additional commands,\" SDKs for building apps, and Terraform provider for infrastructure-as-code — covering the major automation-parity claim for an AI-native/API-driven user. Missing for 10: independent hands-on verification that every single Console feature has an API/CLI equivalent (no explicit gap analysis) and no discoverable OpenAPI/machine-readable spec at the probed endpoints.",
+    "evidenceIds": [
+      "oracle-cloud-docs-1",
+      "oracle-cloud-docs-5",
+      "oracle-cloud-docs-19",
+      "oracle-cloud-docs-6",
+      "oracle-cloud-probe-5",
+      "oracle-cloud-probe-3"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "openness-full-export",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "OCI provides CLI/SDK/REST API access (oracle-cloud-docs-1,5,19) and Terraform state import/export (oracle-cloud-docs-6,7) that could be used to programmatically retrieve resources and configuration, implying some data portability, but there is no explicit documentation of a bulk data-export feature, open-format guarantees, or account-closure data extraction process, and no independent/community evidence confirming successful full data export and departure. Missing for 10: explicit data-export/portability documentation, open-format export guarantees, and independent confirmation of leaving with all data intact.",
+    "evidenceIds": [
+      "oracle-cloud-docs-5",
+      "oracle-cloud-docs-6",
+      "oracle-cloud-docs-7",
+      "oracle-cloud-docs-1"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "openness-open-license",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "OCI is a proprietary closed-source cloud platform; no evidence indicates its core source code is published under an open license. Some SDKs/CLI tools may be open source but the evidence pack contains no license or repository evidence supporting this, so it counts as none rather than na since a cloud provider could open-source components.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "openness-self-host",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Oracle Cloud Infrastructure is a proprietary public cloud platform, not open-source software distributed for self-hosting; the category error applies since the 'core product' is Oracle's own data centers/services, not something a user can run on their own infrastructure.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "pricing-calculator-transparency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack contains no citation to Oracle's public per-service pricing pages or an official cost calculator; it only covers budgets/alerts, free tier, and IAM/CLI topics, none of which address pre-purchase price estimation.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "privacy-data-residency",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The only region-specific evidence is a release note about importing a model into OCI Generative AI in the UAE Central (Abu Dhabi) region, implying OCI operates multiple geographic regions where services can be deployed, but there is no explicit documentation cited on data residency guarantees, region selection at resource-creation time, or compliance controls for data sovereignty. missing for 10: explicit region-selection/data-residency documentation, compliance/sovereignty guarantees, independent verification of residency controls.",
+    "evidenceIds": [
+      "oracle-cloud-docs-26"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "privacy-no-training",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI-training data usage policies, opt-out controls, or data privacy commitments related to AI model training; the evidence covers CLI, SDKs, IAM, billing, free tier, and general community sentiment unrelated to this axis.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "privacy-retention-controls",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack covers CLI/SDK tooling, billing/budgets, IAM, and free tier terms, but contains no documentation of data retention policies, data deletion controls, or privacy/compliance features an AI-native user could invoke to manage data lifecycle. This axis is fair for a cloud infrastructure provider, but no supporting evidence is present.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "privacy-telemetry-optout",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out settings for OCI tools, CLI, SDKs, or services; the documentation excerpts cover CLI, SDKs, IAM, billing, and free tier but never mention telemetry collection or opt-out mechanisms.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "quickstart-to-deploy",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "There's evidence of getting-started docs (launch instance, load balancer, object storage, CLI quickstart) and CLI install/config instructions with exact commands (e.g. dnf install), plus a free trial to try it without cost. But there's no evidence of a single unified 'zero to running service in under an hour' quickstart with a full exact command sequence, nor time estimates, nor independent confirmation of onboarding speed. Missing for 10: a consolidated end-to-end quickstart tutorial with all commands shown, explicit time-to-first-deploy claims, and hands-on/community corroboration of a fast first deploy.",
+    "evidenceIds": [
+      "oracle-cloud-docs-13",
+      "oracle-cloud-docs-27",
+      "oracle-cloud-docs-3",
+      "oracle-cloud-docs-25",
+      "oracle-cloud-docs-10"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "regions-footprint",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack item references a published OCI region list or a per-region service availability matrix; the only region-specific mention (UAE Central for one Generative AI model) is incidental, not a systematic availability tool. This axis clearly applies to a cloud infrastructure provider, but no capability is documented here.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "sandbox-isolated-accounts",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows only generic IAM policies, identity domains, and billing budget alerts, but no documented multi-account/project isolation constructs (e.g., compartments, organizational units, sandbox tenancies) or guardrail patterns that explicitly separate experimental from production workloads. A community report even describes OCI deleting an entire production fleet due to a billing error, underscoring the absence of demonstrated isolation guardrails. missing for 10: documentation of compartments/org-unit hierarchy, sandbox account patterns, policy-as-guardrail examples preventing cross-environment impact, and any corroborating case of successful isolation.",
+    "evidenceIds": [
+      "oracle-cloud-docs-9",
+      "oracle-cloud-docs-22",
+      "oracle-cloud-docs-8",
+      "oracle-cloud-comm-11"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "serverless-functions",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "The evidence pack contains no mention of OCI Functions, serverless containers, triggers, concurrency limits, or cold-start behavior anywhere in the docs, community, or probe items — coverage instead focuses on CLI, SDKs, IAM, budgets, and free tier. This is an applicable axis for a major cloud provider, but nothing in the pack demonstrates it.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "service-reference-coverage",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Oracle's docs demonstrate a consistent structural pattern (CLI, SDK, REST API concepts pages) applied across varied services—compute, identity, billing, Terraform, Data Science, Generative AI—suggesting reference docs extend beyond flagship compute/storage into newer AI and platform services. However, the evidence pack shows no explicit API reference (e.g., no discoverable OpenAPI spec via probes) and no independent/developer corroboration confirming reference-doc consistency or completeness across the full service catalog. missing for 10: independent developer corroboration of consistency, evidence of a full API reference/OpenAPI catalog, coverage confirmation for lesser-used or niche services.",
+    "evidenceIds": [
+      "oracle-cloud-docs-1",
+      "oracle-cloud-docs-5",
+      "oracle-cloud-docs-6",
+      "oracle-cloud-docs-9",
+      "oracle-cloud-docs-14",
+      "oracle-cloud-docs-15",
+      "oracle-cloud-docs-16",
+      "oracle-cloud-docs-26",
+      "oracle-cloud-probe-3"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "spend-budgets-alerts",
+    "verdict": "disputed",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "OCI officially documents Budgets with soft limits and spend alerts, letting founders configure cost guardrails from day one (oracle-cloud-docs-8/21). However, community evidence describes a real incident where an uncaught OCI billing error triggered deletion of hundreds of production servers with major data/financial impact, undermining confidence that OCI's billing/anomaly systems reliably prevent cost or operational disasters (oracle-cloud-comm-11); free-tier users also report abrupt, unannounced resource reclamation/bans tied to usage thresholds (oracle-cloud-comm-1, oracle-cloud-comm-3, oracle-cloud-comm-5). Missing for 10: documented anomaly-detection-on-spend feature (beyond simple threshold alerts), evidence of granular/automated cost anomaly alerts, and independent confirmation that billing safeguards work reliably in practice.",
+    "evidenceIds": [
+      "oracle-cloud-docs-8",
+      "oracle-cloud-docs-21",
+      "oracle-cloud-comm-11",
+      "oracle-cloud-comm-1",
+      "oracle-cloud-comm-3",
+      "oracle-cloud-comm-5"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "status-incident-transparency",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "No evidence pack citation shows a public OCI status/health dashboard, per-service uptime history, or published post-incident reports; only community anecdotes about outages (DNS outage, mass server deletion) with no mention of official incident disclosure or transparency artifacts.",
+    "evidenceIds": []
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "terraform-provider-quality",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs confirm OCI maintains an official Terraform provider connecting Terraform to OCI services and even integrates with Resource Manager for state import, indicating vendor investment; however there's no evidence of release cadence, OpenTofu compatibility/registry listing, breadth of resource coverage, or independent corroboration of active maintenance. Missing for 10: release frequency/changelog evidence, explicit OpenTofu support statement, resource/service coverage breadth, and community/hands-on validation of the provider's reliability.",
+    "evidenceIds": [
+      "oracle-cloud-docs-6",
+      "oracle-cloud-docs-7"
+    ]
+  },
+  {
+    "productId": "oracle-cloud",
+    "storyId": "workload-identity-federation",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "low",
+    "rationale": "Evidence shows OCI IAM identity domains, policies, and token-based CLI auth, but there is no documentation of OIDC/workload identity federation issuing short-lived credentials to CI or external services—no mention of GitHub Actions OIDC, workload identity federation, or similar end-to-end short-lived credential flows. missing for 10: OIDC/workload identity federation setup docs, CI integration examples (e.g., GitHub Actions), evidence of short-lived credential issuance replacing long-lived keys.",
+    "evidenceIds": [
+      "oracle-cloud-docs-9",
+      "oracle-cloud-docs-17",
+      "oracle-cloud-docs-22"
+    ]
+  }
+]
