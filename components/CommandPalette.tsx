@@ -50,10 +50,16 @@ export default function CommandPalette({ entries }: { entries: SearchEntry[] }) 
 
   // Results are pre-grouped by type (arena, stack, page, product, story) so rendering can walk
   // one flat array in display order — no index bookkeeping needed at render time. Within each
-  // group, filterSearchEntries has already ordered matches best-first.
+  // group, filterSearchEntries has already ordered matches best-first. Founder 2026-09-23
+  // ("searching Jev, Jev doesn't come up at the top"): with a live query, the group holding the
+  // GLOBAL best match leads — filterSearchEntries returns score order, so limited[0] is the
+  // strongest direct-character match and always renders as row one; the static TYPE_ORDER only
+  // governs the browse view and the remaining groups.
   const results = useMemo(() => {
     const limited = filterSearchEntries(prepared, query).slice(0, MAX_RESULTS)
-    return TYPE_ORDER.flatMap((type) => limited.filter((e) => e.type === type))
+    const best = query.trim() !== '' ? limited[0]?.type : undefined
+    const order = best ? [best, ...TYPE_ORDER.filter((t) => t !== best)] : TYPE_ORDER
+    return order.flatMap((type) => limited.filter((e) => e.type === type))
   }, [prepared, query])
 
   function close() {
