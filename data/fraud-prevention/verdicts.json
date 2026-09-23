@@ -1238,16 +1238,20 @@
     "productId": "sift",
     "storyId": "account-abuse-coverage",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Docs explicitly cover multiple fraud surfaces beyond checkout — account takeover ('Block unauthorized access in real time'), fake account creation ('Stop fraudulent signups at the door'), and abuse-specific scoring ('fight multiple types of fraud at once... add an abuse-specific risk score'), all managed within the same Workflows/Decisions/Review Queue system. Missing for 10: dedicated documentation or case study specifically on promo/policy abuse handling, and independent hands-on verification of multi-surface scoring in one unified dashboard.",
+    "rationale": "Sift explicitly documents distinct abuse-specific coverage — Account Takeover, Account Abuse (fake accounts), Promotion Abuse, and Payment Protection — all scored and managed through the same Events/Decisions/Workflows/Review Queues system rather than siloed tools. Runtime probes confirm the shared Events API is live, and community evidence corroborates real-world use for fraud/account risk decisioning. Missing for 10: independent case-study evidence specifically showing promo-abuse or fake-account-creation workflows in production (most concrete detail comes from vendor docs).",
     "evidenceIds": [
+      "sift-docs-19",
+      "sift-docs-20",
+      "sift-docs-22",
       "sift-docs-13",
       "sift-docs-14",
-      "sift-docs-9",
       "sift-docs-6",
+      "sift-docs-7",
       "sift-docs-12",
-      "sift-docs-7"
+      "sift-probe-rt-1",
+      "sift-comm-2"
     ]
   },
   {
@@ -1256,7 +1260,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers general fraud scoring, workflows, and decisions but nothing addresses distinguishing AI shopping agents from malicious bots or agentic-commerce specific handling; missing for 10: any mention of AI agent traffic detection, agent-vs-bot classification, or agentic-commerce policy/whitelisting.",
+    "rationale": "The evidence pack covers Sift's general fraud-scoring, workflows, and abuse-type products (payments, account abuse, ATO, content, promo abuse) but contains no mention of distinguishing legitimate AI/agentic buying agents from malicious bots, or any agentic-commerce-specific detection capability. This is a plausible axis for a fraud platform to address, but nothing in the docs or community evidence shows Sift addressing AI agent traffic classification specifically. missing for 10: any documentation or mention of AI-agent/bot differentiation, agentic-commerce signals, or policies preventing blanket-blocking of AI buying agents.",
     "evidenceIds": []
   },
   {
@@ -1278,21 +1282,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift has Review Queues and REST/Decisions APIs for humans to review flagged cases (sift-docs-12, sift-docs-3), and community evidence confirms a human-in-the-loop review model (sift-comm-4), but there is no evidence of an AI agent programmatically pulling flagged cases, summarizing evidence, or recommending decisions for human confirmation.",
+    "rationale": "Sift documents Review Queues and human-in-the-loop decisioning (sift-docs-12, sift-comm-4) but there is no evidence of any agent-facing API, MCP server, or tool that lets an AI agent pull flagged cases, summarize evidence, or draft a recommended decision for human confirmation. The llms.txt probe shows only a generic marketing overview, not an agentic review-queue interface. Missing for 10: an agent-accessible API/MCP tool for the review queue, evidence of case summarization or recommendation generation, and any documented human-confirm workflow for agent-proposed decisions.",
     "evidenceIds": [
       "sift-docs-12",
-      "sift-docs-3",
-      "sift-comm-4"
+      "sift-comm-4",
+      "sift-probe-rt-2"
     ]
   },
   {
     "productId": "sift",
     "storyId": "agentic-agent-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an llms.txt file or agent-oriented documentation format; the docs are standard developer API references with no mention of AI-agent consumption. missing for 10: llms.txt file, agent-readable docs format, any mention of AI-agent-targeted documentation.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "A probe confirms sift.com/llms.txt serves a real agent-oriented overview document, showing Sift has published llms.txt content an agent could consume. However, the developer docs subdomain (developers.sift.com) returns a 403 on /llms.txt, meaning the more detailed API/tutorial docs are not exposed via the agent-friendly file. Missing for 10: llms.txt or equivalent agent-oriented coverage on the actual API/developer docs subdomain, and no independent/community confirmation of agents successfully using this file.",
+    "evidenceIds": [
+      "sift-probe-rt-2"
+    ]
   },
   {
     "productId": "sift",
@@ -1333,14 +1339,14 @@
     "productId": "sift",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Sift is fundamentally API-driven (REST Events/Decisions APIs, SDKs) which is inherently 'headless' and can be called from backend or automated systems, but there is no explicit evidence of a CLI, CI pipeline integration, or documented headless automation workflow. Missing for 10: explicit CI/CD examples, CLI tooling, or automation-specific documentation beyond generic API integration.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Sift is fundamentally an API-first fraud service (Events/Decisions/Score APIs) with curl-based docs, and the runtime probe confirms the Events API responds to plain HTTP calls without any UI, which supports headless/automated use in CI or scripts. However, there is no explicit CI-specific tooling, CLI, or pipeline integration guide, and no SDKs beyond iOS/Android are mentioned for server-side automation frameworks. missing for 10: dedicated CI/CD integration docs or CLI, broader server-side SDK coverage, evidence of automated test/CI usage patterns.",
     "evidenceIds": [
-      "sift-docs-1",
       "sift-docs-2",
       "sift-docs-3",
-      "sift-docs-4"
+      "sift-docs-1",
+      "sift-probe-rt-1"
     ]
   },
   {
@@ -1349,7 +1355,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift is a fraud-detection/risk-scoring platform, not an AI agent or assistant; the story asks whether the product can plug in MCP servers to consume external tools, which is a client-agent capability not applicable to this kind of product.",
+    "rationale": "Sift is a fraud-detection/risk-scoring SaaS product, not an AI agent or assistant that consumes tools via MCP. There is no evidence of an MCP client capability in Sift, and this axis is a category error for this type of product.",
     "evidenceIds": []
   },
   {
@@ -1384,17 +1390,18 @@
   {
     "productId": "sift",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Sift documents REST APIs (Events, Decisions, Score, Workflows) that let developers programmatically drive fraud scoring and decisioning, which supports an AI-native integration story. However, this is a traditional fraud-ops API, not one purpose-built for AI agent orchestration, and there's no evidence of agent-specific tooling like an MCP server, function-calling schemas, or SDKs for LLM agents. missing for 10: agent-oriented API framing (e.g., MCP server, function-calling schema), independent hands-on validation of API usability beyond one user noting confusing docs.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Sift documents a comprehensive REST API surface (Events, Decisions, Score, Workflows) with public developer docs, and a live probe confirms the Events API endpoint is reachable and responds per documented spec. Machine-oriented docs (llms.txt) further support programmatic/agentic discovery. missing for 10: no evidence of official SDKs beyond mobile/JS being AI-agent friendly, no independent third-party API-quality review, and no explicit mention of API design tailored for autonomous agent use.",
     "evidenceIds": [
       "sift-docs-1",
       "sift-docs-2",
       "sift-docs-3",
-      "sift-docs-5",
       "sift-docs-6",
-      "sift-comm-6"
+      "sift-docs-12",
+      "sift-probe-rt-1",
+      "sift-probe-rt-2"
     ]
   },
   {
@@ -1420,9 +1427,14 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Sift's documented integration model is inbound REST APIs (Events, Decisions, Score, Workflows) for sending data to Sift, not outbound webhooks for subscribing to events from Sift. No evidence pack item mentions webhook subscriptions or event push notifications to external consumers.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "All evidence describes Sift's inbound REST APIs (Events, Decisions, Score, Workflows) for sending data to Sift, but there is no mention of webhooks or any outbound event-subscription mechanism for consumers to receive notifications from Sift. Missing for 10: any webhook endpoint/config docs, event subscription API, or callback delivery mechanism.",
+    "evidenceIds": [
+      "sift-docs-1",
+      "sift-docs-2",
+      "sift-docs-6",
+      "sift-docs-12"
+    ]
   },
   {
     "productId": "sift",
@@ -1430,20 +1442,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers Sift's APIs, scoring, workflows/rules automation, and review queues, but there is no mention of any built-in AI assistant, natural-language query capability, drafted rules generation, or investigation summary generation in the console. Missing for 10: any documentation or mention of a natural-language/AI assistant feature, evidence of NL-to-query capability, evidence of AI-drafted rules or summaries.",
-    "evidenceIds": [
-      "sift-docs-6",
-      "sift-docs-12"
-    ]
+    "rationale": "No evidence of a built-in AI assistant for natural-language queries, rule drafting, or investigation summaries in the console; docs describe APIs, scores, Workflows, and Review Queues but nothing about an embedded conversational AI assistant.",
+    "evidenceIds": []
   },
   {
     "productId": "sift",
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows REST/Decisions/Events API docs exist but nothing describes an interactive API reference with runnable examples (e.g., embedded sandbox, try-it console). Missing for 10: interactive API explorer, runnable code examples, sandbox/try-it functionality.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence only shows standard REST/curl-based documentation pages (events, decisions, score APIs) and a runtime probe confirming the live API responds with documented error codes, but nothing indicates an interactive reference tool (e.g., Swagger/OpenAPI explorer, try-it console, or embedded runnable code snippets) that lets a user execute calls directly from the docs.",
+    "evidenceIds": [
+      "sift-docs-1",
+      "sift-docs-2",
+      "sift-probe-rt-1"
+    ]
   },
   {
     "productId": "sift",
@@ -1451,12 +1464,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Sift has REST APIs (Events, Decisions, Score, Workflows) with docs, but no mention of a downloadable OpenAPI spec or other machine-readable API schema anywhere in the pack.",
+    "rationale": "No evidence of a downloadable OpenAPI/Swagger spec or other machine-readable API spec file; docs describe REST endpoints in prose/curl form only. Missing for 10: an OpenAPI/Swagger JSON/YAML file or equivalent spec download link, any mention of spec generation tooling or spec-based SDK generation.",
     "evidenceIds": [
       "sift-docs-1",
       "sift-docs-2",
-      "sift-docs-3",
-      "sift-docs-6"
+      "sift-docs-16"
     ]
   },
   {
@@ -1464,8 +1476,8 @@
     "storyId": "api-sandbox",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack item mentions a sandbox environment, test mode, or any way to test Sift integrations without touching production data; all docs reference live Events/Decisions/Score APIs. Missing for 10: sandbox/test environment docs, test API keys or staging mode, any mention of separating test vs production data.",
+    "confidence": "medium",
+    "rationale": "No evidence anywhere in the pack mentions a sandbox, test mode, or non-production environment for validating integrations without touching real/production data; all API docs describe live event/decision ingestion. Missing for 10: any mention of a sandbox/test API key, staging environment, or synthetic-data testing mode.",
     "evidenceIds": []
   },
   {
@@ -1473,9 +1485,12 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows Sift has REST APIs, SDKs, and docs but no mention of API versioning scheme or a documented deprecation policy anywhere in the pack. Missing for 10: explicit API versioning documentation, deprecation policy or changelog, migration timelines for breaking changes.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows Sift has a REST API with version numbers in URLs (e.g., v205 endpoint) but no documentation of a versioning scheme, deprecation policy, or migration timelines/support windows for older API versions.",
+    "evidenceIds": [
+      "sift-probe-rt-1",
+      "sift-docs-1"
+    ]
   },
   {
     "productId": "sift",
@@ -1483,7 +1498,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Sift documents backfilling months of historical data as a bulk-load capability, but there is no evidence of a dedicated bulk API for batch-scoring, batch-deciding, or bulk-updating many items at once (e.g., no batch endpoint documentation). Missing for 10: explicit bulk/batch API documentation, batch decision or batch scoring examples, and any hands-on evidence of bulk workflows being used successfully.",
+    "rationale": "The only evidence hinting at bulk operations is the mention of 'backfilling a few months worth of historical data' to jump-start integration, implying some bulk-import capability, but there's no documented batch/bulk endpoint, rate-limit guidance, or bulk scoring/decision API for AI-native automation. missing for 10: explicit bulk/batch API endpoints, documentation on batch size limits or async bulk processing, and independent confirmation of bulk operation support.",
     "evidenceIds": [
       "sift-docs-4",
       "sift-docs-2",
@@ -1494,14 +1509,16 @@
     "productId": "sift",
     "storyId": "automation-rules-engine",
     "verdict": "disputed",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Sift's docs clearly describe a 'Workflows' rules automation platform that triggers real-time Decisions (Ban Account, Cancel Order) based on event risk scores, directly matching the story. However, a Sift co-founder is quoted saying 'we do not have any rules in our product... rules are rather easy for fraudsters to circumvent,' directly contradicting the vendor's later rules-automation framing. missing for 10: reconciliation of this contradiction and independent hands-on confirmation that customer-defined Workflow rules reliably trigger automated actions in production.",
+    "rationale": "Sift's docs describe Workflows as a 'rules automation platform' that lets users create custom rules connected to real-time Decisions/actions (ban account, cancel order) triggered by events (sift-docs-6, sift-docs-7, sift-docs-12), and the Events/Decisions APIs are confirmed live via probe (sift-probe-rt-1). However, Sift's own CEO explicitly stated in community commentary that 'we do not have any rules in our product' because rules are easy to circumvent, directly contradicting the rules-automation framing (sift-comm-8, sift-comm-9). This creates a genuine conflict between current product docs and a first-party statement about the company's approach. Missing for 10: independent hands-on confirmation that Workflows rule-building actually functions as advertised, and clarity on whether the no-rules stance was superseded by the later Workflows feature.",
     "evidenceIds": [
       "sift-docs-6",
       "sift-docs-7",
       "sift-docs-12",
-      "sift-comm-8"
+      "sift-comm-8",
+      "sift-comm-9",
+      "sift-probe-rt-1"
     ]
   },
   {
@@ -1510,7 +1527,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift is a fraud-detection/risk-scoring platform, not a workflow/job scheduling or automation orchestration tool; scheduling recurring jobs is outside its product category and not addressed by any evidence (Workflows here refer to real-time rules-based decisioning, not recurring job scheduling).",
+    "rationale": "Sift is a fraud-detection/risk-scoring platform, not a workflow/job automation or task-scheduling product; 'Workflows' here refers to real-time rule-based risk decisioning, not recurring/scheduled jobs. Scheduling recurring jobs is a wrong-axis question for this product category.",
     "evidenceIds": []
   },
   {
@@ -1519,7 +1536,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift is a fraud-detection/risk-scoring platform, not an automation/workflow builder with version control for user-created automations; the evidence pack shows Workflows and Decisions APIs but no versioning, review, or rollback of automations. This is a category mismatch rather than a missing feature.",
+    "rationale": "Sift is a fraud-detection/risk-scoring platform, not an automation/workflow authoring tool with version control for user-built automations; 'version, review, and roll back automations' is a category error for this type of product (its Workflows feature is for fraud-decision rules, not user-authored AI-native automations with versioning/rollback semantics).",
     "evidenceIds": []
   },
   {
@@ -1528,7 +1545,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions a chargeback guarantee, liability shift, reimbursement for approved-then-disputed orders, or coverage terms — Sift is documented only as a fraud-scoring/risk-decision API, not an insurance-backed guarantee product.",
+    "rationale": "The evidence pack shows Sift as a risk-scoring/decisioning platform (scores, workflows, decisions, event ingestion) but contains no mention of a chargeback guarantee, liability shift, or reimbursement program with coverage terms — that is a distinct commercial product typically offered by payment/guarantee vendors. Missing for 10: any documentation of a financial guarantee/reimbursement program, coverage terms, liability-shift language, or contractual chargeback indemnification.",
     "evidenceIds": []
   },
   {
@@ -1551,14 +1568,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Sift's docs clearly support ingesting custom events, custom fields, session/device signals, and business action data via Events/Decisions APIs, and scoring incorporates this custom data plus historical backfill to tailor risk to the business rather than generic network defaults. Missing for 10: independent hands-on verification of custom-field scoring impact and explicit device-fingerprint API documentation beyond general SDK mentions.",
+    "rationale": "Docs show clear support for custom events/fields, custom metadata, session IDs for anonymous users, historical backfill, and JS/SDK/REST ingestion of behavioral and device-level signals feeding the risk score and workflows — directly matching the developer story of feeding custom signals into scoring. A live probe confirms the Events API is real and functioning as documented. Missing for 10: no independent hands-on evidence specifically validating custom fields' effect on score weighting, and no explicit device-fingerprint API example beyond general SDK mentions.",
     "evidenceIds": [
       "sift-docs-2",
-      "sift-docs-3",
-      "sift-docs-4",
       "sift-docs-10",
       "sift-docs-11",
-      "sift-docs-5"
+      "sift-docs-4",
+      "sift-docs-5",
+      "sift-docs-1",
+      "sift-probe-rt-1"
     ]
   },
   {
@@ -1567,7 +1585,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items discuss regional data residency, data hosting locations, retention periods, or compliance/privacy review controls; one comment even notes a prospective customer's hesitation about privacy/legal review with no resolution shown. Missing for 10: any documentation of regional hosting/data residency options, retention/configurable deletion policies, or compliance certifications addressing privacy review.",
+    "rationale": "No evidence pack item discusses regional data residency, data center location choices, or retention/deletion policies; one community note even highlights unresolved customer concern about privacy/legal review when sending data to Sift, but no counter-evidence of actual controls exists. Missing for 10: regional residency options, configurable retention periods, data deletion/export controls, compliance certifications (SOC2/GDPR data processing terms) documentation.",
     "evidenceIds": [
       "sift-comm-3"
     ]
@@ -1578,7 +1596,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Sift's evidence covers fraud risk scoring, decisions, and workflows for fraud/chargeback prevention (blocking risky orders proactively), but there is no evidence of automated chargeback dispute response — i.e., compiling order/delivery/session evidence and submitting it to card issuers/networks. This is a distinct capability (representment automation) that Sift's documented APIs do not address. Missing for 10: any mention of evidence compilation for chargeback representment, issuer/network submission integration, or automated dispute response workflows.",
     "evidenceIds": []
   },
   {
@@ -1586,8 +1604,8 @@
     "storyId": "fraud-outcome-reporting",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence covers APIs, scoring, workflows, and general product sentiment, but there is no mention of finance-lead dashboards, dispute-rate/false-positive/approval-lift metrics, review workload reporting, or board-ready export capability. missing for 10: dispute-rate and false-positive-rate metrics reporting, approval-rate lift analytics, review workload/queue metrics, export or reporting functionality for finance/board consumption.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Sift's APIs (Events, Decisions, Score), Workflows, and Review Queues but contains no mention of finance-facing analytics, dashboards, or exportable metrics like dispute rate, false-positive rate, approval-rate lift, or review workload. This is a fair capability to expect from a fraud-ops platform for a finance stakeholder, but no evidence shows Sift delivers it.",
     "evidenceIds": []
   },
   {
@@ -1610,10 +1628,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Sift documents Review Queues as a product feature alongside Workflows, and community evidence confirms human analysts do review flagged users to make final decisions, supporting the general workflow. However, there is no evidence detailing the review queue UI showing customer history, similar cases, or signal context in one view. missing for 10: documentation/screenshots of review queue UI showing customer history and similar cases, evidence of consolidated signal context, independent hands-on confirmation of queue usability.",
+    "rationale": "Sift documents a Review Queues product alongside Workflows for real-time decisioning, and community evidence confirms customers use human review with a go/no-go decision on flagged users, supporting the review-queue workflow. However, no evidence details what the review queue UI actually displays — customer history, signal breakdowns, or similar/related case linking — so the 'full context' aspect of the story is unconfirmed. Missing for 10: documentation or screenshots of the review queue UI showing customer history, signal context, and similar-case surfacing.",
     "evidenceIds": [
       "sift-docs-12",
-      "sift-comm-4"
+      "sift-comm-4",
+      "sift-docs-5"
     ]
   },
   {
@@ -1622,7 +1641,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers scoring, workflows, decisions, and events APIs, but there is no mention of precision/recall metrics on the customer's own traffic, model performance measurement, or shadow-mode trialing of new models/rules before they go live. missing for 10: precision/recall measurement tooling, shadow-mode/challenger model testing, any model transparency reporting for finance/business stakeholders.",
+    "rationale": "No evidence in the pack describes precision/recall reporting, model performance dashboards, or shadow-mode trials for testing new models/rules before they go live. The docs cover scoring, workflows, and decisions APIs but nothing about measuring or comparing model performance for a finance lead.",
     "evidenceIds": []
   },
   {
@@ -1631,7 +1650,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes Sift's own ML scoring, event/decision APIs, and workflows, but nowhere claims that risk signals (e.g., a card or identity) are shared or aggregated across Sift's merchant customer base to inform another business's score. sift-docs-4 only references a business's own historical data improving its own model, not cross-merchant network effects.",
+    "rationale": "The evidence pack contains no claim about a cross-merchant/global data network informing per-customer scores — only that Sift 'gets smarter the more data it has about your business' (own-business data) and API/product overview docs; no documented network-effect or shared-signal claim appears in the pack.",
     "evidenceIds": []
   },
   {
@@ -1640,14 +1659,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Sift's docs show extensive REST APIs covering events, decisions, scoring, and even a Workflows API for automation, indicating broad programmatic access mirroring core UI functions (sift-docs-1,2,3,5,6,12). However, there's no explicit evidence that Review Queues or full workflow configuration UI actions are fully API-equivalent, and no independent confirmation of complete UI/API parity. missing for 10: explicit parity claim for Review Queues and workflow UI configuration, independent verification of full CRUD API coverage matching every console action.",
+    "rationale": "Sift's core fraud-detection functions (event ingestion, scoring, decisions, and workflow triggering) are explicitly documented as REST/API-driven, and a live probe confirms the Events API is reachable and functioning as documented, indicating strong API-first design suited to AI-native/programmatic use. However, the evidence never states full UI/API parity — Review Queues and Workflow *configuration* (as opposed to triggering) are described as UI-based paradigms without a documented equivalent API for managing/queuing manual reviews. Missing for 10: explicit parity statement, Review Queue API endpoints, and workflow-configuration API documentation.",
     "evidenceIds": [
       "sift-docs-1",
       "sift-docs-2",
       "sift-docs-3",
       "sift-docs-5",
       "sift-docs-6",
-      "sift-docs-12"
+      "sift-docs-12",
+      "sift-docs-16",
+      "sift-docs-17",
+      "sift-probe-rt-1"
     ]
   },
   {
@@ -1656,7 +1678,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift is a fraud-detection API platform; evidence covers sending events/data into Sift via REST API, scoring, workflows, but there is no mention of exporting or bulk-downloading customer data out of Sift in open formats, nor any data-portability/export feature. missing for 10: any documented data export/download capability, open-format export (CSV/JSON dumps), or account data portability tooling.",
+    "rationale": "Sift is a fraud-detection SaaS; the evidence covers sending event/decision data in via APIs, but there is no mention of any data export capability, bulk/open-format export, or account data portability for users to take their data and leave. Missing for 10: any documented export API/feature, open format export (CSV/JSON dump), account data portability or offboarding process.",
     "evidenceIds": []
   },
   {
@@ -1665,7 +1687,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift is a proprietary commercial fraud-detection SaaS product; there is no indication of an open-source license or public source code. This is a category error for the axis — closed commercial SaaS products aren't expected to publish source under open license, so it's inapplicable rather than a failure.",
+    "rationale": "Sift is a closed, proprietary fraud-detection SaaS platform; there is no evidence or plausibility of an open-source licensed codebase being available for inspection. This is a category mismatch for a commercial fraud API product, not an absence of documentation.",
     "evidenceIds": []
   },
   {
@@ -1674,7 +1696,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift is a cloud-based fraud detection SaaS delivered via REST APIs and hosted risk scoring; self-hosting the core product is not a fair axis for this kind of managed service, and no evidence suggests otherwise.",
+    "rationale": "Sift is a cloud-only, closed-source fraud-detection SaaS platform accessed via hosted REST APIs; there is no concept of self-hosting the core product for this category, so the axis is a category error rather than an unmet capability.",
     "evidenceIds": []
   },
   {
@@ -1683,7 +1705,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows only generic REST API, JS snippet, and mobile SDKs — no mention of maintained Shopify, Salesforce Commerce, BigCommerce, or PSP-specific integrations. Everything points to a raw API/SDK integration model, not prebuilt commerce-platform connectors.",
+    "rationale": "Evidence shows only a generic REST/Decisions/Events API, JS snippet, and mobile SDKs — no mention of maintained plugins/apps for Shopify, Salesforce Commerce, BigCommerce, or specific PSP integrations. The story explicitly asks for platform-specific maintained integrations, not just a raw API, and none are evidenced.",
     "evidenceIds": [
       "sift-docs-1",
       "sift-docs-2",
@@ -1696,10 +1718,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or geographic control over where Sift stores customer data; one community comment even notes hesitation about sending data to Sift without clarity on compliance handling. Missing for 10: any documentation of region selection, data residency options, or compliance certifications addressing storage location.",
-    "evidenceIds": [
-      "sift-comm-3"
-    ]
+    "rationale": "No evidence anywhere in the pack mentions data residency, regional data storage options, or geographic control over where customer data is processed/stored; the docs only describe API integration and fraud-detection features.",
+    "evidenceIds": []
   },
   {
     "productId": "sift",
@@ -1716,7 +1736,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Sift is a fraud-detection API/platform, and the evidence pack contains no documentation of data retention controls, deletion APIs, or configurable data lifecycle policies for users. One community comment (sift-comm-3) even flags unresolved privacy/legal review concerns about sending personal data to Sift, but this is not concrete evidence of a retention/deletion mechanism either way. missing for 10: any documentation of data retention settings, a deletion/right-to-be-forgotten API, or data lifecycle/export controls.",
+    "rationale": "Sift is a fraud-detection data platform, and while the axis of data retention/deletion control could plausibly apply (customers send PII/event data to Sift), no evidence pack item documents any retention policy, deletion API, data lifecycle controls, or privacy/compliance settings a user could configure; one community note even flags unresolved privacy/legal concerns about sending data to Sift with no indication these were addressed via retention/deletion controls.",
     "evidenceIds": [
       "sift-comm-3"
     ]
@@ -1727,7 +1747,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Sift is a backend fraud-detection/risk-scoring API whose core function is ingesting customer/user behavioral data for fraud analysis, not a developer tool or AI agent with its own usage-telemetry settings that an 'AI-native user' would opt out of. The evidence pack contains no mention of telemetry collection about API/dashboard usage, making this axis a category mismatch rather than an unmet capability.",
+    "rationale": "Sift is a fraud-detection/risk-scoring platform whose entire product function is ingesting user event/behavioral data for its clients' businesses — it is not an AI-native developer tool with its own telemetry/usage-tracking opt-out settings for its users. This story misapplies a client-tool privacy-toggle axis to a data-processing B2B platform, so it is a category error rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -1743,28 +1763,30 @@
     "productId": "sift",
     "storyId": "psp-agnostic-coverage",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Sift's architecture (generic REST Events/Decisions API, JS snippet, SDKs) is inherently processor-agnostic — it ingests events from any application regardless of which PSP or gateway processes the payment, rather than being tied to one processor's rails. However, there is no explicit documentation or case evidence naming specific PSPs/gateways/platforms it integrates with or confirming multi-processor deployments in practice. Missing for 10: explicit multi-PSP/gateway integration examples, named partner processors, or customer testimony confirming cross-stack usage.",
+    "rationale": "Sift's integration model is processor-agnostic by design: developers send event/transaction data via generic REST Events/Decisions APIs, JS snippet, or mobile SDKs rather than through a specific payment processor's rails (sift-docs-1, sift-docs-2, sift-docs-3, sift-probe-rt-1), and 'Payment Protection' is described as a general capability regardless of checkout stack (sift-docs-18). However, there is no explicit documentation naming or certifying support for specific PSPs/gateways (e.g., Stripe, Adyen, Braintree) or platform-specific connectors, so multi-PSP compatibility is inferred from the generic API architecture rather than demonstrated directly. Missing for 10: explicit named PSP/gateway integrations or partner list, and independent confirmation of working across multiple concrete payment stacks.",
     "evidenceIds": [
       "sift-docs-1",
       "sift-docs-2",
       "sift-docs-3",
-      "sift-docs-10"
+      "sift-docs-18",
+      "sift-probe-rt-1"
     ]
   },
   {
     "productId": "sift",
     "storyId": "realtime-scoring-api",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Sift's documented Score API returns a 0-100 ML risk score via REST, and Workflows enable real-time risk-based decisions during key events, supporting synchronous scoring before a decision. However, the evidence doesn't explicitly confirm the Score API is called synchronously pre-authorization (vs. async/webhook-based scoring), and community feedback notes many customers use human review queues rather than pure real-time automated decisions. Missing for 10: explicit documentation of synchronous call/response latency guarantees for pre-authorization use, and independent confirmation of real-time performance under transaction-blocking scenarios.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Sift's documented Score API returns a synchronous 0–100 ML risk score per event via REST, with the Events API for real-time submission and a live runtime probe confirming the endpoint is active and responding per documented error vocabulary. Workflows/Decisions docs further show real-time decisioning tied to these scores. Missing for 10: explicit documentation of sub-second/synchronous latency guarantees before authorization completes, and independent (non-vendor) benchmarking of real-time performance.",
     "evidenceIds": [
       "sift-docs-5",
+      "sift-docs-2",
       "sift-docs-6",
-      "sift-docs-13",
-      "sift-comm-4"
+      "sift-probe-rt-1",
+      "sift-docs-16"
     ]
   },
   {
@@ -1800,11 +1822,12 @@
     "storyId": "rules-backtesting",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes Workflows as a rules automation platform and mentions real-time decisioning, but nothing in the pack describes a backtest/simulation capability against historical traffic showing what a rule would have blocked/flagged/cost.",
+    "confidence": "high",
+    "rationale": "Evidence covers Workflows/rules automation, scoring, and decisions APIs, but there is no mention of a backtest/simulation feature that replays historical traffic to show what a new rule would have blocked, flagged, or cost. Backtesting is a reasonable ask for a rules engine, but nothing in the pack demonstrates it.",
     "evidenceIds": [
+      "sift-docs-6",
       "sift-docs-12",
-      "sift-docs-6"
+      "sift-comm-8"
     ]
   },
   {
@@ -1813,27 +1836,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents Sift's 0–100 risk score, Workflows, and Decisions APIs, but nowhere mentions score explanations, reason codes, or top contributing risk factors accompanying each score. Missing for 10: any documentation of explainability/reason-code output, feature-importance breakdowns, or examples of a score being paired with human-readable risk drivers.",
+    "rationale": "The evidence describes Sift's 0-100 risk score, Events/Decisions APIs, and Workflows, but nowhere mentions reason codes, top contributing factors, or any explanation accompanying a score. This axis clearly applies to a fraud-scoring product but no evidence shows Sift exposes per-score risk factor breakdowns.",
     "evidenceIds": [
       "sift-docs-5",
-      "sift-docs-6",
-      "sift-docs-12"
+      "sift-docs-8",
+      "sift-docs-9",
+      "sift-docs-16"
     ]
   },
   {
     "productId": "sift",
     "storyId": "score-thresholds-actions",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Sift's docs describe Workflows as a rules automation platform for real-time risk-based decisions, with custom Decisions (e.g., Ban Account, Cancel Order) tied to score ranges (0-100), and Review Queues for human review — directly supporting configurable score-to-action mapping and threshold tuning. However, no evidence explicitly mentions 3DS step-up as an action type, and an older founder comment (sift-comm-8) claims 'no rules' which is in tension with the current Workflows rules-engine framing, though this appears to reflect product evolution rather than a live contradiction. missing for 10: explicit 3DS/step-up action documentation, independent hands-on confirmation of threshold customization in practice.",
+    "rationale": "Sift's Workflows product explicitly lets ops build custom, score-based rules automation and connect them to real business actions (Ban Account, Cancel Order, etc.), and the Score API delivers a 0-100 risk score that can be split into ranges for allow/review/block-style logic, with Decisions API triggering the chosen action. However, no evidence explicitly mentions a step-up 3DS action or a threshold-tuning UI/appetite-setting workflow. Missing for 10: explicit 3DS step-up action support, evidence of a UI for setting/adjusting score-range thresholds, and independent confirmation of this workflow in practice.",
     "evidenceIds": [
       "sift-docs-5",
       "sift-docs-6",
       "sift-docs-7",
       "sift-docs-12",
-      "sift-comm-4",
-      "sift-comm-8"
+      "sift-docs-18"
     ]
   },
   {
@@ -1842,8 +1865,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence Sift supports ingesting verified agent identity, agentic-payment protocol tokens, signed agent tokens, or delegated spending scopes as risk signals; docs only describe generic user/business event and custom-field ingestion. missing for 10: any mention of agentic-commerce protocols, signed agent tokens, or delegated spending scope support as a risk signal.",
-    "evidenceIds": []
+    "rationale": "No evidence that Sift ingests verified agent identity signals (agentic-payment protocols, signed agent tokens, delegated spending scopes) as inputs into its risk scoring or decisioning. The Events/Decisions API docs describe generic user actions and business actions, not agent-identity or delegated-authority signals — missing for 10: any mention of agent identity verification, signed agent tokens, agentic-payment protocol support, or delegated spending scope fields in the risk model.",
+    "evidenceIds": [
+      "sift-docs-2",
+      "sift-docs-3",
+      "sift-docs-5",
+      "sift-docs-10"
+    ]
   },
   {
     "productId": "signifyd",

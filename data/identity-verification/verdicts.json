@@ -5,28 +5,30 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show a structured, API-driven flow (workflow run → SDK token → webhook/polling → reports) with distinct report types (document, watchlist/PEP/sanctions/adverse media, facial similarity, repeat-fraud alerts) that provide machine-consumable results an automation could branch on. However, there is no explicit evidence of a documented schema for risk scores, standardized failure-reason codes, or example JSON payloads that an agent would parse to make branching decisions. Missing for 10: explicit result schema/field reference, enumerated failure/rejection reason codes, and sample structured payloads showing risk signal granularity.",
+    "rationale": "Docs show structured, typed reports (Document, Facial Similarity, Watchlist/PEP/Adverse Media, Known Faces) retrievable via API/webhook, giving machine-readable outcomes and risk signals that could drive automated branching (e.g., watchlist hits, repeat-fraud flags). However, there is no explicit documentation of a result schema, granular failure-reason codes, or confidence/risk scores designed for agent decision logic. missing for 10: explicit JSON result schema with failure-reason enumerations, documented risk-score fields, and any agent/automation-oriented branching examples.",
     "evidenceIds": [
       "entrust-onfido-docs-3",
       "entrust-onfido-docs-4",
-      "entrust-onfido-docs-8",
       "entrust-onfido-docs-9",
-      "entrust-onfido-docs-10",
-      "entrust-onfido-docs-5"
+      "entrust-onfido-docs-17",
+      "entrust-onfido-docs-18",
+      "entrust-onfido-docs-19",
+      "entrust-onfido-docs-10"
     ]
   },
   {
     "productId": "entrust-onfido",
     "storyId": "agent-runs-verification",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "The API supports the core pipeline: create applicant/workflow run, obtain SDK/OAuth tokens with scoped client-credentials grants, and retrieve results via webhook or polling (docs-2,3,4,6). However there is no evidence of an MCP surface for agent access, and no explicit documentation of a 're-check' trigger endpoint distinct from creating a new workflow run. missing for 10: MCP server/tool surface for agentic access, explicit re-check/re-verification API, and any agent-oriented orchestration examples.",
+    "rationale": "The API supports the core pipeline (create applicant, create workflow run, poll or webhook for results, OAuth client-credentials scoped tokens) which an agent could drive programmatically, but there is no evidence of an MCP server/surface, no explicit 're-check' trigger endpoint, and no mention of scoped credentials designed for agent/AI use. missing for 10: MCP server or agent-native surface, explicit re-check/retry API documentation, fine-grained scoped credentials for autonomous agents, independent confirmation of agent-driven usage.",
     "evidenceIds": [
-      "entrust-onfido-docs-2",
       "entrust-onfido-docs-3",
       "entrust-onfido-docs-4",
-      "entrust-onfido-docs-6"
+      "entrust-onfido-docs-6",
+      "entrust-onfido-docs-14",
+      "entrust-onfido-docs-15"
     ]
   },
   {
@@ -35,7 +37,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "An llms.txt file exists at documentation.identity.entrust.com/llms.txt and is directly probed returning HTTP 200 with structured content describing the API/SDK platform, confirming an agent can be pointed at it. Missing for 10: no evidence of broader agent-oriented doc formats (e.g., markdown-only mirrors, sitemap of llms-full.txt) or third-party confirmation that agents successfully consume it.",
+    "rationale": "The probe confirms a live, HTTP 200 llms.txt file at documentation.identity.entrust.com/llms.txt with a proper summary description, and doc entries directly reference this llms.txt as containing structured workflow guidance, indicating genuine agent-oriented documentation support. Missing for 10: no evidence of independent/third-party confirmation that agents successfully consume this file or broader agent-oriented doc structure beyond the single llms.txt endpoint.",
     "evidenceIds": [
       "entrust-onfido-probe-1",
       "entrust-onfido-docs-3"
@@ -47,12 +49,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Entrust Identity Verification is an identity-proofing/verification API and SDK platform (document checks, facial similarity, watchlist screening, workflows), not a data-analytics or generative-AI insights product where users query their data for AI-generated suggestions. The story's axis is a category error for this product type.",
-    "evidenceIds": [
-      "entrust-onfido-docs-1",
-      "entrust-onfido-docs-9",
-      "entrust-onfido-docs-10"
-    ]
+    "rationale": "Entrust Identity Verification is an identity-verification/KYC API platform, not a data-analytics or AI-assistant product with a user-facing interface for exploring 'my data'; the 'AI-generated insights from my data' story is a category mismatch for this product type, and none of the evidence describes any such feature.",
+    "evidenceIds": []
   },
   {
     "productId": "entrust-onfido",
@@ -73,21 +71,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Entrust Identity Verification is an identity-verification API/SDK/workflow platform, not an AI assistant product; there is no built-in conversational AI assistant to delegate tasks to. This axis is a category error for this product type.",
+    "rationale": "Entrust Identity Verification is an identity-proofing/KYC API and SDK platform, not an AI assistant or agentic product with a built-in assistant to delegate tasks to; this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "entrust-onfido",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The product exposes a full REST API (create applicant, create workflow run, webhooks, OAuth client-credentials tokens) that could be scripted headlessly in CI, and webhook/polling patterns support automation without UI interaction. However, the primary workflow-building tool is explicitly no-code/drag-and-drop, and there is no evidence of a CLI, SDK for CI pipelines, or documented headless/automation-testing use case. missing for 10: explicit CI/headless automation examples, CLI tooling, documented non-interactive test/staging workflows, and confirmation that Workflow Studio config can be version-controlled or scripted rather than GUI-only.",
+    "rationale": "The API/SDK flow is documented as fully backend-drivable — creating applicants and workflow runs from a server with API/OAuth tokens, retrieving results via webhook or polling, with no UI required (docs-3, docs-6, docs-14, docs-15, docs-4). This supports headless/automated integration, but there is no explicit mention of CI/CD pipelines, automated testing, or command-line/headless SDK usage patterns, and Workflow Studio is positioned as a no-code drag-and-drop tool rather than a CI-automatable config path. Missing for 10: explicit CI/CD pipeline examples, headless test-automation guidance, and confirmation that Workflow Studio configuration itself can be automated/scripted rather than only via the GUI.",
     "evidenceIds": [
-      "entrust-onfido-docs-2",
       "entrust-onfido-docs-3",
-      "entrust-onfido-docs-4",
       "entrust-onfido-docs-6",
+      "entrust-onfido-docs-14",
+      "entrust-onfido-docs-15",
+      "entrust-onfido-docs-4",
       "entrust-onfido-docs-1"
     ]
   },
@@ -97,7 +96,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Entrust Identity Verification is an identity-verification API/SDK platform, not an AI agent or assistant that consumes tools; MCP server integration is a wrong-axis question for this product category and there is no evidence of MCP support in the pack.",
+    "rationale": "Entrust Identity Verification is an identity-verification API/SDK platform, not an AI agent or agent-hosting product; there is no MCP client/server capability applicable to this product category, and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
@@ -131,15 +130,17 @@
     "productId": "entrust-onfido",
     "storyId": "agentic-public-api",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Entrust provides a well-documented public API/SDK flow (applicant creation, workflow run, SDK token, webhook or polling for results) plus OAuth client-credentials authentication and webhook signature verification, all confirmed by a live llms.txt probe describing it as 'a comprehensive API and SDK platform'.  missing for 10: independent/community corroboration of real-world API integration, and a direct link to a full API reference/OpenAPI spec beyond the docs snippets.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Entrust IDV exposes a documented public API with OAuth-based authentication, endpoints to create applicants and workflow runs, SDK tokens, webhooks with HMAC signature verification, and a full quick-start guide walking through backend API calls — all confirmed by a live llms.txt probe. This is clearly a documented, programmatically drivable API suitable for AI-native/agentic orchestration. Missing for 10: no explicit mention of OpenAPI/Swagger spec, official client libraries per language, or independent third-party corroboration of API usability beyond vendor docs.",
     "evidenceIds": [
       "entrust-onfido-docs-2",
       "entrust-onfido-docs-3",
       "entrust-onfido-docs-4",
       "entrust-onfido-docs-5",
       "entrust-onfido-docs-6",
+      "entrust-onfido-docs-14",
+      "entrust-onfido-docs-15",
       "entrust-onfido-probe-1"
     ]
   },
@@ -148,11 +149,13 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "The docs show OAuth client-credentials grant for short-lived tokens and separate SDK tokens for capture flows, which provides some credential separation, but there is no explicit mention of scoped/least-privilege roles, permission granularity, or agent-specific credential issuance. missing for 10: explicit least-privilege/scoped role definitions, documentation of granting narrower API scopes per use-case or agent, and any AI-agent-specific credential workflow.",
+    "confidence": "medium",
+    "rationale": "Entrust's API uses OAuth client-credentials grant with recommended short-lived access tokens, and SDK tokens are scoped to a specific applicant/workflow run rather than granting full account access, which gives some least-privilege characteristics. However, there is no documentation of granular scopes/permissions, role-based API keys, or any concept of issuing credentials specifically for an 'agent' persona. Missing for 10: explicit scope/permission granularity, agent-specific credential issuance guidance, and role-based access control documentation.",
     "evidenceIds": [
       "entrust-onfido-docs-6",
-      "entrust-onfido-docs-2"
+      "entrust-onfido-docs-14",
+      "entrust-onfido-docs-2",
+      "entrust-onfido-docs-3"
     ]
   },
   {
@@ -161,13 +164,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence confirms official SDKs exist (mobile/web SDKs, SDK tokens, migration guide from Smart Capture SDKs to new IDV SDKs) with documented API/webhook/auth flows, showing developers can build against them. However, there's no evidence of language-specific SDK repos, open-source code samples, versioning/release notes, or independent developer corroboration of build experience. Missing for 10: public SDK repository/language coverage details, code samples, independent developer testimonials, changelog/versioning transparency.",
+    "rationale": "Entrust provides official mobile SDKs (iOS, Android, React Native, Flutter planned) and documented API/SDK token flows for building custom integrations, which supports SDK-based development. However, this is a documentation-based confirmation rather than published, developer-facing SDK repos with hands-on examples or language coverage beyond mobile. missing for 10: independent/hands-on verification of SDK usability, broader language/server-side SDK coverage (e.g., web/JS backend SDKs beyond mobile), and public code samples or GitHub repos demonstrating agentic/AI-native integration patterns.",
     "evidenceIds": [
       "entrust-onfido-docs-2",
       "entrust-onfido-docs-3",
-      "entrust-onfido-docs-6",
-      "entrust-onfido-docs-11",
-      "entrust-onfido-docs-13"
+      "entrust-onfido-docs-13",
+      "entrust-onfido-docs-21",
+      "entrust-onfido-docs-22"
     ]
   },
   {
@@ -176,11 +179,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs clearly document configurable webhook events to notify on workflow status changes, including signature verification via HMAC-SHA256, showing a supported webhook subscription mechanism. missing for 10: no documentation of event type granularity/catalog, no independent/hands-on corroboration, and no explicit mention of self-serve webhook management UI or retry/delivery guarantees.",
+    "rationale": "Docs clearly describe configuring webhooks to asynchronously receive workflow status change events, with secure HMAC-SHA256 signature verification, integrated into the applicant→workflow→SDK→webhook flow. Missing for 10: no documentation of a full event-type catalog, retry/delivery guarantees, or independent/hands-on confirmation of webhook reliability.",
     "evidenceIds": [
       "entrust-onfido-docs-4",
       "entrust-onfido-docs-5",
-      "entrust-onfido-docs-3"
+      "entrust-onfido-docs-3",
+      "entrust-onfido-docs-16"
     ]
   },
   {
@@ -189,7 +193,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe Watchlist reports covering Sanctions, PEPs, Monitored Lists, and Adverse Media, integrated into the same workflow/API/dashboard used for identity verification (single vendor, single API, unified webhook/review surface). missing for 10: no independent/hands-on corroboration of the unified review UI or case-management workflow for screening hits.",
+    "rationale": "Docs explicitly describe Watchlist reports covering Sanctions, PEPs, Monitored Lists, and Adverse Media as part of the same platform/workflow used for identity verification (same API, same dashboard/workflow studio), satisfying the one-vendor, one-API, one-review-surface requirement. Missing for 10: no independent/hands-on corroboration of the unified review UI or evidence of how screening results integrate into a single case review alongside document/biometric checks in practice.",
     "evidenceIds": [
       "entrust-onfido-docs-9",
       "entrust-onfido-docs-3",
@@ -202,7 +206,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows conventional API/SDK documentation (auth, webhooks, workflow setup) but no mention of an interactive API reference, API explorer, or runnable code examples anywhere in the docs.",
+    "rationale": "Evidence shows standard API/SDK documentation, guides, and a quick-start flow, but nothing indicates an interactive API reference with runnable/try-it examples (e.g., embedded API console, live code execution). Missing for 10: interactive API explorer, runnable code snippets/try-it-now console, evidence of live request execution within docs.",
     "evidenceIds": []
   },
   {
@@ -211,17 +215,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows extensive API/webhook documentation but no mention of a downloadable OpenAPI/Swagger spec or other machine-readable API definition file. As an API-driven platform, this axis is applicable, but no evidence supports it.",
+    "rationale": "The evidence pack shows API/SDK documentation and an llms.txt file, but nowhere mentions a downloadable machine-readable API spec such as OpenAPI/Swagger for the Entrust IDV API. No evidence of an OpenAPI JSON/YAML file, Postman collection, or similar spec artifact.",
     "evidenceIds": []
   },
   {
     "productId": "entrust-onfido",
     "storyId": "api-sandbox",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers SDK tokens, webhooks, OAuth, and workflow tools but contains no mention of a sandbox/test environment separate from production for API or SDK testing. This is a fair axis for an API/SDK platform, but no evidence supports it.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs explicitly confirm a distinct sandbox environment exists alongside the live/production environment, using the same OAuth token-based authentication [entrust-onfido-docs-14]. However, there is no detail on how sandbox data isolation works, how to provision test applicants/documents, or any explicit guidance for AI-native/agentic testing workflows. Missing for 10: documentation on sandbox-specific test data/mock verification responses, guidance on switching environments in SDKs, and independent/hands-on confirmation that sandbox testing avoids touching production data.",
+    "evidenceIds": [
+      "entrust-onfido-docs-14"
+    ]
   },
   {
     "productId": "entrust-onfido",
@@ -229,10 +235,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The docs reference an 'api/latest' version and a migration guide for moving from Smart Capture SDKs to new IDV SDKs, implying some versioning and change management, but there is no explicit documented deprecation policy, version support timeline, or sunset schedule for APIs. missing for 10: explicit versioned API scheme (e.g., v1/v2 endpoints), a published deprecation/sunset policy, and timelines for backward compatibility.",
+    "rationale": "Docs reference a versioned API path (api/latest) and provide migration guides when SDKs are replaced, suggesting some version-lifecycle management, but there is no explicit documented deprecation policy, versioning scheme, or sunset timeline for the API itself. missing for 10: explicit API versioning scheme, published deprecation/sunset policy, changelog or version support timeline.",
     "evidenceIds": [
       "entrust-onfido-docs-2",
-      "entrust-onfido-docs-13"
+      "entrust-onfido-docs-13",
+      "entrust-onfido-docs-21",
+      "entrust-onfido-docs-22"
     ]
   },
   {
@@ -241,11 +249,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes single-applicant workflows (create applicant → workflow run → SDK token → webhook) and no batch/bulk API endpoints, CSV bulk upload, or multi-item processing tools are documented. Bulk operations are a plausible axis for an identity verification API but no supporting evidence exists.",
-    "evidenceIds": [
-      "entrust-onfido-docs-3",
-      "entrust-onfido-docs-4"
-    ]
+    "rationale": "The evidence pack details single-applicant workflows (create one applicant, one workflow run, one SDK token) and webhook-based status monitoring, but nowhere mentions batch/bulk applicant creation, bulk report retrieval, or any batch API endpoints for processing many items at once.",
+    "evidenceIds": []
   },
   {
     "productId": "entrust-onfido",
@@ -266,7 +271,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Entrust Identity Verification is an identity verification/KYC API and SDK platform, not an automation/orchestration tool for scheduling recurring jobs or workflows; its 'workflows' refer to verification decision flows, not cron-like recurring job scheduling. This axis is a category error for this product type.",
+    "rationale": "Entrust Identity Verification is an identity-verification API/SDK platform (document/biometric checks, watchlist screening) triggered per-transaction via API calls or SDK sessions, not a workflow/task automation tool with scheduling capabilities. Recurring job/workflow scheduling is a category error for this product type — it's an on-demand verification service invoked when a user needs to be verified, not a system for scheduling recurring automated tasks.",
     "evidenceIds": []
   },
   {
@@ -274,8 +279,8 @@
     "storyId": "automation-versioned-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of version history, review workflows, or rollback capabilities for Workflow Studio automations; documentation focuses on building workflows via no-code interface but omits versioning/rollback features entirely.",
+    "confidence": "high",
+    "rationale": "No evidence of version control, review workflows, or rollback capabilities for Workflow Studio automations; docs only describe building/updating workflows via drag-and-drop, with no mention of versioning history, approval/review steps, or reverting to prior workflow versions.",
     "evidenceIds": []
   },
   {
@@ -283,17 +288,23 @@
     "storyId": "biometric-consent-compliance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack covers technical integration (SDKs, webhooks, workflow studio, watchlist/document reports) but contains no documentation addressing GDPR legal bases, BIPA or other US biometric statutes, or consent language guidance for biometric data handling.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "None of the evidence addresses legal bases for biometric processing (GDPR Article 9/6 grounds), BIPA or other US state biometric statute compliance, retention schedules, or consent language guidance for legal review — the docs are entirely technical/API-focused (SDK tokens, webhooks, workflows, report types). Absence of any legal/compliance documentation on biometric data handling means this axis is unmet.",
+    "evidenceIds": [
+      "entrust-onfido-docs-1",
+      "entrust-onfido-docs-3",
+      "entrust-onfido-docs-9",
+      "entrust-onfido-docs-12",
+      "entrust-onfido-docs-20"
+    ]
   },
   {
     "productId": "entrust-onfido",
     "storyId": "conversion-analytics",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers workflow configuration, SDK/webhook integration, document/watchlist checks, and fraud detection, but nothing about a dashboard or reporting feature showing pass rates, drop-off funnels, or completion time broken down by country/document type. No analytics or reporting evidence exists to support this founder-facing metrics story.",
+    "confidence": "high",
+    "rationale": "Evidence covers workflow building, SDK/API integration, webhooks, document/facial/watchlist reports, and fraud detection, but nothing mentions analytics dashboards, pass rates, drop-off funnels, completion time metrics, or breakdowns by country/document type for cost/conversion insight.",
     "evidenceIds": []
   },
   {
@@ -302,7 +313,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "None of the evidence mentions documented data retention windows or a redaction/deletion API for PII; the docs cover workflow building, SDK tokens, webhooks, watchlist reports, and biometric features but nothing about data lifecycle controls. missing for 10: retention policy documentation, deletion/redaction API endpoints, and any mention of PII scrubbing on demand.",
+    "rationale": "The evidence pack covers workflows, SDKs, webhooks, OAuth auth, and various report types, but contains no mention of documented data retention windows or a redaction/deletion API for scrubbing PII on demand. Missing for 10: retention policy documentation, deletion/redaction API endpoints, any privacy-data-lifecycle controls.",
     "evidenceIds": []
   },
   {
@@ -311,19 +322,25 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers document verification, biometric/facial checks, watchlist/PEP/sanctions screening, webhooks, and SDK auth flows, but contains no mention of document-free identity verification against SSN, national ID registries, or credit-header databases. Since this is a plausible capability for an IDV platform, absence of evidence means 'none' rather than 'na'.",
-    "evidenceIds": []
+    "rationale": "The evidence pack details document verification, facial similarity/biometric checks, watchlist/PEP/sanctions screening, and known-faces duplicate detection, but nowhere describes a documentless identity check against SSN, national registries, or credit-header databases. Watchlist reports check sanctions/PEP lists, not authoritative identity registries, so this specific no-document verification capability is unevidenced.",
+    "evidenceIds": [
+      "entrust-onfido-docs-9",
+      "entrust-onfido-docs-17",
+      "entrust-onfido-docs-18",
+      "entrust-onfido-docs-19"
+    ]
   },
   {
     "productId": "entrust-onfido",
     "storyId": "deepfake-injection-defense",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence documents general liveness via head-motion challenges (Motion feature) and repeat-face fraud alerts, but nothing names specific defenses against AI-generated faces, deepfakes, or camera-injection attacks as the story requires. Missing for 10: named deepfake detection capability, AI-generated/synthetic face detection, and camera/virtual-camera injection attack prevention documentation.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs describe a 'Motion' liveness check (head-turn/randomized movements) and facial similarity/known-faces matching, which are liveness-adjacent anti-fraud features, but nothing names specific defenses against AI-generated faces, deepfakes, or camera-injection attacks as distinct detection capabilities. missing for 10: named deepfake-detection capability, named camera/virtual-camera injection detection, named AI-generated/synthetic face detection, any technical description of how liveness models distinguish real vs. injected/synthetic media.",
     "evidenceIds": [
       "entrust-onfido-docs-12",
-      "entrust-onfido-docs-10"
+      "entrust-onfido-docs-18",
+      "entrust-onfido-docs-19"
     ]
   },
   {
@@ -332,10 +349,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs confirm the platform lets ops configure accepted documents by issuing country and document type (docs-8), implying broad multi-country/document-type support, but no published list enumerating supported countries or specific document types (passports, national IDs, licenses, residence permits) is provided in the evidence. Missing for 10: a published country/document-type coverage list, explicit mention of all four document categories, and any breadth metric (e.g., number of countries/documents supported).",
+    "rationale": "Docs confirm document verification exists and that customers can filter accepted documents by issuing country and document type (docs-8), plus NFC/ePassport support (docs-20), but no published breadth list (e.g., number of countries, specific document types like residence permits) is cited. missing for 10: a published comprehensive country/document-type coverage list, explicit mention of residence permits or driver licenses support breadth, and independent verification of coverage scope.",
     "evidenceIds": [
       "entrust-onfido-docs-8",
-      "entrust-onfido-docs-11"
+      "entrust-onfido-docs-17",
+      "entrust-onfido-docs-20"
     ]
   },
   {
@@ -344,13 +362,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs describe the full server-side flow: create applicant, create workflow run (returns SDK token), collect document+selfie captures via drop-in/hosted SDK, and retrieve results via webhook or polling — exactly the no-build-your-own-capture-UI flow described in the story. Also supports Smart Capture Link as a hosted no-code option and webhook signature verification for secure result reads. missing for 10: no independent/hands-on developer corroboration (blog posts, sample repos, or third-party integration reports) confirming the drop-in/hosted redirect flow works end-to-end in practice.",
+    "rationale": "Docs show the full server-driven flow: create applicant → create workflow run (returns SDK token) → collect captures via SDK or Smart Capture Link (hosted/drop-in, low/no-code) → retrieve results via webhook or polling, matching the story closely. Missing for 10: independent/hands-on corroboration beyond vendor docs, and explicit example of a redirect-based hosted URL flow versus only SDK/Smart Capture Link.",
     "evidenceIds": [
-      "entrust-onfido-docs-3",
       "entrust-onfido-docs-2",
+      "entrust-onfido-docs-3",
       "entrust-onfido-docs-4",
-      "entrust-onfido-docs-5",
-      "entrust-onfido-docs-7"
+      "entrust-onfido-docs-7",
+      "entrust-onfido-docs-15"
     ]
   },
   {
@@ -359,7 +377,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "All evidence focuses on individual identity verification (document capture, facial similarity, watchlist/PEP checks on applicants, workflow studio for KYC flows) — there is no mention of business/registry lookups, UBO (ultimate beneficial owner) identification, or documented KYB (know-your-business) workflows chaining into KYC on owners.",
+    "rationale": "The evidence pack focuses entirely on individual (KYC) verification—document reports, facial similarity, watchlist/PEP checks, known faces, NFC—with no mention of business registry lookups, UBO (ultimate beneficial owner) identification, or a documented KYB workflow chaining into owner KYC.",
     "evidenceIds": []
   },
   {
@@ -368,7 +386,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents workflow orchestration, SDKs, webhooks, watchlist/document reports, and dashboard configuration, but nowhere describes a manual review queue that surfaces document images, extracted fields, and check results together, nor a feedback loop where reviewer decisions update the record. Missing for 10: explicit manual review queue documentation, evidence bundling for reviewers, and reviewer decision feedback into the applicant record.",
+    "rationale": "The evidence pack covers workflow orchestration, SDKs, webhooks, and various report types (document, facial similarity, watchlist, known faces) but never mentions a manual review queue, escalation of borderline cases to human reviewers, or reviewer decisions being fed back into the applicant record. This is a plausible and common capability for an IDV platform, but nothing in the pack evidences it.",
     "evidenceIds": []
   },
   {
@@ -377,13 +395,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence confirms native mobile SDKs (with NFC only via mobile SDK) and an SDK-token based capture flow, and the product name 'Smart Capture' implies guided capture, but there is no explicit documentation of glare/blur/edge-detection coaching or confirmation of iOS, Android, and web SDK parity. missing for 10: explicit glare/blur/edge-detection coaching documentation, confirmation of web SDK support, first-try capture UX detail.",
+    "rationale": "Docs confirm native iOS, Android, and React Native SDKs (with Flutter coming) plus SDK-token-based capture flow (docs-2,3,22), and a web-based no-code 'Smart Capture Link' alternative (docs-7), but no evidence explicitly describes real-time glare, blur, or edge-detection coaching guiding users to a usable photo. Missing for 10: explicit documentation of in-SDK image-quality coaching (glare/blur/edge detection), confirmation of a dedicated JS/web SDK (vs. hosted link), and any hands-on/independent corroboration of capture UX quality.",
     "evidenceIds": [
       "entrust-onfido-docs-2",
       "entrust-onfido-docs-3",
-      "entrust-onfido-docs-11",
-      "entrust-onfido-docs-13",
-      "entrust-onfido-docs-7"
+      "entrust-onfido-docs-7",
+      "entrust-onfido-docs-22",
+      "entrust-onfido-docs-13"
     ]
   },
   {
@@ -392,7 +410,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Smart Capture Link is documented as a low-/no-code frontend that lets ops verify individuals without engineering effort, aligning with the no-code link concept, and Workflow Studio supports drag-and-drop workflow setup without developers. However, there is no explicit mention of a shareable QR code option or a simple 'send a one-off link' flow from a dashboard for ad-hoc individuals like contractors or sellers. missing for 10: explicit QR code generation/sharing feature, documentation of an ops-friendly one-off invite/send flow, independent or hands-on confirmation of ease-of-use for non-technical ops staff.",
+    "rationale": "Smart Capture Link is explicitly documented as a 'low- to no-code frontend solution' that lets teams verify individuals 'with or without engineering effort,' directly matching the no-ticket, ops-led send-a-link use case. However, the evidence never explicitly confirms QR-code generation or shows the ops-facing dashboard workflow for creating/sending such links, and most other docs (SDK tokens, API workflow) describe the developer-integration path rather than the no-code path. Missing for 10: explicit QR-code capability, ops-console screenshots/workflow for generating and sending links, and independent/hands-on confirmation of the no-code experience.",
     "evidenceIds": [
       "entrust-onfido-docs-7",
       "entrust-onfido-docs-1"
@@ -404,7 +422,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence documents one-time Watchlist Reports (sanctions, PEP, monitored lists, adverse media) run during a verification workflow, plus webhooks that notify on workflow status changes — but nothing describes ongoing/continuous re-screening of previously verified applicants against watchlist updates or dedicated 'watchlist changed' events after the initial check.",
+    "rationale": "Evidence confirms one-time Watchlist reports (sanctions, PEPs, monitored lists, adverse media) and webhook events for workflow status changes, but nothing indicates ongoing/continuous re-screening of previously verified applicants against watchlist updates or dedicated 'watchlist monitoring' change events. Missing for 10: explicit continuous/ongoing monitoring feature, evidence of periodic re-checks post-verification, and change-triggered alerts distinct from initial workflow completion.",
     "evidenceIds": [
       "entrust-onfido-docs-9",
       "entrust-onfido-docs-4"
@@ -416,13 +434,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Core verification actions (create applicant, start workflow run, obtain SDK token, retrieve results via webhook/polling) are documented as API operations, but Workflow Studio (workflow building) and Dashboard-based document-acceptance configuration are explicitly positioned as no-code/low-code UI tools 'without the need for developer involvement,' with no documented API equivalent for authoring or editing workflows/rules themselves. Missing for 10: API/SDK endpoints for programmatically creating or editing workflows and document-acceptance rules equivalent to what Workflow Studio and the Dashboard provide, and confirmation that NFC or other SDK-only features are reachable via pure API calls.",
+    "rationale": "The core verification flow (creating applicants, running workflows, retrieving SDK tokens, webhooks, reports) is fully API/SDK-driven per docs, but the Workflow Studio for building/configuring verification workflows is explicitly described as a 'no-code, drag and drop interface... without the need for developer involvement,' with no documented API/config-as-code equivalent for authoring workflows themselves. Missing for 10: an API or IaC path to create/edit workflows equivalent to Workflow Studio's UI, and independent confirmation that all Dashboard settings (e.g., accepted document types) are also API-configurable.",
     "evidenceIds": [
       "entrust-onfido-docs-1",
       "entrust-onfido-docs-3",
-      "entrust-onfido-docs-7",
+      "entrust-onfido-docs-15",
       "entrust-onfido-docs-8",
-      "entrust-onfido-docs-11"
+      "entrust-onfido-docs-7"
     ]
   },
   {
@@ -449,7 +467,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Entrust Identity Verification (Onfido) is a cloud SaaS identity verification API/SDK platform; self-hosting the core product is not an offered deployment model and is a category error for this type of managed compliance/verification service, not a missing feature.",
+    "rationale": "Entrust Identity Verification (Onfido) is a cloud-based SaaS identity verification API/SDK platform with no self-hosted deployment option; self-hosting the core product is a category error for this kind of managed cloud IDV service.",
     "evidenceIds": []
   },
   {
@@ -458,12 +476,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack documents document reports, facial similarity/liveness, watchlist/PEP/sanctions checks, and duplicate-face detection, but contains no mention of phone, email, carrier, address history, or device fingerprint risk signals as check types. missing for 10: phone risk check docs, email risk check docs, carrier/device fingerprint check docs, address history check docs.",
+    "rationale": "Evidence covers document, facial similarity, watchlist, and known-faces reports, but no documented check types for phone/carrier verification, email risk, address history, or device fingerprinting are mentioned anywhere in the docs. Missing for 10: any documented phone/carrier check, email risk signal, address history check, or device fingerprint report type.",
     "evidenceIds": [
-      "entrust-onfido-docs-8",
       "entrust-onfido-docs-9",
-      "entrust-onfido-docs-10",
-      "entrust-onfido-docs-12"
+      "entrust-onfido-docs-17",
+      "entrust-onfido-docs-18",
+      "entrust-onfido-docs-19"
     ]
   },
   {
@@ -471,8 +489,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data localization controls for Entrust Identity Verification; the docs cover workflow building, SDK tokens, webhooks, and verification reports but say nothing about where data is stored or user choice of region.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions data residency, regional storage options, or data localization controls for Entrust Identity Verification; the docs cover workflows, SDKs, webhooks, and report types but nothing about choosing storage region.",
     "evidenceIds": []
   },
   {
@@ -481,7 +499,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "This story targets AI-native users seeking control over AI training data usage, which is not a relevant axis for an identity verification/KYC platform like Entrust Onfido; the evidence pack covers document verification, workflows, watchlists, and SDKs with no mention of AI training data opt-outs. This is a category mismatch rather than a missing capability.",
+    "rationale": "Entrust Identity Verification is an identity-proofing/KYC API and SDK platform, not an AI model or AI-native tool that trains on user data; the story about opting out of AI model training is a category error for this product type. No evidence pack content addresses AI training data opt-out, and the axis does not fairly apply to an identity verification service.",
     "evidenceIds": []
   },
   {
@@ -490,7 +508,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack covers workflow building, SDK/API auth, webhooks, document/watchlist checks, and fraud detection, but contains no mention of data retention policies, deletion controls, or user-facing privacy/data lifecycle management. No documentation excerpt addresses how users or AI-native integrators can configure retention periods or trigger deletion of collected identity data.",
+    "rationale": "The evidence pack covers workflows, SDKs, webhooks, authentication, and verification report types, but contains no mention of data retention controls, deletion policies, or user-facing controls to delete/export their identity verification data. missing for 10: data retention configuration, applicant data deletion API/endpoint, data export or right-to-erasure mechanism, retention period settings.",
     "evidenceIds": []
   },
   {
@@ -499,17 +517,18 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Entrust Identity Verification (Onfido) is an identity-verification API/SDK platform, not an AI coding tool or agent product with telemetry/usage-tracking opt-out settings relevant to an AI-native developer workflow; this axis is a category error for this product type.",
+    "rationale": "Entrust Identity Verification is an identity-verification API/SDK product, not an AI agent or developer tool with telemetry the user interacts with directly; opting out of telemetry/usage tracking is not a fair axis for this category of product, and no evidence discusses such a toggle.",
     "evidenceIds": []
   },
   {
     "productId": "entrust-onfido",
     "storyId": "repeat-fraud-detection",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs explicitly describe a facial deduplication feature that flags faces already seen in prior verification flows, directly addressing repeat-identity detection under different names. However, evidence lacks detail on document-level duplicate detection, how matches are surfaced/scored to a risk analyst, or independent/hands-on validation of accuracy. Missing for 10: document dedup evidence, analyst-facing reporting/UI detail, independent corroboration of detection accuracy.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Docs explicitly describe a 'Known Faces' report that compares an applicant's biometric media against prior applicants in the account database to flag repeat identity fraud attempts, directly matching the story of detecting the same face resurfacing under different names, corroborated by the general-introduction description of alerts for faces already seen in the verification flow. missing for 10: no independent/hands-on validation of detection accuracy, no detail on document-level duplicate matching (only face-based) or false-positive handling.",
     "evidenceIds": [
+      "entrust-onfido-docs-19",
       "entrust-onfido-docs-10"
     ]
   },
@@ -519,9 +538,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The docs describe repeat-face detection for fraud purposes (flagging faces that already went through verification) but this is a fraud-detection alert, not a documented mechanism for reusing a prior passed check to skip re-verification across sessions or products. No evidence of a 'reusable identity' or portable verification token/credential feature.",
+    "rationale": "The evidence only shows a 'Known Faces' report that flags repeat faces as potential fraud (docs-19/docs-10), not a documented mechanism to recognize and reuse a prior passed verification to skip re-verification. No mention of portable/reusable identity, credential reuse APIs, or cross-product/session recognition that grants a pass without re-running checks.",
     "evidenceIds": [
-      "entrust-onfido-docs-10"
+      "entrust-onfido-docs-10",
+      "entrust-onfido-docs-19"
     ]
   },
   {
@@ -529,19 +549,22 @@
     "storyId": "sandbox-test-verifications",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a sandbox environment with documented test documents, personas, or magic values that deterministically produce pass/fail/review outcomes; the pack only covers workflow setup, SDK tokens, webhooks, and report types. missing for 10: sandbox/test-mode documentation, sample test documents or personas, deterministic magic-value test data for triggering specific verification outcomes.",
-    "evidenceIds": []
+    "confidence": "low",
+    "rationale": "The evidence mentions a 'sandbox' only in passing (OAuth works for both sandbox and live environments) but provides no documented test documents, personas, or magic values that deterministically produce pass/fail/review outcomes. Missing for 10: sandbox environment documentation, specific test document/persona references, deterministic outcome triggers for pass/fail/review states.",
+    "evidenceIds": [
+      "entrust-onfido-docs-14"
+    ]
   },
   {
     "productId": "entrust-onfido",
     "storyId": "selfie-match-liveness",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm a facial similarity/liveness check using motion challenges (head turns, randomized movements) to match selfie to document portrait, but there is no explicit documentation describing specific defenses against printed photos, screen replays, or video replay attacks. Missing for 10: explicit anti-spoofing detail (printed photo, screen, deepfake/video replay countermeasures), independent testing/accuracy corroboration.",
+    "rationale": "Docs confirm Facial Similarity reports comparing selfie/video to document portrait and explicit liveness via Motion (head turn/randomized head movements), which addresses replay/photo-of-photo type attacks. However, there is no documented detail on specific anti-spoofing defenses against printed photos, screen replay, or deepfake/video injection attacks, nor independent/hands-on validation of liveness robustness. missing for 10: explicit documentation of defenses against printed photos/screen replays/video injection, independent or third-party testing of liveness accuracy, anti-spoofing certification (e.g., iBeta/NIST) evidence.",
     "evidenceIds": [
-      "entrust-onfido-docs-12"
+      "entrust-onfido-docs-12",
+      "entrust-onfido-docs-18"
     ]
   },
   {
@@ -550,13 +573,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm core lifecycle steps — create applicant, create workflow run, obtain SDK token, retrieve results via webhook or polling — plus authentication (OAuth) and webhook signature verification are documented. However, explicit API-level documentation for retrieving captured media, and for cancel/redact operations, is not shown in the evidence pack. missing for 10: documented endpoint/example for retrieving captured media via API, documented cancel operation, documented redact/delete operation, and independent confirmation these work end-to-end.",
+    "rationale": "Docs confirm applicant/workflow creation via API, OAuth token auth, webhook status notifications with signature verification, and report retrieval (document, facial similarity, watchlist, known faces) — covering create/status/results. However, explicit API documentation for retrieving captured media, and for cancel/redact operations on a session, is not shown in the evidence pack. missing for 10: documented endpoints/examples for retrieving captured media artifacts via API, and explicit cancel/redact API documentation with request/response examples.",
     "evidenceIds": [
-      "entrust-onfido-docs-2",
       "entrust-onfido-docs-3",
       "entrust-onfido-docs-4",
       "entrust-onfido-docs-5",
-      "entrust-onfido-docs-6"
+      "entrust-onfido-docs-6",
+      "entrust-onfido-docs-14",
+      "entrust-onfido-docs-15",
+      "entrust-onfido-docs-17",
+      "entrust-onfido-docs-18",
+      "entrust-onfido-docs-19"
     ]
   },
   {
@@ -565,10 +592,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence describes workflow results retrievable via webhook or polling and a 'document report' concept, but nothing explicitly confirms that structured fields (name, DOB, document number, address, expiry) are returned as retrievable API data rather than a report/pass-fail outcome. Missing for 10: explicit API/webhook payload schema or docs showing per-field extracted data (name, DOB, doc number, address, expiry) returned to developers.",
+    "rationale": "The evidence describes document reports as authenticity checks and NFC extraction of 'document and biometric data,' but no citation confirms that individual extracted fields (name, DOB, document number, address, expiry) are returned as structured, retrievable API data rather than a pass/fail-style report outcome.",
     "evidenceIds": [
-      "entrust-onfido-docs-3",
-      "entrust-onfido-docs-4",
+      "entrust-onfido-docs-17",
+      "entrust-onfido-docs-20",
       "entrust-onfido-docs-8"
     ]
   },
@@ -576,12 +603,13 @@
     "productId": "entrust-onfido",
     "storyId": "verification-webhooks",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm webhooks can be configured to asynchronously notify status changes on workflow runs, with signed payloads verified via HMAC-SHA256, letting developers avoid polling. However, the pack never enumerates the specific lifecycle states (created, processing, verified, requires-input) claimed in the story, so exact event coverage is unconfirmed. missing for 10: explicit list of webhook event types/payload schema, independent confirmation of event granularity.",
+    "rationale": "Docs confirm webhook configuration for asynchronous status monitoring and HMAC-SHA256 signature verification, satisfying the 'signed webhooks' and 'react without polling' core claims. However, evidence does not enumerate specific lifecycle event types (created, processing, verified, requires-input) or show payload/schema examples confirming these exact states. Missing for 10: explicit list of webhook event/status types matching the story's named states, sample payloads, and independent/hands-on confirmation of reliability.",
     "evidenceIds": [
       "entrust-onfido-docs-4",
       "entrust-onfido-docs-5",
+      "entrust-onfido-docs-16",
       "entrust-onfido-docs-3"
     ]
   },

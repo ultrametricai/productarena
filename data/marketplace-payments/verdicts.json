@@ -3203,35 +3203,42 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of agentic-commerce protocol support, delegated payment credentials, or agent-initiated checkout anywhere in the pack; documentation covers standard payment platform features (API keys, webhooks, merchant onboarding, payouts) with no mention of AI agent buyers or agent checkout flows.",
-    "evidenceIds": []
+    "rationale": "No evidence anywhere in the pack mentions agent-initiated checkout, agentic-commerce protocols (e.g., AP2, ACP), delegated/tokenized payment credentials for AI agents, or split-fund flows tied to such transactions. Tilled's docs cover standard merchant onboarding, payments, disputes, and webhooks, but nothing agent-specific; the probe even confirms no agent-oriented docs index exists.",
+    "evidenceIds": [
+      "tilled-probe-rt-2"
+    ]
   },
   {
     "productId": "tilled",
     "storyId": "agent-onboards-sellers",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Tilled's docs show API-driven merchant onboarding (create, pre-fill, and edit applications in `created`/`started` status) and dashboard progress tracking of onboarding steps, which supports part of the 'agent drives onboarding' story. However, there is no evidence of an MCP surface, no mention of scoped/restricted API credentials for agent use, and no explicit handling of 'requirements-due' states via API. missing for 10: MCP server/tool surface, scoped credential model for agents, explicit requirements-due state API.",
+    "quality": 3,
+    "confidence": "medium",
+    "rationale": "Tilled's docs show API-driven merchant onboarding (create/edit applications, no-code and OnboardingJS options, API keys with scoped per-merchant headers), which supports agent-driven account creation and onboarding via the API. However there is no mention of a 'requirements-due' status concept or API endpoint for surfacing outstanding onboarding requirements, and no MCP surface exists — the runtime probe confirms no llms.txt/agent-oriented docs index, meaning agent access is API-only with no first-class agent integration layer. Missing for 10: requirements-due state API, MCP server/tool surface, agent-specific docs or scoped-credential guidance for autonomous agents.",
     "evidenceIds": [
       "tilled-docs-7",
       "tilled-docs-8",
-      "tilled-docs-12",
-      "tilled-docs-1"
+      "tilled-docs-18",
+      "tilled-docs-1",
+      "tilled-probe-rt-1",
+      "tilled-probe-rt-2"
     ]
   },
   {
     "productId": "tilled",
     "storyId": "agent-platform-operations",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Docs confirm a general API with keys and webhooks for real-time events, and payout speed/dispute management are documented, but they are explicitly described as Dashboard-based features rather than agent-callable API endpoints for reading balances, investigating payouts, or drafting dispute evidence. Missing for 10: explicit API endpoints/schemas for balances, payout investigation, and dispute evidence submission usable by an autonomous agent, plus any agent/automation-specific tooling or examples.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Tilled exposes API surfaces for payouts, disputes, and webhooks (docs-10, docs-11, docs-22, docs-4/23) and a live REST API confirmed by a runtime probe, so an agent could plausibly read balances/payouts and draft dispute evidence via the DisputesAPI. However, payout and dispute management are largely documented as Dashboard-driven workflows rather than fully agent-scriptable endpoints, and there's no llms.txt or agent-oriented docs index (tilled-probe-rt-2), meaning agent-usability is not explicitly designed for. missing for 10: documented read endpoints for balances/payouts usable headlessly by an agent, an agent-facing docs/llms.txt index, and evidence of end-to-end automated dispute-evidence drafting via API rather than console UI.",
     "evidenceIds": [
       "tilled-docs-10",
       "tilled-docs-11",
+      "tilled-docs-22",
       "tilled-docs-4",
-      "tilled-docs-1"
+      "tilled-docs-23",
+      "tilled-probe-rt-1",
+      "tilled-probe-rt-2"
     ]
   },
   {
@@ -3240,8 +3247,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an llms.txt file, agent-oriented documentation, or any mention of AI agent-friendly docs; the evidence pack only shows standard developer documentation for payments/onboarding.",
-    "evidenceIds": []
+    "rationale": "A probe explicitly confirms Tilled has no llms.txt (404 on redirect) and no agent-oriented docs index; only standard human-facing documentation exists.",
+    "evidenceIds": [
+      "tilled-probe-rt-2"
+    ]
   },
   {
     "productId": "tilled",
@@ -3267,17 +3276,25 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Tilled is a payments infrastructure/API platform for ISVs and merchants; there is no evidence of, or plausible expectation for, a built-in AI assistant to which tasks can be delegated. This is a category mismatch rather than a missing feature.",
+    "rationale": "Tilled is a payments infrastructure/API platform, not a product designed to have users delegate tasks to a built-in AI assistant; this axis is a category error for this type of product and no evidence suggests otherwise.",
     "evidenceIds": []
   },
   {
     "productId": "tilled",
     "storyId": "agentic-headless",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Tilled exposes a documented REST API with API-key auth, a sandbox environment, and test card numbers for automated testing (tilled-docs-1,17,2,24,3), and the probe confirms the API is live and callable without a browser (tilled-probe-rt-1), which supports scripted/CI-style automation. However there's no explicit CI/CD guidance, CLI tool, or SDK automation examples, and the product itself lacks any agent-facing docs index (tilled-probe-rt-2). Missing for 10: explicit CI/CD integration docs, a CLI or automation SDK, and evidence of headless usage beyond generic API+sandbox testing.",
+    "evidenceIds": [
+      "tilled-docs-1",
+      "tilled-docs-17",
+      "tilled-docs-2",
+      "tilled-docs-24",
+      "tilled-docs-3",
+      "tilled-probe-rt-1",
+      "tilled-probe-rt-2"
+    ]
   },
   {
     "productId": "tilled",
@@ -3285,17 +3302,19 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Tilled is a payments/merchant onboarding platform with no evidence of any AI agent tooling; MCP server integration is a category error for this product type, not a missing capability.",
+    "rationale": "Tilled is a payments/merchant-onboarding API platform, not an AI agent or assistant; the evidence pack contains no mention of MCP servers or agentic tool integration at all, and this axis is about the product acting as an MCP client — a role irrelevant to a payments API product.",
     "evidenceIds": []
   },
   {
     "productId": "tilled",
     "storyId": "agentic-mcp-server",
-    "verdict": "none",
+    "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "rationale": "Tilled is a payments platform, not an AI agent product; this MCP-server story applies to whether Tilled ships an official MCP server for agent integration, but there's a more fitting boundary here: Tilled is not itself an agent, so the axis in principle applies, but evidence shows no MCP server exists—only a standard REST API and explicit absence of agent-oriented docs. This is 'none' rather than 'na' since a payments platform could plausibly ship an MCP server for agent integration.",
+    "evidenceIds": [
+      "tilled-probe-rt-2"
+    ]
   },
   {
     "productId": "tilled",
@@ -3318,15 +3337,17 @@
   {
     "productId": "tilled",
     "storyId": "agentic-public-api",
-    "verdict": "partial",
+    "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Tilled documents a public API with API keys, a quick-start guide, sandbox/test environment, and webhooks for event-driven use, indicating the product can be driven programmatically (tilled-docs-1, tilled-docs-2, tilled-docs-3, tilled-docs-4). However, the evidence pack lacks a full API reference/spec, SDK details, or independent developer corroboration of building an integration end-to-end. Missing for 10: comprehensive API reference/OpenAPI docs, SDK examples, and third-party/hands-on confirmation of programmatic control.",
+    "rationale": "Tilled has a documented public REST API confirmed live by a runtime probe (structured error response validating header contract before auth), with docs covering payments, webhooks, disputes, merchant onboarding, and testing/sandbox. missing for 10: no llms.txt or agent-oriented docs index, no independent third-party corroboration of API completeness, and no evidence of official SDKs/agent tooling beyond raw REST docs.",
     "evidenceIds": [
       "tilled-docs-1",
-      "tilled-docs-2",
-      "tilled-docs-3",
-      "tilled-docs-4"
+      "tilled-docs-4",
+      "tilled-docs-23",
+      "tilled-docs-24",
+      "tilled-probe-rt-1",
+      "tilled-probe-rt-2"
     ]
   },
   {
@@ -3335,9 +3356,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows basic API key generation for platform access; there is no mention of scoped, least-privilege, or role-restricted credentials suitable for delegating to an AI agent.",
+    "rationale": "Evidence only shows basic API key generation via the Dashboard and a sandbox environment, with no mention of scoped, role-based, or least-privilege credential issuance for agents specifically. Missing for 10: any documentation of permission scopes, restricted-key types, or agent-specific credential controls.",
     "evidenceIds": [
-      "tilled-docs-1"
+      "tilled-docs-1",
+      "tilled-docs-17"
     ]
   },
   {
@@ -3345,19 +3367,25 @@
     "storyId": "agentic-sdks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers API keys, sandbox testing, webhooks, merchant onboarding, and dashboard features, but contains no mention of official SDKs (e.g., language-specific libraries like Python, Node.js, Java) for developers to build against.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack documents Tilled's REST API, API keys, webhooks, and a JS onboarding widget (OnboardingJS), but nowhere claims official language SDKs (e.g., Node, Python, Ruby, Java client libraries) for building integrations, and the runtime probe finds no agent-oriented docs index or SDK references. Since SDK availability is a reasonable expectation for a payments API platform, absence of evidence yields none rather than na.",
+    "evidenceIds": [
+      "tilled-docs-1",
+      "tilled-docs-15",
+      "tilled-docs-18",
+      "tilled-probe-rt-2"
+    ]
   },
   {
     "productId": "tilled",
     "storyId": "agentic-webhooks",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Tilled documents webhooks that provide real-time event notifications, confirming basic webhook subscription support, but there is no evidence of event type filtering, subscription management API, signature verification, or retry/delivery configuration details. missing for 10: documented list of subscribable event types, webhook management/configuration API, signature verification details, independent/hands-on confirmation.",
+    "rationale": "Tilled documents a dedicated Webhooks API providing real-time event notifications for platform occurrences, confirming webhook subscription capability. However, missing for 10: independent/hands-on corroboration of webhook subscription flow, no detail on event types or signature verification, and no agent-oriented docs confirming AI-native accessibility.",
     "evidenceIds": [
-      "tilled-docs-4"
+      "tilled-docs-4",
+      "tilled-docs-23"
     ]
   },
   {
@@ -3366,8 +3394,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows standard docs (quick-start, webhooks, testing, onboarding) but no mention of an interactive API reference or runnable code examples/sandbox console embedded in docs.",
-    "evidenceIds": []
+    "rationale": "Evidence confirms Tilled has an API reference site (docs.tilled.com/api-reference) and a sandbox/testing environment for API calls, but nothing describes an interactive, in-browser 'try it out' console with runnable code examples embedded in the docs. Missing for 10: any mention of runnable/interactive code snippets, live request builder, or embedded API console within the reference pages.",
+    "evidenceIds": [
+      "tilled-docs-1",
+      "tilled-docs-24",
+      "tilled-probe-rt-1"
+    ]
   },
   {
     "productId": "tilled",
@@ -3375,20 +3407,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack item mentions an OpenAPI spec, Swagger file, or any downloadable machine-readable API specification; docs only describe API concepts and dashboard features.",
-    "evidenceIds": []
+    "rationale": "No evidence pack item mentions an OpenAPI spec, Swagger file, or any downloadable machine-readable API definition; docs only reference an 'api-reference' page and no llms.txt or agent-oriented spec was found by the runtime probe. missing for 10: OpenAPI/Swagger file link, machine-readable spec download, any mention of spec format.",
+    "evidenceIds": [
+      "tilled-probe-rt-2"
+    ]
   },
   {
     "productId": "tilled",
     "storyId": "api-sandbox",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Tilled explicitly offers a sandbox environment for testing, including simulating declines and mock card-present/terminal testing, without touching production data. Missing for 10: independent/hands-on corroboration beyond vendor docs, and no explicit mention of automated/agentic test workflows or CI integration.",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Tilled explicitly provides a dedicated sandbox environment with its own Dashboard for integration testing, separate from production, along with documented test card numbers and decline simulation to test flows without touching real data. This is corroborated by the live API being reachable and documented header contracts, showing the sandbox/testing path is real and functional. Missing for 10: independent hands-on confirmation of actual sandbox isolation from production data and no explicit mention of automated/agentic test workflows against the sandbox.",
     "evidenceIds": [
       "tilled-docs-2",
+      "tilled-docs-17",
       "tilled-docs-3",
-      "tilled-docs-6"
+      "tilled-docs-24",
+      "tilled-probe-rt-1"
     ]
   },
   {
@@ -3396,19 +3432,23 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence pack items mention API versioning, version numbers, or a deprecation policy for Tilled's API; documentation covers keys, webhooks, onboarding, and dashboard features but not lifecycle/versioning practices.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack mentions API versioning scheme or any documented deprecation policy for Tilled's API; docs cover onboarding, testing, webhooks, disputes, etc., but nothing about version numbers, changelogs, or sunset timelines.",
     "evidenceIds": []
   },
   {
     "productId": "tilled",
     "storyId": "application-fee-monetization",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Tilled documents per-seller pricing via merchant pricing templates (tilled-docs-9), which supports setting per-seller pricing, but there is no evidence of an application-fee/markup mechanism on transactions or of a dashboard/report that separates platform revenue from underlying processing costs. Missing for 10: explicit application fee or markup configuration per transaction, and a revenue-vs-processing-cost reporting view.",
+    "rationale": "Tilled's merchant pricing templates (tilled-docs-9, tilled-docs-21) let ISVs set per-merchant pricing, which is the core mechanism for building in a markup/take-rate per seller, and onboarding docs (tilled-docs-8, tilled-docs-20) support managing many merchants under one platform. However, there is no evidence of an explicit 'application fee' object/API or a dashboard view that separates platform revenue from underlying processing costs — missing for 10: explicit application-fee/revenue-share API, and reporting that isolates ISV markup revenue from interchange/processing cost.",
     "evidenceIds": [
-      "tilled-docs-9"
+      "tilled-docs-9",
+      "tilled-docs-21",
+      "tilled-docs-8",
+      "tilled-docs-20",
+      "tilled-docs-12"
     ]
   },
   {
@@ -3417,8 +3457,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Tilled's evidence pack covers payments API, onboarding, disputes, payouts, and webhooks, but there is no mention of bulk/batch operations across many items (e.g., bulk payment creation, bulk merchant updates, batch API endpoints for multiple resources at once). The only 'batch' reference concerns settlement batch closing for a single store's transactions, not bulk operations across many items.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows only single-item operations (creating a payment intent, closing a batch for settlement, voiding/refunding a transaction) and no documented bulk/batch API for processing many items at once (e.g., bulk refunds, bulk payouts, bulk merchant updates). While a payments platform could plausibly offer bulk operations, no such capability is evidenced here.",
+    "evidenceIds": [
+      "tilled-docs-5",
+      "tilled-docs-26",
+      "tilled-docs-3"
+    ]
   },
   {
     "productId": "tilled",
@@ -3426,9 +3470,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Tilled offers webhooks for event notifications (tilled-docs-4) but there is no evidence of a rules engine or conditional trigger system that lets users define automated actions based on those events.",
+    "rationale": "Tilled offers webhooks that push real-time event notifications to an external application, but there is no evidence of an in-product rules engine where users define conditions/actions that trigger automatically within Tilled itself — webhooks merely notify, leaving all rule logic and action execution to the receiving system.",
     "evidenceIds": [
-      "tilled-docs-4"
+      "tilled-docs-4",
+      "tilled-docs-23"
     ]
   },
   {
@@ -3446,18 +3491,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Tilled is a payments/payouts infrastructure API, not an automation-building tool with workflows to version, review, or roll back; this axis is a category error for this product type.",
+    "rationale": "Tilled is a payments/merchant-onboarding API platform, not an automation/workflow builder; the evidence pack covers payments, onboarding, disputes, webhooks, and dashboards with no mention of workflow/automation configurations that would need versioning, review, or rollback. This story is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "tilled",
     "storyId": "buy-rate-pricing-control",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Tilled's docs mention merchant pricing templates that let platforms set pricing per payment method, implying sell-rate control (tilled-docs-9), but there is no documented buy rate from Tilled or interchange-level cost visibility described anywhere in the evidence pack. missing for 10: explicit buy rate disclosure, interchange-level cost breakdown/visibility tools, and spread-management reporting.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Tilled documents pricing templates that let a platform set merchant-facing (sell) rates per payment method, and merchant onboarding/dashboard flows support setting these economics, but the evidence never documents a specific 'buy rate' contract from Tilled itself or interchange-level cost breakdowns for spread visibility. missing for 10: documented buy-rate/cost basis from Tilled, interchange-level fee reporting or reporting API showing cost vs. sell-rate spread, independent confirmation of margin visibility.",
     "evidenceIds": [
-      "tilled-docs-9"
+      "tilled-docs-9",
+      "tilled-docs-21",
+      "tilled-docs-10"
     ]
   },
   {
@@ -3465,9 +3512,11 @@
     "storyId": "cross-border-payouts",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers merchant onboarding, payouts speed settings, disputes, and dashboard features, but contains no mention of international sellers, multi-currency support, FX handling, or local bank rail settlement outside the US. Tilled appears to be a US-focused payment facilitator platform with no documented cross-border/local-currency payout capability.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Tilled's merchant onboarding, payouts dashboard, disputes, and webhooks, but contains no mention of multi-currency payouts, FX handling, or settlement to local/international bank rails — Tilled's docs appear US-focused (payout 'speed' only, no currency/geography details).",
+    "evidenceIds": [
+      "tilled-docs-10"
+    ]
   },
   {
     "productId": "tilled",
@@ -3475,12 +3524,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Tilled explicitly offers white-labeling of API, onboarding, and reporting console under a partner's own domain, and documents building custom UIs on top of its API (payouts, disputes, subscriptions data are accessible via Dashboard/API). This supports embeddable seller-facing surfaces but the evidence doesn't detail specific pre-built components for balances/transaction history or give independent proof of embedding fidelity. Missing for 10: dedicated embeddable balance/transaction-history widget docs, explicit component-level white-label UI examples, and independent/hands-on confirmation of the white-label experience.",
+    "rationale": "Tilled explicitly supports white-labeling (custom domain for API/console/dev portal, 'white-label functionality', 'Customize and build your own UI', OnboardingJS, DisputesAPI for custom dispute UI) which lets a developer embed seller-facing merchant/dispute/onboarding surfaces under their own brand. However, evidence does not show dedicated APIs/components specifically for balances or transaction history embedding — those appear only as Dashboard/Console views, not documented embeddable primitives. missing for 10: explicit balances API/component, explicit transaction-history API/component for embedding, independent confirmation of white-label UI in production.",
     "evidenceIds": [
       "tilled-docs-14",
       "tilled-docs-15",
+      "tilled-docs-18",
+      "tilled-docs-22",
+      "tilled-docs-25",
+      "tilled-docs-28",
       "tilled-docs-10",
-      "tilled-docs-11",
       "tilled-docs-13"
     ]
   },
@@ -3489,8 +3541,8 @@
     "storyId": "global-seller-coverage",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack item documents a coverage map of supported onboarding countries, local payment methods, or local-currency settlement; all citations relate to API/dashboard mechanics, merchant onboarding flow, and product journal updates rather than geographic/currency coverage. missing for 10: supported-country list, local payment method coverage, local-currency settlement documentation.",
+    "confidence": "high",
+    "rationale": "The evidence pack covers onboarding mechanics (API keys, no-code onboarding, merchant applications, pricing templates, dashboards) but contains no documentation of supported countries, local payment methods, or local-currency settlement as a coverage map — the exact ask of this story is unaddressed.",
     "evidenceIds": []
   },
   {
@@ -3498,20 +3550,26 @@
     "storyId": "holds-delayed-release",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence covers payouts, disputes, webhooks, and settlement/batch closing, but nothing describes holding seller funds in an escrow-like balance pending delivery or dispute windows, nor any release-on-trigger mechanism or documented limits for such holds — missing for 10: escrow/hold-funds concept, configurable release triggers, documented limits on hold duration or scope.",
+    "evidenceIds": [
+      "tilled-docs-10",
+      "tilled-docs-11",
+      "tilled-docs-5"
+    ]
   },
   {
     "productId": "tilled",
     "storyId": "in-person-omnichannel",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Tilled docs mention card-present terminal creation/testing and batch closing so in-person transactions settle at shift end, implying integration with the same merchant account, but there's no explicit tap-to-pay SDK or documentation showing unified balance/reporting dashboards combining online and in-person payments. Missing for 10: tap-to-pay SDK details, explicit unified reporting/balance evidence combining online and card-present transactions, and independent corroboration of terminal hardware support.",
+    "rationale": "Tilled documents batch closing for settlement at end of shift, a mock card-present provider for terminal creation/testing, and payouts/reporting/disputes that presumably unify online and in-person transactions under the same merchant balance and dashboard. However, there is no evidence of an actual terminal hardware catalog, tap-to-pay SDK for mobile devices, or documented reconciliation showing in-person and online payments reported identically in production. missing for 10: production tap-to-pay/mobile SDK documentation, physical terminal device support details, explicit confirmation that in-person settlement flows into the same balance/reporting as online with concrete examples, independent/hands-on corroboration beyond docs.",
     "evidenceIds": [
       "tilled-docs-5",
-      "tilled-docs-6"
+      "tilled-docs-6",
+      "tilled-docs-10",
+      "tilled-docs-26"
     ]
   },
   {
@@ -3520,7 +3578,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains only integration, onboarding, testing, and dashboard feature docs; none of it addresses an explicit documented split of liability for KYC/AML, card-network compliance, fraud losses, or seller misconduct between Tilled and the platform.",
+    "rationale": "The evidence pack covers onboarding, disputes, webhooks, testing, and dashboard UI features, but contains no documentation explicitly delineating responsibility split for KYC/AML ownership, card-network compliance, fraud loss liability, or seller misconduct between Tilled and the ISV/platform. No liability-allocation or compliance-responsibility docs are cited anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -3529,7 +3587,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items address fund segregation, custody of in-flight/held balances, yield on balances, or safeguarding from provider's own accounts; documentation covers API keys, payouts speed, disputes, and onboarding only. missing for 10: any mention of fund segregation/custody model, held-balance yield policy, or safeguarding disclosures.",
+    "rationale": "No evidence anywhere in the pack addresses fund segregation, custody of held/in-flight balances, yield on balances, or how platform funds are separated from Tilled's own accounts — the docs cover payments, onboarding, disputes, and dashboards but nothing on treasury/ledger custody. This is a fair question for a payments/PSP platform (finance leads care where funds sit), so the axis applies but is unaddressed.",
     "evidenceIds": []
   },
   {
@@ -3537,25 +3595,32 @@
     "storyId": "negative-balance-recovery",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only mentions that merchants can 'manage disputes' through the Dashboard, with no documentation of negative balance recovery, automatic debits against future earnings, bank account debits, or liability ordering for refunds/chargebacks exceeding balance.",
+    "confidence": "medium",
+    "rationale": "Evidence covers disputes/chargebacks management and payouts generally (docs-10, docs-11, docs-22, docs-26) but nothing describes recovering negative balances via automatic debits against future earnings or bank account, nor documentation of liability order. Missing for 10: negative-balance/reserve handling, automatic debit mechanics, bank-account clawback, and liability/documentation of who bears the loss.",
     "evidenceIds": [
-      "tilled-docs-11"
+      "tilled-docs-10",
+      "tilled-docs-11",
+      "tilled-docs-22",
+      "tilled-docs-26"
     ]
   },
   {
     "productId": "tilled",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Tilled offers API access for core payment operations (payments, webhooks, batches, testing) but several UI-only functions like dispute management and payout speed viewing are explicitly documented as Dashboard-only, and merchant onboarding has a no-code Dashboard option alongside API options, suggesting UI and API are not fully at parity. missing for 10: evidence that disputes, payout configuration, and subscription management can be fully performed via API rather than only through the Dashboard, plus independent confirmation of full API/UI parity.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Tilled exposes a broad payments API (payment intents, disputes API, webhooks API, merchant onboarding, batch close) that mirrors many Dashboard actions, but several UI-only functions have no documented API equivalent — e.g. viewing payout speed and managing subscriptions/pricing templates are described only as Dashboard workflows, and no llms.txt or agent-oriented API index exists to confirm full parity. missing for 10: documented API endpoints for payout-speed viewing, subscription management, pricing-template creation equivalent to Dashboard UI, and an agent-discoverable API index confirming full UI/API parity.",
     "evidenceIds": [
+      "tilled-docs-5",
+      "tilled-docs-9",
       "tilled-docs-10",
       "tilled-docs-11",
       "tilled-docs-13",
-      "tilled-docs-7",
-      "tilled-docs-5"
+      "tilled-docs-21",
+      "tilled-docs-22",
+      "tilled-probe-rt-1",
+      "tilled-probe-rt-2"
     ]
   },
   {
@@ -3563,8 +3628,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Tilled is a payments/merchant onboarding platform and the evidence pack contains no mention of bulk data export, open data formats, or data portability features for users to leave with their data. This is a plausible axis for a SaaS platform holding merchant/transaction data, but no evidence supports it.",
+    "confidence": "medium",
+    "rationale": "Tilled is a payments/merchant-processing platform; its docs cover API keys, merchants, disputes, webhooks, etc., but there is no mention of any bulk data export feature, open-format export (CSV/JSON dumps), or account portability/deletion mechanism that would let a user 'export all data and leave'. No evidence of such a capability exists in the pack.",
     "evidenceIds": []
   },
   {
@@ -3573,7 +3638,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Tilled is a closed payments platform/API service, not an open-source project; source code availability under an open license is not a relevant axis for this kind of product.",
+    "rationale": "Tilled is a payments API/platform product, not open-source software; the evidence pack shows only proprietary API docs and dashboard features, with no mention of source code or licensing. Open-source availability is not a fair axis for this type of commercial fintech SaaS product.",
     "evidenceIds": []
   },
   {
@@ -3582,7 +3647,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Tilled is a hosted payments infrastructure/PayFac-as-a-service platform, not open-source software; self-hosting the core product is a category error for this type of SaaS financial infrastructure product.",
+    "rationale": "Tilled is a payments-processing SaaS platform (merchant onboarding, payments API, dashboards); self-hosting the core product is not a plausible axis for this category of hosted payment infrastructure, which requires PCI compliance and centralized processing.",
     "evidenceIds": []
   },
   {
@@ -3590,9 +3655,14 @@
     "storyId": "payfac-graduation-path",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers Tilled's managed PayFac features (onboarding, pricing templates, webhooks, dashboards, white-labeling) but contains no mention of a graduation path toward registered payment facilitation, economics changes, or control transitions without replatforming. Missing for 10: any documentation of a registered-PayFac upgrade path, economics/revenue-share changes at that tier, or migration mechanics that avoid replatforming.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack documents Tilled's managed PayFac-as-a-Service onboarding, pricing templates, white-label options, and dashboard/API tooling, but nothing addresses a path for an ISV to later become an independently registered PayFac with more direct economics/control, nor any mention of a 'graduation' program or replatforming-free transition off Tilled's rails. This is a fair question for a PayFac-as-a-service platform (economics/liability evolution is a known concern in this space), so it applies, but no evidence supports it.",
+    "evidenceIds": [
+      "tilled-docs-7",
+      "tilled-docs-9",
+      "tilled-docs-14",
+      "tilled-docs-25"
+    ]
   },
   {
     "productId": "tilled",
@@ -3600,7 +3670,7 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Only one thin reference confirms that Tilled lets ops view a merchant's 'payout speed' in the Dashboard, implying some per-merchant payout timing configuration, but there is no documentation of specific schedule options (daily/weekly/monthly/manual) or instant payouts to cards/real-time rails. Missing for 10: explicit schedule types (daily/weekly/monthly/manual), instant payout to card support, real-time rails support, and confirmation that these are configurable per seller.",
+    "rationale": "Tilled docs mention viewing a merchant's 'payout speed' in the Dashboard, implying some configurability of payout timing per merchant, but there is no documentation of specific schedule options (daily/weekly/monthly/manual) or instant payouts to cards/real-time rails. Missing for 10: explicit schedule configuration options, instant/real-time payout rail support, per-seller granularity beyond a single 'speed' setting, and any independent corroboration.",
     "evidenceIds": [
       "tilled-docs-10"
     ]
@@ -3609,13 +3679,16 @@
     "productId": "tilled",
     "storyId": "platform-ledger-visibility",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs show payout speed settings, merchant pricing templates, and dispute management, implying some money-tracking infrastructure, but there is no explicit documentation of per-seller balance views, platform fee account tracking, or charge-to-split-to-payout traceability/reconciliation. Missing for 10: explicit balance-by-seller/fee-account reporting, transaction-level traceability from charge through split to payout, and reconciliation tooling or statements.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Tilled's docs cover pieces of the money-flow story — payouts and payout-speed visibility, merchant pricing templates (fee configuration), batch settlement/close, webhooks for event notifications, and a 'reporting console' — which together imply traceability from charge to payout, but there is no direct evidence of a unified ledger view showing balances by seller vs. platform fee accounts or penny-level reconciliation tooling. Missing for 10: explicit balance/ledger reporting UI, dedicated fee-account balance tracking, and reconciliation/audit-trail documentation tying charge→split→payout together.",
     "evidenceIds": [
+      "tilled-docs-5",
       "tilled-docs-9",
       "tilled-docs-10",
-      "tilled-docs-11"
+      "tilled-docs-14",
+      "tilled-docs-21",
+      "tilled-docs-23"
     ]
   },
   {
@@ -3624,7 +3697,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers onboarding, payouts, disputes management, webhooks, and API testing, but contains no mention of fraud/credit-risk scoring per sub-merchant, anomaly alerts, or tools to pause payouts/offboard risky sellers.",
+    "rationale": "Evidence covers onboarding, payouts, disputes, and webhooks but contains no mention of fraud/credit-risk scoring per sub-merchant, anomaly alerts, or tools to pause payouts/offboard sellers. Missing for 10: risk scoring signals, anomaly detection/alerting, payout pause/hold functionality, merchant offboarding workflow.",
     "evidenceIds": []
   },
   {
@@ -3632,8 +3705,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or geographic storage controls for Tilled's platform.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack discusses data residency, regional storage options, or data-center location choices for Tilled; the evidence is entirely about payments API, merchant onboarding, and dashboard features.",
     "evidenceIds": []
   },
   {
@@ -3642,7 +3715,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Tilled is a payments infrastructure/API platform for merchant onboarding and payment processing, not an AI model or AI product that trains on user data; the AI-training opt-out axis is a category error for this product type.",
+    "rationale": "Tilled is a payments/merchant-processing API platform, not an AI model or AI product handling user data for model training; there is no evidence of any AI training pipeline at all, so an 'opt out of AI training' privacy control is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3660,34 +3733,38 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Tilled is a payments infrastructure/API platform, not an AI tool or developer agent with telemetry collection concerns; the evidence pack contains no AI-native usage-tracking features at all, making telemetry opt-out a category mismatch rather than a missing capability.",
+    "rationale": "Tilled is a payments/processing API platform, not an AI tool with telemetry collection about AI usage; opting out of telemetry/usage tracking is not a relevant axis for this product category based on the evidence provided.",
     "evidenceIds": []
   },
   {
     "productId": "tilled",
     "storyId": "programmatic-seller-onboarding",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Tilled's docs show a merchant onboarding API with multiple integration paths — a no-code hosted option and a fully custom API/UI option — plus white-labeled hosted onboarding for enterprise partners, matching the 'hosted flows and embeddable components' ask. However, the evidence never explicitly details KYC/KYB data collection, bank account linking steps, or terms-of-service acceptance as part of that flow. Missing for 10: explicit KYC/KYB field/process documentation, bank account linking API details, and terms acceptance mechanism.",
+    "rationale": "Tilled's docs describe merchant onboarding via API (create/edit merchant applications), a no-code hosted onboarding option, a customizable OnboardingJS component for embedding, and Plaid integration for bank account verification — covering the core of the story. However, KYB/KYC terminology and explicit terms-of-service acceptance steps are not directly named, and there's no independent/hands-on confirmation beyond docs. missing for 10: explicit KYC/KYB step documentation, explicit terms-acceptance flow, and third-party corroboration of the onboarding UX.",
     "evidenceIds": [
       "tilled-docs-7",
       "tilled-docs-8",
       "tilled-docs-15",
-      "tilled-docs-14"
+      "tilled-docs-18",
+      "tilled-docs-19",
+      "tilled-docs-20"
     ]
   },
   {
     "productId": "tilled",
     "storyId": "progressive-onboarding",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Tilled docs show merchant applications have progressive statuses (created/started) that can be pre-filled and edited over time, and ISVs get an item-by-item onboarding progress view in the Dashboard, suggesting some staged onboarding exists. However there is no explicit evidence of a tunable minimum-to-sell model gated by payout thresholds or clearly defined 'requirements-due' states per seller like a formal verification/eligibility system. Missing for 10: explicit documentation of minimum data required to start accepting payments, payout-threshold-triggered requirement escalation, and named per-seller requirements-due states.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Tilled supports merchant applications that can be pre-filled/edited while in 'created' or 'started' status, no-code and API onboarding options, and dashboard progress tracking (API keys, application, first payment) suggesting a staged onboarding flow rather than all-or-nothing. However, there's no explicit documentation of tunable minimum-data-to-start-selling vs. deferred-collection-before-payout, nor explicit 'requirements-due' states tied to payout thresholds. missing for 10: explicit documentation of minimum-fields-to-start-selling vs progressive data collection gated by payout thresholds, named 'requirements due' or similar per-seller status states, and independent/hands-on confirmation of this tunable onboarding flow.",
     "evidenceIds": [
       "tilled-docs-8",
       "tilled-docs-12",
-      "tilled-docs-10"
+      "tilled-docs-27",
+      "tilled-docs-7",
+      "tilled-docs-20"
     ]
   },
   {
@@ -3696,11 +3773,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence shows settlement-related building blocks (batch closing/settlement per docs-5, payout visibility per docs-10, webhooks for event notifications per docs-4, and a hosted reporting console per docs-14) but nothing documents automated per-seller and rolled-up reconciliation reports, scheduled delivery, or finance-stack-consumable file/API exports. missing for 10: explicit reconciliation/settlement report generation, per-seller vs rolled-up aggregation, scheduled file exports or dedicated reporting API endpoints for finance systems.",
+    "rationale": "Tilled provides payout visibility, batch settlement, webhooks for real-time events, and a 'reporting console' mentioned for enterprise partners, which are building blocks for reconciliation, but there is no documented settlement/balance report API, scheduled file delivery, or per-seller vs rolled-up reporting output for finance systems to consume. missing for 10: explicit reconciliation/settlement report API or downloadable file exports, scheduled delivery mechanism, and per-seller vs aggregate rollup reporting.",
     "evidenceIds": [
       "tilled-docs-5",
       "tilled-docs-10",
       "tilled-docs-4",
+      "tilled-docs-23",
       "tilled-docs-14"
     ]
   },
@@ -3710,10 +3788,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Tilled's docs show merchants can view payout speed in a Dashboard (tilled-docs-10) and enterprise partners can white-label a 'reporting console' (tilled-docs-14), suggesting some self-serve payout visibility, but there is no evidence of per-seller statements, payout reconciliation reports, or bookkeeper-ready exports. missing for 10: per-seller statement generation, payout reconciliation report format/detail, CSV/export functionality for bookkeepers.",
+    "rationale": "Tilled's Dashboard gives merchants some self-serve financial visibility (payout speed views, dispute management, subscription management), suggesting sellers can check some money-related info without contacting ops, but there is no evidence of dedicated per-seller statements, payout reconciliation reports, or bookkeeper-friendly exports. Missing for 10: explicit statement generation, reconciliation report exports, CSV/accounting-export tooling, and any confirmation these outputs are self-serve enough for a bookkeeper to close the books.",
     "evidenceIds": [
       "tilled-docs-10",
-      "tilled-docs-14"
+      "tilled-docs-11",
+      "tilled-docs-13"
     ]
   },
   {
@@ -3722,21 +3801,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers merchant onboarding, pricing templates, payouts, disputes, and webhooks, but nothing describes splitting a single charge across multiple parties, taking a platform cut, or reversing/adjusting such splits as API objects. Tilled's evidence centers on single-merchant payment processing and ISV platform fee/pricing templates, not multi-party charge splitting. Missing for 10: any mention of split payments, multi-party charge routing, application fees, or transfer/reversal objects for splits.",
-    "evidenceIds": [
-      "tilled-docs-9",
-      "tilled-docs-10"
-    ]
+    "rationale": "The evidence pack shows Tilled's PayFac/ISV model — merchant onboarding, pricing templates for ISV fee percentages, payouts, disputes, webhooks — but nowhere describes a multi-party split-payment object that routes one charge across several sellers with adjustable/reversible splits. Tilled's fee model is ISV-vs-merchant (one merchant per charge), not marketplace-style fan-out to multiple sellers.",
+    "evidenceIds": []
   },
   {
     "productId": "tilled",
     "storyId": "submerchant-dispute-handling",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Only one doc snippet confirms merchants can manage disputes via the Dashboard, implying per-merchant (sub-merchant) dispute handling, but there's no evidence of API-based evidence submission, explicit chargeback routing logic, or automatic reconciliation of outcomes into seller balances. missing for 10: API-based dispute evidence submission, explicit per-seller chargeback routing details, automatic balance reconciliation after dispute outcome.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Tilled documents dispute management via both Dashboard and a DisputesAPI for custom flows, and webhooks provide real-time event notifications that could relay outcomes — consistent with a per-merchant marketplace model where each merchant has its own account. However, there's no explicit documentation confirming chargebacks are automatically routed/attributed to the correct sub-merchant or that dispute outcomes automatically reconcile against seller-specific balances/payouts. Missing for 10: explicit sub-merchant attribution logic for chargebacks, documentation of automatic balance/payout adjustment post-dispute-resolution, and any independent/hands-on confirmation of this workflow.",
     "evidenceIds": [
-      "tilled-docs-11"
+      "tilled-docs-11",
+      "tilled-docs-22",
+      "tilled-docs-4",
+      "tilled-docs-23",
+      "tilled-docs-10"
     ]
   },
   {
@@ -3744,8 +3824,8 @@
     "storyId": "tax-form-generation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence anywhere in the pack mentions 1099-K threshold tracking, tax form generation, delivery, filing, or a data-corrections workflow; the pack covers onboarding, payments, payouts, disputes, and dashboards but is silent on tax reporting entirely.",
+    "confidence": "high",
+    "rationale": "No evidence anywhere in the pack mentions 1099-K thresholds, tax form generation, delivery/filing, or a data correction workflow — the evidence only covers merchant onboarding, payments API, disputes, payouts, and webhooks. As a payments platform for ISVs, this axis clearly applies (payfacs typically handle 1099-K reporting for sub-merchants), but no documentation or feature evidence supports it.",
     "evidenceIds": []
   }
 ]
