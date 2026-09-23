@@ -71,4 +71,29 @@ export const probes: LocalProbe[] = [
       expect: /Client Version: v\d+\.\d+\.\d+/,
       timeoutMs: 30_000,
     },
+    {
+      // Honest negative: docs.crossplane.io/llms.txt redirects to the HTML docs shell
+      // (/latest/) instead of serving an agent-readable index — a soft-404, recorded as such
+      // (2026-09-23 depth spike).
+      probeId: 'docs-llms-txt-soft404',
+      productId: 'crossplane',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL --max-time 20 https://docs.crossplane.io/llms.txt | head -c 15'],
+      displayCommand: 'curl -sL https://docs.crossplane.io/llms.txt | head -c 15',
+      expect: /<!doctype html/,
+      timeoutMs: 30_000,
+    },
+    {
+      // Honest negative: opentofu.org publishes no llms.txt (404) — recorded absence from the
+      // 2026-09-23 depth spike.
+      probeId: 'site-llms-txt-absent',
+      productId: 'opentofu',
+      storyIds: ['agentic-agent-docs'],
+      bin: 'curl',
+      argv: ['sh', '-c', 'curl -sL -o /dev/null -w "HTTP %{http_code}" --max-time 20 https://opentofu.org/llms.txt'],
+      displayCommand: 'curl -sL -o /dev/null -w "HTTP %{http_code}" https://opentofu.org/llms.txt',
+      expect: /HTTP 404/,
+      timeoutMs: 30_000,
+    },
 ]
