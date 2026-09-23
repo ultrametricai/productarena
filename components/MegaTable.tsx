@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { HomeModeContext } from '@/components/HomeModes'
 import AiEraBadge from '@/components/AiEraBadge'
 import ConfidenceChip from '@/components/ConfidenceChip'
 import HotChip from '@/components/HotChip'
@@ -105,8 +106,10 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
   const [arenaId, setArenaId] = useState('all')
   const [showAll, setShowAll] = useState(false)
   // Founder 2026-09-16: companies by default — judged family sub-products (stripe-issuing,
-  // adyen-for-platforms, …) hide so a company appears once; this toggle reveals every line.
-  const [includeSubProducts, setIncludeSubProducts] = useState(false)
+  // adyen-for-platforms, …) hide so a company appears once. Founder 2026-09-23: the old
+  // include-sub-products checkbox is now the homepage's Products tab — the mode arrives via
+  // HomeModeContext (companies/HomeModes.tsx owns the ?view param and legacy ?all=1 links).
+  const includeSubProducts = useContext(HomeModeContext) === 'products'
   // Watch column only exists for logged-in readers (see lib/session.ts) — static HTML and the
   // anonymous view render the same 9-column table as before login existed.
   const watchlistOn = useSession().state === 'authenticated'
@@ -126,7 +129,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
     setDirection(dir === 'asc' || dir === 'desc' ? dir : defaultDirectionFor(col))
     const arena = p.get('arena')
     if (arena !== null && arenas.some((a) => a.id === arena)) setArenaId(arena)
-    if (p.get('all') === '1') setIncludeSubProducts(true)
     const q = p.get('q')
     if (q !== null && q !== '') setQuery(q)
     // Mount-only by design: the URL is the INITIAL view; after that the reader's clicks own it.
@@ -194,25 +196,6 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
         }}
       />
 
-      <label className="flex w-fit cursor-pointer items-center gap-2 text-xs text-zinc-500 transition hover:text-zinc-300">
-        <input
-          type="checkbox"
-          checked={includeSubProducts}
-          onChange={(e) => {
-            setIncludeSubProducts(e.target.checked)
-            setParams({ all: e.target.checked ? '1' : null })
-          }}
-          className="h-3.5 w-3.5 accent-emerald-400"
-        />
-        Include all products of companies
-        <span
-          title="Off: one row per company — a multi-product family (Stripe, Adyen…) shows only its parent. On: every judged product line ranks separately, as it does inside its own arena."
-          className="text-zinc-600"
-        >
-          ⓘ
-        </span>
-      </label>
-
       {/* lg (not md): with every sm/md column visible the table needs ~810px, so a 768–1023px
           viewport still gets the horizontal scroll container instead of page-level overflow. */}
       <div className="overflow-x-auto rounded-2xl border border-zinc-800 lg:overflow-x-visible">
@@ -250,6 +233,12 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                   the product name, so it shifted with name width and made the layout move. */}
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
                 <span className="sr-only">Compare</span>
+              </SortableTh>
+              {/* Founder 2026-09-23: an evidence column at the end — every ranking clicks
+                  through to the receipt that produced it (the product's /score page: every
+                  story, verdict, evidence item, and the arithmetic). */}
+              <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
+                <span title="The evidence behind this ranking — click a row's ⚖ for the full receipt: every story, verdict, and cited evidence item">Evidence</span>
               </SortableTh>
               {watchlistOn && (
                 <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="w-8">
@@ -391,6 +380,16 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                       +⇆
                     </Link>
                   </td>
+                  <td className="w-8 px-2 py-2 text-center">
+                    <Link
+                      href={`/arena/${row.arenaId}/product/${row.productId}/score`}
+                      title={`The evidence behind ${row.name}'s ranking — every story, verdict, and cited evidence item, with the arithmetic`}
+                      aria-label={`Evidence behind ${row.name}'s ranking`}
+                      className="inline-block rounded border border-zinc-800 px-1 font-mono text-[10px] leading-4 text-zinc-500 transition hover:border-emerald-400/40 hover:text-emerald-300"
+                    >
+                      ⚖
+                    </Link>
+                  </td>
                   {watchlistOn && (
                     <td className="px-2 py-2 text-center">
                       <WatchButton productId={row.productId} productName={row.name} size="sm" />
@@ -401,7 +400,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
             })}
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={watchlistOn ? 11 : 10} className="px-3 py-6 text-center text-zinc-500">
+                <td colSpan={watchlistOn ? 12 : 11} className="px-3 py-6 text-center text-zinc-500">
                   No products match &ldquo;{query}&rdquo;.
                 </td>
               </tr>

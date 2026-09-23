@@ -3,13 +3,15 @@
 //   ?rank=<column>  sort column (default agentReady elided)
 //   ?dir=asc|desc   only when it differs from the column's own default direction
 //   ?arena=<id>     arena scope ('all' elided)
-//   ?all=1          "Include all products of companies" (off elided)
 //   ?q=<text>       text filter (empty elided)
+// Sub-product visibility is no longer a checkbox/?all param: the homepage's Companies|Products
+// tabs own it via HomeModeContext (legacy ?all=1 links resolve in components/HomeModes.tsx).
 // Contract per param: (a) present on mount → the view applies after hydration, (b) changing the
 // control writes it, (c) the default state removes it; invalid values fall back silently.
 import { fireEvent, render, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import MegaTable from '@/components/MegaTable'
+import { HomeModeContext } from '@/components/HomeModes'
 import type { MegaTableRow } from '@/lib/megaTableSort'
 
 const PATH = '/productarena/'
@@ -69,14 +71,23 @@ describe('mount applies URL params (invalids fall back silently)', () => {
     expect(names.indexOf('Stripe')).toBeLessThan(names.indexOf('Notion'))
   })
 
-  it('?arena=<id>, ?all=1 and ?q= apply the scope, sub-product toggle and text filter', () => {
-    setUrl('?arena=payments&all=1&q=stripe')
+  it('?arena=<id> and ?q= apply the scope and text filter', () => {
+    setUrl('?arena=payments&q=stripe')
     const { container } = mount()
     expect((within(container).getByLabelText('Filter by arena') as HTMLSelectElement).value).toBe('payments')
-    expect((within(container).getByRole('checkbox') as HTMLInputElement).checked).toBe(true)
     expect((within(container).getByLabelText('Filter products by name or vendor') as HTMLInputElement).value).toBe('stripe')
     expect(within(container).queryByText('Notion')).toBeNull()
-    expect(within(container).getByText('Stripe Issuing')).toBeDefined() // all=1 reveals the sub-product
+  })
+
+  it('sub-products hide by default and rank in products mode (HomeModeContext)', () => {
+    const { container } = mount()
+    expect(within(container).queryByText('Stripe Issuing')).toBeNull() // companies: one row per company
+    const products = render(
+      <HomeModeContext.Provider value="products">
+        <MegaTable rows={ROWS} arenas={ARENAS} />
+      </HomeModeContext.Provider>,
+    )
+    expect(within(products.container).getByText('Stripe Issuing')).toBeDefined()
   })
 
   it('invalid ?rank/?dir/?arena fall back to the defaults, silently', () => {
@@ -108,19 +119,13 @@ describe('interactions write params; defaults remove them', () => {
     expect(params().get('dir')).toBeNull()
   })
 
-  it('arena scope, sub-product toggle and text filter write and clear their params', () => {
+  it('arena scope and text filter write and clear their params', () => {
     const { container } = mount()
     const select = within(container).getByLabelText('Filter by arena')
     fireEvent.change(select, { target: { value: 'docs' } })
     expect(params().get('arena')).toBe('docs')
     fireEvent.change(select, { target: { value: 'all' } })
     expect(params().get('arena')).toBeNull()
-
-    const checkbox = within(container).getByRole('checkbox')
-    fireEvent.click(checkbox)
-    expect(params().get('all')).toBe('1')
-    fireEvent.click(checkbox)
-    expect(params().get('all')).toBeNull()
 
     const input = within(container).getByLabelText('Filter products by name or vendor')
     fireEvent.change(input, { target: { value: 'notion' } })

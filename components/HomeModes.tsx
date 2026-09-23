@@ -1,35 +1,40 @@
 'use client'
 
-import { type ReactNode, useEffect, useState } from 'react'
+import { createContext, type ReactNode, useEffect, useState } from 'react'
 import { readParam, setParams } from '@/lib/urlState'
 
 // Homepage mode switch (founder 2026-09-21: "add processes onto the homepage as well, maybe have
-// two modes, company mode/process mode"). Both modes are server-rendered into the static HTML —
-// companies visible by default (the homepage IS the table, founder call 2026-09-14, and the SEO
-// surface is unchanged), processes toggled in client-side via CSS. The choice persists per
-// device; readers who live in process land come back to it.
+// two modes, company mode/process mode"; founder 2026-09-23: "add 'Products' as the 3rd ranking
+// set which will replace the 'include all products of companies' button"). Companies and
+// Products share ONE server-rendered table — the mode reaches MegaTable through
+// HomeModeContext (client provider around server children), so no second copy of the row data
+// ships in the page. Processes is toggled in client-side via CSS as before.
 //
-// Shareable URLs (founder 2026-09-21, lib/urlState.ts): ?view=processes reproduces the process
-// mode for whoever the link is sent to. URL ONLY (founder 2026-09-23): restoring the device's
-// last mode from localStorage after hydration flashed companies→processes on every load for
-// process-mode readers — a pristine visit is now always companies with zero flicker, and the
-// one expected post-hydration flip is a shared ?view=processes link opening in the sender's view.
-type Mode = 'companies' | 'processes'
+// Shareable URLs (lib/urlState.ts): ?view=products / ?view=processes reproduce the sender's
+// mode. URL ONLY (founder 2026-09-23): restoring the device's last mode from localStorage after
+// hydration flashed companies→processes on every load for process-mode readers — a pristine
+// visit is now always companies with zero flicker. Legacy ?all=1 links (the retired
+// include-sub-products checkbox) resolve to products mode.
+export type HomeMode = 'companies' | 'products' | 'processes'
+
+export const HomeModeContext = createContext<HomeMode>('companies')
 
 export default function HomeModes({ companies, processes }: { companies: ReactNode; processes: ReactNode }) {
-  const [mode, setMode] = useState<Mode>('companies')
+  const [mode, setMode] = useState<HomeMode>('companies')
   /* eslint-disable react-hooks/set-state-in-effect -- one-time post-hydration sync FROM the URL
      (external system). The static HTML must render the default mode, so this cannot be a
      useState initializer (hydration mismatch); it runs once and renders at most one extra pass. */
   useEffect(() => {
-    if (readParam('view') === 'processes') setMode('processes')
+    const view = readParam('view')
+    if (view === 'processes' || view === 'products') setMode(view)
+    else if (readParam('all') === '1') setMode('products')
   }, [])
   /* eslint-enable react-hooks/set-state-in-effect */
-  const pick = (m: Mode) => {
+  const pick = (m: HomeMode) => {
     setMode(m)
-    setParams({ view: m === 'companies' ? null : m })
+    setParams({ view: m === 'companies' ? null : m, all: null })
   }
-  const tab = (m: Mode, label: string, title: string) => (
+  const tab = (m: HomeMode, label: string, title: string) => (
     <button
       type="button"
       onClick={() => pick(m)}
@@ -46,13 +51,16 @@ export default function HomeModes({ companies, processes }: { companies: ReactNo
   )
 
   return (
-    <div>
-      <div className="mb-4 inline-flex items-center gap-1 rounded-full border border-zinc-800 p-1">
-        {tab('companies', '🏢 Companies', 'Every product judged across every arena — the mega-table')}
-        {tab('processes', '🔁 Processes', 'Startup processes, the software that runs them, and the best an agent can do today')}
+    <HomeModeContext.Provider value={mode}>
+      <div>
+        <div className="mb-4 inline-flex items-center gap-1 rounded-full border border-zinc-800 p-1">
+          {tab('companies', '🏢 Companies', 'One row per company — a multi-product family (Stripe, Adyen…) shows only its parent')}
+          {tab('products', '📦 Products', 'Every judged product line ranked separately, as it does inside its own arena')}
+          {tab('processes', '🔁 Processes', 'Startup processes, the software that runs them, and the best an agent can do today')}
+        </div>
+        <div className={mode !== 'processes' ? '' : 'hidden'}>{companies}</div>
+        <div className={mode === 'processes' ? '' : 'hidden'}>{processes}</div>
       </div>
-      <div className={mode === 'companies' ? '' : 'hidden'}>{companies}</div>
-      <div className={mode === 'processes' ? '' : 'hidden'}>{processes}</div>
-    </div>
+    </HomeModeContext.Provider>
   )
 }
