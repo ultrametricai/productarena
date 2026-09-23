@@ -99,6 +99,10 @@ const NAV_LABELS: Record<string, string> = {
   "self-hosted-assistants": "Self-hosted AI",
   "email-marketing": "Email Mktg",
   "frontier-models": "Frontier models",
+  "compliance-automation": "Compliance",
+  "applicant-tracking": "ATS",
+  "domain-registrars": "Registrars",
+  "sso-identity": "SSO / IdP",
 };
 
 // Build-time only, best-effort: repo is currently private so this 404s and we fall back to

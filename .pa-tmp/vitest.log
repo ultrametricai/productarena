@@ -2,19 +2,156 @@
   - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
 Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
 
- RUN  v5.0.1 /Users/judegomila/Documents/GitHub/productarena/.claude/worktrees/agent-a7de3fb215d00e627
+ RUN  v5.0.1 /Users/judegomila/Documents/GitHub/productarena/.claude/worktrees/agent-a571f3db9f0412041
 
- ❯ lib/__tests__/search-matching.test.ts (18 tests | 2 failed) 13ms
+ ❯ lib/__tests__/processRankings.test.ts (18 tests | 1 failed) 344ms
+   ❯ end-to-end: launch-website chain (founder ask: key other vendors for every move) (2)
+     × site generation lists ChatGPT (ai-assistants) and Framer/Figma/Canva (design-tools) beside the vibe-coding roster, each evidence-backed 9ms
+ ❯ pipeline/__tests__/stepPrompts.test.ts (17 tests | 2 failed) 154ms
+   ❯ data/step-prompts.json (6)
+     × uses the literal {{vendor}} placeholder exactly when the step has a vendor market 3ms
+     × quotes endpoints only from the step's grounded vendor calls (data/step-vendor-calls.json) 2ms
+ ❯ lib/__tests__/search-matching.test.ts (18 tests | 1 failed) 10ms
    ❯ search-aliases.json integrity (4)
-     × covers EVERY arena with 3-8 alias phrases 4ms
-     × keeps alias phrases free of matcher-stripped chrome (best/top prefixes, tools/software suffixes) 6ms
+     × covers EVERY arena with 3-8 alias phrases 3ms
 Not implemented: navigation to another Document
 $ tsx pipeline/cli.ts derive --category desktop-os
 
-⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  pipeline/__tests__/stepPrompts.test.ts > data/step-prompts.json > uses the literal {{vendor}} placeholder exactly when the step has a vendor market
+AssertionError: comp_001:n1 market=true: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ pipeline/__tests__/stepPrompts.test.ts:205:97
+    203|       const node = nodeByKey.get(`${e.taskId}:${e.nodeId}`)!
+    204|       const market = coveringArenaId(node) !== null
+    205|       expect(e.prompt.includes(VENDOR_PLACEHOLDER), `${e.taskId}:${e.n…
+       |                                                                                                 ^
+    206|     }
+    207|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  pipeline/__tests__/stepPrompts.test.ts > data/step-prompts.json > quotes endpoints only from the step's grounded vendor calls (data/step-vendor-calls.json)
+AssertionError: hr_013:n2 quotes ungrounded endpoint "POST /rest/contracts": expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ pipeline/__tests__/stepPrompts.test.ts:217:11
+    215|           grounded.some((m) => m.includes(endpoint)),
+    216|           `${e.taskId}:${e.nodeId} quotes ungrounded endpoint "${endpo…
+    217|         ).toBe(true)
+       |           ^
+    218|       }
+    219|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  lib/__tests__/processRankings.test.ts > end-to-end: launch-website chain (founder ask: key other vendors for every move) > site generation lists ChatGPT (ai-assistants) and Framer/Figma/Canva (design-tools) beside the vibe-coding roster, each evidence-backed
+Error: Snapshot `end-to-end: launch-website chain (founder ask: key other vendors for every move) > site generation lists ChatGPT (ai-assistants) and Framer/Figma/Canva (design-tools) beside the vibe-coding roster, each evidence-backed 1` mismatched
+
+- Expected
++ Received
+
+@@ -3,12 +3,19 @@
+      "steps": [
+        {
+          "extras": [],
+          "label": "Check registrar availability across TLDs",
+          "nodeId": "n1",
+-         "primary": null,
+-       },
++         "primary": [
++           "name-com:52.4",
++           "godaddy:48.8",
++           "dynadot:44.2",
++           "porkbun:43.1",
++           "cloudflare-registrar:40.4",
++           "namecheap:13.1",
++         ],
++       },
+        {
+          "extras": [],
+          "label": "Check matching social handles",
+          "nodeId": "n2",
+          "primary": null,
+@@ -41,11 +48,18 @@
+        },
+        {
+          "extras": [],
+          "label": "Register at Name.com",
+          "nodeId": "n2",
+-         "primary": null,
++         "primary": [
++           "name-com:42.9",
++           "cloudflare-registrar:42.4",
++           "porkbun:34.2",
++           "dynadot:32.1",
++           "godaddy:31.6",
++           "namecheap:8.5",
++         ],
+        },
+        {
+          "extras": [],
+          "label": "Provision DNS/SSL (Cloudflare)",
+          "nodeId": "n3",
+@@ -130,17 +144,31 @@
+      "steps": [
+        {
+          "extras": [],
+          "label": "Search domain availability",
+          "nodeId": "n1",
+-         "primary": null,
++         "primary": [
++           "name-com:52.4",
++           "godaddy:48.8",
++           "dynadot:44.2",
++           "porkbun:43.1",
++           "cloudflare-registrar:40.4",
++           "namecheap:13.1",
++         ],
+        },
+        {
+          "extras": [],
+          "label": "Register domain",
+          "nodeId": "n2",
+-         "primary": null,
++         "primary": [
++           "porkbun:68.8",
++           "name-com:58",
++           "godaddy:48",
++           "dynadot:38.4",
++           "cloudflare-registrar:36",
++           "namecheap:12",
++         ],
+        },
+        {
+          "extras": [],
+          "label": "Transfer DNS to Cloudflare",
+          "nodeId": "n3",
+
+ ❯ lib/__tests__/processRankings.test.ts:380:22
+    378|     const publish = snapshot.find((t) => t.task === 'site_001')!.steps…
+    379|     expect(publish.extras.some((e) => e.arena === 'vibe-coding' && e.v…
+    380|     expect(snapshot).toMatchSnapshot()
+       |                      ^
+    381|   })
+    382|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
 
  FAIL  lib/__tests__/search-matching.test.ts > search-aliases.json integrity > covers EVERY arena with 3-8 alias phrases
-AssertionError: arena frontier-models has 10 aliases (want 3-8): expected 10 to be less than or equal to 8
+AssertionError: arena compliance-automation has 9 aliases (want 3-8): expected 9 to be less than or equal to 8
  ❯ lib/__tests__/search-matching.test.ts:64:87
      62|       expect(aliases, `arena ${id} has no aliases`).toBeDefined()
      63|       expect(aliases.length, `arena ${id} has ${aliases?.length} alias…
@@ -23,33 +160,15 @@ AssertionError: arena frontier-models has 10 aliases (want 3-8): expected 10 to 
      65|     }
      66|   })
 
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
-
- FAIL  lib/__tests__/search-matching.test.ts > search-aliases.json integrity > keeps alias phrases free of matcher-stripped chrome (best/top prefixes, tools/software suffixes)
-AssertionError: alias "best ai model" (frontier-models) should not start with best/top/great: expected 'best ai model' not to match /^(?:best|top|great)\s/
-
-- Expected:
-/^(?:best|top|great)\s/
-
-+ Received:
-"best ai model"
-
- ❯ lib/__tests__/search-matching.test.ts:80:84
-     78|     for (const [id, aliases] of Object.entries(arenaAliases)) {
-     79|       for (const a of aliases) {
-     80|         expect(a, `alias "${a}" (${id}) should not start with best/top…
-       |                                                                                    ^
-     81|         expect(a, `alias "${a}" (${id}) should be lowercase`).toBe(a.t…
-     82|       }
-
-⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
 
 
- Test Files  1 failed | 154 passed (155)
-      Tests  2 failed | 1629 passed (1631)
-   Start at  13:11:07
-   Duration  36.21s (tests 51%, environment 24%, setup 13%, import 7%, transform 4%, worker 1%)
+  Snapshots  1 failed
+ Test Files  3 failed | 155 passed (158)
+      Tests  4 failed | 1654 passed (1658)
+   Start at  17:04:46
+   Duration  28.63s (tests 55%, environment 19%, setup 13%, import 8%, transform 3%, worker 1%)
 
-    Isolate  155 workers spawned · ~179ms startup each (spawn + environment, per file)
-             at least ~13.72s faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  158 workers spawned · ~132ms startup each (spawn + environment, per file)
+             at least ~10.29s faster with isolate: false — reuses workers across files instead of one per file
 

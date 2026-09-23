@@ -240,10 +240,12 @@ describe('vendor -> arena mapping', () => {
   it('every corpus vendorOption is either arena-tracked or an intentional unlinked chip', () => {
     const tracked = new Set(Object.keys(VENDOR_ARENA))
     // Untracked options we still show honestly (no arena yet) — keep this list deliberate.
-    // (legalzoom and mailchimp graduated to tracked when legal-ops/email-marketing shipped.)
+    // (legalzoom and mailchimp graduated to tracked when legal-ops/email-marketing shipped;
+    // vanta/secureframe/oneleet, namecheap/name_com/porkbun graduated 2026-09-22 when the
+    // wave-5 compliance-automation and domain-registrars arenas shipped.)
     const allowedUntracked = new Set([
       'doola', 'google_sheets', 'google_drive', 'dropbox', 'northwest',
-      'vanta', 'termly', 'iubenda', 'producthunt', 'betalist', 'hackernews',
+      'termly', 'iubenda', 'producthunt', 'betalist', 'hackernews',
       'ahrefs', 'semrush', 'google_search_console', 'apollo', 'sendgrid',
       // vendor_011 "Compare on evidence": our own surface, labeled '(ours)' — honest
       // affiliation, never passed off as an independently judged product.
@@ -251,16 +253,13 @@ describe('vendor -> arena mapping', () => {
       // 2026-09-22 corpus expansion — real suppliers with no arena yet, shown as honest
       // unlinked chips: R&D-credit study shops, pen-test firms, 401(k) providers, MDMs,
       // EOR/status-page/questionnaire vendors, and mobile build/submit tooling.
-      // 2026-09-22 founder: 'check domain availability' had an empty vendor cell — the
-      // registrar market has no arena yet, so these are honest unlinked chips.
-      'name_com', 'namecheap', 'porkbun',
-      'fondo', 'neo_tax', 'cobalt', 'oneleet', 'guideline', 'human_interest',
+      'fondo', 'neo_tax', 'cobalt', 'guideline', 'human_interest',
       'kandji', 'jamf', 'remote', 'statuspage', 'conveyor', 'fastlane', 'expo',
       // 2026-09-22 wave-3 vendor-cell fill — real suppliers with no arena yet (virtual-address
-      // providers, password managers, compliance automation, trademark watch services), every
-      // listed signup URL curl-verified 200 in lib/processes.ts.
+      // providers, password managers, trademark watch services), every listed signup URL
+      // curl-verified 200 in lib/processes.ts.
       'stable', 'earth_class_mail', 'virtualpostmail',
-      'onepassword', 'bitwarden', 'dashlane', 'secureframe',
+      'onepassword', 'bitwarden', 'dashlane',
       'markify', 'corsearch', 'harbor_compliance',
     ])
     for (const task of loadProcesses(DATA_DIR)) {

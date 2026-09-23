@@ -204,7 +204,8 @@ describe('tryit assembly (committed corpus)', () => {
   it('mercury is tryable via the live MCP endpoint alone; unknown products are not', () => {
     expect(hasTryIt('startup-banking', 'mercury')).toBe(true)
     expect(buildRecordedStories('startup-banking', 'mercury', [])).toEqual([])
-    expect(hasTryIt('payroll', 'gusto')).toBe(false) // docs-only MCP link, no proofs → no fake try
+    expect(hasTryIt('payroll', 'gusto')).toBe(true) // official MCP server evidence → live endpoint qualifies
+    expect(hasTryIt('accounting', 'quickbooks')).toBe(false) // docs-only MCP link, no proofs → no fake try
   })
 
   it('cross-links founder processes only for the arena the vendor is mapped to', () => {
