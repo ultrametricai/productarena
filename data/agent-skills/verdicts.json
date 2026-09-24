@@ -4,8 +4,8 @@
     "storyId": "active-maintenance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack includes docs and community discussion about Skills functionality but contains no evidence about the anthropics/skills repo's release cadence, issue triage practices, or acceptance of community-contributed skills/PRs — nothing about commit frequency, changelog, or contribution workflow.",
+    "confidence": "medium",
+    "rationale": "The evidence pack documents the Skills feature, its docs, and GitHub repo existence, but contains no evidence about release cadence, issue triage practices, or accepted community pull requests. The one date reference (Dec 18, 2025 standard publication) doesn't establish an ongoing maintenance pattern.",
     "evidenceIds": []
   },
   {
@@ -14,19 +14,19 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Anthropic ships an explicit skill-creator meta-skill that creates new skills, iteratively improves them, and benchmarks performance/triggering accuracy, plus a canonical template SKILL.md and a public open spec (agentskills.io) defining required frontmatter, folder structure, and file conventions — together covering end-to-end authoring and packaging. Community reports (comm-4, comm-5) corroborate real-world use of authored skills, though multiple users report triggering/discovery reliability issues once packaged (comm-6/7/9/11/12) which is a secondary caveat rather than a failure of the authoring workflow itself. missing for 10: independent hands-on verification specifically of the skill-creator meta-skill workflow (vs. just docs), and stronger evidence that agent-authored skills reliably self-trigger post-packaging.",
+    "rationale": "Anthropic provides a dedicated skill-creator meta-skill that creates new skills and iteratively improves them, benchmarks performance, and optimizes descriptions for triggering; a public open spec (agentskills.io) defines required SKILL.md structure, frontmatter, and folder layout; and a template repo (template/SKILL.md) gives a scaffold to follow. Community evidence corroborates hands-on authoring of custom skills, though some users report unreliable auto-invocation which is a separate discovery-trigger concern, not an authoring/packaging gap. missing for 10: no independent hands-on report specifically validating the skill-creator meta-skill workflow end-to-end, and no evidence of automated packaging/validation tooling (e.g., a linter/CLI to package a skill for distribution) beyond manual folder conventions.",
     "evidenceIds": [
       "anthropic-skills-docs-13",
       "anthropic-skills-docs-14",
-      "anthropic-skills-docs-29",
       "anthropic-skills-docs-30",
-      "anthropic-skills-docs-17",
+      "anthropic-skills-docs-29",
       "anthropic-skills-docs-26",
       "anthropic-skills-docs-51",
       "anthropic-skills-docs-52",
+      "anthropic-skills-docs-44",
+      "anthropic-skills-docs-17",
       "anthropic-skills-gh-3",
-      "anthropic-skills-comm-4",
-      "anthropic-skills-comm-9"
+      "anthropic-skills-comm-5"
     ]
   },
   {
@@ -82,30 +82,32 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Skills as packaged instructions/resources Claude loads when relevant, and related Claude Code features like background 'Agent view' sessions and 'Agent teams' for coordinating instances, but none of this describes setting up autonomous, unattended automations (e.g., scheduled or event-triggered background runs) — it only covers monitoring already-running sessions or invoking skills within an active conversation. Missing for 10: evidence of scheduling/triggers for unattended runs, evidence of automations executing without a user-initiated session, and any hands-on confirmation of autonomous background operation.",
+    "rationale": "The evidence pack describes Skills as capability-packaging (SKILL.md files, plugins, marketplaces) that Claude loads into context during an active session, not as a mechanism for scheduling or triggering autonomous background automations. While adjacent Claude Code features like 'Agent view' (background sessions) and 'Agent teams' are mentioned, none of this is tied to Skills setting up autonomous background runs — Skills require Claude to be actively working and decide (often unreliably per community reports) whether to invoke them. Missing for 10: any documentation of Skills triggering scheduled/unattended background automations, or evidence linking Skills specifically to the background/agent-view features.",
     "evidenceIds": [
+      "anthropic-skills-docs-25",
       "anthropic-skills-docs-55",
       "anthropic-skills-docs-56",
-      "anthropic-skills-docs-59"
+      "anthropic-skills-comm-6",
+      "anthropic-skills-comm-9"
     ]
   },
   {
     "productId": "anthropic-skills",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "disputed",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Claude Code/Skills evidence shows genuine task-delegation to a built-in AI assistant: subagents, agent teams, background 'agent view', and an Agent SDK for building autonomous agents, plus skills that let Claude autonomously invoke bundled tools/scripts. However, multiple community reports describe skills/agent delegation as unreliable — agents 'just don't use them without being asked,' triggering is 'hit or miss,' and some users had to bypass the mechanism by pasting instructions into AGENTS.md — a real caveat on how dependably delegation works in practice. Missing for 10: independent benchmarks confirming reliable autonomous delegation, and resolution of the widely reported triggering inconsistency.",
+    "rationale": "Anthropic's docs claim Claude automatically detects and loads relevant Skills when delegating a task (docs-2, docs-25, gh-9), effectively letting users delegate to the built-in assistant which then invokes specialized capabilities. However, multiple hands-on community reports concretely contradict automatic triggering, describing skills frequently not being invoked even when explicitly named, forcing manual invocation or pasting content into AGENTS.md instead (comm-6, comm-7, comm-9, comm-11, comm-12, comm-14). Missing for 10: reliable automatic delegation without manual workarounds, and independent benchmarks confirming trigger accuracy.",
     "evidenceIds": [
-      "anthropic-skills-docs-54",
-      "anthropic-skills-docs-55",
-      "anthropic-skills-docs-56",
-      "anthropic-skills-docs-59",
+      "anthropic-skills-docs-2",
       "anthropic-skills-docs-25",
+      "anthropic-skills-gh-9",
       "anthropic-skills-comm-6",
+      "anthropic-skills-comm-7",
       "anthropic-skills-comm-9",
       "anthropic-skills-comm-11",
-      "anthropic-skills-comm-12"
+      "anthropic-skills-comm-12",
+      "anthropic-skills-comm-14"
     ]
   },
   {
@@ -114,13 +116,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Skills can be invoked entirely programmatically via the Messages API (container parameter with skill_id, up to 20 skills per request, Skills API for upload/management), which is inherently headless and usable in automated/CI pipelines rather than requiring a UI. However, there is no explicit documentation or example showing a CI/CD workflow, GitHub Actions integration, or headless CLI invocation of Skills specifically. Missing for 10: explicit CI/automation examples, headless-mode CLI docs for skills, and any first-party or community confirmation of running Skills unattended in a pipeline.",
+    "rationale": "Skills can be invoked headlessly via the Messages/Skills API (container parameter, skill_id) and via the Claude Agent SDK for building production agents, which supports non-interactive/automated use outside the interactive CLI. However, there's no explicit CI/pipeline example, and community reports note skills are sometimes inconsistently triggered even in interactive use, raising doubts about reliability in unattended automation. Missing for 10: an explicit CI/automation example or tutorial, independent verification of reliable headless triggering, and confirmation that skill invocation works deterministically without human-in-the-loop prompting.",
     "evidenceIds": [
       "anthropic-skills-docs-10",
       "anthropic-skills-docs-23",
-      "anthropic-skills-docs-37",
       "anthropic-skills-docs-24",
-      "anthropic-skills-docs-49"
+      "anthropic-skills-docs-59",
+      "anthropic-skills-docs-63",
+      "anthropic-skills-comm-6",
+      "anthropic-skills-comm-9"
     ]
   },
   {
@@ -142,12 +146,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a packaging/instruction-format standard (SKILL.md files, directories of scripts/resources) that gives agents like Claude Code or the Claude API new capabilities — it is not itself a service that exposes an official MCP server for other agents to connect to. Evidence only shows Claude Code acting as an MCP *client* (connecting to external MCP servers) and plugins that may *bundle* MCP servers, which is the client-side capability, not Skills serving as an MCP endpoint — a category mismatch for this axis.",
-    "evidenceIds": [
-      "anthropic-skills-docs-57",
-      "anthropic-skills-docs-6",
-      "anthropic-skills-docs-21"
-    ]
+    "rationale": "Anthropic Skills is a packaging/extension mechanism consumed by an agent (Claude Code/Claude API), not a standalone service meant to be connected to as an MCP server by other agents. Evidence shows Claude Code connecting OUT to MCP servers and plugins optionally bundling MCP servers as one component type, but nothing shows Skills itself exposed as an MCP server endpoint for external agents to connect to — this is a category mismatch (client-side agent feature, not a server axis).",
+    "evidenceIds": []
   },
   {
     "productId": "anthropic-skills",
@@ -180,15 +180,16 @@
     "storyId": "agentic-public-api",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Anthropic documents a public Skills API: Skills are specified via the `container` parameter in the Messages API (up to 20 per request), and can be uploaded/managed through a dedicated Skills API endpoint, alongside SDK/plugin tooling for programmatic use. This gives AI-native users a clear, documented path to drive the product via API rather than only UI. Missing for 10: independent/hands-on corroboration of the API's real-world reliability and rate limits, and more detail on authentication/versioning specifics beyond the docs themselves.",
+    "confidence": "medium",
+    "rationale": "Anthropic documents a dedicated Skills API for uploading/managing skills and a Messages API `container` parameter (with `skill_id`, `type`, `version`, up to 20 skills per request) letting developers drive skills programmatically, alongside the open Agent Skills spec for portability. missing for 10: independent hands-on developer corroboration of the API (auth, rate limits, error handling) beyond first-party docs.",
     "evidenceIds": [
       "anthropic-skills-docs-10",
       "anthropic-skills-docs-23",
       "anthropic-skills-docs-24",
       "anthropic-skills-docs-37",
       "anthropic-skills-docs-39",
-      "anthropic-skills-docs-49"
+      "anthropic-skills-docs-49",
+      "anthropic-skills-docs-67"
     ]
   },
   {
@@ -197,7 +198,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a mechanism for packaging instructions/resources that Claude loads into context; it is not an identity/credential-issuance system and has no concept of scoped API keys or least-privilege credential minting. Issuing scoped credentials is a wrong axis for this product category.",
+    "rationale": "Anthropic Skills is a mechanism for packaging instructions/scripts for Claude to load, not an identity/credential management system; scoped API credential issuance is outside its product category.",
     "evidenceIds": []
   },
   {
@@ -205,16 +206,18 @@
     "storyId": "agentic-sdks",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Anthropic provides official Messages/Skills API with `container` parameter, skill_id/version fields, upload/management via the Skills API, and documented request limits (up to 20 skills per request), letting developers build against a genuine official SDK/API surface rather than a reverse-engineered one. This is corroborated by first-party API docs plus an open cross-tool specification (agentskills.io). missing for 10: independent hands-on developer reports specifically building against the Skills API (not just Claude Code usage), and no mention of language-specific SDK code samples (Python/TS) for the Skills API endpoints.",
+    "confidence": "medium",
+    "rationale": "Anthropic provides official SDK-level integration points for Skills: the Messages API `container` parameter and Skills API for uploading/managing skills, plus the Claude Agent SDK with dedicated skills docs for building custom agents that discover and invoke skills programmatically. missing for 10: independent/hands-on developer corroboration of building production apps against these SDKs (community evidence covers skill-triggering reliability, not SDK integration experience).",
     "evidenceIds": [
       "anthropic-skills-docs-10",
       "anthropic-skills-docs-23",
       "anthropic-skills-docs-24",
       "anthropic-skills-docs-37",
-      "anthropic-skills-docs-39",
       "anthropic-skills-docs-49",
-      "anthropic-skills-docs-12"
+      "anthropic-skills-docs-59",
+      "anthropic-skills-docs-63",
+      "anthropic-skills-docs-64",
+      "anthropic-skills-docs-62"
     ]
   },
   {
@@ -223,7 +226,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a mechanism for packaging instructions/scripts that Claude can load and invoke; it is not an event/webhook subscription system, so this axis is a category error for this product type.",
+    "rationale": "Anthropic Skills is a mechanism for packaging instructions/scripts for Claude agents, not an event-driven notification/subscription system; webhooks are outside its product category, so this axis is a category error rather than an unmet capability.",
     "evidenceIds": []
   },
   {
@@ -232,7 +235,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a mechanism for packaging instructions/scripts for Claude to load, not an API product with an interactive reference/playground; no evidence pack item describes a runnable, interactive API explorer for Skills itself.",
+    "rationale": "Anthropic Skills is a packaging mechanism for agent capabilities (SKILL.md files, plugins, API skill_id parameters), not an interactive API-reference documentation product; the evidence pack covers docs, plugins, and community sentiment but nothing resembling an interactive/runnable API reference explorer, which is a different product category (e.g., API playground/docs site).",
     "evidenceIds": []
   },
   {
@@ -241,7 +244,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes the Skills feature, SKILL.md format, the Agent Skills open standard spec (agentskills.io/specification.md), and the Claude API's Skills API endpoints, but none of it points to a downloadable OpenAPI/Swagger spec or equivalent machine-readable API definition for the product's API surface. The agentskills.io specification defines the skill-file format, not an API spec.",
+    "rationale": "Evidence describes a Skills API and an open 'Agent Skills' specification for authoring SKILL.md files, but there is no mention of a downloadable OpenAPI (or equivalent machine-readable) API spec for the Claude/Skills API itself.",
     "evidenceIds": []
   },
   {
@@ -262,7 +265,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack discusses API versioning, version numbers, or a deprecation policy for the Skills feature or its APIs; documentation covers usage, plugins, and marketplaces but not versioning/deprecation guarantees.",
+    "rationale": "Evidence shows skills/plugins support optional version fields and marketplace 'version tracking' (docs-10, docs-36) but there is no documentation of an API versioning scheme or deprecation policy for the Skills or Messages API in this pack.",
     "evidenceIds": []
   },
   {
@@ -271,16 +274,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Anthropic publishes an explicit open spec (agentskills.io) defining SKILL.md structure with required YAML frontmatter (name, description) and folder conventions (scripts/, references/, assets/), plus a ready-to-use template file and a dedicated 'skill-creator' skill for authoring and iterating on new skills, none of which requires reverse-engineering existing skills. Missing for 10: independent/hands-on developer account confirming the template and spec alone (without inspecting example skills) sufficed to author a working skill.",
+    "rationale": "Anthropic provides a documented SKILL.md format (YAML frontmatter with required name/description fields, optional directories for scripts/references/assets), a public specification (agentskills.io), a template file, and even a dedicated 'skill-creator' skill to help author and iteratively improve new skills without needing to reverse-engineer existing ones. Community evidence also shows developers successfully authoring custom skills for real workflows (e.g., xlsx skill praise). missing for 10: no independent hands-on account specifically of a developer using the template/spec from scratch (most community commentary focuses on triggering reliability, not authoring ease), and no evidence of validation tooling/error messages for malformed frontmatter.",
     "evidenceIds": [
-      "anthropic-skills-docs-17",
-      "anthropic-skills-docs-26",
+      "anthropic-skills-docs-13",
       "anthropic-skills-docs-29",
       "anthropic-skills-docs-44",
       "anthropic-skills-docs-51",
-      "anthropic-skills-docs-52",
-      "anthropic-skills-docs-13",
-      "anthropic-skills-gh-3"
+      "anthropic-skills-docs-66",
+      "anthropic-skills-gh-3",
+      "anthropic-skills-docs-17",
+      "anthropic-skills-docs-30"
     ]
   },
   {
@@ -288,17 +291,19 @@
     "storyId": "authoring-meta-skill",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "The skill-creator meta-skill explicitly guides creation, iterative improvement, benchmarking, and description optimization for new skills, and templates plus specification docs support packaging (SKILL.md structure, frontmatter, bundled files). missing for 10: independent hands-on validation of the skill-creator meta-skill itself (community evidence covers skills usage/triggering generally, not authoring workflow specifically), and no evidence of packaging/distribution steps (e.g., plugin marketplace publishing) being driven directly by the meta-skill.",
+    "confidence": "medium",
+    "rationale": "Anthropic ships a dedicated 'skill-creator' meta-skill described explicitly as 'A skill for creating new skills and iteratively improving them,' supporting creation, modification, benchmarking with variance analysis, and optimizing descriptions for triggering accuracy — directly matching the story's write/improve/package theme, and packaging is further supported by the SKILL.md template, specification, and plugin/marketplace distribution tooling. missing for 10: independent hands-on corroboration specifically validating the skill-creator meta-skill's effectiveness (community evidence discusses skill triggering issues generally, not this meta-skill).",
     "evidenceIds": [
       "anthropic-skills-docs-13",
       "anthropic-skills-docs-14",
       "anthropic-skills-docs-30",
+      "anthropic-skills-docs-65",
       "anthropic-skills-docs-29",
-      "anthropic-skills-docs-26",
       "anthropic-skills-docs-51",
       "anthropic-skills-docs-52",
-      "anthropic-skills-docs-44"
+      "anthropic-skills-docs-66",
+      "anthropic-skills-docs-8",
+      "anthropic-skills-docs-9"
     ]
   },
   {
@@ -307,11 +312,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The main concrete evidence of bulk-style operations is the PDF skill's ability to 'merge multiple PDFs' and scripts bundled within skill directories, suggesting skills can encapsulate scripted batch logic. There is no broader documentation of bulk operations across many items (e.g., batch processing datasets, mass file transforms, iterating operations at scale) as a core capability of the Skills framework itself. missing for 10: explicit bulk/batch-processing examples across many items, documentation of scaling behavior for large item sets, and independent confirmation that skills reliably execute such operations.",
+    "rationale": "Skills can bundle scripts (e.g., the PDF skill merges multiple PDFs, and skills can include arbitrary executable scripts) which could technically enable processing multiple items, but there is no documented feature or example specifically about performing bulk operations across many items at once (e.g., batch processing large sets of files or records). missing for 10: explicit bulk-operation examples/documentation, evidence of scaling to 'many' items, and independent confirmation that skills reliably execute multi-item batch workflows.",
     "evidenceIds": [
       "anthropic-skills-docs-32",
       "anthropic-skills-docs-52",
-      "anthropic-skills-docs-15"
+      "anthropic-skills-comm-4"
     ]
   },
   {
@@ -320,14 +325,15 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Anthropic's docs claim Skills are automatically loaded 'when relevant' without explicit invocation (docs-2, docs-3, docs-25), which is the closest analog to rule-based automatic triggering on events. However, extensive hands-on community reports concretely contradict reliable automatic triggering — users report skills are 'hit or miss', agents 'just don't use them without being asked', and some had to bypass the mechanism entirely by pasting skill content into AGENTS.md to get consistent behavior (comm-6 through comm-14). Missing for 10: reliable event-based (not just semantic-relevance) triggering, first-party acknowledgment of the triggering reliability issue, and independent benchmark data showing consistent auto-invocation.",
+    "rationale": "Anthropic's docs claim Skills can be loaded/invoked automatically 'when relevant' without explicit user action (docs-3, docs-25, docs-34), which is the closest analog to 'rules triggering actions on events' since Skills aren't built around discrete event/webhook triggers. However, multiple hands-on community reports directly contradict reliable automatic triggering — users report skills frequently fail to activate even when semantically relevant, requiring explicit invocation or duplicating instructions into AGENTS.md to get consistent behavior (comm-6, comm-7, comm-9, comm-10, comm-11, comm-12). Missing for 10: dedicated event/trigger-rule system (e.g., cron, webhooks, file-watchers) distinct from LLM relevance-based invocation, and independent benchmarking of auto-trigger reliability.",
     "evidenceIds": [
-      "anthropic-skills-docs-2",
       "anthropic-skills-docs-3",
       "anthropic-skills-docs-25",
+      "anthropic-skills-docs-34",
       "anthropic-skills-comm-6",
       "anthropic-skills-comm-7",
       "anthropic-skills-comm-9",
+      "anthropic-skills-comm-10",
       "anthropic-skills-comm-11",
       "anthropic-skills-comm-12"
     ]
@@ -338,7 +344,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a packaging mechanism (SKILL.md + instructions/scripts) that Claude loads into context when relevant; it has no scheduler or recurring-job/cron capability, and scheduling automation is not part of this product's category. This is a wrong-axis question for a skills-packaging system rather than an orchestration/scheduling platform.",
+    "rationale": "Anthropic Skills is a mechanism for packaging instructions/scripts that agents load dynamically for specific tasks — it has no scheduling, cron, or recurring-workflow trigger mechanism; scheduling recurring jobs is a wrong axis for this kind of product.",
     "evidenceIds": []
   },
   {
@@ -347,13 +353,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Skills and plugins are plain files/directories (SKILL.md, plugin.json with a version field) distributed via git-based marketplaces that provide 'version tracking, automatic updates' (anthropic-skills-docs-8, -27, -36), so version control and rollback are achievable via git, and skill-creator supports iterative improvement (anthropic-skills-docs-13/14/30). However, there is no documented review/approval workflow, changelog, diffing, or explicit rollback command dedicated to automations. Missing for 10: a first-party review/approval mechanism, an explicit rollback UI/command, and audit-trail evidence beyond generic marketplace version tracking.",
+    "rationale": "Skills/plugins support versioning via plugin.json manifests and marketplaces that provide 'version tracking' and support git repositories as sources (implying git-based history), but there is no documented review workflow (e.g., approval/diff review) or explicit rollback mechanism for skills/automations. missing for 10: explicit rollback/revert capability, formal review/approval process, version history or diff viewing tools.",
     "evidenceIds": [
       "anthropic-skills-docs-8",
       "anthropic-skills-docs-27",
       "anthropic-skills-docs-36",
-      "anthropic-skills-docs-13",
-      "anthropic-skills-docs-30"
+      "anthropic-skills-docs-9"
     ]
   },
   {
@@ -362,14 +367,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Anthropic provides a plugin/skill marketplace mechanism (`/plugin marketplace add`, `/plugin install`) and the anthropics/skills GitHub repo functions as a browsable catalog of example skills, with docs claiming marketplaces give 'centralized discovery, version tracking, automatic updates'. However, there's no evidence of a searchable UI, leaderboard, or ranking system — discovery is limited to reading a GitHub repo listing or adding a marketplace source before installing by exact name. Missing for 10: a searchable/filterable registry UI, popularity/leaderboard signals, and independent evidence of users actually browsing a marketplace catalog before install.",
+    "rationale": "Anthropic documents 'plugin marketplaces' as catalogs providing 'centralized discovery, version tracking, automatic updates' (anthropic-skills-docs-8, -36, -48), and the official GitHub repo anthropics/skills acts as a browsable list of example skills you can register/add before installing (anthropic-skills-gh-1, -2, -4, -6). This supports browsing/discovery before install, but there's no evidence of a searchable UI, leaderboard, ratings, or popularity metrics — discovery is largely via CLI commands or reading a repo's folder listing rather than a rich marketplace search experience. Missing for 10: dedicated searchable marketplace UI, ranking/leaderboard or quality signals, independent confirmation of catalog usability.",
     "evidenceIds": [
       "anthropic-skills-docs-8",
+      "anthropic-skills-docs-9",
+      "anthropic-skills-docs-28",
       "anthropic-skills-docs-36",
+      "anthropic-skills-docs-48",
       "anthropic-skills-gh-1",
       "anthropic-skills-gh-2",
-      "anthropic-skills-docs-9",
-      "anthropic-skills-gh-4"
+      "anthropic-skills-gh-4",
+      "anthropic-skills-gh-6"
     ]
   },
   {
@@ -378,13 +386,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes how to create, invoke, and install skills/plugins (SKILL.md, /plugin install, marketplaces) but contains no documentation of a command or mechanism to list installed skills or cleanly uninstall/remove them (e.g., no '/skill list', '/plugin uninstall', or removal instructions). The only related setting, disableBundledSkills, only disables bundled skills rather than removing them or any custom ones cleanly.",
-    "evidenceIds": [
-      "anthropic-skills-docs-4",
-      "anthropic-skills-docs-19",
-      "anthropic-skills-docs-9",
-      "anthropic-skills-docs-22"
-    ]
+    "rationale": "The evidence pack documents how to create, invoke, and install skills/plugins (SKILL.md files, marketplace add/install commands, disableBundledSkills setting) but contains no documentation of a command to list installed skills or to cleanly uninstall/remove a skill and its files/instructions without manual folder deletion.",
+    "evidenceIds": []
   },
   {
     "productId": "anthropic-skills",
@@ -392,13 +395,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Plugin marketplaces (which can host skills) explicitly document 'version tracking, automatic updates' and installation via `/plugin install` and `/plugin marketplace add`, giving a documented update path for skills distributed as plugins. However, this update mechanism applies to the plugin/marketplace layer, not to skills installed directly (e.g., via manual SKILL.md drop-in or Skills API upload), and there's no explicit 'update' command shown for standalone skills or API-managed skills. missing for 10: an explicit update/upgrade command demonstrated in a walkthrough, confirmation that marketplace auto-update applies uniformly to skill-only installs (not just plugins), and independent/community confirmation that updates work smoothly in practice.",
+    "rationale": "Anthropic documents plugin marketplaces that provide 'centralized discovery, version tracking, automatic updates' for skills distributed via plugins, plus explicit `/plugin marketplace add` and `/plugin install` commands. However, this update path applies specifically to skills packaged as plugins through a marketplace; there's no documented explicit update/upgrade command for standalone skills installed directly (e.g., via SKILL.md folders or the API), and no independent confirmation that auto-updates work reliably in practice. Missing for 10: explicit update command for non-plugin skills, hands-on/independent verification that marketplace auto-updates function as described, and versioning guidance for API-uploaded skills.",
     "evidenceIds": [
       "anthropic-skills-docs-8",
       "anthropic-skills-docs-36",
       "anthropic-skills-docs-9",
       "anthropic-skills-gh-1",
-      "anthropic-skills-docs-22"
+      "anthropic-skills-docs-24"
     ]
   },
   {
@@ -421,29 +424,30 @@
     "storyId": "inspect-before-install",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Skills are transparent by design — a plain directory containing a readable SKILL.md plus optional scripts/references/assets folders (docs-52, docs-16, docs-26) — so an engineering lead can inspect the files in a repo (e.g. on GitHub) or after installation. But there is no documented install-time preview/listing command, permission diff, or built-in audit tool that shows exactly what a skill will add before installation; review relies on manually browsing the plugin/marketplace source. Missing for 10: a documented pre-install content listing or manifest diff, and any built-in review/approval workflow for skill files before they're added to Claude's toolkit.",
+    "confidence": "medium",
+    "rationale": "Skills are transparent by design: each skill is just a directory with a SKILL.md plus optional scripts/references/assets folders (anthropic-skills-docs-52, anthropic-skills-docs-66), distributed via inspectable GitHub repos and plugin marketplaces (anthropic-skills-gh-1, anthropic-skills-docs-8), so an engineering lead can browse the repo/plugin.json and read every file before or after installing. However, there is no documented dedicated review workflow — no CLI command to list a skill's contents pre-install, no diff/preview step, no install-time file manifest or confirmation prompt described anywhere in the docs. Missing for 10: an explicit pre-install content listing/manifest feature, a documented security-review or approval workflow, and independent confirmation that engineering teams use this for safety review.",
     "evidenceIds": [
       "anthropic-skills-docs-52",
-      "anthropic-skills-docs-16",
-      "anthropic-skills-docs-26",
-      "anthropic-skills-docs-51",
-      "anthropic-skills-gh-3",
-      "anthropic-skills-docs-9"
+      "anthropic-skills-docs-66",
+      "anthropic-skills-gh-1",
+      "anthropic-skills-docs-8",
+      "anthropic-skills-docs-27",
+      "anthropic-skills-docs-64"
     ]
   },
   {
     "productId": "anthropic-skills",
     "storyId": "multi-harness-support",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Anthropic Skills documents that the `SKILL.md` format follows the open 'Agent Skills' standard which 'works across multiple AI tools' (anthropic-skills-docs-47), and community evidence shows a user successfully reusing a skill directory with Codex via AGENTS.md (anthropic-skills-comm-13). However, all official install/marketplace instructions (`/plugin marketplace add`, `/plugin install`, `/skill-name` invocation) are Claude Code-specific, and there is no first-party per-harness guidance for Codex, Cursor, or other agents — cross-agent use is a community workaround rather than a documented, supported path. Missing for 10: official per-harness install docs for Codex/Cursor/other agents, first-party confirmation of consistent behavior across harnesses, and evidence of a unified multi-agent installer.",
+    "rationale": "Anthropic explicitly frames Skills as an open, cross-platform standard (agentskills.io) and documents installation for Claude Code, the Claude API, and Claude Agent SDK, and community reports (e.g., using Codex with an AGENTS.md pointing to a skill directory) show the same skill folders being reused outside Claude Code. However, there are no first-party, harness-specific install instructions for Cursor or other third-party agents, and community feedback highlights inconsistent skill-triggering across harnesses. Missing for 10: official per-harness setup docs for Cursor/other agents, first-party confirmation of Codex support, and consistent invocation behavior across harnesses.",
     "evidenceIds": [
+      "anthropic-skills-docs-67",
       "anthropic-skills-docs-47",
       "anthropic-skills-comm-13",
-      "anthropic-skills-gh-1",
-      "anthropic-skills-docs-26"
+      "anthropic-skills-docs-26",
+      "anthropic-skills-docs-51"
     ]
   },
   {
@@ -468,15 +472,15 @@
     "storyId": "open-spec-compliance",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Anthropic's own docs explicitly state Claude Code skills follow the open Agent Skills standard (agentskills.io) that works across multiple AI tools, and the referenced agentskills.io specification (SKILL.md with YAML frontmatter, folder structure, description requirements) matches exactly what Anthropic's skill folders use, confirming portability beyond Anthropic's own tooling. missing for 10: independent third-party confirmation that a Claude-authored skill folder works unmodified in a non-Anthropic tool, and no discussion of any Anthropic-specific extensions that might break strict spec compliance.",
+    "confidence": "medium",
+    "rationale": "Anthropic explicitly states Claude Code skills follow the open Agent Skills standard (agentskills.io) 'which works across multiple AI tools' and describes it as published 'for cross-platform portability,' with the spec itself defining the SKILL.md folder format independently of Claude Code docs. Missing for 10: independent, hands-on evidence that a non-Anthropic tool actually consumes the same SKILL.md folder unmodified.",
     "evidenceIds": [
       "anthropic-skills-docs-47",
+      "anthropic-skills-docs-67",
+      "anthropic-skills-docs-17",
       "anthropic-skills-docs-26",
       "anthropic-skills-docs-51",
-      "anthropic-skills-docs-17",
-      "anthropic-skills-docs-44",
-      "anthropic-skills-docs-52"
+      "anthropic-skills-docs-66"
     ]
   },
   {
@@ -485,14 +489,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show Skills can be uploaded/managed via the Skills API and invoked in Messages API requests via the container parameter (up to 20 skills), mirroring the ability to create/use skills in Claude.ai and Claude Code UI/CLI. However, there's no explicit evidence of full parity for other Skills-adjacent UI features like plugin marketplaces, agent view, or agent teams being API-accessible in the same way, and community feedback notes unreliable triggering regardless of surface. Missing for 10: explicit comparison confirming all UI-exposed skill management/discovery features (marketplaces, auto-invocation controls, agent view) are equally available via API, and independent verification of API-side parity.",
+    "rationale": "Docs show Skills can be created/uploaded/managed via a dedicated Skills API and invoked in the Messages API via the `container` parameter (up to 20 skills per request), paralleling the UI/Claude Code experience of adding SKILL.md files and invoking via slash commands; skills are also noted as available to Claude.ai paid plans, suggesting cross-surface parity for core skill creation/use. However there's no explicit documentation confirming full feature parity (e.g., automatic discovery/triggering behavior, plugin marketplaces, agent teams, or Claude Code-specific UX like `/run`/`/verify` are not shown as API-equivalent), and community comments focus on triggering reliability rather than API/UI parity. Missing for 10: explicit statement/confirmation that all UI-exposed skill behaviors (auto-discovery, marketplaces, Code-specific commands) are equally achievable via API, and independent verification of parity.",
     "evidenceIds": [
       "anthropic-skills-docs-10",
       "anthropic-skills-docs-23",
       "anthropic-skills-docs-24",
-      "anthropic-skills-docs-12",
       "anthropic-skills-docs-37",
-      "anthropic-skills-docs-49"
+      "anthropic-skills-docs-49",
+      "anthropic-skills-docs-12",
+      "anthropic-skills-gh-2"
     ]
   },
   {
@@ -501,17 +506,24 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a mechanism for packaging instructions/scripts to extend Claude's capabilities, not a data-storage or SaaS platform holding user data that would need export/portability. Data export and 'leave with your data' is a wrong axis for this product category.",
+    "rationale": "Anthropic Skills is a capability-packaging mechanism (SKILL.md files/plugins) for Claude, not a data-hosting or account-based service with user data to export; 'export all my data and leave' is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "anthropic-skills",
     "storyId": "openness-open-license",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence shows Anthropic publishes an open GitHub repository (anthropics/skills) with example SKILL.md files, templates, and a skill-creator skill that can be inspected, but nothing in the evidence pack states or links to an actual open-source license (e.g., MIT, Apache) governing that source code or the broader Claude Code/Skills product.",
-    "evidenceIds": []
+    "rationale": "The Skills repository is publicly hosted on GitHub with fully readable SKILL.md files, templates, and example skills (anthropic-skills-gh-1/3/5, anthropic-skills-docs-13), and Anthropic states it has 'published Agent Skills as an open standard for cross-platform portability' (anthropic-skills-docs-67), plus a public specification site (agentskills.io). This shows the source/spec is openly readable and portable, but the evidence never names or cites an explicit open-source license (e.g., MIT/Apache) governing the repo or SKILL.md content. missing for 10: explicit license file/name evidence, independent confirmation the repo/spec is licensed for reuse rather than just publicly viewable.",
+    "evidenceIds": [
+      "anthropic-skills-gh-1",
+      "anthropic-skills-gh-3",
+      "anthropic-skills-gh-5",
+      "anthropic-skills-docs-13",
+      "anthropic-skills-docs-67",
+      "anthropic-skills-docs-26"
+    ]
   },
   {
     "productId": "anthropic-skills",
@@ -532,17 +544,18 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Anthropic's spec strongly documents that every SKILL.md must include a description field stating what the skill does and when to use it, plus frontmatter controlling who/when invokes it, which should let developers predict activation (anthropic-skills-docs-17, -29, -32, -44, -3, -34). However, multiple hands-on community reports directly contradict predictable activation: users with properly formatted YAML/semantic triggers report skills are 'hit or miss', not triggered on expected keywords, or ignored entirely unless explicitly invoked (anthropic-skills-comm-6, -7, -9, -11, -12), undermining the story's promise of predictable, surprise-free behavior. Missing for 10: reliable, reproducible triggering behavior in practice and first-party acknowledgment/fix for inconsistent auto-invocation.",
+    "rationale": "Anthropic's spec and docs are explicit that every SKILL.md must document what it does and when Claude should use it via the required `description` frontmatter field (anthropic-skills-docs-17, -29, -32, -44), and Claude Code docs describe frontmatter controlling invocation and automatic loading (anthropic-skills-docs-3, -34, -25). However, multiple independent hands-on reports directly contradict the 'predict before surprised' promise: developers with properly formatted YAML/description skills report triggering is 'hit or miss', skills are ignored even when explicitly asked, and behavior only becomes reliable by bypassing the skill mechanism entirely and pasting instructions into AGENTS.md (anthropic-skills-comm-6, -7, -9, -10, -11, -12). This is a concrete, repeated hands-on contradiction of the documented activation-prediction claim, not mere skepticism. Missing for 10: evidence that documented 'when to use' triggers reliably match actual runtime activation, and no vendor rebuttal/fix addressing the triggering-unpredictability reports.",
     "evidenceIds": [
       "anthropic-skills-docs-17",
       "anthropic-skills-docs-29",
       "anthropic-skills-docs-32",
       "anthropic-skills-docs-44",
       "anthropic-skills-docs-3",
-      "anthropic-skills-docs-34",
+      "anthropic-skills-docs-25",
       "anthropic-skills-comm-6",
       "anthropic-skills-comm-7",
       "anthropic-skills-comm-9",
+      "anthropic-skills-comm-10",
       "anthropic-skills-comm-11",
       "anthropic-skills-comm-12"
     ]
@@ -553,14 +566,16 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Docs confirm skills are just plain-text folders with a SKILL.md (YAML frontmatter + Markdown), optionally bundling scripts/references/assets, following the open agentskills.io standard that 'works across multiple AI tools,' making them inherently copyable and portable rather than a proprietary binary. missing for 10: no independent hands-on report of someone literally copying a skill folder into a different, non-Anthropic harness and confirming it worked unmodified.",
+    "rationale": "Extensive docs confirm skills are plain folders with a required SKILL.md (YAML frontmatter + Markdown) plus optional scripts/references/assets, explicitly published as the open Agent Skills standard for cross-platform portability, and GitHub examples show copying/uploading these plain files across surfaces (Claude Code, API, Claude.ai). Community evidence corroborates they are literally '.md files' developers read and manage. Missing for 10: no independent hands-on report of someone physically carrying a SKILL.md folder into a non-Anthropic harness (e.g., a third-party agent) to confirm true cross-harness portability in practice.",
     "evidenceIds": [
       "anthropic-skills-docs-26",
       "anthropic-skills-docs-51",
       "anthropic-skills-docs-52",
-      "anthropic-skills-docs-47",
+      "anthropic-skills-docs-66",
+      "anthropic-skills-docs-67",
       "anthropic-skills-gh-3",
-      "anthropic-skills-docs-16"
+      "anthropic-skills-docs-47",
+      "anthropic-skills-comm-8"
     ]
   },
   {
@@ -569,7 +584,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a feature/packaging mechanism for extending Claude's capabilities, not a data storage/hosting service with configurable regional residency options. Data residency is a platform-level concern for the underlying Claude API/Console, not an axis applicable to the Skills feature itself.",
+    "rationale": "Anthropic Skills is a feature/packaging mechanism for extending Claude's capabilities, not a data-hosting or infrastructure product; data residency/region selection is not a capability this product type would ship. This axis belongs to the underlying Claude platform's account/infrastructure settings, not to Skills itself.",
     "evidenceIds": []
   },
   {
@@ -578,7 +593,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Anthropic Skills is a feature for packaging instructions/tools for Claude agents, not a data-training opt-out or privacy-control mechanism; training-data usage controls are governed by Anthropic's overall account/API privacy policies, not by the Skills feature itself, so this axis is a category error for this product.",
+    "rationale": "Anthropic Skills is a capability-packaging mechanism for Claude agents (SKILL.md files, plugins, marketplaces); it has no relation to data-training opt-out or privacy controls. This is a category error — the axis belongs to account/data-privacy settings, not to the Skills feature.",
     "evidenceIds": []
   },
   {
@@ -595,8 +610,8 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers Skills' functionality, plugins, marketplaces, and community reception, but contains no mention of telemetry settings, opt-out mechanisms, or usage tracking controls for Anthropic Skills.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out settings for Anthropic Skills; the docs cover skill creation, invocation, plugins, and marketplaces but never mention privacy/telemetry controls. missing for 10: any mention of telemetry collection, opt-out settings, or privacy controls.",
     "evidenceIds": []
   },
   {
@@ -620,11 +635,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows plugin marketplaces support 'version tracking' and plugin manifests include a version field, but there is no evidence of actual release notes, a changelog, or a documented history of what changed between skill/plugin versions that a developer could review before updating.",
+    "rationale": "While plugins/skills have a version field in plugin.json and marketplaces offer 'version tracking' and 'automatic updates', there is no evidence of actual changelogs, release notes, or a documented history of what changed between skill versions.",
     "evidenceIds": [
-      "anthropic-skills-docs-8",
       "anthropic-skills-docs-27",
-      "anthropic-skills-docs-36"
+      "anthropic-skills-docs-36",
+      "anthropic-skills-docs-8"
     ]
   },
   {
@@ -633,15 +648,16 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "high",
-    "rationale": "Anthropic's docs explicitly describe automatic triggering: Claude loads a skill when it judges the description relevant, and the spec requires descriptions to state 'what it does and when to use it' (docs-2, docs-3, docs-25, docs-32, docs-44). But multiple independent hands-on reports directly contradict reliable auto-activation — users report skills 'aren't triggered when I would expect,' are 'hit or miss' even with proper YAML/semantic triggers, and some find explicit invocation or dumping instructions into AGENTS.md necessary instead (anthropic-skills-comm-6 through -14). Missing for 10: vendor-side benchmarks/evidence of triggering accuracy, and resolution of the documented real-world inconsistency.",
+    "rationale": "Anthropic's docs explicitly claim skills auto-trigger based on engineered descriptions ('Claude uses skills when relevant', loads automatically when relevant, skill-creator tool optimizes descriptions 'for better triggering accuracy'), but multiple independent hands-on reports concretely contradict this: developers report skills are 'hit or miss', 'don't use them without being asked', fail to trigger 'even when asked' with proper YAML/semantic triggers, and workarounds (dumping skill content into AGENTS.md instead) are needed to get reliable behavior. missing for 10: consistent reliable auto-triggering confirmed by independent testing, resolution of reported inconsistency.",
     "evidenceIds": [
       "anthropic-skills-docs-2",
+      "anthropic-skills-docs-3",
       "anthropic-skills-docs-25",
-      "anthropic-skills-docs-32",
-      "anthropic-skills-docs-44",
+      "anthropic-skills-docs-14",
       "anthropic-skills-comm-6",
       "anthropic-skills-comm-7",
       "anthropic-skills-comm-9",
+      "anthropic-skills-comm-10",
       "anthropic-skills-comm-11",
       "anthropic-skills-comm-12"
     ]
@@ -652,13 +668,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Docs mention some control mechanisms relevant to security (e.g., disableBundledSkills setting, skill execution in a 'code execution environment' via the container parameter, and requirements like git/docker/jq/internet access), but there is no dedicated security-posture document addressing a trust model for third-party/marketplace skills or any telemetry/data-collection disclosure. Missing for 10: explicit trust/vetting model for third-party skills, telemetry or data-collection statement, sandboxing/execution security details, and any independent audit or hands-on security review.",
+    "rationale": "Docs describe some execution-related controls (skills run in a sandboxed code-execution container, `disableBundledSkills` setting, public-vs-private workspace availability) but there is no dedicated security-posture document covering a trust model for third-party/community skills or telemetry/data-collection practices. missing for 10: explicit third-party trust/vetting model, telemetry/data-collection disclosure, dedicated security-review documentation.",
     "evidenceIds": [
-      "anthropic-skills-docs-4",
       "anthropic-skills-docs-10",
-      "anthropic-skills-docs-45",
-      "anthropic-skills-docs-8",
-      "anthropic-skills-docs-36"
+      "anthropic-skills-docs-4",
+      "anthropic-skills-docs-12",
+      "anthropic-skills-docs-45"
     ]
   },
   {
@@ -667,27 +682,25 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs and GitHub examples show developers can install individual plugins/skill-bundles from a marketplace (e.g. `/plugin install document-skills@anthropic-agent-skills` vs `example-skills@anthropic-agent-skills`, or `quality-review-plugin@my-plugins`) rather than pulling the entire marketplace, and the API lets you specify individual `skill_id`s per request rather than a whole bundle. Missing for 10: no evidence of picking a single skill out of a multi-skill plugin bundle, and no independent/hands-on confirmation of this selective install granularity in practice.",
+    "rationale": "Skills are individual folders/SKILL.md files that can be added, invoked, or disabled one at a time (e.g. /skill-name invocation, disableBundledSkills to strip bundled ones, plugin install of individual skill packages like document-skills@anthropic-agent-skills rather than the whole repo), showing developers can selectively install/enable specific skills rather than an entire bundle. missing for 10: no explicit hands-on/independent confirmation of selectively installing a subset from a multi-skill marketplace bundle (only whole-bundle disable or whole-plugin install patterns are documented), and no dedicated 'pick individual skills from a collection' UI/CLI flag is shown.",
     "evidenceIds": [
+      "anthropic-skills-docs-4",
+      "anthropic-skills-docs-19",
+      "anthropic-skills-docs-2",
       "anthropic-skills-gh-4",
-      "anthropic-skills-docs-9",
-      "anthropic-skills-docs-22",
-      "anthropic-skills-docs-23",
-      "anthropic-skills-docs-37",
-      "anthropic-skills-docs-8",
-      "anthropic-skills-docs-36"
+      "anthropic-skills-docs-9"
     ]
   },
   {
     "productId": "anthropic-skills",
     "storyId": "skill-testing-harness",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows skill-creator can 'benchmark skill performance with variance analysis' as a feature offered to end-users, but there's no evidence that Anthropic itself maintains a test/eval suite for the official skills collection to catch regressions before shipping changes. Community reports (comm-6 through comm-14) actually describe unpredictable, hit-or-miss triggering behavior, suggesting no rigorous regression testing is evident in practice.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The skill-creator skill references being able to 'benchmark skill performance with variance analysis' and 'optimize a skill's description for better triggering accuracy,' implying some tooling exists for evaluating skill regressions, but there is no documentation of a formal test/eval suite, CI pipeline, or regression benchmarks applied to the shipped Anthropic Skills collection itself. Community reports (comm-6 through comm-14) describe unpredictable triggering behavior, suggesting no rigorous evals are evident in practice. Missing for 10: documented CI/test suite for the skills repo, published eval results or benchmarks per skill, evidence of automated regression checks before releases.",
     "evidenceIds": [
       "anthropic-skills-docs-14",
-      "anthropic-skills-docs-30",
+      "anthropic-skills-docs-65",
       "anthropic-skills-comm-6",
       "anthropic-skills-comm-9",
       "anthropic-skills-comm-12"
@@ -699,17 +712,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Anthropic Skills supports team-wide distribution via committed SKILL.md files in shared repos, git-based plugin marketplaces (`/plugin marketplace add`), and installable plugins bundling skills/agents/hooks, with centralized discovery, versioning, and auto-updates documented. Community evidence shows real-world use of shared skill repos (e.g., xlsx skill) and org-level customization (brand guidelines, workflows), corroborating practical distribution. missing for 10: no independent case study of an engineering team formally rolling out a marketplace org-wide, and community reports raise reliability concerns about skills being triggered consistently once distributed.",
+    "rationale": "Docs show multiple concrete distribution paths: committing SKILL.md files directly into a project (.claude/skills), packaging skills into plugins that can be versioned and shared 'across projects and teams', and publishing/installing via git-based plugin marketplaces (`/plugin marketplace add`, `/plugin install`) with centralized discovery and automatic updates; the anthropics/skills GitHub repo itself demonstrates this pattern end-to-end. Missing for 10: independent/hands-on evidence of a team actually adopting a shared marketplace at scale (community evidence found focuses on skill-triggering reliability, not distribution mechanics).",
     "evidenceIds": [
       "anthropic-skills-docs-7",
       "anthropic-skills-docs-8",
       "anthropic-skills-docs-9",
       "anthropic-skills-docs-36",
+      "anthropic-skills-docs-21",
       "anthropic-skills-gh-1",
-      "anthropic-skills-gh-4",
-      "anthropic-skills-gh-7",
-      "anthropic-skills-comm-4",
-      "anthropic-skills-comm-9"
+      "anthropic-skills-gh-6",
+      "anthropic-skills-docs-33",
+      "anthropic-skills-docs-46"
     ]
   },
   {
