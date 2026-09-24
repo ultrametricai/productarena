@@ -4103,44 +4103,51 @@
     "productId": "yapily",
     "storyId": "account-ownership-data",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Yapily explicitly documents confirming account ownership and retrieving customer details, plus broader Data API access to account details/balances for identity matching purposes. Missing for 10: no explicit breakdown of which fields (name, address, contact) are returned, and no independent/hands-on corroboration beyond first-party docs.",
+    "rationale": "Yapily explicitly offers account ownership/customer detail confirmation ('Confirm account ownership and customer details instantly' and account details retrieval via the Data API, including name/consumer/business/corporate account details), directly matching the ops lead's need to match account owner against customer records. missing for 10: explicit documentation of exact fields returned (name, address, contact data) and independent/hands-on confirmation of this feature beyond first-party docs.",
     "evidenceIds": [
       "yapily-docs-4",
       "yapily-docs-15",
-      "yapily-docs-2"
+      "yapily-docs-34",
+      "yapily-docs-27"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "agent-links-and-reads",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's API clearly supports creating consent/link sessions, retrieving balances/transactions, and managing connections (yapily-docs-2, -7, -9, -15), and there is an MCP surface (yapily-docs-6, yapily-probe-3) — but that MCP is documented as connecting coding agents (Claude/Cursor) to the documentation, not as an operational interface for agents to actually invoke banking actions with scoped credentials. Missing for 10: evidence of an MCP tool surface that performs live API calls (link sessions, balance/transaction retrieval) rather than just docs access, and explicit scoped-credential/agent-auth model for such calls.",
+    "rationale": "Yapily's REST API fully supports the core actions an agent would need — creating authorisation/consent sessions (create-embedded-account-authorisation, create-bulk-payment-authorisation, re-authorise-account-consent), retrieving accounts/balances/transactions, and scoped credential auth via Application ID/Secret or consent tokens. However, the documented MCP surface is explicitly for connecting coding agents to the *documentation* (a 'live, searchable connection to this documentation'), not an MCP server for actually invoking banking operations like link-session creation or balance retrieval. Missing for 10: an MCP server/tool surface that exposes actual banking operations (not just docs search), and any evidence of scoped/delegated credentials specifically for agent-driven MCP calls.",
     "evidenceIds": [
-      "yapily-docs-2",
-      "yapily-docs-7",
-      "yapily-docs-9",
-      "yapily-docs-15",
       "yapily-docs-6",
-      "yapily-probe-3"
+      "yapily-docs-32",
+      "yapily-probe-3",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-30",
+      "yapily-docs-31",
+      "yapily-docs-23"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "agent-ready-financial-data",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs show enrichment (merchant detection, spending insights) and a Data API returning structured account/transaction/balance data, plus OpenAPI-based client generation implying documented schemas (yapily-docs-3, yapily-docs-2, yapily-docs-8, yapily-docs-15). However, a probe found the openapi.json/swagger.json spec not resolvable at standard paths, casting doubt on how discoverable the machine-readable schema actually is, and no evidence pack item shows an actual JSON response sample or schema definition. Missing for 10: concrete JSON response examples/schema snippets, confirmation of a publicly resolvable OpenAPI spec, and explicit statement that enrichment fields are machine-parseable without heuristics.",
+    "rationale": "Yapily's Data API documents structured JSON endpoints (accounts, balances, transactions) with categorisation/merchant-detection enrichment, and provides an OpenAPI spec plus API reference schemas that a workflow could consume programmatically; it also exposes docs via MCP/llms.txt so agents can query documentation without heuristic scraping. However, the MCP/llms.txt integration is for documentation search, not for the live financial data payloads themselves, and a probe for the actual OpenAPI file at standard paths returned 404s, leaving the machine-readable schema discovery unconfirmed. Missing for 10: independent verification of a live, agent-fetchable OpenAPI/schema endpoint, and explicit confirmation that transaction/enrichment payloads follow a stable versioned schema.",
     "evidenceIds": [
       "yapily-docs-2",
       "yapily-docs-3",
-      "yapily-docs-8",
-      "yapily-docs-15",
-      "yapily-probe-2"
+      "yapily-docs-22",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-6",
+      "yapily-probe-1",
+      "yapily-probe-2",
+      "yapily-probe-3"
     ]
   },
   {
@@ -4149,10 +4156,11 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Yapily explicitly documents an llms.txt file (confirmed live via probe returning HTTP 200) and dedicated agent-oriented docs describing how to connect Claude, Cursor, or other AI agents via MCP, llms.txt, or Agent Skills, directly matching the story. Missing for 10: independent third-party confirmation of an agent successfully consuming the docs end-to-end.",
+    "rationale": "Yapily explicitly documents llms.txt and agent-oriented docs (docs.yapily.com/llms.txt, ai-agents.md) with instructions to connect Claude, Cursor, or other agents via MCP, llms.txt, or Agent Skills, and this is confirmed live by an independent probe returning HTTP 200 with structured llms.txt content. Missing for 10: no independent evidence of an actual agent session successfully consuming the llms.txt content end-to-end.",
     "evidenceIds": [
       "yapily-docs-6",
       "yapily-docs-7",
+      "yapily-docs-32",
       "yapily-probe-1",
       "yapily-probe-3"
     ]
@@ -4173,15 +4181,15 @@
     "productId": "yapily",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Yapily's Payments API supports scheduled and recurring/variable-recurring payments that execute autonomously without re-authorisation, and webhooks provide background event notifications — both are forms of autonomous background automation. However, there's no evidence of an AI-agent-specific automation-setup flow (e.g., an agent configuring or monitoring these jobs), just generic API-level scheduling. Missing for 10: explicit AI-agent-driven automation setup, agent monitoring/adjusting of scheduled tasks, and independent confirmation of reliability of unattended runs.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Yapily supports background-running automations such as scheduled/recurring payments and variable recurring payments without re-authorisation, plus webhooks for real-time monitoring of payment/status changes, which are the mechanisms an AI-native integrator could use to build autonomous background flows. However, this is generic payments-API automation, not an AI-agent-specific orchestration or scheduling tool, and there's no evidence of agent-driven setup or management of these automations. Missing for 10: dedicated agent/automation orchestration layer, evidence of AI agents actually configuring or monitoring these schedules autonomously, and any workflow/scheduling UI beyond raw API primitives.",
     "evidenceIds": [
       "yapily-docs-1",
       "yapily-docs-5",
-      "yapily-docs-16",
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-16",
+      "yapily-docs-24"
     ]
   },
   {
@@ -4190,21 +4198,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open banking API/infrastructure platform, not an AI assistant product; the evidence shows it supports AI agents connecting to its docs (MCP/llms.txt) as an API consumer, but it does not embed a built-in AI assistant for users to delegate tasks to within the product itself.",
+    "rationale": "Yapily is an open banking API/infrastructure product for developers, not a product with a built-in AI assistant UI for end users; its AI-related evidence is about connecting external coding agents (Claude, Cursor) to its docs via MCP, not a built-in assistant users delegate tasks to. This axis is a category error for an API platform.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Yapily is a REST/API-first platform (payments, data, webhooks) with a sandbox for testing and generated client libraries, implying it can be scripted/automated without a UI, but there is no explicit documentation of running it headlessly in a CI pipeline, no CLI tool, and no automation/testing-pipeline example. missing for 10: explicit CI/CD or headless automation documentation, a CLI or scriptable test harness, evidence of pipeline integration examples.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Yapily is fundamentally an API/webhook platform (HTTP Basic Auth with app ID/secret, REST endpoints, OpenAPI spec, generated client libraries, webhook notifications) which is inherently scriptable and automatable without a UI, supporting headless/CI-style usage of the Data and Payments APIs.  Missing for 10: explicit CI/CD pipeline examples or documentation, a dedicated CLI tool, and independent confirmation of automated/headless test-suite integration.",
     "evidenceIds": [
-      "yapily-docs-12",
+      "yapily-docs-23",
+      "yapily-docs-22",
       "yapily-docs-8",
       "yapily-docs-13",
-      "yapily-docs-9"
+      "yapily-docs-25",
+      "yapily-docs-12"
     ]
   },
   {
@@ -4213,21 +4223,19 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open-banking API/platform, not an agentic runtime that consumes external tools; the evidence only shows Yapily exposing an MCP server so AI coding agents can query its docs, not Yapily itself acting as an MCP client that plugs in and uses other servers' tools. This client-side 'use MCP tools' axis is a category mismatch for a banking API product.",
-    "evidenceIds": [
-      "yapily-docs-6",
-      "yapily-probe-3"
-    ]
+    "rationale": "Yapily is a banking/open-banking API platform, not an AI agent or orchestration tool that would itself consume MCP servers' tools. The evidence only shows Yapily exposing its own docs via an MCP server for other agents to query (yapily-docs-6, yapily-docs-32, yapily-probe-3) — the reverse of this story's client-side capability, which doesn't apply to this product category.",
+    "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "agentic-mcp-server",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Yapily documents an official MCP server for connecting AI agents (Claude, Cursor) to its docs, confirmed by both docs and a probe verifying the ai-agents.md resource, so the axis clearly applies and is addressed. However, the evidence only shows MCP access to documentation/context, not to Yapily's actual banking APIs (payments, data, AIS/PIS) as agent-callable tools, and there's no independent or hands-on confirmation of the MCP server's tool set in action. Missing for 10: evidence that the MCP server exposes real API operations (payments, account data) as agent tools, tool/resource list details, and independent corroboration beyond first-party docs.",
+    "rationale": "Yapily documents an official MCP server that lets AI agents (Claude, Cursor, etc.) connect directly to its docs for a live, searchable connection, and a probe confirms the resource exists at docs.yapily.com/resources/ai-agents. This is docs-focused rather than exposing full banking API operations via MCP tools, so it's a real but limited agentic integration. Missing for 10: evidence of MCP tools invoking actual Yapily API operations (payments/data) rather than just documentation search, and independent/hands-on confirmation beyond the vendor's own docs and probe.",
     "evidenceIds": [
       "yapily-docs-6",
+      "yapily-docs-32",
       "yapily-probe-3"
     ]
   },
@@ -4237,9 +4245,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Yapily's evidence covers a developer API/SDKs and an MCP-served documentation assistant for coding agents (yapily-docs-6, yapily-probe-3), but there is no evidence that end users can issue natural-language commands to actually operate Yapily's core functions (payments, account data retrieval, etc.). The MCP/llms.txt integration is for helping coding agents navigate docs, not a natural-language control interface for the product's operations.",
+    "rationale": "Yapily provides MCP/llms.txt access so AI agents can query its documentation, but there is no evidence that end users can actually operate Yapily's core functions (payments, account data retrieval) via natural-language commands — the MCP integration is documentation-search only, not an agentic command interface for the product's banking operations.",
     "evidenceIds": [
       "yapily-docs-6",
+      "yapily-docs-32",
       "yapily-probe-3"
     ]
   },
@@ -4249,7 +4258,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Yapily provides SDK/client library generation (yapily-docs-8) and AI-agent connectivity via MCP/llms.txt (yapily-docs-6), but there is no evidence of an official CLI tool for interacting with the Yapily platform or APIs.",
+    "rationale": "Evidence shows client library/code generation (OpenAPI-based), MCP/llms.txt for AI agents, and API auth, but there is no mention of an official CLI tool for Yapily; SDK generation and MCP docs are distinct from a CLI product.",
     "evidenceIds": []
   },
   {
@@ -4258,15 +4267,16 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Yapily is API-first: docs describe endpoints for payments, data, webhooks, and confirm OpenAPI-based client library generation, plus explicit AI-agent access via MCP/llms.txt (confirmed live by probe-1 and probe-3), directly matching the 'documented public API for AI-native use' story. Missing for 10: a verifiable OpenAPI spec file (probe-2 found all standard OpenAPI/swagger paths 404) and independent third-party confirmation of API completeness beyond first-party docs.",
+    "rationale": "Yapily publishes a full REST API reference (accounts, transactions, payments, authorisations), documented HTTP Basic Auth, an OpenAPI spec for client-library generation, and webhooks for async status — all core requirements for an AI-native user to programmatically drive the product. Missing for 10: independent/hands-on verification of the OpenAPI spec (probe found expected openapi.json paths 404) and third-party corroboration beyond first-party docs.",
     "evidenceIds": [
+      "yapily-docs-22",
+      "yapily-docs-23",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-29",
       "yapily-docs-8",
-      "yapily-docs-6",
-      "yapily-probe-1",
-      "yapily-probe-3",
-      "yapily-probe-2",
-      "yapily-docs-16",
-      "yapily-docs-15"
+      "yapily-docs-13",
+      "yapily-probe-2"
     ]
   },
   {
@@ -4274,19 +4284,22 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack describes issuing scoped or least-privilege API credentials/keys for agent use; documentation covers payments, data access, consent flows, and AI-agent documentation connectivity (MCP/llms.txt) but not credential scoping mechanisms.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "Yapily's documented authentication model is a single HTTP Basic Auth pair (Application ID + Application Secret) applied at the whole-application level, with no evidence of scoped, granular, or per-agent least-privilege credential issuance (e.g., OAuth scopes, restricted API keys, or role-based tokens).",
+    "evidenceIds": [
+      "yapily-docs-23"
+    ]
   },
   {
     "productId": "yapily",
     "storyId": "agentic-sdks",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Yapily documents generating client libraries from an OpenAPI spec for Java, Python, Node.js, etc., which supports the 'official SDK' story, but this is code generation rather than a maintained, first-party SDK repository, and the probe found no accessible OpenAPI spec file, undermining confidence in this claim. missing for 10: evidence of actual published/maintained SDK repos (GitHub links, versioning, install instructions), independent corroboration, and working OpenAPI spec access.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Yapily documents OpenAPI-based code generation for client libraries in Java, Python, Node.js and more, and states this is the same spec they use to generate server-side libraries, but there's no evidence of dedicated, maintained official SDK repos (e.g. on GitHub) with versioning/release history — only generated clients from a spec. The probe also found no live OpenAPI/swagger file at expected endpoints, weakening confidence in easy self-generation. missing for 10: published/maintained official SDK repositories (not just generator instructions), independent confirmation of SDK quality, and a working discoverable OpenAPI spec endpoint.",
     "evidenceIds": [
       "yapily-docs-8",
+      "yapily-docs-22",
       "yapily-probe-2"
     ]
   },
@@ -4295,24 +4308,30 @@
     "storyId": "agentic-webhooks",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Yapily documents a dedicated webhooks system delivering real-time HTTP notifications of platform events (e.g., payment status changes), directly matching the story. Missing for 10: independent/hands-on corroboration of webhook reliability and no detail on subscription filtering/event types.",
+    "confidence": "high",
+    "rationale": "Yapily documents a full webhook subscription system: real-time HTTP notifications for platform and payment events, multi-event-category subscriptions, and setup guidance for secure endpoints. This directly satisfies the story of subscribing to events via webhooks. Missing for 10: independent/hands-on corroboration of webhook reliability and no explicit example of an AI agent programmatically subscribing/managing webhooks itself.",
     "evidenceIds": [
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-18",
+      "yapily-docs-24",
+      "yapily-docs-25",
+      "yapily-docs-26"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an interactive API reference or runnable code examples; the OpenAPI spec probe returned 404s and docs only mention static content, code-gen libraries, and AI-agent integration (MCP/llms.txt), not an interactive playground with runnable examples.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Yapily has a structured API reference (endpoint docs like get-accounts, create-bulk-payment-authorisation, etc.) and an OpenAPI spec used for client-library generation, plus a sandbox for testing, but there is no evidence of an interactive, in-browser 'try it now' console or embedded runnable code examples—an openapi.json probe even returned 404 at expected locations. missing for 10: explicit interactive try-it/run console in docs, confirmed live OpenAPI spec endpoint, runnable code snippets embedded in reference pages.",
     "evidenceIds": [
-      "yapily-probe-2",
-      "yapily-docs-8",
-      "yapily-docs-6"
+      "yapily-docs-22",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-29",
+      "yapily-docs-12",
+      "yapily-probe-2"
     ]
   },
   {
@@ -4321,8 +4340,9 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs reference an OpenAPI specification used to generate client libraries (yapily-docs-8), implying a machine-readable spec exists, but a direct probe for standard OpenAPI/Swagger file locations returned 404 everywhere (yapily-probe-2), meaning no publicly downloadable spec could be located. missing for 10: a working public URL/download link for the OpenAPI/Swagger file, confirmation of its format and completeness, and independent corroboration that it can actually be fetched.",
+    "rationale": "Docs claim Yapily provides an OpenAPI v3 spec used to generate client libraries (yapily-docs-22, yapily-docs-8), but a direct probe for the OpenAPI file at all standard candidate paths (openapi.json, swagger.json, etc.) returned 404 (yapily-probe-2), so the machine-readable spec is not verifiably downloadable as claimed. missing for 10: a working, discoverable URL for the OpenAPI file itself, independent confirmation of successful download/parsing.",
     "evidenceIds": [
+      "yapily-docs-22",
       "yapily-docs-8",
       "yapily-probe-2"
     ]
@@ -4333,10 +4353,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "medium",
-    "rationale": "Yapily explicitly documents a sandbox environment that simulates real Open Banking flows with test accounts/banks so developers can test without touching production data (yapily-docs-12), supported by webhook and API docs for testing flows. Missing for 10: independent/hands-on confirmation of sandbox behavior and explicit detail on data isolation guarantees beyond the doc description.",
+    "rationale": "Yapily explicitly documents a sandbox test environment allowing connection to a bank with test accounts to simulate the real Open Banking experience without touching production, and it's tied into the broader API/dev workflow that AI agents can access via MCP docs. Missing for 10: no independent/hands-on confirmation of sandbox behavior, no explicit detail on how an AI agent programmatically invokes/tests against the sandbox distinct from production endpoints.",
     "evidenceIds": [
       "yapily-docs-12",
-      "yapily-docs-13"
+      "yapily-docs-6",
+      "yapily-docs-32"
     ]
   },
   {
@@ -4345,18 +4366,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack items mention API versioning scheme or a documented deprecation policy; docs reference API capabilities, sandbox, webhooks, and client library generation but nothing about version lifecycle or deprecation commitments. missing for 10: versioning scheme documentation, deprecation policy/notice process, changelog or migration guides.",
+    "rationale": "The evidence pack shows extensive API documentation, OpenAPI spec references, authentication, webhooks, etc., but nowhere mentions API versioning strategy or a documented deprecation policy for breaking changes.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Yapily's docs mention 'bulk' as a supported payment type alongside scheduled/periodic/international payments, indicating some batch-processing capability, but there is no detailed documentation of bulk API semantics (batch size limits, bulk data retrieval, bulk consent management, etc.) beyond this one-line reference. missing for 10: dedicated bulk API endpoint documentation, batch limits/pagination for data retrieval, examples of bulk operations in practice.",
+    "rationale": "Yapily explicitly supports bulk payment authorisation (create-bulk-payment-authorisation endpoint) and 'bulk' payment types via the Payments API, giving direct evidence of bulk operations for payments. However, there's no evidence of bulk operations for other item types (e.g., bulk account/consent retrieval, bulk webhooks management, or batch data queries), and no AI-native/agent-driven bulk automation workflow is documented. missing for 10: bulk support across data/account retrieval, bulk consent management, batch webhook operations, and explicit agent-orchestrated bulk workflows.",
     "evidenceIds": [
       "yapily-docs-17",
+      "yapily-docs-29",
       "yapily-docs-16"
     ]
   },
@@ -4366,26 +4388,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Yapily documents webhooks for real-time event notifications, but there is no evidence of a rules engine or mechanism letting users define conditional triggers that automatically execute actions based on events — webhooks only notify, they don't let a user configure 'if X then do Y' automation.",
+    "rationale": "Yapily offers webhooks for real-time event notifications, but there is no evidence of a rules engine or mechanism letting users define conditional 'if event X then action Y' automations — webhooks only push raw notifications, leaving all rule logic and triggered actions to be built externally by the developer.",
     "evidenceIds": [
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-24",
+      "yapily-docs-25",
+      "yapily-docs-26"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "automation-scheduled-jobs",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's Payments API explicitly supports scheduled and recurring (periodic/variable recurring) payment initiation, which is a concrete recurring-job capability exposed via API and webhooks for status tracking. However, this is domain-specific (payments only) rather than a general-purpose job/workflow scheduler or automation engine that an AI agent could use to orchestrate arbitrary recurring tasks. Missing for 10: evidence of a generic scheduling/orchestration API or cron-like trigger system beyond payment initiation, and no independent corroboration of this working end-to-end.",
+    "rationale": "Yapily's Payments API explicitly supports scheduled, periodic, and variable recurring payments (yapily-docs-1, yapily-docs-16, yapily-docs-17, yapily-docs-5), which an AI agent could invoke via the API (and MCP-connected docs, yapily-docs-6/32) to set up recurring financial workflows. However, this is domain-specific payment scheduling, not a general-purpose job/workflow scheduler for arbitrary AI-driven automations, and there's no evidence of a broader orchestration or cron-like automation layer for agent workflows. Missing for 10: a general workflow/job scheduling mechanism beyond payment initiation, and independent/hands-on confirmation that AI agents can reliably trigger recurring jobs end-to-end.",
     "evidenceIds": [
       "yapily-docs-1",
-      "yapily-docs-5",
       "yapily-docs-16",
       "yapily-docs-17",
-      "yapily-docs-18",
-      "yapily-docs-21"
+      "yapily-docs-5",
+      "yapily-docs-6",
+      "yapily-docs-32"
     ]
   },
   {
@@ -4394,17 +4418,21 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open banking API/payments platform, not an automation-builder product with a versionable workflow concept; version/review/rollback of 'automations' is a category error for this kind of product.",
+    "rationale": "Yapily is an open banking API/payments platform, not a workflow/automation-builder product with a concept of versioning, reviewing, or rolling back 'automations' — this axis targets tools with automation/workflow definitions, which is a wrong category for an API infrastructure provider.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "connection-repair-relink",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "The evidence pack covers payments, data retrieval, webhooks, and Yapily Connect UI, but nothing documents how expired/revoked consent links surface as statuses or how users re-authenticate via an update flow without restarting the linking process — missing for 10: documented consent-expiry/revocation status codes, and an explicit re-auth/update flow that preserves prior linkage.",
-    "evidenceIds": []
+    "rationale": "Yapily documents a re-authorise-account-consent endpoint explicitly for when a previously AUTHORIZED consent 'can no longer be used to retrieve data', letting users re-consent without starting a fresh integration. However, there's no documented status taxonomy for expired/revoked links, no explicit ops-facing dashboard or webhook event naming these states, and no equivalent documented re-auth flow for payments consents. missing for 10: documented consent status codes (expired/revoked/failed) surfaced to ops, webhook event types for consent expiry/revocation, an equivalent re-auth update flow for payment authorisations, and independent/hands-on confirmation this works smoothly in practice.",
+    "evidenceIds": [
+      "yapily-docs-31",
+      "yapily-docs-13",
+      "yapily-docs-18"
+    ]
   },
   {
     "productId": "yapily",
@@ -4412,8 +4440,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes a documented deletion/revocation flow for connections or users, nor confirmation that data collection stops and held data is purged; docs only mention consent collection, sandbox, webhooks, and data retrieval, not consent revocation or data deletion/purge.",
-    "evidenceIds": []
+    "rationale": "The evidence pack documents consent creation, re-authorisation, and data retrieval endpoints, but nowhere describes a way to delete/revoke a consent or user, stop data collection, or purge held data — only a re-authorise-account-consent endpoint is shown, which is about renewing consent, not severing it.",
+    "evidenceIds": [
+      "yapily-docs-31",
+      "yapily-docs-27",
+      "yapily-docs-15"
+    ]
   },
   {
     "productId": "yapily",
@@ -4433,11 +4465,15 @@
   {
     "productId": "yapily",
     "storyId": "income-cashflow-insights",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Yapily's docs show transaction categorisation, merchant detection, and spending insights (yapily-docs-3), but there is no evidence of recurring income/payroll detection, cash-flow signal derivation, or income verification products built on the data.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Yapily documents generic transaction categorisation, merchant detection, and spending insights built on account/transaction data (yapily-docs-3, yapily-docs-15, yapily-docs-28), which is adjacent to income/cash-flow signal derivation, but there is no evidence of dedicated recurring-income/payroll detection or a documented income verification product. Missing for 10: explicit recurring income/payroll detection logic, dedicated income verification API/product, and any documentation tying categorisation to cash-flow or income signals specifically.",
+    "evidenceIds": [
+      "yapily-docs-3",
+      "yapily-docs-15",
+      "yapily-docs-28"
+    ]
   },
   {
     "productId": "yapily",
@@ -4445,7 +4481,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack contains no published institution counts, geographic coverage lists, or bank-name directories that a founder could check against their users' banks—only product/API feature descriptions.",
+    "rationale": "No evidence in the pack cites published institution counts, country coverage lists, or bank directories that a founder could check against their users' banks; the docs describe API capabilities (payments, data, webhooks) but not coverage numbers/geographies.",
     "evidenceIds": []
   },
   {
@@ -4454,11 +4490,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a documented institution status page, outage/degradation signals, or error-code taxonomy distinguishing bank-side failures from client-side issues; only generic webhook and payment-status mentions are present. Missing for 10: institution status/availability page, degradation/outage signals, and documented bank-vs-integration error code distinctions.",
-    "evidenceIds": [
-      "yapily-docs-18",
-      "yapily-docs-13"
-    ]
+    "rationale": "No evidence pack items reference institution status pages, outage/degradation dashboards, per-bank health signals, or error code taxonomies distinguishing bank-side vs integrator-side failures; webhooks cover payment status but not institution health/coverage visibility.",
+    "evidenceIds": []
   },
   {
     "productId": "yapily",
@@ -4466,14 +4499,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's Data API and consent flow (via Yapily Connect) grant access to accounts, balances, transactions, and identity data under a single AIS consent/session (yapily-docs-2, yapily-docs-4, yapily-docs-15, yapily-docs-20), and Yapily Connect explicitly reduces repeated consent screens across flows (yapily-docs-7, yapily-docs-9). However, payments (PIS) are documented as a separate initiation flow/API from data access (AIS), and no evidence explicitly confirms a single link/consent session spans both AIS and PIS products without re-authentication. missing for 10: explicit confirmation that one consent/session token covers both payments and data products together, and independent/hands-on evidence of a true single multi-product session rather than per-product consent screens.",
+    "rationale": "Yapily's Account Authorisation flow covers both AIS (accounts, balances, transactions) and identity/account confirmation under a single consent grant, and Yapily Connect provides a single white-label UI for these AIS flows, implying one session can cover multiple data products. However, payments (PIS) are documented as a separate authorisation/consent flow, and there's no explicit documentation confirming a single link session spans both AIS and PIS or that identity confirmation is bundled without a separate re-auth step. missing for 10: explicit documentation of one unified session/consent token covering AIS+PIS+identity simultaneously, and independent/hands-on confirmation that users aren't re-prompted per product.",
     "evidenceIds": [
       "yapily-docs-2",
       "yapily-docs-4",
       "yapily-docs-7",
-      "yapily-docs-9",
-      "yapily-docs-15",
       "yapily-docs-20",
+      "yapily-docs-30",
+      "yapily-docs-33",
+      "yapily-docs-31",
       "yapily-docs-16"
     ]
   },
@@ -4483,10 +4517,12 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Yapily's docs describe bank redirect and SCA-based consent flows (docs-9, docs-10) which imply OAuth-style bank-hosted authentication rather than screen-scraping, but no evidence explicitly uses the term 'OAuth,' documents OAuth coverage across institutions, or discusses retirement of legacy credential-scraping flows. Missing for 10: explicit OAuth terminology/documentation, institution-by-institution OAuth coverage stats, and any statement about phasing out screen-scraped credential flows.",
+    "rationale": "Docs describe redirecting users to their bank's own login screen for consent (create-bulk-payment-authorisation, create-embedded-account-authorisation) and automatic handling of Strong Customer Authentication/bank redirects, implying bank-hosted authentication rather than screen-scraping, but nowhere do the docs use the term 'OAuth', quantify coverage across institutions, or discuss retirement of legacy credential-sharing flows. Missing for 10: explicit OAuth terminology/coverage stats, any mention of legacy screen-scraping methods being deprecated, and independent confirmation of bank-hosted OAuth across the institution network.",
     "evidenceIds": [
-      "yapily-docs-9",
-      "yapily-docs-10"
+      "yapily-docs-29",
+      "yapily-docs-30",
+      "yapily-docs-10",
+      "yapily-docs-9"
     ]
   },
   {
@@ -4494,11 +4530,12 @@
     "storyId": "on-demand-refresh",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence covers account data retrieval, webhooks for real-time notifications, and payments, but nothing describes an on-demand refresh endpoint/parameter or documents refresh semantics (e.g., how often data updates or how to force a refresh). Missing for 10: any mention of a refresh API/endpoint, refresh frequency/rate limits, or documented semantics for on-demand data freshness.",
+    "confidence": "medium",
+    "rationale": "Docs describe GET accounts/transactions and balances endpoints and a re-authorise-consent endpoint, but there is no documented on-demand 'refresh' endpoint or explicit refresh semantics (e.g., how a fresh pull vs cached data is triggered) anywhere in the evidence pack.",
     "evidenceIds": [
-      "yapily-docs-2",
-      "yapily-docs-13",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-31",
       "yapily-docs-15"
     ]
   },
@@ -4508,13 +4545,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's UI (Yapily Connect) is explicitly described as a pre-built white-label layer for AIS/PIS flows that sits on top of the same Data and Payments APIs (docs-7, docs-9, docs-15, docs-16), implying most UI functionality is API-backed rather than API-exclusive. However, there is no explicit documentation stating full UI/API parity, and a probe found no discoverable OpenAPI spec at expected locations, raising doubt about complete self-service API coverage. Missing for 10: explicit parity statement enumerating any UI-only conveniences (e.g., branding, consent screen customization) and their API equivalents, and a working public OpenAPI spec confirming full endpoint coverage.",
+    "rationale": "Yapily's core data/payments/consent operations are all exposed via the API (accounts, transactions, payment initiation, authorisations), and the Yapily Connect UI is explicitly a pre-built wrapper around the same API flows, suggesting API parity for core banking actions. However, evidence doesn't confirm that UI-only conveniences (e.g., branding/customisation controls in Yapily Connect, institution selection UX logic) are fully API-configurable, and the OpenAPI spec probe returned 404s, weakening confidence in complete self-service API discoverability. Missing for 10: confirmation that all UI configuration/branding options are API-settable, a working public OpenAPI spec link, and independent verification of full UI/API parity beyond vendor docs.",
     "evidenceIds": [
       "yapily-docs-7",
       "yapily-docs-9",
-      "yapily-docs-15",
       "yapily-docs-16",
-      "yapily-docs-8",
+      "yapily-docs-27",
+      "yapily-docs-30",
+      "yapily-docs-22",
       "yapily-probe-2"
     ]
   },
@@ -4542,22 +4580,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is a regulated open-banking API/aggregation platform requiring bank connectivity, licensing, and infrastructure that only the vendor can provide; self-hosting the core product is not a meaningful capability for this category of service.",
+    "rationale": "Yapily is a cloud-based open banking API/SaaS platform, not a product designed for self-hosting; self-hosting the core banking infrastructure/regulatory service is a category error for this kind of product.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "pay-by-bank-initiation",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Yapily's docs clearly describe payment initiation (single, scheduled, periodic, recurring/VRP) via its Payments API using local rails like UK Faster Payments and European SEPA, giving some geographic grounding, but there is no comprehensive, explicit list of supported countries/markets or independent confirmation of live coverage claims. missing for 10: full country/geography list, independent verification of live markets, and any hands-on confirmation of payment success rates.",
+    "rationale": "Yapily's docs clearly describe payment initiation (single, scheduled, recurring, bulk) via a dedicated Payments API, with local rail settlement mentioned for UK (Faster Payments) and Europe (SEPA), and status tracking via webhooks — a coherent, honestly-scoped payment-initiation product. Missing for 10: an explicit full country/geography coverage list beyond UK/SEPA, and independent or hands-on corroboration of live payment initiation (only first-party docs are cited).",
     "evidenceIds": [
       "yapily-docs-1",
       "yapily-docs-16",
       "yapily-docs-17",
       "yapily-docs-21",
-      "yapily-docs-18"
+      "yapily-docs-18",
+      "yapily-docs-29"
     ]
   },
   {
@@ -4565,8 +4604,8 @@
     "storyId": "privacy-data-residency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence in the pack addresses data residency, regional storage choice, or hosting location options for customer data; all docs focus on payments, data access APIs, and AI-agent connectivity.",
+    "confidence": "high",
+    "rationale": "No evidence pack mentions data residency, region selection, or data storage location controls for Yapily's platform; the docs focus on payments, data API, webhooks, and AI-agent connectivity with no mention of regional/data residency configuration options.",
     "evidenceIds": []
   },
   {
@@ -4575,7 +4614,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Yapily is an open banking API/payments platform, not an AI model or AI product that trains on user data; the axis of preventing data use for AI model training does not apply to its category.",
+    "rationale": "Yapily is an open banking API/payments platform, not an AI model provider or chatbot with training-data controls; the evidence pack contains no mention of AI training data usage policies at all, and this axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -4584,7 +4623,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack addresses data retention policies, deletion controls, or user-initiated data removal options for Yapily; the documentation covers data access, payments, and AI-agent integration but nothing about retention/deletion controls.",
+    "rationale": "Evidence covers consent/re-authorisation flows for account access but no mention of data retention policies, deletion of stored data, or user/developer controls over how long financial data is retained or how to delete it.",
     "evidenceIds": []
   },
   {
@@ -4592,18 +4631,24 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack addresses telemetry opt-out or usage tracking controls for Yapily's products or docs; this is a fair question for an API/SaaS platform but is unaddressed.",
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry or usage-tracking opt-out controls for Yapily; the docs cover open banking APIs, payments, data access, and AI-agent connectivity but nothing about privacy/telemetry settings.",
     "evidenceIds": []
   },
   {
     "productId": "yapily",
     "storyId": "processor-integrations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's docs describe account verification and payment initiation via its own Payments/Data APIs, but there is no evidence of documented integrations or token-exchange mechanisms that hand verified account credentials to third-party payment processors or platforms.",
-    "evidenceIds": []
+    "rationale": "Yapily documents Data API/consent flows and Payments API that let developers retrieve verified account/balance data and initiate bank-to-bank payments, effectively handing verified account data to the developer's own platform, and its Data API is positioned for building 'personalised financial products and services.' However, the story specifically asks about handing credentials/data to third-party payment processors — Yapily's docs describe Yapily itself as the aggregator/PISP, not documented integrations or token exchange with named third-party processors (e.g., Stripe, Adyen). missing for 10: explicit documented integrations or token-exchange flows with named third-party payment processors/platforms, and independent confirmation of such handoffs.",
+    "evidenceIds": [
+      "yapily-docs-15",
+      "yapily-docs-27",
+      "yapily-docs-16",
+      "yapily-docs-23",
+      "yapily-docs-34"
+    ]
   },
   {
     "productId": "yapily",
@@ -4611,23 +4656,28 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Evidence confirms a sandbox test environment (yapily-docs-12) and client library generation via OpenAPI spec for Java, Python, Node.js, etc. (yapily-docs-8), but there is no evidence of a self-serve signup flow, API key issuance process, or a runnable quickstart guide. The openapi.json probe returned 404s across all candidate paths, casting doubt on how straightforward the client-library generation actually is in practice. missing for 10: self-serve signup/API-key evidence, an explicit quickstart walkthrough, working OpenAPI spec endpoint, independent corroboration of time-to-first-sandbox-account.",
+    "rationale": "Docs confirm a sandbox test environment, Basic-Auth API keys (App ID/Secret), and OpenAPI-based codegen for Java/Python/Node client libraries, which cover much of the technical integration path. However, there is no evidence of a self-serve signup flow to obtain API keys, no dedicated 'quickstart' tutorial, and a probe found the claimed OpenAPI spec file returning 404 at all standard paths, undermining the client-library generation claim. Missing for 10: documented self-serve signup/API key creation, a runnable quickstart guide, and a verifiable/working OpenAPI spec link for client-library generation.",
     "evidenceIds": [
       "yapily-docs-12",
+      "yapily-docs-23",
       "yapily-docs-8",
+      "yapily-docs-22",
       "yapily-probe-2"
     ]
   },
   {
     "productId": "yapily",
     "storyId": "realtime-balance-checks",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Yapily's Data API explicitly documents retrieving account balances (via AIS/Open Banking) alongside accounts and transactions, which is the core capability needed for pre-payment balance checks. Missing for 10: explicit 'real-time' latency guarantees and explicit framing of the endpoint for NSF/risk-check use cases.",
+    "rationale": "Yapily's Data API documents a get-accounts endpoint that 'Returns all accounts and balances for the end user associated with the presented consent token' (yapily-docs-27), and account/balance data access is repeatedly described as core functionality (yapily-docs-2, yapily-docs-15, yapily-docs-34). However, no evidence explicitly frames this as a real-time pre-payment NSF/risk check workflow, nor documents latency guarantees, freshness of balance data, or an explicit pattern linking balance-check to payment initiation. Missing for 10: explicit documentation tying the balance endpoint to pre-payment NSF/risk-check use cases, guidance on real-time freshness/staleness of returned balances, and any hands-on/independent confirmation of this workflow.",
     "evidenceIds": [
+      "yapily-docs-27",
       "yapily-docs-2",
-      "yapily-docs-15"
+      "yapily-docs-15",
+      "yapily-docs-34",
+      "yapily-docs-16"
     ]
   },
   {
@@ -4636,14 +4686,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly cover recurring/scheduled/periodic payments (yapily-docs-1, -16, -17) and dedicated variable recurring payment support without re-authorisation (yapily-docs-5), plus webhook-based status tracking and local rail settlement for recurring debits (yapily-docs-18, -21). Missing for 10: independent/hands-on confirmation of VRP flows in production and more detail on standing consent lifecycle management beyond docs claims.",
+    "rationale": "Docs explicitly cover scheduled/periodic/recurring payments (yapily-docs-1, yapily-docs-16, yapily-docs-17) and specifically call out variable recurring payments 'without re-authorisation each time' (yapily-docs-5), plus re-authorisation/consent renewal endpoints (yapily-docs-31) and webhook status tracking for recurring flows (yapily-docs-18, yapily-docs-24). Missing for 10: independent/hands-on corroboration of VRP working in practice, and explicit standing-order/mandate terminology or regulatory VRP scheme detail.",
     "evidenceIds": [
       "yapily-docs-1",
       "yapily-docs-5",
       "yapily-docs-16",
       "yapily-docs-17",
-      "yapily-docs-18",
-      "yapily-docs-21"
+      "yapily-docs-31",
+      "yapily-docs-18"
     ]
   },
   {
@@ -4652,9 +4702,12 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm a sandbox exists to connect to test banks and simulate the Open Banking experience, but the evidence pack doesn't detail documented test credentials, specific error-state simulation, or step-by-step end-to-end linking/retrieval walkthroughs. missing for 10: explicit test credentials list, error/edge-case simulation documentation, independent/hands-on confirmation of the sandbox experience.",
+    "rationale": "Docs explicitly describe a sandbox with test institutions/accounts simulating the real Open Banking experience, plus API references for accounts/transactions/authorisation flows and error handling patterns via webhooks. However, there is no evidence of documented test credentials, explicit error-state simulation guidance, or a hands-on walkthrough confirming end-to-end sandbox usage. missing for 10: documented test credentials, explicit error-state/failure simulation examples, independent/hands-on confirmation of sandbox completeness.",
     "evidenceIds": [
-      "yapily-docs-12"
+      "yapily-docs-12",
+      "yapily-docs-27",
+      "yapily-docs-28",
+      "yapily-docs-31"
     ]
   },
   {
@@ -4663,12 +4716,14 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Yapily separates its offerings into distinct products (Data API for AIS, Payments API for PIS, account confirmation, VRP) each with its own consent screen, implying developers only request the product-specific consent they need rather than a single blanket grant (yapily-docs-2, -15, -16, -20). However, there is no explicit documentation of fine-grained data-minimization controls within a product (e.g., requesting balances only vs. full transaction history) or scope parameters in the API reference.\nmissing for 10: granular in-product scope/field-level consent documentation, explicit data-minimization API parameters, independent confirmation of scope enforcement.",
+    "rationale": "Yapily's docs show consent-based access control separated by product (Data API for AIS vs Payments API for PIS), account-level consent tokens, and re-authorisation flows, which implies some scoping. However, there is no explicit documentation of granular field-level or scope-level data-minimization controls (e.g., balances-only vs transactions-only consent) or configurable minimal-scope requests. missing for 10: explicit scope/permission granularity docs, evidence of selecting only specific data fields, and independent confirmation that minimal-scope consents are enforced.",
     "evidenceIds": [
       "yapily-docs-2",
-      "yapily-docs-15",
-      "yapily-docs-16",
-      "yapily-docs-20"
+      "yapily-docs-27",
+      "yapily-docs-30",
+      "yapily-docs-31",
+      "yapily-docs-34",
+      "yapily-docs-15"
     ]
   },
   {
@@ -4689,10 +4744,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Docs confirm transaction/account/balance retrieval via the Data API with consent (yapily-docs-2, yapily-docs-15) and webhooks for real-time change notifications (yapily-docs-13), which could support a sync pattern, but there is no documented pagination mechanism, no stated history depth/lookback window, and no explicit delta/incremental-fetch API for transactions. missing for 10: pagination details, documented transaction history depth, explicit changed-only/delta sync endpoint or pattern beyond generic webhooks.",
+    "rationale": "Yapily's Data API clearly supports pulling account transactions via a dedicated endpoint (get-account-transactions) under consented access, and webhooks exist for real-time notifications of platform changes. However, the evidence pack contains no documentation of pagination parameters, no stated history depth/lookback window, and no explicit sync/delta pattern for fetching only changed transactions since a webhook or polling cursor. missing for 10: pagination parameter docs, transaction history depth/retention window, explicit incremental-sync (delta) pattern tied to transactions.",
     "evidenceIds": [
-      "yapily-docs-2",
       "yapily-docs-15",
+      "yapily-docs-28",
+      "yapily-docs-34",
       "yapily-docs-13"
     ]
   },
@@ -4702,19 +4758,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Yapily Connect provides consent screens for initiating AIS/PIS authorization (docs-7, docs-20) but nothing about a portal or surface where end users can view all apps/connections and actively revoke previously granted consent to their bank data.",
-    "evidenceIds": []
+    "rationale": "Yapily's docs cover consent creation, re-authorisation, and revocation is implied only via bank-side flows (e.g., yapily-docs-31 covers re-authorising lapsed consent, not user-initiated revocation), but there is no documented end-user consent dashboard/portal where users can view and revoke which apps hold access to their bank data. Yapily Connect provides consent *screens* during onboarding, not an ongoing management surface.",
+    "evidenceIds": [
+      "yapily-docs-31",
+      "yapily-docs-7",
+      "yapily-docs-9"
+    ]
   },
   {
     "productId": "yapily",
     "storyId": "webhook-data-events",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Yapily documents webhooks for real-time HTTP notifications of platform changes, explicitly used for payment status tracking, supporting event-driven updates instead of polling. However, the evidence never confirms webhook payloads are cryptographically signed, nor details specific coverage for new transactions/balance updates/connection state changes as separate event types. Missing for 10: signature/verification mechanism documentation, explicit event types for transactions/balances/connection state, and independent confirmation of reliability.",
+    "rationale": "Yapily's docs clearly describe real-time webhooks for transactions, balances, and payment status changes, explicitly positioning them as the way to avoid polling (docs-13, docs-18, docs-24, docs-26), with setup guidance requiring a secure HTTPS endpoint (docs-25). However, the evidence never explicitly confirms webhook payloads are cryptographically 'signed' or details a signature-verification mechanism, and 'connection state changes' as a discrete webhook event type isn't directly evidenced. Missing for 10: explicit signature/verification scheme for webhooks, explicit connection-state-change event category, independent/hands-on confirmation of webhook reliability.",
     "evidenceIds": [
       "yapily-docs-13",
-      "yapily-docs-18"
+      "yapily-docs-18",
+      "yapily-docs-24",
+      "yapily-docs-25",
+      "yapily-docs-26"
     ]
   }
 ]
