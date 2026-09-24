@@ -251,7 +251,7 @@ export default function StepVendorRow({
         className="text-[10px] uppercase tracking-wide text-zinc-500"
         title={`Vendors ranked for THIS step — scored from their judged verdicts on the ${storyCount} stories mapped to it${
           hasExtras ? '; vendors from another arena carry a tag naming where their evidence lives' : ''
-        } — not the arena's overall PA Score. Click a chip's "use" to see the whole process via that vendor.`}
+        } — not the arena's overall Overall score. Click a chip's "use" to see the whole process via that vendor.`}
       >
         ranked for this step:
       </span>

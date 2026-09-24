@@ -56,7 +56,7 @@ export const DagNodeSchema = z.object({
   // The arena (categories.json id) covering this step's GENERAL FUNCTION — "run payroll" →
   // payroll, "choose a bank" → startup-banking. Display-only: stepVendorOptions() DERIVES the
   // step's supplier list from this arena's live leaderboard at build time (top products by
-  // PA Score, capped), so roster changes flow through automatically instead of freezing
+  // Overall score, capped), so roster changes flow through automatically instead of freezing
   // product lists here. vendorOptions stays the hand-curated set; entries not in the arena
   // are appended after the derived roster. Steps whose function is narrower than any arena
   // (formation services inside legal-ops) or has no arena yet (SEO tools, cloud file storage,
@@ -807,7 +807,7 @@ export function vendorChipInfo(vendor: string, dir?: string): VendorChipInfo {
   }
 }
 
-// Cap on arena-derived supplier chips per step — the roster's top-N by PA Score. Keeps a
+// Cap on arena-derived supplier chips per step — the roster's top-N by Overall score. Keeps a
 // "via:" row readable even for deep arenas (ai-coding judges 13 products); curated extras
 // appended by stepVendorOptions can push a step slightly past this, which is fine.
 export const STEP_OPTIONS_CAP = 8
@@ -841,7 +841,7 @@ function arenaOptionChips(arenaId: string, dir?: string): VendorChipInfo[] {
 // through lib/processRankings.ts crossArenaStepRankings, which gates each one on the committed
 // step→story mapping and a judged full/partial verdict. When the step declares
 // optionsArenaId, the list is DERIVED from that arena's current leaderboard (top
-// STEP_OPTIONS_CAP by PA Score, in arena-rank order) so roster changes flow through on the
+// STEP_OPTIONS_CAP by Overall score, in arena-rank order) so roster changes flow through on the
 // next build; hand-curated vendorOptions not already in the derived roster are appended after
 // it — tracked-elsewhere vendors keep their own arena chip, untracked ones render as honest
 // unlinked "not yet judged" chips. Steps without an optionsArenaId keep their curated options.

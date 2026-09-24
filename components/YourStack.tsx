@@ -259,7 +259,7 @@ export default function YourStack({
               <span className="font-mono tabular-nums text-emerald-400">{(advice.bestPossible ?? 0).toFixed(0)}</span>
               <span className="text-zinc-600">/100</span>
               <span className="ml-1 text-xs text-zinc-500">
-                — mean published PA Score of your scored picks vs those same arenas&rsquo; leaders.
+                — mean published Overall score of your scored picks vs those same arenas&rsquo; leaders.
               </span>
             </p>
           )}
@@ -278,7 +278,7 @@ export default function YourStack({
                   <span className="text-xs text-zinc-500">
                     #{p.pick.rank} of {p.pick.fieldSize}
                   </span>
-                  <span className="font-mono text-xs tabular-nums text-zinc-300" title="PA Score — the arena leaderboard's published headline score">
+                  <span className="font-mono text-xs tabular-nums text-zinc-300" title="Overall score — the arena leaderboard's published headline score">
                     PA {scoreText(p.pick.aiEra)}
                   </span>
                   <Link href={receiptHref(p.pick)} className="text-[11px] text-zinc-500 underline decoration-zinc-700 hover:text-emerald-300">

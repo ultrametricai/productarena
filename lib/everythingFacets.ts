@@ -16,7 +16,7 @@ export interface EverythingRow {
   arenaName: string
   oss: boolean
   hasLogo: boolean
-  /** Blended PA Score (initScore/aiEra) — first number of the "42·77·23" triplet. */
+  /** Blended Overall score (initScore/aiEra) — first number of the "42·77·23" triplet. */
   score: number | null
   agentReady: number | null
   agenticApp: number | null
@@ -24,7 +24,7 @@ export interface EverythingRow {
   grade: 'A' | 'B' | 'C' | 'D'
   /** Access glyph chars in MCP·CLI·API order, each one of ✓ ~ ! — (see lib/accessGlyphs.ts). */
   access: string
-  /** 30-day PA Score trend delta (lib/scoreTrend.ts) — null when <2 history points. */
+  /** 30-day Overall score trend delta (lib/scoreTrend.ts) — null when <2 history points. */
   trend: number | null
 }
 
@@ -104,7 +104,7 @@ export function groupRowsByArena(allRows: EverythingRow[], visible: EverythingRo
 }
 
 // Flat view ordering: agent-readiness desc (the site's cross-arena default, see
-// lib/megaTableSort.ts's DEFAULT_COLUMN), nulls last; ties broken by PA Score desc then name.
+// lib/megaTableSort.ts's DEFAULT_COLUMN), nulls last; ties broken by Overall score desc then name.
 export function sortRowsFlat(rows: EverythingRow[]): EverythingRow[] {
   const num = (v: number | null) => (v === null ? -Infinity : v)
   return [...rows].sort(

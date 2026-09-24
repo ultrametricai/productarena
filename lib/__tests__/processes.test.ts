@@ -421,7 +421,7 @@ describe('derived step options (optionsArenaId)', () => {
   })
 
   it('caps the derived roster at STEP_OPTIONS_CAP and appends curated extras after it', () => {
-    // ai-coding judges >8 products; the derived list is the top 8 by PA Score, and the curated
+    // ai-coding judges >8 products; the derived list is the top 8 by Overall score, and the curated
     // option that falls outside the top 8 (cursor) is appended rather than dropped.
     const codeStep = loadProcesses(DATA_DIR)
       .find((t) => t.id === 'sw_001')!.dag.nodes.find((n) => n.id === 'n3')!

@@ -25,7 +25,7 @@ describe('CompareRivals', () => {
     const vsLink = rampRow.querySelector('a[href="/vs/mercury-vs-ramp"]')!
     expect(vsLink).not.toBeNull()
     expect(vsLink.textContent).toContain('12–30')
-    // PA Score cells link to each product's /score receipt page.
+    // Overall score cells link to each product's /score receipt page.
     expect(rows[0].querySelector('a[href="/arena/startup-banking/product/mercury/score"]')).not.toBeNull()
     expect(rampRow.querySelector('a[href="/arena/startup-banking/product/ramp/score"]')).not.toBeNull()
     // Footer: the full-arena link.

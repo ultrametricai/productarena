@@ -49,7 +49,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
 
   const jsonLd = rankingJsonLd(
     `YC ${code} — tracked products ranked by agent readiness`,
-    `Y Combinator ${batchLabel(code)} alumni tracked on ProductArena, ranked by evidence-graded agent readiness, built-in AI, and PA Score.`,
+    `Y Combinator ${batchLabel(code)} alumni tracked on ProductArena, ranked by evidence-graded agent readiness, built-in AI, and Overall score.`,
     rows.map((row) => ({
       name: row.productName,
       path: `/arena/${row.arenaId}/product/${row.productId}`,
@@ -76,7 +76,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
           The {rows.length} {batchLabel(code)} {rows.length === 1 ? 'company' : 'companies'} we track, ranked by
-          evidence-graded agent readiness — can an agent actually drive this product? — then built-in AI and PA Score.
+          evidence-graded agent readiness — can an agent actually drive this product? — then built-in AI and Overall score.
         </p>
         <p className="mt-2 max-w-2xl text-xs text-zinc-500">
           This is the YC {code} companies <span className="text-zinc-300">we track</span>, judged on evidence — not a
@@ -101,8 +101,8 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
               <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Built-in AI score (0–100): does the product itself act agentically for its users?">
                 Built-in AI
               </th>
-              <th className="hidden px-3 py-2 font-normal md:table-cell" title="PA Score (0–100): the blended AI-era score — agent readiness, API quality, openness, built-in AI, automation depth">
-                PA Score
+              <th className="hidden px-3 py-2 font-normal md:table-cell" title="Overall score (0–100): the blended AI-era score — agent readiness, API quality, openness, built-in AI, automation depth">
+                Overall score
               </th>
             </tr>
           </thead>
@@ -159,7 +159,7 @@ export default async function YcBatchPage({ params }: { params: Promise<{ batch:
       </div>
 
       <p className="text-xs text-zinc-500">
-        A product tracked in more than one arena appears once, in the arena where its PA Score is highest. Unscored
+        A product tracked in more than one arena appears once, in the arena where its Overall score is highest. Unscored
         means no applicable product user stories — never zero. Batch stamps verified against YC&rsquo;s public directory by website
         domain, never by name.
       </p>

@@ -37,7 +37,7 @@ export function batchLabel(code: string): string {
 }
 
 // One row per YC-stamped product. A product tracked in more than one arena keeps the arena where
-// its PA Score (aiEra) is highest (deterministic tiebreak: arena id) — same one-row-per-product
+// its Overall score (aiEra) is highest (deterministic tiebreak: arena id) — same one-row-per-product
 // dedupe the sitemap applies with seenProductIds.
 export function buildYcRows(categories: CategoryData[]): YcRow[] {
   const byProduct = new Map<string, YcRow>()
@@ -69,7 +69,7 @@ export function buildYcRows(categories: CategoryData[]): YcRow[] {
   return Array.from(byProduct.values())
 }
 
-// Batch ranking order: most agent-ready first (nulls last), then Built-in AI, then PA Score,
+// Batch ranking order: most agent-ready first (nulls last), then Built-in AI, then Overall score,
 // then name — the "could an agent run this product" question the founder is asking per batch.
 export function sortYcRows(rows: YcRow[]): YcRow[] {
   const key = (v: number | null) => (v === null ? -1 : v)

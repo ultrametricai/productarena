@@ -46,7 +46,7 @@ import {
 // and `rank` is a fixed identity derived from that same default order, not a re-derived row
 // index, so it doesn't reshuffle when a reader sorts by another column.
 //
-// The three /rankings/* pages (highest PA Score, most agentic, best built-in AI) remain the
+// The three /rankings/* pages (highest Overall score, most agentic, best built-in AI) remain the
 // "preset view" links above the table — this table is the single-honest-view superset of what
 // those three (plus the old per-arena ArenaTable trio) used to render separately.
 
@@ -94,7 +94,7 @@ function SortableTh({
 // the same rows (they just set the sort column), replacing the old links out to /rankings/*.
 const RANK_PRESETS: Array<{ col: MegaTableColumn; label: string }> = [
   { col: 'agentReady', label: 'Most agent-ready' },
-  { col: 'initScore', label: 'Highest PA Score' },
+  { col: 'initScore', label: 'Highest Overall score' },
   { col: 'agenticApp', label: 'Best built-in AI' },
   { col: 'popularity', label: 'Most popular' },
 ]
@@ -257,7 +257,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 <span title="Open source — the code is publicly available. Click to sort open-source products first.">OSS</span>
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
+                <span title="Overall score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a badge for the methodology.">Overall score</span>
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
                 <span title="AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).">Agent-ready</span>
@@ -269,7 +269,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                 <span title="API quality /100 — machine-readable spec, interactive docs, sandbox, versioning discipline. Untested = no evidence either way.">API</span>
               </SortableTh>
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
-                <span title="GitHub stars — adoption signal from public registries; never part of the PA Score. When the repo is known, clicking a count opens it.">GitHub ★</span>
+                <span title="GitHub stars — adoption signal from public registries; never part of the Overall score. When the repo is known, clicking a count opens it.">GitHub ★</span>
               </SortableTh>
               <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden sm:table-cell">
                 <span title="Agent access surfaces — MCP server / CLI / API, from judged evidence: ✓ full, ~ partial, ! disputed, — none found">Access</span>
@@ -345,7 +345,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                   </td>
                   <td className="px-2 py-2 font-mono tabular-nums text-zinc-300">
                     {row.naDimensions?.includes('agentReady') ? (
-                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface of its own. The PA Score still applies.">n/a</span>
+                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface of its own. The Overall score still applies.">n/a</span>
                     ) : row.agentReadyUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agent-access evidence found or probed either way — unscored, not zero.">
                         untested
@@ -361,7 +361,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 sm:table-cell">
                     {row.naDimensions?.includes('agenticApp') ? (
-                      <span className="text-zinc-600" title="Not meaningful for this arena's product class. The PA Score still applies.">n/a</span>
+                      <span className="text-zinc-600" title="Not meaningful for this arena's product class. The Overall score still applies.">n/a</span>
                     ) : row.agenticAppUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No agentic-features evidence found or probed either way — unscored, not zero.">
                         untested
@@ -370,7 +370,7 @@ export default function MegaTable({ rows, arenas }: { rows: MegaTableRow[]; aren
                   </td>
                   <td className="hidden px-2 py-2 font-mono tabular-nums text-zinc-300 lg:table-cell">
                     {row.naDimensions?.includes('apiQuality') ? (
-                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no API of its own. The PA Score still applies.">n/a</span>
+                      <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no API of its own. The Overall score still applies.">n/a</span>
                     ) : row.apiUntested ? (
                       <span className="font-sans text-xs italic text-zinc-500" title="No API-quality evidence found or probed either way — unscored, not zero.">
                         untested

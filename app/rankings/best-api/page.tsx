@@ -112,7 +112,7 @@ export default function BestApiRankingPage() {
           <Link href="/rankings/agentic" className="text-zinc-300 underline decoration-zinc-700 hover:text-emerald-300">
             agent-ready ranking
           </Link>
-          ). Ties break on agent-readiness, then PA Score.
+          ). Ties break on agent-readiness, then Overall score.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
           {untestedCount} products show <span className="italic">untested</span> instead of a number: every

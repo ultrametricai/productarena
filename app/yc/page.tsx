@@ -40,7 +40,7 @@ export default function YcIndexPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           Every YC alum among the products we track — {rows.length} products across {batches.length} batches —
           verified against YC&rsquo;s public directory by website domain, never by name, and ranked by the same
-          evidence-graded scores as everything else: agent readiness, built-in AI, PA Score.
+          evidence-graded scores as everything else: agent readiness, built-in AI, Overall score.
         </p>
         <p className="mt-2 max-w-2xl text-xs text-zinc-500">
           Honest framing: this is the YC companies <span className="text-zinc-300">we track</span>, judged on
@@ -109,7 +109,7 @@ export default function YcIndexPage() {
 
       <p className="text-xs text-zinc-500">
         Batch codes are YC&rsquo;s own: W winter, X spring, S summer, F fall. A product tracked in more than one
-        arena counts once, in the arena where its PA Score is highest.
+        arena counts once, in the arena where its Overall score is highest.
       </p>
     </div>
   )

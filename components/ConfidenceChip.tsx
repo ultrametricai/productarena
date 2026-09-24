@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { confidenceTitle, type ProductConfidence } from '@/lib/confidence'
 
-// Small A–D grade chip rendered next to PA Score badges (MegaTable + ArenaTable): says how
+// Small A–D grade chip rendered next to Overall score badges (MegaTable + ArenaTable): says how
 // much of the score rests on tested vs claimed evidence (see lib/confidence.ts). Deliberately
 // quiet — a letter, not another number — so it annotates the score without competing with it.
 // The chip links to the methodology's confidence section: hover tooltips are unreliable on

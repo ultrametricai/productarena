@@ -11,7 +11,7 @@
 //       across the two registries is honest),
 //   (c) curated "clearly popular" products with NO public counter (data/popular-products.json)
 //       rendered as an UNRANKED strip — an editorial fact, never a fake number.
-// Missing data is absent, never zero, and none of this ever touches the PA Score (see
+// Missing data is absent, never zero, and none of this ever touches the Overall score (see
 // METHODOLOGY.md "Popularity — a signal, not a score").
 import { z } from 'zod'
 import { formatCompact } from './popularity'

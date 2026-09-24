@@ -37,7 +37,7 @@ export default function NotFound() {
           href="/rankings/init"
           className="rounded-lg border border-zinc-800 px-4 py-2 text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
         >
-          Highest PA Score ranking
+          Highest Overall score ranking
         </Link>
       </div>
     </div>

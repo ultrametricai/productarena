@@ -55,7 +55,7 @@ export default function Home() {
                 className="group rounded-xl border border-zinc-800 p-4 transition hover:border-emerald-400/60"
               >
                 <p className="text-xs uppercase tracking-widest text-zinc-400">{data.category.name}</p>
-                {/* No PA Score badges here — those already render in the table and arena cards
+                {/* No Overall score badges here — those already render in the table and arena cards
                     above; this card's own datum is the head-to-head record. */}
                 <div className="mt-2 flex items-center gap-2">
                   <ProductLogo product={a} size={28} />

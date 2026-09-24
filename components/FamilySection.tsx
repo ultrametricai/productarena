@@ -66,7 +66,7 @@ export default function FamilySection({ arenaId, productId }: { arenaId: string;
                 <th scope="col" className="px-2 py-1.5 font-normal"><span title="One of the company's individual products — each is judged separately in its own arena">Line</span></th>
                 <th scope="col" className="px-2 py-1.5 font-normal"><span title="The product category (arena) this line competes in">Arena</span></th>
                 <th scope="col" className="px-2 py-1.5 font-normal"><span title="Rank in its own arena's leaderboard">Rank</span></th>
-                <th scope="col" className="px-2 py-1.5 font-normal"><span title="PA Score /100 — the blended headline score">PA Score</span></th>
+                <th scope="col" className="px-2 py-1.5 font-normal"><span title="Overall score /100 — the blended headline score">Overall score</span></th>
                 <th scope="col" className="hidden px-2 py-1.5 font-normal sm:table-cell"><span title="Agent-ready /100 — how easily an outside AI agent can access and operate it">Agent-ready</span></th>
               </tr>
             </thead>

@@ -11,7 +11,7 @@ import { buildMyStackProducts } from '@/lib/myStackData'
 export const metadata: Metadata = {
   title: 'Battle of the stacks — ProductArena',
   description:
-    'Put two stacks side by side — curated AI stacks or your own product lists — and compare their evidence aggregates: mean PA Score, agent-readiness, arena coverage, verified interconnects, and the weakest link. Aggregates of published scores, not a judged head-to-head.',
+    'Put two stacks side by side — curated AI stacks or your own product lists — and compare their evidence aggregates: mean Overall score, agent-readiness, arena coverage, verified interconnects, and the weakest link. Aggregates of published scores, not a judged head-to-head.',
 }
 
 // Static shell, same contract as /compare: the matchup lives in `?a=…&b=…` (a curated stack id

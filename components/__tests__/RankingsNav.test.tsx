@@ -75,6 +75,6 @@ describe('RankingsNav', () => {
     const current = screen.getByText('Riskiest', { selector: 'a, span:not(.sr-only)' })
     expect(current.tagName).toBe('SPAN')
     // Company rankings stay linked from a process page.
-    expect(screen.getByRole('link', { name: /Highest PA Score/ }).getAttribute('href')).toBe('/rankings/init')
+    expect(screen.getByRole('link', { name: /Highest Overall score/ }).getAttribute('href')).toBe('/rankings/init')
   })
 })

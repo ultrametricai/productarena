@@ -13,7 +13,7 @@ interface IndexRow {
 }
 
 // Fourth global index, alongside AgenticIndexTable (agentReady), AiNativeIndexTable
-// (agenticApp) and InitIndexTable (PA Score): this one sorts by the claims-integrity score —
+// (agenticApp) and InitIndexTable (Overall score): this one sorts by the claims-integrity score —
 // "whose website claims survive independent verification" (see lib/claimsIntegrity.ts for the
 // formula). Nulls (no testable claims) sort last per repo convention — "we don't know" is never
 // a rank. Ties break on verified count (more independently-verified claims first), then fewer

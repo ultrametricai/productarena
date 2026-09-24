@@ -115,7 +115,7 @@ export function generateMetadata(): Metadata {
   const topStars = byStars[0]
   return {
     title: 'Most popular — stars, installs, and what’s hot — ProductArena',
-    description: `Popularity measured fairly: ${byStars.length} products by GitHub stars${topStars?.stars !== undefined ? ` (${topStars.name} leads with ${formatCompact(topStars.stars)})` : ''}, ${byInstalls.length} by weekly npm/PyPI installs, plus ${hot.length} exploding in interest right now — each with its measured reason. Never blended into one fake number, never part of the PA Score.`,
+    description: `Popularity measured fairly: ${byStars.length} products by GitHub stars${topStars?.stars !== undefined ? ` (${topStars.name} leads with ${formatCompact(topStars.stars)})` : ''}, ${byInstalls.length} by weekly npm/PyPI installs, plus ${hot.length} exploding in interest right now — each with its measured reason. Never blended into one fake number, never part of the Overall score.`,
   }
 }
 
@@ -156,7 +156,7 @@ export default function PopularRankingPage() {
   // note above) and are not folded into the ItemList.
   const jsonLd = rankingJsonLd(
     'Most popular — GitHub-tracked products by stars',
-    'Products with a tracked public repo, ranked by GitHub stars (velocity shown as stars/year). Sourced from public registries; never part of the PA Score.',
+    'Products with a tracked public repo, ranked by GitHub stars (velocity shown as stars/year). Sourced from public registries; never part of the Overall score.',
     byStars.map((row) => ({
       name: row.name,
       path: `/arena/${row.arenaId}/product/${row.productId}`,
@@ -189,7 +189,7 @@ export default function PopularRankingPage() {
           public counter at all — plus what&rsquo;s exploding in interest right now, each flag with its measured reason.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
-          Popularity is never part of the PA Score (
+          Popularity is never part of the Overall score (
           <Link href="/methodology" className="text-zinc-400 underline decoration-zinc-700 hover:text-emerald-300">
             methodology
           </Link>

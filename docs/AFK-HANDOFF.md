@@ -43,7 +43,7 @@ Process manifest:
       ],
       "vendorOptions": [             // every vendor that can perform the step, canonical first.
                                      // Steps mapped to an arena (corpus optionsArenaId) list the
-                                     // arena's CURRENT roster — top products by PA Score, resolved
+                                     // arena's CURRENT roster — top products by Overall score, resolved
                                      // at build time — then any curated extras; the list grows or
                                      // reorders as the live leaderboard moves (additive, non-breaking).
         {

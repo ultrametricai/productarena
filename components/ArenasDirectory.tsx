@@ -38,7 +38,7 @@ function ArenaCard({ data }: { data: CategoryData }) {
           on the arena leaderboard a click away. */}
       <div className="mt-2 min-w-0">
         <p className="text-[10px] uppercase tracking-widest text-zinc-400">
-          {data.products.length} products · PA Score leader
+          {data.products.length} products · Overall score leader
         </p>
         <p className="truncate text-sm font-medium">{leader.name}</p>
       </div>

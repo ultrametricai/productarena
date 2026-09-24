@@ -30,7 +30,7 @@ export interface MyStackProduct {
   arenaId: string
   arenaName: string
   type: 'oss' | 'commercial'
-  /** PA Score from the arena leaderboard (null = not scored yet). */
+  /** Overall score from the arena leaderboard (null = not scored yet). */
   aiEra: number | null
   agentReady: number | null
   /** Evidence-confidence grade for the score's footing — see lib/confidence.ts. */
@@ -87,7 +87,7 @@ export interface RecommendationResult {
   truncated: number
 }
 
-// PA Score gap below which a same-arena alternative is noise, not an upgrade. Aligned with the
+// Overall score gap below which a same-arena alternative is noise, not an upgrade. Aligned with the
 // spirit of lib/aiStacks.ts's CLOSE_CALL_DELTA (Δ3 = too close to call): Δ8 is far enough
 // outside the close-call band to be a material, defensible difference.
 export const UPGRADE_DELTA = 8
@@ -173,7 +173,7 @@ function upgradeAndBreakoutRecs(picks: MyStackProduct[], byArena: Map<string, My
     // beside it would bury the lede.
     if (isShutdown(pick)) continue
     const field = byArena.get(pick.arenaId) ?? []
-    // Best confident challenger: highest PA Score, must clear UPGRADE_DELTA, must not be
+    // Best confident challenger: highest Overall score, must clear UPGRADE_DELTA, must not be
     // another of the reader's own picks (that pair is rule 3's overlap, not an upgrade) —
     // and never a shutdown product (lib/shutdown.ts: not an offer).
     const challenger = field
@@ -646,7 +646,7 @@ export const STACK_UPGRADE_CANDIDATES = 2
 
 export interface StackUpgradeCandidate {
   product: MyStackProduct
-  /** PA Score gap over the pick (candidate − pick), one decimal. Null when either side is unscored. */
+  /** Overall score gap over the pick (candidate − pick), one decimal. Null when either side is unscored. */
   paDelta: number | null
   agentReadyDelta: number | null
 }
@@ -654,7 +654,7 @@ export interface StackUpgradeCandidate {
 export interface StackPickAdvice {
   arenaId: string
   arenaName: string
-  /** The BEST of the reader's picks in this arena (highest PA Score; unscored last) — upgrade
+  /** The BEST of the reader's picks in this arena (highest Overall score; unscored last) — upgrade
    *  advice compares THIS pick vs the leader; the others are coPicks. */
   pick: MyStackProduct
   /** The reader's OTHER picks in this arena, stack order preserved. 1+ entries means a
@@ -675,9 +675,9 @@ export interface StackPickAdvice {
 
 export interface StackAdvice {
   picks: StackPickAdvice[]
-  /** Mean PA Score of the scored picks — the honest "stack score". Null with no scored pick. */
+  /** Mean Overall score of the scored picks — the honest "stack score". Null with no scored pick. */
   stackScore: number | null
-  /** Mean PA Score of those same arenas' leaders — "best possible" with the same coverage. */
+  /** Mean Overall score of those same arenas' leaders — "best possible" with the same coverage. */
   bestPossible: number | null
 }
 
@@ -710,7 +710,7 @@ export function stackAdvice(stack: StackMap, products: MyStackProduct[]): StackA
       return p ? [p] : [] // not judged in this arena (stale pick) — nothing honest to say
     })
     if (resolved.length === 0) continue
-    // Best pick: highest PA Score (unscored sort last), rank breaking ties — the one the
+    // Best pick: highest Overall score (unscored sort last), rank breaking ties — the one the
     // upgrade math runs against; the rest are coPicks in stack order.
     const pick = [...resolved].sort(
       (a, b) => (b.aiEra ?? -1) - (a.aiEra ?? -1) || a.rank - b.rank,

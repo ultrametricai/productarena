@@ -255,19 +255,19 @@ export default async function ProductPage({
             )}
           </div>
         </div>
-        {/* PRIMARY metrics row — the "should I care" read: PA Score (+68% band), the three
+        {/* PRIMARY metrics row — the "should I care" read: Overall score (+68% band), the three
             agenticness indexes, and the MCP/CLI/API access glyphs. Everything below this row
             is deliberately quieter (secondary: momentum/vendor responses; then the arenas
             strip). Every pill clicks through to THIS product's transparent calculation page
             (/score, per-dimension anchors) — the exact stories, verdicts, evidence, and
             arithmetic behind its number (founder 2026-09-15). */}
         <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
-          {/* Founder 2026-09-15: "PA Score" lives INSIDE the pill (label prop), consistent with
+          {/* Founder 2026-09-15: "Overall score" lives INSIDE the pill (label prop), consistent with
               the self-labeled Agent-ready / Built-in AI pills beside it. */}
-          <AiEraBadge label="PA Score" value={entry.aiEra} href={`/arena/${category}/product/${id}/score`} interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
+          <AiEraBadge label="Overall score" value={entry.aiEra} href={`/arena/${category}/product/${id}/score`} interval={aiEraBandFor(loadScoreIntervals(category), id)} showBand components={{ agentReady: entry.agentReady, apiQuality: entry.apiQuality, openness: entry.themeScores['openness'] ?? null, agenticApp: entry.agenticApp, automation: entry.themeScores['automation-depth'] ?? null }} />
           {/* naDimensions (hardware arenas): a suppressed dimension renders the muted "n/a"
               pill (value=null path) — a chip has no agent-drivable surface or API of its own,
-              and a number would overstate; the PA Score above still applies. */}
+              and a number would overstate; the Overall score above still applies. */}
           <AgenticBadge kind="agent-ready" value={naDims.has('agentReady') ? null : entry.agentReady} untested={!naDims.has('agentReady') && isGroupUntested(data, id, 'agent-access')} href={naDims.has('agentReady') ? undefined : `/arena/${category}/product/${id}/score#agent-ready`} />
           <AgenticBadge kind="agentic-app" value={naDims.has('agenticApp') ? null : entry.agenticApp} untested={!naDims.has('agenticApp') && isGroupUntested(data, id, 'agentic-features')} href={naDims.has('agenticApp') ? undefined : `/arena/${category}/product/${id}/score#built-in-ai`} />
           <AgenticBadge kind="api-quality" value={naDims.has('apiQuality') ? null : entry.apiQuality} untested={!naDims.has('apiQuality') && isGroupUntested(data, id, 'api-quality')} href={naDims.has('apiQuality') ? undefined : `/arena/${category}/product/${id}/score#api-quality`} />
@@ -285,7 +285,7 @@ export default async function ProductPage({
             }
           />
         </div>
-        {/* SECONDARY row — adoption signals (registry data, never part of the PA Score), the
+        {/* SECONDARY row — adoption signals (registry data, never part of the Overall score), the
             evidence-depth flag (how hard we've looked, founder 2026-09-23), and the
             vendor-response chip. */}
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">

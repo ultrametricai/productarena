@@ -332,7 +332,7 @@ export default function OpsDashboard({ data }: { data: OpsData }) {
         <SectionHead
           id="news"
           title="Vendor news monitor"
-          blurb="Recent blog/changelog post titles per tracked vendor (pipeline/scripts/watch-vendor-news.ts — RSS first, anchor scrape fallback, budgeted and resumable). Agentic-relevant titles are keyword-flagged for focus; flags never touch any PA Score."
+          blurb="Recent blog/changelog post titles per tracked vendor (pipeline/scripts/watch-vendor-news.ts — RSS first, anchor scrape fallback, budgeted and resumable). Agentic-relevant titles are keyword-flagged for focus; flags never touch any Overall score."
         />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Headline label="Sources checked" value={String(news.sourcesChecked)} title={news.generatedAt ? `last run ${shortDate(news.generatedAt)}` : 'not yet run'} />

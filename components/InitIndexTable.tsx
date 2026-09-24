@@ -15,7 +15,7 @@ interface IndexRow {
 }
 
 // Third global index, alongside AgenticIndexTable (sorted by agentReady) and AiNativeIndexTable
-// (sorted by agenticApp): this one sorts by the blended PA Score itself — "which single
+// (sorted by agenticApp): this one sorts by the blended Overall score itself — "which single
 // product is most ready for the AI-agent era, all five axes considered." Ties break on the raw
 // coverage score, both desc/nulls-last, matching lib/scoring.ts's own leaderboard tiebreak.
 export function buildInitIndex(categories: CategoryData[]): IndexRow[] {
@@ -57,7 +57,7 @@ export default function InitIndexTable({ categories, limit }: { categories: Cate
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of any score">Popularity</span></th>
             <th className="px-3 py-2 font-normal">
               <span className="inline-flex items-center gap-1.5">
-                <span title="PA Score (0–100): the site's blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">PA Score</span>
+                <span title="Overall score (0–100): the site's blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">Overall score</span>
                 <ColumnsHelpLink />
               </span>
             </th>

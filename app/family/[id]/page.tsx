@@ -7,7 +7,7 @@ import { loadFamilies, type Family, type FamilyProductRef } from '@/lib/families
 
 // One vendor, product by product (data/product-families.json — see lib/families.ts for the
 // data contract). Each product line is a card: lines judged as their own product in an arena
-// (arenaRef) deep-link to that product page with the LIVE rank and PA Score pulled from the
+// (arenaRef) deep-link to that product page with the LIVE rank and Overall score pulled from the
 // arena's rankings.json, plus head-to-head battle links against their arena rivals; lines with
 // no fitting arena render an honest "not yet judged" state — never a fabricated score. Fully
 // static — params come from the families file, unknown ids 404 (dynamicParams = false), same
@@ -29,7 +29,7 @@ export async function generateMetadata({
   return {
     title: `${family ? family.name : id}, product by product — ProductArena`,
     description: family
-      ? `${family.name}'s product lines broken out one by one: which are judged in a ProductArena arena (with live rank and PA Score) and which have no arena yet.`
+      ? `${family.name}'s product lines broken out one by one: which are judged in a ProductArena arena (with live rank and Overall score) and which have no arena yet.`
       : undefined,
   }
 }
@@ -159,7 +159,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                   </p>
                   <p className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-zinc-400">
                     {/* Rank clicks through to the leaderboard it comes from (founder feedback);
-                        the score wears the same emerald pill as every PA Score on the site. */}
+                        the score wears the same emerald pill as every Overall score on the site. */}
                     <Link
                       href={`/arena/${judged.arenaId}`}
                       title={`Rank ${judged.rank} of ${judged.of} — the full ${judged.arenaName} leaderboard`}
@@ -170,7 +170,7 @@ export default async function FamilyPage({ params }: { params: Promise<{ id: str
                     </Link>
                     {judged.paScore !== null && (
                       <>
-                        <span>· PA Score</span>
+                        <span>· Overall score</span>
                         <AiEraBadge value={judged.paScore} size="xs" />
                       </>
                     )}

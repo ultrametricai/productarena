@@ -15,23 +15,23 @@ import { AGENTIC_BOOST, OPPORTUNITY_CAP, opportunitiesFor, type Opportunity, typ
 
 // Where closing the gap lands, in plain words — the REQUIRED tooltip for each lever chip.
 const LEVER_TITLES: Record<ScoreLever, string> = {
-  'agent-ready': 'Closing this moves the agent-ready index directly (and the PA Score through it)',
-  'Built-in AI': 'Closing this moves the Built-in AI index directly (and the PA Score through it)',
-  'API quality': 'Closing this moves the API quality index directly (and the PA Score through it)',
-  'PA Score': 'Closing this moves the PA Score blend via its theme, plus the coverage score',
+  'agent-ready': 'Closing this moves the agent-ready index directly (and the Overall score through it)',
+  'Built-in AI': 'Closing this moves the Built-in AI index directly (and the Overall score through it)',
+  'API quality': 'Closing this moves the API quality index directly (and the Overall score through it)',
+  'Overall score': 'Closing this moves the Overall score blend via its theme, plus the coverage score',
 }
 
 // The index-feeding levers get the emerald treatment — they're the agentic axes this site is
-// about; plain PA Score levers stay zinc.
+// about; plain Overall score levers stay zinc.
 const LEVER_STYLES: Record<ScoreLever, string> = {
   'agent-ready': 'border-emerald-400/40 bg-emerald-400/5 text-emerald-300',
   'Built-in AI': 'border-emerald-400/40 bg-emerald-400/5 text-emerald-300',
   'API quality': 'border-emerald-400/40 bg-emerald-400/5 text-emerald-300',
-  'PA Score': 'border-zinc-700 bg-zinc-900 text-zinc-400',
+  'Overall score': 'border-zinc-700 bg-zinc-900 text-zinc-400',
 }
 
 function impactTitle(o: Opportunity): string {
-  const boost = o.scoreLever === 'PA Score' ? '' : ` × ${AGENTIC_BOOST} agentic boost`
+  const boost = o.scoreLever === 'Overall score' ? '' : ` × ${AGENTIC_BOOST} agentic boost`
   return `Impact = story weight × (10 − judged quality ${o.quality})${boost} — the score headroom this story represents`
 }
 

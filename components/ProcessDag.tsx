@@ -353,7 +353,7 @@ function NodeBlock({
   // Steps with a derived market (optionsArenaId) already show the whole arena in the "via:"
   // row — a second "or:" row of alternatives would just repeat it.
   const alts = node.vendor && !node.optionsArenaId && !ranking ? vendorAlternatives(node.vendor) : []
-  // Live market for the step's general function: arena-derived roster (top by PA Score, in
+  // Live market for the step's general function: arena-derived roster (top by Overall score, in
   // arena-rank order) plus curated extras — lib/processes.ts stepVendorOptions.
   const options = ranking ? [] : stepVendorOptions(node)
   const calls = node.functionCalls ?? []
@@ -468,7 +468,7 @@ function NodeBlock({
           {node.optionsArenaId && (
             <Link
               href={`/arena/${node.optionsArenaId}`}
-              title="This list is derived from the arena's live leaderboard (top products by PA Score) — see the whole judged market"
+              title="This list is derived from the arena's live leaderboard (top products by Overall score) — see the whole judged market"
               className="whitespace-nowrap text-[10px] text-zinc-500 transition hover:text-emerald-300"
             >
               full arena →

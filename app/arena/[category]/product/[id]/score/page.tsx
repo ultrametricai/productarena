@@ -36,7 +36,7 @@ export async function generateMetadata({
   const product = data.products.find((p) => p.id === id)
   return {
     title: `${product ? product.name : id} score calculation — ${data.category.name} Arena — ProductArena`,
-    description: `The transparent audit trail behind ${product ? product.name : id}'s PA Score: every judged story, verdict, cited evidence item, and the exact arithmetic from verdicts to the blended score.`,
+    description: `The transparent audit trail behind ${product ? product.name : id}'s Overall score: every judged story, verdict, cited evidence item, and the exact arithmetic from verdicts to the blended score.`,
     alternates: { canonical: `${SITE_URL}/arena/${category}/product/${id}/score` },
   }
 }
@@ -192,7 +192,7 @@ export default async function ScorePage({
         <p className="mt-2 max-w-2xl text-sm text-zinc-400">
           The full audit trail, recomputed from the verdict data at build time through the same
           code that produced the leaderboard: verdict × quality × story weight per cell, cells
-          sum to dimension scores, dimensions blend into the PA Score. Every number on the{' '}
+          sum to dimension scores, dimensions blend into the Overall score. Every number on the{' '}
           <Link href={productHref} className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200">product page</Link>{' '}
           is reproducible from this page alone; for why the formula looks like this, see the{' '}
           <Link href="/methodology#arena-score" className="text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition hover:text-emerald-200">methodology</Link>.
@@ -205,7 +205,7 @@ export default async function ScorePage({
       {/* The blend — the equation at the top of the receipt, this vendor's numbers substituted. */}
       <section id="pa-score" className="scroll-mt-16 rounded-xl border border-emerald-400/40 p-5 target:border-emerald-400/80">
         <h2 className="font-display leading-[1.1] flex flex-wrap items-center gap-x-3 text-lg font-semibold">
-          PA Score
+          Overall score
           <AiEraBadge value={blend.aiEra} />
         </h2>
         <div className="mt-3 space-y-1 font-mono text-sm tabular-nums">
@@ -225,7 +225,7 @@ export default async function ScorePage({
           ))}
           {blend.aiEra === null ? (
             <p className="border-t border-zinc-700 pt-2 italic text-zinc-500">
-              every component n/a — no PA Score to compute
+              every component n/a — no Overall score to compute
             </p>
           ) : (
             <p className="border-t border-zinc-700 pt-2 text-zinc-300">

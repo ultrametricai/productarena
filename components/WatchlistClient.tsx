@@ -16,7 +16,7 @@ import type { WatchlistProduct } from '@/lib/watchlist'
 
 // Plain-English definitions for the two score labels — the same wording the ranking tables use.
 const SCORE_LABEL_TITLES: Record<string, string> = {
-  'PA Score': 'PA Score (0–100): the site\'s blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI',
+  'Overall score': 'Overall score (0–100): the site\'s blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI',
   'Agent-ready': 'Agent-ready (0–100): how easily an outside AI agent or assistant can connect to and operate this product',
 }
 
@@ -76,7 +76,7 @@ export default function WatchlistClient({ products }: { products: WatchlistProdu
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-                <ScoreCell label="PA Score" value={p.aiEra} values={seriesFor(entries, 'aiEra').map((pt) => pt.value)} />
+                <ScoreCell label="Overall score" value={p.aiEra} values={seriesFor(entries, 'aiEra').map((pt) => pt.value)} />
                 <ScoreCell label="Agent-ready" value={p.agentReady} values={seriesFor(entries, 'agentReady').map((pt) => pt.value)} />
               </div>
             </div>

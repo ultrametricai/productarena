@@ -64,7 +64,7 @@ function buildRows(data: CategoryData): ArenaTableRow[] {
 // identically on every leaderboard; only the columns differ per table.
 const RANK_PRESETS: Array<{ col: ArenaTableColumn; label: string }> = [
   { col: 'agentReady', label: 'Most agent-ready' },
-  { col: 'initScore', label: 'Highest PA Score' },
+  { col: 'initScore', label: 'Highest Overall score' },
   { col: 'agenticApp', label: 'Best built-in AI' },
   { col: 'popularity', label: 'Most popular' },
 ]
@@ -121,7 +121,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
   // arenas): render n/a instead of a number, before any untested check.
   const naDims = new Set(data.category.naDimensions ?? [])
   const naCell = (
-    <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface or API of its own. The PA Score still applies; see the arena methodology note.">
+    <span className="text-zinc-600" title="Not meaningful for this arena's product class — a physical part has no agent-drivable surface or API of its own. The Overall score still applies; see the arena methodology note.">
       n/a
     </span>
   )
@@ -198,7 +198,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                 Product
               </SortableTh>
               <SortableTh col="initScore" current={column} direction={direction} onSort={handleSort}>
-                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a badge for the methodology.">PA Score</span>
+                <span title="Overall score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a badge for the methodology.">Overall score</span>
               </SortableTh>
               <SortableTh col="agentReady" current={column} direction={direction} onSort={handleSort}>
                 <span title="AGENT-READY = outside-in: can YOUR agent drive this product? Measures the access surface — API, MCP, CLI, headless runs, agent docs. A product can score high here with zero AI features of its own (think Stripe).">Agent-ready</span>
@@ -217,7 +217,7 @@ export default function ArenaTable({ data, logoMap, pricing, hotReasons }: { dat
                 <span title="Automation depth /100 — how much of the product's work can run hands-off, end to end, without a person clicking through">Autom.</span>
               </SortableTh>
               <SortableTh col="popularity" current={column} direction={direction} onSort={handleSort} className="hidden md:table-cell">
-                <span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of the PA Score">Popularity</span>
+                <span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of the Overall score">Popularity</span>
               </SortableTh>
               {pricing && (
                 <SortableTh col="rank" current={column} direction={direction} onSort={handleSort} sortable={false} className="hidden md:table-cell">

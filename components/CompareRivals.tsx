@@ -49,7 +49,7 @@ const DIMS: Array<{
 ]
 
 const NA_CELL_TITLE =
-  "Not meaningful for this arena's product class — a physical part has no agent-drivable surface or API of its own. The PA Score still applies; see the arena methodology note."
+  "Not meaningful for this arena's product class — a physical part has no agent-drivable surface or API of its own. The Overall score still applies; see the arena methodology note."
 
 function ScoreCell({
   row,
@@ -113,7 +113,7 @@ export default function CompareRivals({ data, productId }: { data: CategoryData;
                 <span title="This product (highlighted) plus its nearest rivals by arena leaderboard rank — # is each product's rank in the full arena">Product</span>
               </th>
               <th scope="col" className="px-2 py-1.5 font-normal">
-                <span title="PA Score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a score for its full receipt.">PA Score</span>
+                <span title="Overall score /100 — the blended headline score: agent-ready ×0.30, API quality ×0.20, openness ×0.20, Built-in AI ×0.15, automation ×0.15. Click a score for its full receipt.">Overall score</span>
               </th>
               {DIMS.map((dim) => (
                 <th key={dim.key} scope="col" className={`px-2 py-1.5 font-normal ${dim.hideBelow ? hide[dim.hideBelow] : ''}`}>
@@ -169,7 +169,7 @@ export default function CompareRivals({ data, productId }: { data: CategoryData;
                   ) : (
                     <Link
                       href={`/arena/${data.category.id}/product/${row.productId}/score`}
-                      title={`${row.name}'s PA Score — click for the full receipt: every dimension, story, verdict, and evidence behind it`}
+                      title={`${row.name}'s Overall score — click for the full receipt: every dimension, story, verdict, and evidence behind it`}
                       className="hover:text-emerald-300"
                     >
                       {row.aiEra.toFixed(0)}

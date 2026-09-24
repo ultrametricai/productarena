@@ -19,7 +19,7 @@ export const dynamic = 'force-static'
 export const metadata: Metadata = {
   title: 'Missing startups — where the agent economy has gaps — ProductArena',
   description:
-    'Arenas ranked by opportunity for new agent-native entrants: weak fleet agent-readiness, stories no product serves, and leaders with low PA Scores — all derived from evidence-backed verdicts.',
+    'Arenas ranked by opportunity for new agent-native entrants: weak fleet agent-readiness, stories no product serves, and leaders with low Overall scores — all derived from evidence-backed verdicts.',
 }
 
 // How many unserved stories a card lists before folding into "+N more".
@@ -142,7 +142,7 @@ export default function MissingStartupsPage() {
                   Current leader:{' '}
                   <Link
                     href={`/arena/${arena.arenaId}/product/${arena.leader.productId}`}
-                    title="The arena's #1 by PA Score — the bar a new entrant has to clear"
+                    title="The arena's #1 by Overall score — the bar a new entrant has to clear"
                     className="inline-flex items-center gap-1.5 align-middle text-zinc-300 underline decoration-zinc-700 underline-offset-2 hover:text-emerald-300"
                   >
                     <ProductLogoView
@@ -152,8 +152,8 @@ export default function MissingStartupsPage() {
                     />
                     {arena.leader.name}
                   </Link>{' '}
-                  <span className="inline-flex items-center gap-1 align-middle" title="The leader's PA Score (0–100) — a low bar is itself the opportunity">
-                    PA Score <AiEraBadge value={arena.leader.paScore} size="xs" />
+                  <span className="inline-flex items-center gap-1 align-middle" title="The leader's Overall score (0–100) — a low bar is itself the opportunity">
+                    Overall score <AiEraBadge value={arena.leader.paScore} size="xs" />
                   </span>{' '}
                   · {arena.productCount} products tracked
                 </>

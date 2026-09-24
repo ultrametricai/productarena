@@ -133,7 +133,7 @@ export default function QueuePage() {
                 <th className="px-3 py-2" title="Queue position — priority desc, deterministic tiebreaks">#</th>
                 <th className="px-3 py-2">Product</th>
                 <th className="px-3 py-2">Arena</th>
-                <th className="px-3 py-2" title="staleness × popularityBoost × founderBoost — work prioritization only, never a PA Score input">
+                <th className="px-3 py-2" title="staleness × popularityBoost × founderBoost — work prioritization only, never a Overall score input">
                   Priority
                 </th>
                 <th className="px-3 py-2" title="0 fresh → 100 stale; from the weekly staleness report when one stands, else median evidence age">
