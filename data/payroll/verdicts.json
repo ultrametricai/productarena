@@ -727,35 +727,32 @@
     "productId": "gusto",
     "storyId": "agent-onboards-new-hire",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's Embedded Payroll API docs cover company onboarding, employee tax setup (federal/state), and a paginated /employees endpoint, and the Dev Assistant MCP server lets AI coding tools query the API and docs directly — supporting agent-driven integration work. However, there is no explicit documentation of a compensation-creation endpoint or an end-to-end 'create employee + compensation + tax' flow demonstrated together, and the MCP server is aimed at developers building integrations rather than an agent performing hiring actions itself. Missing for 10: explicit compensation-setup API reference, a documented end-to-end new-hire onboarding sequence, and evidence of an agent actually executing this workflow (not just API capability existing).",
+    "rationale": "Gusto's API docs and CLI show the individual building blocks for an agent-led hire onboarding — employee creation (implied via /employees endpoints and CLI 'gusto employee' command), compensation setup ('gusto compensation'), and employee tax configuration (federal/state tax docs) — plus an agent-friendly CLI with JSON envelopes, dry-run and confirm gates for safe automated writes. However there is no single documented end-to-end 'create employee + compensation + tax' workflow example, and the CLI's write gate requires human confirmation for actual submission, so full autonomous API-driven onboarding isn't demonstrated. Missing for 10: a documented complete API/CLI flow chaining employee, compensation and tax creation in one sequence, and evidence of an agent completing tax setup without human confirmation.",
     "evidenceIds": [
-      "gusto-docs-60",
-      "gusto-docs-63",
       "gusto-docs-37",
-      "gusto-docs-43",
-      "gusto-docs-70",
-      "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-probe-3"
+      "gusto-docs-63",
+      "gusto-docs-45",
+      "gusto-docs-60",
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-docs-70"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "agent-payroll-preview-anomalies",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Gusto's API exposes payroll preview/calculation-adjacent data (e.g., GET /v1/companies/{id}/payrolls, contractor payment preview endpoint, submission_blockers) and offers MCP servers (dev-assistant MCP for building integrations, and a remote MCP server for accessing account data via natural language) that an agent could use to pull payroll run data programmatically. However, there is no documented dedicated 'payroll preview' endpoint with anomaly detection, no evidence of a structured anomaly-flagging/review mechanism, and no documented approval workflow gating agent-run previews before submission. missing for 10: a dedicated payroll-preview API returning calculated totals for review, built-in anomaly/variance detection logic, and a documented approve/reject workflow tied to agent-surfaced anomalies.",
+    "rationale": "Gusto documents an API preview endpoint that validates inputs and surfaces submission_blockers before a payment/run is made (gusto-docs-27, gusto-docs-10), and the first-party agent-facing CLI explicitly implements a dry-run preview + agent JSON envelope + a human-approval confirm gate (exit 8 until --confirm) plus a bundled 'payroll-prep' skill that maps inputs to a draft payroll for review (gusto-contest-61-1, gusto-contest-61-5). This directly matches an agent previewing a run and surfacing blockers before approval.  Missing for 10: an explicitly documented full regular-payroll (not just contractor) preview/anomaly endpoint, and richer anomaly-detection beyond the submission_blockers field; the CLI itself also stops short of executing the run, so end-to-end approve-and-submit is not evidenced.",
     "evidenceIds": [
-      "gusto-docs-40",
-      "gusto-docs-46",
       "gusto-docs-27",
       "gusto-docs-10",
-      "gusto-docs-6",
-      "gusto-contest-52-1",
-      "gusto-probe-3"
+      "gusto-docs-40",
+      "gusto-contest-61-1",
+      "gusto-contest-61-5"
     ]
   },
   {
@@ -764,15 +761,15 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto provides API endpoints to pull payroll data (GET /v1/companies/{id}/payrolls, payroll.paid webhooks) and even a remote MCP server letting AI agents access account data via natural language, plus mentions accounting-app integrations and 'generate payroll reports' capability, which together support an agent pulling payroll data programmatically. However there's no documented journal-entry-specific export format, GL-code mapping, or explicit reconciliation workflow into a ledger. Missing for 10: explicit payroll journal/GL export schema, documented reconciliation-to-ledger workflow, and independent evidence of an agent actually performing this reconciliation end-to-end.",
+    "rationale": "Gusto exposes API endpoints to pull payroll data (GET /v1/companies/{id}/payrolls), payroll.paid webhooks, payroll report generation, and generic 'accounting' app integrations, plus an agent-friendly CLI/MCP server that can fetch payroll/company data for an AI agent to consume. However, there is no explicit documentation of a payroll 'journal entry' export or built-in reconciliation-to-ledger workflow — the evidence shows raw payroll/report retrieval but not a GL-journal-formatted export or reconciliation logic. missing for 10: explicit payroll journal-entry export format, documented reconciliation-to-ledger workflow or accounting-system journal mapping, and independent confirmation an agent has actually performed this reconciliation.",
     "evidenceIds": [
       "gusto-docs-40",
+      "gusto-docs-46",
       "gusto-docs-44",
       "gusto-docs-41",
-      "gusto-docs-16",
-      "gusto-docs-49",
-      "gusto-contest-52-1",
-      "gusto-docs-6"
+      "gusto-docs-56",
+      "gusto-contest-61-1",
+      "gusto-contest-52-1"
     ]
   },
   {
@@ -781,13 +778,12 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Gusto has a confirmed llms.txt file (HTTP 200 with structured guide index) plus extensive .md-formatted docs pages, and additionally documents an official MCP server (both a dev-assistant MCP for API/code docs and a remote MCP server for account data) explicitly designed for AI agent consumption. This directly satisfies the story of pointing an agent at agent-oriented docs/llms.txt. Missing for 10: independent third-party confirmation that agents reliably parse/use these docs in practice beyond first-party claims.",
+    "rationale": "Gusto serves a live llms.txt (HTTP 200) at docs.gusto.com/llms.txt, provides markdown-native versions of docs pages, and its separate CLI repo ships a dedicated AGENTS.md file with agent-specific conventions (install, auth, JSON envelopes, write-gating) confirmed via keyless curl — directly matching the 'point an agent at llms.txt/agent-oriented docs' story. Missing for 10: independent third-party (non-vendor-probe) confirmation that agents actually consume these files successfully in practice.",
     "evidenceIds": [
       "gusto-probe-1",
       "gusto-probe-2",
-      "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-contest-52-1"
+      "gusto-contest-61-2",
+      "gusto-docs-6"
     ]
   },
   {
@@ -796,27 +792,25 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto ships an official MCP server (mcp.api.gusto.com) letting LLMs like Claude/ChatGPT/Gemini access account data via natural language, which enables AI-driven interaction with the user's payroll data, but this is a connectivity/access layer rather than native, in-product AI-generated insights, anomaly detection, or proactive suggestions surfaced within the Gusto UI itself. missing for 10: evidence of first-party generative insights/recommendations embedded directly in the Gusto product UI, proactive suggestion features, or analytics dashboards powered by AI, plus independent hands-on validation of the MCP server's insight-generation quality.",
+    "rationale": "Gusto's official MCP server lets an AI assistant query and analyze a user's own Gusto data via natural language (gusto-contest-52-1), and the agent CLI ships a 'cash-forecasting' skill that projects payroll cash needs (gusto-contest-61-5) — both give AI-derived insight from Gusto data. However, these are external agent/developer integrations rather than a native in-product AI insights/suggestions feature surfaced inside the Gusto app itself. Missing for 10: evidence of an embedded, in-app AI assistant or dashboard proactively surfacing insights/suggestions to end users, and independent confirmation of the insight quality.",
     "evidenceIds": [
       "gusto-contest-52-1",
-      "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-probe-3"
+      "gusto-contest-61-5",
+      "gusto-docs-6"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Gusto has webhooks (event-driven callbacks a partner must build automation logic around) and an MCP server for AI tools to query/act on data interactively, plus scheduled payroll generation as a built-in product behavior — but there is no evidence of a user-configurable automation/workflow feature that runs autonomously in the background as an AI-native capability.",
+    "rationale": "Gusto's public CLI supports headless/scripted operation (env-var tokens, CI-friendly, no interactive prompt) and ships bundled agent skills (cash-forecasting, timesheet-sync, payroll-prep) that auto-install into agent workspaces, enabling background-run automations for non-money-moving tasks. However, any write action (including payroll submission) is explicitly gated behind a --confirm human-in-the-loop step and the CLI has no run/submit command at all, so fully autonomous background execution of consequential tasks is intentionally blocked. Missing for 10: evidence of any workflow that runs fully autonomously end-to-end without a human confirmation gate, and independent/hands-on corroboration beyond the vendor's own repo.",
     "evidenceIds": [
-      "gusto-docs-5",
-      "gusto-docs-16",
-      "gusto-docs-62",
-      "gusto-contest-52-1",
-      "gusto-docs-6"
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-contest-61-5",
+      "gusto-contest-61-6"
     ]
   },
   {
@@ -825,27 +819,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Gusto offers MCP servers (a Dev Assistant MCP for API/docs, and a remote MCP server for account data) that let external AI tools like Claude, ChatGPT, and Cursor connect to Gusto — this is external-assistant connectivity, not a built-in AI assistant embedded within the Gusto product itself for end-users to delegate payroll/HR tasks to. No evidence of a native in-app AI assistant/chatbot inside Gusto's UI.",
+    "rationale": "Gusto's evidence shows MCP servers that let external AI tools (Claude, ChatGPT, Cursor, Gemini) connect to Gusto's API/data, and a CLI with agent skills for developers — these are integrations enabling outside assistants to access Gusto, not a built-in AI assistant embedded within Gusto's own product UI that an end user can delegate payroll/HR tasks to. No evidence of a native in-app chat/assistant feature inside Gusto's dashboard.",
     "evidenceIds": [
       "gusto-docs-6",
       "gusto-docs-34",
       "gusto-docs-66",
-      "gusto-contest-52-1"
+      "gusto-contest-52-1",
+      "gusto-contest-61-1"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Gusto exposes a full REST API with idempotency keys, webhooks, and official client libraries, which supports programmatic/automated use, but there's no evidence of a CLI, official automation SDK for CI pipelines, or documented headless batch/cron workflows; the MCP servers described are for AI assistants interacting with docs/data, not for running Gusto headlessly in CI. missing for 10: CLI or CI-specific tooling, documented automation/cron examples, evidence of running against Gusto in unattended CI pipelines, independent corroboration of headless automation use.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "medium",
+    "rationale": "Gusto ships an official CLI (gusto-cli) explicitly documented as CI/agent-ready: env-var/stdin token auth for scripted environments, a stable JSON envelope (--agent/--json) auto-enabled when stdout is piped, documented exit codes, --dry-run previews, and a --confirm gate for writes — all confirmed via the GitHub repo, live install script probe, and release history (gusto-contest-61-1..6). This is strong first-party evidence of headless/CI operation, though writes are intentionally blocked pending human --confirm and the CLI can't execute actual payroll runs, limiting full unattended automation. Missing for 10: independent/hands-on confirmation of real-world CI pipelines using the CLI beyond first-party docs, and evidence the confirmation gate doesn't materially block end-to-end automated workflows.",
     "evidenceIds": [
-      "gusto-docs-8",
-      "gusto-docs-17",
-      "gusto-docs-54",
-      "gusto-docs-56",
-      "gusto-contest-52-1"
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-contest-61-3",
+      "gusto-contest-61-4",
+      "gusto-contest-61-6"
     ]
   },
   {
@@ -854,14 +849,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gusto's evidence exclusively describes it as an MCP *server* (the Embedded Dev Assistant MCP and mcp.api.gusto.com) that other AI tools like Cursor, Claude Desktop, and ChatGPT connect to and consume — the reverse role from the story, which asks whether a user can plug external MCP servers into Gusto so Gusto itself can use their tools. Gusto is a payroll/HR SaaS/API platform with no agentic assistant surface for consuming external tools, so this client-side MCP axis does not apply to its product category.",
-    "evidenceIds": [
-      "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-docs-66",
-      "gusto-contest-52-1",
-      "gusto-probe-3"
-    ]
+    "rationale": "This story describes the product acting as an MCP client/host that consumes externally-plugged-in MCP servers' tools (like Claude Desktop or Cursor do). Gusto is a payroll/HR SaaS platform, not an AI agent or IDE-style host application — all Gusto evidence instead shows it publishing its own MCP server (and CLI) for others to consume, which is the opposite, server-side role and a separate axis.",
+    "evidenceIds": []
   },
   {
     "productId": "gusto",
@@ -882,24 +871,33 @@
     "productId": "gusto",
     "storyId": "agentic-nl-commands",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Gusto ships an official first-party MCP server (mcp.api.gusto.com) explicitly designed for end users to 'access your data housed within Gusto using natural language' via Claude, ChatGPT, Gemini, and Cursor, with OAuth2-scoped access — directly matching the AI-native natural-language operation story. This is separate from the developer-focused Dev Assistant MCP server also documented. Missing for 10: independent/hands-on user reports confirming real-world natural-language usage and breadth of operations supported beyond data access (e.g., running payroll via NL command).",
+    "rationale": "Gusto documents an official remote MCP server (mcp.api.gusto.com) explicitly built for natural-language access to a user's Gusto account data via Claude, ChatGPT, Gemini, and Cursor, plus a public agent-friendly CLI with bundled skills for Claude/Cursor/Windsurf that lets agents (driven by natural language) run payroll-prep workflows with human-in-the-loop confirmation. This directly satisfies the story of operating Gusto via natural-language commands rather than only via developer API integration. Missing for 10: independent/hands-on user reports confirming real-world natural-language MCP/CLI usage (evidence is entirely first-party docs and GitHub artifacts, no community corroboration).",
     "evidenceIds": [
       "gusto-contest-52-1",
-      "gusto-docs-6",
-      "gusto-docs-34",
-      "gusto-docs-66"
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-contest-61-5",
+      "gusto-docs-6"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "agentic-official-cli",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "full",
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Evidence pack details Gusto's API, React SDK, client libraries, and an MCP server for AI editors, but nowhere mentions an official command-line interface (CLI) tool for developers or AI-native workflows. The axis is plausible for a developer platform, but no CLI is documented anywhere in the evidence.",
-    "evidenceIds": []
+    "rationale": "Gusto ships a first-party, actively-released public CLI (gusto-cli) explicitly designed for agentic workflows: dual human/agent JSON output, --dry-run and --confirm human-in-the-loop gates, a dedicated AGENTS.md, bundled agent skills auto-installed into Claude/Cursor/Windsurf/Cline workspaces, headless CI auth via env vars or stdin token, and a verifiable install script hosted on Gusto's own cli.gusto.com domain with SHA256-verified releases. This is corroborated across the GitHub repo, raw AGENTS.md fetch, install script probe, and release API, going well beyond a bare CLI to explicit AI-native tooling. Missing for 10: independent/community hands-on usage reports (only vendor/GitHub-sourced evidence) and the official product page is blocked by Cloudflare to crawlers.",
+    "evidenceIds": [
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-contest-61-3",
+      "gusto-contest-61-4",
+      "gusto-contest-61-5",
+      "gusto-contest-61-6",
+      "gusto-contest-61-7"
+    ]
   },
   {
     "productId": "gusto",
@@ -907,30 +905,33 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Gusto Embedded Payroll offers a fully documented public REST API with authentication, pagination, idempotency, versioning, webhooks, official client libraries, and a React SDK, plus reference docs for concrete endpoints (contractor payments, time off, payroll). This gives AI-native developers a rich, well-documented surface to drive the product programmatically. Missing for 10: independent/hands-on third-party verification of API robustness beyond vendor docs.",
+    "rationale": "Gusto Embedded Payroll offers a comprehensive documented public REST API covering onboarding, payroll runs, contractors, time off, webhooks, idempotency, versioning, pagination, and authentication, plus official client libraries/SDKs and a public CLI/skills for agent-driven workflows. missing for 10: independent third-party hands-on corroboration of the full API surface beyond first-party docs and repo evidence.",
     "evidenceIds": [
-      "gusto-docs-6",
-      "gusto-docs-54",
-      "gusto-docs-53",
-      "gusto-docs-67",
-      "gusto-docs-70",
+      "gusto-docs-8",
+      "gusto-docs-17",
       "gusto-docs-25",
       "gusto-docs-40",
-      "gusto-docs-56",
-      "gusto-probe-2"
+      "gusto-docs-54",
+      "gusto-docs-67",
+      "gusto-docs-70",
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-contest-61-4"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "agentic-scoped-keys",
     "verdict": "full",
-    "quality": 7,
-    "confidence": "medium",
-    "rationale": "Gusto's official MCP server documentation explicitly describes an OAuth2-based connection flow that lets a user 'select the categories of data to which your chosen LLM will have access,' i.e., scoped/least-privilege agent credentials, complementing the API's general system access token model for application-level auth. This directly matches the story of issuing scoped credentials for an AI agent to access Gusto data.  Missing for 10: independent/hands-on verification of the scoping granularity, and more detailed docs on token expiration/revocation or fine-grained scope lists beyond 'categories of data.'",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Gusto's official MCP server and CLI provide OAuth2-based connections with selectable data categories per connection, and the CLI supports scoped env-based credential slots (production vs sandbox), token-stdin for secret hygiene, and a confirm-gated write model limiting agent actions — all evidencing least-privilege, scoped credential issuance for agents. missing for 10: no explicit fine-grained permission/role scoping model (e.g., read-only vs write-only token grants) documented beyond category selection and env slots, and no independent/hands-on verification of the scoping enforcement.",
     "evidenceIds": [
       "gusto-contest-52-1",
-      "gusto-docs-70",
-      "gusto-docs-6"
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-contest-61-6",
+      "gusto-docs-70"
     ]
   },
   {
@@ -939,13 +940,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Gusto documents official client libraries/SDKs across several languages plus a dedicated React SDK with built-in payroll business logic, alongside API fundamentals (idempotency, pagination, versioning) that AI-native developers would build against. Missing for 10: independent/community corroboration of SDK quality or hands-on developer reports validating the SDKs in production.",
+    "rationale": "Gusto documents official client libraries/SDKs across multiple languages plus a dedicated React SDK with prebuilt components, backed by comprehensive API docs (idempotency, versioning, webhooks, pagination) and even an official MCP server and CLI tailored for AI-agent workflows. missing for 10: independent third-party developer corroboration of SDK quality/reliability beyond Gusto's own docs, and no evidence of SDKs in languages beyond what's implied (only React SDK detailed explicitly).",
     "evidenceIds": [
       "gusto-docs-53",
       "gusto-docs-54",
       "gusto-docs-65",
       "gusto-docs-8",
-      "gusto-docs-67"
+      "gusto-docs-67",
+      "gusto-contest-52-1",
+      "gusto-contest-61-1"
     ]
   },
   {
@@ -954,13 +957,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Gusto's docs describe a full webhook subscription system: creating subscriptions with subscription_types (gusto-docs-56), verifying via a token before events are sent (gusto-docs-71), HMAC signature verification (gusto-docs-23), specific events like payroll.paid (gusto-docs-16/22/49/59), and a health-check endpoint (gusto-docs-57). This is well-documented first-party API capability suitable for AI-native/event-driven integration. Missing for 10: independent/hands-on developer confirmation of webhook reliability and a broader catalog of subscription event types beyond payroll.paid.",
+    "rationale": "Gusto's docs provide first-party webhook subscription creation endpoint (POST /v1/webhook-subscription), event types like payroll.paid, HMAC-based payload verification, a verify endpoint for confirming subscriptions, and a health-check endpoint for the webhooks system — a fairly complete webhooks subscription API. This is well documented for API/AI-native integrators building agentic workflows. missing for 10: independent/hands-on corroboration of webhook reliability or delivery guarantees, and no evidence of AI-agent-specific tooling for consuming/subscribing to these webhooks (e.g., agent SDK helpers).",
     "evidenceIds": [
       "gusto-docs-5",
       "gusto-docs-16",
       "gusto-docs-22",
       "gusto-docs-23",
-      "gusto-docs-49",
       "gusto-docs-56",
       "gusto-docs-57",
       "gusto-docs-71"
@@ -991,11 +993,12 @@
   {
     "productId": "gusto",
     "storyId": "api-sandbox",
-    "verdict": "partial",
-    "quality": 5,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Gusto's docs mention that 'Demo companies are automatically generated with company info, employees, and previous payrolls so you can begin testing right away' (gusto-docs-13), which supports sandbox-style testing without touching production data. However, this is a single, brief mention with no further detail on sandbox API endpoints, environment separation, or independent confirmation of its reliability. missing for 10: explicit sandbox API/environment documentation beyond demo companies, details on how sandbox vs production keys/environments are isolated, and independent/hands-on verification of the sandbox experience.",
+    "rationale": "The Gusto CLI explicitly supports a documented '--env sandbox (api.gusto-demo.com)' credential slot separate from production, letting agentic users test flows (payroll prep, timesheets, dry-runs) against sandbox data without touching production, and demo companies are auto-generated for embedded partners to test with pre-populated data instead of live records. missing for 10: no independent/hands-on third-party confirmation that the sandbox environment behaves identically to production or fully isolates data, and no explicit mention of sandbox mode in the embedded-payroll API docs themselves (only in the CLI evidence).",
     "evidenceIds": [
+      "gusto-contest-61-6",
       "gusto-docs-13"
     ]
   },
@@ -1005,7 +1008,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto documents explicit API versioning (X-Gusto-API-Version header, per-version Postman collections, version-gated error formats since 2023-02-01), showing a real versioning scheme. However, the evidence pack contains no explicit deprecation policy (e.g., sunset timelines, notice periods, migration guides between versions). Missing for 10: documented deprecation/sunset policy, migration guidance between API versions, and independent confirmation of how version transitions are handled in practice.",
+    "rationale": "Gusto documents explicit API versioning (via the `X-Gusto-API-Version` header, per-version Postman collections, and version-tied changes like consistent error JSON structures starting 2023-02-01), showing a real versioning system exists and is documented. However, the evidence pack contains no explicit deprecation policy — no sunset timelines, migration windows, or notices for retiring old versions are shown. Missing for 10: documented deprecation/sunset policy, version lifecycle timeline, and independent confirmation that old versions are supported for a defined period.",
     "evidenceIds": [
       "gusto-docs-67",
       "gusto-docs-68",
@@ -1018,12 +1021,11 @@
     "verdict": "disputed",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's docs strongly claim automatic federal/state/local tax calculation, filing, and remittance ('Calculate and file taxes automatically', 'all associated federal, state, and local filings and payments', 'handling everything from tax calculations to bank transfers') plus employee federal/state tax onboarding, but an independent hands-on report describes a concrete tax-filing failure (Gusto erroneously combined tax IDs on W-2c forms causing 2021 Q1 payroll to be double-reported to the IRS, with support unable to resolve it), directly contradicting the 'automatic and correct' claim. missing for 10: independent corroboration that filings are consistently accurate at scale, and a documented resolution/fix process for filing errors.",
+    "rationale": "Gusto's own docs explicitly promise automatic federal/state/local tax calculation, filing, and remittance as a core payroll feature (gusto-docs-52, gusto-docs-44, gusto-docs-58, gusto-docs-63), well beyond the embedded-API product. However, independent community reports describe a concrete real-world failure where Gusto's tax filing went wrong — W-2c forms combining two tax IDs caused Q1 payroll to be double-reported to the IRS, with support unable to resolve it (gusto-comm-11, gusto-comm-12) — directly contradicting the 'automatically calculated and filed correctly' claim. Missing for 10: independent verification of routine tax-filing accuracy at scale, and no vendor response/resolution to the cited filing-error incident.",
     "evidenceIds": [
-      "gusto-docs-44",
       "gusto-docs-52",
+      "gusto-docs-44",
       "gusto-docs-58",
-      "gusto-docs-37",
       "gusto-docs-63",
       "gusto-comm-11",
       "gusto-comm-12"
@@ -1035,12 +1037,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Gusto's platform inherently processes payroll for multiple employees at once and offers contractor_payment_groups endpoints to preview/process payments to many contractors together, which is a form of bulk operation, but there's no documented generic bulk-create/bulk-update API for arbitrary object types (employees, time-off requests, etc.) and no AI-specific batch tooling beyond the MCP server for natural-language single-item queries. missing for 10: explicit bulk-create/bulk-update endpoints across resource types, batch API for employees/contractors beyond payment groups, AI-native agent examples performing bulk operations via MCP.",
+    "rationale": "Gusto's payroll runs and contractor_payment_groups inherently act across many employees/contractors at once (docs-27, docs-44, docs-61), and the official CLI/agent skills (payroll-prep, timesheet-sync) drive per-cycle payroll prep across a whole company in one agent session, giving some multi-item automation depth. However there's no documented bulk/batch API endpoint for creating, updating, or approving many discrete records (e.g., employees, time-off requests) in a single call — operations like time-off approvals and employee onboarding are described one-at-a-time.\nmissing for 10: explicit bulk/batch create-update-approve endpoints for arbitrary item sets, CLI commands that operate on multiple named items in a single invocation, independent evidence of large-scale bulk automation in practice.",
     "evidenceIds": [
       "gusto-docs-27",
-      "gusto-docs-62",
-      "gusto-docs-46",
-      "gusto-contest-52-1"
+      "gusto-docs-44",
+      "gusto-docs-31",
+      "gusto-contest-61-1",
+      "gusto-contest-61-5"
     ]
   },
   {
@@ -1060,24 +1063,31 @@
   {
     "productId": "gusto",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Gusto's docs show only domain-specific recurring payroll runs that are automatically pre-generated from a company's pay schedule (gusto-docs-62) and event-driven webhooks (gusto-docs-16), but there is no evidence of a general-purpose scheduler or workflow automation capability that an AI-native user could configure to run recurring custom jobs/workflows via API or MCP.",
+    "rationale": "Gusto's platform inherently pre-generates recurring payroll runs on a company's pay schedule (gusto-docs-62) and exposes webhooks so external apps can react to recurring events like payroll.paid (gusto-docs-16/49), and the new agent CLI ships bundled 'payroll-prep' and 'cash-forecasting' skills that could be invoked on a schedule by an external cron/agent (gusto-contest-61-5). However, there is no documented first-party scheduler/cron primitive that lets an AI-native user define arbitrary recurring jobs or workflows inside Gusto itself — recurrence is baked into payroll cadence, not a general automation feature. Missing for 10: a native recurring-job/workflow scheduler API or CLI subcommand (e.g., 'gusto schedule'), and independent evidence of agents actually orchestrating recurring workflows via webhooks/CLI.",
     "evidenceIds": [
       "gusto-docs-62",
       "gusto-docs-16",
-      "gusto-docs-56"
+      "gusto-docs-49",
+      "gusto-contest-61-5",
+      "gusto-contest-61-1"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "automation-versioned-workflows",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Gusto is a payroll/HR API platform with no mention of automation versioning, change review, or rollback for workflows/automations; only unrelated concepts like idempotency keys and record version fields for concurrency control appear, which are not automation version control.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Gusto's CLI provides a review step via --dry-run and a --confirm gate before any write executes, and the API exposes a version field with 409-conflict optimistic locking plus explicit API versioning headers — but none of this amounts to true 'automation' versioning/rollback (e.g., undoing a submitted payroll run or reverting an automation's history). Missing for 10: an actual rollback/undo mechanism for executed automations, a version history/audit trail of automation changes, and any documented 'revert' or 'restore prior state' capability.",
+    "evidenceIds": [
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-docs-25",
+      "gusto-docs-67"
+    ]
   },
   {
     "productId": "gusto",
@@ -1085,13 +1095,14 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs describe off-cycle payrolls for handling 'corrections' (gusto-docs-4, gusto-docs-21, gusto-docs-32) and show that upcoming payrolls can be queried with processing_statuses=unprocessed (gusto-docs-46), implying visibility into payrolls not yet finalized, but there is no documented API/UI action to explicitly cancel or edit a submitted payroll before it pays employees. Missing for 10: an explicit 'cancel/void submitted payroll' endpoint or workflow, confirmation of edit windows before check date, and independent/hands-on evidence that corrections actually stop a pending pay run rather than creating a separate off-cycle run after the fact.",
+    "rationale": "Docs show off-cycle payrolls exist specifically to handle 'corrections' and that upcoming payrolls can be queried by processing_statuses=unprocessed, implying payrolls remain editable before processing, but there is no explicit endpoint or workflow documented for canceling/voiding a payroll that has already been submitted before pay-out. missing for 10: explicit cancel/void-payroll API or docs, confirmation that a submitted-but-unprocessed payroll can be pulled back, independent/hands-on verification of this correction flow.",
     "evidenceIds": [
       "gusto-docs-4",
       "gusto-docs-21",
       "gusto-docs-32",
+      "gusto-docs-40",
       "gusto-docs-46",
-      "gusto-docs-40"
+      "gusto-docs-62"
     ]
   },
   {
@@ -1100,14 +1111,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Gusto Embedded Payroll's API/webhook infrastructure, tax configuration fields, and multi-location payroll setup, but contains no mention of proactive founder-facing alerts triggered by new hires, new locations, or changes in law creating compliance obligations. Webhooks documented (e.g. payroll.paid) are transactional payroll events, not compliance-obligation notifications.",
-    "evidenceIds": [
-      "gusto-docs-45",
-      "gusto-docs-37",
-      "gusto-docs-63",
-      "gusto-docs-5",
-      "gusto-docs-16"
-    ]
+    "rationale": "The evidence pack documents Gusto's automatic tax calculation, multi-state handling, and webhook events tied to payroll runs, but there is no mention of a proactive alerting/notification system that flags compliance obligations triggered specifically by a new hire, a new location, or a law change. Compliance is handled automatically behind the scenes rather than surfaced as founder-facing alerts.",
+    "evidenceIds": []
   },
   {
     "productId": "gusto",
@@ -1148,7 +1153,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm Gusto supports multiple work locations with different pay schedules based on location or job type, and auto-generates scheduled regular payrolls per company pay schedule, implying multi-schedule capability. However, there's no explicit documentation of setting up distinct weekly/biweekly/semimonthly/monthly schedules per team or a UI/API walkthrough for configuring multiple concurrent pay schedules across teams. Missing for 10: explicit multi-schedule configuration API/UI documentation, examples of setting different cadences per team, and independent/hands-on confirmation of this specific setup.",
+    "rationale": "Docs confirm multi-location companies can have different pay schedules by location/job type and that regular payrolls are pre-generated from a company's pay schedule, but there's no explicit documentation of setting up weekly/biweekly/semimonthly/monthly schedule types or configuring them per team/department in the ops UI. missing for 10: explicit list of supported pay schedule frequencies (weekly, biweekly, semimonthly, monthly), a documented UI/API flow for creating/editing multiple distinct schedules per team, and independent confirmation of this multi-schedule setup working in practice.",
     "evidenceIds": [
       "gusto-docs-31",
       "gusto-docs-48",
@@ -1162,12 +1167,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gusto's evidence pack covers only US-based payroll, contractor payments, and benefits with no mention of EOR services or owned-entity global payroll for international employees. Community evidence explicitly confirms the gap: 'Gusto doesn't support outside of US folks' and users struggling when 'employees spread across multiple states/countries' had to switch providers.",
+    "rationale": "The evidence pack contains no mention of employer-of-record services or global/international payroll offerings; Gusto's embedded payroll docs and product overview focus entirely on US company onboarding, tax filing, and contractor payments. Community evidence directly contradicts any international capability: one HN commenter explicitly states 'Gusto doesn't support outside of US folks' and another notes they had to switch providers because employees spread across multiple states/countries couldn't be accommodated.",
     "evidenceIds": [
       "gusto-comm-5",
       "gusto-comm-7",
-      "gusto-docs-9",
-      "gusto-docs-44"
+      "gusto-docs-44",
+      "gusto-docs-52"
     ]
   },
   {
@@ -1175,13 +1180,14 @@
     "storyId": "health-benefits-administration",
     "verdict": "disputed",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Docs confirm Gusto offers health insurance administration via its SimplyInsured partner integration as part of the platform ecosystem [gusto-docs-39], implying enrollment/deduction handling analogous to its 401(k) Guideline flow, but there is no first-party documentation detailing how health-insurance deductions specifically sync to payroll. Independent, hands-on reports directly contradict smooth benefits administration: one describes Gusto failing to correctly terminate an employee's health plan causing prolonged billing problems [gusto-comm-14], and another describes being unable to customize plans for a multi-state/country workforce, leading them to switch providers [gusto-comm-7]; platform lock-in around benefits features is also noted [gusto-comm-4]. Missing for 10: explicit docs on health-insurance enrollment-to-payroll-deduction sync mechanics, resolution/rebuttal of the termination-failure report, and independent corroboration of successful multi-state benefits administration.",
+    "confidence": "medium",
+    "rationale": "Gusto documents offering health insurance through a partner (SimplyInsured) as part of its platform alongside payroll (gusto-docs-39, gusto-docs-44/52), implying integrated administration, but there's no first-party detail on enrollment workflows or deduction-sync mechanics. Hands-on community reports directly contradict smooth administration: one customer couldn't customize plans for multi-state/multi-country employees and switched providers (gusto-comm-7), and another reported a 6+ month billing mess because Gusto failed to terminate a healthcare plan correctly (gusto-comm-14). Missing for 10: detailed API/docs on enrollment and deduction-sync mechanics, and independent evidence rebutting the termination/customization failures.",
     "evidenceIds": [
       "gusto-docs-39",
-      "gusto-comm-14",
+      "gusto-docs-44",
+      "gusto-docs-52",
       "gusto-comm-7",
-      "gusto-comm-4"
+      "gusto-comm-14"
     ]
   },
   {
@@ -1189,8 +1195,8 @@
     "storyId": "international-contractor-payments",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Gusto's docs describe contractor payment methods only as direct deposit, check, or historical payment (US-based) with no mention of local-currency disbursement or country-specific compliant contracts, and community evidence explicitly states 'Gusto doesn't support outside of US folks,' confirming no international contractor payment capability.",
+    "confidence": "medium",
+    "rationale": "Gusto's docs describe only US-style contractor payment methods (direct deposit, check, historical payment) with no mention of local-currency payouts or international compliant contracts, and community feedback explicitly states 'Gusto doesn't support outside of US folks,' contradicting any international contractor payment capability.",
     "evidenceIds": [
       "gusto-docs-9",
       "gusto-docs-18",
@@ -1204,17 +1210,16 @@
     "storyId": "multi-state-payroll",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Docs explicitly confirm multi-state support: companies can have multiple work locations across states with different pay schedules, platform handles multi-state tax requirements, federal/state tax configuration for employees, and automatic tax calculation/filing across federal, state, and local jurisdictions. Community feedback also affirms strong payroll tax handling as a core strength. Missing for 10: no detailed walkthrough of state-specific registration workflow (e.g., new state registration steps) or independent verification of accuracy across all 50 states.",
+    "confidence": "medium",
+    "rationale": "Gusto's docs explicitly describe multi-location/multi-state payroll support, automatic tax calculation and filing, and per-employee state tax configuration during onboarding (gusto-docs-31/48/44/45/52/58/63), directly matching the story of running payroll across states with correct withholdings and filings. Missing for 10: no explicit documentation of automated new-state employer registration workflow and no independent/hands-on corroboration of multi-state accuracy beyond first-party docs.",
     "evidenceIds": [
       "gusto-docs-31",
       "gusto-docs-48",
       "gusto-docs-44",
       "gusto-docs-45",
       "gusto-docs-52",
-      "gusto-docs-63",
-      "gusto-docs-37",
-      "gusto-comm-8"
+      "gusto-docs-58",
+      "gusto-docs-63"
     ]
   },
   {
@@ -1222,13 +1227,13 @@
     "storyId": "off-cycle-payroll-run",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Gusto's docs explicitly cover off-cycle payroll creation for bonuses/corrections (gusto-docs-4, gusto-docs-21, gusto-docs-32) with a dedicated 'create-an-off-cycle-payroll' guide, specific handling of bonus withholding rules (gusto-docs-47), and platform-level messaging that termination processing and off-cycle payments are supported (gusto-docs-52, gusto-docs-44). Missing for 10: no independent/hands-on community verification specifically of the off-cycle run flow (community evidence is about general payroll/support, not off-cycle runs), and no detail on termination-specific off-cycle nuances beyond bonus example.",
+    "confidence": "high",
+    "rationale": "Gusto's docs explicitly cover off-cycle payroll for corrections/bonuses (create-an-off-cycle-payroll.md, gusto-docs-32, gusto-docs-47) and terminations (platform-overview.md, gusto-docs-52), with API endpoints and configurable withholding/deduction rules for bonus runs. This is well documented first-party but lacks independent hands-on confirmation of the off-cycle flow specifically. missing for 10: independent/hands-on verification of the off-cycle payroll flow, and explicit termination-payroll API walkthrough (only summarized in platform-overview, not a dedicated guide like the off-cycle one).",
     "evidenceIds": [
-      "gusto-docs-4",
-      "gusto-docs-21",
       "gusto-docs-32",
       "gusto-docs-47",
+      "gusto-docs-4",
+      "gusto-docs-21",
       "gusto-docs-52",
       "gusto-docs-44"
     ]
@@ -1248,17 +1253,19 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's Embedded Payroll API covers extensive UI-equivalent operations (onboarding, payroll runs, off-cycle payroll, contractor payments, time off, benefits, tax config) and offers React SDK/UI flows as alternatives to custom UI, plus official client libraries and an MCP server for AI-native access to the API/docs. However, evidence doesn't confirm full parity — some flows (e.g., 401k/Guideline, benefits enrollment) explicitly rely on pre-built partner UI flows rather than pure API access, suggesting certain UI-only actions aren't fully API-exposed. missing for 10: explicit confirmation that every UI-only action (e.g., admin approval interfaces, benefits enrollment via third parties) has a full API equivalent, and independent/hands-on verification that the API achieves full UI parity rather than requiring embedded UI components.",
+    "rationale": "Gusto's Embedded Payroll docs show a very broad API surface (company onboarding, regular/off-cycle payroll, contractor payments, time off requests with approval flows, tax configuration, benefits partner links, webhooks, versioning) plus SDKs, a CLI, and an MCP server for AI-native access, strongly suggesting near-parity with UI workflows. However, there is no explicit vendor statement or independent audit confirming 100% feature parity between the API and the full Gusto UI (e.g., reporting/exports, admin settings, historical corrections are only glancingly mentioned). Missing for 10: an explicit parity claim/audit, coverage of reporting/export and admin-configuration endpoints, and independent confirmation that no UI-only features exist.",
     "evidenceIds": [
+      "gusto-docs-2",
+      "gusto-docs-3",
+      "gusto-docs-9",
+      "gusto-docs-11",
+      "gusto-docs-19",
+      "gusto-docs-27",
       "gusto-docs-38",
       "gusto-docs-44",
-      "gusto-docs-52",
-      "gusto-docs-19",
-      "gusto-docs-36",
-      "gusto-docs-53",
       "gusto-docs-54",
-      "gusto-docs-6",
-      "gusto-contest-52-1"
+      "gusto-docs-70",
+      "gusto-contest-61-1"
     ]
   },
   {
@@ -1267,19 +1274,27 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Gusto's Embedded Payroll API, webhooks, SDKs, and MCP integrations, but contains no mention of a bulk data-export feature, open-format (CSV/JSON) export of all payroll/HR records, or an account-closure/data-portability workflow for end users. Community commentary even flags 'platform lock-in for new features' (gusto-comm-4), suggesting the opposite of easy portability, but this doesn't rise to a documented contradiction of a claimed export feature—there's simply no claim to dispute.",
+    "rationale": "The evidence pack shows API/CLI endpoints for retrieving specific payroll, employee, and contractor data (GET endpoints, CLI commands, MCP read access) but no documented bulk/full data export feature in open, portable formats intended for a user to take their data and leave Gusto. One community comment (gusto-comm-4) even flags platform lock-in for certain features, but there's no concrete vendor claim of comprehensive data export to dispute.",
     "evidenceIds": [
+      "gusto-docs-40",
+      "gusto-docs-46",
+      "gusto-contest-52-1",
+      "gusto-contest-61-1",
       "gusto-comm-4"
     ]
   },
   {
     "productId": "gusto",
     "storyId": "openness-open-license",
-    "verdict": "na",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Gusto is a closed commercial SaaS payroll platform; there is no evidence of an open-source license for its source code, and open-sourcing product source is not a plausible axis for this kind of proprietary HR/payroll service.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Gusto's core payroll platform is closed-source SaaS with no evidence of open-licensed source for the product itself, but the company does ship an official companion CLI (gusto-cli) publicly on GitHub under an Apache-2.0 license, which is inspectable source code. This only covers a peripheral developer tool, not the actual payroll application/backend. Missing for 10: open-licensed source for the core Gusto product/platform, any indication the main service's codebase is available, independent confirmation of license terms beyond the repo listing.",
+    "evidenceIds": [
+      "gusto-contest-61-1",
+      "gusto-contest-61-2",
+      "gusto-contest-61-4"
+    ]
   },
   {
     "productId": "gusto",
@@ -1287,7 +1302,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Gusto is a SaaS payroll/HR platform (and embedded API product); self-hosting the core product is not an applicable axis for this category — it is a hosted service, not open-source software distributable for self-hosting.",
+    "rationale": "Gusto is a managed payroll/HR SaaS involving regulated tax filing, banking, and compliance functions that inherently require centralized, licensed processing — self-hosting is not a coherent capability for this category of product, unlike self-hostable software tools.",
     "evidenceIds": []
   },
   {
@@ -1295,17 +1310,17 @@
     "storyId": "pay-employees-and-contractors",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Gusto's platform explicitly supports both W-2 employee payroll (regular/off-cycle runs, tax filing, benefits) and 1099 contractor payments (direct deposit, check, historical payment methods) from the same account/API, per docs-44, docs-52, docs-9/18/26/61, and docs-27. Community reviews corroborate strong core payroll experience (gusto-comm-1, gusto-comm-8). missing for 10: independent hands-on confirmation of running combined W-2+1099 payrolls together in one run, and one community anecdote (gusto-comm-3) noted confusion about contractor-only use, though this doesn't contradict combined support for mixed workforces.",
+    "confidence": "medium",
+    "rationale": "Gusto's Embedded Payroll docs explicitly describe running regular/off-cycle payroll for employees and a full contractor payment API (direct deposit, check, payment groups, submission blockers) side by side, plus platform-overview text listing both employee payroll and 'Manage contractor payments' as core capabilities — clearly a single-platform payroll for both worker types. Community comments corroborate general payroll quality, though one comment (gusto-comm-3) notes confusion about contractor-only setups, which is a different scenario than mixed W-2+1099 payroll and doesn't contradict this story. Missing for 10: independent hands-on confirmation of running a single payroll cycle containing both W-2 and 1099 payees simultaneously.",
     "evidenceIds": [
-      "gusto-docs-44",
-      "gusto-docs-52",
       "gusto-docs-9",
       "gusto-docs-18",
       "gusto-docs-26",
       "gusto-docs-27",
-      "gusto-docs-61",
-      "gusto-comm-1",
+      "gusto-docs-28",
+      "gusto-docs-44",
+      "gusto-docs-52",
+      "gusto-docs-60",
       "gusto-comm-8"
     ]
   },
@@ -1333,9 +1348,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The only direct evidence is a single bullet listing \"Generate payroll reports\" among platform capabilities, with no detail on payroll register format, gross-to-net breakdowns, or export/download options for offline analysis. Missing for 10: documentation of report content/format, gross-to-net specificity, export file types (CSV/PDF), and any independent confirmation that ops users can actually pull and export these reports.",
+    "rationale": "Gusto's platform overview lists \"Generate payroll reports\" as a capability, and the API supports pagination for large result sets, but there is no documented detail on payroll register format, gross-to-net breakdown, or specific export mechanisms (CSV/Excel) for ops analysis. missing for 10: dedicated payroll register/gross-to-net report endpoints, export format documentation (CSV/Excel/PDF), and independent confirmation of report usability for ops teams.",
     "evidenceIds": [
-      "gusto-docs-44"
+      "gusto-docs-44",
+      "gusto-docs-35",
+      "gusto-docs-43"
     ]
   },
   {
@@ -1344,7 +1361,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Gusto's evidence pack covers payroll, HR, API, and MCP features extensively, but there is no mention of data residency options, regional data storage, or geographic data controls. This is a plausible axis for a payroll/HR SaaS handling sensitive employee data, so absence of evidence yields 'none' rather than 'na'.",
+    "rationale": "No evidence anywhere in the pack mentions data residency, regional data storage options, or geographic control over where customer/employee data is stored; docs focus on payroll functionality, webhooks, MCP server, and API mechanics, not data residency choices.",
     "evidenceIds": []
   },
   {
@@ -1352,8 +1369,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence anywhere in the pack addresses AI training data usage policies, opt-outs, or data-use terms for Gusto's AI features (MCP server, dev assistant); the docs describe functionality but not privacy/training-data guarantees. missing for 10: explicit statement that customer data is not used for AI model training, opt-out mechanism, or data processing addendum covering AI training.",
+    "confidence": "high",
+    "rationale": "The evidence pack contains no policy, setting, or documentation stating whether Gusto uses customer/employee data to train AI models or how a user could opt out; the MCP/CLI/AI-integration docs describe access to data via LLMs but never address training-data usage or an opt-out mechanism.",
     "evidenceIds": []
   },
   {
@@ -1362,17 +1379,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes user or AI-agent controls for data retention, export, or deletion within Gusto Embedded Payroll or its MCP server offerings; docs cover payroll, contractor, webhook, and API mechanics but nothing about privacy/retention/deletion settings.",
-    "evidenceIds": []
+    "rationale": "Evidence covers OAuth2 scoping and category-level access selection for Gusto's MCP server (gusto-contest-52-1), but there is no documentation of data retention periods, deletion/revocation of data ingested by AI tools, or export/erasure controls specific to AI-native usage. missing for 10: retention policy documentation, deletion/erasure endpoints or controls, evidence of data lifecycle management for AI integrations.",
+    "evidenceIds": [
+      "gusto-contest-52-1"
+    ]
   },
   {
     "productId": "gusto",
     "storyId": "privacy-telemetry-optout",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence in the pack discusses telemetry/usage-tracking opt-out settings for Gusto or its AI/MCP integrations; the docs cover payroll functionality, webhooks, and MCP server setup but never address data collection or opt-out controls for AI-native usage tracking.",
-    "evidenceIds": []
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "The Gusto CLI's documented authentication/telemetry section explicitly states that API requests carry anonymous usage headers (X-Gusto-CLI-Install-Id, X-Gusto-CLI-Command) and that setting GUSTO_TELEMETRY=0 omits both, providing a documented, environment-variable-based opt-out mechanism for an AI-native (agent-facing) tool. This is first-party documented and specific, but missing for 10: independent/hands-on verification that the opt-out actually suppresses telemetry, and confirmation that the same opt-out extends to other Gusto surfaces (e.g., the MCP server or web dashboard) beyond the CLI.",
+    "evidenceIds": [
+      "gusto-contest-61-6",
+      "gusto-contest-61-2"
+    ]
   },
   {
     "productId": "gusto",
@@ -1380,7 +1402,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm a full time-off request lifecycle — balance checking, submission, admin approval, and payroll integration (gusto-docs-11, gusto-docs-19, gusto-docs-29, gusto-docs-51) — and admins can approve/decline requests via embedded UI or API (gusto-docs-55). However, evidence never shows ops users configuring accrual rules/policies (rates, caps, carryover) themselves; the docs describe consuming existing balances rather than defining accrual policies. Missing for 10: explicit accrual-policy configuration UI/API, evidence of automatic policy-driven accrual calculation, and independent/hands-on confirmation of policy setup.",
+    "rationale": "Gusto's docs confirm a full time-off request lifecycle — balance checking, submission, admin approval/decline, and payroll integration — with either a pre-built approval UI or direct API-driven approvals (gusto-docs-11,19,29,51,55). However, there's no explicit documentation of defining custom PTO accrual policies (e.g., accrual rates, policy types like unlimited/accrual-per-period/frontload) — only 'balance checking' is mentioned, implying accrual balances exist but not that ops users configure the accrual rules themselves. Missing for 10: documentation of accrual policy creation/configuration, evidence of policy-level customization (accrual rate, caps, carryover), and independent/hands-on confirmation that approvals automatically feed payroll runs.",
     "evidenceIds": [
       "gusto-docs-11",
       "gusto-docs-19",
@@ -1396,7 +1418,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Gusto's docs confirm 401(k) retirement benefits are offered through a Guideline integration, with partners able to generate links for employer admins to set it up via pre-built flows, implying payroll-benefits integration. However, no evidence explicitly describes automatic per-payroll contribution syncing mechanics (e.g., deduction codes, contribution webhook events, or reconciliation), so the 'syncs automatically with each payroll' claim is implied rather than directly documented. Missing for 10: explicit documentation of automatic contribution calculation/sync logic per pay run, and independent confirmation that contributions actually sync without manual intervention.",
+    "rationale": "Gusto Embedded Payroll documents a built-in 401(k) integration via Guideline, letting partners generate admin access links through pre-built flows (gusto-docs-36/42/50/64), and lists 401(k) (Guideline) among supported benefits (gusto-docs-39). However, the docs stop at account access/link generation and never describe the mechanics of automatic contribution deduction syncing with each payroll run. Missing for 10: explicit documentation of contribution amounts flowing automatically into payroll calculations each cycle, API/webhook events tied to 401(k) deduction sync, and any independent/hands-on confirmation that contributions sync without manual reconciliation.",
     "evidenceIds": [
       "gusto-docs-36",
       "gusto-docs-39",
@@ -1411,16 +1433,17 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Gusto's docs describe the pieces of a full payroll cycle — retrieving upcoming/unprocessed payrolls (review), pre-built UI Flows and API endpoints for processing and submitting regular and off-cycle payrolls, and tax/withholding handling — plus community sentiment confirming payroll runs 'just work' end-to-end for admins. However the evidence is fragmented across API guides (complete-a-regular-payroll, off-cycle, platform-overview) rather than showing one consolidated review→preview-totals→submit UI flow, and no dedicated 'preview totals' endpoint for regular (non-contractor) payroll is cited. Missing for 10: a single documented UI/API flow that explicitly chains hours review, dollar-total preview, and submission in one pass, and first-hand ops-user account of doing this in one sitting.",
+    "rationale": "Docs show the underlying pieces of a full payroll cycle — retrieving upcoming/unprocessed payrolls (docs-40/46), pre-generated scheduled payrolls (docs-62), off-cycle and regular payroll processing with tax/bank handling (docs-44, docs-52, docs-58), and a contractor payment preview/submission-blockers flow (docs-27, docs-10) — implying a review→preview→submit path exists via the platform's API/guides (e.g. 'complete-a-regular-payroll' guide). However, there is no explicit documentation of an 'hours and earnings' review step for employee payroll or a single unified UI flow that ties review, preview totals, and submit together, and the newer companion CLI explicitly 'only drafts payroll — it has no run/submit command, so it can't move money' (gusto-contest-61-1), underscoring that submission isn't exposed as a one-flow action in every surface. missing for 10: explicit employee hours/earnings review step, a documented single end-to-end review-preview-submit UI/API flow, and independent hands-on confirmation of the full cycle working seamlessly.",
     "evidenceIds": [
       "gusto-docs-40",
       "gusto-docs-46",
       "gusto-docs-62",
       "gusto-docs-44",
-      "gusto-docs-38",
+      "gusto-docs-52",
       "gusto-docs-58",
-      "gusto-comm-1",
-      "gusto-comm-8"
+      "gusto-docs-27",
+      "gusto-docs-10",
+      "gusto-contest-61-1"
     ]
   },
   {
@@ -1429,11 +1452,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs show pieces of new-hire onboarding data collection — employees configuring federal/state tax info (W-4 equivalent) and companies/employees needing bank account information — but there is no mention of I-9 collection or an explicit self-serve 'before day one' onboarding flow sent to a new hire; most evidence is API/company-onboarding oriented (Embedded Payroll platform) rather than a described ops-facing new-hire onboarding UX. Missing for 10: I-9 collection, explicit self-serve pre-day-one flow/UI for new hires, confirmation this exists in core Gusto product (not just the Embedded API).",
+    "rationale": "Docs mention employee onboarding requiring federal and state tax information (docs-63, docs-37) and company-level bank account setup (docs-60/2), which touches part of the story, but there is no mention of I-9 collection or a dedicated self-serve new-hire flow bundling W-4, I-9, and bank details together. Most evidence concerns the Embedded Payroll API for partners rather than a direct ops-facing onboarding checklist. missing for 10: explicit I-9 collection, a documented self-serve new-hire onboarding flow (vs. company-level setup), employee bank-account collection step, independent/hands-on confirmation the flow works end-to-end.",
     "evidenceIds": [
-      "gusto-docs-60",
       "gusto-docs-63",
       "gusto-docs-37",
+      "gusto-docs-60",
       "gusto-docs-2"
     ]
   },
@@ -1441,14 +1464,15 @@
     "productId": "gusto",
     "storyId": "time-tracking-into-payroll",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Gusto's docs cover time-off (PTO) request/approval APIs and payroll processing/off-cycle runs, and mention generic integrations with 'time tracking software' apps, but there is no documentation of native hourly time-entry capture or overtime calculation logic that flows directly into a payroll run. The evidence only implies this happens via unspecified third-party time-tracking integrations rather than a built-in Gusto feature. missing for 10: dedicated hourly timesheet/time-entry API, overtime rule/calculation documentation, explicit description of how hourly+overtime data is ingested into a payroll run.",
+    "rationale": "The official docs cover PTO/time-off requests flowing into payroll (time-off-requests.md) but never mention hourly time entries or overtime calculation. The only signal for actual hourly timesheet flow is the third-party/GitHub CLI evidence showing a `gusto timesheet` command and a 'timesheet-sync' skill that 'drives the per-cycle timesheet input flow' feeding into payroll-prep drafts — but this doesn't explicitly confirm overtime rules or rate calculations being applied automatically. Missing for 10: official API/docs describing hourly time-entry endpoints, overtime rule computation, and independent confirmation that overtime correctly flows into a submitted payroll run.",
     "evidenceIds": [
-      "gusto-docs-41",
       "gusto-docs-11",
+      "gusto-docs-19",
       "gusto-docs-44",
-      "gusto-docs-62"
+      "gusto-contest-61-1",
+      "gusto-contest-61-5"
     ]
   },
   {
