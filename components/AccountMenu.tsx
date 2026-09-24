@@ -9,7 +9,7 @@ import { SITE_URL } from '@/lib/site'
 // jumps while /auth/me is in flight) readers get one quiet "Log in" text link — currently
 // hidden behind the pa-auth-test flag until the WorkOS flow is signed off; nothing else about
 // the site changes for them. Authenticated readers get a small chip (their email's first
-// letter) opening a menu: Watchlist + Log out. Menu open/close behavior mirrors
+// letter) opening a menu: Account, My vendors, Watchlist + Log out. Menu open/close behavior mirrors
 // components/ArenaMenu.tsx (outside pointerdown + Escape).
 //
 // The login href carries return_to back to the exact page the reader is on — computed at click
@@ -100,7 +100,16 @@ export default function AccountMenu() {
             className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-800 hover:text-emerald-300"
           >
             <span aria-hidden className="text-emerald-400">⚙</span>
-            Account &amp; my vendors
+            Account
+          </Link>
+          <Link
+            role="menuitem"
+            href="/account/vendors"
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-zinc-200 hover:bg-zinc-800 hover:text-emerald-300"
+          >
+            <span aria-hidden className="text-emerald-400">▦</span>
+            My vendors
           </Link>
           <Link
             role="menuitem"

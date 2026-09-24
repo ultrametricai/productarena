@@ -171,7 +171,7 @@ export default async function ArenaPage({ params }: { params: Promise<{ category
           />
           {data.category.name}
         </h1>
-        <p className="mt-2 max-w-2xl text-zinc-400">{data.category.description}</p>
+        <p className="mt-2 text-zinc-400">{data.category.description}</p>
         <p className="mt-2 text-xs text-zinc-400">
           <a
             href="#story-matrix"
