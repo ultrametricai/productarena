@@ -50,6 +50,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/rankings/popular`, lastModified: now },
     { url: `${SITE_URL}/rankings/most-open`, lastModified: now },
     { url: `${SITE_URL}/rankings/best-api`, lastModified: now },
+    // Control surfaces — abstract technologies (API/MCP/CLI…) ranked from judged verdicts
+    // (lib/controlSurfaces.ts, app/technologies/page.tsx).
+    { url: `${SITE_URL}/technologies`, lastModified: now },
     // Process rankings (🔁 group in the Explore menu — launch audit S5).
     { url: `${SITE_URL}/rankings/processes/most-automatable`, lastModified: now },
     { url: `${SITE_URL}/rankings/processes/best-covered`, lastModified: now },

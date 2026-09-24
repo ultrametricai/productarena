@@ -325,6 +325,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     name: "More views",
                     items: [
                       { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
+                      { id: "technologies", name: "Control surfaces", label: "stats", href: "/technologies" },
                       { id: "missing", name: "Missing startups", label: "gaps", href: "/missing" },
                       { id: "operating-rhythm", name: "Operating rhythm", label: "processes", href: "/processes/operating-rhythm" },
                       { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
