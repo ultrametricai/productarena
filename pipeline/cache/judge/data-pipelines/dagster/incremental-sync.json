@@ -1,15 +1,17 @@
 {
-  "hash": "e2b80ad3efb9710b3f8e2bba5f03b7e558fb7b12913da75861147977563331b5",
+  "hash": "6d3efa306ac5e1db01b91a0e95ac74e163fe96c190b82ae3550aa362344941f7",
   "verdict": {
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Dagster is an orchestration framework that can trigger and sequence syncs from tools like Airbyte, Fivetran, and dlt (dagster-docs-8, dagster-docs-9, dagster-docs-10), but the evidence never shows Dagster itself performing incremental extraction with cursor/state tracking to avoid full reloads — that logic lives in the integrated EL tools, not in Dagster's own asset/partition system. No documentation describes native cursor management or change-data-capture behavior within Dagster's asset framework.",
+    "rationale": "Dagster itself is an orchestrator rather than a data-replication engine; incremental/cursor-based sync (only new/changed records) is delegated to integrated tools like dlt, Fivetran, and Airbyte, which Dagster can represent as assets and trigger, rather than Dagster natively managing extraction cursors or diffing records. Missing for 10: native cursor/state tracking for record-level incremental extraction, first-party evidence of Dagster's own sensor/partition cursors being used specifically for source-system change-data-capture, and any hands-on account confirming reload avoidance in practice.",
     "evidenceIds": [
       "dagster-docs-8",
       "dagster-docs-9",
       "dagster-docs-10",
-      "dagster-docs-25"
+      "dagster-docs-28",
+      "dagster-docs-21",
+      "dagster-docs-22"
     ],
     "productId": "dagster",
     "storyId": "incremental-sync"

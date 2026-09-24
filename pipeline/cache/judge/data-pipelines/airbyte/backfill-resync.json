@@ -1,17 +1,19 @@
 {
-  "hash": "585e1a7ce5f9521e14add6634d68915f6eda6c03db4331811a0e6725d6e74ab1",
+  "hash": "63461de33764dc445fdbd84db5fd8468f64548cf4926dfca74264200749d8d91",
   "verdict": {
-    "productId": "airbyte",
-    "storyId": "backfill-resync",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Airbyte's sync-mode docs show that syncs are configured per stream/table (full refresh vs incremental) and that a connection can be re-run to backfill history without touching other streams, matching the story's intent [airbyte-docs-7][airbyte-docs-23][airbyte-docs-22]. However, a hands-on account shows resyncing a very large (8B-row) single table required a manual workaround ('tricked Airbyte') rather than a clean built-in resync flow, indicating real-world limits [airbyte-comm-4]. Missing for 10: explicit docs on a UI/API 'reset/resync single stream' action, and independent confirmation that large-table resyncs work smoothly without workarounds.",
+    "rationale": "Docs show Airbyte connections operate per-stream with configurable sync modes (full refresh/incremental) and typing/deduping mapping one table per stream, implying data engineers can control replication behavior per table rather than the whole pipeline, and connection timeline shows historical sync events. However, no evidence explicitly documents a 'reset/resync single stream' UI action, and a hands-on community report describes having to 'trick' Airbyte into thinking a first sync of an 8B-row table had completed, indicating real friction when trying to backfill/resync a specific large table without workarounds. missing for 10: explicit documentation of a per-stream reset/backfill feature, and independent confirmation that single-table resync works smoothly at scale without custom tricks.",
     "evidenceIds": [
       "airbyte-docs-7",
-      "airbyte-docs-23",
       "airbyte-docs-22",
+      "airbyte-docs-23",
+      "airbyte-docs-41",
+      "airbyte-docs-10",
       "airbyte-comm-4"
-    ]
+    ],
+    "productId": "airbyte",
+    "storyId": "backfill-resync"
   }
 }
