@@ -2865,26 +2865,28 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Skyfire's documented protocol (tokens, kya/pay/kya-pay, MCP tools like find-sellers/create-*-token) covers identity verification and payment authorization/settlement, but there is no documented call for creating or updating a cart or order draft \u2014 order/cart state is left to the seller's own system, not exposed via Skyfire's API or MCP server.",
+    "rationale": "Skyfire's documented protocol covers agent identity and payment tokens (kya, pay, kya-pay) and their creation/charging/introspection via API and MCP tools (find-sellers, create-kya-token, create-pay-token, create-kya-payment-token), but there is no documented call for creating or updating a cart or order draft \u2014 carts/orders would live on the seller's own commerce platform, not in Skyfire's API surface.",
     "evidenceIds": [
       "skyfire-docs-6",
-      "skyfire-docs-7",
+      "skyfire-docs-15",
       "skyfire-supp-9",
-      "skyfire-supp-1"
+      "skyfire-docs-16"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "agent-catalog-search",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Skyfire's MCP server exposes a 'find-sellers' tool for programmatic discovery, but access requires a self-service API key scoped to a registered agent (not fully keyless) and seller listings are approval-gated by Skyfire rather than an open, permissionless catalog; runtime probe confirms endpoints are key-gated. missing for 10: evidence of true keyless/anonymous discovery, breadth/independence of merchant catalog, and independent corroboration of discovery quality beyond Skyfire's own docs.",
+    "rationale": "Skyfire documents self-service onboarding (auto-created Buyer Agent, API keys generated in the dashboard with no partnership required) and a 'find-sellers' MCP tool plus a browsable Directory for programmatic discovery of seller services (skyfire-docs-1, skyfire-docs-11/12/13, skyfire-docs-15, skyfire-supp-9). However, access is self-service-credential-gated rather than keyless \u2014 a runtime probe shows the API rejects unauthenticated calls with NOT_AUTHORIZED (skyfire-probe-rt-1) \u2014 and the 'merchants' searchable are limited to sellers that have been approved onto Skyfire's own service directory (skyfire-docs-3/14), not an open web of arbitrary merchants. Missing for 10: evidence of true keyless discovery, evidence of discovery breadth across independent/third-party merchants outside Skyfire's approval-gated seller directory, and independent (non-vendor) corroboration.",
     "evidenceIds": [
-      "skyfire-docs-6",
-      "skyfire-supp-9",
       "skyfire-docs-1",
-      "skyfire-supp-8",
+      "skyfire-docs-11",
+      "skyfire-docs-13",
+      "skyfire-docs-15",
+      "skyfire-supp-9",
+      "skyfire-docs-3",
       "skyfire-probe-rt-1"
     ]
   },
@@ -2893,15 +2895,15 @@
     "storyId": "agent-checkout-complete",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Skyfire documents the full agent-checkout loop: MCP tools let an agent discover sellers, create kya/pay/kya-pay tokens (delegated payment+identity credential), and sellers charge the token post-delivery with funds moved between wallets, completing a confirmed order/settlement. missing for 10: independent/hands-on end-to-end transaction proof (evidence is vendor docs plus a narrow auth-only runtime probe, not a full live purchase trace) and no example of an explicit 'confirmed order' object/receipt returned to the buyer.",
+    "confidence": "high",
+    "rationale": "Skyfire documents the full end-to-end agentic checkout loop: buyer agent auto-created with pre-funded wallet, MCP server tools to discover sellers and create kya/pay/kya-pay tokens (delegated payment credentials), and seller-side charge-token API to collect payment and settle funds, with committed-amount guarantees and confirmed settlement timing. Runtime probes confirm the token API is live and key-gated as documented. missing for 10: independent third-party/hands-on confirmation of an actual completed purchase (all evidence is vendor docs/probes, no external case study or real transaction log), and no public OpenAPI spec found.",
     "evidenceIds": [
-      "skyfire-docs-4",
       "skyfire-docs-6",
       "skyfire-docs-9",
       "skyfire-supp-1",
       "skyfire-supp-4",
       "skyfire-supp-5",
+      "skyfire-docs-11",
       "skyfire-supp-9",
       "skyfire-probe-rt-1"
     ]
@@ -2912,12 +2914,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Skyfire's docs explicitly allocate payment risk: sellers are guaranteed payment up to a token's committed amount and 'do not carry buyer non-payment risk' (skyfire-supp-4), overcharges are rejected, and even after account deactivation in-flight tokens are still honored so sellers get paid (skyfire-supp-6). Card-based flows also state the agent can never exceed cardholder-approved amounts and purchases are never anonymous to the merchant (skyfire-supp-7). However, there is no dedicated chargeback/dispute-resolution policy, no explicit statement of who bears fraud losses when credentials are stolen or a buyer disputes via their bank, and no formal merchant-facing liability/ToS document. Missing for 10: explicit chargeback/dispute process, stolen-credential fraud liability terms, formal merchant liability agreement or ToS reference.",
+    "rationale": "Docs document risk allocation mechanics clearly: pay tokens carry committed amounts so 'sellers do not carry buyer non-payment risk for charges within a valid token,' cardholder-approved amounts act as a spend ceiling, and revocation/settlement timing rules (24h grace, 51h settlement) are spelled out. However this covers payment-guarantee and expiry mechanics rather than a full fraud/chargeback/dispute framework. Missing for 10: explicit chargeback dispute-resolution process, fraud liability allocation for disputed/fraudulent transactions (e.g., buyer claims non-delivery), and formal terms-of-service/legal liability language.",
     "evidenceIds": [
       "skyfire-supp-4",
+      "skyfire-supp-5",
       "skyfire-supp-6",
       "skyfire-supp-7",
-      "skyfire-supp-5"
+      "skyfire-docs-22"
     ]
   },
   {
@@ -2926,14 +2929,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Skyfire's KYA/KYA-Pay tokens give merchants a verifiable, signed identity credential (JWT) per agent, with optional real-world identity attachment and hard gating ('token creation fails and the transaction does not proceed' if verification level is insufficient), plus per-agent scoped API keys and a documented merchant/bot-manager flow to identify and admit agent traffic instead of blocking it. This directly addresses distinguishing trusted, verified agent traffic from anonymous bots via a signature-based, tiered identity system. Missing for 10: independent/third-party corroboration of real-world merchant adoption or trust-tier enforcement outside Skyfire's own docs, and no public API schema (openapi probes 404) to verify signature/verification details externally.",
+    "rationale": "Skyfire's KYA/KYA-Pay tokens provide merchants with verifiable, signed identity credentials (JWTs) tied to registered agents, with explicit trust tiers (identity-only vs identity+payment, Individual/Organization verification levels) and hard gating when a buyer doesn't meet the required verification level. Docs also describe how this lets sites/bot managers distinguish verified agent traffic from anonymous bots ('never anonymous' purchases, no 403/captcha blocking) and runtime probes confirm the token API is live and key-gated. Missing for 10: independent/third-party corroboration beyond vendor docs and no evidence of merchant-side verification tooling (e.g., a public verifier API for merchants outside the checkout flow).",
     "evidenceIds": [
-      "skyfire-docs-8",
       "skyfire-supp-2",
-      "skyfire-supp-3",
       "skyfire-supp-7",
+      "skyfire-supp-3",
+      "skyfire-docs-8",
+      "skyfire-docs-17",
       "skyfire-docs-10",
-      "skyfire-docs-1"
+      "skyfire-probe-rt-1"
     ]
   },
   {
@@ -2941,64 +2945,70 @@
     "storyId": "agent-order-attribution",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Skyfire ties every transaction to a specific Buyer Agent via KYA identity tokens and per-agent API keys, so orders are technically attributable to the originating agent (skyfire-docs-1, skyfire-supp-2, skyfire-supp-7), and introspect/charge-token APIs let a seller programmatically check token/agent status (skyfire-docs-4, skyfire-docs-5). However, there is no evidence of a merchant-facing report or dashboard view that lets a merchant filter/aggregate transactions by agent \u2014 only a general 'Agent Dashboard' for key management is mentioned. Missing for 10: documented merchant reporting/analytics UI or API for filtering transactions by agent, evidence of aggregate order-to-agent attribution reporting.",
+    "confidence": "medium",
+    "rationale": "Skyfire ties every transaction to an identified buyer/seller agent via scoped API keys and KYA/pay tokens, and notes that 'from the merchant's side, an agentic purchase is never anonymous,' meaning attribution data exists per charge (skyfire-docs-1, skyfire-supp-7, skyfire-supp-8). However, there is no documented merchant-facing reporting or dashboard filter that lets sellers query/filter past transactions specifically by agent identity \u2014 only agent-scoped token creation and charging APIs are shown. Missing for 10: a documented transactions/reporting dashboard or API endpoint for filtering/aggregating charges by agent, and any analytics/export feature for merchants.",
     "evidenceIds": [
       "skyfire-docs-1",
-      "skyfire-supp-2",
       "skyfire-supp-7",
-      "skyfire-docs-4",
-      "skyfire-docs-5"
+      "skyfire-supp-8",
+      "skyfire-docs-16",
+      "skyfire-supp-2"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "agent-order-tracking",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is strictly an identity-and-payments rail (token issuance, KYA verification, charging, settlement) between buyer and seller agents; it has no order-management or fulfillment-tracking role. Order status/tracking after purchase is the seller's own system, not something Skyfire's token introspection (which only checks token validity/balance) addresses \u2014 this axis is a category error for a payments/identity infrastructure product.",
-    "evidenceIds": []
+    "rationale": "Skyfire's documented APIs cover token creation, introspection (usability/balance), and charging for payment settlement, but nothing in the evidence describes order status or shipment/tracking queries after a purchase \u2014 introspect-token checks payment token validity, not order fulfillment state.",
+    "evidenceIds": [
+      "skyfire-docs-5",
+      "skyfire-supp-5",
+      "skyfire-docs-16"
+    ]
   },
   {
     "productId": "skyfire",
     "storyId": "agent-traffic-controls",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Skyfire lets sellers set per-service identity requirements (KYA verification levels) that gate token creation and thus checkout access, and its payment-card flow lets a merchant's bot manager identify and allow known agents rather than block them \u2014 giving coarse allow/deny-by-identity control. However there is no documented rate-limiting feature, no explicit deny-list or per-agent/platform blocking mechanism, and no console for merchants to enumerate specific agents/platforms to throttle or reject. Missing for 10: rate-limiting controls, explicit allow/deny list management UI/API, granular per-agent-platform policy enforcement beyond identity-level gating.",
+    "confidence": "low",
+    "rationale": "Skyfire gives merchants some coarse-grained control: services can require KYA/KYA-Pay identity verification so unverified buyer agents are denied ('token creation fails and the transaction does not proceed'), and sellers configure per-service 'identity requirements' during approval, plus a mention that a site or bot manager can identify an agent/platform and allow it through (docs-3, docs-10, supp-2, docs-17). However, there is no documented mechanism for rate-limiting specific agents, nor for building an explicit allow/deny list of named agents or agent platforms beyond identity-tier gating. Missing for 10: rate-limiting controls, granular per-agent/platform allow/deny lists (vs. verification-tier gating), and any dashboard/API for merchants to manage such rules.",
     "evidenceIds": [
-      "skyfire-supp-2",
+      "skyfire-docs-3",
       "skyfire-docs-10",
-      "skyfire-supp-8"
+      "skyfire-docs-17",
+      "skyfire-supp-2"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "agent-wallet-provisioning",
     "verdict": "full",
-    "quality": 7,
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Docs describe a Buyer Agent wallet auto-created and pre-funded on signup, scoped per-agent via API keys that the user controls, with committed-amount enforcement against the wallet balance and an introspect-token API to check remaining balance. This covers user-provisioned/funded/controlled wallet plus balance visibility, but missing for 10: dashboard UI screenshots showing balance, explicit mechanism for manually topping up/funding beyond initial pre-fund, and independent/hands-on corroboration.",
+    "rationale": "Docs show a Buyer Agent with a pre-funded wallet is auto-created for the user on signup, scoped API keys give the user control over which agent can spend, and the introspect-token API provides real-time balance/usability checks; committed-amount and charge-balance mechanics further reinforce user-controlled spend limits. Runtime probe confirms the token API is live and key-gated as documented, corroborating first-party claims. Missing for 10: independent/hands-on confirmation of the funding flow itself (e.g. actually depositing funds) and more detail on ongoing balance top-up/withdrawal beyond the enterprise Credits Wallet Embed SDK.",
     "evidenceIds": [
       "skyfire-docs-11",
-      "skyfire-supp-8",
+      "skyfire-docs-1",
       "skyfire-docs-5",
       "skyfire-supp-4",
-      "skyfire-docs-1"
+      "skyfire-docs-18",
+      "skyfire-probe-rt-1"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Skyfire's docs site serves a working llms.txt (HTTP 200, agent-oriented summary) confirmed by both a probe and a runtime check, and its full docs are structured as agent-consumable markdown (.md endpoints throughout). This directly satisfies pointing an agent at llms.txt/agent-oriented docs. Missing for 10: no independent third-party report of an agent successfully consuming llms.txt end-to-end, and no OpenAPI spec (all candidate paths 404) which would further strengthen machine-readability.",
+    "rationale": "Skyfire's docs site serves a real llms.txt confirmed live via direct probe (HTTP 200), giving agents a machine-readable entry point to agent-oriented docs, alongside an MCP server for direct agentic interaction. Missing for 10: no independent third-party confirmation of llms.txt usage/adoption beyond the probe.",
     "evidenceIds": [
       "skyfire-probe-1",
       "skyfire-probe-rt-1",
-      "skyfire-probe-2"
+      "skyfire-docs-6"
     ]
   },
   {
@@ -3007,21 +3017,20 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments infrastructure layer for AI agents (tokens, KYA, MCP commerce), not a data product with dashboards or analytics \u2014 'AI-generated insights and suggestions from my data' is a category mismatch, not a missing feature.",
+    "rationale": "Skyfire is an agent identity/payments infrastructure product for enabling agentic commerce, not a data analytics/BI product; there is no user-facing 'data' surface for generating AI insights or suggestions from user data. This axis is a category error for this product type.",
     "evidenceIds": []
   },
   {
     "productId": "skyfire",
     "storyId": "agentic-autonomous-automation",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Skyfire's MCP server lets an agent autonomously discover sellers, mint kya/pay tokens, and execute commerce transactions without human-in-the-loop approval up to committed token limits (skyfire-docs-6, skyfire-supp-9, skyfire-supp-4), which supports autonomous background operation for agent commerce specifically. But Skyfire is a payment/identity layer, not a general automation/orchestration platform \u2014 there's no documented scheduler, trigger system, or persistent background-job mechanism for setting up broader autonomous workflows beyond commerce transactions. missing for 10: evidence of a scheduling/trigger system, persistent background job execution beyond per-call MCP invocations, and support for non-commerce automation tasks.",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Skyfire's MCP server lets an agent autonomously discover sellers, mint kya/pay tokens, and 'orchestrate agent commerce workflows' without human intervention, which supports some autonomous agentic operation, but this is transaction-level agent tooling, not a facility for a user to configure persistent, scheduled, or trigger-based background automations. Missing for 10: any scheduling/trigger/cron mechanism, persistent background job management, or evidence of continuous unattended operation beyond per-call MCP tool invocations.",
     "evidenceIds": [
       "skyfire-docs-6",
-      "skyfire-supp-9",
-      "skyfire-supp-4",
-      "skyfire-supp-1"
+      "skyfire-docs-15",
+      "skyfire-supp-9"
     ]
   },
   {
@@ -3030,24 +3039,22 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments infrastructure layer (APIs, tokens, MCP server) for AI agents to transact \u2014 it is not itself an AI assistant product with a built-in assistant persona for users to delegate tasks to. This axis is a category error for an infrastructure/API product.",
+    "rationale": "Skyfire is an identity/payments infrastructure layer for AI agents, not a product with a built-in AI assistant persona for end users; it provides APIs, tokens, and an MCP server for agent commerce rather than a conversational assistant to delegate tasks to.",
     "evidenceIds": []
   },
   {
     "productId": "skyfire",
     "storyId": "agentic-headless",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Skyfire is API-first: agents authenticate via scoped API keys (no interactive login) and all core operations (token creation, introspection, charging) are REST endpoints, confirmed live and key-gated by a runtime probe, plus an MCP server for programmatic agent workflows. However, there's no explicit CI/CD example, headless setup guide, or CLI/SDK documentation showing automation-pipeline usage. missing for 10: explicit CI/headless usage guide, CLI or SDK tooling, and independent confirmation of non-interactive automation beyond API-key auth.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Skyfire is fundamentally an API/SDK platform: agent operations (token creation, introspection, charging) are exposed via key-authenticated REST endpoints and an MCP server, both designed for programmatic/headless agent use with no UI dependency, and a live probe confirms the API is reachable and key-gated as documented. missing for 10: explicit CI/CD pipeline example or GitHub Actions integration docs, and independent hands-on confirmation of running it in an automated pipeline.",
     "evidenceIds": [
       "skyfire-docs-1",
       "skyfire-docs-4",
       "skyfire-docs-5",
-      "skyfire-docs-6",
-      "skyfire-probe-rt-1",
-      "skyfire-supp-8",
-      "skyfire-supp-9"
+      "skyfire-supp-9",
+      "skyfire-probe-rt-1"
     ]
   },
   {
@@ -3056,11 +3063,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments layer for agents that itself exposes an MCP server (find-sellers, create-token tools) for other agents to consume \u2014 it is not an agent runtime or orchestrator that would plug in and consume arbitrary external MCP servers' tools. The client-role axis is a category error for this kind of infrastructure/protocol product.",
-    "evidenceIds": [
-      "skyfire-docs-6",
-      "skyfire-supp-9"
-    ]
+    "rationale": "Skyfire is an identity/payments infrastructure layer that agents call into, not itself an agent or agent-host that would consume external MCP servers as a client. The evidence shows Skyfire ships its own MCP *server* (skyfire-docs-6, skyfire-docs-15, skyfire-supp-9) for other agents to plug into, but nothing indicates Skyfire itself acts as an MCP client integrating outside tool servers \u2014 this 'plug servers in' story is a category error for this kind of product.",
+    "evidenceIds": []
   },
   {
     "productId": "skyfire",
@@ -3068,23 +3072,24 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Skyfire documents an official hosted MCP server (https://mcp.skyfire.xyz/mcp, plus sandbox) with documented tools (find-sellers, create-kya-token, create-pay-token, create-kya-payment-token) and auth via API key header, letting agents connect and execute commerce workflows. missing for 10: independent/third-party corroboration of the MCP server working in practice, and no public OpenAPI/schema for deeper verification.",
+    "rationale": "Skyfire documents an official hosted MCP server (mcp.skyfire.xyz/mcp, sandbox variant) with specific tools (find-sellers, create-kya-token, create-pay-token, create-kya-payment-token) authenticated via API key, letting agents discover sellers and execute commerce workflows. Missing for 10: independent/hands-on confirmation beyond first-party docs, and no evidence of broader MCP ecosystem adoption or third-party client testing.",
     "evidenceIds": [
       "skyfire-docs-6",
-      "skyfire-docs-7",
-      "skyfire-supp-9"
+      "skyfire-docs-15",
+      "skyfire-supp-9",
+      "skyfire-docs-7"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Skyfire ships an MCP server exposing tools (find-sellers, create-kya-token, create-pay-token, create-kya-payment-token) that let an LLM-driven agent translate natural-language requests into commerce actions like discovering sellers and issuing/charging tokens, which is the standard mechanism for natural-language operation in agentic products. Missing for 10: no evidence of a first-party conversational interface, no examples of actual natural-language prompts mapped to tool calls, and no independent/hands-on confirmation of NL-driven usage beyond the docs.",
+    "rationale": "Skyfire exposes an MCP server that lets AI agents discover sellers and create/charge tokens via structured tool calls (find-sellers, create-kya-token, etc.), which is a form of agentic operation, but this is tool invocation via defined MCP functions rather than free-form natural-language command interpretation by the product itself. There's no evidence of a chat/NL interface where a user types plain-English instructions that Skyfire parses and executes directly. missing for 10: evidence of a natural-language interface or NL-to-action translation layer, documentation of NL command parsing, independent corroboration of conversational usage beyond structured MCP tool calls.",
     "evidenceIds": [
       "skyfire-docs-6",
-      "skyfire-docs-7",
+      "skyfire-docs-15",
       "skyfire-supp-9"
     ]
   },
@@ -3103,43 +3108,45 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Skyfire ships a documented public REST API (tokens, introspect, charge-token) gated by per-agent API keys, confirmed live via runtime probe returning a structured auth error rather than a 404, plus llms.txt-served docs. Missing for 10: a published OpenAPI/swagger spec (probe found all candidate spec URLs 404) and independent third-party corroboration beyond vendor docs/probes.",
+    "rationale": "Skyfire ships a documented public REST API (token creation, introspection, charge-token) plus API-key auth, confirmed live via runtime probe (NOT_AUTHORIZED challenge on keyless call), and an MCP server for agentic workflows, giving AI-native users multiple documented programmatic entry points. missing for 10: no discoverable OpenAPI/swagger spec (404s on all probed paths) and no independent third-party corroboration beyond vendor docs and probes.",
     "evidenceIds": [
       "skyfire-docs-1",
-      "skyfire-docs-4",
       "skyfire-docs-5",
-      "skyfire-probe-1",
-      "skyfire-probe-2",
+      "skyfire-docs-4",
+      "skyfire-supp-9",
       "skyfire-probe-rt-1",
-      "skyfire-supp-5"
+      "skyfire-probe-2"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "agentic-scoped-keys",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Skyfire API keys are scoped per-agent (Buyer/Seller) and pay tokens carry committed amounts with hard balance ceilings, and KYA-gated tokens enforce identity requirements, which together give agent-level least-privilege credentials. However, this is scoped to payment/identity tokens rather than granular API permission scopes (e.g., no fine-grained action/resource-level scoping or role-based permission sets), and there is no documented per-token revocation API. missing for 10: fine-grained permission/action scoping beyond agent+amount+identity, documented revocation controls, independent/hands-on verification of scoping enforcement.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Skyfire issues per-agent API keys scoped to a single Buyer or Seller agent, and tokens are further limited by committed dollar amounts, expiry windows, and identity/verification levels, giving clear least-privilege scoping; a live probe confirms the API actually rejects unauthenticated/invalid-key requests. Missing for 10: independent third-party audit of scope enforcement and finer-grained permission scopes beyond buyer/seller/amount/expiry.",
     "evidenceIds": [
       "skyfire-docs-1",
       "skyfire-supp-4",
-      "skyfire-supp-2",
+      "skyfire-supp-5",
       "skyfire-supp-6",
-      "skyfire-supp-8"
+      "skyfire-supp-2",
+      "skyfire-probe-rt-1"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Skyfire has REST API reference docs, a Playground, and an MCP server for agent integration, but nowhere does it mention or link to an official language SDK (e.g., Python/JS client library). The openapi.json probe even returned 404, undermining any inference of auto-generated SDK tooling.",
+    "rationale": "Skyfire documents multiple official SDKs (Payments React SDK, Credits Wallet Embed SDK) plus a documented REST API and MCP server, giving developers concrete first-party building blocks. However, no OpenAPI/spec file is published (openapi probe returned 404s), no evidence of language-specific SDKs (e.g., Python/Node client libraries) beyond the two named front-end SDKs, and no independent/community corroboration of SDK usage exists. Missing for 10: published OpenAPI spec, broader multi-language SDK coverage, independent developer corroboration.",
     "evidenceIds": [
+      "skyfire-docs-18",
+      "skyfire-docs-19",
       "skyfire-docs-6",
-      "skyfire-probe-2",
-      "skyfire-supp-9"
+      "skyfire-supp-9",
+      "skyfire-probe-2"
     ]
   },
   {
@@ -3148,7 +3155,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence covers token issuance, charging, MCP tools, and identity verification, but nowhere mentions webhooks or any event subscription/callback mechanism for developers to receive notifications. Missing for 10: any webhook endpoint registration, event types, or push-notification documentation.",
+    "rationale": "No evidence anywhere in the pack mentions webhooks, event subscriptions, or push notifications; Skyfire's documented integration surface is API calls, MCP server tools, and SDKs, with no webhook mechanism described.",
     "evidenceIds": []
   },
   {
@@ -3157,9 +3164,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Skyfire has structured reference docs (charge-token, introspect-token, etc.) but the openapi probe found no machine-readable spec (404s on all candidate paths), and there is no mention of an interactive console, 'try it' feature, or runnable code examples anywhere in the pack \u2014 only static markdown-style API reference pages.",
+    "rationale": "Evidence shows static docs and reference pages (charge-token, introspect-token) plus a Playground for creating tokens, but no interactive API reference with runnable/try-it-out examples; probes for an OpenAPI/Swagger spec (which typically powers such interactive docs) returned 404s, indicating no such interactive explorer is discoverable.",
     "evidenceIds": [
       "skyfire-probe-2",
+      "skyfire-docs-2",
       "skyfire-docs-4",
       "skyfire-docs-5"
     ]
@@ -3169,12 +3177,10 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The docs contain structured API reference pages (e.g., charge-token, introspect-token) suggesting an underlying spec, but a direct probe for machine-readable OpenAPI/Swagger files at all standard locations returned 404 for every candidate path, and no evidence shows a downloadable spec file or link.",
+    "confidence": "high",
+    "rationale": "The probe explicitly checked common OpenAPI spec paths (openapi.json, swagger.json, etc.) and all returned 404, indicating no machine-readable API spec is published/downloadable, despite having a reference-style API docs section.",
     "evidenceIds": [
-      "skyfire-probe-2",
-      "skyfire-docs-4",
-      "skyfire-docs-5"
+      "skyfire-probe-2"
     ]
   },
   {
@@ -3182,8 +3188,8 @@
     "storyId": "api-sandbox",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "The MCP server docs explicitly reference a separate sandbox endpoint (mcp-sandbox.skyfire.xyz) distinct from the production mcp.skyfire.xyz, showing a dedicated test environment exists. However, there's no broader documentation of a sandbox for the core token/payment APIs, wallets, or KYA flows outside the MCP context, and no detail on how sandbox data is isolated from production. Missing for 10: dedicated sandbox docs for REST/token APIs beyond MCP, explicit guidance on test credentials/test wallets, independent confirmation the sandbox fully mirrors production without touching real funds.",
+    "confidence": "medium",
+    "rationale": "Skyfire documents a distinct MCP sandbox endpoint (mcp-sandbox.skyfire.xyz/mcp) separate from the production MCP server, implying agents can test commerce workflows without hitting live production data. However, there's no detailed documentation of sandbox wallets, test tokens, or isolation guarantees beyond this single endpoint mention. Missing for 10: explicit sandbox onboarding docs, test-mode wallet/token behavior, and confirmation that sandbox data/transactions are fully isolated from production.",
     "evidenceIds": [
       "skyfire-supp-9"
     ]
@@ -3194,10 +3200,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "While the API path shows a v1 prefix (skyfire-probe-rt-1) and an OpenAPI spec probe returned 404s (skyfire-probe-2), there is no documentation of a versioning scheme, deprecation timeline, or migration policy anywhere in the evidence pack. Missing for 10: any deprecation policy page, versioning changelog, or migration guide.",
+    "rationale": "No evidence of API versioning scheme (e.g., v1/v2 endpoints), version headers, or a documented deprecation policy anywhere in the docs pack; the openapi spec probe even 404'd. missing for 10: versioned endpoint documentation, deprecation/sunset policy, changelog or migration guides.",
     "evidenceIds": [
-      "skyfire-probe-2",
-      "skyfire-probe-rt-1"
+      "skyfire-probe-2"
     ]
   },
   {
@@ -3219,7 +3224,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments layer for agent commerce (tokens, KYA verification, charge/settlement APIs, MCP server for discovering sellers and creating tokens) \u2014 it does not offer a rules/trigger engine for automating actions on events. This is a category mismatch, not a missing feature of the product's domain.",
+    "rationale": "Skyfire is an identity/payments infrastructure layer for agent commerce (tokens, wallets, MCP server for discovering sellers and transacting), not a rules/automation engine for defining event-triggered actions; this axis is a category error for the product type.",
     "evidenceIds": []
   },
   {
@@ -3228,7 +3233,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments layer for agent-to-agent commerce (tokens, KYA verification, charging, settlement), not a workflow orchestration or job-scheduling product. Scheduling recurring jobs/workflows is outside its category \u2014 this is a category mismatch, not a missing feature.",
+    "rationale": "Skyfire is an identity/payments credential layer for agent commerce, not a workflow/job scheduling or orchestration product; there is no concept of recurring jobs or scheduled workflows in its evidence, and this axis is a category error for its product type.",
     "evidenceIds": []
   },
   {
@@ -3237,21 +3242,23 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments layer for AI agent commerce, not an automation-building or workflow tool; there is no concept of authoring, versioning, reviewing, or rolling back 'automations' in this evidence. This axis is a category error for an identity/payments API product.",
+    "rationale": "Skyfire is an agent identity/payments infrastructure product (tokens, wallets, KYA verification), not an automation-building tool with workflows to version, review, or roll back. This story concerns automation/workflow lifecycle management, which is a category mismatch for a payments/credentialing API.",
     "evidenceIds": []
   },
   {
     "productId": "skyfire",
     "storyId": "catalog-feed-publish",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Skyfire lets a seller register services via 'Create Service' (name, type, pricing, identity requirements) and then makes them discoverable to agents through the MCP server's 'find-sellers' tool, which is a real agent-discovery surface. But this is a one-at-a-time, approval-gated dashboard/API flow rather than a documented bulk catalog feed or import API for a full product/service catalog. missing for 10: a bulk catalog feed/import API (e.g., CSV/JSON catalog upload), documentation on how multiple SKUs or listings map to discovery, and evidence of independent merchant usage confirming catalog visibility in agent surfaces.",
+    "rationale": "Skyfire lets a seller register a single service (name, type, pricing, identity requirements) via the dashboard, subject to approval, and that service becomes discoverable to buyer agents through the Directory and the MCP server's 'find-sellers' tool \u2014 a form of agent-surface discovery. However, this is a manual, one-at-a-time service registration UI/API, not a documented bulk catalog feed or import API for a full product/service catalog with multiple SKUs. Missing for 10: a documented catalog/feed format for multiple products, bulk import API, and any evidence of syncing an existing merchant catalog rather than manually creating single services.",
     "evidenceIds": [
       "skyfire-docs-3",
-      "skyfire-supp-8",
-      "skyfire-docs-6",
-      "skyfire-supp-9"
+      "skyfire-docs-13",
+      "skyfire-docs-14",
+      "skyfire-docs-15",
+      "skyfire-supp-9",
+      "skyfire-supp-8"
     ]
   },
   {
@@ -3260,24 +3267,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Skyfire's evidence documents a generic agent-to-agent payment/identity protocol (tokens, MCP server for 'find-sellers' and token creation) but nowhere mentions ChatGPT, Claude, Gemini, Copilot or any named chat/assistant surface, nor any commerce-in-chat integration or app-store listing. The MCP server is a generic protocol endpoint, not documented evidence of embedding within these specific consumer assistant surfaces.",
-    "evidenceIds": [
-      "skyfire-docs-6",
-      "skyfire-supp-9",
-      "skyfire-docs-7"
-    ]
+    "rationale": "Skyfire documents a generic MCP server and APIs for agent-to-agent commerce, identity, and payment tokens, but no evidence ties it to specific chat/assistant surfaces like ChatGPT, Claude, Gemini, or Copilot, or shows it being surfaced as a checkout option inside those products.",
+    "evidenceIds": []
   },
   {
     "productId": "skyfire",
     "storyId": "checkout-spec-versioned",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Skyfire points to an external 'open' KYAPay protocol (KYAPay.org) with JWT-based tokens that all Skyfire tokens conform to, giving a nominal published spec, but the evidence pack shows no OpenAPI/schema file for Skyfire's own API (all standard OpenAPI paths 404) and no conformance/validation tooling (test suites, schema validators, certification) is documented anywhere. Missing for 10: a published machine-readable schema for the Skyfire API itself, explicit protocol versioning, and any conformance/validation tooling a developer could run against.",
+    "rationale": "Skyfire publishes the KYAPay token protocol as an 'open, industry specification' with documented token types, headers, and API reference pages (charge-token, introspect-token), and a probe confirms the live API enforces key-gating as documented. However, there is no evidence of a versioned schema, a formal spec document, or conformance/validation tooling \u2014 an OpenAPI probe returned 404 on all candidate paths, and no test suite, SDK conformance checker, or protocol version number is documented. missing for 10: published machine-readable schema (OpenAPI/JSON Schema), explicit protocol versioning, conformance/validation test tooling, independent corroboration of spec adherence.",
     "evidenceIds": [
       "skyfire-supp-3",
+      "skyfire-docs-16",
+      "skyfire-supp-5",
       "skyfire-probe-2",
-      "skyfire-docs-7"
+      "skyfire-probe-rt-1"
     ]
   },
   {
@@ -3285,25 +3290,18 @@
     "storyId": "dispute-handling-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack documents token creation, charging, introspection, settlement timing, and revocation limits, but nowhere describes a dispute or chargeback mechanism \u2014 no evidence-submission endpoint, dispute status API, or outcome reporting is mentioned. Payment guarantees are described as ceiling-bound token commitments rather than a dispute-resolution workflow, so this applicable axis has no supporting evidence.",
-    "evidenceIds": [
-      "skyfire-supp-4",
-      "skyfire-supp-5",
-      "skyfire-supp-6"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence pack documents payment tokens, charging, settlement timing, and non-payment risk protection, but there is no mention of a dispute/chargeback mechanism, evidence submission process, or dispute status/outcome API. Sellers are protected from buyer non-payment by the committed-token model, but this is different from a dispute-resolution API for contested transactions.",
+    "evidenceIds": []
   },
   {
     "productId": "skyfire",
     "storyId": "fees-transparency-agent-payments",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows sellers set their own service pricing when configuring a service, but there is no published fee schedule for Skyfire's own transaction/take-rate fees on agent-originated payments \u2014 nothing lets a merchant price agentic channels without contacting sales.",
-    "evidenceIds": [
-      "skyfire-docs-3",
-      "skyfire-supp-8"
-    ]
+    "confidence": "high",
+    "rationale": "The evidence describes how sellers set their own service pricing and how tokens/charges/settlement work, but nowhere does it publish Skyfire's own platform fee, take rate, or commission for processing agent-originated transactions \u2014 a merchant could not derive Skyfire's cut from this documentation.",
+    "evidenceIds": []
   },
   {
     "productId": "skyfire",
@@ -3341,12 +3339,14 @@
     "verdict": "partial",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Skyfire documents a concrete merchant-facing path: create a Seller Agent, generate a scoped API key, click 'Create Service' with pricing/identity requirements, and use the Charge Token API to collect payment \u2014 all via the Agent Dashboard (skyfire-docs-3, skyfire-supp-8, skyfire-docs-4). However, service creation is explicitly 'Submit for approval,' meaning it's gated rather than a pure self-serve flip-a-switch flow. Missing for 10: confirmation of approval turnaround/criteria, an explicit merchant agreement/ToS signing step, and independent verification that the approval process is lightweight rather than a manual sales gate.",
+    "rationale": "Docs describe a clear merchant path \u2014 create an Organization/seller agent, click 'Create Service' with pricing/identity requirements, and 'Submit for approval' \u2014 plus a dedicated 'Sell to your customers' agents' guide, so merchants can self-initiate onboarding. However, service listing is explicitly approval-gated by Skyfire rather than a pure self-serve flip-a-switch, and there's no documented merchant agreement/TOS signing step or an SLA on approval turnaround. Missing for 10: instant self-serve activation without vendor approval, explicit merchant agreement/contract step, independent confirmation of approval timelines.",
     "evidenceIds": [
       "skyfire-docs-3",
+      "skyfire-docs-14",
       "skyfire-supp-8",
-      "skyfire-docs-4",
-      "skyfire-docs-1"
+      "skyfire-docs-20",
+      "skyfire-docs-21",
+      "skyfire-docs-17"
     ]
   },
   {
@@ -3355,25 +3355,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Skyfire claims tokens conform to an 'open KYAPay protocol' hosted at KYAPay.org, but every operational piece \u2014 charging, wallets, settlement, MCP server, verification \u2014 runs exclusively through Skyfire's own APIs and infrastructure per the evidence pack. There is no mention of any independent vendor, competitor, or third party implementing the protocol or running their own compatible service/settlement layer.",
+    "rationale": "Evidence shows Skyfire is a vendor-run platform with an open token spec (KYAPay.org) but nothing demonstrates that any independent party besides Skyfire has implemented the protocol/platform as an operator or issuer \u2014 all charging, wallets, and settlement run through Skyfire's own APIs (skyfire-supp-3). No third-party implementations, competing servers, or independent ecosystem adopters are cited.",
     "evidenceIds": [
-      "skyfire-supp-3",
-      "skyfire-supp-5",
-      "skyfire-supp-9"
+      "skyfire-supp-3"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "open-spec-published",
-    "verdict": "partial",
+    "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Skyfire claims tokens conform to \"the open KYAPay protocol, an industry specification for identity-linked payment credentials\" (referencing KYAPay.org), suggesting a published spec exists, but the evidence pack itself notes that charging, wallets, and settlement all run through Skyfire's own gated APIs, and every other capability (creating tokens, MCP server, seller services) requires an API key and account signup \u2014 no evidence of a version number, a standalone spec document, or an implementation path that doesn't require signing up with Skyfire. missing for 10: a link to a versioned KYAPay spec document, confirmation it can be implemented independently of Skyfire's account/API-key system, and independent corroboration of the spec's openness.",
+    "rationale": "Skyfire claims tokens \"conform to the open KYAPay protocol, an industry specification\" (skyfire-supp-3), but no versioned spec document is discoverable \u2014 the OpenAPI/swagger probe returned 404s across all candidate paths (skyfire-probe-2), and every actual protocol operation (token creation, charging, introspection) requires a Skyfire-issued API key tied to a signed-up agent account (skyfire-docs-1, skyfire-supp-8), with the live introspect endpoint rejecting unauthenticated calls (skyfire-probe-rt-1). This contradicts the 'read and implement without signing anything' requirement even though the vendor markets the token format as open. Missing for 10: a publicly hosted versioned specification file/repo, evidence of third-party implementations built without a Skyfire account, and confirmation that core commerce flows (charge, settle) are actually protocol-level rather than proprietary API calls.",
     "evidenceIds": [
       "skyfire-supp-3",
       "skyfire-probe-2",
-      "skyfire-probe-rt-1",
-      "skyfire-supp-8"
+      "skyfire-docs-1",
+      "skyfire-supp-8",
+      "skyfire-probe-rt-1"
     ]
   },
   {
@@ -3382,16 +3381,15 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Core operations (token creation/charge/introspect, service creation, KYA verification) are all documented as REST API endpoints, and an MCP server exposes agentic workflows, showing strong API-first parity with the UI dashboard/playground. However, no OpenAPI/swagger spec was found (404s on all candidate paths), and some UI-only flows like account approval, dashboard-based key management, and paid KYA subscription setup aren't confirmed as fully API-driven. missing for 10: published OpenAPI/swagger spec, confirmation that account/service approval and subscription management can be done purely via API without dashboard interaction, independent third-party confirmation of full API/UI parity.",
+    "rationale": "Skyfire documents a broad API surface (create/charge/introspect tokens, MCP server tools for discovery and token creation) that mirrors most core commerce workflows available in the Dashboard/Playground, and the MCP server explicitly exposes agent-facing equivalents of UI actions. However, some flows are described as UI-first with no documented API equivalent \u2014 e.g., API key creation/management 'in your Agent Dashboard' and service creation via 'Click Create Service' with manual 'Submit for approval' \u2014 and no public OpenAPI spec was found (404s on openapi.json/swagger.json), leaving true API/UI parity unconfirmed. missing for 10: documented API endpoints for API-key management and service creation/approval, a published OpenAPI spec confirming full endpoint coverage, and independent confirmation of 1:1 parity.",
     "evidenceIds": [
+      "skyfire-docs-1",
       "skyfire-docs-3",
       "skyfire-docs-4",
       "skyfire-docs-5",
       "skyfire-docs-6",
-      "skyfire-docs-8",
-      "skyfire-probe-2",
-      "skyfire-supp-8",
-      "skyfire-supp-9"
+      "skyfire-supp-9",
+      "skyfire-probe-2"
     ]
   },
   {
@@ -3409,11 +3407,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Skyfire is a closed, key-gated commercial API/platform (identity+payments infrastructure) with only a published token spec (KYAPay) being open, not the product's own source code; no repo, license, or open-source claim appears anywhere in the pack.",
-    "evidenceIds": [
-      "skyfire-probe-rt-1",
-      "skyfire-supp-3"
-    ]
+    "rationale": "Skyfire is a closed commercial identity/payments platform with only public docs and an API; there is no evidence of source code being published under any open-source license, only a token protocol spec (KYAPay) being 'open' as a format, not source code.",
+    "evidenceIds": []
   },
   {
     "productId": "skyfire",
@@ -3421,12 +3416,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is a hosted identity/payments network \u2014 wallets, token settlement, and charging all run through Skyfire's own centrally-operated APIs (skyfire-supp-3, skyfire-supp-4), which is inherent to a trust/settlement layer rather than self-hostable software; no self-host option is offered or plausible for this product category.",
-    "evidenceIds": [
-      "skyfire-supp-3",
-      "skyfire-supp-4",
-      "skyfire-supp-8"
-    ]
+    "rationale": "Skyfire is a hosted identity/payments network (wallets, token issuance, settlement, MCP server) that fundamentally depends on Skyfire's own hosted infrastructure for wallets, settlement, and trust guarantees \u2014 self-hosting a payments/trust network by an individual user is a category error, not a missing feature.",
+    "evidenceIds": []
   },
   {
     "productId": "skyfire",
@@ -3434,25 +3425,26 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire's docs cover token creation, charging, and introspection (pull-based checks), but there is no evidence of any webhook, event subscription, or push notification mechanism for order lifecycle events (created/updated/fulfilled/canceled). Developers must poll introspect-token rather than subscribe to pushed events.",
+    "rationale": "Skyfire's docs cover token creation, charging, introspection, and MCP-based discovery, but nothing describes a webhook, event stream, or pub/sub mechanism for order lifecycle events (created/updated/fulfilled/canceled) pushed to a developer's backend. Introspect-token requires polling rather than subscription, and no callback/webhook API is documented.",
     "evidenceIds": [
       "skyfire-docs-5",
       "skyfire-supp-5",
-      "skyfire-supp-4"
+      "skyfire-docs-4"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "payable-service-directory",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Skyfire's MCP server exposes a 'find-sellers' tool that lets an agent query for payable services/sellers programmatically, and sellers register services through an approval-gated catalog, giving agents a discovery mechanism (skyfire-docs-6, skyfire-supp-9, skyfire-docs-3). However, there's no evidence of a publicly browsable directory/index outside the MCP tool call, nor documentation of how the directory is structured, filtered, or how comprehensive/curated it is. Missing for 10: a documented public directory/catalog UI or API endpoint separate from the MCP tool, details on search/filter capabilities, and independent confirmation of discovery breadth.",
+    "rationale": "Skyfire publishes both a human-browsable Directory of payable services (skyfire-docs-13) and a programmatic discovery path via its MCP server's 'find-sellers' tool, explicitly described as enabling agents to 'Discover sellers' and orchestrate commerce workflows (skyfire-docs-15, skyfire-supp-9, skyfire-docs-6). This directly satisfies agent-driven discovery of payable services/APIs through a published index or directory. Missing for 10: independent/hands-on corroboration that find-sellers returns a real service catalog, and a public OpenAPI/discovery spec (the openapi.json probe returned 404s).",
     "evidenceIds": [
-      "skyfire-docs-6",
+      "skyfire-docs-13",
+      "skyfire-docs-15",
       "skyfire-supp-9",
-      "skyfire-docs-3",
-      "skyfire-docs-7"
+      "skyfire-docs-6",
+      "skyfire-probe-2"
     ]
   },
   {
@@ -3461,7 +3453,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments layer for agent commerce, not a data storage or hosting platform, so data residency/region choice is not an applicable axis for this product category.",
+    "rationale": "Skyfire is an identity/payments infrastructure layer for AI agents, not a data storage or hosting product; data residency/region selection is not an axis this product category addresses, and no evidence pack item discusses data storage location.",
     "evidenceIds": []
   },
   {
@@ -3470,7 +3462,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity/payments layer for AI agent commerce, not a data/training or AI-model-usage product; controlling whether user data is used for AI model training is entirely outside its category and evidence set.",
+    "rationale": "Skyfire is an identity/payments infrastructure layer for agentic commerce, not a data/training-privacy control product; nothing in its documentation addresses AI model training data usage, making this axis a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -3479,8 +3471,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Skyfire's docs describe identity verification (KYA), token issuance/expiry, and payment settlement, but nothing in the evidence pack addresses user-controlled data retention policies or deletion of stored identity/verification/payment data. Given Skyfire handles real-world identity data via KYA, this is a fair privacy axis to expect, but no retention or deletion controls are documented.",
-    "evidenceIds": []
+    "rationale": "Skyfire handles identity verification (KYA) and payment data tied to real-world individuals/organizations, so data retention/deletion controls are a fair privacy-posture question. The evidence pack only shows account deactivation stopping new token creation (skyfire-supp-6) but no documentation of data retention policies, user-initiated data deletion, export, or GDPR-style controls.",
+    "evidenceIds": [
+      "skyfire-supp-6",
+      "skyfire-supp-2"
+    ]
   },
   {
     "productId": "skyfire",
@@ -3488,7 +3483,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Skyfire is an identity-and-payments infrastructure layer for AI agent commerce, not a telemetry-collecting analytics/consumer product; the evidence pack contains no mention of telemetry collection or opt-out mechanisms, and this axis is not a natural fit for its product category.",
+    "rationale": "Skyfire is an agent identity/payments infrastructure product, not a consumer AI application with usage telemetry a user could opt out of; privacy-posture around telemetry opt-out is not a fair axis for this product category, and no evidence addresses such a setting.",
     "evidenceIds": []
   },
   {
@@ -3497,11 +3492,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers token creation, charging, settlement, and revocation bounds in detail, but nowhere documents a refund API, refund initiation flow, or refund status/tracking endpoint. Since Skyfire is a payments platform, refunds are a plausible feature, but no evidence of programmatic refund support exists \u2014 missing for 10: any refund/dispute API reference, refund status tracking, or documented refund workflow.",
+    "rationale": "The evidence pack details token creation, charging, settlement timing, and revocation bounds, but nowhere mentions a refund API, refund tracking, or dispute-resolution workflow for agent-placed orders \u2014 in fact, docs explicitly describe 'sellers do not carry buyer non-payment risk' and no per-token reversal mechanism, with no refund endpoint documented anywhere.",
     "evidenceIds": [
       "skyfire-supp-5",
       "skyfire-supp-6",
-      "skyfire-supp-4"
+      "skyfire-docs-22",
+      "skyfire-probe-2"
     ]
   },
   {
@@ -3510,14 +3506,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Skyfire issues scoped pay/kya-pay tokens with committed amount ceilings, expiry windows (10s-24h plus grace period), and merchant/identity-requirement gating rather than raw card numbers, all documented via API and MCP server tooling. Missing for 10: independent third-party/hands-on corroboration beyond vendor docs, and explicit merchant-restriction scoping details (evidence shows identity/amount/time limits clearly but merchant-lock-in specifics are thinner).",
+    "rationale": "Skyfire pay/kya-pay tokens are scoped, limited-use credentials: amount is committed at creation and acts as a hard ceiling, tokens have expiry windows (10s\u201324h) with a bounded grace period, and merchant/service restrictions apply via seller-service and identity requirements rather than a raw card number. This is documented in first-party docs and corroborated by a live API probe showing the token endpoints are real and key-gated. Missing for 10: independent third-party (non-vendor) confirmation of real-world merchant-restriction enforcement and no hands-on end-user report of the full credential-issuance flow.",
     "evidenceIds": [
       "skyfire-supp-4",
       "skyfire-supp-5",
       "skyfire-supp-6",
-      "skyfire-supp-2",
+      "skyfire-docs-1",
       "skyfire-docs-11",
-      "skyfire-supp-9"
+      "skyfire-probe-rt-1"
     ]
   },
   {
@@ -3526,27 +3522,27 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Skyfire documents the settlement mechanics merchants need \u2014 charge-token API, committed/ceiling amounts, multi-charge until balance exhausted, defined settlement windows (up to 51 hours), and overcharge rejection (402) \u2014 which supports reconciliation of individual transactions. However, there is no documented merchant-facing payout flow (e.g., withdrawal to bank/external accounts), no statement/reporting/export API, and no mention of standard accounting artifacts (invoices, ledgers, CSV/webhook reporting) that would let a merchant reconcile against other channels. missing for 10: documented payout/withdrawal mechanism to real-world funds, merchant reporting/statement or export API, reconciliation tooling or ledger export, independent confirmation of reporting flows.",
+    "rationale": "Skyfire documents settlement mechanics (charge-token API, committed amounts, wallet-to-wallet fund movement, charge windows up to 24h post-expiry, settlement up to 51h) that give merchants a payout trail, and wallets/tokens are per-agent and auditable via introspect-token. However there is no documented merchant-facing reporting/reconciliation dashboard, no statement/ledger export, no mention of standard accounting integrations (invoices, CSV/API exports for bookkeeping), and no independent evidence of real-world reconciliation workflows. missing for 10: dedicated payout/statement reporting docs, ledger/export or accounting-system integration, third-party confirmation of reconciliation in practice.",
     "evidenceIds": [
       "skyfire-supp-4",
       "skyfire-supp-5",
-      "skyfire-supp-6",
-      "skyfire-docs-4",
-      "skyfire-supp-1"
+      "skyfire-docs-16",
+      "skyfire-docs-5",
+      "skyfire-supp-6"
     ]
   },
   {
     "productId": "skyfire",
     "storyId": "spend-caps-revocation",
-    "verdict": "partial",
+    "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Skyfire supports per-agent scoping and spend caps: keys are scoped to a single agent, and pay tokens carry a committed amount ceiling that bounds spend and rejects overcharges. However, the docs explicitly state there is no per-token revocation API and that deactivating an account does not void already-issued tokens \u2014 in-flight tokens remain chargeable until expiry plus a 24-hour grace window \u2014 directly contradicting 'instant' revocation of payment authority. missing for 10: a documented instant per-agent/per-token revocation mechanism, independent or hands-on confirmation of revocation behavior, and granular usage-limit controls beyond token amount/expiry.",
+    "rationale": "Skyfire documents per-token spend caps (committed amount ceilings, balance checks via introspect, overcharge rejection) and identity/verification gating, which functions as a spend-limit mechanism, and live probing confirms the token API is real and key-gated (skyfire-probe-rt-1). However, Skyfire's own docs explicitly state there is no per-token revocation API and that deactivating an account does not void already-issued pay/kya-pay tokens \u2014 'in-flight tokens are honored' and remain chargeable until expiry plus a 24-hour grace window (skyfire-supp-6), directly contradicting the 'revoke instantly' requirement. missing for 10: a documented instant-revoke/kill-switch API for outstanding tokens, dashboard controls for setting/adjusting spend caps after issuance, and independent confirmation that caps can be dynamically tightened mid-session rather than only fixed at token creation.",
     "evidenceIds": [
       "skyfire-supp-4",
-      "skyfire-supp-5",
+      "skyfire-docs-5",
       "skyfire-supp-6",
-      "skyfire-docs-1"
+      "skyfire-probe-rt-1"
     ]
   },
   {
@@ -3568,14 +3564,14 @@
     "productId": "skyfire",
     "storyId": "structured-offer-data",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Skyfire's MCP server exposes a 'find-sellers' tool for service discovery, and seller service creation includes a 'pricing' field (skyfire-docs-3, skyfire-docs-6, skyfire-supp-9), suggesting some machine-readable service metadata exists. However, there is no documented schema showing availability, variants, or checkout links returned to a developer/agent, and no OpenAPI spec was found (skyfire-probe-2) to confirm structured offer data beyond pricing and identity requirements. Missing for 10: documented availability/variant fields, explicit checkout-link data, and a public API schema showing full offer payloads.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Skyfire's Directory and MCP server's `find-sellers` tool let a buyer agent programmatically discover registered services, and sellers must supply pricing when listing a service, which covers part of the 'machine-readable offer data' story. However, evidence never shows a structured schema for availability, variants, or checkout links (Skyfire's flow uses token-based `kya`/`pay` issuance rather than a checkout-link paradigm), and discovery is scoped to services onboarded to Skyfire, not 'any listed product' generally. Missing for 10: explicit availability/variant fields in offer data, documented checkout-link format, and evidence discovery works for arbitrary third-party listings beyond Skyfire's own seller directory.",
     "evidenceIds": [
-      "skyfire-docs-3",
-      "skyfire-docs-6",
+      "skyfire-docs-13",
+      "skyfire-docs-14",
       "skyfire-supp-9",
-      "skyfire-probe-2"
+      "skyfire-docs-15"
     ]
   },
   {
