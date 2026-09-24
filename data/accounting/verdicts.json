@@ -2007,74 +2007,77 @@
     "storyId": "accountant-collaboration-access",
     "verdict": "full",
     "quality": 8,
-    "confidence": "high",
-    "rationale": "Kick explicitly supports role-based access control ('you decide exactly who can see and do what'), lock periods where an accountant can finalize and lock books against changes, a full audit trail of workspace activity, and a dedicated Tax Package/accountant workflow with a marketed accountants page — together enabling a founder to invite an external accountant with scoped access to review/adjust books. Missing for 10: no explicit documentation of granular invite flow or specific role types (e.g., 'accountant' vs 'bookkeeper' role names) and no independent/hands-on confirmation of the invite UX.",
+    "confidence": "medium",
+    "rationale": "Kick documents role-based access control for workspace collaborators (kick-docs-11), a dedicated accountant-facing page/workflow (kick-docs-3), period locking so accountants can finalize books that even the owner can't alter (kick-supp-locks), a full audit trail of all changes (kick-supp-audit-trail), and a tax package built for handoff to accountants/preparers (kick-docs-9, kick-docs-20) — together covering invite-and-collaborate-with-scoped-access for external bookkeepers. Missing for 10: explicit documentation of the invite flow UI and enumerated role types/permission granularity (e.g., what an 'accountant' role can vs cannot do beyond generic RBAC mention).",
     "evidenceIds": [
       "kick-docs-11",
+      "kick-docs-3",
       "kick-supp-locks",
       "kick-supp-audit-trail",
       "kick-docs-9",
-      "kick-docs-3",
-      "kick-docs-14"
+      "kick-docs-20"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agent-answers-affordability",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kick documents an AI workflow where live report data lands in Google Sheets so Gemini/Claude/ChatGPT can read and reason over it, which could support a question like \"can we afford X?\", but this runs through a spreadsheet bridge, not a genuine public ledger API — probes show openapi/swagger endpoints all 404, and the only live MCP endpoint found serves GitBook documentation search, not ledger data or account actions. Missing for 10: a documented public API or account-scoped MCP server exposing live ledger data directly to agents, and any evidence of natural-language affordability Q&A being answered from it.",
+    "rationale": "Kick documents an MCP interface where 'Your AI can query transactions, generate reports, and update bookkeeping — all with your approval' and works with 'any MCP-compatible assistant,' plus a Google Sheets AI integration where live report data can be reasoned over by Gemini/Claude/ChatGPT — both plausibly support a natural-language 'can we afford X?' query grounded in live ledger data. However, there is no dedicated public REST/GraphQL API (openapi probes all 404), no worked example of an affordability-style query/answer, and no independent/hands-on confirmation that this works in practice. Missing for 10: a documented public API (vs MCP-only), a concrete example of grounded financial Q&A, and third-party verification of accuracy.",
     "evidenceIds": [
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17",
       "kick-supp-sheets-ai",
-      "kick-docs-2",
-      "kick-probe-2",
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface"
+      "kick-probe-2"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agent-flags-spend-anomalies",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kick's reconciliation workflow explicitly checks for missing/duplicate transactions before close, and AI categorization has confidence-gating that flags low-confidence transactions for manual review, with all actions logged in a full audit trail — covering pieces of anomaly detection. However, there's no documented feature where an agent proactively/continuously monitors the ledger and surfaces anomaly or duplicate alerts ahead of close; the AI-agent angle is limited to external LLMs reasoning over exported Sheets report data, not a native monitoring agent. Missing for 10: a dedicated automated agent/alerting workflow for anomaly and duplicate detection tied to close, and evidence of proactive (vs. manual/scheduled) flagging.",
+    "rationale": "Kick's MCP/CLI docs explicitly promise agents can 'query your client data in plain language, automate month-end checks' (kick-docs-15) and read/report on live data via Google Sheets AI integrations (kick-docs-2, kick-supp-sheets-ai), while reconciliation docs describe checking for duplicate/missing transactions before close (kick-supp-reconciliation) and an audit trail logs AI actions (kick-supp-audit-trail). However, there is no documented feature that specifically flags spend anomalies or duplicate transactions automatically via an agent — this would require building a custom workflow on top of MCP rather than a shipped anomaly-detection capability. Missing for 10: a native anomaly/duplicate-detection agent feature, evidence of automated alerts pre-close, and independent/hands-on confirmation of this workflow working in practice.",
     "evidenceIds": [
+      "kick-docs-15",
+      "kick-docs-16",
       "kick-supp-reconciliation",
-      "kick-supp-categorization",
       "kick-supp-audit-trail",
-      "kick-docs-2",
       "kick-supp-sheets-ai"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agent-posts-journal-entries",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Kick documents journal entries, categorization confidence-gating, rules, and period locks, but there is no evidence of a public API/SDK for agents to draft or post journal entries programmatically, nor any 'review queue' workflow exposed via API. The only discovered API-like surface is a GitBook docs-search MCP endpoint (docs only, not ledger actions), and explicit probes for an OpenAPI spec returned 404s.",
+    "rationale": "Kick's MCP interface explicitly lets an AI agent query transactions, generate reports, and update bookkeeping 'all with your approval' (kick-docs-16), and every transaction (including AI-driven ones) generates a real double-entry journal entry logged in the Activity audit trail under the relevant Kick agent (kick-supp-journal-entries, kick-supp-audit-trail). However, there is no documented feature for an agent to 'post' entries into a distinct accountant-facing review queue — the closest analogues are low-confidence categorization being left for manual review (kick-supp-categorization) and accountants locking periods after review (kick-supp-locks), neither of which is a dedicated journal-entry review queue tied to agent-drafted entries. Missing for 10: explicit agent-drafted journal-entry review/approval queue, confirmation that MCP write actions create pending (not auto-posted) entries, and accountant-specific approval workflow for AI-generated entries.",
     "evidenceIds": [
+      "kick-docs-16",
       "kick-supp-journal-entries",
-      "kick-probe-2",
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface"
+      "kick-supp-audit-trail",
+      "kick-supp-categorization",
+      "kick-supp-locks"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agent-reconciles-month-end",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kick's AI auto-categorizes ~97% of transactions and gates low-confidence items for manual review, and the product includes month-end period locks and a full audit trail logging AI agent actions — echoing pieces of an end-to-end reconciliation workflow. However, the reconciliation docs themselves describe reconciliation as a process of comparing Kick's records to bank statements without documenting that Kick's AI actually performs the matching/flagging of reconciliation exceptions (as opposed to categorization); there's no evidence of a single agent command that walks through match, flag, and prepare-for-review end-to-end. Missing for 10: documented AI-driven bank-statement matching/exception flagging specific to reconciliation (not just categorization), and a described single-agent workflow that completes a full month-end close autonomously.",
+    "rationale": "Kick's docs describe the core building blocks: automatic transaction categorization with confidence-gated exceptions left for manual review (kick-supp-categorization), a documented reconciliation workflow comparing ledger to bank statements (kick-supp-reconciliation), rules that automate handling (kick-docs-18), an MCP/CLI surface explicitly pitched to 'automate month-end checks' and update bookkeeping 'all with your approval' (kick-docs-15, kick-docs-16), and an audit trail that logs AI agent actions for human review (kick-supp-audit-trail). This maps closely to matching, flagging exceptions, and prepping for review. Missing for 10: a concrete end-to-end demonstration of an agent autonomously executing a full month-end close via MCP, and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
+      "kick-docs-15",
+      "kick-docs-16",
       "kick-supp-categorization",
       "kick-supp-reconciliation",
-      "kick-supp-locks",
+      "kick-docs-18",
       "kick-supp-audit-trail",
-      "kick-probe-1"
+      "kick-supp-locks"
     ]
   },
   {
@@ -2083,21 +2086,56 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A live llms.txt index exists at docs.kick.co/llms.txt (HTTP 200, confirmed by probe) with markdown mirrors and a documented ask-query interface, plus a real MCP JSON-RPC endpoint for docs search, giving agents multiple ways to consume agent-oriented documentation. missing for 10: this is a GitBook platform surface rather than a Kick-built capability, and there's no independent (non-vendor) corroboration of agents actually using it successfully.",
+    "rationale": "Kick publishes a full llms.txt index (confirmed live via probe returning HTTP 200) plus markdown mirrors on every doc page and a dynamic ask-query interface, making the docs directly agent-legible; this is corroborated by both claimed-docs and an independent probe. missing for 10: no third-party/community report of an agent actually consuming llms.txt successfully, and no evidence of structured schema.org/agent-manifest beyond GitBook's generic surfaces.",
     "evidenceIds": [
-      "kick-probe-1",
       "kick-supp-docs-agent-surface",
-      "kick-probe-3"
+      "kick-probe-1",
+      "kick-docs-15"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agentic-ai-insights",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Kick documents AI categorization of transactions (auto-labeling ~97% on first pass, confidence-gated, learns from corrections) and real-time P&L updates from that AI action, which is a form of AI acting on user data. However, this is transactional automation, not explicit 'insights and suggestions' (e.g., anomaly flags, forecasts, recommendations) surfaced inside the product itself; the only place data is 'reasoned over' by AI (Gemini/Claude/ChatGPT) is via export to Google Sheets, which is outside the core product UI. Missing for 10: in-app AI-generated insights/recommendations dashboard, proactive suggestions beyond categorization, and evidence of AI reasoning happening natively within Kick rather than via Sheets/GitBook docs-search surfaces.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Kick auto-categorizes transactions with AI (97% first-pass), surfaces AI actions in an audit trail, and lets users query data, generate reports, and get suggestions via MCP/CLI and via AI assistants (Gemini/Claude/ChatGPT) reasoning over live Kick report data in Sheets. This covers in-product AI insights/suggestions directly on user financial data with approval workflows. Missing for 10: independent/hands-on validation of insight quality and no native in-app chat/insights UI beyond categorization and external AI integrations.",
     "evidenceIds": [
+      "kick-supp-categorization",
+      "kick-supp-audit-trail",
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17",
+      "kick-supp-sheets-ai",
+      "kick-docs-21"
+    ]
+  },
+  {
+    "productId": "kick",
+    "storyId": "agentic-autonomous-automation",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Kick supports background autonomy via automatic AI categorization (97% first-pass), Rules that run automatically on every matching transaction sync, and MCP/CLI workflows described as automating month-end checks and workflows 'that run across every workspace' — with AI actions logged in the audit trail. However, most AI actions (MCP queries, bookkeeping updates) are explicitly gated by human approval ('all with your approval'), so true autonomous background execution is limited mainly to categorization and rules rather than open-ended agentic automation. missing for 10: evidence of scheduled/triggered autonomous workflows beyond rules and categorization, independent confirmation of unattended MCP automation running without approval, and details on failure handling/monitoring for background automations.",
+    "evidenceIds": [
+      "kick-supp-categorization",
+      "kick-docs-18",
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-supp-audit-trail"
+    ]
+  },
+  {
+    "productId": "kick",
+    "storyId": "agentic-builtin-assistant",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Kick ships autonomous AI automation (auto-categorization, rule-based automation, 'self-driving' books) and exposes an MCP/CLI interface so external assistants (Claude, ChatGPT, Gemini) can query and update data with approval, but the docs describe connecting third-party AI clients rather than a first-party in-app chat assistant UI for delegating tasks. missing for 10: evidence of a native in-product chat/assistant interface (not just MCP connector to external LLMs), and independent/hands-on confirmation of task delegation working end-to-end.",
+    "evidenceIds": [
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17",
       "kick-supp-categorization",
       "kick-supp-sheets-ai",
       "kick-probe-1"
@@ -2105,45 +2143,16 @@
   },
   {
     "productId": "kick",
-    "storyId": "agentic-autonomous-automation",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Kick automates categorization, transfer matching, reconciliation checks, and rule-based overrides continuously in the background (kick-supp-categorization, kick-supp-reconciliation, kick-docs-7), which is a form of autonomous background automation for bookkeeping tasks. However, this is limited to Kick's own fixed bookkeeping pipeline, not a general-purpose, user-configurable automation/agent framework that an AI-native user could set up for arbitrary autonomous tasks. missing for 10: evidence of user-defined autonomous workflows/agents beyond built-in categorization rules, a scheduling/trigger system for custom automations, or an automation builder — none is documented; MCP surfaces found are docs-search only, not action-capable agents.",
-    "evidenceIds": [
-      "kick-supp-categorization",
-      "kick-docs-7",
-      "kick-supp-reconciliation",
-      "kick-supp-audit-trail",
-      "kick-probe-3"
-    ]
-  },
-  {
-    "productId": "kick",
-    "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Kick documents AI automation for bookkeeping (auto-categorization with confidence gating, described as 'self-driving' per llms.txt) and logs AI actions in an audit trail, but this is background automation of a fixed task, not a conversational assistant a user delegates arbitrary tasks to. The actual 'ask an AI' workflow routes through external tools (Gemini/Claude/ChatGPT) reasoning over exported Sheets data, not a built-in assistant inside Kick's own UI. Missing for 10: a native in-product chat/assistant interface, evidence of delegating open-ended tasks (not just categorization) to it, and independent confirmation of this workflow beyond vendor docs.",
-    "evidenceIds": [
-      "kick-supp-categorization",
-      "kick-supp-audit-trail",
-      "kick-probe-1",
-      "kick-supp-sheets-ai"
-    ]
-  },
-  {
-    "productId": "kick",
     "storyId": "agentic-headless",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of an API, CLI, or headless automation surface for actual Kick operations: OpenAPI/swagger probes all 404, and the only live MCP endpoint found is a GitBook docs-search server, not a Kick account/ledger API. The single 'MCP/CLI' mention on the pricing page is a bare link with no supporting documentation of scriptable/CI-usable functionality.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Kick advertises a CLI and MCP integration for automating workflows (\"Connect MCP or CLI to take it further... automate month-end checks, and build workflows that run across every workspace\"), and rules run automatically on sync, suggesting some headless automation capability. However, there is no CLI documentation, no CI setup guide, no scripting examples, and an openapi probe found no public API surface. missing for 10: dedicated CLI docs/reference, CI integration guide, headless auth/config examples, and independent confirmation of automated/CI usage.",
     "evidenceIds": [
-      "kick-probe-2",
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface",
-      "kick-docs-1"
+      "kick-docs-1",
+      "kick-docs-15",
+      "kick-docs-18",
+      "kick-probe-2"
     ]
   },
   {
@@ -2152,67 +2161,66 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence that Kick lets users plug external MCP servers into the product so it can call their tools. The only MCP-related evidence is a GitBook-provided docs-search MCP endpoint (serving documentation, not Kick data or actions) and a separate workflow where Kick data is exported to Google Sheets for AI tools to read — neither shows Kick acting as an MCP client consuming external servers.",
+    "rationale": "Kick's documented MCP integration runs in the opposite direction from the story: docs describe Kick exposing an MCP server so external AI assistants (Claude, ChatGPT, Gemini) can query and act on Kick data (kick-docs-15, kick-docs-16, kick-docs-17), not Kick itself connecting to and consuming tools from externally supplied MCP servers. There is no evidence that a user can plug arbitrary MCP servers into Kick so Kick's own AI can use their tools.",
     "evidenceIds": [
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface",
-      "kick-supp-sheets-ai"
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agentic-mcp-server",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "The only MCP endpoint found is a generic GitBook platform docs-search server (serverInfo \"mcp-typescript server on vercel\"), explicitly noted as serving documentation, not Kick account data or ledger actions — not an official Kick-built MCP server. Kick's documented AI workflow instead routes through Google Sheets exports for LLMs, with no first-party MCP server for agent access to financial data or actions.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Kick documents an official MCP server/connector ('Connect MCP or CLI', 'Kick works with any MCP-compatible assistant', MCP quickstart docs enabling querying transactions, generating reports, and updating bookkeeping with approval). missing for 10: independent/hands-on third-party verification of the MCP server working in practice, and technical details (auth, tool schema, hosting) beyond marketing-style docs pages.",
     "evidenceIds": [
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface",
-      "kick-supp-sheets-ai",
-      "kick-probe-2"
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agentic-nl-commands",
-    "verdict": "partial",
-    "quality": 4,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kick supports AI-native interaction only indirectly: reports sync as live data to Google Sheets so Gemini/Claude/ChatGPT can read, reason over, and even write back to the sheet, and the docs are agent-legible via GitBook's MCP/llms.txt surfaces. But there's no evidence of a native chat/NL command interface inside Kick itself for issuing commands like 'recategorize this transaction' or 'send this invoice' — the MCP endpoint found only serves documentation search, not account actions, and AI categorization is automatic/rule-based rather than user-prompted NL commands. Missing for 10: a first-party NL command interface or agent that can execute ledger/invoicing/bill-pay actions directly from user prompts, and independent corroboration of the write-back capability actually altering Kick data (not just the sheet).",
+    "rationale": "Kick documents native MCP support letting any MCP-compatible AI assistant query transactions, generate reports, and update bookkeeping in natural language with approval, plus a Google Sheets AI workflow where Gemini/Claude/ChatGPT can read and reason over live Kick data. This directly satisfies natural-language operation for an AI-native user. Missing for 10: independent/hands-on corroboration of the MCP or CLI actually working, and more detail on the CLI mentioned only briefly on the pricing page.",
     "evidenceIds": [
-      "kick-docs-2",
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17",
       "kick-supp-sheets-ai",
-      "kick-supp-docs-agent-surface",
-      "kick-probe-3",
-      "kick-supp-categorization"
+      "kick-docs-2",
+      "kick-docs-1"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agentic-official-cli",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of a Kick-built CLI exists; the only 'CLI' mention is an unresolved label on a pricing page, and the actual agent-facing surfaces documented (GitBook llms.txt, GitBook MCP endpoint, Google Sheets AI workflow) are docs-search or spreadsheet integrations, not a command-line interface for interacting with Kick. missing for 10: any documented CLI tool, install instructions, command reference, or hands-on confirmation of a Kick CLI.",
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Kick's pricing page and AI docs mention a 'CLI' alongside MCP ('Connect MCP or CLI to take it further'), implying an official CLI exists, but no evidence pack item provides CLI installation steps, command reference, or a dedicated quickstart — all MCP-specific docs (mcp-quickstart, connectors) only cover the MCP path. Missing for 10: CLI-specific documentation/quickstart, command reference, install instructions, and independent/hands-on confirmation the CLI works as described.",
     "evidenceIds": [
       "kick-docs-1",
-      "kick-supp-docs-agent-surface",
-      "kick-probe-3"
+      "kick-docs-15"
     ]
   },
   {
     "productId": "kick",
     "storyId": "agentic-public-api",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No documented public API for driving Kick itself was found: an OpenAPI/API probe returned 404s everywhere, and the only working MCP endpoint is explicitly a GitBook docs-search server that 'serves documentation, not Kick account data or ledger actions.' The AI integration path is one-way reporting into Google Sheets for LLMs to read, not a programmatic API to act on the product.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Kick documents an MCP server and CLI that let AI agents query transactions, generate reports, and update bookkeeping with approval (kick-docs-15,16,17), which is a genuine agent-facing documented interface. However, probes confirm no traditional public REST/OpenAPI spec exists (404s on all openapi/swagger paths), so 'API' access is limited to the MCP protocol rather than a broader documented public API surface. Missing for 10: a traditional REST/OpenAPI-documented API, independent/hands-on verification that the MCP server works as described in practice.",
     "evidenceIds": [
-      "kick-probe-2",
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface",
-      "kick-supp-sheets-ai"
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17",
+      "kick-probe-2"
     ]
   },
   {
@@ -2220,13 +2228,13 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any API credential system, scoped tokens, OAuth grants, or agent-specific permission levels for Kick's product/account data—only role-based access control for human team members and a documentation-search MCP endpoint unrelated to account access. No mention of issuing least-privilege API keys or credentials for AI agents to act on a user's financial data.",
+    "confidence": "medium",
+    "rationale": "Kick documents general workspace RBAC for human team members and an approval-gated MCP integration, but there is no evidence of issuing scoped/least-privilege API credentials specifically for an AI agent (e.g., agent-specific API keys, OAuth scopes, or token permissions distinct from a user's own access).",
     "evidenceIds": [
       "kick-docs-11",
-      "kick-supp-security",
-      "kick-probe-3",
-      "kick-probe-2"
+      "kick-docs-16",
+      "kick-docs-17",
+      "kick-supp-audit-trail"
     ]
   },
   {
@@ -2234,13 +2242,13 @@
     "storyId": "agentic-sdks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "There is no evidence of an official Kick SDK: the OpenAPI/Swagger probe returned 404 on all candidate paths, and the only MCP endpoint found (kick-probe-3) is GitBook's generic docs-search MCP server, not a Kick-built API/SDK — it serves documentation, not account or ledger data. AI workflows are routed indirectly through Google Sheets exports rather than a programmable SDK.",
+    "confidence": "medium",
+    "rationale": "The evidence shows Kick offers an MCP server and CLI for AI workflows, but there is no mention of official SDKs (e.g., Python/JS client libraries) for developers to build against, and a direct probe for an OpenAPI spec returned 404s, indicating no formal API/SDK surface is published.",
     "evidenceIds": [
-      "kick-probe-2",
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface",
-      "kick-supp-sheets-ai"
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17",
+      "kick-probe-2"
     ]
   },
   {
@@ -2249,22 +2257,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a webhooks feature or event subscription mechanism for Kick account/ledger data; the only outbound integrations mentioned are docs-search MCP (GitBook platform) and Google Sheets sync, neither of which is a webhook subscription API.",
-    "evidenceIds": []
+    "rationale": "No evidence of a webhook subscription mechanism anywhere in the pack; Kick's AI-native surface is MCP/CLI query-based and Google Sheets integration, not event-driven webhooks, and the OpenAPI probe returned 404s with no webhook docs found.",
+    "evidenceIds": [
+      "kick-probe-2",
+      "kick-docs-15",
+      "kick-docs-16"
+    ]
   },
   {
     "productId": "kick",
     "storyId": "ap-aging-vendor-balances",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Kick supports AP-adjacent features — viewing and managing bills with real-time sync from Ramp/BILL (kick-docs-13, kick-supp-invoicing-billpay), a real double-entry ledger (kick-supp-journal-entries), and locked periods that keep historical reports stable so numbers can be trusted 'at any point in time' (kick-supp-locks, kick-docs-14). However, there is no explicit documentation of an AP aging report (e.g., 30/60/90-day buckets) or a vendor-balance summary view — only bill list/sync visibility is evidenced. Missing for 10: dedicated AP aging report, vendor balance summary/report, and evidence of historical point-in-time AP snapshots beyond generic locked-period stability.",
+    "confidence": "low",
+    "rationale": "Kick provides bill tracking with real-time sync from Ramp/BILL and lists 'AR & AP' as a Plus-plan feature, implying some AP functionality, but there is no documented AP aging report or vendor balance history at a point in time. missing for 10: AP aging report, vendor balance snapshots/historical point-in-time views, vendor-level statements.",
     "evidenceIds": [
       "kick-docs-13",
       "kick-supp-invoicing-billpay",
-      "kick-supp-journal-entries",
-      "kick-supp-locks",
-      "kick-docs-14"
+      "kick-supp-pricing"
     ]
   },
   {
@@ -2272,12 +2282,11 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "There's no evidence of an interactive API reference or runnable code examples; probes explicitly show no OpenAPI/Swagger spec exists (all candidate paths 404), and the only 'API-like' surface is GitBook's generic docs-search MCP endpoint, which serves documentation text, not a runnable API reference.",
+    "confidence": "medium",
+    "rationale": "Kick has MCP/CLI docs but no evidence of an interactive API reference with runnable examples; probes for OpenAPI/Swagger specs at expected paths all returned 404, and the docs are static GitBook markdown mirrors, not a runnable API explorer.",
     "evidenceIds": [
       "kick-probe-2",
-      "kick-supp-docs-agent-surface",
-      "kick-probe-3"
+      "kick-supp-docs-agent-surface"
     ]
   },
   {
@@ -2286,11 +2295,9 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "A direct probe for an OpenAPI/Swagger spec returned 404 on all candidate paths, and no evidence pack item shows a downloadable machine-readable API spec for Kick's own product API; the only machine-readable surfaces found (llms.txt, GitBook MCP) serve documentation, not an API contract.",
+    "rationale": "Probe explicitly checked common OpenAPI/spec paths and found all returned 404, and no evidence pack item shows a downloadable machine-readable API spec; MCP/CLI docs exist but do not constitute an OpenAPI-equivalent spec.",
     "evidenceIds": [
-      "kick-probe-2",
-      "kick-supp-docs-agent-surface",
-      "kick-probe-3"
+      "kick-probe-2"
     ]
   },
   {
@@ -2299,7 +2306,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Kick is a live bookkeeping/accounting product that connects directly to real bank feeds via Plaid and operates on production financial data; there is no evidence of a sandbox, test/demo environment, or synthetic data mode for AI-native testing. All MCP/CLI and AI integrations (kick-docs-15/16/17) operate on real workspace data with 'your approval' guardrails, not an isolated sandbox.",
     "evidenceIds": []
   },
   {
@@ -2308,11 +2315,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a public, versioned Kick API exists — the openapi/swagger probe returned 404 on all candidate paths, and the only MCP/API-like surface found is GitBook's generic docs-search MCP endpoint, not a Kick-built account/ledger API. There is no mention anywhere in the docs of API versioning schemes or a deprecation policy.",
+    "rationale": "No evidence of API versioning scheme or a documented deprecation policy; an OpenAPI spec probe returned 404s and no changelog/versioning docs are cited, only MCP/CLI and integration docs.",
     "evidenceIds": [
       "kick-probe-2",
-      "kick-supp-docs-agent-surface",
-      "kick-probe-3"
+      "kick-docs-15",
+      "kick-docs-17"
     ]
   },
   {
@@ -2334,57 +2341,69 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Kick's docs explicitly state AI auto-categorizes ~97% of transactions on first pass, learns from user corrections, and lets users create Rules that override AI categorization permanently for future matching transactions — directly matching the story's requirement for learning-based categorization suggestions. Confidence gating (low-confidence transactions left uncategorized) further supports a learning/feedback loop. Missing for 10: no independent/hands-on verification of the learning accuracy or how quickly corrections propagate, and no detail on the mechanism (per-vendor vs. global learning).",
+    "rationale": "Kick's docs explicitly describe AI auto-categorization on transaction import (~97% first-pass accuracy), learning from user corrections, confidence-based gating leaving low-confidence items for manual review, and rules that override and persist AI categorization decisions going forward. This directly matches the founder story of automatic categorization with learning from corrections. Missing for 10: independent/third-party corroboration of the 97% claim and no detail on the exact mechanism by which 'learning' improves future categorization accuracy.",
     "evidenceIds": [
       "kick-supp-categorization",
-      "kick-docs-7"
+      "kick-docs-7",
+      "kick-docs-18"
     ]
   },
   {
     "productId": "kick",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Kick's AI categorizes ~97% of transactions automatically and rules apply logic across every matching transaction going forward, and multi-entity transaction splitting affects many items at once — all forms of bulk-scale automation. However there is no documented bulk-edit UI, batch API, or CLI/MCP action surface for an AI agent to programmatically trigger bulk operations across many items on demand. Missing for 10: explicit bulk-select/bulk-edit feature, a programmatic bulk-action API or CLI, and evidence of agent-triggered bulk operations beyond passive AI categorization.",
+    "rationale": "Kick supports bulk-style automation: AI auto-categorizes ~97% of transactions on sync, Rules apply automatically to every matching transaction going forward, multi-entity workspaces let you split a transaction across entities, and the MCP/CLI surface is documented to 'automate month-end checks, and build workflows that run across every workspace.' These collectively cover bulk processing of transactions/entities via automation and AI/MCP agents, though there's no explicit UI for manually selecting and batch-editing arbitrary item sets. Missing for 10: no documented bulk-select/bulk-edit UI action, no explicit example of an MCP call operating on hundreds of items at once, no independent/hands-on confirmation of bulk throughput.",
     "evidenceIds": [
       "kick-supp-categorization",
       "kick-docs-7",
+      "kick-docs-18",
       "kick-docs-6",
-      "kick-docs-4"
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-19"
     ]
   },
   {
     "productId": "kick",
     "storyId": "automation-rules-engine",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Kick's documented Rules feature lets users define logic that overrides AI categorization and 'run automatically whenever a matching transaction syncs' — a real event-triggered automation rule engine. However, this is scoped narrowly to transaction categorization events rather than a general-purpose trigger/action framework spanning arbitrary events (e.g., invoicing, bill pay, entity actions). Missing for 10: evidence of rules triggering on non-categorization events, multi-step or cross-feature actions, and any user-facing rule builder UI/API details beyond the single doc description.",
+    "rationale": "Kick's Rules feature lets users define custom logic that automatically triggers actions (overriding AI categorization) whenever a matching transaction event (sync) occurs, confirmed consistently across multiple docs pages. This is a genuine event-triggered automation capability, though scoped specifically to transaction categorization/handling rather than a general-purpose rules engine covering arbitrary events and actions. Missing for 10: evidence of rules triggering on non-transaction events, complex multi-condition/multi-action workflows, and independent/hands-on corroboration beyond first-party docs.",
     "evidenceIds": [
       "kick-docs-7",
+      "kick-docs-18",
       "kick-supp-categorization"
     ]
   },
   {
     "productId": "kick",
     "storyId": "automation-scheduled-jobs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Kick documents event-driven automation (AI categorization on sync, rules triggered by matching transactions) but no evidence of user-schedulable recurring jobs/workflows (e.g., recurring invoices, scheduled reports, cron-like automation) that an AI-native user could set up and manage.",
-    "evidenceIds": []
+    "rationale": "Kick supports automation via Rules that trigger automatically on matching transaction syncs (kick-docs-7, kick-docs-18) and via MCP/CLI that can 'automate month-end checks' and 'build workflows that run across every workspace' (kick-docs-15). This is real automation depth, but it's event-triggered (on transaction sync) rather than documented as time-based recurring/scheduled job execution (e.g., no cron-style scheduler, no 'run every X days' config is shown). Missing for 10: explicit scheduling/cron mechanism for recurring workflows, documentation of how MCP-driven workflows are triggered on a recurring cadence, and independent confirmation of month-end automation working as scheduled.",
+    "evidenceIds": [
+      "kick-docs-7",
+      "kick-docs-18",
+      "kick-docs-15",
+      "kick-docs-16"
+    ]
   },
   {
     "productId": "kick",
     "storyId": "automation-versioned-workflows",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Kick documents an audit trail (Activity tab) that logs categorization/rule changes, but there is no evidence of versioning automation Rules or rolling back an automation to a prior state — only a log of what happened, not a way to view/restore prior rule versions.",
+    "rationale": "Kick documents an audit trail that logs every categorization, rule action, and AI decision (kick-supp-audit-trail, kick-docs-10), and rules/period locks provide some governance over automated logic (kick-docs-7, kick-docs-18, kick-supp-locks). However, there is no documented mechanism to version rules/automations, review pending automation changes before they apply, or roll back a specific automated action once executed. Missing for 10: rule/automation version history, explicit rollback/undo of an automation's effects, and a review-before-apply workflow for AI/rule changes.",
     "evidenceIds": [
-      "kick-supp-audit-trail",
       "kick-docs-7",
+      "kick-docs-18",
+      "kick-supp-audit-trail",
+      "kick-docs-10",
       "kick-supp-locks"
     ]
   },
@@ -2458,16 +2477,15 @@
     "productId": "kick",
     "storyId": "complete-audit-trail",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "high",
-    "rationale": "Kick documents a full Activity tab audit trail logging every transaction change, categorization update, and sync event with timestamp and actor (including AI agent actions), plus period locks that prevent retroactive changes to closed periods and RBAC to control who can act. This directly covers who-changed-what-when across the ledger, including multi-entity workspaces. Missing for 10: no independent/hands-on corroboration of the audit trail in practice, no detail on exporting/filtering audit logs for compliance review, and no explicit confirmation the trail spans across all entities in a multi-entity workspace simultaneously.",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Kick's Activity tab is explicitly documented as a full audit trail logging every transaction change, categorization update, and sync event with timestamp and the actor (including AI agents), which directly satisfies the accountant's need to trace who changed what and when (kick-supp-audit-trail, kick-docs-10). Multi-entity support and locked-period protections reinforce ledger integrity across entities (kick-docs-5, kick-docs-19, kick-supp-locks). Missing for 10: explicit confirmation that the audit log aggregates/spans across multiple entities in one consolidated view (vs. per-entity logs), and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "kick-supp-audit-trail",
       "kick-docs-10",
-      "kick-supp-locks",
-      "kick-docs-14",
-      "kick-docs-11",
-      "kick-docs-5"
+      "kick-docs-5",
+      "kick-docs-19",
+      "kick-supp-locks"
     ]
   },
   {
@@ -2488,9 +2506,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence only shows that the Plus plan includes 'classes' as a feature label in pricing (kick-supp-pricing), but there is no documentation of a report builder that lets users filter/group by class, location, or tag dimensions, nor any mention of 'location' or 'tag' dimensions at all. Missing for 10: documented custom report builder UI, filter/group-by controls, evidence of location dimension, evidence of tag dimension.",
+    "rationale": "Evidence only shows a passing mention of 'classes' as a Plus-plan feature (kick-supp-pricing) and generic reporting/tax-package outputs, but there is no documentation of a custom report builder with filtering/grouping by class, location, or tag dimensions.",
     "evidenceIds": [
-      "kick-supp-pricing"
+      "kick-supp-pricing",
+      "kick-docs-9",
+      "kick-docs-19"
     ]
   },
   {
@@ -2499,29 +2519,30 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Kick's docs show a real double-entry ledger with live P&L and Balance Sheet organized by Chart of Accounts, updating in real time as transactions are categorized, plus period locking that keeps historical reports accurate for any locked period (kick-supp-coa, kick-supp-categorization, kick-supp-journal-entries, kick-supp-locks). However, no evidence explicitly confirms a cash-flow statement report or an 'any period on demand' report generator UI — missing for 10: explicit cash-flow statement documentation, evidence of arbitrary custom date-range reporting on demand, and independent/hands-on verification of statement accuracy.",
+    "rationale": "Kick's docs confirm a real double-entry ledger with a configurable Chart of Accounts that organizes a Profit & Loss and Balance Sheet (kick-supp-coa, kick-supp-journal-entries), plus period locking to keep historical reports stable (kick-docs-14, kick-supp-locks) and a Tax Package export (kick-docs-9, kick-docs-20) — supporting on-demand, accurate P&L and Balance Sheet reporting for any period. However, no evidence in the pack explicitly documents a cash-flow statement being generated, so the third piece of the story is unconfirmed. Missing for 10: explicit documentation of a cash-flow statement report, and independent/third-party verification of statement accuracy.",
     "evidenceIds": [
       "kick-supp-coa",
-      "kick-supp-categorization",
       "kick-supp-journal-entries",
+      "kick-docs-14",
       "kick-supp-locks",
-      "kick-docs-9"
+      "kick-docs-9",
+      "kick-docs-20"
     ]
   },
   {
     "productId": "kick",
     "storyId": "full-gl-export-via-api",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Kick documents a real double-entry ledger, chart of accounts, and journal entries, but there is no evidence of a documented API for exporting the general ledger or trial balance in open formats — the openapi probe returned 404s on all candidate endpoints, and the only 'API'-like surfaces found are a GitBook docs-search MCP server and Google Sheets AI integration, neither of which expose ledger/GL data programmatically.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Kick documents a real double-entry GL (kick-supp-journal-entries), a Chart of Accounts, and an MCP/CLI interface that lets an AI 'query transactions, generate reports, and update bookkeeping' (kick-docs-16, kick-docs-15), plus a Tax Package Excel export (kick-docs-9/20) — giving some programmatic and open-format access to financial data. However, there is no documented REST/OpenAPI spec (probe of openapi.json/swagger.json returned 404s at kick-probe-2), and no explicit mention of a 'trial balance' report or a dedicated GL export endpoint in open formats like CSV/JSON. Missing for 10: a documented public API (OpenAPI/REST) beyond MCP, an explicit trial-balance report/export, and confirmation that GL data can be pulled in structured open formats (CSV/JSON) via that API.",
     "evidenceIds": [
-      "kick-probe-2",
+      "kick-docs-15",
+      "kick-docs-16",
       "kick-supp-journal-entries",
       "kick-supp-coa",
-      "kick-supp-docs-agent-surface",
-      "kick-probe-3",
-      "kick-supp-sheets-ai"
+      "kick-docs-9",
+      "kick-probe-2"
     ]
   },
   {
@@ -2530,7 +2551,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Kick documents explicit period locking: an accountant locks a period after review, which 'protects the finalized books for that period from being changed - by anyone, including you,' and locked-period reports 'remain accurate and stable,' implying reopening is required for changes. This directly matches the accountant story of preventing prior-period edits without explicit reopening. Missing for 10: explicit documentation of the reopening workflow/permissions and independent/hands-on confirmation beyond vendor docs.",
+    "rationale": "Kick documents explicit period locking that protects finalized books from being changed by anyone, including the account owner, until an accountant reopens it, and confirms reports for locked periods remain stable — directly matching the story. Missing for 10: independent/hands-on third-party verification of lock enforcement in practice.",
     "evidenceIds": [
       "kick-supp-locks",
       "kick-docs-14"
@@ -2542,11 +2563,10 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kick documents a genuine double-entry ledger where every transaction generates a journal entry with debit/credit sides, plus a chart of accounts accountants can adjust, supporting the underlying ledger mechanics. However, the evidence describes journal entries as system-generated from transactions/payroll/bills, not explicit manual entry creation by an accountant with supporting memos. Missing for 10: explicit documentation of manually creating/posting a journal entry, memo/description fields on manual entries, and confirmation entries must balance before posting.",
+    "rationale": "Kick documents a genuine double-entry ledger where every transaction generates a journal entry with matching debits and credits, and the Chart of Accounts can be adjusted by accountants (kick-supp-journal-entries, kick-supp-coa). However, the docs describe journal entries as auto-generated from bank/payroll/bill transactions rather than confirming a manual entry workflow with memo fields for ad hoc accountant adjustments. Missing for 10: explicit manual journal entry creation UI/feature, memo/description field support, and confirmation of balance validation on manual entries.",
     "evidenceIds": [
       "kick-supp-journal-entries",
-      "kick-supp-coa",
-      "kick-supp-locks"
+      "kick-supp-coa"
     ]
   },
   {
@@ -2568,13 +2588,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kick documents core close primitives — reconciliation against bank statements, period locks that finalize books, an audit trail of activity/AI actions, and rules/categorization workflows — which together support month-end close discipline. However, there is no evidence of a dedicated checklist feature tracking accruals as discrete tasks, formal review sign-off workflows, or a consolidated close-status dashboard for accountants. Missing for 10: a documented month-end checklist UI, explicit accrual task tracking, and formal sign-off/approval steps beyond simple period locking.",
+    "rationale": "Kick documents core close primitives — reconciliation workflows, period locks that function as accountant sign-off/finalization, double-entry journal entries, and an accrual ledger tier — but there is no documented unified 'close checklist' feature that ties reconciliations, accruals, and sign-offs together into one trackable list. missing for 10: an explicit month-end close checklist/dashboard, explicit accrual entry workflow beyond a plan-tier mention, and evidence of tracking sign-off status across multiple close tasks in one view.",
     "evidenceIds": [
       "kick-supp-reconciliation",
       "kick-supp-locks",
+      "kick-supp-journal-entries",
       "kick-supp-audit-trail",
-      "kick-docs-7",
-      "kick-supp-coa"
+      "kick-supp-pricing"
     ]
   },
   {
@@ -2583,40 +2603,40 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Kick documents multi-entity management from a single workspace, including cross-entity expense splitting (kick-docs-5, kick-docs-6), and pricing tiers explicitly support 'unlimited entities' (kick-supp-pricing). However, there is no explicit documentation of consolidated financial statements or roll-up reporting across entities—only per-entity management and transaction splitting are described. Missing for 10: explicit consolidated P&L/Balance Sheet reporting across entities, evidence of a consolidation feature or combined financial statement output.",
+    "rationale": "Kick documents genuine multi-entity workspace management—each entity keeps its own books/reports, and shared expenses can be split across entities by amount or percentage (kick-docs-5, kick-docs-19, kick-docs-6). However, there is no evidence of true consolidated financials (e.g., a combined P&L/Balance Sheet rolling up multiple entities into one statement) — the docs explicitly note each entity has separate books/reports rather than a unified consolidated view. Missing for 10: documented consolidation reports/statements across entities, intercompany elimination handling, and any UI/report showing combined financials rather than per-entity splitting.",
     "evidenceIds": [
       "kick-docs-5",
-      "kick-docs-6",
-      "kick-supp-pricing"
+      "kick-docs-19",
+      "kick-docs-6"
     ]
   },
   {
     "productId": "kick",
     "storyId": "openness-api-parity",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows no general Kick API: OpenAPI/swagger probes all 404'd, the only MCP endpoint found is a GitBook docs-search server explicitly noted to serve documentation, not Kick account data or ledger actions, and the AI workflow route is one-directional Google Sheets report export (with limited spreadsheet write-back, not writing into Kick). There is no evidence of programmatic access to core UI actions like categorization, reconciliation, invoicing, or entity management.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Kick documents an MCP server/CLI letting AI query transactions, generate reports, and update bookkeeping, and states it works with any MCP-compatible assistant, but explicitly notes actions require 'your approval,' and there is no evidence of a full public API/OpenAPI spec — the openapi probe returned 404s across all candidate paths. Many UI-surfaced workflows (invoicing, bill pay, multi-entity splits, rules creation, reconciliation) are never confirmed as MCP/CLI-accessible, only UI-documented. missing for 10: documented full REST/GraphQL API or OpenAPI spec, confirmation that all UI actions (invoicing, bill pay, multi-entity, rules) are exposed via API/MCP, and evidence of unattended (non-approval-gated) automation.",
     "evidenceIds": [
+      "kick-docs-15",
+      "kick-docs-16",
+      "kick-docs-17",
       "kick-probe-2",
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface",
-      "kick-supp-sheets-ai",
-      "kick-supp-invoicing-billpay"
+      "kick-supp-audit-trail"
     ]
   },
   {
     "productId": "kick",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Kick offers some export surfaces — a Tax Package that bundles reports into a single Excel file and live Google Sheets sync of reports for AI tools to read — but there is no documented capability to export the full ledger/transactions/journal entries in bulk open formats (CSV/JSON) or a documented account-closure/migration export process; 'migration support' is only mentioned as a paid Advanced-tier perk with no detail. missing for 10: full-data export (transactions, journal entries, chart of accounts) in open formats, documented account closure/migration workflow, evidence of independent/hands-on export testing.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Kick supports some open-format exports — a Tax Package Excel file with a full year-end financial package (kick-docs-9, kick-docs-20) and live spreadsheet sync of reports into Google Sheets (kick-supp-sheets-ai, kick-docs-21) — but there is no documented mechanism for exporting the full underlying ledger (all transactions, journal entries, chart of accounts, audit trail) in an open format for a clean migration off the platform. Missing for 10: full transaction/journal-entry export, a documented data-portability/exit workflow, and evidence of exporting beyond reports/tax package.",
     "evidenceIds": [
       "kick-docs-9",
-      "kick-supp-sheets-ai",
-      "kick-supp-pricing",
-      "kick-docs-4"
+      "kick-docs-20",
+      "kick-docs-21",
+      "kick-supp-sheets-ai"
     ]
   },
   {
@@ -2645,10 +2665,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Kick's evidence pack (security, pricing, integrations, multi-entity docs) never mentions data residency options, regional storage selection, or geographic data controls; only generic encryption-in-transit/at-rest claims are documented.",
-    "evidenceIds": [
-      "kick-supp-security"
-    ]
+    "rationale": "No evidence in the pack addresses data residency, regional storage options, or geographic data location controls; security docs mention only encryption in transit/at rest, not residency choice.",
+    "evidenceIds": []
   },
   {
     "productId": "kick",
@@ -2656,7 +2674,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Kick's evidence covers security (encryption, RBAC, audit trail) and AI-based categorization, but there is no documentation of an opt-out for AI/model training on user data, no privacy policy excerpt, and no data-usage/training statement of any kind.",
+    "rationale": "Kick's evidence pack covers security (encryption, RBAC, Plaid credential handling) but contains no mention of an AI training data policy, opt-out mechanism, or any statement about whether user data is used to train AI models.",
     "evidenceIds": []
   },
   {
@@ -2665,7 +2683,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence covers encryption, RBAC, and audit trails but contains no mention of data retention policies, data export, or account/data deletion controls that a user could invoke. Nothing addresses this axis at all, so it applies but is unaddressed.",
+    "rationale": "Kick's evidence pack covers encryption, RBAC, audit trails, and financial data handling, but there is no mention of data retention policies, data export/deletion controls, or account/data deletion mechanisms that a user could invoke. Missing for 10: documented data retention periods, user-initiated data deletion or export tools, and any policy on how long data is kept after account closure.",
     "evidenceIds": []
   },
   {
@@ -2673,9 +2691,11 @@
     "storyId": "privacy-telemetry-optout",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Kick is an accounting/bookkeeping SaaS product, and no evidence pack item addresses telemetry/usage-tracking opt-out settings, a privacy control panel, or any documented data-collection preferences for the product itself. The security doc only covers encryption and Plaid credential handling, not telemetry opt-out.",
-    "evidenceIds": []
+    "confidence": "high",
+    "rationale": "No evidence in the pack addresses telemetry opt-out or usage-tracking controls anywhere in Kick's docs (security page covers encryption and Plaid credential handling only, not telemetry).",
+    "evidenceIds": [
+      "kick-supp-security"
+    ]
   },
   {
     "productId": "kick",
@@ -2683,7 +2703,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Kick's docs confirm basic invoicing (viewing synced invoices from Stripe/Mercury/BILL, and creating/sending invoices directly from Kick) but there is no mention anywhere in the evidence of recurring/repeating invoice schedules or automated overdue-payment reminders. missing for 10: recurring invoice scheduling, automatic overdue payment reminder/dunning workflow.",
+    "rationale": "Kick's docs describe basic invoicing (viewing invoices synced from Stripe/Mercury/BILL and creating/sending invoices directly) but contain no mention of recurring invoice scheduling or automatic overdue payment reminders. Missing for 10: recurring invoice setup/scheduling, automated overdue reminder workflows, any evidence these AR automation features exist.",
     "evidenceIds": [
       "kick-docs-12",
       "kick-supp-invoicing-billpay"

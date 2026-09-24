@@ -1,15 +1,16 @@
 {
-  "hash": "f4b2b991e6b504045ff88e9c806ee101202a5480d8978bb7235f40eda6cd74ea",
+  "hash": "e094b0513baf05ab271939e625f56272714cef9099fc128e1eb20681664f312c",
   "verdict": {
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Kick documents journal entries, categorization confidence-gating, rules, and period locks, but there is no evidence of a public API/SDK for agents to draft or post journal entries programmatically, nor any 'review queue' workflow exposed via API. The only discovered API-like surface is a GitBook docs-search MCP endpoint (docs only, not ledger actions), and explicit probes for an OpenAPI spec returned 404s.",
+    "rationale": "Kick's MCP interface explicitly lets an AI agent query transactions, generate reports, and update bookkeeping 'all with your approval' (kick-docs-16), and every transaction (including AI-driven ones) generates a real double-entry journal entry logged in the Activity audit trail under the relevant Kick agent (kick-supp-journal-entries, kick-supp-audit-trail). However, there is no documented feature for an agent to 'post' entries into a distinct accountant-facing review queue — the closest analogues are low-confidence categorization being left for manual review (kick-supp-categorization) and accountants locking periods after review (kick-supp-locks), neither of which is a dedicated journal-entry review queue tied to agent-drafted entries. Missing for 10: explicit agent-drafted journal-entry review/approval queue, confirmation that MCP write actions create pending (not auto-posted) entries, and accountant-specific approval workflow for AI-generated entries.",
     "evidenceIds": [
+      "kick-docs-16",
       "kick-supp-journal-entries",
-      "kick-probe-2",
-      "kick-probe-3",
-      "kick-supp-docs-agent-surface"
+      "kick-supp-audit-trail",
+      "kick-supp-categorization",
+      "kick-supp-locks"
     ],
     "productId": "kick",
     "storyId": "agent-posts-journal-entries"
