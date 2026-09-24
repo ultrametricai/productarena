@@ -3367,31 +3367,31 @@
     "productId": "modal",
     "storyId": "agent-self-provisions",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Modal Sandboxes are explicitly designed for programmatic, API-driven provisioning, code execution, log/result retrieval, and teardown, with SDK examples (Python/JS/Go) showing sandbox creation, exec, file access, and logs, plus a documented agent-code-execution example. missing for 10: independent hands-on report showing a fully autonomous agent loop (provision->execute->read->teardown) with no human intervention, and clearer documentation of teardown/termination API specifics.",
+    "rationale": "Modal Sandboxes provides a programmatic SDK (Python/JS/Go) to create sandboxes, execute commands, read output/logs, and terminate them, explicitly marketed for autonomous agents running untrusted code; the agent.md example demonstrates an LLM agent generating and executing code inside a Sandbox end-to-end, and community builders (MCP-JS, self-hosted runners) corroborate real agent-driven provisioning/teardown. Missing for 10: independent third-party audit of full lifecycle automation without any human-in-the-loop step, and more detail on automated teardown/cleanup semantics.",
     "evidenceIds": [
-      "modal-docs-2",
       "modal-docs-3",
-      "modal-docs-13",
       "modal-docs-19",
-      "modal-docs-21",
       "modal-docs-22",
+      "modal-docs-30",
+      "modal-docs-25",
       "modal-docs-23",
-      "modal-probe-2",
-      "modal-comm-2"
+      "modal-comm-2",
+      "modal-probe-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "agentic-agent-docs",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Modal has a working llms.txt (HTTP 200) with a documentation summary, and docs pages are also served as markdown (.md suffix) confirming agent-oriented doc access. missing for 10: no independent confirmation that agents actually consume this llms.txt successfully in practice, and no dedicated agent-docs index beyond the generic llms.txt.",
+    "rationale": "Modal has a working llms.txt endpoint returning HTTP 200 with structured documentation summary, plus docs pages served as markdown (.md suffix) that agents can fetch directly, confirming agent-oriented docs are in place. missing for 10: no explicit third-party report of an agent successfully consuming llms.txt to complete a task.",
     "evidenceIds": [
       "modal-probe-1",
-      "modal-probe-2"
+      "modal-probe-2",
+      "modal-docs-30"
     ]
   },
   {
@@ -3400,7 +3400,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is compute/sandbox infrastructure for running untrusted or agent code, not a data product that ingests user data and surfaces AI-generated insights/suggestions from it — this axis is a category error for this product type.",
+    "rationale": "Modal Sandboxes is infrastructure for running untrusted/agent code in isolated environments, not a data product with built-in analytics or insight-generation UI; 'AI-generated insights from my data' is a category error for a sandboxing/compute platform.",
     "evidenceIds": []
   },
   {
@@ -3409,13 +3409,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes explicitly supports running autonomous agent code in isolated environments at scale (docs-3, docs-4, docs-22), and community evidence shows real-world use for background automation (self-hosted CI runners on modal-comm-1, agent runtimes on modal-comm-2). However, the evidence pack lacks explicit documentation of scheduling/cron triggers or persistent background job orchestration—sandboxes are framed as on-demand execution environments rather than a native 'set it and forget it' automation scheduler. Missing for 10: native scheduling/cron trigger docs, first-party persistent orchestration for long-running background automations.",
+    "rationale": "Modal Sandboxes provide ephemeral, isolated environments explicitly designed to run autonomous agents and untrusted code with tools/credentials preconfigured (modal-docs-3, modal-docs-22, modal-docs-30), and community evidence shows real-world autonomous background automation built on Sandboxes (self-hosted CI runners, agent runtimes) (modal-comm-1, modal-comm-2). However, the evidence pack lacks first-class scheduling/trigger primitives (cron, webhooks, event-driven wake-up) specific to Sandboxes for hands-off background operation — automation orchestration appears to be left to the user's own code/CI setup. Missing for 10: native scheduling/trigger mechanism for sandboxes, first-party docs on long-running background job patterns, more independent case studies beyond two HN posts.",
     "evidenceIds": [
       "modal-docs-3",
-      "modal-docs-4",
       "modal-docs-22",
+      "modal-docs-30",
       "modal-comm-1",
-      "modal-comm-2"
+      "modal-comm-2",
+      "modal-docs-6"
     ]
   },
   {
@@ -3424,7 +3425,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is an infrastructure platform for running untrusted/agent code, not itself an AI assistant or agent product; it provides no built-in assistant to delegate tasks to — this is a wrong-axis question for this product category.",
+    "rationale": "Modal Sandboxes is infrastructure for running untrusted/agent code in isolated environments, not a product with a built-in AI assistant persona to delegate tasks to; this axis is a category error for this type of product.",
     "evidenceIds": []
   },
   {
@@ -3433,16 +3434,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is built for programmatic/headless use via Python, JS/Go SDKs and a CLI, with sandboxes created and controlled entirely through code (modal-docs-2, modal-docs-19, modal-docs-20, modal-gh-1). Community evidence confirms real-world CI/automation usage — a developer built GitHub Actions self-hosted runners on Modal Sandboxes explicitly for scalable, pay-per-use automation (modal-comm-1), and another wired gRPC control for an agent runtime (modal-comm-2). Missing for 10: no first-party CI/CD integration guide (e.g., official GitHub Actions/Jenkins docs) or dedicated 'headless CI' documentation section beyond community projects.",
+    "rationale": "Modal Sandboxes are designed to be created and controlled entirely programmatically via Python/JS/Go SDKs and a CLI, with no interactive/GUI dependency, making headless/CI use natural (modal-docs-19, modal-docs-25, modal-probe-4). Community evidence corroborates real-world CI/automation use: a developer built GitHub Actions self-hosted runners on Modal Sandboxes and another built a gRPC-driven agent runtime to control sandboxes (modal-comm-1, modal-comm-2). Missing for 10: an official CI/CD integration guide (e.g., GitHub Actions template) or first-party CI pipeline docs from Modal itself.",
     "evidenceIds": [
-      "modal-docs-2",
       "modal-docs-19",
-      "modal-docs-20",
-      "modal-gh-1",
-      "modal-comm-1",
-      "modal-comm-2",
+      "modal-docs-25",
       "modal-docs-15",
-      "modal-probe-4"
+      "modal-probe-4",
+      "modal-comm-1",
+      "modal-comm-2"
     ]
   },
   {
@@ -3483,7 +3482,7 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal ships an official CLI (documented at modal.com/docs/reference/cli) supporting sandbox-related operations like running commands/shells and managing/connecting to containers, confirmed by probe access to the CLI reference page. This CLI is core to Modal's agentic/AI-native workflows (creating and interacting with sandboxes for untrusted/agent code). missing for 10: independent hands-on user reports specifically praising/using the CLI (vs. SDK), and more detail on CLI coverage of full sandbox lifecycle (snapshots, networking) beyond the two documented subcommands.",
+    "rationale": "Modal ships an official CLI (documented at modal.com/docs/reference/cli) with commands for running commands/shells inside containers and managing/connecting to running containers, directly supporting sandbox and agentic workflows alongside SDKs used for AI agents. Missing for 10: no independent hands-on review of the CLI itself (community evidence focuses on SDK/gRPC usage rather than CLI specifically) and no deeper documentation of CLI's AI-native-specific features beyond basic container/sandbox management.",
     "evidenceIds": [
       "modal-docs-15",
       "modal-docs-18",
@@ -3497,17 +3496,18 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal exposes documented Python, JS, and Go SDKs plus a CLI for programmatically creating, controlling, and interacting with Sandboxes (exec, filesystem, snapshots, networking, logs), and community developers confirm driving it via gRPC/SDK for agent runtimes. missing for 10: no public OpenAPI/REST spec (probe found only 404s), so the 'documented public API' is SDK/CLI-based rather than a formal API contract, and there's no independent audit of API stability/versioning.",
+    "rationale": "Modal documents an extensive public API surface for Sandboxes across Python, JS/Go SDKs, and a CLI reference (modal-docs-13,15,18,19,20,21,25), with independent community developers confirming they drove Sandboxes programmatically via gRPC/SDK for real projects (modal-comm-1, modal-comm-2). Missing for 10: a discoverable formal REST/OpenAPI spec (probe-3 shows all openapi.json candidates 404) and broader third-party API-client corroboration beyond a couple of HN posts.",
     "evidenceIds": [
+      "modal-docs-13",
+      "modal-docs-15",
+      "modal-docs-18",
       "modal-docs-19",
       "modal-docs-20",
       "modal-docs-21",
+      "modal-docs-25",
       "modal-gh-1",
-      "modal-docs-15",
-      "modal-docs-18",
-      "modal-docs-23",
+      "modal-comm-1",
       "modal-comm-2",
-      "modal-probe-2",
       "modal-probe-3"
     ]
   },
@@ -3516,11 +3516,9 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence describes secure sandboxed execution environments and general platform features, but there is no concrete evidence of a mechanism for issuing scoped/least-privilege API credentials specifically to agents—only a vague marketing line about 'credentials already in place' (modal-docs-3) with no documentation of credential scoping, token permissions, or per-agent access control. Missing for 10: any documented API/credential-scoping mechanism, permission granularity docs, or examples of issuing least-privilege tokens to agents.",
-    "evidenceIds": [
-      "modal-docs-3"
-    ]
+    "confidence": "high",
+    "rationale": "Evidence shows sandbox isolation, network allowlisting, and resource limits, but there is no mention of scoped/least-privilege API credential issuance for agents (e.g., token minting, permission scoping, or credential management) — Modal's security model is container/network isolation, not credential-based access control. Missing for 10: any API/CLI for issuing scoped tokens, credential scoping mechanisms, or least-privilege API key management for agents.",
+    "evidenceIds": []
   },
   {
     "productId": "modal",
@@ -3528,15 +3526,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal ships official Python SDK plus JS/Go SDKs for Sandboxes with documented APIs (exec, filesystem, snapshots, networking, logs) and community developers confirm building against them (GitHub Actions runners, gRPC-based JS agent runtime). missing for 10: independent third-party SDK reference/benchmarks beyond Modal's own docs and one community mention, and no evidence of broader language SDK coverage (e.g. Rust, Java).",
+    "rationale": "Modal ships official Python, JS, and Go SDKs for Sandboxes with detailed API references (Sandbox, SandboxSnapshot, Probe classes), CLI tooling, and documented examples of building AI agents on top of them, plus community developers independently confirming they built agent runtimes (MCP-JS, gRPC) against these SDKs. missing for 10: no evidence of official SDKs beyond Python/JS/Go (e.g. no broader language coverage confirmation) and no independent third-party audit of SDK completeness/stability.",
     "evidenceIds": [
       "modal-gh-1",
       "modal-docs-19",
       "modal-docs-20",
       "modal-docs-21",
-      "modal-docs-23",
+      "modal-docs-25",
+      "modal-docs-27",
+      "modal-docs-30",
       "modal-comm-2",
-      "modal-comm-1"
+      "modal-probe-4"
     ]
   },
   {
@@ -3545,20 +3545,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack of a webhook subscription mechanism or event-driven notification system for Modal Sandboxes; the docs focus on programmatic spin-up, execution, logging, and filesystem access, not outbound event/webhook subscriptions.",
+    "rationale": "No evidence of any webhook subscription or event-notification mechanism for Modal Sandboxes; docs cover logs, snapshots, networking, CLI, and SDKs but nothing about webhooks or event callbacks.",
     "evidenceIds": []
   },
   {
     "productId": "modal",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence shows standard docs pages, CLI reference, and SDK code snippets, but no interactive API reference or runnable-example playground; the openapi probe returned 404s and no docs mention an in-browser code runner or live API explorer.",
+    "rationale": "Modal ships a fairly thorough API reference (Sandbox, SandboxSnapshot, Probe classes) plus SDK guides with concrete code snippets (Python/JS/Go) that a developer can copy and run, and example docs like the agent.md walkthrough show end-to-end usage. However, there is no evidence of an actually interactive/runnable reference (e.g., embedded live code execution or API explorer) — the openapi/swagger probe returned 404s, indicating no structured interactive API browser exists.  missing for 10: an in-browser runnable sandbox/playground tied to the reference docs, evidence of interactivity beyond static markdown code blocks, independent confirmation of a live API explorer.",
     "evidenceIds": [
-      "modal-probe-3",
-      "modal-docs-15",
-      "modal-docs-21"
+      "modal-docs-25",
+      "modal-docs-27",
+      "modal-docs-26",
+      "modal-docs-19",
+      "modal-docs-21",
+      "modal-docs-30",
+      "modal-probe-3"
     ]
   },
   {
@@ -3567,7 +3571,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The probe explicitly found all candidate OpenAPI/swagger endpoints return 404, and no other evidence pack item mentions a machine-readable API spec being published; Modal's public interface is SDK/CLI-based rather than a REST API with a spec.",
+    "rationale": "A direct probe for OpenAPI/swagger specs at Modal's standard endpoints returned 404 for all candidates, and no documentation references a machine-readable API spec; Modal instead exposes Python/JS/Go SDKs and a CLI.",
     "evidenceIds": [
       "modal-probe-3"
     ]
@@ -3578,17 +3582,16 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes are explicitly designed as ephemeral, isolated containers for running untrusted or agent code, with filesystem, networking/security, and snapshot controls documented (modal-docs-2, modal-docs-8, modal-docs-9, modal-docs-10, modal-probe-2), and community examples show real usage isolating workloads from production infra (modal-comm-1, modal-comm-2). This satisfies the 'test without touching production' need since each sandbox is a fresh, isolated environment rather than shared prod state. Missing for 10: explicit documentation or case study framing isolation specifically in terms of 'production data' separation (e.g., no prod DB/staging parity guidance), and no independent audit confirming true isolation guarantees.",
+    "rationale": "Modal Sandboxes are explicitly documented as ephemeral, isolated containers for running untrusted/agent code, with filesystem isolation, network controls (block_network, CIDR/domain allowlists), and snapshotting — all of which support safe testing separate from any production system, and community builders confirm using them for isolated agent/runner workloads. Missing for 10: explicit mention of connecting to or masking production datasets, and no independent third-party audit specifically validating data isolation from production systems.",
     "evidenceIds": [
       "modal-docs-2",
       "modal-docs-8",
-      "modal-docs-9",
       "modal-docs-10",
       "modal-docs-19",
-      "modal-docs-22",
+      "modal-docs-31",
+      "modal-probe-2",
       "modal-comm-1",
-      "modal-comm-2",
-      "modal-probe-2"
+      "modal-comm-2"
     ]
   },
   {
@@ -3597,13 +3600,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows release notes and beta/alpha labels for some sandbox features, but no documentation of API versioning scheme or a deprecation policy; OpenAPI spec probes also 404. missing for 10: explicit versioning scheme documentation, deprecation policy page, changelog with deprecation notices, stability guarantees for GA vs beta APIs.",
+    "rationale": "Evidence shows release notes and beta/alpha-labeled features (e.g., 'VM Sandboxes Beta', 'Sidecars Alpha', experimental snapshot API), but there is no documented versioning scheme or deprecation policy for the API; the OpenAPI spec probe also 404'd, showing no formal API contract surfaced. No mention of semantic versioning, deprecation timelines, or backward-compatibility guarantees anywhere in the pack.",
     "evidenceIds": [
       "modal-docs-11",
       "modal-docs-12",
-      "modal-docs-23",
-      "modal-docs-24",
-      "modal-probe-3"
+      "modal-docs-27",
+      "modal-probe-3",
+      "modal-docs-23"
     ]
   },
   {
@@ -3612,8 +3615,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack only mentions general pay-per-second billing and bursty scaling, but never documents an explicit sandbox timeout or idle-shutdown parameter/config. No citation confirms configurable timeouts that auto-terminate sandboxes when idle or complete.",
-    "evidenceIds": []
+    "rationale": "The evidence pack shows Modal Sandboxes are billed per-second and lists Sandbox creation parameters (e.g., gpu, cloud, region, cpu, memory) but never mentions a timeout/idle-shutdown parameter or automatic termination behavior for sandboxes. Without explicit documentation of a timeout mechanism, this applicable provisioning-lifecycle axis is unsupported by the evidence provided.",
+    "evidenceIds": [
+      "modal-docs-32",
+      "modal-docs-7",
+      "modal-docs-17"
+    ]
   },
   {
     "productId": "modal",
@@ -3621,13 +3628,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Modal supports spinning up hundreds of thousands of concurrent sandboxes/rollout environments programmatically, which is strong evidence of bulk/parallel scaling (modal-docs-4, modal-docs-14, modal-docs-5), and this is corroborated by community builds using it for scaled runner fleets (modal-comm-1). However, this is infrastructure-level bulk provisioning, not a documented 'bulk operations' API/pattern for operating across many existing items (e.g., batch file ops, batch snapshot management, or a dedicated batch API) — missing for 10: a first-party batch/bulk-operation API or workflow example (vs just scaling raw sandbox count), independent benchmarks confirming claimed concurrency at scale, and documentation of bulk management operations (e.g., bulk terminate/list/update) rather than just creation.",
+    "rationale": "Modal Sandboxes supports spinning up hundreds of thousands of concurrent sandboxes/rollout environments programmatically, which enables bulk parallel operations (spawning many isolated environments at once) — a form of scale-oriented automation relevant to AI-native bulk workflows. However, the evidence is about scaling sandbox instances/compute, not about a native 'bulk operations across many items' API (e.g., batch file processing, bulk data transforms, or a queue/map-reduce primitive for arbitrary item sets); this is inferred capability from raw concurrency rather than a documented bulk-operation feature. missing for 10: explicit bulk/batch-operation APIs or examples (e.g., map over N items, batch job orchestration primitives), independent benchmarks validating claimed 100k+ concurrency at scale, and community confirmation of bulk-item workflows beyond scaling sandboxes themselves.",
     "evidenceIds": [
       "modal-docs-4",
       "modal-docs-14",
       "modal-docs-5",
-      "modal-comm-1",
-      "modal-docs-6"
+      "modal-docs-16",
+      "modal-docs-24",
+      "modal-docs-29"
     ]
   },
   {
@@ -3645,12 +3653,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers ephemeral sandbox creation, execution, networking, snapshots, and SDKs, but there is no mention of cron-like scheduling, recurring triggers, or persistent workflow orchestration for Modal Sandboxes. missing for 10: any scheduling/cron API, recurring job trigger mechanism, or workflow orchestration documentation tied to Sandboxes.",
-    "evidenceIds": [
-      "modal-docs-11",
-      "modal-docs-13",
-      "modal-docs-9"
-    ]
+    "rationale": "The evidence pack covers Modal Sandboxes' ephemeral, programmatic execution model (spinning up isolated containers, filesystem, networking, snapshots) but contains no mention of scheduling, cron jobs, or recurring workflow triggers for Sandboxes specifically. Nothing indicates a built-in mechanism for recurring or scheduled sandbox jobs.",
+    "evidenceIds": []
   },
   {
     "productId": "modal",
@@ -3667,7 +3671,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence describes Modal Sandboxes as isolated containers/VMs for running arbitrary code, agents, filesystem access, networking, and command execution, but nowhere mentions headless browser or full desktop/GUI environment support (e.g., Xvfb, VNC, browser automation tooling). No docs or community reports reference browser or desktop environments running inside sandboxes.",
+    "rationale": "Evidence covers Modal Sandboxes as secure containers for running untrusted code/commands, filesystem access, networking, GPUs, and snapshots, but there is no mention of headless browser support, display/X11 forwarding, or full desktop environment capability inside a sandbox.",
     "evidenceIds": []
   },
   {
@@ -3676,14 +3680,16 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Modal markets very high concurrency ('hundreds of thousands of concurrent rollout environments', 'scale to thousands of concurrent runs') and even documents a backend upgrade for higher creation rates/concurrency, plus community reports of building scalable runner fleets on Sandboxes, showing the capability is real and used at scale. However there is no evidence of documented hard limits, quotas, or per-account/per-plan concurrency ceilings that a platform engineer could plan capacity against. Missing for 10: explicit documented concurrency/rate limits or quotas, benchmark/load-test data, and any per-tier scaling caps.",
+    "rationale": "Modal's docs make strong scale claims (hundreds of thousands of concurrent rollout environments, thousands of concurrent runs, opt-in higher-performance backend for higher creation rates/concurrency) and community reports (self-hosted CI runners, MCP-JS agent runtime) show real-world fleet usage, but there is no documented table of concrete concurrency limits, quotas, or per-account/workspace caps — just marketing-level throughput claims. missing for 10: explicit numeric concurrency/quota documentation, official benchmarks or SLAs for large fleets, third-party validation of stated 'hundreds of thousands' figure.",
     "evidenceIds": [
       "modal-docs-4",
-      "modal-docs-5",
       "modal-docs-14",
+      "modal-docs-5",
       "modal-docs-16",
       "modal-docs-24",
-      "modal-comm-1"
+      "modal-docs-29",
+      "modal-comm-1",
+      "modal-comm-2"
     ]
   },
   {
@@ -3691,27 +3697,27 @@
     "storyId": "custom-images-templates",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Modal explicitly supports creating Sandboxes with custom Images ('Custom images, any dependency' and 'Create a Sandbox with the specified Image, and mount a Volume'), and community projects (GitHub Actions runners, MCP-JS) confirm developers configuring custom sandbox environments in practice. Missing for 10: explicit documentation of importing arbitrary Docker/OCI registry images or a dedicated 'bring your own container' guide beyond the Image API reference.",
+    "confidence": "high",
+    "rationale": "Modal Sandboxes explicitly supports creating a Sandbox with a custom Image ('Create a Sandbox with the specified Image'), custom dependencies ('Custom images, any dependency'), and configurable resources (gpu, cpu, memory, region), fully enabling bring-your-own-container-image workflows. missing for 10: no independent hands-on confirmation of custom image builds/Dockerfile import specifics, and no detail on image registry integration or template reuse patterns.",
     "evidenceIds": [
       "modal-docs-2",
       "modal-docs-20",
-      "modal-docs-19",
-      "modal-comm-1",
-      "modal-comm-2"
+      "modal-docs-25",
+      "modal-docs-32",
+      "modal-probe-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "expose-public-url",
-    "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The docs pack includes a 'Networking and security' guide for sandboxes (modal-docs-10) which is the likely location for tunnel/port-exposure features, but no evidence text actually describes exposing a port to a public preview URL, tunnel URLs, or reachability details. missing for 10: explicit documentation or example showing sandbox.tunnels()/port forwarding, a public URL format, and independent confirmation of accessing services inside a sandbox via that URL.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "medium",
+    "rationale": "The evidence pack shows Modal Sandboxes support networking configuration (block_network, CIDR/domain allowlists) and TCP port readiness checks, but nothing in the pack describes exposing a sandbox port on a public preview/tunnel URL reachable from outside Modal's network.",
     "evidenceIds": [
       "modal-docs-10",
-      "modal-docs-11",
-      "modal-probe-2"
+      "modal-docs-26",
+      "modal-docs-31"
     ]
   },
   {
@@ -3720,12 +3726,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows general speed/scale claims (\"spin up hundreds of thousands of concurrent rollout environments in seconds,\" faster backend for higher creation rates) but no explicit documented cold-start latency benchmark (e.g., sub-second or few-second startup time) for sandboxes specifically. Missing for 10: a concrete cold-start time benchmark/number, independent performance verification, and comparison across sandbox sizes/images.",
+    "rationale": "Modal's docs emphasize speed and scale ('spin up hundreds of thousands of concurrent rollout environments in seconds', 'more performant Sandbox backend') and community evidence confirms sandboxes are used for scalable, on-demand workloads, but no evidence pack item gives concrete documented cold-start latency numbers (sub-second or few-second) for starting an individual sandbox. missing for 10: explicit documented cold-start benchmark numbers (e.g., 'X ms/sec to start'), independent latency measurements/hands-on timing tests, and any SLA or performance guarantee specifically about sandbox startup time rather than aggregate concurrency claims.",
     "evidenceIds": [
       "modal-docs-4",
       "modal-docs-14",
       "modal-docs-24",
-      "modal-docs-2"
+      "modal-docs-29",
+      "modal-comm-1"
     ]
   },
   {
@@ -3734,12 +3741,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal explicitly documents a dedicated 'Filesystem Access' guide for sandboxes (modal-docs-8) alongside SDK examples showing file read/write via mounted volumes and exec commands (modal-docs-20, modal-docs-21), confirming read/write/upload/download-style operations through the SDK. missing for 10: no independent/hands-on community confirmation specifically of file upload/download methods (only exec/volume examples), and no explicit code snippet showing a dedicated upload/download API method distinct from volume mounting.",
+    "rationale": "Modal's docs explicitly document a dedicated 'Filesystem Access' guide for sandboxes (modal-docs-8) alongside SDK examples showing file operations via exec (e.g., cat commands reading mounted volume files in modal-docs-21) and volume mounting for sandboxes (modal-docs-20), confirming read/write/upload/download-style file interactions through the SDK. missing for 10: direct code snippets showing explicit upload/download API calls (e.g., sb.open, put/get file methods) and independent/community verification of file I/O usage beyond volume mounting.",
     "evidenceIds": [
       "modal-docs-8",
-      "modal-docs-19",
       "modal-docs-20",
       "modal-docs-21",
+      "modal-docs-19",
       "modal-probe-2"
     ]
   },
@@ -3748,20 +3755,21 @@
     "storyId": "free-tier-start",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence pack includes pricing-related docs (pay-per-use, burst capacity) but no mention of a free tier, free credits, or self-serve signup without contacting sales; nothing confirms developers can start building without sales contact.",
+    "confidence": "low",
+    "rationale": "The evidence pack contains extensive technical/pricing docs (pay-per-second, no reserved capacity) but no mention of a free tier, free credits, or self-serve signup without sales contact; nothing confirms a developer can start building without talking to sales.",
     "evidenceIds": []
   },
   {
     "productId": "modal",
     "storyId": "gpu-access",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Modal docs explicitly state GPUs (H100s, A100s, A10Gs) can be attached to any sandbox on demand with per-second billing, and community evidence (HN runner project) confirms real-world GPU-backed sandbox usage. missing for 10: independent hands-on benchmark of GPU attach performance/reliability, and explicit code example showing GPU parameter in sandbox creation API.",
+    "rationale": "Docs explicitly state H100s/A100s/A10Gs can be attached to any sandbox on demand, and the Sandbox Python SDK reference shows a `gpu=` parameter directly on the constructor, plus community evidence of a developer building GPU-enabled self-hosted runners on Modal Sandboxes. missing for 10: no independent benchmark of GPU sandbox performance/latency at scale beyond marketing claims.",
     "evidenceIds": [
       "modal-docs-5",
       "modal-docs-16",
+      "modal-docs-32",
       "modal-comm-1"
     ]
   },
@@ -3770,13 +3778,14 @@
     "storyId": "hard-isolation-boundary",
     "verdict": "partial",
     "quality": 5,
-    "confidence": "low",
-    "rationale": "Modal repeatedly describes Sandboxes as 'secure,' 'isolated' containers for untrusted code, and references a 'VM Sandboxes Beta' page implying microVM-based isolation, but no evidence pack item actually documents the underlying isolation technology (e.g., Firecracker/gVisor specifics, threat model, or security boundary guarantees) that a platform engineer would need to rely on.  Missing for 10: explicit technical documentation of the isolation mechanism (hypervisor/kernel boundary), any third-party security audit or independent verification of the boundary's robustness.",
+    "confidence": "medium",
+    "rationale": "Modal repeatedly markets Sandboxes as 'secure, isolated' environments for running untrusted/agent code, and has dedicated docs on 'Networking and security' and a 'VM Sandboxes' feature, plus network-allowlist controls (block_network, outbound/inbound CIDR) suggesting real isolation controls. However, the pack shows only a 'Beta' VM Sandboxes label without technical detail on the isolation mechanism (e.g., no explicit microVM/Firecracker/gVisor documentation), and default sandboxes are described as 'secure containers' rather than a clearly documented hard boundary. Missing for 10: explicit technical documentation naming the isolation technology (microVM/gVisor/etc.) as the default guarantee, independent security audit or hands-on validation of the boundary, and clarity on whether VM-level isolation is standard vs. beta-only.",
     "evidenceIds": [
-      "modal-docs-11",
       "modal-probe-2",
-      "modal-docs-19",
-      "modal-docs-22"
+      "modal-docs-11",
+      "modal-docs-10",
+      "modal-docs-31",
+      "modal-docs-19"
     ]
   },
   {
@@ -3785,39 +3794,41 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Modal docs describe sandboxes as isolated, scalable execution environments with snapshotting, filesystem, and networking support, and a community project (self-hosted GitHub Actions runners) demonstrates sandboxes being kept alive for extended, real workloads. However, no evidence pack item states explicit maximum session duration, timeout configuration, or guarantees for multi-day persistence, so long-running-session support is inferred rather than directly documented. Missing for 10: explicit docs on configurable/no timeout limits, guidance for multi-day sandbox lifecycles, and independent confirmation of hours/days-long sessions beyond one community anecdote.",
+    "rationale": "Modal documents Sandboxes as long-lived containers with running commands, snapshots, logs, and filesystem/networking access (modal-docs-8,9,13,23), and community builders report using Sandboxes for continuously running GitHub Actions runners and agent runtimes (modal-comm-1, modal-comm-2), suggesting extended-duration viability. However, there is no explicit documentation of maximum sandbox lifetime, timeout configuration, or guarantees for multi-hour/day sessions. Missing for 10: explicit docs on max/adjustable sandbox timeout, first-party guidance or examples for hours/days-long agent sessions, and independent benchmarks confirming stability over long durations.",
     "evidenceIds": [
+      "modal-docs-8",
       "modal-docs-9",
-      "modal-docs-11",
+      "modal-docs-13",
+      "modal-docs-23",
       "modal-comm-1",
-      "modal-docs-6",
-      "modal-docs-23"
+      "modal-comm-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "multi-language-runtimes",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes let you run arbitrary commands/code in isolated containers with custom images (any dependency, any language stack), including SDK examples for JS/Go exec and Python examples of running agent code (modal-docs-2, modal-docs-13, modal-docs-19-21). However, evidence never shows explicit multi-language runtime presets (Python vs JS vs others) or structured/rich result payloads (e.g., images, dataframes, mime-typed outputs) — outputs shown are plain stdout/exec results. missing for 10: explicit built-in multi-language runtime templates, documented rich/structured result formats beyond raw stdout.",
+    "rationale": "Modal Sandboxes clearly support executing arbitrary code/commands via custom images and have SDKs for Python, JS, and Go, letting developers run 'any dependency' language (modal-docs-2, modal-docs-19, modal-gh-1, modal-docs-21). However, the exec API returns subprocess-style stdout/stderr (like asyncio.subprocess.Process, modal-docs-25) rather than documented 'rich results' (e.g., images, dataframes, structured outputs) as in dedicated code-interpreter products. Missing for 10: evidence of rich/structured result formatting (images, plots, dataframes) rather than raw text streams, and broader language runtime examples beyond Python/JS/Go.",
     "evidenceIds": [
       "modal-docs-2",
-      "modal-docs-13",
       "modal-docs-19",
-      "modal-docs-20",
       "modal-docs-21",
-      "modal-docs-22"
+      "modal-docs-25",
+      "modal-gh-1",
+      "modal-docs-30"
     ]
   },
   {
     "productId": "modal",
     "storyId": "network-egress-policy",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "medium",
-    "rationale": "Modal has a dedicated 'Networking and security' guide for Sandboxes, confirming the platform documents network controls for sandboxes, but the evidence pack only shows the page title without excerpts detailing how egress allow/deny policies are configured. missing for 10: actual policy syntax/examples (e.g. allowlist/blocklist configuration), confirmation of default-deny behavior, independent/hands-on verification that egress restrictions work as documented.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Modal's Sandbox docs explicitly expose network egress controls via parameters like block_network, outbound_cidr_allowlist, and outbound_domain_allowlist, plus inbound_cidr_allowlist, and there is a dedicated 'Networking and security' guide page describing this policy surface. This directly matches the platform-engineer story of restricting or allowing egress with explicit policy. Missing for 10: independent/hands-on verification of these controls in practice and more detail on domain-allowlist enforcement mechanics beyond the parameter list.",
     "evidenceIds": [
+      "modal-docs-31",
       "modal-docs-10",
       "modal-probe-2"
     ]
@@ -3828,7 +3839,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Modal Sandboxes is fundamentally API/SDK-driven (Python, JS/Go) with a full CLI for running commands and managing containers, and docs describe programmatic control over image building, execution, filesystem, networking, snapshots, and logs — suggesting the API is the primary and most complete interface. However, there's no explicit documentation stating full UI/API parity or listing any UI-exclusive features, and no OpenAPI spec is discoverable (probe found 404s), making it hard to confirm completeness of a public REST API surface beyond the SDKs/CLI. Missing for 10: explicit parity statement between dashboard UI and API/CLI capabilities, and a public API reference/spec confirming no UI-only actions.",
+    "rationale": "Modal's Sandboxes are fundamentally API/SDK-driven (Python, JS/Go) with broad coverage — creation, exec, filesystem, snapshots, networking, GPU attachment, logs — plus a CLI for running commands and managing containers, suggesting near-complete programmatic control mirroring dashboard views. However, there's no explicit vendor statement guaranteeing UI/API feature parity, and no public REST/OpenAPI spec was found (probe shows 404s), leaving some potential UI-only features (e.g., billing/usage dashboards) unconfirmed as API-accessible. Missing for 10: explicit parity documentation between dashboard UI and API/CLI, a public OpenAPI/REST spec, and independent verification that all UI actions are scriptable.",
     "evidenceIds": [
       "modal-docs-8",
       "modal-docs-9",
@@ -3836,8 +3847,8 @@
       "modal-docs-13",
       "modal-docs-15",
       "modal-docs-18",
-      "modal-gh-1",
       "modal-docs-19",
+      "modal-docs-25",
       "modal-probe-3",
       "modal-probe-4"
     ]
@@ -3848,7 +3859,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
+    "rationale": "Modal Sandboxes offers filesystem access, snapshots, and logs APIs, but there is no evidence of a data export/portability feature or open-format export mechanism for users to take their data and leave the platform; snapshots and filesystem access are operational features tied to running sandboxes, not an account-level data export capability.",
     "evidenceIds": []
   },
   {
@@ -3856,11 +3867,9 @@
     "storyId": "openness-open-license",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence only shows a GitHub repo for the client SDK (modal-client) used to invoke Modal Sandboxes, not the underlying sandbox/runtime platform itself, and no license terms are mentioned. There is no evidence that Modal Sandboxes' core product source is published under an open license.",
-    "evidenceIds": [
-      "modal-gh-1"
-    ]
+    "confidence": "high",
+    "rationale": "Modal Sandboxes is a closed commercial platform; the evidence pack shows only client SDKs (modal-client on GitHub) with no mention of the core platform/server source being available under an open license.",
+    "evidenceIds": []
   },
   {
     "productId": "modal",
@@ -3868,8 +3877,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Modal is a fully-managed cloud platform for running Sandboxes; there is no evidence of any self-hostable/on-prem version of the core product, and everything described (pay-per-second billing, GPU access, hosted CLI) implies a proprietary SaaS deployment model only.",
-    "evidenceIds": []
+    "rationale": "Modal Sandboxes is a fully managed cloud platform; nothing in the evidence pack indicates any self-hosted/on-prem deployment option — all docs describe a hosted SaaS with pay-per-second cloud pricing, GPUs on demand, and managed infrastructure.",
+    "evidenceIds": [
+      "modal-docs-1",
+      "modal-docs-7",
+      "modal-docs-5",
+      "modal-probe-1"
+    ]
   },
   {
     "productId": "modal",
@@ -3877,10 +3891,10 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Modal has a dedicated 'Snapshots' doc for sandboxes suggesting some pause/resume-with-state capability, but the evidence pack only gives the page title with no detail on what state (filesystem/memory) is preserved or how resume works. Missing for 10: documented mechanics of snapshot/resume (filesystem+memory fidelity), explicit confirmation memory state is preserved, independent/hands-on validation of the feature working as described.",
+    "rationale": "Modal docs reference a `SandboxSnapshot` object created via `._experimental_snapshot()`, confirming some pause/resume-with-state capability exists, and a dedicated 'Snapshots' guide page is listed. However, the API is explicitly marked experimental (underscore-prefixed method), there's no detailed documentation of how memory/filesystem state is restored, no resume-time guarantees, and no independent/hands-on confirmation that filesystem+memory state survives a pause/resume cycle. Missing for 10: stable (non-experimental) snapshot/resume API, documented guarantees on memory+filesystem fidelity, and community or hands-on validation of the feature working as described.",
     "evidenceIds": [
       "modal-docs-9",
-      "modal-docs-8"
+      "modal-docs-27"
     ]
   },
   {
@@ -3888,9 +3902,10 @@
     "storyId": "per-second-billing",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Modal's pricing docs and marketing explicitly state per-second billing with no reserved capacity ('pay by the second with no reserved capacity', 'only pay for what you use... burst up to what you need without over-allocating'), directly matching the story, and a community user corroborates paying only for resources actually consumed when building GPU runners on Sandboxes. Missing for 10: independent verification of exact billing granularity/metering mechanics and no first-party pricing breakdown showing per-second line items in the evidence pack.",
+    "confidence": "high",
+    "rationale": "Modal's pricing docs and marketing explicitly state per-second billing with no reserved capacity ('pay by the second with no reserved capacity', 'only pay for what you use', 'burst up to what you need without over-allocating'), and this is corroborated by a community user who built self-hosted runners specifically to 'pay for what you need only.' missing for 10: an independent/third-party billing audit or detailed rate-card breakdown showing exact second-level granularity in an invoice.",
     "evidenceIds": [
+      "modal-docs-5",
       "modal-docs-7",
       "modal-docs-16",
       "modal-docs-17",
@@ -3900,11 +3915,15 @@
   {
     "productId": "modal",
     "storyId": "privacy-data-residency",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions data residency, region selection, or geographic data storage controls for Modal Sandboxes; the pack covers execution, scaling, GPUs, filesystem, and networking but nothing about choosing storage region/residency.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "The Sandbox API exposes a `region` parameter (modal-docs-32) alongside `cloud`/`gpu` options, implying some ability to select where compute (and by extension, sandbox data) runs, but there is no documentation framing this as a data residency/privacy compliance feature, no list of supported regions, and no statement about where persistent data/snapshots are stored. missing for 10: explicit data residency/compliance documentation, list of selectable regions, clarity on where snapshots/volumes/logs are stored relative to chosen region.",
+    "evidenceIds": [
+      "modal-docs-32",
+      "modal-docs-9",
+      "modal-docs-27"
+    ]
   },
   {
     "productId": "modal",
@@ -3920,8 +3939,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence covers sandbox ephemerality, filesystem access, snapshots, and networking/security, but nothing describes data retention policies, deletion controls, or compliance/data-handling settings that a user could configure. missing for 10: explicit data retention policy documentation, user-controllable deletion/purge mechanisms, compliance certifications (e.g., SOC2/GDPR data handling), retention period configuration.",
+    "confidence": "high",
+    "rationale": "No evidence pack items address data retention policies, deletion controls, data residency, or privacy/compliance configuration for Sandboxes; the pack covers ephemeral execution, scaling, filesystem/snapshots/networking features but nothing about user-controllable retention or deletion of data/logs.",
     "evidenceIds": []
   },
   {
@@ -3930,7 +3949,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out mechanism for Modal Sandboxes; the docs cover sandboxing, GPUs, filesystem, and logging but not data-collection/privacy controls.",
+    "rationale": "No evidence anywhere in the pack mentions telemetry, usage tracking, analytics collection, or an opt-out setting for Modal Sandboxes; the pack focuses entirely on sandbox execution, networking, GPUs, and SDK features. Since privacy/telemetry controls are a plausible and fair axis for any developer platform, absence of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -3939,7 +3958,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Modal's docs show general support for running 'agents' and 'untrusted code' in Sandboxes (modal-docs-3, modal-docs-22, modal-docs-19), but no evidence pack item mentions a vendor recipe, tutorial, or example specifically for running Claude Code or Codex inside a Sandbox.",
+    "rationale": "Modal's docs describe running generic 'coding agents' and LLM agents in sandboxes (e.g. modal-docs-22, modal-docs-30, modal-docs-3), but no evidence pack item mentions a vendor recipe, tutorial, or example specifically for Claude Code or Codex running inside a Modal Sandbox.",
     "evidenceIds": []
   },
   {
@@ -3948,14 +3967,15 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Modal Sandboxes is explicitly built for running untrusted/AI-generated code in isolated, ephemeral containers with networking/filesystem controls, resource limits, and logging, and community examples show real-world use (self-hosted CI runners, agent runtimes) confirming the isolation model works in practice. Missing for 10: independent security audit or adversarial escape-testing evidence, and clearer documentation of resource/network isolation guarantees beyond marketing copy.",
+    "rationale": "Modal Sandboxes is explicitly documented as secure, isolated containers/VMs for executing untrusted user or agent code, with network isolation controls, filesystem access, snapshots, and dedicated agent-code-execution examples showing arbitrary code run safely; community use (self-hosted runners, agent runtimes) corroborates real-world usage. missing for 10: independent third-party security audits or documented isolation-breakout testing, and clearer guarantees on infra-risk isolation beyond docs/examples.",
     "evidenceIds": [
       "modal-docs-1",
-      "modal-docs-2",
+      "modal-docs-3",
       "modal-docs-10",
-      "modal-docs-11",
       "modal-docs-19",
       "modal-docs-22",
+      "modal-docs-30",
+      "modal-docs-31",
       "modal-probe-2",
       "modal-comm-1",
       "modal-comm-2"
@@ -3965,14 +3985,12 @@
     "productId": "modal",
     "storyId": "secrets-stay-out",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Modal Sandboxes are documented as isolated, ephemeral containers for running untrusted/agent code with dedicated networking-and-security guides, supporting the general isolation story (modal-docs-1, modal-docs-2, modal-docs-10, modal-probe-2, modal-docs-19, modal-docs-22). However, no evidence explicitly states that host secrets/credentials are unreachable by default or describes the secrets-injection model that would confirm this — one doc even implies credentials are provisioned into the agent environment (modal-docs-3), which cuts against a strong 'unreachable unless granted' guarantee. Missing for 10: explicit secrets-isolation documentation, details of the opt-in secrets mechanism, and independent/hands-on confirmation that host credentials cannot leak into sandboxed code.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Modal Sandboxes are documented as isolated containers/VMs for running untrusted or agent code, with networking controls (block_network, CIDR/domain allowlists) that can restrict outbound access, which supports keeping host secrets/credentials unreachable. However, there is no explicit documentation describing secret-isolation guarantees or how host credentials are prevented from leaking into the sandbox (e.g., environment variable scoping, explicit secret injection controls) — the evidence focuses on general network/process isolation rather than credential-specific security claims. missing for 10: explicit documentation on how host secrets/credentials are excluded or scoped from sandbox environments, independent security audit or hands-on validation of secret isolation, and any first-party statement on credential handling policy.",
     "evidenceIds": [
-      "modal-docs-1",
-      "modal-docs-2",
-      "modal-docs-3",
       "modal-docs-10",
+      "modal-docs-31",
       "modal-docs-19",
       "modal-docs-22",
       "modal-probe-2"
@@ -3984,28 +4002,28 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "Modal Sandboxes documentation explicitly covers running arbitrary shell commands (sb.exec, CLI 'run a command or interactive shell inside a Modal container'), custom images with any dependency installation, filesystem access, and community reports (HN self-hosted runners, JS agent runtime) corroborate real-world use for arbitrary command execution and untrusted code. Missing for 10: no independent benchmark of package installation limits or explicit documented apt/pip install examples beyond generic 'any dependency' claim.",
+    "rationale": "Modal Sandboxes explicitly document running arbitrary shell commands (sb.exec, CLI 'run a command or interactive shell', Sandbox.exec API) and support custom Images with any dependency installed, corroborated by community usage building CI runners and agent runtimes on top of it. Missing for 10: no independent hands-on benchmark of package installation reliability at scale.",
     "evidenceIds": [
       "modal-docs-13",
       "modal-docs-15",
       "modal-docs-19",
       "modal-docs-21",
-      "modal-docs-2",
+      "modal-docs-25",
+      "modal-docs-22",
       "modal-comm-1",
-      "modal-comm-2",
-      "modal-probe-2"
+      "modal-comm-2"
     ]
   },
   {
     "productId": "modal",
     "storyId": "snapshot-restore-fork",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Modal explicitly documents a 'Sandbox Snapshots' feature (modal-docs-9), confirming snapshot capability exists, but the evidence pack gives no detail on the actual snapshot/restore/fork API mechanics, no confirmation that new independent sandboxes can be forked from a single snapshot, and no community/hands-on corroboration of this specific workflow. missing for 10: documented API details on restoring/forking multiple sandboxes from one snapshot, independent/hands-on confirmation of snapshot-restore-fork workflow, and clarity on any beta/experimental limitations.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Modal documents a dedicated Snapshots guide and a SandboxSnapshot API object created via `._experimental_snapshot()` that lets you interact with a stored snapshot, confirming the core snapshot/restore capability exists. However, the underscore-prefixed method name signals this is still an experimental feature, and there's no explicit documentation or example showing forking multiple new sandboxes from one snapshot, nor any independent/community corroboration of this specific workflow. Missing for 10: explicit fork-from-snapshot example/API details, clarity on experimental limitations, independent hands-on confirmation.",
     "evidenceIds": [
       "modal-docs-9",
-      "modal-docs-11"
+      "modal-docs-27"
     ]
   },
   {
@@ -4014,16 +4032,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs and SDK references (Python, JS/Go) show a single call (e.g. modal.Sandbox.create) spins up an isolated, ephemeral container/VM in seconds, with fast creation rates highlighted (hundreds of thousands of concurrent environments in seconds, faster backend for higher creation rates). Community builders (HN posts) independently confirm using Modal Sandboxes programmatically for real workloads like CI runners and agent runtimes. Missing for 10: independent benchmark of actual cold-start latency and a public OpenAPI spec (probe found 404s), so exact 'seconds' claim isn't third-party verified.",
+    "rationale": "Extensive first-party docs and SDK references (Python, JS/Go) show one-call sandbox creation (`Sandbox.create`), fast spin-up ('seconds', 'hundreds of thousands of concurrent rollout environments in seconds'), custom images, GPU attachment, and live command execution, corroborated by independent community builds using Modal Sandboxes for real workloads (CI runners, agent runtimes). Missing for 10: independent benchmark of actual cold-start latency and no formal API spec (OpenAPI 404) to verify single-call simplicity claims.",
     "evidenceIds": [
       "modal-docs-2",
       "modal-docs-4",
+      "modal-docs-14",
       "modal-docs-19",
       "modal-docs-20",
-      "modal-docs-24",
+      "modal-docs-25",
+      "modal-probe-2",
       "modal-comm-1",
-      "modal-comm-2",
-      "modal-probe-2"
+      "modal-comm-2"
     ]
   },
   {
