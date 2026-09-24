@@ -5,11 +5,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm automatic 2-way sync with QuickBooks Enterprise, NetSuite, Sage Intacct, and Dynamics, plus manual CSV export as fallback, and API support for building org structure. However, Xero is not mentioned anywhere in the evidence, and there is no explicit documentation of finance-lead-controlled GL account, class, or department field mapping (only general sync claims). Missing for 10: Xero sync support, explicit GL/class/department mapping controls, and any hands-on confirmation of mapping accuracy.",
+    "rationale": "Docs confirm automatic 2-way sync with QuickBooks Enterprise, NetSuite, and other accounting platforms, plus manual CSV fallback, indicating transaction sync is supported; however, there is no explicit evidence for Xero support, and no documentation detailing finance-lead control over GL account, class, or department-level mapping configuration. missing for 10: explicit Xero sync support, documented GL account/class/department mapping controls, independent/hands-on confirmation of mapping accuracy.",
     "evidenceIds": [
       "bill-spend-expense-docs-12",
-      "bill-spend-expense-docs-13",
-      "bill-spend-expense-docs-5"
+      "bill-spend-expense-docs-13"
     ]
   },
   {
@@ -18,12 +17,13 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "BILL exposes a v3 API and webhooks for S&E transactions and an MCP server, but the MCP server is explicitly scoped to API documentation lookup (for coding assistants), not transaction data access or coding workflows, and there's no evidence of an 'uncoded transactions' endpoint, AI categorization/policy-flag proposal via API, or a review-and-push-back coding loop. missing for 10: MCP server that exposes actual transaction/expense data (not just docs), an API endpoint for pulling uncoded transactions, agent-driven categorization/policy-flag proposal, and a documented push-back-for-review coding workflow.",
+    "rationale": "The BILL v3 API exposes S&E transaction/card management endpoints and webhooks (docs-2, docs-3, docs-9), and BILL's own 'Invoice Coding Agent' does AI-driven coding (docs-8), suggesting some data plumbing exists for coding transactions. However, the only MCP server documented is for browsing API documentation in coding tools like Cursor/Claude Desktop (docs-18), not for pulling live uncoded transactions or pushing coding decisions back into BILL, and there's no explicit endpoint or workflow described for an external agent to fetch 'uncoded' transactions, propose categorizations/policy flags, and submit them for human review. Missing for 10: a transactional MCP server (not just docs) or explicit API endpoints/recipes for uncoded-transaction retrieval and coding submission, and evidence of a review/approval loop for agent-proposed coding.",
     "evidenceIds": [
-      "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2",
+      "bill-spend-expense-docs-8",
+      "bill-spend-expense-docs-9",
       "bill-spend-expense-docs-18",
-      "bill-spend-expense-docs-8"
+      "bill-spend-expense-docs-23"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "verdict": "full",
     "quality": 9,
     "confidence": "high",
-    "rationale": "BILL has a live llms.txt returning HTTP 200 with structured doc guidance, plus explicit agent-oriented resources including an MCP server for AI code editors and assistants to interact with BILL API docs. missing for 10: independent third-party confirmation of agent usage beyond BILL's own docs.",
+    "rationale": "BILL has a live llms.txt at developer.bill.com/llms.txt (HTTP 200, confirmed by probe) and additionally documents an official MCP server for AI code editors/agents to interact with its API docs, plus dedicated ai-agent-resources docs. This directly satisfies the story of pointing an agent at agent-oriented docs. Missing for 10: no independent third-party corroboration of agent usage in practice.",
     "evidenceIds": [
       "bill-spend-expense-probe-1",
       "bill-spend-expense-docs-18"
@@ -56,11 +56,11 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BILL offers background automation primitives — vendor autopay that automatically pays bills when created, an AI Invoice Coding Agent that auto-codes multi-line bills, custom approval policies, and webhook-driven event subscriptions — all of which run without manual intervention once configured. However, there's no evidence of a general-purpose, AI-native automation/agent builder that lets users define arbitrary autonomous workflows; these are fixed, pre-built automation features rather than a configurable agentic automation layer. Missing for 10: a documented no-code/AI automation builder for custom autonomous workflows, evidence of user-defined multi-step agentic automations, and independent confirmation these run reliably unattended.",
+    "rationale": "BILL provides several autonomous background automations (Invoice Coding Agent for automatic bill coding, vendor autopay triggered by bill creation, automatic vendor matching, real-time webhook event notifications that can drive downstream automations) which support background, event-driven processing. However there is no evidence of a dedicated automation/workflow builder for AI-native users to configure custom autonomous background tasks beyond these fixed features. Missing for 10: a general-purpose automation/agent builder UI, documentation of persistent scheduled/triggered custom automations, and independent corroboration of autonomous execution reliability.",
     "evidenceIds": [
       "bill-spend-expense-docs-8",
       "bill-spend-expense-docs-21",
-      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-4",
       "bill-spend-expense-docs-16",
       "bill-spend-expense-docs-9"
     ]
@@ -71,24 +71,26 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "BILL advertises an 'Invoice Coding Agent' that automatically performs AI multi-line bill coding and general 'AI-powered spend management,' showing some built-in AI capability, but this is an automated background feature rather than a conversational assistant the user can actively delegate arbitrary tasks to. Missing for 10: evidence of a user-facing chat/assistant interface, examples of delegating varied tasks (not just bill coding), and independent confirmation of how the agent is invoked or controlled.",
+    "rationale": "The evidence only mentions an \"Invoice Coding Agent\" that automatically codes bill line-items with AI, which is a narrow, single-purpose automation rather than a general-purpose in-app AI assistant users can delegate arbitrary tasks to. Missing for 10: evidence of a conversational or task-delegation AI assistant embedded in the product UI, examples of users assigning varied tasks to it, and any first-party documentation describing assistant capabilities beyond bill coding.",
     "evidenceIds": [
-      "bill-spend-expense-docs-8",
-      "bill-spend-expense-docs-9"
+      "bill-spend-expense-docs-8"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "BILL exposes a full REST v3 API with webhooks, sandbox environment, and recipes that could be scripted/automated in CI, supporting headless operation. However there's no evidence of an official CLI, CI-specific tooling, or documented automation/scripting examples for pipeline use, and no OpenAPI spec was found at expected locations. missing for 10: official CLI or CI-integration docs, OpenAPI spec discoverability, explicit automation/headless-use examples beyond raw API/webhooks.",
+    "rationale": "BILL exposes a full v3 REST API, webhooks, bulk/mass payment endpoints, and a sandbox environment, which together allow programmatic, non-interactive automation of Spend & Expense workflows suitable for CI/headless use (docs-1,2,3,15,40,41,16). However, there is no explicit CLI, SDK, or documented CI/CD integration pattern, and the probe found no accessible OpenAPI/swagger spec, limiting easy machine-driven tooling. Missing for 10: dedicated CLI or SDK for automation, explicit CI/CD usage examples, and a publicly reachable OpenAPI spec for tooling generation.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
+      "bill-spend-expense-docs-2",
+      "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-15",
       "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-23",
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
       "bill-spend-expense-probe-2"
     ]
   },
@@ -98,7 +100,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The only MCP-related evidence describes BILL exposing an MCP server for its own API documentation to be consumed by external AI coding tools (Cursor, Windsurf, Claude Desktop) — this is the reverse direction of the story, which asks whether BILL Spend & Expense itself can act as an MCP client and plug in external MCP servers to use their tools. No evidence shows any such client-side MCP integration in the product.",
+    "rationale": "The evidence only shows BILL exposing its own documentation as an MCP server for external AI tools (Cursor, Windsurf, Claude Desktop) to consume — the reverse of what this story asks. There is no evidence that BILL Spend & Expense itself can accept and use external MCP servers' tools.",
     "evidenceIds": [
       "bill-spend-expense-docs-18"
     ]
@@ -109,7 +111,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BILL provides an official MCP server, but per docs-18 it is scoped only to letting AI coding tools (Cursor, Windsurf, Claude Desktop) query BILL's API documentation — not to actually invoke BILL's AP/AR/S&E operations as an agent. This is a legitimate official MCP server, but it's a docs-assistant, not a full agentic action interface. Missing for 10: an MCP server (or evidence of one) that exposes actual BILL operations/tools for agents to execute, independent confirmation of real-world usage.",
+    "rationale": "BILL provides an official MCP server, but it is explicitly scoped to API documentation interaction for AI coding tools (Cursor, Windsurf, Claude Desktop), not a full-featured MCP server exposing BILL's actual AP/AR/S&E operations or data to agents. Missing for 10: an official MCP server that exposes live BILL functionality/actions (not just docs), independent hands-on confirmation of it working, and clarity on scope/coverage of exposed endpoints.",
     "evidenceIds": [
       "bill-spend-expense-docs-18"
     ]
@@ -132,7 +134,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack documents the BILL v3 API, webhooks, Elements UI, and an MCP server for documentation, but no official CLI tool is mentioned anywhere. As a platform with an API ecosystem, a CLI is a plausible offering, so absence of evidence means 'none' rather than 'na'.",
+    "rationale": "No evidence of an official CLI tool for BILL Spend & Expense; the product only offers a REST API, webhooks, UI Elements, and an MCP documentation server, none of which constitute a CLI.",
     "evidenceIds": []
   },
   {
@@ -141,12 +143,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "BILL publishes a documented public v3 REST API covering AP/AR/S&E, with clear endpoint examples (e.g., POST /v3/vendors), webhooks, sandbox environment, and an llms.txt for AI-agent consumption. Missing for 10: a directly accessible OpenAPI/swagger spec (all probed paths 404) and independent third-party corroboration of API robustness.",
+    "rationale": "BILL provides a well-documented public v3 REST API (developer.bill.com) covering AP/AR/S&E resources, with concrete endpoints (POST /v3/vendors, PATCH /v3/vendors/{id}, bulk/mass payments), webhooks, sandbox environment, and even an llms.txt for AI discoverability. Missing for 10: no publicly discoverable OpenAPI/swagger spec file was found (all probed paths 404), and no independent third-party corroboration beyond vendor docs.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-15",
       "bill-spend-expense-docs-28",
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
       "bill-spend-expense-probe-1",
       "bill-spend-expense-probe-2"
     ]
@@ -157,8 +161,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows a general API platform with webhooks, sandbox, and an API documentation MCP server, but nothing about scoped or least-privilege API credentials/tokens for agents (e.g., OAuth scopes, role-restricted API keys). No mention of granular credential scoping for AI agents specifically.",
-    "evidenceIds": []
+    "rationale": "Evidence shows BILL has a general v3 API with tokens and webhook security keys, but nothing describes issuing scoped or least-privilege API credentials specifically for AI agents; the MCP server mentioned is only for querying documentation, not credential-scoped agent access.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-1",
+      "bill-spend-expense-docs-19",
+      "bill-spend-expense-docs-18"
+    ]
   },
   {
     "productId": "bill-spend-expense",
@@ -182,14 +190,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "BILL provides documented webhook subscription functionality for AP, AR, and S&E events, including setup, HMAC-SHA256 signature verification, per-org subscription limits (up to 10), and error handling docs — clearly supporting real-time event-driven/agentic integration. missing for 10: independent/hands-on third-party corroboration and richer detail on event payload catalog breadth for S&E specifically.",
+    "rationale": "BILL's developer docs explicitly document webhook subscriptions for AP/AR/S&E events, including setup, HMAC-SHA256 signature verification, subscription limits (up to 10 per org), and error handling, showing a mature webhook system usable by any integration including AI-native agents. missing for 10: no independent/hands-on corroboration of webhook reliability or agent-specific usage examples beyond generic API docs.",
     "evidenceIds": [
       "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-16",
       "bill-spend-expense-docs-17",
-      "bill-spend-expense-docs-19",
       "bill-spend-expense-docs-22",
-      "bill-spend-expense-docs-24"
+      "bill-spend-expense-docs-24",
+      "bill-spend-expense-docs-19"
     ]
   },
   {
@@ -197,8 +205,8 @@
     "storyId": "ai-expense-coding",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "BILL Spend & Expense is explicitly marketed as 'AI-powered spend management' that automatically categorizes and ensures compliance for every transaction (docs-9), and BILL's platform includes an 'Invoice Coding Agent' for automatic AI bill coding (docs-8), suggesting some automated categorization/coding capability. However, there is no evidence of receipt OCR/reading, memo suggestion, or duplicate/fraud detection specifically for expense transactions. Missing for 10: explicit receipt-reading/OCR evidence, memo-suggestion detail, and duplicate or fraud detection functionality for Spend & Expense.",
+    "confidence": "low",
+    "rationale": "BILL claims 'AI-powered spend management' that automatically categorizes and keeps transactions compliant, and separately touts an 'Invoice Coding Agent' for AI bill coding, showing some AI-driven categorization capability. However, there is no evidence of receipt OCR/reading, AI-generated memos, or explicit duplicate/fraud detection specifically within the Spend & Expense product. Missing for 10: receipt scanning/OCR evidence, memo-suggestion feature, duplicate/fraud detection capability, and any hands-on or independent corroboration of these AI behaviors.",
     "evidenceIds": [
       "bill-spend-expense-docs-9",
       "bill-spend-expense-docs-8"
@@ -209,13 +217,13 @@
     "storyId": "ai-policy-copilot",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows automated policy/categorization features (custom approval policies, AI invoice coding, real-time webhooks) but no conversational AI assistant that chases missing receipts, explains declines, or answers pre-spend 'can I expense this' questions.",
+    "confidence": "medium",
+    "rationale": "Evidence shows AI-powered categorization/compliance and an Invoice Coding Agent, plus custom approval policies and webhooks, but nothing describes a conversational assistant that proactively chases missing receipts, explains declines, or answers 'can I expense this?' before spend occurs. The MCP server referenced is for developers querying API docs, not an end-user policy-enforcement chat experience.",
     "evidenceIds": [
-      "bill-spend-expense-docs-7",
       "bill-spend-expense-docs-8",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-20"
+      "bill-spend-expense-docs-7",
+      "bill-spend-expense-docs-18"
     ]
   },
   {
@@ -224,10 +232,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "BILL's developer portal provides API docs, code recipes, and a sandbox for testing without real money (docs-15, docs-23), which supports some hands-on exploration, but there's no evidence of a true interactive API reference (e.g., Swagger/OpenAPI explorer) with runnable examples — a probe for openapi.json/swagger.json returned 404 on all checked paths. Missing for 10: an interactive API console or Swagger-UI-style reference, confirmed runnable code examples embedded in docs, and independent corroboration that the API reference itself (not just recipes) is executable in-browser.",
+    "rationale": "Docs mention a sandbox environment for testing workflows and code recipes/endpoint examples (e.g., POST /v3/vendors), which supports experimentation, but there is no evidence of an interactive, runnable API reference (like a Swagger/OpenAPI explorer) — probes for openapi.json/swagger.json all 404. Missing for 10: interactive try-it console, discoverable OpenAPI spec, in-browser runnable code examples.",
     "evidenceIds": [
       "bill-spend-expense-docs-15",
       "bill-spend-expense-docs-23",
+      "bill-spend-expense-docs-28",
       "bill-spend-expense-probe-2"
     ]
   },
@@ -236,11 +245,11 @@
     "storyId": "api-machine-spec",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "While BILL has extensive API documentation and even an MCP server for AI tools to query docs (bill-spend-expense-docs-18), there is no evidence of a downloadable machine-readable OpenAPI/Swagger spec. A direct probe of standard OpenAPI spec locations (openapi.json, swagger.json, etc.) returned 404 on all paths, and the llms.txt only points to prose documentation, not a machine-readable API schema.",
+    "confidence": "medium",
+    "rationale": "While BILL has an extensive v3 API and developer portal, a direct probe for standard OpenAPI/Swagger spec paths (openapi.json, swagger.json, etc.) all returned 404, and no documentation excerpt references a downloadable OpenAPI/Swagger file or spec.",
     "evidenceIds": [
       "bill-spend-expense-probe-2",
-      "bill-spend-expense-probe-1"
+      "bill-spend-expense-docs-1"
     ]
   },
   {
@@ -249,10 +258,10 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "BILL explicitly documents a comprehensive sandbox environment for testing AP/S&E workflows without moving real money, directly matching the story. Missing for 10: independent/hands-on corroboration beyond vendor docs, and no explicit detail on sandbox data isolation guarantees for Spend & Expense specifically.",
+    "rationale": "BILL's developer docs explicitly state a comprehensive sandbox environment exists for testing workflows (bills, AP payments, S&E) without moving real money, directly matching the story. This is first-party documentation without independent hands-on corroboration. Missing for 10: independent/third-party verification of sandbox fidelity and details on how S&E-specific sandbox data isolation works.",
     "evidenceIds": [
       "bill-spend-expense-docs-15",
-      "bill-spend-expense-docs-23"
+      "bill-spend-expense-docs-2"
     ]
   },
   {
@@ -272,12 +281,13 @@
     "productId": "bill-spend-expense",
     "storyId": "approval-workflows",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence only shows a bare pricing-page bullet 'Set custom approval policies' repeated twice, with no documentation of multi-step chains (manager/budget owner/finance), delegation, or escalation logic. missing for 10: documentation of multi-step approval chain configuration, delegation of approvals, escalation on stalled requests, and any hands-on or independent corroboration.",
+    "rationale": "BILL's docs confirm configurable approval policies (\"Set custom approval policies\", and AP bill approval policies that control who must approve and when), which is the closest evidence to approval chains, but this is scoped to AP bills rather than explicitly to Spend & Expense card/expense workflows. Missing for 10: explicit multi-step chain configuration (manager → budget owner → finance), delegation of approval authority, and escalation logic when an approver fails to act.",
     "evidenceIds": [
       "bill-spend-expense-docs-7",
-      "bill-spend-expense-docs-20"
+      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-39"
     ]
   },
   {
@@ -286,7 +296,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack contains no mention of automatic receipt-to-transaction matching, e-receipt pulling from integrations (e.g., email or vendor portals), or smart nudging logic for missing receipts specifically. Only a generic marketing claim about 'AI-powered spend management' and transactions being 'controlled, categorized, and automatically compliant' appears (bill-spend-expense-docs-9), which does not describe this specific capability.",
+    "rationale": "The evidence pack covers BILL's developer API, webhooks, AP/AR workflows, vendor network, and payment features, but contains no specific documentation of receipt-to-card-transaction auto-matching, e-receipt pull from email/integrations, or smart nudge logic that only fires for genuinely missing receipts. The closest mention (docs-9) is a generic marketing line about 'AI-powered spend management' with no detail on receipt matching or nudging mechanics.",
     "evidenceIds": [
       "bill-spend-expense-docs-9"
     ]
@@ -295,12 +305,13 @@
     "productId": "bill-spend-expense",
     "storyId": "automation-bulk-operations",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "The BILL v3 API exposes individual CRUD endpoints (e.g., POST/PATCH for vendors) and CSV import/export for accounting sync, which could be scripted to approximate bulk operations, but there is no documented batch/bulk endpoint or explicit multi-item operation support for AI agents. missing for 10: dedicated batch/bulk API endpoints, documented multi-item transaction/approval operations, evidence of an agent performing bulk actions in practice.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "BILL's platform API documents explicit bulk endpoints (POST /v3/payments/bulk for up to 50 bills, POST /v3/payments/mass for up to 2000 bills) and bulk record export, showing genuine multi-item automation support at the API/platform level. However, these bulk endpoints are documented for AP (bills) rather than shown specifically for Spend & Expense transactions/cards, and there's no evidence of bulk expense categorization, bulk card management, or bulk approval actions specific to the S&E product. Missing for 10: dedicated bulk operation endpoints for S&E-specific objects (transactions, cards, expense reports), independent/hands-on confirmation of bulk usage at scale.",
     "evidenceIds": [
-      "bill-spend-expense-docs-28",
-      "bill-spend-expense-docs-13",
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
+      "bill-spend-expense-docs-37",
       "bill-spend-expense-docs-1"
     ]
   },
@@ -310,13 +321,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "BILL supports webhooks for real-time event notifications and custom approval policies/tolerance rules, which enable some automated reactions to events, but there is no evidence of a native rules engine where users define arbitrary if-this-then-that automation triggering actions — webhooks require external code to consume and act on events. missing for 10: a documented no-code/low-code rule builder that lets users define trigger-condition-action automations natively within the product, evidence of arbitrary action-taking (not just notification) on events, and independent confirmation of this workflow in practice.",
+    "rationale": "BILL supports custom approval policies, vendor autopay triggers, and webhook event subscriptions that notify external systems on events (e.g., bill created, vendor autopay), which enable rule-like automation, but this is largely policy-based (approvals, autopay) rather than a general user-defined 'if event then action' rules engine natively in the product; true automation requires building via API/webhooks rather than a no-code rules UI. missing for 10: a native no-code rule builder for arbitrary trigger-action automation, evidence of end-to-end automation without custom development, and independent confirmation of this workflow in practice.",
     "evidenceIds": [
-      "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-7",
-      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-16",
       "bill-spend-expense-docs-21",
+      "bill-spend-expense-docs-39",
       "bill-spend-expense-docs-22"
     ]
   },
@@ -325,8 +335,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows webhooks for real-time event notifications, vendor autopay triggers, and API endpoints, but nothing about scheduling recurring jobs or workflows (e.g., cron-like automation, recurring batch runs). This is an applicable axis for an expense/AP platform with automation ambitions, but no capability is documented.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers webhooks (event-driven notifications), API endpoints, bulk/mass payments, and an MCP docs server, but nothing about scheduling recurring jobs or workflows (e.g., cron-like automation, scheduled triggers). Webhooks react to events rather than allowing scheduled recurring execution, so this axis is unaddressed.",
     "evidenceIds": []
   },
   {
@@ -335,7 +345,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of version control, review workflows, or rollback capability for automations/approval policies; evidence only covers API access, webhooks, and integration features with no mention of versioning or audit/rollback of automation rules.",
+    "rationale": "The evidence covers approval policies, audit trails for vendor changes, webhooks, and API access, but there is no mention of versioning, reviewing, or rolling back automations/workflows themselves (e.g., no automation version history or rollback mechanism for rules/policies/integrations).",
     "evidenceIds": []
   },
   {
@@ -344,31 +354,32 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Evidence shows full AP capability: bill capture/coding (Invoice Coding Agent), custom approval policies, vendor network payments, and multiple disbursement methods including ACH-style ePayments, checks written via BILL account, and wire/funding via bank connections — all within the same platform alongside S&E. missing for 10: explicit first-party confirmation of wire transfer as a distinct payment rail (only checks, ePayments, and network payments are explicitly documented) and independent/hands-on corroboration beyond vendor docs.",
+    "rationale": "Extensive first-party docs show BILL supports invoice/bill capture and coding, custom multi-step approval policies, vendor network connectivity, and disbursement via ACH, virtual card, check, and international payments, plus bulk/mass payment APIs. missing for 10: independent/hands-on corroboration beyond vendor docs, and clearer detail on wire transfer support specifically (evidence focuses on ACH/check/virtual card).",
     "evidenceIds": [
-      "bill-spend-expense-docs-7",
       "bill-spend-expense-docs-8",
+      "bill-spend-expense-docs-39",
+      "bill-spend-expense-docs-33",
+      "bill-spend-expense-docs-36",
+      "bill-spend-expense-docs-40",
+      "bill-spend-expense-docs-41",
+      "bill-spend-expense-docs-42",
       "bill-spend-expense-docs-11",
-      "bill-spend-expense-docs-27",
-      "bill-spend-expense-docs-29",
-      "bill-spend-expense-docs-30",
-      "bill-spend-expense-docs-1",
-      "bill-spend-expense-docs-21"
+      "bill-spend-expense-docs-30"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "budgets-enforcement",
     "verdict": "partial",
-    "quality": 7,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm core building blocks: setting up budgets, virtual cards, and custom approval policies, plus org-structure configuration and per-transaction control language, which together map to budget allocation with enforced card limits/approvals. However, evidence is vendor-only marketing/docs with no independent or hands-on confirmation that limits/approvals actually block out-of-policy spend in practice, and no explicit project-level (vs team-level) allocation detail. Missing for 10: independent/hands-on verification of real-time enforcement, explicit project-based budget allocation evidence, and detail on how approvals interact with card limits at transaction time.",
+    "rationale": "BILL Spend & Expense docs confirm budgets, virtual cards, custom approval policies, and card/expense controls tied to AI-powered spend management, supporting budget allocation and enforcement via cards and approvals. However, evidence lacks detail on project-level budget allocation granularity, real-time overspend blocking mechanics, or hands-on/independent verification that limits actually hard-block transactions in practice. missing for 10: independent/hands-on confirmation of real-time enforcement, project-level (not just team/org) budget breakdown, and detail on how approval policies interact with card limits at transaction time.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-7",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-5",
-      "bill-spend-expense-docs-20"
+      "bill-spend-expense-docs-20",
+      "bill-spend-expense-docs-39"
     ]
   },
   {
@@ -385,29 +396,32 @@
   {
     "productId": "bill-spend-expense",
     "storyId": "continuous-close-coding",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Vendor docs claim that BILL Spend & Expense cards make every transaction 'controlled, categorized, and automatically compliant' and pair with AI-driven bill coding (docs-8, docs-9), plus automatic 2-way sync to major accounting systems (docs-12), which supports real-time coding for close. However, there is no explicit documentation of automatic merchant/memo capture or receipt-matching workflows, and no independent/hands-on evidence corroborating that categorization actually eliminates manual review at month-end. Missing for 10: explicit receipt-capture/matching evidence, memo-field automation detail, and independent verification of coding accuracy.",
+    "rationale": "BILL Spend & Expense's core product marketing and docs describe real-time transaction categorization ('every transaction is controlled, categorized, and automatically compliant'), receipt/coding automation via AI (Invoice Coding Agent, multi-line coding), custom approval policies, and automatic 2-way sync to accounting systems (QuickBooks, NetSuite, Sage Intacct, Dynamics) — directly supporting spend being coded in real time so month-end close is a review not reconstruction. Webhooks and audit trail APIs further support continuous, real-time reconciliation rather than after-the-fact archaeology. Missing for 10: no independent/hands-on evidence (e.g., customer reviews or case studies) confirming receipt capture and memo/category coding accuracy in practice, and no explicit mention of receipt-matching workflow details in this specific evidence pack.",
     "evidenceIds": [
-      "bill-spend-expense-docs-8",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-12"
+      "bill-spend-expense-docs-8",
+      "bill-spend-expense-docs-7",
+      "bill-spend-expense-docs-12",
+      "bill-spend-expense-docs-37",
+      "bill-spend-expense-docs-38"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "expense-audit-trail",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "BILL documents custom approval policies, tolerance rules, and 2-way/3-way matching (docs-7, docs-10, docs-20, docs-31) plus real-time webhook event notifications (docs-3, docs-16) that could feed an audit trail, but there is no explicit documentation of an immutable edit/approval history log designed to survive external audit scrutiny. missing for 10: explicit audit-log/history feature documentation, retention guarantees, and any independent/third-party confirmation that audit trails hold up under external audit.",
+    "rationale": "Docs confirm approval-policy configuration (docs-7, docs-20, docs-39) and an audit-trail API endpoint (docs-38), but the only documented audit-trail endpoint is scoped to vendor objects, not expense/card transactions specifically, and there's no evidence of a full edit/approval/policy-check history log for S&E expenses suitable for external audit review. Missing for 10: expense-transaction-level audit trail endpoint/UI, evidence of policy-check logging on card transactions, and independent/third-party confirmation of audit completeness.",
     "evidenceIds": [
+      "bill-spend-expense-docs-38",
       "bill-spend-expense-docs-7",
-      "bill-spend-expense-docs-10",
-      "bill-spend-expense-docs-16",
       "bill-spend-expense-docs-20",
-      "bill-spend-expense-docs-31"
+      "bill-spend-expense-docs-39",
+      "bill-spend-expense-docs-9"
     ]
   },
   {
@@ -416,27 +430,29 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "BILL Spend & Expense explicitly advertises 'custom approval policies,' budget/card controls, and AI-powered spend management that keeps 'every transaction... controlled, categorized, and automatically compliant,' which supports policy codification and automated compliance. However, the evidence never details rule granularity (by category, role, or context) or an explicit exception-only human-review workflow for auto-approved in-policy spend. Missing for 10: documentation of multi-dimensional policy rule configuration (category/role/context), explicit auto-approval vs. exception-routing logic, and independent/hands-on confirmation of this behavior.",
+    "rationale": "BILL supports custom approval policies and budget/card limits per user, and markets S&E transactions as 'automatically compliant,' which maps to policy-based auto-approval; there's also a defined 'approval policy' concept controlling who must approve and when. However, the detailed approval-policy documentation (docs-39) is scoped to AP bill approvals rather than S&E card/expense transactions specifically, and no evidence describes granular rule-building by category+role+context or explicit exception-routing logic for expenses. Missing for 10: S&E-specific policy configuration docs (category/role/context rule builder), explicit auto-approve vs. exception-routing mechanics, and independent/hands-on confirmation of this workflow.",
     "evidenceIds": [
       "bill-spend-expense-docs-7",
       "bill-spend-expense-docs-20",
       "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-2"
+      "bill-spend-expense-docs-2",
+      "bill-spend-expense-docs-39"
     ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "expenses-api-read",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "BILL's v3 API is documented and explicitly covers Spend & Expense (transactions, expenses) alongside AP/AR, with a sandbox, webhooks, and REST endpoints (e.g., vendor CRUD) demonstrated in docs. However, the evidence never mentions OAuth or scoped token authentication — only an 'apiToken' concept appears — and no openapi/swagger spec was found at standard locations, leaving the authentication model underspecified for developers pulling receipts/expense data. Missing for 10: explicit OAuth flow documentation, scoped/permissioned token details, and confirmation of a public OpenAPI spec.",
+    "rationale": "BILL's v3 API is documented as covering AP, AR, and S&E data (transactions, expenses, vendors, payments) with a sandbox, webhooks, and endpoints like vendor CRUD and audit trails, indicating a real developer-facing REST API. However, the pack never explicitly documents OAuth flows or scoped token grants — only an 'apiToken' error reference — so token-based auth exists but OAuth/scopes are unconfirmed, and there's no explicit receipt-retrieval endpoint shown. Missing for 10: explicit OAuth 2.0 flow documentation, scope definitions, dedicated receipt-pull endpoint evidence, and independent/hands-on confirmation of auth behavior.",
     "evidenceIds": [
       "bill-spend-expense-docs-1",
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-15",
       "bill-spend-expense-docs-19",
-      "bill-spend-expense-probe-2"
+      "bill-spend-expense-docs-28",
+      "bill-spend-expense-docs-37"
     ]
   },
   {
@@ -456,8 +472,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers card/expense management, AP/AR APIs, vendor network payments, and webhooks, but contains no mention of multi-currency reimbursement, international payouts, FX handling, or paying employees abroad in local currency. This is a plausible axis for an expense/reimbursement product, but no supporting evidence exists.",
-    "evidenceIds": []
+    "rationale": "Evidence shows only AP international vendor payments (doc-42) where vendors receive funds in local currency, not employee expense reimbursements; the S&E reimbursement docs (doc-2) mention 'reimbursements' generically but never local-currency/international reimbursement for employees abroad. Missing for 10: any documentation of employee reimbursement disbursement in local currency, any mention of multi-currency support within Spend & Expense card/reimbursement workflows, and confirmation this avoids a separate international payments process.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-2",
+      "bill-spend-expense-docs-42"
+    ]
   },
   {
     "productId": "bill-spend-expense",
@@ -465,7 +484,7 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs confirm virtual card issuance and spend/budget management (doc-2, doc-9) as part of the S&E product, implying per-card spend controls, but no explicit mention of physical card issuance, onboarding speed ('minutes'), or per-card individual limits is provided. Missing for 10: explicit physical card issuance details, quick setup/time-to-issue claims, and explicit per-card spend limit configuration evidence.",
+    "rationale": "Docs confirm virtual card issuance tied to budgets/users (docs-2, docs-9), supporting quick setup of cards with spend controls, but there is no explicit evidence of physical card issuance, per-card spend limit configuration UI, or issuance speed ('in minutes') claims. Missing for 10: physical card issuance evidence, explicit per-card spend limit mechanics, timing/speed claims, and independent/hands-on corroboration.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-9"
@@ -477,7 +496,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers AP/AR/S&E APIs, webhooks, vendor network, elements embedding, and integrations, but contains no mention of mileage tracking, map-based distance calculation, or per-diem rate claims anywhere in the docs or pricing pages.",
+    "rationale": "The evidence pack covers AP/AR/card/spend management, webhooks, vendor payments, and API/embedding features, but contains no mention of mileage tracking, map-based distance calculation, or per-diem rate claims anywhere in the docs or pricing pages.",
     "evidenceIds": []
   },
   {
@@ -485,23 +504,27 @@
     "storyId": "multi-entity-currency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack addresses multi-entity account structures, multi-currency support, consolidated reporting, or per-entity books; the evidence only covers API integration, webhooks, vendor network, and accounting sync features, none of which speak to multi-entity/multi-currency consolidation.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence pack shows organization structure APIs, international vendor payments, and accounting sync, but no mention of multi-entity/subsidiary management, per-entity books, or consolidated cross-entity reporting — a fair ask for a finance/spend platform used by growing SMBs. Nothing in the docs addresses running multiple legal entities or multi-currency consolidated reporting.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-5",
+      "bill-spend-expense-docs-42",
+      "bill-spend-expense-docs-37"
+    ]
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "BILL's v3 API covers a wide range of S&E functionality (budgets, users, virtual cards, transactions, reimbursements, vendor management, org structure, webhooks) matching many UI capabilities, and docs explicitly note API-driven org/vendor/budget management. However, some UI-configurable features (custom approval policies, purchase order tolerance rules, 2/3-way matching) are only described in pricing pages, not confirmed as API-exposed, and probes show no discoverable OpenAPI/swagger spec (404s across standard paths), suggesting incomplete parity or discoverability. Missing for 10: explicit API endpoints/docs for approval-policy customization and purchase-order workflows, and a published machine-readable OpenAPI spec confirming full UI-API parity.",
+    "rationale": "Docs show broad API coverage for card/expense management, budgets, virtual cards, transactions, reimbursements, org structure, approvals, and vendor management (docs-2,5,7,9,39), suggesting strong UI/API parity, but there's no explicit claim of full feature parity and the OpenAPI spec is not discoverable (probe-2 shows 404s across standard paths), raising doubt about completeness/documentation of every endpoint. missing for 10: explicit 1:1 parity statement covering every S&E UI feature, a discoverable machine-readable OpenAPI spec, and independent/hands-on corroboration that all UI actions are API-reachable.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
       "bill-spend-expense-docs-5",
       "bill-spend-expense-docs-7",
-      "bill-spend-expense-docs-10",
-      "bill-spend-expense-docs-28",
+      "bill-spend-expense-docs-9",
+      "bill-spend-expense-docs-39",
       "bill-spend-expense-probe-2"
     ]
   },
@@ -509,12 +532,12 @@
     "productId": "bill-spend-expense",
     "storyId": "openness-full-export",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "CSV import/export and API access allow some data portability, but there's no evidence of a full open-format data export/backup feature for a user wanting to leave the platform entirely. missing for 10: documented full account data export tool, open-format bulk export (JSON/CSV) covering all transaction/vendor/user data, data portability guarantees, and independent confirmation of export completeness.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Docs confirm data export via API and CSV for core entities (vendors, customers, bills, invoices, AP/AR payments), supporting portability in reasonably open formats. However, there's no explicit statement of full account/data export for platform migration or an all-encompassing 'leave the platform' export bundle. missing for 10: complete account-level export/backup guarantee, explicit open-standard (e.g., JSON/CSV schema) documentation for all data types, independent confirmation of unrestricted data portability.",
     "evidenceIds": [
       "bill-spend-expense-docs-13",
-      "bill-spend-expense-docs-1"
+      "bill-spend-expense-docs-37"
     ]
   },
   {
@@ -523,7 +546,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BILL Spend & Expense is a closed commercial SaaS product; there is no source code to read under an open license, and this axis is a category error for this type of product.",
+    "rationale": "BILL Spend & Expense is a closed commercial SaaS financial product; there is no indication its source code is open-sourced or that an open license applies. Source availability is not a fair axis for a proprietary fintech SaaS platform, so this is a category mismatch rather than a missing feature.",
     "evidenceIds": []
   },
   {
@@ -532,7 +555,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "BILL Spend & Expense is a cloud SaaS financial service; self-hosting the core product is a category error for this type of product, not a missing feature.",
+    "rationale": "BILL Spend & Expense is a SaaS financial platform, not self-hostable software; self-hosting is a category error for this type of cloud service product.",
     "evidenceIds": []
   },
   {
@@ -541,7 +564,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack mentions data residency, region selection, or storage location controls for BILL Spend & Expense data.",
+    "rationale": "No evidence anywhere in the pack addresses data residency, regional storage options, or data localization controls for BILL Spend & Expense; the documentation focuses on API integration, payments, and UI embedding, not data residency choice.",
     "evidenceIds": []
   },
   {
@@ -550,7 +573,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses AI training data usage, opt-out controls, or any privacy policy statement about model training; evidence only covers API features, webhooks, and integrations.",
+    "rationale": "No evidence anywhere in the pack about AI training data opt-out, data usage policies for model training, or privacy controls related to AI training; the evidence focuses on API features, payments, and integrations.",
     "evidenceIds": []
   },
   {
@@ -559,7 +582,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items address data retention policies, deletion controls, or user-facing privacy/data lifecycle management for AI-native usage; the evidence focuses on API integration, webhooks, and product features unrelated to retention/deletion controls.",
+    "rationale": "Evidence covers API, webhooks, UI elements, payments, and network features, but there is no mention of data retention policies, data deletion controls, or export/erasure mechanisms an AI-native user could invoke to manage their data lifecycle.",
     "evidenceIds": []
   },
   {
@@ -568,7 +591,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out settings for AI-native users; the documentation covers API features, webhooks, and integrations but nothing about privacy controls or telemetry opt-out.",
+    "rationale": "No evidence in the pack addresses telemetry/usage-tracking opt-out controls for BILL Spend & Expense; all documentation covers API, payments, webhooks, and UI elements. This is a fair privacy-posture question for a SaaS financial product, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -577,11 +600,11 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Docs confirm a card & expense management API surface (\"virtual cards\", budgets, users, transactions) and webhook notifications, implying some programmatic card management, but there is no explicit documentation of endpoints for creating a card with a limit, locking a card, or updating card controls. missing for 10: explicit API reference/endpoints for card creation with limits, card lock/unlock actions, control updates, and any hands-on or independent confirmation these operations work as described.",
+    "rationale": "Docs confirm the BILL v3 API platform explicitly covers Spend & Expense (S&E) including 'card & expense management services' and 'virtual cards' setup, and other object types (vendors) show concrete POST/PATCH endpoint patterns, suggesting similar CRUD exists for cards — but no endpoint, payload, or example specifically for creating a card with a limit, locking a card, or updating card controls is shown. Missing for 10: explicit card creation/lock/control-update endpoint documentation, example requests/responses, and independent confirmation of programmatic card lifecycle management.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
-      "bill-spend-expense-docs-9",
-      "bill-spend-expense-docs-16"
+      "bill-spend-expense-docs-1",
+      "bill-spend-expense-docs-28"
     ]
   },
   {
@@ -590,11 +613,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Docs describe card transactions as automatically 'controlled, categorized, and automatically compliant' and support real-time webhook event notifications for S&E events, implying transactions are visible/categorized as they occur rather than only on statements. However, there is no direct evidence of a dashboard or reporting view that breaks down spend specifically by team, category, and merchant in real time. Missing for 10: explicit dashboard/reporting UI screenshots or docs showing team/category/merchant breakdowns, independent user corroboration of real-time visibility.",
+    "rationale": "BILL Spend & Expense markets AI-powered spend management that categorizes transactions automatically and 'controls' spend as it happens (doc-9), plus real-time webhook event notifications for S&E events (docs-3, docs-16) and organization structure APIs that could map to teams (docs-5). However, there is no direct evidence of a founder-facing real-time dashboard or report broken down explicitly by team, category, and merchant — most evidence is developer/API-platform oriented rather than describing the actual spend-visibility UI. Missing for 10: explicit documentation/screenshots of a real-time spend dashboard segmented by team/category/merchant, and independent/user corroboration of same-day visibility.",
     "evidenceIds": [
       "bill-spend-expense-docs-9",
+      "bill-spend-expense-docs-3",
       "bill-spend-expense-docs-16",
-      "bill-spend-expense-docs-3"
+      "bill-spend-expense-docs-5"
     ]
   },
   {
@@ -603,8 +627,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers API/webhook/network/UI-embedding capabilities but contains no mention of receipt photo capture, email-forwarding of receipts, OCR extraction, or automatic transaction matching—core to this story. Since receipt capture is a mainstream expected capability for an expense product, absence of evidence yields 'none' rather than 'na'.",
-    "evidenceIds": []
+    "rationale": "The evidence pack contains only developer/API and pricing docs about AP/AR workflows, vendor payments, and general 'AI-powered spend management' language, but never mentions receipt photo capture, OCR of receipts, or email-forwarding of receipts to auto-file against transactions. Missing for 10: any mention of mobile receipt photo capture, OCR extraction, email-forward-to-receipt ingestion, or auto-matching of scanned receipts to transactions.",
+    "evidenceIds": [
+      "bill-spend-expense-docs-9"
+    ]
   },
   {
     "productId": "bill-spend-expense",
@@ -625,19 +651,20 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows card issuance, transaction categorization, receipt-adjacent AP/AR/S&E API and webhook capabilities, but nothing about travel bookings, itineraries, or automatic linking of bookings/cards/receipts into a single itinerary-linked trip report — a core travel-management feature category this product's evidence never addresses.",
+    "rationale": "The evidence covers general card/expense management, vendor payments, and API/webhook capabilities but contains no mention of travel bookings, itineraries, or automatic linking of trip-related expenses (cards, bookings, receipts) into a single itinerary-linked report. This is a plausible capability for an expense-management product, so the axis applies, but nothing in the pack evidences it.",
     "evidenceIds": []
   },
   {
     "productId": "bill-spend-expense",
     "storyId": "vendor-virtual-cards",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Docs confirm BILL Spend & Expense supports creating virtual cards and card/expense management (budgets, users, virtual cards) via its API and product, which aligns with issuing per-vendor cards for SaaS/procurement. However, no evidence explicitly shows merchant-locking or single-vendor restriction controls that would guarantee a card is usable only with one vendor. missing for 10: explicit documentation of vendor/merchant-lock restrictions on virtual cards, and independent confirmation of single-vendor isolation.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Evidence confirms BILL Spend & Expense supports creating and managing virtual cards (\"Set up budgets, users, & virtual cards\", \"smart, flexible cards paired with AI-powered spend management\") and controlled/categorized transactions, which implies vendor-level card issuance, but none of the docs explicitly describe locking a virtual card to a single vendor/merchant to contain compromise blast radius. Missing for 10: explicit documentation of single-vendor/merchant-lock controls on virtual cards, and any independent/hands-on confirmation of this specific control.",
     "evidenceIds": [
       "bill-spend-expense-docs-2",
-      "bill-spend-expense-docs-9"
+      "bill-spend-expense-docs-9",
+      "bill-spend-expense-docs-33"
     ]
   },
   {
