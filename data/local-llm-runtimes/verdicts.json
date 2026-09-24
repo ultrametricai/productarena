@@ -5,12 +5,8 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of TPU, Gaudi, or any specialized accelerator plugin support; evidence only covers CPU/GPU local inference, cloud model integration, and MCP support. Missing for 10: any mention of TPU/Gaudi hardware support, plugin architecture for accelerators, or third-party backend plugins enabling such hardware.",
-    "evidenceIds": [
-      "jan-gh-1",
-      "jan-gh-6",
-      "jan-gh-18"
-    ]
+    "rationale": "No evidence of TPU, Gaudi, or any specialized-accelerator plugin support; Jan's inference is based on llama.cpp with local GPU/CPU support only, and no plugin architecture for alternative accelerators is mentioned.",
+    "evidenceIds": []
   },
   {
     "productId": "jan",
@@ -18,48 +14,58 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The probe evidence shows llms.txt returns a 404 at jan.ai, and no openapi/agent-oriented docs endpoints were found either; no other evidence mentions agent-readable docs like llms.txt.",
+    "rationale": "Direct probes show no llms.txt, docs.md, or machine-readable API spec exists (404s), and no evidence pack item mentions any agent-oriented documentation format for Jan itself.",
     "evidenceIds": [
       "jan-probe-1",
-      "jan-probe-2"
+      "jan-probe-2",
+      "jan-probe-3"
     ]
   },
   {
     "productId": "jan",
     "storyId": "agentic-ai-insights",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Evidence shows Jan supports local/cloud LLM chat, custom assistants, and MCP integration, but nothing describes analyzing or surfacing insights from the user's own data inside the product (no RAG, document analysis, or data-insight feature mentioned).",
+    "rationale": "Jan is essentially a chat/assistant interface with local & cloud model access, custom assistants, MCP integration, and autonomous agent tasks (files, commands, web research) that could surface insights from data, but there's no dedicated feature for analyzing user's own data (e.g. documents, databases) to proactively generate insights/suggestions — it's more general chat-based Q&A than data-driven insight generation. missing for 10: dedicated data-analysis/insight-generation workflow, evidence of proactive suggestions from user data, independent hands-on validation of this specific capability.",
     "evidenceIds": [
-      "jan-gh-1",
-      "jan-gh-2",
       "jan-gh-3",
       "jan-gh-5",
-      "jan-docs-1"
+      "jan-docs-13",
+      "jan-docs-14",
+      "jan-docs-9"
     ]
   },
   {
     "productId": "jan",
     "storyId": "agentic-autonomous-automation",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "Jan is a local AI chat/assistant app with MCP integration and an OpenAI-compatible API, but there is no evidence of scheduling, triggers, or background autonomous automation workflows — everything described is interactive chat/assistant use or manual API calls.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs claim autonomous agents that 'read files, manage calendars, and take actions via WhatsApp, Discord, or Slack' and that Jan can be given a task and 'works on it autonomously' (jan-docs-13, jan-docs-14), supported by MCP integration for agentic capabilities (jan-gh-5/14). However, the same docs state each tool call must be individually approved via inline approval panels (jan-docs-9), which undercuts true unattended background automation, and there's no evidence of scheduling/trigger-based automation setup. Missing for 10: documented scheduling/trigger mechanism, evidence of fully unattended (no-approval) background runs, independent confirmation of long-running autonomous sessions.",
+    "evidenceIds": [
+      "jan-docs-13",
+      "jan-docs-14",
+      "jan-gh-5",
+      "jan-docs-9"
+    ]
   },
   {
     "productId": "jan",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Jan offers Custom Assistants for task-specific delegation and MCP integration for agentic capabilities, letting users create and delegate to AI assistants within the app. Missing for 10: independent hands-on verification of assistant delegation workflow, details on how tasks are executed/managed by the assistant beyond marketing bullet points, and any autonomous multi-step task completion evidence.",
+    "rationale": "Jan documents built-in custom assistants with configurable personas/instructions, assignable per-project, plus autonomous task execution (files, commands, web research) and MCP tool-calling with approval flow — directly matching the delegate-to-assistant story. Missing for 10: independent/hands-on verification of autonomous task delegation actually working reliably beyond vendor docs and changelog claims.",
     "evidenceIds": [
+      "jan-docs-13",
+      "jan-docs-14",
+      "jan-docs-7",
+      "jan-docs-12",
       "jan-gh-3",
       "jan-gh-5",
-      "jan-gh-10",
-      "jan-gh-14"
+      "jan-docs-9",
+      "jan-docs-8"
     ]
   },
   {
@@ -68,23 +74,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jan is presented as a desktop GUI app (Electron-based, 'launches the app') with a local OpenAI-compatible API server for other applications to connect to, but there is no evidence of a headless mode, CLI-only operation, or CI-friendly deployment (e.g., Docker image, no-GUI flag) that would let it run in automated pipelines.",
-    "evidenceIds": [
-      "jan-gh-4",
-      "jan-gh-7",
-      "jan-gh-13"
-    ]
+    "rationale": "Jan is presented as a desktop GUI application; while it exposes an OpenAI-compatible local API server (jan-gh-4, jan-docs-6) that other apps can call, there is no evidence of a headless mode, CLI-only operation, Docker/CI-friendly packaging, or documentation describing running Jan without its desktop UI for automation pipelines.",
+    "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "agentic-mcp-client",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Jan explicitly lists 'Model Context Protocol: MCP integration for agentic capabilities' as a first-party feature, confirming users can plug in MCP servers for tool use. However, evidence is limited to short marketing bullet points with no detailed documentation, setup guide, or independent hands-on confirmation of how MCP servers are configured or used. Missing for 10: detailed docs on adding/configuring MCP servers, independent/community verification of MCP working in practice, list of supported MCP server types.",
+    "rationale": "Jan documents MCP integration for agentic capabilities, a dedicated MCP docs page describing tool-call approval flow, and changelog entries showing shipped MCP integrations (e.g., Jan Browser MCP). missing for 10: independent/hands-on third-party corroboration of MCP server plugging beyond vendor docs and changelog.",
     "evidenceIds": [
       "jan-gh-5",
-      "jan-gh-14"
+      "jan-gh-14",
+      "jan-docs-8",
+      "jan-docs-9",
+      "jan-docs-15"
     ]
   },
   {
@@ -105,13 +110,13 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Jan is fundamentally a chat-based interface for local/cloud LLMs where natural-language is the primary interaction mode, and it adds MCP integration explicitly for 'agentic capabilities' plus custom assistants for task-specific NL workflows. Missing for 10: independent hands-on verification of NL-driven agentic actions beyond chat, and richer documentation of what MCP-enabled agentic commands can actually do.",
+    "rationale": "Jan is fundamentally a chat interface where users interact via natural-language prompts to control local/cloud models, custom assistants with persona instructions, and agentic tasks (files, commands, web research, MCP tool calls) — all driven by conversational input rather than rigid commands. Missing for 10: independent hands-on verification of natural-language command breadth and no example transcripts showing complex multi-step NL-driven task execution.",
     "evidenceIds": [
-      "jan-gh-5",
-      "jan-gh-14",
-      "jan-gh-3",
-      "jan-gh-10",
-      "jan-docs-2"
+      "jan-docs-13",
+      "jan-docs-14",
+      "jan-docs-7",
+      "jan-docs-9",
+      "jan-gh-5"
     ]
   },
   {
@@ -119,8 +124,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an official CLI tool for Jan; evidence covers desktop app, local API server, MCP integration, and build scripts but nothing about a dedicated CLI for AI-native workflows.",
+    "confidence": "medium",
+    "rationale": "Jan is presented as a desktop app with an OpenAI-compatible local API server and MCP integration, but no evidence pack item documents an official standalone CLI tool for scripting/automation; jan-gh-7 refers only to a build/install script, not a CLI product feature.",
     "evidenceIds": []
   },
   {
@@ -129,14 +134,14 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Jan exposes an OpenAI-compatible local API server (localhost:1337) intended for other applications to drive it, plus MCP integration for agentic use, but there's no evidence of a public hosted API or formal OpenAPI/swagger documentation (probes for openapi.json/swagger.json and llms.txt all returned 404). Missing for 10: publicly documented OpenAPI/swagger spec, independent third-party corroboration of API usage, and hosted (non-local) API access.",
+    "rationale": "Jan documents a built-in OpenAI-compatible local API server (localhost:1337) intended as a drop-in replacement for cloud APIs, which AI-native users/agents can call to drive the product programmatically, and it also supports MCP for agentic tool use. However, there is no discoverable formal OpenAPI/swagger spec or llms.txt (probes return 404s), so the API's documentation is informal/README-level rather than a rigorously specified public API reference. missing for 10: published OpenAPI/swagger schema, llms.txt or machine-readable API reference, independent confirmation of API robustness.",
     "evidenceIds": [
       "jan-gh-4",
-      "jan-gh-13",
+      "jan-docs-6",
+      "jan-docs-17",
       "jan-gh-5",
-      "jan-gh-14",
       "jan-probe-1",
-      "jan-probe-2"
+      "jan-probe-3"
     ]
   },
   {
@@ -144,25 +149,27 @@
     "storyId": "agentic-scoped-keys",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence Jan provides scoped or least-privilege API credential issuance for agents; its API server is a local OpenAI-compatible endpoint with no mention of permission scoping or credential management, and OpenAPI/spec probes returned 404.",
+    "confidence": "medium",
+    "rationale": "Jan ships a local OpenAI-compatible API server and MCP tool-call approval prompts, but there is no evidence of any mechanism to issue scoped or least-privilege API credentials/keys for an agent — no API key management, permission scoping, or role-based access control is documented.",
     "evidenceIds": [
+      "jan-docs-6",
+      "jan-docs-9",
       "jan-gh-4",
-      "jan-probe-2"
+      "jan-docs-17"
     ]
   },
   {
     "productId": "jan",
     "storyId": "agentic-sdks",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Jan exposes an OpenAI-compatible local API server, but there is no evidence of an official SDK (Python, JS, or otherwise) for building applications against Jan; probes for API/OpenAPI specs also returned 404s. missing for 10: official SDK packages, SDK documentation/reference, OpenAPI spec availability.",
+    "rationale": "Jan exposes an OpenAI-compatible local API server (jan-gh-4, jan-docs-6) which lets developers reuse existing OpenAI SDKs, but there is no evidence of a dedicated first-party Jan SDK, and probes for a published OpenAPI/swagger spec or docs.md all returned 404s, suggesting thin formal API documentation for builders. missing for 10: dedicated official SDK packages, published OpenAPI spec, and independent developer corroboration of building against the API.",
     "evidenceIds": [
       "jan-gh-4",
-      "jan-gh-13",
-      "jan-probe-1",
-      "jan-probe-2"
+      "jan-docs-6",
+      "jan-probe-3",
+      "jan-probe-1"
     ]
   },
   {
@@ -171,7 +178,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any webhook subscription or event notification system; Jan offers a local OpenAI-compatible API and MCP integration but nothing about outbound event webhooks. Missing for 10: webhook subscription docs, event types, endpoint configuration, delivery mechanism.",
+    "rationale": "No evidence of any webhook subscription mechanism in Jan; it offers a local OpenAI-compatible API server and MCP client integration, but nothing about outbound webhooks or event subscriptions.",
     "evidenceIds": []
   },
   {
@@ -180,11 +187,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jan documents an OpenAI-compatible local API server and outbound integration with Anthropic Claude models as a cloud provider, but there is no evidence of Jan itself exposing an Anthropic-compatible messages endpoint for developers to call.",
+    "rationale": "Jan documents an OpenAI-compatible local API server (jan-docs-6, jan-gh-4/13) but there is no evidence of an Anthropic-compatible /v1/messages endpoint being served by Jan; Anthropic is only mentioned as a cloud provider Jan can connect to as a client (jan-gh-2/9/17), not an API shape Jan exposes.",
     "evidenceIds": [
+      "jan-docs-6",
       "jan-gh-4",
-      "jan-gh-9",
-      "jan-probe-2"
+      "jan-gh-2"
     ]
   },
   {
@@ -192,24 +199,25 @@
     "storyId": "api-interactive-docs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of an interactive API reference or runnable examples; probes for llms.txt and openapi specs both returned 404, and no docs mention an API explorer despite Jan exposing an OpenAI-compatible local server.",
+    "confidence": "medium",
+    "rationale": "Jan documents an OpenAI-compatible local API server but there is no evidence of an interactive API reference or runnable examples; explicit probes for openapi/swagger specs and docs endpoints all returned 404s.",
     "evidenceIds": [
+      "jan-docs-6",
+      "jan-probe-3",
       "jan-probe-1",
-      "jan-probe-2",
-      "jan-gh-4"
+      "jan-probe-2"
     ]
   },
   {
     "productId": "jan",
     "storyId": "api-machine-spec",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Jan exposes an OpenAI-compatible local API server, which implies an OpenAPI-style spec is at least conceptually available since it mirrors OpenAI's documented API, but there's no evidence of an actual downloadable OpenAPI/swagger file — probes for openapi.json/swagger.json all returned 404. missing for 10: a documented, downloadable OpenAPI spec file or endpoint, explicit API reference docs describing endpoints/schemas.",
+    "verdict": "none",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Jan documents an OpenAI-compatible local API server but there is no evidence of a downloadable OpenAPI/Swagger spec; explicit probes for openapi.json, swagger.json, and related paths all returned 404, confirming absence.",
     "evidenceIds": [
-      "jan-gh-4",
-      "jan-probe-2"
+      "jan-docs-6",
+      "jan-probe-3"
     ]
   },
   {
@@ -218,7 +226,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jan is a local/desktop AI assistant app running models on the user's own machine; there's no concept of 'production data' vs sandbox environment for this product category—no evidence of any staging/testing environment feature exists or is expected.",
+    "rationale": "Jan is a local desktop AI assistant/model runner, not a service with a staging/production data environment; the concept of a sandbox vs. production data separation does not apply to its product category.",
     "evidenceIds": []
   },
   {
@@ -227,11 +235,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "There is no evidence of any versioned API policy or deprecation documentation; probes for openapi/llms.txt returned 404, and the only API-related evidence is a mention of an OpenAI-compatible local server with no versioning or deprecation policy discussion.",
+    "rationale": "Jan documents an OpenAI-compatible local API server but there is no evidence of API versioning scheme or a documented deprecation policy; OpenAPI spec probes returned 404, indicating no discoverable formal API contract docs.",
     "evidenceIds": [
       "jan-gh-4",
-      "jan-probe-1",
-      "jan-probe-2"
+      "jan-docs-6",
+      "jan-probe-3"
     ]
   },
   {
@@ -240,7 +248,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions Apple Silicon, ARM builds, or Metal acceleration; all citations describe generic model download, cloud integration, MCP, and API features without hardware-specific optimization details.",
+    "rationale": "No evidence pack items mention Apple Silicon, ARM builds, Metal, or GPU/hardware-specific acceleration optimizations; Jan runs on llama.cpp locally but nothing documents native ARM/Metal support explicitly. missing for 10: Apple Silicon/ARM build documentation, Metal backend mention, any benchmark or hands-on confirmation of accelerated inference on Mac hardware.",
     "evidenceIds": []
   },
   {
@@ -249,7 +257,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence covers model downloads, cloud connections, custom assistants, MCP integration, and an OpenAI-compatible API, but nothing describes bulk/batch operations across many items (e.g., batch processing files, mass assistant operations, bulk data actions). Missing for 10: any mention of batch processing, multi-item selection, or bulk automation features.",
+    "rationale": "Jan is a single-user chat/assistant desktop app with model management, API server, and agentic MCP features, but there is no evidence of bulk operations across many items (e.g., batch processing conversations, files, or tasks at scale) — only single-file import and single-task autonomous execution are described.",
     "evidenceIds": []
   },
   {
@@ -257,8 +265,8 @@
     "storyId": "automation-rules-engine",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Jan is presented as a local AI chat/assistant app with MCP integration and API access, but no evidence describes a rules engine or event-trigger automation system (e.g., 'when X happens, do Y'). MCP integration enables agentic tool use within a chat session, not autonomous event-driven rule triggers.",
+    "confidence": "medium",
+    "rationale": "Jan documents autonomous agents that execute tasks (files, commands, web research, messaging apps) once given a task, and MCP tool-calling with manual approval, but there is no evidence of user-defined rules or event-triggers (e.g., 'when X happens, do Y') that fire actions automatically without a user-initiated prompt.",
     "evidenceIds": []
   },
   {
@@ -266,8 +274,8 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any scheduling, cron, or recurring workflow trigger capability in Jan; features listed are local models, cloud integration, custom assistants, API server, and MCP, none of which describe recurring job scheduling.",
+    "confidence": "medium",
+    "rationale": "Jan supports assistants, MCP integration, and agentic task execution, but there is no evidence of any scheduling, cron-like recurrence, or automated triggering mechanism for jobs/workflows. missing for 10: recurring job scheduler, cron/timer trigger, workflow automation persistence across sessions.",
     "evidenceIds": []
   },
   {
@@ -276,7 +284,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any versioning, review, diff, or rollback mechanism for automations/assistants/workflows in Jan; evidence only covers model management, MCP, assistants creation, and API access.",
+    "rationale": "No evidence of any versioning, review, or rollback capability for automations/assistants/agents — Jan supports creating assistants and MCP-based agentic tasks, but nothing about tracking changes, reviewing history, or reverting to prior configurations.",
     "evidenceIds": []
   },
   {
@@ -285,12 +293,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Jan supports downloading and running various LLMs from HuggingFace (Llama, Gemma, Qwen, GPT-oss) and connecting to cloud models, but the evidence never mentions MoE architectures, multi-modal models, or embedding models specifically — only generic LLM chat models are referenced. missing for 10: explicit support for MoE architectures, multi-modal models, embedding models, and evidence of 'hundreds' of architectures being supported.",
+    "rationale": "Jan clearly supports running many LLM architectures (Llama, Gemma, Qwen, GPT-oss) via local GGUF import and HuggingFace download, plus cloud model integration, giving broad architecture coverage. However, the evidence never mentions MoE-specific support, multi-modal models, or embedding models, nor any claim of 'hundreds' of architectures. Missing for 10: explicit MoE model support, multi-modal (vision/audio) model support, embedding model support, and any quantified count of supported architectures.",
     "evidenceIds": [
       "jan-gh-1",
-      "jan-gh-8",
-      "jan-gh-6",
-      "jan-docs-1"
+      "jan-gh-2",
+      "jan-docs-10",
+      "jan-docs-11",
+      "jan-docs-6"
     ]
   },
   {
@@ -309,13 +318,13 @@
     "storyId": "built-in-chat-ui",
     "verdict": "full",
     "quality": 8,
-    "confidence": "medium",
-    "rationale": "Jan is described as an open-source ChatGPT replacement/desktop app that lets users download and run local LLMs with full control and privacy, implying a built-in GUI chat interface, and community mention confirms real-world usage as a chat app. Missing for 10: explicit first-party screenshots/docs describing the chat UI itself and independent hands-on review detailing the GUI experience beyond a single brief community comment.",
+    "confidence": "high",
+    "rationale": "Jan is described as a desktop, open-source ChatGPT/Claude replacement with built-in foundation models and assistants, letting users chat with local or cloud models entirely on their own hardware (jan-docs-3, jan-gh-6, jan-docs-1). Community corroboration confirms real-world usage as a chat app (jan-comm-1). missing for 10: no first-party screenshots/UI walkthrough or independent hands-on review detailing the chat UX specifically.",
     "evidenceIds": [
-      "jan-gh-12",
+      "jan-docs-3",
       "jan-gh-6",
-      "jan-gh-1",
-      "jan-docs-2",
+      "jan-docs-1",
+      "jan-gh-12",
       "jan-comm-1"
     ]
   },
@@ -325,11 +334,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence describes Jan as a desktop GUI app with an OpenAI-compatible local server and MCP integration, but nothing indicates a terminal/CLI-based interactive chat session with a model. Missing for 10: any mention of a CLI chat command, terminal REPL, or documentation of starting a chat session from the terminal.",
+    "rationale": "Jan is documented as a desktop GUI application with a local OpenAI-compatible API server and MCP integrations, but no evidence describes a terminal/CLI command for starting an interactive chat session (e.g., a 'jan chat' CLI). The build script reference is about compiling the app, not a terminal chat UX.",
     "evidenceIds": [
-      "jan-gh-4",
-      "jan-gh-13",
-      "jan-gh-7"
+      "jan-gh-7",
+      "jan-docs-6",
+      "jan-gh-12"
     ]
   },
   {
@@ -338,70 +347,82 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jan is primarily a desktop GUI app for downloading and running local LLMs; evidence describes model download via HuggingFace and a local OpenAI-compatible server, but no CLI for searching/downloading/managing models is documented anywhere in the pack.",
-    "evidenceIds": []
+    "rationale": "All model management evidence (searching via Hub search bar, importing GGUF files, pause/resume downloads) describes Jan's desktop GUI, not a command-line interface; no CLI tool for model search/download/management is mentioned anywhere in the evidence pack.",
+    "evidenceIds": [
+      "jan-docs-10",
+      "jan-docs-11",
+      "jan-docs-16"
+    ]
   },
   {
     "productId": "jan",
     "storyId": "cli-runtime-config",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence describes a CLI for loading models with GPU offload or context-length flags; Jan's evidence focuses on GUI-based model download/run, cloud integration, and a local API server, with no mention of command-line configuration options.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "The evidence describes Jan as a desktop GUI application with model settings (GPU offload, context length) presumably configured through UI panels and an OpenAI-compatible local server, but nothing documents a CLI for loading models with custom GPU offload or context-length flags. jan-gh-7 only references a build/launch script, not a model-loading CLI.",
+    "evidenceIds": [
+      "jan-gh-7",
+      "jan-docs-6",
+      "jan-docs-10",
+      "jan-docs-11"
+    ]
   },
   {
     "productId": "jan",
     "storyId": "cli-server-control",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence confirms Jan runs a local OpenAI-compatible API server (localhost:1337) but gives no indication of a CLI command to start/stop that server from the command line — only a build/launch script for the desktop app is mentioned. No documentation or examples of CLI server management were found.",
+    "confidence": "medium",
+    "rationale": "Evidence confirms Jan ships a local OpenAI-compatible API server (localhost:1337, configurable to 0.0.0.0) but nowhere describes a CLI command to start or stop that server — it's presented as a GUI-managed feature. No evidence of any `jan serve`/`jan start`/`jan stop` command or similar CLI tooling exists in the pack.",
     "evidenceIds": [
       "jan-gh-4",
-      "jan-gh-13",
-      "jan-gh-7"
+      "jan-docs-6",
+      "jan-docs-17"
     ]
   },
   {
     "productId": "jan",
     "storyId": "client-library-bindings",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Jan exposes an OpenAI-compatible local API server, which means any official OpenAI Python/JS client library could technically call it, but there's no evidence of Jan-specific official client libraries or SDKs for Python/JavaScript, nor documentation demonstrating this usage pattern. Missing for 10: dedicated Jan client libraries or SDK docs, explicit examples of calling the runtime via Python/JS clients, and independent confirmation of compatibility.",
+    "rationale": "Jan ships a built-in OpenAI-compatible local API server (jan-docs-6, jan-gh-4/13) explicitly marketed as a 'drop-in replacement for cloud APIs,' which lets developers call it using existing OpenAI Python/JS SDKs by pointing the base URL to localhost:1337. However, there is no evidence of a dedicated, officially branded Jan client library for Python or JavaScript — only OpenAI-API compatibility is documented. Missing for 10: an official Jan-branded SDK/package, published API reference (openapi probes 404), and independent developer confirmation of using client libraries against the server.",
     "evidenceIds": [
+      "jan-docs-6",
       "jan-gh-4",
-      "jan-gh-13"
+      "jan-gh-13",
+      "jan-docs-17"
     ]
   },
   {
     "productId": "jan",
     "storyId": "cloud-model-passthrough",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Jan explicitly supports local model downloads alongside cloud provider integration (OpenAI, Anthropic, Mistral, Groq, MiniMax) within the same app, and docs mention plugging in 'favorite online models' alongside open models. Missing for 10: independent hands-on verification of simultaneous use in one interface and details on switching/mixing providers within a single conversation.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Multiple first-party sources confirm Jan runs local models (HuggingFace/GGUF) while also connecting to cloud providers like OpenAI, Anthropic, Mistral, Groq, MiniMax within the same app, explicitly marketed as 'switch freely between local and frontier models.' Community mention corroborates real-world usage as an alternative to cloud-only tools like OpenWebUI. Missing for 10: independent hands-on verification of simultaneous multi-provider switching in a single session.",
     "evidenceIds": [
       "jan-gh-1",
       "jan-gh-2",
       "jan-docs-1",
-      "jan-gh-17",
-      "jan-gh-18"
+      "jan-docs-4",
+      "jan-comm-1"
     ]
   },
   {
     "productId": "jan",
     "storyId": "cloud-offload-large-models",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Jan supports connecting to hosted cloud model providers (OpenAI, Anthropic, Mistral, Groq, MiniMax) as an alternative to running large models locally, which addresses the core need of offloading large models away from local hardware. However, this is framed as generic 'cloud integration' via API keys to third-party providers, not a purpose-built 'hosted cloud tier' offload feature with seamless no-download experience tailored to power-users' large-model needs. Missing for 10: no evidence of a dedicated Jan-hosted cloud tier, no documentation on switching from local to cloud specifically due to hardware insufficiency, no independent hands-on confirmation of this workflow.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Jan documents connecting to external cloud model providers (OpenAI, Claude, Mistral, Groq, etc.) so users can use large frontier models without downloading them locally, and explicitly frames this as switching between local and cloud models without vendor lock-in. However, this is BYO-API-key integration with third-party providers rather than a first-party 'hosted cloud tier' offered by Jan itself, and there's no evidence of Jan-hosted inference infrastructure. Missing for 10: evidence of a Jan-operated hosted cloud tier (vs third-party API connections), and independent confirmation of this offload workflow in practice.",
     "evidenceIds": [
       "jan-gh-2",
       "jan-gh-9",
       "jan-gh-17",
-      "jan-docs-1"
+      "jan-docs-1",
+      "jan-docs-4"
     ]
   },
   {
@@ -410,7 +431,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jan is a BYO-key aggregator that lets users connect to third-party cloud providers (OpenAI, Anthropic, etc.), but there is no evidence Jan itself publishes or documents pricing tiers, rate limits, or usage caps for a 'vendor's hosted cloud tier' — those would be the third-party providers' own terms, not Jan's. No pricing/rate-limit documentation appears anywhere in the evidence pack.",
+    "rationale": "Jan lets users connect to third-party cloud providers (OpenAI, Anthropic, Groq, etc.) via BYOK, but there is no vendor-hosted cloud tier of its own, and no evidence of any documented pricing tiers, rate limits, or usage caps for offloading inference — those would be set by the third-party providers, not Jan.",
     "evidenceIds": []
   },
   {
@@ -419,12 +440,12 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Jan exposes an OpenAI-compatible local API server (localhost:1337) that external applications/agents can use as a backend, plus explicit MCP integration for agentic capabilities, directly enabling a coding agent to connect to it as a backend. Missing for 10: independent hands-on verification of a coding agent successfully using Jan as a backend, and detailed API/OpenAPI documentation (probes returned 404s).",
+    "rationale": "Jan exposes a local OpenAI-compatible API server (localhost:1337, network-accessible via 0.0.0.0) explicitly positioned as a drop-in replacement for cloud APIs, and its docs explicitly state it can be connected to coding agents like Claude Code as well as MCP servers. This directly supports using Jan as a backend for an external coding agent. Missing for 10: independent/hands-on confirmation that a coding agent (e.g. Claude Code) actually works end-to-end against Jan's server, and more detailed setup/config documentation for that specific integration.",
     "evidenceIds": [
+      "jan-docs-6",
+      "jan-docs-8",
       "jan-gh-4",
-      "jan-gh-13",
-      "jan-gh-5",
-      "jan-gh-14"
+      "jan-docs-17"
     ]
   },
   {
@@ -433,7 +454,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence addresses runtime binary size, startup/cold-start time, or lightweight footprint claims; the pack only covers model download, cloud integration, API server, and MCP features, none of which speak to fast cold start from a lightweight binary.",
+    "rationale": "No evidence about binary size, startup time, or cold-start performance is provided anywhere in the pack; Jan is a desktop app powered by llama.cpp but nothing addresses launch speed or a lightweight runtime binary claim.",
     "evidenceIds": []
   },
   {
@@ -442,12 +463,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence confirms Jan runs a local OpenAI-compatible API server, but there is no documentation of maximum concurrent requests/connections or throughput degradation thresholds; API probes for openapi/spec docs returned 404.",
+    "rationale": "No evidence documents any concurrency limits, throughput benchmarks, or performance degradation thresholds for Jan's local API server; docs only describe basic server setup and network binding options.",
     "evidenceIds": [
-      "jan-gh-4",
-      "jan-gh-13",
-      "jan-probe-1",
-      "jan-probe-2"
+      "jan-docs-6",
+      "jan-docs-17"
     ]
   },
   {
@@ -455,8 +474,8 @@
     "storyId": "container-deployment",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Jan is presented as a desktop app (installer-based) with a local API server, but no evidence in the pack mentions Docker/container images or containerized deployment support.",
+    "confidence": "high",
+    "rationale": "No evidence pack item mentions Docker, containers, or any containerized deployment method for Jan; the product is described as a desktop application installed locally, with no reference to container images or reproducible deployment tooling.",
     "evidenceIds": []
   },
   {
@@ -465,8 +484,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of continuous batching, chunked prefill, or any throughput/performance-serving optimizations; Jan's evidence focuses on local model download, chat UI, and API compatibility, not batching internals.",
-    "evidenceIds": []
+    "rationale": "Jan is a desktop app powered by llama.cpp with a local OpenAI-compatible API; there is no mention anywhere in the evidence of continuous batching, chunked prefill, or any high-throughput serving optimizations — these are server-scale inference engine features (e.g., vLLM/TGI) not surfaced in Jan's docs or GitHub description.",
+    "evidenceIds": [
+      "jan-docs-6",
+      "jan-gh-4",
+      "jan-gh-13"
+    ]
   },
   {
     "productId": "jan",
@@ -474,7 +497,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "Evidence shows Jan runs local LLMs and offers privacy/control, but nothing in the pack mentions CPU+GPU hybrid offload or handling models larger than VRAM specifically.",
+    "rationale": "Jan runs local GGUF models via llama.cpp, which conceivably supports CPU+GPU offload, but no evidence in the pack mentions VRAM management, GPU layer offload settings, or running models larger than available VRAM — missing for 10: any documentation of offload/quantization settings, VRAM-related configuration, or hands-on confirmation that combined CPU+GPU inference works for oversized models.",
     "evidenceIds": []
   },
   {
@@ -483,20 +506,22 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions PowerPC or any non-x86/ARM CPU architecture support; Jan's documentation only discusses standard desktop platforms and local model execution generally.",
+    "rationale": "No evidence anywhere in the pack mentions PowerPC, non-x86/ARM architecture support, or any CPU architecture beyond the standard desktop targets; Jan appears distributed only for typical desktop platforms via llama.cpp with no mention of exotic architectures.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "custom-assistant-creation",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Jan explicitly advertises a 'Custom Assistants' feature for creating specialized AI assistants for specific tasks, repeated consistently across GitHub README listings. However, there is no documentation detail on configuration options (system prompts, tools, model bindings per assistant) or independent/hands-on corroboration of this feature working as described. Missing for 10: detailed configuration docs for assistant customization, independent/hands-on verification, and community confirmation of the feature's depth.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Jan explicitly supports creating custom assistants with persona/instruction configuration (e.g. 'Act as a software engineering mentor...') and lets users assign a specific assistant/persona per project so conversations automatically use chosen instructions. This is documented first-party across GitHub feature lists and docs.ai pages. Missing for 10: independent/hands-on user reports validating the assistant customization workflow beyond vendor docs, and more detail on assistant configuration breadth (e.g. tool access scoping per assistant).",
     "evidenceIds": [
       "jan-gh-3",
       "jan-gh-10",
-      "jan-gh-15"
+      "jan-gh-15",
+      "jan-docs-7",
+      "jan-docs-12"
     ]
   },
   {
@@ -504,9 +529,13 @@
     "storyId": "custom-model-identifier",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence confirms Jan has an OpenAI-compatible local server and custom assistants, but there is no mention of assigning custom identifiers/aliases to loaded models for API reference; API/OpenAPI probes returned 404s, leaving this capability unevidenced.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Jan documents an OpenAI-compatible local API server and model loading via Hugging Face IDs or GGUF import, but no evidence describes assigning a custom identifier/alias to a loaded model for consistent reference in API calls.",
+    "evidenceIds": [
+      "jan-docs-6",
+      "jan-docs-10",
+      "jan-docs-11"
+    ]
   },
   {
     "productId": "jan",
@@ -514,7 +543,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Jan is a local desktop app for running/chatting with LLMs, not a large-scale serving/inference infrastructure system; prefill-decode disaggregation is a datacenter-scale serving optimization technique irrelevant to this product category.",
+    "rationale": "Jan is a desktop app for running local/cloud LLMs for individual users, not a large-scale serving infrastructure; prefill/decode disaggregation is a distributed-inference-cluster optimization concept that doesn't apply to this product category.",
     "evidenceIds": []
   },
   {
@@ -523,7 +552,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of tensor, pipeline, or data parallelism across multiple GPUs; Jan is presented as a local desktop app for running single-model inference with an OpenAI-compatible API, with no mention of multi-GPU distribution strategies.",
+    "rationale": "Jan is a desktop app for running local models (via llama.cpp) with no evidence of tensor/pipeline/data parallelism or multi-GPU distribution features; documentation only covers single-model local inference and cloud API connections.",
     "evidenceIds": []
   },
   {
@@ -532,7 +561,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers local LLM running, cloud model connections, custom assistants, MCP integration, and API server, but there is no mention of document ingestion, embeddings, vector search, or RAG functionality anywhere in the pack — chatting with 'your own documents' is not evidenced.",
+    "rationale": "Evidence shows Jan supports local LLMs, custom assistants, MCP integrations, and file import for models, but there is no mention of document ingestion, indexing, or retrieval-augmented generation (RAG) over user documents anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -540,23 +569,23 @@
     "storyId": "document-editing-assistant",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Jan is a local LLM chat/assistant client with model management, cloud integration, and MCP support, but there is no evidence of an integrated document workspace with AI drafting/editing and autosave features.",
+    "confidence": "medium",
+    "rationale": "Jan is a chat/agent interface for local and cloud LLMs with MCP/tool-use and file/command/web-research agentic capabilities, but there is no evidence of an integrated document workspace (e.g., a canvas/editor) where an agent drafts and edits documents with autosave. The closest features (assistants, chat, MCP, autonomous tasks) do not describe document authoring/editing UX.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "download-models-from-huggingface",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "GitHub README explicitly states Jan can download and run LLMs (Llama, Gemma, Qwen, GPT-oss etc.) from HuggingFace, directly matching the story, and this is repeated consistently across multiple citations plus docs confirming choice of open models. Missing for 10: independent hands-on verification of the HuggingFace download flow and more detailed documentation of the UX (e.g., search/filter within Jan) beyond marketing bullet points.",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Jan's docs and README explicitly support downloading and running open models from Hugging Face (Llama, Gemma, Qwen, GPT-oss etc.), with a documented Hub search feature to enter a Hugging Face model ID directly. Missing for 10: independent hands-on verification/community corroboration of the HF download flow beyond vendor docs.",
     "evidenceIds": [
       "jan-gh-1",
-      "jan-gh-8",
-      "jan-gh-16",
+      "jan-gh-6",
       "jan-docs-1",
-      "jan-gh-6"
+      "jan-docs-11",
+      "jan-docs-3"
     ]
   },
   {
@@ -564,8 +593,8 @@
     "storyId": "embedding-model-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Jan's evidence focuses on chat/LLM model download, cloud integration, and OpenAI-compatible chat API, with no mention of embedding model support or embeddings endpoint for retrieval/search use cases.",
+    "confidence": "medium",
+    "rationale": "Jan focuses on LLM chat/agent workflows (local LLMs, cloud LLM connectors, assistants, MCP) with no evidence of serving dedicated embedding models or embeddings API endpoints for retrieval/search use cases.",
     "evidenceIds": []
   },
   {
@@ -574,17 +603,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack item addresses licensing terms, commercial/enterprise use restrictions, or paid tiers beyond the open-source community edition.",
+    "rationale": "No evidence pack item mentions licensing terms, commercial/enterprise use restrictions, or a paid tier beyond the free community edition; all evidence covers features (local models, MCP, API server) rather than licensing.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "flexible-integer-quantization",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "The evidence pack mentions downloading and running LLMs from HuggingFace but never discusses quantization formats, bit-width options, or memory footprint reduction techniques like GGUF quantization levels.",
-    "evidenceIds": []
+    "rationale": "Jan runs GGUF models via llama.cpp (jan-docs-6, jan-docs-10), and GGUF format inherently supports a range of integer quantization levels, implying the capability exists, but the evidence pack never explicitly documents quantization options, bit-level selection, or memory-footprint controls for power-users. Missing for 10: explicit documentation of supported quant levels (e.g., Q2_K–Q8_0), UI for choosing quantization at download/import, and any hands-on confirmation of memory savings.",
+    "evidenceIds": [
+      "jan-docs-6",
+      "jan-docs-10",
+      "jan-docs-11"
+    ]
   },
   {
     "productId": "jan",
@@ -592,21 +625,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence addresses runtime upgrade compatibility, versioning notes, or migration guidance for quantized model files; the pack only covers general download/run features and API/integration claims.",
+    "rationale": "No evidence pack item discusses runtime version upgrades, backward-compatibility guarantees, or migration notes for previously downloaded GGUF/quantized model files; documentation covers importing GGUF files and using models but not runtime-upgrade compatibility risks.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "gguf-format-support",
-    "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Jan is marketed as downloading and running LLMs (Llama, Gemma, Qwen, GPT-oss) from HuggingFace with full local control, which in practice implies GGUF-packaged models (the standard format for such local runners), but no evidence explicitly names GGUF format support or details quantization handling. Missing for 10: explicit mention of GGUF format, documentation on quantization levels/compatibility, and hands-on confirmation of loading arbitrary GGUF files.",
+    "verdict": "full",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Jan's docs explicitly support importing local GGUF files via 'Import Model' and pulling Hugging Face models, and the backend is powered by llama.cpp which natively runs GGUF, backed by GitHub descriptions of downloading and running LLMs. Missing for 10: independent hands-on verification of GGUF loading beyond vendor docs.",
     "evidenceIds": [
+      "jan-docs-10",
+      "jan-docs-6",
       "jan-gh-1",
-      "jan-gh-6",
-      "jan-docs-1",
-      "jan-gh-16"
+      "jan-docs-11"
     ]
   },
   {
@@ -615,7 +648,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack item mentions GPU acceleration diagnostics, fallback detection, or logging around hardware acceleration failures; all citations focus on model downloading, cloud integration, and general features.",
+    "rationale": "No evidence in the pack discusses GPU acceleration diagnostics, fallback detection, or logging around hardware acceleration failures; nothing addresses this specific power-user diagnostic need.",
     "evidenceIds": []
   },
   {
@@ -624,12 +657,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Jan is presented as a desktop GUI app (Electron-based ChatGPT-replacement) with a bundled local OpenAI-compatible server for other apps to call, but nothing in the evidence describes a headless/no-GUI mode, CLI-only launch, or Docker/CI-friendly deployment of the runtime itself. The install/launch script explicitly 'launches the app,' implying GUI dependency.",
+    "rationale": "Jan is documented as a desktop GUI application (Electron-based) with a built-in local API server that runs alongside the GUI, and there is no evidence of a headless/server-only launch mode, CLI-driven daemon, or container/CI-oriented deployment path.",
     "evidenceIds": [
+      "jan-docs-3",
+      "jan-docs-6",
       "jan-gh-7",
-      "jan-gh-12",
-      "jan-gh-4",
-      "jan-gh-13"
+      "jan-docs-17"
     ]
   },
   {
@@ -647,7 +680,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack mentions speech dictation, voice input, or real-time transcription features; Jan's evidence focuses on LLM chat, cloud integration, custom assistants, and MCP support.",
+    "rationale": "No evidence in the pack mentions speech dictation, voice input, or real-time transcription features in Jan; all evidence covers text-based chat, models, MCP, and API server capabilities.",
     "evidenceIds": []
   },
   {
@@ -656,7 +689,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions LoRA adapters, adapter switching, or multi-adapter serving; Jan's documented features cover model download, cloud integration, custom assistants, and an OpenAI-compatible API, none of which address LoRA adapter serving.",
+    "rationale": "Jan is a local desktop app for running single LLMs (GGUF import, HuggingFace models) with no mention anywhere in the evidence of LoRA adapters, adapter switching, or multi-adapter serving infrastructure.",
     "evidenceIds": []
   },
   {
@@ -664,8 +697,8 @@
     "storyId": "low-level-server-tuning-flags",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence of exposing low-level engine settings like mmap or memory-locking controls; evidence pack only covers model downloading, cloud integration, API server, and MCP features, with no mention of engine-level configuration knobs.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions low-level engine controls like memory locking, mmap toggles, context size, GPU layers, or other llama.cpp engine parameters being exposed for user override; docs mention API server binding address and model import but nothing about engine-level tuning knobs.",
     "evidenceIds": []
   },
   {
@@ -674,30 +707,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of release notes, changelog, CVE history, or patch cadence is present in the pack; all items describe features rather than release/security response history. Missing for 10: changelog/release notes history, security advisory records, patch turnaround examples.",
+    "rationale": "No evidence in the pack references release cadence, changelog patch frequency for security fixes, CVE history, or time-to-patch metrics; only a generic changelog mention of features (browser automation, download pause/resume) without any security/bugfix timing data.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "model-cache-portability",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows Jan downloads models from HuggingFace and runs them locally, but nothing addresses whether Jan's model storage/cache format is shared or interoperable with other runtimes (e.g., Ollama, llama.cpp) to avoid re-downloading or re-converting files.",
-    "evidenceIds": []
+    "rationale": "Jan lets users import existing local GGUF files directly (jan-docs-10) and search/download models from Hugging Face (jan-docs-11), implying some reuse of already-downloaded model files rather than mandatory re-download. However there is no explicit documentation on cache directory structure, compatibility with other runtimes' caches (e.g., Ollama, LM Studio, llama.cpp cache reuse), or guarantees against re-conversion. missing for 10: explicit cache/format interoperability docs, cross-runtime reuse confirmation, independent verification of no re-conversion needed.",
+    "evidenceIds": [
+      "jan-docs-10",
+      "jan-docs-11",
+      "jan-gh-1"
+    ]
   },
   {
     "productId": "jan",
     "storyId": "model-config-management",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Evidence confirms Jan lets users download/manage local models and create custom assistants, which implies some per-model and prompt organization, but there's no explicit documentation of a unified UI for managing saved prompts or per-model configuration settings together. Missing for 10: dedicated docs/screenshots of a model management dashboard, prompt library feature, and per-model config UI, plus independent hands-on confirmation.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Jan documents model downloading/importing (Hub search, GGUF import), assistants with custom personas/instructions assigned per-project, and a settings/API server config, covering models, prompts, and configs in one app. However, there's no evidence of a unified management view combining all three, and no independent hands-on confirmation of usability. missing for 10: dedicated unified dashboard evidence for models+prompts+configs together, independent/community corroboration of this workflow.",
     "evidenceIds": [
-      "jan-gh-1",
+      "jan-docs-10",
+      "jan-docs-11",
+      "jan-docs-12",
+      "jan-docs-7",
       "jan-gh-3",
-      "jan-gh-6",
-      "jan-docs-1"
+      "jan-docs-6"
     ]
   },
   {
@@ -706,11 +745,12 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "low",
-    "rationale": "Jan supports downloading/running multiple local LLMs and exposes an OpenAI-compatible local server, implying model switching without restarting the app, but there's no explicit documentation confirming hot-swapping models via the API server without a restart, and no independent/hands-on confirmation. Missing for 10: explicit docs on runtime model switching via API without restart, and independent verification of this specific serving-api behavior.",
+    "rationale": "Jan supports downloading/importing multiple local models and running an OpenAI-compatible API server (jan-docs-6, jan-docs-10, jan-docs-11), implying the ability to load different models via the UI, but there is no explicit documentation confirming the API server can hot-swap models without restarting the server process itself. missing for 10: explicit docs on live model switching via API without server restart, independent/hands-on confirmation of hot-swap behavior.",
     "evidenceIds": [
-      "jan-gh-1",
-      "jan-gh-13",
-      "jan-docs-1"
+      "jan-docs-6",
+      "jan-docs-10",
+      "jan-docs-11",
+      "jan-gh-1"
     ]
   },
   {
@@ -719,17 +759,24 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Evidence shows Jan lets users browse and download models from HuggingFace and run them locally, but there is no mention of any assistant that recommends which model fits a user's specific hardware or task before download.",
-    "evidenceIds": []
+    "rationale": "Jan provides a Hub for browsing/downloading Hugging Face models and importing GGUF files, but no evidence shows any recommendation engine that suggests which model best fits the user's hardware or task before download.",
+    "evidenceIds": [
+      "jan-docs-10",
+      "jan-docs-11"
+    ]
   },
   {
     "productId": "jan",
     "storyId": "modern-quant-format-support",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only shows generic model downloading/running from HuggingFace with no mention of specific quantization formats like FP8, INT4, GPTQ, or AWQ support.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Jan documents importing GGUF files or pulling Hugging Face models, and running via llama.cpp, but there is no mention anywhere of support for FP8, INT4, GPTQ, or AWQ quantization formats specifically — llama.cpp's ecosystem centers on GGUF, and no evidence shows loading these other quant formats.",
+    "evidenceIds": [
+      "jan-docs-10",
+      "jan-docs-11",
+      "jan-docs-6"
+    ]
   },
   {
     "productId": "jan",
@@ -737,7 +784,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence describes reserved capacity, concurrency guarantees, or throughput management for multiple simultaneous agents/sessions; evidence only covers model downloading, cloud integration, local API server, and MCP support, none of which address dedicated capacity reservation.",
+    "rationale": "Jan is a single-user local desktop app running models via llama.cpp; there is no evidence of any capacity reservation, request queuing, or concurrency management for multiple agents/sessions issuing simultaneous requests. The evidence only covers model downloading, API server existence, and MCP integration, none of which address throughput guarantees under concurrent load.",
     "evidenceIds": []
   },
   {
@@ -746,7 +793,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence describes any control over context memory allocation across concurrent model instances; evidence only covers downloading models, cloud integration, MCP, and API server. Missing for 10: memory allocation controls, concurrent instance management, resource configuration UI/settings.",
+    "rationale": "No evidence describes memory/context allocation controls for running multiple concurrent model instances; documentation covers model download, API server, assistants, and MCP but nothing about concurrency resource management or memory tuning.",
     "evidenceIds": []
   },
   {
@@ -755,49 +802,59 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence in the pack mentions GPU vendor support, NVIDIA/AMD acceleration kernels, CUDA, ROCm, Vulkan, or hardware-specific backends; all citations focus on model downloading, cloud integration, and API/MCP features.",
+    "rationale": "Evidence covers running local GGUF models via llama.cpp and cloud model connections, but there is no mention of GPU vendor-specific acceleration kernels (e.g., NVIDIA CUDA, AMD ROCm/Vulkan) or any hardware backend selection/configuration for different GPU vendors. Missing for 10: explicit support/documentation for NVIDIA CUDA, AMD ROCm, Intel/other GPU backends, and any vendor-specific kernel or acceleration configuration.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "network-accessible-serving",
-    "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "Jan exposes an OpenAI-compatible local API server at localhost:1337, which could be accessed by other devices on a local network if bound to the machine's network interface, but there is no explicit evidence of network-binding configuration, LAN-access documentation, or hands-on confirmation that this works beyond localhost. Missing for 10: explicit docs on binding to 0.0.0.0 or network interface for LAN access, firewall/network setup guidance, and independent confirmation of cross-device usage.",
+    "verdict": "full",
+    "quality": 8,
+    "confidence": "high",
+    "rationale": "Jan's docs explicitly document binding the API server to 0.0.0.0 to make it accessible from other devices on the local network, alongside its OpenAI-compatible local server feature. Missing for 10: independent/hands-on confirmation of cross-device access working in practice and details on authentication/security for LAN exposure.",
     "evidenceIds": [
-      "jan-gh-4",
-      "jan-gh-13"
+      "jan-docs-17",
+      "jan-docs-6",
+      "jan-gh-4"
     ]
   },
   {
     "productId": "jan",
     "storyId": "one-command-agent-launch",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of Jan providing a launcher for third-party coding agent CLIs pre-configured to use local models; Jan offers a local OpenAI-compatible API and MCP integration, but nothing about launching external CLI agents with a single command.",
-    "evidenceIds": []
+    "verdict": "partial",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Jan documents connecting with third-party agent CLIs like Claude Code alongside MCP servers, implying some integration path, but there's no evidence of a single-command launch mechanism or pre-configured CLI wrapper as described in the story. missing for 10: documented single-command launch flow, evidence of actual CLI pre-configuration, independent confirmation of this workflow.",
+    "evidenceIds": [
+      "jan-docs-8",
+      "jan-gh-5",
+      "jan-docs-9"
+    ]
   },
   {
     "productId": "jan",
     "storyId": "open-source-contribution",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "Jan is confirmed open-source on GitHub, but the evidence pack contains no mention of contribution guidelines, PR process, contributor recognition, governance, or community collaborator status.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Jan is confirmed open-source (GitHub repo, build instructions in jan-gh-7) but the evidence pack contains no contribution guidelines, PR/review process, contributor recognition program, or community governance details that would let a developer become a recognized collaborator.",
+    "evidenceIds": [
+      "jan-gh-7",
+      "jan-gh-12"
+    ]
   },
   {
     "productId": "jan",
     "storyId": "openai-compatible-server",
     "verdict": "full",
-    "quality": 8,
-    "confidence": "medium",
-    "rationale": "Jan explicitly documents an OpenAI-Compatible API served locally at localhost:1337 for use by other applications, directly matching the story, and this is corroborated across multiple repo listings. Missing for 10: independent hands-on verification of the server working with arbitrary loaded models, and official API docs/OpenAPI spec (probes returned 404).",
+    "quality": 9,
+    "confidence": "high",
+    "rationale": "Jan documents a built-in OpenAI-compatible API server running locally at localhost:1337, powered by llama.cpp, usable as a drop-in replacement for cloud APIs, and configurable to be accessible on the local network for other applications. This is corroborated across both GitHub README and official docs. Missing for 10: independent hands-on verification/community confirmation of the server's compatibility in practice.",
     "evidenceIds": [
       "jan-gh-4",
-      "jan-gh-13"
+      "jan-gh-13",
+      "jan-docs-6",
+      "jan-docs-17"
     ]
   },
   {
@@ -805,25 +862,29 @@
     "storyId": "openness-api-parity",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "low",
-    "rationale": "Jan exposes an OpenAI-compatible local API (localhost:1337) for chat/model inference, but there's no evidence that UI-only features like managing custom assistants, MCP configuration, or model downloads are exposed via API — and probes for an OpenAPI spec/docs returned 404, suggesting no comprehensive API surface parity is documented. missing for 10: documented API endpoints for assistants/MCP/model management, published OpenAPI spec, independent confirmation of API-UI parity.",
+    "confidence": "medium",
+    "rationale": "Jan exposes an OpenAI-compatible local API server for inference (drop-in replacement for cloud APIs), but evidence only covers chat completions — there's no documentation of API endpoints for model downloading/import, custom assistant creation, MCP server configuration, or project/persona management, all of which are UI-driven features. Probes for an OpenAPI spec or docs.md returned 404s, reinforcing that a comprehensive API surface matching the UI isn't evidenced. missing for 10: API endpoints for assistant creation/management, model download/import via API, MCP configuration via API, published OpenAPI spec confirming full UI parity.",
     "evidenceIds": [
       "jan-gh-4",
-      "jan-gh-13",
-      "jan-gh-5",
-      "jan-gh-14",
-      "jan-probe-2",
-      "jan-probe-1"
+      "jan-docs-6",
+      "jan-docs-9",
+      "jan-docs-12",
+      "jan-probe-3"
     ]
   },
   {
     "productId": "jan",
     "storyId": "openness-full-export",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 3,
     "confidence": "low",
-    "rationale": "No evidence of a data export feature or open-format export/portability mechanism; being open-source and local doesn't itself demonstrate an export/leave capability for chat history, assistants, or settings.",
-    "evidenceIds": []
+    "rationale": "Jan's docs emphasize local-first storage, open-source code, and 'no vendor lock-in' when switching models, implying user data lives on-device rather than in a locked cloud silo, but there is no explicit documentation of a dedicated 'export data' feature or the specific open file formats (chat logs, settings, model configs) a user would take with them. missing for 10: explicit export/backup feature documentation, named open data formats (e.g., JSON/SQLite schema) for chats and settings, and any independent confirmation of a full data-export workflow.",
+    "evidenceIds": [
+      "jan-docs-4",
+      "jan-docs-3",
+      "jan-docs-5",
+      "jan-gh-18"
+    ]
   },
   {
     "productId": "jan",
@@ -831,11 +892,11 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Jan is hosted publicly on GitHub as an open-source project (\"Jan - Open-source ChatGPT replacement\"), with build instructions visible, indicating the source is readable and available for inspection. Missing for 10: explicit license file/name (e.g., AGPL/MIT) confirmation and independent commentary verifying license terms.",
+    "rationale": "The GitHub repo (janhq/jan) is publicly described as an 'Open-source ChatGPT replacement,' and docs corroborate it as an open-source local AI app, confirming the source is publicly readable. Missing for 10: explicit statement of the specific open-source license (e.g. AGPL/MIT) and independent confirmation of license terms.",
     "evidenceIds": [
       "jan-gh-12",
-      "jan-gh-7",
-      "jan-gh-1"
+      "jan-docs-3",
+      "jan-gh-7"
     ]
   },
   {
@@ -844,14 +905,14 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Jan is an open-source, locally-installable application (build/install instructions given) that runs models entirely on-device, exposes a local OpenAI-compatible API, and emphasizes privacy/full control — this is effectively self-hosting the core product. Missing for 10: no explicit dedicated self-hosting/server deployment guide (e.g., Docker/server install docs) or independent hands-on confirmation of a full self-hosted setup beyond desktop app installation.",
+    "rationale": "Jan is explicitly open-source and designed to run entirely on the user's own hardware, with build-from-source instructions, a local OpenAI-compatible API server, and network-accessible mode for other devices — core hallmarks of self-hosting. Missing for 10: dedicated server/Docker-style self-hosting deployment guide for multi-user or headless hosting, and independent third-party confirmation of a full self-hosted setup beyond the desktop app.",
     "evidenceIds": [
-      "jan-gh-7",
-      "jan-gh-6",
-      "jan-gh-18",
-      "jan-gh-4",
       "jan-gh-12",
-      "jan-docs-2"
+      "jan-gh-7",
+      "jan-docs-3",
+      "jan-docs-6",
+      "jan-docs-17",
+      "jan-gh-18"
     ]
   },
   {
@@ -860,7 +921,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence describes Jan's features and a build script (jan-gh-7) but shows no installation via a standard package manager (npm, brew, apt, winget, pip, etc.); only manual build/launch process is mentioned.",
+    "rationale": "Evidence shows only a build/setup script that 'installs dependencies, builds core components, and launches the app' (jan-gh-7), not installation via a standard package manager (e.g., brew, apt, npm, winget). No mention of any package-manager-based install path exists in the pack.",
     "evidenceIds": [
       "jan-gh-7"
     ]
@@ -870,8 +931,8 @@
     "storyId": "prebuilt-binaries",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence only shows a build-from-source script ('installs dependencies, builds core components, and launches the app') but no mention of prebuilt binaries, installers, or package manager distributions (e.g., .exe, .dmg, .AppImage, brew, apt).",
+    "confidence": "medium",
+    "rationale": "The evidence pack only describes a build script that 'installs dependencies, builds core components, and launches the app' (jan-gh-7), implying a from-source build flow, but there is no mention anywhere of downloadable prebuilt binaries, installers, or packages (e.g., .exe, .dmg, .deb, package manager listings) for Jan.",
     "evidenceIds": [
       "jan-gh-7"
     ]
@@ -882,75 +943,79 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence pack items mention prefix caching, KV-cache reuse, or any performance optimization for repeated prompts; only generic feature lists and API endpoints are documented.",
+    "rationale": "No evidence pack item mentions prefix caching, KV cache reuse, or any performance optimization for repeated prompts; Jan's docs focus on model management, API server, and MCP/agent features without addressing this specific inference-performance capability.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "privacy-data-residency",
-    "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Jan lets users keep all data fully local ('Everything runs locally when you want it,' 'Personal Intelligence that answers only to you'), which gives coarse control over data location (device vs. cloud) but there is no evidence of formal region/residency selection (e.g., choosing EU/US servers) for its cloud integrations. missing for 10: explicit region/residency controls for cloud-connected providers, documentation on where cloud API calls are routed/stored.",
+    "verdict": "na",
+    "quality": 0,
+    "confidence": "high",
+    "rationale": "Jan is a local-first desktop app that runs entirely on the user's own hardware rather than a multi-region cloud service; there is no cloud data-center infrastructure across which a user could select a residency region. The axis of 'choosing a storage region' is a category error for this product type — its equivalent control is local-vs-cloud model choice, not regional data-center selection.",
     "evidenceIds": [
-      "jan-gh-18",
-      "jan-docs-2",
-      "jan-gh-9"
+      "jan-docs-3",
+      "jan-docs-5",
+      "jan-gh-18"
     ]
   },
   {
     "productId": "jan",
     "storyId": "privacy-no-training",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Jan emphasizes local-first operation ('Privacy First: Everything runs locally when you want it to', 'Personal Intelligence that answers only to you', 'full control and privacy'), which inherently keeps data off vendor training pipelines when using local models. However, there is no explicit policy statement about data usage/training when using cloud-integrated models (OpenAI, Claude, etc.), which the product also supports. Missing for 10: explicit no-training data policy/documentation, terms clarifying cloud-provider data handling, independent privacy audit or community confirmation.",
+    "rationale": "Jan runs local models entirely on-device with 'zero data collection until you say so' and explicit privacy-first design, meaning user data/conversations are not sent to third parties for training by default; local-only operation inherently prevents data being used for AI training. Missing for 10: independent/hands-on verification of the privacy claims and no explicit policy statement addressing cloud-model usage data (when users opt into cloud providers) regarding training use.",
     "evidenceIds": [
-      "jan-gh-18",
+      "jan-docs-5",
       "jan-docs-2",
-      "jan-gh-6",
-      "jan-gh-2"
+      "jan-gh-18",
+      "jan-docs-3",
+      "jan-gh-6"
     ]
   },
   {
     "productId": "jan",
     "storyId": "privacy-retention-controls",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "low",
-    "rationale": "Jan's local-first architecture and 'full control and privacy' messaging imply user data (chats, models) stays on-device and is inherently under user control, but no evidence pack item documents explicit retention settings, data export, or deletion features within the app. missing for 10: explicit in-app data retention/deletion controls, documented data lifecycle policy, independent confirmation of local-only storage behavior.",
+    "quality": 5,
+    "confidence": "medium",
+    "rationale": "Jan's local-first architecture and 'zero data collection until you say so' policy imply strong user control over data since everything runs on-device by default, giving users inherent power over retention (jan-docs-5, jan-docs-2, jan-gh-18). However, there is no explicit documentation of retention settings, chat history deletion, or data export/removal tools. Missing for 10: explicit UI/settings for deleting conversation history or model data, data export controls, and any documented retention policy for cloud-connected models.",
     "evidenceIds": [
-      "jan-gh-6",
+      "jan-docs-5",
       "jan-docs-2",
-      "jan-docs-1"
+      "jan-gh-18",
+      "jan-docs-3"
     ]
   },
   {
     "productId": "jan",
     "storyId": "privacy-telemetry-optout",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence only covers general privacy/local-run positioning (e.g. 'Privacy First: Everything runs locally when you want it to') but no explicit mention of a telemetry/usage-tracking opt-out setting or toggle.",
+    "verdict": "full",
+    "quality": 7,
+    "confidence": "medium",
+    "rationale": "Jan's dedicated privacy docs page states 'Zero data collection until you say so,' directly indicating telemetry/data collection is opt-in rather than default-on, backed by the broader 'Privacy First: Everything runs locally when you want it to' positioning. Missing for 10: explicit UI toggle/setting documentation for disabling telemetry, and independent/community verification that no background telemetry occurs.",
     "evidenceIds": [
+      "jan-docs-5",
       "jan-gh-18",
-      "jan-docs-2"
+      "jan-docs-3"
     ]
   },
   {
     "productId": "jan",
     "storyId": "private-local-inference-guarantee",
     "verdict": "full",
-    "quality": 8,
+    "quality": 9,
     "confidence": "high",
-    "rationale": "Jan explicitly supports downloading and running LLMs locally with 'full control and privacy,' branding itself as 'Privacy First' where 'everything runs locally when you want it to,' and offers a local OpenAI-compatible API server — directly matching the power-user's need to keep data on-device. Community mention confirms real-world usage, though it's not deeply detailed. Missing for 10: independent technical verification of offline/air-gapped operation and no confirmation that telemetry is fully disabled by default.",
+    "rationale": "Jan is built around fully local inference via llama.cpp, with local model downloads (HuggingFace/GGUF), a local-only OpenAI-compatible API server, and explicit privacy claims of zero data collection and hardware-only execution, corroborated by consistent first-party docs and GitHub README across multiple entries. missing for 10: independent hands-on verification of the zero-data-collection claim beyond vendor docs.",
     "evidenceIds": [
+      "jan-gh-1",
       "jan-gh-6",
       "jan-gh-18",
-      "jan-gh-1",
-      "jan-gh-4",
-      "jan-docs-2",
-      "jan-comm-1"
+      "jan-docs-3",
+      "jan-docs-5",
+      "jan-docs-6",
+      "jan-docs-10"
     ]
   },
   {
@@ -958,18 +1023,19 @@
     "storyId": "speculative-decoding",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack mentions speculative decoding, draft models, or any related inference-acceleration technique; only generic model-running and API features are documented.",
+    "confidence": "medium",
+    "rationale": "No evidence pack item mentions speculative decoding, draft models, or any technique for accelerating token generation speed; coverage focuses on model download, cloud integration, MCP, and API server features only.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "streaming-token-output",
     "verdict": "partial",
-    "quality": 6,
-    "confidence": "medium",
-    "rationale": "Jan exposes an OpenAI-compatible local API server, which by convention supports streaming responses, but no evidence explicitly confirms token streaming behavior, SDK examples, or independent verification of this specific capability. Missing for 10: explicit documentation/example of streaming (SSE) responses from the local API, independent confirmation that streaming works as expected.",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Jan documents a local OpenAI-compatible API server (localhost:1337, powered by llama.cpp) intended as a drop-in replacement for cloud APIs, which implies standard OpenAI-style streaming support, but no evidence explicitly confirms token-by-token streaming behavior or shows a streaming code example. missing for 10: explicit documentation or example of stream=true / SSE token streaming, independent confirmation that streaming works as expected.",
     "evidenceIds": [
+      "jan-docs-6",
       "jan-gh-4",
       "jan-gh-13"
     ]
@@ -980,20 +1046,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence mentions grammar-based constrained decoding, JSON schema enforcement, or structured output support; only general API/server and model integration features are documented.",
+    "rationale": "Jan's evidence covers local model serving, an OpenAI-compatible API server, and MCP tool integration, but there is no mention of grammar-based or JSON-schema-constrained output/structured generation anywhere in the docs or GitHub materials.",
     "evidenceIds": []
   },
   {
     "productId": "jan",
     "storyId": "tool-calling-support",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Jan has an OpenAI-compatible local API and MCP integration for agentic capabilities, but there is no mention of native tool-calling support in API requests or a reasoning-parser (e.g., for chain-of-thought/thinking tokens) in the serving API. OpenAPI/spec probes also returned 404s, giving no confirmation of these specific request features.",
+    "verdict": "partial",
+    "quality": 5,
+    "confidence": "low",
+    "rationale": "Jan supports MCP integration and tool-call approval flows, plus an OpenAI-compatible local API server, suggesting some tool-calling ability, but there is no explicit mention of a reasoning-parser or native structured tool-calling format in the served API responses. missing for 10: explicit documentation of reasoning-parser support, native tool-calling schema/format details in API requests/responses, and independent confirmation of tool-calling correctness via the API server.",
     "evidenceIds": [
-      "jan-gh-4",
       "jan-gh-5",
-      "jan-probe-2"
+      "jan-docs-8",
+      "jan-docs-9",
+      "jan-docs-6"
     ]
   },
   {
@@ -1002,7 +1069,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "No evidence mentions vision-language models, image inputs, or multimodal capability; evidence only covers text LLMs, cloud integration, custom assistants, and API/MCP support. Missing for 10: any mention of VLM support, image understanding, multimodal model download or inference.",
+    "rationale": "No evidence pack item mentions vision, multimodal, or image inputs; all model support references (Llama, Gemma, Qwen, GPT-oss) and download flows are text-only oriented with no mention of VLM capability.",
     "evidenceIds": []
   },
   {
@@ -1010,8 +1077,8 @@
     "storyId": "vulkan-fallback-acceleration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item mentions Vulkan, AMD GPU support, or ROCm-free acceleration; only generic model-running and privacy claims are present.",
+    "confidence": "low",
+    "rationale": "No evidence pack item mentions Vulkan, AMD GPU support, or any GPU backend selection; all citations focus on model management, cloud integration, MCP, and API server features. Since GPU acceleration backends are a plausible axis for a local inference app, absence of evidence yields 'none' rather than 'na'.",
     "evidenceIds": []
   },
   {
@@ -1019,8 +1086,8 @@
     "storyId": "x86-simd-acceleration",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence in the pack mentions CPU instruction set optimizations (AVX, AVX2, AVX512, AMX) or any hardware-acceleration tuning for x86 CPUs; the evidence only covers model downloading, cloud integration, MCP, and API server features.",
+    "confidence": "low",
+    "rationale": "Jan runs inference via llama.cpp locally, which does support AVX/AVX2/AVX512 under the hood, but no evidence in this pack mentions CPU instruction set optimizations, AVX, AVX2, AVX512, or AMX at all.",
     "evidenceIds": []
   },
   {
