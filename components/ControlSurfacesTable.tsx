@@ -254,6 +254,7 @@ function SurfaceRows({
             <span aria-hidden className="mr-1.5 inline-block text-zinc-500">
               {expanded ? '▾' : '▸'}
             </span>
+            <span aria-hidden className="mr-1.5">{row.icon}</span>
             {row.name}
           </button>
           <p className="mt-0.5 text-xs text-zinc-500">{row.blurb}</p>
