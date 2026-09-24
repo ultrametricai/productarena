@@ -301,6 +301,15 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <GeoMark seed="processes" title="Processes — end-to-end workflows across products" size={13} className="hidden text-zinc-500 sm:inline-flex" />
                 Processes
               </Link>
+              {/* Founder 2026-09-24 ("i don't see /technologies"): Control surfaces gets a
+                  top-level entry — a dropdown-only link wasn't discoverable. */}
+              <Link
+                href="/technologies"
+                className="flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-300 transition hover:border-emerald-400/60 hover:text-emerald-300"
+              >
+                <GeoMark seed="technologies" title="Technologies — API, MCP, CLI & other control surfaces, ranked from fleet-wide judged evidence" size={13} className="hidden text-zinc-500 sm:inline-flex" />
+                Technologies
+              </Link>
               {/* geo: every Explore destination wears its deterministic concept mark
                   (components/GeoMark.tsx), the same mark it wears on its own page header. */}
               {/* Founder 2026-09-21: the ranking entries come in TWO labeled groups so it's
@@ -325,7 +334,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     name: "More views",
                     items: [
                       { id: "global", name: "Capability adoption", label: "stats", href: "/global" },
-                      { id: "technologies", name: "Control surfaces", label: "stats", href: "/technologies" },
+                      { id: "technologies", name: "Technologies (control surfaces)", label: "stats", href: "/technologies" },
                       { id: "missing", name: "Missing startups", label: "gaps", href: "/missing" },
                       { id: "operating-rhythm", name: "Operating rhythm", label: "processes", href: "/processes/operating-rhythm" },
                       { id: "icp", name: `ICP lenses (${icpTypes.length})`, label: "lenses", href: "/icp" },
