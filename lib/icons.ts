@@ -425,7 +425,7 @@ export function themeTooltip(theme: string): string {
 // The comparison/leaderboard metrics. One entry per CONCEPT; aliases below map the various
 // field spellings (aiEra/paScore, agenticApp/aiNative, …) onto them.
 const METRICS: Record<string, { icon: string; tooltip: string }> = {
-  paScore: { icon: '🏆', tooltip: 'PA Score — overall evidence-graded score for the AI era (0–100)' },
+  paScore: { icon: '🏆', tooltip: 'Overall score — overall evidence-graded score for the AI era (0–100)' },
   agentReady: { icon: '🤖', tooltip: 'Agent-ready — how well AI agents can access and operate the product' },
   aiNative: { icon: '✨', tooltip: 'Built-in AI — how agentic the product experience itself is' },
   apiQuality: { icon: '🔌', tooltip: 'API quality — depth and reliability of the public API' },

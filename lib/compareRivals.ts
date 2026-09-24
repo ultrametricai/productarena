@@ -17,7 +17,7 @@ export interface CompareRivalRow {
   /** Verified shutdown note when the vendor announced a closure — see lib/shutdown.ts. */
   shutdown?: string
   shutdownSource?: string
-  /** PA Score (leaderboard `aiEra`) — the headline blended score, /100. */
+  /** Overall score (leaderboard `aiEra`) — the headline blended score, /100. */
   aiEra: number | null
   agentReady: number | null
   agenticApp: number | null

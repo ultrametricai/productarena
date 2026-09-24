@@ -91,7 +91,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
           {rivals.length} {data.category.name} rivals, ranked by the same evidence-graded leaderboard —{' '}
           {product.name} itself ranks{' '}
           <Link href={`/arena/${data.category.id}/product/${product.id}`} className="text-emerald-300 hover:underline">
-            #{baseRank} with a PA Score of {fmtScore(baseEntry?.aiEra ?? null)}
+            #{baseRank} with a Overall score of {fmtScore(baseEntry?.aiEra ?? null)}
           </Link>
           . Every &ldquo;beats {product.name} on&rdquo; below comes from a judged head-to-head round with cited
           evidence — see the{' '}
@@ -122,7 +122,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
               </div>
               <div className="ml-auto flex shrink-0 items-center gap-3">
                 <span className="inline-flex items-center gap-1.5 text-xs text-zinc-400">
-                  PA Score <AiEraBadge value={rival.entry.aiEra} size="xs" />
+                  Overall score <AiEraBadge value={rival.entry.aiEra} size="xs" />
                 </span>
                 <Link
                   href={`/vs/${rival.battleSlug}`}
@@ -178,7 +178,7 @@ export default async function AlternativesPage({ params }: { params: Promise<{ p
               >
                 <p className="font-semibold">{adj.product.name}</p>
                 <p className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-zinc-500">
-                  Top-ranked in {adj.categoryName} · PA Score <AiEraBadge value={adj.entry.aiEra} size="xs" />
+                  Top-ranked in {adj.categoryName} · Overall score <AiEraBadge value={adj.entry.aiEra} size="xs" />
                 </p>
                 <p className="mt-2 text-[11px] text-zinc-500">shares: {adj.sharedThemes.map(humanizeTheme).join(', ')}</p>
               </Link>

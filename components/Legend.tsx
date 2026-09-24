@@ -64,7 +64,7 @@ export default function Legend({ id = 'legend' }: { id?: string; defaultOpen?: b
         <Item chip={<Chip href="/methodology#evidence-tiers" title="How evidence tiers work — /methodology" className="bg-amber-950 text-amber-300 ring-amber-800">⚿ auth-gated</Chip>} gloss="probe hit a live sign-in wall — verified reachable, untestable keylessly" />
       </Group>
       <span className="text-[11px] text-zinc-500">
-        quality 0–10 · PA Score /100 ·{' '}
+        quality 0–10 · Overall score /100 ·{' '}
         <Link href="/methodology#confidence" className="underline decoration-zinc-700 hover:text-emerald-300">
           A–D = evidence confidence
         </Link>

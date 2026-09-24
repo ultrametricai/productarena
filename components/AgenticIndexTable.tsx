@@ -80,7 +80,7 @@ export default function AgenticIndexTable({ categories, limit }: { categories: C
             <th className="hidden px-3 py-2 font-normal sm:table-cell"><span title="Adoption signal from public registries (GitHub stars, weekly installs) — context only, never part of any score">Popularity</span></th>
             <th className="px-3 py-2 font-normal">
               <span className="inline-flex items-center gap-1.5">
-                <span title="PA Score (0–100): the site's blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">PA Score</span>
+                <span title="Overall score (0–100): the site's blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">Overall score</span>
                 <ColumnsHelpLink />
               </span>
             </th>

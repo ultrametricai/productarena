@@ -1,4 +1,4 @@
-// The full audit trail behind one product's PA Score — the data spine of the per-vendor
+// The full audit trail behind one product's Overall score — the data spine of the per-vendor
 // /arena/{cat}/product/{id}/score page ("the receipt"). For each of the five blend dimensions
 // it lists exactly which stories feed it, each cell's verdict × quality × weight arithmetic and
 // the evidence the judge cited, then reproduces the dimension score and the weighted PA blend

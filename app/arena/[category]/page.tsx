@@ -24,7 +24,7 @@ const SPEC_ANNEX: Record<string, string> = {
   gpus: '/experiments/gpus',
 }
 
-// The leaderboard already sorts primarily by aiEra/PA Score (see lib/scoring.ts), so entry 0
+// The leaderboard already sorts primarily by aiEra/Overall score (see lib/scoring.ts), so entry 0
 // is the "most agent-friendly" product for both metadata and the FAQ answer below — no
 // fabricated ratings, just the same number rendered on the page.
 function topEntry(data: CategoryData) {
@@ -34,7 +34,7 @@ function topEntry(data: CategoryData) {
 }
 
 function scoreText(aiEra: number | null): string {
-  return aiEra === null ? 'the top evidence-graded coverage score' : `a PA Score of ${aiEra.toFixed(0)}/100`
+  return aiEra === null ? 'the top evidence-graded coverage score' : `a Overall score of ${aiEra.toFixed(0)}/100`
 }
 
 // Honest FAQPage JSON-LD — both answers are derived straight from this arena's own computed

@@ -31,7 +31,7 @@ interface OpenRow {
 // Every product ranked by its openness theme score (self-hosting, full data export, open
 // license, API parity — evidence-graded like everything else). Null openness means no
 // applicable openness cells (unscored, never zero) and sorts last. Ties break open-source
-// first (the flag is a fact, not a score), then PA Score.
+// first (the flag is a fact, not a score), then Overall score.
 function buildOpenRows(categories: CategoryData[]): OpenRow[] {
   const rows: OpenRow[] = []
   for (const data of categories) {
@@ -118,7 +118,7 @@ export default function MostOpenRankingPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {rows.length} products across every arena, ranked by the openness theme score — evidence-graded
           verdicts on self-hosting, full data export, open licensing, and API parity, the four questions that decide
-          whether you own your setup or rent it. Ties break open-source first, then PA Score. Full definitions on{' '}
+          whether you own your setup or rent it. Ties break open-source first, then Overall score. Full definitions on{' '}
           <Link href="/methodology" className="text-zinc-300 underline decoration-zinc-700 hover:text-emerald-300">
             /methodology
           </Link>

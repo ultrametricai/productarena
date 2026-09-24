@@ -133,7 +133,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
               <tr className="border-b border-zinc-800 bg-zinc-900/60 text-left text-xs text-zinc-400">
                 <th className="px-3 py-2 font-medium">#</th>
                 <th className="px-3 py-2 font-medium">Product</th>
-                <th className="px-3 py-2 text-right font-medium"><span title="PA Score (0–100): the blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">PA Score</span></th>
+                <th className="px-3 py-2 text-right font-medium"><span title="Overall score (0–100): the blended headline score — mostly agent-readiness and API quality, plus openness and built-in AI">Overall score</span></th>
                 <th className="px-3 py-2 text-right font-medium"><span title="Story coverage (0–100): how much of the arena's judged story set the product delivers, weighted by importance">Coverage score</span></th>
                 <th className="px-3 py-2 text-right font-medium"><span title="Judged (product, story) product user stories that apply to this product — n/a stories excluded">Applicable product user stories</span></th>
                 <th className="px-3 py-2 text-right font-medium"><span title="Mean judge confidence across this product's verdicts">Confidence</span></th>
@@ -165,7 +165,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
           </table>
         </div>
         <p className="mt-2 text-xs text-zinc-500">
-          PA Score = agent-readiness blend (see methodology). Coverage score = weighted share of judged
+          Overall score = agent-readiness blend (see methodology). Coverage score = weighted share of judged
           requirements met. Confidence = how much of the score rests on tested vs claimed evidence (A–D).
         </p>
       </section>
@@ -178,7 +178,7 @@ export default async function ArenaReportPage({ params }: { params: Promise<{ ca
             This arena is currently a <span className="font-semibold text-zinc-300">close race</span>:{' '}
             {closeRace.top1Name} ({closeRace.top1AiEra.toFixed(1)}) vs {closeRace.top2Name} (
             {closeRace.top2AiEra.toFixed(1)}), a gap of{' '}
-            {Math.abs(closeRace.top1AiEra - closeRace.top2AiEra).toFixed(1)} PA Score. The ordering was
+            {Math.abs(closeRace.top1AiEra - closeRace.top2AiEra).toFixed(1)} Overall score. The ordering was
             re-checked with extra judge samples: {closeRace.contested} decisive cells were triple-judged and{' '}
             {closeRace.unstable} came back unstable. Treat the #1/#2 ordering as contested — shortlist both.
           </p>

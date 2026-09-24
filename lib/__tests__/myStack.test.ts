@@ -106,7 +106,7 @@ describe('recommend — UPGRADE', () => {
     expect(kinds(r)).toContain('overlap')
   })
 
-  it('skips picks with no PA Score', () => {
+  it('skips picks with no Overall score', () => {
     const rows = [product({ id: 'mine', aiEra: null }), product({ id: 'leader', aiEra: 90 })]
     expect(recommend(['mine'], inputs(rows)).recommendations).toEqual([])
   })

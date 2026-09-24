@@ -3,14 +3,14 @@ import { shortDate } from '@/lib/dates'
 import type { ScoreHistoryEntry } from '@/lib/schemas'
 import { seriesFor, type ScoreMetric, type SeriesPoint } from '@/lib/scoreTrend'
 
-// "Score trend" block for the product page: one sparkline per headline metric (PA Score /
+// "Score trend" block for the product page: one sparkline per headline metric (Overall score /
 // aiEra and agent-readiness) with first→last values and dates, fed by
 // data/{cat}/score-history.jsonl (see lib/scoreHistory.ts). Server component — the history never
 // crosses to the client here. Renders nothing at all when there's no history file/entries yet;
 // with entries but <2 plottable points per metric it says so honestly instead of drawing a line.
 
 const METRICS: Array<{ metric: ScoreMetric; label: string }> = [
-  { metric: 'aiEra', label: 'PA Score' },
+  { metric: 'aiEra', label: 'Overall score' },
   { metric: 'agentReady', label: 'Agent-ready' },
 ]
 

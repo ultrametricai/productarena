@@ -69,7 +69,7 @@ function CatalogRow({ row }: { row: EverythingRow }) {
       <Link
         href="/methodology#arena-score"
         className="w-[4.5rem] shrink-0 text-right font-mono text-xs tabular-nums text-zinc-300 transition hover:text-emerald-300"
-        title={`PA Score ${fmt(row.score)} · Agent-ready ${fmt(row.agentReady)} · Agentic ${fmt(row.agenticApp)} (each /100) — how they're computed, on /methodology`}
+        title={`Overall score ${fmt(row.score)} · Agent-ready ${fmt(row.agentReady)} · Agentic ${fmt(row.agenticApp)} (each /100) — how they're computed, on /methodology`}
       >
         {triplet}
       </Link>

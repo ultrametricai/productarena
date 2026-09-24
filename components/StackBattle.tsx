@@ -64,8 +64,8 @@ function AggregateRows({ agg }: { agg: StackAggregates }) {
   return (
     <dl className="space-y-1.5 text-sm">
       <div className="flex items-baseline justify-between gap-2">
-        <dt className="text-xs text-zinc-500" title="Mean of the stack's published PA Scores — an aggregate, not a judged result.">mean PA Score</dt>
-        {/* Same emerald pill as every PA Score on the site (AiEraBadge) — the plain mean()
+        <dt className="text-xs text-zinc-500" title="Mean of the stack's published Overall scores — an aggregate, not a judged result.">mean Overall score</dt>
+        {/* Same emerald pill as every Overall score on the site (AiEraBadge) — the plain mean()
             rendering stays for agent-ready below, which is a different metric. */}
         <dd className="flex items-center gap-1">
           <AiEraBadge value={agg.meanAiEra} size="xs" />
@@ -96,7 +96,7 @@ function AggregateRows({ agg }: { agg: StackAggregates }) {
         </dd>
       </div>
       <div className="flex items-baseline justify-between gap-2">
-        <dt className="text-xs text-zinc-500" title="The stack's lowest-scoring product on PA Score.">weakest link</dt>
+        <dt className="text-xs text-zinc-500" title="The stack's lowest-scoring product on Overall score.">weakest link</dt>
         <dd className="text-right text-xs text-zinc-300">
           {agg.weakestLink ? (
             <Link
@@ -401,7 +401,7 @@ export default function StackBattle({
             </div>
             {/* One line visible; the cross-arena + no-evidence caveats stay one click away. */}
             <p className="text-xs text-zinc-500">
-              A slot&rsquo;s green side has the higher published PA Score in that arena.
+              A slot&rsquo;s green side has the higher published Overall score in that arena.
             </p>
             <details className="mt-1 text-xs text-zinc-500">
               <summary className="cursor-pointer text-zinc-400 transition hover:text-emerald-300">

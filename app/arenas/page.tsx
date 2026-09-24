@@ -20,7 +20,7 @@ export default function ArenasPage() {
       <section>
         <h1 className="font-display leading-[1.1] text-3xl font-bold tracking-tight">Arenas</h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          {total} judged markets. Every arena card shows its current PA Score leader; every score
+          {total} judged markets. Every arena card shows its current Overall score leader; every score
           traces back to cited evidence.
         </p>
         {/* Jump strip: one chip per section, anchors into the directory below. */}

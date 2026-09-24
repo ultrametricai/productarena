@@ -75,7 +75,7 @@ export async function generateMetadata({
   const year = new Date().getFullYear()
   return {
     title: `${a.name} vs ${b.name} (${year}): which is more AI-ready? Evidence-tested comparison`,
-    description: `Head-to-head, evidence-graded comparison of ${a.name} and ${b.name} across ${data.category.name} — PA Score, agent-readiness, business model, vendor claims verified, and every judged round.`,
+    description: `Head-to-head, evidence-graded comparison of ${a.name} and ${b.name} across ${data.category.name} — Overall score, agent-readiness, business model, vendor claims verified, and every judged round.`,
     alternates: { canonical: `${SITE_URL}/vs/${slug}` },
   }
 }

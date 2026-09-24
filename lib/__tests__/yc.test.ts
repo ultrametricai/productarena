@@ -38,7 +38,7 @@ describe('batchOrdinal / batchLabel', () => {
 })
 
 describe('buildYcRows', () => {
-  it('keeps only YC-stamped products and dedupes by product id on highest PA Score', () => {
+  it('keeps only YC-stamped products and dedupes by product id on highest Overall score', () => {
     const rows = buildYcRows([
       cat('a', [{ id: 'p1', name: 'P1', ycBatch: 'W23' }, { id: 'p2', name: 'P2' }], [
         { productId: 'p1', agentReady: 50, agenticApp: 10, aiEra: 40 },

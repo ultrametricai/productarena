@@ -34,7 +34,7 @@ export default function StacksSection({ data }: { data: CategoryData }) {
               </div>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] uppercase tracking-widest text-zinc-400">PA Score</span>
+                  <span className="text-[10px] uppercase tracking-widest text-zinc-400">Overall score</span>
                   <AiEraBadge value={coverage.aiEra} size="sm" href="/methodology#arena-score" />
                 </div>
                 <ScoreBar score={coverage.score} />

@@ -228,7 +228,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     { type: "arena", label: "Claims vs reality (full ranking)", sublabel: "All products, ranked by claims integrity", href: "/rankings/claims-integrity", keywords: pageAliases["/rankings/claims-integrity"] },
     { type: "arena", label: "Most connected (full ranking)", sublabel: "Products ranked by verified integrations", href: "/rankings/most-connected", keywords: pageAliases["/rankings/most-connected"] },
     { type: "arena", label: "Most tested (full ranking)", sublabel: "All products, ranked by tested-evidence share", href: "/rankings/most-tested", keywords: pageAliases["/rankings/most-tested"] },
-    { type: "arena", label: "Rising & falling (30-day moves)", sublabel: "Biggest PA Score gains and falls", href: "/rankings/rising", keywords: pageAliases["/rankings/rising"] },
+    { type: "arena", label: "Rising & falling (30-day moves)", sublabel: "Biggest Overall score gains and falls", href: "/rankings/rising", keywords: pageAliases["/rankings/rising"] },
     { type: "arena", label: "Most popular (stars, installs, 🔥 hot)", sublabel: "Popularity measured fairly, by segment", href: "/rankings/popular", keywords: pageAliases["/rankings/popular"] },
     { type: "arena", label: "Most open (full ranking)", sublabel: "All products, ranked by openness", href: "/rankings/most-open", keywords: pageAliases["/rankings/most-open"] },
     { type: "arena", label: "Best API (full ranking)", sublabel: "All products, ranked by API quality", href: "/rankings/best-api", keywords: pageAliases["/rankings/best-api"] },

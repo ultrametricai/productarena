@@ -46,7 +46,7 @@ or forcing it into a near-miss arena (Identity→auth-platforms, Treasury→star
 Sigma→data-warehouses, Data Pipeline→data-pipelines, RevRec→accounting) would misrepresent what
 the product is. Billing is the closest call and is documented above.
 
-**Atlas result (same stories, no special treatment):** rank #4 of 6 in legal-ops, PA Score 11.3,
+**Atlas result (same stories, no special treatment):** rank #4 of 6 in legal-ops, Overall score 11.3,
 20/54 stories applicable (it na's out of e-signature and contract-lifecycle themes exactly like
 the other incorporation specialists). It **loses its head-to-head with Clerky 4–5 (11 draws)** —
 Stripe's own acquired company beats Stripe's product in our arena. That neutrality is the product.
@@ -123,8 +123,8 @@ honestly instead of one row wearing both hats.
 | Context Mesh, KAi Agent, MCP Registry | none | not lines | Tech-preview/embedded Konnect features, not sold product lines — listing them would inflate the surface. |
 
 **Results (same stories, no special treatment):** kong-ai-gateway debuts **#6 of 7** in
-model-gateways (PA Score 19.3, just behind Cloudflare AI Gateway at 19.4) — the arena's OSS
-incumbents keep their lead. Insomnia debuts **#2 of 5** in api-platforms (PA Score 34.3),
+model-gateways (Overall score 19.3, just behind Cloudflare AI Gateway at 19.4) — the arena's OSS
+incumbents keep their lead. Insomnia debuts **#2 of 5** in api-platforms (Overall score 34.3),
 0.1 ahead of its own parent. The re-scoped kong entry moved **#1 → #3** (39.4 → 34.2): the old
 #1 was partly built on Insomnia's docs, which is exactly what the re-scope existed to stop.
 One churn audit was needed: adding Insomnia's Apache-2.0 LICENSE evidence (a contest-precedent
@@ -277,7 +277,7 @@ from a terminal", "generate and edit images in conversation") — never benchmar
 - `lib/schemas.ts`: `Product.familyId` (optional, display-only, never in the judge's cellHash —
   stamping it busts no caches). `lib/__tests__/families.test.ts` keeps stamps and family
   structure in sync both directions and every ref resolving.
-- `/family/[id]` pulls rank + PA Score live from each ref's `rankings.json` at build time and
+- `/family/[id]` pulls rank + Overall score live from each ref's `rankings.json` at build time and
   links each judged line's `/vs/` battles; page-only lines render their honest `note`, never a
   score. `components/FamilySection.tsx` renders the "Product lines" block on every member
   product's page (generic — no vendor special-casing). Both are in the sitemap via

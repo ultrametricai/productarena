@@ -62,11 +62,11 @@ describe('mount applies URL params (invalids fall back silently)', () => {
     expect((within(container).getByLabelText('Filter by arena') as HTMLSelectElement).value).toBe('all')
   })
 
-  it('?rank=initScore&dir=asc sorts by PA Score ascending', () => {
+  it('?rank=initScore&dir=asc sorts by Overall score ascending', () => {
     setUrl('?rank=initScore&dir=asc')
     const { container } = mount()
-    expect(thFor(container, 'PA Score')?.getAttribute('aria-sort')).toBe('ascending')
-    // Ascending PA Score puts Stripe (40) before Notion (95).
+    expect(thFor(container, 'Overall score')?.getAttribute('aria-sort')).toBe('ascending')
+    // Ascending Overall score puts Stripe (40) before Notion (95).
     const names = within(container).getAllByText(/^(Stripe|Notion)$/).map((el) => el.textContent)
     expect(names.indexOf('Stripe')).toBeLessThan(names.indexOf('Notion'))
   })
@@ -103,7 +103,7 @@ describe('interactions write params; defaults remove them', () => {
     const { getByText } = mount()
     fireEvent.click(getByText('Most popular'))
     expect(params().get('rank')).toBe('popularity')
-    fireEvent.click(getByText('Highest PA Score'))
+    fireEvent.click(getByText('Highest Overall score'))
     expect(params().get('rank')).toBe('initScore')
     fireEvent.click(getByText('Most agent-ready')) // the default sort — param gone
     expect(params().get('rank')).toBeNull()

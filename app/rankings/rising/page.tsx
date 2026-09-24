@@ -15,11 +15,11 @@ import { seriesFor, trendDelta, TREND_WINDOW_DAYS } from '@/lib/scoreTrend'
 interface TrendRow {
   data: CategoryData
   product: CategoryData['products'][number]
-  /** Current PA Score from the leaderboard (null = unscored). */
+  /** Current Overall score from the leaderboard (null = unscored). */
   aiEra: number | null
-  /** 30-day PA Score delta (lib/scoreTrend.ts's trendDelta) — non-null by construction here. */
+  /** 30-day Overall score delta (lib/scoreTrend.ts's trendDelta) — non-null by construction here. */
   delta: number
-  /** Full plottable PA Score series for the sparkline. */
+  /** Full plottable Overall score series for the sparkline. */
   values: number[]
 }
 
@@ -32,7 +32,7 @@ interface TrendIndex {
   noTrend: number
 }
 
-// Splits every product into risers/fallers by the 30-day PA Score delta derived from the
+// Splits every product into risers/fallers by the 30-day Overall score delta derived from the
 // committed score-history files (the same data /changelog is built from). Products without ≥2
 // recorded points have no trend yet and are EXCLUDED, never shown as 0 — "no data" and "flat"
 // are different claims.
@@ -70,7 +70,7 @@ export function generateMetadata(): Metadata {
   const { risers, fallers } = buildTrendIndex(loadAll())
   const top = risers[0]
   return {
-    title: `Rising & falling — biggest ${TREND_WINDOW_DAYS}-day PA Score moves — ProductArena`,
+    title: `Rising & falling — biggest ${TREND_WINDOW_DAYS}-day Overall score moves — ProductArena`,
     description: `${risers.length} products rose and ${fallers.length} fell over the last ${TREND_WINDOW_DAYS} days of re-derived scores.${top ? ` ${top.product.name} gained the most (${fmtDelta(top.delta)}).` : ''} Derived from the committed score history — falls shown too, honest both ways.`,
   }
 }
@@ -87,14 +87,14 @@ function TrendTable({ rows, direction }: { rows: TrendRow[]; direction: 'up' | '
           <tr className="border-b border-zinc-800 text-left text-xs uppercase tracking-widest text-zinc-500">
             <th className="w-10 px-3 py-2 font-normal">#</th>
             <th className="px-3 py-2 font-normal">Product</th>
-            <th className="px-3 py-2 font-normal" title={`PA Score change over the last ${TREND_WINDOW_DAYS} days: latest recorded value minus the value in effect ${TREND_WINDOW_DAYS} days ago`}>
+            <th className="px-3 py-2 font-normal" title={`Overall score change over the last ${TREND_WINDOW_DAYS} days: latest recorded value minus the value in effect ${TREND_WINDOW_DAYS} days ago`}>
               <span className="inline-flex items-center gap-1.5">{TREND_WINDOW_DAYS}d Δ<ColumnsHelpLink /></span>
             </th>
-            <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Every recorded PA Score point for this product — the full tracked window, not just 30 days">
+            <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Every recorded Overall score point for this product — the full tracked window, not just 30 days">
               Trend
             </th>
-            <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Current PA Score (0–100), the blended agent-ready / API quality / openness / agentic app / automation score">
-              PA Score now
+            <th className="hidden px-3 py-2 font-normal sm:table-cell" title="Current Overall score (0–100), the blended agent-ready / API quality / openness / agentic app / automation score">
+              Overall score now
             </th>
           </tr>
         </thead>
@@ -119,10 +119,10 @@ function TrendTable({ rows, direction }: { rows: TrendRow[]; direction: 'up' | '
                 {fmtDelta(row.delta)}
               </td>
               <td className="hidden px-3 py-2 sm:table-cell">
-                <Sparkline values={row.values} label={`${row.product.name} PA Score, every recorded point`} />
+                <Sparkline values={row.values} label={`${row.product.name} Overall score, every recorded point`} />
               </td>
               <td className="hidden px-3 py-2 sm:table-cell">
-                {/* Same emerald pill every leaderboard uses for the PA Score (AiEraBadge). */}
+                {/* Same emerald pill every leaderboard uses for the Overall score (AiEraBadge). */}
                 <AiEraBadge value={row.aiEra} size="sm" href="/methodology#arena-score" />
               </td>
             </tr>
@@ -137,8 +137,8 @@ export default function RisingRankingPage() {
   const categories = loadAll()
   const { risers, fallers, flat, noTrend } = buildTrendIndex(categories)
   const jsonLd = rankingJsonLd(
-    `Rising — biggest ${TREND_WINDOW_DAYS}-day PA Score gains`,
-    `Products ranked by PA Score gain over the last ${TREND_WINDOW_DAYS} days, derived from the committed score history.`,
+    `Rising — biggest ${TREND_WINDOW_DAYS}-day Overall score gains`,
+    `Products ranked by Overall score gain over the last ${TREND_WINDOW_DAYS} days, derived from the committed score history.`,
     risers.map((row) => ({
       name: row.product.name,
       path: `/arena/${row.data.category.id}/product/${row.product.id}`,
@@ -153,14 +153,14 @@ export default function RisingRankingPage() {
       <div>
         {/* seed "rising": same concept mark as the Explore menu entry and RankingsNav. */}
         <p className="flex items-center gap-2 text-sm uppercase tracking-widest text-emerald-400">
-          <GeoMark seed="rising" title="Rising & falling — biggest 30-day PA Score moves" size={16} className="text-zinc-500" />
+          <GeoMark seed="rising" title="Rising & falling — biggest 30-day Overall score moves" size={16} className="text-zinc-500" />
           Global ranking
         </p>
         <h1 className="font-display leading-[1.1] mt-1 text-3xl font-bold tracking-tight">
           Rising &amp; falling — the biggest {TREND_WINDOW_DAYS}-day score moves
         </h1>
         <p className="mt-2 max-w-2xl text-zinc-400">
-          Every product whose PA Score moved over the last {TREND_WINDOW_DAYS} days, biggest gain first — and the
+          Every product whose Overall score moved over the last {TREND_WINDOW_DAYS} days, biggest gain first — and the
           falls right below, because a rankings site that only reports rises is marketing. Scores only move when
           evidence and verdicts are re-derived, so every move here traces to a re-judged cell (the{' '}
           <Link href="/changelog" className="text-zinc-300 underline decoration-zinc-700 hover:text-emerald-300">

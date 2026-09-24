@@ -11,7 +11,7 @@ import { z } from 'zod'
 //
 // Two kinds of sub-product line:
 //   - arenaRef set → the line is judged as its own product in that arena (Stripe Terminal in
-//     mobile-payments); the family page pulls its live rank/PA Score from that arena's
+//     mobile-payments); the family page pulls its live rank/Overall score from that arena's
 //     rankings and deep-links to the product page and its battles.
 //   - arenaRef null → breakdown-page-only: no existing arena genuinely fits the line as a
 //     competitor. Rendered as an honest "not yet judged" state; the optional `note` says why

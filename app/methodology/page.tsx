@@ -4,7 +4,7 @@ import { REPO } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Methodology — ProductArena',
-  description: 'Evidence tiers, judging, scoring, the PA Score, story provenance, and bias disclosure — full writeup on GitHub.',
+  description: 'Evidence tiers, judging, scoring, the Overall score, story provenance, and bias disclosure — full writeup on GitHub.',
 }
 
 // Static page — no data dependency, no dynamic segments.
@@ -75,7 +75,7 @@ export default function MethodologyPage() {
           <p className="font-semibold text-zinc-300">Popularity (not scored)</p>
           <p className="mt-1">
             GitHub stars/npm/PyPI downloads, shown as a survival signal only — measures adoption, not AI-readiness,
-            so it&apos;s never part of the PA Score or rankings.
+            so it&apos;s never part of the Overall score or rankings.
           </p>
         </div>
         <div id="story-tiers" className={`scroll-mt-16 ${PILL}`}>
@@ -96,10 +96,10 @@ export default function MethodologyPage() {
       </div>
 
       <section id="ai-era" className="rounded-xl border border-zinc-800 p-5">
-        <h2 id="arena-score" className="scroll-mt-16 font-display leading-[1.1] text-lg font-semibold">The PA Score</h2>
+        <h2 id="arena-score" className="scroll-mt-16 font-display leading-[1.1] text-lg font-semibold">The Overall score</h2>
         <p className="mt-1 text-sm text-zinc-500">Formerly displayed as the &quot;Arena Score&quot; (and before that the &quot;AI-Era Index&quot;) — same formula, new name.</p>
         <p className="mt-3 max-w-2xl text-sm text-zinc-400">
-          Every leaderboard entry carries a PA Score (0–100, <span className={CODE}>aiEra</span> internally) — a
+          Every leaderboard entry carries a Overall score (0–100, <span className={CODE}>aiEra</span> internally) — a
           weighted, renormalized blend of five components:
         </p>
         <table className="mt-3 w-full max-w-2xl border-collapse text-sm">
@@ -120,7 +120,7 @@ export default function MethodologyPage() {
       <section id="confidence" className="scroll-mt-16 rounded-xl border border-zinc-800 p-5">
         <h2 className="font-display leading-[1.1] text-lg font-semibold">Confidence grades (A–D)</h2>
         <p className="mt-3 max-w-2xl text-sm text-zinc-400">
-          The letter next to a PA Score says how much of that score rests on evidence we tested
+          The letter next to a Overall score says how much of that score rests on evidence we tested
           ourselves versus evidence the vendor merely claims. It grades the receipts, not the
           product — a great product can carry a C simply because we haven&apos;t probed it deeply yet.
         </p>

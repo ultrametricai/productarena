@@ -3,11 +3,11 @@
 // trendDelta, and renders the same quiet dash rather than implying "flat"). Pure props → markup,
 // safe in both server and client trees.
 //
-// `metric` names what moved (defaults to the PA Score; the mega-table's Agent-ready column
+// `metric` names what moved (defaults to the Overall score; the mega-table's Agent-ready column
 // passes its own) — it drives both the hover title and the screen-reader text.
 export default function TrendArrow({
   delta,
-  metric = 'PA Score',
+  metric = 'Overall score',
 }: {
   delta: number | null | undefined
   metric?: string

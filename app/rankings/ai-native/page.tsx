@@ -29,7 +29,7 @@ export default function AiNativeRankingPage() {
         <p className="mt-2 max-w-2xl text-zinc-400">
           All {totalProducts} products across every arena, ranked by BUILT-IN AI: does the product act agentically on
           its own behalf (built-in assistant, autonomous automation, natural-language commands)? Ties break on
-          automation depth, then PA Score.
+          automation depth, then Overall score.
         </p>
         <p className="mt-2 text-xs text-zinc-500">
           This is the deep-linkable form of the homepage table&rsquo;s &ldquo;Best built-in AI&rdquo; preset —{' '}
