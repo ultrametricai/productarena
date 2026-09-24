@@ -18,7 +18,7 @@ import {
 } from '@/lib/myStack'
 import { loginUrl, registrationUrl, useSession } from '@/lib/session'
 
-// The signed-in half of /my-stack and /account (founder asks: "in signed-in mode, allow the
+// The signed-in half of /my-stack and /account/vendors (founder asks: "in signed-in mode, allow the
 // user to define their stack and get upgraded stack advice"; 2026-09-22: "allow multiple
 // vendors for functions" + "I want logos here"): the reader's vendors per arena — SEVERAL
 // allowed, first = primary — rendered as logo chips, grouped by the header's arena sections,
