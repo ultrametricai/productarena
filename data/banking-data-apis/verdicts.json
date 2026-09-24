@@ -2,17 +2,19 @@
   {
     "productId": "mastercard-open-finance",
     "storyId": "account-numbers-for-ach",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 8,
     "confidence": "medium",
-    "rationale": "Mastercard's docs list dedicated 'Get ACH details' and 'Validate account details' products alongside account-ownership verification and balance checks, which together match the story of retrieving account/routing data and validating funding source without micro-deposits. However, the evidence pack only shows product titles/index links rather than detailed descriptions of the actual data returned (e.g., explicit account/routing number fields, tokenization format, or confirmation that validation replaces micro-deposits). Missing for 10: detailed API schema/response showing routing+account numbers or tokens, explicit statement that validation eliminates micro-deposit verification, and independent developer confirmation of real-world usage.",
+    "rationale": "The docs explicitly describe a 'Get ACH details' / 'Get Account Payment (ACH) details' endpoint alongside account ownership verification and account validation, indicating developers can retrieve account/routing details (or tokenized equivalents) from a linked account without micro-deposits, and this is testable via Test Drive/sandbox personas. Missing for 10: explicit confirmation of tokenization format for routing/account numbers and independent/hands-on corroboration beyond vendor docs.",
     "evidenceIds": [
       "mastercard-open-finance-docs-6",
       "mastercard-open-finance-docs-14",
-      "mastercard-open-finance-docs-3",
-      "mastercard-open-finance-docs-16",
+      "mastercard-open-finance-docs-30",
       "mastercard-open-finance-docs-1",
-      "mastercard-open-finance-docs-15"
+      "mastercard-open-finance-docs-15",
+      "mastercard-open-finance-docs-16",
+      "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-25"
     ]
   },
   {
@@ -21,30 +23,28 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Docs explicitly describe an Account Owner Verification service retrieving name, address, email and phone from the connected FI account, and a match-account-ownership endpoint that compares provided customer data against the bank's on-file details with confidence scores — directly matching the ops matching workflow. Missing for 10: independent/hands-on corroboration beyond vendor docs and more detail on data completeness/edge cases across FIs.",
+    "rationale": "Mastercard's Account Owner Verification product explicitly retrieves account ownership details—name, address, email, phone—directly from the connected financial institution, and supports matching that data against customer-provided data via confidence scores, which directly matches the ops-lead story. missing for 10: no independent/hands-on corroboration of match accuracy or field completeness across institutions.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
       "mastercard-open-finance-docs-15",
-      "mastercard-open-finance-docs-28"
+      "mastercard-open-finance-docs-30"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "agent-links-and-reads",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Mastercard's Open Finance APIs clearly support the core actions an agent would need — creating link sessions via Connect, retrieving balances (Account Balance service), pulling transactions (Transaction Data), and managing connections/webhooks — all gated by PartnerID/secret/appKey OAuth tokens that function as scoped credentials. There is also a documented official MCP surface (agent-toolkit/mcp-overview) explicitly referencing Open Finance use cases like verifying ownership and checking balances, but its documented function is 'dynamic code generation' for developers rather than confirmed direct agentic execution of live account operations. missing for 10: evidence the MCP server itself executes link-session/balance/transaction calls (vs. just generating code samples), and independent/hands-on confirmation of an agent operating end-to-end with scoped MCP credentials.",
+    "rationale": "Mastercard's Open Finance APIs support the core operations (link via Connect, balances, transactions, account ownership) and there is an official MCP surface (agent-toolkit) documented for developer Q&A and code generation, but the MCP overview is framed as a docs/code-gen assistant for AI tools like Claude/Cursor, not as an agentic interface for actually creating link sessions, retrieving live balances/transactions, or managing connections with scoped credentials at runtime. missing for 10: evidence that the MCP server exposes actual banking operations (create link session, get balance, list transactions, manage connections) rather than just documentation/code-sample retrieval, and evidence of scoped/limited credentials for agent use versus full partner API keys.",
     "evidenceIds": [
+      "mastercard-open-finance-docs-27",
       "mastercard-open-finance-docs-2",
       "mastercard-open-finance-docs-7",
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-10",
-      "mastercard-open-finance-docs-23",
-      "mastercard-open-finance-docs-27",
       "mastercard-open-finance-docs-12",
-      "mastercard-open-finance-docs-28",
-      "mastercard-open-finance-probe-2"
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-probe-2",
+      "mastercard-open-finance-docs-10"
     ]
   },
   {
@@ -53,14 +53,16 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Mastercard Open Finance provides structured JSON APIs with documented schemas for account, transaction, balance, and enrichment data (transaction categorization, recurring transactions, spending insights), an OpenAPI spec with generated client libraries, and even an official MCP/agent-toolkit for AI consumption. However, evidence doesn't show explicit example JSON payloads or schema definitions in the pack, nor confirmation that enrichment fields are agent-optimized (e.g., no heuristic parsing needed) versus requiring developer interpretation. missing for 10: concrete JSON schema examples/response samples, explicit confirmation that enrichment output avoids downstream heuristic parsing, independent developer corroboration of agent-readiness.",
+    "rationale": "The API returns structured account/transaction/ownership data with documented endpoints, categorized data segments, enrichment (transaction types, recurring transactions, spending insights), webhooks for real-time events instead of polling, and even an llms.txt plus MCP server for AI-tool consumption, suggesting agent-friendly design. However, evidence doesn't confirm JSON schema specs (e.g. OpenAPI/JSON Schema files) are published for automated validation, nor explicit claims that enrichment fields eliminate heuristic parsing for downstream agents. missing for 10: published JSON schema/OpenAPI spec details, explicit confirmation that enrichment output requires no heuristic interpretation, independent/hands-on validation of agent consumption quality.",
     "evidenceIds": [
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
+      "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-22",
-      "mastercard-open-finance-gh-1",
-      "mastercard-open-finance-probe-2",
-      "mastercard-open-finance-docs-12"
+      "mastercard-open-finance-docs-31",
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-probe-1",
+      "mastercard-open-finance-probe-2"
     ]
   },
   {
@@ -69,12 +71,12 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "A probe confirms llms.txt is live at developer.mastercard.com/llms.txt (HTTP 200), and Mastercard also documents an agent-oriented MCP toolkit with dynamic code generation for agents. Missing for 10: no independent third-party confirmation that agents actually consume this llms.txt effectively, and no explicit doc listing Open Finance-specific sections within it.",
+    "rationale": "There is a confirmed live llms.txt at developer.mastercard.com (HTTP 200) plus an official agent-oriented MCP toolkit doc explicitly describing AI tools (Claude, ChatGPT, Cursor, Windsurf) querying Mastercard docs contextually, showing a real agent-facing entry point beyond generic docs. Missing for 10: no evidence llms.txt is scoped specifically to Open Finance product docs (it's platform-wide), and no independent/hands-on confirmation of agent success using it.",
     "evidenceIds": [
       "mastercard-open-finance-probe-1",
       "mastercard-open-finance-probe-2",
       "mastercard-open-finance-docs-12",
-      "mastercard-open-finance-docs-28"
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
@@ -83,11 +85,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence shows Mastercard Open Finance exposes categorized financial data (transaction types, recurring transactions, spending, loan payments) via APIs, and a separate MCP agent toolkit for developers to generate code, but there is no evidence of AI-generated insights or suggestions surfaced to an end-user inside the product itself.",
+    "rationale": "Mastercard Open Finance is a B2B data/API platform (account verification, balances, transaction aggregation) consumed by other apps; there is no evidence of AI-generated insights or suggestions surfaced directly to an end user 'inside the product.' The 'Insights into transaction types/spending/recurring payments' item is a raw data categorization API output, not an AI-generated suggestion delivered within a user-facing product, and the MCP/agent toolkit evidence is about developers querying API documentation, not end-users getting insights from their own financial data.",
     "evidenceIds": [
       "mastercard-open-finance-docs-22",
-      "mastercard-open-finance-docs-12",
-      "mastercard-open-finance-docs-28"
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-docs-12"
     ]
   },
   {
@@ -95,36 +97,42 @@
     "storyId": "agentic-autonomous-automation",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Evidence shows webhooks for event notifications and an MCP toolkit for code generation, but nothing about scheduling or configuring autonomous background automations/workflows that run without user intervention. Missing for 10: any documentation of scheduled/triggered automation setup, autonomous workflow orchestration, or agentic task execution running independently in the background.",
+    "confidence": "medium",
+    "rationale": "The evidence shows Mastercard Open Finance is a financial-data API platform with webhooks for event notifications (eliminating polling) and an MCP server for AI coding assistants to look up docs/generate code — but there is no evidence of an end-user-facing capability to configure autonomous background automations (e.g., a workflow/automation builder or agent runtime that executes actions on a schedule/trigger). Webhooks only notify of events; building any 'automation' still requires the developer to write and host their own logic elsewhere.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-26",
-      "mastercard-open-finance-docs-12"
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "agentic-builtin-assistant",
-    "verdict": "na",
+    "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "Mastercard Open Finance is a developer API platform for financial data/verification, not a consumer or workflow product with a built-in AI assistant persona to delegate tasks to; the MCP toolkit evidence is about exposing APIs to external agents/tools, not a native in-product assistant.",
-    "evidenceIds": []
+    "confidence": "medium",
+    "rationale": "Evidence shows Mastercard exposes MCP tooling so external AI agents (Claude, ChatGPT, Cursor) can query its API docs, but this is the product acting as a data source for outside assistants, not a built-in AI assistant living inside the Open Finance product that users can delegate tasks to.",
+    "evidenceIds": [
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-probe-2"
+    ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "As a pure REST API platform, Open Finance is inherently headless — it uses PartnerID/secret token auth (docs-10, docs-23), an OpenAPI spec with generated client libraries (mastercard-open-finance-gh-1), and a non-billable 'Test Drive' sandbox with scripted test personas (docs-24, docs-25) suitable for automated/CI testing. Missing for 10: no explicit CI/CD pipeline examples, no documented headless SDK/CLI runner, and no first-party guidance on automating the flow end-to-end in a build pipeline.",
+    "rationale": "Open Finance is a REST API platform with token-based auth (PartnerID/secret/appKey), a non-interactive Sandbox/Test Drive plan, and a GitHub project that generates an API client library for automated testing — all of which support headless, scriptable use in CI-like environments. However, there is no explicit CI/CD pipeline example, SDK for automation frameworks, or documentation calling out CI-specific usage. Missing for 10: explicit CI/pipeline integration guide, official SDKs/automation examples, and evidence of non-interactive end-to-end runs beyond sandbox testing.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
       "mastercard-open-finance-docs-24",
-      "mastercard-open-finance-docs-25",
-      "mastercard-open-finance-gh-1"
+      "mastercard-open-finance-docs-29",
+      "mastercard-open-finance-gh-1",
+      "mastercard-open-finance-docs-33"
     ]
   },
   {
@@ -133,11 +141,8 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance is a financial data/API platform, not an agent or assistant host that could itself consume external MCP servers as tools; the evidence only shows Mastercard publishing its own MCP server (agent-toolkit) for others to call into Open Finance APIs, which is the opposite role from 'plugging MCP servers into this product'.",
-    "evidenceIds": [
-      "mastercard-open-finance-probe-2",
-      "mastercard-open-finance-docs-12"
-    ]
+    "rationale": "Mastercard Open Finance is a financial-data/API platform, not an AI agent or assistant capable of hosting an MCP client that consumes external MCP servers' tools. The MCP-related evidence describes Mastercard publishing its own MCP server for other AI tools to query its docs (the reverse direction), which does not make this client-side 'plug in MCP servers' axis applicable to this product.",
+    "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
@@ -145,9 +150,10 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Mastercard documents an official Agent Toolkit MCP server (mcp-overview) that includes dynamic code generation and an example use case directly referencing Open Finance verification and balance checks, confirming AI agents can connect via this official MCP server to access Open Finance APIs. Missing for 10: independent/hands-on corroboration of the MCP server working with Open Finance endpoints, and detailed API-to-tool mapping documentation.",
+    "rationale": "Mastercard documents an official MCP server (agent-toolkit) that lets AI tools like Claude/Cursor/Windsurf query Mastercard services including Open Finance use cases (e.g., verifying account ownership, checking balances), confirmed by a dedicated docs page and probe. Missing for 10: independent/hands-on verification of the MCP server working specifically with Open Finance endpoints, and more detail on setup/auth flow for the MCP server itself.",
     "evidenceIds": [
       "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34",
       "mastercard-open-finance-docs-28",
       "mastercard-open-finance-probe-2"
     ]
@@ -156,11 +162,12 @@
     "productId": "mastercard-open-finance",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 4,
     "confidence": "medium",
-    "rationale": "Mastercard offers an official Agent Toolkit/MCP server with dynamic code generation and natural-language-friendly API access (e.g., 'I need to integrate Open Finance to verify account ownership and check balances'), which supports operating the platform via AI-native/natural-language workflows. However, this is a developer-integration tool rather than end-user natural-language command execution over the product's core financial functions. missing for 10: evidence of an end-user-facing natural-language interface, broader coverage of MCP tool capabilities beyond code generation, and independent/hands-on validation of the MCP server's reliability.",
+    "rationale": "Mastercard documents an Agent Toolkit/MCP server that lets AI assistants (Claude, ChatGPT, Cursor, Windsurf) ask natural-language questions about its services and get contextual answers plus dynamically generated code examples, which is a real natural-language interface layer. However, this is scoped to documentation Q&A and code generation for developers, not natural-language execution of the Open Finance product's actual financial operations (verify account, get balances, etc.) — missing for 10: evidence that NL commands can directly trigger/execute API actions (not just generate code), independent/hands-on validation of the MCP server, and coverage of NL control over the core finance workflows themselves.",
     "evidenceIds": [
       "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34",
       "mastercard-open-finance-docs-28",
       "mastercard-open-finance-probe-2"
     ]
@@ -170,8 +177,8 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "No evidence of an official CLI tool; evidence covers APIs, webhooks, MCP server, and SDK/test client generation but nothing describing a command-line interface for AI-native workflows. Missing for 10: any mention of an official CLI, its installation, or its use in agentic/AI workflows.",
+    "confidence": "high",
+    "rationale": "No evidence of an official CLI tool for Mastercard Open Finance/Finicity; the evidence pack only covers APIs, webhooks, onboarding, testing personas, and an MCP server/agent toolkit, none of which constitute a CLI. This is a fair axis for a developer platform, but no CLI is documented anywhere in the pack.",
     "evidenceIds": []
   },
   {
@@ -180,15 +187,17 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance exposes a well-documented public REST API (accounts, balances, transactions, ownership verification, webhooks) with OpenAPI spec, token-based auth, sandbox/test-drive access, and even an llms.txt plus official MCP toolkit for agent-driven access. missing for 10: independent third-party developer confirmation of API usability/reliability beyond vendor docs.",
+    "rationale": "Mastercard Open Finance exposes a well-documented public REST API (accounts, transactions, balances, ACH, verification, etc.) with token-based auth, sandbox/test-drive access, OpenAPI spec/client generation, webhooks, and an llms.txt plus an official MCP/agent toolkit enabling AI tools to query and generate code against the API. This gives strong evidence of a documented, machine-consumable API surface suitable for AI-native driving. Missing for 10: no independent/third-party corroboration of AI agents successfully driving the API end-to-end, and no explicit examples of autonomous agent workflows beyond code-generation/doc-lookup use cases.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
       "mastercard-open-finance-docs-24",
       "mastercard-open-finance-gh-1",
+      "mastercard-open-finance-docs-34",
+      "mastercard-open-finance-docs-12",
       "mastercard-open-finance-probe-1",
       "mastercard-open-finance-probe-2",
-      "mastercard-open-finance-docs-12"
+      "mastercard-open-finance-docs-9"
     ]
   },
   {
@@ -197,10 +206,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows PartnerID/secret/appKey token generation for API access (docs-10, docs-23) but no mention of scoped, least-privilege, or per-agent credential issuance — auth appears to be a single partner-level secret rather than granular scoped tokens for agents. Missing for 10: any documentation of scoped/limited-permission API keys, per-agent credential issuance, or role-based access control for agent use.",
+    "rationale": "Onboarding uses a single PartnerID/secret/appKey pair to generate access tokens (broad account credentials), with no evidence of scoped, per-agent, or least-privilege credential issuance mechanisms such as fine-grained scopes, short-lived agent tokens, or delegated permission sets.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
-      "mastercard-open-finance-docs-23"
+      "mastercard-open-finance-docs-23",
+      "mastercard-open-finance-docs-24"
     ]
   },
   {
@@ -209,9 +219,11 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "The only relevant evidence is a GitHub repo showing an OpenAPI-generated client library used for testing, not a fully documented, officially published SDK across languages. Missing for 10: dedicated official SDK repositories/packages (e.g., npm, PyPI, Maven), SDK version support docs, and independent developer confirmation of SDK usability.",
+    "rationale": "The only evidence close to 'official SDKs' is a GitHub OpenAPI spec project that lets developers generate a client library for testing, not a maintained, documented set of official SDKs; the rest of the evidence covers REST API docs and an MCP/agent-toolkit for AI assistants, not language SDKs. missing for 10: documented official SDKs in specific languages (e.g. Java/Python/Node), SDK versioning/release notes, package registry listings, and independent confirmation of SDK usage.",
     "evidenceIds": [
-      "mastercard-open-finance-gh-1"
+      "mastercard-open-finance-gh-1",
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
@@ -220,7 +232,7 @@
     "verdict": "full",
     "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs explicitly describe webhook support for real-time event notifications (avoiding polling) and a subscription-based OBWMS API letting developers subscribe to specific events. Missing for 10: concrete webhook payload/setup examples, independent/hands-on confirmation, and detail on programmatic subscription management via API/SDK.",
+    "rationale": "Docs explicitly describe webhook support for real-time event notifications and a subscription API (OBWMS) letting users subscribe to specific events instead of polling. Missing for 10: independent/hands-on corroboration, detailed payload schemas, and explicit programmatic/AI-native subscription flow examples.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-26"
@@ -229,14 +241,16 @@
   {
     "productId": "mastercard-open-finance",
     "storyId": "api-interactive-docs",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "The evidence shows extensive product/API documentation, an OpenAPI spec-driven test client, and a 'Test Drive' sandbox plan, but nothing describes an interactive API reference (e.g., Swagger/Postman-style try-it console) with runnable code examples in the docs portal itself.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Evidence shows a Test Drive sandbox plan giving access to all API endpoints, an OpenAPI spec used to generate a client library for testing, and an MCP toolkit that can dynamically generate 'working code examples based on current API specifications' for AI tools — all suggesting some runnable/interactive exploration exists. However, there is no explicit mention of an interactive API reference page (e.g., Swagger/Redoc-style 'try it now' console) embedded in the docs themselves. Missing for 10: direct evidence of an in-browser interactive API reference with executable request/response examples, and independent confirmation of its usability.",
     "evidenceIds": [
       "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-29",
       "mastercard-open-finance-gh-1",
-      "mastercard-open-finance-docs-11"
+      "mastercard-open-finance-docs-12",
+      "mastercard-open-finance-docs-34"
     ]
   },
   {
@@ -259,12 +273,13 @@
     "verdict": "full",
     "quality": 8,
     "confidence": "high",
-    "rationale": "Mastercard provides a dedicated non-billable 'Test Drive' plan with unlimited access to all Open Finance API endpoints plus documented testing personas representing example users, explicitly for sandbox-style integration testing without production data, and a GitHub sample project generating a client from the API spec for testing. missing for 10: independent/hands-on confirmation of full production-data isolation and details on sandbox data realism or limitations.",
+    "rationale": "Docs describe a dedicated Sandbox/Test Drive plan with unlimited, non-billable access to all API endpoints, plus test banks (FinBanks), test payroll (FinPayroll), and testing personas representing sample users — clearly separated from production data. This directly supports safe sandbox testing without touching production. Missing for 10: no explicit statement that sandbox data is fully synthetic/isolated from production systems, and no independent/hands-on confirmation beyond vendor docs.",
     "evidenceIds": [
       "mastercard-open-finance-docs-24",
-      "mastercard-open-finance-docs-11",
+      "mastercard-open-finance-docs-29",
+      "mastercard-open-finance-docs-33",
       "mastercard-open-finance-docs-25",
-      "mastercard-open-finance-gh-1"
+      "mastercard-open-finance-docs-11"
     ]
   },
   {
@@ -273,7 +288,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence pack items mention API versioning scheme or a documented deprecation policy; docs reference endpoints, onboarding, testing, and webhooks but not version lifecycle management.",
+    "rationale": "The evidence pack shows extensive API documentation, onboarding, testing, and webhook capabilities, but nowhere mentions API versioning schemes or a documented deprecation policy for endpoints. No citation addresses version lifecycle, sunset timelines, or migration guidance for breaking changes.",
     "evidenceIds": []
   },
   {
@@ -282,7 +297,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence describes batch/bulk endpoints or multi-item operations (e.g., submitting many account IDs or requests in a single call); documented APIs appear per-account/per-transaction oriented, and webhooks only address real-time single-event notifications, not bulk processing.",
+    "rationale": "No evidence of bulk/batch endpoints or multi-item operations across accounts/customers; APIs described are single-account or single-transaction oriented, and webhooks/MCP mentions relate to event notifications and AI code assistance rather than batch processing. Missing for 10: batch API endpoints, bulk data export/import, multi-item request support, documented rate-limit or batching guidance for large-scale operations.",
     "evidenceIds": []
   },
   {
@@ -291,7 +306,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Webhooks provide event notifications but there is no evidence of user-definable rules or automated triggered actions based on those events; missing for 10: rule-definition engine, conditional logic, automated action execution tied to events.",
+    "rationale": "The evidence shows webhooks for real-time event notifications (subscribing to specific events) but nothing about defining rules that trigger automated actions in response to those events — there's no rules engine, condition/action automation, or workflow builder described. Webhooks only deliver notifications; the user would still need to build their own automation logic externally.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
       "mastercard-open-finance-docs-26"
@@ -312,7 +327,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance is a financial data/API platform, not an automation/workflow tool with user-created 'automations' to version or roll back; no evidence pack item addresses automation versioning, review, or rollback capabilities.",
+    "rationale": "Mastercard Open Finance is a financial data/API platform, not an automation-building tool with workflows to version or roll back; this axis targets AI-native automation builders, not this product category.",
     "evidenceIds": []
   },
   {
@@ -321,19 +336,16 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers account data products, webhooks, onboarding, and testing personas, but nothing documents connection health statuses (expired/revoked), a re-authentication or 'update mode' flow, or any repair-without-restart mechanism for broken links. Missing for 10: documented connection status states (e.g., expired/revoked/error), an update/re-auth flow API or UI, and any evidence of preserving existing account links during re-auth.",
-    "evidenceIds": [
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-27"
-    ]
+    "rationale": "No evidence in the pack addresses connection health states (expired/revoked links), reconnect/update-mode flows, or any documented status codes for broken links; the pack covers data products (balances, transactions, verification) and onboarding/testing but nothing about repairing or re-authenticating an existing Connect session. missing for 10: documented connection status/error codes for expired or revoked links, an update/reconnect flow API or Connect mode that avoids re-linking from scratch, and any ops-facing guidance on monitoring/repairing broken links.",
+    "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "data-deletion-api",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence pack item documents a delete/disconnect endpoint, user data purge process, or data retention/deletion policy for connections or held account data; coverage is limited to data retrieval, verification, and onboarding APIs.",
+    "confidence": "low",
+    "rationale": "No evidence pack item documents an API, endpoint, or process for deleting a connection/user or purging held data; documentation focuses on onboarding, data retrieval, and testing, with no mention of disconnect/deletion or data purge workflows.",
     "evidenceIds": []
   },
   {
@@ -353,12 +365,13 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm transaction data services with insights into recurring transactions, transaction types, consumer spending, and loan payments, plus credit-decisioning report APIs — directly supporting cash-flow/recurring-stream signals. However, there's no explicit mention of payroll detection or a dedicated income-verification product built on this data. missing for 10: explicit payroll/income detection feature, named income-verification product, independent validation of accuracy.",
+    "rationale": "Docs show recurring-transaction insights, consumer spending and loan-payment insights, and a dedicated Transaction Data/Aggregation service (docs-22, docs-7, docs-8), plus a test payroll provider (FinPayroll) used in sandbox testing (docs-33) and credit-decisioning report APIs (docs-13), indicating cash-flow and payroll-adjacent signals are derivable from the data. However, there is no explicit named 'income verification' product or documented payroll-detection algorithm distinct from the generic transaction insights. Missing for 10: a first-party income-verification/payroll-detection product page, independent validation of recurring-stream accuracy, and explicit payroll payer identification beyond the test persona.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-22",
+      "mastercard-open-finance-docs-7",
+      "mastercard-open-finance-docs-8",
       "mastercard-open-finance-docs-13",
-      "mastercard-open-finance-docs-8"
+      "mastercard-open-finance-docs-33"
     ]
   },
   {
@@ -367,7 +380,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API capabilities (verification, balances, transaction data, webhooks, onboarding) but contains no published institution-coverage numbers, geographic breakdowns, or bank-reach statistics that a founder could check against their users' banks.",
+    "rationale": "The evidence pack covers API products, onboarding, testing personas, and webhooks, but contains no published institution coverage numbers, bank/FI counts, or geographic coverage lists that a founder could check against their users' banks.",
     "evidenceIds": []
   },
   {
@@ -376,17 +389,23 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The evidence pack covers API products (balance, ownership, transaction data, webhooks, onboarding) but contains no mention of institution status dashboards, outage/degradation signals, or error codes distinguishing bank-side vs integration-side issues.",
+    "rationale": "The evidence pack covers product APIs (account verification, balances, transactions, ACH, webhooks) and onboarding/testing, but there is no mention of institution-level health/status dashboards, outage or degradation signals, or error codes that distinguish bank-side failures from client-side issues. Webhooks are described only for event notifications, not institution health monitoring.",
     "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "multi-product-sessions",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The evidence lists multiple separate data products (account ownership, balances, transactions) and mentions a generic 'Connect' linking step, but nothing describes a single link/Connect session simultaneously provisioning auth, balances, transactions, and identity without repeated connection flows per product.",
-    "evidenceIds": []
+    "rationale": "Docs show account linking via Connect (docs-27) feeds multiple products—verification/account ownership, balances, transactions, ACH details—implying a shared linked-account model rather than per-product re-auth, but no explicit statement that a single Connect/link session simultaneously authorizes and returns auth+balances+transactions+identity without separate flows. missing for 10: explicit documentation confirming one link session grants access to all data products at once, developer walkthrough or hands-on evidence showing multi-product access from a single Connect session, and clarification on whether each product still requires separate permissioning/re-consent.",
+    "evidenceIds": [
+      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-docs-1",
+      "mastercard-open-finance-docs-2",
+      "mastercard-open-finance-docs-7",
+      "mastercard-open-finance-docs-30"
+    ]
   },
   {
     "productId": "mastercard-open-finance",
@@ -394,39 +413,36 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers Connect/account-linking, webhooks, and API products but never mentions OAuth-based bank authentication coverage, connectivity method mix, or a documented plan/status for retiring screen-scraped credential flows. Without explicit documentation of OAuth coverage vs. legacy scraping, this specific developer-facing transparency claim is unevidenced.",
-    "evidenceIds": [
-      "mastercard-open-finance-docs-27",
-      "mastercard-open-finance-docs-9"
-    ]
+    "rationale": "The evidence pack covers account linking, connect flows, and data aggregation but contains no documentation of OAuth-based bank connections versus screen-scraped/credential-based flows, nor any statement about retiring legacy credential flows or OAuth coverage across institutions.",
+    "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "on-demand-refresh",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "low",
-    "rationale": "Evidence shows account balance can be 'real-time or cached' and webhooks provide event notifications, but there is no documented API endpoint or explicit refresh semantics (e.g., a force-refresh trigger, freshness guarantees, or polling-for-refresh-status flow) for triggering an on-demand data refresh. Missing for 10: an explicit refresh/force-update endpoint, documented refresh semantics (sync vs async, staleness thresholds), and any independent confirmation of on-demand refresh behavior.",
+    "verdict": "partial",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Docs explicitly state that although Transaction Aggregation data refreshes daily, developers can trigger a refresh via dedicated 'Data Refresh' endpoints when more recent data is needed, confirming an on-demand refresh capability tied to the API. However, the evidence pack only points to this capability rather than detailing the actual refresh semantics (e.g., sync/async behavior, expected latency, status codes, or webhook completion notification), so the depth of documented semantics is unclear. Missing for 10: detailed refresh endpoint spec/semantics, confirmation of applicability to Account Balance/other data types beyond transactions, and independent corroboration of refresh behavior.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-2",
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-7"
+      "mastercard-open-finance-docs-32",
+      "mastercard-open-finance-docs-7",
+      "mastercard-open-finance-docs-8"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "openness-api-parity",
     "verdict": "partial",
-    "quality": 6,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "As an API-first data platform, virtually all core functions (account verification, balances, transactions, ACH details, webhooks/event management, token generation) are exposed directly via documented REST APIs rather than gated behind a UI, and even administrative functions like webhook subscriptions and token creation are API-driven (docs-9, docs-23, docs-26). However, the 'Connect' account-linking flow is a hosted widget/UI experience (docs-27) whose full API-equivalence isn't evidenced, and there's no explicit confirmation that all developer-portal/dashboard actions (billing, partner management) have API parity. Missing for 10: explicit API equivalents for the Connect linking UI, and confirmation that portal/dashboard admin tasks are fully scriptable.",
+    "rationale": "Mastercard Open Finance is API-first by design (account ownership, balance, transaction data, ACH details, webhooks, etc. all exposed via documented endpoints), and there is no separate end-user UI whose functionality would need to be matched — most flows (Connect widget) are meant to be embedded via API/SDK. However, the evidence doesn't explicitly confirm full parity for every UI-exposed configuration (e.g., partner dashboard/admin settings, Connect widget customization options) is achievable purely via API. missing for 10: explicit confirmation that all dashboard/admin/configuration actions available in the Mastercard developer portal UI are also exposed via API, and independent/hands-on verification of full API-UI parity.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-23",
-      "mastercard-open-finance-docs-26",
-      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-docs-1",
+      "mastercard-open-finance-docs-2",
       "mastercard-open-finance-docs-7",
-      "mastercard-open-finance-docs-1"
+      "mastercard-open-finance-docs-9",
+      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-docs-35"
     ]
   },
   {
@@ -434,8 +450,8 @@
     "storyId": "openness-full-export",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "This is a B2B financial data API platform, not a consumer product with user-owned data to export; the evidence shows no data export/portability feature for end users to take their data out in open formats and leave. No mention of any account/data export or account deletion/portability capability anywhere in the docs.",
+    "confidence": "medium",
+    "rationale": "This is a B2B financial data API platform (for fintechs/partners to access end-user financial data), not an end-user product with personal data export/portability controls; the evidence covers API endpoints for account/transaction data retrieval by partner apps, but no mention of a data export/portability feature or account deletion for the platform's own users/developers.",
     "evidenceIds": []
   },
   {
@@ -444,8 +460,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "The axis applies to this product kind (peer products hold positive or none verdicts on this story), so lack of evidence for an applicable capability is \"none\", never \"na\". (na/none harmonized at arena bring-up — see pipeline/scripts/na-harmonize.ts.)",
-    "evidenceIds": []
+    "rationale": "This is a proprietary financial API/SaaS product; there's a public GitHub repo for a test client generator, but no evidence the core product source is released under an open license. Absence of evidence for source availability under an open license means this applicable axis is unmet.",
+    "evidenceIds": [
+      "mastercard-open-finance-gh-1"
+    ]
   },
   {
     "productId": "mastercard-open-finance",
@@ -453,7 +471,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Mastercard Open Finance is a hosted financial-data API/SaaS platform; self-hosting the core product is not a coherent capability for this kind of service, so the axis does not apply.",
+    "rationale": "Mastercard Open Finance is a cloud-hosted financial data API/platform, not a software artifact designed to be self-hosted; self-hosting a bank-grade regulated financial aggregation service is a category error for this product type.",
     "evidenceIds": []
   },
   {
@@ -462,14 +480,14 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack describes the 'Pay' product family only as verification (account ownership, balance, ACH details, match), fraud/success prediction, and switching services — none of the docs describe an actual payment-initiation endpoint that moves funds from a connected account, nor any stated live geographies for such a capability. Without a documented API to actually initiate a bank payment, this axis is unmet.",
+    "rationale": "The docs describe a 'Pay' category with account verification, balance checks, ACH detail retrieval, account validation and payment-success prediction, but none of these evidence items describe an actual API call that initiates or moves a bank payment (i.e., pay-by-bank execution), and there is no statement of live geographies for any payment-initiation capability. This looks like decisioning/verification support for payments rather than payment initiation itself.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
       "mastercard-open-finance-docs-2",
-      "mastercard-open-finance-docs-15",
+      "mastercard-open-finance-docs-6",
+      "mastercard-open-finance-docs-16",
       "mastercard-open-finance-docs-17",
-      "mastercard-open-finance-docs-18",
-      "mastercard-open-finance-docs-6"
+      "mastercard-open-finance-docs-30"
     ]
   },
   {
@@ -478,7 +496,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence anywhere in the pack discusses data residency, regional storage options, or geographic controls for where customer data is stored/processed. This is an applicable axis for a financial data platform handling sensitive PII, but nothing addresses it.",
+    "rationale": "No evidence anywhere in the pack mentions data residency, region selection, or storage location controls for Open Finance data; the documentation covers APIs for account data, verification, payments, and testing but nothing about choosing storage regions.",
     "evidenceIds": []
   },
   {
@@ -486,8 +504,8 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence anywhere in the pack addresses AI-training data opt-out or data usage controls; the documentation covers financial data APIs and MCP tooling but nothing about preventing use of user data for AI model training.",
+    "confidence": "low",
+    "rationale": "The evidence pack covers Mastercard Open Finance's data aggregation, verification, and payment APIs, plus an MCP/agent toolkit for developer documentation Q&A, but contains no mention of AI model training policies, data usage opt-outs, or any mechanism for users to prevent their data from being used to train AI models. missing for 10: any privacy policy or setting addressing AI training use of data, opt-out mechanism, or public statement on model training practices.",
     "evidenceIds": []
   },
   {
@@ -495,8 +513,8 @@
     "storyId": "privacy-retention-controls",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers API products (account data, verification, transactions, webhooks, onboarding) but contains no mention of data retention policies, deletion controls, or user-facing privacy/data-lifecycle management tools. Missing for 10: any documentation of data retention periods, deletion/erasure APIs, or consumer-facing controls over stored financial data.",
+    "confidence": "medium",
+    "rationale": "No evidence in the pack addresses user-controlled data retention or deletion policies, consent revocation, or data purge mechanisms for accounts connected via Finicity/Open Finance; documentation covers data access, aggregation, and onboarding but not retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -505,37 +523,41 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence pack items mention telemetry, usage tracking, analytics collection, or any opt-out mechanism for AI-native or any users; this is an applicable axis for a developer platform but simply unevidenced.",
+    "rationale": "No evidence in the pack addresses telemetry/usage tracking opt-out for AI-native users or developers; the docs focus on financial data APIs, onboarding, and MCP tooling with no privacy/telemetry controls mentioned.",
     "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "processor-integrations",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Mastercard Open Finance provides account ownership verification, balance, ACH details, and account aggregation APIs accessible via token-based auth (PartnerID/secret) that developers can integrate into payment processing flows, and it supports Connect for account linking. However, the evidence does not document specific third-party payment processor/platform integration partnerships or an explicit token-exchange handoff mechanism to hand verified credentials to external processors — the story implies pre-built plug-and-play integrations rather than raw APIs a developer must wire up themselves. missing for 10: named third-party processor/platform integration partners, explicit token-exchange-to-processor handoff documentation, independent confirmation of such integrations working in production.",
+    "rationale": "Mastercard Open Finance documents account ownership verification, ACH details, balance data, and a partner-ID/secret token exchange model (including a 'Partner Direct Model' for onboarding affiliate customers), which supports the general mechanism of handing verified account/payment data to third parties. However, there is no named documentation of specific payment-processor integrations or a concrete token-exchange flow explicitly built for processors like Stripe/Dwolla. Missing for 10: named third-party processor integration partners, explicit processor-facing token/credential handoff flow, and independent confirmation of processor usage.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
-      "mastercard-open-finance-docs-2",
+      "mastercard-open-finance-docs-15",
       "mastercard-open-finance-docs-6",
+      "mastercard-open-finance-docs-30",
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
-      "mastercard-open-finance-docs-27"
+      "mastercard-open-finance-docs-35"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "quickstart-first-connection",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs show a self-serve-ish onboarding path (PartnerID/secret/appKey token generation, a non-billable unlimited 'Test Drive' plan, and test personas for sandbox account linking) and a GitHub OpenAPI spec that can generate a client library, but there's no explicit runnable quickstart tutorial or multi-language official client libraries beyond the one generated test project. Missing for 10: an explicit step-by-step quickstart guide, published official SDKs in multiple languages, and clear evidence of instant self-serve API key issuance without a sales/partner approval step.",
+    "rationale": "Docs show self-serve onboarding via PartnerID/secret/appKey token generation, a free unlimited 'Test Drive' sandbox plan, and test personas/test banks for realistic sandbox linking, plus a quick-start guide and a GitHub project that generates a client library from the OpenAPI spec. However, there's no evidence of officially published client libraries in multiple languages or a clearly fast, guided end-to-end quickstart tutorial from signup to first linked account. missing for 10: multi-language official SDKs, a concrete step-by-step quickstart walkthrough, evidence of quick sandbox-to-first-linked-account turnaround time.",
     "evidenceIds": [
       "mastercard-open-finance-docs-10",
       "mastercard-open-finance-docs-23",
       "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-29",
       "mastercard-open-finance-docs-25",
+      "mastercard-open-finance-docs-33",
+      "mastercard-open-finance-docs-35",
       "mastercard-open-finance-gh-1"
     ]
   },
@@ -557,50 +579,55 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence covers account data (balances, ownership, transactions), ACH details, and 'switch deposits and bill payments' but nothing documents variable recurring payments, standing consents, or a recurring debit/payment-initiation flow — this product's Pay APIs appear focused on verification (account owner, balance, ACH details) rather than initiating recurring debits.",
+    "rationale": "The evidence pack shows account verification, balances, transaction data, ACH details, and payment success prediction, but nothing about variable recurring payments, standing consents, or documented recurring debit/payment-initiation flows — this is an account information/data product, not a payment-initiation API with recurring capabilities.",
     "evidenceIds": []
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "sandbox-test-institutions",
-    "verdict": "partial",
-    "quality": 6,
+    "verdict": "full",
+    "quality": 7,
     "confidence": "medium",
-    "rationale": "Docs confirm a dedicated Test Drive sandbox with unlimited access to all endpoints, testing personas representing different user scenarios, and a GitHub sample project generating a real API client for end-to-end testing — covering linking, data retrieval, and onboarding tokens. However, there is no explicit documentation of error-state simulation or a catalog of documented test credentials/institutions with specific failure scenarios. Missing for 10: explicit documented test credentials list, coverage of error/failure state simulation, and independent/hands-on confirmation of the sandbox experience.",
+    "rationale": "Docs describe a dedicated non-billable Test Drive sandbox with full API access, test banks (FinBanks) and test payroll provider (FinPayroll), and multiple 'testing personas' representing different user profiles for exercising linking (via Connect) and data retrieval scenarios, plus a GitHub sample project that generates a client library from the spec for realistic integration testing. Missing for 10: explicit documentation of test credentials/login details for the test institutions and explicit coverage of simulated error states (e.g., failed auth, MFA challenges) in the sandbox.",
     "evidenceIds": [
-      "mastercard-open-finance-docs-11",
       "mastercard-open-finance-docs-24",
+      "mastercard-open-finance-docs-29",
+      "mastercard-open-finance-docs-33",
       "mastercard-open-finance-docs-25",
-      "mastercard-open-finance-gh-1",
-      "mastercard-open-finance-docs-27"
+      "mastercard-open-finance-docs-27",
+      "mastercard-open-finance-gh-1"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "scoped-data-access",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "The docs show a product-based API structure (separate endpoints for account ownership, balance, transactions, ACH, etc.), which implicitly allows requesting only specific data products rather than a single blob, but there is no explicit documentation of scoped consent tokens, granular permission grants, or data-minimization controls presented to developers. missing for 10: explicit consent-scoping API/parameters, documentation of minimal-data-grant mechanisms, evidence of per-scope authorization tokens, and any independent confirmation of data-minimization enforcement.",
+    "rationale": "The docs show Open Finance is organized into discrete products (account ownership verification, balance, transaction data, ACH details, payment prediction, etc.) that are called via separate endpoints, implying developers can integrate only the specific data product they need rather than one monolithic feed, and account/transaction data is further broken into 'data segments' varying by account type. However, there is no explicit documentation of a consent-scope selection UI, granular permission grants surfaced to end users, or stated data-minimization policy/controls tied to those product APIs. Missing for 10: explicit consent-scope selection mechanism in the Connect flow, documented end-user permission granularity, and a stated data-minimization policy.",
     "evidenceIds": [
       "mastercard-open-finance-docs-1",
       "mastercard-open-finance-docs-2",
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
-      "mastercard-open-finance-docs-19"
+      "mastercard-open-finance-docs-31",
+      "mastercard-open-finance-docs-16",
+      "mastercard-open-finance-docs-17",
+      "mastercard-open-finance-docs-18"
     ]
   },
   {
     "productId": "mastercard-open-finance",
     "storyId": "transaction-enrichment",
     "verdict": "partial",
-    "quality": 4,
-    "confidence": "medium",
-    "rationale": "Docs confirm Transaction Data Services return categorized insights (transaction types, recurring transactions, consumer spending, loan payments), which implies some enrichment/categorization layer, but nothing explicitly documents merchant-name cleansing or logo attachment as a first-class capability. Missing for 10: explicit documentation of merchant name normalization/cleanup and logo enrichment fields in the transaction schema.",
+    "quality": 3,
+    "confidence": "low",
+    "rationale": "Docs confirm a Transaction Data Services product with account/transaction data elements and higher-level insights (transaction types, recurring transactions, consumer spending), suggesting some categorization-level enrichment, but nowhere do the docs explicitly mention cleaned/normalized merchant names or merchant logos as a documented output. missing for 10: explicit documentation of merchant-name cleansing, category taxonomy definitions, and logo delivery in transaction responses.",
     "evidenceIds": [
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
-      "mastercard-open-finance-docs-22"
+      "mastercard-open-finance-docs-22",
+      "mastercard-open-finance-docs-31"
     ]
   },
   {
@@ -609,14 +636,13 @@
     "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Evidence confirms a dedicated Transaction Data Services API that returns account/transaction details and varies by account type, plus a webhook/notification system explicitly framed as eliminating constant polling, which implies a change-based sync pattern. However, no evidence documents pagination mechanics or a specific stated history depth (e.g., days/months of transactions) for the transaction endpoint. missing for 10: explicit pagination documentation, stated transaction history depth/lookback window, explicit delta/cursor sync pattern for transactions specifically (webhooks reference is generic, not transaction-specific).",
+    "rationale": "Docs confirm Transaction Data Services return account transaction data, note refresh/sync via 'Data Refresh' endpoints (daily refresh, can be refreshed on demand), and webhooks for change notifications instead of constant polling — supporting a sync pattern. However, there's no explicit documentation of pagination mechanics or a stated history depth (e.g., days/months of history available) in the evidence. missing for 10: explicit pagination parameters/response structure, documented transaction history depth/lookback window, and independent/hands-on confirmation of the sync pattern in practice.",
     "evidenceIds": [
       "mastercard-open-finance-docs-7",
       "mastercard-open-finance-docs-8",
       "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-19",
-      "mastercard-open-finance-docs-22",
-      "mastercard-open-finance-docs-26"
+      "mastercard-open-finance-docs-32",
+      "mastercard-open-finance-docs-31"
     ]
   },
   {
@@ -624,8 +650,8 @@
     "storyId": "user-consent-management",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence pack covers data retrieval, verification, transaction data, webhooks, onboarding tokens, and testing personas, but nowhere documents an end-user-facing consent management portal, dashboard, or revocation mechanism for shared bank-data access. No mention of a consent surface for users to view or revoke connected apps' access.",
+    "confidence": "high",
+    "rationale": "No evidence pack item describes an end-user-facing consent management portal, dashboard, or revocation surface for data sharing; the docs cover developer-facing APIs (account verification, balances, transactions, webhooks) and testing personas, but nothing about users viewing/revoking connected app access. This axis applies to any data-aggregation/open-banking product, so absence of evidence yields 'none'.",
     "evidenceIds": []
   },
   {
@@ -634,11 +660,10 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm webhooks exist for real-time event notifications instead of polling, and OBWMS lets you subscribe to specific events; transaction/notification-type docs exist too. However, there's no evidence of webhook payload signing/verification, and no explicit documentation enumerating events like balance updates or connection-state changes with delivery guarantees. Missing for 10: signature verification mechanism, explicit event-type catalog (transactions/balances/connection state), delivery retry/reliability details.",
+    "rationale": "Docs confirm webhooks exist for real-time event notifications instead of polling, covering event subscriptions and transaction/connection state changes. missing for 10: explicit confirmation of payload signing/verification mechanism for webhook authenticity, and concrete coverage of balance-update webhook events specifically.",
     "evidenceIds": [
       "mastercard-open-finance-docs-9",
-      "mastercard-open-finance-docs-26",
-      "mastercard-open-finance-docs-20"
+      "mastercard-open-finance-docs-26"
     ]
   },
   {
