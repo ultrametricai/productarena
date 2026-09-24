@@ -1431,7 +1431,7 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Docs confirm real integrations with QuickBooks Online (export sync) and NetSuite (expense syncing/reporting/accounting), plus a 'multi-level GL coding' feature suggesting GL account/class/department mapping control, but there's no explicit mention of Xero or of finance-lead-controlled class/department field mapping specifically. Missing for 10: explicit Xero integration evidence, detailed documentation of user-controlled class/department mapping configuration, and independent/hands-on confirmation that mappings work as configured.",
+    "rationale": "Docs confirm QuickBooks Online and NetSuite accounting connections plus multi-level GL coding, supporting core sync-with-mapping capability, but Xero is never mentioned and class/department-specific mapping controls are not detailed beyond generic GL coding language. missing for 10: Xero integration evidence, explicit class/department mapping documentation, independent corroboration of mapping accuracy.",
     "evidenceIds": [
       "expensify-docs-7",
       "expensify-docs-13",
@@ -1443,14 +1443,18 @@
     "productId": "expensify",
     "storyId": "agent-closes-the-books",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Expensify documents a general API with OAuth2 credential-based access (expensify-docs-1/2) and an AI assistant that can categorize/approve expenses via plain language (expensify-docs-3/4), suggesting some machinery exists for pulling and coding transactions, but there is no documentation of an MCP server, no specific 'uncoded transactions' API endpoint, and no described workflow for pushing proposed codings back for human review. Community reports also raise concerns about categorization accuracy historically (expensify-comm-1/4), casting doubt on the 'propose categorizations' reliability. missing for 10: MCP server/connector evidence, explicit API support for uncoded-transaction retrieval and coding-review push-back, verified categorization accuracy at scale.",
+    "rationale": "Expensify offers a general API with OAuth2 credentials (expensify-docs-1,2,12,19,20) and conversational AI features that can categorize/approve/reject expenses via plain language (expensify-docs-3,4,22), which could underpin an agent-driven coding workflow, but there is no documentation of an MCP server, no endpoint specifically for pulling 'uncoded' transactions, and no described push-back-for-review flow for agent-proposed coding. Missing for 10: MCP server support, a dedicated uncoded-transactions/coding API endpoint, explicit agent review-and-push workflow, and independent validation of categorization accuracy (community reports flag frequent categorization errors, expensify-comm-1, expensify-comm-4).",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
       "expensify-docs-3",
       "expensify-docs-4",
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20",
+      "expensify-docs-22",
       "expensify-comm-1",
       "expensify-comm-4"
     ]
@@ -1461,19 +1465,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of an llms.txt file, agent-oriented documentation, or any machine-readable docs endpoint; the docs-md probe returned a 404, and no other citation mentions such a resource.",
+    "rationale": "No evidence of an llms.txt file, agent-oriented documentation format, or any indication Expensify publishes docs designed for AI agents to consume; the probe for a machine-readable docs endpoint returned a 404. Standard human-oriented API docs exist but nothing addresses agent-discoverable documentation.",
     "evidenceIds": [
-      "expensify-probe-1"
+      "expensify-probe-1",
+      "expensify-docs-1"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "agentic-ai-insights",
-    "verdict": "disputed",
-    "quality": 5,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify markets an 'Ask Expensify AI' feature that lets users create/categorize/approve expenses and even fix workspace configuration via plain-language requests, which matches the AI-insights/suggestions story (expensify-docs-3, expensify-docs-4). However, independent community reports say Expensify's automated categorization (the core AI-driven suggestion mechanism) is wrong roughly 70% of the time unless obvious, undercutting the reliability of these AI suggestions (expensify-comm-1, expensify-comm-4). Missing for 10: independent hands-on validation of the newer 'Ask Expensify AI' feature specifically (not just older SmartScan categorization), and evidence of proactive 'insights' beyond conversational commands.",
+    "rationale": "First-party docs describe an 'Ask Expensify AI' feature that gives instant answers, charts, and quarterly flux analysis, and can act on data via plain language (expensify-docs-22, expensify-docs-3, expensify-docs-4), matching the story of AI-generated insights inside the product. However there is no independent or hands-on corroboration of this specific insights feature's quality, and unrelated community reports point to inaccuracies in Expensify's other automated data-extraction (SmartScan/categorization), raising some doubt about overall AI reliability even though not directly about the insights feature. Missing for 10: independent/hands-on validation of the Ask Expensify AI insights feature specifically, and details on accuracy/limits of its generated suggestions.",
     "evidenceIds": [
+      "expensify-docs-22",
       "expensify-docs-3",
       "expensify-docs-4",
       "expensify-comm-1",
@@ -1501,23 +1507,26 @@
     "verdict": "partial",
     "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify's own blog documents 'Ask Expensify AI Anything,' a built-in assistant that can create/categorize/approve expenses and even configure workspaces via plain language, matching the delegation story. However, this is first-party marketing copy with no independent hands-on corroboration, and community feedback in the pack focuses only on SmartScan's older categorization/data-handling issues rather than validating the AI assistant itself. Missing for 10: independent/hands-on verification of the AI assistant's task delegation, details on scope/limits of what it can autonomously do, and any user reports specifically about this AI feature.",
+    "rationale": "Expensify's own docs describe an 'Ask Expensify AI Anything' assistant that can create/categorize/approve expenses, configure workspaces, and answer spend questions via plain language, directly matching the story of delegating tasks to a built-in AI assistant. However, all evidence is vendor-authored marketing copy with no independent or hands-on verification of the AI assistant's actual behavior or reliability. Missing for 10: independent/hands-on confirmation that the AI assistant works as described, details on scope/limits of delegation, and any user reviews specifically of the AI feature (existing community feedback concerns older SmartScan/categorization issues, not the AI assistant itself).",
     "evidenceIds": [
       "expensify-docs-3",
-      "expensify-docs-4"
+      "expensify-docs-4",
+      "expensify-docs-22"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "agentic-headless",
     "verdict": "partial",
-    "quality": 3,
-    "confidence": "low",
-    "rationale": "Expensify exposes an Integration Server API with OAuth2 token-based programmatic access, which could technically be scripted into a CI pipeline, but there is no documentation, CLI, SDK, or example showing headless/CI usage specifically. Missing for 10: explicit CI/automation documentation, a headless CLI or SDK, and any hands-on evidence of running Expensify unattended in a pipeline.",
+    "quality": 4,
+    "confidence": "medium",
+    "rationale": "Expensify exposes an Integration Server API with generated credentials and an OAuth2 client-credentials/authorization flow, which enables scripted, non-interactive (headless) calls that could be invoked from CI pipelines. However, there is no documentation of a CLI, SDK, or explicit CI/automation examples, and the GitHub references only cover running the front-end app locally, not headless automation of expense workflows. Missing for 10: explicit CI/CD integration guides, a documented CLI or automation SDK, and evidence of headless usage in real pipelines.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1526,7 +1535,7 @@
     "verdict": "na",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Expensify is an expense management SaaS product, not an AI agent; the evidence shows only its own API/integration server and AI-assistant features, with no mention of MCP server support for plugging in external tool servers. This axis (agent-role MCP client capability) does not apply to a SaaS platform's own product surface.",
+    "rationale": "Expensify is an expense-management SaaS product, not an AI agent; evidence shows only its own REST/OAuth API and an internal 'Ask Expensify AI' feature, with no mention of MCP server support for plugging in external tools.",
     "evidenceIds": []
   },
   {
@@ -1535,23 +1544,21 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "Expensify offers a REST API with OAuth2 credentials, but there is no evidence of an official MCP server for agent connectivity; the AI features described (Ask Expensify) are first-party assistant features, not an MCP integration point.",
-    "evidenceIds": [
-      "expensify-docs-1",
-      "expensify-docs-2",
-      "expensify-docs-3"
-    ]
+    "rationale": "Expensify is not itself an agent, so the axis applies (it's a fair question whether the SaaS ships an official MCP server), but no evidence pack item mentions MCP, an MCP server, or agent-connection protocol — only REST/OAuth2 API credentials and an in-app 'Ask Expensify AI' chat feature are documented.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "agentic-nl-commands",
     "verdict": "partial",
-    "quality": 5,
-    "confidence": "low",
-    "rationale": "First-party blog claims 'Ask Expensify AI' lets users create/categorize/tag/approve/reject expenses and configure workspaces via plain language, directly matching the story, but this is vendor marketing copy with no independent/hands-on verification of the natural-language feature itself. Community evidence discusses categorization accuracy and UX issues but doesn't specifically test or contradict the AI natural-language assistant. Missing for 10: independent hands-on confirmation that the AI chat actually executes commands reliably, details on scope/limits of supported natural-language operations, and evidence it's broadly available rather than a beta/blog announcement.",
+    "quality": 6,
+    "confidence": "medium",
+    "rationale": "Expensify markets an 'Ask Expensify AI' feature allowing users to create/categorize/approve expenses, fix workspace setup, and get instant financial insights via plain language commands, which directly matches the natural-language operation story. However, this is vendor-claimed blog content with no independent hands-on verification of accuracy or reliability, and community evidence highlights general accuracy/categorization issues in other AI-adjacent features (SmartScan), raising doubts about robustness. Missing for 10: independent corroboration of the natural-language AI feature's real-world reliability, technical documentation/API details for the NL interface itself, and evidence of broad command coverage beyond the blog's examples.",
     "evidenceIds": [
       "expensify-docs-3",
-      "expensify-docs-4"
+      "expensify-docs-4",
+      "expensify-docs-22",
+      "expensify-comm-1"
     ]
   },
   {
@@ -1559,34 +1566,38 @@
     "storyId": "agentic-official-cli",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows an API/Integration Server with OAuth2, and a GitHub repo for the app itself, but no official CLI tool for AI-native workflows is documented anywhere in the pack.",
+    "confidence": "high",
+    "rationale": "Evidence shows an Integration Server API with OAuth2 and a GitHub repo for the app itself, but no evidence of an official CLI tool for AI-native workflows.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "agentic-public-api",
-    "verdict": "full",
-    "quality": 7,
+    "verdict": "partial",
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify documents a public Integration Server API with credential generation and OAuth2 authorization-code flow for acting on behalf of users, indicating programmatic access beyond the UI. Missing for 10: independent/hands-on developer corroboration of the API's completeness, rate limits, or breadth of endpoints, and no evidence of SDKs or community usage confirming real-world API-driven workflows.",
+    "rationale": "Expensify has a documented public Integration Server API with credential generation and OAuth2 authorization code flow for acting on behalf of users, enabling programmatic access. However, evidence lacks detail on API endpoint coverage/breadth, rate limits, SDKs, or independent developer corroboration of usability. Missing for 10: broader endpoint documentation, independent/hands-on developer validation, and SDK/tooling support.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "agentic-scoped-keys",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "Expensify's API docs describe generating general API credentials and using OAuth2 to obtain short-lived tokens on behalf of a user, but there's no evidence of scoped/least-privilege credential issuance specifically designed for agent use cases (e.g., granular permission scopes, agent-specific role restrictions). Missing for 10: scoped/permissioned API key or token creation, agent-specific credential controls, documentation of least-privilege design.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "Expensify's docs show API credential issuance (partnerUserID/partnerUserSecret) and an OAuth2 authorization-code flow yielding short-lived access tokens, plus manual secret rotation — some least-privilege elements (time-limited tokens, credential regeneration) exist. However, there's no evidence of granular scopes, role-based permissions, or agent-specific credential restrictions (e.g., read-only vs. write, limited resource access) that would constitute true scoped/least-privilege credentials for an AI agent. Missing for 10: documented permission scopes/roles, agent-specific credential templates, and any explicit least-privilege API key configuration.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1595,12 +1606,13 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a proprietary Integration Server REST API with API credentials/OAuth2, not an official SDK (client library) for building AI-native integrations; no mention of SDKs in any language, and a probe attempt to find developer docs even returned a 404. Missing for 10: any official SDK/client library, language-specific packages, or AI-agent oriented developer kit.",
+    "rationale": "Evidence shows only a raw REST-style Integration Server API with credential generation and OAuth2 flow, not any official SDKs or client libraries for developers to build against; the GitHub repo referenced is Expensify's own app, not a published SDK.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12",
-      "expensify-probe-1"
+      "expensify-docs-19",
+      "expensify-docs-20",
+      "expensify-gh-1"
     ]
   },
   {
@@ -1608,8 +1620,8 @@
     "storyId": "agentic-webhooks",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack shows Expensify has an API with OAuth2 auth and credential generation, but nothing describes a webhook/event subscription mechanism for AI agents to consume. Missing for 10: any documentation of webhook endpoints, event types, subscription setup, or push-notification callback support.",
+    "confidence": "high",
+    "rationale": "Evidence shows OAuth2/API credential setup for Expensify's REST API but no mention of webhooks, event subscriptions, or push notifications for AI agents to consume.",
     "evidenceIds": []
   },
   {
@@ -1618,16 +1630,15 @@
     "verdict": "disputed",
     "quality": 4,
     "confidence": "medium",
-    "rationale": "Expensify markets 'Ask Expensify AI' for categorizing, tagging, and approving expenses via plain language, and SmartScan for reading receipt data (expensify-docs-3, expensify-docs-4, expensify-docs-6, expensify-docs-18), but hands-on community reports directly contradict the accuracy claims: users report ~70% mis-categorization rates and note SmartScan historically relied on human mechanical-turk workers (with resulting PII exposure) rather than pure AI (expensify-comm-1, expensify-comm-2, expensify-comm-3, expensify-comm-4). No evidence at all addresses duplicate or fraud detection. Missing for 10: verified fraud/duplicate-catching capability, independent confirmation that categorization/audit is now AI-driven and accurate, and resolution of the human-labor/accuracy concerns.",
+    "rationale": "Expensify markets an AI feature that reads receipts (SmartScan) and can categorize, tag, and create expenses via plain language (expensify-docs-3, expensify-docs-6, expensify-docs-18), but there is no evidence of AI-driven duplicate or fraud detection. Community hands-on reports directly contradict the categorization-quality claim, stating Expensify 'does pretty horrible categorization' and gets it wrong ~70% of the time (expensify-comm-1, expensify-comm-4), and also raise concerns about human (mechanical turk) processing of receipt data rather than pure AI (expensify-comm-2, expensify-comm-3). Missing for 10: explicit fraud/duplicate detection capability, independent verification of the newer 'Expensify AI' feature's accuracy, and resolution of the categorization-accuracy complaints.",
     "evidenceIds": [
       "expensify-docs-3",
-      "expensify-docs-4",
       "expensify-docs-6",
       "expensify-docs-18",
       "expensify-comm-1",
+      "expensify-comm-4",
       "expensify-comm-2",
-      "expensify-comm-3",
-      "expensify-comm-4"
+      "expensify-comm-3"
     ]
   },
   {
@@ -1635,11 +1646,12 @@
     "storyId": "ai-policy-copilot",
     "verdict": "partial",
     "quality": 4,
-    "confidence": "medium",
-    "rationale": "Expensify's 'Ask Expensify AI Anything' assistant supports plain-language creation, categorization, approval/rejection of expenses and workspace rule configuration, which is conversational policy interaction, but the evidence never shows it proactively chasing missing receipts, explaining specific declines, or answering pre-spend 'can I expense this?' queries. Community reports also flag poor categorization accuracy (~70% error rate), undermining confidence in the conversational engine's reliability. Missing for 10: explicit documentation of proactive receipt-chasing, decline explanations, and pre-spend eligibility checks, plus independent verification of these specific behaviors.",
+    "confidence": "low",
+    "rationale": "Expensify's 'Ask Expensify AI' lets users approve/reject/categorize expenses and get instant spend answers conversationally, showing some conversational-policy capability, but there's no evidence of it proactively chasing missing receipts, explaining declines, or answering 'can I expense this?' before spend occurs. Community evidence also flags inconsistent categorization accuracy, raising doubts about reliability of any automated policy judgments. Missing for 10: proactive receipt-chasing workflow, decline-explanation feature, pre-spend policy Q&A, and independent verification of AI accuracy on these tasks.",
     "evidenceIds": [
       "expensify-docs-3",
       "expensify-docs-4",
+      "expensify-docs-22",
       "expensify-comm-1",
       "expensify-comm-4"
     ]
@@ -1650,10 +1662,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows only a basic API doc requiring credentials and OAuth2 setup, with no mention of an interactive reference, runnable examples, or sandbox/console; a probe for a machine-readable docs endpoint returned 404.",
+    "rationale": "Evidence shows only a static API doc page describing credential setup and OAuth flow, with no mention of an interactive reference, runnable code examples, or sandbox/playground; a probe for a machine-readable/interactive doc endpoint returned 404.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
+      "expensify-docs-19",
       "expensify-probe-1"
     ]
   },
@@ -1663,11 +1676,12 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Expensify has an API with OAuth2 credentials but no mention of a downloadable machine-readable spec like OpenAPI/Swagger; the docs page is only HTML documentation, not a spec file.",
+    "rationale": "Evidence shows Expensify has an Integration Server API with OAuth2 credentials, but there is no mention of a downloadable machine-readable spec like OpenAPI/Swagger; the docs-md probe even returned a 404, suggesting no machine-readable doc format is exposed.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-19",
+      "expensify-probe-1"
     ]
   },
   {
@@ -1676,7 +1690,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of a sandbox or test environment for Expensify's API/integration platform; docs only cover OAuth2 credentials and production-oriented integrations (QuickBooks, NetSuite). This is a fair axis for an API-driven product, but nothing in the evidence pack mentions sandbox, staging, or test-mode accounts.",
+    "rationale": "No evidence of any sandbox/test environment, staging API, or mock data mode for Expensify's API or integrations — only production API credential setup is documented.",
     "evidenceIds": []
   },
   {
@@ -1684,35 +1698,31 @@
     "storyId": "api-versioning-policy",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows Expensify has an Integration Server API with OAuth2 credentials, but nothing about API versioning, version numbers, or a documented deprecation/sunset policy is present anywhere in the pack. Missing for 10: any mention of API version numbers, changelog, breaking-change policy, or deprecation timeline/notice process.",
-    "evidenceIds": [
-      "expensify-docs-1",
-      "expensify-docs-2",
-      "expensify-docs-12"
-    ]
+    "confidence": "high",
+    "rationale": "There is API documentation and credential/token guidance, but no evidence of API versioning scheme or any documented deprecation policy anywhere in the pack.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "approval-workflows",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence pack items describe multi-step approval chains (manager/budget owner/finance), delegation, or escalation logic; documentation covers API auth, SmartScan, integrations, invoicing, and pricing but nothing on approval workflow configuration.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack describes multi-step approval chains, delegation, or escalation logic in Expensify's workflow configuration; evidence only covers API auth, receipt scanning, accounting integrations, and unrelated community complaints.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "auto-receipt-matching",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 3,
     "confidence": "low",
-    "rationale": "Expensify documents SmartScan for automatic receipt data extraction (docs-6, docs-18) and supports bringing your own corporate cards (docs-5, docs-10), which implies some card-transaction integration, but there is no direct evidence describing automatic receipt-to-transaction matching, e-receipt pulling from vendor integrations, or a 'nudge only when missing' notification flow. Community reports also flag categorization/accuracy issues that could undercut a fully automated match (comm-1, comm-4). Missing for 10: explicit documentation of automatic receipt-card matching logic, e-receipt integration pulls, and a missing-receipt notification/nudge feature.",
+    "rationale": "Expensify docs show SmartScan auto-reading receipt data and card import/BYOC, which implies some receipt-to-transaction linkage, but there is no explicit evidence of automatic e-receipt pulling from partner integrations or of a nudge system that only fires when a receipt is genuinely missing. Community reports also flag inconsistent categorization and slow processing, undercutting confidence in the 'smart' matching claim. Missing for 10: explicit e-receipt integration sourcing, documented auto-match-to-card-transaction logic, and evidence of a targeted 'missing receipt' nudge feature.",
     "evidenceIds": [
       "expensify-docs-6",
       "expensify-docs-18",
+      "expensify-docs-21",
       "expensify-docs-5",
-      "expensify-docs-10",
       "expensify-comm-1",
       "expensify-comm-4"
     ]
@@ -1720,14 +1730,16 @@
   {
     "productId": "expensify",
     "storyId": "automation-bulk-operations",
-    "verdict": "none",
-    "quality": 0,
+    "verdict": "partial",
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows an API/OAuth integration and a natural-language AI assistant for single-item actions (create/categorize/approve expenses), but nothing describes bulk or batch operations across many items at once via API or AI. Missing for 10: documented bulk endpoints, batch API calls, or AI commands operating on multiple items simultaneously, plus any independent confirmation of such bulk capability.",
+    "rationale": "Expensify offers an API (with OAuth2 auth) and an AI assistant that can create/categorize/tag/approve/reject expenses via plain language, which implies some programmatic/automation capability, but no evidence explicitly describes bulk operations across many items at once (e.g., batch endpoints, mass-approve, multi-item processing in one call).  missing for 10: explicit bulk/batch API endpoints or documented multi-item automation examples, independent verification of bulk-operation reliability.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-3"
+      "expensify-docs-3",
+      "expensify-docs-4",
+      "expensify-docs-19"
     ]
   },
   {
@@ -1749,13 +1761,9 @@
     "storyId": "automation-scheduled-jobs",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Expensify's API/integration docs describe authentication and one-off actions but no evidence of scheduling recurring jobs or automated workflows on a timer; automatic exports (e.g., QuickBooks) are triggered by report finalization, not user-defined recurring schedules exposed to AI-native automation.",
-    "evidenceIds": [
-      "expensify-docs-1",
-      "expensify-docs-2",
-      "expensify-docs-7"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence shows an API with OAuth credentials and export automation (e.g., auto-export to QuickBooks) but no scheduler, cron-like job runner, or workflow automation engine for recurring AI-native jobs is documented.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
@@ -1772,36 +1780,38 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack covers expense reporting, receipt scanning, corporate cards, travel, and outbound client invoicing (AR), plus accounting syncs to QuickBooks/NetSuite, but contains no mention of vendor bill/invoice capture for payables, AP-specific approval routing, or vendor payment via ACH, check, or wire. This is a distinct AP workflow not evidenced here.",
+    "rationale": "Evidence shows only outbound client invoicing (branded invoice templates, payment notifications) and expense/spend management (corporate cards), not accounts-payable bill capture, approval routing for vendor invoices, or vendor payment via ACH/check/wire. No evidence Expensify supports receiving and paying vendor bills.",
     "evidenceIds": [
       "expensify-docs-9",
       "expensify-docs-17",
-      "expensify-docs-7",
-      "expensify-docs-13",
-      "expensify-docs-14"
+      "expensify-docs-15",
+      "expensify-docs-10"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "budgets-enforcement",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence only shows generic 'Smart Limits on cards' and 'multi-level GL coding' features, with no documentation of allocating budgets specifically to teams/projects or details on how approvals/card limits enforce those budgets end-to-end. Missing for 10: team/project-level budget allocation workflows, approval-chain enforcement mechanics, and any independent verification that limits actually block overspend.",
+    "rationale": "Expensify docs mention 'Smart Limits on cards' and 'multi-level GL coding' which suggest some card-limit and budget-tracking capability, but there is no evidence of a feature to allocate budgets specifically to teams/projects or of approval workflows that enforce those allocations. missing for 10: team/project-level budget allocation, documented approval-workflow enforcement tied to budgets, independent verification that Smart Limits actually block overspend in practice.",
     "evidenceIds": [
       "expensify-docs-10",
-      "expensify-docs-15"
+      "expensify-docs-15",
+      "expensify-docs-21"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "card-policy-controls",
     "verdict": "partial",
-    "quality": 3,
+    "quality": 4,
     "confidence": "low",
-    "rationale": "Expensify markets 'Smart Limits on cards' as a feature, suggesting some spend-control capability, but the evidence pack gives no detail on restricting by category/merchant/amount or on real-time auto-lock/decline at point of sale. Missing for 10: documentation of category/merchant-based restriction rules, confirmation of real-time POS decline/lock behavior, and any independent corroboration of these controls working as described.",
+    "rationale": "Expensify offers 'Smart Limits on cards' and mentions bringing your own corporate cards, suggesting some card-level spend controls exist, but there is no evidence of restricting by specific merchant, or real-time point-of-sale auto-lock/decline enforcement for out-of-policy spend. Missing for 10: documentation of category/merchant-specific restriction rules, real-time point-of-sale decline mechanics, and any hands-on or independent confirmation that these controls actually block transactions at swipe time.",
     "evidenceIds": [
-      "expensify-docs-10"
+      "expensify-docs-10",
+      "expensify-docs-21",
+      "expensify-docs-5"
     ]
   },
   {
@@ -1810,16 +1820,16 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify's docs promise automatic merchant/date/total capture (SmartScan), AI-driven categorization, multi-level GL coding, and syncing to QuickBooks/NetSuite so reports are close-ready, but hands-on community reports directly contradict the categorization claim, citing ~70% miscategorization and slow, human-mediated (mechanical turk) receipt processing that undermines 'real-time coding'. Missing for 10: independent verification that categorization accuracy has improved, more recent (post-mturk-era) hands-on accounts confirming reliable real-time coding, and evidence of memo/note fields being auto-populated.",
+    "rationale": "Expensify's docs describe a full real-time coding pipeline — SmartScan auto-extracts merchant/date/total, AI auto-categorizes and tags expenses, multi-level GL coding, and automatic export to QuickBooks/NetSuite — which is exactly the 'code as it happens' close-readiness story. However, hands-on community reports concretely contradict the categorization claim, citing ~70% miscategorization rates and slow/manual processing, meaning finance teams still have real cleanup work at month-end rather than pure review. Missing for 10: independent verification that categorization/AI accuracy has materially improved since these reports, and evidence of end-to-end audit showing memo/receipt completeness at scale without manual correction.",
     "evidenceIds": [
-      "expensify-docs-3",
       "expensify-docs-6",
-      "expensify-docs-15",
       "expensify-docs-18",
+      "expensify-docs-3",
+      "expensify-docs-15",
       "expensify-docs-7",
+      "expensify-docs-14",
       "expensify-comm-1",
-      "expensify-comm-4",
-      "expensify-comm-5"
+      "expensify-comm-4"
     ]
   },
   {
@@ -1828,7 +1838,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "The evidence pack shows approval workflows (AI-driven approve/reject) and accounting sync (QuickBooks, NetSuite) but no documentation of an immutable audit trail, edit/approval history log, or audit-ready reporting that would survive external audit scrutiny. Community evidence focuses on categorization accuracy and billing complaints, not audit-trail integrity.",
+    "rationale": "The evidence pack covers API auth, SmartScan, integrations, pricing, and travel/invoicing features, but contains no documentation of an audit trail, edit/approval history log, or policy-check logging that would satisfy an external audit. No mention of immutable logs, approval chains being recorded, or compliance/audit certifications.",
     "evidenceIds": []
   },
   {
@@ -1837,24 +1847,27 @@
     "verdict": "partial",
     "quality": 4,
     "confidence": "low",
-    "rationale": "Evidence shows some policy-adjacent features (Smart Limits on cards, multi-level GL coding, and 'build rules' via AI assistant) but no explicit documentation of a full policy engine enforcing limits by category/role/context with automatic in-policy approval and exception routing to a human approver. missing for 10: documented approval workflow/exception routing, role-based limit configuration, and evidence of auto-approval logic actually functioning as described.",
+    "rationale": "Evidence shows some policy-adjacent features — Smart Limits on cards, multi-level GL coding, and workspace 'rules' configurable via AI assistant — suggesting the platform supports policy codification, but there's no direct documentation of category/role/context-based approval limits or an explicit auto-approve-vs-exception-routing workflow. Missing for 10: dedicated approval-workflow/policy-engine documentation, evidence of role-based spending limits, evidence of automatic approval routing only exceptions to humans, and independent corroboration that this works as described.",
     "evidenceIds": [
       "expensify-docs-10",
       "expensify-docs-15",
-      "expensify-docs-4"
+      "expensify-docs-4",
+      "expensify-docs-3"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "expenses-api-read",
     "verdict": "partial",
-    "quality": 5,
+    "quality": 6,
     "confidence": "medium",
-    "rationale": "Expensify documents an Integration Server API with API credentials and OAuth2 authorization code flow for short-lived access tokens, which supports scoped-token access on behalf of users. However, there is no clear evidence of granular scoped tokens, comprehensive REST endpoint documentation for pulling transactions/expenses/receipts specifically, or independent developer corroboration of the API's usability. missing for 10: detailed REST endpoint reference for transactions/receipts, explicit scope definitions, independent developer confirmation of working OAuth flow.",
+    "rationale": "Expensify documents a REST-style Integration Server API with OAuth2 authorization code flow and scoped/short-lived access tokens, plus API credential generation (partnerUserID/partnerUserSecret, client secret rotation), which supports pulling expense/report data programmatically. However, there's no explicit evidence of dedicated endpoints for pulling receipts specifically, no independent/hands-on developer corroboration of the API's reliability or completeness, and no mention of rate limits, SDKs, or scope granularity beyond basic OAuth. missing for 10: independent developer corroboration, explicit receipt-pull endpoint documentation, detail on scope granularity/rate limits.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-12"
+      "expensify-docs-12",
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1862,8 +1875,8 @@
     "storyId": "fast-reimbursements",
     "verdict": "none",
     "quality": 0,
-    "confidence": "low",
-    "rationale": "The evidence pack covers receipt scanning, categorization, accounting integrations, and pricing, but contains no documentation of the direct-deposit reimbursement flow, payout timing, or tracking from submission to payout. Community items focus on categorization accuracy and billing complaints, not reimbursement speed or tracking. missing for 10: reimbursement/payout documentation, direct deposit setup details, submission-to-payout tracking evidence.",
+    "confidence": "medium",
+    "rationale": "The evidence pack covers Expensify's receipt scanning, categorization, workspace, card, and accounting-sync features but contains no documentation or community evidence about direct-deposit reimbursement mechanics, payout timing, or end-to-end submission-to-payout tracking. Since reimbursement is a core, plausible capability for an expense platform, its complete absence from the evidence means the story is unsupported.",
     "evidenceIds": []
   },
   {
@@ -1872,18 +1885,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "low",
-    "rationale": "The evidence pack contains no mention of multi-currency reimbursement or international payment processing to employees abroad; it covers receipt scanning, accounting integrations, invoicing, and API auth, but nothing about local-currency reimbursement or cross-border payouts.",
+    "rationale": "The evidence covers multi-currency expense capture (SmartScan currency detection, multi-currency invoicing) but contains no mention of an actual reimbursement/payout mechanism that pays employees abroad in local currency without a separate international payments process. Missing for 10: any documentation of Expensify's global reimbursement/payout rails, local-currency disbursement, or FX handling for employee reimbursements.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "issue-cards-limits",
     "verdict": "partial",
-    "quality": 4,
+    "quality": 5,
     "confidence": "low",
-    "rationale": "Expensify's spend-management page mentions 'Smart Limits on cards' and the product supports 'bring your own cards,' implying corporate card issuance with limit controls, but there is no documentation of physical vs. virtual card issuance speed, per-card limit setup workflow, or any concrete 'minutes to issue' claim. missing for 10: evidence of physical card issuance process, virtual card creation flow, time-to-issue claims, and per-card individual limit configuration details.",
+    "rationale": "Expensify offers corporate cards with Smart Limits and supports importing existing card programs, implying spend-limit controls, but the evidence emphasizes BYOC (bring your own cards) rather than instantly issuing new physical/virtual cards, and there's no documentation of an actual 'minutes to issue' workflow or virtual card issuance process. missing for 10: concrete documentation of issuing new physical/virtual cards in minutes, virtual card issuance flow, per-card limit-setting UI, and independent confirmation of speed/ease of issuance.",
     "evidenceIds": [
       "expensify-docs-10",
+      "expensify-docs-21",
       "expensify-docs-5"
     ]
   },
@@ -1892,8 +1906,8 @@
     "storyId": "mileage-per-diem",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "The evidence pack covers SmartScan receipt capture, categorization, integrations (QuickBooks, NetSuite), travel booking, and invoicing, but contains no mention of mileage tracking, map-based distance calculation, or per-diem rate claims. This is a fair axis for an expense management product like Expensify, but no supporting evidence exists in the pack. Missing for 10: any documentation or community mention of mileage/distance logging or per-diem rate automation.",
+    "confidence": "low",
+    "rationale": "No evidence in the pack mentions mileage tracking, map-based distance calculation, or per-diem rate claiming — the evidence covers receipt SmartScan, card management, invoicing, travel booking, and accounting integrations, but never mileage/per-diem features.",
     "evidenceIds": []
   },
   {
@@ -1901,13 +1915,9 @@
     "storyId": "multi-entity-currency",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "No evidence describes multi-entity account structures, per-entity books, or consolidated multi-entity reporting; only generic multi-currency invoicing and single ERP connections (QuickBooks/NetSuite) are mentioned, which is not the same as multi-entity consolidation.",
-    "evidenceIds": [
-      "expensify-docs-9",
-      "expensify-docs-13",
-      "expensify-docs-14"
-    ]
+    "confidence": "low",
+    "rationale": "Evidence pack covers receipt scanning, invoicing, accounting connections (QuickBooks, NetSuite), spend management, and AI features, but contains no mention of multi-entity/multi-subsidiary management, per-entity books, or consolidated cross-entity reporting for a finance lead managing multiple legal entities and currencies at the account level.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
@@ -1915,11 +1925,12 @@
     "verdict": "partial",
     "quality": 3,
     "confidence": "low",
-    "rationale": "Evidence confirms Expensify has an API with OAuth2 credential/token flow for acting on behalf of users, but there is no documentation or claim that the API exposes the full breadth of UI capabilities (workspace configuration, travel booking, invoicing, card limits, SmartScan review, etc.) — the probe also shows a broken docs endpoint. missing for 10: evidence of API endpoints covering workspace/rule configuration, travel, invoicing, card management, and any independent confirmation of full UI/API parity.",
+    "rationale": "Expensify does document an API (Integration Server) with OAuth2/credential-based auth for building integrations, showing openness in principle, but the evidence pack gives no indication of feature parity — no documented API endpoints for actions like approvals, invoicing, travel booking, or workspace configuration that mirror UI capabilities. missing for 10: comprehensive API endpoint documentation, evidence of parity for approvals/invoicing/travel/config actions, independent confirmation that AI-native workflows can fully replace UI usage via API.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-probe-1"
+      "expensify-docs-19",
+      "expensify-docs-20"
     ]
   },
   {
@@ -1928,18 +1939,19 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence of a bulk/open-format data export or account-portability feature; Expensify offers accounting-system connections (QuickBooks, NetSuite) and an API requiring OAuth credentials, but nothing about exporting all user data in open formats for departure from the platform.",
+    "rationale": "There is API access and QuickBooks/NetSuite sync, but no evidence of a general open-format bulk data export mechanism for users to leave with all their data (e.g., CSV/JSON export of full account history for portability). The APIs described are for integration/automation, not user-initiated full data export for departure.",
     "evidenceIds": []
   },
   {
     "productId": "expensify",
     "storyId": "openness-open-license",
-    "verdict": "none",
-    "quality": 0,
-    "confidence": "medium",
-    "rationale": "While a public GitHub repo (Expensify/App) with build instructions exists, none of the evidence specifies any open-source license or terms governing that code, so we cannot confirm the source is available under an open license. missing for 10: explicit license file/terms, confirmation of open-source licensing, any documentation asserting open licensing.",
+    "verdict": "partial",
+    "quality": 4,
+    "confidence": "low",
+    "rationale": "The GitHub repo Expensify/App is publicly documented with build instructions (npm install, npm run <platform>), indicating the source code is publicly readable, but no evidence pack item states an explicit open-source license (e.g., MIT, Apache) governing that code. missing for 10: explicit license text/file citation, confirmation that the full product (not just the app) is open-sourced, and any independent corroboration of license terms.",
     "evidenceIds": [
-      "expensify-gh-1"
+      "expensify-gh-1",
+      "expensify-gh-2"
     ]
   },
   {
@@ -1948,9 +1960,10 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Expensify is a hosted SaaS product; while its App repo is open source on GitHub, there is no evidence of a self-hostable backend/server deployment for the core expense-management product—only a client app install step (npm install) is shown, not a full self-host path.",
+    "rationale": "Evidence shows only an open-source client app repo with npm install/run instructions (expensify-gh-1, expensify-gh-2), but no evidence that the core backend/service can be self-hosted independent of Expensify's SaaS infrastructure. Missing for 10: any backend/server self-hosting docs, deployment guides, or independent confirmation of running the full product outside Expensify's cloud.",
     "evidenceIds": [
-      "expensify-gh-1"
+      "expensify-gh-1",
+      "expensify-gh-2"
     ]
   },
   {
@@ -1959,7 +1972,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence in the pack addresses data residency, regional storage options, or any data-location controls for Expensify; all citations concern API auth, product features, integrations, or general community complaints unrelated to data residency.",
+    "rationale": "No evidence anywhere in the pack of data residency/region selection options for Expensify; nothing about EU/US data storage choices or compliance controls for data location.",
     "evidenceIds": []
   },
   {
@@ -1967,13 +1980,9 @@
     "storyId": "privacy-no-training",
     "verdict": "none",
     "quality": 0,
-    "confidence": "high",
-    "rationale": "No evidence of any AI-training opt-out, data-use control, or privacy settings related to AI model training; in fact community evidence shows receipt data was historically routed to third-party human contractors (MTurk) without confidentiality protections, suggesting weak data-handling controls generally.",
-    "evidenceIds": [
-      "expensify-comm-2",
-      "expensify-comm-3",
-      "expensify-comm-4"
-    ]
+    "confidence": "low",
+    "rationale": "No evidence in the pack addresses AI-training opt-out or data-use controls for Expensify; the only AI-related mentions describe Expensify's own AI features, not user control over data being used to train models. There is also concrete evidence Expensify has historically sent user receipt data to third-party human contractors (MTurk) without confidentiality safeguards, which undercuts any implicit privacy assurance, but no explicit AI-training opt-out mechanism is documented either way.",
+    "evidenceIds": []
   },
   {
     "productId": "expensify",
@@ -1981,7 +1990,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "No evidence in the pack of any user-facing controls to set data retention periods or delete data/AI interaction history; only community reports raise privacy concerns around SmartScan's use of contractor-based data extraction, which is unrelated to retention/deletion controls.",
+    "rationale": "The evidence pack contains no documentation of data retention policies, deletion controls, or export/delete APIs for user data; only unrelated privacy concerns about third-party SmartScan data handling are present, which don't address retention/deletion controls.",
     "evidenceIds": []
   },
   {
@@ -1990,7 +1999,7 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "high",
-    "rationale": "No evidence of any telemetry opt-out or AI usage-tracking control; evidence pack covers unrelated features (API, integrations, expense management) and community complaints about accuracy/billing, none addressing privacy/telemetry controls for AI-native usage.",
+    "rationale": "No evidence pack item mentions telemetry, usage tracking, or opt-out controls for AI-native or any users; the evidence covers unrelated product features, integrations, and community complaints.",
     "evidenceIds": []
   },
   {
@@ -1998,27 +2007,30 @@
     "storyId": "programmatic-card-issuance",
     "verdict": "none",
     "quality": 0,
-    "confidence": "medium",
-    "rationale": "Evidence shows a general Expensify API exists for expense/report operations with OAuth2 credentials, and mentions Smart Limits on cards as a product feature, but there is no documentation of API endpoints for programmatically creating, locking, or updating card controls/limits. missing for 10: card-issuing API endpoints, card lock/unlock API calls, programmatic control update examples, any developer reference for card management via API.",
+    "confidence": "high",
+    "rationale": "The evidence pack shows Expensify's public API supports OAuth2 authentication and general expense/report actions, and mentions 'Smart Limits' and 'Bring your own cards' as UI features, but there is no documented API endpoint for programmatically creating, locking, or updating card controls/limits — card management is only described as a manual/UI feature.",
     "evidenceIds": [
       "expensify-docs-1",
       "expensify-docs-2",
-      "expensify-docs-10"
+      "expensify-docs-10",
+      "expensify-docs-21",
+      "expensify-docs-5"
     ]
   },
   {
     "productId": "expensify",
     "storyId": "realtime-spend-visibility",
     "verdict": "disputed",
-    "quality": 4,
+    "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify claims real-time capture via SmartScan (data extracted 'in realtime, no batch processing') and offers categorization/workspaces, which would support real-time spend visibility by merchant and category, but independent user reports directly contradict the categorization accuracy claim — one reports ~70% miscategorization and use of outsourced human labor (MTurk) rather than reliable automated categorization, undermining the 'by category' promise. Missing for 10: evidence of a real-time company-wide spend dashboard broken down by team/department, and any rebuttal or fix to the categorization accuracy complaints.",
+    "rationale": "Expensify offers real-time capture (SmartScan reads receipts instantly, no batch delays) and AI-driven analytics for 'monthly spend' and 'quarterly flux analysis,' plus GL coding for categorization — suggesting near-real-time spend visibility by category/merchant. However, hands-on community reports say Expensify's categorization is wrong ~70% of the time and relies on outsourced manual data entry, directly undermining the 'by category' accuracy claim; other users cite slow processing (20 min per receipt) contradicting 'real time.' Missing for 10: a dedicated team/department spend dashboard, documented real-time merchant/category breakdowns, and independent verification of AI analytics accuracy.",
     "evidenceIds": [
       "expensify-docs-18",
-      "expensify-docs-6",
+      "expensify-docs-22",
+      "expensify-docs-15",
       "expensify-comm-1",
       "expensify-comm-4",
-      "expensify-comm-2"
+      "expensify-comm-5"
     ]
   },
   {
@@ -2027,11 +2039,12 @@
     "verdict": "disputed",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify's SmartScan is documented to OCR receipts in real time (merchant, date, total, currency) via camera capture, but hands-on community reports contradict the polish of this claim: users report categorization is wrong ~70% of the time unless obvious, that scans took ~20 minutes to process, and that outsourced (MTurk) human review was used behind the scenes with data accuracy not guaranteed. There is also no evidence in the pack for the 'forward an email' capture path. missing for 10: evidence of email-forward receipt capture, independent verification of categorization/filing accuracy against transactions, resolution of the community-reported OCR/categorization failures.",
+    "rationale": "Expensify's docs claim SmartScan reads merchant, date, total, and currency in real time from a photographed receipt (expensify-docs-6, expensify-docs-18), which covers the photo-capture and OCR-to-transaction-filing part of the story. However, hands-on community reports concretely contradict the 'automatic' framing: users report ~70% mis-categorization, reliance on mechanical-turk human workers (raising accuracy and privacy issues) rather than pure OCR, and slow processing that led one user to enter data manually instead (expensify-comm-1, expensify-comm-2, expensify-comm-4, expensify-comm-5). No evidence at all addresses the 'forward an email' capture path. Missing for 10: evidence of email-forwarded receipt capture, and independent verification that categorization/filing accuracy matches vendor claims.",
     "evidenceIds": [
       "expensify-docs-6",
       "expensify-docs-18",
       "expensify-comm-1",
+      "expensify-comm-2",
       "expensify-comm-4",
       "expensify-comm-5"
     ]
@@ -2051,19 +2064,18 @@
   {
     "productId": "expensify",
     "storyId": "trip-expenses-autocollect",
-    "verdict": "disputed",
+    "verdict": "partial",
     "quality": 5,
     "confidence": "medium",
-    "rationale": "Expensify documents travel booking (flights/hotels/cars/rail) alongside SmartScan receipt capture and BYOC card support, which together could populate a trip report, but there's no explicit documentation of itinerary-linked auto-consolidation tying bookings+card charges+receipts into one report. Community evidence directly contradicts the 'automatic, accurate' framing of SmartScan: users report ~70% miscategorization and that receipt data was processed by low-paid, unvetted Mechanical Turk workers who could see PII, undermining the 'collect themselves' promise. Missing for 10: explicit itinerary-report linking mechanism, and resolution of the accuracy/privacy contradiction in receipt processing.",
+    "rationale": "Expensify Travel supports booking flights/hotels/cars/rail (expensify-docs-16) and claims trips 'don't end in a pile of receipts' (expensify-docs-8), while SmartScan auto-captures receipt data (expensify-docs-6, expensify-docs-18) and BYOC lets any card's spend flow in (expensify-docs-5, expensify-docs-21). However, no evidence explicitly shows these three streams (bookings, card transactions, receipts) auto-merging into one itinerary-linked report, and community feedback flags real categorization/accuracy issues with receipt processing (expensify-comm-1, expensify-comm-4). Missing for 10: explicit documentation of automatic itinerary-to-report linkage, evidence of card-transaction matching to trip itineraries, and independent confirmation the unified report actually works end-to-end.",
     "evidenceIds": [
       "expensify-docs-8",
       "expensify-docs-16",
       "expensify-docs-6",
       "expensify-docs-18",
       "expensify-docs-5",
+      "expensify-docs-21",
       "expensify-comm-1",
-      "expensify-comm-2",
-      "expensify-comm-3",
       "expensify-comm-4"
     ]
   },
@@ -2073,10 +2085,11 @@
     "verdict": "none",
     "quality": 0,
     "confidence": "medium",
-    "rationale": "Evidence shows Expensify Card with 'Smart Limits' and general spend management, but nothing about issuing single-vendor-locked virtual cards for SaaS/procurement use cases. Missing for 10: any documentation of virtual card issuance, vendor-locking/merchant-locking controls, or single-use card workflows for subscriptions.",
+    "rationale": "The evidence only shows generic card features like 'Smart Limits' and BYOC support, with no documentation of creating single-vendor virtual cards restricted to one merchant for SaaS/procurement spend. Missing for 10: explicit virtual-card issuance feature, vendor-lock/merchant-restriction controls, and any hands-on confirmation of this specific capability.",
     "evidenceIds": [
       "expensify-docs-10",
-      "expensify-docs-11"
+      "expensify-docs-21",
+      "expensify-docs-5"
     ]
   },
   {
